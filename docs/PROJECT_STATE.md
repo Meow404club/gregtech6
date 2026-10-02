@@ -1,4 +1,4 @@
-# 项目状态（镜像·维护期版 2026-10-02 · 渲染积压大波收官）
+# 项目状态（镜像·维护期版 2026-10-03 · pool-drain 波收官）
 
 > 权威数据在 MCP `gt6-brain` 的 state/记忆/KG 里。本文件自 2026-09-27 起改为**维护期精简镜像**：
 > P1-P38 逐阶段详账已蒸馏归档至 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)
@@ -9,7 +9,25 @@
 GT6（1.7.10 GregTech6）→ 现代移植：1.20.1 Forge + 1.21.1 NeoForge 双节点（Stonecutter）。
 内容完成度 97-98%+，2026-09-24 发布 v0.1.0（GitHub Release，双 jar），现处**还债/维护阶段**（2026-09-26 起）。
 
-## 当前态（2026-10-03 · 池排空波开场）
+## 当前态（2026-10-03 · pool-drain 波收官）
+
+- **池排空波 16 卡全清收官**（main=**5ab81bc80**；三席 11 张审查卡全 approve；卡级与波级账以
+  state `tasks.pool-drain-wave` 为权威，本段为摘要；push 逐次等用户指令）：
+  **席 1 五卡**：fluids-null-source-fix（P0 实机裸装崩端修复，merge=399666218）/berry-overlay
+  （浆果阶段层 tint+四贴图借图）/mdh-5-block-worldgen-axis（worldgen/block 两轴 census 四面
+  静态终态关闭裁决）/pool-drain-removal-channel（原版 6 行 CR.delate 移除通道，双事件缝）/
+  pool-drain-food-t5-tail（T5 蔬食 crafting 回填+cheese off-by-one+raisin 冰淇淋）。
+  **席 2 五卡**：pool-drain-food-machine-tail（食品机器行族 GT6RecipesFoodTail）/
+  btl-fluids-prereq（35 流体：swampwater/stagnantwater/tar 三单行+双染料族 32）/
+  small-gem-1pct（浮出吸收：石层 1% 小宝石回退池）/btl-bottles-families-a（71 瓶+尾段 9）/
+  btl-bottles-families-b（96 瓶，171）。**席 3 一卡**：btl-dye-bottles（48 染料瓶三族 walk，
+  219 全域，merge=5ab81bc80）。
+  **零代码关闭 2 项**：骡肉照灌（E 维持）+mutton-rabbit declared deviation（F 维持）。
+  **余瓶链收官**：35 流体+219 瓶全域（4 landed+71 A+96 B+48 dye）落地，census bottles-g 草案
+  卡系误记已勘误（尾段 9 行 families-a 已落+tar 流体 prereq 已落）。
+  语言地板：ZH_KEY_FLOOR 5417（py --check 3419==3419）；tree_check OK 112495 byte-identical。
+
+## 前态（2026-10-03 · 池排空波开场）
 
 - **池排空波已开场**（用户裁定：池尾小卡族全部清空+修实机崩端；push 逐次等用户指令）。
   首卡 P0 **fluids-null-source-fix 已合入**（merge=399666218）：实机裸装装载期崩端修复——
