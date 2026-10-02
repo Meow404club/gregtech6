@@ -1,40 +1,1234 @@
 {
-  "recipes": [
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [
-        {
-          "item": "minecraft:clay_ball",
-          "count": 1
-        },
-        {
-          "item": "minecraft:clay_ball",
-          "count": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "minecraft:brick",
-          "count": 1
-        }
-      ],
-      "duration": 16,
-      "eut": 16
+     "item": "minecraft:clay_ball",
+     "count": 1
     },
     {
-      "inputs": [
-        {
-          "item": "minecraft:snow_block",
-          "count": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "minecraft:snowball",
-          "count": 4
-        }
-      ],
-      "duration": 512,
-      "eut": 16
+     "item": "minecraft:clay_ball",
+     "count": 1
     }
-  ]
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:brick",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "inputs": [
+    {
+     "item": "minecraft:snow_block",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:snowball",
+     "count": 4
+    }
+   ],
+   "duration": 512,
+   "eut": 16
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:66 verbatim (vanilla water leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:67 verbatim (vanilla water leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:66 verbatim (MnWtr leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:67 verbatim (MnWtr leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:66 verbatim (DistW leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:67 verbatim (DistW leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:66 verbatim (SpDew leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:67 verbatim (SpDew leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_salt"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_sodium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:68 verbatim (vanilla water leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:69 verbatim (vanilla water leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:68 verbatim (MnWtr leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:69 verbatim (MnWtr leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:68 verbatim (DistW leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:69 verbatim (DistW leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:68 verbatim (SpDew leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:69 verbatim (SpDew leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_sylvite"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_potassium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:70 verbatim (vanilla water leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:71 verbatim (vanilla water leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:70 verbatim (MnWtr leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:71 verbatim (MnWtr leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:70 verbatim (DistW leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:71 verbatim (DistW leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:70 verbatim (SpDew leg of the FL.waters(1000) walk): small salt dust + water x3/4 750 -> Cl 125 + H 375 + O 125 gases + small hydroxide dust (OM.dust 3*U8 = U4-class), 1280 t / 16 EUt.",
+   "duration": 1280,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 750
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_small_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 125
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 375
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:71 verbatim (SpDew leg): full salt dust + water x3 3000 -> Cl 500 + H 1500 + O 500 + hydroxide dust (3*U2 = 1.5U dust), 5120 t / 16 EUt.",
+   "duration": 5120,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_lithium_chloride"
+    }
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 3000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_lithium_hydroxide"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 500
+    },
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1500
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:300 verbatim: sodium bisulfate dust x7 -> hydrogen gas 1000 + sodium persulfate dust x6, 512 t / 16 EUt (the ST.tag(0) empty slot omits).",
+   "duration": 512,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_sodium_bisulfate",
+     "count": 7
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_sodium_persulfate",
+     "count": 6
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:301 verbatim: potassium bisulfate dust x7 -> hydrogen 1000 + potassium persulfate x6, 512 t / 16 EUt.",
+   "duration": 512,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_potassium_bisulfate",
+     "count": 7
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_potassium_persulfate",
+     "count": 6
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:302 verbatim: calcium_chloride dust x3 -> chlorine 2000 + calcium dust, 1024/2048 t / 64 EUt (Mn row 2048).",
+   "duration": 1024,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_calcium_chloride",
+     "count": 3
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_calcium"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 2000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:303 verbatim: magnesium_chloride dust x3 -> chlorine 2000 + magnesium dust, 1024/2048 t / 64 EUt (Mn row 2048).",
+   "duration": 1024,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_magnesium_chloride",
+     "count": 3
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_magnesium"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 2000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:304 verbatim: manganese_chloride dust x3 -> chlorine 2000 + manganese dust, 1024/2048 t / 64 EUt (Mn row 2048).",
+   "duration": 2048,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_manganese_chloride",
+     "count": 3
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_manganese"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chlorine",
+     "amount": 2000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:312 verbatim (vanilla water leg of the FL.waters(3000) walk): water electrolysis 3000 -> H 2000 + O 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:312 verbatim (MnWtr leg of the FL.waters(3000) walk): water electrolysis 3000 -> H 2000 + O 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:312 verbatim (DistW leg of the FL.waters(3000) walk): water electrolysis 3000 -> H 2000 + O 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:312 verbatim (SpDew leg of the FL.waters(3000) walk): water electrolysis 3000 -> H 2000 + O 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:313 verbatim: geothermal water 3000 -> H 2000 + O 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:water_geothermal",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:314 verbatim: boiling water 3000 -> H 2000 + O 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:water_boiling",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:316 verbatim: hot water 3000 -> H 2000 + O 1000, 3840 t / 16 EUt (the :315 Water_Hot row stays unregistered in the port - the p19 hot-water-alias ruling).",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:hot_water",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:317 verbatim: cold water 3000 -> H 2000 + O 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:cold_water",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:hydrogen",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:318 verbatim: heavy water (MT.D2O = heavywater) 3000 -> deuterium 2000 + oxygen 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:deuterium",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Chem.java:319 verbatim: tritiated water (MT.T2O) 3000 -> tritium 2000 + oxygen 1000, 3840 t / 16 EUt.",
+   "duration": 3840,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:tritium",
+     "amount": 2000
+    },
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Vanilla.java:899 verbatim: sand block -> OM.dust(SiO2, U*9) = silicon dioxide dust x9, 576 t / 64 EUt.",
+   "duration": 576,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "minecraft:sand"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_silicon_dioxide",
+     "count": 9
+    }
+   ]
+  },
+  {
+   "comment": "RM.Electrolyzer Loader_Recipes_Vanilla.java:900 verbatim: sand dust -> silicon dioxide dust, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_sand"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_silicon_dioxide"
+    }
+   ]
+  }
+ ],
+ "comment": "the two seated smoke rows (clay->brick, snow block->snowballs) stay seated — no true upstream row supersedes them; task recipe-data-b2b2 appends its 41 rows."
 }

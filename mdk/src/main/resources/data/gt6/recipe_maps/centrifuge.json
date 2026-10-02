@@ -1,40 +1,2569 @@
 {
-  "recipes": [
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [
-        {
-          "item": "minecraft:snowball",
-          "count": 2
-        }
-      ],
-      "outputs": [
-        {
-          "item": "minecraft:clay_ball",
-          "count": 1
-        },
-        {
-          "item": "minecraft:flint",
-          "count": 1
-        }
-      ],
-      "duration": 16,
-      "eut": 16
+     "item": "minecraft:snowball",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:clay_ball",
+     "count": 1
     },
     {
-      "inputs": [
-        {
-          "item": "minecraft:snow",
-          "count": 2
-        }
-      ],
-      "outputs": [
-        {
-          "item": "minecraft:clay_ball",
-          "count": 1
-        }
-      ],
-      "duration": 512,
-      "eut": 16
+     "item": "minecraft:flint",
+     "count": 1
     }
-  ]
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "inputs": [
+    {
+     "item": "minecraft:snow",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:clay_ball",
+     "count": 1
+    }
+   ],
+   "duration": 512,
+   "eut": 16
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:43 verbatim: dark ashes x2 -> ash dust + the TE_Slag->IE_Slag->FZ_Sludge->OM.dust(Ash) fallback-chain leg, which resolves to a second ash dust in the no-foreign-mod port runtime, 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_dark_ashes",
+     "count": 2
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_ashes"
+    },
+    {
+     "item": "gt6:dust_ashes"
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:50 verbatim: sluice juice 100 + water 50 -> six stone/metal tiny dusts (chances {9640,100,100,100,100,100}), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:sluicejuice",
+     "amount": 100
+    },
+    {
+     "fluid": "minecraft:water",
+     "amount": 50
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_stone",
+     "chance": 9640
+    },
+    {
+     "item": "gt6:dust_tiny_copper",
+     "count": 2,
+     "chance": 100
+    },
+    {
+     "item": "gt6:dust_tiny_tin",
+     "chance": 100
+    },
+    {
+     "item": "gt6:dust_tiny_zinc",
+     "chance": 100
+    },
+    {
+     "item": "gt6:dust_tiny_antimony",
+     "chance": 100
+    },
+    {
+     "item": "gt6:dust_tiny_chromium",
+     "chance": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:56 verbatim: bedrock dust -> deepslate dust (chance 7000) + adamantite/draconium/monazite x2/zircon x3/graphite x3 tiny dusts (chance 3000), 144 t / 256 EUt.",
+   "duration": 144,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:dust_bedrock"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_deepslate",
+     "chance": 7000
+    },
+    {
+     "item": "gt6:dust_tiny_adamantite",
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_draconium",
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_monazite",
+     "count": 2,
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_zircon",
+     "count": 3,
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_graphite",
+     "count": 3,
+     "chance": 3000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:57 verbatim: bedrock block dust -> the x9 faces of the :56 outputs, 1296 t / 256 EUt.",
+   "duration": 1296,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:block_dust_bedrock"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_deepslate",
+     "count": 9,
+     "chance": 7000
+    },
+    {
+     "item": "gt6:dust_tiny_adamantite",
+     "count": 9,
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_draconium",
+     "count": 9,
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_monazite",
+     "count": 18,
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_zircon",
+     "count": 27,
+     "chance": 3000
+    },
+    {
+     "item": "gt6:dust_tiny_graphite",
+     "count": 27,
+     "chance": 3000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:70 verbatim: rare earth -> the six lanthanide tiny dusts x8 (chances all 72), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_rare_earth"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_neodymium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_yttrium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_lanthanium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_cerium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_cadmium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_caesium",
+     "count": 8,
+     "chance": 72
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:71 verbatim: rare earth -> the six lanthanide tiny dusts x8 (chances all 162), 36 t / 64 EUt.",
+   "duration": 36,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_rare_earth"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_neodymium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_yttrium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_lanthanium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_cerium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_cadmium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_caesium",
+     "count": 8,
+     "chance": 162
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:72 verbatim: rare earth -> the six lanthanide tiny dusts x8 (chances all 648), 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_rare_earth"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_neodymium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_yttrium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_lanthanium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_cerium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_cadmium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_caesium",
+     "count": 8,
+     "chance": 648
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:73 verbatim: rare earth -> the six lanthanide tiny dusts x8 (chances all 80), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_rare_earth"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_neodymium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_yttrium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_lanthanium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_cerium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_cadmium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_caesium",
+     "count": 8,
+     "chance": 80
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:74 verbatim: rare earth -> the six lanthanide tiny dusts x8 (chances all 720), 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_rare_earth"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_neodymium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_yttrium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_lanthanium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_cerium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_cadmium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_caesium",
+     "count": 8,
+     "chance": 720
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:76 verbatim: platinum group sludge -> the six PGM tiny dusts x8 (chances all 72), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_tiny_platinum_group_sludge"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_ruthenium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_rhodium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_palladium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_osmium_elemental",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_iridium",
+     "count": 8,
+     "chance": 72
+    },
+    {
+     "item": "gt6:dust_tiny_platinum",
+     "count": 8,
+     "chance": 72
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:77 verbatim: platinum group sludge -> the six PGM tiny dusts x8 (chances all 162), 36 t / 64 EUt.",
+   "duration": 36,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_small_platinum_group_sludge"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_ruthenium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_rhodium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_palladium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_osmium_elemental",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_iridium",
+     "count": 8,
+     "chance": 162
+    },
+    {
+     "item": "gt6:dust_tiny_platinum",
+     "count": 8,
+     "chance": 162
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:78 verbatim: platinum group sludge -> the six PGM tiny dusts x8 (chances all 648), 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_platinum_group_sludge"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_ruthenium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_rhodium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_palladium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_osmium_elemental",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_iridium",
+     "count": 8,
+     "chance": 648
+    },
+    {
+     "item": "gt6:dust_tiny_platinum",
+     "count": 8,
+     "chance": 648
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:79 verbatim: platinum group sludge -> the six PGM tiny dusts x8 (chances all 80), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_platinum_group_sludge"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_ruthenium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_rhodium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_palladium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_osmium_elemental",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_iridium",
+     "count": 8,
+     "chance": 80
+    },
+    {
+     "item": "gt6:dust_tiny_platinum",
+     "count": 8,
+     "chance": 80
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:80 verbatim: platinum group sludge -> the six PGM tiny dusts x8 (chances all 720), 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_platinum_group_sludge"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_ruthenium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_rhodium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_palladium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_osmium_elemental",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_iridium",
+     "count": 8,
+     "chance": 720
+    },
+    {
+     "item": "gt6:dust_tiny_platinum",
+     "count": 8,
+     "chance": 720
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:82 verbatim: lava centrifuging -> basalt tiny dust (chance 8000) + copper x8/tin x4/lead x2/gold x1/silver x1 nuggets (chance 250), 288 t / 64 EUt.",
+   "duration": 288,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:lava",
+     "amount": 100
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_basalt",
+     "chance": 8000
+    },
+    {
+     "item": "gt6:nugget_copper",
+     "count": 8,
+     "chance": 250
+    },
+    {
+     "item": "gt6:nugget_tin",
+     "count": 4,
+     "chance": 250
+    },
+    {
+     "item": "gt6:nugget_lead",
+     "count": 2,
+     "chance": 250
+    },
+    {
+     "item": "gt6:nugget_gold",
+     "chance": 250
+    },
+    {
+     "item": "gt6:nugget_silver",
+     "chance": 250
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:83 verbatim: lava centrifuging -> basalt tiny dust (chance 9000) + copper x8/tin x4/lead x2/gold x1/silver x1 nuggets (chance 300), 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:ic2pahoehoelava",
+     "amount": 100
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_basalt",
+     "chance": 9000
+    },
+    {
+     "item": "gt6:nugget_copper",
+     "count": 8,
+     "chance": 300
+    },
+    {
+     "item": "gt6:nugget_tin",
+     "count": 4,
+     "chance": 300
+    },
+    {
+     "item": "gt6:nugget_lead",
+     "count": 2,
+     "chance": 300
+    },
+    {
+     "item": "gt6:nugget_gold",
+     "chance": 300
+    },
+    {
+     "item": "gt6:nugget_silver",
+     "chance": 300
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:90 verbatim: soulsand -> soulsand oil 45 (chance 8000) + sand dust x9 + niter/coal/bone tiny dusts x9 (chance 1000), 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "minecraft:soul_sand"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_sand",
+     "count": 9,
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_niter",
+     "count": 9,
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_coal",
+     "count": 9,
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_bone",
+     "count": 9,
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:soulsandoil",
+     "amount": 45
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:91 verbatim: soulsand -> soulsand oil 5 (chance 8000) + sand dust x1 + niter/coal/bone tiny dusts x1 (chance 1000), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_soulsand"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_sand",
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_niter",
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_coal",
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_bone",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:soulsandoil",
+     "amount": 5
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:92 verbatim: netherrack -> stone dust x9 (chance 8000) + sulfur x18/redstone x9/coal x9/gold x9 tiny dusts (chances 1000/500/500/100), 144 t / 64 EUt.",
+   "duration": 144,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:block_dust_netherrack"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_stone",
+     "count": 9,
+     "chance": 8000
+    },
+    {
+     "item": "gt6:dust_tiny_sulfur",
+     "count": 18,
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 9,
+     "chance": 500
+    },
+    {
+     "item": "gt6:dust_tiny_coal",
+     "count": 9,
+     "chance": 500
+    },
+    {
+     "item": "gt6:dust_tiny_gold",
+     "count": 9,
+     "chance": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:93 verbatim: netherrack -> stone dust x1 (chance 8000) + sulfur x2/redstone x1/coal x1/gold x1 tiny dusts (chances 1000/500/500/100), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:dust_netherrack"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_stone",
+     "chance": 8000
+    },
+    {
+     "item": "gt6:dust_tiny_sulfur",
+     "count": 2,
+     "chance": 1000
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "chance": 500
+    },
+    {
+     "item": "gt6:dust_tiny_coal",
+     "chance": 500
+    },
+    {
+     "item": "gt6:dust_tiny_gold",
+     "chance": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:361 verbatim: crushed centrifuged tiny beryllium -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 256 EUt.",
+   "duration": 256,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_beryllium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_beryllium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_beryllium7",
+     "count": 8,
+     "chance": 150
+    },
+    {
+     "item": "dust_tiny_beryllium8",
+     "count": 8,
+     "chance": 150
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:362 verbatim: crushed centrifuged beryllium -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 256 EUt.",
+   "duration": 2304,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_beryllium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_beryllium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_beryllium7",
+     "count": 8,
+     "chance": 1350
+    },
+    {
+     "item": "dust_beryllium8",
+     "count": 8,
+     "chance": 1350
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:363 verbatim: crushed centrifuged tiny lithium -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 256 EUt.",
+   "duration": 256,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_lithium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_lithium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_lithium6",
+     "count": 8,
+     "chance": 300
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:364 verbatim: crushed centrifuged lithium -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 256 EUt.",
+   "duration": 2304,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_lithium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_lithium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_lithium6",
+     "count": 8,
+     "chance": 2700
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:365 verbatim: crushed centrifuged tiny boron -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 256 EUt.",
+   "duration": 256,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_boron"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_boron",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_boron11",
+     "count": 8,
+     "chance": 300
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:366 verbatim: crushed centrifuged boron -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 256 EUt.",
+   "duration": 2304,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_boron"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_boron",
+     "chance": 10000
+    },
+    {
+     "item": "dust_boron11",
+     "count": 8,
+     "chance": 2700
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:367 verbatim: crushed centrifuged tiny carbon -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 256 EUt.",
+   "duration": 256,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_carbon"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_carbon",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_carbon13",
+     "count": 8,
+     "chance": 150
+    },
+    {
+     "item": "dust_tiny_carbon14",
+     "count": 8,
+     "chance": 150
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:368 verbatim: crushed centrifuged carbon -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 256 EUt.",
+   "duration": 2304,
+   "eut": 256,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_carbon"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_carbon",
+     "chance": 10000
+    },
+    {
+     "item": "dust_carbon13",
+     "count": 8,
+     "chance": 1350
+    },
+    {
+     "item": "dust_carbon14",
+     "count": 8,
+     "chance": 1350
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:369 verbatim: crushed centrifuged tiny cobalt -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 512 EUt.",
+   "duration": 256,
+   "eut": 512,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_cobalt"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_cobalt",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_cobalt60",
+     "count": 8,
+     "chance": 300
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:370 verbatim: crushed centrifuged cobalt -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 512 EUt.",
+   "duration": 2304,
+   "eut": 512,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_cobalt"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_cobalt",
+     "chance": 10000
+    },
+    {
+     "item": "dust_cobalt60",
+     "count": 8,
+     "chance": 2700
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:372 verbatim: crushed centrifuged tiny uranium -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 1024 EUt.",
+   "duration": 256,
+   "eut": 1024,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_uranium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_uranium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_uranium235",
+     "count": 8,
+     "chance": 200
+    },
+    {
+     "item": "dust_tiny_uranium233",
+     "count": 8,
+     "chance": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:373 verbatim: crushed centrifuged uranium -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 1024 EUt.",
+   "duration": 2304,
+   "eut": 1024,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_uranium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_uranium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_uranium235",
+     "count": 8,
+     "chance": 1800
+    },
+    {
+     "item": "dust_uranium233",
+     "count": 8,
+     "chance": 900
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:375 verbatim: crushed centrifuged tiny plutonium -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 1024 EUt.",
+   "duration": 256,
+   "eut": 1024,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_plutonium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_plutonium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_plutonium241",
+     "count": 8,
+     "chance": 150
+    },
+    {
+     "item": "dust_tiny_plutonium243",
+     "count": 8,
+     "chance": 150
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:376 verbatim: crushed centrifuged plutonium -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 1024 EUt.",
+   "duration": 2304,
+   "eut": 1024,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_plutonium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_plutonium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_plutonium241",
+     "count": 8,
+     "chance": 1350
+    },
+    {
+     "item": "dust_plutonium243",
+     "count": 8,
+     "chance": 1350
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:377 verbatim: crushed centrifuged tiny americium -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 1024 EUt.",
+   "duration": 256,
+   "eut": 1024,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_americium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_americium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_americium241",
+     "count": 8,
+     "chance": 300
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:378 verbatim: crushed centrifuged americium -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 1024 EUt.",
+   "duration": 2304,
+   "eut": 1024,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_americium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_americium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_americium241",
+     "count": 8,
+     "chance": 2700
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:379 verbatim: crushed centrifuged tiny flerovium -> self tiny dust + isotope tiny dusts x8 (chances per the new long[] table), 256 t / 1536 EUt.",
+   "duration": 256,
+   "eut": 1536,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_tiny_flerovium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_tiny_flerovium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_tiny_flerovium298",
+     "count": 8,
+     "chance": 300
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Ores.java:380 verbatim: crushed centrifuged flerovium -> self dust + isotope tiny dusts x8 (chances per the new long[] table), 2304 t / 1536 EUt.",
+   "duration": 2304,
+   "eut": 1536,
+   "inputs": [
+    {
+     "item": "gt6:crushed_centrifuged_flerovium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "dust_flerovium",
+     "chance": 10000
+    },
+    {
+     "item": "dust_flerovium298",
+     "count": 8,
+     "chance": 2700
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:764 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_thorium_232_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_thorium"
+    },
+    {
+     "item": "gt6:dust_div72_uranium",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:765 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_cyanite_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_cyanite"
+    },
+    {
+     "item": "gt6:dust_div72_blutonium",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:766 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_uranium_238_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_uranium"
+    },
+    {
+     "item": "gt6:dust_div72_uranium235",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:767 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_uranium_235_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_uranium235"
+    },
+    {
+     "item": "gt6:dust_div72_plutonium",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:768 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_uranium_233_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_uranium233"
+    },
+    {
+     "item": "gt6:dust_div72_plutonium243",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:769 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_yellorium_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_yellorium"
+    },
+    {
+     "item": "gt6:dust_div72_cyanite",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:770 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_plutonium_244_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_plutonium"
+    },
+    {
+     "item": "gt6:dust_div72_plutonium241",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:771 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_plutonium_241_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_plutonium241"
+    },
+    {
+     "item": "gt6:dust_div72_plutonium243",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:772 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_plutonium_243_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_plutonium243"
+    },
+    {
+     "item": "gt6:dust_div72_americium",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:773 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_plutonium_239_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_plutonium239"
+    },
+    {
+     "item": "gt6:dust_div72_americium241",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:774 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_blutonium_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_blutonium"
+    },
+    {
+     "item": "gt6:dust_div72_ludicrite",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:775 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_americium_245_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_americium"
+    },
+    {
+     "item": "gt6:dust_div72_americium241",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:776 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_americium_241_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_americium241"
+    },
+    {
+     "item": "gt6:dust_div72_naquadah_enriched",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:777 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_ludicrite_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_ludicrite"
+    },
+    {
+     "item": "gt6:dust_div72_yellorium",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:778 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_cobalt_60_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_cobalt60"
+    },
+    {
+     "item": "gt6:dust_div72_thorium",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:779 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_enriched_naquadah_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_naquadah_enriched"
+    },
+    {
+     "item": "gt6:dust_div72_naquadria",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:780 verbatim: depleted rod -> zirconium scrap x9 + self tiny dust + dust_div72 product x6, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:depleted_naquadria_fuel_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_naquadria"
+    },
+    {
+     "item": "gt6:dust_div72_cobalt60",
+     "count": 6
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:787 verbatim: enriched uranium-233 rod -> zirconium scrap x9 + uranium-233 tiny dust x4 + thorium dust_div72 x4, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:uranium_233_enriched_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_uranium233",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_div72_thorium",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:788 verbatim: enriched plutonium-239 rod -> zirconium scrap x9 + plutonium-239 tiny dust x4 + uranium dust_div72 x4, 256 t / 64 EUt.",
+   "duration": 256,
+   "eut": 64,
+   "inputs": [
+    {
+     "item": "gt6:plutonium_239_enriched_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_plutonium239",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_div72_uranium",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_MultiTileEntities.java:790 verbatim: enriched naquadah rod -> zirconium scrap x9 + naquadah-enriched tiny dust x4 + naquadah dust_div72 x4, 256 t / 512 EUt.",
+   "duration": 256,
+   "eut": 512,
+   "inputs": [
+    {
+     "item": "gt6:enriched_naquadah_enriched_rod"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:scrap_gt_zirconium",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_tiny_naquadah_enriched",
+     "count": 4
+    },
+    {
+     "item": "gt6:dust_div72_naquadah",
+     "count": 4
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:470 verbatim (vanilla water leg of the FL.waters walk): water 3000 -> semiheavy (HDO) 100 + heavy (D2O) 10 + tritiated (T2O) 1, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:470 verbatim (MnWtr leg of the FL.waters walk): water 3000 -> semiheavy (HDO) 100 + heavy (D2O) 10 + tritiated (T2O) 1, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mnwtr",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:470 verbatim (DistW leg of the FL.waters walk): water 3000 -> semiheavy (HDO) 100 + heavy (D2O) 10 + tritiated (T2O) 1, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:470 verbatim (SpDew leg of the FL.waters walk): water 3000 -> semiheavy (HDO) 100 + heavy (D2O) 10 + tritiated (T2O) 1, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:spdew",
+     "amount": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:471 verbatim: geothermal water 50000 -> semiheavy 100 + heavy 10 + tritiated 1, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:water_geothermal",
+     "amount": 50000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:472 verbatim: boiling water 100000 -> semiheavy 100 + heavy 10 + tritiated 1, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:water_boiling",
+     "amount": 100000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:474 verbatim: hot water 100000 -> semiheavy 100 + heavy 10 + tritiated 1, 64 t / 64 EUt (the :473 Water_Hot row stays unregistered - the p19 ruling).",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:hot_water",
+     "amount": 100000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:475 verbatim: cold water 100000 -> semiheavy 100 + heavy 10 + tritiated 1, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:cold_water",
+     "amount": 100000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 10
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:476 verbatim: semiheavy water 1000 -> heavy water 100 + tritiated water 10, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:semiheavywater",
+     "amount": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 100
+    },
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 10
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Chem.java:477 verbatim: heavy water 1000 -> tritiated water 100, 64 t / 64 EUt.",
+   "duration": 64,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:heavywater",
+     "amount": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:tritiatedwater",
+     "amount": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Vanilla.java:902 verbatim: slimy bone dust -> slime green 250 + bone dust, 16 t / 16 EUt.",
+   "duration": 16,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:dust_slimy_bone"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_bone"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:slime",
+     "amount": 250
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Vanilla.java:903 verbatim: magma cream -> slime green 125 + blaze powder, 16 t / 16 EUt.",
+   "duration": 16,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "minecraft:magma_cream"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:blaze_powder"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:slime",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Vanilla.java:906 verbatim (the FluidsGT.SLIME walk, port members slime/slime_blue - pinkslime unregistered): slime fluid 250 -> latex L/2 = 72 + glue 250, 64 t / 16 EUt.",
+   "duration": 64,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:slime",
+     "amount": 250
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:latex",
+     "amount": 72
+    },
+    {
+     "fluid": "gt6:glue",
+     "amount": 250
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Vanilla.java:906 verbatim (slime_blue leg): blue slime 250 -> latex 72 + glue 250, 64 t / 16 EUt.",
+   "duration": 64,
+   "eut": 16,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:slime_blue",
+     "amount": 250
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:latex",
+     "amount": 72
+    },
+    {
+     "fluid": "gt6:glue",
+     "amount": 250
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Other.java:677 verbatim: fish oil 125 (MT.FishOil.liquid(U8)) -> mercury 1 mB (MT.Hg.liquid(1) - the verbatim 1-unit liquid face), 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:fishoil",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:mercury",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge Loader_Recipes_Other.java:678 verbatim: whale oil 125 -> mercury 1 mB, 16 t / 64 EUt.",
+   "duration": 16,
+   "eut": 64,
+   "fluidInputs": [
+    {
+     "fluid": "gt6:whaleoil",
+     "amount": 125
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:mercury",
+     "amount": 1
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:251 verbatim: comb_honey -> fluids + wax/dust outputs (chances per the new long[] table). {10000,1000}: the FR_Propolis leg resolves null in the no-Forestry runtime.",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_honey"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_bee",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:honey",
+     "amount": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:252 verbatim: comb_water -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_water"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_bee",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:253 verbatim: comb_magic -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_magic"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_magic",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ambrosia",
+     "amount": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:254 verbatim: comb_nether -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_nether"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_refractory",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:blaze",
+     "amount": 144
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:255 verbatim: comb_end -> fluids + wax/dust outputs (chances per the new long[] table). {10000,1000,1000}: the FR_Propolis_Pulsating + EtFu_Chorus_Fruit legs resolve null.",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_end"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_endstone",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dragon_breath",
+     "amount": 125
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:256 verbatim: comb_rock -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_rock"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_stone",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:concrete",
+     "amount": 144
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:257 verbatim: comb_jungle -> fluids + wax/dust outputs (chances per the new long[] table). {10000,1000}: the FR_Propolis_Silky leg takes its declared fallback vanilla string.",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_jungle"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_cocoa",
+     "chance": 1000
+    },
+    {
+     "item": "minecraft:string",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:chocolate_molten",
+     "amount": 144
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:258 verbatim: comb_frozen -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_frozen"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_ice",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ice",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:259 verbatim: comb_shroom -> fluids + wax/dust outputs (chances per the new long[] table). {6000,6000}: the third output rides the default chance.",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_shroom"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:red_mushroom_block",
+     "chance": 6000
+    },
+    {
+     "item": "minecraft:brown_mushroom_block",
+     "chance": 10000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:soup_mushroom",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:260 verbatim: comb_sandy -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_sandy"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:sand",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:cactuswater",
+     "amount": 100
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:261 verbatim: comb_clay -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_clay"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_clay",
+     "chance": 2000
+    },
+    {
+     "item": "gt6:dust_clay_brown",
+     "chance": 2000
+    },
+    {
+     "item": "gt6:dust_clay_red",
+     "chance": 2000
+    },
+    {
+     "item": "gt6:dust_bentonite",
+     "chance": 2000
+    },
+    {
+     "item": "gt6:dust_palygorskite",
+     "chance": 2000
+    },
+    {
+     "item": "gt6:dust_kaolinite",
+     "chance": 2000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:concrete",
+     "amount": 144
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:262 verbatim: comb_sticky -> fluids + wax/dust outputs (chances per the new long[] table). {10000,3000}: the IC2_Resin->Resin fallback chain resolves null.",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_sticky"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_bee",
+     "chance": 3000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:latex",
+     "amount": 144
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:263 verbatim: comb_royal -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_royal"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_bee"
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:honey",
+     "amount": 50
+    },
+    {
+     "fluid": "gt6:royal_jelly",
+     "amount": 10
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:264 verbatim: comb_soul -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_soul"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_soulful",
+     "chance": 9000
+    },
+    {
+     "item": "gt6:dust_soulsand",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:soulsandoil",
+     "amount": 50
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:265 verbatim: comb_amnesic -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_amnesic"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wax_amnesic",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:lubricant",
+     "amount": 1000
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:266 verbatim: comb_military -> fluids + wax/dust outputs (chances per the new long[] table). {10000,500,500,250}: the fifth output rides the default chance.",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_military"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_bone",
+     "chance": 500
+    },
+    {
+     "item": "minecraft:bone",
+     "chance": 500
+    },
+    {
+     "item": "minecraft:rotten_flesh",
+     "chance": 250
+    },
+    {
+     "item": "minecraft:spider_eye",
+     "chance": 10000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:potion_harm_1",
+     "amount": 50
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:267 verbatim: comb_pyro -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_pyro"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_blaze",
+     "chance": 1000
+    },
+    {
+     "item": "gt6:stick_blaze",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:blaze",
+     "amount": 72
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:268 verbatim: comb_cryo -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_cryo"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_blizz",
+     "chance": 1000
+    },
+    {
+     "item": "gt6:stick_blizz",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ice",
+     "amount": 500
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:269 verbatim: comb_aero -> fluids + wax/dust outputs (chances per the new long[] table). {10000,500,500}: the fourth output rides the default chance.",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_aero"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_blitz",
+     "chance": 500
+    },
+    {
+     "item": "gt6:stick_blitz",
+     "chance": 500
+    },
+    {
+     "item": "gt6:stick_breeze",
+     "chance": 10000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dragon_breath",
+     "amount": 50
+    }
+   ]
+  },
+  {
+   "comment": "RM.Centrifuge MultiItemFood.java:270 verbatim: comb_tera -> fluids + wax/dust outputs (chances per the new long[] table).",
+   "duration": 64,
+   "eut": 16,
+   "inputs": [
+    {
+     "item": "gt6:comb_tera"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_basalz",
+     "chance": 1000
+    },
+    {
+     "item": "gt6:stick_basalz",
+     "chance": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:concrete",
+     "amount": 144
+    }
+   ]
+  }
+ ],
+ "comment": "the two seated smoke rows (snowballs/snow -> clay+flint) stay seated — no true upstream row supersedes them; task recipe-data-b2b2 appends its 94 rows (Ores statics + isotope chain + MTE rods + heavy water + slime + oils + the honeycomb walk)."
 }
