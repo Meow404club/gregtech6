@@ -3844,7 +3844,7 @@ NAMING_FLUID_BACKFILL = {
     "fluid.gt6.mercury": "汞",                      # S:fluid.mercury :411
     "fluid.gt6.sluicejuice": "废水",                # S:fluid.sluicejuice :858
 }
-# task btl-bottles-families-a — 瓶族 A 批 71 行 (display 71 + desc 5): dump
+# task btl-bottles-families-a — 瓶族 A 批 77 行 (display 71 + desc 6, 其一空值键): dump
 # gt.multiitem.bottles.<meta>[.tooltip] 逐字 (tmp/gregtech.lang:6901-7329 带段);
 # 汞瓶 32765 en desc 有词但 dump zh tooltip 空串 = 不落键 (en 运行时回退, 上游 zh 同貌);
 # 空瓶/ketchup/BBQ/cream/tab 四项已在手译层 (food-bottles-min)。
@@ -3924,6 +3924,10 @@ BOTTLES_FAMILIES_A_BACKFILL = {
     "item.gt6.bottle_blood": "鲜血瓶",
     "item.gt6.bottle_lubricant": "润滑油瓶",
     "item.gt6.bottle_mercury": "汞瓶",
+    # 汞瓶 32765 desc: en "Also called Quicksilver" 有词, dump zh tooltip 空串 = 无可采逐字面 —
+    # 手组成值 (罐装空气三元组先例): 又叫 + dump gt.material.Quicksilver=水银(汞) :5331 逐字词;
+    # 空串/纯 ASCII 值会踩 zh 非空不变量, 手组值保持 zh 键数与 en 对齐 (零欠账不变量)
+    "item.gt6.bottle_mercury.tooltip": "又叫水银(汞)",
     "item.gt6.bottle_glue": "胶水瓶",
 }
 for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL, BOTTLES_FAMILIES_A_BACKFILL):

@@ -2319,7 +2319,8 @@ public class GT6ZhCn extends LanguageProvider {
 		// (dump gt.material.Empty=空 :4643 + oredict.prefix.suffix.bottle=瓶 :91217); tab=dump
 		// itemGroup.gt.multiitem.bottles:17954 格雷牌饮料 逐字 (upstream "GregTech: Bottles",
 		// MultiItemBottles.java:40); desc=dump *.tooltip 逐字, 六条 en desc 行中 32765 汞瓶
-		// dump zh 空串=不落键（运行时 en 回退, 上游 zh 同貌）; 空串行=双侧零键
+		// dump zh 空串=手组成值 又叫水银(汞)（罐装空气先例, dump gt.material.Quicksilver :5331 词）;
+		// 空串行=双侧零键
 		for (gregtech6.registry.GT6Bottles.BottleRow tRow : gregtech6.registry.GT6Bottles.ROWS) {
 			addDirect(tRow.langKey());
 			if (tRow.tooltipKey() != null) addDirect(tRow.tooltipKey());
