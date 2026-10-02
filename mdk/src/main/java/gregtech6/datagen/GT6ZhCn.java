@@ -1161,7 +1161,10 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("fluid.gt6.seawater");
 		addDirect("fluid.gt6.spdew");
 		addDirect("fluid.gt6.spruceresin"); // task chem-fluids-unlock — no dump face, the 云杉树脂 hand row (the coffee 咖啡 precedent)
+		addDirect("fluid.gt6.stagnantwater"); // task btl-fluids-prereq — no dump face, the 死水 hand row (the spruceresin precedent)
 		addDirect("fluid.gt6.steam");
+		addDirect("fluid.gt6.swampwater"); // task btl-fluids-prereq — no dump face, the 沼泽水 hand row
+		addDirect("fluid.gt6.tar"); // task btl-fluids-prereq — the FL.java:435 main id, no dump face, the 焦油 hand row; the "tarfluid" alias stays unregistered
 		addDirect("fluid.gt6.water_boiling");
 		addDirect("fluid.gt6.water_geothermal");
 		addDirect("fluid.gt6.waterdirty");
@@ -1174,6 +1177,17 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("fluid.gt6." + GTFluids.dyeChemicalName(i));
 		}
 		addDirect("fluid.gt6.chlorine");
+		// task btl-fluids-prereq: the 32 dye bottle-fluid display names — the dump carries
+		// the whole two families (S:fluid.dye.watermixed.* tmp/gregtech.lang:262-277,
+		// S:fluid.dye.flower.* :246-261); the keys ride the SAME GTFluids.DyeFluid name
+		// derivation the en walk and the FluidType descriptionIds use. Values are hand
+		// rows in the reference table (the dump faces verbatim).
+		for (GTFluids.DyeFluid tFamily : GTFluids.DYE_WATERMIXED) {
+			addDirect(tFamily.descriptionId());
+		}
+		for (GTFluids.DyeFluid tFamily : GTFluids.DYE_FLOWER) {
+			addDirect(tFamily.descriptionId());
+		}
 		// task food-fluids-b1: the 220 food-fluid display names — the dump carries 153
 		// faces (S:fluid.* rows: the milk/honey/juice/mash/tea/oil/sauce/cream/slime families
 		// + the alcohol verbatim rows), the 67 binnie-external/derived ids are hand rows in

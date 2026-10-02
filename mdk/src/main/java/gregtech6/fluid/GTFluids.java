@@ -194,6 +194,20 @@ import gregtech6.registry.GT6ModDrivers;
  * providers exist standalone, so the port declares them absent (the seam a future compat
  * card would mount); NO KubeJS-specific seam.
  *
+ * <p>The bottle-prereq rows (task btl-fluids-prereq) close the MultiItemBottles census'
+ * fluid gaps (state research.bottles-census): THREE simple-liquid rows appended to
+ * {@link #SIMPLE_LIQUID_SPECS} — {@code swampwater} (FL.java:129, bottle 6) and
+ * {@code stagnantwater} (:128, bottle 7) and {@code tar} (:435, bottle 32762, the FL.Tar
+ * MAIN id only — the "tarfluid" alias stays unregistered, the ADR-MDH5 UNVERIFIED
+ * single-name ruling; MT.Tar is an unused material, MT.java:4033) — and the TWO dye
+ * bottle-fluid families {@code dye_watermixed_<DYE_IDS[i]>} / {@code dye_flower_<DYE_IDS[i]>}
+ * ×16 each (Loader_Fluids.java:121-122, the :123 dye-chemical loop's sibling rows, the
+ * {@link DyeFluid} block below). All 35 are the bottle CARRIERS: the bottles themselves
+ * are the follow-up MultiItemBottles cards' scope — zero bottle registrations here. KJS
+ * surface (the class-doc declaration the card pins): REGISTRATION face (the 3 Spec rows +
+ * the 32 family rows); NO KubeJS-specific seam; the datapack domain is empty (fluid-only
+ * rows on the existing bodies).
+ *
  * <p>The WORLDGEN BLOCK FACE (task fluid-spring): five further LiquidBlocks —
  * {@code liquid_extra_heavy_oil_block/liquid_heavy_oil_block/liquid_medium_oil_block/
  * liquid_light_oil_block/water_geothermal_block} (see {@link #SPRING_BLOCK_IDS}) — the
@@ -768,6 +782,19 @@ public final class GTFluids {
 	 * regardless). Task chem-fluids-unlock appends the two B2 chemical-blocker rows of
 	 * the same flag shape (brine/spruceresin — the per-row anchors live on the table
 	 * comments below).
+	 *
+	 * <p>The bottle-prereq trio (task btl-fluids-prereq) appends the three remaining
+	 * SIMPLE+LIQUID bottle-carrier ids of the MultiItemBottles census (state
+	 * research.bottles-census): swampwater (FL.java:129, bottle 6), stagnantwater
+	 * (FL.java:128, bottle 7) and tar (FL.java:435, bottle 32762 — the FL.Tar MAIN id
+	 * ONLY: the "tarfluid" alias is UNVERIFIED and stays unregistered per the ADR-MDH5
+	 * single-name ruling, and MT.Tar is an unused material, MT.java:4033, so there is no
+	 * material-fluid face to bridge). None of the three has a GT6 {@code FL.create}
+	 * registration upstream (external-mod fluid names, the honest-default house shape
+	 * again — the dump carries no S:fluid.* face for any of them either), so the declared
+	 * values are the FluidType defaults (300 K / 1000 / 1000) and the tints are port-owned
+	 * declared values. The bottles that carry them are the follow-up MultiItemBottles
+	 * cards' scope — this card registers the fluids only.
 	 */
 	public static final List<AquaFluidSpec> SIMPLE_LIQUID_SPECS = List.of(
 		new AquaFluidSpec("seawater"  , "Seawater"    , 300, 1000, 1000, 0xFF3E8E9C), // FL.java:125 "seawater" — the Ocean shorthand, salty teal (declared)
@@ -785,7 +812,18 @@ public final class GTFluids {
 		// b2b2 squeezer blocker) and the :227 Distillery exists() gate; no dump face at
 		// all — display declared, zh hand row 云杉树脂.
 		new AquaFluidSpec("brine"     , "Brine"       , 300, 1000, 1000, 0xFFC8D8D0), // FL.java:131 "brine" — honest defaults, pale salt grey-green (declared)
-		new AquaFluidSpec("spruceresin", "Spruce Resin", 300, 1000, 1000, 0xFFD8A848));// FL.java:245 "spruceresin" — honest defaults, amber resin (declared)
+		new AquaFluidSpec("spruceresin", "Spruce Resin", 300, 1000, 1000, 0xFFD8A848),// FL.java:245 "spruceresin" — honest defaults, amber resin (declared)
+		// the bottle-prereq trio (task btl-fluids-prereq) — the three remaining
+		// SIMPLE+LIQUID bottle-carrier ids of the MultiItemBottles census, the exact
+		// seawater/waterdirty shape once more: external-mod fluid names with no GT6
+		// FL.create upstream and no dump S:fluid.* face, so the HONEST FluidType defaults
+		// stand (300 K / 1000 / 1000) and the tints are port-owned declared values.
+		// swampwater (FL.java:129, bottle 6) and stagnantwater (:128, bottle 7); tar
+		// (FL.java:435, bottle 32762) is the FL.Tar MAIN id only — the "tarfluid" alias
+		// stays unregistered (ADR-MDH5 UNVERIFIED) and MT.Tar is unused (MT.java:4033).
+		new AquaFluidSpec("swampwater"   , "Swampwater"    , 300, 1000, 1000, 0xFF556B2F), // FL.java:129 "swampwater" — honest defaults, murky swamp green (declared)
+		new AquaFluidSpec("stagnantwater", "Stagnant Water", 300, 1000, 1000, 0xFF4E5B33), // FL.java:128 "stagnantwater" — honest defaults, stagnant pond green (declared)
+		new AquaFluidSpec("tar"          , "Tar"           , 300, 1000, 1000, 0xFF2E2620));// FL.java:435 FL.Tar main id — honest defaults, tar black-brown (declared)
 
 	/** The simple-liquid row for a gt6 id path, or null (the {@link #aquaSpec} lookup shape, its own table). */
 	public static AquaFluidSpec simpleLiquidSpec(String aName) {
@@ -801,7 +839,7 @@ public final class GTFluids {
 	}
 
 	/**
-	 * The two simple-liquid registrations — one line per fluid family, data from
+	 * The simple-liquid registrations — one line per fluid family, data from
 	 * {@link #SIMPLE_LIQUID_SPECS}, appended after the aqua block in the static-init order
 	 * (the DeferredRegister fields accumulate, the entries fire with the existing
 	 * {@link #onModConstruct}, types before fluids).
@@ -810,10 +848,13 @@ public final class GTFluids {
 	public static final AquaFluid WATERDIRTY = simpleLiquidFluid("waterdirty");
 	public static final AquaFluid BRINE      = simpleLiquidFluid("brine");      // task chem-fluids-unlock
 	public static final AquaFluid SPRUCERESIN = simpleLiquidFluid("spruceresin"); // task chem-fluids-unlock
+	public static final AquaFluid SWAMPWATER    = simpleLiquidFluid("swampwater");    // task btl-fluids-prereq — FL.java:129, bottle 6
+	public static final AquaFluid STAGNANTWATER = simpleLiquidFluid("stagnantwater"); // task btl-fluids-prereq — FL.java:128, bottle 7
+	public static final AquaFluid TAR           = simpleLiquidFluid("tar");           // task btl-fluids-prereq — FL.java:435 the main id; "tarfluid" stays unregistered (ADR-MDH5)
 
 	/** The registered simple-liquid families in {@link #SIMPLE_LIQUID_SPECS} declaration order (the lang/table walkers). */
 	public static List<AquaFluid> simpleLiquids() {
-		return List.of(SEAWATER, WATERDIRTY, BRINE, SPRUCERESIN);
+		return List.of(SEAWATER, WATERDIRTY, BRINE, SPRUCERESIN, SWAMPWATER, STAGNANTWATER, TAR);
 	}
 
 	/**
@@ -1917,6 +1958,125 @@ public final class GTFluids {
 	public static DyeChemicalFluid dyeChemical(int aIndex) {
 		return DYE_CHEMICALS.get(aIndex);
 	}
+
+	/**
+	 * One dye bottle-fluid family row (task btl-fluids-prereq) — the Loader_Fluids.java
+	 * :121/:122 sibling compose of the {@link DyeChemicalFluid} :123 shape: the same
+	 * 16-index dye walk over the same colour sources, the same FluidType carriers (300 K
+	 * is the {@code FL.create} temperature literal the shared loop passes on all three
+	 * dye rows; density 1000 / viscosity 1000 the honest FluidType defaults, the
+	 * water_boiling/food precedent) and one grayscale carrier texture per family (the
+	 * {@code dyes.water} / {@code dyes.flower} IIconContainers of Loader_Fluids.java
+	 * :115-116, the byte-identical borrows, tinted per family like the dye-chemical
+	 * carrier). The with-block leg mirrors the dye-chemical precedent (the four-DR-with-
+	 * block template, zero generated blockstate JSON — the liquid renders through the
+	 * fluid layers). The bottles that carry these fluids are the follow-up
+	 * MultiItemBottles cards' scope (bottles 32100-32115 watermixed / 32132-32147 flower,
+	 * MultiItemBottles.java:352/:354) — this card registers the fluids only.
+	 */
+	public static final class DyeFluid {
+		/** The GT6 dye index this family is ({@code 0..15}, the {@link GTSprayCanItem#DYE_IDS} row). */
+		public final int dyeIndex;
+		/** The upstream compose family — {@code "watermixed"} (Loader_Fluids.java:121) or {@code "flower"} (:122). */
+		public final String family;
+		public final RegistryObject<FluidType> type;
+		public final RegistryObject<FlowingFluid> source;
+		public final RegistryObject<Fluid> flowing;
+		public final RegistryObject<LiquidBlock> block;
+
+		DyeFluid(int aDyeIndex, String aFamily, RegistryObject<FluidType> aType, RegistryObject<FlowingFluid> aSource,
+				RegistryObject<Fluid> aFlowing, RegistryObject<LiquidBlock> aBlock) {
+			dyeIndex = aDyeIndex; family = aFamily; type = aType; source = aSource; flowing = aFlowing; block = aBlock;
+		}
+
+		/** The gt6 registry path — {@code dye_} + the family + the {@link GTSprayCanItem#DYE_IDS}[i] snake id (the spray-can snake, the dye-chemical declared deviation). */
+		public String name() {return "dye_" + family + "_" + GTSprayCanItem.DYE_IDS[dyeIndex];}
+
+		/** The tint over the grayscale carrier — {@link GTSprayCanItem#DYES_INT}[i], the single colour source. */
+		public int tint() {return GTSprayCanItem.DYES_INT[dyeIndex];}
+
+		/** The en_us display — the upstream :121/:122 compose verbatim. */
+		public String displayName() {
+			return "flower".equals(family)
+					? GTSprayCanItem.DYE_NAMES[dyeIndex] + " Flower Dye"
+					: "Water Mixed " + GTSprayCanItem.DYE_NAMES[dyeIndex] + " Dye";
+		}
+
+		/** The lang/description key, the descriptionId the FluidType is registered with. */
+		public String descriptionId() {return "fluid.gt6." + name();}
+	}
+
+	/** The table-driven registration helper for one dye bottle-fluid row: FluidType + Source/Flowing + LiquidBlock (the {@link #dyeChemicalFluid} four-DR-with-block shape, the family decides the carrier texture). */
+	private static DyeFluid dyeFluid(String aFamily, int aIndex) {
+		String tName = "dye_" + aFamily + "_" + GTSprayCanItem.DYE_IDS[aIndex];
+		int tTint = GTSprayCanItem.DYES_INT[aIndex]; // the single colour source, captured once
+		String tTexture = "block/fluids/dyes_" + aFamily; // the byte-identical borrow (dyes_water / dyes_flower)
+		RegistryObject<FluidType> tType = FLUID_TYPES.register(tName, () -> new FluidType(FluidType.Properties.create()
+				.descriptionId("fluid.gt6." + tName)
+				.temperature(DYE_CHEMICAL_TEMPERATURE) // the same Loader_Fluids.java:121-122 FL.create literal the :123 dye-chemical row carries
+				.density(DYE_CHEMICAL_DENSITY)         // the honest FluidType default, declared explicitly
+				.viscosity(1000)) {
+			@Override
+			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
+				aConsumer.accept(new IClientFluidTypeExtensions() {
+					// the upstream single grayscale carrier, still = flow (Loader_Fluids.java:115-116
+					// tDyeWaterMixed/tDyeFlower shared by both layers; the PNGs are the byte-identical
+					// borrows) — instance fields: the texture is per-family, not a literal like the
+					// dye-chemical carrier, and static fields cannot capture the method local
+					private final ResourceLocation still = ResourceLocation.fromNamespaceAndPath("gt6", tTexture);
+					private final ResourceLocation flow = still;
+
+					@Override
+					public ResourceLocation getStillTexture() {return still;}
+
+					@Override
+					public ResourceLocation getFlowingTexture() {return flow;}
+
+					@Override
+					public int getTintColor() {return tTint;} // GTSprayCanItem.DYES_INT[aIndex] — zero new colour data
+				});
+			}
+		});
+		RegistryObject<FlowingFluid> tSource = FLUIDS.register(tName,
+				() -> new ForgeFlowingFluid.Source(dyeChemicalProperties(tType, tName)));
+		RegistryObject<Fluid> tFlowing = FLUIDS.register(tName + "_flowing",
+				() -> new ForgeFlowingFluid.Flowing(dyeChemicalProperties(tType, tName)));
+		// the block leg rides the same forge/21.1 fork as the dye-chemical rows (the supplier
+		// handle vs the resolved fluid — the stonecutter LiquidBlock UPPER_CASE rewrite)
+		//? if forge {
+		RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+				() -> new LiquidBlock(tSource, BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+		//?} else {
+		/*RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
+				() -> new LiquidBlock(tSource.get(), BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp (FLUID before BLOCK, the resolved .get() is live)
+		*///?}
+		SOURCE_SEAM.put(tName, tSource);
+		FLOWING_SEAM.put(tName, tFlowing);
+		BLOCK_SEAM.put(tName, tBlock);
+		return new DyeFluid(aIndex, aFamily, tType, tSource, tFlowing, tBlock);
+	}
+
+	/**
+	 * The 32 dye bottle-fluid registrations — 16 per compose family, one line per dye
+	 * index in {@link GTSprayCanItem#DYE_IDS} order (the vanilla dye order 0=Black..
+	 * 15=White, the upstream DYE_OREDICTS_POST walk, CS.java:464), appended after the
+	 * dye-chemical block in the static-init order (the DeferredRegister fields
+	 * accumulate, the entries fire with the existing {@link #onModConstruct}, types
+	 * before fluids).
+	 */
+	public static final List<DyeFluid> DYE_WATERMIXED = List.of(
+			dyeFluid("watermixed", 0), dyeFluid("watermixed", 1), dyeFluid("watermixed", 2), dyeFluid("watermixed", 3),
+			dyeFluid("watermixed", 4), dyeFluid("watermixed", 5), dyeFluid("watermixed", 6), dyeFluid("watermixed", 7),
+			dyeFluid("watermixed", 8), dyeFluid("watermixed", 9), dyeFluid("watermixed", 10), dyeFluid("watermixed", 11),
+			dyeFluid("watermixed", 12), dyeFluid("watermixed", 13), dyeFluid("watermixed", 14), dyeFluid("watermixed", 15));
+
+	public static final List<DyeFluid> DYE_FLOWER = List.of(
+			dyeFluid("flower", 0), dyeFluid("flower", 1), dyeFluid("flower", 2), dyeFluid("flower", 3),
+			dyeFluid("flower", 4), dyeFluid("flower", 5), dyeFluid("flower", 6), dyeFluid("flower", 7),
+			dyeFluid("flower", 8), dyeFluid("flower", 9), dyeFluid("flower", 10), dyeFluid("flower", 11),
+			dyeFluid("flower", 12), dyeFluid("flower", 13), dyeFluid("flower", 14), dyeFluid("flower", 15));
 
 	/**
 	 * {@code gt6:cfoam} + the 32-family C-Foam fluid domain (task c-foam-fluid-refill).
@@ -3109,6 +3269,30 @@ public final class GTFluids {
 			for (DyeChemicalFluid tFamily : DYE_CHEMICALS) {
 				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
 				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (dye-chemical family, {}, dye index {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						DYE_CHEMICAL_TEMPERATURE,
+						DYE_CHEMICAL_DENSITY,
+						ForgeRegistries.BLOCKS.getKey(tFamily.block.get()),
+						tFamily.displayName(),
+						tFamily.dyeIndex);
+			}
+			// task btl-fluids-prereq — the two dye bottle-fluid families, the dye-chemical
+			// smoke shape verbatim (the P0 null-guard form on every loop)
+			for (DyeFluid tFamily : DYE_WATERMIXED) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (dye-watermixed family, {}, dye index {})",
+						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
+						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
+						DYE_CHEMICAL_TEMPERATURE,
+						DYE_CHEMICAL_DENSITY,
+						ForgeRegistries.BLOCKS.getKey(tFamily.block.get()),
+						tFamily.displayName(),
+						tFamily.dyeIndex);
+			}
+			for (DyeFluid tFamily : DYE_FLOWER) {
+				if (tFamily.source == null) continue; // the mdh-3 gated shell — absent domain, nothing registered to smoke
+				GT6Mod.LOGGER.info("GT6 fluid registered: {} (source) / {} (flowing), FluidType {} K, density {}, block {} (dye-flower family, {}, dye index {})",
 						ForgeRegistries.FLUIDS.getKey(tFamily.source.get()),
 						ForgeRegistries.FLUIDS.getKey(tFamily.flowing.get()),
 						DYE_CHEMICAL_TEMPERATURE,

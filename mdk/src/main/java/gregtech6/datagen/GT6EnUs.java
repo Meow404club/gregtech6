@@ -112,6 +112,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodTailFluids(); // task food-tail
         addDyeChemicalFluids(); // task dye-chemical-fluids — table-tail append
         addCFoamFluids(); // task c-foam-fluid-refill — table-tail append
+        addDyeWaterFlowerFluids(); // task btl-fluids-prereq — table-tail append (the 32 dye bottle-fluid rows)
         addChemicalFluids(); // task w4-f1-chemicals — table-tail append
         addHotFamilyFluids(); // task w4-hot-lube — table-tail append (hot + closure + lubricant)
         addQuFluids(); // task qu-a-foundation — table-tail append (the QU matter/ender trio)
@@ -474,6 +475,26 @@ public class GT6EnUs extends LanguageProvider {
             add(tFamily.descriptionId(), tFamily.displayName());
         }
         for (GTFluids.CFoamFluid tFamily : GTFluids.CFOAMS_OWNED) {
+            add(tFamily.descriptionId(), tFamily.displayName());
+        }
+    }
+
+    /**
+     * Dye bottle-fluid family keys (task btl-fluids-prereq): one description entry per
+     * {@link GTFluids.DyeFluid} row of the two bottle families, walked from
+     * {@link GTFluids#DYE_WATERMIXED}/{@link GTFluids#DYE_FLOWER} so the lang face cannot
+     * drift from the registered fluids. Values ride the row's displayName: the upstream
+     * Loader_Fluids.java:121/:122 composes verbatim ({@code "Water Mixed " + DYE_NAMES[i]
+     * + " Dye"} / {@code DYE_NAMES[i] + " Flower Dye"}). The zh faces ride the reference
+     * table's hand layer (the dump carries all 32 faces, tmp/gregtech.lang:246-277 — the
+     * GT6ZhCn mirror walk). The three bottle-prereq simple-liquid rows need no walk here:
+     * the existing addSimpleLiquidFluids loop covers them from the table.
+     */
+    private void addDyeWaterFlowerFluids() {
+        for (GTFluids.DyeFluid tFamily : GTFluids.DYE_WATERMIXED) {
+            add(tFamily.descriptionId(), tFamily.displayName());
+        }
+        for (GTFluids.DyeFluid tFamily : GTFluids.DYE_FLOWER) {
             add(tFamily.descriptionId(), tFamily.displayName());
         }
     }
