@@ -1,7 +1,8 @@
 {
- "comment": "task b2-residual-maps - the RM.Loom three-walk pour (the B2 residual data card; the RULING-SCOPED face set). CENSUS: the three ruled walks = 26 rows: (1) Loader_Recipes_Vanilla.java:751 the ANY.Iron horse-armor walk (leather x6 + plate x8 -> iron_horse_armor, eut 64 dur 128) = 11 rows - ALL eleven port members carry the plate face, the MT.Enori member rides the plateGem arm (the :751 ternary -> gt6:plate_gem_enori); (2) :755 the ANY.Steel saddle walk (leather x6 + ring x2 + stick x3 -> saddle, eut 64 dur 128) = 3 rows (Steel/Knightmetal/MeteoricSteel); (3) :763-:766 the ANY.Steel chain walk (ring x5/8/7/4 -> chainmail helmet/chestplate/leggings/boots, eut 96 dur 128) = 4 x 3 = 12 rows. DECLARED DEVIATION (the ST.tag selector legs): the :763-:766 ST.tag(4/5/6/7) selector slots are NOT expressible in the JSON v1 schema (damage/NBT config faces, resolveItem is item+count only) - dropped per the loom.json precedent, the row semantics relax to selector-free. ALREADY SEATED: :744 the string->wool smoke row (untouched). DECLARED BLOCKED / NOT POURED: :736-:742 + :743 the 17 dye rows (plantGtFiber + MT.DATA.Dye_Materials[15-i]/MT.Cu -> wool colors) - Dye_Materials is deferred and the PLANTS material band is unported (the plant/dye-items cards; the b2a-midcard BLOCKED ruling stands); :745 the string->web row and :746 the reeds->paper row + :752/:753 the golden/diamond horse-armor statics + :757-:760 the four leather-armor statics are the RULING-UNNAMED sibling statics of the same block - live vanilla ids, declared NOT poured as outside the ruled three-walk scope (next data card). WALK ROW PROVENANCE: the walk rows carry NO further per-row comment - provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check over ANY.Iron/ANY.Steel and the live registration. KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
+ "comment": "task b2-residual-maps - the RM.Loom three-walk pour (the B2 residual data card; the RULING-SCOPED face set). CENSUS: the three ruled walks = 26 rows: (1) Loader_Recipes_Vanilla.java:751 the ANY.Iron horse-armor walk (leather x6 + plate x8 -> iron_horse_armor, eut 64 dur 128) = 11 rows - ALL eleven port members carry the plate face, the MT.Enori member rides the plateGem arm (the :751 ternary -> gt6:plate_gem_enori); (2) :755 the ANY.Steel saddle walk (leather x6 + ring x2 + stick x3 -> saddle, eut 64 dur 128) = 3 rows (Steel/Knightmetal/MeteoricSteel); (3) :763-:766 the ANY.Steel chain walk (ring x5/8/7/4 -> chainmail helmet/chestplate/leggings/boots, eut 96 dur 128) = 4 x 3 = 12 rows. DECLARED DEVIATION (the ST.tag selector legs): the :763-:766 ST.tag(4/5/6/7) selector slots are NOT expressible in the JSON v1 schema (damage/NBT config faces, resolveItem is item+count only) - dropped per the loom.json precedent, the row semantics relax to selector-free. ALREADY SEATED: :744 the string->wool smoke row (untouched). DECLARED BLOCKED / NOT POURED: :736-:742 + :743 the 17 dye rows (plantGtFiber + MT.DATA.Dye_Materials[15-i]/MT.Cu -> wool colors) - Dye_Materials is deferred and the PLANTS material band is unported (the plant/dye-items cards; the b2a-midcard BLOCKED ruling stands); :745 the string->web row and :746 the reeds->paper row + :752/:753 the golden/diamond horse-armor statics + :757-:760 the four leather-armor statics are the RULING-UNNAMED sibling statics of the same block - live vanilla ids, declared NOT poured as outside the ruled three-walk scope (next data card). WALK ROW PROVENANCE: the walk rows carry NO further per-row comment - provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check over ANY.Iron/ANY.Steel and the live registration. KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b1 pours the statics the three-walk ruling deferred: :745/:746/:752/:753/:757-:760 (8 rows, the selector slots dropped per the declared deviation above); the seated :744 row is corrected to the upstream 16t (Loader_Recipes_Vanilla.java:744 verbatim — it carried a 128 smoke-era transcription slip).",
  "recipes": [
   {
+   "comment": "Loader_Recipes_Vanilla.java:744 — string x4 -> white wool",
    "inputs": [
     {
      "item": "minecraft:string",
@@ -14,7 +15,7 @@
      "count": 1
     }
    ],
-   "duration": 128,
+   "duration": 16,
    "eut": 16
   },
   {
@@ -526,6 +527,150 @@
    ],
    "duration": 128,
    "eut": 96
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:745 — string x4 -> cobweb (Items.web)",
+   "inputs": [
+    {
+     "item": "minecraft:string",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:cobweb",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:746 — sugar cane (Items.reeds) -> paper",
+   "inputs": [
+    {
+     "item": "minecraft:sugar_cane",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:paper",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:752 — leather x6 + gold plate x8 -> golden horse armor",
+   "inputs": [
+    {
+     "item": "minecraft:leather",
+     "count": 6
+    },
+    {
+     "item": "gt6:plate_gold",
+     "count": 8
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:golden_horse_armor",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 64
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:753 — leather x6 + diamond plate-gem x8 -> diamond horse armor",
+   "inputs": [
+    {
+     "item": "minecraft:leather",
+     "count": 6
+    },
+    {
+     "item": "gt6:plate_gem_diamond",
+     "count": 8
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:diamond_horse_armor",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 64
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:757 — leather x5 -> leather helmet",
+   "inputs": [
+    {
+     "item": "minecraft:leather",
+     "count": 5
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:leather_helmet",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:758 — leather x8 -> leather chestplate",
+   "inputs": [
+    {
+     "item": "minecraft:leather",
+     "count": 8
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:leather_chestplate",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:759 — leather x7 -> leather leggings",
+   "inputs": [
+    {
+     "item": "minecraft:leather",
+     "count": 7
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:leather_leggings",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:760 — leather x4 -> leather boots",
+   "inputs": [
+    {
+     "item": "minecraft:leather",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:leather_boots",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
   }
  ]
 }

@@ -1,10 +1,59 @@
 {
-  "recipes": [
+ "comment": "task recipe-data-b1 appends its 2 rows after the seated smoke row (Vanilla :520-:521).",
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [{"item": "minecraft:sandstone", "count": 1}],
-      "outputs": [{"item": "minecraft:sand", "count": 2}],
-      "duration": 16,
-      "eut": 16
+     "item": "minecraft:sandstone",
+     "count": 1
     }
-  ]
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:sand",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:520 — flint -> 8 flint arrow heads + 1 tiny flint dust",
+   "inputs": [
+    {
+     "item": "minecraft:flint",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_arrow_flint",
+     "count": 8
+    },
+    {
+     "item": "gt6:dust_tiny_flint",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:521 — glass pane -> glass lens",
+   "inputs": [
+    {
+     "item": "minecraft:glass_pane",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:lens_glass",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  }
+ ]
 }

@@ -1,11 +1,180 @@
 {
-  "recipes": [
+ "comment": "task recipe-data-b1 appends its 9 rows after the seated smoke row (the :662-:668 freezing walk + the Chem :208/:214 oxygen legs).",
+ "recipes": [
+  {
+   "inputs": [
     {
-      "inputs": [{"item": "minecraft:snowball", "count": 1}],
-      "fluidInputs": [{"fluid": "minecraft:water", "amount": 1000}],
-      "outputs": [{"item": "minecraft:ice", "count": 1}],
-      "duration": 16,
-      "eut": 16
+     "item": "minecraft:snowball",
+     "count": 1
     }
-  ]
+   ],
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:ice",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:662 — water x250 -> ice fluid (FL.Ice; the FL.waters walk lands vanilla water only in the port, tMul 1; selector dropped)",
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 250
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:ice",
+     "amount": 250
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:663 — water x250 -> snowball",
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:snowball",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:664 — water x500 -> snow layer (Blocks.snow_layer -> the 1.20.1 snow identity)",
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 500
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:snow",
+     "count": 1
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:665 — water x1000 -> snow block (Blocks.snow -> the 1.20.1 snow_block identity)",
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:snow_block",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:666 — water x1000 -> ice block",
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:ice",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:667 — water x1000 -> snow dust",
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_snow",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:668 — water x1000 -> ice dust",
+   "fluidInputs": [
+    {
+     "fluid": "minecraft:water",
+     "amount": 1000
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_ice",
+     "count": 1
+    }
+   ],
+   "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:208 — mercury liquid U (144 mB/unit) -> mercury ingot (OM.ingotOrDust U; the Br leg :207 stays pooled — the bromine fluid face is port-absent)",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:mercury",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:ingot_mercury",
+     "count": 1
+    }
+   ],
+   "duration": 512,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Chem.java:214 — oxygen x1000 -> liquid oxygen (the Reikygen leg :213 stays pooled — the fluid face is port-absent)",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:oxygen",
+     "amount": 1000
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:liquidoxygen",
+     "amount": 1000
+    }
+   ],
+   "duration": 256,
+   "eut": 16
+  }
+ ]
 }

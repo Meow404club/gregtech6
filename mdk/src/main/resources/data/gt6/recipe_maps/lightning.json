@@ -1,5 +1,5 @@
 {
- "comment": "task b2-residual-maps - the RM.Lightning pour (the B2 residual data card). CENSUS + conversion: the ledger's 2 ruled legs (NetherStar Other:930 + the Dolamide pair Ores:339/:340) pour as 3 rows, and the RULING-EXTERNAL live-absorption face (main-session ruling 2026-10-01) adds the four stations the line-by-line read found live in the port universe: Chem:217/:218 (the K2S/Na2S + oxygen salt rows), Chem:271 (Adamantine) and Other:638 (Certus charge) = 7 new rows total (+1 seated smoke row). DECLARED DEVIATION (the ST.tag selector legs): :339/:340 carry ST.tag(1), :217/:218 ST.tag(2), :271/:638 ST.tag(1) - the JSON v1 schema cannot express damage/NBT config items, so the selector slots are dropped (the loom.json precedent, row semantics relax to selector-free). UNIT FACE: FL.Ender.make(L*4) = 4 x CS.L(144) = 576 mB (liquid-native); MT.O.gas(U*4) = 4000 mB (the gas native 1000 mB per U face, Loader_Fluids.java:66 MT.O.gas(FL.Reikygen.make(1000))). DECLARED BLOCKED / TRUE NEGATIVE / NOT POURED: Chem:88 the H2O2 row (mt.h2o2 fluid unregistered - the CHEMICAL_SPECS gap, the fluid-content card); Chem:216 the NO row (nitricoxide unregistered, same face); Other:913 the TE-gated NetherStar twin (FL.Ender_TE = the 'ender' TE alias, faithful absence - and it sits inside the FL.Redstone_TE.exists() gate); Chem:88/216 sit inside the FluidsGT.OXYGEN walk (one port member = oxygen) and the :217-:218 oxygen inputs ride it. WALK ROW PROVENANCE: provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
+ "comment": "task b2-residual-maps - the RM.Lightning pour (the B2 residual data card). CENSUS + conversion: the ledger's 2 ruled legs (NetherStar Other:930 + the Dolamide pair Ores:339/:340) pour as 3 rows, and the RULING-EXTERNAL live-absorption face (main-session ruling 2026-10-01) adds the four stations the line-by-line read found live in the port universe: Chem:217/:218 (the K2S/Na2S + oxygen salt rows), Chem:271 (Adamantine) and Other:638 (Certus charge) = 7 new rows total (+1 seated smoke row). DECLARED DEVIATION (the ST.tag selector legs): :339/:340 carry ST.tag(1), :217/:218 ST.tag(2), :271/:638 ST.tag(1) - the JSON v1 schema cannot express damage/NBT config items, so the selector slots are dropped (the loom.json precedent, row semantics relax to selector-free). UNIT FACE: FL.Ender.make(L*4) = 4 x CS.L(144) = 576 mB (liquid-native); MT.O.gas(U*4) = 4000 mB (the gas native 1000 mB per U face, Loader_Fluids.java:66 MT.O.gas(FL.Reikygen.make(1000))). DECLARED BLOCKED / TRUE NEGATIVE / NOT POURED: Chem:88 the H2O2 row (mt.h2o2 fluid unregistered - the CHEMICAL_SPECS gap, the fluid-content card); Chem:216 the NO row (nitricoxide unregistered, same face); Other:913 the TE-gated NetherStar twin (FL.Ender_TE = the 'ender' TE alias, faithful absence - and it sits inside the FL.Redstone_TE.exists() gate); Chem:88/216 sit inside the FluidsGT.OXYGEN walk (one port member = oxygen) and the :217-:218 oxygen inputs ride it. WALK ROW PROVENANCE: provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b1 correction: the Chem:217/:218 salt legs and the Chem:271 Adamantine leg re-poured at the upstream full-dust OM.dust ladders (they carried tiny/small mis-ladders); this card's other candidates ride the file already (the Certus row identical, NetherStar/Dolamide landed via b2).",
  "recipes": [
   {
    "inputs": [
@@ -91,10 +91,10 @@
    "eut": 512
   },
   {
-   "comment": "Chem:217 the ruling-external salt leg - K2S dust U*3 ladders to dust_tiny x3, output K2SO4 U*7 ladders to dust_small x7 (OM.java:460-468); the dropped ST.tag(2) selector",
+   "comment": "Loader_Recipes_Chem.java:217 — K2S: OM.dust(U*3) = dust x3 + oxygen x4000 -> K2SO4: OM.dust(U*7) = dust x7 (corrected to the upstream ladder — it carried a tiny/small mis-ladder; task recipe-data-b1)",
    "inputs": [
     {
-     "item": "gt6:dust_tiny_potassium_sulfide",
+     "item": "gt6:dust_potassium_sulfide",
      "count": 3
     }
    ],
@@ -106,7 +106,7 @@
    ],
    "outputs": [
     {
-     "item": "gt6:dust_small_potassium_sulfate",
+     "item": "gt6:dust_potassium_sulfate",
      "count": 7
     }
    ],
@@ -114,10 +114,10 @@
    "eut": 256
   },
   {
-   "comment": "Chem:218 the Na2S twin -> dust_small_sodium_sulfate x7",
+   "comment": "Loader_Recipes_Chem.java:218 — Na2S twin: OM.dust(U*3) = dust x3 + oxygen x4000 -> Na2SO4: OM.dust(U*7) = dust x7 (corrected to the upstream ladder; task recipe-data-b1)",
    "inputs": [
     {
-     "item": "gt6:dust_tiny_sodium_sulfide",
+     "item": "gt6:dust_sodium_sulfide",
      "count": 3
     }
    ],
@@ -129,7 +129,7 @@
    ],
    "outputs": [
     {
-     "item": "gt6:dust_small_sodium_sulfate",
+     "item": "gt6:dust_sodium_sulfate",
      "count": 7
     }
    ],
@@ -137,10 +137,10 @@
    "eut": 256
   },
   {
-   "comment": "Chem:271 the Adamantine leg - Adamantine U*7 ladders to dust_small x7; outputs MT.O.gas(U*4) = 4000 mB (the Reikygen-native 1000 mB per U face, FL.java:66; the port oxygen carrier) + MT.Ad dust U*3 -> dust_tiny_adamantium x3; the dropped ST.tag(1) selector",
+   "comment": "Loader_Recipes_Chem.java:271 — Adamantine: OM.dust(U*7) = dust x7 -> O gas 4000 + Ad: OM.dust(U*3) = dust x3 (corrected to the upstream ladder — it carried a small/tiny mis-ladder; task recipe-data-b1)",
    "inputs": [
     {
-     "item": "gt6:dust_small_adamantine",
+     "item": "gt6:dust_adamantine",
      "count": 7
     }
    ],
@@ -152,7 +152,7 @@
    ],
    "outputs": [
     {
-     "item": "gt6:dust_tiny_adamantium",
+     "item": "gt6:dust_adamantium",
      "count": 3
     }
    ],

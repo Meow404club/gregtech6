@@ -1,5 +1,5 @@
 {
- "comment": "task b2-residual-maps - the RM.Unboxinator single-row supplement (the B2 residual data card; the row the b2a midcard ruling deferred to this card). Poured: Loader_Recipes_Vanilla.java:965 RM.unbox(bookshelf -> book x3 + IL.Plank x3), eut 16 dur 16. SWEEP ABSORPTION (task plank-mapping-sweep, 2026-10-01): the DECLARED IDENTITY MAPPING (the sawing-card anchor, precedent commit 24a0a8f12): IL.Plank = Loader_Woods.java:74 ST.make(BlocksGT.Planks, 1, 9) = the 'Wood Planks' generic face rode the ruled minecraft:oak_planks identity anchor; the generic plank face has landed (task wood-planks-register: OP.plank x MT.Wood = gt6:plank_wood), so the row re-pours minecraft:oak_planks -> gt6:plank_wood (row count unchanged). DECLARED NOT POURED: GT6_Main.java:386-:403 are ALL addFakeRecipe loot faces (Crate_Loot/Book_Loot/Bottle_Loot/Bag_Loot/TC_Loot/LOOTBAGS gates) - fake rows are the v1 row-flag boundary (the loader cannot mark mFakeRecipe), and the TC/LOOTBAGS members are foreign-mod gated; the Compat_Recipes_* unbox faces (Aether:100, Atum:70-:77, ...) are foreign-mod content. WALK ROW PROVENANCE: provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
+ "comment": "task b2-residual-maps - the RM.Unboxinator single-row supplement (the B2 residual data card; the row the b2a midcard ruling deferred to this card). Poured: Loader_Recipes_Vanilla.java:965 RM.unbox(bookshelf -> book x3 + IL.Plank x3), eut 16 dur 16. SWEEP ABSORPTION (task plank-mapping-sweep, 2026-10-01): the DECLARED IDENTITY MAPPING (the sawing-card anchor, precedent commit 24a0a8f12): IL.Plank = Loader_Woods.java:74 ST.make(BlocksGT.Planks, 1, 9) = the 'Wood Planks' generic face rode the ruled minecraft:oak_planks identity anchor; the generic plank face has landed (task wood-planks-register: OP.plank x MT.Wood = gt6:plank_wood), so the row re-pours minecraft:oak_planks -> gt6:plank_wood (row count unchanged). DECLARED NOT POURED: GT6_Main.java:386-:403 are ALL addFakeRecipe loot faces (Crate_Loot/Book_Loot/Bottle_Loot/Bag_Loot/TC_Loot/LOOTBAGS gates) - fake rows are the v1 row-flag boundary (the loader cannot mark mFakeRecipe), and the TC/LOOTBAGS members are foreign-mod gated; the Compat_Recipes_* unbox faces (Aether:100, Atum:70-:77, ...) are foreign-mod content. WALK ROW PROVENANCE: provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check. KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b1 appends its 19 rows (the :418-:421 minecart unbox halves + the :424-:458 typemin(1) tool unbox halves) after the two seated rows.",
  "recipes": [
   {
    "inputs": [
@@ -37,6 +37,405 @@
     {
      "item": "gt6:plank_wood",
      "count": 3
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:418 — chest minecart -> minecart + chest (boxunbox unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:chest_minecart",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:chest",
+     "count": 1
+    },
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:419 — furnace minecart -> furnace + minecart",
+   "inputs": [
+    {
+     "item": "minecraft:furnace_minecart",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:furnace",
+     "count": 1
+    },
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:420 — hopper minecart -> hopper + minecart",
+   "inputs": [
+    {
+     "item": "minecraft:hopper_minecart",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:hopper",
+     "count": 1
+    },
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:421 — tnt minecart -> tnt + minecart",
+   "inputs": [
+    {
+     "item": "minecraft:tnt_minecart",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:tnt",
+     "count": 1
+    },
+    {
+     "item": "minecraft:minecart",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:426 — iron sword -> head + stick x1 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_sword",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_sword_iron",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:427 — golden sword -> head + stick x1 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_sword",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_sword_gold",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:428 — diamond sword -> head + stick x1 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_sword",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_sword_diamond",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:433 — iron pickaxe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_pickaxe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_pickaxe_iron",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:434 — golden pickaxe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_pickaxe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_pickaxe_gold",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:435 — diamond pickaxe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_pickaxe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_pickaxe_diamond",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:440 — iron shovel -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_shovel",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_shovel_iron",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:441 — golden shovel -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_shovel",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_shovel_gold",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:442 — diamond shovel -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_shovel",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_shovel_diamond",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:447 — iron axe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_axe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_axe_iron",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:448 — golden axe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_axe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_axe_gold",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:449 — diamond axe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_axe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_axe_diamond",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:454 — iron hoe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:iron_hoe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_hoe_iron",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:455 — golden hoe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:golden_hoe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_hoe_gold",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Vanilla.java:456 — diamond hoe -> head + stick x2 (unbox half)",
+   "inputs": [
+    {
+     "item": "minecraft:diamond_hoe",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:tool_head_hoe_diamond",
+     "count": 1
+    },
+    {
+     "item": "minecraft:stick",
+     "count": 2
     }
    ],
    "duration": 16,

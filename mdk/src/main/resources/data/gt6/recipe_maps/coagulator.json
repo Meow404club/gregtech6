@@ -1,10 +1,106 @@
 {
-  "recipes": [
+ "comment": "task recipe-data-b1 appends its 5 rows after the seated fluid row (Food :689/:691/:692/:696 + Other :680, the eut-0 TU face).",
+ "recipes": [
+  {
+   "fluidInputs": [
     {
-      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 1000 }],
-      "outputs": [{ "item": "minecraft:snowball", "count": 1 }],
-      "duration": 64,
-      "eut": 1
+     "fluid": "minecraft:water",
+     "amount": 1000
     }
-  ]
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:snowball",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 1
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:689 — pink slime x250 -> raw-meat nugget (the compat-null fallback form: the slimeballPink ore member is port-absent so the OP.nugget(MeatRaw) fallback lands)",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:pinkslime",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:nugget_meat_raw",
+     "count": 1
+    }
+   ],
+   "duration": 256,
+   "eut": 0
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:691 — blue slime x250 -> slime ball (the compat-null fallback form)",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:slime_blue",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:slime_ball",
+     "count": 1
+    }
+   ],
+   "duration": 256,
+   "eut": 0
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:692 — green slime x250 -> slime ball",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:slime",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:slime_ball",
+     "count": 1
+    }
+   ],
+   "duration": 256,
+   "eut": 0
+  },
+  {
+   "comment": "Loader_Recipes_Food.java:696 — soy milk x250 -> tofu dust (OM.dust U)",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:soymilk",
+     "amount": 250
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tofu",
+     "count": 1
+    }
+   ],
+   "duration": 1024,
+   "eut": 0
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:680 — latex x16 (L/9) -> rubber nugget",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:latex",
+     "amount": 16
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:nugget_rubber",
+     "count": 1
+    }
+   ],
+   "duration": 256,
+   "eut": 0
+  }
+ ]
 }
