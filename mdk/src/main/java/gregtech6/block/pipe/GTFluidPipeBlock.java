@@ -16,11 +16,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-import net.minecraftforge.common.ToolActions;
-
 import gregtech6.block.GTBlockProperties;
 import gregtech6.block.GTEntityBlock;
 import gregtech6.client.render.GTRenderUpdates;
+import gregtech6.items.tools.GT6ToolActions;
 import gregtech6.registry.GTFluidPipes;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
@@ -47,12 +46,13 @@ import gregtech6.covers.ICoverableTE;
  * <p>Flow-control interaction (task pipe-flow-control spec ①) — the two-layer
  * {@code use} wiring over the upstream tool-click semantics:
  * <ul>
- * <li>hoe-class tool ({@code ToolActions.HOE_DIG} — the wrench substitute, the cover
- *     onCoverToolClick precedent) right click = the per-face connection toggle of
+ * <li>wrench-key stack ({@code GT6ToolActions.isWrenchInteractionKey} — the formal
+ *     wrench or the vanilla-hoe substitute; task wrench-interaction-key wired the
+ *     wrench in) right click = the per-face connection toggle of
  *     upstream onToolClick2 (TileEntityBase09Connector.java:70-79): connected →
  *     disconnect, else connect;</li>
- * <li>hoe + shift = the per-face output-arrow toggle (the monkeywrench output layer,
- *     MultiTileEntityPipeItem.java:128-153 single-layered);</li>
+ * <li>wrench key + shift = the per-face output-arrow toggle (the monkeywrench output
+ *     layer, MultiTileEntityPipeItem.java:128-153 single-layered);</li>
  * <li>the target face is {@code UT6.getSideWrenching} over the 0..1 hit offsets
  *     (upstream UT.java:1776-1798 — clicked face + edge thresholds + OPOS corner
  *     fallback);</li>
@@ -61,7 +61,8 @@ import gregtech6.covers.ICoverableTE;
  * </ul>
  *
  * <p>Ownership face (task pipe-owner): a locked pipe ({@code mOwnable} with a set
- * {@code mOwner}) drops its own tools — the hoe use returns PASS before any mutation
+ * {@code mOwner}) drops its own tools — the wrench-key use returns PASS before any
+ * mutation
  * (the upstream TileEntityBase06Covers.java:141 host-tool-kill counterpart) and the
  * vanilla break progress is denied to 0.0F through the
  * {@link GTFluidPipeBlockEntity#ownerDestroyProgress} seam (the upstream
@@ -243,7 +244,7 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	InteractionHand aHand = InteractionHand.MAIN_HAND;
 	*///?}
 		ItemStack tStack = aPlayer.getItemInHand(aHand);
-		if (tStack.isEmpty() || !tStack.canPerformAction(ToolActions.HOE_DIG)) return InteractionResult.PASS;
+		if (!GT6ToolActions.isWrenchInteractionKey(tStack)) return InteractionResult.PASS;
 		if (aLevel.isClientSide) return InteractionResult.CONSUME; // claim the interaction, the BE executes server-side
 
 		BlockEntity tTile = aLevel.getBlockEntity(aPos);

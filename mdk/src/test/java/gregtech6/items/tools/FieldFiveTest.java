@@ -304,7 +304,7 @@ public class FieldFiveTest {
 	public void classificationCensusIsTheCardSurface() {
 		assertTrue(GTHoeItem.classifies(GT6ToolActions.HOE));
 		assertFalse(GTHoeItem.classifies(net.minecraftforge.common.ToolActions.HOE_DIG),
-				"RED LINE: HOE_DIG is the wrench-substitute key (GTOvenBlock/GTFluidPipeBlock/GTWrenchHighlightListener)");
+				"RED LINE: HOE_DIG is the vanilla-hoe leg of the wrench-interaction key (GT6ToolActions.isWrenchInteractionKey)");
 		assertTrue(GTPlowItem.classifies(GT6ToolActions.PLOW));
 		assertTrue(GTPlowItem.classifies(net.minecraftforge.common.ToolActions.SHOVEL_DIG), "the :89 TOOL_shovel relay");
 		assertFalse(GTPlowItem.classifies(net.minecraftforge.common.ToolActions.HOE_DIG));

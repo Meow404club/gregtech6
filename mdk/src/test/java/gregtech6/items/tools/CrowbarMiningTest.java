@@ -26,8 +26,10 @@ import org.junit.jupiter.api.Test;
  *
  * <p>The hoe red line rides along: the mining half must not borrow the hoe face —
  * {@code classifies} stays CROWBAR-only (the three wrench-substitute predicate files
- * GTOvenBlock/GTFluidPipeBlock/GTWrenchHighlightListener are untouched by
- * construction, zero diff) and hoe-faced blocks do not mine.
+ * GTOvenBlock/GTFluidPipeBlock/GTWrenchHighlightListener key the shared
+ * {@code GT6ToolActions.isWrenchInteractionKey} seam since task
+ * wrench-interaction-key; the crowbar classifies neither of its two actions, so it
+ * still fires none of them) and hoe-faced blocks do not mine.
  */
 public class CrowbarMiningTest {
 

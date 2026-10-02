@@ -22,12 +22,12 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-import net.minecraftforge.common.ToolActions;
 //? if forge {
 import net.minecraftforge.network.NetworkHooks;
 //?}
 
 import gregtech6.covers.ICoverableTE;
+import gregtech6.items.tools.GT6ToolActions;
 import gregtech6.registry.GTMachines;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.machines.TileEntityOven;
@@ -45,8 +45,10 @@ import net.minecraft.world.entity.Entity;
  * <p>use() is the chest/open-GUI chain (GTExampleChestBlock.use, upstream
  * onBlockActivated3 :483-486 → openGUI) without the blocked-above guard (a furnace-style
  * machine has no lid). Between the cover consumption and the GUI open sits the GTCEu
- * onWrenchClick :509-525 rotation layer (task oven-rotation): a hoe held with shift
- * rotates the front through the grid edge cells (shift never opens the GUI), everything
+ * onWrenchClick :509-525 rotation layer (task oven-rotation): a wrench-key stack (the
+ * shared {@code GT6ToolActions.isWrenchInteractionKey} — the formal wrench or the
+ * vanilla-hoe substitute) held with shift rotates the front through the grid edge cells
+ * (shift never opens the GUI), everything
  * else opens the GUI unchanged. setPlacedBy mirrors onPlaced (:128-131): the BE's facing
  * becomes the player's horizontal look direction, double-written NBT + BlockState.
  */
@@ -245,7 +247,9 @@ public class GTOvenBlock extends GTEntityBlock {
 			}
 			// task oven-rotation — the GTCEu onWrenchClick :509-525 layer, between the
 			// cover consumption above and the GUI open below (upstream onBlockActivated3
-			// :124): a hoe held with shift rotates the machine through the grid edge cells.
+			// :124): a wrench-key stack (the shared GT6ToolActions.isWrenchInteractionKey
+			// — the formal wrench or the vanilla-hoe substitute) held with shift rotates
+			// the machine through the grid edge cells.
 			// The side resolution is the same UT6.getSideWrenching pick the wrench grid
 			// overlay draws (GTFluidPipeBlock.use:109-114 shape — not the bare hit
 			// direction), so the cell clicked is constructively the cell shown. A valid
@@ -253,7 +257,7 @@ public class GTOvenBlock extends GTEntityBlock {
 			// GTCEu FAIL :518-519 no-op — shift never opens the GUI; without shift the
 			// GUI path is unchanged (PASS :524).
 			ItemStack tHeld = aPlayer.getItemInHand(aHand);
-			if (!tHeld.isEmpty() && tHeld.canPerformAction(ToolActions.HOE_DIG) && aPlayer.isShiftKeyDown()) {
+			if (GT6ToolActions.isWrenchInteractionKey(tHeld) && aPlayer.isShiftKeyDown()) {
 				tOven.setFrontFacing(UT6.getSideWrenching((byte) aHit.getDirection().get3DDataValue(),
 						(float) (aHit.getLocation().x - aPos.getX()), (float) (aHit.getLocation().y - aPos.getY()),
 						(float) (aHit.getLocation().z - aPos.getZ())));

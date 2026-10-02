@@ -13,12 +13,12 @@ import net.minecraftforge.common.ToolActions;
  * becomes the action below (the "stack-to-id classifier" seam the research card pinned).
  *
  * <p>RED LINE (card spec ①): the crowbar action is deliberately NOT an alias of
- * {@link ToolActions#HOE_DIG}. {@code canPerformAction(HOE_DIG)} is the wrench
- * substitute in exactly three live predicates — GTOvenBlock.use:109 (the shift
- * rotation), GTFluidPipeBlock.use:104 (the connection grid) and
- * GTWrenchHighlightListener:85 (the nine-cell overlay) — and a crowbar that also
- * classified as HOE_DIG would fire the wrench UI everywhere. The crowbar rides its
- * own action and enters the dismantle path through the reserved tool id only.
+ * {@link ToolActions#HOE_DIG} nor of {@link #WRENCH}. The wrench-substitute key is the
+ * shared {@link #isWrenchInteractionKey} seam (task wrench-interaction-key — the ONE
+ * predicate behind the pipe-connection/oven-rotation/nine-cell-overlay interaction
+ * points) and a crowbar that classified as either of its two actions would fire the
+ * wrench UI everywhere. The crowbar rides its own action and enters the dismantle path
+ * through the reserved tool id only.
  */
 public final class GT6ToolActions {
 
@@ -148,12 +148,34 @@ public final class GT6ToolActions {
 	 * the classification onto this Forge {@link ToolAction} and keeps the string for the
 	 * dispatch seam as {@link #WRENCH_ID}. Consumer: {@link GTWrenchItem}. RED LINE
 	 * (decisions.p25-tool-hammer-wrench-rulings ②): the item classifies on THIS action
-	 * and NEVER on {@code ToolActions.HOE_DIG} — the three wrench-substitute predicates
-	 * (GTOvenBlock.use:109 / GTFluidPipeBlock.use:104 / GTWrenchHighlightListener:85)
-	 * stay HOE_DIG-keyed untouched, the whole {@code Behavior_Tool(TOOL_wrench, …)}
-	 * interaction face (GT_Tool_Wrench.java:95) is the machine-interaction pool.
+	 * and NEVER on {@code ToolActions.HOE_DIG} — the interaction points gate on the shared
+	 * {@link #isWrenchInteractionKey} seam (task wrench-interaction-key: WRENCH ∪ the
+	 * vanilla-hoe leg), so the wrench enters through THIS leg and the HOE_DIG leg stays
+	 * the vanilla-hoe substitute; the {@code Behavior_Tool(TOOL_wrench, …)} world face
+	 * (GT_Tool_Wrench.java:95, machine-dismantle/rotation) stays the interaction pool.
 	 */
 	public static final ToolAction WRENCH = ToolAction.get("gt6_wrench");
+
+	/**
+	 * The wrench-interaction key (task wrench-interaction-key — research.wrench-grid-status
+	 * verdict ③ "built but not wired"): the ONE stack predicate behind every
+	 * wrench-substitute interaction point — the pipe connection toggles (both
+	 * {@code GTFluidPipeBlock.use} and {@code GTItemPipeBlock.use}), the oven rotation
+	 * ({@code GTOvenBlock.use}, shift) and the nine-cell overlay display
+	 * ({@code GTWrenchHighlightListener.isWrenchHeld}). The points MUST ride this single
+	 * seam, never a local re-spelling — that identity is the "shown means clickable"
+	 * invariant: the grid is shown exactly when a click would act.
+	 *
+	 * <p>The key accepts the formal {@link #WRENCH} classification (GTWrenchItem — the
+	 * card's wiring fix: before it the formal wrench triggered nothing) plus the vanilla
+	 * {@code ToolActions.HOE_DIG} substitute (upstream 1.7.10 fidelity: the hoe was the
+	 * wrench key there). The self-owned tools stay out by construction: crowbar, gt6 hoe
+	 * and hammer classify only their own actions (the class-javadoc red lines), and an
+	 * empty stack never passes.
+	 */
+	public static boolean isWrenchInteractionKey(net.minecraft.world.item.ItemStack aStack) {
+		return !aStack.isEmpty() && (aStack.canPerformAction(WRENCH) || aStack.canPerformAction(ToolActions.HOE_DIG));
+	}
 
 	/**
 	 * The upstream {@code CS.TOOL_file} dispatch id ("file", CS.java:1050) — the reserved
@@ -291,8 +313,10 @@ public final class GT6ToolActions {
 	 * The hoe stack-classification action ("gt6_hoe" — task w5-t4-field-five, the
 	 * PICKAXE entry shape; upstream {@code TOOL_hoe} CS.java:1044, the
 	 * Loader_Tools.java:122 registration row). RED LINE: the hoe NEVER classifies
-	 * {@code ToolActions.HOE_DIG} — the wrench-substitute predicates key on it
-	 * (the CROWBAR ruling above; a hoe there would fire the wrench UI).
+	 * {@code ToolActions.HOE_DIG} — that action is the vanilla-hoe leg of the
+	 * wrench-interaction key ({@link #isWrenchInteractionKey}; a GT6 hoe classifying there
+	 * would fire the wrench UI, the CROWBAR ruling above — the vanilla hoe keeps the
+	 * substitute face, the gt6 hoe keeps tilling).
 	 */
 	public static final ToolAction HOE = ToolAction.get("gt6_hoe");
 
