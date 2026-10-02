@@ -37,6 +37,7 @@ import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.minecraft.client.renderer.RenderType;
@@ -55,10 +56,20 @@ import net.minecraftforge.client.textures.UnitTextureAtlasSprite;
 import net.minecraftforge.client.model.data.ModelData;
 
 import gregtech6.datagen.GT6WorldgenDatagen;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.misc.GTFluidSpringBlockEntity;
 import gregtech6.worldgen.GTFluidSpringConfig;
 
 public class GTFluidSpringRenderTest extends GTOfflineRenderTestBase {
+
+	/** The FLUID_SPRING_TABLE touch below runs the whole GT6WorldgenDatagen clinit, whose
+	 * vein/bedrock tables capture MT.* fields one-shot — un-booted they freeze as null for
+	 * every later suite in this fork JVM (the full-suite 159&gt;110 run-order lottery).
+	 * Same material boot every other worldgen-table consumer carries. */
+	@BeforeAll
+	static void bootMaterialsBeforeWorldgenClinit() {
+		GTMaterialItems.initMaterials();
+	}
 
 	private static final int COLOR_SLOT = 3;
 	private static final int WHITE = 0xFFFFFFFF;
