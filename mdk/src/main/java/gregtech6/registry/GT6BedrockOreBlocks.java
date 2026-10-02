@@ -48,6 +48,15 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * port-time static history — the unified mod-driver face is GT6ModDrivers (mdh series;
  * isLoaded/visibilityGate); HEX is an mdh-2 atlas (GT6ForeignMaterialAtlas) takeover
  * candidate.
+ *
+ * <p>mdh-5 axis-takeover census (task mdh-5-block-worldgen-axis, CLOSED — ruling (a),
+ * static terminal state): the atlas cross-table finds exactly TWO PRIMARY members on this
+ * axis — Dolamide (mo) and Adamantine (metallurgy) — both riding OFFWORLD bedrock rows
+ * (Loader_Worldgen.java:767/:768, never drawn overworld); the HEX cut above holds (no
+ * Hexorium material anywhere on this face). No dead reference on bare installs (the block
+ * items register here; loot/worldgen consumers gate on the same walk), so no driver gate
+ * is taken on {@link #materialAxis}. Cross-table + per-face rulings:
+ * GT6AxisTakeoverCensusTest, decisions.mdh-5-axis-rulings.
  */
 @net.minecraftforge.fml.common.Mod.EventBusSubscriber(modid = "gt6", bus = net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6BedrockOreBlocks {
