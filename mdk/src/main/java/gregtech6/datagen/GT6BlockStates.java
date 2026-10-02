@@ -30,6 +30,7 @@ import gregtech6.block.attachment.GTAttachmentSmallBlock;
 import gregtech6.block.concrete.GT6ConcreteBlock; // task concrete-blocks-register
 import gregtech6.block.concrete.GT6ConcreteSlabBlock; // task concrete-blocks-register
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
+import gregtech6.block.surface.GT6WildBushBlock; // task berry-overlay (the AGE->model map)
 import gregtech6.block.tank.GT6GasCylinderBlock; // task small-tank-gas-cylinder
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6Portals; // p35 tail-append
@@ -1564,7 +1565,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_side", modLoc(tBand + "overlay_side"))
                 .renderType("cutout");
         tintedBody(tModel);
-        overlayShell(tModel, "overlay_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
+        overlayShell(tModel, 0.0F, -1, "overlay_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
         return tModel;
     }
 
@@ -1579,33 +1580,71 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * The six 0.01-plate decal shells (the addConverterModel elements 1-6 grammar): north
      * = {@code aFront}, south = {@code aBack}, west/east = {@code aSide}, up = {@code aTop},
-     * down = {@code aBottom} — the texture KEYS, untinted and cullface-synced.
+     * down = {@code aBottom} — the texture KEYS. {@code aOutset} shifts the shell further
+     * off the body face in 0.01 steps (0 = the original barrel position; task berry-overlay
+     * stacks the bush layers at 0.01/0.02), and {@code aTintIndex} tints every plate face
+     * (-1 = the untinted detail-shell grammar — the JSON key is omitted at -1, the
+     * ModelBuilder face emission guards {@code tintIndex != -1}).
      */
-    private void overlayShell(BlockModelBuilder aModel, String aFront, String aBack, String aSide, String aTop, String aBottom) {
+    private void overlayShell(BlockModelBuilder aModel, float aOutset, int aTintIndex, String aFront, String aBack, String aSide, String aTop, String aBottom) {
         aModel.element() // north
-                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
-                .face(Direction.NORTH).texture("#" + aFront).cullface(Direction.NORTH)
+                .from(0.0F, 0.0F, -0.01F - aOutset).to(16.0F, 16.0F, -aOutset)
+                .face(Direction.NORTH).texture("#" + aFront).tintindex(aTintIndex).cullface(Direction.NORTH)
                 .end();
         aModel.element() // south
-                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
-                .face(Direction.SOUTH).texture("#" + aBack).cullface(Direction.SOUTH)
+                .from(0.0F, 0.0F, 16.0F + aOutset).to(16.0F, 16.0F, 16.01F + aOutset)
+                .face(Direction.SOUTH).texture("#" + aBack).tintindex(aTintIndex).cullface(Direction.SOUTH)
                 .end();
         aModel.element() // west
-                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
-                .face(Direction.WEST).texture("#" + aSide).cullface(Direction.WEST)
+                .from(-0.01F - aOutset, 0.0F, 0.0F).to(-aOutset, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#" + aSide).tintindex(aTintIndex).cullface(Direction.WEST)
                 .end();
         aModel.element() // east
-                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
-                .face(Direction.EAST).texture("#" + aSide).cullface(Direction.EAST)
+                .from(16.0F + aOutset, 0.0F, 0.0F).to(16.01F + aOutset, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#" + aSide).tintindex(aTintIndex).cullface(Direction.EAST)
                 .end();
         aModel.element() // bottom
-                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
-                .face(Direction.DOWN).texture("#" + aBottom).cullface(Direction.DOWN)
+                .from(0.0F, -0.01F - aOutset, 0.0F).to(16.0F, -aOutset, 16.0F)
+                .face(Direction.DOWN).texture("#" + aBottom).tintindex(aTintIndex).cullface(Direction.DOWN)
                 .end();
         aModel.element() // top
-                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
-                .face(Direction.UP).texture("#" + aTop).cullface(Direction.UP)
+                .from(0.0F, 16.0F + aOutset, 0.0F).to(16.0F, 16.01F + aOutset, 16.0F)
+                .face(Direction.UP).texture("#" + aTop).tintindex(aTintIndex).cullface(Direction.UP)
                 .end();
+    }
+
+    /**
+     * The wild berry bush layered model (task berry-overlay) — the barrelPartsModel grammar
+     * generalized to the upstream BlockTextureMulti layer stack (MultiTileEntityBush.java:
+     * 230-242): element 0 = the tinted body cube over the grayscale {@code berry_bush.png}
+     * borrow (tintindex 0, the bushesgt-tint-color seat), element group 1 = the six
+     * {@code overlay_bush} detail plates (untinted, the barrel shell grammar), and — when
+     * the model carries berries — the six {@code berries} plates at tintindex 1 (the
+     * stage-colour seat, {@code bush_parts/berries*.png}) plus their detail plates, each
+     * group stacked a further 0.01 off the body face. Cutout so the shells' transparent
+     * texels discard (the C7' lesson: a decal shell without it renders as an opaque white
+     * board over the tinted body). {@code aBerries} = null keeps the age-0 two-layer form
+     * (the model name and the tintindex-0 seat unchanged since bushesgt-tint-color).
+     */
+    private BlockModelBuilder bushPartsModel(String aName, String aBerries, String aBerriesOverlay) {
+        String tBand = "block/bush_parts/";
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("down", modLoc("block/berry_bush")).texture("up", modLoc("block/berry_bush"))
+                .texture("north", modLoc("block/berry_bush")).texture("south", modLoc("block/berry_bush"))
+                .texture("west", modLoc("block/berry_bush")).texture("east", modLoc("block/berry_bush"))
+                .texture("particle", modLoc("block/berry_bush"))
+                .texture("bush_overlay", modLoc(tBand + "overlay_bush"))
+                .renderType("cutout");
+        tintedBody(tModel);
+        overlayShell(tModel, 0.0F, -1, "bush_overlay", "bush_overlay", "bush_overlay", "bush_overlay", "bush_overlay");
+        if (aBerries != null) {
+            tModel.texture("berries", modLoc(tBand + aBerries));
+            tModel.texture("berries_overlay", modLoc(tBand + aBerriesOverlay));
+            overlayShell(tModel, 0.01F, 1, "berries", "berries", "berries", "berries", "berries");
+            overlayShell(tModel, 0.02F, -1, "berries_overlay", "berries_overlay", "berries_overlay", "berries_overlay", "berries_overlay");
+        }
+        return tModel;
     }
 
     /**
@@ -3427,7 +3466,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_side", modLoc(tBand + "overlay_side"))
                 .renderType("cutout");
         tintedBody(tModel);
-        overlayShell(tModel, "overlay_front_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
+        overlayShell(tModel, 0.0F, -1, "overlay_front_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
         return tModel;
     }
 
@@ -3721,12 +3760,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * lily-pad face (BlockGlowtus = BlockBaseLilyPad): a hand-built 1px flat plate over the
      * borrowed GLOWTUS_RED.png (cutout — the texture carries transparency; the tintedSlab
      * element grammar), the sand/turf are cube_all over the borrowed PNGs, the bush is the
-     * tinted cube_all over the verbatim grayscale borrow (task bushesgt-tint-color — the
-     * tintindex-0 seat the {@code GT6BushTintListener} default bush colour rides, the
-     * w6-t2 pre-coloured-PNG shortcut retired), and the four fallen-log woods ride the t1
-     * log idiom verbatim (axis variants + cube_column over the borrowed LOG_SIDE/TOP
-     * iconsets, renamed to the block ids at borrow time). All 13 textures are upstream
-     * iconsets byte-borrows (assets/README.md rows this card).
+     * three-model berry-overlay trio over the verbatim grayscale borrow (task berry-overlay,
+     * the {@code bushPartsModel} stack over the tintindex-0 seat the
+     * {@code GT6BushTintListener} per-state arm rides; the bushesgt-tint-color single-cube
+     * form retired — the tintindex-0 seat itself unchanged), and the four fallen-log woods
+     * ride the t1 log idiom verbatim (axis variants + cube_column over the borrowed
+     * LOG_SIDE/TOP iconsets, renamed to the block ids at borrow time). All 18 textures are
+     * upstream iconsets byte-borrows (assets/README.md rows this card + berry-overlay).
      */
     private void addSurfacePlants() {
         // glowtus: the flat water plate (the vanilla lily-pad form)
@@ -3741,13 +3781,23 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .end();
         simpleBlock(GT6SurfaceBlocks.GLOWTUS.get(), tGlowtus);
         itemModels().withExistingParent("glowtus", modLoc("block/glowtus"));
-        // the berry bush: the tinted cube (the grayscale tintable borrow, index 0) over the
-        // full 36-state grid (AGE_3 x KIND nine, task bush-growth-blockstate) — one model,
-        // every state points at it (the per-state colour rides the GT6BushTintListener arm)
-        BlockModelBuilder tBerryBush = tintedCubeAll("berry_bush", modLoc("block/berry_bush"));
+        // the berry bush (task berry-overlay): the upstream BlockTextureMulti layer stack
+        // (MultiTileEntityBush.java:230-242) as three cutout models over the tintindex-0
+        // body seat — age0 = body + the overlay_bush detail shell; stage1 adds the
+        // immature-berries plates at tintindex 1 + their detail plates; stage2 the ripe
+        // pair (age2/3 share the model, their colours differ only in the per-state tint
+        // arm). The full 36-state grid (AGE_3 x KIND nine) maps per AGE, KIND-independent:
+        // 0 -> berry_bush, 1 -> berry_bush_stage1, 2|3 -> berry_bush_stage2.
+        ModelFile[] tBushModels = {
+                bushPartsModel("berry_bush", null, null),
+                bushPartsModel("berry_bush_stage1", "berries_immature", "overlay_berries_immature"),
+                bushPartsModel("berry_bush_stage2", "berries", "overlay_berries")};
         getVariantBuilder(GT6SurfaceBlocks.BERRY_BUSH.get())
-                .forAllStates(tState -> new ConfiguredModel[] {new ConfiguredModel(tBerryBush)});
-        itemModels().withExistingParent("berry_bush", modLoc("block/berry_bush"));
+                .forAllStates(tState -> new ConfiguredModel[] {new ConfiguredModel(
+                        tBushModels[Math.min(tState.getValue(GT6WildBushBlock.AGE), GT6WildBushBlock.MAX_AGE - 1)])});
+        // the item face = the upstream SIDES_ITEM_RENDER row (MultiTileEntityBush.java:233-234):
+        // the berry layer is ALWAYS shown, at the stage-2 colour
+        itemModels().withExistingParent("berry_bush", modLoc("block/berry_bush_stage2"));
         // the two finished cubes: black sand, turf
         for (String tPath : new String[] {"black_sand", "turf"}) {
             Block tBlock = tPath.equals("black_sand") ? GT6SurfaceBlocks.BLACK_SAND.get() : GT6SurfaceBlocks.TURF.get();
@@ -3772,7 +3822,7 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
-        LOGGER.info("GT6 surface plants: 8 blockstate bands (1 plate + 3 cubes + 4 axis columns), 8 models");
+        LOGGER.info("GT6 surface plants: 8 blockstate bands (1 plate + 1 bush trio + 2 cubes + 4 axis columns), 10 models");
     }
 
     /**

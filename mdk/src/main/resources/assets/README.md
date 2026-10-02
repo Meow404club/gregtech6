@@ -8873,6 +8873,17 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   upstream default bush colour 0x22cc22 (MultiTileEntityBush.java:224/237,
   CS.java:1588 BushesGT.DEFAULT) in GT6BushTintListener;
   sha256 `2b6afbbd9c6f12d28908185e9ef5615da8600e82925a165bb8736fe45c48b683`)
+- `gt6/textures/block/bush_parts/` — the berry-layer sprites (task berry-overlay), 5
+  upstream borrows from `machines/plants/bush/` rendered by the three bush models
+  (berry_bush / _stage1 / _stage2) as the 0.01-plate decal shells over the tinted body;
+  the `colored/` pair rides tintindex 1 (the per-stage colour in GT6BushTintListener),
+  the `overlay/` trio is the untinted detail layer:
+
+  - `bush_parts/berries.png`            `f5f544e6e7cc6bba3bfb59e885496a03021ac31318cfd1c7e820774073d58e1b` (upstream `colored/berries.png`)
+  - `bush_parts/berries_immature.png`   `3fb0dfa7a665bf0051fbcf38386c9ef4c7850bb1caf803112868398c80822703` (upstream `colored/berries_immature.png`)
+  - `bush_parts/overlay_bush.png`       `57ee6c0dfeba5a32c738a26e1364c6f20c9097ec2676e31b35e7848581490e6c` (upstream `overlay/bush.png`)
+  - `bush_parts/overlay_berries.png`    `595331dbb5390e5fb40bc1fc80eac6082c8f58dc52a2ac02418ae72e336092e4` (upstream `overlay/berries.png`)
+  - `bush_parts/overlay_berries_immature.png` `595331dbb5390e5fb40bc1fc80eac6082c8f58dc52a2ac02418ae72e336092e4` (upstream `overlay/berries_immature.png` — BYTE-IDENTICAL to `overlay/berries.png` UPSTREAM; the two paths borrow the same file, the barrel same-hash precedent `overlay_bottom`/`overlay_top`)
 - `gt6/textures/block/black_sand.png` — the magnetite river sand (upstream
   `iconsets/SAND_MAGNETITE.png`; sha256
   `f512f0776c14d38f5a8c40e8277513e0c569cf2ddb460a0da5d1e9535e6529f8`)
