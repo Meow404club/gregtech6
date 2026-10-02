@@ -1194,6 +1194,15 @@ HAND_TRANSLATIONS = {
     "item.gt6.food_ribeyesteak_raw.tooltip": ("从大型动物上掉落", "hand"),
     "item.gt6.food_ribeyesteak_cooked": ("烤肋眼牛排", "hand"),
     "item.gt6.food_ribeyesteak_cooked.tooltip": ("它正盯着你.......", "hand"),
+    # seat-XVIII review fix (2026-10-02): the cbc-6 two-flower rows landed on main with the
+    # tsv direct band but WITHOUT these py hand rows — the 4-row DRIFT gen_zhcn_ref --check
+    # flags (py 3047 vs tsv 3051 on main a686093d4). Values verbatim from the dump
+    # gt.multiitem.food.12010/12011 (tmp/gregtech.lang:8809-8812), the same faces the
+    # GT6ZhCn datagen hand layer emits.
+    "item.gt6.food_cerublossom": ("暗影花", "hand"),
+    "item.gt6.food_cerublossom.tooltip": ("用于膜法", "hand"),
+    "item.gt6.food_desertnova": ("沙漠新星", "hand"),
+    "item.gt6.food_desertnova.tooltip": ("用于膜法", "hand"),
     "item.gt6.food_dogmeat_raw": ("狗肉", "hand"),
     "item.gt6.food_dogmeat_raw.tooltip": ("你的[慈悲]去哪里了?", "hand"),
     "item.gt6.food_dogmeat_cooked": ("烤狗肉", "hand"),
