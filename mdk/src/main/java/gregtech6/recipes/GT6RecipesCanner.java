@@ -163,16 +163,28 @@ public final class GT6RecipesCanner {
 	// the MultiItemCans.java:113-120 air band
 
 	/**
+	 * The family-can seam shared live face — offline-safe: the shared-test pour (the
+	 * PhaseGate census / HashIndex equivalence / MaterialTree drive load() LIVE on both
+	 * legs) runs against unbound gt6 RegistryObjects on the forge test JVM, where the
+	 * {@code .get()} THROWS ("Registry Object not present") — a null here keeps the
+	 * upstream {@code aCans[tier]} mat()-null silent drop instead of blowing up the whole
+	 * shared pour (the {@link #liveAirFluid} wrap precedent, the c3190e3d2 lesson).
+	 */
+	static ItemStack liveFamilyCan(java.util.function.Supplier<ItemStack> aLeg) {
+		try {return aLeg.get();} catch (RuntimeException tOffline) {return null;}
+	}
+
+	/**
 	 * The meat-can family seam: tier 0..5 → the {@code gt6:food_can_meat_<size>} can
 	 * (upstream IL.CANS_MEAT, the aCans[tier] dispatch), fixtures injected offline.
 	 */
-	public static IntFunction<ItemStack> sMeatCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get());
+	public static IntFunction<ItemStack> sMeatCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get()));
 
 	/** The fish-can family seam (upstream IL.CANS_FISH), fixtures injected offline. */
-	public static IntFunction<ItemStack> sFishCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_FISH.get(aTier).get());
+	public static IntFunction<ItemStack> sFishCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_FISH.get(aTier).get()));
 
 	/** The veggie-can family seam (upstream IL.CANS_VEGGIE — the Tofu AND the Soylent Green target), fixtures injected offline. */
-	public static IntFunction<ItemStack> sVeggieCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_VEGGIE.get(aTier).get());
+	public static IntFunction<ItemStack> sVeggieCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_VEGGIE.get(aTier).get()));
 
 	/**
 	 * The canned-material seam: (prefix, material) → the GT6 material item (the
@@ -301,7 +313,7 @@ public final class GT6RecipesCanner {
 	public static Function<String, Item> sBakingFoodItemResolver = GT6RecipesMeat::resolveFoodItem;
 
 	/** The bread-can family seam: tier 0..5 → the {@code gt6:food_can_bread_<size>} can (upstream IL.CANS_BREAD), fixtures injected offline. */
-	public static IntFunction<ItemStack> sBreadCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_BREAD.get(aTier).get());
+	public static IntFunction<ItemStack> sBreadCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_BREAD.get(aTier).get()));
 
 	/**
 	 * The :608-:782 baking-domain members, upstream order. Dispositions around them: the
