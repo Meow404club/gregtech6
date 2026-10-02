@@ -104,10 +104,17 @@ public final class GT6BumbliaryMUI {
 		// bindPlayerInventory here would NPE on the null menu, the issue #3 gate removal)
 
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(aScoop ? PANEL_NAME_SCOOP : PANEL_NAME, 176, 166)
-				// the (mod, path) overload exists on the forge leg only — the ResourceLocation face is the leg-generic one
-				.background(UITexture.fullImage(ResourceLocation.fromNamespaceAndPath("gt6", aBumbliary.advanced()
-						? "textures/gui/machines/bumbliaryadvanced.png" // the Advanced :469
-						: "textures/gui/machines/bumbliary.png"))); // the :500/:507 pair
+				// the (mod, path) overload exists on the forge leg only — the ResourceLocation face is the leg-generic one.
+				// The machine sheets are 256x256 canvases with the art in the top-left 176x166 —
+				// the sub-area is declared explicitly, fullImage would shrink the art into the
+				// corner (task gui-bg-uv-fix).
+				.background(UITexture.builder()
+						.location(ResourceLocation.fromNamespaceAndPath("gt6", aBumbliary.advanced()
+								? "textures/gui/machines/bumbliaryadvanced.png" // the Advanced :469
+								: "textures/gui/machines/bumbliary.png")) // the :500/:507 pair
+						.imageSize(256, 256)
+						.subAreaXYWH(0, 0, 176, 166)
+						.build());
 
 		for (int i = 0; i < aBumbliary.slotCount(); i++) {
 			GT6BumbliaryBlockEntity.GuiSeat tSeat = aBumbliary.guiSeat(aScoop, i);

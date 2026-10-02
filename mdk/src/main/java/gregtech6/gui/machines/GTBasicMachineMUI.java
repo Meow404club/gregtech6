@@ -125,8 +125,16 @@ public final class GTBasicMachineMUI {
 		aSyncManager.syncValue(SYNC_PROGRESS, tProgress);
 
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME, 176, 166)
-				// the mGUIPath background — the same ResourceLocation parse the vanilla screen blits
-				.background(UITexture.fullImage(GTBasicMachineScreen.backgroundOf(aHost)));
+				// the mGUIPath background — the same ResourceLocation parse the vanilla screen blits.
+				// The machine sheets are 256x256 canvases with the art in the top-left 176x166
+				// (the vanilla blit's implicit 256 sampling, GTGuiScreen.renderBg:55-58), so the
+				// sub-area is declared explicitly — fullImage would stretch the whole canvas into
+				// the panel and shrink the art into the top-left corner (task gui-bg-uv-fix).
+				.background(UITexture.builder()
+						.location(GTBasicMachineScreen.backgroundOf(aHost))
+						.imageSize(256, 256)
+						.subAreaXYWH(0, 0, 176, 166)
+						.build());
 
 		// the input seats — the GT6MachineGuiLayout case table, the fluid arm riding the same
 		// tank-bank length the display seats render (every 1/2-input family keeps its exact
