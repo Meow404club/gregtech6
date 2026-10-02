@@ -44,7 +44,11 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		case "minecraft:map" -> Items.MAP;
 		case "minecraft:wheat" -> Items.WHEAT;
 		case "minecraft:sugar" -> Items.SUGAR;
-		default -> null;
+		// the gt6-domain stand-in (the GT6RecipeMapDataB2b1RowsPourTest posture): since
+		// recipe-data-b2b1 the fermenter file carries the 195-row stock and the gt6-id
+		// registration universe is guarded by ITS id-universe pin — this seam-acceptance
+		// test resolves every gt6 id to a stand-in instead of whitelisting 28+ item ids.
+		default -> "gt6".equals(aId.getNamespace()) ? Items.IRON_INGOT : null;
 	};
 
 	private static final Function<ResourceLocation, Fluid> FLUID_FIXTURE = aId -> Fluids.WATER;
@@ -88,7 +92,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("loom"), "one loom smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "one boxinator smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "one unboxinator smoke row");
-		assertEquals(7, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — 1 smoke row + the 6 food-fluids-b1 core rows");
+		assertEquals(195, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — the landed b2b1 census (7 smoke + 188 pour; the seat-IX reconciliation bump)");
 
 		// the Ananas row content pin (review fix): the OFFLINE fixture collapses every
 		// fluid id to Fluids.WATER (FLUID_FIXTURE above), so the poured Recipe objects
@@ -97,25 +101,28 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		// ("binnie.juicepineapple" — the GTFluids juicepineapple carrier) into
 		// Cider_Ananas ("binnie.winepineapple") — NOT winepineapple into itself (the
 		// input-id transcription slip this pin guards against).
+		// upstream carries TWO Juice_Pineapple input rows (:610 the Cider drink leg,
+		// :649 the FRUIT_JUICE walk -> Wine_Fruit), so the selection goes by the row's
+		// source citation — a bare input-id scan would last-match the :649 walk row.
 		JsonObject tAnanasRow = null;
 		for (JsonElement tElement : resource("fermenter.json").getAsJsonObject().getAsJsonArray("recipes")) {
 			JsonObject tRow = tElement.getAsJsonObject();
-			if (tRow.has("fluidInputs") && tRow.getAsJsonArray("fluidInputs").size() == 1
-				&& "gt6:juicepineapple".equals(tRow.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("fluid").getAsString())) {
+			if (tRow.has("comment") && tRow.get("comment").getAsString().startsWith("Loader_Recipes_Food.java:610")) {
 				tAnanasRow = tRow;
 			}
 		}
 		assertNotNull(tAnanasRow, "the fermenter file must carry the Ananas fermentation row");
+		assertEquals("gt6:juicepineapple", tAnanasRow.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("fluid").getAsString(), "the Ananas input id");
 		assertEquals(50, tAnanasRow.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("amount").getAsLong(), "the Ananas input amount");
 		assertEquals(1, tAnanasRow.getAsJsonArray("fluidOutputs").size(), "the Ananas row is a single-fluid-output row");
-		assertEquals("gt6:winepineapple", tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("fluid").getAsString(), "the Ananas output id — Cider_Ananas (Loader_Recipes_Food.java:608)");
+		assertEquals("gt6:winepineapple", tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("fluid").getAsString(), "the Ananas output id — Cider_Ananas (Loader_Recipes_Food.java:610)");
 		assertEquals(25, tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("amount").getAsLong(), "the Ananas output amount");
 
 		// the rows are LIVE in the maps (the findRecipe stock grew by one each)
 		assertEquals(1, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held ONLY the smoke row (the DECLARED-empty card-A state)");
 		assertEquals(1, GT6RecipeMaps.BOXINATOR.mRecipeList.size());
 		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size());
-		assertEquals(7, GT6RecipeMaps.FERMENTER.mRecipeList.size());
+		assertEquals(195, GT6RecipeMaps.FERMENTER.mRecipeList.size());
 	}
 
 	/** A repeated pour REPLACES the same-file subset — the idempotence face of the seam. */
@@ -125,7 +132,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		tData.put(new ResourceLocation("gt6", "fermenter"), resource("fermenter.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 		GT6RecipeMapJsonLoader.pour(tData);
-		assertEquals(7, GT6RecipeMaps.FERMENTER.mRecipeList.size(), "the subset replace — never a duplicate");
+		assertEquals(195, GT6RecipeMaps.FERMENTER.mRecipeList.size(), "the subset replace — never a duplicate");
 	}
 
 	/** MIXER and SIFTING are NOT in the card-D JSON face — the loader never touches them here. */
