@@ -256,9 +256,9 @@ public class GTFluidsFoodB1Test extends GTOfflineTestBase {
 	@Test
 	public void earlierTablesAreUntouched() {
 		assertEquals(6, GTFluids.AQUA_SPECS.size());
-		assertEquals(2, GTFluids.SIMPLE_LIQUID_SPECS.size());
+		assertEquals(4, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 pair + the chem-fluids-unlock brine/spruceresin pair");
 		assertEquals(4, GTFluids.FOOD_FLUID_SPECS.size());
-		assertEquals(48, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain is a different card — zero overlap (39 + 5 task machines-bumblelyzer-crucible molten quintet + 3 task machines-burner-plantalyzer Burner Mixer row carriers + 1 task debt-hene-fluid heliumneon blend row)");
+		assertEquals(80, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain rides its own cards (48 through debt-hene-fluid + 32 task chem-fluids-unlock B2 blocker batch)");
 	}
 
 	/** The representative-row property assertions (one per family, acceptance 属性断言). */

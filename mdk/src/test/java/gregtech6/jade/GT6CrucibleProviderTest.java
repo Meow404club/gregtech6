@@ -348,7 +348,7 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 			String tId = tMaterial.mNameInternal.toLowerCase(Locale.ROOT);
 			if ("iron".equals(tId) || GTFluids.chemicalSource(gregtech6.fluid.FluidBridge.moltenIdForMaterial(tId)) != null) tBridged.add(tId);
 		}
-		assertEquals(39, tBridged.size(), "the full molten-domain census: " + tBridged);
+		assertEquals(41, tBridged.size(), "the full molten-domain census (39 -> 41: the chem-blocker batch adds the molten.aluminiumfluoride + molten.cryolite material moltens, task chem-fluids-unlock review fix): " + tBridged);
 		// the original 7 seed materials + the expansion spot set stay bridged
 		assertTrue(tBridged.containsAll(Arrays.asList("iron", "redstone", "silicon", "germanium",
 				"redstonealloy", "nikolinealloy", "alumina", "tungsten", "tin", "sodium", "calcite",

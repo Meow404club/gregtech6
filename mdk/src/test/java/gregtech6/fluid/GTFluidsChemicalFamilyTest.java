@@ -52,14 +52,24 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			"silicon_molten", "germanium_molten", "redstonealloy_molten", "nikolinealloy_molten", "alumina_molten",
 			// task machines-burner-plantalyzer — the three new Burner Mixer row
 			// carriers (the fourth, tritiatedwater, is the w4-hot-lube closure row)
-			"titaniumtetrachloride", "sodiumcarbonate_molten", "calcite_molten");
+			"titaniumtetrachloride", "sodiumcarbonate_molten", "calcite_molten",
+			// task chem-fluids-unlock — the B2 chemical-blocker batch, in table order
+			"hydrogenperoxide", "hydrogenfluoride", "hydrochloricacid", "nitricacid",
+				"nitrogenmonoxide", "nitrogendioxide", "sulfurdioxide", "sulfurtrioxide",
+				"sulfuricacid", "disulfuricacid", "hexafluorosilicicacid", "aquaregia",
+				"bromine", "saltwater", "saltedwater",
+				"uraniumhexafluoride", "uranium238hexafluoride", "uranium235hexafluoride",
+				"aluminiumfluoride_molten", "cryolite_molten",
+				"bluevitriol", "redvitriol", "pinkvitriol", "cyanvitriol", "whitevitriol",
+				"grayvitriol", "greenvitriol", "martianvitriol", "vitriolofclay",
+				"chloroauricacid", "chloroplatinicacid", "stannicchloride");
 
 
 	@Test
 	public void tableCarriesTheChemicalRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.CHEMICAL_SPECS.stream().map(GTFluids.ChemicalFluidSpec::name).toList());
-		assertEquals(48, GTFluids.CHEMICAL_SPECS.size());
-		assertEquals(48, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
+		assertEquals(80, GTFluids.CHEMICAL_SPECS.size());
+		assertEquals(80, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
 	}
 
 	/** Acceptance ①: the per-fluid declared census, one block per sub-family. */
@@ -319,6 +329,150 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 		assertNull(GTFluids.materialOf(GTFluids.chemicalSpec("liquidoxygen")));
 		assertNull(GTFluids.specOf(null, false), "null-safe");
 		assertNull(GTFluids.materialOf(null), "null-safe");
+	}
+
+	/**
+	 * Task chem-fluids-unlock — the B2 chemical-blocker batch (32 rows): the
+	 * recipe-data-b2a/b2b2/b2b1 discard blockers plus the acid-chain family those rows
+	 * consume/produce. Gases ride the FL.java:1080 createGas walk (temp = bp&lt;300 ?
+	 * min(300, plasma−1) : bp — UF6's bp 329 lands verbatim, the acids clamp to 300),
+	 * liquids the :1072 createLiquid walk (mp&lt;300 → min(300, bp−1) = 300 everywhere
+	 * here), moltens the :1077 createMolten walk (+ luminosity 10). Densities are the
+	 * :1128-1136 formula transcriptions (the setDensity literals, or the Σg·amt/U
+	 * molecule sums, OreDictMaterial.java:393-409 over the element g/cm³ MT.java:943-1119).
+	 */
+	@Test
+	public void b2BlockerBatchCarriesTheUpstreamWalkParameters() {
+		// the nine createGas rows — {id, display, temp, density, tint}
+		Object[][] tGases = {
+			{"hydrogenfluoride"          , "Hydrogen Fluoride"        , 300,     1, 0xFF00F0F0}, // g = H+F = 0.00178588 → 1
+			{"hydrochloricacid"          , "Hydrochloric Acid"        , 300,     3, 0xFF00FF80}, // g = H+Cl = 0.00330388 → 3
+			{"nitrogenmonoxide"          , "Nitrogen Monoxide"        , 300,     2, 0xFF64AFFF}, // g = N+O = 0.0026796 → 2
+			{"nitrogendioxide"           , "Nitrogen Dioxide"         , 300,     4, 0xFF78BEFF}, // g = N+2O = 0.0041086 → 4
+			{"sulfurdioxide"             , "Sulfur Dioxide"           , 300,  2069, 0xFFFFC800}, // g = S+2O = 2.069858 → 2069
+			{"sulfurtrioxide"            , "Sulfur Trioxide"          , 300,  2071, 0xFFFFDC00}, // g = S+3O = 2.071287 → 2071
+			{"uraniumhexafluoride"       , "Uranium Hexafluoride"     , 329, 18960, 0xFF426255}, // bp 329 verbatim; g = U+6F = 18.960176 → 18960
+			{"uranium238hexafluoride"    , "Uranium-238 Hexafluoride" , 329, 18960, 0xFF426255}, // the Chem:182 centrifuge split leg
+			{"uranium235hexafluoride"    , "Uranium-235 Hexafluoride" , 329, 18960, 0xFF426255},
+		};
+		for (Object[] tRow : tGases) {
+			GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec((String)tRow[0]);
+			assertNotNull(tSpec, (String)tRow[0]);
+			assertEquals(tRow[1], tSpec.displayName(), (String)tRow[0] + ": the mNameLocal face");
+			assertEquals(tRow[2], tSpec.temperature(), (String)tRow[0] + ": the :1080 rule over the material heat() points");
+			assertEquals(tRow[3], tSpec.density(), (String)tRow[0] + ": the :1128-1136 1000·g formula");
+			assertEquals(200, tSpec.viscosity(), (String)tRow[0] + ": the :1105 gas viscosity");
+			assertEquals(tRow[4], tSpec.tint(), (String)tRow[0] + ": the material RGBa");
+			assertTrue(tSpec.gas(), (String)tRow[0] + ": setGaseous");
+			assertEquals(0, tSpec.luminosity(), (String)tRow[0] + ": unlit");
+			assertTrue(GTFluidLists.isGas((String)tRow[0]), (String)tRow[0] + ": the :1105 GAS auto-add");
+		}
+		// the twenty-one createLiquid rows — {id, display, temp, density, tint}
+		Object[][] tLiquids = {
+			{"hydrogenperoxide"      , "Hydrogen Peroxide"       , 300,  1000, 0xFF1414FF}, // setDensity 1.0 (MT.java:1019); the Chem:88 Lightning row
+			{"sulfuricacid"          , "Sulfuric Acid"           , 300,  1500, 0xFFFF8000}, // setDensity 1.5 (:1047)
+			{"nitricacid"            , "Nitric Acid"             , 300,  1500, 0xFF80FF00}, // setDensity 1.5 (:1031)
+			{"disulfuricacid"        , "Disulfuric Acid"         , 300,  1500, 0xFFFF9600}, // setDensity 1.5 (:1048)
+			{"hexafluorosilicicacid" , "Hexafluorosilicic Acid"  , 300,  1500, 0xFFBEC8BE}, // setDensity 1.5 (:1054)
+			{"aquaregia"             , "Aqua Regia"              , 300,  7526, 0xFF40FF40}, // g = 5×1.5+8×0.00330388 = 7.52643104 (:1188); the Chem:267 mixer row
+			{"bromine"               , "Bromine"                 , 300,  3122, 0xFF500A0A}, // mp 265 → temp 300, g 3.122 (:424); the Chem:207 Freezer row
+			{"saltwater"             , "Saltwater"               , 300,  1000, 0xFFFF00FF}, // mp 300 → temp 300, setDensity 1.0 (:1143)
+			{"saltedwater"           , "Salted Water"            , 300,  1000, 0xFFFF00C8}, // same walk (:1160)
+			{"bluevitriol"           , "Blue Vitriol"            , 300, 11032, 0xFF4242DE}, // g = Cu+S+4O = 11.032716 (:1169); the Chem:73 electrolyzer walk
+			{"redvitriol"            , "Red Vitriol"             , 300, 10932, 0xFFDE4242}, // Co leg (:1171)
+			{"pinkvitriol"           , "Pink Vitriol"            , 300,  3810, 0xFFDE6F6F}, // Mg leg (:1172)
+			{"cyanvitriol"           , "Cyan Vitriol"            , 300, 10984, 0xFF6FDEDE}, // Ni leg (:1173)
+			{"whitevitriol"          , "White Vitriol"           , 300,  9206, 0xFFDEDEDE}, // Zn leg (:1174)
+			{"grayvitriol"           , "Gray Vitriol"            , 300,  9512, 0xFF6F6F6F}, // Mn leg (:1175); also the Chem:265 Eudialyte Bath row
+			{"greenvitriol"          , "Green Vitriol"           , 300,  9946, 0xFF42DE42}, // Fe leg (:1170); also the Chem:261 Ilmenite Bath row
+			{"martianvitriol"        , "Martian Vitriol"         , 300, 21966, 0xFFDE42DE}, // g = 2Fe+3S+12O = 21.966148 (:1176)
+			{"vitriolofclay"         , "Vitriol Of Clay"         , 300, 33215, 0xFF42DEDE}, // g = 5×Al2O3+3S+9O = 33.215296 (:1177)
+			{"chloroauricacid"       , "Chloroauric Acid"        , 300, 19294, 0xFFFFC846}, // g = Au+4Cl+H = 19.29494588 (:1163); the Chem:83 input
+			{"chloroplatinicacid"    , "Chloroplatinic Acid"     , 300, 21479, 0xFFFF4646}, // g = Pt+6Cl+2H = 21.47946376 (:1164)
+			{"stannicchloride"       , "Stannic Chloride"        , 300,  7299, 0xFFD2FAFA}, // g = Sn+4Cl = 7.299856 (:1165)
+		};
+		for (Object[] tRow : tLiquids) {
+			GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec((String)tRow[0]);
+			assertNotNull(tSpec, (String)tRow[0]);
+			assertEquals(tRow[1], tSpec.displayName(), (String)tRow[0] + ": the mNameLocal face");
+			assertEquals(tRow[2], tSpec.temperature(), (String)tRow[0] + ": the :1072 rule over the material heat() points");
+			assertEquals(tRow[3], tSpec.density(), (String)tRow[0] + ": the :1128-1136 1000·g formula");
+			assertEquals(1000, tSpec.viscosity(), (String)tRow[0] + ": the :1104 STATE_LIQUID viscosity");
+			assertEquals(tRow[4], tSpec.tint(), (String)tRow[0] + ": the material RGBa");
+			assertTrue(!tSpec.gas(), (String)tRow[0] + ": a liquid");
+		}
+		// the two createMolten rows — the :1077 walk (+ luminosity 10); Na3AlF6/AlF3 carry
+		// only MOLTEN tags upstream, so their .liquid() accessor resolves to the molten
+		// carrier (createMolten binds mLiquid, FL.java:1130 — the Chem:291-298 aluminium
+		// walk and the :103-106 mixer rows consume this face)
+		Object[][] tMoltens = {
+			{"aluminiumfluoride_molten", "Molten Aluminium Fluoride", 1560, 2703, 0xFFC8BEBE}, // mp 1560, g = Al+3F = 2.703088 (:1082)
+			{"cryolite_molten"         , "Molten Cryolite"          , 1285, 5621, 0xFFC8BEBE}, // mp 1285, g = 3Na+Al+6F = 5.621176 (:1142)
+		};
+		for (Object[] tRow : tMoltens) {
+			GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec((String)tRow[0]);
+			assertNotNull(tSpec, (String)tRow[0]);
+			assertEquals(tRow[1], tSpec.displayName(), (String)tRow[0] + ": the \"Molten \" + mNameLocal face");
+			assertEquals(tRow[2], tSpec.temperature(), (String)tRow[0] + ": the :1077 melting-point rule");
+			assertEquals(tRow[3], tSpec.density(), (String)tRow[0] + ": the :1128-1136 1000·g formula");
+			assertEquals(1000, tSpec.viscosity(), (String)tRow[0] + ": the STATE_LIQUID viscosity");
+			assertEquals(tRow[4], tSpec.tint(), (String)tRow[0] + ": the material RGBa");
+			assertTrue(!tSpec.gas(), (String)tRow[0] + ": a liquid");
+			assertEquals(10, tSpec.luminosity(), (String)tRow[0] + ": the :1077 .setLuminosity(10) literal");
+		}
+	}
+
+	/**
+	 * Task chem-fluids-unlock — the difference-set assertions (the 交卡门禁 ①): the
+	 * fluids the blocker lists named that ALREADY lived on the other tables are NOT
+	 * re-registered (zero duplicates), and the declared absences stay absent. The
+	 *Cream pair already maps to grcmilk_cream (FOOD_B1), pinkslime to the FOOD_B1
+	 * aqua row; Heavy_Reiker ("rc heavy water", FL.java:121) stays unregistered — the
+	 * RotaryCraft-compat alias behind the Chem:467 exists() gate, the same
+	 * faithful-absence class the b2a Reikygen ruling declared; BlackVitriol
+	 * (MT.java:1168) has zero consumers in the B2 loader files and stays pooled.
+	 */
+	@Test
+	public void theDifferenceSetStaysClean() {
+		// the already-mapped pair: zero re-registration
+		assertNull(GTFluids.chemicalSpec("cream"), "Cream already lives as the grcmilk_cream FOOD_B1 row — no chemical-table duplicate");
+		assertNotNull(GTFluids.foodB1Spec("grcmilk_cream"), "the Cream carrier stays the FOOD_B1 row (GTFluids.java:990 band)");
+		assertNull(GTFluids.chemicalSpec("pinkslime"), "pinkslime already lives as the FOOD_B1 aqua row — no chemical-table duplicate");
+		assertNull(GTFluids.simpleLiquidSpec("pinkslime"), "and not a simple-liquid row either");
+		assertNotNull(GTFluids.foodB1Spec("pinkslime"), "the pinkslime carrier stays the FOOD_B1 row");
+		// the declared faithful absences
+		assertNull(GTFluids.chemicalSpec("rc heavy water"), "Heavy_Reiker: the RC-compat alias the upstream Chem:467 exists() gate hides — faithful absence (the b2a Reikygen ruling)");
+		assertNull(GTFluids.simpleLiquidSpec("rc heavy water"), "no simple-liquid face either");
+		assertNull(GTFluids.chemicalSpec("blackvitriol"), "BlackVitriol: zero B2 loader consumers — stays pooled (the YAGNI ruling)");
+		// and the batch is 32 strong on the table (the census split above pins the legs)
+		assertEquals(32, IDS.size() - 48, "the batch census: 9 gases + 21 liquids + 2 moltens");
+	}
+
+	/**
+	 * Task chem-fluids-unlock — the material↔spec binding seam over the batch: the
+	 * internal-name convention (specOf = mNameInternal lowercased, + "_molten" for the
+	 * MOLTEN-tag-only pair) binds every material-walk row, round-tripping through
+	 * {@link GTFluids#materialOf}.
+	 */
+	@Test
+	public void b2BatchMaterialsRoundTripThroughTheSpecSeam() {
+		GTMaterialItems.initMaterials();
+		for (OreDictMaterial tGas : new OreDictMaterial[] {MT.H2O2, MT.HF, MT.HCl, MT.HNO3, MT.NO, MT.NO2, MT.SO2, MT.SO3, MT.UF6, MT.U235F6, MT.U238F6}) {
+			GTFluids.ChemicalFluidSpec tSpec = GTFluids.specOf(tGas, false);
+			assertNotNull(tSpec, tGas.mNameInternal + ": the gas/liquid binding");
+			assertSame(tGas, GTFluids.materialOf(tSpec), tGas.mNameInternal + ": the reverse leg");
+		}
+		assertEquals("sulfuricacid", GTFluids.specOf(MT.H2SO4, false).name());
+		assertEquals("bromine", GTFluids.specOf(MT.Br, false).name());
+		assertEquals("saltwater", GTFluids.specOf(MT.SaltWater, false).name());
+		assertEquals("saltedwater", GTFluids.specOf(MT.SaltedWater, false).name());
+		for (OreDictMaterial tMolten : new OreDictMaterial[] {MT.Na3AlF6, MT.AlF3}) {
+			GTFluids.ChemicalFluidSpec tSpec = GTFluids.specOf(tMolten, true);
+			assertNotNull(tSpec, tMolten.mNameInternal + ": the molten binding");
+			assertSame(tMolten, GTFluids.materialOf(tSpec), tMolten.mNameInternal + ": the reverse leg");
+		}
+		assertEquals("cryolite_molten", GTFluids.specOf(MT.Na3AlF6, true).name());
+		assertEquals("aluminiumfluoride_molten", GTFluids.specOf(MT.AlF3, true).name());
 	}
 
 	@Test

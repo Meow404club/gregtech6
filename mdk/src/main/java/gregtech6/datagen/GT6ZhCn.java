@@ -1142,6 +1142,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.wire_electric_1x");
 		addDirect("block.gt6.wire_electric_2x");
 		// fluids: the 21 remaining display names (dump anchors 柴油/蒸馏水/幻露 per the research card)
+		addDirect("fluid.gt6.brine"); // task chem-fluids-unlock — the S:fluid.brine=Brine dump face verbatim (tmp/gregtech.lang:114, untranslated upstream)
 		addDirect("fluid.gt6.cactuswater");
 		addDirect("fluid.gt6.cold_water");
 		addDirect("fluid.gt6.diesel");
@@ -1159,6 +1160,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("fluid.gt6.sap");
 		addDirect("fluid.gt6.seawater");
 		addDirect("fluid.gt6.spdew");
+		addDirect("fluid.gt6.spruceresin"); // task chem-fluids-unlock — no dump face, the 云杉树脂 hand row (the coffee 咖啡 precedent)
 		addDirect("fluid.gt6.steam");
 		addDirect("fluid.gt6.water_boiling");
 		addDirect("fluid.gt6.water_geothermal");

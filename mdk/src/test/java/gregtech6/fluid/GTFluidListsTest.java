@@ -99,8 +99,12 @@ public class GTFluidListsTest {
 				"propane", "butane", "propylene", "ethylene",
 				"chlorine",
 				"deuterium", "tritium", "helium3",
-				"netherair", "enderair", "aerotheum"),
-			GTFluidLists.GAS, "GAS = steam + natural_gas + the 19 gaseous chemical seeds + the 3 fusion isotopes + the 3 naming-parity gases");
+				"netherair", "enderair", "aerotheum",
+				"hydrogenfluoride", "hydrochloricacid",
+				"nitrogenmonoxide", "nitrogendioxide",
+				"sulfurdioxide", "sulfurtrioxide",
+				"uraniumhexafluoride", "uranium238hexafluoride", "uranium235hexafluoride"),
+			GTFluidLists.GAS, "GAS = steam + natural_gas + the 19 gaseous chemical seeds + the 3 fusion isotopes + the 3 naming-parity gases + the 9 chem-fluids-unlock blocker gases");
 		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("steam"), "the original seed rides");
 	}
 }

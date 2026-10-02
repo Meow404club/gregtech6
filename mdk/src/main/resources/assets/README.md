@@ -12248,3 +12248,24 @@ desertnova = the 沙漠新星 desert-orange nova). NOT byte-identical to upstrea
 placeholder, swap for a borrow the day a snapshot surfaces. sha256
 `657bf0063261eb4b558db556dfc2ff3a8aeff9d0e2946446cb1e5fd83378bea3` /
 `6df7307f062bfa12d2e60ad81a3b1d821ce69e2872236d32fb2d248eb909c88e`.
+
+## task chem-fluids-unlock (2026-09-30) — the B2 chemical-blocker fluid batch: zero
+## texture files, declared-tint ledger
+
+- NO borrows this card — 34 fluid rows (32 CHEMICAL_SPECS material-walk rows + the
+  brine/spruceresin simple-liquid pair), all fluid-only, all rendering through the
+  family vanilla-water layers over the row tint (the chemical-family initializeClient
+  convention). The upstream `assets/gregtech/textures/blocks/fluids/` directory
+  (686 pngs, audited) carries NO face for any of the 34 ids — the only hits are the
+  already-ported nitrofuel/nitrogenplasma — and the material-walk fluids upstream
+  render through the material BLOCK textures (`mTextureSetsBlock.get(
+  INDEX_BLOCK_MOLTEN/INDEX_BLOCK_GAS)`, FL.java:1072/:1077/:1080), not per-fluid pngs,
+  so there is nothing to borrow byte-identically.
+- Tint ledger (per row, the JetFuel/aqua port-owned-declared precedent where no
+  material anchor exists): the 32 chemical rows tint = the material RGBa verbatim
+  (MT.java upstream lines cited on each GTFluids row comment; e.g. bromine 80,10,10
+  MT.java:424, UF6 family 66,98,85 MT.java:1181-1185, the vitriol family MT.java
+  :1169-1177). The 2 honest-default rows (brine/spruceresin — external-mod fluid
+  names with no GT6 FL.create and no material) declare port-owned tints: brine
+  0xFFC8D8D0 pale salt grey-green, spruceresin 0xFFD8A848 amber resin (the
+  sap/maplesap amber family).

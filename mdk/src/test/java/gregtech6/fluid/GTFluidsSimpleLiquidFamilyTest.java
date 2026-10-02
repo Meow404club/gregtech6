@@ -15,9 +15,9 @@ import gregtech6.recipes.GT6RecipesDrying;
 import gregtech6.tileentity.GTOfflineTestBase;
 
 /**
- * Simple-liquid fluid family offline tests (task drying-rows-backfill-2 — the
+ * Simple-liquid fluid family offline tests (task drying-rows-backfill-2 + chem-fluids-unlock — the
  * registration-row assertions against the DECLARED values, the GTFluidsAquaFamilyTest
- * shape): two {@link GTFluids.AquaFluidSpec} rows on the SECOND table — seawater
+ * shape): four {@link GTFluids.AquaFluidSpec} rows on the SECOND table — seawater
  * (FL.java:125, the Ocean shorthand) and waterdirty (FL.java:127, the Dirty_Water
  * shorthand). Both carry ONLY the SIMPLE+LIQUID flags upstream — no FOOD/WATER/BATH —
  * which is exactly why the architect ruling keeps them OUT of {@link GTFluids#AQUA_SPECS}
@@ -31,13 +31,42 @@ import gregtech6.tileentity.GTOfflineTestBase;
  */
 public class GTFluidsSimpleLiquidFamilyTest extends GTOfflineTestBase {
 
-	/** The two ids in declaration order — the card list, the GT6RecipesDrying pinned spellings. */
-	private static final List<String> IDS = List.of("seawater", "waterdirty");
+	/** The four ids in declaration order — the p19 pair plus the chem-fluids-unlock blocker pair, the GT6RecipesDrying pinned spellings. */
+	private static final List<String> IDS = List.of("seawater", "waterdirty", "brine", "spruceresin");
 
 	@Test
-	public void tableCarriesTwoRowsInDeclarationOrder() {
+	public void tableCarriesTheRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.SIMPLE_LIQUID_SPECS.stream().map(GTFluids.AquaFluidSpec::name).toList());
 		assertEquals(IDS.size(), GTFluids.SIMPLE_LIQUID_SPECS.size());
+	}
+
+	/**
+	 * Task chem-fluids-unlock — the two B2 chemical-blocker rows: the same no-FL.create
+	 * honest-default shape as the p19 pair (external-mod fluid names, FL.java:131/:245 —
+	 * the FL fields only list them in the FluidsGT sets). brine carries the untranslated
+	 * dump face verbatim ("Brine", tmp/gregtech.lang:114); spruceresin has no dump face —
+	 * the declared display. The exists() gates over them (the Chem:323/:550 brine rows,
+	 * the Loader_Recipes_Woods.java:127-128 spruceresin Squeezer rows and the :227
+	 * Distillery row) become live semantics over the registered fluids (the sap :654
+	 * precedent). Tints are port-owned declared values (the seawater precedent).
+	 */
+	@Test
+	public void b2BlockerPairCarriesTheHonestDefaults() {
+		GTFluids.AquaFluidSpec tBrine = GTFluids.simpleLiquidSpec("brine");
+		assertNotNull(tBrine);
+		assertEquals(300, tBrine.temperature(), "FluidType.java:925 default — the honest default, not fabricated");
+		assertEquals("Brine", tBrine.displayName(), "the untranslated dump face verbatim (tmp/gregtech.lang:114)");
+		assertEquals(0xFFC8D8D0, tBrine.tint(), "the declared pale salt grey-green (no upstream texture exists to borrow)");
+
+		GTFluids.AquaFluidSpec tSpruce = GTFluids.simpleLiquidSpec("spruceresin");
+		assertNotNull(tSpruce);
+		assertEquals(300, tSpruce.temperature(), "FluidType.java:925 default — the honest default, not fabricated");
+		assertEquals("Spruce Resin", tSpruce.displayName(), "the declared display (the OD name spruceresin spelled out)");
+		assertEquals(0xFFD8A848, tSpruce.tint(), "the declared amber resin (the sap/maplesap amber family)");
+
+		// the honest-default honesty: no material-walk duplicate on the chemical table
+		assertNull(GTFluids.chemicalSpec("brine"), "brine lives on the simple-liquid table only");
+		assertNull(GTFluids.chemicalSpec("spruceresin"), "spruceresin lives on the simple-liquid table only");
 	}
 
 	/** The cross-family contract: the aqua table is UNCHANGED by the second table (the exact-order aqua assertion stays green). */

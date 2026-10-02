@@ -1194,6 +1194,15 @@ HAND_TRANSLATIONS = {
     "item.gt6.food_ribeyesteak_raw.tooltip": ("从大型动物上掉落", "hand"),
     "item.gt6.food_ribeyesteak_cooked": ("烤肋眼牛排", "hand"),
     "item.gt6.food_ribeyesteak_cooked.tooltip": ("它正盯着你.......", "hand"),
+    # seat-XVIII review fix (2026-10-02): the cbc-6 two-flower rows landed on main with the
+    # tsv direct band but WITHOUT these py hand rows — the 4-row DRIFT gen_zhcn_ref --check
+    # flags (py 3047 vs tsv 3051 on main a686093d4). Values verbatim from the dump
+    # gt.multiitem.food.12010/12011 (tmp/gregtech.lang:8809-8812), the same faces the
+    # GT6ZhCn datagen hand layer emits.
+    "item.gt6.food_cerublossom": ("暗影花", "hand"),
+    "item.gt6.food_cerublossom.tooltip": ("用于膜法", "hand"),
+    "item.gt6.food_desertnova": ("沙漠新星", "hand"),
+    "item.gt6.food_desertnova.tooltip": ("用于膜法", "hand"),
     "item.gt6.food_dogmeat_raw": ("狗肉", "hand"),
     "item.gt6.food_dogmeat_raw.tooltip": ("你的[慈悲]去哪里了?", "hand"),
     "item.gt6.food_dogmeat_cooked": ("烤狗肉", "hand"),
@@ -2341,6 +2350,7 @@ BLOCK_BACKFILL = {
 # research card; the lowercase code keys (mnwtr/spdew/waterdirty) follow their en
 # semantics per the task-card ruling).
 FLUID_BACKFILL = {
+    "fluid.gt6.brine": "Brine",            # task chem-fluids-unlock — the S:fluid.brine=Brine dump face verbatim (:114, untranslated upstream)
     "fluid.gt6.cactuswater": "仙人掌汁",
     "fluid.gt6.cold_water": "冷水",
     "fluid.gt6.diesel": "柴油",
@@ -2358,6 +2368,7 @@ FLUID_BACKFILL = {
     "fluid.gt6.sap": "树液",
     "fluid.gt6.seawater": "海水",
     "fluid.gt6.spdew": "幻露",             # en semantics: Spectral Dew (research-card anchor)
+    "fluid.gt6.spruceresin": "云杉树脂",   # task chem-fluids-unlock — no dump face, the hand row (the coffee 咖啡 precedent)
     "fluid.gt6.steam": "蒸汽",
     "fluid.gt6.water_boiling": "沸水",
     "fluid.gt6.water_geothermal": "温泉水",
@@ -3689,6 +3700,45 @@ ROW_MISC_BACKFILL = {
 # census found port-absent (state research.p37-fluids-naming-census). Keys are the port
 # snake/suffix ids (GTFluids NAMING_FLUID_SPECS — "molten hsla" folds its space,
 # molten.X turns into the X_molten suffix form, "UUAmplifier" lowercases).
+CHEM_FLUID_BACKFILL = {
+    # task chem-fluids-unlock — the 32 B2 chemical-blocker rows, dump faces verbatim
+    # (tmp/gregtech.lang S:fluid.* rows cited per line; the two special rows: brine
+    # rides its untranslated dump face verbatim, spruceresin has no dump face and is
+    # the hand row 云杉树脂 per the coffee 咖啡 precedent)
+    "fluid.gt6.aquaregia": "王水",                        # S:fluid.aquaregia :48
+    "fluid.gt6.aluminiumfluoride_molten": "熔融氟化铝",    # S:fluid.molten.aluminiumfluoride :432
+    "fluid.gt6.bluevitriol": "五水合硫酸铜",              # S:fluid.bluevitriol :113
+    "fluid.gt6.bromine": "溴",                            # S:fluid.bromine :118
+    "fluid.gt6.chloroauricacid": "氯金酸",                # S:fluid.chloroauricacid :169
+    "fluid.gt6.chloroplatinicacid": "氯铂酸",             # S:fluid.chloroplatinicacid :174
+    "fluid.gt6.cyanvitriol": "硫酸镍",                    # S:fluid.cyanvitriol :204
+    "fluid.gt6.disulfuricacid": "焦硫酸",                 # S:fluid.disulfuricacid :226
+    "fluid.gt6.grayvitriol": "硫酸锰",                    # S:fluid.grayvitriol :320
+    "fluid.gt6.greenvitriol": "硫酸亚铁",                 # S:fluid.greenvitriol :326
+    "fluid.gt6.hexafluorosilicicacid": "六氟硅酸",        # S:fluid.hexafluorosilicicacid :334
+    "fluid.gt6.hydrochloricacid": "盐酸",                 # S:fluid.hydrochloricacid :354
+    "fluid.gt6.hydrogenfluoride": "氟化氢",               # S:fluid.hydrogenfluoride :356
+    "fluid.gt6.hydrogenperoxide": "过氧化氢",             # S:fluid.hydrogenperoxide :357
+    "fluid.gt6.martianvitriol": "硫酸铁",                 # S:fluid.martianvitriol :403
+    "fluid.gt6.nitricacid": "硝酸",                       # S:fluid.nitricacid :654
+    "fluid.gt6.nitrogendioxide": "二氧化氮",              # S:fluid.nitrogendioxide :659
+    "fluid.gt6.nitrogenmonoxide": "一氧化氮",             # S:fluid.nitrogenmonoxide :660
+    "fluid.gt6.pinkvitriol": "硫酸镁",                    # S:fluid.pinkvitriol :685
+    "fluid.gt6.redvitriol": "硫酸钴",                     # S:fluid.redvitriol :838
+    "fluid.gt6.saltwater": "盐水",                        # S:fluid.saltwater :849
+    "fluid.gt6.saltedwater": "盐水",                      # S:fluid.saltedwater :848
+    "fluid.gt6.stannicchloride": "四氯化锡",              # S:fluid.stannicchloride :870
+    "fluid.gt6.sulfurdioxide": "二氧化硫",                # S:fluid.sulfurdioxide :879
+    "fluid.gt6.sulfuricacid": "硫酸",                     # S:fluid.sulfuricacid :881
+    "fluid.gt6.sulfurtrioxide": "三氧化硫",               # S:fluid.sulfurtrioxide :882
+    "fluid.gt6.uraniumhexafluoride": "六氟化铀",          # S:fluid.uraniumhexafluoride :902
+    "fluid.gt6.uranium235hexafluoride": "六氟化铀-235",   # S:fluid.uranium235hexafluoride :899
+    "fluid.gt6.uranium238hexafluoride": "六氟化铀-238",   # S:fluid.uranium238hexafluoride :900
+    "fluid.gt6.vitriolofclay": "硫酸铝",                  # S:fluid.vitriolofclay :910
+    "fluid.gt6.whitevitriol": "硫酸锌",                   # S:fluid.whitevitriol :917
+    "fluid.gt6.cryolite_molten": "熔融冰晶石",            # S:fluid.molten.cryolite :478
+}
+
 NAMING_FLUID_BACKFILL = {
     "fluid.gt6.netherair": "下界空气",              # dump S:fluid.netherair tmp/gregtech.lang:652
     "fluid.gt6.enderair": "末地空气",               # S:fluid.enderair :281
@@ -3725,7 +3775,7 @@ NAMING_FLUID_BACKFILL = {
     "fluid.gt6.mercury": "汞",                      # S:fluid.mercury :411
     "fluid.gt6.sluicejuice": "废水",                # S:fluid.sluicejuice :858
 }
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL):
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")

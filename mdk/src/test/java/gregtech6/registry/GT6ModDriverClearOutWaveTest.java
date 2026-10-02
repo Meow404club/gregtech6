@@ -207,12 +207,13 @@ public class GT6ModDriverClearOutWaveTest {
 
     @Test
     public void fluidDataFaceThreeAnnotatedRowsAndNoUnannotatedPrimaryRow() {
-        // 1. the annotation census: exactly three material-fluid rows carry a domain (mdh-3).
+        // 1. the annotation census: exactly six material-fluid rows carry a domain (mdh-3).
         Map<String, String> tAnnotated = new HashMap<>();
         for (GTFluids.ChemicalFluidSpec tSpec : allChemicalSpecs())
             if (tSpec.driverDomain() != null) tAnnotated.put(tSpec.name(), tSpec.driverDomain());
-        assertEquals(Map.of("chocolate_molten", MT.MD.HaC.mID, "waxplant_molten", MT.MD.HaC.mID, "ic2uumatter", MT.MD.IC2.mID),
-                tAnnotated, "the mdh-3 fluid annotation census (the three PRIMARY material-fluid faces)");
+        assertEquals(Map.of("chocolate_molten", MT.MD.HaC.mID, "waxplant_molten", MT.MD.HaC.mID, "ic2uumatter", MT.MD.IC2.mID,
+                        "hydrogenperoxide", MT.MD.IHL.mID, "sulfuricacid", MT.MD.FZ.mID, "aquaregia", MT.MD.FZ.mID),
+                tAnnotated, "the mdh-3 fluid annotation census (the six PRIMARY material-fluid faces; +3 the chem-blocker batch, task chem-fluids-unlock review fix — H2O2/H2SO4/AquaRegia are IHL/FZ/FZ PRIMARY per the atlas, the mdh-3 hide-with-owner law rides)");
         for (GTFluids.AquaFluidSpec tSpec : allAquaSpecs())
             assertNull(tSpec.driverDomain(), "no aqua-family row is driver-annotated: " + tSpec.name());
         for (GTFluids.EngineFluidSpec tSpec : GTFluids.ENGINE_SPECS)
