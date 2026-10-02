@@ -2510,6 +2510,102 @@ direct	item.gt6.diablosauce_strong	老干爹辣椒酱	hand
 direct	item.gt6.diabolosauce	恶魔辣酱	hand
 direct	item.gt6.dragonblood	龙血	hand
 direct	item.gt6.dressing	调料	hand
+direct	item.gt6.dye_chemical_black	罐装化学染料	hand
+direct	item.gt6.dye_chemical_black.tooltip	颜色: 黑色	hand
+direct	item.gt6.dye_chemical_blue	罐装化学染料	hand
+direct	item.gt6.dye_chemical_blue.tooltip	颜色: 蓝色	hand
+direct	item.gt6.dye_chemical_brown	罐装化学染料	hand
+direct	item.gt6.dye_chemical_brown.tooltip	颜色: 褐色	hand
+direct	item.gt6.dye_chemical_cyan	罐装化学染料	hand
+direct	item.gt6.dye_chemical_cyan.tooltip	颜色: 青色	hand
+direct	item.gt6.dye_chemical_gray	罐装化学染料	hand
+direct	item.gt6.dye_chemical_gray.tooltip	颜色: 灰色	hand
+direct	item.gt6.dye_chemical_green	罐装化学染料	hand
+direct	item.gt6.dye_chemical_green.tooltip	颜色: 绿色	hand
+direct	item.gt6.dye_chemical_light_blue	罐装化学染料	hand
+direct	item.gt6.dye_chemical_light_blue.tooltip	颜色: 淡蓝色	hand
+direct	item.gt6.dye_chemical_light_gray	罐装化学染料	hand
+direct	item.gt6.dye_chemical_light_gray.tooltip	颜色: 淡灰色	hand
+direct	item.gt6.dye_chemical_lime	罐装化学染料	hand
+direct	item.gt6.dye_chemical_lime.tooltip	颜色: 黄绿色	hand
+direct	item.gt6.dye_chemical_magenta	罐装化学染料	hand
+direct	item.gt6.dye_chemical_magenta.tooltip	颜色: 品红	hand
+direct	item.gt6.dye_chemical_orange	罐装化学染料	hand
+direct	item.gt6.dye_chemical_orange.tooltip	颜色: 橙色	hand
+direct	item.gt6.dye_chemical_pink	罐装化学染料	hand
+direct	item.gt6.dye_chemical_pink.tooltip	颜色: 粉色	hand
+direct	item.gt6.dye_chemical_purple	罐装化学染料	hand
+direct	item.gt6.dye_chemical_purple.tooltip	颜色: 紫色	hand
+direct	item.gt6.dye_chemical_red	罐装化学染料	hand
+direct	item.gt6.dye_chemical_red.tooltip	颜色: 红色	hand
+direct	item.gt6.dye_chemical_white	罐装化学染料	hand
+direct	item.gt6.dye_chemical_white.tooltip	颜色: 白色	hand
+direct	item.gt6.dye_chemical_yellow	罐装化学染料	hand
+direct	item.gt6.dye_chemical_yellow.tooltip	颜色: 黄色	hand
+direct	item.gt6.dye_flower_black	罐装植物染料	hand
+direct	item.gt6.dye_flower_black.tooltip	颜色: 黑色	hand
+direct	item.gt6.dye_flower_blue	罐装植物染料	hand
+direct	item.gt6.dye_flower_blue.tooltip	颜色: 蓝色	hand
+direct	item.gt6.dye_flower_brown	罐装植物染料	hand
+direct	item.gt6.dye_flower_brown.tooltip	颜色: 褐色	hand
+direct	item.gt6.dye_flower_cyan	罐装植物染料	hand
+direct	item.gt6.dye_flower_cyan.tooltip	颜色: 青色	hand
+direct	item.gt6.dye_flower_gray	罐装植物染料	hand
+direct	item.gt6.dye_flower_gray.tooltip	颜色: 灰色	hand
+direct	item.gt6.dye_flower_green	罐装植物染料	hand
+direct	item.gt6.dye_flower_green.tooltip	颜色: 绿色	hand
+direct	item.gt6.dye_flower_light_blue	罐装植物染料	hand
+direct	item.gt6.dye_flower_light_blue.tooltip	颜色: 淡蓝色	hand
+direct	item.gt6.dye_flower_light_gray	罐装植物染料	hand
+direct	item.gt6.dye_flower_light_gray.tooltip	颜色: 淡灰色	hand
+direct	item.gt6.dye_flower_lime	罐装植物染料	hand
+direct	item.gt6.dye_flower_lime.tooltip	颜色: 黄绿色	hand
+direct	item.gt6.dye_flower_magenta	罐装植物染料	hand
+direct	item.gt6.dye_flower_magenta.tooltip	颜色: 品红	hand
+direct	item.gt6.dye_flower_orange	罐装植物染料	hand
+direct	item.gt6.dye_flower_orange.tooltip	颜色: 橙色	hand
+direct	item.gt6.dye_flower_pink	罐装植物染料	hand
+direct	item.gt6.dye_flower_pink.tooltip	颜色: 粉色	hand
+direct	item.gt6.dye_flower_purple	罐装植物染料	hand
+direct	item.gt6.dye_flower_purple.tooltip	颜色: 紫色	hand
+direct	item.gt6.dye_flower_red	罐装植物染料	hand
+direct	item.gt6.dye_flower_red.tooltip	颜色: 红色	hand
+direct	item.gt6.dye_flower_white	罐装植物染料	hand
+direct	item.gt6.dye_flower_white.tooltip	颜色: 白色	hand
+direct	item.gt6.dye_flower_yellow	罐装植物染料	hand
+direct	item.gt6.dye_flower_yellow.tooltip	颜色: 黄色	hand
+direct	item.gt6.dye_watermixed_black	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_black.tooltip	颜色: 黑色	hand
+direct	item.gt6.dye_watermixed_blue	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_blue.tooltip	颜色: 蓝色	hand
+direct	item.gt6.dye_watermixed_brown	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_brown.tooltip	颜色: 褐色	hand
+direct	item.gt6.dye_watermixed_cyan	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_cyan.tooltip	颜色: 青色	hand
+direct	item.gt6.dye_watermixed_gray	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_gray.tooltip	颜色: 灰色	hand
+direct	item.gt6.dye_watermixed_green	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_green.tooltip	颜色: 绿色	hand
+direct	item.gt6.dye_watermixed_light_blue	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_light_blue.tooltip	颜色: 淡蓝色	hand
+direct	item.gt6.dye_watermixed_light_gray	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_light_gray.tooltip	颜色: 淡灰色	hand
+direct	item.gt6.dye_watermixed_lime	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_lime.tooltip	颜色: 黄绿色	hand
+direct	item.gt6.dye_watermixed_magenta	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_magenta.tooltip	颜色: 品红	hand
+direct	item.gt6.dye_watermixed_orange	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_orange.tooltip	颜色: 橙色	hand
+direct	item.gt6.dye_watermixed_pink	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_pink.tooltip	颜色: 粉色	hand
+direct	item.gt6.dye_watermixed_purple	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_purple.tooltip	颜色: 紫色	hand
+direct	item.gt6.dye_watermixed_red	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_red.tooltip	颜色: 红色	hand
+direct	item.gt6.dye_watermixed_white	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_white.tooltip	颜色: 白色	hand
+direct	item.gt6.dye_watermixed_yellow	罐装水性染料	hand
+direct	item.gt6.dye_watermixed_yellow.tooltip	颜色: 黄色	hand
 direct	item.gt6.elderberrysmoothie	接骨木冰沙	hand
 direct	item.gt6.empty_reactor_rod	空燃料棒	hand
 direct	item.gt6.energium_cyan_ev	青色能量水晶 (T4)	hand
