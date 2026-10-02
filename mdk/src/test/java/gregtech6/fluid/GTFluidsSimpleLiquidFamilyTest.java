@@ -31,8 +31,8 @@ import gregtech6.tileentity.GTOfflineTestBase;
  */
 public class GTFluidsSimpleLiquidFamilyTest extends GTOfflineTestBase {
 
-	/** The four ids in declaration order — the p19 pair plus the chem-fluids-unlock blocker pair, the GT6RecipesDrying pinned spellings. */
-	private static final List<String> IDS = List.of("seawater", "waterdirty", "brine", "spruceresin");
+	/** The seven ids in declaration order — the p19 pair, the chem-fluids-unlock blocker pair, and the btl-fluids-prereq bottle trio, the GT6RecipesDrying pinned spellings. */
+	private static final List<String> IDS = List.of("seawater", "waterdirty", "brine", "spruceresin", "swampwater", "stagnantwater", "tar");
 
 	@Test
 	public void tableCarriesTheRowsInDeclarationOrder() {
@@ -109,6 +109,7 @@ public class GTFluidsSimpleLiquidFamilyTest extends GTOfflineTestBase {
 		// and the isolation is bidirectional: the new ids are NOT aqua rows either
 		assertNull(GTFluids.aquaSpec("seawater"), "seawater lives on the SECOND table only (the architect ruling)");
 		assertNull(GTFluids.aquaSpec("waterdirty"), "waterdirty lives on the SECOND table only");
+		assertNull(GTFluids.aquaSpec("tar"), "tar lives on the SECOND table only (task btl-fluids-prereq)");
 	}
 
 	/** The registration shape: source = the id, flowing = id + "_flowing" (the four-DR template). */
