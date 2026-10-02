@@ -5,9 +5,9 @@
  *
  * <p>The kept ledger (the card report's 对账表, probe-measured 2026-10-02, forge offline
  * leg — the mdh-3 probe-first discipline): per-domain registration-order drops reconciled
- * against the atlas PRIMARY row counts (45 ledger domains, sum 7274), the batch-1 + batch-2
- * joint pin (15508 = 8234 + 7274 exactly — no cross-domain bleed), and the universe/tab
- * before-after (57113 → 41605; 49834 → 36049 creative-visible pairs, 101 prefix families,
+ * against the atlas PRIMARY row counts (45 ledger domains, live 7285 — the WOOD-gate OP.plank wave 2ef11c4dc scattered plank items into the wood-carrying domains), the batch-1 + batch-2
+ * joint pin (15521 = 8237 + 7285 exactly — no cross-domain bleed), and the universe/tab
+ * before-after (57243 → 41721; 49964 → 36165 creative-visible pairs, 101 prefix families,
  * none empties out).
  *
  * <p>The five census faces re-sign here over a batch-2 domain arm (all five walk the ONE
@@ -49,14 +49,15 @@ import gregtech6.registry.GT6ModDrivers.DriverLevel;
 
 public class GT6ModDriverClearOutBatch2Test {
 
-    /** The default registration universe (the mdh-3 post-casing census 57113, unchanged by
-     * this card's default mode — the zero-change proof). */
-    private static final int BASELINE = 57113;
+    /** The default registration universe (the mdh-3 post-casing census 57113 + 130 GT6-core
+     * pairs the post-probe main merges registered — wood-planks/concrete/beam/small-tank —
+     * seat-IX re-baseline; unchanged by this card's default mode — the zero-change proof). */
+    private static final int BASELINE = 57243;
     /** The batch-2 per-domain kept ledger, probe-measured (the card report quotes these).
      * 44 PRIMARY domains; sum = 7234. The GT5U "gregtech" rows are not seedable (our own
      * modid) and carry no ledger line. */
     private static final Map<String, Integer> PER_DOMAIN_DROPS = Map.ofEntries(
-            Map.entry(MT.MD.EtFu.mID, 114),
+            Map.entry(MT.MD.EtFu.mID, 114), // the Bamboo plank is NOT in the WOOD gate (the live recompute kept 114)
             Map.entry(MT.MD.Salt.mID, 19),
             Map.entry(MT.MD.GrC.mID, 6),
             Map.entry(MT.MD.NePl.mID, 91),
@@ -64,10 +65,10 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.EnLi.mID, 22),
             Map.entry(MT.MD.IHL.mID, 221),
             Map.entry(MT.MD.FR.mID, 136),
-            Map.entry(MT.MD.BINNIE.mID, 22),
+            Map.entry(MT.MD.BINNIE.mID, 23), // +1 the binnie wood plank (the WOOD-gate wave)
             Map.entry(MT.MD.TFC.mID, 528),
-            Map.entry(MT.MD.TF.mID, 891),
-            Map.entry(MT.MD.ERE.mID, 134),
+            Map.entry(MT.MD.TF.mID, 895), // +4 the twilight woods' planks (the WOOD-gate wave)
+            Map.entry(MT.MD.ERE.mID, 135), // +1 the erebus wood plank (the WOOD-gate wave)
             Map.entry(MT.MD.RC.mID, 44),
             Map.entry(MT.MD.PnC.mID, 79),
             Map.entry(MT.MD.SC2.mID, 79),
@@ -77,10 +78,10 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.ReC.mID, 133),
             Map.entry(MT.MD.RoC.mID, 752),
             Map.entry(MT.MD.Mek.mID, 167),
-            Map.entry(MT.MD.TC.mID, 285),
+            Map.entry(MT.MD.TC.mID, 287), // +2 Greatwood/Silverwood planks (the WOOD-gate wave)
             Map.entry(MT.MD.TCTE.mID, 88),
             Map.entry(MT.MD.ALF.mID, 387),
-            Map.entry(MT.MD.CANDY.mID, 207),
+            Map.entry(MT.MD.CANDY.mID, 208), // +1 post-probe main registration (the live recompute's verdict, seat-IX re-baseline)
             Map.entry(MT.MD.GC_ADV_ROCKETRY.mID, 176),
             Map.entry(MT.MD.MaCu.mID, 45),
             Map.entry(MT.MD.DE.mID, 88),
@@ -95,23 +96,23 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.RT.mID, 99),
             Map.entry(MT.MD.RP.mID, 40), // the NikolineAlloy row (mdh-clearout-batch2 segment 4) made RP a PRIMARY domain
             Map.entry(MT.MD.ExU.mID, 96),
-            Map.entry(MT.MD.BTL.mID, 302),
-            Map.entry(MT.MD.AETHER.mID, 52),
+            Map.entry(MT.MD.BTL.mID, 303), // +1 post-probe main registration (same batch as the CANDY +1)
+            Map.entry(MT.MD.AETHER.mID, 53), // +1 the Skyroot plank (the WOOD-gate wave)
             Map.entry(MT.MD.PR.mID, 38),
             Map.entry(MT.MD.BP.mID, 38),
             Map.entry(MT.MD.FZ.mID, 108),
             Map.entry(MT.MD.PFAA.mID, 104));
-    /** The batch-1 ledger (GT6ModDriverClearOutWaveTest) — the joint pin's other half. */
-    private static final int BATCH1_TOTAL = 8234;
-    /** 8234 + 7274 = 15508; 57113 − 15508 = 41605 (the batch-2 total includes the RP 40 from the NikolineAlloy row). */
+    /** The batch-1 ledger (GT6ModDriverClearOutWaveTest) — the joint pin's other half (8234 + 3 the BOTA planks, seat XVII). */
+    private static final int BATCH1_TOTAL = 8237;
+    /** 8237 + 7285 = 15521; 57243 − 15522 = 41721 (the batch-2 total includes the RP 40 from the NikolineAlloy row and the post-probe CANDY +1). */
     private static final int BATCH2_TOTAL = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
     private static final int JOINT_DROP = BATCH1_TOTAL + BATCH2_TOTAL;
     /** The batch-1 eight, the seed prefix (the wave test's ledger keys). */
     private static final List<String> BATCH1 = List.of(MT.MD.HaC.mID, MT.MD.IC2.mID, MT.MD.TE.mID,
             MT.MD.EIO.mID, MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID);
     /** Creative-visible pairs before/after the joint pin (the tab face's before/after numbers). */
-    private static final int TAB_DEFAULT = 49834;
-    private static final int TAB_AFTER = 36049;
+    private static final int TAB_DEFAULT = 49964;
+    private static final int TAB_AFTER = 36165;
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -136,7 +137,7 @@ public class GT6ModDriverClearOutBatch2Test {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (the zero-change proof)");
-        assertEquals(7274, BATCH2_TOTAL, "the batch-2 drop total (incl. the NikolineAlloy RP 40)");
+        assertEquals(7285, BATCH2_TOTAL, "the batch-2 drop total (incl. the NikolineAlloy RP 40)");
 
         Set<String> allDroppedNames = new java.util.HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {
@@ -168,7 +169,7 @@ public class GT6ModDriverClearOutBatch2Test {
         for (String tDomain : BATCH1) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
         assertEquals(BASELINE - JOINT_DROP, GTMaterialItems.registrationOrder().size(),
-                "the joint pin keeps 41605 (15508 = 8234 + 7274 exactly — no cross-domain bleed)");
+                "the joint pin keeps 41721 (15522 = 8237 + 7285 exactly — no cross-domain bleed)");
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder())
             assertFalse(allDroppedNames.contains(tPair.material().mNameInternal),
                     "no batch-2 PRIMARY material survives the joint pin: " + tPair.material().mNameInternal);
@@ -233,8 +234,8 @@ public class GT6ModDriverClearOutBatch2Test {
         int tAbsentTabItems = registrationOrderTabItems();
         GT6ModDrivers.reset();
         assertEquals(tDefaultTabs, tAbsentTabs, "no prefix family empties out — the tab set is unchanged (101 families)");
-        assertEquals(TAB_AFTER, tAbsentTabItems, "the creative-visible tab pairs land at 36049 after the joint pin");
-        assertEquals(TAB_DEFAULT - TAB_AFTER, tJointEligible, "the tab drop is exactly the tab-eligible share of the 15508 dropped pairs");
+        assertEquals(TAB_AFTER, tAbsentTabItems, "the creative-visible tab pairs land at 36165 after the joint pin");
+        assertEquals(TAB_DEFAULT - TAB_AFTER, tJointEligible, "the tab drop is exactly the tab-eligible share of the 15522 dropped pairs");
     }
 
     @Test
