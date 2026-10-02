@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_rib_cooked": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gt6:food_rib_cooked"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:bake_rib_bbq"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_rib_cooked",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:bake_rib_bbq"
+    ]
+  },
+  "sends_telemetry_event": false
+}

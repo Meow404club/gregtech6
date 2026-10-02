@@ -2295,6 +2295,16 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_cerublossom.tooltip"); // dump food.12010.tooltip 用于膜法
 		addDirect("item.gt6.food_desertnova"); // dump food.12011 沙漠新星
 		addDirect("item.gt6.food_desertnova.tooltip"); // dump food.12011.tooltip 用于膜法
+		// task food-bottles-min — 瓶域最小 4 项+瓶 tab: 三瓶 dump gt.multiitem.bottles.{3101,805,1101} 逐字
+		// (MultiItemBottles.java:257/:111/:139); 空瓶=OP.bottle.dat(MT.Empty) 组合词 空+瓶
+		// (dump gt.material.Empty=空 :4643 + oredict.prefix.suffix.bottle=瓶 :91217); tab=dump
+		// itemGroup.gt.multiitem.bottles:17954 格雷牌饮料 逐字 (upstream "GregTech: Bottles",
+		// MultiItemBottles.java:40); 三瓶 desc=dump 空串行=双侧零键
+		addDirect("item.gt6.bottle_empty"); // 空+瓶 组合词
+		addDirect("item.gt6.food_ketchup"); // dump bottles.3101 番茄酱
+		addDirect("item.gt6.food_barbecuesauce"); // dump bottles.805 烧烤酱
+		addDirect("item.gt6.food_heavycream"); // dump bottles.1101 鲜奶油
+		addDirect("itemGroup.gt6.bottles"); // dump itemGroup.gt.multiitem.bottles:17954 格雷牌饮料
 		addDirect("item.gt6.bending_cylinder_small"); // task food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
 		addDirect("item.gt6.pickaxe"); // task w5-t1-dig-six — 镐 (dump tagprefix tool_head_pickaxe 镐头 :895, minus 头)
 		addDirect("item.gt6.pickaxe_gem"); // 镶尖镐 (dump tagprefix tool_head_pickaxe_gem 镶尖镐头 :896)

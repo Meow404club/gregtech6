@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_rib_cooked"
+    },
+    {
+      "item": "gt6:food_barbecuesauce"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:food_rib_bbq"
+  }
+}

@@ -2270,6 +2270,7 @@ direct	item.gt6.blutonium_fuel_rod	蓝钚燃料棒	hand
 direct	item.gt6.book_loot_guide	布满灰尘的指南书	hand
 direct	item.gt6.book_loot_guide.tooltip	战利品：某本随机手册	hand
 direct	item.gt6.book_loot_guide.tooltip_loot	右键方块以开启	hand
+direct	item.gt6.bottle_empty	空瓶	hand
 direct	item.gt6.branch_cutter	修枝剪	hand
 direct	item.gt6.builder_wand	建筑之杖	hand
 direct	item.gt6.butchery_knife	屠宰刀	hand
@@ -2494,6 +2495,7 @@ direct	item.gt6.food_banana	香蕉	hand
 direct	item.gt6.food_banana.tooltip	也可以用来当枪使	hand
 direct	item.gt6.food_banana_sliced	香蕉片	hand
 direct	item.gt6.food_banana_sliced.tooltip	小黄人的食物	hand
+direct	item.gt6.food_barbecuesauce	烧烤酱	hand
 direct	item.gt6.food_blackberry	黑莓	hand
 direct	item.gt6.food_blueberry	蓝莓	hand
 direct	item.gt6.food_bread_raw	生面团 (面包)	hand
@@ -2694,10 +2696,12 @@ direct	item.gt6.food_ham_raw.tooltip	会从猪身上掉落	hand
 direct	item.gt6.food_ham_slice_cooked	熟的火腿片	hand
 direct	item.gt6.food_ham_slice_raw	生的火腿片	hand
 direct	item.gt6.food_hazelnut	榛子	hand
+direct	item.gt6.food_heavycream	鲜奶油	hand
 direct	item.gt6.food_horse_cooked	烤马肉	hand
 direct	item.gt6.food_horse_raw	马肉	hand
 direct	item.gt6.food_ice_cream	冰淇淋	hand
 direct	item.gt6.food_ice_cream.tooltip	牛奶基本款意式冰淇淋	hand
+direct	item.gt6.food_ketchup	番茄酱	hand
 direct	item.gt6.food_large_sandwich_bacon	大型培根三明治	hand
 direct	item.gt6.food_large_sandwich_bacon.tooltip	只为真男人!(女汉子也行)	hand
 direct	item.gt6.food_large_sandwich_cheese	大型奶酪三明治	hand
@@ -3094,6 +3098,7 @@ direct	item.gt6.zpm	零点模块 (ZPM)	hand
 direct	itemGroup.gt6.bee	蜜蜂	hand
 direct	itemGroup.gt6.billet	坯料	hand
 direct	itemGroup.gt6.books	说明书	hand
+direct	itemGroup.gt6.bottles	格雷牌饮料	hand
 direct	itemGroup.gt6.chests	箱子	hand
 direct	itemGroup.gt6.electric_wires	导线	hand
 direct	itemGroup.gt6.fluid_containers	储罐	hand

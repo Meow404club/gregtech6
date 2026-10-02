@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_ketchup"
+    },
+    {
+      "item": "gt6:food_dough_flat"
+    },
+    {
+      "item": "gt6:food_dough_flat"
+    },
+    {
+      "item": "gt6:food_dough_flat"
+    },
+    {
+      "item": "gt6:food_dough_flat"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "item": "gt6:food_dough_flat_ketchup"
+  }
+}

@@ -239,6 +239,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shapeExtruderRodBuilder().save(aConsumer, SHAPE_EXTRUDER_ROD_ID);
 		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id()); // task food-bake-items
 		for (BakeCraftRow tRow : bakeCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aConsumer, tRow.id()); else tRow.shapeless().save(aConsumer, tRow.id());} // task food-bake-recipes
+		for (BakeCraftRow tRow : bottleCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aConsumer, tRow.id()); else tRow.shapeless().save(aConsumer, tRow.id());} // task food-bottles-min — the independent bottles band
 		for (BakeSmeltRow tRow : bakeSmeltRows()) tRow.builder().save(aConsumer, tRow.id()); // task food-bake-recipes
 		largeSteelCrucibleBuilder().save(aConsumer, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aConsumer, BATHING_POT_STEEL_ID);
@@ -482,6 +483,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		shapeExtruderRodBuilder().save(aOutput, SHAPE_EXTRUDER_ROD_ID);
 		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aOutput, tRow.id()); // task food-bake-items
 		for (BakeCraftRow tRow : bakeCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aOutput, tRow.id()); else tRow.shapeless().save(aOutput, tRow.id());} // task food-bake-recipes
+		for (BakeCraftRow tRow : bottleCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aOutput, tRow.id()); else tRow.shapeless().save(aOutput, tRow.id());} // task food-bottles-min — the independent bottles band
 		for (BakeSmeltRow tRow : bakeSmeltRows()) tRow.builder().save(aOutput, tRow.id()); // task food-bake-recipes
 		largeSteelCrucibleBuilder().save(aOutput, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aOutput, BATHING_POT_STEEL_ID);
@@ -2129,6 +2131,76 @@ public class GT6CraftingRecipes extends RecipeProvider {
 							.unlockedBy("has_sliced_bread", has(bakeItem((int) tSandwich[2]))),
 					bakeId((String) tSandwich[6])));
 		}
+	}
+
+	// -------------------------------------------------------------------------
+	// the bottles band (task food-bottles-min) — an INDEPENDENT band, kept textually
+	// separate from the food-crafting-tail card's bakeCraftRows() appends (the merge seam)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The bottle-unlocked crafting tail (task food-bottles-min) — the MultiItemFood.java
+	 * rows whose carrier items are the GT6-owned bottles (MultiItemBottles), VERBATIM over
+	 * the port universe. The research.food-crafting-tail row-by-row list, each row with its
+	 * upstream line anchor and its oredict → port-item mapping:
+	 * <ul>
+	 * <li>:643 — ketchup ladder rung 1: {@code foodKetchup} + 1 Food_Dough_Flat → 1
+	 *     Food_Dough_Flat_Ketchup ({@code gt6:food_ketchup} + bake DOUGH_FLAT →
+	 *     DOUGH_FLAT_KETCHUP)</li>
+	 * <li>:644 — rung 2 (×2 outputs), :645 — rung 3 (×3), :646 — rung 4 (×4), :647 — rung
+	 *     5 (×5): one ketchup bottle spreads over 1-5 flat doughs</li>
+	 * <li>:636 — the vanilla cake re-craft: {@code CR.shaped(Items.cake, "C","Z", Z=
+	 *     Food_CakeBottom, C="foodHeavycream")} — the foodHeavycream oredict name is the
+	 *     RE-REGISTRATION of bottleCream (LoaderOreDictReRegistrations.java:870), so the
+	 *     port item is {@code gt6:food_heavycream}; the cake bottom is the T3 bake item</li>
+	 * <li>:550 — the BBQ ribs: {@code foodRibcooked} + {@code foodBarbecuesauce} →
+	 *     Food_Rib_BBQ ({@code gt6:food_rib_cooked} + {@code gt6:food_barbecuesauce} →
+	 *     {@code gt6:food_rib_bbq})</li>
+	 * </ul>
+	 *
+	 * <p>SEVEN rows total: the research ledger's row-by-row list enumerates exactly these
+	 * seven (its "8 行" header is a counting slip — the ledger's tiebreak clause rules the
+	 * per-row list authoritative). The :637 cake delate row is the removal channel (the
+	 * decision card, not this band). Landing these closes the pizza dead end: the ketchup
+	 * ladder is the ONLY producer of food_dough_flat_ketchup, which the already-landed
+	 * bake_pizza_cheese_raw/meat_raw rows consume. The machine filling rows (fluid + empty
+	 * bottle → filled bottle) stay deferred with the capability-container decision card
+	 * (the declared small-case-b deviation, GT6Bottles javadoc).
+	 */
+	private List<BakeCraftRow> bottleCraftRows() {
+		Item tFlat = bakeItem(GT6RecipesBakeIds.DOUGH_FLAT);
+		Item tFlatKetchup = bakeItem(GT6RecipesBakeIds.DOUGH_FLAT_KETCHUP);
+		Item tKetchup = gregtech6.registry.GT6Bottles.FOOD_KETCHUP.get();
+		List<BakeCraftRow> rRows = new ArrayList<>();
+
+		// :643-:647 — the ketchup ladder (1 bottle + N flat doughs → N sauced flat doughs)
+		for (int i = 1; i <= 5; i++) {
+			rRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, tFlatKetchup, i)
+							.requires(tKetchup)
+							.requires(tFlat, i)
+							.unlockedBy("has_flat_dough", has(tFlat)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_ketchup_flat_" + i)));
+		}
+
+		// :636 — the vanilla cake re-craft ("C"/"Z" over the cake bottom + the heavy-cream
+		// bottle; CR.DEF_NCC. The :637 delate of the vanilla cake recipe is the removal
+		// channel — the decision card, not here.)
+		rRows.add(BakeCraftRow.of(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, Items.CAKE)
+						.pattern("C")
+						.pattern("Z")
+						.define('C', gregtech6.registry.GT6Bottles.FOOD_HEAVYCREAM.get())
+						.define('Z', bakeItem(GT6RecipesBakeIds.CAKEBOTTOM))
+						.unlockedBy("has_cake_bottom", has(bakeItem(GT6RecipesBakeIds.CAKEBOTTOM))),
+				new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_cake_heavycream")));
+
+		// :550 — the BBQ ribs (CR.DEF_NCC)
+		rRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,
+						gregtech6.registry.GT6Foods.FOODS.get(18).get()) // FOOD_ROWS index 18 = food_rib_bbq (MultiItemFood.java:548)
+						.requires(gregtech6.registry.GT6Foods.FOODS.get(17).get()) // index 17 = food_rib_cooked (:547)
+						.requires(gregtech6.registry.GT6Bottles.FOOD_BARBECUESAUCE.get())
+						.unlockedBy("has_rib_cooked", has(gregtech6.registry.GT6Foods.FOODS.get(17).get())),
+				new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_rib_bbq")));
+		return rRows;
 	}
 
 	/**

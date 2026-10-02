@@ -12301,3 +12301,23 @@ the port slot geometry align by construction (the dryer.png rationale).
 
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+## GT6 bottle items (task food-bottles-min, 2026-10-01)
+- `gt6/textures/item/bottle/*.png` — the bottles-domain minimum subset (3 textures,
+  task food-bottles-min), byte-identical borrows renamed to the registered item ids:
+  - `ketchup.png`          `textures/items/gt.multiitem.bottles/3101.png`
+    (`40a479ed0ec585c5d46e4565482cb4dc579a995788a6e79b4cd5f8e98f34f58c` — the Tomato
+    Ketchup bottle, MultiItemBottles.java:257, oredict foodKetchup)
+  - `barbecuesauce.png`    `textures/items/gt.multiitem.bottles/805.png`
+    (`e5c36805512fd0dfe0d8a691868f60af15eae4d694c90d57264494a4b226b6f9` — the Barbecue
+    Sauce bottle, MultiItemBottles.java:111, oredict foodBarbecuesauce)
+  - `heavycream.png`       `textures/items/gt.multiitem.bottles/1101.png`
+    (`6838344186dea7e2b216755a555197fd1bf2ab1c56f2152d1aeab8118fe4ad7d` — the Heavy
+    Cream bottle, MultiItemBottles.java:139, oredict bottleCream re-registered to
+    foodHeavycream, LoaderOreDictReRegistrations.java:870)
+  All 16x16 RGBA, CC0 1.0 per the upstream README block (the bottle faces on the
+  MultiItemBottles meta item; cmp-verified 2026-10-01, 3/3 byte-identical). The fourth
+  registered bottle (bottle_empty) borrows NOTHING: upstream it is the OP.bottle
+  material-prefix technical container (OP.java:229, IS_CONTAINER/SELF_REFERENCING) whose
+  MT.Empty face has no own sprite anywhere in the upstream resources, so the port binds
+  the vanilla glass_bottle model (the declared deviation).

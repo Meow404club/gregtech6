@@ -97,6 +97,7 @@ import gregtech6.registry.GT6BeeCombs;
 import gregtech6.registry.GT6BeeHives;
 import gregtech6.registry.GT6Boilers;
 import gregtech6.registry.GT6Books;
+import gregtech6.registry.GT6Bottles; // task food-bottles-min
 import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Cups;
@@ -303,7 +304,9 @@ public class GT6AssetCoverageGuardTest {
 	 */
 	private static final List<Class<?>> REGISTRY_CONTAINER_CLASSES = List.of(
 			GT6Anvils.class, GT6Attachments.class, GT6Batteries.class, GT6BeeCombs.class,
-			GT6BeeHives.class, GT6Boilers.class, GT6Books.class, GT6BurningBoxes.class, GT6Crucibles.class,
+			GT6BeeHives.class, GT6Boilers.class, GT6Books.class,
+			GT6Bottles.class, // task food-bottles-min — the bottles-domain minimum (4 rows)
+			GT6BurningBoxes.class, GT6Crucibles.class,
 			GT6CrystalChargers.class, GT6Distillation.class, GT6DynamoHousings.class,
 			GT6ElectricDynamos.class, GT6ElectricTransformers.class, GT6ExtruderMolds.class,
 			GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class, GT6FoamBlocks.class,

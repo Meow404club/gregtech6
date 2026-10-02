@@ -201,6 +201,7 @@ public class GT6EnUs extends LanguageProvider {
         addBakeFoods(); // task food-bake-items — table-tail append
         addCropFoods(); // task food-crop-items — table-tail append
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
+        addBottles(); // task food-bottles-min — the bottles-domain minimum
     }
 
     /**
@@ -2297,6 +2298,23 @@ public class GT6EnUs extends LanguageProvider {
             case "shape_foodmold_toast" -> "Food Grade Mold (Toast)";
             default -> throw new IllegalStateException("unmapped food mold: " + aPath);
         };
+    }
+
+    /**
+     * The bottles-domain minimum (task food-bottles-min): the 4 item faces + the tab
+     * title. Values are the upstream wordings verbatim — the MultiItemBottles
+     * registration-row name column (:257 "Tomato Ketchup", :111 "Barbecue Sauce", :139
+     * "Heavy Cream") and the OP.bottle local-name template over MT.Empty ("Empty" +
+     * " Bottle", OP.java:229); the three filled rows carry an EMPTY desc column (no
+     * tooltip key, the addFoodItems ruling) and the tab label is the creative-tab ctor
+     * literal "GregTech: Bottles" (MultiItemBottles.java:40).
+     */
+    private void addBottles() {
+        add("item.gt6.bottle_empty", "Empty Bottle");
+        add("item.gt6.food_ketchup", "Tomato Ketchup");
+        add("item.gt6.food_barbecuesauce", "Barbecue Sauce");
+        add("item.gt6.food_heavycream", "Heavy Cream");
+        add(gregtech6.registry.GT6Bottles.TAB_TITLE_KEY, "GregTech: Bottles");
     }
 
     /**
