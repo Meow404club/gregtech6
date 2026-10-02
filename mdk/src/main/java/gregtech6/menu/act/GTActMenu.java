@@ -1,9 +1,16 @@
 package gregtech6.menu.act;
 
+import org.jetbrains.annotations.NotNull;
+
+import brachy.modularui.api.IUIHolder;
 import brachy.modularui.api.drawable.Text;
+import brachy.modularui.drawable.UITexture;
+import brachy.modularui.factory.AbstractUIFactory;
+import brachy.modularui.factory.GuiManager;
 import brachy.modularui.factory.PosGuiData;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
+import brachy.modularui.screen.UISettings;
 import brachy.modularui.value.sync.GenericSyncValue;
 import brachy.modularui.value.sync.InteractionSyncHandler;
 import brachy.modularui.value.sync.PanelSyncManager;
@@ -14,6 +21,8 @@ import brachy.modularui.widgets.slot.ItemSlot;
 import brachy.modularui.widgets.slot.ModularSlot;
 import brachy.modularui.widgets.slot.PhantomItemSlot;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import gregtech6.item.GT6Circuits;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
+import gregtech6.tileentity.machines.TileEntityChargingCraftingTable;
 
 /**
  * The Advanced Crafting Table ModularUI panel (task act-machine C2 — the mdk-first
@@ -36,6 +46,25 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
  * upstream holo click semantics — and the TWO holo-32 positions (:650-653: slotIndex
  * 34 = flush, 35 = sort) become the two action buttons. The 9x4 belt (35-70) is
  * automation-only upstream and shows nowhere in the GUI either.
+ *
+ * <p><b>Layout (task act-dual-gui):</b> the panel is the upstream 176x166 machine sheet
+ * (the borrowed advancedcraftingtable{,charging}.png canvases, the top-left 176x166
+ * sub-area — the 256x256 whole-canvas stretch is the gui-bg-uv-fix disease) and the
+ * player inventory 36 seats ride the tree at the upstream bind offset
+ * (ContainerCommon.bindPlayerInventory :327-334 — rows at y=84/102/120, hotbar y=142;
+ * the x follows the fork's own playerInventory widget precedent, GT6StorageMUI.safePanel).
+ * The sheet follows the VARIANT, not the GUI id — upstream `mGUITexture` defaults to the
+ * plain sheet (:74) and the charging registration column swaps it via NBT_GUI
+ * (Loader_MultiTileEntities.java:137), so {@link #guiSheet} reads the BE kind the same way.
+ *
+ * <p><b>The two-GUI channel (the upstream :115-116 split)</b>: the crafting GUI (0) and
+ * the belt GUI (1 — the upstream `ContainerCommonDefault(…, 35, 36)` charging GUI, the
+ * ContainerCommon case-36 9x4 storage belt at (8,8)..(152,62)) open through
+ * {@link Factory#CRAFT}/{@link Factory#BELT} — the GT6BumbliaryMUI.Factory form (one
+ * factory per GUI, the factory identity rides the OpenGuiPacket wire, no MenuType).
+ * The block use() face routes top → 0, the two along-axis vertical faces → 1, else PASS
+ * (upstream :115-117 verbatim). The BE's {@code IUIHolder.buildUI} face stays the
+ * crafting panel (the /gt6act open arm's default GUI 0).
  *
  * <p>The GUI 3x3 = the PHANTOM PATTERN GRID (decisions.p24-act-ghost-form ②: "GUI 端
  * ModularUI PhantomItemSlot 绑 mPattern") — nine {@link PhantomItemSlot} seats over the
@@ -70,10 +99,40 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
  */
 public final class GTActMenu {
 
-	/** The panel name (the MUI2 main-panel key). */
+	/** The panel names (the MUI2 main-panel keys — GUI 0 crafting, GUI 1 belt/charging). */
 	public static final String PANEL_NAME = "advanced_crafting_table";
+	public static final String PANEL_NAME_BELT = "advanced_crafting_table_belt";
+
+	/** The belt slot group (the shift-transfer face, rowSize 9 — the case-36 grid). */
+	public static final String GROUP_BELT36 = "act_belt36";
 
 	private GTActMenu() {
+	}
+
+	/**
+	 * The panel sheet — per VARIANT, upstream-verbatim: the charging BE swaps the sheet
+	 * exactly like the registration column's {@code NBT_GUI} swap
+	 * (Loader_MultiTileEntities.java:137 over the :74 plain default), both GUIs of one
+	 * table share it (upstream :585/:750 read the same {@code mGUITexture}).
+	 */
+	public static ResourceLocation guiSheet(TileEntityAdvancedCraftingTable aTable) {
+		return ResourceLocation.fromNamespaceAndPath("gt6", aTable instanceof TileEntityChargingCraftingTable
+				? "textures/gui/machines/advancedcraftingtablecharging.png"
+				: "textures/gui/machines/advancedcraftingtable.png");
+	}
+
+	/**
+	 * The machine-sheet background — the borrowed canvases are 256x256 with the art in
+	 * the top-left 176x166 (the vanilla blit's implicit sampling), so the sub-area is
+	 * declared explicitly; fullImage would stretch the whole canvas into the panel (the
+	 * gui-bg-uv-fix disease — the corrected builder form, GTBasicMachineMUI shape).
+	 */
+	public static UITexture panelBackground(TileEntityAdvancedCraftingTable aTable) {
+		return UITexture.builder()
+				.location(guiSheet(aTable))
+				.imageSize(256, 256)
+				.subAreaXYWH(0, 0, 176, 166)
+				.build();
 	}
 
 	/** Client face of {@code IUIHolder} (the TestBlockEntity :100 pattern). */
@@ -81,7 +140,7 @@ public final class GTActMenu {
 		return new ModularScreen(brachy.modularui.ModularUI.MOD_ID, aMainPanel);
 	}
 
-	/** The panel body — runs on SERVER and CLIENT (the sync handlers must exist on both). */
+	/** The crafting panel body (GUI 0) — runs on SERVER and CLIENT (the sync handlers must exist on both). */
 	public static ModularPanel<?> buildPanel(TileEntityAdvancedCraftingTable aTable, PanelSyncManager aSyncManager) {
 		GTItemStackHandler tInv = aTable.getInventory();
 		aSyncManager.registerSlotGroup("act_belt16", 4); // the STORAGE_SLOT_PRIO shift-transfer face
@@ -89,12 +148,12 @@ public final class GTActMenu {
 		// the player-inventory SYNC face rides the fork auto-bind (ModularSyncManager.construct
 		// :68-70) — the explicit bindPlayerInventory(getPlayer()) here dereferenced the null
 		// menu (getPlayer() → menu.getPlayer(), ModularSyncManager.java:167-169) and NPEd on
-		// every open (issue #3 reverse mine); the panel carries no player widget by design
-		// (the 176x210 layout, the sync face only)
+		// every open (issue #3 reverse mine); the widget binds by sync key instead
 		// the display half of the output seat — the stack syncs server→client
 		aSyncManager.syncValue("act_output", GenericSyncValue.forItem(() -> tInv.getStackInSlot(31), null));
 
-		return ModularPanel.defaultPanel(PANEL_NAME, 176, 210)
+		return ModularPanel.defaultPanel(PANEL_NAME, 176, 166)
+				.background(panelBackground(aTable))
 				// the 4x4 input belt (upstream :693-708)
 				.child(SlotGroupWidget.builder()
 						.row("IIII").row("IIII").row("IIII").row("IIII")
@@ -116,8 +175,106 @@ public final class GTActMenu {
 				.child(new ItemDisplayWidget().syncHandler("act_output").displayAmount(true).pos(135, 64))
 				.child(craftButton(aTable, aSyncManager).pos(135, 64))
 				// the two holo-32 positions (:650-653): slotIndex 34 = flush, 35 = sort
-				.child(actionButton("F", "Flush automation bands", () -> aTable.mFlushMode = true).pos(153, 46))
-				.child(actionButton("S", "Sort grid into slots", () -> aTable.sortIntoTheInputSlots()).pos(135, 46));
+				.child(actionButton("Flush automation bands", () -> aTable.mFlushMode = true).pos(153, 46))
+				.child(actionButton("Sort grid into slots", () -> aTable.sortIntoTheInputSlots()).pos(135, 46))
+				// the player inventory at the upstream bind offset 84 (ContainerCommon
+				// :327-334; the x follows the fork playerInventory widget precedent,
+				// GT6StorageMUI.safePanel) — UNCONDITIONAL (the sync handlers resolve by
+				// key at construct, the GT6StorageMUI issue-#3 form)
+				.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
+	}
+
+	/**
+	 * The belt/charging panel body (GUI 1) — the upstream
+	 * {@code ContainerCommonDefault(aPlayer.inventory, this, aGUIID, 35, 36)} charging
+	 * GUI (:585-586): the case-36 default slots 35-70 as the 9x4 grid stepping from
+	 * (8,8) (gregapi/gui/ContainerCommon.java:250-287) over the same player-inventory
+	 * bind as GUI 0. No interaction widgets — the upstream GUI 1 is pure Slot_Normal.
+	 */
+	public static ModularPanel<?> buildBeltPanel(TileEntityAdvancedCraftingTable aTable, PanelSyncManager aSyncManager) {
+		GTItemStackHandler tInv = aTable.getInventory();
+		aSyncManager.registerSlotGroup(GROUP_BELT36, 9);
+		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME_BELT, 176, 166)
+				.background(panelBackground(aTable));
+		tPanel.child(SlotGroupWidget.builder()
+				.row("IIIIIIIII").row("IIIIIIIII").row("IIIIIIIII").row("IIIIIIIII")
+				.key('I', i -> new ItemSlot().slot(new ModularSlot(tInv, 35 + i)))
+				.slotGroup(GROUP_BELT36).build().pos(8, 8));
+		tPanel.child(SlotGroupWidget.playerInventory((aIndex, aSlot) -> aSlot).pos(7, 84));
+		return tPanel;
+	}
+
+	/**
+	 * The open chain of the GUI pair (the GT6BumbliaryMUI.Factory form): the framework
+	 * doctrine is one factory per GUI ("to make sure they are same on client and
+	 * server", SimpleUIFactory javadoc) — the factory identity rides the OpenGuiPacket
+	 * wire, the variant does not touch the pos-only PosGuiData format and needs no
+	 * MenuType (the P26 no-new-MenuType ruling).
+	 */
+	public static final class Factory extends AbstractUIFactory<PosGuiData> {
+
+		/** The crafting GUI factory (upstream openGUI(aPlayer, 0), :115 top face). */
+		public static final Factory CRAFT = new Factory(PANEL_NAME, false);
+		/** The belt/charging GUI factory (upstream openGUI(aPlayer, 1), :116 along-axis faces). */
+		public static final Factory BELT = new Factory(PANEL_NAME_BELT, true);
+
+		private final boolean mBelt;
+
+		private Factory(String aName, boolean aBelt) {
+			super(ResourceLocation.fromNamespaceAndPath("gt6", aName)); // the two-arg ctor is private in 1.21.1 (the GTWireBakedModel idiom)
+			mBelt = aBelt;
+		}
+
+		/** The variant flag — the panel dispatch key. */
+		public boolean belt() {
+			return mBelt;
+		}
+
+		/** The server open (the BlockEntityUIFactory.open shape over this factory's identity). */
+		public void open(ServerPlayer aPlayer, TileEntityAdvancedCraftingTable aTable) {
+			GuiManager.open(this, new PosGuiData(aPlayer, aTable.getBlockPos()), aPlayer);
+		}
+
+		/** The panel dispatch — the variant rides the factory, not the wire data. */
+		@Override
+		public ModularPanel<?> createPanel(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
+			TileEntityAdvancedCraftingTable tTable = (TileEntityAdvancedCraftingTable)aData.getBlockEntity();
+			return mBelt ? buildBeltPanel(tTable, aSyncManager) : buildPanel(tTable, aSyncManager);
+		}
+
+		@Override
+		public @NotNull IUIHolder<PosGuiData> getGuiHolder(PosGuiData aData) {
+			return (TileEntityAdvancedCraftingTable)aData.getBlockEntity();
+		}
+
+		@Override
+		public boolean canInteractWith(Player aPlayer, PosGuiData aGuiData) {
+			// the BlockEntityUIFactory :70-73 body verbatim — the 64-sq range gate
+			return aPlayer == aGuiData.getPlayer() && aGuiData.getBlockEntity() != null
+					&& aGuiData.getSquaredDistance(aPlayer) <= 64;
+		}
+
+		/** The wire faces — the BlockEntityUIFactory :77/:86 bodies verbatim (pos-only; the variant rides the factory identity). */
+		@Override
+		//? if forge {
+		public void writeGuiData(PosGuiData aGuiData, net.minecraft.network.FriendlyByteBuf aBuffer) {
+			aBuffer.writeBlockPos(aGuiData.getBlockPos());
+		}
+
+		@Override
+		public @NotNull PosGuiData readGuiData(Player aPlayer, net.minecraft.network.FriendlyByteBuf aBuffer) {
+			return new PosGuiData(aPlayer, aBuffer.readBlockPos());
+		}
+		//?} else {
+		/*public void writeGuiData(PosGuiData aGuiData, net.minecraft.network.RegistryFriendlyByteBuf aBuffer) {
+			aBuffer.writeBlockPos(aGuiData.getBlockPos());
+		}
+
+		@Override
+		public @NotNull PosGuiData readGuiData(Player aPlayer, net.minecraft.network.RegistryFriendlyByteBuf aBuffer) {
+			return new PosGuiData(aPlayer, aBuffer.readBlockPos());
+		}
+		 *///?}
 	}
 
 	/** The 3x3 phantom pattern seats over the mPattern view (the hybrid ghost face). */
@@ -151,12 +308,20 @@ public final class GTActMenu {
 						}));
 	}
 
-	/** One holo-32 action button — the server action runs the upstream arm verbatim. */
-	private static ButtonWidget<?> actionButton(String aLabel, String aTooltip, Runnable aAction) {
+	/**
+	 * One holo-32 action button — the server action runs the upstream arm verbatim. The
+	 * tooltip rides the DYNAMIC form: the fork's every text constructor funnels through
+	 * the package-private vanilla MutableComponent ctor (the fork accesstransformer.cfg
+	 * line, applied by FML at mod-load only), so an EAGER tooltip/overlay text would
+	 * throw IllegalAccessError on any headless panel build (the offline tests); the
+	 * dynamic builder defers construction to the client hover render, identical output
+	 * for constant text. The F/S letter overlays are dropped with the same rationale —
+	 * the tooltip names the action.
+	 */
+	private static ButtonWidget<?> actionButton(String aTooltip, Runnable aAction) {
 		return new ButtonWidget<>()
 				.size(18)
-				.tooltip(aTooltipConsumer -> aTooltipConsumer.addLine(Text.str(aTooltip)))
-				.overlay(Text.str(aLabel).scale(0.7f))
+				.tooltipDynamic(aTooltipConsumer -> aTooltipConsumer.addLine(Text.str(aTooltip)))
 				.syncHandler(new InteractionSyncHandler()
 						.setOnMousePressed(aMouseData -> aAction.run()));
 	}
