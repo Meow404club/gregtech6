@@ -12,6 +12,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 
+import gregapi.code.TagData;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 
@@ -141,6 +142,70 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 			int[] tPos = GT6RecipeMapViewerMeta.viewerFluidOutputPos(i);
 			aBuilder.addOutputSlot(tPos[0], tPos[1])
 					.addFluidStack(aRecipe.mFluidOutputs[i].getFluid(), aRecipe.mFluidOutputs[i].getAmount());
+		}
+	}
+
+	/**
+	 * The gear-spot jump port (task viewer-energy-jump-gear, the user ruling): carrier maps
+	 * get ONE {@link GearJumpFace} registered as BOTH an {@code IRecipeWidget} (the hover
+	 * tooltip affordance over the baked gear art) and an {@code IJeiInputHandler} (the
+	 * click contract — mouse-down simulates, mouse-up executes, IJeiInputHandler.java:36-49).
+	 * GU maps register nothing: the gear stays decoration (无载体图不画). Both pins are
+	 * @since 15.9.0 on the forge leg / 19.6.0 on the neo leg — under both pinned stacks.
+	 */
+	@Override
+	public void createRecipeExtras(mezz.jei.api.gui.widgets.IRecipeExtrasBuilder aBuilder, Recipe aRecipe, IFocusGroup aFocuses) {
+		TagData tCarrier = GT6RecipeMapViewerMeta.energyOf(mMap);
+		if (tCarrier == null) return;
+		GearJumpFace tGear = new GearJumpFace(tCarrier);
+		aBuilder.addWidget(tGear);
+		aBuilder.addInputHandler(tGear);
+	}
+
+	/**
+	 * The port itself: the folded gear rect, the hint tooltip and the jump through
+	 * {@link GT6JeiPlugin#openEnergyCarrierInfo} (guarded — offline/pre-init no-op). The
+	 * mouse-coordinate params are ignored: JEI only routes inputs whose position is inside
+	 * {@link #getArea} (the handler contract). Package-private: the offline pin drives the
+	 * click contract directly (the GT6JeiPluginTest posture).
+	 */
+	static final class GearJumpFace implements mezz.jei.api.gui.widgets.IRecipeWidget, mezz.jei.api.gui.inputs.IJeiInputHandler {
+
+		private final TagData mCarrier;
+
+		GearJumpFace(TagData aCarrier) {
+			mCarrier = aCarrier;
+		}
+
+		@Override
+		public net.minecraft.client.gui.navigation.ScreenRectangle getArea() {
+			int[] tPos = GT6RecipeMapViewerMeta.viewerGearPos();
+			return new net.minecraft.client.gui.navigation.ScreenRectangle(tPos[0], tPos[1],
+					GT6RecipeMapViewerMeta.GEAR_SIZE, GT6RecipeMapViewerMeta.GEAR_SIZE);
+		}
+
+		@Override
+		public net.minecraft.client.gui.navigation.ScreenPosition getPosition() {
+			int[] tPos = GT6RecipeMapViewerMeta.viewerGearPos();
+			return new net.minecraft.client.gui.navigation.ScreenPosition(tPos[0], tPos[1]);
+		}
+
+		@Override
+		public net.minecraft.client.gui.navigation.ScreenRectangle getScreenRectangle() {
+			return getArea();
+		}
+
+		@Override
+		public void getTooltip(mezz.jei.api.gui.builder.ITooltipBuilder aTooltip, double aMouseX, double aMouseY) {
+			aTooltip.add(Component.translatable(GT6RecipeMapViewerMeta.ENERGY_JUMP_HINT_KEY));
+		}
+
+		@Override
+		public boolean handleInput(double aMouseX, double aMouseY, mezz.jei.api.gui.inputs.IJeiUserInput aInput) {
+			if (aInput.getKey().getType() != com.mojang.blaze3d.platform.InputConstants.Type.MOUSE) return false;
+			if (aInput.isSimulate()) return true; // mouse-down: this click can be handled (no action)
+			GT6JeiPlugin.openEnergyCarrierInfo(mCarrier); // mouse-up: execute
+			return true;
 		}
 	}
 

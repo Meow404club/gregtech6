@@ -3,6 +3,7 @@ package gregtech6.jei;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -12,6 +13,7 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 
+import gregapi.code.TagData;
 import gregtech6.items.tools.GT6MaterialToolRecipe;
 import gregtech6.recipes.RecipeMap;
 
@@ -99,6 +101,7 @@ public class GT6JeiPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
 		registerMultiblockPreviewRows(registration);
+		registerEnergyCarrierInfoPages(registration);
 		registerRecipeMapCategoriesRows(registration);
 		registerOreGenInfoRows(registration);
 		registerMaterialTreeRows(registration);
@@ -118,6 +121,36 @@ public class GT6JeiPlugin implements IModPlugin {
 			tRows.add(GT6MultiblockPreviewJeiCategory.wrapperOf(tEntry));
 		}
 		registration.addRecipes(GT6MultiblockPreviewJeiCategory.RECIPE_TYPE, tRows);
+	}
+
+	/**
+	 * The per-carrier info pages (task viewer-energy-jump-gear, the r6-30 phase-2 design):
+	 * one {@code addIngredientInfo(T, IIngredientType<T>, Component...)} page per accepted
+	 * energy carrier over the shared {@code gt6.jei.info.energy.*} keys — the page the gear
+	 * port ({@link GT6RecipeMapJeiCategory}, {@code createRecipeExtras}) jumps to. The
+	 * overload rides {@link IRecipeRegistration} (IRecipeRegistration.java:63, both pinned
+	 * generations identical); the TYPE registration itself happens in
+	 * {@link #registerIngredients} below.
+	 */
+	private static void registerEnergyCarrierInfoPages(IRecipeRegistration registration) {
+		for (TagData tCarrier : GT6RecipeMapViewerMeta.pinnedEnergyCarriers()) {
+			registration.addIngredientInfo(tCarrier, GT6EnergyCarrierJei.TYPE,
+					Component.translatable(GT6RecipeMapViewerMeta.energyInfoKey(tCarrier)));
+		}
+	}
+
+	/**
+	 * The energy-carrier pseudo ingredient (task viewer-energy-jump-gear, the r6-30
+	 * phase-2 design): the nine accepted-energy carriers register with an EMPTY
+	 * {@code allIngredients} list — never in the ingredient list / search index (the
+	 * r6-30-flagged POC face). The per-carrier info pages themselves ride
+	 * {@link #registerRecipes} (the addIngredientInfo overload lives on
+	 * IRecipeRegistration, not here). Both pinned generations expose the same
+	 * {@code IModPlugin.registerIngredients} hook.
+	 */
+	@Override
+	public void registerIngredients(mezz.jei.api.registration.IModIngredientRegistration registration) {
+		registration.register(GT6EnergyCarrierJei.TYPE, java.util.List.of(), GT6EnergyCarrierJei.HELPER, GT6EnergyCarrierJei.RENDERER);
 	}
 
 	/**
@@ -272,6 +305,27 @@ public class GT6JeiPlugin implements IModPlugin {
 	public static boolean openRecipeMapPage(RecipeMap aMap) {
 		if (aMap == null || sRuntime == null) return false;
 		sRuntime.getRecipesGui().showTypes(java.util.List.of(GT6RecipeMapJeiCategory.recipeTypeOf(aMap)));
+		return true;
+	}
+
+	/**
+	 * The gear-port jump face (task viewer-energy-jump-gear): opens the energy carrier's
+	 * info page — the info recipes ride under the carrier as an INPUT focus ingredient
+	 * (the internal IngredientInfoRecipeCategory mounts each recipe's ingredients under
+	 * BOTH roles: addInputSlot + addInvisibleIngredients(OUTPUT), read off the harvested
+	 * 15.x Library source :41-51), so {@code show(focus)} lands on the Information tab.
+	 * The focus comes from {@code IJeiRuntime.getJeiHelpers().getFocusFactory()}
+	 * (IJeiHelpers.java:42, both legs) — no stash beyond {@link #sRuntime} needed.
+	 * Never call unguarded: only the JEI-side gear handler reaches it (JEI present by
+	 * construction there).
+	 *
+	 * @return false (no-op) when the runtime is not available — offline and pre-init safe.
+	 */
+	public static boolean openEnergyCarrierInfo(TagData aCarrier) {
+		if (aCarrier == null || sRuntime == null) return false;
+		mezz.jei.api.recipe.IFocus<TagData> tFocus = sRuntime.getJeiHelpers().getFocusFactory()
+				.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.INPUT, GT6EnergyCarrierJei.TYPE, aCarrier);
+		sRuntime.getRecipesGui().show(tFocus);
 		return true;
 	}
 }

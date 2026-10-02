@@ -102,11 +102,14 @@ public class GT6EmiPluginTest {
 		assertEquals("gt6.jei.info.multiblock_coke_oven", GT6RecipeViewerText.INFO_KEY_COKE_OVEN);
 		assertEquals(GT6JeiPlugin.INFO_KEY_COKE_OVEN, GT6RecipeViewerText.INFO_KEY_COKE_OVEN,
 				"the JEI forwarding constant and the holder literal must stay one seam");
-		// and the plugin bytecode carries the modern replacement face (no EmiInfoRecipe):
+		// and the plugin bytecode carries the modern replacement face; the RETIRED face is
+		// the coke-oven text page specifically — since task viewer-energy-jump-gear the
+		// EmiInfoRecipe API is back for the energy-carrier pages (the seat-IX rebase
+		// adjudication: the retirement targeted the replaced face, not the API):
 		try (java.io.InputStream in = GT6EmiPlugin.class.getResourceAsStream("GT6EmiPlugin.class")) {
 			String tBytes = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
-			assertFalse(tBytes.contains("EmiInfoRecipe"),
-					"the EMI text-info face must be gone (task multiblock-preview-infra)");
+			assertFalse(tBytes.contains("registerCokeOvenInfo"),
+					"the EMI coke-oven text-info face must be gone (task multiblock-preview-infra)");
 			assertTrue(tBytes.contains("GT6MultiblockPreviewEmiCategory"),
 					"the EMI plugin must register the preview category twin");
 		}

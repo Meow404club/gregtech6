@@ -3,6 +3,7 @@ package gregtech6.jei;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -600,6 +601,82 @@ public final class GT6RecipeMapViewerMeta {
 	private static int[] fold(int[] aPos) {
 		return aPos == null ? null : new int[] {aPos[0] - S_OFFSET_X, aPos[1] - S_OFFSET_Y};
 	}
+	
+	// -----------------------------------------------------------------------
+	// The gear-spot jump port (task viewer-energy-jump-gear, the user ruling:
+	// "跳转对应能量怎么产的页面也应该做，跳转口可以做在之间的齿轮图标") — the baked gear
+	// decoration on the NEI plate becomes the clickable entrance onto the map's accepted
+	// energy carrier's info page. Both viewer legs consume the same fold and the same
+	// carrier query; a GU map (energyOf null) draws no port — the gear stays decoration.
+	// -----------------------------------------------------------------------
+	
+	/**
+	 * The baked gear-art spot in machine-GUI coordinates — upstream NEI_RecipeMap.java:278
+	 * drew its rare machine icon at (152,83), the same pixel the plate's gear decoration
+	 * bakes into (the debt-viewer-polish icon rode exactly here pre-retirement).
+	 */
+	public static final int[] GEAR_POS_GUI = {152, 83};
+	
+	/** The port's hit box — the 18px slot pitch, the art's gear face. */
+	public static final int GEAR_SIZE = 18;
+	
+	/** {@link #GEAR_POS_GUI} folded into panel/viewer coordinates — (147,76) under the re-anchored -(5,7). */
+	public static int[] viewerGearPos() {
+		return fold(GEAR_POS_GUI);
+	}
+	
+	/**
+	 * The per-carrier info-page lang key domain (task viewer-energy-jump-gear): the
+	 * {@code gt6.jei.info.*} viewer-neutral family (the coke-oven/ore-gen precedent) with
+	 * the short code as the tail — {@code gt6.jei.info.energy.eu}. The datagen en
+	 * producer, the zh TSV hand band and both viewer legs derive the key through this one
+	 * formula, so the census (pinned in GT6EnergyJumpTest) cannot drift.
+	 */
+	public static final String INFO_KEY_ENERGY_PREFIX = "gt6.jei.info.energy.";
+	
+	/** The gear port's affordance tooltip (both legs) — the one line that makes the baked art discoverable as a button. */
+	public static final String ENERGY_JUMP_HINT_KEY = "gt6.jei.info.energy_jump_hint";
+	
+	/** The info-page key of one carrier: the short code lowercased (Locale.ROOT) — {@code gt6.jei.info.energy.eu}. */
+	public static String energyInfoKey(TagData aCarrier) {
+		return INFO_KEY_ENERGY_PREFIX + energyTypeShortCode(aCarrier).toLowerCase(Locale.ROOT);
+	}
+	
+	/**
+	 * The carrier census, derived — every TagData the {@link #ENERGY_BY_MAP} transcription
+	 * pins (dedup via the TagData singleton contract), short-code-sorted for determinism:
+	 * the nine EU/RU/KU/HU/CU/LU/MU/QU/TU faces. The single source of truth for the jump
+	 * faces' info-page registration AND the key-existence census — a carrier entering the
+	 * table without its lang rows turns the census red, never the page.
+	 */
+	public static List<TagData> pinnedEnergyCarriers() {
+		return ENERGY_BY_MAP.values().stream().distinct()
+				.sorted(java.util.Comparator.comparing(GT6RecipeMapViewerMeta::energyTypeShortCode))
+				.toList();
+	}
+	
+	/**
+	 * The carrier long names — the upstream TD.Energy createTagData 3rd argument verbatim
+	 * (TD.java:81/:88/:95/:102/:109/:116/:123/:137/:147 "Electric Energy"…"Time"), the
+	 * port's TD.java:39 stripped it as presentation data; only the nine carriers the
+	 * registration rows use. The en info-page body's opening face (the GT6EnUs producer
+	 * appends the units sentence; TU's is "Ticks" per the upstream "Amount = Ticks" doc).
+	 */
+	private static final Map<TagData, String> ENERGY_LONG_NAMES = Map.of(
+			TD.Energy.EU, "Electric Energy",
+			TD.Energy.RU, "Rotation Energy",
+			TD.Energy.KU, "Kinetic Energy",
+			TD.Energy.HU, "Heat Energy",
+			TD.Energy.CU, "Cryo Energy",
+			TD.Energy.LU, "Light Energy",
+			TD.Energy.MU, "Magnetic Energy",
+			TD.Energy.QU, "Quantum Energy",
+			TD.Energy.TU, "Time");
+	
+	/** The upstream long name of one carrier ({@code null} = not one of the nine). */
+	public static String energyLongName(TagData aCarrier) {
+		return ENERGY_LONG_NAMES.get(aCarrier);
+	}
 
 	/** {@link #inputPos} folded into panel/viewer coordinates — the only form the viewer legs consume. */
 	public static int[] viewerInputPos(int aIndex, RecipeMap aMap) {
@@ -631,6 +708,12 @@ public final class GT6RecipeMapViewerMeta {
 	// mRecipeMachineList, so the per-map gear-spot draw (debt-viewer-polish's #34 defer)
 	// was an over-generalization — GUI_MACHINE_ICON_POS/machineIconPos/machineIcon are
 	// gone, zero production consumers remain.
+	//
+	// The SPOT itself returns (task viewer-energy-jump-gear, the user ruling) — no longer
+	// a machine icon, but the CLICKABLE jump port onto the per-carrier "how is this
+	// energy produced" info page: GEAR_POS_GUI/viewerGearPos below. Carrier-less (GU)
+	// maps keep the gear as pure decoration — both viewer legs skip the port when
+	// energyOf is null.
 	//
 	// The cost/tier/time/special text — NEI_RecipeMap.drawExtras :680-717, verbatim
 	// arithmetic (UT.Code.makeString folds to plain long-to-string).
