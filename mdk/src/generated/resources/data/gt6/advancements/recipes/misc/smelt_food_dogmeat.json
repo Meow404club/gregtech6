@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_food_dogmeat_raw": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "gt6:food_dogmeat_raw"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "gt6:smelt_food_dogmeat"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_food_dogmeat_raw",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "gt6:smelt_food_dogmeat"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -833,6 +833,14 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/advancements/recipes/misc/clay_jug.json",
     "data/gt6/advancements/recipes/misc/clay_jug_reverse.json",
     "data/gt6/advancements/recipes/misc/smelt_clay_jug.json",
+
+    # task food-meat-recipes 交卡补录（2026-10-02）：肉排烧制行 GT6MeatDatagen.Recipes 与
+    # GT6CupDatagen.Recipes 同构（//? if forge 整类门控，21.1 节点结构性无输出）；
+    # smelt :574 DECLARED 行（dogmeat_raw→dogmeat_cooked，骡肉 bug verbatim 转录）×2
+    # （配方+advancement），singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，
+    # 无需声明。runtime 不受影响。
+    "data/gt6/recipes/smelt_food_dogmeat.json",
+    "data/gt6/advancements/recipes/misc/smelt_food_dogmeat.json",
 })
 
 # ── 声明偏离带（canonical 前瞻孪生树，vanilla-tag-dual-tree 引入）──────────────

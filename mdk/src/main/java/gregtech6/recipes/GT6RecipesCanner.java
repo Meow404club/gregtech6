@@ -20,6 +20,7 @@
 package gregtech6.recipes;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -40,16 +41,24 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import gregapi.data.MT;
+import gregapi.data.OP;
+import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6SprayCans;
 
 /**
- * The RM.Canner spray-can refill pour — task canner-machine, the port counterpart of
+ * The RM.Canner pour home — task canner-machine, the port counterpart of
  * the {@code RM.Canner.addRecipe1} rows of MultiItemRandomTools.java:246 (the 16 colour
  * refills, the :242 loop body) and :272 (the paint-remover refill). Everything else the
  * upstream Canner map eats rides the {@link GT6RecipeMapCanner} dynamic arms (R1).
+ * Task food-meat-recipes extends the load() with the food-side explicit rows: the
+ * Loader_Recipes_Food.java:44-51 canned-material band (the cooked meat/fish + Tofu +
+ * Soylent Green dust ladders over the shared {@link #foodCanRow} row0 shape) and the
+ * MultiItemCans.java:113-120 air band (the Canned Air fill/release triplets).
  *
  * <p><b>Row shape</b> (the two upstream lines verbatim over the port Recipe ctor):
  * buffered T, EUt 16, duration 256, item input = the empty spray can count 1, fluid input
@@ -150,6 +159,197 @@ public final class GT6RecipesCanner {
 	/** The full Advanced spray seam: dye index i → the {@code gt6:foam_spray_owned_<DYE_IDS[i]>} can (upstream IL.SPRAY_CAN_FOAM_OWNED[i] :259, GT6FoamSprays.FOAM_SPRAYS_OWNED), fixtures injected offline. */
 	public static IntFunction<ItemStack> sFoamSprayOwnedResolver = aIndex -> new ItemStack(GT6FoamSprays.FOAM_SPRAYS_OWNED.get(aIndex).get());
 
+	// task food-meat-recipes — the Loader_Recipes_Food.java:40-51 canned-material band +
+	// the MultiItemCans.java:113-120 air band
+
+	/**
+	 * The family-can seam shared live face — offline-safe: the shared-test pour (the
+	 * PhaseGate census / HashIndex equivalence / MaterialTree drive load() LIVE on both
+	 * legs) runs against unbound gt6 RegistryObjects on the forge test JVM, where the
+	 * {@code .get()} THROWS ("Registry Object not present") — a null here keeps the
+	 * upstream {@code aCans[tier]} mat()-null silent drop instead of blowing up the whole
+	 * shared pour (the {@link #liveAirFluid} wrap precedent, the c3190e3d2 lesson).
+	 */
+	static ItemStack liveFamilyCan(java.util.function.Supplier<ItemStack> aLeg) {
+		try {return aLeg.get();} catch (RuntimeException tOffline) {return null;}
+	}
+
+	/**
+	 * The meat-can family seam: tier 0..5 → the {@code gt6:food_can_meat_<size>} can
+	 * (upstream IL.CANS_MEAT, the aCans[tier] dispatch), fixtures injected offline.
+	 */
+	public static IntFunction<ItemStack> sMeatCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get()));
+
+	/** The fish-can family seam (upstream IL.CANS_FISH), fixtures injected offline. */
+	public static IntFunction<ItemStack> sFishCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_FISH.get(aTier).get()));
+
+	/** The veggie-can family seam (upstream IL.CANS_VEGGIE — the Tofu AND the Soylent Green target), fixtures injected offline. */
+	public static IntFunction<ItemStack> sVeggieCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_VEGGIE.get(aTier).get()));
+
+	/**
+	 * The canned-material seam: (prefix, material) → the GT6 material item (the
+	 * {@code OP.<prefix>.mat(MT.<food>, n)} legs of :44-51; the live default is the
+	 * GTMaterialItems walk — the GT6RecipesBees resolver share), fixtures injected offline
+	 * (GTMaterialItems.get yields null there, the b2b1 lesson — never a throw).
+	 */
+	public static BiFunction<OreDictPrefix, OreDictMaterial, Item> sFoodMaterialItemResolver = GT6RecipesMixer::resolveItem;
+
+	/**
+	 * The air-fluid seam: the upstream FL id → the port source fluid (the
+	 * {@code FL.make(tAir, 16000)} legs of :114-116 and the FL.Air.*.make(16000) legs of
+	 * :118-120; the live default is the {@link #liveAirFluid} walk — plain {@code air} is
+	 * port-ABSENT so its two rows stay pour-face-forever dormant, netherair/enderair
+	 * resolve), fixtures injected offline.
+	 */
+	public static Function<String, Fluid> sAirFluidResolver = GT6RecipesCanner::liveAirFluid;
+
+	/** The air-can seam: the FL id → the filled air can (upstream IL.Food_Can_Air/_Nether/_End), fixtures injected offline. */
+	public static Function<String, ItemStack> sAirCanResolver = GT6RecipesCanner::liveAirCan;
+
+	/**
+	 * The live air-fluid leg — the GTFluids walk wrapped offline-safe: the shared-test
+	 * pour (the PhaseGate census / HashIndex equivalence drives load() LIVE on both legs)
+	 * runs against unbound fluid RegistryObjects on the forge test JVM, where the
+	 * {@code ChemicalFluid.source.get()} inside {@code GTFluids.liveFluidSource} THROWS
+	 * ("Registry Object not present") — a null here keeps the upstream FL.exists silent
+	 * drop instead of blowing up the whole shared pour.
+	 */
+	static Fluid liveAirFluid(String aAirId) {
+		try {return GTFluids.liveFluidSource(aAirId);} catch (RuntimeException tOffline) {return null;}
+	}
+
+	/**
+	 * The live air-can leg — the string-id registry walk over the three air cans (the
+	 * GT6RecipesMeat.resolveFoodItem face: offline the unbound registry yields null = the
+	 * silent drop; the type-free form also stays clear of the stonecutter
+	 * RegistryObject→DeferredHolder swap, whose 21.1 shape carries isBound() instead of
+	 * isPresent()).
+	 */
+	static ItemStack liveAirCan(String aAirId) {
+		String tPath = switch (aAirId) {
+			case "air" -> "food_can_air";
+			case "netherair" -> "food_can_air_nether";
+			case "enderair" -> "food_can_air_end";
+			default -> null;
+		};
+		if (tPath == null) return ItemStack.EMPTY;
+		Item tCan = ForgeRegistries.ITEMS.getValue(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath));
+		return tCan == null ? ItemStack.EMPTY : new ItemStack(tCan);
+	}
+
+	/**
+	 * The FluidsGT.AIR trio (CS.java:1515, populated by the FL AIR-category ctor face —
+	 * FL.java:64-66: {@code air}, {@code enderair}, {@code netherair}).
+	 */
+	public static final List<String> AIR_FLUIDS = List.of("air", "enderair", "netherair");
+
+	/**
+	 * The :113 fill-walk face: upstream {@code for (String tAir : FluidsGT.AIR) if
+	 * (!FL.Air_End.is(tAir) && !FL.Air_Nether.is(tAir))} — the walk minus the two
+	 * dimension specials = the plain {@code air} alone; :115/:116 add them back as the
+	 * explicit fixed rows.
+	 */
+	public static final List<String> AIR_FILL_WALK = List.of("air");
+
+	/** The :115-:116 explicit fill rows (the two dimension specials the :113 walk excludes). */
+	public static final List<String> AIR_FILL_SPECIALS = List.of("netherair", "enderair");
+
+	/** The :118-:120 release rows (every AIR walk member releases back). */
+	public static final List<String> AIR_RELEASE = List.of("air", "netherair", "enderair");
+
+	/** The air fill/release fluid column (:114-120 — the 16000 mB literal). */
+	public static final int AIR_MB = 16000;
+
+	/** The air-band EUt column (:114-120 — 16). */
+	public static final long AIR_EUT = 16;
+
+	/** The air fill duration (:114-116 — 64; the release rows :118-120 run 16). */
+	public static final long AIR_FILL_DURATION = 64;
+
+	/** The air release duration (:118-120 — 16). */
+	public static final long AIR_RELEASE_DURATION = 16;
+
+	/** One :44-51 canned-material spec — the loop body of {@code RM.food_can(tStack, 2, name, IL.CANS_*)}. */
+	public record CannedMaterial(String note, OreDictMaterial material, IntFunction<ItemStack> family) {}
+
+	/** The seven ST.array prefixes of :44/:46/:48/:50, upstream order. */
+	public static List<OreDictPrefix> cannedMaterialPrefixes() {
+		return List.of(OP.dustTiny, OP.dustSmall, OP.dust, OP.nugget, OP.chunkGt, OP.billet, OP.ingot);
+	}
+
+	/**
+	 * The input-count column of :44-51, aligned index-for-index with {@link
+	 * #cannedMaterialPrefixes()}: the second {@code mat(prefix, N)} argument per ST.array
+	 * element — the stackSize (OreDictManager.java:561-574 {@code ST.amount(aAmount,
+	 * rStack)}), poured verbatim as the recipe input by RM.food_can (RM.java:740-753). All
+	 * four bands carry the same N per prefix: 9/4/1/9/4/2/1 — every recipe line consumes
+	 * ONE FULL material unit, not a single item.
+	 */
+	public static final List<Integer> CANNED_MATERIAL_COUNTS = List.of(9, 4, 1, 9, 4, 2, 1);
+
+	/**
+	 * The four :44-51 material specs, upstream order (FishCooked → Canned Fish, MeatCooked
+	 * → Canned Meat, Tofu/SoylentGreen → the veggie family). Every row carries foodValue 2
+	 * (the second RM.food_can argument). Lazily built — the {@code @EventBusSubscriber} scan
+	 * class-loads at MOD CONSTRUCTION, before MT.init() (the a9027ac lesson).
+	 */
+	public static List<CannedMaterial> cannedMaterialTable() {
+		List<CannedMaterial> tTable = sCannedMaterials;
+		if (tTable == null) sCannedMaterials = tTable = List.of(
+				new CannedMaterial(":44-45", MT.FishCooked, sFishCansResolver),
+				new CannedMaterial(":46-47", MT.MeatCooked, sMeatCansResolver),
+				new CannedMaterial(":48-49", MT.Tofu, sVeggieCansResolver),
+				new CannedMaterial(":50-51", MT.SoylentGreen, sVeggieCansResolver));
+		return tTable;
+	}
+
+	/** The captured material table (lazy — the a9027ac lesson). */
+	private static volatile List<CannedMaterial> sCannedMaterials = null;
+
+	/** The foodValue column of every :44-51 row (the shared RM.food_can second argument). */
+	public static final int CANNED_MATERIAL_FOOD_VALUE = 2;
+
+	// task food-meat-recipes (the coordinator's scope extension) — the T3b-delegated
+	// baking-domain band, MultiItemFood.java:600-:782 (the T3b ledger POOLED these
+	// food_can rows to the Canner domain; the boundary walk re-homed them here)
+
+	/**
+	 * One baking-domain member — the EXPLICIT foodValue form (RM.food_can's second
+	 * argument, NOT the item nutrition), the upstream input count carrying verbatim.
+	 */
+	public record BakingCanMember(String note, String itemId, int inputCount, int foodValue, String family) {}
+
+	/** The bake-food item seam (the ForgeRegistries walk by default, fixtures injected offline — the meat walk's face). */
+	public static Function<String, Item> sBakingFoodItemResolver = GT6RecipesMeat::resolveFoodItem;
+
+	/** The bread-can family seam: tier 0..5 → the {@code gt6:food_can_bread_<size>} can (upstream IL.CANS_BREAD), fixtures injected offline. */
+	public static IntFunction<ItemStack> sBreadCansResolver = aTier -> liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_BREAD.get(aTier).get()));
+
+	/**
+	 * The :608-:782 baking-domain members, upstream order. Dispositions around them: the
+	 * :600 Cookie Tin row is the row0 card's third row (already poured in this load());
+	 * the :624 Abyssal arm stays TRUE NEGATIVE — its {@code IL.NeLi_Cookie.exists()} gate
+	 * never opens on the port (netherlicious is foreign, the P10 ruling). The display
+	 * names ("Raisin Cookie Tin"/"Canned Bread"/"Canned Pain") stay pooled with the
+	 * NEI-info face (the foodCanRow doc).
+	 */
+	public static final List<BakingCanMember> BAKING_CANNED_MEMBERS = List.of(
+			new BakingCanMember(":608 raisin cookie tin"          , "gt6:food_cookie_raisins"          , 6, 12, "cookies"),
+			new BakingCanMember(":616 chocolate raisin cookie tin", "gt6:food_cookie_chocolate_raisins", 6, 12, "cookies"),
+			new BakingCanMember(":680 canned bread bun"           , "gt6:food_bun"                     , 1,  2, "bread"),
+			new BakingCanMember(":681 canned bread bun sliced"    , "gt6:food_bun_sliced"              , 2,  2, "bread"),
+			new BakingCanMember(":682 canned bread buns sliced"   , "gt6:food_buns_sliced"             , 1,  2, "bread"),
+			new BakingCanMember(":719 canned bread"               , "minecraft:bread"                  , 1,  4, "bread"),
+			new BakingCanMember(":720 canned bread sliced"        , "gt6:food_bread_sliced"            , 1,  2, "bread"),
+			new BakingCanMember(":721 canned breads sliced"       , "gt6:food_breads_sliced"           , 1,  4, "bread"),
+			new BakingCanMember(":749 canned pain baguette"       , "gt6:food_baguette"                , 1,  8, "bread"),
+			new BakingCanMember(":750 canned pain baguette sliced", "gt6:food_baguette_sliced"         , 1,  4, "bread"),
+			new BakingCanMember(":751 canned pain baguettes slice", "gt6:food_baguettes_sliced"        , 1,  8, "bread"),
+			new BakingCanMember(":780 canned bread toast raw"     , "gt6:food_toast_raw"               , 1,  8, "bread"),
+			new BakingCanMember(":781 canned bread toast"         , "gt6:food_toast"                   , 1,  8, "bread"),
+			new BakingCanMember(":782 canned bread toast sliced"  , "gt6:food_toast_sliced"            , 1,  1, "bread"));
+
+
 	// task qu-laser-domain + debt-laser-gas-family — the gas laser emitter fill family
 	// (MultiItemTechnological.java:396-403, the eight upstream Canner rows)
 
@@ -202,15 +402,22 @@ public final class GT6RecipesCanner {
 	}
 
 	/**
-	 * Pours the 60 rows into {@link GT6RecipeMaps#CANNER}: the 17 refill rows (the 16
-	 * colour refills + the chlorine remover, p24), the 3 food-can rows of task
-	 * food-can-row0 (rotten_flesh/spider_eye/cookie), the 32 C-Foam refills of task
-	 * c-foam-fluid-refill (the :254 dyed + the :262 owned ladders) and the laser gas
-	 * fill family (qu-laser-domain + debt-laser-gas-family + debt-hene-fluid,
-	 * MultiItemTechnological.java:396-403 — the FULL eight-row walk resolves in vivo: the
-	 * helium item leg self-heals through the registry lookup, the heliumneon fluid leg
-	 * landed with debt-hene-fluid; the offline test fixtures still arm the helium skip —
-	 * the registry lookup yields nothing on an unbooted registry).
+	 * Pours the {@link GT6RecipeMaps#CANNER} stock: the 17 refill rows (the 16 colour
+	 * refills + the chlorine remover, p24), the 3 food-can rows of task food-can-row0
+	 * (rotten_flesh/spider_eye/cookie), the 32 C-Foam refills of task c-foam-fluid-refill
+	 * (the :254 dyed + the :262 owned ladders), the laser gas fill family (qu-laser-domain +
+	 * debt-laser-gas-family + debt-hene-fluid, MultiItemTechnological.java:396-403 — the
+	 * FULL eight-row walk resolves in vivo: the helium item leg self-heals through the
+	 * registry lookup, the heliumneon fluid leg landed with debt-hene-fluid; the offline
+	 * test fixtures still arm the helium skip — the registry lookup yields nothing on an
+	 * unbooted registry), PLUS the task food-meat-recipes bands: the 28 canned-material
+	 * rows (Loader_Recipes_Food.java:44-51 — 4 cooked/tofu materials × the 7 ST.array
+	 * prefixes), the 6 air rows (MultiItemCans.java:113-120 — 3 fills + 3 releases; the
+	 * plain-air pair stays dormant on the port-absent {@code air} fluid, the
+	 * pour-face-forever posture) and the 14 T3b-delegated baking rows (MultiItemFood.java
+	 * :600-:782 walk; :600 = the row0 row, :624 = the NeLi TRUE NEGATIVE). The :40 WiMo
+	 * row and the :41/:42 row0 pair keep their
+	 * row0-card disposition (foreign TRUE NEGATIVE / already poured).
 	 * Idempotent; an unresolvable row skips with a count (the upstream FL.exists drops).
 	 */
 	public static synchronized void load() {
@@ -273,8 +480,106 @@ public final class GT6RecipesCanner {
 			tMap.addRecipe(tRow);
 			tPoured++;
 		}
+
+		// task food-meat-recipes — the :44-51 canned-material band: 4 materials × the 7
+		// ST.array prefixes, RM.food_can(tStack, 2, name, IL.CANS_*) — the tier dispatch
+		// (foodValue 2 → the tiny can) rides the shared foodCanRow. The input count is the
+		// mat() stackSize column (CANNED_MATERIAL_COUNTS — the full material unit per line,
+		// the rework food-meat-recipes-rework correction). The upstream canned display
+		// names ("Canned Fish"/"Canned Meat"/"Canned Tofu"/"Canned Emerald Green")
+		// stay pooled with the NEI-info face (the foodCanRow doc).
+		ItemStack tMaterialEmptyCan = sFoodCanEmptyResolver.get();
+		if (tMaterialEmptyCan == null || tMaterialEmptyCan.isEmpty()) {
+			tSkipped += 4 * cannedMaterialPrefixes().size(); // the empty-can leg feeds every row
+		} else for (CannedMaterial tSpec : cannedMaterialTable()) {
+			List<OreDictPrefix> tPrefixes = cannedMaterialPrefixes();
+			for (int i = 0; i < tPrefixes.size(); i++) {
+				Item tMatItem = sFoodMaterialItemResolver.apply(tPrefixes.get(i), tSpec.material());
+				Recipe tRow = tMatItem == null ? null
+						: foodCanRow(new ItemStack(tMatItem, CANNED_MATERIAL_COUNTS.get(i)), CANNED_MATERIAL_FOOD_VALUE, tSpec.family(), tMaterialEmptyCan);
+				if (tRow == null) {tSkipped++; continue;} // the mat()-null silent drop
+				tMap.addRecipe(tRow);
+				tPoured++;
+			}
+		}
+
+		// task food-meat-recipes (scope extension) — the T3b-delegated baking band: the
+		// MultiItemFood.java:600-:782 food_can walk over the port bake items (the :600 row
+		// is the row0 card's; the :624 NeLi arm = the declared TRUE NEGATIVE). The explicit
+		// foodValue column and the input counts carry verbatim; the cookie rows ride the
+		// row0 cookies-can seam, the bread rows the CANS_BREAD ladder.
+		ItemStack tBakingEmptyCan = sFoodCanEmptyResolver.get();
+		if (tBakingEmptyCan == null || tBakingEmptyCan.isEmpty()) {
+			tSkipped += BAKING_CANNED_MEMBERS.size();
+		} else for (BakingCanMember tMember : BAKING_CANNED_MEMBERS) {
+			Item tBakeFood = sBakingFoodItemResolver.apply(tMember.itemId());
+			IntFunction<ItemStack> tBakeFamily = "cookies".equals(tMember.family())
+					? aTier -> sCookiesCanResolver.get() : sBreadCansResolver;
+			Recipe tBakeRow = tBakeFood == null ? null
+					: foodCanRow(new ItemStack(tBakeFood, tMember.inputCount()), tMember.foodValue(), tBakeFamily, tBakingEmptyCan);
+			if (tBakeRow == null) {tSkipped++; continue;} // the unregistered bake-item silent drop
+			tMap.addRecipe(tBakeRow);
+			tPoured++;
+		}
+
+		// task food-meat-recipes — the MultiItemCans.java:113-120 air band: the :113-114
+		// walk-minus fill + the :115-:116 explicit fills + the :118-:120 releases, buffered
+		// F verbatim. The plain-air pair stays dormant on the port-absent air fluid.
+		for (String tAir : AIR_FILL_WALK) {if (pourAir(tMap, airFillRecipe(tAir))) tPoured++; else tSkipped++;}
+		for (String tAir : AIR_FILL_SPECIALS) {if (pourAir(tMap, airFillRecipe(tAir))) tPoured++; else tSkipped++;}
+		for (String tAir : AIR_RELEASE) {if (pourAir(tMap, airReleaseRecipe(tAir))) tPoured++; else tSkipped++;}
+
 		sLoaded = true;
 		LOGGER.info("GT6 Canner poured: {} loaded, {} skipped (unregistered dye/chlorine/can ids, = upstream FL.exists drops)", tPoured, tSkipped);
+	}
+
+	/** The pour helper: null → the silent skip (the air-band counter face). */
+	private static boolean pourAir(gregtech6.recipes.maps.GT6RecipeMapCanner aMap, @Nullable Recipe aRow) {
+		if (aRow == null) return false;
+		aMap.addRecipe(aRow);
+		return true;
+	}
+
+	/**
+	 * The MultiItemCans.java:113-116 fill row for ONE air id — buffered F, EUt 16, duration
+	 * 64, the empty can in, the air fluid × 16000 mB in, the filled can out. Null when any
+	 * leg fails to resolve (the silent skip — the plain-air dormancy face).
+	 */
+	@Nullable
+	static Recipe airFillRecipe(String aAirId) {
+		Fluid tAir = sAirFluidResolver.apply(aAirId);
+		if (tAir == null) return null;
+		ItemStack tEmpty = sFoodCanEmptyResolver.get();
+		if (tEmpty == null || tEmpty.isEmpty()) return null;
+		ItemStack tCan = sAirCanResolver.apply(aAirId);
+		if (tCan == null || tCan.isEmpty()) return null;
+		// upstream :113-116 — RM.Canner.addRecipe1(F, 16, 64, IL.Food_Can_Empty.get(1), FL.make(tAir, 16000), NF, IL.Food_Can_Air_*.get(1))
+		return new Recipe(false,
+				new ItemStack[] {tEmpty.copy()}, new ItemStack[] {tCan.copy()},
+				new FluidStack[] {new FluidStack(tAir, AIR_MB)},
+				null,
+				AIR_FILL_DURATION, AIR_EUT, 0);
+	}
+
+	/**
+	 * The MultiItemCans.java:118-120 release row for ONE air id — buffered F, EUt 16,
+	 * duration 16, the filled can in, the air fluid × 16000 mB + the empty can out. Null
+	 * when any leg fails to resolve.
+	 */
+	@Nullable
+	static Recipe airReleaseRecipe(String aAirId) {
+		Fluid tAir = sAirFluidResolver.apply(aAirId);
+		if (tAir == null) return null;
+		ItemStack tEmpty = sFoodCanEmptyResolver.get();
+		if (tEmpty == null || tEmpty.isEmpty()) return null;
+		ItemStack tCan = sAirCanResolver.apply(aAirId);
+		if (tCan == null || tCan.isEmpty()) return null;
+		// upstream :118-120 — RM.Canner.addRecipe1(F, 16, 16, IL.Food_Can_Air_*.get(1), NF, FL.Air_*.make(16000), IL.Food_Can_Empty.get(1))
+		return new Recipe(false,
+				new ItemStack[] {tCan.copy()}, new ItemStack[] {tEmpty.copy()},
+				null,
+				new FluidStack[] {new FluidStack(tAir, AIR_MB)},
+				AIR_RELEASE_DURATION, AIR_EUT, 0);
 	}
 
 	/**
@@ -455,7 +760,7 @@ public final class GT6RecipesCanner {
 	}
 
 	/** Test seam: clears the poured flag so a fresh generation can re-pour (public — the cross-domain e2e drives it). */
-	public static void resetForTest() {sLoaded = false;}
+	public static void resetForTest() {sLoaded = false; sCannedMaterials = null;}
 
 	private GT6RecipesCanner() {}
 }
