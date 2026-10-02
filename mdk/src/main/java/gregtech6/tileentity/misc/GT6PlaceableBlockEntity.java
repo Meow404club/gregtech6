@@ -87,6 +87,7 @@ public class GT6PlaceableBlockEntity extends TileEntityBase03TicksAndSync {
 
 	@Override
 	public void load(CompoundTag aNBT) {
+		ItemStack tWas = mStack;
 		super.load(aNBT);
 		if (aNBT.contains(NBT_VALUE, Tag.TAG_COMPOUND)) {
 			//? if forge {
@@ -97,6 +98,16 @@ public class GT6PlaceableBlockEntity extends TileEntityBase03TicksAndSync {
 			*///?}
 		} else {
 			mStack = ItemStack.EMPTY;
+		}
+		if (hasLevel() && isClientSide() && !ItemStack.matches(tWas, mStack)) {
+			// task surface-rock-material-link: the BE-data channel never re-bakes chunks —
+			// vanilla handleBlockEntityData only loads the tag (ClientPacketListener.java
+			// :1226-1238), so a material arriving AFTER the section was compiled leaves the
+			// pile untinted until some unrelated rebuild. The base's paint arm re-bakes via
+			// requestModelDataUpdate (the ModelData consumers); the BlockColor consumers
+			// need the section-dirty face — the client sendBlockUpdated IS that face
+			// (ClientLevel.java:554 -> LevelRenderer.blockChanged :2532 -> setBlockDirty).
+			getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 0);
 		}
 	}
 }

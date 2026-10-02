@@ -111,6 +111,11 @@ public final class GT6PlaceablePlacement {
 				tPile.setStack(tOne);
 				aHeld.shrink(1);
 			}
+			// task surface-rock-material-link — the deferred confirm re-send (the
+			// GT6PlaceableBlock.tick javadoc): the BE-data packet can reach a client whose
+			// block does not exist yet and be dropped there; tick+4 retransmits onto a
+			// client BE that exists, so the material tint always lands.
+			aLevel.scheduleTick(tTarget, tBlock, 4);
 		}
 		SoundType tSound = tBlock.kind().sound;
 		aLevel.playSound(null, tTarget, tSound.getPlaceSound(), SoundSource.BLOCKS,

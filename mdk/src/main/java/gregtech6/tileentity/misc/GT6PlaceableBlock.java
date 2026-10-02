@@ -3,6 +3,8 @@ package gregtech6.tileentity.misc;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -189,6 +191,24 @@ public class GT6PlaceableBlock extends GTEntityBlock {
 		}
 		aLevel.removeBlock(aPos, false);
 		return InteractionResult.CONSUME;
+	}
+
+	/**
+	 * The deferred placement confirm (task surface-rock-material-link): the BE-data packet
+	 * races the section packet in vanilla ChunkHolder.broadcastChanges — the multi-change
+	 * branch sends broadcastBlockEntityIfNeeded BEFORE the section update (ChunkHolder.java
+	 * :226-227), and the client silently DROPS a payload that lands before the block exists
+	 * (handleBlockEntityData getBlockEntity().ifPresent no-op, ClientPacketListener.java
+	 * :1226-1238) — the pile then renders untinted (the "全部变成石头类型" report) and nothing
+	 * ever resends. One delayed re-send after the placement lands on a client BE that EXISTS
+	 * by then, so the retransmit loads — and the load arm re-bakes the tint. The GT6FoamFresh
+	 * scheduleTick precedent; the no-level offline face is the sendClientData side guard.
+	 */
+	@Override
+	public void tick(BlockState aState, ServerLevel aLevel, BlockPos aPos, RandomSource aRandom) {
+		if (aLevel.getBlockEntity(aPos) instanceof GT6PlaceableBlockEntity tPile && !tPile.stack().isEmpty()) {
+			tPile.sendClientData();
+		}
 	}
 
 	/** The loot shell (base :72-74 getDrops → mStack): the contents ARE the drops, noLootTable. */
