@@ -70,6 +70,20 @@ import net.minecraftforge.registries.RegistryObject;
  * upstream TD.Creative.HIDDEN rows (6/7/8, 203/204, 302, 402, 502, 602, 1400/1401,
  * 1500/1501, 1601) register but do NOT display in the tab.
  *
+ * <p>Task btl-bottles-families-b extends the table with the families-B batch: 96 rows
+ * (171 total) — the kitchen segment (the sauce family 800-804, the apple rows 900-905,
+ * the cooking-oil bottles 1000-1007, mayo/dressing 1020/1021, the milk family
+ * 1100/1102, soy milk 1200, the chocolate creams 1900/1901, maple 3500/3501, peanut
+ * butter 3601) and the smoothie walk 2000-5705 minus the landed ketchup 3101. The
+ * HIDDEN set grows by 802/803/804 (the Diabolo/Diablo/Cow sauces), 1102 (the spoiled
+ * milk), 3200 (the golden carrot juice) and 3700 (the rainbow sap). The smoothie walk
+ * row count is the walk's ACTUAL output (69 rows, MultiItemBottles.java:197-:341) — the
+ * census "~46" headline was an undercount, the row list is the authority (the
+ * food-bottles-min 7-vs-8 counting precedent). The oil-family texture source stayed the
+ * folder sprites (gt.multiitem.bottles/<meta>.png — gregapi MultiItemRandom.java:366
+ * registers the folder icon unconditionally, the census "material prefix texture family"
+ * hypothesis refuted; the assets/README.md families-B ledger carries the note).
+ *
  * <p>KJS surface: REGISTRATION face only, deferred to the KJS binding card (the
  * GT6CrystalChargers.java:44 declaration form); the item models + textures are
  * datapack-domain, naturally moddable.
@@ -206,28 +220,143 @@ public final class GT6Bottles {
 			new BottleRow(32765, "bottle_mercury"           , "Mercury Bottle"              , "Also called Quicksilver", false, 64), // :399 IL.Bottle_Mercury; HBM drop leg :405 = ABSENT(HBM) gate
 			new BottleRow(32766, "bottle_glue"              , "Glue Bottle"                 , "", false, 64)); // :408 IL.Bottle_Glue
 
-	private static int sFirstIndexOfMeta(int aMeta) {
-		for (int i = 0; i < FAMILY_A_ROWS.size(); i++) {
-			if (FAMILY_A_ROWS.get(i).meta() == aMeta) return i;
+	/**
+	 * The families-B rows, upstream meta order (MultiItemBottles.java:106-:341; the line
+	 * anchor lives in the per-row census test and the assets/README.md sha256 ledger).
+	 * The landed seats (BBQ 805, cream 1101, ketchup 3101) are NOT repeated here — they
+	 * splice into {@link #ROWS} at their families-a positions. All 96 rows sit below the
+	 * meta 32000 stack split, so the column is 16 across the batch. The fluid-carrier id
+	 * rows ride the port GTFluids FOOD_B1/FOOD_B2 ids verbatim; the OP.bottle.dat(MT.X)
+	 * material containers (the cooking oils, the milk bottle) and the IL.Bottle_* seats
+	 * with bottle names (the slime bottles) snake the anchor; HIDDEN adds 802/803/804,
+	 * 1102, 3200 and 3700.
+	 */
+	public static final List<BottleRow> FAMILY_B_ROWS = List.of(
+			new BottleRow(  800, "chillysauce"         , "Chili Sauce"             , "", false, 16), // :106 FL.Sauce_Chili
+			new BottleRow(  801, "hotsauce"            , "Hot Sauce"               , "", false, 16), // :107 FL.Sauce_Hot
+			new BottleRow(  802, "diabolosauce"        , "Diabolo Sauce"           , "", true , 16), // :108 HIDDEN
+			new BottleRow(  803, "diablosauce"         , "Diablo Sauce"            , "", true , 16), // :109 HIDDEN
+			new BottleRow(  804, "diablosauce_strong"  , "There is no Cow Sauce"   , "", true , 16), // :110 HIDDEN FL.Sauce_Cow_Level
+			new BottleRow(  900, "juiceapple"          , "Apple Juice"             , "", false, 16), // :114 FL.Juice_Apple
+			new BottleRow(  901, "ciderapple"          , "Cider"                   , "", false, 16), // :115 FL.Cider_Apple
+			new BottleRow(  902, "applevinegar"        , "Apple Cider Vinegar"     , "", false, 16), // :116 FL.Vinegar_Apple
+			new BottleRow(  905, "applesmoothie"       , "Apple Smoothie"          , "", false, 16), // :117 FL.Smoothie_Apple
+			new BottleRow( 1000, "bottle_olive_oil"    , "Olive Oil"               , "Cooking Oil", false, 16), // :120 OP.bottle.dat(MT.OliveOil); FL.Oil_Olive = the juiceolive fluid carrier
+			new BottleRow( 1001, "bottle_sunflower_oil", "Sunflower Oil"           , "Cooking Oil", false, 16), // :121 OP.bottle.dat(MT.SunflowerOil)
+			new BottleRow( 1002, "bottle_nut_oil"      , "Nut Oil"                 , "Cooking Oil", false, 16), // :122 OP.bottle.dat(MT.NutOil)
+			new BottleRow( 1003, "bottle_seed_oil"     , "Seed Oil"                , "Cooking Oil", false, 16), // :123 OP.bottle.dat(MT.SeedOil)
+			new BottleRow( 1004, "bottle_hemp_oil"     , "Hemp Oil"                , "Cooking Oil", false, 16), // :124 OP.bottle.dat(MT.HempOil)
+			new BottleRow( 1005, "bottle_lin_oil"      , "Lin Oil"                 , "Cooking Oil", false, 16), // :125 OP.bottle.dat(MT.LinOil)
+			new BottleRow( 1006, "bottle_fish_oil"     , "Fish Oil"                , "Cooking Oil", false, 16), // :126 OP.bottle.dat(MT.FishOil)
+			new BottleRow( 1007, "bottle_whale_oil"    , "Whale Oil"               , "Cooking Oil", false, 16), // :127 OP.bottle.dat(MT.WhaleOil)
+			new BottleRow( 1020, "mayo"                , "Mayo"                    , "", false, 16), // :134 FL.Mayo
+			new BottleRow( 1021, "dressing"            , "Dressing"                , "", false, 16), // :135 FL.Dressing
+			new BottleRow( 1100, "bottle_milk"         , "Milk"                    , "", false, 16), // :138 OP.bottle.dat(MT.Milk), IL.Bottle_Milk
+			new BottleRow( 1102, "spoiledmilk"         , "Milk"                    , "", true , 16), // :141 HIDDEN IL.Bottle_Milk_Spoiled, FL.Milk_Spoiled
+			new BottleRow( 1200, "soymilk"             , "Soy Milk"                , "", false, 16), // :149 FL.MilkSoy, IL.Bottle_Milk_Soy
+			new BottleRow( 1900, "chocolatecream"      , "Chocolate Cream"         , "", false, 16), // :194 FL.Cream_Chocolate
+			new BottleRow( 1901, "nutella"             , "Nutella"                 , "", false, 16), // :195 FL.Cream_Nutella
+			new BottleRow( 2000, "strawberryjuice"     , "Strawberry Juice"        , "", false, 16), // :197 FL.Juice_Strawberry
+			new BottleRow( 2005, "strawberrysmoothie"  , "Strawberry Smoothie"     , "", false, 16), // :198 FL.Smoothie_Strawberry
+			new BottleRow( 2100, "bananajuice"         , "Banana Juice"            , "", false, 16), // :200 FL.Juice_Banana
+			new BottleRow( 2105, "bananasmoothie"      , "Banana Smoothie"         , "", false, 16), // :201 FL.Smoothie_Banana
+			new BottleRow( 2200, "bottle_slime_green"  , "Green Slime Bottle"      , "Can be used as Glue too", false, 16), // :204 IL.Bottle_Slime_Green, FL.Slime_Green
+			new BottleRow( 2201, "bottle_slime_pink"   , "Pink Slime Bottle"       , "Can be used as Glue too", false, 16), // :206 IL.Bottle_Slime_Pink, FL.Slime_Pink
+			new BottleRow( 2202, "bottle_slime_blue"   , "Blue Slime Bottle"       , "Can be used as Glue too", false, 16), // :208 IL.Bottle_Slime_Blue, FL.Slime_Blue
+			new BottleRow( 2210, "bawls"               , "BAWLS"                   , "", false, 16), // :209 FL.BAWLS
+			new BottleRow( 2300, "melonjuice"          , "Melon Juice"             , "", false, 16), // :226 FL.Juice_Melon
+			new BottleRow( 2305, "melonsmoothie"       , "Melon Smoothie"          , "", false, 16), // :227 FL.Smoothie_Melon
+			new BottleRow( 2400, "juice_juice"         , "Juice"                   , "", false, 16), // :229 FL.Juice = the juice_juice fluid carrier
+			new BottleRow( 2405, "fruitsmoothie"       , "Froot Smoothie"          , "", false, 16), // :230 FL.Smoothie_Fruit
+			new BottleRow( 2500, "kiwijuice"           , "Kiwi Juice"              , "", false, 16), // :238 FL.Juice_Kiwi
+			new BottleRow( 2505, "kiwismoothie"        , "Kiwi Smoothie"           , "", false, 16), // :239 FL.Smoothie_Kiwi
+			new BottleRow( 2600, "raspberryjuice"      , "Raspberry Juice"         , "", false, 16), // :241 FL.Juice_Raspberry
+			new BottleRow( 2605, "raspberrysmoothie"   , "Raspberry Smoothie"      , "", false, 16), // :242 FL.Smoothie_Raspberry
+			new BottleRow( 2700, "blackberryjuice"     , "Blackberry Juice"        , "", false, 16), // :244 FL.Juice_Blackberry
+			new BottleRow( 2705, "blackberrysmoothie"  , "Blackberry Smoothie"     , "", false, 16), // :245 FL.Smoothie_Blackberry
+			new BottleRow( 2800, "blueberryjuice"      , "Blueberry Juice"         , "", false, 16), // :247 FL.Juice_Blueberry
+			new BottleRow( 2805, "blueberrysmoothie"   , "Blueberry Smoothie"      , "", false, 16), // :248 FL.Smoothie_Blueberry
+			new BottleRow( 2900, "cranberryjuice"      , "Cranberry Juice"         , "", false, 16), // :250 FL.Juice_Cranberry
+			new BottleRow( 2905, "cranberrysmoothie"   , "Cranberry Smoothie"      , "", false, 16), // :251 FL.Smoothie_Cranberry
+			new BottleRow( 3000, "gooseberryjuice"     , "Gooseberry Juice"        , "", false, 16), // :253 FL.Juice_Gooseberry
+			new BottleRow( 3005, "gooseberrysmoothie"  , "Gooseberry Smoothie"     , "", false, 16), // :254 FL.Smoothie_Gooseberry
+			new BottleRow( 3100, "juicetomato"         , "Tomato Juice"            , "", false, 16), // :256 FL.Juice_Tomato
+			new BottleRow( 3200, "goldencarrotjuice"   , "Golden Carrot Juice"     , "", true , 16), // :259 HIDDEN goldencarrotjuice fluid (FOOD_B2)
+			new BottleRow( 3300, "juicecarrot"         , "Carrot Juice"            , "", false, 16), // :261 FL.Juice_Carrot
+			new BottleRow( 3400, "cactuswater"         , "Cactus Water"            , "", false, 16), // :263 FL.Juice_Cactus
+			new BottleRow( 3500, "maplesap"            , "Maple Sap"               , "", false, 16), // :265 FL.Sap_Maple
+			new BottleRow( 3501, "maplesyrup"          , "Maple Syrup"             , "", false, 16), // :266 FL.Syrup_Maple
+			new BottleRow( 3601, "peanutbutter"        , "Peanut Butter"           , "", false, 16), // :273 FL.Nutbutter_Peanut
+			new BottleRow( 3700, "rainbowsap"          , "Rainbow Sap"             , "Friendship in a Bottle, definitely not blood of a Tree", true , 16), // :275 HIDDEN FL.Sap_Rainbow (the :2898 fluid), oredict foodRainbowsap
+			new BottleRow( 3800, "juicecherry"         , "Cherry Juice"            , "", false, 16), // :282 FL.Juice_Cherry
+			new BottleRow( 3805, "cherrysmoothie"      , "Cherry Smoothie"         , "", false, 16), // :283 FL.Smoothie_Cherry
+			new BottleRow( 3900, "juicepineapple"      , "Ananas Juice"            , "", false, 16), // :285 FL.Juice_Ananas
+			new BottleRow( 3901, "winepineapple"       , "Ananas Cider"            , "", false, 16), // :286 FL.Cider_Ananas
+			new BottleRow( 3905, "pineapplesmoothie"   , "Ananas Smoothie"         , "", false, 16), // :287 FL.Smoothie_Ananas
+			new BottleRow( 4000, "currantjuice"        , "Currant Juice"           , "", false, 16), // :289 FL.Juice_Currant
+			new BottleRow( 4005, "currantsmoothie"     , "Currant Smoothie"        , "", false, 16), // :290 FL.Smoothie_Currant
+			new BottleRow( 4100, "juiceplum"           , "Plum Juice"              , "", false, 16), // :292 FL.Juice_Plum
+			new BottleRow( 4105, "plumsmoothie"        , "Plum Smoothie"           , "", false, 16), // :293 FL.Smoothie_Plum
+			new BottleRow( 4200, "juicepeach"          , "Peach Juice"             , "", false, 16), // :295 FL.Juice_Peach
+			new BottleRow( 4205, "peachsmoothie"       , "Peach Smoothie"          , "", false, 16), // :296 FL.Smoothie_Peach
+			new BottleRow( 4300, "juiceelderberry"     , "Elderberry Juice"        , "", false, 16), // :298 FL.Juice_Elderberry
+			new BottleRow( 4305, "elderberrysmoothie"  , "Elderberry Smoothie"     , "", false, 16), // :299 FL.Smoothie_Elderberry
+			new BottleRow( 4400, "juicegrapefruit"     , "Grapefruit Juice"        , "", false, 16), // :301 FL.Juice_Grapefruit
+			new BottleRow( 4405, "grapefruitsmoothie"  , "Grapefruit Smoothie"     , "", false, 16), // :302 FL.Smoothie_Grapefruit
+			new BottleRow( 4500, "juicelime"           , "Lime Juice"              , "", false, 16), // :304 FL.Juice_Lime
+			new BottleRow( 4505, "limesmoothie"        , "Lime Smoothie"           , "", false, 16), // :305 FL.Smoothie_Lime
+			new BottleRow( 4600, "juiceorange"         , "Orange Juice"            , "", false, 16), // :307 FL.Juice_Orange
+			new BottleRow( 4605, "orangesmoothie"      , "Orange Smoothie"         , "", false, 16), // :308 FL.Smoothie_Orange
+			new BottleRow( 4700, "juiceapricot"        , "Apricot Juice"           , "", false, 16), // :310 FL.Juice_Apricot
+			new BottleRow( 4705, "apricotsmoothie"     , "Apricot Smoothie"        , "", false, 16), // :311 FL.Smoothie_Apricot
+			new BottleRow( 4800, "juicepear"           , "Pear Juice"              , "", false, 16), // :313 FL.Juice_Pear
+			new BottleRow( 4805, "pearsmoothie"        , "Pear Smoothie"           , "", false, 16), // :314 FL.Smoothie_Pear
+			new BottleRow( 4900, "pumpkinjuice"        , "Pumpkin Juice"           , "", false, 16), // :316 FL.Juice_Pumpkin
+			new BottleRow( 5000, "persimmonjuice"      , "Persimmon Juice"         , "", false, 16), // :318 FL.Juice_Persimmon
+			new BottleRow( 5005, "persimmonsmoothie"   , "Persimmon Smoothie"      , "", false, 16), // :319 FL.Smoothie_Persimmon
+			new BottleRow( 5100, "starfruitjuice"      , "Starfruit Juice"         , "", false, 16), // :321 FL.Juice_Starfruit
+			new BottleRow( 5105, "starfruitsmoothie"   , "Starfruit Smoothie"      , "", false, 16), // :322 FL.Smoothie_Starfruit
+			new BottleRow( 5200, "figjuice"            , "Fig Juice"               , "", false, 16), // :324 FL.Juice_Fig
+			new BottleRow( 5205, "figsmoothie"         , "Fig Smoothie"            , "", false, 16), // :325 FL.Smoothie_Fig
+			new BottleRow( 5300, "pomegranatejuice"    , "Pomegranate Juice"       , "", false, 16), // :327 FL.Juice_Pomegranate
+			new BottleRow( 5305, "pomegranatesmoothie" , "Pomegranate Smoothie"    , "", false, 16), // :328 FL.Smoothie_Pomegranate
+			new BottleRow( 5400, "mangojuice"          , "Mango Juice"             , "", false, 16), // :330 FL.Juice_Mango
+			new BottleRow( 5405, "mangosmoothie"       , "Mango Smoothie"          , "", false, 16), // :331 FL.Smoothie_Mango
+			new BottleRow( 5500, "papayajuice"         , "Papaya Juice"            , "", false, 16), // :333 FL.Juice_Papaya
+			new BottleRow( 5505, "papayasmoothie"      , "Papaya Smoothie"         , "", false, 16), // :334 FL.Smoothie_Papaya
+			new BottleRow( 5600, "coconutmilk"         , "Coconut Milk"            , "Cooking Oil", false, 16), // :336 FL.Juice_Coconut
+			new BottleRow( 5604, "coconutcream"        , "Coconut Cream"           , "", false, 16), // :337 FL.Cream_Coconut
+			new BottleRow( 5605, "coconutsmoothie"     , "Coconut Smoothie"        , "", false, 16), // :338 FL.Smoothie_Coconut
+			new BottleRow( 5700, "beetjuice"           , "Beet Juice"              , "", false, 16)); // :340 FL.Juice_Beet
+
+	private static int sIndexOf(List<BottleRow> aRows, int aMeta) {
+		for (int i = 0; i < aRows.size(); i++) {
+			if (aRows.get(i).meta() == aMeta) return i;
 		}
-		throw new IllegalStateException("no families-A row with meta " + aMeta);
+		throw new IllegalStateException("no bottle row with meta " + aMeta);
 	}
 
 	/**
-	 * The 75 rows in upstream identity order (the empty domain-entry item first, then the
-	 * metas ascending — ketchup 3101 lands between 30001 and 32000, BBQ 805 / cream 1101
-	 * before the honey segment). Drives the models band, the lang walks and the tab.
+	 * The 171 rows in upstream identity order (the empty domain-entry item first, then the
+	 * metas ascending with the families-a landed seats preserved: BBQ 805 between the
+	 * 800-804 sauces and the apple rows, cream 1101 inside the milk family, ketchup 3101
+	 * between 30001 and 32000). Drives the models band, the lang walks and the tab.
 	 */
 	public static final List<BottleRow> ROWS;
 	static {
-		List<BottleRow> tRows = new ArrayList<>(1 + FAMILY_A_ROWS.size() + 3);
+		List<BottleRow> tRows = new ArrayList<>(1 + FAMILY_A_ROWS.size() + FAMILY_B_ROWS.size() + 3);
 		tRows.add(EMPTY_ROW);
-		tRows.addAll(FAMILY_A_ROWS.subList(0, sFirstIndexOfMeta(1300))); // 0..701
-		tRows.add(BBQ_ROW);
-		tRows.add(CREAM_ROW);
-		tRows.addAll(FAMILY_A_ROWS.subList(sFirstIndexOfMeta(1300), sFirstIndexOfMeta(32000))); // 1300..30001
-		tRows.add(KETCHUP_ROW);
-		tRows.addAll(FAMILY_A_ROWS.subList(sFirstIndexOfMeta(32000), FAMILY_A_ROWS.size())); // 32000..32766
+		tRows.addAll(FAMILY_A_ROWS.subList(0, sIndexOf(FAMILY_A_ROWS, 1300))); // 0..701
+		tRows.addAll(FAMILY_B_ROWS.subList(sIndexOf(FAMILY_B_ROWS, 800), sIndexOf(FAMILY_B_ROWS, 900))); // 800..804
+		tRows.add(BBQ_ROW); // 805, the landed seat
+		tRows.addAll(FAMILY_B_ROWS.subList(sIndexOf(FAMILY_B_ROWS, 900), sIndexOf(FAMILY_B_ROWS, 1102))); // 900..1100
+		tRows.add(CREAM_ROW); // 1101, the landed seat
+		tRows.addAll(FAMILY_B_ROWS.subList(sIndexOf(FAMILY_B_ROWS, 1102), sIndexOf(FAMILY_B_ROWS, 1900))); // 1102..1200
+		tRows.addAll(FAMILY_A_ROWS.subList(sIndexOf(FAMILY_A_ROWS, 1300), sIndexOf(FAMILY_A_ROWS, 30000))); // 1300..1802
+		tRows.addAll(FAMILY_B_ROWS.subList(sIndexOf(FAMILY_B_ROWS, 1900), FAMILY_B_ROWS.size())); // 1900..5700
+		tRows.addAll(FAMILY_A_ROWS.subList(sIndexOf(FAMILY_A_ROWS, 30000), sIndexOf(FAMILY_A_ROWS, 32000))); // 30000..30001
+		tRows.add(KETCHUP_ROW); // 3101, the landed seat between 30001 and 32000
+		tRows.addAll(FAMILY_A_ROWS.subList(sIndexOf(FAMILY_A_ROWS, 32000), FAMILY_A_ROWS.size())); // 32000..32766
 		ROWS = List.copyOf(tRows);
 	}
 
@@ -253,9 +382,12 @@ public final class GT6Bottles {
 		for (BottleRow tRow : FAMILY_A_ROWS) {
 			BY_ID.put(tRow.id(), ITEMS.register(tRow.id(), () -> new Item(new Item.Properties().stacksTo(tRow.stackSize()))));
 		}
+		for (BottleRow tRow : FAMILY_B_ROWS) {
+			BY_ID.put(tRow.id(), ITEMS.register(tRow.id(), () -> new Item(new Item.Properties().stacksTo(tRow.stackSize()))));
+		}
 	}
 
-	/** The 75 holders in {@link #ROWS} order (the census-walk face the tests pin). */
+	/** The 171 holders in {@link #ROWS} order (the census-walk face the tests pin). */
 	public static final List<RegistryObject<Item>> BOTTLES = ROWS.stream().map(tRow -> BY_ID.get(tRow.id())).toList();
 
 	/** The tab face: the non-HIDDEN rows in {@link #ROWS} order (the TD.Creative.HIDDEN rows stay out). */
