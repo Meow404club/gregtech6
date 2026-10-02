@@ -146,14 +146,14 @@ public final class GT6ToolActions {
 	 * {@code new GT_Tool_Wrench() … , TOOL_wrench}) and the {@code craftingToolWrench}
 	 * oredict key (CS.java:1876) as the crafting-tool ingredient face; the port flattens
 	 * the classification onto this Forge {@link ToolAction} and keeps the string for the
- * dispatch seam as {@link #WRENCH_ID}. Consumer: {@link GTWrenchItem}. RED LINE
- * (decisions.p25-tool-hammer-wrench-rulings ②): the item classifies on THIS action
- * and NEVER on {@code ToolActions.HOE_DIG} — the interaction points gate on the shared
- * {@link #isWrenchInteractionKey} seam (task wrench-interaction-key: WRENCH ∪ the
- * vanilla-hoe leg), so the wrench enters through THIS leg and the HOE_DIG leg stays
- * the vanilla-hoe substitute; the {@code Behavior_Tool(TOOL_wrench, …)} world face
- * (GT_Tool_Wrench.java:95, machine-dismantle/rotation) stays the interaction pool.
- */
+	 * dispatch seam as {@link #WRENCH_ID}. Consumer: {@link GTWrenchItem}. RED LINE
+	 * (decisions.p25-tool-hammer-wrench-rulings ②): the item classifies on THIS action
+	 * and NEVER on {@code ToolActions.HOE_DIG} — the interaction points gate on the shared
+	 * {@link #isWrenchInteractionKey} seam (task wrench-interaction-key: WRENCH ∪ the
+	 * vanilla-hoe leg), so the wrench enters through THIS leg and the HOE_DIG leg stays
+	 * the vanilla-hoe substitute; the {@code Behavior_Tool(TOOL_wrench, …)} world face
+	 * (GT_Tool_Wrench.java:95, machine-dismantle/rotation) stays the interaction pool.
+	 */
 	public static final ToolAction WRENCH = ToolAction.get("gt6_wrench");
 
 	/**
@@ -312,12 +312,12 @@ public final class GT6ToolActions {
 	/**
 	 * The hoe stack-classification action ("gt6_hoe" — task w5-t4-field-five, the
 	 * PICKAXE entry shape; upstream {@code TOOL_hoe} CS.java:1044, the
- * Loader_Tools.java:122 registration row). RED LINE: the hoe NEVER classifies
- * {@code ToolActions.HOE_DIG} — that action is the vanilla-hoe leg of the
- * wrench-interaction key ({@link #isWrenchInteractionKey}; a GT6 hoe classifying there
- * would fire the wrench UI, the CROWBAR ruling above — the vanilla hoe keeps the
- * substitute face, the gt6 hoe keeps tilling).
- */
+	 * Loader_Tools.java:122 registration row). RED LINE: the hoe NEVER classifies
+	 * {@code ToolActions.HOE_DIG} — that action is the vanilla-hoe leg of the
+	 * wrench-interaction key ({@link #isWrenchInteractionKey}; a GT6 hoe classifying there
+	 * would fire the wrench UI, the CROWBAR ruling above — the vanilla hoe keeps the
+	 * substitute face, the gt6 hoe keeps tilling).
+	 */
 	public static final ToolAction HOE = ToolAction.get("gt6_hoe");
 
 	/**
