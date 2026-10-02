@@ -2323,19 +2323,24 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The bottles-domain minimum (task food-bottles-min): the 4 item faces + the tab
-     * title. Values are the upstream wordings verbatim — the MultiItemBottles
-     * registration-row name column (:257 "Tomato Ketchup", :111 "Barbecue Sauce", :139
-     * "Heavy Cream") and the OP.bottle local-name template over MT.Empty ("Empty" +
-     * " Bottle", OP.java:229); the three filled rows carry an EMPTY desc column (no
-     * tooltip key, the addFoodItems ruling) and the tab label is the creative-tab ctor
-     * literal "GregTech: Bottles" (MultiItemBottles.java:40).
+     * The bottles domain (task food-bottles-min + btl-bottles-families-a): the 75 item
+     * faces + the desc tooltips + the tab title, walked over the
+     * {@link gregtech6.registry.GT6Bottles#ROWS} table so the lang face cannot drift from
+     * the registered ids (the addFoodItems form). Values are the upstream wordings
+     * verbatim — the MultiItemBottles registration-row name column (:45-:408, e.g. :257
+     * "Tomato Ketchup", :157 "Honey", :183 "Purple Drink") + the six non-empty desc rows
+     * (the honey bear joke :157, the ink/indigo "Color: *" :346/:349, the loot bottle
+     * :368, the tar glue note :371, the quicksilver alias :399) and the OP.bottle
+     * local-name template over MT.Empty ("Empty" + " Bottle", OP.java:229); the empty
+     * desc rows emit NO tooltip key (the GT6BakeFoods empty-desc ruling) and the tab
+     * label is the creative-tab ctor literal "GregTech: Bottles"
+     * (MultiItemBottles.java:40).
      */
     private void addBottles() {
-        add("item.gt6.bottle_empty", "Empty Bottle");
-        add("item.gt6.food_ketchup", "Tomato Ketchup");
-        add("item.gt6.food_barbecuesauce", "Barbecue Sauce");
-        add("item.gt6.food_heavycream", "Heavy Cream");
+        for (gregtech6.registry.GT6Bottles.BottleRow tRow : gregtech6.registry.GT6Bottles.ROWS) {
+            add(tRow.langKey(), tRow.enName());
+            if (tRow.tooltipKey() != null) add(tRow.tooltipKey(), tRow.enTooltip());
+        }
         add(gregtech6.registry.GT6Bottles.TAB_TITLE_KEY, "GregTech: Bottles");
     }
 

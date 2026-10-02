@@ -2263,6 +2263,8 @@ direct	gt6.wire.display.plain	%s%s	hand
 direct	gt6.wire.form.cable	线缆	hand
 direct	gt6.wire.form.wire	导线	hand
 direct	gt6.wire.form.wirelamp	灯导线	hand
+direct	item.gt6.alcopops	波普甜酒	hand
+direct	item.gt6.ambrosia	圣餐	hand
 direct	item.gt6.americium_241_fuel_rod	镅-241燃料棒	hand
 direct	item.gt6.americium_245_fuel_rod	镅-245燃料棒	hand
 direct	item.gt6.axe	斧	hand
@@ -2299,21 +2301,39 @@ direct	item.gt6.battery_nicd_hv	镍镉电池 (HV)	hand
 direct	item.gt6.battery_nicd_lv	镍镉电池 (LV)	hand
 direct	item.gt6.battery_nicd_mv	镍镉电池 (MV)	hand
 direct	item.gt6.battery_nicd_ulv	镍镉电池 (ULV)	hand
+direct	item.gt6.beer	啤酒	hand
 direct	item.gt6.bending_cylinder	弯曲绕筒	hand
 direct	item.gt6.bending_cylinder_small	小型弯曲绕筒	hand
 direct	item.gt6.blutonium_fuel_rod	蓝钚燃料棒	hand
 direct	item.gt6.book_loot_guide	布满灰尘的指南书	hand
 direct	item.gt6.book_loot_guide.tooltip	战利品：某本随机手册	hand
 direct	item.gt6.book_loot_guide.tooltip_loot	右键方块以开启	hand
+direct	item.gt6.bottle_blood	鲜血瓶	hand
 direct	item.gt6.bottle_empty	空瓶	hand
+direct	item.gt6.bottle_glue	胶水瓶	hand
+direct	item.gt6.bottle_holy_water	圣水	hand
+direct	item.gt6.bottle_honeydew	蜜汁	hand
+direct	item.gt6.bottle_indigo	罐装靛蓝色染料	hand
+direct	item.gt6.bottle_indigo.tooltip	颜色: 蓝色	hand
+direct	item.gt6.bottle_ink	墨水瓶	hand
+direct	item.gt6.bottle_ink.tooltip	颜色: 黑色	hand
+direct	item.gt6.bottle_loot	Clouded Bottle	hand
+direct	item.gt6.bottle_loot.tooltip	Loot: A random Bottle	hand
+direct	item.gt6.bottle_lubricant	润滑油瓶	hand
+direct	item.gt6.bottle_mercury	汞瓶	hand
+direct	item.gt6.bottle_poison	Bottle of Poison	hand
+direct	item.gt6.bottle_tar	焦油瓶	hand
+direct	item.gt6.bottle_tar.tooltip	也可以用作胶水	hand
 direct	item.gt6.branch_cutter	修枝剪	hand
 direct	item.gt6.builder_wand	建筑之杖	hand
 direct	item.gt6.butchery_knife	屠宰刀	hand
 direct	item.gt6.butchery_knife.tooltip	攻击速度较慢	hand
 direct	item.gt6.buzzsaw_lv	圆锯 (LV)	hand
 direct	item.gt6.buzzsaw_lv.tooltip	不适合采集方块	hand
+direct	item.gt6.canevinegar	甘蔗醋	hand
 direct	item.gt6.carbine	卡宾枪	hand
 direct	item.gt6.carbine.tooltip	单发, 伤害高	hand
+direct	item.gt6.cavejohnsonsgrenadejuice	凯夫·约翰逊的炸弹柠檬汁	hand
 direct	item.gt6.chainsaw_hv	链锯 (HV)	hand
 direct	item.gt6.chainsaw_hv.tooltip	也可采集冰	hand
 direct	item.gt6.chainsaw_lv	链锯 (LV)	hand
@@ -2419,6 +2439,7 @@ direct	item.gt6.crop_seed	作物种子	hand
 direct	item.gt6.crowbar	撬棍	hand
 direct	item.gt6.cutter	线缆剪	hand
 direct	item.gt6.cyanite_fuel_rod	蓝晶石燃料棒	hand
+direct	item.gt6.darkbeer	黑啤	hand
 direct	item.gt6.depleted_americium_241_fuel_rod	枯竭镅-241燃料棒	hand
 direct	item.gt6.depleted_americium_245_fuel_rod	枯竭镅-245燃料棒	hand
 direct	item.gt6.depleted_blutonium_fuel_rod	枯竭蓝钚燃料棒	hand
@@ -2436,6 +2457,7 @@ direct	item.gt6.depleted_uranium_233_fuel_rod	枯竭铀-233燃料棒	hand
 direct	item.gt6.depleted_uranium_235_fuel_rod	枯竭铀-235燃料棒	hand
 direct	item.gt6.depleted_uranium_238_fuel_rod	枯竭铀-238燃料棒	hand
 direct	item.gt6.depleted_yellorium_fuel_rod	枯竭黄铀燃料棒	hand
+direct	item.gt6.dragonblood	龙血	hand
 direct	item.gt6.empty_reactor_rod	空燃料棒	hand
 direct	item.gt6.energium_cyan_ev	青色能量水晶 (T4)	hand
 direct	item.gt6.energium_cyan_hv	青色能量水晶 (T3)	hand
@@ -2732,6 +2754,8 @@ direct	item.gt6.food_ham_slice_cooked	熟的火腿片	hand
 direct	item.gt6.food_ham_slice_raw	生的火腿片	hand
 direct	item.gt6.food_hazelnut	榛子	hand
 direct	item.gt6.food_heavycream	鲜奶油	hand
+direct	item.gt6.food_honeydrop	蜂蜜	hand
+direct	item.gt6.food_honeydrop.tooltip	为什么这个罐子看起来像熊而不是蜜蜂?	hand
 direct	item.gt6.food_horse_cooked	烤马肉	hand
 direct	item.gt6.food_horse_raw	马肉	hand
 direct	item.gt6.food_ice_cream	冰淇淋	hand
@@ -2838,6 +2862,10 @@ direct	item.gt6.food_white_egg	鸡蛋	hand
 direct	item.gt6.food_white_egg.tooltip	先有蛋, 后有鸡!	hand
 direct	item.gt6.food_white_egg_boiled	煮鸡蛋	hand
 direct	item.gt6.food_white_egg_boiled.tooltip	煮了还是没煮? 这是一个问题	hand
+direct	item.gt6.glenmckenner	格伦麦肯纳	hand
+direct	item.gt6.grapejuice	葡萄汁	hand
+direct	item.gt6.grapesmoothie	葡萄冰沙	hand
+direct	item.gt6.grc_grapewine0	葡萄汁	hand
 direct	item.gt6.hammer	锤	hand
 direct	item.gt6.hammer.tooltip_prospector	勘探周围的矿石	hand
 direct	item.gt6.hand_drill	手钻	hand
@@ -2893,12 +2921,17 @@ direct	item.gt6.hazmat_universal_helmet.tooltip	穿齐一套可以抵御一切�
 direct	item.gt6.hazmat_universal_leggings	全防裤	hand
 direct	item.gt6.hazmat_universal_leggings.tooltip	穿齐一套可以抵御一切危险	hand
 direct	item.gt6.hoe	锄	hand
+direct	item.gt6.hopsmash	啤酒花汁	hand
+direct	item.gt6.ice	冰水	hand
 direct	item.gt6.integrated_circuit	集成电路	hand
 direct	item.gt6.integrated_circuit.configuration	配置：%s	hand
 direct	item.gt6.jackhammer_hv_no_ores	电镐 (HV, 无矿石模式)	hand
 direct	item.gt6.jackhammer_hv_no_ores.tooltip	不会破坏矿石方块，层矿除外	hand
 direct	item.gt6.jackhammer_hv_normal	电镐 (HV, 普通模式)	hand
 direct	item.gt6.jackhammer_hv_normal.tooltip	将岩石击碎成碎块	hand
+direct	item.gt6.juicelemon	柠檬汁	hand
+direct	item.gt6.juiceredgrape	葡萄汁	hand
+direct	item.gt6.juicewhitegrape	葡萄汁	hand
 direct	item.gt6.key.tooltip	可以打开特定的锁	hand
 direct	item.gt6.key_brass	黄铜钥匙	hand
 direct	item.gt6.key_bronze	青铜钥匙	hand
@@ -2911,6 +2944,10 @@ direct	item.gt6.key_platinum	铂钥匙	hand
 direct	item.gt6.key_silver	银钥匙	hand
 direct	item.gt6.key_tin	锡钥匙	hand
 direct	item.gt6.knife	小刀	hand
+direct	item.gt6.lemonade	柠檬水	hand
+direct	item.gt6.lemonsmoothie	柠檬冰沙	hand
+direct	item.gt6.leninade	列宁柠檬水	hand
+direct	item.gt6.limoncello	柠檬酒	hand
 direct	item.gt6.lithium_breeder_rod	锂增殖棒	hand
 direct	item.gt6.lubricant_bucket	润滑油桶	hand
 direct	item.gt6.lubricant_bucket.tooltip	仅限工业用途！	hand
@@ -2931,9 +2968,15 @@ direct	item.gt6.manual_reactors	裂变反应堆手册	hand
 direct	item.gt6.manual_smeltery	冶炼坩埚手册	hand
 direct	item.gt6.manual_steam	蒸汽手册	hand
 direct	item.gt6.manual_tools	工具索引	hand
+direct	item.gt6.mashwheat	小麦提取液	hand
+direct	item.gt6.mead	蜂蜜酒	hand
+direct	item.gt6.medicine.heal	药	hand
+direct	item.gt6.medicine.laxative	泻药	hand
+direct	item.gt6.mineralsoda	含汽矿泉水	hand
 direct	item.gt6.mining_drill_hv	采矿钻头 (HV)	hand
 direct	item.gt6.mining_drill_lv	采矿钻头 (LV)	hand
 direct	item.gt6.mining_drill_mv	采矿钻头 (MV)	hand
+direct	item.gt6.mnwtr	矿泉水	hand
 direct	item.gt6.mode_switch.tooltip	潜行右键切换模式	hand
 direct	item.gt6.modeled_porcelain_cup	已成型的瓷杯	hand
 direct	item.gt6.mold_ceramic_arrow_raw	粘土模具 (箭)	hand
@@ -2982,6 +3025,7 @@ direct	item.gt6.neutron_reflector_rod	中子反射棒	hand
 direct	item.gt6.pickaxe	镐	hand
 direct	item.gt6.pickaxe_construction	建筑镐	hand
 direct	item.gt6.pickaxe_gem	镶尖镐	hand
+direct	item.gt6.pina_colada	凤梨可乐达	hand
 direct	item.gt6.pincers	钳子	hand
 direct	item.gt6.pistol	手枪	hand
 direct	item.gt6.pistol.tooltip	单发, 伤害中等	hand
@@ -2992,6 +3036,13 @@ direct	item.gt6.plutonium_239_fuel_rod	钚-239燃料棒	hand
 direct	item.gt6.plutonium_241_fuel_rod	钚-241燃料棒	hand
 direct	item.gt6.plutonium_243_fuel_rod	钚-243燃料棒	hand
 direct	item.gt6.plutonium_244_fuel_rod	钚-244燃料棒	hand
+direct	item.gt6.potatojuice	土豆汁	hand
+direct	item.gt6.potion.goldenapplejuice	金苹果汁	hand
+direct	item.gt6.potion.goldencider	金苹果酒	hand
+direct	item.gt6.potion.idunsapplejuice	伊顿苹果汁	hand
+direct	item.gt6.potion.notchesbrew	Notch汤	hand
+direct	item.gt6.purpledrink	紫色饮料	hand
+direct	item.gt6.purplegrapesmoothie	葡萄冰沙	hand
 direct	item.gt6.reactor_rod.absorber	吸收中子并将每中子两倍的热量传给冷却剂	hand
 direct	item.gt6.reactor_rod.breeder.1	吸收中子以增殖为浓缩棒	hand
 direct	item.gt6.reactor_rod.breeder.2	每中子产生的热量减半	hand
@@ -3022,14 +3073,25 @@ direct	item.gt6.reactor_rod.product.2	可离心提取有价值的材料	hand
 direct	item.gt6.reactor_rod.product.breeds	由 %s 培育而来	hand
 direct	item.gt6.reactor_rod.reflector	将中子反射回其源头，增强反应	hand
 direct	item.gt6.reactor_rod.used_in_core	用于核反应堆核心	hand
+direct	item.gt6.redgrapesmoothie	葡萄冰沙	hand
+direct	item.gt6.reedwater	甘蔗汁	hand
+direct	item.gt6.ricardosanchez	里卡多·桑切斯	hand
+direct	item.gt6.ricevinegar	米醋	hand
+direct	item.gt6.ricewater	酒酿	hand
 direct	item.gt6.rifle	步枪	hand
 direct	item.gt6.rifle.tooltip	单发, 伤害极高	hand
 direct	item.gt6.rolling_pin	擀面杖	hand
+direct	item.gt6.rottendrink	腐坏的饮料	hand
+direct	item.gt6.royal_jelly	蜂王浆	hand
+direct	item.gt6.rumdark	海盗啤酒	hand
+direct	item.gt6.rumwhite	朗姆酒	hand
+direct	item.gt6.sake	清酒 (米酒)	hand
 direct	item.gt6.saw	锯	hand
 direct	item.gt6.scissors	剪刀	hand
 direct	item.gt6.scoop	捕虫网	hand
 direct	item.gt6.screwdriver	螺丝刀	hand
 direct	item.gt6.screwdriver_lv	螺丝刀 (LV)	hand
+direct	item.gt6.seawater	盐水	hand
 direct	item.gt6.sense	镰刀	hand
 direct	item.gt6.sensor_ev	传感器 (EV)	hand
 direct	item.gt6.sensor_hv	传感器 (HV)	hand
@@ -3057,6 +3119,7 @@ direct	item.gt6.shape_slicer_grid	切片器刀片 (栅格式)	hand
 direct	item.gt6.shape_slicer_quarters	切片器刀片 (四分之一)	hand
 direct	item.gt6.shape_slicer_quarters_hollow	切片器刀片 (中空四分之一)	hand
 direct	item.gt6.shape_slicer_split	切片器刀片 (分割)	hand
+direct	item.gt6.short_mead	蜂蜜酒	hand
 direct	item.gt6.shovel	锹	hand
 direct	item.gt6.signal_emitter_ev	信号发射器 (EV)	hand
 direct	item.gt6.signal_emitter_hv	信号发射器 (HV)	hand
@@ -3068,8 +3131,10 @@ direct	item.gt6.signal_emitter_puv1	信号发射器 (PUV1)	hand
 direct	item.gt6.signal_emitter_ulv	信号发射器 (ULV)	hand
 direct	item.gt6.signal_emitter_uv	信号发射器 (UV)	hand
 direct	item.gt6.signal_emitter_zpm	信号发射器 (ZPM)	hand
+direct	item.gt6.soda	苏打水	hand
 direct	item.gt6.soft_hammer	软锤	hand
 direct	item.gt6.spade	铲	hand
+direct	item.gt6.spdew	光谱露	hand
 direct	item.gt6.spray_can_empty	空喷罐	hand
 direct	item.gt6.spray_paint_black	喷漆（黑）	hand
 direct	item.gt6.spray_paint_blue	喷漆（蓝）	hand
@@ -3088,6 +3153,8 @@ direct	item.gt6.spray_paint_red	喷漆（红）	hand
 direct	item.gt6.spray_paint_remover	除漆喷剂	hand
 direct	item.gt6.spray_paint_white	喷漆（白）	hand
 direct	item.gt6.spray_paint_yellow	喷漆（黄）	hand
+direct	item.gt6.stagnantwater	死水	hand
+direct	item.gt6.swampwater	沼泽污水	hand
 direct	item.gt6.sword	剑	hand
 direct	item.gt6.thorium_232_breeder_rod	钍-232增殖棒	hand
 direct	item.gt6.thorium_232_fuel_rod	钍-232燃料棒	hand
@@ -3123,6 +3190,15 @@ direct	item.gt6.usb_stick_3	USB 3.0	hand
 direct	item.gt6.usb_stick_3.tooltip	储存数据	hand
 direct	item.gt6.usb_stick_4	USB 4.0	hand
 direct	item.gt6.usb_stick_4.tooltip	储存数据	hand
+direct	item.gt6.vinegar	醋	hand
+direct	item.gt6.vodka	伏特加	hand
+direct	item.gt6.waterdirty	脏水	hand
+direct	item.gt6.wheathopsmash	加了小麦的啤酒花汁	hand
+direct	item.gt6.whiskeywheat	威士忌	hand
+direct	item.gt6.whitegrapesmoothie	葡萄冰沙	hand
+direct	item.gt6.wine	葡萄酒	hand
+direct	item.gt6.winered	红葡萄酒	hand
+direct	item.gt6.winewhite	葡萄酒	hand
 direct	item.gt6.wrench	扳手	hand
 direct	item.gt6.wrench_hv	扳手 (HV)	hand
 direct	item.gt6.wrench_hv.tooltip	潜行右键切换为活动扳手	hand
