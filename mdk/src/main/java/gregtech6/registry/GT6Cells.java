@@ -140,7 +140,9 @@ public final class GT6Cells {
 
 	private static RegistryObject<GT6CellBlock> registerRow(CellRow aRow) {
 		RegistryObject<GT6CellBlock> tBlock = BLOCKS.register(aRow.path(),
-				() -> new GT6CellBlock(() -> GT6Cells.CELL_BE.get(), GT6CellBlock.rowProperties(aRow.woodHost())));
+				// task small-tank-colored-tint — the row's NBT_MATERIAL rides the block
+				// carrier (the GTBarrelBlock supplier column form) into the tint dispatch
+				() -> new GT6CellBlock(() -> GT6Cells.CELL_BE.get(), aRow.material(), GT6CellBlock.rowProperties(aRow.woodHost())));
 		ITEMS.register(aRow.path(),
 				// the 64-stack family override (MultiTileEntityCell.java:76) — the plain 64 properties, no content gate
 				() -> new GT6CellBlockItem(tBlock.get(), new Item.Properties().stacksTo(GT6CellBlockEntity.STACK_SIZE)));

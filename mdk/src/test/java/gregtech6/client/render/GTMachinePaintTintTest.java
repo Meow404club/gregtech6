@@ -279,6 +279,65 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		}
 	}
 
+	/**
+	 * Task small-tank-colored-tint: the four small-tank families ride the combined
+	 * dispatch — the 40 cell rows and the 4 gas-cylinder rows through their block
+	 * carriers (Loader :1770-1809 / :2101-2104), the single cup and jug rows as fixed
+	 * constants (MT.Porcelain :2094, MT.Ceramic :2095). The representative pair per
+	 * ladder (2-of-4 cylinders, 2-of-40 cells), and the VALUES are the upstream
+	 * fRGBaSolid literals (MT.java:439 Tin 220,220,220 / :463 Tungsten 50,50,50 /
+	 * :1289 Porcelain 235,235,245 / :1279 Ceramic 220,130,70) — the tinted faces the
+	 * seats (the datagen twin GTSmallTankTintDatagenTest pins the committed tree).
+	 */
+	@Test
+	void smallTankFamiliesRideTheCombinedDispatch() {
+		unfreezeBlockRegistry();
+		gregtech6.block.tank.GT6GasCylinderBlock tSteelCylinder = new gregtech6.block.tank.GT6GasCylinderBlock(
+				() -> null, () -> gregapi.data.ANY.Steel, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		gregtech6.block.tank.GT6GasCylinderBlock tTungstenCylinder = new gregtech6.block.tank.GT6GasCylinderBlock(
+				() -> null, () -> gregapi.data.MT.Tungsten, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		gregtech6.block.tank.GT6CellBlock tTinCell = new gregtech6.block.tank.GT6CellBlock(
+				() -> null, () -> gregapi.data.MT.Sn, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		gregtech6.block.tank.GT6CellBlock tTungstenCell = new gregtech6.block.tank.GT6CellBlock(
+				() -> null, () -> gregapi.data.MT.W, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		gregtech6.block.tank.GT6CupBlock tCup = new gregtech6.block.tank.GT6CupBlock(
+				() -> null, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		gregtech6.block.tank.GT6JugBlock tJug = new gregtech6.block.tank.GT6JugBlock(
+				() -> null, net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		assertSame(gregapi.data.ANY.Steel, GTMachinePaintTint.tintMaterialOf(tSteelCylinder),
+				"the :2101 Steel gas-cylinder row rides the carrier");
+		assertSame(gregapi.data.MT.Tungsten, GTMachinePaintTint.tintMaterialOf(tTungstenCylinder),
+				"the :2103 Tungsten gas-cylinder row rides the carrier");
+		assertSame(gregapi.data.MT.Sn, GTMachinePaintTint.tintMaterialOf(tTinCell),
+				"the :1779 Tin cell row rides the carrier");
+		assertSame(gregapi.data.MT.W, GTMachinePaintTint.tintMaterialOf(tTungstenCell),
+				"the :1790 Tungsten cell row rides the carrier");
+		assertSame(gregapi.data.MT.Porcelain, GTMachinePaintTint.tintMaterialOf(tCup),
+				"the :2094 cup row is the fixed Porcelain constant");
+		assertSame(gregapi.data.MT.Ceramic, GTMachinePaintTint.tintMaterialOf(tJug),
+				"the :2095 jug row is the fixed Ceramic constant");
+		assertNull(GTMachinePaintTint.tintMaterialOf(net.minecraft.world.level.block.Blocks.BRICKS),
+				"an off-carrier block stays the material-less white identity");
+		// the pinned values — the upstream mRGBa sources byte-exact over the combined dispatch
+		assertEquals(0xFF828282, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tSteelCylinder), 0),
+				"the Steel cylinder tints gray-white 130,130,130");
+		assertEquals(0xFF323232, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tTungstenCylinder), 0),
+				"the Tungsten cylinder tints 50,50,50 (MT.java:463)");
+		assertEquals(0xFFDCDCDC, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tTinCell), 0),
+				"the Tin cell tints 220,220,220 (MT.java:439)");
+		assertEquals(0xFF323232, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tTungstenCell), 0),
+				"the Tungsten cell tints 50,50,50 (MT.java:463)");
+		assertEquals(0xFFEBEBF5, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tCup), 0),
+				"the cup tints Porcelain 235,235,245 (MT.java:1289)");
+		assertEquals(0xFFDC8246, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tJug), 0),
+				"the jug tints Ceramic 220,130,70 (MT.java:1279)");
+		// the seat discipline — a non-zero index is no tint, and a painted stack still wins
+		assertEquals(-1, GTMachinePaintTint.tintARGB(null, gregapi.data.MT.Porcelain, 1),
+				"index 1 is not a seat — the overlay/fluid faces never tint");
+		assertEquals(0xFFFF0000, GTMachinePaintTint.tintARGB(paintedData(PAINT_RED), gregapi.data.MT.Porcelain, 0),
+				"the spray override wins over the cup's Porcelain row (upstream Paintable:85)");
+	}
+
 	/** The BlockColor lambda's guard arms (null level/pos and a non-zero index return no tint). */
 	@Test
 	void blockColorLambdaGuardArms() {

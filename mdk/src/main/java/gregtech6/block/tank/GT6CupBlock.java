@@ -85,6 +85,19 @@ public class GT6CupBlock extends GTEntityBlock {
 		registerDefaultState(getStateDefinition().any().setValue(LIQUID_LEVEL, 0));
 	}
 
+	/**
+	 * The cup's upstream {@code NBT_MATERIAL} (Loader_MultiTileEntities.java:2094,
+	 * MT.Porcelain — the single registration row): the fixed-constant carrier (the
+	 * {@code GTBarrelBlock.materialOf} shape, no Supplier column — one row, no ladder).
+	 * Task small-tank-colored-tint: the colored band's tintindex-0 seat multiplies this
+	 * through the combined dispatch exactly like the upstream
+	 * {@code BlockTextureDefault(colored, mRGBa)} passes (MultiTileEntityCup.java:68-73).
+	 */
+	@javax.annotation.Nullable
+	public static gregapi.oredict.OreDictMaterial materialOf(@javax.annotation.Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GT6CupBlock ? gregapi.data.MT.Porcelain : null;
+	}
+
 	//? if neoforge {
 	/*// (1.21.1: BlockBehaviour.codec() is abstract — the GTBarrelBlock carrier precedent.)
 	@Override

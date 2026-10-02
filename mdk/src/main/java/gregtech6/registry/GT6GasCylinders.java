@@ -92,7 +92,10 @@ public final class GT6GasCylinders {
 
 	private static RegistryObject<GT6GasCylinderBlock> registerRow(GasCylinderRow aRow) {
 		RegistryObject<GT6GasCylinderBlock> tBlock = BLOCKS.register(aRow.path(),
-				() -> new GT6GasCylinderBlock(() -> GT6GasCylinders.GAS_CYLINDER_BE.get(), GT6GasCylinderBlock.rowProperties(aRow.resistanceF())));
+				// task small-tank-colored-tint — the row's NBT_MATERIAL rides the block
+				// carrier (the GTBarrelBlock supplier column form) into the tint dispatch
+				() -> new GT6GasCylinderBlock(() -> GT6GasCylinders.GAS_CYLINDER_BE.get(), aRow.material(),
+						GT6GasCylinderBlock.rowProperties(aRow.resistanceF())));
 		ITEMS.register(aRow.path(),
 				() -> new GT6GasCylinderBlockItem(tBlock.get(), new Item.Properties().stacksTo(16)));
 		return tBlock;

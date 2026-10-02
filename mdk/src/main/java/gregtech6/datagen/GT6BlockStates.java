@@ -4657,10 +4657,12 @@ public final class GT6BlockStates extends BlockStateProvider {
      * barometer arm (pass 4) tile EVERY face with the barometer tile (the :141
      * {@code aRenderPass > 2} branch). Each element is duplicated by a 0.01-inflated
      * overlay shell (the addMeasuringPot 0.01-plate form, cutout). NO fluid display
-     * pass and NO BER — the Base09 no-sync static face. The colored band ships
-     * UN-TINTED — the measuring-pot declared deviation (upstream tints it with mRGBa;
-     * {@code ponytail:} a tintindex-0 + dispatch row lands it without model change
-     * when the render pool gets to it).
+     * pass and NO BER — the Base09 no-sync static face. Since task
+     * small-tank-colored-tint the colored band is the tintindex-0 seat (the row
+     * material multiplies it through the baked GTMachineTintModel — the upstream
+     * {@code BlockTextureDefault(colored, mRGBa)} pass, :141) and the overlay shell
+     * stays untinted (the P22 decal split); the former measuring-pot declared
+     * deviation retires.
      */
     private void addGasCylinders() {
         BlockModelBuilder tModel = models().getBuilder("barometer_gas_cylinder")
@@ -4699,7 +4701,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 aMaxX + 0.01F, aMaxY + 0.01F, aMaxZ + 0.01F, "overlay_");
     }
 
-    /** One box: all six faces over the given band prefix — body faces use the world-side mapping (or the all-barometer override), no tint. */
+    /** One box: all six faces over the given band prefix — body faces use the world-side mapping (or the all-barometer override); the colored band carries the tintindex-0 seat, the overlay band untinted. */
     private void cylinderBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
             float aMaxX, float aMaxY, float aMaxZ, String aBand) {
         cylinderBox(aModel, aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, aBand, null);
@@ -4714,7 +4716,9 @@ public final class GT6BlockStates extends BlockStateProvider {
             else if (tDir == Direction.UP) tFace = "top";
             else if (tDir == Direction.DOWN) tFace = "bottom";
             else tFace = "sides";
-            tElement.face(tDir).texture("#" + aBand + tFace).end();
+            BlockModelBuilder.ElementBuilder.FaceBuilder tFaceBuilder = tElement.face(tDir).texture("#" + aBand + tFace);
+            if (aBand.isEmpty()) tFaceBuilder.tintindex(0); // the colored band rides the row material (upstream mRGBa, :141)
+            tFaceBuilder.end();
         }
         tElement.end();
     }
@@ -4730,11 +4734,12 @@ public final class GT6BlockStates extends BlockStateProvider {
      * colored sides tile (the crucible-bowl-card declared simplification: the static
      * model cannot know the BE's actual fluid). Each element is duplicated by a
      * 0.01-inflated overlay shell (the overlay tiles are the blank upstream set — the
-     * borrow rides the grammar so future overlay art lands without model change). The
-     * colored band ships UN-TINTED — the measuring-pot declared deviation
-     * ({@code ponytail:} a tintindex-0 + GTMachinePaintTint dispatch row lands it
-     * without model change when the render pool gets to it). Cutout — the sides window
-     * is genuinely transparent.
+     * borrow rides the grammar so future overlay art lands without model change). Since
+     * task small-tank-colored-tint the colored band is the tintindex-0 seat (the row
+     * material multiplies it through the baked GTMachineTintModel — the upstream
+     * {@code BlockTextureDefault(colored, mRGBa)} passes, :42-44; the fluid box and the
+     * overlay shells stay untinted, the P22 decal split) — the former measuring-pot
+     * declared deviation retires. Cutout — the sides window is genuinely transparent.
      */
     private void addCells() {
         BlockModelBuilder tEmpty = models().getBuilder("cell_container_empty")
@@ -4785,24 +4790,28 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
     }
 
-    /** One cell shell box: all six faces over the band prefix — the world-side mapping (up=top, down=bottom, horizontals=sides). */
+    /** One cell shell box: all six faces over the band prefix — the world-side mapping (up=top, down=bottom, horizontals=sides); the colored band carries the tintindex-0 seat, the overlay band untinted. */
     private void cellBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
             float aMaxX, float aMaxY, float aMaxZ, String aBand) {
         BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
         for (Direction tDir : Direction.values()) {
             String tFace = tDir == Direction.UP ? "top" : tDir == Direction.DOWN ? "bottom" : "sides";
-            tElement.face(tDir).texture("#" + aBand + tFace).end();
+            BlockModelBuilder.ElementBuilder.FaceBuilder tFaceBuilder = tElement.face(tDir).texture("#" + aBand + tFace);
+            if (aBand.isEmpty()) tFaceBuilder.tintindex(0); // the colored band rides the row material (upstream mRGBa, :42-44)
+            tFaceBuilder.end();
         }
         tElement.end();
     }
 
-    /** One insides box: every face the insides band (the layer only shows through the sides window). */
+    /** One insides box: every face the insides band (the layer only shows through the sides window); the colored band carries the tintindex-0 seat. */
     private void cellInsides(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
             float aMaxX, float aMaxY, float aMaxZ, String... aBand) {
         String tBand = aBand.length == 0 ? "" : aBand[0];
         BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
         for (Direction tDir : Direction.values()) {
-            tElement.face(tDir).texture("#" + tBand + "insides").end();
+            BlockModelBuilder.ElementBuilder.FaceBuilder tFaceBuilder = tElement.face(tDir).texture("#" + tBand + "insides");
+            if (tBand.isEmpty()) tFaceBuilder.tintindex(0); // upstream tints the insides with mRGBa too (:44)
+            tFaceBuilder.end();
         }
         tElement.end();
     }
@@ -4868,30 +4877,42 @@ public final class GT6BlockStates extends BlockStateProvider {
         itemModels().withExistingParent("porcelain_cup", tEmpty.getLocation());
     }
 
-    /** One wall box at x=aMinX..aMaxX, z=aMinZ..aMaxZ: the outer face = sides, the inner face = insides, the rim top = top (the :73 SIDE_Y_POS non-5 mapping), both overlay bands ride the prefix. */
+    /** One wall box at x=aMinX..aMaxX, z=aMinZ..aMaxZ: the outer face = sides, the inner face = insides, the rim top = top (the :73 SIDE_Y_POS non-5 mapping), both overlay bands ride the prefix; the colored band carries the tintindex-0 seat, the overlay band untinted. */
     private void cupWallBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ, float aMaxX, float aMaxY, float aMaxZ, String aBand) {
         BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
         boolean tWestFacing = aMinX < 8.0F && (aMaxX - aMinX) < 2.0F; // the wall hugging the west edge → its west face is the outer
-        tElement.face(Direction.WEST).texture("#" + aBand + (tWestFacing ? "sides" : "insides")).end();
-        tElement.face(Direction.EAST).texture("#" + aBand + (tWestFacing ? "insides" : "sides")).end();
+        bandFace(tElement, Direction.WEST, aBand, tWestFacing ? "sides" : "insides");
+        bandFace(tElement, Direction.EAST, aBand, tWestFacing ? "insides" : "sides");
         boolean tNorthFacing = aMinZ < 8.0F && (aMaxZ - aMinZ) < 2.0F;
-        tElement.face(Direction.NORTH).texture("#" + aBand + (tNorthFacing ? "sides" : "insides")).end();
-        tElement.face(Direction.SOUTH).texture("#" + aBand + (tNorthFacing ? "insides" : "sides")).end();
-        tElement.face(Direction.UP).texture("#" + aBand + "top").end();
-        tElement.face(Direction.DOWN).texture("#" + aBand + "sides").end();
+        bandFace(tElement, Direction.NORTH, aBand, tNorthFacing ? "sides" : "insides");
+        bandFace(tElement, Direction.SOUTH, aBand, tNorthFacing ? "insides" : "sides");
+        bandFace(tElement, Direction.UP, aBand, "top");
+        bandFace(tElement, Direction.DOWN, aBand, "sides");
         tElement.end();
     }
 
-    /** The bottom slab: down=bottom, every other face the interior mapping (up=top after the :73 pass-4/SIDE_Y_POS form, horizontals=sides). */
+    /** The bottom slab: down=bottom, every other face the interior mapping (up=top after the :73 pass-4/SIDE_Y_POS form, horizontals=sides); the colored band carries the tintindex-0 seat. */
     private void cupSlab(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ, float aMaxX, float aMaxY, float aMaxZ, String aBand) {
         BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
-        tElement.face(Direction.DOWN).texture("#" + aBand + "bottom").end();
-        tElement.face(Direction.UP).texture("#" + aBand + "top").end();
-        tElement.face(Direction.NORTH).texture("#" + aBand + "sides").end();
-        tElement.face(Direction.SOUTH).texture("#" + aBand + "sides").end();
-        tElement.face(Direction.WEST).texture("#" + aBand + "sides").end();
-        tElement.face(Direction.EAST).texture("#" + aBand + "sides").end();
+        bandFace(tElement, Direction.DOWN, aBand, "bottom");
+        bandFace(tElement, Direction.UP, aBand, "top");
+        bandFace(tElement, Direction.NORTH, aBand, "sides");
+        bandFace(tElement, Direction.SOUTH, aBand, "sides");
+        bandFace(tElement, Direction.WEST, aBand, "sides");
+        bandFace(tElement, Direction.EAST, aBand, "sides");
         tElement.end();
+    }
+
+    /**
+     * One band-qualified face: the shared tint seat of the cup/jug wall+slab boxes —
+     * the colored band (empty prefix) carries {@code tintindex 0} (the upstream
+     * {@code BlockTextureDefault(colored, mRGBa)} passes, Cup :68-73 / Jug :71-76), the
+     * overlay prefix passes through untinted (the P22 decal split).
+     */
+    private void bandFace(BlockModelBuilder.ElementBuilder aElement, Direction aDir, String aBand, String aSuffix) {
+        BlockModelBuilder.ElementBuilder.FaceBuilder tFaceBuilder = aElement.face(aDir).texture("#" + aBand + aSuffix);
+        if (aBand.isEmpty()) tFaceBuilder.tintindex(0);
+        tFaceBuilder.end();
     }
 
     /**
