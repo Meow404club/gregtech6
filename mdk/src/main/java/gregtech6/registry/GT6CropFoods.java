@@ -73,7 +73,8 @@ import gregtech6.GT6Mod;
  * OreDictItemData faces (the pomeraisins' raisins seat :391, the crop/grass oredicts
  * OD.itemGrass family :53-60); the pet-feeding behaviors (Behavior_FeedGrass :53-60,
  * Behavior_FeedPig on the apples/cores, Behavior_FeedDog on the pomeraisins); the
- * BushesGT bush-render colors (:395-429 — the bush blocks are unpored); the
+ * BushesGT bush-render colors (:395-429 — unpored here; the bush block's own
+ * tint arm carries its body colours, GT6BushTintListener); the
  * Sandwiches.INGREDIENTS seats (every *_Sliced row); the TC aspects; the smelt-time
  * columns (the cores/bark TICKS_PER_SMELT faces); the replicateOrganic/`kX` slicing/
  * food_can rows over the band (the T5b recipe card's surface); the apple-core

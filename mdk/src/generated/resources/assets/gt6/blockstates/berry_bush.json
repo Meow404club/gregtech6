@@ -1,6 +1,111 @@
 {
   "variants": {
-    "": {
+    "age=0,kind=blackberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=blueberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=candleberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=cotton": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=cranberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=currants_black": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=currants_red": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=currants_white": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=0,kind=raspberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=blackberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=blueberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=candleberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=cotton": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=cranberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=currants_black": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=currants_red": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=currants_white": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=1,kind=raspberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=blackberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=blueberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=candleberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=cotton": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=cranberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=currants_black": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=currants_red": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=currants_white": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=2,kind=raspberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=blackberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=blueberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=candleberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=cotton": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=cranberry": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=currants_black": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=currants_red": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=currants_white": {
+      "model": "gt6:block/berry_bush"
+    },
+    "age=3,kind=raspberry": {
       "model": "gt6:block/berry_bush"
     }
   }

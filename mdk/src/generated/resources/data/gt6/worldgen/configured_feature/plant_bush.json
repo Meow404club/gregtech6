@@ -2,10 +2,99 @@
   "type": "minecraft:simple_block",
   "config": {
     "to_place": {
-      "type": "minecraft:simple_state_provider",
-      "state": {
-        "Name": "gt6:berry_bush"
-      }
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "blueberry"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "candleberry"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "cranberry"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "currants_black"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "currants_white"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "currants_red"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "blackberry"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "raspberry"
+            }
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "gt6:berry_bush",
+            "Properties": {
+              "age": "3",
+              "kind": "cotton"
+            }
+          },
+          "weight": 1
+        }
+      ]
     }
   }
 }
