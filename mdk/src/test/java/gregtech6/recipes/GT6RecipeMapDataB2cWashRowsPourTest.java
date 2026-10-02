@@ -139,6 +139,14 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		assertTrue(tLower.contains("replaced smoke row") && tHead.contains("coarse_dirt"), "the replaced p29 smoke row is declared");
 		assertTrue(tHead.contains("PRESSURE_WASHER") && tHead.contains("pinned 0"), "the PhaseGate zero-bump posture is declared");
 		assertTrue(tHead.contains("Row census: 28"), "the row census statement is present");
+		// the stripped exclusion + domain-out + tag pin (task stripped-log-qol)
+		assertTrue(tHead.contains("STRIPPED EXCLUSION (task stripped-log-qol)"),
+				"the stripped-input exclusion is declared (no bark face to wash on an already-stripped log)");
+		assertTrue(tLower.contains("no stripped_* log"), "the explicit input id set excludes stripped_*");
+		assertTrue(tLower.contains("log tag"), "the tag-migration guard is declared");
+		assertTrue(tHead.contains("OUT-OF-DOMAIN") && tHead.contains("mangrove/cherry/crimson/warped"),
+				"the out-of-GT6-wood-dictionary stripped logs are declared TRUE NEGATIVE");
+		assertTrue(tHead.contains("#gt6:beam_wood"), "the beam tag pin is declared");
 	}
 
 	/** Every row is a cited :167 expansion (the citation names the wood and the fluid leg). */
@@ -153,6 +161,18 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 			assertTrue(tCite.endsWith(")"), WASH + ": the citation names the wood and the leg");
 		}
 		assertEquals(CENSUS, tRows.size(), WASH + ": the cited stock is the census");
+	}
+
+	/** The stripped-input exclusion pin (task stripped-log-qol): no row washes an already-stripped log. */
+	@Test
+	public void noRowWashesAStrippedLog() throws Exception {
+		Set<String> tStripped = new HashSet<>();
+		for (JsonElement tElement : pourShipped()) {
+			String tIn = tElement.getAsJsonObject().getAsJsonArray("inputs").get(0).getAsJsonObject().get("item").getAsString();
+			if (tIn.contains("stripped")) tStripped.add(tIn);
+		}
+		assertTrue(tStripped.isEmpty(),
+				"the debarking wash strips the bark — an already-stripped log has no bark face to wash: " + tStripped);
 	}
 
 	/**
