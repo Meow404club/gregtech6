@@ -249,6 +249,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		wrapStates(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get(), aEvent);
 		wrapStates(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get(), aEvent);
 		wrapStates(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get(), aEvent);
+		// task coke-oven-texture — the coke oven controller joins the same seat: the
+		// :1193 NBT_MATERIAL row (MT.Ceramic, the same column the bricks share) rides
+		// the GTMultiBlockControllerBlock carrier (the p38-c2 gate), the tinted body
+		// cube is the tintindex-0 seat, the overlay/front window decal untinted
+		wrapStates(gregtech6.registry.GTMultiBlocks.COKE_OVEN.get(), aEvent);
 		// issue #15 (task beehive-tint) — the bee family joins the baked-tint domain:
 		// the hive's 15 worldgen family colours ride the BE PAINT model data (the worldgen
 		// paints at placement) and the Bumbliary pair's row material rides the
@@ -349,6 +354,10 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		tPaintItems.add(gregtech6.registry.GT6Logistics.LOGISTICS_CORE_ITEM.get());
 		tPaintItems.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_ITEM.get());
 		tPaintItems.add(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_ITEM.get());
+		// task coke-oven-texture — the coke oven controller's BlockItem joins the same
+		// lambda (the creative-tab face of the Ceramic row colour, the #18 converter-band
+		// note: an unregistered BlockItem renders the item form untinted)
+		tPaintItems.add(gregtech6.registry.GTMultiBlocks.COKE_OVEN_ITEM.get());
 		// task tex-pipe-textures — the three pipe connector families' BlockItems (the
 		// 280 fluid rows — task fluid-pipe-matrix, the 18 item pipe rows, the logistics
 		// wire) join the same lambda; the wire's carrier resolves NULL (upstream
