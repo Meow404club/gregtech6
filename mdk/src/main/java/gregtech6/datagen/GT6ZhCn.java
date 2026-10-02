@@ -2320,7 +2320,10 @@ public class GT6ZhCn extends LanguageProvider {
 		// itemGroup.gt.multiitem.bottles:17954 格雷牌饮料 逐字 (upstream "GregTech: Bottles",
 		// MultiItemBottles.java:40); desc=dump *.tooltip 逐字, 六条 en desc 行中 32765 汞瓶
 		// dump zh 空串=手组成值 又叫水银(汞)（罐装空气先例, dump gt.material.Quicksilver :5331 词）;
-		// 空串行=双侧零键
+		// 空串行=双侧零键; task btl-bottles-families-b — walk 随 ROWS 扩到 171 行（py
+		// BOTTLES_FAMILIES_B_BACKFILL 同 commit）: dump 逐字, 油 1002-1007/椰奶 5600 desc
+		// dump 空串=en "Cooking Oil" 有词 → 手组成值 食用油（dump 词根 热食用油 :4723）,
+		// 酱/苹果行 en 空串=零键（mnwtr 先例）
 		for (gregtech6.registry.GT6Bottles.BottleRow tRow : gregtech6.registry.GT6Bottles.ROWS) {
 			addDirect(tRow.langKey());
 			if (tRow.tooltipKey() != null) addDirect(tRow.tooltipKey());

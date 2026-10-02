@@ -2334,7 +2334,9 @@ public class GT6EnUs extends LanguageProvider {
      * local-name template over MT.Empty ("Empty" + " Bottle", OP.java:229); the empty
      * desc rows emit NO tooltip key (the GT6BakeFoods empty-desc ruling) and the tab
      * label is the creative-tab ctor literal "GregTech: Bottles"
-     * (MultiItemBottles.java:40).
+     * (MultiItemBottles.java:40). Task btl-bottles-families-b rides the same walk over
+     * the 96 new families-B rows (171 total): the en-empty sauce/apple rows stay keyless,
+     * the oil/slime/rainbow/coconut descs are the en verbatim.
      */
     private void addBottles() {
         for (gregtech6.registry.GT6Bottles.BottleRow tRow : gregtech6.registry.GT6Bottles.ROWS) {
