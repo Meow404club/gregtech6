@@ -66,6 +66,19 @@ class GT6TreePlankCensusTest {
             net.minecraft.server.Bootstrap.bootStrap();
         } catch (Throwable ignored) {
         }
+        // the plankBlocks() fixture builds real Blocks and a Block CONSTRUCTION folds the
+        // state into the built-in block registry (NamespacedWrapper.createIntrusiveHolder),
+        // so the frozen post-bootStrap registry must be reopened — the GT6PortalBlockProperties
+        // Test/GT6JuicerRegistrationTest bracket form (the r8-hotfix b679b2345 precedent);
+        // without it both attribute walks die "Registry is already frozen" even single-class
+        try {
+            java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                    .getClass().getMethod("unfreeze");
+            tUnfreeze.setAccessible(true);
+            tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        } catch (Exception aE) {
+            throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+        }
     }
 
     /** The census: 9 plank blocks over the KINDS walk, ids {@code <snake>_planks}, all distinct. */
