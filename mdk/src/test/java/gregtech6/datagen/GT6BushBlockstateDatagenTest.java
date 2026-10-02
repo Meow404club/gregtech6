@@ -1,13 +1,13 @@
 /**
  * Offline pin for task bush-growth-blockstate — the generated-tree faces of the wild
- * bush's blockstate form. The blockstate emits the FULL 36-state grid (AGE_3 x KIND nine)
- * over the one tinted cube model (the colour rides the GT6BushTintListener per-state
- * arm, not the JSON), and the configured feature is the weighted KIND nine at the
- * upstream birth stage 3 VERBATIM (placeBushCore :86 NBT_STATE 3 — the 2026-10-01
- * coordinator ruling: the birth stage follows the upstream; the growth/harvest mechanics
- * alone ride the vanilla homolog). The kind spread collapses the upstream NoiseGenerator
- * patch index (WorldgenBushes.java:66) to per-placement uniform — declared in
- * GT6WorldgenDatagen.
+ * bush's blockstate form, remapped by berry-overlay: the 36-state grid (AGE_3 x KIND
+ * nine) maps per AGE onto the three bush models (age0 = berry_bush, age1 = stage1,
+ * age2|3 = stage2 — the stage colour rides the GT6BushTintListener arm, not the JSON),
+ * and the configured feature is the weighted KIND nine at the upstream birth stage 3
+ * VERBATIM (placeBushCore :86 NBT_STATE 3 — the 2026-10-01 coordinator ruling: the birth
+ * stage follows the upstream; the growth/harvest mechanics alone ride the vanilla
+ * homolog). The kind spread collapses the upstream NoiseGenerator patch index
+ * (WorldgenBushes.java:66) to per-placement uniform — declared in GT6WorldgenDatagen.
  *
  * <p>Reads the committed generated tree on the classpath (the GT6BushTintDatagenTest
  * form — no datagen run).
@@ -42,20 +42,31 @@ public class GT6BushBlockstateDatagenTest {
 		}
 	}
 
-	/** The blockstate grid: every AGE x KIND state points at the one tinted cube model. */
+	/**
+	 * The blockstate grid (task berry-overlay): every AGE x KIND state rides its per-AGE
+	 * model — age 0 = berry_bush, age 1 = berry_bush_stage1, ages 2|3 share
+	 * berry_bush_stage2 (their colours differ only in the GT6BushTintListener stage arm) —
+	 * 36 variants collapsing to exactly 3 distinct model names, KIND-independent.
+	 */
 	@Test
 	void theBlockstateEmitsTheFullThirtySixStateGrid() throws Exception {
 		JsonObject tVariants = generatedJson("assets/gt6/blockstates/berry_bush.json")
 				.getAsJsonObject("variants");
 		assertEquals(36, tVariants.size(), "4 ages x 9 kinds, every state seated");
+		java.util.Set<String> tModelNames = new java.util.HashSet<>();
+		String[] tModelsByAge = {"gt6:block/berry_bush", "gt6:block/berry_bush_stage1",
+				"gt6:block/berry_bush_stage2", "gt6:block/berry_bush_stage2"};
 		for (int tAge = 0; tAge <= 3; tAge++) {
 			for (String tKind : KINDS) {
 				String tKey = "age=" + tAge + ",kind=" + tKind;
 				assertTrue(tVariants.has(tKey), "the variant key " + tKey + " exists");
-				assertEquals("gt6:block/berry_bush", tVariants.getAsJsonObject(tKey).get("model").getAsString(),
-						"the " + tKey + " state rides the one tinted cube model");
+				String tModel = tVariants.getAsJsonObject(tKey).get("model").getAsString();
+				assertEquals(tModelsByAge[tAge], tModel,
+						"the " + tKey + " state rides its per-AGE model");
+				tModelNames.add(tModel);
 			}
 		}
+		assertEquals(3, tModelNames.size(), "the 36 variants collapse to exactly the bush trio");
 	}
 
 	/**
