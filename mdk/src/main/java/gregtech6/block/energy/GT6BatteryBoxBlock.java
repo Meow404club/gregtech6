@@ -40,9 +40,12 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * re-faces to the clicked sub-face). The BE mirror re-syncs from the state each tick
  * (the state is the authority). The block
  * carries the family's slot count (4 or 16 — the NBT_INV_SIZE column) as data; the two
- * sizes share the BE class over two BETs. The GUI is the pool (upstream opens a
- * ContainerCommonDefault; the port face is the item slot NBT + the capability item
- * handler); the {@code use()} override is the wrench-rotate arm ONLY, NO onRemove
+ * sizes share the BE class over two BETs. {@code use()} is the two-arm dispatch (task
+ * batterybox-gui): the wrench sub-face pick first, then the GUI open (upstream
+ * onBlockActivated3 :99-102 {@code openGUI} — the Base10 getGUIServer2 :195-196
+ * ContainerCommonDefault chest-grid, re-expressed as the
+ * {@link gregtech6.gui.machines.GT6BatteryBoxMUI} panel through the BE's
+ * {@code GT6MuiMachine} face; the MUI factory chain, zero MenuType). NO onRemove
  * override (the BaseEntityBlock kill+recreate lesson).
  *
  * <p>Since task tex-composite-family the block carries the ACTIVITY and MATERIAL
@@ -182,8 +185,19 @@ public class GT6BatteryBoxBlock extends GTEntityBlock {
 	*///?}
 		// the wrench arm (issue #18 — upstream Base09 onToolClick2 :67): the clicked
 		// wrench-grid sub-face becomes the FRONT (the emit face); the state is the
-		// authority, the BE tick mirror follows
-		return GT6ElectricTransformerBlock.wrenchRotate(aState, aLevel, aPos, aPlayer, aHand, aHit, FACING);
+		// authority, the BE tick mirror follows. PASS when no wrench is held — the
+		// GUI arm answers then (upstream onBlockActivated3 :99-102 ran after the
+		// tool click the same way).
+		InteractionResult tWrench = GT6ElectricTransformerBlock.wrenchRotate(aState, aLevel, aPos, aPlayer, aHand, aHit, FACING);
+		if (tWrench != InteractionResult.PASS) return tWrench;
+		// the GUI open arm (task batterybox-gui — the Base10 getGUIServer2 :195-196
+		// chest-grid): the MUI factory chain (the GTBasicMachineBlock :404 shape, zero
+		// MenuType). The family inherits this arm (GT6ZpmDechargerBlock overrides nothing).
+		if (aLevel.getBlockEntity(aPos) instanceof gregtech6.tileentity.energy.GT6BatteryBoxBlockEntity tBox
+				&& aPlayer instanceof net.minecraft.server.level.ServerPlayer tServerPlayer) {
+			gregtech6.gui.machines.GT6MuiMachine.tryOpen(tServerPlayer, tBox);
+		}
+		return InteractionResult.CONSUME;
 	}
 
 	@Override
