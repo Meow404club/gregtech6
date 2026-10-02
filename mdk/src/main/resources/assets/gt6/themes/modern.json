@@ -1,0 +1,15 @@
+{
+  "parent": "vanilla",
+  "itemSlot": {
+    "background": {
+      "type": "texture",
+      "location": "gt6:gui/parts/slot_frame_18x18"
+    }
+  },
+  "fluidSlot": {
+    "background": {
+      "type": "texture",
+      "location": "gt6:gui/parts/slot_frame_18x18"
+    }
+  }
+}
