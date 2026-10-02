@@ -176,7 +176,9 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 
 		String tUnbox = headOf("unboxinator");
 		assertTrue(tUnbox.contains("Loader_Recipes_Vanilla.java:965"), "the bookshelf anchor");
-		assertTrue(tUnbox.contains("minecraft:oak_planks"), "the identity anchor named");
+		assertTrue(tUnbox.contains("minecraft:oak_planks"), "the original identity anchor on record");
+		assertTrue(tUnbox.contains("-> gt6:plank_wood") && tUnbox.contains("plank-mapping-sweep"),
+				"the sweep re-pour target and card are declared");
 		assertTrue(tUnbox.contains("Loader_Woods.java:74"), "the IL.Plank provenance");
 		assertTrue(tUnbox.contains("addFakeRecipe"), "the loot faces declared not poured");
 	}
@@ -385,7 +387,7 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		assertEquals(96, tChain.get("eut").getAsInt(), ":763-766 eut 96");
 	}
 
-	/** The unboxinator verbatim face: the bookshelf row with the ruled oak-planks identity mapping. */
+	/** The unboxinator verbatim face: the bookshelf row, its IL.Plank leg re-poured onto gt6:plank_wood (task plank-mapping-sweep). */
 	@Test
 	public void theUnboxinatorRowsAreUpstreamVerbatim() throws Exception {
 		JsonArray tRows = pourShipped("unboxinator");
@@ -394,8 +396,8 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		assertEquals(16, tBookshelf.get("eut").getAsInt());
 		assertEquals("minecraft:book", tBookshelf.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
 		assertEquals(3, tBookshelf.getAsJsonArray("outputs").get(0).getAsJsonObject().get("count").getAsInt());
-		assertEquals("minecraft:oak_planks", tBookshelf.getAsJsonArray("outputs").get(1).getAsJsonObject().get("item").getAsString(),
-				"the ruled IL.Plank identity anchor");
+		assertEquals("gt6:plank_wood", tBookshelf.getAsJsonArray("outputs").get(1).getAsJsonObject().get("item").getAsString(),
+				"the absorbed IL.Plank identity anchor (the wood-planks-register carrier)");
 		assertEquals(3, tBookshelf.getAsJsonArray("outputs").get(1).getAsJsonObject().get("count").getAsInt());
 	}
 
@@ -556,7 +558,9 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 				// loom + unboxinator + lightning smoke
 				"leather", "iron_horse_armor", "saddle",
 				"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
-				"string", "white_wool", "bookshelf", "book", "oak_planks",
+				// "oak_planks" left at plank-mapping-sweep: the bookshelf unbox's IL.Plank leg
+				// re-poured onto gt6:plank_wood, which rides the registration union above
+				"string", "white_wool", "bookshelf", "book",
 				"quartz", "glowstone_dust", "water", "prismarine_crystals",
 				// cryomixer smoke
 				"clay_ball", "snow_block", "map", "paper", "compass"}) {
