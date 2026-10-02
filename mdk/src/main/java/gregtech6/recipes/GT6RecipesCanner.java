@@ -278,6 +278,16 @@ public final class GT6RecipesCanner {
 	}
 
 	/**
+	 * The input-count column of :44-51, aligned index-for-index with {@link
+	 * #cannedMaterialPrefixes()}: the second {@code mat(prefix, N)} argument per ST.array
+	 * element — the stackSize (OreDictManager.java:561-574 {@code ST.amount(aAmount,
+	 * rStack)}), poured verbatim as the recipe input by RM.food_can (RM.java:740-753). All
+	 * four bands carry the same N per prefix: 9/4/1/9/4/2/1 — every recipe line consumes
+	 * ONE FULL material unit, not a single item.
+	 */
+	public static final List<Integer> CANNED_MATERIAL_COUNTS = List.of(9, 4, 1, 9, 4, 2, 1);
+
+	/**
 	 * The four :44-51 material specs, upstream order (FishCooked → Canned Fish, MeatCooked
 	 * → Canned Meat, Tofu/SoylentGreen → the veggie family). Every row carries foodValue 2
 	 * (the second RM.food_can argument). Lazily built — the {@code @EventBusSubscriber} scan
@@ -473,17 +483,20 @@ public final class GT6RecipesCanner {
 
 		// task food-meat-recipes — the :44-51 canned-material band: 4 materials × the 7
 		// ST.array prefixes, RM.food_can(tStack, 2, name, IL.CANS_*) — the tier dispatch
-		// (foodValue 2 → the tiny can) rides the shared foodCanRow. The upstream canned
-		// display names ("Canned Fish"/"Canned Meat"/"Canned Tofu"/"Canned Emerald Green")
+		// (foodValue 2 → the tiny can) rides the shared foodCanRow. The input count is the
+		// mat() stackSize column (CANNED_MATERIAL_COUNTS — the full material unit per line,
+		// the rework food-meat-recipes-rework correction). The upstream canned display
+		// names ("Canned Fish"/"Canned Meat"/"Canned Tofu"/"Canned Emerald Green")
 		// stay pooled with the NEI-info face (the foodCanRow doc).
 		ItemStack tMaterialEmptyCan = sFoodCanEmptyResolver.get();
 		if (tMaterialEmptyCan == null || tMaterialEmptyCan.isEmpty()) {
 			tSkipped += 4 * cannedMaterialPrefixes().size(); // the empty-can leg feeds every row
 		} else for (CannedMaterial tSpec : cannedMaterialTable()) {
-			for (OreDictPrefix tPrefix : cannedMaterialPrefixes()) {
-				Item tMatItem = sFoodMaterialItemResolver.apply(tPrefix, tSpec.material());
+			List<OreDictPrefix> tPrefixes = cannedMaterialPrefixes();
+			for (int i = 0; i < tPrefixes.size(); i++) {
+				Item tMatItem = sFoodMaterialItemResolver.apply(tPrefixes.get(i), tSpec.material());
 				Recipe tRow = tMatItem == null ? null
-						: foodCanRow(new ItemStack(tMatItem, 1), CANNED_MATERIAL_FOOD_VALUE, tSpec.family(), tMaterialEmptyCan);
+						: foodCanRow(new ItemStack(tMatItem, CANNED_MATERIAL_COUNTS.get(i)), CANNED_MATERIAL_FOOD_VALUE, tSpec.family(), tMaterialEmptyCan);
 				if (tRow == null) {tSkipped++; continue;} // the mat()-null silent drop
 				tMap.addRecipe(tRow);
 				tPoured++;

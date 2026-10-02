@@ -382,6 +382,18 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.load();
 		assertEquals(4 * 7, GT6RecipesCanner.cannedMaterialTable().size() * GT6RecipesCanner.cannedMaterialPrefixes().size(),
 				"the :44-51 walk — FishCooked/MeatCooked/Tofu/SoylentGreen × dustTiny/dustSmall/dust/nugget/chunkGt/billet/ingot");
+		// the count column verbatim (rework food-meat-recipes-rework): the mat() stackSize,
+		// index-aligned with the prefixes (Loader_Recipes_Food.java:44/:46/:48/:50 — all four
+		// bands share the same N per prefix: 9/4/1/9/4/2/1)
+		assertEquals(List.of(9, 4, 1, 9, 4, 2, 1), GT6RecipesCanner.CANNED_MATERIAL_COUNTS,
+				"the :44 mat(prefix, N) column — dustTiny 9 / dustSmall 4 / dust 1 / nugget 9 / chunkGt 4 / billet 2 / ingot 1");
+		// the poured FishCooked rows carry that column (the stock iterates unordered — the
+		// per-material counts pin as a sorted multiset; all four bands share the shape)
+		assertEquals(List.of(1, 1, 2, 4, 4, 9, 9),
+				GT6RecipeMaps.CANNER.mRecipeList.stream()
+						.filter(r -> r.mInputs.length == 2 && r.mInputs[0].getItem() == Items.BRICK)
+						.map(r -> r.mInputs[0].getCount()).sorted().toList(),
+				"the :44-45 FishCooked input counts — the full material unit per line, NOT count 1");
 		// every foodValue-2 row lands in the tiny tier (the shared dispatch, switch(1) → {1, 0})
 		assertArrayEquals(new int[] {1, 0}, GT6RecipesCanner.foodCanTier(GT6RecipesCanner.CANNED_MATERIAL_FOOD_VALUE),
 				"foodValue 2 → switch(1) → the TINY can, one can out");
@@ -401,16 +413,22 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 	@Test
 	void cannedMaterialRowShapeIsTheUpstreamLine() {
 		GT6RecipesCanner.load();
-		// the identity walk (unordered stock): the dustTiny fixture input isolates the FIRST
-		// :44 row (FishCooked/dustTiny, the loop-head row)
+		// the identity walk (unordered stock): the 7 FishCooked rows share the fixture input
+		// identity (BRICK + PAPER) and differ ONLY by the input count — the count-9 filter
+		// pins the dustTiny/nugget shape (both carry the mat() 9)
 		Recipe tRow = GT6RecipeMaps.CANNER.mRecipeList.stream()
-				.filter(r -> r.mInputs.length == 2 && r.mInputs[0].getItem() == Items.BRICK && r.mInputs[1].getItem() == Items.PAPER)
+				.filter(r -> r.mInputs.length == 2 && r.mInputs[0].getItem() == Items.BRICK && r.mInputs[0].getCount() == 9)
 				.findFirst().orElse(null);
-		assertNotNull(tRow, "the dustTiny_FishCooked row resolves for (material item, empty can)");
+		assertNotNull(tRow, "the :44 count-9 row resolves for (material item, empty can)");
 		assertTrue(tRow.mCanBeBuffered, "RM.food_can → addRecipe2(T, ...) — buffered");
 		assertEquals(16, tRow.mEUt, "EUt 16 — CONSTANT (RM.java:744)");
 		assertEquals(16, tRow.mDuration, "duration 16 — CONSTANT");
-		assertEquals(1, tRow.mInputs[0].getCount(), "the material item at count 1 (the ST.array element)");
+		// ERRATUM (rework food-meat-recipes-rework): the old pin claimed count 1 "(the ST.array
+		// element)" — FALSIFIED: the upstream ST.array elements are THEMSELVES count-N stacks
+		// (Loader_Recipes_Food.java:44 dustTiny.mat(MT.FishCooked, 9); OreDictManager.java:561-574
+		// ST.amount(aAmount, rStack) sets the stackSize; RM.java:740-753 pours aStack verbatim).
+		// The input count IS the mat() N — one FULL material unit per recipe line.
+		assertEquals(9, tRow.mInputs[0].getCount(), "the material input carries the mat() stackSize (the :44 dustTiny/nugget N = 9)");
 		assertEquals(1, tRow.mInputs[1].getCount(), "ONE empty can (foodValue 2 → count 1)");
 		assertSame(SYNTHETIC_FISH_CANS[0], tRow.mOutputs[0].getItem(), "the :44-45 spec walks first — the tiny fish can");
 	}
