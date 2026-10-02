@@ -461,6 +461,19 @@ public final class GT6OreBlocks {
      * item walk, whose resolve/dedup shape this walk mirrors), unified across all families
      * and forms. M = 53 + 13 + 56 = 122, total 74 x 122 = 9028, pinned by
      * GT6OreBlocksRegistrationTest.
+     *
+     * <p>mdh-5 axis-takeover census (task mdh-5-block-worldgen-axis, CLOSED — ruling (a),
+     * static terminal state): the atlas (GT6ForeignMaterialAtlas) cross-table finds exactly
+     * FIVE PRIMARY members on this axis — Azurite/Eudialyte (tropicraft), CaF2 "Fluorite"
+     * (rotarycraft), Jade (erebus), Dolamide (mo) — all riding ALWAYS-ON upstream rows
+     * (:800-852 + :875 + the :877-880 gem loop), never the mod-gated :854-874 pool. Under
+     * mdh-3 ABSENT seeds their item universe hides while these block faces stay
+     * self-consistent (the block items register HERE, not through the driver-gated
+     * GTMaterialItems.enumerate; consumers guard — GT6OreLootTables.java:236 loop-head
+     * null-drop, the batch2 sweep account), so no dead reference exists and the driver gate
+     * on {@link #addAxisMember} (the :486 isGeneratingItem filter stays the only criterion)
+     * is NOT taken. Cross-table + per-face rulings: GT6AxisTakeoverCensusTest,
+     * decisions.mdh-5-axis-rulings.
      */
     public static List<OreDictMaterial> materialAxis() {
         Set<OreDictMaterial> tSeen = Collections.newSetFromMap(new IdentityHashMap<>());

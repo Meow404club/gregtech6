@@ -1055,6 +1055,17 @@ public final class GT6WorldgenDatagen {
      * <p>Driver-face interlink (mdh-4 closeout): the unified mod-driver face is
      * GT6ModDrivers (mdh series; isLoaded/visibilityGate) — this port-time static ruling
      * ships as history; HBM is an mdh-2 atlas (GT6ForeignMaterialAtlas) takeover candidate.
+     *
+     * <p>mdh-5 axis-takeover census (task mdh-5-block-worldgen-axis, CLOSED — ruling (a),
+     * static terminal state): the lens face carries ZERO atlas-PRIMARY rows — the HBM
+     * triple-intersect candidate (Columbite: STONE_LAYER_ORES axis member + the granite_red
+     * arm above + the atlas hbm row) is COMMON_SECONDARY (upstream MT.java:2398 COMMON_ORE,
+     * never hidden). The large-vein ({@code LARGE_VEIN_TABLE}, :1433) and bedrock
+     * ({@code BEDROCK_ORE_TABLE}, :1591) tables carry atlas-PRIMARY slots only in DEAD or
+     * OFFWORLD positions (apatite/lapis/monazite/titanium/adamantium/dolamide veins;
+     * bedrock dolamide/adamantine), and the lapis vein's live Azurite spread slot stays
+     * guarded at its consumers — no dead-reference face, no driver gate. Cross-table +
+     * per-face rulings: GT6AxisTakeoverCensusTest, decisions.mdh-5-axis-rulings.
      */
     public static final List<LensOreRow> LENS_ORE_TABLE = List.of(
         // -- kimberlite, :225-229 — the diamond-pipe bone ----------------------------

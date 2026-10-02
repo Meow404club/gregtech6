@@ -43,6 +43,16 @@ import gregtech6.registry.GTMaterialItems;
  * {@code !IL.Ancient_Debris.exists()} is a PLACEMENT-time compat check and vanilla
  * 1.20.1 ships ancient debris) — hence 21 table nether rows minus the gate = 20.
  *
+ * <p>mdh-5 axis-takeover census (task mdh-5-block-worldgen-axis, CLOSED — ruling (a),
+ * static terminal state): exactly FIVE atlas-PRIMARY materials carry rows here —
+ * eudialyte/azurite (tropicraft), fluorite (rotarycraft, CaF2), jade (erebus), dolamide
+ * (mo, whose :843 row has no vanilla dim) — all on ALWAYS-ON upstream rows; the 21
+ * mod-gated rows (:854-874) stay out as the compat pool. That is four live overworld
+ * placements out of the 152 pairs; consumers guard (GT6OreLootTables.java:236 loop-head
+ * null-drop), so no dead reference exists and no driver gate is taken on
+ * {@link #placementPairs}. Cross-table + per-face rulings: GT6AxisTakeoverCensusTest,
+ * decisions.mdh-5-axis-rulings.
+ *
  * <p><b>Feature keys</b> {@code ore_small_<dim>/<row-tail>} (spec ⑤): the key segment
  * is the upstream config name's tail ({@code ore.small.redcinnabar} →
  * {@code ore_small_nether/redcinnabar}) — the material snake for 53 of 54 rows, and
