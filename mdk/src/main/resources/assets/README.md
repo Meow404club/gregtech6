@@ -12630,3 +12630,213 @@ Two icon miswires restored to the upstream form:
 
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+## GT6 bottle items, families-B batch (task btl-bottles-families-b, 2026-10-02)
+- `gt6/textures/item/bottle/*.png` — the non-dye registration batch B (96 new textures:
+  the kitchen segment — the sauce family 800-804, the apple rows 900-905, the cooking-oil
+  bottles 1000-1007, mayo/dressing 1020/1021, the milk family 1100/1102, soy milk 1200,
+  the chocolate creams 1900/1901, maple 3500/3501, peanut butter 3601 — and the smoothie
+  walk 2000-5705 minus the landed ketchup 3101), byte-identical borrows renamed to the
+  registered item ids:
+  - `chillysauce.png` `textures/items/gt.multiitem.bottles/800.png`
+    (`3322c357aeb444f99b11812f658795ed25841ea07d15b3d2078a05a055bbf4f5` — meta 800, MultiItemBottles.java:106)
+  - `hotsauce.png` `textures/items/gt.multiitem.bottles/801.png`
+    (`c4c4c1148dbd173f380dfc4af3a685df903481bccbd864f6d00eb30bdf9449e9` — meta 801, MultiItemBottles.java:107)
+  - `diabolosauce.png` `textures/items/gt.multiitem.bottles/802.png`
+    (`e85307c6fc2e08f6f25e3105f737b7aef5c73e4601e1bcae0216149801419612` — meta 802, MultiItemBottles.java:108)
+  - `diablosauce.png` `textures/items/gt.multiitem.bottles/803.png`
+    (`5c82343f33f3d93da851da20a1f8d255b79be9dee9fe57ab93cb5400f4b771aa` — meta 803, MultiItemBottles.java:109)
+  - `diablosauce_strong.png` `textures/items/gt.multiitem.bottles/804.png`
+    (`a30ecbe7709698368d90bac32a9761e244d09f130c36cf90e3c7f4f9d98f038c` — meta 804, MultiItemBottles.java:110)
+  - `juiceapple.png` `textures/items/gt.multiitem.bottles/900.png`
+    (`3a40cc1434b6ae946ed5524d20259375b675750e085b3860b81729aeb2570b3f` — meta 900, MultiItemBottles.java:114)
+  - `ciderapple.png` `textures/items/gt.multiitem.bottles/901.png`
+    (`8f0d70c364c60c27cb44d4e1fca50f2a02565c032d6d7d353987eeea02100214` — meta 901, MultiItemBottles.java:115)
+  - `applevinegar.png` `textures/items/gt.multiitem.bottles/902.png`
+    (`7dc8e96e88541423d391fa3de2e846fc689cb62fbff06f5ba79886181d22befc` — meta 902, MultiItemBottles.java:116)
+  - `applesmoothie.png` `textures/items/gt.multiitem.bottles/905.png`
+    (`1f4b21c435cbd01281092bc67ae259d03a797e1788eb827ee928a8b271384464` — meta 905, MultiItemBottles.java:117)
+  - `bottle_olive_oil.png` `textures/items/gt.multiitem.bottles/1000.png`
+    (`d0859d0b0ef5c332be1aec1ac1f533cbcfbb8ed8485b4bb25ce952a9ed59733b` — meta 1000, MultiItemBottles.java:120)
+  - `bottle_sunflower_oil.png` `textures/items/gt.multiitem.bottles/1001.png`
+    (`63776319e33f683a5b9fa31078039517b65e48688820b6b6792ad2b3599bd251` — meta 1001, MultiItemBottles.java:121)
+  - `bottle_nut_oil.png` `textures/items/gt.multiitem.bottles/1002.png`
+    (`830a97b1a2970a076db91e7b3a9401b350bcadb76c798c92d32f2c36b1f71114` — meta 1002, MultiItemBottles.java:122)
+  - `bottle_seed_oil.png` `textures/items/gt.multiitem.bottles/1003.png`
+    (`c4dbb5fcab0e9f18587f1095f750322d230598e2bb731b78e1e544e7e549cd2c` — meta 1003, MultiItemBottles.java:123)
+  - `bottle_hemp_oil.png` `textures/items/gt.multiitem.bottles/1004.png`
+    (`16665f798aa9b6ddacbac31b5bfaac1ab9710fb6fe23d701dc161dbebf8422a3` — meta 1004, MultiItemBottles.java:124)
+  - `bottle_lin_oil.png` `textures/items/gt.multiitem.bottles/1005.png`
+    (`8862ccfc1167010004b3f5ba4668927e2c8a3c4e681564e122716c812f848278` — meta 1005, MultiItemBottles.java:125)
+  - `bottle_fish_oil.png` `textures/items/gt.multiitem.bottles/1006.png`
+    (`8eafd93ea2dba760308164101ab4276be10cbdf49390438bd54ca802a1c95ccf` — meta 1006, MultiItemBottles.java:126)
+  - `bottle_whale_oil.png` `textures/items/gt.multiitem.bottles/1007.png`
+    (`c960607a760857bf8560c773cbed9bba853de7af7fd6a0eb843d304c52ca8258` — meta 1007, MultiItemBottles.java:127)
+  - `mayo.png` `textures/items/gt.multiitem.bottles/1020.png`
+    (`48e493eeb68b06274ab0be46f3d5b03996104ce4d1207c15d2cc4417f695527a` — meta 1020, MultiItemBottles.java:134)
+  - `dressing.png` `textures/items/gt.multiitem.bottles/1021.png`
+    (`81700f16188324a2f0882fffe8dc33a87589a5830b62f9b49262a45646ca2f54` — meta 1021, MultiItemBottles.java:135)
+  - `bottle_milk.png` `textures/items/gt.multiitem.bottles/1100.png`
+    (`9c43b3374256c8333557c86cfef93c89e558ac711456fa4d1c7bd33aff40fbe6` — meta 1100, MultiItemBottles.java:138)
+  - `spoiledmilk.png` `textures/items/gt.multiitem.bottles/1102.png`
+    (`9c43b3374256c8333557c86cfef93c89e558ac711456fa4d1c7bd33aff40fbe6` — meta 1102, MultiItemBottles.java:141)
+  - `soymilk.png` `textures/items/gt.multiitem.bottles/1200.png`
+    (`7d00498d4fce908a3fc69d443af6335a773577b7d2327bc901444de919ff9764` — meta 1200, MultiItemBottles.java:149)
+  - `chocolatecream.png` `textures/items/gt.multiitem.bottles/1900.png`
+    (`f3933f6f380928674f37d07e8c7764ae8c6422cc09b6dffda76cace6fad386c5` — meta 1900, MultiItemBottles.java:194)
+  - `nutella.png` `textures/items/gt.multiitem.bottles/1901.png`
+    (`216a2a2838f254678892cb04adb38eab5a1606bef47e62656d72dc2af094ab28` — meta 1901, MultiItemBottles.java:195)
+  - `maplesap.png` `textures/items/gt.multiitem.bottles/3500.png`
+    (`841498524ea9f9dd4930a688aa2dcdf09e5552591ed443c1e6cc8b5da1bc1ac6` — meta 3500, MultiItemBottles.java:265)
+  - `maplesyrup.png` `textures/items/gt.multiitem.bottles/3501.png`
+    (`1e45d5251c3b8b6c0cba75e27a6dbb800f63695ac8cc2676a4fc0645248f20af` — meta 3501, MultiItemBottles.java:266)
+  - `peanutbutter.png` `textures/items/gt.multiitem.bottles/3601.png`
+    (`639cc1785bb8d8862d4b7f6234de5cb2b0d64fd12643039c1f31559926404460` — meta 3601, MultiItemBottles.java:273)
+  - `strawberryjuice.png` `textures/items/gt.multiitem.bottles/2000.png`
+    (`8c42d0e40c38c453d3953cc9f7772214c1ef5fbf66719d4b820bbfa66d887dfa` — meta 2000, MultiItemBottles.java:197)
+  - `strawberrysmoothie.png` `textures/items/gt.multiitem.bottles/2005.png`
+    (`1e470940670f74d521cb4ff47384c54cbb05e928c93a902934f91bfa78f06639` — meta 2005, MultiItemBottles.java:198)
+  - `bananajuice.png` `textures/items/gt.multiitem.bottles/2100.png`
+    (`a6f2979aaac4a947767b947a56b2a583b8326d0d86138ce9f9f2a5346b5f5587` — meta 2100, MultiItemBottles.java:200)
+  - `bananasmoothie.png` `textures/items/gt.multiitem.bottles/2105.png`
+    (`a933407432f80c85e8670e392d0eafdb6979f82b20e80eef059289b9bd7d4e87` — meta 2105, MultiItemBottles.java:201)
+  - `bottle_slime_green.png` `textures/items/gt.multiitem.bottles/2200.png`
+    (`08ba598a49837623b40deb9876f016642bda8d919e59efadd61a5b24da5a4693` — meta 2200, MultiItemBottles.java:204)
+  - `bottle_slime_pink.png` `textures/items/gt.multiitem.bottles/2201.png`
+    (`00f8acd3f8a2922173792cf0c2de42a941f57704e45afabaf5f428b06f79bc79` — meta 2201, MultiItemBottles.java:206)
+  - `bottle_slime_blue.png` `textures/items/gt.multiitem.bottles/2202.png`
+    (`69e18308f02058b2654742e5178f573f3c5266799af82ce584c2f594143b4117` — meta 2202, MultiItemBottles.java:208)
+  - `bawls.png` `textures/items/gt.multiitem.bottles/2210.png`
+    (`b657121019e55a69fe429d4ec6f83db8c2cf15b5184ce669aa27a5f9bf8b7311` — meta 2210, MultiItemBottles.java:209)
+  - `melonjuice.png` `textures/items/gt.multiitem.bottles/2300.png`
+    (`dbfd2f4c20106dfb81c20d47915a804a38c66c8ee755b8412f294c846d04c432` — meta 2300, MultiItemBottles.java:226)
+  - `melonsmoothie.png` `textures/items/gt.multiitem.bottles/2305.png`
+    (`1e1b8cdac6b3f7a4282bc116fcf145dbe327e16a759693edf6c46c6776b9e0c7` — meta 2305, MultiItemBottles.java:227)
+  - `juice_juice.png` `textures/items/gt.multiitem.bottles/2400.png`
+    (`6619fb535ec4625599677fc491a6262ec1445ec48f1a05da91298a74ecf14c43` — meta 2400, MultiItemBottles.java:229)
+  - `fruitsmoothie.png` `textures/items/gt.multiitem.bottles/2405.png`
+    (`478a8090640e8089fa4da3f001026f5ce1157406588990550b6cfac832e57840` — meta 2405, MultiItemBottles.java:230)
+  - `kiwijuice.png` `textures/items/gt.multiitem.bottles/2500.png`
+    (`cc8b80c56dbf5220833f47ec04647c9184869f175f12fb7854f53212ca03f3c6` — meta 2500, MultiItemBottles.java:238)
+  - `kiwismoothie.png` `textures/items/gt.multiitem.bottles/2505.png`
+    (`981b240cf2ade8e2e193bd799b415eae1ee90420fe86323baa2496e65ca8a646` — meta 2505, MultiItemBottles.java:239)
+  - `raspberryjuice.png` `textures/items/gt.multiitem.bottles/2600.png`
+    (`0d69f07dca605217d794c3ed67f5f9a202b4c431fb6583e2dd0b02f0ec9ff82c` — meta 2600, MultiItemBottles.java:241)
+  - `raspberrysmoothie.png` `textures/items/gt.multiitem.bottles/2605.png`
+    (`30dac0a1d25729391ff8806d4a4db57f5604741447cb3da6487d3a1144ebf9d5` — meta 2605, MultiItemBottles.java:242)
+  - `blackberryjuice.png` `textures/items/gt.multiitem.bottles/2700.png`
+    (`283ed43476552315a86e90438f4fcc44bcca88de26d2ed77c6788b964338f640` — meta 2700, MultiItemBottles.java:244)
+  - `blackberrysmoothie.png` `textures/items/gt.multiitem.bottles/2705.png`
+    (`125b5b957b31698c1e09e7a881a83611d3940b51573bb79e66baf8593958871c` — meta 2705, MultiItemBottles.java:245)
+  - `blueberryjuice.png` `textures/items/gt.multiitem.bottles/2800.png`
+    (`8c82105198c5de888d756a11294e6413b4be2246ed149a301f37d539704a9aa2` — meta 2800, MultiItemBottles.java:247)
+  - `blueberrysmoothie.png` `textures/items/gt.multiitem.bottles/2805.png`
+    (`0f4af026ba2ade65fbf1d7cefd6e6ed33bd71db9dd8e9b9c574de2c4a8f82d36` — meta 2805, MultiItemBottles.java:248)
+  - `cranberryjuice.png` `textures/items/gt.multiitem.bottles/2900.png`
+    (`391a724818e519fe5aa6245bb738dbe7e7ca90c1a0aae20d3435a8eb0cdc5263` — meta 2900, MultiItemBottles.java:250)
+  - `cranberrysmoothie.png` `textures/items/gt.multiitem.bottles/2905.png`
+    (`bd2dca4cfef1f4d70509cd2a67e7924ae2ecaffae35113e5fc0bf1ca3235c9da` — meta 2905, MultiItemBottles.java:251)
+  - `gooseberryjuice.png` `textures/items/gt.multiitem.bottles/3000.png`
+    (`3818da06440a4e3f808e244fff9e7cc34ae1c982ad29c20d5e7a5c83eb0007d8` — meta 3000, MultiItemBottles.java:253)
+  - `gooseberrysmoothie.png` `textures/items/gt.multiitem.bottles/3005.png`
+    (`848725ddc6c129c16bdabdbab1e187fcb37c94be6416d199fd819e3bf898134d` — meta 3005, MultiItemBottles.java:254)
+  - `juicetomato.png` `textures/items/gt.multiitem.bottles/3100.png`
+    (`586a8726f39543fa14f18d8c09f74676a39ca92a0f2c9e3a63f627fb500cbf31` — meta 3100, MultiItemBottles.java:256)
+  - `goldencarrotjuice.png` `textures/items/gt.multiitem.bottles/3200.png`
+    (`c0e45d7461099ae3fda8a192d0048a8af79f0789119bcf28954c23951ad151e1` — meta 3200, MultiItemBottles.java:259)
+  - `juicecarrot.png` `textures/items/gt.multiitem.bottles/3300.png`
+    (`6d76ddc244f74765980b6b171b28fc5c395bfd35f3400bc6d34f6d052934945c` — meta 3300, MultiItemBottles.java:261)
+  - `cactuswater.png` `textures/items/gt.multiitem.bottles/3400.png`
+    (`a868cfa3b25eee1c2d9b1b7585aac1f6a57b8c2bb6f5be0e09613927e0835eb0` — meta 3400, MultiItemBottles.java:263)
+  - `rainbowsap.png` `textures/items/gt.multiitem.bottles/3700.png`
+    (`a36295e313b16d18e50d2b21fe7408cc966e44c7309f711f323f69c4984b72f9` — meta 3700, MultiItemBottles.java:275)
+  - `juicecherry.png` `textures/items/gt.multiitem.bottles/3800.png`
+    (`e1301d923cbd45cef646092a30dcd471b3890eed3f592eed717577d707dfae6c` — meta 3800, MultiItemBottles.java:282)
+  - `cherrysmoothie.png` `textures/items/gt.multiitem.bottles/3805.png`
+    (`3816325af09e2c58e16cf83e01418f96f2233b92be6489355c969b24d8eaa7c8` — meta 3805, MultiItemBottles.java:283)
+  - `juicepineapple.png` `textures/items/gt.multiitem.bottles/3900.png`
+    (`870ea6ea9c2a0e8723ca0e3cc7a3a6abc1518a5bd6f9858fa1dd644e1f919374` — meta 3900, MultiItemBottles.java:285)
+  - `winepineapple.png` `textures/items/gt.multiitem.bottles/3901.png`
+    (`c297b415a937315946ccb3c07aad56b49242e697012de27491dc83456d4996d2` — meta 3901, MultiItemBottles.java:286)
+  - `pineapplesmoothie.png` `textures/items/gt.multiitem.bottles/3905.png`
+    (`953de99562bd0a5e240f980df810b1ba8e0c5fb82452ec869c45424b41b1a01d` — meta 3905, MultiItemBottles.java:287)
+  - `currantjuice.png` `textures/items/gt.multiitem.bottles/4000.png`
+    (`af6ff5f4a16c71b432a7f40486a28872e8b9e85e55daa84ebe5c1fa0b8a5f6b6` — meta 4000, MultiItemBottles.java:289)
+  - `currantsmoothie.png` `textures/items/gt.multiitem.bottles/4005.png`
+    (`99a1a284145cd2b0b2262fb7265e7f66e666fe6147ced1fed44f338ad63653dc` — meta 4005, MultiItemBottles.java:290)
+  - `juiceplum.png` `textures/items/gt.multiitem.bottles/4100.png`
+    (`6e4eb782cad37018dad2eeb615a7ddcaf5ede26d4bb2d37e07fa5f995c20b2bb` — meta 4100, MultiItemBottles.java:292)
+  - `plumsmoothie.png` `textures/items/gt.multiitem.bottles/4105.png`
+    (`0a556f3bfbe2c2cfb47878f05188567300e7705c7b5bb5e706f675a6ac8bc6ca` — meta 4105, MultiItemBottles.java:293)
+  - `juicepeach.png` `textures/items/gt.multiitem.bottles/4200.png`
+    (`2a636a8f67791a9446fb9841f2da572f2227887dd3b4ce27716d7a7dcd123eb1` — meta 4200, MultiItemBottles.java:295)
+  - `peachsmoothie.png` `textures/items/gt.multiitem.bottles/4205.png`
+    (`fe30d0484ba83e3720fd3a690ddf77d43b468a4d57e9c3139d8127a563c5a326` — meta 4205, MultiItemBottles.java:296)
+  - `juiceelderberry.png` `textures/items/gt.multiitem.bottles/4300.png`
+    (`c0833fddf27988585e65a73efd8a6c2585acfa3b769172c4364f7c974994e655` — meta 4300, MultiItemBottles.java:298)
+  - `elderberrysmoothie.png` `textures/items/gt.multiitem.bottles/4305.png`
+    (`859dc05e096f63743e3a5c77c2a2e71b7ce1f248163d16e1ee975197de2b65fc` — meta 4305, MultiItemBottles.java:299)
+  - `juicegrapefruit.png` `textures/items/gt.multiitem.bottles/4400.png`
+    (`c98ea44c3ee07ee8a6fc570be9447d70f2eb0d5b2d587ca6007ca6e8f9640da9` — meta 4400, MultiItemBottles.java:301)
+  - `grapefruitsmoothie.png` `textures/items/gt.multiitem.bottles/4405.png`
+    (`3c30b78c095c0eadc7971dddc816b5c1c8c59169f520314abbddb2edb543a114` — meta 4405, MultiItemBottles.java:302)
+  - `juicelime.png` `textures/items/gt.multiitem.bottles/4500.png`
+    (`62104cf9b893f1d17bdbdfeb0d7eddf07eb6331b10ddfdea8ff4edaab5333f17` — meta 4500, MultiItemBottles.java:304)
+  - `limesmoothie.png` `textures/items/gt.multiitem.bottles/4505.png`
+    (`d348848b649525604256873abcadb360c116132f9bba4862b218b867117ab005` — meta 4505, MultiItemBottles.java:305)
+  - `juiceorange.png` `textures/items/gt.multiitem.bottles/4600.png`
+    (`1af2600d6d03e7685f081016da8dac00f0348697f51812e9ba1b5df20e3a7768` — meta 4600, MultiItemBottles.java:307)
+  - `orangesmoothie.png` `textures/items/gt.multiitem.bottles/4605.png`
+    (`7984ea8559ccd4738c4d69a4273d8d52dc76b702e092550d78bdd22126ca77e5` — meta 4605, MultiItemBottles.java:308)
+  - `juiceapricot.png` `textures/items/gt.multiitem.bottles/4700.png`
+    (`976ef45c10550c691f9513fa55a831d7f867f5b33e7e58043b49de1f71bf0187` — meta 4700, MultiItemBottles.java:310)
+  - `apricotsmoothie.png` `textures/items/gt.multiitem.bottles/4705.png`
+    (`297c64254c8cddc5ae063908c90b61a99e559b2cb4988d6055189927d2d2eb66` — meta 4705, MultiItemBottles.java:311)
+  - `juicepear.png` `textures/items/gt.multiitem.bottles/4800.png`
+    (`f59edfce8d75e2158f45218e3bd9fbfd4a3e65de981bf061a223b61040131b36` — meta 4800, MultiItemBottles.java:313)
+  - `pearsmoothie.png` `textures/items/gt.multiitem.bottles/4805.png`
+    (`22d01908319753c8ad8b04ee6ce3c663f808ac1f40089b18ef971a3881fe5b19` — meta 4805, MultiItemBottles.java:314)
+  - `pumpkinjuice.png` `textures/items/gt.multiitem.bottles/4900.png`
+    (`3d64136e3284d9c7818300a298ee8b0136977116959d47a4f9ca694551ef3db8` — meta 4900, MultiItemBottles.java:316)
+  - `persimmonjuice.png` `textures/items/gt.multiitem.bottles/5000.png`
+    (`1af2600d6d03e7685f081016da8dac00f0348697f51812e9ba1b5df20e3a7768` — meta 5000, MultiItemBottles.java:318)
+  - `persimmonsmoothie.png` `textures/items/gt.multiitem.bottles/5005.png`
+    (`7984ea8559ccd4738c4d69a4273d8d52dc76b702e092550d78bdd22126ca77e5` — meta 5005, MultiItemBottles.java:319)
+  - `starfruitjuice.png` `textures/items/gt.multiitem.bottles/5100.png`
+    (`b6c4073fcb059e7eb4aaea9228e88816d7184faa6d5fed8ad3bf8c3c540ecbeb` — meta 5100, MultiItemBottles.java:321)
+  - `starfruitsmoothie.png` `textures/items/gt.multiitem.bottles/5105.png`
+    (`b2965bf8dfb775cd94138411829b005f4c4d97a607781b1b836f08c4e9b0102f` — meta 5105, MultiItemBottles.java:322)
+  - `figjuice.png` `textures/items/gt.multiitem.bottles/5200.png`
+    (`a598bcf32821b55d6578de3023b836971716b270283a81ef68805ae8e2568069` — meta 5200, MultiItemBottles.java:324)
+  - `figsmoothie.png` `textures/items/gt.multiitem.bottles/5205.png`
+    (`2189fd9b1add2bfbb44fa896dd3b9458ffd9a518bbe0132cf744aad293d4dd87` — meta 5205, MultiItemBottles.java:325)
+  - `pomegranatejuice.png` `textures/items/gt.multiitem.bottles/5300.png`
+    (`3557fb1e8b841569417d468757a5e47a9f506c4dada2bccb39a2f7c19931ac00` — meta 5300, MultiItemBottles.java:327)
+  - `pomegranatesmoothie.png` `textures/items/gt.multiitem.bottles/5305.png`
+    (`323be4fcd97ede6035164cb7a6c788d423da77436e1a6dcf2e82a472c4bff931` — meta 5305, MultiItemBottles.java:328)
+  - `mangojuice.png` `textures/items/gt.multiitem.bottles/5400.png`
+    (`dc86a15c11856335ae384bd766a446b058a43ef8d68e09e0d3ee3f5de1b242f6` — meta 5400, MultiItemBottles.java:330)
+  - `mangosmoothie.png` `textures/items/gt.multiitem.bottles/5405.png`
+    (`6657864ece705da4bfde9d9f9ecd5d8e5e575680b446db0fe2a3e4de99f2078d` — meta 5405, MultiItemBottles.java:331)
+  - `papayajuice.png` `textures/items/gt.multiitem.bottles/5500.png`
+    (`a71dbbb1b2223279121710f3e079d8ffee4791e536fda52f8c2258bcc93dc340` — meta 5500, MultiItemBottles.java:333)
+  - `papayasmoothie.png` `textures/items/gt.multiitem.bottles/5505.png`
+    (`6356a41e506665e0d9a9538abd6e51c8f111ca6a46fb4b6f4236058e7e78ef9f` — meta 5505, MultiItemBottles.java:334)
+  - `coconutmilk.png` `textures/items/gt.multiitem.bottles/5600.png`
+    (`9ed3660c8dce28cdd69f915f7a05e04d5418b61c4cf965504c25bbeb086418d9` — meta 5600, MultiItemBottles.java:336)
+  - `coconutcream.png` `textures/items/gt.multiitem.bottles/5604.png`
+    (`a5561184ed729a9da57909f95f5e642923034feb463857a13d3b35dfe819cc22` — meta 5604, MultiItemBottles.java:337)
+  - `coconutsmoothie.png` `textures/items/gt.multiitem.bottles/5605.png`
+    (`85667f14db435e0bbb1c7d27e02210038e3a1470d914dc156880f5ee12328fee` — meta 5605, MultiItemBottles.java:338)
+  - `beetjuice.png` `textures/items/gt.multiitem.bottles/5700.png`
+    (`021a2196235bb4400b6ee071b5865aac2cc6cd45b50098f6f91efff0df000e8f` — meta 5700, MultiItemBottles.java:340)
+  All 16x16 RGBA, CC0 1.0 per the upstream README block; cmp-verified 2026-10-02,
+  96/96 byte-identical. The dye bottles 32100-32147 stay the btl-dye-bottles card.
+
+  Oil-family texture-source note (the census "material prefix texture family" hypothesis,
+  researched per the card mandate): REFUTED — every MultiItemBottles meta renders from the
+  folder sprite unconditionally (`mIconList[aMeta][0] = aIconRegister.registerIcon(mModID +
+  ":" + getUnlocalizedName() + "/" + aMeta)`, gregapi MultiItemRandom.java:366), so
+  OP.bottle.dat(MT.X) rows (the cooking oils 1000-1007, the milk bottle 1100) ride the
+  same gt.multiitem.bottles/<meta>.png files as every other row; the on-disk oil sprites
+  are distinct 16x16 art (8 distinct sha256s), not placeholders. Borrowed from the folder
+  like the rest; zero placeholder rows.
