@@ -2313,15 +2313,18 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.food_cerublossom.tooltip"); // dump food.12010.tooltip 用于膜法
 		addDirect("item.gt6.food_desertnova"); // dump food.12011 沙漠新星
 		addDirect("item.gt6.food_desertnova.tooltip"); // dump food.12011.tooltip 用于膜法
-		// task food-bottles-min — 瓶域最小 4 项+瓶 tab: 三瓶 dump gt.multiitem.bottles.{3101,805,1101} 逐字
-		// (MultiItemBottles.java:257/:111/:139); 空瓶=OP.bottle.dat(MT.Empty) 组合词 空+瓶
+		// task food-bottles-min + btl-bottles-families-a — 瓶域 75 行 walk（addTreeUnits 形，
+		// keys 不能漂移）: 全表 dump gt.multiitem.bottles.<meta> 逐字（py
+		// BOTTLES_FAMILIES_A_BACKFILL 同 commit）; 空瓶=OP.bottle.dat(MT.Empty) 组合词 空+瓶
 		// (dump gt.material.Empty=空 :4643 + oredict.prefix.suffix.bottle=瓶 :91217); tab=dump
 		// itemGroup.gt.multiitem.bottles:17954 格雷牌饮料 逐字 (upstream "GregTech: Bottles",
-		// MultiItemBottles.java:40); 三瓶 desc=dump 空串行=双侧零键
-		addDirect("item.gt6.bottle_empty"); // 空+瓶 组合词
-		addDirect("item.gt6.food_ketchup"); // dump bottles.3101 番茄酱
-		addDirect("item.gt6.food_barbecuesauce"); // dump bottles.805 烧烤酱
-		addDirect("item.gt6.food_heavycream"); // dump bottles.1101 鲜奶油
+		// MultiItemBottles.java:40); desc=dump *.tooltip 逐字, 六条 en desc 行中 32765 汞瓶
+		// dump zh 空串=手组成值 又叫水银(汞)（罐装空气先例, dump gt.material.Quicksilver :5331 词）;
+		// 空串行=双侧零键
+		for (gregtech6.registry.GT6Bottles.BottleRow tRow : gregtech6.registry.GT6Bottles.ROWS) {
+			addDirect(tRow.langKey());
+			if (tRow.tooltipKey() != null) addDirect(tRow.tooltipKey());
+		}
 		addDirect("itemGroup.gt6.bottles"); // dump itemGroup.gt.multiitem.bottles:17954 格雷牌饮料
 		addDirect("item.gt6.bending_cylinder_small"); // task food-can-row0 — dump gt.metatool.01.56 小型弯曲绕筒 (Loader_Tools.java:146 "Small Bending Cylinder")
 		addDirect("item.gt6.pickaxe"); // task w5-t1-dig-six — 镐 (dump tagprefix tool_head_pickaxe 镐头 :895, minus 头)
