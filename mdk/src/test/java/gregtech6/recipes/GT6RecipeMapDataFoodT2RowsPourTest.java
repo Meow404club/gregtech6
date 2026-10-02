@@ -203,18 +203,16 @@ public class GT6RecipeMapDataFoodT2RowsPourTest extends GTRecipesOfflineTestBase
 
 	/**
 	 * The fermenter reconciliation face: the :605-649 segment of the T2 list is fully
-	 * covered elsewhere — :605-:610 ride the main smoke rows, :611-:649 the
-	 * recipe-data-b2b1 pour — so THIS card ships zero fermenter rows, and the
-	 * branch diff must not touch the file at all (only-add-never-duplicate).
-	 * The main file predates the file-head convention (its head lands with the
-	 * b2b1 branch), so only the row stock is pinned here.
+	 * covered elsewhere — :605-:610 ride the main smoke rows, :611-:649 landed with the
+	 * recipe-data-b2b1 pour (the branch's fermenter only-add, never duplicate) — so
+	 * THIS card ships zero fermenter rows, and the pin rides the landed b2b1 census.
 	 */
 	@Test
 	public void theFermenterDeltaStaysEmptyAgainstTheB2b1Pour() throws Exception {
 		InputStream tStream = GT6RecipeMapDataFoodT2RowsPourTest.class.getResourceAsStream("/data/gt6/recipe_maps/fermenter.json");
 		assertNotNull(tStream);
 		JsonObject tDoc = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
-		assertEquals(7, tDoc.getAsJsonArray("recipes").size(), "fermenter.json keeps the 7 main smoke rows — this card adds nothing (the :611-649 drinks/walks ride the recipe-data-b2b1 branch)");
+		assertEquals(195, tDoc.getAsJsonArray("recipes").size(), "fermenter.json holds the landed b2b1 pour (195 = 7 smoke + 188; the :611-649 drinks/walks landed with recipe-data-b2b1 — the seat-IX reconciliation bump)");
 	}
 
 	/** The live-id face, offline: every gt6 item id the four files reference must be a member
