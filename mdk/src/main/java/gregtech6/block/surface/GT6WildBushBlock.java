@@ -87,11 +87,13 @@ import gregtech6.registry.GT6CropFoods;
  * {@code Items.string} default; the HarvestCraft {@code cottonItem} branch :69 is the
  * foreign-conditional TRUE NEGATIVE).
  *
- * <p>The world face renders the upstream grayscale {@code bush.png} through the
- * tintindex-0 seat, tinted per state by the kind's BUSH BODY colour — the body colour is
- * stage-constant upstream (MultiTileEntityBush.java:236-240, {@code tBerryColor[0]} at
- * every stage; the stage colours [1..3] ride the berry OVERLAY textures, which stay CUT
- * with the berry visual). {@code GT6BushTintListener} answers the per-state arm.
+     * <p>The world face renders the upstream grayscale {@code bush.png} through the
+     * tintindex-0 seat, tinted per state by the kind's BUSH BODY colour — the body colour is
+     * stage-constant upstream (MultiTileEntityBush.java:236-240, {@code tBerryColor[0]} at
+     * every stage). The berry layer rides tintindex 1 (task berry-overlay): the
+     * {@code bush_parts} sprites on the age models, tinted by the kind's STAGE colour at
+     * the state's AGE via {@link Kind#stageColorARGB} — the upstream BlockTextureMulti
+     * layer stack (:230-242). {@code GT6BushTintListener} answers the per-state arm.
  *
  * <p>KJS surface: the REGISTRATION face stays deferred to the KJS binding card (the
  * GT6Bumbles.java:71-72 declaration form) — no KJS adapter rides this card.
@@ -223,47 +225,74 @@ public final class GT6WildBushBlock extends BushBlock implements BonemealableBlo
     }
 
     /**
-     * One bush identity — the KIND nine row. The colour is the upstream WORLD-render
-     * BUSH BODY colour (MultiTileEntityBush.java:236-240 {@code tBerryColor[0]}, the
-     * stage-constant face); the berry carrier is the T5a {@code GT6CropFoods} row id, or
-     * {@code null} for the vanilla string carrier (WorldgenBushes.java:66). Rows ride the
-     * upstream MultiItemFood put order (:397-429), the string cotton last (the default).
+     * One bush identity — the KIND nine row. The colours are the upstream BushesGT 4-tuple:
+     * the BUSH BODY colour (MultiTileEntityBush.java:236-240 {@code tBerryColor[0]}, the
+     * stage-constant face) plus the three STAGE colours of the berry layer
+     * (:230-242 {@code tBerryColor[1..3]} — task berry-overlay, the CS.java:1584 put
+     * javadoc "Bush Color, Stage 1, Stage 2, Stage 3" rows; the {@code aBloom/aImmature}
+     * parameter names upstream are misleading, the stage semantics ride the render usage).
+     * The berry carrier is the T5a {@code GT6CropFoods} row id, or {@code null} for the
+     * vanilla string carrier (WorldgenBushes.java:66). Rows ride the upstream
+     * MultiItemFood put order (:397-429), the string cotton last (the default).
      */
     public enum Kind implements net.minecraft.util.StringRepresentable {
 
-        /** MultiItemFood.java:397 (BushesGT.put 0x22ff22 body). */
-        BLUEBERRY(0x22ff22, "food_blueberry"),
-        /** MultiItemFood.java:405 (BushesGT.put 0x44ff44 body). */
-        CANDLEBERRY(0x44ff44, "food_candleberry"),
-        /** MultiItemFood.java:409 (BushesGT.put 0x00dd00 body). */
-        CRANBERRY(0x00dd00, "food_cranberry"),
-        /** MultiItemFood.java:413 (BushesGT.put 0x33ff33 body). */
-        CURRANTS_BLACK(0x33ff33, "food_currants_black"),
-        /** MultiItemFood.java:417 (BushesGT.put 0x33ff33 body). */
-        CURRANTS_WHITE(0x33ff33, "food_currants_white"),
-        /** MultiItemFood.java:421 (BushesGT.put 0x33ff33 body). */
-        CURRANTS_RED(0x33ff33, "food_currants_red"),
-        /** MultiItemFood.java:425 (BushesGT.put 0x11ff11 body). */
-        BLACKBERRY(0x11ff11, "food_blackberry"),
-        /** MultiItemFood.java:429 (BushesGT.put 0x11ff11 body). */
-        RASPBERRY(0x11ff11, "food_raspberry"),
+        /** MultiItemFood.java:397 — body 0x22ff22, stages 0xffcccc/0x6666dd/0x0000ff. */
+        BLUEBERRY(0x22ff22, 0xffcccc, 0x6666dd, 0x0000ff, "food_blueberry"),
+        /** MultiItemFood.java:405 — body 0x44ff44, stages 0xccffcc/0xaaffaa/0xccffcc. */
+        CANDLEBERRY(0x44ff44, 0xccffcc, 0xaaffaa, 0xccffcc, "food_candleberry"),
+        /** MultiItemFood.java:409 — body 0x00dd00, stages 0xffcccc/0x66ff66/0xff0000. */
+        CRANBERRY(0x00dd00, 0xffcccc, 0x66ff66, 0xff0000, "food_cranberry"),
+        /** MultiItemFood.java:413 — body 0x33ff33, stages 0xaaaaaa/0x66ff66/0x111111. */
+        CURRANTS_BLACK(0x33ff33, 0xaaaaaa, 0x66ff66, 0x111111, "food_currants_black"),
+        /** MultiItemFood.java:417 — body 0x33ff33, stages 0xaaaaaa/0x66ff66/0xeeeedd. */
+        CURRANTS_WHITE(0x33ff33, 0xaaaaaa, 0x66ff66, 0xeeeedd, "food_currants_white"),
+        /** MultiItemFood.java:421 — body 0x33ff33, stages 0xaaaaaa/0x66ff66/0xee0000. */
+        CURRANTS_RED(0x33ff33, 0xaaaaaa, 0x66ff66, 0xee0000, "food_currants_red"),
+        /** MultiItemFood.java:425 — body 0x11ff11, stages 0xffcccc/0x663333/0x331111. */
+        BLACKBERRY(0x11ff11, 0xffcccc, 0x663333, 0x331111, "food_blackberry"),
+        /** MultiItemFood.java:429 — body 0x11ff11, stages 0xffcccc/0x664444/0xffaaaa. */
+        RASPBERRY(0x11ff11, 0xffcccc, 0x664444, 0xffaaaa, "food_raspberry"),
         /** The string-cotton default bush (CS.java:1588/:1589 — the BushesGT.DEFAULT row). */
-        COTTON(0x22cc22, null);
+        COTTON(0x22cc22, 0x33cc33, 0x44cc44, 0xeeeeee, null);
 
         /** The body colour, 0x00RRGGBB (the {@code bush.png} tint, stage-constant). */
         private final int mBodyColorRGB;
+        /** The berry-layer stage colours 1..3, 0x00RRGGBB (MultiTileEntityBush.java:230-242). */
+        private final int mStage1ColorRGB, mStage2ColorRGB, mStage3ColorRGB;
         /** The T5a food-row id, null = the vanilla string carrier. */
         private final String mFoodPath;
         private final String mSerializedName = name().toLowerCase(Locale.ROOT);
 
-        Kind(int aBodyColorRGB, String aFoodPath) {
+        Kind(int aBodyColorRGB, int aStage1ColorRGB, int aStage2ColorRGB, int aStage3ColorRGB, String aFoodPath) {
             mBodyColorRGB = aBodyColorRGB;
+            mStage1ColorRGB = aStage1ColorRGB;
+            mStage2ColorRGB = aStage2ColorRGB;
+            mStage3ColorRGB = aStage3ColorRGB;
             mFoodPath = aFoodPath;
         }
 
         /** The world-face tint, 0xFFRRGGBB (the GT6BushTintListener per-state arm). */
         public int bodyColorARGB() {
             return 0xFF000000 | mBodyColorRGB;
+        }
+
+        /**
+         * The berry-layer tint at tintindex 1, 0xFFRRGGBB — the stage colour of the state's
+         * AGE (MultiTileEntityBush.java:230-242 {@code tBerryColor[aStage]}: stage 1 =
+         * the immature berries, stages 2/3 = the ripe pair riding the shared
+         * {@code berries.png} layer at their own colours). Age 0 has no berry faces in the
+         * {@code berry_bush} model, so the seat is never queried there — the body colour
+         * answers as the defensive default.
+         */
+        public int stageColorARGB(int aAge) {
+            int tRGB = switch (aAge) {
+                case 1 -> mStage1ColorRGB;
+                case 2 -> mStage2ColorRGB;
+                case 3 -> mStage3ColorRGB;
+                default -> mBodyColorRGB;
+            };
+            return 0xFF000000 | tRGB;
         }
 
         /** The T5a food-row id, null on the cotton/string kind (the offline path-pin face). */
