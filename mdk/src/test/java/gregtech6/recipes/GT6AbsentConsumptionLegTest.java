@@ -56,12 +56,13 @@ import gregtech6.registry.GT6ModDrivers.DriverLevel;
  * consume the same registration root. The proven NPE face (hopperRecipeBuilder,
  * GTMaterialItems.get(...).get() under a live-FML seeded JVM) is guarded row-level by the
  * f8ffa0bd1 review fix (the builder answers null, the walk callers skip — the JSON bad-row
- * semantics); its convergence evidence is the runData both-legs rerun with a wiped output
- * tree (forge 226952 files byte-identical to HEAD, neo datagen_tree_check OK 112037+67551).
- * The remaining unguarded GTMaterialItems.get datagen sites are the re-activation card's
- * obligation: the SEEDED_DOMAINS flip stays inert until every walk face carries the guard
- * (activation preconditions: datagen-JVM short-circuit + the walk sweep + the committed-tree
- * face — registration precedes GatherDataEvent, so a late reset cannot un-shrink the universe).
+ * semantics); mdh-clearout-batch2 landed the remaining sweep guards and the walk-face pin
+ * lives in {@code gregtech6.datagen.GT6DatagenWalkLegTest} (same package as the guarded
+ * builders — the runData both-legs byte-identity rerun stays the committed-tree evidence).
+ * The SEEDED_DOMAINS re-activation rode those three preconditions: the datagen-JVM
+ * short-circuit (GT6ModDriversTest.datagenJvmShortCircuitsTheSeed), this sweep, and the
+ * committed-tree verdict — registration precedes GatherDataEvent, so a late reset cannot
+ * un-shrink the universe.
  */
 public class GT6AbsentConsumptionLegTest extends GTRecipesOfflineTestBase {
 

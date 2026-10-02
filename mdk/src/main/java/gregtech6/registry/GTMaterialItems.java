@@ -406,8 +406,17 @@ public final class GTMaterialItems {
 
     /** Query API for later cards: the handle of a prefix x material item, or null if not registered. */
     //? if forge {
+    /**
+     * The pair-lookup seam (the GT6RecipesImplosion.sMaterialItemResolver precedent, mdh-clearout-batch2):
+     * production answers the frozen registration INDEX; the datagen walk-leg test swaps in the
+     * registration-truth stub (registrationOrder ∩ driver pin) because a test JVM cannot re-run
+     * registration. Tests capture the original reference and restore it in their afterEach, always.
+     */
+    public static java.util.function.BiFunction<OreDictPrefix, OreDictMaterial, RegistryObject<Item>> sLookup =
+            (aPrefix, aMaterial) -> INDEX.get(new PrefixMaterial(aPrefix, aMaterial));
+
     public static RegistryObject<Item> get(OreDictPrefix prefix, OreDictMaterial material) {
-        return INDEX.get(new PrefixMaterial(prefix, material));
+        return sLookup.apply(prefix, material);
     }
 
     /** All registered handles (unmodifiable, registration order). */
@@ -415,8 +424,11 @@ public final class GTMaterialItems {
         return Collections.unmodifiableMap(INDEX);
     }
     //?} else {
-    /*public static DeferredHolder<Item, Item> get(OreDictPrefix prefix, OreDictMaterial material) {
-        return INDEX.get(new PrefixMaterial(prefix, material));
+    /*public static java.util.function.BiFunction<OreDictPrefix, OreDictMaterial, DeferredHolder<Item, Item>> sLookup =
+            (aPrefix, aMaterial) -> INDEX.get(new PrefixMaterial(aPrefix, aMaterial));
+
+    public static DeferredHolder<Item, Item> get(OreDictPrefix prefix, OreDictMaterial material) {
+        return sLookup.apply(prefix, material);
     }
 
     // All registered handles (unmodifiable, registration order).

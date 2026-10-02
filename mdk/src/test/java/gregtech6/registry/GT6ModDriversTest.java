@@ -20,6 +20,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregapi.data.MT;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 
@@ -92,5 +93,24 @@ public class GT6ModDriversTest {
         GT6ModDrivers.seedFromEnvironment(); // must not throw: forge leg ModList == null, neo leg empty domain set
         assertTrue(GT6ModDrivers.isLoaded("gt6test.never_seeded"), "no seeded state after the offline seed");
         assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "the offline seed hides nothing");
+    }
+
+    /**
+     * Activation precondition 1 (mdh-clearout-batch2, review seat XVI): a datagen JVM
+     * short-circuits the seed BEFORE any mod-list walk — the runData NPE face (f8ffa0bd1)
+     * was exactly a seeded runData JVM, and registration precedes GatherDataEvent so a late
+     * reset cannot un-shrink the universe. The probe seam stands in for the platform flag
+     * ({@code DatagenModLoader.isRunningDataGen()}, live before any mod constructs on both
+     * legs); on the neo junit-fml leg this is a REAL regression pin — a live mod list lacking
+     * the foreign domains plus a seeding seed would write ABSENT and shrink the census.
+     */
+    @Test
+    public void datagenJvmShortCircuitsTheSeed() {
+        int tBaseline = GTMaterialItems.registrationOrder().size();
+        GT6ModDrivers.setDatagenProbe(() -> true);
+        GT6ModDrivers.seedFromEnvironment();
+        assertTrue(GT6ModDrivers.isLoaded(MT.MD.HaC.mID), "a probe-true (datagen) JVM never seeds: the batch-1 domain stays PRESENT");
+        assertTrue(GT6ModDrivers.isLoaded(MT.MD.TiC.mID), "a probe-true (datagen) JVM never seeds: the batch-2 domain stays PRESENT");
+        assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "the datagen seed wrote nothing — the walk universe is untouched");
     }
 }

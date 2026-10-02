@@ -69,6 +69,10 @@ class GT6GuiReskinCensusTest {
      * 34-viewer-gui-bg added the viewer backdrop rows (nei, bedrockorelist).
      */
     private static final String[][] MANIFEST = {
+        // the two act-dual-gui borrowed faces (the seat-IX manifest catch-up: the textures
+        // landed on main without their manifest rows, a pure-main red this review chases)
+        {"advancedcraftingtable", "advancedcraftingtable.png", "af774ea0631d00b61242ea8d18deaba148c9fc581fd90201c615091381729a5a", "256", "256"},
+        {"advancedcraftingtablecharging", "advancedcraftingtablecharging.png", "cd57524d0fcb72efd3519e4a0e9a62fe8e67b7422aff61194985da9a500f198a", "256", "256"},
         {"alloying", "Alloying.png", "c93bb15e340b98314f0053acddda047e65fee4808b4aafe095f8b0a917ed365b", "256", "256"},
         {"anvil", "Anvil.png", "41fc7d5914113898a2b41632cec80e797060583d8aeee7c833e6a0dd4030ca9a", "256", "256"},
         {"anvilbend", "AnvilBendingBig.png", "41d60ba2f35458f4f083ad9f4d5b625cb97d7ddc54b21776271d449ed54cca39", "256", "256"},

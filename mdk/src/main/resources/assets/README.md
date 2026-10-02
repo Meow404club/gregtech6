@@ -9997,12 +9997,14 @@ matching-rules record.
 
 Matching was case-insensitive (amazawa ships PascalCase, ResourceLocation paths
 must be lowercase — every file lands on our existing lowercase name); the canvas is
-256x256 on all 73, identical to the replaced upstream panels. `anvilbend.png` folds
+256x256 on all 75, identical to the replaced upstream panels (73 amazawa + the 2 act-dual-gui borrowed faces). `anvilbend.png` folds
 amazawa `AnvilBendingBig.png` (the Small/Big fold above). AE2-copy spot check over
 the heaviest AE2-flavoured files (`Default`/`Crafting`/`AnvilBendingBig`/`Alloying`):
 verdict = original redraws in the pack's flat light style — style reference, not
 pixel copies of AE2 assets; nothing removed.
 
+- `gui/machines/advancedcraftingtable.png` ← amazawa `advancedcraftingtable.png` sha256 `af774ea0631d00b61242ea8d18deaba148c9fc581fd90201c615091381729a5a` (task act-dual-gui, upstream AdvancedCraftingTable family — not amazawa; manifest row added by the seat-IX catch-up)
+- `gui/machines/advancedcraftingtablecharging.png` ← amazawa `advancedcraftingtablecharging.png` sha256 `cd57524d0fcb72efd3519e4a0e9a62fe8e67b7422aff61194985da9a500f198a` (task act-dual-gui, upstream AdvancedCraftingTable family — not amazawa; manifest row added by the seat-IX catch-up)
 - `gui/machines/alloying.png` ← amazawa `Alloying.png` sha256 `c93bb15e340b98314f0053acddda047e65fee4808b4aafe095f8b0a917ed365b`
 - `gui/machines/anvil.png` ← amazawa `Anvil.png` sha256 `41fc7d5914113898a2b41632cec80e797060583d8aeee7c833e6a0dd4030ca9a`
 - `gui/machines/anvilbend.png` ← amazawa `AnvilBendingBig.png` sha256 `41d60ba2f35458f4f083ad9f4d5b625cb97d7ddc54b21776271d449ed54cca39`
