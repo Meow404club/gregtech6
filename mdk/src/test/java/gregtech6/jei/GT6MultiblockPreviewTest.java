@@ -124,18 +124,22 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	public void infoPagesRemovedFromBothPlugins() throws Exception {
-		// the swap census: neither plugin may still carry the text-info faces — read at the
-		// bytecode layer (the same layer the detection-contract tests read)
+		// the swap census: neither plugin may still carry the retired COKE-OVEN text-info
+		// faces — read at the bytecode layer (the same layer the detection-contract tests
+		// read). Narrowed at the seat-IX rebase adjudication (task viewer-energy-jump-gear):
+		// the retirement targeted the replaced face, not the API — the energy-carrier
+		// info pages legitimately ride addIngredientInfo/EmiInfoRecipe (user ruling: the
+		// gear port jumps to per-carrier "how is this produced" pages).
 		try (java.io.InputStream tJei = GT6JeiPlugin.class.getResourceAsStream("GT6JeiPlugin.class");
 			 java.io.InputStream tEmi = GT6EmiPlugin.class.getResourceAsStream("GT6EmiPlugin.class")) {
 			assertNotNull(tJei, "JEI plugin class resource");
 			assertNotNull(tEmi, "EMI plugin class resource");
 			String tJeiBytes = new String(tJei.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
 			String tEmiBytes = new String(tEmi.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
-			assertFalse(tJeiBytes.contains("addIngredientInfo"),
-					"the JEI text-info page must be gone (replaced by the preview category)");
-			assertFalse(tEmiBytes.contains("EmiInfoRecipe"),
-					"the EMI text-info page must be gone (replaced by the preview category)");
+			assertFalse(tJeiBytes.contains("cokeOvenInfo"),
+					"the JEI coke-oven text-info page must be gone (replaced by the preview category)");
+			assertFalse(tEmiBytes.contains("registerCokeOvenInfo"),
+					"the EMI coke-oven text-info page must be gone (replaced by the preview category)");
 			assertTrue(tJeiBytes.contains("GT6MultiblockPreviewJeiCategory"),
 					"the JEI leg must register the preview category");
 			assertTrue(tEmiBytes.contains("GT6MultiblockPreviewEmiCategory"),
