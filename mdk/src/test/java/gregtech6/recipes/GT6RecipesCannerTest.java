@@ -197,9 +197,9 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sEmptyCanResolver = () -> new ItemStack(GT6SprayCans.SPRAY_CAN_EMPTY.get());
 		GT6RecipesCanner.sSprayPaintResolver = aIndex -> new ItemStack(GT6SprayCans.SPRAY_PAINTS.get(aIndex).get());
 		GT6RecipesCanner.sRemoverResolver = () -> new ItemStack(GT6SprayCans.SPRAY_PAINT_REMOVER.get());
-		GT6RecipesCanner.sFoodCanEmptyResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_EMPTY.get());
-		GT6RecipesCanner.sRottenCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_ROTTEN.get(aTier).get());
-		GT6RecipesCanner.sCookiesCanResolver = () -> new ItemStack(GT6FoodCans.FOOD_CAN_COOKIES_HUGE.get());
+		GT6RecipesCanner.sFoodCanEmptyResolver = () -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_EMPTY.get()));
+		GT6RecipesCanner.sRottenCansResolver = aTier -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_ROTTEN.get(aTier).get()));
+		GT6RecipesCanner.sCookiesCanResolver = () -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_COOKIES_HUGE.get()));
 		GT6RecipesCanner.sCfoamFluidResolver = aIndex -> gregtech6.fluid.GTFluids.cfoam(aIndex, false).source.get();
 		GT6RecipesCanner.sCfoamOwnedFluidResolver = aIndex -> gregtech6.fluid.GTFluids.cfoam(aIndex, true).source.get();
 		GT6RecipesCanner.sFoamSprayResolver = aIndex -> new ItemStack(gregtech6.registry.GT6FoamSprays.FOAM_SPRAYS.get(aIndex).get());
@@ -209,13 +209,13 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 		GT6RecipesCanner.sLaserGasEmitterResolver = GT6RecipesCanner::liveLaserEmitter;
 		// task food-meat-recipes — the live defaults restored verbatim (lambda creation runs nothing)
 		GT6RecipesCanner.sFoodMaterialItemResolver = GT6RecipesMixer::resolveItem;
-		GT6RecipesCanner.sMeatCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get());
-		GT6RecipesCanner.sFishCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_FISH.get(aTier).get());
-		GT6RecipesCanner.sVeggieCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_VEGGIE.get(aTier).get());
+		GT6RecipesCanner.sMeatCansResolver = aTier -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get()));
+		GT6RecipesCanner.sFishCansResolver = aTier -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_FISH.get(aTier).get()));
+		GT6RecipesCanner.sVeggieCansResolver = aTier -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_VEGGIE.get(aTier).get()));
 		GT6RecipesCanner.sAirFluidResolver = GT6RecipesCanner::liveAirFluid;
 		GT6RecipesCanner.sAirCanResolver = GT6RecipesCanner::liveAirCan;
 		GT6RecipesCanner.sBakingFoodItemResolver = GT6RecipesMeat::resolveFoodItem;
-		GT6RecipesCanner.sBreadCansResolver = aTier -> new ItemStack(GT6FoodCans.FOOD_CAN_BREAD.get(aTier).get());
+		GT6RecipesCanner.sBreadCansResolver = aTier -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(GT6FoodCans.FOOD_CAN_BREAD.get(aTier).get()));
 		GT6RecipeMaps.reset();
 	}
 

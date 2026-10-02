@@ -130,7 +130,14 @@ public final class GT6RecipesMeat {
 	/** The resolution seams: live lookups by default, fixtures injected offline (the Bees precedent). */
 	public static Function<String, Item> sFoodItemResolver = GT6RecipesMeat::resolveFoodItem;
 	public static BiFunction<OreDictPrefix, OreDictMaterial, Item> sDustItemResolver = GT6RecipesMixer::resolveItem;
-	public static Supplier<Fluid> sBbqSauceResolver = () -> GTFluids.liveFluidSource("bbqsauce");
+	/** The BBQ sauce seam — the {@code GTFluids.BBQSAUCE} AquaFluid carrier's source (the FOOD_B1 fluid), wrapped offline-safe: the forge test JVM RESOLVES the gt6 ITEMS (the rib leg does NOT null out there — the 07:53 XML empirics) but leaves the gt6 FLUIDS unbound, so the bare {@code .get()} THROWS ("Registry Object not present: gt6:bbqsauce") and the shared-test pour dies — the null keeps the upstream FL.exists silent drop (the liveFamilyCan wrap precedent). */
+	public static Supplier<Fluid> sBbqSauceResolver = GT6RecipesMeat::liveBbqSauce;
+
+	/** The offline-safe sauce leg (the GT6RecipesCanner.liveFamilyCan wrap form). */
+	@Nullable
+	static Fluid liveBbqSauce() {
+		try {return GTFluids.BBQSAUCE.source.get();} catch (RuntimeException tOffline) {return null;}
+	}
 
 	/** The live item walk over both namespaces (null when absent — the silent-drop face). */
 	@Nullable

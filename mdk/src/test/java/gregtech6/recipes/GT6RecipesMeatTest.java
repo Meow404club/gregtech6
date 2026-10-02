@@ -138,10 +138,10 @@ public class GT6RecipesMeatTest extends GTRecipesOfflineTestBase {
 	void restoreSeams() {
 		GT6RecipesMeat.sFoodItemResolver = GT6RecipesMeat::resolveFoodItem;
 		GT6RecipesMeat.sDustItemResolver = GT6RecipesMixer::resolveItem;
-		GT6RecipesMeat.sBbqSauceResolver = () -> gregtech6.fluid.GTFluids.liveFluidSource("bbqsauce");
+		GT6RecipesMeat.sBbqSauceResolver = () -> gregtech6.fluid.GTFluids.BBQSAUCE.source.get();
 		GT6RecipesCanner.sFoodCanEmptyResolver = () -> new ItemStack(gregtech6.registry.GT6FoodCans.FOOD_CAN_EMPTY.get());
-		GT6RecipesCanner.sMeatCansResolver = aTier -> new ItemStack(gregtech6.registry.GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get());
-		GT6RecipesCanner.sFishCansResolver = aTier -> new ItemStack(gregtech6.registry.GT6FoodCans.FOOD_CAN_FISH.get(aTier).get());
+		GT6RecipesCanner.sMeatCansResolver = aTier -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(gregtech6.registry.GT6FoodCans.FOOD_CAN_MEAT.get(aTier).get()));
+		GT6RecipesCanner.sFishCansResolver = aTier -> GT6RecipesCanner.liveFamilyCan(() -> new ItemStack(gregtech6.registry.GT6FoodCans.FOOD_CAN_FISH.get(aTier).get()));
 		GT6RecipeMaps.reset();
 		GT6RecipesMeat.resetForTest();
 	}

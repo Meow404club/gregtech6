@@ -111,7 +111,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("GAS_FUELS", 0);
 		SNAPSHOT.put("DISTILLERY", 8);
 		SNAPSHOT.put("DRYING", 48); // +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs
+		//? if forge {
 		SNAPSHOT.put("CANNER", 84); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip +25: task debt-reactor-c-rods — the 24 reactor-rod fills (:742-744/:746-762/:782-785) + the :789 Tritium unpack pour
+		//?} else {
+		/*SNAPSHOT.put("CANNER", 160); // task food-meat-recipes — the live-registry leg: +28 the :44-51 canned-material band + 4 air rows (netherair/enderair fill/release; the plain-air pair dormant) + 14 T3b-delegated baking rows (:600-:782) + 30 the meat/fish listener walk (GT6RecipesMeat, :404-:514); the forge leg skips them all (the unbound gt6 registries yield null = the silent-drop face)
+		*///?}
 		SNAPSHOT.put("MIXER", 56023); // +20 task cbc-5-crop-consumption — (4 grain crops + cropWheat) x the 4-water mash walk +3 task food-bake-recipes — the :141-:143 dough rows (the :140 gemChipped leg dormant) (union seat XVII)
 		SNAPSHOT.put("SIFTING", 489); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the material axis, every row resolving under the brick fixture; +52 task a-ore-axis-extension — the axis grew 53 -> 66 (4 x 13); +224 task b-gem-pool-extension — the axis grew 66 -> 122 (4 x 56, + 1: the 489th row is the grass row0)
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
@@ -125,7 +129,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		*///?}
 		SNAPSHOT.put("WIREMILL", 912);
 		SNAPSHOT.put("ROLLING_MILL", 1); // +1 task food-bake-recipes — the :139 dough→flat row
-		SNAPSHOT.put("BATH", 1090); // +1 task food-bake-recipes — the :357 fries row
+		//? if forge {
+		SNAPSHOT.put("BATH", 1090); // +1 task food-bake-recipes — the :357 fries row; task food-meat-recipes — the :430 Rib_BBQ row stays forge-dormant (the forge test JVM leaves the gt6 FLUIDS unbound — the liveBbqSauce silent drop; the rib ITEM itself resolves there, the 07:53 empirics)
+		//?} else {
+		/*SNAPSHOT.put("BATH", 1091); // +1 task food-bake-recipes — the :357 fries row +1 task food-meat-recipes — the :430 Rib_BBQ row (rib cooked + bbqsauce 250 → food_rib_bbq, live on the registry-live leg)
+		*///?}
 		SNAPSHOT.put("FURNACE_FUEL", 0);
 		SNAPSHOT.put("PRESS", 7); // +7 task food-bake-recipes — the :146-:149 loaves + the :152 cylinder trio
 		SNAPSHOT.put("EXTRUDER", 966);
@@ -133,7 +141,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("CRUCIBLE_ALLOYING", 0);
 		SNAPSHOT.put("ANVIL", 145);
 		SNAPSHOT.put("ANVIL_BEND", 27);
-		SNAPSHOT.put("FERMENTER", 1716); // +1716 task cbc-5-crop-consumption — the RM.biomass 66-leg walk (RM.java:688-705) over 26 feeders: 16 flour-grain dust/blockDust arms + the 4 fodder items + the 4 grain crops + cropWheat + the baleWheat hay-block alias
+		//? if forge {
+		SNAPSHOT.put("FERMENTER", 1719); // +1716 task cbc-5-crop-consumption +3 task food-meat-recipes — the THREE vanilla raw-meat members (porkchop/beef/chicken) resolve on the forge vanilla bootstrap and spoil (:354/:357); the nine gt6 raws stay null there — the RM.biomass 66-leg walk (RM.java:688-705) over 26 feeders: 16 flour-grain dust/blockDust arms + the 4 fodder items + the 4 grain crops + cropWheat + the baleWheat hay-block alias
+		//?} else {
+		/*SNAPSHOT.put("FERMENTER", 1728); // +12 task food-meat-recipes — the :354/:357 rotten-flesh walk (the 12 raw-meat members, GT6RecipesMeat)
+		*///?}
 		SNAPSHOT.put("LOOM", 0);
 		SNAPSHOT.put("PRESSURE_WASHER", 0);
 		// task squeezer-seed-legs — the 4 vanilla seed-oil legs (squeezer.json, the cbc-5 leftover (4):
@@ -429,6 +441,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesShCL.load();
 		GT6RecipesStoneChisel.load();
 		GT6RecipesCanner.load();
+		GT6RecipesMeat.load(); // task food-meat-recipes — the listener-walk pour (30 canned + 12 fermenter + 16 mortar + 1 bath)
 		GT6RecipeMapJsonLoader.pour(Map.of()); // the ledger arm — the no-op pour
 		GT6RecipesMixer.load();
 		GT6RecipesSifter.load();
