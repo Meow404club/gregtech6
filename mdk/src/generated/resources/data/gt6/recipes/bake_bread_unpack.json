@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:food_breads_sliced"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "item": "gt6:food_bread_sliced"
+  }
+}
