@@ -2319,7 +2319,7 @@ public final class GTFluids {
 		// into the formula: the setDensity literals verbatim, the uumMcfg/setMcfg rows as
 		// the Σg·amt/U sums (OreDictMaterial.java:393-409). KJS: registration face only,
 		// the class-doc deferral to the kjs binding card holds.
-		new ChemicalFluidSpec("hydrogenperoxide"   , "Hydrogen Peroxide"       ,  300,  1000, 1000, 0xFF1414FF, false,  0), // hydrogenperoxide=过氧化氢 (tmp/gregtech.lang:357) — MT.H2O2 (MT.java:1019, LIQUID, the Chem:88 Lightning row); setDensity 1.0 → 1000
+		new ChemicalFluidSpec("hydrogenperoxide"   , "Hydrogen Peroxide"       ,  300,  1000, 1000, 0xFF1414FF, false,  0, MT.MD.IHL.mID), // hydrogenperoxide=过氧化氢 (tmp/gregtech.lang:357) — MT.H2O2 (MT.java:1019, LIQUID, the Chem:88 Lightning row); setDensity 1.0 → 1000
 		new ChemicalFluidSpec("hydrogenfluoride"   , "Hydrogen Fluoride"       ,  300,     1,  200, 0xFF00F0F0, true ,  0), // hydrogenfluoride=氟化氢 (:356) — MT.HF (MT.java:1021, GASES); g = 0.00008988+0.001696 = 0.00178588 → 1
 		new ChemicalFluidSpec("hydrochloricacid"   , "Hydrochloric Acid"       ,  300,     3,  200, 0xFF00FF80, true ,  0), // hydrochloricacid=盐酸 (:354) — MT.HCl (MT.java:1020, GASES); g = 0.00008988+0.003214 = 0.00330388 → 3
 		new ChemicalFluidSpec("nitricacid"         , "Nitric Acid"             ,  300,  1500, 1000, 0xFF80FF00, false,  0), // nitricacid=硝酸 (:654) — MT.HNO3 (MT.java:1031, LIQUID); setDensity 1.5 → 1500
@@ -2327,10 +2327,10 @@ public final class GTFluids {
 		new ChemicalFluidSpec("nitrogendioxide"    , "Nitrogen Dioxide"        ,  300,     4,  200, 0xFF78BEFF, true ,  0), // nitrogendioxide=二氧化氮 (:659) — MT.NO2 (MT.java:1029, GASES); g = 0.0012506+2×0.001429 = 0.0041086 → 4
 		new ChemicalFluidSpec("sulfurdioxide"      , "Sulfur Dioxide"          ,  300,  2069,  200, 0xFFFFC800, true ,  0), // sulfurdioxide=二氧化硫 (:879) — MT.SO2 (MT.java:1044, GASES, the b2b1 roasting discard); g = 2.067+2×0.001429 = 2.069858 → 2069
 		new ChemicalFluidSpec("sulfurtrioxide"     , "Sulfur Trioxide"         ,  300,  2071,  200, 0xFFFFDC00, true ,  0), // sulfurtrioxide=三氧化硫 (:882) — MT.SO3 (MT.java:1045, GASES); g = 2.067+3×0.001429 = 2.071287 → 2071
-		new ChemicalFluidSpec("sulfuricacid"       , "Sulfuric Acid"           ,  300,  1500, 1000, 0xFFFF8000, false,  0), // sulfuricacid=硫酸 (:881) — MT.H2SO4 (MT.java:1047, LIQUID); setDensity 1.5 → 1500
+		new ChemicalFluidSpec("sulfuricacid"       , "Sulfuric Acid"           ,  300,  1500, 1000, 0xFFFF8000, false,  0, MT.MD.FZ.mID), // sulfuricacid=硫酸 (:881) — MT.H2SO4 (MT.java:1047, LIQUID); setDensity 1.5 → 1500
 		new ChemicalFluidSpec("disulfuricacid"     , "Disulfuric Acid"         ,  300,  1500, 1000, 0xFFFF9600, false,  0), // disulfuricacid=焦硫酸 (:226) — MT.H2S2O7 (MT.java:1048, LIQUID); setDensity 1.5 → 1500
 		new ChemicalFluidSpec("hexafluorosilicicacid", "Hexafluorosilicic Acid",  300,  1500, 1000, 0xFFBEC8BE, false,  0), // hexafluorosilicicacid=六氟硅酸 (:334) — MT.H2SiF6 (MT.java:1054, LIQUID); setDensity 1.5 → 1500
-		new ChemicalFluidSpec("aquaregia"          , "Aqua Regia"              ,  300,  7526, 1000, 0xFF40FF40, false,  0), // aquaregia=王水 (:48) — MT.AquaRegia (MT.java:1188, LIQUID, the Chem:267 mixer row); g = 5×1.5 + 8×0.00330388 = 7.52643104 → 7526
+		new ChemicalFluidSpec("aquaregia"          , "Aqua Regia"              ,  300,  7526, 1000, 0xFF40FF40, false,  0, MT.MD.FZ.mID), // aquaregia=王水 (:48) — MT.AquaRegia (MT.java:1188, LIQUID, the Chem:267 mixer row); g = 5×1.5 + 8×0.00330388 = 7.52643104 → 7526
 		new ChemicalFluidSpec("bromine"            , "Bromine"                 ,  300,  3122, 1000, 0xFF500A0A, false,  0), // bromine=溴 (:118) — MT.Br (MT.java:424 diatomic, LIQUID, the Chem:207 Freezer row); mp 265 → temp 300, g 3.122 → 3122
 		new ChemicalFluidSpec("saltwater"          , "Saltwater"               ,  300,  1000, 1000, 0xFFFF00FF, false,  0), // saltwater=盐水 (:849) — MT.Saltwater (MT.java:1143, LIQUID); mp 300 → temp 300, setDensity 1.0 → 1000
 		new ChemicalFluidSpec("saltedwater"        , "Salted Water"            ,  300,  1000, 1000, 0xFFFF00C8, false,  0), // saltedwater=盐水 (:848) — MT.SaltedWater (MT.java:1160, LIQUID); same walk, setDensity 1.0 → 1000
