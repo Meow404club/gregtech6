@@ -2,8 +2,9 @@
  * Offline tests for task food-bottles-min: the GT6Bottles registration home — the
  * registry parity + the borrowed textures grounded in the assets/README.md sha256 ledger
  * + the item-model pins, the GT6FoodsTest posture verbatim. The families-A census
- * ratchet lives in GT6BottlesFamiliesATest, the families-B one (171 rows, segments,
- * hidden/tab/stack pins, the 96 new borrows) in GT6BottlesFamiliesBTest.
+ * ratchet lives in GT6BottlesFamiliesATest, the families-B one (219 rows since the dye
+ * batch, segments, hidden/tab/stack pins, the 96 new borrows) in GT6BottlesFamiliesBTest,
+ * the dye one (the 48 fluid-mapped rows) in GT6BottlesDyeTest.
  *
  * <p>The items are NOT constructible in this bootstrapped-and-frozen JVM (the mod-Item
  * intrusive-holder wall), so the assertion surface is the pure registry-wiring data +
@@ -48,15 +49,16 @@ public class GT6BottlesTest {
 	}
 
 	/**
-	 * The table is EXACTLY 171 items — one row per upstream identity, zero skip: the
+	 * The table is EXACTLY 219 items — one row per upstream identity, zero skip: the
 	 * food-bottles-min 4 (empty, ketchup 3101, BBQ 805, cream 1101) + the families-A 71
-	 * (task btl-bottles-families-a) + the families-B 96 (task btl-bottles-families-b; the
-	 * census ratchet). The full 171-row order pin + the segment census live in
-	 * GT6BottlesFamiliesBTest.
+	 * (task btl-bottles-families-a) + the families-B 96 (task btl-bottles-families-b) +
+	 * the dye 48 (task btl-dye-bottles; the census ratchet). The full 219-row order pin +
+	 * the segment census live in GT6BottlesFamiliesBTest, the dye census in
+	 * GT6BottlesDyeTest.
 	 */
 	@Test
 	public void registeredSubsetIsExactlyThe4Rows() {
-		assertEquals(171, GT6Bottles.ITEMS.getEntries().size(), "the bottles table: 171 rows, zero skip");
+		assertEquals(219, GT6Bottles.ITEMS.getEntries().size(), "the bottles table: 219 rows, zero skip");
 	}
 
 	/** The BOTTLES table keeps the four landed identities at their meta positions (0, 805, 1101, 3101). */
@@ -64,7 +66,7 @@ public class GT6BottlesTest {
 	public void bottlesTableWalksTheUpstreamIdentityOrder() {
 		String[] tExpected = {"bottle_empty", "food_barbecuesauce", "food_heavycream", "food_ketchup"};
 		int[] tPositions = {0, 50, 66, 161};
-		assertEquals(171, GT6Bottles.BOTTLES.size());
+		assertEquals(219, GT6Bottles.BOTTLES.size());
 		for (int i = 0; i < tExpected.length; i++) {
 			assertEquals("gt6:" + tExpected[i], GT6Bottles.BOTTLES.get(tPositions[i]).getId().toString(),
 					"row " + tPositions[i] + " rides the upstream meta order");

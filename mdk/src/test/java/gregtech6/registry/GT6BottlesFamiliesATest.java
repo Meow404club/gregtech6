@@ -85,7 +85,8 @@ public class GT6BottlesFamiliesATest {
 	 */
 	@Test
 	public void segmentCensusMatchesTheBatchPlan() {
-		assertEquals(171, GT6Bottles.ROWS.size(), "4 landed + 71 families-A + 96 families-B");
+		// task btl-dye-bottles ratchet: 219 rows (4 landed + 71 A + 96 B + 48 dye)
+		assertEquals(219, GT6Bottles.ROWS.size(), "4 landed + 71 families-A + 96 families-B + 48 dye");
 		assertEquals(9, countBand(0, 8), "water family :45-:53");
 		assertEquals(38, countBand(100, 701) + countBand(1800, 1802), "alcohol families 38 bottles");
 		assertEquals(15, countBand(1300, 1700) + countBand(30000, 30001), "honey/potion segment 15");
@@ -139,8 +140,8 @@ public class GT6BottlesFamiliesATest {
 		}
 		java.util.Set<String> tTab = new java.util.HashSet<>();
 		GT6Bottles.TAB_BOTTLES.forEach(tHolder -> tTab.add(tHolder.getId().getPath()));
-		// task btl-bottles-families-b ratchet: 171 rows, 20 hidden (14 A + 6 B)
-		assertEquals(171 - 20, GT6Bottles.TAB_BOTTLES.size(), "tab face = the non-hidden rows");
+		// task btl-dye-bottles ratchet: 219 rows, 20 hidden (14 A + 6 B, none dye)
+		assertEquals(219 - 20, GT6Bottles.TAB_BOTTLES.size(), "tab face = the non-hidden rows");
 		assertEquals(tVisible, tTab, "the tab face is EXACTLY the non-hidden rows, no swap");
 	}
 
@@ -181,8 +182,8 @@ public class GT6BottlesFamiliesATest {
 		assertEquals("Can be used as Glue too", rowByMeta(32762).enTooltip(), ":371 tar");
 		assertEquals("Also called Quicksilver", rowByMeta(32765).enTooltip(), ":399 mercury");
 		long tEmptyDesc = GT6Bottles.ROWS.stream().filter(tRow -> tRow.enTooltip().isEmpty()).count();
-		// task btl-bottles-families-b ratchet: 171 rows, 19 descs (6 A + 13 B)
-		assertEquals(171 - 19, tEmptyDesc, "exactly nineteen rows carry a desc");
+		// task btl-dye-bottles ratchet: 219 rows, 67 descs (6 A + 13 B + 48 dye)
+		assertEquals(219 - 67, tEmptyDesc, "exactly sixty-seven rows carry a desc");
 	}
 
 	/**
