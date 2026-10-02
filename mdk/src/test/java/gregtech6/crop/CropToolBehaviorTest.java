@@ -74,6 +74,10 @@ public class CropToolBehaviorTest extends GTOfflineTestBase {
 		CropBlockEntityTest.seedFluidTypeSize(); // the ItemEntity ctor's FluidType read dead-headed (the cbc-1 seam)
 		//?}
 		GTOfflineTestBase.unfreezeBlockEntityTypeRegistry(); // the base @BeforeAll already rode; idempotent
+		// the NBT load face rebinding needs cropId=rye resolvable in the global walk
+		// (loadCrop -> GT6Crops.crop); the live registry is GT6CropCards.ensureRegistered's
+		// FML enqueueWork, absent on this bare JVM -- same fixture seam as CropBlockEntityTest.
+		GT6Crops.registerCrop(GT6CropGrains.RYE);
 		sBlock = block();
 		sBeType = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GT6CropBlockEntity(sBeType, aPos, aState), sBlock).build(null);
