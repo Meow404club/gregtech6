@@ -94,6 +94,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			"gregtech6.recipes.GT6RecipesReactorRods", // task debt-reactor-c-rods — the 45-row reactor-rod pour joins the ledger
 			"gregtech6.recipes.GT6RecipesCrops", // task cbc-5-crop-consumption — the crop consumption pour joins the ledger
 			"gregtech6.recipes.GT6RecipesFood", // task food-recipes-t1b — the five-map food band pour joins the ledger (REVIEW FIX seat XVII: the card selftest ran a narrow Food/Bath/Mixer filter and missed the ADR-P18 ledger ratchet)
+			"gregtech6.recipes.GT6RecipesFoodTail", // task pool-drain-food-machine-tail — the food machine-row tail pour joins the ledger (cheese/egg/chum/fish-oil/mushroom/singles/meat-ingot/raisin bands)
 	};
 
 	/** The freeze-point snapshot: map field name → expected row count after the full census pour. Upstream registration order. */
@@ -101,7 +102,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 	static {
 		SNAPSHOT.put("FURNACE", 0);
 		SNAPSHOT.put("COKE_OVEN", 47); // beam-consume-increment: +8 wood-beam rows (Loader_Recipes_Woods.java:197-201, the GT6BeamKind static activation)
-		SNAPSHOT.put("SHREDDER", 406); // +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here) +8 task cbc-5-crop-consumption — the wool seam white shred + the cropWheat/baleWheat + 4 grain + potato-remains mortarize-shredder rows
+		//? if forge {
+		SNAPSHOT.put("SHREDDER", 406); // +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here) +8 task cbc-5-crop-consumption — the wool seam white shred + the cropWheat/baleWheat + 4 grain + potato-remains mortarize-shredder rows; task pool-drain-food-machine-tail: the :132 cheese Shredder row SKIPS on this leg (the unbound gt6 registries null the food/cheese-dust legs)
+		//?} else {
+		/*SNAPSHOT.put("SHREDDER", 407); // task pool-drain-food-machine-tail — +1 the :132 cheese Shredder row (the one GT6 foodCheese member + the dust_cheese output resolve live); the :123-128 foodVanilla band stays TRUE NEGATIVE (zero members)
+		*///?}
 		SNAPSHOT.put("CRUSHER", 1643); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
 		SNAPSHOT.put("LATHE", 77); // +3 task machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
 		SNAPSHOT.put("CHISEL", 36);
@@ -116,7 +121,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		//?} else {
 		/*SNAPSHOT.put("CANNER", 160); // task food-meat-recipes — the live-registry leg: +28 the :44-51 canned-material band + 4 air rows (netherair/enderair fill/release; the plain-air pair dormant) + 14 T3b-delegated baking rows (:600-:782) + 30 the meat/fish listener walk (GT6RecipesMeat, :404-:514); the forge leg skips them all (the unbound gt6 registries yield null = the silent-drop face)
 		*///?}
-		SNAPSHOT.put("MIXER", 56023); // +20 task cbc-5-crop-consumption — (4 grain crops + cropWheat) x the 4-water mash walk +3 task food-bake-recipes — the :141-:143 dough rows (the :140 gemChipped leg dormant) (union seat XVII)
+		//? if forge {
+		SNAPSHOT.put("MIXER", 56023); // +20 task cbc-5-crop-consumption — (4 grain crops + cropWheat) x the 4-water mash walk +3 task food-bake-recipes — the :141-:143 dough rows (the :140 gemChipped leg dormant) (union seat XVII); task pool-drain-food-machine-tail: all 57 tail Mixer rows SKIP on this leg (the unbound gt6 items/fluids null every leg)
+		//?} else {
+		/*SNAPSHOT.put("MIXER", 56080); // task pool-drain-food-machine-tail — +57: the raisin :156 walk x5 + the two-name :255/:259 x6 + the :322 ANY.Flour egg-dough walk x7 + the :720-:723 ANY.FlourGrains meat-ingot walk x32 + the :519 mushroom soup + the :552 ambrosia + the :555 spoiledmilk + the :725 abyssal dough + the :733/:735/:737 chocolate trio (the :734/:736 gemChipped pair DROPPED); the :394-:397 chum quartet skips on its two declared-null faces (the pooled scrapmeat input + the FL.Sludge output, GTFluids untouched)
+		*///?}
 		SNAPSHOT.put("SIFTING", 489); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the material axis, every row resolving under the brick fixture; +52 task a-ore-axis-extension — the axis grew 53 -> 66 (4 x 13); +224 task b-gem-pool-extension — the axis grew 66 -> 122 (4 x 56, + 1: the 489th row is the grass row0)
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
 		// universe, which differs 1.20.1 vs 1.21.1 by 109 compressibles — the per-leg pin
@@ -130,9 +139,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("WIREMILL", 912);
 		SNAPSHOT.put("ROLLING_MILL", 1); // +1 task food-bake-recipes — the :139 dough→flat row
 		//? if forge {
-		SNAPSHOT.put("BATH", 1090); // +1 task food-bake-recipes — the :357 fries row; task food-meat-recipes — the :430 Rib_BBQ row stays forge-dormant (the forge test JVM leaves the gt6 FLUIDS unbound — the liveBbqSauce silent drop; the rib ITEM itself resolves there, the 07:53 empirics)
+		SNAPSHOT.put("BATH", 1090); // +1 task food-bake-recipes — the :357 fries row; task food-meat-recipes — the :430 Rib_BBQ row stays forge-dormant (the forge test JVM leaves the gt6 FLUIDS unbound — the liveBbqSauce silent drop; the rib ITEM itself resolves there, the 07:53 empirics); task pool-drain-food-machine-tail: the :155 raisin quintet SKIPS on this leg (the unbound chocolate_molten nulls them)
 		//?} else {
-		/*SNAPSHOT.put("BATH", 1091); // +1 task food-bake-recipes — the :357 fries row +1 task food-meat-recipes — the :430 Rib_BBQ row (rib cooked + bbqsauce 250 → food_rib_bbq, live on the registry-live leg)
+		/*SNAPSHOT.put("BATH", 1096); // +1 task food-bake-recipes — the :357 fries row +1 task food-meat-recipes — the :430 Rib_BBQ row (rib cooked + bbqsauce 250 → food_rib_bbq, live on the registry-live leg) +5 task pool-drain-food-machine-tail — the :155 raisin Bath quintet (chocolate_molten 250 mB → food_raisins_chocolate, EUt 0)
 		*///?}
 		SNAPSHOT.put("FURNACE_FUEL", 0);
 		SNAPSHOT.put("PRESS", 7); // +7 task food-bake-recipes — the :146-:149 loaves + the :152 cylinder trio
@@ -152,12 +161,20 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// the Loader_Recipes_Crops.java:256-305 oredict seed fan folded to wheat/melon/beetroot/pumpkin
 		// per the juicer.json rows-4-7 ruling) ride the SAME JSON seam, equally OUT of this offline
 		// snapshot walk and pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest.
-		SNAPSHOT.put("SQUEEZER", 25); // +5 task cbc-5-crop-consumption — the vanilla-anchored crop juice legs (apple/melon/beet/carrot/potato)
+		//? if forge {
+		SNAPSHOT.put("SQUEEZER", 25); // +5 task cbc-5-crop-consumption — the vanilla-anchored crop juice legs (apple/melon/beet/carrot/potato); task pool-drain-food-machine-tail: the :412 fish-oil quartet SKIPS on this leg (the unbound gt6 fishoil fluid nulls the output)
+		//?} else {
+		/*SNAPSHOT.put("SQUEEZER", 29); // task pool-drain-food-machine-tail — +4 the :412 fish-oil quartet (the T4b SKIPPED_UPSTREAM leftover ①: cod 2000/salmon 4000/tropical 1000/pufferfish 1000 mB + the FishRaw-half byproduct dusts)
+		*///?}
 		SNAPSHOT.put("BEDROCK_ORE_LIST", 0);
 		SNAPSHOT.put("CLUSTER_MILL", 0);
 		SNAPSHOT.put("ROLL_BENDER", 0);
 		SNAPSHOT.put("ROLL_FORMER", 0);
-		SNAPSHOT.put("CENTRIFUGE", 40); // +20 task debt-reactor-c-rods — the 17 depleted + 3 solid-enriched recycle rows (:764-780/:787-790) join the census pour
+		//? if forge {
+		SNAPSHOT.put("CENTRIFUGE", 40); // +20 task debt-reactor-c-rods — the 17 depleted + 3 solid-enriched recycle rows (:764-780/:787-790) join the census pour; task pool-drain-food-machine-tail: the :315 egg pair SKIPS on this leg (the unbound gt6 food outputs null the rows)
+		//?} else {
+		/*SNAPSHOT.put("CENTRIFUGE", 42); // task pool-drain-food-machine-tail — +2 the :315 egg Centrifuge pair (the itemEgg members: the vanilla egg + the gt6 white egg)
+		*///?}
 		SNAPSHOT.put("SHARPENING", 0);
 		// task recipe-data-b2c-cut — the CUTTER JSON row stock (23596 walk rows in cutter.json, the
 		// 20-statement x 4-leg handler replay of Loader_Recipes_Handlers.java:633-652) rides the JSON
@@ -212,11 +229,19 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("MAGNETIC_SEPARATOR", 0);
 		SNAPSHOT.put("INJECTOR", 0);
 		SNAPSHOT.put("LAMINATOR", 0);
-		SNAPSHOT.put("AUTOCLAVE", 0);
+		//? if forge {
+		SNAPSHOT.put("AUTOCLAVE", 0); // task pool-drain-food-machine-tail: the :313 egg pair SKIPS on this leg (the unbound gt6 steam/carrier registries null the rows)
+		//?} else {
+		/*SNAPSHOT.put("AUTOCLAVE", 2); // task pool-drain-food-machine-tail — +2 the :313 egg Autoclave pair (steam 800 → DistW 5, EUt 0, duration 128, the never-consumed config-0 selector)
+		*///?}
 		SNAPSHOT.put("FREEZER", 0);
 		SNAPSHOT.put("POLARIZER", 0);
 		SNAPSHOT.put("LIGHTNING", 0);
-		SNAPSHOT.put("SLICER", 13); // +8 task food-bake-recipes — the 4 cookie doughs + 4 loaf splits // task slicer-row-domain - the vanilla-face rows land (the leather quartet + the paper row); the declared smoke-JSON debt is retired with the card
+		//? if forge {
+		SNAPSHOT.put("SLICER", 13); // +8 task food-bake-recipes — the 4 cookie doughs + 4 loaf splits // task slicer-row-domain - the vanilla-face rows land (the leather quartet + the paper row); the declared smoke-JSON debt is retired with the card; task pool-drain-food-machine-tail: the :130 cheese + :297 egg rows SKIP on this leg (the unbound gt6 foods null them)
+		//?} else {
+		/*SNAPSHOT.put("SLICER", 16); // task pool-drain-food-machine-tail — +3 the :130 cheese Slicer row (food_cheese + the flat blade → food_cheese_sliced x4) + the :297 foodBoiledegg pair (→ food_egg_sliced x4)
+		*///?}
 		SNAPSHOT.put("LASER_ENGRAVER", 0);
 		SNAPSHOT.put("WELDER", 30); // +8 task crucible-wall-obtainability — the dedicated crucible-wall rows replay the :1143-1153 row onto the 8 port-side block twins
 		SNAPSHOT.put("ELECTROLYZER", 0);
@@ -460,6 +485,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		GT6RecipesBake.load(); // task food-bake-recipes — the 26-row bake pour (the two dormant pairs stay skip-side) joins the census
 		GT6RecipesReactorRods.load(); // task debt-reactor-c-rods — the 45-row pour (25 Canner + 20 Centrifuge) joins the census
 		GT6RecipesCrops.load(); // task cbc-5-crop-consumption — the crop consumption pour joins the census
+		GT6RecipesFoodTail.load(); // task pool-drain-food-machine-tail — the food machine-row tail pour joins the census
 	}
 
 	/** The census and the hook ledger must move together (the guard test pins the same ledger against ITS array). */
