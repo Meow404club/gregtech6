@@ -107,7 +107,7 @@ public final class GTMaterialItems {
      * MT/ANY-dependent block, landed HERE (mdk-side, caller-of-OP.init timing) because a port
      * row consumes the items. The material-condition-system "47 unlocked prefixes" is the
      * same pattern: the port keeps the upstream model and lands the table rows per consuming
-     * card. Exactly three rows, each upstream verbatim:
+     * card. Three rows upstream verbatim:
      * <ul>
      * <li>{@code :616 bouleGt.forceItemGeneration(MT.Si, MT.Ge, MT.RedstoneAlloy, MT.NikolineAlloy)}
      *     — the boule quartet;</li>
@@ -118,7 +118,19 @@ public final class GTMaterialItems {
      * <li>{@code :619 plateTiny.forceItemGeneration(MT.Paper)} — the Bumblelyzer scan leg's
      *     paper tiny.</li>
      * </ul>
-     * The known cascade is upstream-faithful, not an explosion: {@code plateGem}'s condition is
+     * Plus the two port-authority dye-axis rows (task dye-item-axis) — upstream has NO force
+     * row for the dyes because the dye() factory routes through dust() whose
+     * {@code put(G_DUST, MORTAR)} (MT.java:528 = upstream MT.java:164) stamps
+     * {@code ITEMGENERATOR.DUSTS|PLANTS} (TD.java:587 G_DUST), satisfying the dust gate
+     * {@code Or(DUSTS, DIRTY_DUSTS)} (OP.java:1199) and the fiber gate {@code PLANTS}
+     * (OP.java:1417) — upstream PrefixItem.run generates the 32 items on that condition face,
+     * and the port enumerate() already keeps them (GTMaterialItemsForceTest probes proved
+     * 32/32 in registrationOrder BEFORE these rows landed). The rows stay as the
+     * condition-refactor pin at the established seam: the axis survives even if the G_DUST
+     * stamp chain or the OP gates are ever reworked. Upstream MT.java:3687
+     * {@code DATA.Dye_Materials} is the referenced table (bound per-generation in MT.init).
+     *
+     * <p>The known cascade is upstream-faithful, not an explosion: {@code plateGem}'s condition is
      * {@code Or(gem, bouleGt) && PLATES}, so these forcings also yield the Crystalline
      * Silicon/Germanium/Redstone-Alloy/Nikoline-Alloy gem plates (GT6MaterialsRegister.csv
      * carries them upstream); GTMaterialItemsForceTest pins the exact item delta.
@@ -128,6 +140,8 @@ public final class GTMaterialItems {
         gregapi.data.OP.bouleGt.forceItemGeneration(gregapi.data.MT.Sapphire, gregapi.data.MT.BlueSapphire, gregapi.data.MT.GreenSapphire,
                 gregapi.data.MT.YellowSapphire, gregapi.data.MT.OrangeSapphire, gregapi.data.MT.PurpleSapphire, gregapi.data.MT.Ruby);
         gregapi.data.OP.plateTiny.forceItemGeneration(gregapi.data.MT.Paper);
+        gregapi.data.OP.dust.forceItemGeneration(gregapi.data.MT.DATA.Dye_Materials); // task dye-item-axis — the 16 vanilla-index dyes
+        gregapi.data.OP.plantGtFiber.forceItemGeneration(gregapi.data.MT.DATA.Dye_Materials);
     }
 
     /** Segment 2 (RegisterEvent, LOW priority): items and the creative tabs, one listener for both (task card). */
