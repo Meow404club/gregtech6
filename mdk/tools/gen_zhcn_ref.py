@@ -1870,6 +1870,11 @@ HAND_TRANSLATIONS = {
     "gt6.jei.recipe_map.massfab": ("物质制造机", "hand"),
     "gt6.jei.recipe_map.fusionreactor": ("聚变反应堆", "hand"),
     "gt6.jei.recipe_map.crystallisationcrucible": ("结晶器", "hand"),
+    # task chem-fluid-registration — regen-faithfulness write-back: these two rows were
+    # direct-written into the committed TSV without a hand row (the restoration-batch
+    # failure mode); re-entered VERBATIM from main HEAD tsv so the regen keeps them
+    "gt6.jei.recipe_map.cruciblealloying": ("坩埚合金", "hand"),
+    "gt6.jei.recipe_map.cruciblesmelting": ("坩埚熔炼", "hand"),
     "gt6.jei.recipe_map.microwave": ("微波炉", "hand"),
     "gt6.jei.recipe_map.cooker": ("烹饪炉", "hand"),
     "gt6.jei.recipe_map.toolhead": ("手柄工具头", "hand"),
@@ -3860,6 +3865,14 @@ CHEM_FLUID_BACKFILL = {
     "fluid.gt6.vitriolofclay": "硫酸铝",                  # S:fluid.vitriolofclay :910
     "fluid.gt6.whitevitriol": "硫酸锌",                   # S:fluid.whitevitriol :917
     "fluid.gt6.cryolite_molten": "熔融冰晶石",            # S:fluid.molten.cryolite :478
+    # task chem-fluid-registration — the b1/b2 recorded-gap rows: glycerol/glyceryl the
+    # dump faces verbatim, the three second-grade oils hand rows (no dump face — the
+    # upstream standalone never registers the FL.java:402/:405/:407 ids)
+    "fluid.gt6.glycerol": "丙三醇",                       # S:fluid.glycerol :311
+    "fluid.gt6.glyceryl": "硝化甘油",                     # S:fluid.glyceryl :312
+    "fluid.gt6.lightoil": "轻质原油",                     # hand — FL.java:402 (Oil_Light2), the petroleum-grade word
+    "fluid.gt6.hotcrude": "热原油",                       # hand — FL.java:405 (Oil_HotCrude)
+    "fluid.gt6.heavyoil": "重质原油",                     # hand — FL.java:407 (Oil_Heavy2)
 }
 
 NAMING_FLUID_BACKFILL = {

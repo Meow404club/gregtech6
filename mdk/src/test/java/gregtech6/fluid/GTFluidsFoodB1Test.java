@@ -258,7 +258,7 @@ public class GTFluidsFoodB1Test extends GTOfflineTestBase {
 		assertEquals(6, GTFluids.AQUA_SPECS.size());
 		assertEquals(7, GTFluids.SIMPLE_LIQUID_SPECS.size(), "the p19 pair + the chem-fluids-unlock brine/spruceresin pair + the btl-fluids-prereq bottle trio");
 		assertEquals(4, GTFluids.FOOD_FLUID_SPECS.size());
-		assertEquals(80, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain rides its own cards (48 through debt-hene-fluid + 32 task chem-fluids-unlock B2 blocker batch)");
+		assertEquals(85, GTFluids.CHEMICAL_SPECS.size(), "the chemical domain rides its own cards (48 through debt-hene-fluid + 32 task chem-fluids-unlock B2 blocker batch + 5 task chem-fluid-registration recorded-gap batch)");
 	}
 
 	/** The representative-row property assertions (one per family, acceptance 属性断言). */
