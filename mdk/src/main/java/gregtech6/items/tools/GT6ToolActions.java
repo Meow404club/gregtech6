@@ -178,6 +178,23 @@ public final class GT6ToolActions {
 	}
 
 	/**
+	 * The context-level arm of the key (task wrench-pipe-fullcube-targeting): the pipe
+	 * {@code getShape} overrides read THIS to answer the outline — a shape context is the
+	 * key when it carries a Player holding a wrench-key stack (the {@link
+	 * #isWrenchInteractionKey} seam composed with the {@code EntityCollisionContext}
+	 * entity face; the GTCEu PipeBlock.getShape :419-436 precedent form, widened to BOTH
+	 * hands to match the nine-cell overlay trigger, GTWrenchHighlightListener:75). The
+	 * collision path can never see a live player context (BlockBehaviour.getCollisionShape
+	 * :290-292 answers through the two-arg {@code state.getShape} = empty context), so the
+	 * arm is collision-inert by construction — outline and interaction surface only.
+	 */
+	public static boolean isWrenchInteractionContext(net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		if (!(aContext instanceof net.minecraft.world.phys.shapes.EntityCollisionContext tCtx)) return false;
+		if (!(tCtx.getEntity() instanceof net.minecraft.world.entity.player.Player tPlayer)) return false;
+		return isWrenchInteractionKey(tPlayer.getMainHandItem()) || isWrenchInteractionKey(tPlayer.getOffhandItem());
+	}
+
+	/**
 	 * The upstream {@code CS.TOOL_file} dispatch id ("file", CS.java:1050) — the reserved
 	 * Behaviour_Tool tool-name string beside {@link #FILE} (the CHISEL_ID/CUTTER_ID
 	 * shape), so a future IBlockToolable-style relay cannot drift from the upstream

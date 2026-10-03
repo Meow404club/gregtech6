@@ -151,10 +151,24 @@ public class GTFluidPipeBlock extends GTEntityBlock {
 	 * CONNECTED side. The foam dried swap rides {@link #getCollisionShape} unchanged
 	 * (its {@code super} call lands here — undried foam collides thin like the bare
 	 * pipe, dried foam stays the full block).
+	 *
+	 * <p>Under the wrench-interaction key the outline is the FULL cube instead (task
+	 * wrench-pipe-fullcube-targeting): upstream judged the pipe as a whole block when
+	 * wrenching (the default shrunkBox = PX_BOX, TileEntityBase01Root.java:834 + CS:489,
+	 * no pipe override; the thin box is collision-only, ConnectorStraight :60) while the
+	 * bare thin envelope starved the raytrace at the cell edges — the nine-cell grid and
+	 * use() never fired where the player aimed. The GTCEu PipeBlock :419-436 precedent
+	 * form over the shared {@code GT6ToolActions.isWrenchInteractionContext} seam, so the
+	 * outline is full-cube exactly when the overlay shows ("shown means clickable");
+	 * listener/use are untouched. Declared deviation: without the key the outline stays
+	 * thin where upstream showed the full cube unconditionally — the context gate is the
+	 * reviewed minimal-blast-radius form. Collision never rides this arm (the two-arg
+	 * empty-context route, BlockBehaviour :290-292).
 	 */
 	@Override
 	public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos,
 			net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		if (GT6ToolActions.isWrenchInteractionContext(aContext)) return net.minecraft.world.phys.shapes.Shapes.block();
 		int tMask = aState.getValue(CONNECTIONS);
 		double tInset = (16 - mRow.variant().diameterPx) / 32.0;
 		return net.minecraft.world.phys.shapes.Shapes.box(
