@@ -920,4 +920,47 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(RecipeMap.class, GT6RecipeMaps.MICROWAVE.getClass(), "RM.Microwave IS a RecipeMapMicrowave upstream — the synthesis arm stays POOLED (the Chisel judged form)");
 		assertEquals(RecipeMap.class, GT6RecipeMaps.HAMMER.getClass(), "RM.Hammer IS a RecipeMapHammer upstream — the ore→crushed synthesis arm stays POOLED (the Shredder judged form)");
 	}
+
+	/** The b6b small-maps trio constants (task recipe-b6b-small-maps-cnc-assembler-nanofab, upstream declaration order Nanofab :140 < Assembler :159 < CNC :160). */
+	@Test
+	void initRegistersB6bTrioWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		// RM.java:140 — items 2/1/0, fluids 1/1/0, MIN 1; the plain RecipeMap upstream
+		assertNotNull(GT6RecipeMaps.NANOFAB);
+		assertSame(GT6RecipeMaps.NANOFAB, RecipeMap.RECIPE_MAPS.get("gt.recipe.nanofab"));
+		assertEquals("Nanoscale Fabricator", GT6RecipeMaps.NANOFAB.mNameLocal);
+		assertEquals(2, GT6RecipeMaps.NANOFAB.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mOutputItemsCount);
+		assertEquals(0, GT6RecipeMaps.NANOFAB.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mInputFluidCount);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.NANOFAB.mMinimalInputFluids);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mMinimalInputs);
+		assertEquals(RecipeMap.class, GT6RecipeMaps.NANOFAB.getClass(), "RM.Nanofab IS a plain RecipeMap upstream");
+		// RM.java:159 — items 2/1/1, fluids 1/0/0, MIN 0; the RecipeMapAssembler subclass
+		// folds to the base class (the printed-pages NBT arm stays POOLED, the UNBOXINATOR judged form)
+		assertNotNull(GT6RecipeMaps.ASSEMBLER);
+		assertSame(GT6RecipeMaps.ASSEMBLER, RecipeMap.RECIPE_MAPS.get("gt.recipe.assembler"));
+		assertEquals("Assembler", GT6RecipeMaps.ASSEMBLER.mNameLocal);
+		assertEquals(2, GT6RecipeMaps.ASSEMBLER.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.ASSEMBLER.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.ASSEMBLER.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.ASSEMBLER.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.ASSEMBLER.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.ASSEMBLER.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.ASSEMBLER.mMinimalInputs);
+		assertEquals(RecipeMap.class, GT6RecipeMaps.ASSEMBLER.getClass(), "the RecipeMapAssembler subclass folds to the base class — its findRecipe NBT arm stays POOLED (RecipeMapAssembler.java:43-54)");
+		// RM.java:160 — items 2/1/2, fluids 1/0/1, MIN 0; the plain RecipeMap upstream
+		assertNotNull(GT6RecipeMaps.CNC);
+		assertSame(GT6RecipeMaps.CNC, RecipeMap.RECIPE_MAPS.get("gt.recipe.cncmachine"));
+		assertEquals("CNC Machine", GT6RecipeMaps.CNC.mNameLocal);
+		assertEquals(2, GT6RecipeMaps.CNC.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.CNC.mOutputItemsCount);
+		assertEquals(2, GT6RecipeMaps.CNC.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.CNC.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.CNC.mOutputFluidCount);
+		assertEquals(1, GT6RecipeMaps.CNC.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.CNC.mMinimalInputs);
+		assertEquals(RecipeMap.class, GT6RecipeMaps.CNC.getClass(), "RM.CNC IS a plain RecipeMap upstream");
+	}
 }
