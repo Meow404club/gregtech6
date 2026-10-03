@@ -1,23 +1,32 @@
 /**
  * The machine-panel background sub-area gate (task gui-bg-uv-fix): the machine sheets are
  * 256x256 canvases with the art in the top-left 176x166 (GT6GuiReskinCensusTest pin-h), so
- * every MUI panel background must declare the explicit sub-area — the former
- * {@code UITexture.fullImage} form stretched the whole canvas into the 176x166 panel and
- * shrank the art into the top-left corner (the vanilla-leg furnace blit samples the same
- * window implicitly, GTGuiScreen.renderBg:55-58).
+ * every MUI panel that still rides a sheet background must declare the explicit sub-area —
+ * the former {@code UITexture.fullImage} form stretched the whole canvas into the 176x166
+ * panel and shrank the art into the top-left corner (the vanilla-leg furnace blit samples the
+ * same window implicitly, GTGuiScreen.renderBg:55-58).
  *
  * <p>Pinned faces:
  * <ul>
- * <li><b>the sub-area table</b> — all three panel families (basic machine / distillation
+ * <li><b>the sub-area table</b> — the two remaining sheet-riding families (distillation
  *     tower / bumbliary normal+advanced) build backgrounds with UV (0,0)-(176/256,166/256),
- *     the top-left sub-area stretched over the full panel rect;</li>
+ *     the top-left sub-area stretched over the full panel rect. The basic-machine family
+ *     LEFT this table (r11-gui-basicmachine-clean-sample): its panel carries no code
+ *     background at all — the gt6 theme 9-slice base draws instead (the
+ *     GT6BasicMachineMUIPanelTest clean-base pin);</li>
  * <li><b>the consumption census</b> — zero {@code UITexture.fullImage} tokens left in the
- *     mdk main sources: a new panel re-committing the whole-canvas stretch turns this red.</li>
+ *     mdk main sources: a new panel re-committing the whole-canvas stretch turns this red;</li>
+ * <li><b>the clean-base census</b> (r11-gui-basicmachine-clean-sample) — the shared
+ *     basic-machine panel factory carries zero {@code gui/machines} sheet tokens and zero
+ *     {@code GuiTextures.PROGRESS_ARROW} tokens: the theme base + the parts arrow are the
+ *     only visuals. (The tower still rides the vendored arrow until its W3 card — the token
+ *     whitelist extends there then.)</li>
  * </ul>
  */
 package gregtech6.gui.machines;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,7 +52,6 @@ import org.junit.jupiter.api.Test;
 
 import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GT6Distillation.TileEntityDistillationTower;
-import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
 
@@ -96,18 +104,6 @@ class GT6GuiBackgroundSubAreaCensusTest extends GTMultiBlocksOfflineTestBase {
 		sBumbliaryType = tHives[0];
 	}
 
-	/** The parametrisable offline machine Host fake (the GT6BasicMachineMUIPanelTest shredder form). */
-	private static class FakeHost implements GTBasicMachineMenu.Host {
-		final GTItemStackHandler mInventory = new GTItemStackHandler(28);
-
-		@Override public GTItemStackHandler getInventory() { return mInventory; }
-		@Override public int getOutputSlotCount() { return 12; }
-		@Override public boolean isSuccessful() { return false; }
-		@Override public long getProgress() { return 0; }
-		@Override public long getMaxProgress() { return 0; }
-		@Override public String getGuiTexture() { return "gt6:textures/gui/machines/shredder"; }
-	}
-
 	/** The row-less tower fixture (the GT6DistillationTowerMUIPanelTest fake-map form). */
 	private static TileEntityDistillationTower newTower() {
 		TileEntityDistillationTower tTower =
@@ -125,16 +121,14 @@ class GT6GuiBackgroundSubAreaCensusTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	/**
-	 * The sub-area table: every machine-panel family samples ONLY the top-left 176x166 of
-	 * the 256x256 canvas — the exact observable of
+	 * The sub-area table: every sheet-riding machine-panel family samples ONLY the top-left
+	 * 176x166 of the 256x256 canvas — the exact observable of
 	 * {@code builder().imageSize(256,256).subAreaXYWH(0,0,176,166)} (a fullImage regression
-	 * reads UV (0,0)-(1,1) and fails the u1/v1 pins).
+	 * reads UV (0,0)-(1,1) and fails the u1/v1 pins). The basic-machine family left the
+	 * table with its sheet (r11-gui-basicmachine-clean-sample).
 	 */
 	@Test
 	public void machineBackgroundsSampleOnlyTheTopLeftSubArea() {
-		// the basic-machine family (shredder stand-in — the location itself is pinned by
-		// GT6BasicMachineMUIPanelTest; this test pins only the sampling window)
-		assertSubArea(GTBasicMachineMUI.buildPanel(new FakeHost(), headlessSyncManager()), "basic machine");
 		// the distillation tower
 		assertSubArea(GTDistillationTowerMUI.buildPanel(newTower(), headlessSyncManager()), "distillation tower");
 		// the bumbliary pair — the advanced flag picks the texture branch, both must sample
@@ -154,6 +148,23 @@ class GT6GuiBackgroundSubAreaCensusTest extends GTMultiBlocksOfflineTestBase {
 		assertEquals(0f, tBackground.v0(), 0f, aWhat + ": sub-area starts at v=0");
 		assertEquals(SUB_U1, tBackground.u1(), 0f, aWhat + ": sub-area ends at u=176/256 (NOT the fullImage 1.0)");
 		assertEquals(SUB_V1, tBackground.v1(), 0f, aWhat + ": sub-area ends at v=166/256 (NOT the fullImage 1.0)");
+	}
+
+	/**
+	 * The clean-base census (r11-gui-basicmachine-clean-sample): the shared basic-machine
+	 * panel factory sources zero {@code gui/machines} sheet tokens and zero
+	 * {@code GuiTextures.PROGRESS_ARROW} tokens — the theme base and the parts arrow are its
+	 * only visuals (the clean-base acceptance; the tower keeps its vendored-arrow token
+	 * until the W3 card, so the walk is scoped to this factory file).
+	 */
+	@Test
+	public void theBasicMachinePanelFactorySourcesNoSheetAndNoVendoredArrowTokens() throws IOException {
+		Path tFactory = mdkMainJava()
+				.resolve("gregtech6").resolve("gui").resolve("machines").resolve("GTBasicMachineMUI.java");
+		String tSource = Files.readString(tFactory);
+		assertFalse(tSource.contains("gui/machines"), "zero machines/ sheet tokens in the shared panel factory");
+		assertFalse(tSource.contains("GuiTextures.PROGRESS_ARROW"),
+				"zero vendored-arrow tokens in the shared panel factory (the parts arrow only)");
 	}
 
 	/**

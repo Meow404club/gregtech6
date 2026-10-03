@@ -1,15 +1,15 @@
 package gregtech6.gui.machines;
 
-import brachy.modularui.drawable.GuiTextures;
-import brachy.modularui.drawable.UITexture;
 import brachy.modularui.drawable.progress.ProgressDrawable;
 import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.utils.Alignment;
 import brachy.modularui.value.sync.DoubleSyncValue;
 import brachy.modularui.value.sync.GenericSyncValue;
 import brachy.modularui.value.sync.PanelSyncManager;
 import brachy.modularui.widgets.FluidDisplayWidget;
 import brachy.modularui.widgets.ProgressWidget;
 import brachy.modularui.widgets.SlotGroupWidget;
+import brachy.modularui.widgets.TextWidget;
 import brachy.modularui.widgets.slot.ItemSlot;
 import brachy.modularui.widgets.slot.ModularSlot;
 
@@ -18,6 +18,8 @@ import net.minecraftforge.fluids.FluidStack;
 //?} else {
 /*import net.neoforged.neoforge.fluids.FluidStack;
 *///?}
+
+import net.minecraft.network.chat.Component;
 
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.GTItemStackHandler;
@@ -30,11 +32,20 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * (the sync handlers register there, IUIHolder.java:21-44 buildUI contract) — card 2's
  * open-chain wires the BE through this exact seam, so the signature is pinned.
  *
- * <p>Panel = the standard 176x166 machine GUI with the background texture taken from
- * {@link Host#getGuiTexture()} (the mGUITexture = mRecipes.mGUIPath semantics,
- * MultiTileEntityBasicMachine.java:114) through {@link GTBasicMachineScreen#backgroundOf} —
- * the same parse the vanilla {@link GTBasicMachineScreen} blit rides, so the MUI panel shows
- * byte-identical backgrounds (shredder/crusher/lathe, GT6RecipeMaps.java:97/:105/:113).
+ * <p>Panel = the standard 176x166 machine GUI on the THEME BASE (r11-gui-basicmachine-clean-sample):
+ * the code background is gone — the gt6 theme's 9-slice {@code panel.background}
+ * ({@code parts/panel_base_176x166}, the machine-area-blank sheet with the printed player band,
+ * task r11-gui-clean-base-theme) draws under the panel (fork Widget.drawBackground :255-264
+ * paints the theme background first, then any code background on top — the old sheet-over-base
+ * stack WAS the double-layer bug, so the sheet arm is simply removed). The per-machine mGUIPath
+ * sheets stay with the vanilla leg ({@link GTBasicMachineScreen#backgroundOf}).
+ *
+ * <p>Title (F1-01): the machine display name as a {@link TextWidget} at the upstream print
+ * position (8, 4) in the 0x404040 ink — the drawGuiContainerForegroundLayer arm
+ * (ContainerClientBasicMachine.java:44). The port source is the served RecipeMap row's local
+ * name (the upstream {@code LH.get(mRecipes.mNameInternal)} arm; the port has no
+ * custom-inventory-name concept, so that upstream branch has no equivalent). A Host without a
+ * map (the fakes) renders no title.
  *
  * <p>Slot topology is the upstream case table consumed through the {@link
  * GT6MachineGuiLayout} descriptor (task gui-layout-descriptor — the faithful per-case
@@ -50,9 +61,12 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * <p>Progress rides the MUI sync-value face: a {@link DoubleSyncValue} fed by
  * {@link #progressRatio} (the normalization wrapper over the three-state
  * {@link GTBasicMachineMenu#progressValue} — the RCON-shared function stays untouched),
- * consumed by a {@link ProgressWidget#value}; the bar visual is the vendored MUI default
- * arrow drawable ({@link GuiTextures#PROGRESS_ARROW}, modularui's own texture — zero new
- * art; the borrowed machine PNGs carry no baked-in arrow, assets/README.md:8-13).
+ * consumed by a {@link ProgressWidget}; the bar visual is the amazawa forward-arrow part
+ * ({@link GT6GuiParts#ARROW_FORWARD}, fill-only — the empty-arrow outline is the deferred
+ * F1-03 semantic decor, the clean base shows a blank cell until W3), and the fill direction
+ * is the served map's upstream {@code mProgressBarDirection} case mapped through
+ * {@link #progressDirection} (F1-02: cases 0-3 grow, 4-7 drain — the drain face feeds
+ * {@code 1 - ratio}).
  *
  * <p>Fluid seats (settled, task gui-basicmachine-fluids — the Option B ruling that
  * redeemed the batch-A boundary declared here before): the two {@link Host} fluid banks
@@ -65,7 +79,9 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * null→EMPTY gate, the {@link FluidTankGT#bindInt} drawn-capacity clamp, the amount text
  * off — the upstream seat is icon-only), registered under the named sync keys
  * {@code bm_fluid_in_<i>} / {@code bm_fluid_out_<i>}. A zero-fluid RecipeMap Host (the
- * default banks) renders zero seats — the pre-p34 panel byte-identical.
+ * default banks) renders zero seats — the pre-p34 panel byte-identical. Each seat wears the
+ * amazawa droplet frame (F2-01: the sheet-baked frame is gone with the sheet, so the
+ * {@link GT6GuiParts#SLOT_FLUID} 18x19 crop rides the widget as its code background).
  *
  * <p>NOT in this card: the vanilla MenuType deregistration (card 3, done), BE/Block wiring
  * (card 2, done). The player-inventory widget is added UNCONDITIONALLY (issue #3: the old
@@ -100,8 +116,18 @@ public final class GTBasicMachineMUI {
 	/** The slot group of the output grid — the shift-transfer destination face. */
 	public static final String GROUP_OUTPUTS = "bm_outputs";
 
-	/** The progress arrow seat: centered in the 36px gap between the input slot (right edge 71) and the output column (107), on the slot row (center y 34) — the GTBasicMachineScreen BAR_X/Y stand-in geometry. */
-	private static final int PROGRESS_X = 79, PROGRESS_Y = 24, PROGRESS_SIZE = 20;
+	/**
+	 * The progress arrow seat — the upstream arrow CELL verbatim (78, 24, 20x18,
+	 * GTBasicMachineScreen.ARROW_* / ContainerClientBasicMachine.java:57 case-0 blit), so the
+	 * MUI panel and the vanilla leg draw the bar in the same spot.
+	 */
+	private static final int PROGRESS_X = 78, PROGRESS_Y = 24, PROGRESS_W = 20, PROGRESS_H = 18;
+
+	/** The title print position — the upstream foreground draw at (8, 4), ContainerClientBasicMachine.java:44. */
+	private static final int TITLE_X = 8, TITLE_Y = 4;
+
+	/** The title ink — the upstream drawString color 4210752 (0x404040). */
+	private static final int TITLE_COLOR = 0x404040;
 
 	private GTBasicMachineMUI() {
 	}
@@ -121,20 +147,36 @@ public final class GTBasicMachineMUI {
 		// :68-70 — it runs after the panel builds, when the menu exists; an explicit
 		// bindPlayerInventory here would NPE on the null menu)
 
-		DoubleSyncValue tProgress = new DoubleSyncValue(() -> progressRatio(aHost));
+		// the title — the upstream foreground arm (ContainerClientBasicMachine.java:44), the
+		// served map's local name; a map-less Host (the fakes) renders no title
+		gregtech6.recipes.RecipeMap tMap = aHost.getRecipeMap();
+
+		// the progress sync — the direction case table decides grow vs drain (drain feeds
+		// 1 - ratio, idle gated to 0 = the upstream mProgressBar >= 0 draw arm)
+		ProgressDirection tDirection = progressDirection(tMap == null ? 0 : tMap.mProgressBarDirection);
+		DoubleSyncValue tProgress = tDirection.drain()
+				? new DoubleSyncValue(() -> GTBasicMachineMenu.progressValue(aHost) < 0 ? 0.0D : 1.0D - progressRatio(aHost))
+				: new DoubleSyncValue(() -> progressRatio(aHost));
 		aSyncManager.syncValue(SYNC_PROGRESS, tProgress);
 
-		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME, 176, 166)
-				// the mGUIPath background — the same ResourceLocation parse the vanilla screen blits.
-				// The machine sheets are 256x256 canvases with the art in the top-left 176x166
-				// (the vanilla blit's implicit 256 sampling, GTGuiScreen.renderBg:55-58), so the
-				// sub-area is declared explicitly — fullImage would stretch the whole canvas into
-				// the panel and shrink the art into the top-left corner (task gui-bg-uv-fix).
-				.background(UITexture.builder()
-						.location(GTBasicMachineScreen.backgroundOf(aHost))
-						.imageSize(256, 256)
-						.subAreaXYWH(0, 0, 176, 166)
-						.build());
+		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME, 176, 166);
+		// NO code background: the gt6 theme's 9-slice panel base draws here (fork
+		// Widget.drawBackground :255-264 theme arm) — the old .background(mGUIPath sheet) is
+		// the removed half of the double-layer stack (r11-gui-basicmachine-clean-sample)
+
+		if (tMap != null) {
+			// vanilla Component.literal, NOT the fork Text.str → ModularComponent chain: the
+			// fork builds MutableComponent through its AT-widened package-private ctor (fork
+			// accesstransformer.cfg) — fine in game (Forge merges every mod's AT), but the
+			// offline test JVM's minecraft artifact carries no AT, so a String-built title
+			// would IllegalAccessError every map-bearing panel at build (all six pin tests
+			// hit it). Plain text draws identically through the same TextWidget face.
+			tPanel.child(new TextWidget<>(Component.literal(tMap.mNameLocal))
+					.pos(TITLE_X, TITLE_Y)
+					.textAlign(Alignment.TopLeft)
+					.color(() -> TITLE_COLOR)
+					.name("title"));
+		}
 
 		// the input seats — the GT6MachineGuiLayout case table, the fluid arm riding the same
 		// tank-bank length the display seats render (every 1/2-input family keeps its exact
@@ -172,12 +214,15 @@ public final class GTBasicMachineMUI {
 					.pos(tPos[0], tPos[1])
 					.name("fluid_out_" + i));
 		}
-		// the progress bar — the vendored MUI default arrow drawable, zero new art
+		// the progress bar — the amazawa arrow part, fill-only (F1-03 outline is deferred W3),
+		// clipped in the map's upstream direction case
 		tPanel.child(new ProgressWidget()
 				.value(tProgress)
-				.texture(GuiTextures.PROGRESS_ARROW, ProgressDrawable.Direction.RIGHT)
+				.progress(new ProgressDrawable()
+						.filledTexture(GT6GuiParts.asUITexture(GT6GuiParts.ARROW_FORWARD))
+						.direction(tDirection.direction()))
 				.pos(PROGRESS_X, PROGRESS_Y)
-				.size(PROGRESS_SIZE, PROGRESS_SIZE));
+				.size(PROGRESS_W, PROGRESS_H));
 
 		// the player inventory at the standard 176x166 machine-panel offset 84
 		// (bindPlayerInventory(84) semantics: the 3x9 block at (7,84), the hotbar at (7,142));
@@ -231,6 +276,54 @@ public final class GTBasicMachineMUI {
 		return new FluidDisplayWidget()
 				.value(tValue)
 				.capacity(FluidTankGT.bindInt(aTank.getCapacity()))
-				.displayAmount(false);
+				.displayAmount(false)
+				// the droplet frame (F2-01): the sheet-baked frame is gone with the sheet —
+				// the amazawa 18x19 fluid cell rides as the code background. The theme's own
+				// fluidSlot frame (modern.json → slot_frame_18x18, the gui-slot-theme card)
+				// would double-frame underneath (fork Widget.drawBackground :255-264 theme arm
+				// first, code second), so the theme arm is disabled for the seat.
+				// The widget box stays the default 18x18; the 1px lip rides the squeeze —
+				// ponytail: revisit at the tower card if the frame shows it
+				.disableThemeBackground(true)
+				.background(GT6GuiParts.asUITexture(GT6GuiParts.SLOT_FLUID));
+	}
+
+	/**
+	 * One upstream progress-direction case: the MUI {@link ProgressDrawable.Direction} the
+	 * fill grows in, plus the drain flag (upstream cases 4-7 invert the step —
+	 * {@code tProgress = tSize - tProgress}, ContainerClientBasicMachine.java:61-64 — so the
+	 * arrow shows the REMAINING work; the panel feeds {@code 1 - ratio} then).
+	 *
+	 * @param direction the MUI fill direction
+	 * @param drain     true = the fill drains as the machine runs (the value face inverts)
+	 */
+	public record ProgressDirection(ProgressDrawable.Direction direction, boolean drain) {
+	}
+
+	/**
+	 * The upstream {@code mProgressBarDirection} case table (0-7) mapped onto the MUI
+	 * direction quartet (F1-02) — the verbatim geometry read:
+	 * <ul>
+	 * <li>0 {@code (x+78, y+24, w=tP)} — grows right → {@code RIGHT}/grow;</li>
+	 * <li>1 {@code (x+78+20-tP, w=tP)} — anchored right → {@code LEFT}/grow;</li>
+	 * <li>2 {@code (h=tP)} — grows down → {@code DOWN}/grow (the Sifter/Anvil maps);</li>
+	 * <li>3 {@code (y+24+18-tP)} — anchored bottom → {@code UP}/grow;</li>
+	 * <li>4-7 — the 0-3 twins with the step inverted → same quartet, drain (the Hammer map
+	 *     lives on case 6).</li>
+	 * </ul>
+	 * Out-of-range bytes ride case 0 (the upstream switch's silent no-draw fallback, rendered
+	 * here as the plain grow-right bar).
+	 */
+	public static ProgressDirection progressDirection(int aUpstreamDirection) {
+		return switch (aUpstreamDirection) {
+			case 1 -> new ProgressDirection(ProgressDrawable.Direction.LEFT, false);
+			case 2 -> new ProgressDirection(ProgressDrawable.Direction.DOWN, false);
+			case 3 -> new ProgressDirection(ProgressDrawable.Direction.UP, false);
+			case 4 -> new ProgressDirection(ProgressDrawable.Direction.RIGHT, true);
+			case 5 -> new ProgressDirection(ProgressDrawable.Direction.LEFT, true);
+			case 6 -> new ProgressDirection(ProgressDrawable.Direction.DOWN, true);
+			case 7 -> new ProgressDirection(ProgressDrawable.Direction.UP, true);
+			default -> new ProgressDirection(ProgressDrawable.Direction.RIGHT, false);
+		};
 	}
 }
