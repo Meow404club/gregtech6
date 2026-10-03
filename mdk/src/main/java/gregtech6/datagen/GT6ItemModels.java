@@ -488,6 +488,17 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_extruder/plate"));
         withExistingParent("shape_extruder_rod", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_extruder/rod"));
+        // the extruder-mold tool-head family (task toolhead-r11c-extruder-heads) — 16
+        // item/generated models over the byte-identical upstream icon borrows (the
+        // gt.multiitem.technological 10015-10022 / 10215-10222 meta tiles now lifted as
+        // standalone sprites, assets/README.md sha256 ledger; the texture basename drops
+        // the family prefix, the shape_foodmold convention)
+        for (String tHead : new String[] {"sword", "pickaxe", "shovel", "axe", "hoe", "hammer", "file", "saw"}) {
+            withExistingParent("shape_extruder_" + tHead, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/shape_extruder/" + tHead));
+            withExistingParent("shape_simple_ex_" + tHead, mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/shape_simple_ex/" + tHead));
+        }
         // the slicer-blade row0 subset (task slicer-row-domain) — 2 item/generated models
         // over the composed placeholder icons (the blade-grid/blade-split 16x16 stdlib
         // generator, the shape_extruder band convention; the upstream multiitem icons are

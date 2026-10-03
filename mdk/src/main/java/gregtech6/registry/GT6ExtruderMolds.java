@@ -17,37 +17,24 @@ import net.minecraftforge.registries.RegistryObject;
 import gregtech6.GT6Mod;
 
 /**
- * The GT6 extruder-mold registration home — task w1-press-extruder-molds, the row0
- * MINIMAL subset of the upstream {@code Shape_Extruder_*} domain (the content-unit
- * completeness ruling: the molds and their RM rows land on the SAME card, the P25
- * food-can row0 precedent). Card-owned self-contained {@code @EventBusSubscriber(MOD)}
+ * The GT6 extruder-mold registration home — task w1-press-extruder-molds (the row0
+ * plate/rod pair), extended to the tool-head family by task toolhead-r11c-extruder-heads:
+ * the 8 {@code Shape_Extruder_*} head molds + the 8 {@code Shape_SimpleEx_*} low-heat
+ * twins that the extruder.json head rows consume (MultiItemTechnological.java:215-222/
+ * :276-283; the rest of the 30+30-mold upstream census stays POOLED with the forming/
+ * wire/pipe cards). Card-owned self-contained {@code @EventBusSubscriber(MOD)}
  * DeferredRegister attached from the construct event (the GT6FoodCans shape verbatim;
  * GT6Mod.java / GTModBusListener.java stay untouched).
  *
- * <p>The subset — 2 items of the upstream 30-mold census (MultiItemTechnological.java
- * :182-256, everything else POOLED with the W2 forming-chain card):
- * <ul>
- * <li><b>the plate mold</b> — upstream {@code IL.Shape_Extruder_Plate} meta 10001
- *     "Extruder Shape (Plate)" (MultiItemTechnological.java:186); the shaping tool of the
- *     RM.Extruder plate row (:405, block + mold → 9 plates).</li>
- * <li><b>the rod mold</b> — upstream {@code IL.Shape_Extruder_Rod} meta 10027 "Extruder
- *     Shape (Rod)" (MultiItemTechnological.java:212); the shaping tool of the RM.Extruder
- *     rod row (:407, block + mold → 18 sticks).</li>
- * </ul>
- * POOLED: the other 28 Shape_Extruder_* molds, the Shape_SimpleEx_* low-heat family
- * (:254-285), the Shape_Mold_* press-mold family (the RM.Press rename/credit dynamic arms'
- * items — the GT6RecipeMapFormingPress row0 face carries their pooling note) and the
- * :406 plateCurved row (its mold leaves row0 with the W2 forming-chain card).
- *
  * <p>Id flattening (the GT6FoodCans ruling): upstream ids were meta ids on the
- * MultiItemTechnological meta item (10001/10027); the port flattens to one id per mold,
- * snake of the upstream name ({@code "Extruder Shape (Plate)"} →
- * {@code shape_extruder_plate}). The molds are PLAIN items — zero shaping behaviour on
+ * MultiItemTechnological meta item (10015-10022/10215-10222); the port flattens to one
+ * id per mold, snake of the upstream name ({@code "Extruder Shape (Sword Blade)"} →
+ * {@code shape_extruder_sword}). The molds are PLAIN items — zero shaping behaviour on
  * the item itself, so a fresh {@code Item} carries the whole declared behaviour.
  *
  * <p><b>The not-consumable face</b> (the archaeology conclusion, remember id478): upstream
- * marks every mold recipe input with STACK SIZE 0 (RM.java:405/:407
- * {@code IL.Shape_Extruder_*.get(0)}) — size-0 is not portable to 1.20.1, so the port
+ * marks every mold recipe input with STACK SIZE 0 (RM.java:405/:407/:410-417, the
+ * Handlers:750-762 handler walks) — size-0 is not portable to 1.20.1, so the port
  * carries the never-consumed net effect through {@code Recipe.sNotConsumable}, whose
  * production default consults {@link #isMold}. The mold identity rides the
  * {@link #EXTRUDER_SHAPES_TAG} tag (the bidirectional tag paradigm: the datagen provider
@@ -82,8 +69,56 @@ public final class GT6ExtruderMolds {
 	public static final RegistryObject<Item> SHAPE_EXTRUDER_ROD = ITEMS.register("shape_extruder_rod",
 			() -> new Item(new Item.Properties()));
 
-	/** The row0 mold set in upstream meta order (:186 plate before :212 rod). */
-	public static final List<RegistryObject<Item>> MOLDS = List.of(SHAPE_EXTRUDER_PLATE, SHAPE_EXTRUDER_ROD);
+	// ---- the tool-head family (task toolhead-r11c-extruder-heads; the rows these shape
+	// ---- live in data/gt6/recipe_maps/extruder.json). Upstream metas 10015-10022 /
+	// ---- 10215-10222 (MultiItemTechnological.java:215-222/:276-283), registration order
+	// ---- preserved in {@link #MOLDS}.
+
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_SWORD = ITEMS.register("shape_extruder_sword",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PICKAXE = ITEMS.register("shape_extruder_pickaxe",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_SHOVEL = ITEMS.register("shape_extruder_shovel",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_AXE = ITEMS.register("shape_extruder_axe",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_HOE = ITEMS.register("shape_extruder_hoe",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_HAMMER = ITEMS.register("shape_extruder_hammer",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_FILE = ITEMS.register("shape_extruder_file",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_SAW = ITEMS.register("shape_extruder_saw",
+			() -> new Item(new Item.Properties()));
+
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_SWORD = ITEMS.register("shape_simple_ex_sword",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PICKAXE = ITEMS.register("shape_simple_ex_pickaxe",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_SHOVEL = ITEMS.register("shape_simple_ex_shovel",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_AXE = ITEMS.register("shape_simple_ex_axe",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_HOE = ITEMS.register("shape_simple_ex_hoe",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_HAMMER = ITEMS.register("shape_simple_ex_hammer",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_FILE = ITEMS.register("shape_simple_ex_file",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_SAW = ITEMS.register("shape_simple_ex_saw",
+			() -> new Item(new Item.Properties()));
+
+	/**
+	 * The mold set in upstream meta order (the plate :186 lead, the head family
+	 * 10015-10022, the rod :212 tail, then the SimpleEx head family 10215-10222).
+	 */
+	public static final List<RegistryObject<Item>> MOLDS = List.of(
+			SHAPE_EXTRUDER_PLATE,
+			SHAPE_EXTRUDER_SWORD, SHAPE_EXTRUDER_PICKAXE, SHAPE_EXTRUDER_SHOVEL, SHAPE_EXTRUDER_AXE,
+			SHAPE_EXTRUDER_HOE, SHAPE_EXTRUDER_HAMMER, SHAPE_EXTRUDER_FILE, SHAPE_EXTRUDER_SAW,
+			SHAPE_EXTRUDER_ROD,
+			SHAPE_SIMPLE_EX_SWORD, SHAPE_SIMPLE_EX_PICKAXE, SHAPE_SIMPLE_EX_SHOVEL, SHAPE_SIMPLE_EX_AXE,
+			SHAPE_SIMPLE_EX_HOE, SHAPE_SIMPLE_EX_HAMMER, SHAPE_SIMPLE_EX_FILE, SHAPE_SIMPLE_EX_SAW);
 
 	/**
 	 * The mold-identity seam (production default = the {@link #EXTRUDER_SHAPES_TAG} tag
@@ -118,12 +153,29 @@ public final class GT6ExtruderMolds {
 	@net.minecraftforge.eventbus.api.SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			GT6Mod.LOGGER.info("GT6 extruder molds registered: {} molds (the row0 subset: plate + rod)", MOLDS.size());
+			GT6Mod.LOGGER.info("GT6 extruder molds registered: {} molds (row0 pair + the tool-head family + its SimpleEx twins)", MOLDS.size());
 			// the registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered mold would throw here and fail the runServer gate.
 			for (RegistryObject<Item> tMold : MOLDS) {
 				GT6Mod.LOGGER.info("GT6 extruder mold registered: {}", net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(tMold.get()));
 			}
 		});
+	}
+
+	/**
+	 * The MACHINES_TAB join (task toolhead-r11c-extruder-heads; the GT6SlicerBlades
+	 * verbatim form, delivered by the class-level MOD-bus {@code @Mod.EventBusSubscriber}
+	 * at the class head). Upstream the molds ride the GT tab list as MultiItemTechnological
+	 * metas; the port pools them with the machines tab. The walk covers the FULL
+	 * {@link #MOLDS} census — registered-but-tab-less is invisible in both the creative
+	 * menu and JEI (the issue #10 lesson).
+	 */
+	@net.minecraftforge.eventbus.api.SubscribeEvent
+	public static void onBuildTabContents(net.minecraftforge.event.BuildCreativeModeTabContentsEvent aEvent) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (RegistryObject<Item> tMold : MOLDS) {
+				aEvent.accept(new ItemStack(tMold.get()));
+			}
+		}
 	}
 }

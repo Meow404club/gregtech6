@@ -1012,6 +1012,32 @@ Press + Extruder family fronts, task w1-press-extruder-molds:
   file to borrow, so the two row0 mold icons are hand-rolled mold-blank pixels. NOT
   byte-identical to upstream — declared placeholder.
 
+- `gt6/textures/item/shape_extruder/{sword,pickaxe,shovel,axe,hoe,hammer,file,saw}.png` —
+  BORROWED byte-identical (task toolhead-r11c-extruder-heads): the upstream
+  MultiItemTechnological meta tiles ARE standalone files after all —
+  `assets/gregtech/textures/items/gt.multiitem.technological/10015.png`-`10022.png`
+  lifted verbatim. sha256
+  `fc8b5ff2372161b99d40d2aa19039c03954c2199a2afeae1cb3f6987eddec1dc` (sword) /
+  `9b4af16d6bd419ecaf4126b2e15675612f82d4fbfe4351c275c423116110d0d2` (pickaxe) /
+  `ab4772450917c8e6ee57183e59a29a92df94a68d9aaf9d6e4bf58d4c6e1e9b8d` (shovel) /
+  `fc45f32bea6511d4ac6f94b88842fef9184235db24ceaac7cf15c551f3f77f23` (axe) /
+  `35228d7bea410c9e5baced12c330a9cdec2a5c7f0816a6ef77ce16ead4fe309b` (hoe) /
+  `85f78f67cad71e223c26aa1f9c78e4d03b430788773caf7c2a2915fcb9466521` (hammer) /
+  `291f040306ab21f2d46c6040b49887aba3bd14c93d238563fd0e1dd74a6c5273` (file) /
+  `96df559099165bc2a8bb8b85ad31314b70ad75cae9d872e85dcd96572f518eb9` (saw).
+
+- `gt6/textures/item/shape_simple_ex/{sword,pickaxe,shovel,axe,hoe,hammer,file,saw}.png` —
+  BORROWED byte-identical (same task): the low-heat twins, the
+  `gt.multiitem.technological/10215.png`-`10222.png` tiles verbatim. sha256
+  `f13cb60d97bcfafadd31cb02222d14bcb6004b719141d643d3899011dbb0b222` (sword) /
+  `22eafa51a53168db3fd3baf25fef5e0a65f0e416a634b31bcbca9956fee50eef` (pickaxe) /
+  `42f05a68f9f5063bb3641adcf4c3c05a9fa0607d3023214a0828912b73a08694` (shovel) /
+  `47c0f8c7c9873bdfd4fbe15b106b7bb2e07a101ad8dd8341f3ad93850ee863a3` (axe) /
+  `3cc8e0163ff3328002d10ecf2eb53c3a2d7f3e2345923210690a1ccc90686ee3` (hoe) /
+  `c2aa74066305e73c22a50c6ec7c43f70678ae80c8136f08fd70870507cde4b3f` (hammer) /
+  `f64e36e2947e8f9d3c5b200228500e37bd1b0d60b3a9c49c5276be80594c9ee8` (file) /
+  `1bbbbc87113b718549778c0b80a85bef7d94cae46faab1e0af6a1afd1c76e7e4` (saw).
+
 - `gt6/textures/item/shape_slicer/{grid,split}.png` — COMPOSED placeholders (the P20
   stdlib generator convention, 16x16 RGBA, task slicer-row-domain): the upstream
   Shape_Slicer_* icons are meta-atlas tiles with no standalone sprite file to borrow, so

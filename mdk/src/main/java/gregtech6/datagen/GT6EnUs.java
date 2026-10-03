@@ -2365,23 +2365,39 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Extruder-mold family keys (task w1-press-extruder-molds): the row0 MINIMAL
-     * subset's display names, walked over the {@link GT6ExtruderMolds} registry constants
-     * so the lang face cannot drift from the registered ids (the addFoodCans form).
-     * Values are the upstream registration-row wordings verbatim: "Extruder Shape (Plate)"
-     * (MultiItemTechnological.java:186) and "Extruder Shape (Rod)" (:212).
-     * Table-tail append, append-only.
+     * Extruder-mold family keys (task w1-press-extruder-molds; the tool-head family rides
+     * task toolhead-r11c-extruder-heads): the FULL 18-mold census display names, walked
+     * over the {@link GT6ExtruderMolds} registry constants so the lang face cannot drift
+     * from the registered ids (the addFoodCans form). Values are the upstream registration
+     * rows verbatim: the head family "Extruder Shape (Sword Blade)".. and the low-heat
+     * twins "Low Heat Extruder Shape (Sword Blade)".. (MultiItemTechnological.java
+     * :215-222/:276-283). Table-tail append, append-only.
      */
     private void addExtruderMolds() {
+        java.util.Map<String, String> tNames = java.util.Map.ofEntries(
+                java.util.Map.entry("shape_extruder_plate", "Extruder Shape (Plate)"),
+                java.util.Map.entry("shape_extruder_sword", "Extruder Shape (Sword Blade)"),
+                java.util.Map.entry("shape_extruder_pickaxe", "Extruder Shape (Pickaxe Head)"),
+                java.util.Map.entry("shape_extruder_shovel", "Extruder Shape (Shovel Head)"),
+                java.util.Map.entry("shape_extruder_axe", "Extruder Shape (Axe Head)"),
+                java.util.Map.entry("shape_extruder_hoe", "Extruder Shape (Hoe Head)"),
+                java.util.Map.entry("shape_extruder_hammer", "Extruder Shape (Hammer Head)"),
+                java.util.Map.entry("shape_extruder_file", "Extruder Shape (File Head)"),
+                java.util.Map.entry("shape_extruder_saw", "Extruder Shape (Saw Blade)"),
+                java.util.Map.entry("shape_extruder_rod", "Extruder Shape (Rod)"),
+                java.util.Map.entry("shape_simple_ex_sword", "Low Heat Extruder Shape (Sword Blade)"),
+                java.util.Map.entry("shape_simple_ex_pickaxe", "Low Heat Extruder Shape (Pickaxe Head)"),
+                java.util.Map.entry("shape_simple_ex_shovel", "Low Heat Extruder Shape (Shovel Head)"),
+                java.util.Map.entry("shape_simple_ex_axe", "Low Heat Extruder Shape (Axe Head)"),
+                java.util.Map.entry("shape_simple_ex_hoe", "Low Heat Extruder Shape (Hoe Head)"),
+                java.util.Map.entry("shape_simple_ex_hammer", "Low Heat Extruder Shape (Hammer Head)"),
+                java.util.Map.entry("shape_simple_ex_file", "Low Heat Extruder Shape (File Head)"),
+                java.util.Map.entry("shape_simple_ex_saw", "Low Heat Extruder Shape (Saw Blade)"));
         for (RegistryObject<Item> tMold : GT6ExtruderMolds.MOLDS) {
             String tPath = tMold.getId().getPath();
-            if (tPath.equals("shape_extruder_plate")) {
-                add("item.gt6." + tPath, "Extruder Shape (Plate)");
-            } else if (tPath.equals("shape_extruder_rod")) {
-                add("item.gt6." + tPath, "Extruder Shape (Rod)");
-            } else {
-                throw new IllegalStateException("extruder mold id drifted: " + tPath);
-            }
+            String tName = tNames.get(tPath);
+            if (tName == null) throw new IllegalStateException("extruder mold id drifted: " + tPath);
+            add("item.gt6." + tPath, tName);
         }
     }
 
