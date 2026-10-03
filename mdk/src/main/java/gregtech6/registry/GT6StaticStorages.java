@@ -246,8 +246,24 @@ public final class GT6StaticStorages {
 		/** Facing property — the FRONT face, horizontals only (upstream SIDES_HORIZONTAL valid sides). */
 		public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-		/** The crate half-height box (upstream PX_P[0]..PX_P[6] = 0..6/16). */
-		private static final VoxelShape CRATE_SHAPE = Block.box(0, 0, 0, 16, 6, 16);
+		/**
+		 * The crate shapes (task r11-geometry-batch, the upstream split verbatim): the
+		 * SELECTION box is 0..6px (getSelectedBoundingBoxFromPool / setBlockBoundsBasedOnState
+		 * = PX_P[6], MultiTileEntityBottleCrate:213-214) while the COLLISION box is 0..10px
+		 * (getCollisionBoundingBoxFromPool = PX_N[6], :212) — the former single 6/16 shape
+		 * conflated the two columns.
+		 */
+		public static final VoxelShape CRATE_SELECTION_SHAPE = Block.box(0, 0, 0, 16, 6, 16);
+		public static final VoxelShape CRATE_COLLISION_SHAPE = Block.box(0, 0, 0, 16, 10, 16);
+
+		/**
+		 * The bookshelf selection shapes (task r11-geometry-batch, upstream :349-350): the
+		 * 2px inset on each OPEN face (north/south = z 2..14, east/west = x 2..14 — the slab
+		 * where the 28 book niches live), full height; the collision stays the full cube
+		 * (the shelf overrides no collision face upstream — the MTE default).
+		 */
+		public static final VoxelShape SHELF_SELECTION_NS = Block.box(0, 0, 2, 16, 16, 14);
+		public static final VoxelShape SHELF_SELECTION_EW = Block.box(2, 0, 0, 14, 16, 16);
 
 		private final StaticRow mRow;
 
@@ -314,15 +330,24 @@ public final class GT6StaticStorages {
 			return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
 		}
 
-		/** The crate is a 6/16 slab-like crate (upstream the collision/selection boxes). */
+		/**
+		 * The wooden-kind geometry (task r11-geometry-batch): the crate rides the 6px
+		 * selection / 10px collision split, the bookshelf the open-face 2px inset slab;
+		 * the metal kinds stay the full cube.
+		 */
 		@Override
 		public VoxelShape getShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
-			return mRow.kind() == Kind.BOTTLECRATE ? CRATE_SHAPE : super.getShape(aState, aLevel, aPos, aContext);
+			return switch (mRow.kind()) {
+				case BOTTLECRATE -> CRATE_SELECTION_SHAPE;
+				case BOOKSHELF -> aState.getValue(FACING).getAxis() == Direction.Axis.Z
+						? SHELF_SELECTION_NS : SHELF_SELECTION_EW;
+				default -> super.getShape(aState, aLevel, aPos, aContext);
+			};
 		}
 
 		@Override
 		public VoxelShape getCollisionShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
-			return mRow.kind() == Kind.BOTTLECRATE ? CRATE_SHAPE : super.getCollisionShape(aState, aLevel, aPos, aContext);
+			return mRow.kind() == Kind.BOTTLECRATE ? CRATE_COLLISION_SHAPE : super.getCollisionShape(aState, aLevel, aPos, aContext);
 		}
 
 		@Override

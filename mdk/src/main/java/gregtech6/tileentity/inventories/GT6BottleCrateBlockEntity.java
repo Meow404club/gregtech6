@@ -38,8 +38,11 @@ import gregtech6.registry.GTBlockEntities;
  * <ul>
  * <li>the pixel 3x3 slot picker (:148-151) folds to the card's shift-all/single-take
  *     ruling — the interaction lives on the BLOCK use face;</li>
- * <li>the mDisplay[] bottle-render sync (36 render passes, :161-249) is the render pool —
- *     placeholder block art (the hopper-family precedent);</li>
+ * <li>the mDisplay[] bottle-render sync (36 render passes, :161-249) rides the
+ *     {@code GTBottleCrateRenderer} BER since task r11-geometry-batch — the crate body
+ *     is the static plank frame model, each occupied slot draws its stack through the
+ *     vanilla FIXED item display (the potion tints ride the item models), the upstream
+ *     3-box mini-bottle pass folded (declared);</li>
  * <li>{@code getDefaultStack :240} (fresh crates pre-filled with an empty bottle) folds —
  *     the port crate ships empty (a pre-fill would fight the keepSlot round trip).</li>
  * </ul>
@@ -96,6 +99,20 @@ public class GT6BottleCrateBlockEntity extends GT6StaticStorageBaseBlockEntity {
 	@Override
 	public boolean canExtractItem(int aSlot, byte aSide) {
 		return true; // upstream :246
+	}
+
+	/**
+	 * The client-display face (task r11-geometry-batch): every inventory mutation also
+	 * fires the block-update broadcast, so the {@code GTBottleCrateRenderer} sees the
+	 * fresh slots — the upstream {@code onTick2 mInventoryChanged → updateClientData}
+	 * arm (:80-94) re-driven EVENT-DRIVEN (the no-tick fold; the adjacency-notify shape
+	 * of the base class). The chunk channel carries the initial payload for free
+	 * ({@code getUpdateTag} = {@code saveWithoutMetadata}, the base pair).
+	 */
+	@Override
+	public void updateInventory() {
+		super.updateInventory();
+		sendClientData();
 	}
 
 	/** The first empty slot (the click insert pick of the shift-all/single-take ruling). */
