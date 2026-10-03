@@ -389,7 +389,9 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 		MaterialTreeDisplay tDisplay = feDisplay();
 		GT6MaterialTreeEmiRecipe tRecipe = new GT6MaterialTreeEmiRecipe(tDisplay);
 		assertEquals(MaterialTreeDisplay.WIDTH, tRecipe.getDisplayWidth());
-		assertEquals(MaterialTreeDisplay.HEIGHT, tRecipe.getDisplayHeight());
+		// nav-m2-emi grew the display by the control strip (the pin lagged the change;
+		// review-seat absorb from the nav-m3-jei branch, seat 8)
+		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight());
 
 		List<Widget> tAdded = new ArrayList<>();
 		WidgetHolder tHolder = new WidgetHolder() {
