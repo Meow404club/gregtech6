@@ -463,6 +463,33 @@ HAND_TRANSLATIONS = {
     "gt6.row.mat.wood_treated": ("木制", "hand"),
     "gt6.row.mat.bronze": ("青铜", "hand"),
     "gt6.row.mat.brass": ("黄铜", "hand"),
+    # ---- task material-tooltip-face — the 22 material-domain tooltip row keys (the
+    # GT6ZhCn.addMaterialTooltipUnits walk). Twelve zh faces are the tmp/gregtech.lang dump
+    # fragments verbatim (trailing spaces preserved: 钓鱼:/:3329 Fuel Value: /:3383/:3569);
+    # the eleven upstream CODE-LITERAL rows (tool_stats/source_of/f3h_hint/the origin
+    # quartet) have no dump face — zh = the hardcoded-en face, the tank.1 convention.
+    "gt6.tooltip.material.furnace_fuel": ("Fuel Value: ", "hand"),
+    "gt6.tooltip.material.tool_stats": ("Q: %s - S: %s - D: %s", "hand"),
+    "gt6.tooltip.material.needs_sharpening": ("使用前需要磨尖", "hand"),
+    "gt6.tooltip.material.needs_handle": ("手柄的材质为:", "hand"),
+    "gt6.tooltip.material.source_of": ("Source of: ", "hand"),
+    "gt6.tooltip.material.tool_enchants": ("可用工具附魔:", "hand"),
+    "gt6.tooltip.material.weapon_enchants": ("可用武器附魔: ", "hand"),
+    "gt6.tooltip.material.ammo_enchants": ("可用弹药附魔:", "hand"),
+    "gt6.tooltip.material.ranged_enchants": ("可用远程武器附魔: ", "hand"),
+    "gt6.tooltip.material.fishing_enchants": ("钓鱼: ", "hand"),
+    "gt6.tooltip.material.armor_enchants": ("可用护甲附魔:", "hand"),
+    "gt6.tooltip.material.flammable_explosive": ("易燃易爆!", "hand"),
+    "gt6.tooltip.material.flammable": ("易燃!", "hand"),
+    "gt6.tooltip.material.explosive": ("易爆!", "hand"),
+    "gt6.tooltip.material.unburnable": ("不可燃!", "hand"),
+    "gt6.tooltip.material.contained_materials": ("含有材料:", "hand"),
+    "gt6.tooltip.material.f3h_hint": ("Enable F3+H Mode for Info about contained Materials.", "hand"),
+    "gt6.tooltip.material.origin_unknown": ("Material from an Unknown Mod", "hand"),
+    "gt6.tooltip.material.origin_vanilla": ("Vanilla Material", "hand"),
+    "gt6.tooltip.material.origin_periodic": ("Material from the Periodic Table of Elements", "hand"),
+    "gt6.tooltip.material.origin_random": ("Random Material handled by Greg API", "hand"),
+    "gt6.tooltip.material.origin_mod": ("Material from %s", "hand"),
     # task p26-pipe-item — the item pipe family: the six variant templates over the three
     # material words. task p27-lang-fix P1 §2.2 + batch rule B5: the dump's 物流管道 word
     # set (tmp/gregtech.lang 25002..25007 黄铜物流管道 family / 25027..25032 康铜 /

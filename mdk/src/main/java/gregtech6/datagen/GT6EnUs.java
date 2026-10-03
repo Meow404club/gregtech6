@@ -202,6 +202,7 @@ public class GT6EnUs extends LanguageProvider {
         addCropFoods(); // task food-crop-items — table-tail append
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
         addBottles(); // task food-bottles-min — the bottles-domain minimum
+        addMaterialTooltip(); // task material-tooltip-face — table-tail append (the 22 material-domain row keys)
     }
 
     /**
@@ -3125,5 +3126,43 @@ public class GT6EnUs extends LanguageProvider {
         add("item.gt6.book_loot_guide", "Dusty Guide Book");
         add("item.gt6.book_loot_guide.tooltip", "Loot: Some random Manual or so");
         add("item.gt6.book_loot_guide.tooltip_loot", "Rightclick this on a Block to loot");
+    }
+
+    /**
+     * The material-domain tooltip row keys (task material-tooltip-face, 22 keys —
+     * table-tail append): the faces {@link gregtech6.item.MaterialPrefixItem#appendMaterialTooltip}
+     * replays from the upstream global hover hook (GT_API_Proxy_Client.onItemTooltip
+     * :214-518). Twelve keys are the upstream LH.add faces verbatim (LH.java:591-616):
+     * furnace_fuel :591, needs_handle :595, needs_sharpening :596, the six enchant labels
+     * :604-609, contained_materials :612, the flammable/explosive/unburnable trio :613-616.
+     * Eleven keys carry the upstream CODE LITERALS (upstream composes them in the handler
+     * body, no LH key exists) — the tank.1 convention: identical en face in both locales:
+     * tool_stats :346, source_of :368, f3h_hint :478 and the four origin faces :484-494
+     * plus origin_mod. Consumed by MaterialPrefixItem; zh faces ride the reference table's
+     * hand layer via GT6ZhCn (the tsv direct band + gen_zhcn_ref.py HAND_TRANSLATIONS).
+     */
+    private void addMaterialTooltip() {
+        add("gt6.tooltip.material.furnace_fuel", "Fuel Value: "); // LH.java:591 TOOLTIP_FURNACE_FUEL
+        add("gt6.tooltip.material.tool_stats", "Q: %s - S: %s - D: %s"); // :346 the Q/S/D literal (mToolQuality/mToolSpeed/mToolDurability slots)
+        add("gt6.tooltip.material.needs_sharpening", "Needs to be sharpened before use"); // LH.java:596
+        add("gt6.tooltip.material.needs_handle", "Requires Handle made of: "); // LH.java:595 (+ the WHITE material fill sibling)
+        add("gt6.tooltip.material.source_of", "Source of: "); // :368 literal (+ the WHITE joined-materials sibling)
+        add("gt6.tooltip.material.tool_enchants", "Tool: "); // LH.java:604
+        add("gt6.tooltip.material.weapon_enchants", "Weapon: "); // LH.java:605
+        add("gt6.tooltip.material.ammo_enchants", "Ammo: "); // LH.java:606
+        add("gt6.tooltip.material.ranged_enchants", "Ranged: "); // LH.java:607
+        add("gt6.tooltip.material.fishing_enchants", "Fishing: "); // LH.java:608
+        add("gt6.tooltip.material.armor_enchants", "Armor: "); // LH.java:609
+        add("gt6.tooltip.material.flammable_explosive", "Flammable and Explosive!"); // LH.java:613
+        add("gt6.tooltip.material.flammable", "Flammable!"); // LH.java:614
+        add("gt6.tooltip.material.explosive", "Explosive!"); // LH.java:615
+        add("gt6.tooltip.material.unburnable", "Unburnable!"); // LH.java:616
+        add("gt6.tooltip.material.contained_materials", "Contained Materials:"); // LH.java:612
+        add("gt6.tooltip.material.f3h_hint", "Enable F3+H Mode for Info about contained Materials."); // :478 code literal
+        add("gt6.tooltip.material.origin_unknown", "Material from an Unknown Mod"); // :484 literal
+        add("gt6.tooltip.material.origin_vanilla", "Vanilla Material"); // :486 literal
+        add("gt6.tooltip.material.origin_periodic", "Material from the Periodic Table of Elements"); // :489 literal
+        add("gt6.tooltip.material.origin_random", "Random Material handled by Greg API"); // :491 literal
+        add("gt6.tooltip.material.origin_mod", "Material from %s"); // :494 literal (the mod-id slot)
     }
 }

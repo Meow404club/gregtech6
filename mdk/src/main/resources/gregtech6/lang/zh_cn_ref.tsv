@@ -2235,6 +2235,28 @@ direct	gt6.tooltip.machine.6	物品输入: %s	hand
 direct	gt6.tooltip.machine.7	物品输出: %s	hand
 direct	gt6.tooltip.machine.8	液体输入: %s	hand
 direct	gt6.tooltip.machine.9	液体输出: %s	hand
+direct	gt6.tooltip.material.ammo_enchants	可用弹药附魔:	hand
+direct	gt6.tooltip.material.armor_enchants	可用护甲附魔:	hand
+direct	gt6.tooltip.material.contained_materials	含有材料:	hand
+direct	gt6.tooltip.material.explosive	易爆!	hand
+direct	gt6.tooltip.material.f3h_hint	Enable F3+H Mode for Info about contained Materials.	hand
+direct	gt6.tooltip.material.fishing_enchants	钓鱼: 	hand
+direct	gt6.tooltip.material.flammable	易燃!	hand
+direct	gt6.tooltip.material.flammable_explosive	易燃易爆!	hand
+direct	gt6.tooltip.material.furnace_fuel	Fuel Value: 	hand
+direct	gt6.tooltip.material.needs_handle	手柄的材质为:	hand
+direct	gt6.tooltip.material.needs_sharpening	使用前需要磨尖	hand
+direct	gt6.tooltip.material.origin_mod	Material from %s	hand
+direct	gt6.tooltip.material.origin_periodic	Material from the Periodic Table of Elements	hand
+direct	gt6.tooltip.material.origin_random	Random Material handled by Greg API	hand
+direct	gt6.tooltip.material.origin_unknown	Material from an Unknown Mod	hand
+direct	gt6.tooltip.material.origin_vanilla	Vanilla Material	hand
+direct	gt6.tooltip.material.ranged_enchants	可用远程武器附魔: 	hand
+direct	gt6.tooltip.material.source_of	Source of: 	hand
+direct	gt6.tooltip.material.tool_enchants	可用工具附魔:	hand
+direct	gt6.tooltip.material.tool_stats	Q: %s - S: %s - D: %s	hand
+direct	gt6.tooltip.material.unburnable	不可燃!	hand
+direct	gt6.tooltip.material.weapon_enchants	可用武器附魔: 	hand
 direct	gt6.tooltip.multiblock.1	使用建筑之杖快速搭建结构	hand
 direct	gt6.tooltip.multiblock.2	使用放大镜观察细节	hand
 direct	gt6.tooltip.multiblock.3	使用扳手设置朝向	hand
