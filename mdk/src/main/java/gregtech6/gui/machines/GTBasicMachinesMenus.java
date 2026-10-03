@@ -3,6 +3,8 @@ package gregtech6.gui.machines;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 
+import gregtech6.menu.act.GTActMenu;
+
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -118,6 +120,8 @@ public final class GTBasicMachinesMenus {
 	 * GuiManager.getFactory :65-68) — an unregistered factory is the client crash face.
 	 */
 	public static void registerActUIFactories() {
-		// the two registrations land with the fix commit (the red pin runs this body empty)
+		brachy.modularui.factory.GuiManager.registerFactory(GTActMenu.Factory.CRAFT);
+		brachy.modularui.factory.GuiManager.registerFactory(GTActMenu.Factory.BELT);
+		LOGGER.info("GT6 ACT UI factories registered (gt6:advanced_crafting_table + gt6:advanced_crafting_table_belt — the ModularUI factory-identity wire, task r11a-act-factory-register)");
 	}
 }
