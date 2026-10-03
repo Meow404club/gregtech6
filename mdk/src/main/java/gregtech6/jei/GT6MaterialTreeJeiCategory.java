@@ -11,12 +11,15 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotRichTooltipCallback;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 
+import gregtech6.emi.GT6MaterialTreeEmiRecipe;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
+import gregtech6.recipes.tree.MaterialTreeViewport;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
@@ -53,6 +56,15 @@ import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
  * {@code IRecipeLayoutBuilder} slot builders with rich-tooltip callbacks (RENDER_ONLY role
  * exists on both generations), and the {@code draw(...)} text/fill leg — loader-neutral
  * common API only. The single leg fork is the usual ResourceLocation constructor.
+ *
+ * <p>Nav suite (task nav-m3-jei): the page mounts the lightweight control face of
+ * {@link GT6MaterialTreeJeiNavWidget} (zoom in/out/reset strip + canvas keyboard, the EMI
+ * twin's semantics riding the same M2 action table) via {@link #createRecipeExtras}, and
+ * grows {@link #getHeight()} by the twin's control-strip band. The tree geometry itself
+ * stays viewport-frozen — JEI freezes slot coordinates at layout build with no render-time
+ * move seam, and self-drawing the tree is ruled out (native hover U/R is the leg's point);
+ * the full assessment and the pre-authorized 按钮+键盘 degradation live on the widget's
+ * javadoc.
  */
 public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeDisplay> {
 
@@ -83,7 +95,7 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 
 	@Override
 	public int getHeight() {
-		return MaterialTreeDisplay.HEIGHT;
+		return MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H;
 	}
 
 	/** No icon this card (the batch-1 precedent: JEI falls back; a machine-item icon table is a later nicety). */
@@ -157,5 +169,25 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 
 	private static IRecipeSlotRichTooltipCallback staticTooltip(String aLine) {
 		return (aView, aTooltip) -> aTooltip.add(Component.literal(aLine));
+	}
+
+	/**
+	 * The nav face registration (task nav-m3-jei): one fresh viewport per layout (JEI keeps
+	 * extras alive exactly as long as the layout is on screen — the EMI twin's per-page-open
+	 * closure), mounted as BOTH the draw widget and the input listener, plus the three hover
+	 * hints on the EMI-parity strip cells. The recipe is not touched here (the viewport is
+	 * display-agnostic), so a null display is as good as any.
+	 */
+	@Override
+	public void createRecipeExtras(IRecipeExtrasBuilder aBuilder, MaterialTreeDisplay aDisplay, IFocusGroup aFocuses) {
+		GT6MaterialTreeJeiNavWidget tNav = new GT6MaterialTreeJeiNavWidget(new MaterialTreeViewport());
+		aBuilder.addWidget(tNav);
+		aBuilder.addGuiEventListener(tNav);
+		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.BUTTON_X0, GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12)
+				.setTooltip(Component.literal("Zoom in (+)"));
+		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.BUTTON_X0 + GT6MaterialTreeEmiRecipe.BUTTON_PITCH,
+				GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12).setTooltip(Component.literal("Zoom out (-)"));
+		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 2 * GT6MaterialTreeEmiRecipe.BUTTON_PITCH,
+				GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12).setTooltip(Component.literal("Reset view (R/0)"));
 	}
 }

@@ -445,7 +445,8 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 		MaterialTreeDisplay tDisplay = feDisplay();
 		GT6MaterialTreeJeiCategory tCategory = new GT6MaterialTreeJeiCategory();
 		assertEquals(MaterialTreeDisplay.WIDTH, tCategory.getWidth());
-		assertEquals(MaterialTreeDisplay.HEIGHT, tCategory.getHeight());
+		// nav-m3-jei: the category carries the EMI twin's 20px control strip below the canvas
+		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tCategory.getHeight());
 
 		List<int[]> tSlots = new ArrayList<>(); // [role ordinal, x, y]
 		List<Boolean> tSlotItems = new ArrayList<>();

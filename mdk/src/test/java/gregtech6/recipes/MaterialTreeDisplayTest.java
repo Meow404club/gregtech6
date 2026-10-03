@@ -327,7 +327,8 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 		GT6MaterialTreeJeiCategory tCategory = new GT6MaterialTreeJeiCategory();
 		assertEquals(new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), tCategory.getRecipeType().getUid());
 		assertEquals(MaterialTreeDisplay.WIDTH, tCategory.getWidth());
-		assertEquals(MaterialTreeDisplay.HEIGHT, tCategory.getHeight());
+		// nav-m3-jei: the category carries the EMI twin's 20px control strip below the canvas
+		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tCategory.getHeight());
 
 		// EMI leg: same category id (the JEMI balance — both twins ship in this card), and the
 		// Fe recipe's input/output split mirrors the JEI slot split
