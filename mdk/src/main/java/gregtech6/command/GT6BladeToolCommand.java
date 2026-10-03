@@ -149,8 +149,9 @@ public final class GT6BladeToolCommand {
 		// the identity THE RECIPE WAY — the ONE stamp face the dig seam pinned (the
 		// serializer and the RCON material arm route through it): primary + the form
 		// multiplier folded into the j payload (MultiItemTool.java:182); the secondary
-		// stays null (the shared serializer face — the blade handle pass renders the
-		// declared Spruce fallback)
+		// stays null (the shared serializer face — the blade tints read the PRIMARY,
+		// the head material: the upstream knife/butchery rows are mUseNormalHandle=false,
+		// Loader_Tools.java:322-323, so the handle IS the head material)
 		float tMultiplier = ((GT6ToolLadder.LadderTool) tItem).durabilityMultiplier();
 		GT6ToolLadder.stampIdentity(tStack, tMaterial, tMultiplier);
 		// read the item surfaces BACK (the faces the gameplay code uses)

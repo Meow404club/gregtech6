@@ -1,6 +1,7 @@
 package gregtech6.items.tools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -166,14 +167,29 @@ public class GT6BladeLadderTest {
 	}
 
 	@Test
-	public void knifeTintIsTheSecondaryFace() {
-		// upstream the knife's visible sprite rides the HANDLE pass (the head pass is
-		// VOID, GT_Tool_Knife.getIcon :73-75) — the aIndex0IsSecondary dispatch arm
+	public void knifeTintIsThePrimaryFace() {
+		// upstream the KNIFE recipe row is mUseNormalHandle=false (Loader_Tools.java:322,
+		// the sword :321 row is T) — the :451 handle material IS the head material itself
+		// (OreDictMaterial.java:280 {@code mHandleMaterial = this}), so the visible sprite
+		// (the head pass VOID, GT_Tool_Knife.getIcon :73-75, riding the inherited sword
+		// colour face) takes the PRIMARY — the same face as the butchery knife
 		ItemStack tLegacy = new ItemStack(Items.STICK);
-		assertEquals(argbOf(MT.WOODS.Spruce), GTKnifeItem.tintARGB(tLegacy, 0), "identity-less → the Spruce fallback");
+		assertEquals(argbOf(MT.Steel), GTKnifeItem.tintARGB(tLegacy, 0), "identity-less → the Steel fallback");
 		ItemStack tIdentified = identified(MT.DamascusSteel, MT.Bronze, 1.0F);
-		assertEquals(argbOf(MT.Bronze), GTKnifeItem.tintARGB(tIdentified, 0), "index 0 = the SECONDARY colour");
+		assertEquals(argbOf(MT.DamascusSteel), GTKnifeItem.tintARGB(tIdentified, 0), "index 0 = the PRIMARY colour");
 		assertEquals(-1, GTKnifeItem.tintARGB(tIdentified, 1), "the overlay stays un-tinted");
+	}
+
+	@Test
+	public void knifeTintFollowsTheStampedHeadMaterial() {
+		// the r11-knife-primary-tint pin: two knives through the ONE stamp face
+		// ({@link GT6ToolLadder#stampIdentity} — the serializer way, secondary=null) must
+		// NOT collapse onto one shared fallback constant — the head material owns the colour
+		ItemStack tSteel = GT6ToolLadder.stampIdentity(new ItemStack(Items.STICK), MT.Steel, 1.0F);
+		ItemStack tIron = GT6ToolLadder.stampIdentity(new ItemStack(Items.STICK), MT.Iron, 1.0F);
+		assertEquals(argbOf(MT.Steel), GTKnifeItem.tintARGB(tSteel, 0), "the stamped Steel knife renders Steel");
+		assertEquals(argbOf(MT.Iron), GTKnifeItem.tintARGB(tIron, 0), "the stamped Iron knife renders Iron");
+		assertNotEquals(GTKnifeItem.tintARGB(tSteel, 0), GTKnifeItem.tintARGB(tIron, 0), "Steel vs Iron knives must differ");
 	}
 
 	@Test

@@ -26,9 +26,11 @@ import com.google.common.collect.Multimap;
  * family face): durability/attack/dig-speed ride the shared {@link GT6ToolLadder} reads
  * with the knife constants; the attack speed stays the shape anchor. TINT: upstream
  * renders the knife through the sword {@code getRGBa} inheritance with the head pass
- * {@code VOID} (GT_Tool_Knife.getIcon :73-75) — the visible sprite takes the
- * SECONDARY (handle) colour, the Spruce fallback verbatim (the sword :119
- * {@code getRGBa(false)} face) — so {@link #tintARGB} index 0 = secondary.
+ * {@code VOID} (GT_Tool_Knife.getIcon :73-75), and the KNIFE recipe row is
+ * mUseNormalHandle=false (Loader_Tools.java:322, the sword :321 row is T) — the :451
+ * handle material IS the head material itself (OreDictMaterial.java:280
+ * {@code mHandleMaterial = this}), so the visible sprite takes the PRIMARY colour
+ * (the butchery face) — {@link #tintARGB} index 0 = primary.
  */
 public class GTKnifeItem extends GTSwordItem {
 
@@ -93,12 +95,14 @@ public class GTKnifeItem extends GTSwordItem {
 	}
 
 	/**
-	 * The runtime tint — the VISIBLE sprite takes the secondary colour (the class
-	 * javadoc; the upstream head pass is {@code VOID}): index 0 = secondary (Spruce
-	 * fallback), the overlay = the {@code -1} sentinel.
+	 * The runtime tint — the VISIBLE sprite takes the PRIMARY colour (the class
+	 * javadoc; the upstream head pass is {@code VOID}, but the KNIFE row is
+	 * mUseNormalHandle=false — Loader_Tools.java:322 — so the handle material IS the
+	 * head material): index 0 = primary (the butchery face), the overlay = the
+	 * {@code -1} sentinel.
 	 */
 	public static int tintARGB(ItemStack aStack, int aTintIndex) {
-		return GT6ToolLadder.bladeTintARGB(aStack, aTintIndex, true);
+		return GT6ToolLadder.bladeTintARGB(aStack, aTintIndex, false);
 	}
 
 	/**
