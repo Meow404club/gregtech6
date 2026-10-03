@@ -228,6 +228,14 @@ public final class GT6Foods {
 						for (RegistryObject<Item> tRow : GT6CropFoods.PLAINS) {
 							aOutput.accept(new ItemStack(tRow.get()));
 						}
+						// task vanilla-alias-foodside: the foodside small-item band rides the
+						// SAME "GregTech: Nature & Foods" tab — the four remains are MultiItemFood
+						// items (the per-multiitem tab discipline) and the two honey drops are
+						// the new-native honey/bee-product pair (the FAITHFUL-CALIBER declaration
+						// lives on GT6FoodsideItems); the T5a rows lead, the foodside tail appends
+						for (RegistryObject<Item> tRow : GT6FoodsideItems.ITEMS_LIST) {
+							aOutput.accept(new ItemStack(tRow.get()));
+						}
 					})
 					.build());
 
