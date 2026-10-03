@@ -15,7 +15,8 @@
  * retired the 8 diesel rows of that band into the block-model 3D form; task
  * r11-mains-tint-wrap retires the two remaining mains-controller rows of that band
  * (the lightning-rod controller + the large heat exchanger — the user-facing flat-white
- * inventory reports) into the same 3D form, the coke-oven item precedent.
+ * inventory reports) AND the rod pillar part row into the same 3D form, the coke-oven
+ * item precedent.
  */
 package gregtech6.datagen;
 
@@ -123,23 +124,22 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
 
     /**
      * The tier-B front-view families (tex-itemform-b, the 28 rows less the diesel
-     * eight and the two mains controllers): 2D icons over the family's own
-     * front/side/composite sprite — the single
-     * kinematics rows (crank, the water wheel, the gearbox), the lightning-rod
-     * rod PART over its composite sprite (the declared part-domain deviation), the
+     * eight, the two mains controllers and the rod pillar): 2D icons over the family's
+     * own front/side/composite sprite — the single
+     * kinematics rows (crank, the water wheel, the gearbox), the
      * 12 tap/funnel attachments over their family side sprite and the twin
      * distillation tower controllers over the borrowed parts side sprite. The 8 diesel
      * tiers LEFT this form in task diesel-item-3d — their block model is genuinely
      * faceted (front/back/side, the steam-family form), so the flat sprite was the
-     * anti-pattern; they are pinned 3D below — and the lightning-rod CONTROLLER and
-     * the heat exchanger left in task r11-mains-tint-wrap (the same shape).
+     * anti-pattern; they are pinned 3D below — the lightning-rod CONTROLLER and
+     * the heat exchanger left in task r11-mains-tint-wrap (the same shape), and the
+     * rod PILLAR left with them (the parts-walk item rides its block model now).
      */
     @Test
     void frontViewFamiliesAre2DIcons() throws Exception {
         assert2DForm("crank", "gt6:block/crank");
         assert2DForm("water_wheel", "gt6:block/water_wheel");
         assert2DForm("gearbox", "gt6:block/gearbox");
-        assert2DForm("lightning_rod", "gt6:block/lightningrod/rod");
         assertEquals(12, GT6Attachments.ROWS.size(), "the 12-attachment walk");
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             assert2DForm(tRow.path(), "gt6:block/" + (tRow.family()
@@ -226,8 +226,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 // family side sprites, which stay on disk for them)
                 {"water_wheel", "gt6:block/water_wheel"},
                 {"gearbox", "gt6:block/gearbox"},
-                {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"},
-                {"lightning_rod", "gt6:block/lightningrod/rod"}};
+                {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"}};
         for (String[] tCase : tArchetypes) {
             JsonObject tModel = generatedJson("assets/gt6/models/block/" + tCase[0] + ".json");
             assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
@@ -241,7 +240,8 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * The ok3D whitelist — the census families whose BlockItems LEGITIMATELY parent a
      * faceted block model (the vanilla furnace form; the tex-census item_form ok3D
      * column): the basic-machine family, the bridge band, the converter/dynamo two-layer
-     * band, the turbine mains, the parts design_0 walk and the large-machine controllers.
+     * band, the turbine mains, the parts design_0 walk, the large-machine controllers
+     * and the Lightning Rod pillar (the parts-walk item since task r11-mains-tint-wrap).
      * These stay block-parented; only the single-texture cubeAll families went 2D.
      */
     @Test
@@ -253,6 +253,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"electric_dynamo", "gt6:block/electric_dynamo"}, // the dynamo ladder
                 {"steam_turbine_graphene", "gt6:block/turbine_main_steam"}, // the turbine mains
                 {"machine_wall_tungsten", "gt6:block/machine_wall_tungsten_design_0"}, // the parts walk
+                {"lightning_rod", "gt6:block/lightning_rod"}, // the rod pillar part (the parts walk, r11-mains-tint-wrap)
                 {"large_massfab", "gt6:block/large_massfab"}, // the large-machine controllers
                 {"battery_box_lv", "gt6:block/battery_box/battery_box"}}; // the composite-energy band (tex-composite-family flip-back)
         for (String[] tCase : tArchetypes) {

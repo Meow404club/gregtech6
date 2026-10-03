@@ -192,6 +192,56 @@ class GT6PartPaintRenderDatagenTest {
         assertSame(gregapi.data.MT.Ad              , materialOf("machine_wall_adamantium"));
     }
 
+    /**
+     * The Lightning Rod pillar part (task r11-mains-tint-wrap): the :1179 row —
+     * NBT_TEXTURE "lightningrod", NBT_DESIGNS 0, upstream aMat MT.SteelGalvanized —
+     * walks the addParts single-model branch over the Lightning Rod family's
+     * registration (the machine_wall_tungsten/niobium_titanium_coil reuse shape). The
+     * former cube_all {@code lightningrod/rod} borrow (light-gray, ZERO overlay layer —
+     * the user-facing "pure white bare pillar" report) is retired: the family two-layer
+     * partModel over the {@code parts/lightningrod/0} borrow carries the tintindex-0
+     * seat (the SteelGalvanized column multiplies the grayscale wall) + the overlay
+     * cap-plate decals (the dark top/bottom art the upstream rod pillar shows). A lost
+     * row normalization goes red on the material/texture pins; a revert to the cube_all
+     * form goes red on the two-layer shape.
+     */
+    @Test
+    public void lightningRodPillarJoinsTheFamilyForm() throws Exception {
+        assertSame(gregapi.data.MT.SteelGalvanized, materialOf("lightning_rod"),
+                "the :1179 row column (the upstream aMat verbatim, the tint source)");
+        JsonObject tModel = json("assets/gt6/models/block/lightning_rod.json");
+        assertEquals(7, tModel.getAsJsonArray("elements").size(), "lightning_rod keeps the two-layer shape (body + 6 decals)");
+        JsonObject tTextures = tModel.getAsJsonObject("textures");
+        assertEquals("gt6:block/parts/lightningrod/0/colored/bottom", tTextures.get("down").getAsString(),
+                "lightning_rod down: the borrowed colored layer");
+        assertEquals("gt6:block/parts/lightningrod/0/colored/top", tTextures.get("up").getAsString(),
+                "lightning_rod up: the borrowed colored layer");
+        for (String tFace : List.of("north", "south", "west", "east")) {
+            assertEquals("gt6:block/parts/lightningrod/0/colored/side", tTextures.get(tFace).getAsString(),
+                    "lightning_rod " + tFace + ": the borrowed colored side (the :1179 texture key)");
+        }
+        for (String tFace : List.of("overlay_bottom", "overlay_top", "overlay_side")) {
+            assertTrue(tTextures.get(tFace).getAsString().startsWith("gt6:block/parts/lightningrod/0/overlay/"),
+                    "lightning_rod " + tFace + ": the overlay cap-plate decals");
+        }
+        JsonObject tBody = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
+        for (Map.Entry<String, JsonElement> tFace : tBody.getAsJsonObject("faces").entrySet()) {
+            assertEquals(0, tFace.getValue().getAsJsonObject().get("tintindex").getAsInt(),
+                    "lightning_rod body face " + tFace.getKey() + " carries tintindex 0 (the SteelGalvanized tint)");
+        }
+        for (int i = 1; i < 7; i++) {
+            JsonObject tDecal = tModel.getAsJsonArray("elements").get(i).getAsJsonObject();
+            for (Map.Entry<String, JsonElement> tFace : tDecal.getAsJsonObject("faces").entrySet()) {
+                assertNull(tFace.getValue().getAsJsonObject().get("tintindex"),
+                        "lightning_rod decal " + i + " face " + tFace.getKey() + " stays untinted (the overlay pass)");
+            }
+        }
+        JsonObject tVariants = json("assets/gt6/blockstates/lightning_rod.json").getAsJsonObject("variants");
+        assertEquals(1, tVariants.size(), "lightning_rod: the single-state blockstate (NBT_DESIGNS 0)");
+        assertEquals("gt6:block/lightning_rod", tVariants.getAsJsonObject(tVariants.keySet().iterator().next())
+                .get("model").getAsString(), "lightning_rod state maps to the family two-layer model");
+    }
+
     /** The rest of the tinted part family — every row resolves a live material (the walk coverage behind partPaintableBlockArray). */
     @Test
     public void remainingPartRowsResolveLiveMaterials() {
@@ -202,6 +252,7 @@ class GT6PartPaintRenderDatagenTest {
         assertNotNull(rowMaterial(GTMultiBlocks.VENTILATION_ROW.material()));
         for (var tRow : GTMultiBlocks.PROCESSOR_UNIT_ROWS) assertNotNull(rowMaterial(tRow.material()), tRow.path());
         assertNotNull(rowMaterial(GTMultiBlocks.WOOD_WALL_ROW.material()));
+        assertNotNull(rowMaterial(GTMultiBlocks.LIGHTNING_ROD_PILLAR_ROW.material()));
         for (var tRow : GTMultiBlocks.LIGHTNING_ROD_PART_ROWS) assertNotNull(rowMaterial(tRow.material()), tRow.path());
     }
 

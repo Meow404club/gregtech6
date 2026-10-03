@@ -221,4 +221,20 @@ class GTMachineTintModelTest extends GTOfflineRenderTestBase {
 		assertEquals(0, tJungleColour & 255, "jungle R zero");
 		assertEquals(0, (tJungleColour >> 16) & 255, "jungle B zero");
 	}
+
+	/**
+	 * THE r11-mains-tint-wrap numeric pin (the user's "正确的钨也不是白色的，这就是纯白的"
+	 * report): the lightning-rod controller's UNPAINTED world tint is the upstream ANY.W
+	 * dark gray — upstream MT.java:1109 {@code refractmetal(..., 50, 50, 50, 255, ...)} —
+	 * NOT white. The port's {@code MT.W} field and the {@code materialColor} clamp chain
+	 * are pinned at the value level, so a white-resolving regression on the mains colour
+	 * source fails here instead of on a player's screen.
+	 */
+	@Test
+	void tungstenUnpaintedTintIsTheUpstreamDarkGray() {
+		assertEquals(0x323232, gregtech6.block.GTBasicMachineBlock.materialColor(gregapi.data.MT.W),
+				"upstream MT.java:1109 — Tungsten 50/50/50 through the bind8 clamp chain");
+		assertEquals(0xFF323232, GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.MT.W, 0),
+				"the unpainted controller world tint through the seam (opaque dark gray)");
+	}
 }
