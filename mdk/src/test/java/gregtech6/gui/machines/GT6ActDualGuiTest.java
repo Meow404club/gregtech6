@@ -315,7 +315,14 @@ class GT6ActDualGuiTest extends GTMultiBlocksOfflineTestBase {
 	 */
 	@Test
 	public void theActUIFactoriesResolveThroughTheClientLookupPath() {
-		GTBasicMachinesMenus.registerActUIFactories();
+		// the forge leg's plain JUnit drives the production seam here; the neo leg's
+		// FML-backed JUnit harness already constructs the mod (FMLConstructModEvent →
+		// onModConstruct → the seam ran, and the GuiManager duplicate guard :59-61
+		// throws on a second registration) — so only drive it when unregistered.
+		// Either way the lookup contract below must hold.
+		if (!brachy.modularui.factory.GuiManager.hasFactory(GTActMenu.Factory.CRAFT.getFactoryName())) {
+			GTBasicMachinesMenus.registerActUIFactories();
+		}
 
 		// the wire identities (the route table opens exactly these two)
 		assertEquals("gt6:advanced_crafting_table", GTActMenu.Factory.CRAFT.getFactoryName().toString(),
