@@ -3533,28 +3533,16 @@ public final class GT6BlockStates extends BlockStateProvider {
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
         // task r11-mains-tint-wrap — the controller BlockItem rides the two-layer block
         // model (the multiblock_coke_oven 3D item form; the tex-itemform-b flat composite
-        // icon retired — the user-facing flat-white inventory face). The rod PART item
-        // below STAYS the 2D icon (the declared part-domain deviation).
+        // icon retired — the user-facing flat-white inventory face).
         itemModels().withExistingParent("multiblock_lightning_rod", modLoc("block/multiblock_lightning_rod"));
-        // the Tungsten Wall (task world-tint-render-type, the C5 clean-up; task
-        // debt-tungsten-wall-designs): the row IS the :1151 machine_wall row (texture
-        // "metalwall", NBT_DESIGNS 7, ANY.W) — its blockstate/item/models moved to the
-        // addParts() new-form walk (the anyPartBlock lookup), where it emits the full
-        // design 0..7 ladder like its ten siblings; the former single-design
-        // partModel(metalwall, 0) special case is retired.
-        // the Niobium-Titanium Coil (task debt-coil-design): the row IS the :1168 coil
-        // row (texture "coil", NBT_DESIGNS 1 — the designs 0/1 range of all six siblings
-        // :1167-1172) — the same anyPartBlock walk carries it over the two-step design
-        // ladder; the former cube_all borrow (lightningrod/coil) simpleBlock special
-        // case is retired (the family two-layer form replaces it).
-        addLightningRodPart("lightning_rod", "block/lightningrod/rod");
-    }
-
-    /** One cube_all Lightning Rod part block + its 2D-icon BlockItem (the addLargeBoilerPart shape, tex-itemform-b). */
-    private void addLightningRodPart(String aPath, String aTexture) {
-        Block tBlock = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath).get();
-        simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
-        itemModels().withExistingParent(aPath, mcLoc("item/generated")).texture("layer0", modLoc(aTexture));
+        // the rod PILLAR part ("lightning_rod", :1179) joined the addParts() new-form walk
+        // in task r11-mains-tint-wrap (the LIGHTNING_ROD_PILLAR_ROW, the
+        // machine_wall_tungsten/niobium_titanium_coil reuse shape): the former cube_all
+        // lightningrod/rod borrow (light-gray, ZERO overlay layer — the user-facing
+        // "pure white bare pillar" report) is retired for the family two-layer partModel
+        // over the parts/lightningrod/0 borrow, the :1179 SteelGalvanized column rides
+        // the paint walk, and the BlockItem parents the block model like every sibling
+        // part row. The former addLightningRodPart special case is deleted.
     }
 
     /**

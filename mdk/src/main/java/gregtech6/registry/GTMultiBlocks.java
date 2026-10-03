@@ -452,8 +452,9 @@ public final class GTMultiBlocks {
 		// Task world-tint-render-type (the C5 clean-up): the rows hand their upstream
 		// NBT_MATERIAL column through the row-less material-carrier constructor — the
 		// Tungsten Wall (machine_wall_tungsten, :1151 ANY.W) joins the paint walk this
-		// card; the rod material rides along dormant (its cube_all model stays untinted,
-		// the declared deviation below).
+		// card; the rod material rode along dormant until task r11-mains-tint-wrap
+		// retired the cube_all deviation (the pillar now walks the family two-layer form,
+		// the LIGHTNING_ROD_PILLAR_ROW datagen walk + the partPaintable append above).
 		// Task debt-tungsten-wall-designs (the C7' leftover ① retired): the :1151 row is a
 		// plain metal-wall registration — NBT_DESIGNS 7, the same design range 0..7 as every
 		// sibling (:1143-1153 are line-identical on the column) — so the Tungsten Wall now
@@ -758,6 +759,19 @@ public final class GTMultiBlocks {
 	/** The Wood Wall row (:1139 — texture "woodwall", NBT_DESIGNS 0, NBT_FLAMMABILITY 150, upstream aMat MT.WoodTreated; the Tank wood-wall precursor). */
 	public static final PartRow WOOD_WALL_ROW = new PartRow("wood_wall", "Wood Wall", 18001, 5.0F, 0, "woodwall", () -> MT.WoodTreated);
 
+	/**
+	 * The Lightning Rod pillar part row (:1179 — texture "lightningrod", NBT_DESIGNS 0,
+	 * upstream aMat MT.SteelGalvanized; REUSED — the block stays the Lightning Rod
+	 * family's registration, the machine_wall_tungsten/niobium_titanium_coil shape, the
+	 * {@code registerAtomicPart} guard skips it). Task r11-mains-tint-wrap: the row
+	 * joins the {@code addParts} datagen walk — the former cube_all
+	 * {@code lightningrod/rod} borrow (light-gray, ZERO overlay layer — the user-facing
+	 * "pure white bare pillar" report) retires into the family two-layer partModel over
+	 * {@code parts/lightningrod/0} (the upstream colored×mRGBa + overlay cap-plate art),
+	 * and the SteelGalvanized column rides the paint walk like every sibling part row.
+	 */
+	public static final PartRow LIGHTNING_ROD_PILLAR_ROW = new PartRow("lightning_rod", "Lightning Rod", 18104, 8.0F, 0, "lightningrod", () -> MT.SteelGalvanized);
+
 	/** Every new-form row in registration order (the tab walk + the census + the datagen walk). */
 	public static final java.util.List<PartRow> NEW_PART_ROWS;
 	static {
@@ -768,6 +782,7 @@ public final class GTMultiBlocks {
 		tRows.add(VENTILATION_ROW);
 		tRows.addAll(PROCESSOR_UNIT_ROWS);
 		tRows.add(WOOD_WALL_ROW);
+		tRows.add(LIGHTNING_ROD_PILLAR_ROW);
 		NEW_PART_ROWS = java.util.List.copyOf(tRows);
 	}
 
@@ -830,11 +845,14 @@ public final class GTMultiBlocks {
 						.strength(WOOD_WALL_ROW.hardness(), WOOD_WALL_ROW.hardness()).sound(SoundType.WOOD), WOOD_WALL_ROW.material())));
 		NEW_PART_ITEMS_BY_PATH.put(WOOD_WALL_ROW.path(), ITEMS.register(WOOD_WALL_ROW.path(),
 				() -> new GTComposedNameItem(NEW_PART_BLOCKS_BY_PATH.get(WOOD_WALL_ROW.path()).get(), new Item.Properties())));
-		// the coils + parts + ventilation + processor units (the ATOMIC rows)
+		// the coils + parts + ventilation + processor units + the Lightning Rod pillar
+		// (the ATOMIC rows; the pillar's row SKIPS — the block stays the Lightning Rod
+		// family's registration, task r11-mains-tint-wrap)
 		for (PartRow tRow : COIL_ROWS) registerAtomicPart(tRow);
 		for (PartRow tRow : PART_ROWS) registerAtomicPart(tRow);
 		registerAtomicPart(VENTILATION_ROW);
 		for (PartRow tRow : PROCESSOR_UNIT_ROWS) registerAtomicPart(tRow);
+		registerAtomicPart(LIGHTNING_ROD_PILLAR_ROW);
 	}
 
 	/**
@@ -862,10 +880,11 @@ public final class GTMultiBlocks {
 	}
 
 	/**
-	 * The part-family paint-tint walker (task issue8-multipart-tint): the 44 part
+	 * The part-family paint-tint walker (task issue8-multipart-tint): the 45 part
 	 * blocks whose datagen models carry tintindex 0 on the body cube — the 11 Dense Walls,
-	 * the 29 new-form part blocks (10 Metal Walls + Wood Wall + 5 Coils + 7 Parts +
-	 * Ventilation + 5 Processor Units), the Heat Transmitter, since task
+	 * the 30 new-form part blocks (10 Metal Walls + Wood Wall + 5 Coils + 7 Parts +
+	 * Ventilation + 5 Processor Units + since task r11-mains-tint-wrap the Lightning Rod
+	 * pillar), the Heat Transmitter, since task
 	 * c2-controller-tint the coke-oven bricks (the upstream Ceramic tint wired — the
 	 * #8 declared deviation retired), since task world-tint-render-type (the C5
 	 * clean-up) machine_wall_tungsten (the Lightning Rod family's registration of the
@@ -876,18 +895,22 @@ public final class GTMultiBlocks {
 	 * two-layer forms, the five sibling coils' family shape). The machine
 	 * {@code GTMachines.paintableBlockArray} census convention, feeding BOTH consumption
 	 * halves: the baked world tint ({@code GTMachineTintModel}, the p32 route) and the
-	 * inventory {@code ItemColor} (GTClientHandlers). NOT in the walk: the one remaining
-	 * Lightning Rod part borrow (the rod — its cube_all model carries no tintindex, the
-	 * declared deviation). Client-side call time only.
+	 * inventory {@code ItemColor} (GTClientHandlers). The LAST Lightning Rod part borrow
+	 * (the rod's cube_all model carried no tintindex, the declared deviation) joined in
+	 * task r11-mains-tint-wrap — the family two-layer form over the
+	 * {@code parts/lightningrod/0} borrow carries the seat, the :1179 SteelGalvanized
+	 * column resolves. Client-side call time only.
 	 */
 	public static net.minecraft.world.level.block.Block[] partPaintableBlockArray() {
-		java.util.List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>(44);
+		java.util.List<net.minecraft.world.level.block.Block> rBlocks = new java.util.ArrayList<>(45);
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : WALL_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
 		for (RegistryObject<GTMultiBlockPartBlock> tHandle : NEW_PART_BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
 		// the Lightning Rod family's reused registrations (the tungsten wall — task
-		// world-tint-render-type, the C5 clean-up; the coil — task debt-coil-design)
+		// world-tint-render-type, the C5 clean-up; the coil — task debt-coil-design; the
+		// pillar — task r11-mains-tint-wrap)
 		rBlocks.add(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("machine_wall_tungsten").get());
 		rBlocks.add(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("niobium_titanium_coil").get());
+		rBlocks.add(LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get("lightning_rod").get());
 		rBlocks.add(HEAT_TRANSMITTER.get());
 		rBlocks.add(COKE_OVEN_BRICKS.get());
 		return rBlocks.toArray(new net.minecraft.world.level.block.Block[0]);

@@ -305,15 +305,16 @@ class GT6MultiblockMainsTexDatagenTest {
      * task — the census walk over the generated tree, the boiler-test filesystem shape).
      * The two borrow-time composites STAY on disk: their tex-itemform-b item layer0
      * consumers left in task r11-mains-tint-wrap (the items ride the block models now),
-     * the sprites keep their README ledger rows (the rod part's rod sprite keeps ITS
-     * consumer — the part item stays 2D).
+     * the sprites keep their README ledger rows (the rod pillar's rod sprite left its
+     * last consumer in the same task — the part rides the parts/lightningrod/0
+     * two-layer borrow, the cube_all form is retired).
      */
     @Test
     public void retiredWallPlaceholderIsDeadEverywhereAndCompositesStay() throws Exception {
         Path tMdk = mdkRoot();
         assertFalse(Files.exists(tMdk.resolve("src/main/resources/assets/gt6/textures/block/large_boiler/wall.png")),
                 "the retired wall placeholder must be deleted");
-        for (String tKept : List.of("lightningrod/main.png", "large_heat_exchanger/main.png")) {
+        for (String tKept : List.of("lightningrod/main.png", "large_heat_exchanger/main.png", "lightningrod/rod.png")) {
             assertTrue(Files.exists(tMdk.resolve("src/main/resources/assets/gt6/textures/block").resolve(tKept)),
                     "the historical composite sprite must stay on disk: " + tKept);
         }
