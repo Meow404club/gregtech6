@@ -76,6 +76,31 @@ public final class GT6GuiParts {
         SLOT_SPECIAL, SLOT_FLUID, BUTTON_FLAT, BUTTON_FLAT_HOVER,
         ARROW_FORWARD, ARROW_FORWARD_RED, ARROW_FORWARD_CYAN, PLAYER_INVENTORY);
 
+    /**
+     * The theme panel base (task r11-gui-clean-base-theme): a SELF-DERIVED sheet —
+     * the amazawa wiremill skin with its machine-area interior filled flat
+     * ({@code mdk/tools/make_panel_base.py}; user ruling 2026-10-03_b: the base must be
+     * a generic machine-area-blank panel that keeps the printed player-inventory band).
+     * Deliberately NOT in {@link #ALL}: the crop manifest is pinned 1:1 against the 12
+     * pack crops, this one carries its own provenance row (assets/README.md "Derived
+     * panel base") and is pixel-replayed against its source by
+     * {@code GT6PanelBaseThemeCensusTest}.
+     */
+    public static final GuiPart PANEL_BASE = new GuiPart("panel_base_176x166.png", 176, 166, 4, 4, 4, 4);
+
+    /**
+     * The drawable face of a part for panel/widget consumers (theme JSON and W1+
+     * assembly). The fork resolves {@code textures/} + {@code .png} itself and takes
+     * the 9-slice borders in GUI px — parts with zero borders stay plain textures.
+     */
+    public static brachy.modularui.drawable.UITexture asUITexture(GuiPart part) {
+        return brachy.modularui.drawable.UITexture.builder()
+            .location(part.texture())
+            .imageSize(part.width(), part.height())
+            .adaptable(part.borderLeft(), part.borderTop(), part.borderRight(), part.borderBottom())
+            .build();
+    }
+
     private GT6GuiParts() {
     }
 }

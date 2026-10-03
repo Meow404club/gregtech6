@@ -10844,6 +10844,31 @@ GT6 crops are the fallback. Two-domain split: this domain is modern amazawa styl
 the block/item domains stay GT6-fidelity (r8 mainline) — census tests treat the two
 separately.
 
+## Derived panel base (task r11-gui-clean-base-theme)
+
+`gui/parts/panel_base_176x166.png` is a SELF-DERIVED asset, not a byte-identical
+borrow — user ruling 2026-10-03_b: the theme panel base must be a generic
+machine-area-blank panel that keeps the printed player-inventory band (the plain
+`panel_176x166.png` crop above bakes the machine-area slot prints and was rejected
+as the base). Derivation (canonical, re-runnable: `mdk/tools/make_panel_base.py`,
+`--verify` replays byte-identically; the Java census `GT6PanelBaseThemeCensusTest`
+additionally replays it PIXEL-exactly against the on-tree source): source
+`gui/machines/wiremill.png` (amazawa `Wiremill.png`, sha256
+`e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458` — picked by
+pixel census, fewest non-background pixels in the machine area x[4,172) y[4,83)
+(1392, ~10%) of all standard sheets; nei.png is flatter but prints no inventory
+band), machine-area interior filled flat with the region's modal panel color
+(203,204,212), border and everything y>=83 (printed player inventory) preserved
+1:1. Output sha256
+`c43ff1305dca8764c346473f94982111110f3fe686652559551f2778510a41e3`
+(derived, grounds to itself on the shelf). Consumer:
+`assets/gt6/themes/modern.json` `panel.background` (9-slice bl/bt/br/bb=4) — the
+vendored ModularUI panel theme paints it under every GT6 MUI panel
+(ModularPanel.getWidgetThemeInternal → theme.getPanelTheme(), IThemeApi.PANEL).
+Known size caveat, declared: only the storage drawer (356x250) is not 176x166 —
+its 9-slice center stretch also stretches the inventory band until the
+r11-gui-storage-clean card owns that panel's base story.
+
 ## task tex-bridge-kinetic (2026-09-29) — the bridge/kinetic two-layer wave
 
 Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
