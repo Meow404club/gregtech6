@@ -39,7 +39,6 @@ import gregtech6.registry.GT6Placeables;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
-import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6BakeFoods;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
@@ -109,10 +108,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation MONKEY_WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "monkey_wrench");
 	public static final ResourceLocation MAGNIFYING_GLASS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "magnifying_glass");
 	public static final ResourceLocation PINCERS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pincers");
-	/** The plate-mold crafting row (task w1-press-extruder-molds, MultiItemTechnological.java:247 stroke). */
-	public static final ResourceLocation SHAPE_EXTRUDER_PLATE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_plate");
-	/** The rod-mold crafting row (task w1-press-extruder-molds, MultiItemTechnological.java:221 stroke). */
-	public static final ResourceLocation SHAPE_EXTRUDER_ROD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_extruder_rod");
 	/** The LARGE Steel Crucible crafting row (task crucible-multiblock SPEC ⑦). */
 	public static final ResourceLocation LARGE_STEEL_CRUCIBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "large_steel_crucible");
 	/**
@@ -292,8 +287,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		monkeyWrenchBuilder().save(aConsumer, MONKEY_WRENCH_ID);
 		magnifyingGlassBuilder().save(aConsumer, MAGNIFYING_GLASS_ID);
 		pincersBuilder().save(aConsumer, PINCERS_ID);
-		shapeExtruderPlateBuilder().save(aConsumer, SHAPE_EXTRUDER_PLATE_ID);
-		shapeExtruderRodBuilder().save(aConsumer, SHAPE_EXTRUDER_ROD_ID);
+		for (MoldRecipeRow tRow : extruderMoldChainRows()) tRow.builder().save(aConsumer, tRow.id()); // task mold-extruder-shapes — the full 64-row mold chain
 		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id()); // task food-bake-items
 		for (BakeCraftRow tRow : bakeCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aConsumer, tRow.id()); else tRow.shapeless().save(aConsumer, tRow.id());} // task food-bake-recipes
 		for (BakeCraftRow tRow : bottleCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aConsumer, tRow.id()); else tRow.shapeless().save(aConsumer, tRow.id());} // task food-bottles-min — the independent bottles band
@@ -545,8 +539,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		monkeyWrenchBuilder().save(aOutput, MONKEY_WRENCH_ID);
 		magnifyingGlassBuilder().save(aOutput, MAGNIFYING_GLASS_ID);
 		pincersBuilder().save(aOutput, PINCERS_ID);
-		shapeExtruderPlateBuilder().save(aOutput, SHAPE_EXTRUDER_PLATE_ID);
-		shapeExtruderRodBuilder().save(aOutput, SHAPE_EXTRUDER_ROD_ID);
+		for (MoldRecipeRow tRow : extruderMoldChainRows()) tRow.builder().save(aOutput, tRow.id()); // task mold-extruder-shapes — the full 64-row mold chain
 		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aOutput, tRow.id()); // task food-bake-items
 		for (BakeCraftRow tRow : bakeCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aOutput, tRow.id()); else tRow.shapeless().save(aOutput, tRow.id());} // task food-bake-recipes
 		for (BakeCraftRow tRow : bottleCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aOutput, tRow.id()); else tRow.shapeless().save(aOutput, tRow.id());} // task food-bottles-min — the independent bottles band
@@ -1894,39 +1887,112 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The plate-mold crafting row (task w1-press-extruder-molds) — the upstream
-	 * {@code "x  ", " P ", "   "} stroke VERBATIM (MultiItemTechnological.java:247, the
-	 * plate-identity file position): 'x' = {@code #gt6:tools/file} (the CR.java:200
-	 * craftingToolFile letter), 'P' = {@link GT6ItemTags#EXTRUDER_SHAPE_BASE} (the declared
-	 * row0 flattening — upstream chains Plate←Foil+file through the pooled Empty/Foil
-	 * intermediates; the port keys both row0 molds on the chain root's tungsten-carbide
-	 * plate face, one file stroke per mold identity). Result 1x plate mold — the RM.Extruder
-	 * plate row's shaping tool (RM.java:405).
+	 * One extruder-mold crafting row — builder + save id (the FoodMoldRecipeRow form).
 	 */
-	private ShapedRecipeBuilder shapeExtruderPlateBuilder() {
-		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.get())
-				.pattern("x  ")
-				.pattern(" P ")
-				.pattern("   ")
-				.define('x', GT6ItemTags.TOOLS_FILE)
-				.define('P', GT6ItemTags.EXTRUDER_SHAPE_BASE)
-				.unlockedBy("has_shape_base", has(GT6ItemTags.EXTRUDER_SHAPE_BASE));
+	private record MoldRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {
 	}
 
 	/**
-	 * The rod-mold crafting row (task w1-press-extruder-molds) — the upstream
-	 * {@code "   ", " Px", "   "} stroke VERBATIM (MultiItemTechnological.java:221, the
-	 * rod-identity file position; the flattened base ingredient per the plate-mold doc).
-	 * Result 1x rod mold — the RM.Extruder rod row's shaping tool (RM.java:407).
+	 * One machining row of the upstream CR.shaped anchor chains (MultiItemTechnological
+	 * .java:218-254 the Shape_Extruder family; the SimpleEx twins :294-330 carry the
+	 * IDENTICAL stroke plan over their own family ids): the mold id suffix, the parent
+	 * mold it machines down from, and the 3x3 stroke verbatim — 'x' is the CR.java:359
+	 * wirecutter tool letter walking the six strike positions clockwise, 'P' the parent.
 	 */
-	private ShapedRecipeBuilder shapeExtruderRodBuilder() {
-		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.get())
-				.pattern("   ")
-				.pattern(" Px")
-				.pattern("   ")
-				.define('x', GT6ItemTags.TOOLS_FILE)
-				.define('P', GT6ItemTags.EXTRUDER_SHAPE_BASE)
-				.unlockedBy("has_shape_base", has(GT6ItemTags.EXTRUDER_SHAPE_BASE));
+	private record MoldChainForm(String aMold, String aParent, String aRow0, String aRow1, String aRow2) {}
+
+	/** The shared stroke plan, upstream row order verbatim (:218-254). */
+	private static final List<MoldChainForm> MOLD_CHAIN_FORMS = List.of(
+			new MoldChainForm("ingot", "empty", "x  ", " P ", "   "),        // :218
+			new MoldChainForm("plate_tiny", "empty", " x ", " P ", "   "),   // :219
+			new MoldChainForm("plate_curved", "empty", "  x", " P ", "   "), // :220
+			new MoldChainForm("rod", "empty", "   ", " Px", "   "),          // :221
+			new MoldChainForm("foil", "empty", "   ", " P ", "  x"),         // :222
+			new MoldChainForm("ring", "empty", "   ", " P ", " x "),         // :223
+			new MoldChainForm("bolt", "rod", "x  ", " P ", "   "),           // :225
+			new MoldChainForm("wire", "rod", " x ", " P ", "   "),           // :226
+			new MoldChainForm("rod_long", "rod", "  x", " P ", "   "),       // :227
+			new MoldChainForm("wire_fine", "rod", "   ", " Px", "   "),      // :228
+			new MoldChainForm("block", "ingot", "x  ", " P ", "   "),        // :230
+			new MoldChainForm("pickaxe", "ingot", " x ", " P ", "   "),      // :231
+			new MoldChainForm("hammer", "ingot", "  x", " P ", "   "),       // :232
+			new MoldChainForm("hoe", "ingot", "   ", " Px", "   "),          // :233
+			new MoldChainForm("gear", "ring", "x  ", " P ", "   "),          // :235
+			new MoldChainForm("gear_small", "ring", " x ", " P ", "   "),    // :236
+			new MoldChainForm("bottle", "ring", "  x", " P ", "   "),        // :237
+			new MoldChainForm("cell", "ring", "   ", " Px", "   "),          // :238
+			new MoldChainForm("ccc", "ring", "   ", " P ", "  x"),           // :239
+			new MoldChainForm("axe", "plate_tiny", "x  ", " P ", "   "),     // :241
+			new MoldChainForm("shovel", "plate_tiny", " x ", " P ", "   "),  // :242
+			new MoldChainForm("file", "plate_tiny", "  x", " P ", "   "),    // :243
+			new MoldChainForm("sword", "plate_tiny", "   ", " Px", "   "),   // :244
+			new MoldChainForm("saw", "plate_tiny", "   ", " P ", "  x"),     // :245
+			new MoldChainForm("plate", "foil", "x  ", " P ", "   "),         // :247
+			new MoldChainForm("casing", "foil", " x ", " P ", "   "),        // :248
+			new MoldChainForm("pipe_tiny", "plate_curved", "x  ", " P ", "   "),   // :250
+			new MoldChainForm("pipe_small", "plate_curved", " x ", " P ", "   "),  // :251
+			new MoldChainForm("pipe_medium", "plate_curved", "  x", " P ", "   "), // :252
+			new MoldChainForm("pipe_large", "plate_curved", "   ", " Px", "   "),  // :253
+			new MoldChainForm("pipe_huge", "plate_curved", "   ", " P ", "  x"));  // :254
+
+	/**
+	 * The FULL extruder-mold crafting chain (task mold-extruder-shapes) — 64 rows, both
+	 * families. Supersedes the w1 flattened plate/rod rows: with the Empty molds now
+	 * registered, every mold crafts from its TRUE upstream parent (the w1 javadoc's "the
+	 * pooled Empty/Foil intermediates" no longer pooled). Row plan:
+	 * <ul>
+	 * <li>the two Empty folds (MultiItemTechnological.java:184/:260, the {@code "hf","xP"}
+	 * 2x2 stroke over a double plate): 'h' = {@code #gt6:tools/hard_hammer} (the
+	 * OreDictToolNames.hammer face, the foodmold row's letter mapping), 'f' =
+	 * {@code #gt6:tools/file}, 'x' = {@code #gt6:tools/wire_cutter} (the CR.java:359
+	 * letter — the w1 rows' file reading was a misread), and 'P' =
+	 * {@code OP.plateDouble.dat(MT.TungstenCarbide)} for the Shape_Extruder Empty vs
+	 * {@code OP.plateDouble.dat(ANY.Steel)} for the SimpleEx Empty — the ANY.Steel walk
+	 * folds to its Steel representative (the Knightmetal/MeteoricSteel co-members are
+	 * unported; the bathing-pot steel-plate precedent).</li>
+	 * <li>the 31+31 machining rows from {@link #MOLD_CHAIN_FORMS} keyed on the EXACT
+	 * parent mold item — the chain root is always the family's own Empty (multi-step:
+	 * e.g. Plate ← Foil ← Empty, the upstream :247/:222 depth preserved).</li>
+	 * </ul>
+	 * The in-grid tools ride the vanilla container-item channel (the foodmold row's
+	 * tool-mark form); CR.DEF_REV has no vanilla-datagen face (the reversed-grid freedom
+	 * is inherent to vanilla shaped matching).
+	 */
+	private List<MoldRecipeRow> extruderMoldChainRows() {
+		java.util.Map<String, net.minecraft.world.item.Item> tMolds = new java.util.LinkedHashMap<>();
+		for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS) {
+			tMolds.put(tMold.getId().getPath(), tMold.get());
+		}
+		net.minecraft.world.item.Item tTcPlateDouble = GTMaterialItems.get(gregapi.data.OP.plateDouble, gregapi.data.MT.TungstenCarbide).get();
+		net.minecraft.world.item.Item tSteelPlateDouble = GTMaterialItems.get(gregapi.data.OP.plateDouble, gregapi.data.MT.Steel).get();
+		List<MoldRecipeRow> rRows = new ArrayList<>();
+		for (String tFamily : new String[] {"shape_extruder", "shape_simple_ex"}) {
+			net.minecraft.world.item.Item tPlateDouble = tFamily.equals("shape_extruder") ? tTcPlateDouble : tSteelPlateDouble;
+			String tEmptyId = tFamily + "_empty";
+			Item tEmpty = tMolds.get(tEmptyId);
+			rRows.add(new MoldRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tEmpty)
+					.pattern("hf")
+					.pattern("xP")
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.define('f', GT6ItemTags.TOOLS_FILE)
+					.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+					.define('P', tPlateDouble)
+					.unlockedBy("has_plate_double", has(tPlateDouble)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, tEmptyId)));
+			for (MoldChainForm tForm : MOLD_CHAIN_FORMS) {
+				String tMoldId = tFamily + "_" + tForm.aMold();
+				Item tParent = tMolds.get(tFamily + "_" + tForm.aParent());
+				rRows.add(new MoldRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tMolds.get(tMoldId))
+						.pattern(tForm.aRow0())
+						.pattern(tForm.aRow1())
+						.pattern(tForm.aRow2())
+						.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+						.define('P', tParent)
+						.unlockedBy("has_" + tForm.aParent(), has(tParent)),
+						new ResourceLocation(GT6DataGenerators.MOD_ID, tMoldId)));
+			}
+		}
+		return rRows;
 	}
 
 	/**

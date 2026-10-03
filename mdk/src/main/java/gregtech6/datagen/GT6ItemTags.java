@@ -389,17 +389,6 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final String PLATES_FAMILY = "plates/%s";
 
 	/**
-	 * The mold crafting base ingredient — {@code forge:plates/tungsten_carbide} (task
-	 * w1-press-extruder-molds): the row0 flattening of the upstream crafting chain
-	 * Empty(:182, plateDouble WC) → Rod(:221)/Foil(:222) → Plate(:247) — the Empty/Foil
-	 * intermediates are POOLED (not row0 items), so the two row0 molds key their 'P'
-	 * ingredient on the upstream chain ROOT's material face (the GT6FoodCans
-	 * plate_curved_tin precedent: the upstream OreDict ingredient → the existing platform
-	 * material tag, single-sourced here).
-	 */
-	public static final TagKey<Item> EXTRUDER_SHAPE_BASE = materialTag(PLATES_FAMILY, "tungsten_carbide");
-
-	/**
 	 * The rod family — GTCEu TagPrefix.java:502 {@code defaultTagPath("rods/%s")} over the
 	 * GT6 {@code stick} prefix (the GT6 rod naming; the GTCEu RODS_WOODEN special case —
 	 * ItemTagLoader:87-88, treated-wood-rod-to-forge-rods/wooden — is a recipe-INPUT face
