@@ -23,7 +23,8 @@ import gregtech6.recipes.RecipeMap;
  * decisions.2026-09-26-debt-jei-emi-coverage) — the shared seam consumed by BOTH the JEI
  * category ({@link GT6RecipeMapJeiCategory}) and the EMI category
  * (gregtech6.emi.GT6RecipeMapEmiCategory/GT6RecipeMapEmiRecipe), the same cross-package
- * sharing shape as the tier-b {@link GT6RecipeViewerText} seam. Strictly vanilla +
+ * sharing shape as the retired tier-b viewer-text seam (the GT6RecipeViewerText holder,
+ * retired task mbpreview-shell-replicate). Strictly vanilla +
  * gregtech6.recipes imports: no JEI, no EMI, no client class — the whole face is
  * offline-testable.
  *

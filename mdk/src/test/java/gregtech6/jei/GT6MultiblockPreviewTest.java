@@ -105,7 +105,8 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6MultiblockPreviews.entries().size(), "first version: exactly one preview row");
 		GT6MultiblockPreviews.Entry tEntry = GT6MultiblockPreviews.entries().get(0);
 		assertEquals("multiblock_coke_oven", tEntry.name(), "the row is the coke oven (registry-name census key)");
-		assertEquals("gt6.jei.multiblock_preview", GT6MultiblockPreviews.TITLE_KEY, "category title key pinned");
+		assertEquals("gt6.jei.multiblock_preview", GT6MultiblockPreviews.TITLE_KEY,
+				"category title key pinned (the ONE text survivor — the category name, kept)");
 		assertEquals("multiblock_preview", GT6MultiblockPreviews.UID_PATH, "category uid path pinned");
 		assertEquals(2, GT6MultiblockPreviews.DISPLAY_FACING, "display facing = north (Direction.get3DDataValue)");
 		assertEquals(200, GT6MultiblockPreviews.PAGE_WIDTH);
@@ -113,13 +114,37 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 	}
 
 	@Test
-	public void descriptionRidesTheSharedInfoSeam() {
-		// the folded text-info body: the entry's description IS the shared
-		// gt6.jei.info.multiblock_coke_oven component (getString() = the raw key offline —
-		// no Language is loaded bare-JVM, so the key literal is exactly what comes back)
-		GT6MultiblockPreviews.Entry tEntry = GT6MultiblockPreviews.entries().get(0);
-		assertEquals("gt6.jei.info.multiblock_coke_oven", tEntry.description().getString(),
-				"the page description must ride the shared info-page seam, not a fresh key");
+	public void previewWidgetPinsTheReplicatedShell() throws Exception {
+		// the mbpreview-shell-replicate face, pinned at the bytecode layer (the widget
+		// links the compile-only ModularUI client stack — never class-loaded offline, the
+		// class doc): the ray-tracing renderer + green frame, the left-click selection
+		// callback, the vendored LayerButton state machine, the viewer-recognized material
+		// slots — and the retired description strip GONE (the 40px give-back to the 3D view)
+		try (java.io.InputStream tWidget = GT6MultiblockPreviewWidget.class
+				.getResourceAsStream("GT6MultiblockPreviewWidget.class");
+			 java.io.InputStream tTable = GT6MultiblockPreviews.class
+					 .getResourceAsStream("GT6MultiblockPreviews.class")) {
+			assertNotNull(tWidget, "preview widget class resource");
+			String tWidgetBytes = new String(tWidget.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+			assertNotNull(tTable, "preview table class resource");
+			String tTableBytes = new String(tTable.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+			assertTrue(tWidgetBytes.contains("brachy/modularui/drawable/SchemaRenderer"),
+					"the 3D view rides the ray-tracing SchemaRenderer (the GTCEu renderer face)");
+			assertTrue(tWidgetBytes.contains("brachy/modularui/drawable/schema/BlockHighlight"),
+					"the green selection frame is wired (the GTCEu highlightRenderer face)");
+			assertTrue(tWidgetBytes.contains("listenGuiAction") && tWidgetBytes.contains("lastRayTrace"),
+					"left-click selection reads the traced hit (the GTCEu setBlockOnClick face)");
+			assertTrue(tWidgetBytes.contains("brachy/modularui/widgets/SchemaWidget$LayerButton"),
+					"the y-level filter is the vendored LayerButton state machine");
+			assertTrue(tWidgetBytes.contains("brachy/modularui/integration/recipeviewer/RecipeViewerSlotWidget"),
+					"the material column is viewer-recognized slots (the GTCEu parts face)");
+			assertTrue(tWidgetBytes.contains("brachy/modularui/widgets/dynamic/DynamicWidget"),
+					"the selected-block display is the GTCEu dynamic rebuild face");
+			assertFalse(tWidgetBytes.contains("brachy/modularui/widgets/TextWidget"),
+					"the description strip is retired — no TextWidget in the page");
+			assertFalse(tTableBytes.contains("description"),
+					"the table row carries NO text face (name+item+pattern only)");
+		}
 	}
 
 	@Test

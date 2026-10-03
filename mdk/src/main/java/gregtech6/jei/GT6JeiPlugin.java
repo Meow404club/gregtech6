@@ -66,17 +66,6 @@ public class GT6JeiPlugin implements IModPlugin {
 	/** Stable plugin uid path — the offline test pins both halves against drift. */
 	public static final String PLUGIN_UID_PATH = "jei_plugin";
 
-	/**
-	 * The coke oven structure description lang key — the reconciliation seam between the
-	 * lang providers (GT6EnUs/GT6ZhCn) and the page that renders it. Since task
-	 * debt-emi-tier-b the literal home is the viewer-neutral {@link GT6RecipeViewerText};
-	 * since task multiblock-preview-infra its consumer is the preview widget's description
-	 * line (the text-info pages are gone from both plugins) — this forwarding constant
-	 * stays as the pinned face the offline tests assert (compile-time inlined, zero
-	 * runtime indirection).
-	 */
-	public static final String INFO_KEY_COKE_OVEN = GT6RecipeViewerText.INFO_KEY_COKE_OVEN;
-
 	/** Stable plugin uid — one constant instance, the offline test pins it against drift. */
 	public static final ResourceLocation PLUGIN_UID = new ResourceLocation("gt6", PLUGIN_UID_PATH);
 

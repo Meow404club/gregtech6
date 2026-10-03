@@ -20,7 +20,6 @@ import gregtech6.jade.GT6FluidProvider;
 import gregtech6.jade.GT6JadeRows;
 import gregtech6.jade.GT6MachineProvider;
 import gregtech6.jade.GT6SensorProvider;
-import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.jei.GT6MultiblockPreviews;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6BookText;
@@ -2483,7 +2482,6 @@ public class GT6ZhCn extends LanguageProvider {
 		// tooltip (仅限工业用途！, the :617 hand row; 润滑油桶 the naming candidate).
 		addDirect("item.gt6.lubricant_bucket");
 		addDirect(gregtech6.item.GT6LubricantBucket.TOOLTIP_KEY);
-		addDirect(GT6JeiPlugin.INFO_KEY_COKE_OVEN);
 		// task debt-oregen-title-i18n — the ore-gen distribution page title (the
 		// GT6OreGenInfoLayout.TITLE_KEY consumer): hand row 矿石生成分布, no dump face —
 		// the page is a modern enhancement, upstream 1.7.10 has no NEI distribution face

@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -67,10 +66,11 @@ public final class GT6MultiblockPreviews {
 	 * One table row: the registry name doubles as the offline census key and the recipe-id
 	 * suffix; the item is the controller's BlockItem (the U anchor); the pattern supplier
 	 * re-reads the machine's own binding so the page and the server check share ONE
-	 * declaration (the pattern-checker red line — never a transcribed copy).
+	 * declaration (the pattern-checker red line — never a transcribed copy). NO text
+	 * description: the 3D preview speaks for itself (task mbpreview-shell-replicate —
+	 * the former description face retired with the text-info pages).
 	 */
-	public record Entry(String name, Supplier<Item> item, Supplier<GTMultiBlockPattern> pattern,
-			Component description) {
+	public record Entry(String name, Supplier<Item> item, Supplier<GTMultiBlockPattern> pattern) {
 
 		/**
 		 * The controller {@link Block} — the anchor cell is painted with it (the GT6
@@ -88,13 +88,10 @@ public final class GT6MultiblockPreviews {
 	 * The table. The coke-oven row's pattern supplier builds a THROWAWAY TileEntity —
 	 * {@code getStructurePattern()} is a pure lazy declaration (no level access,
 	 * TileEntityCokeOven.java:119-130), the cheapest honest reuse of the one binding.
-	 * The description is the shared info-page text (task debt-emi-tier-b seam) folded
-	 * into the page — the text-info pages this card replaces.
 	 */
 	private static final List<Entry> ENTRIES = List.of(
 			new Entry("multiblock_coke_oven", GTMultiBlocks.COKE_OVEN_ITEM,
-					() -> new TileEntityCokeOven(BlockPos.ZERO, Blocks.AIR.defaultBlockState()).getStructurePattern(),
-					GT6RecipeViewerText.cokeOvenInfo()));
+					() -> new TileEntityCokeOven(BlockPos.ZERO, Blocks.AIR.defaultBlockState()).getStructurePattern()));
 
 	/** The live rows — one per previewed machine (the data cards' growth point). */
 	public static List<Entry> entries() {
