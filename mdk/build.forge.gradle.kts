@@ -252,6 +252,24 @@ sourceSets["test"].runtimeClasspath += files().from(
     }
 )
 
+// ModularUI guard 测试喂件（task mb-preview-emi-drag-fix）：EMI 输入链守卫测试
+// （GT6MultiblockPreviewEmiInputTest）读 RecipeScreenMixin 字节码 + modularui.mixins.json。
+// 不走类路径：neoforge test JVM 跑 FML 模块层（TRANSFORMER 层实证 2026-10-03），modularui
+// 是独立 mod 模块类加载器，跨 mod 资源读取恒 null——两腿统一走文件系统：子项目节点 build
+// 产出目录经系统属性传路径，测试直接读文件字节（javap 读 jar 的既有 guard 惯例同型）。
+// 跨项目只取 layout.buildDirectory（核心属性，零 model 访问——extensions.getByType 在
+// stonecutter 评估序下炸 JavaPluginExtension-not-exist，2026-10-03 实证）。目录就绪由编译链
+// 保证：test→testClasses→main compile→modCompileOnly/runtimeOnly(project) 强制其产物。
+// test 专属，runs/jar 不动。
+val tMuiClasses = project(":third-party:modularui:1.20.1-forge")
+    .layout.buildDirectory.dir("classes/java/main")
+val tMuiResources = project(":third-party:modularui:1.20.1-forge")
+    .layout.buildDirectory.dir("resources/main")
+tasks.withType(Test::class).configureEach {
+    systemProperty("gt6.modularui.classes", tMuiClasses.get().asFile.absolutePath)
+    systemProperty("gt6.modularui.resources", tMuiResources.get().asFile.absolutePath)
+}
+
 // ---- Test sourceSet 类路径补全（p3-fullprefix-creativetab：注册判定/first-wins/判据收敛断言）----
 // 测试 JVM 需要加载 gregapi（root jar，经 main 类路径）与 main 类引用的 MC 类型
 // （GTMaterialItems 的字节码校验需要 net.minecraft 类在测试类路径上），

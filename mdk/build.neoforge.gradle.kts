@@ -274,6 +274,21 @@ sourceSets["test"].runtimeClasspath += sourceSets["main"].output
 sourceSets["test"].compileClasspath += sourceSets["main"].compileClasspath
 sourceSets["test"].runtimeClasspath += sourceSets["main"].runtimeClasspath
 
+// ModularUI guard 测试喂件（task mb-preview-emi-drag-fix）——与 forge 节点 build.forge.gradle.kts
+// 同构对称：GT6MultiblockPreviewEmiInputTest 读 RecipeScreenMixin 字节码 + modularui.mixins.json。
+// 本节点 test JVM 跑 FML 模块层（forgejunitdev TRANSFORMER 层，2026-10-03 实证），modularui
+// 是独立 mod 模块类加载器，runtimeOnly(project) 虽在原始类路径上、跨 mod 资源读取恒 null——
+// 两腿统一走文件系统：子项目节点 build 产出目录经系统属性传路径，测试直接读文件字节。
+// 跨项目只取 layout.buildDirectory（核心属性，零 model 访问）。test 专属，runs/jar 不动。
+val tMuiClasses = project(":third-party:modularui:1.21.1-neoforge")
+    .layout.buildDirectory.dir("classes/java/main")
+val tMuiResources = project(":third-party:modularui:1.21.1-neoforge")
+    .layout.buildDirectory.dir("resources/main")
+tasks.withType(Test::class).configureEach {
+    systemProperty("gt6.modularui.classes", tMuiClasses.get().asFile.absolutePath)
+    systemProperty("gt6.modularui.resources", tMuiResources.get().asFile.absolutePath)
+}
+
 // neoforge.mods.toml 模板展开：NeoForge 1.20.5+ 元数据文件为 META-INF/neoforge.mods.toml
 // （模板 src/main/resources/META-INF/neoforge.mods.toml：loaderVersion "[2,)" / 依赖 modId=neoforge）。
 // 与 forge 节点同构：共享模板目录 mdk/src/main/templates，产物挂 main resources。

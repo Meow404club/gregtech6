@@ -50,7 +50,14 @@ import gregtech6.multiblock.GTMultiBlockPattern;
  * carries a bare {@code Predicate} with no candidate list, so the selected cell simply
  * NAMES its block (the {@code partBlock} enumeration face, GTMultiBlockPattern.java:134);
  * no in-world preview button — the port's hologram is a separate card (P12 renderer, id331).
- * Drag-rotate / scroll-zoom stay (SchemaWidget defaults) — free value.
+ * Drag-rotate / scroll-zoom stay (SchemaWidget defaults) — live on BOTH legs: the JEI
+ * bridge forwards every event, and the EMI leg rides the vendored fork's
+ * {@code RecipeScreenMixin}, which captures RecipeScreen's scroll/drag/release at HEAD and
+ * hands them to {@code ModularUIEmiRecipe.UIWrapperWidget} (upstream MUI PR #39 — those
+ * three methods are mixin-invoked, NOT dead: they were once scoped as unreachable because
+ * only upstream EMI's dispatch was read, missing the vendored fork's own injection; the
+ * chain is pinned by GT6MultiblockPreviewEmiInputTest, and left-click select rides the
+ * same forwarded release via its {@code IGuiAction.MouseReleased} listener).
  *
  * <p>Construction happens ONLY inside a live viewer page (the JEI category's
  * wrapperFunction and the EMI wrapper's supplier are lazy), where the vendored ModularUI
