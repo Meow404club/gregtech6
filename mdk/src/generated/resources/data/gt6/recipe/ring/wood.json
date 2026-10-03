@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "minecraft:wooden_buttons"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "P ",
+    " k"
+  ],
+  "result": {
+    "count": 4,
+    "id": "gt6:ring_wood"
+  }
+}

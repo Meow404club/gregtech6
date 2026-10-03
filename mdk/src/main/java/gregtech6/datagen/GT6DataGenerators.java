@@ -122,6 +122,12 @@ public final class GT6DataGenerators {
         // ruling); it rides the SAME gt6:material_tool serializer + stamped identity seam
         event.getGenerator().addProvider(true,
             new GT6GunRecipes(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+        // task toolhead-r11d-wood-button-belt: the wood-button belt — the Woods:137-152
+        // 16 static rows, another SEPARATE provider (the GT6GunRecipes ruling again:
+        // GT6CraftingRecipes.java stays the in-flight toolhead cards' file); plain vanilla
+        // shaped rows, MUST precede the dual-directory mirror below.
+        event.getGenerator().addProvider(true,
+            new GT6WoodButtonRecipes(event.getGenerator().getPackOutput(), event.getLookupProvider()));
         // task worldgen-pipeline-skeleton: the first dynamic-registry provider — the 17
         // stone blobs' configured/placed features + biome modifiers off ONE RegistrySetBuilder
         // (three BootstapContexts, GT6WorldgenDatagen.BUILDER; GTCEu DataGenerators.java:40
