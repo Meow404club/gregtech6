@@ -123,6 +123,7 @@ public final class GT6CapabilityWiring {
 		registerPortalRelays(aEvent); // task portals-mini-nether-end (tail-append; shared serial file)
 		registerLongDistancePipeFaces(aEvent); // task long-distance-pipes (tail-append; shared serial file)
 		registerReactorCoreFaces(aEvent); // task debt-reactor-b-2x2-be (tail-append; shared serial file)
+		registerSiftingTableFace(aEvent); // task sifting-table-family (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -968,6 +969,23 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tCore,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
+	}
+
+	// -- the manual Sifting Table (sifting-table-family; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// ITEM-ONLY face (zero fluid tanks on the class — the oven/ACT shape): the 13-slot
+	// side view over the canInsertItem/canExtractItem gates (upstream
+	// MultiTileEntitySiftingTable.java:445-453 — slot 0 accepts SIFTING row inputs,
+	// slots 1..12 extract). The forge leg answers through the
+	// GT6SiftingTableBlockEntity getCapability override and cannot see this file.
+	// Without this row every external hopper push (the VanillaInventoryCodeHooks
+	// insertHook level query) is capability-blind on this node while the 1.20.1 BE
+	// override hides the gap — the ADR-P15-4 census discipline, mechanized by
+	// GT6CapabilityWiringSeamTest.
+	private static void registerSiftingTableFace(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<gregtech6.tileentity.tools.GT6SiftingTableBlockEntity> tTable = GT6SiftingTables.SIFTING_TABLE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tTable,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
 }
