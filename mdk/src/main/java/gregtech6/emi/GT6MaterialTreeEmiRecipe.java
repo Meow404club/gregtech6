@@ -3,13 +3,14 @@ package gregtech6.emi;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
-import dev.emi.emi.api.widget.SlotWidget;
 import dev.emi.emi.api.widget.WidgetHolder;
 
 import gregtech6.recipes.tree.MaterialTreeDisplay;
@@ -20,6 +21,7 @@ import gregtech6.recipes.tree.MaterialTreeDisplay.Overflow;
 import gregtech6.recipes.tree.MaterialTreeLayout;
 import gregtech6.recipes.tree.MaterialTreeLayout.EdgeLayout;
 import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
+import gregtech6.recipes.tree.MaterialTreeViewport;
 import gregtech6.registry.GTMaterialItems;
 
 /**
@@ -42,8 +44,26 @@ import gregtech6.registry.GTMaterialItems;
  * <p>Id stability: {@code gt6:material_tree/<snake(material)>} — the snake_case face is the
  * registered-item id convention (GTMaterialItems.itemIdOf), so the id survives a material's
  * localisation.
+ *
+ * <p>Nav suite (task nav-m2-emi, consuming the S1 {@link MaterialTreeViewport}): every page
+ * open creates a FRESH viewport and wires it through all the widgets — the wires/labels
+ * drawable and the {@link GT6MaterialTreeTransformSlot}s transform through it at render
+ * time, the control strip (zoom in/out/reset buttons, click-track slider) and the invisible
+ * key canvas drive it — and closing the page drops the widgets, which is the whole
+ * apply-unapply 闭环 (no static state, nothing leaks between opens). The control strip
+ * rides a band BELOW the canvas ({@link #CONTROL_STRIP_H}) — the recipe height is the EMI
+ * page-size source (RecipeDisplay.height = getDisplayHeight), and EMI stacks each recipe
+ * at its own height, so the extra 20px cost nothing.
  */
 public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
+
+	/** The nav control strip below the tree canvas (12px buttons + an 8px track on a 20px band). */
+	public static final int CONTROL_STRIP_H = 20;
+	/** The strip buttons' column (zoom in / zoom out / reset, 12px cells, 4px gaps), on the band's top row. */
+	public static final int BUTTON_X0 = 4, BUTTON_PITCH = 16, BUTTON_Y = MaterialTreeDisplay.HEIGHT + 4;
+	/** The click-track zoom slider: a 138x8 track, vertically centred in the strip. */
+	public static final int SLIDER_X = 56, SLIDER_Y = MaterialTreeDisplay.HEIGHT + 6;
+	public static final int SLIDER_W = 138, SLIDER_H = 8;
 
 	public final MaterialTreeDisplay mDisplay;
 	private final ResourceLocation mId;
@@ -95,7 +115,7 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 
 	@Override
 	public int getDisplayHeight() {
-		return MaterialTreeDisplay.HEIGHT;
+		return MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H;
 	}
 
 	/** No recipe tree this card: the transfer/ghost face stays batch 4 (the batch-1 不做 clause). */
@@ -106,21 +126,50 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 
 	@Override
 	public void addWidgets(WidgetHolder aWidgets) {
+		// the nav viewport: FRESH per page-open (the apply-unapply 闭环 — entering applies it
+		// to every widget below, leaving drops the widgets, nothing static survives)
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		// the shared zoom anchor: the canvas centre (buttons, keys and slider all focus it)
+		double tCx = MaterialTreeDisplay.WIDTH / 2.0, tCy = MaterialTreeDisplay.HEIGHT / 2.0;
+
 		List<Edge> tEdges = mDisplay.edges();
 		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(mDisplay);
-		// FIRST: the wires + arrowheads, one drawable over the whole canvas ( GuiGraphics.fill
-		// per rect — no diagonal primitive on 1.20.1), so they render under the slots
+		// FIRST: the wires + arrowheads + labels, one drawable over the whole page ( GuiGraphics.fill
+		// per rect — no diagonal primitive on 1.20.1), so they render under the slots. The
+		// labels moved in here with the nav suite: their positions must follow the viewport
+		// at RENDER time, and a TextWidget freezes its coordinate at add time.
 		List<Rect> tWires = new ArrayList<>(), tArrows = new ArrayList<>();
 		for (EdgeLayout tLayout : tLayouts) {
 			tWires.addAll(tLayout.wire());
 			tArrows.addAll(tLayout.arrow());
 		}
-		aWidgets.addDrawable(0, 0, MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT, (aGuiGraphics, aMouseX, aMouseY, aDelta) -> {
-			for (Rect tRect : tWires) aGuiGraphics.fill(tRect.x(), tRect.y(), tRect.x() + tRect.w(), tRect.y() + tRect.h(), MaterialTreeLayout.WIRE_INK);
-			for (Rect tRect : tArrows) aGuiGraphics.fill(tRect.x(), tRect.y(), tRect.x() + tRect.w(), tRect.y() + tRect.h(), MaterialTreeLayout.ARROW_INK);
+		record Label(Component text, int x, int y, int color) {}
+		List<Label> tLabels = new ArrayList<>();
+		tLabels.add(new Label(Component.literal(MaterialTreeDisplay.materialName(mDisplay.material)), 4, 4, 0xFF000000));
+		tLabels.add(new Label(Component.literal(MaterialTreeDisplay.BYPRODUCT_HEADER),
+				MaterialTreeDisplay.LANE_X0, MaterialTreeDisplay.BYPRODUCT_HEADER_Y, 0xFF000000));
+		for (int e = 0; e < tEdges.size(); e++) {
+			EdgeLayout tLayout = tLayouts.get(e);
+			if (tLayout.machine() != null) continue; // the via-label lives on the machine slot's tooltip
+			tLabels.add(new Label(Component.literal(tEdges.get(e).viaLabel()), tLayout.labelX(), tLayout.labelY(), 0xFF555555));
+		}
+		for (Overflow tOverflow : mDisplay.overflow()) {
+			tLabels.add(new Label(Component.literal("+" + tOverflow.hidden()),
+					MaterialTreeDisplay.overflowX(), MaterialTreeDisplay.overflowY(tOverflow.column()), 0xFF000000));
+		}
+		aWidgets.addDrawable(0, 0, MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H, (aGuiGraphics, aMouseX, aMouseY, aDelta) -> {
+			// corner-pair transforms: shared rect edges stay seamless at any scale
+			for (Rect tRect : tWires) fillTransformed(aGuiGraphics, tView, tRect, MaterialTreeLayout.WIRE_INK);
+			for (Rect tRect : tArrows) fillTransformed(aGuiGraphics, tView, tRect, MaterialTreeLayout.ARROW_INK);
+			for (Label tLabel : tLabels) {
+				MaterialTreeViewport.Point tPoint = tView.apply(tLabel.x(), tLabel.y());
+				aGuiGraphics.drawString(Minecraft.getInstance().font, tLabel.text(),
+						(int)Math.round(tPoint.x()), (int)Math.round(tPoint.y()), tLabel.color(), false);
+			}
 		});
 		for (Node tNode : mDisplay.nodes()) {
-			aWidgets.add(new SlotWidget(EmiStack.of(tNode.stack()), MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode)));
+			aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tNode.stack()),
+					MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode), tView));
 		}
 		// the v2 machine-icon nodes: a background-free slot (drawBack false — the bare 16x16 icon
 		// face) per machine-resolved edge, hover box one px around the shared helper's icon rect,
@@ -128,29 +177,48 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		for (int i = 0; i < tEdges.size(); i++) {
 			EdgeLayout tLayout = tLayouts.get(i);
 			if (tLayout.machine() == null) continue;
-			aWidgets.add(new SlotWidget(EmiStack.of(tEdges.get(i).machine()),
-					tLayout.machine().x() - 1, tLayout.machine().y() - 1)
+			aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tEdges.get(i).machine()),
+					tLayout.machine().x() - 1, tLayout.machine().y() - 1, tView)
 					.drawBack(false)
 					.appendTooltip(Component.literal(tEdges.get(i).viaLabel())));
 		}
 		int i = 0;
 		for (Byproduct tByproduct : mDisplay.byproducts()) {
-			aWidgets.add(new SlotWidget(EmiStack.of(tByproduct.stack()),
-					MaterialTreeDisplay.byproductX(i), MaterialTreeDisplay.byproductY()))
+			aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tByproduct.stack()),
+					MaterialTreeDisplay.byproductX(i), MaterialTreeDisplay.byproductY(), tView))
 					.appendTooltip(Component.literal(tByproduct.sourceLabel()));
 			i++;
 		}
-		aWidgets.addText(Component.literal(MaterialTreeDisplay.materialName(mDisplay.material)), 4, 4, 0xFF000000, false);
-		aWidgets.addText(Component.literal(MaterialTreeDisplay.BYPRODUCT_HEADER),
-				MaterialTreeDisplay.LANE_X0, MaterialTreeDisplay.BYPRODUCT_HEADER_Y, 0xFF000000, false);
-		for (int e = 0; e < tEdges.size(); e++) {
-			EdgeLayout tLayout = tLayouts.get(e);
-			if (tLayout.machine() != null) continue; // the via-label lives on the machine slot's tooltip
-			aWidgets.addText(Component.literal(tEdges.get(e).viaLabel()), tLayout.labelX(), tLayout.labelY(), 0xFF555555, false);
-		}
-		for (Overflow tOverflow : mDisplay.overflow()) {
-			aWidgets.addText(Component.literal("+" + tOverflow.hidden()),
-					MaterialTreeDisplay.overflowX(), MaterialTreeDisplay.overflowY(tOverflow.column()), 0xFF000000, false);
-		}
+		// the control strip (the EMI 1.1.24 native button seam — WidgetHolder.addButton onto the
+		// blank cell u=72 v=0 of emi buttons.png, whose hover/inactive rows ButtonWidget picks by
+		// itself): the zoom buttons sleep at the S1 floor/ceiling, reset never does
+		aWidgets.addButton(BUTTON_X0, BUTTON_Y, 12, 12, 72, 0,
+				() -> tView.scale() < MaterialTreeViewport.MAX_SCALE,
+				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.ZOOM_IN, tCx, tCy));
+		aWidgets.addButton(BUTTON_X0 + BUTTON_PITCH, BUTTON_Y, 12, 12, 72, 0,
+				() -> tView.scale() > MaterialTreeViewport.MIN_SCALE,
+				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.ZOOM_OUT, tCx, tCy));
+		aWidgets.addButton(BUTTON_X0 + 2 * BUTTON_PITCH, BUTTON_Y, 12, 12, 72, 0,
+				() -> true,
+				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, tCx, tCy));
+		aWidgets.add(new GT6MaterialTreeSliderWidget(tView, SLIDER_X, SLIDER_Y, SLIDER_W, SLIDER_H, tCx, tCy));
+		// the key canvas LAST: it covers the page for the keyboard face but paints nil and
+		// lets clicks fall through — the slots' U/R faces are untouched
+		aWidgets.add(new GT6MaterialTreeNavWidget(tView, 0, 0,
+				MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H, tCx, tCy));
+		// hover hints — invisible tooltip widgets, they never consume clicks
+		aWidgets.addTooltipText(List.of(Component.literal("Zoom in (+)")), BUTTON_X0, BUTTON_Y, 12, 12);
+		aWidgets.addTooltipText(List.of(Component.literal("Zoom out (-)")), BUTTON_X0 + BUTTON_PITCH, BUTTON_Y, 12, 12);
+		aWidgets.addTooltipText(List.of(Component.literal("Reset view (R/0)")), BUTTON_X0 + 2 * BUTTON_PITCH, BUTTON_Y, 12, 12);
+		aWidgets.addTooltipText(List.of(Component.literal("Click to set zoom")), SLIDER_X, SLIDER_Y, SLIDER_W, SLIDER_H);
+	}
+
+	/** One wire/arrow rect through the viewport as a corner pair, then filled (exclusive x2/y2). */
+	private static void fillTransformed(GuiGraphics aGuiGraphics, MaterialTreeViewport aView, Rect aRect, int aInk) {
+		MaterialTreeViewport.Point tA = aView.apply(aRect.x(), aRect.y());
+		MaterialTreeViewport.Point tB = aView.apply(aRect.x() + aRect.w(), aRect.y() + aRect.h());
+		aGuiGraphics.fill(
+				(int)Math.round(Math.min(tA.x(), tB.x())), (int)Math.round(Math.min(tA.y(), tB.y())),
+				(int)Math.round(Math.max(tA.x(), tB.x())), (int)Math.round(Math.max(tA.y(), tB.y())), aInk);
 	}
 }
