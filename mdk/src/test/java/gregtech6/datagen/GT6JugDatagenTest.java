@@ -1,6 +1,7 @@
 package gregtech6.datagen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -228,26 +229,53 @@ class GT6JugDatagenTest extends GTOfflineTestBase {
 		assertEquals(5, tOverlayShells, "the five 0.01 overlay shells ride the overlay band");
 	}
 
-	/** The per-level fluid box: levels 1..8 parent the shell and APPEND one content box, the flat eighth-fractions of the 3px interior above the body plane. */
+	/**
+	 * The per-level fluid box: levels 1..8 keep the shell parent (the texture map) but carry
+	 * the FULL element set in the child itself — the ten shell boxes + the one fluid box, the
+	 * flat eighth-fractions of the 3px interior above the body plane. Vanilla
+	 * {@code BlockModel.getElements} (1.20.1 BlockModel.java:104-105) never walks the parent
+	 * chain once the child carries elements — the former parent + one-element "candle idiom"
+	 * dropped the jug shell at render (the smeltery/cup filled family's same disease, the
+	 * filled-shell-family-2 card). Cutout is self-carried too: render_type does not ride the
+	 * parent chain either, and the shell's transparent overlay texels need the alpha-tested
+	 * layer.
+	 */
 	@Test
 	void theFilledModelsPinThePerLevelFluidBox() throws Exception {
-		assertEquals("gt6:block/ceramic_jug_empty",
-				generatedJson("assets/gt6/models/block/ceramic_jug_filled_1.json").get("parent").getAsString(),
-				"the filled children parent the shell — elements APPEND (the vanilla candle idiom)");
+		int tShellCount = generatedJson("assets/gt6/models/block/ceramic_jug_empty.json")
+				.getAsJsonArray("elements").size();
 		for (int tLevel = 1; tLevel <= 8; tLevel++) {
 			JsonObject tModel = generatedJson("assets/gt6/models/block/ceramic_jug_filled_" + tLevel + ".json");
-			assertEquals("gt6:block/ceramic_jug_empty", tModel.get("parent").getAsString(), "level " + tLevel + ": parents the shell");
-			JsonArray tElements = tModel.getAsJsonArray("elements");
-			assertEquals(1, tElements.size(), "level " + tLevel + ": exactly the appended fluid box");
-			JsonObject tElem = tElements.get(0).getAsJsonObject();
-			float tMinY = tElem.getAsJsonArray("from").get(1).getAsFloat();
-			float tTop = tElem.getAsJsonArray("to").get(1).getAsFloat();
+			assertEquals("gt6:block/ceramic_jug_empty", tModel.get("parent").getAsString(), "level " + tLevel + ": the parent stays (the texture map)");
+			assertEquals("minecraft:cutout", tModel.get("render_type") == null ? null : tModel.get("render_type").getAsString(),
+					"level " + tLevel + ": cutout self-carried — the transparent overlay shell must bake alpha-tested");
+			assertEquals(tShellCount + 1, tModel.getAsJsonArray("elements").size(),
+					"level " + tLevel + ": the FULL shell + the one fluid box — vanilla getElements never merges the parent");
+			// the game's own accessor — the exact parent-fallback decision point — must see
+			// the full set offline (ponytail: the stand-in for the quad bake, which needs
+			// the atlas + ModelBakery; the layer-level view stays field_test)
+			var tVanilla = net.minecraft.client.renderer.block.model.BlockModel.fromString(tModel.toString());
+			assertEquals(tShellCount + 1, tVanilla.getElements().size(),
+					"level " + tLevel + ": vanilla BlockModel.getElements sees the shell+fluid set");
+			float tTop = 10.05F + tLevel * 2.9F / 8.0F;
+			JsonObject tFluid = null;
+			for (var tElement : tModel.getAsJsonArray("elements")) {
+				for (var tFace : tElement.getAsJsonObject().getAsJsonObject("faces").entrySet()) {
+					if ("#content".equals(tFace.getValue().getAsJsonObject().get("texture").getAsString())) {
+						tFluid = tElement.getAsJsonObject();
+					}
+				}
+			}
+			assertNotNull(tFluid, "level " + tLevel + ": the fluid box element");
+			float tMinY = tFluid.getAsJsonArray("from").get(1).getAsFloat();
 			assertEquals(10.05F, tMinY, 1e-4, "level " + tLevel + ": the 0.05px inset off the body plane (no z-fight)");
-			assertEquals(10.05F + tLevel * 2.9F / 8.0F, tTop, 1e-4,
+			assertEquals(tTop, tFluid.getAsJsonArray("to").get(1).getAsFloat(), 1e-4,
 					"level " + tLevel + ": the flat eighth-fraction of the 3px interior, inset off the :53 fluid plane");
-			for (var tFaceEntry : tElem.getAsJsonObject("faces").entrySet()) {
+			for (var tFaceEntry : tFluid.getAsJsonObject("faces").entrySet()) {
 				assertEquals("#content", tFaceEntry.getValue().getAsJsonObject().get("texture").getAsString(),
 						"level " + tLevel + ": every face rides the smeltery_content placeholder (the declared ceiling)");
+				assertFalse(tFaceEntry.getValue().getAsJsonObject().has("tintindex"),
+						"level " + tLevel + " face " + tFaceEntry.getKey() + ": the fluid box never tints (the BlockTextureFluid form)");
 			}
 		}
 	}
