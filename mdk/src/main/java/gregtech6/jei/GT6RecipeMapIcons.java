@@ -1,6 +1,8 @@
 package gregtech6.jei;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -11,6 +13,7 @@ import net.minecraft.world.item.Items;
 
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.block.GTBasicMachineBlock;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6BurningBoxes;
@@ -18,32 +21,53 @@ import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6HeatExchangers;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Kitchen;
+import gregtech6.registry.GT6LargeMachines;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6Turbines;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMultiBlocks;
 
 /**
- * The per-map category icon table (task issues #29/#34a, GitHub #29a) — the reverse seam the
- * batch-2 adjudication (task debt-jei-emi-batch2) deferred: the port's folded 15-arg
- * RecipeMap carries no upstream mRecipeMachineList and the machine registries are
- * forward-keyed (machine row → RecipeMapSupplier, many machines share one map), so the
- * reverse mapping lives HERE as one hand-curated row per visible map, keyed by
- * {@link RecipeMap#mNameInternal}. The icon stock is the map's representative machine
- * BlockItem (the lowest registered tier of its family) — zero new PNGs, the item-model
- * icons every machine already has. Both viewer legs consume this one table: the JEI leg
- * draws it through {@code IGuiHelper.createDrawableItemStack} (GT6RecipeMapJeiCategory)
- * and registers the same stack as the recipe catalyst; the EMI leg passes it as the
- * {@link dev.emi.emi.api.recipe.EmiRecipeCategory} icon and the workstation (the JEMI
- * red-line twin).
+ * The per-map machine reverse index (task r11-emi-workstation-full, the user-reported
+ * "EMI does not list every machine able to process a recipe" fix) — the batch-2
+ * adjudication's deferred reverse seam, now DERIVED instead of hand-curated: the port's
+ * folded 15-arg RecipeMap carries no upstream {@code mRecipeMachineList} and the machine
+ * registries are forward-keyed, so the reverse mapping map→machines is walked out of the
+ * registration tables themselves (the {@link GTBasicMachineBlock.MachineRow#recipes()}
+ * Supplier<RecipeMap> seam + the family BY_PATH item tables, the GTCEu
+ * GTRecipeEMICategory.registerWorkStations whole-registry walk). One entry per registered
+ * machine, in registration order (the BY_PATH LinkedHashMap order — the research card's
+ * "注册序天然升阶" tier reading; the family T1-T4 ladders ascend, ULV rungs tail the list
+ * exactly as the registration loops append them). Both viewer legs consume this one index:
+ * the EMI leg registers every entry as a workstation (EmiRecipes' per-category list, the
+ * EmiRecipes.java:107-109 append) and the JEI leg as recipe catalysts (the JEMI red-line
+ * twin); {@link #iconOf} hands back the FIRST entry — the same representative machine the
+ * retired hand table tabled — so the category-icon face is byte-compatible with every
+ * existing consumer.
+ *
+ * <p>The index builds LAZILY on first query: the walk resolves {@code row.recipes().get()}
+ * for the map keys, and the RecipeMap fields are null until {@code GT6RecipeMaps.init()}
+ * (the mod-construct face in-game — the viewer plugins register long after; the census
+ * tests init explicitly). The map keys are stable name strings, so the cached index
+ * survives the test generations' {@code reset()}/{@code init()} cycles unchanged.
+ * ponytail: unsynchronized lazy build — the query face is the client main thread
+ * (plugin registration), add a holder idiom only if an off-thread caller ever appears.
  *
  * <p>The upstream fallback face stays FAITHFUL for the four DECLARED-empty maps
  * (microwave/cooker/toolhead/mortar — GT6RecipeMapJsonLoader's zero-row-stock set, no
  * machine exists in the port): {@code #iconOf} hands back the lit-furnace default the
  * upstream NEI_RecipeMap.init() drew whenever a map's mRecipeMachineList was empty
  * (NEI_RecipeMap.java:82 {@code Blocks.lit_furnace}). That whitelist is the ONLY
- * fallback path — every other visible map must table a machine (the guard test pins
- * this against the live census).
+ * fallback path — every other visible map must walk at least one machine (the guard test
+ * pins this against the live census).
+ *
+ * <p>Deviations from the upstream manual adds (declared, nothing fabricated): the wooden
+ * pot (GT6_Main.java:408-409 ByProductList) has no port item; the furnace face
+ * (RM.java:174) is the EXCLUDED vanilla-mirror map — the vanilla viewer category is its
+ * face; the oven/large-oven machines ride that same excluded furnace map; the chisel map
+ * is NEI-disallowed upstream and here alike. The tool faces that DO exist in the port
+ * (hammer, bending cylinder) and the anvil tiers (MultiTileEntityAnvil.java:424-426's
+ * self-adds) walk in below.
  */
 public final class GT6RecipeMapIcons {
 
@@ -58,101 +82,11 @@ public final class GT6RecipeMapIcons {
 			"gt.recipe.toolhead",   // declared-empty, the per-material listener walk is the W5 cut
 			"gt.recipe.mortar");    // hand-tool face, no mortar item exists in the port
 
-	/** The per-map machine items, keyed by {@link RecipeMap#mNameInternal}. */
-	private static final Map<String, Supplier<Item>> ICONS = new HashMap<>();
+	/** One machine entry: the registration path (the census/reconciliation face) + the lazy item. */
+	public record Workstation(String path, Supplier<Item> item) {}
 
-	private static void icon(String aMap, Supplier<Item> aItem) {
-		ICONS.put(aMap, aItem);
-	}
-
-	/** The lowest registered tier of a family (BY_PATH maps insert in registration order). */
-	private static Supplier<Item> first(Map<String, RegistryObject<Item>> aItems) {
-		return () -> aItems.values().iterator().next().get();
-	}
-
-	/** The lowest registered tier of one sub-family inside a mixed BY_PATH map. */
-	private static Supplier<Item> firstByPath(Map<String, RegistryObject<Item>> aItems, String aPrefix) {
-		return () -> {
-			for (Map.Entry<String, RegistryObject<Item>> tEntry : aItems.entrySet())
-				if (tEntry.getKey().startsWith(aPrefix)) return tEntry.getValue().get();
-			throw new IllegalStateException("no registered item under path prefix " + aPrefix);
-		};
-	}
-
-	static {
-		// the multiblock controllers (GTMultiBlocks explicit items)
-		icon("gt.recipe.cokeoven", () -> GTMultiBlocks.COKE_OVEN_ITEM.get());
-		icon("gt.recipe.implosioncompressor", () -> GTMultiBlocks.IMPLOSION_COMPRESSOR_ITEM.get());
-		icon("gt.recipe.massfab", () -> GTMultiBlocks.MASSFAB_ITEM.get());
-		icon("gt.recipe.fusionreactor", () -> GTMultiBlocks.FUSION_REACTOR_ITEM.get());
-		icon("gt.recipe.bedrockorelist", () -> GTMultiBlocks.BEDROCK_DRILL_ITEM.get());
-		// the basic-machine families with explicit base items
-		icon("gt.recipe.shredder", () -> GTMachines.SHREDDER_ITEM.get());
-		icon("gt.recipe.crusher", () -> GTMachines.CRUSHER_ITEM.get());
-		icon("gt.recipe.lathe", () -> GTMachines.LATHE_ITEM.get());
-		// the basic-machine families walked through their BY_PATH maps (lowest tier)
-		icon("gt.recipe.distillery", first(GTMachines.DISTILLERY_ITEMS_BY_PATH));
-		icon("gt.recipe.drying", first(GTMachines.DRYER_ITEMS_BY_PATH));
-		icon("gt.recipe.mixer", first(GTMachines.MIXER_ITEMS_BY_PATH));
-		icon("gt.recipe.burnmixer", first(GTMachines.BURNER_MIXER_ITEMS_BY_PATH));
-		icon("gt.recipe.sifter", first(GTMachines.SIFTER_ITEMS_BY_PATH));
-		icon("gt.recipe.compressor", first(GTMachines.COMPRESSOR_ITEMS_BY_PATH));
-		icon("gt.recipe.wiremill", first(GTMachines.WIREMILL_ITEMS_BY_PATH));
-		icon("gt.recipe.rollingmill", first(GTMachines.ROLLINGMILL_ITEMS_BY_PATH));
-		icon("gt.recipe.extruder", first(GTMachines.EXTRUDER_ITEMS_BY_PATH));
-		icon("gt.recipe.bath", first(GTMachines.BATH_ITEMS_BY_PATH));
-		icon("gt.recipe.fermenter", first(GTMachines.FERMENTER_ITEMS_BY_PATH));
-		icon("gt.recipe.loom", first(GTMachines.LOOM_ITEMS_BY_PATH));
-		icon("gt.recipe.pressurewasher", first(GTMachines.PRESSURE_WASHER_ITEMS_BY_PATH));
-		icon("gt.recipe.squeezer", first(GTMachines.SQUEEZER_ITEMS_BY_PATH));
-		icon("gt.recipe.clustermill", first(GTMachines.CLUSTERMILL_ITEMS_BY_PATH));
-		icon("gt.recipe.rollbender", first(GTMachines.ROLLBENDER_ITEMS_BY_PATH));
-		icon("gt.recipe.rollformer", first(GTMachines.ROLLFORMER_ITEMS_BY_PATH));
-		icon("gt.recipe.centrifuge", first(GTMachines.CENTRIFUGE_ITEMS_BY_PATH));
-		icon("gt.recipe.sharpener", first(GTMachines.SANDING_ITEMS_BY_PATH));
-		icon("gt.recipe.cutter", first(GTMachines.BUZZSAW_ITEMS_BY_PATH));
-		icon("gt.recipe.boxinator", first(GTMachines.BOXINATOR_ITEMS_BY_PATH));
-		icon("gt.recipe.unboxinator", first(GTMachines.UNBOXINATOR_ITEMS_BY_PATH));
-		icon("gt.recipe.sluice", first(GTMachines.SLUICE_ITEMS_BY_PATH));
-		icon("gt.recipe.steamcracking", first(GTMachines.STEAM_CRACKER_ITEMS_BY_PATH));
-		icon("gt.recipe.catalyticcracking", first(GTMachines.CATALYTIC_CRACKER_ITEMS_BY_PATH));
-		icon("gt.recipe.coagulator", first(GTMachines.COAGULATOR_ITEMS_BY_PATH));
-		icon("gt.recipe.cryomixer", first(GTMachines.CRYO_MIXER_ITEMS_BY_PATH));
-		icon("gt.recipe.magneticseparator", first(GTMachines.MAGNETIC_SEPARATOR_ITEMS_BY_PATH));
-		icon("gt.recipe.injector", first(GTMachines.INJECTOR_ITEMS_BY_PATH));
-		icon("gt.recipe.laminator", first(GTMachines.LAMINATOR_ITEMS_BY_PATH));
-		icon("gt.recipe.autoclave", first(GTMachines.AUTOCLAVE_ITEMS_BY_PATH));
-		icon("gt.recipe.freezer", first(GTMachines.FREEZER_ITEMS_BY_PATH));
-		icon("gt.recipe.polarizer", first(GTMachines.POLARIZER_ITEMS_BY_PATH));
-		icon("gt.recipe.lightning", first(GTMachines.LIGHTNING_ITEMS_BY_PATH));
-		icon("gt.recipe.slicer", first(GTMachines.SLICER_ITEMS_BY_PATH));
-		icon("gt.recipe.laserengraver", first(GTMachines.LASER_ENGRAVER_ITEMS_BY_PATH));
-		icon("gt.recipe.welder", first(GTMachines.LASER_WELDER_ITEMS_BY_PATH));
-		icon("gt.recipe.electrolyzer", first(GTMachines.ELECTROLYZER_ITEMS_BY_PATH));
-		icon("gt.recipe.printer", first(GTMachines.PRINTER_ITEMS_BY_PATH));
-		icon("gt.recipe.scannervisuals", first(GTMachines.SCANNER_VISUALS_ITEMS_BY_PATH));
-		icon("gt.recipe.scannermolecular", first(GTMachines.MOLECULAR_SCANNER_ITEMS_BY_PATH));
-		icon("gt.recipe.generifier", first(GTMachines.GENERIFIER_ITEMS_BY_PATH));
-		icon("gt.recipe.melter", first(GTMachines.MELTER_ITEMS_BY_PATH));
-		icon("gt.recipe.smelter", first(GTMachines.SMELTER_ITEMS_BY_PATH));
-		icon("gt.recipe.roaster", first(GTMachines.ROASTING_ITEMS_BY_PATH));
-		icon("gt.recipe.crystallisationcrucible", first(GTMachines.CRYSTALLISATION_ITEMS_BY_PATH));
-		icon("gt.recipe.press", first(GTMachines.PRESS_ITEMS_BY_PATH));
-		icon("gt.recipe.canner", first(GTMachines.CANNER_ITEMS_BY_PATH));
-		icon("gt.recipe.replicator", first(GTMachines.REPLICATOR_ITEMS_BY_PATH));
-		// the towers, kitchen, tools, fuels and anvil faces (their own registry classes)
-		icon("gt.recipe.distillationtower", firstByPath(GT6Distillation.TOWER_ITEMS_BY_PATH, "distillation_tower"));
-		icon("gt.recipe.cryodistillationtower", firstByPath(GT6Distillation.TOWER_ITEMS_BY_PATH, "cryo_distillation_tower"));
-		icon("gt.recipe.juicer", () -> GT6Kitchen.JUICER_ITEM.get());
-		icon("gt.recipe.anvil", first(GT6Anvils.ITEMS_BY_PATH));
-		icon("gt.recipe.anvil.bend", () -> GT6Tools.BENDING_CYLINDER.get());
-		icon("gt.recipe.hammer", () -> GT6Tools.HAMMER.get());
-		icon("gt.recipe.fuels.engine", first(GT6Kinetics.DIESEL_ITEMS));
-		icon("gt.recipe.fuels.burn", firstByPath(GT6BurningBoxes.ITEMS_BY_PATH, "burning_box_liquid"));
-		icon("gt.recipe.fuels.fluidbed", firstByPath(GT6BurningBoxes.ITEMS_BY_PATH, "burning_box_fluidbed"));
-		icon("gt.recipe.fuels.gas", first(GT6Turbines.ITEMS_BY_PATH));
-		icon("gt.recipe.fuels.hot", () -> GT6HeatExchangers.HEAT_EXCHANGER_ITEM.get());
-	}
+	/** The reverse index, built once on first query (see the class doc's lazy contract). */
+	private static Map<String, List<Workstation>> sIndex;
 
 	private GT6RecipeMapIcons() {}
 
@@ -165,14 +99,185 @@ public final class GT6RecipeMapIcons {
 	 */
 	public static java.util.function.Function<Supplier<Item>, Item> sResolver = Supplier::get;
 
-	/** The tabled machine item for this map, or the whitelist's furnace fallback. Never empty. */
-	public static ItemStack iconOf(RecipeMap aMap) {
-		Supplier<Item> tItem = ICONS.get(aMap.mNameInternal);
-		return new ItemStack(tItem == null ? Items.FURNACE : sResolver.apply(tItem));
+	/** Every registered machine able to process this map, registration order. Never null; empty for the whitelist maps. */
+	public static List<Workstation> workstationsOf(RecipeMap aMap) {
+		if (sIndex == null) sIndex = build();
+		List<Workstation> tList = sIndex.get(aMap.mNameInternal);
+		return tList == null ? List.of() : tList;
 	}
 
-	/** True exactly when the map carries a tabled machine (the guard test's seam). */
+	/** The resolved stack of one entry (the sResolver seam's workstation face). */
+	public static ItemStack stackOf(Workstation aWorkstation) {
+		return new ItemStack(sResolver.apply(aWorkstation.item()));
+	}
+
+	/** The tabled machine item for this map (the FIRST entry), or the whitelist's furnace fallback. Never empty. */
+	public static ItemStack iconOf(RecipeMap aMap) {
+		List<Workstation> tList = workstationsOf(aMap);
+		return tList.isEmpty() ? new ItemStack(Items.FURNACE) : stackOf(tList.get(0));
+	}
+
+	/** True exactly when the map carries at least one tabled machine (the guard test's seam). */
 	public static boolean has(RecipeMap aMap) {
-		return ICONS.containsKey(aMap.mNameInternal);
+		return !workstationsOf(aMap).isEmpty();
+	}
+
+	// -------------------------------------------------------------------------
+	// the reverse-index walk (registration-table order throughout)
+	// -------------------------------------------------------------------------
+
+	private static void add(Map<String, List<Workstation>> aIndex, String aMap, Workstation aWorkstation) {
+		aIndex.computeIfAbsent(aMap, k -> new ArrayList<>()).add(aWorkstation);
+	}
+
+	/** A single-machine face: the path is the registration id (the census face for free). */
+	private static void single(Map<String, List<Workstation>> aIndex, String aMap, RegistryObject<Item> aItem) {
+		add(aIndex, aMap, new Workstation(aItem.getId().getPath(), aItem::get));
+	}
+
+	/**
+	 * A row-carried family: the rows' own {@code recipes()} supplier names the map key,
+	 * the family's BY_PATH item table supplies the machine by path — the exact pairing the
+	 * registration loops run ({@code ITEMS_BY_PATH.put(tRow.path(), ...)}), so the walk
+	 * cannot drift from the registration.
+	 */
+	private static void walk(Map<String, List<Workstation>> aIndex, List<GTBasicMachineBlock.MachineRow> aRows,
+			Map<String, RegistryObject<Item>> aItems) {
+		for (GTBasicMachineBlock.MachineRow tRow : aRows)
+			add(aIndex, tRow.recipes().get().mNameInternal,
+					new Workstation(tRow.path(), () -> aItems.get(tRow.path()).get()));
+	}
+
+	/** A row-less tier ladder (the BET hardwires the map; each tier is one explicit item). */
+	private static void ladder(Map<String, List<Workstation>> aIndex, String aMap, RegistryObject<Item>... aTiers) {
+		for (RegistryObject<Item> tTier : aTiers) single(aIndex, aMap, tTier);
+	}
+
+	/**
+	 * The whole walk, in registration-table order. The family order inside a shared map is
+	 * what pins today's representative as the FIRST entry (mixer's manual ladder before the
+	 * electric one, loom likewise, massfab's large controller before the small ladder,
+	 * basic families before the twelve W3 large machines).
+	 */
+	private static Map<String, List<Workstation>> build() {
+		Map<String, List<Workstation>> rIndex = new HashMap<>();
+
+		// the multiblock controllers (GTMultiBlocks explicit items)
+		single(rIndex, "gt.recipe.cokeoven", GTMultiBlocks.COKE_OVEN_ITEM);
+		single(rIndex, "gt.recipe.implosioncompressor", GTMultiBlocks.IMPLOSION_COMPRESSOR_ITEM);
+		single(rIndex, "gt.recipe.massfab", GTMultiBlocks.MASSFAB_ITEM);
+		single(rIndex, "gt.recipe.fusionreactor", GTMultiBlocks.FUSION_REACTOR_ITEM);
+		single(rIndex, "gt.recipe.bedrockorelist", GTMultiBlocks.BEDROCK_DRILL_ITEM);
+
+		// the row-less tier ladders (shredder/crusher/lathe — the ULV blocks join the quads)
+		ladder(rIndex, "gt.recipe.shredder", GTMachines.SHREDDER_ITEM, GTMachines.SHREDDER_T2_ITEM,
+				GTMachines.SHREDDER_T3_ITEM, GTMachines.SHREDDER_T4_ITEM, GTMachines.SHREDDER_ULV_ITEM);
+		ladder(rIndex, "gt.recipe.crusher", GTMachines.CRUSHER_ITEM, GTMachines.CRUSHER_T2_ITEM,
+				GTMachines.CRUSHER_T3_ITEM, GTMachines.CRUSHER_T4_ITEM, GTMachines.CRUSHER_ULV_ITEM);
+		ladder(rIndex, "gt.recipe.lathe", GTMachines.LATHE_ITEM, GTMachines.LATHE_T2_ITEM,
+				GTMachines.LATHE_T3_ITEM, GTMachines.LATHE_T4_ITEM);
+
+		// the row-carried basic-machine families (GTMachines registration-loop order)
+		walk(rIndex, GTMachines.DRYER_ROWS, GTMachines.DRYER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.CANNER_ROWS, GTMachines.CANNER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.CANNER_ULV_ROWS, GTMachines.CANNER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.PRESS_ROWS, GTMachines.PRESS_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.EXTRUDER_ROWS, GTMachines.EXTRUDER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SIFTER_ROWS, GTMachines.SIFTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SIFTER_ULV_ROWS, GTMachines.SIFTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.COMPRESSOR_ROWS, GTMachines.COMPRESSOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.WIREMILL_ROWS, GTMachines.WIREMILL_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.WIREMILL_ULV_ROWS, GTMachines.WIREMILL_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ROLLINGMILL_ROWS, GTMachines.ROLLINGMILL_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ROLLINGMILL_RU_ROWS, GTMachines.ROLLINGMILL_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ROLL_BENDER_ROWS, GTMachines.ROLLBENDER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ROLL_FORMER_ROWS, GTMachines.ROLLFORMER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.CLUSTER_MILL_ROWS, GTMachines.CLUSTERMILL_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.MIXER_ROWS, GTMachines.MIXER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ELECTRIC_MIXER_ROWS, GTMachines.ELECTRIC_MIXER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.LOOM_ROWS, GTMachines.LOOM_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ELECTRIC_LOOM_ROWS, GTMachines.ELECTRIC_LOOM_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ELECTRIC_SIFTER_ROWS, GTMachines.ELECTRIC_SIFTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.BOXINATOR_ROWS, GTMachines.BOXINATOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.UNBOXINATOR_ROWS, GTMachines.UNBOXINATOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.FERMENTER_ROWS, GTMachines.FERMENTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.POLARIZER_ROWS, GTMachines.POLARIZER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.MAGNETIC_SEPARATOR_ROWS, GTMachines.MAGNETIC_SEPARATOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.LASER_ENGRAVER_ROWS, GTMachines.LASER_ENGRAVER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.LASER_WELDER_ROWS, GTMachines.LASER_WELDER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.FREEZER_ROWS, GTMachines.FREEZER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.CRYO_MIXER_ROWS, GTMachines.CRYO_MIXER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.MASSFAB_SMALL_ROWS, GTMachines.MASSFAB_SMALL_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.MOLECULAR_SCANNER_ROWS, GTMachines.MOLECULAR_SCANNER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.REPLICATOR_ROWS, GTMachines.REPLICATOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.DISTILLERY_ROWS, GTMachines.DISTILLERY_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.BUZZSAW_ROWS, GTMachines.BUZZSAW_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SQUEEZER_ROWS, GTMachines.SQUEEZER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.CENTRIFUGE_ROWS, GTMachines.CENTRIFUGE_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SLUICE_ROWS, GTMachines.SLUICE_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SANDING_ROWS, GTMachines.SANDING_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.PRESSURE_WASHER_ROWS, GTMachines.PRESSURE_WASHER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.AUTOCRAFTER_ROWS, GTMachines.AUTOCRAFTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.LIGHTNING_ROWS, GTMachines.LIGHTNING_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.LAMINATOR_ROWS, GTMachines.LAMINATOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ELECTROLYZER_ROWS, GTMachines.ELECTROLYZER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.INJECTOR_ROWS, GTMachines.INJECTOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.PRINTER_ROWS, GTMachines.PRINTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SCANNER_VISUALS_ROWS, GTMachines.SCANNER_VISUALS_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SLICER_ROWS, GTMachines.SLICER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.STEAM_CRACKER_ROWS, GTMachines.STEAM_CRACKER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.CATALYTIC_CRACKER_ROWS, GTMachines.CATALYTIC_CRACKER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.COAGULATOR_ROWS, GTMachines.COAGULATOR_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.GENERIFIER_ROWS, GTMachines.GENERIFIER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.BATH_ROWS, GTMachines.BATH_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.AUTOCLAVE_ROWS, GTMachines.AUTOCLAVE_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.SMELTER_ROWS, GTMachines.SMELTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.MELTER_ROWS, GTMachines.MELTER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.ROASTING_ROWS, GTMachines.ROASTING_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.BUMBLELYZER_ROWS, GTMachines.BUMBLELYZER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.CRYSTALLISATION_ROWS, GTMachines.CRYSTALLISATION_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.BURNER_MIXER_ROWS, GTMachines.BURNER_MIXER_ITEMS_BY_PATH);
+		walk(rIndex, GTMachines.PLANTALYZER_ROWS, GTMachines.PLANTALYZER_ITEMS_BY_PATH);
+
+		// the twelve W3 large machines (GT6LargeMachines rows, same recipes() seam)
+		for (GT6LargeMachines.LargeMachineRow tRow : GT6LargeMachines.ROWS)
+			add(rIndex, tRow.recipes().get().mNameInternal,
+					new Workstation(tRow.path(), () -> GT6LargeMachines.ITEMS_BY_PATH.get(tRow.path()).get()));
+
+		// the towers (the TowerRow cryo column names the map, the BE's own derivation)
+		for (GT6Distillation.TowerRow tRow : GT6Distillation.ROWS)
+			add(rIndex, tRow.cryo() ? "gt.recipe.cryodistillationtower" : "gt.recipe.distillationtower",
+					new Workstation(tRow.path(), () -> GT6Distillation.TOWER_ITEMS_BY_PATH.get(tRow.path()).get()));
+
+		// the anvil tiers (the MultiTileEntityAnvil :424-426 self-adds) + the tool/kitchen faces
+		for (GT6Anvils.AnvilRow tRow : GT6Anvils.ROWS)
+			add(rIndex, "gt.recipe.anvil", new Workstation(tRow.path(), () -> GT6Anvils.ITEMS_BY_PATH.get(tRow.path()).get()));
+		single(rIndex, "gt.recipe.juicer", GT6Kitchen.JUICER_ITEM);
+		single(rIndex, "gt.recipe.anvil.bend", GT6Tools.BENDING_CYLINDER);
+		single(rIndex, "gt.recipe.hammer", GT6Tools.HAMMER);
+
+		// the fuel faces: diesel engines (walked from the DIESEL_SPECS static table — the
+		// DIESEL_ITEMS map fills at the mod-bus registration event, AFTER class-init, so the
+		// spec-driven name derivation is the only offline-stable face; in-game the map is
+		// live and the supplier resolves the same RegistryObject the event registered),
+		// gas turbines, the FM.Burn burning boxes (LIQUID + GAS — the GAS BE extends the
+		// LIQUID one, GTGeneratorGasBlockEntity), the fluidized bed, the heat exchanger.
+		// SOLID/brick boxes burn on the vanilla furnace-fuel face — no recipe map, not
+		// tabled (the declared deviation).
+		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
+			String tName = GT6Kinetics.dieselName(tSpec.material());
+			add(rIndex, "gt.recipe.fuels.engine", new Workstation(tName, () -> GT6Kinetics.DIESEL_ITEMS.get(tName).get()));
+		}
+		for (GT6Turbines.GasTurbineRow tRow : GT6Turbines.GAS_ROWS)
+			add(rIndex, "gt.recipe.fuels.gas", new Workstation(tRow.path(), () -> GT6Turbines.ITEMS_BY_PATH.get(tRow.path()).get()));
+		for (GT6BurningBoxes.BurningBoxRow tRow : GT6BurningBoxes.allRows()) {
+			String tMap = tRow.family() == GT6BurningBoxes.Family.LIQUID || tRow.family() == GT6BurningBoxes.Family.GAS
+					? "gt.recipe.fuels.burn"
+					: tRow.family() == GT6BurningBoxes.Family.FLUIDBED ? "gt.recipe.fuels.fluidbed" : null;
+			if (tMap != null) add(rIndex, tMap, new Workstation(tRow.path(), () -> GT6BurningBoxes.ITEMS_BY_PATH.get(tRow.path()).get()));
+		}
+		single(rIndex, "gt.recipe.fuels.hot", GT6HeatExchangers.HEAT_EXCHANGER_ITEM);
+
+		return rIndex;
 	}
 }

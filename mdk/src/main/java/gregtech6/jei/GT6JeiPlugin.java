@@ -199,9 +199,11 @@ public class GT6JeiPlugin implements IModPlugin {
 	 * Shredder/Sifter/Anvil/Crusher opens the {@code gt6:material_tree} page, the GTCEu
 	 * registerWorkstation shape on the JEI leg.
 	 *
-	 * <p>Third arm (task issues #29/#34a): every RM category carries its map's machine item as
-	 * the catalyst — the same stack the icon table hands out — so U on a machine reaches
-	 * its recipes even before the icon face is consulted.
+	 * <p>Third arm (task issues #29/#34a + r11-emi-workstation-full): every RM category
+	 * carries ALL of its map's machines as catalysts (the reverse index's full list — the
+	 * upstream mRecipeMachineList face, JEI catalysts are a list too) — so U on any tier of
+	 * any machine family reaches its recipes. The EMI leg mirrors the same list through
+	 * addWorkstation (the JEMI red line).
 	 */
 	@Override
 	public void registerRecipeCatalysts(mezz.jei.api.registration.IRecipeCatalystRegistration registration) {
@@ -212,7 +214,11 @@ public class GT6JeiPlugin implements IModPlugin {
 						.map(tEntry -> new ItemStack(tEntry.item().get()))
 						.toArray(ItemStack[]::new));
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
-			registration.addRecipeCatalysts(GT6RecipeMapJeiCategory.recipeTypeOf(tMap), GT6RecipeMapIcons.iconOf(tMap));
+			List<ItemStack> tCatalysts = new ArrayList<>();
+			for (GT6RecipeMapIcons.Workstation tWs : GT6RecipeMapIcons.workstationsOf(tMap)) {
+				tCatalysts.add(GT6RecipeMapIcons.stackOf(tWs));
+			}
+			registration.addRecipeCatalysts(GT6RecipeMapJeiCategory.recipeTypeOf(tMap), tCatalysts.toArray(new ItemStack[0]));
 		}
 		GT6OreGenInfoJeiCategory tCategory = new GT6OreGenInfoJeiCategory();
 		ItemStack tCatalyst = gregtech6.worldgen.GT6OreGenInfoLayout.catalystStack();

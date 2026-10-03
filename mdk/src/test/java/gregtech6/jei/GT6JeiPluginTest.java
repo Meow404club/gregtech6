@@ -101,4 +101,21 @@ public class GT6JeiPluginTest {
 		assertEquals("gt6", new GT6JeiPlugin().getPluginUid().getNamespace());
 		assertEquals(GT6JeiPlugin.PLUGIN_UID_PATH, new GT6JeiPlugin().getPluginUid().getPath());
 	}
+
+	@Test
+	public void rmCatalystsRideTheWorkstationLoop() throws Exception {
+		// task r11-emi-workstation-full — the catalyst arm walks the shared reverse index
+		// (workstationsOf) per map instead of the single iconOf representative; the JEMI
+		// red line's twin assertion lives on the EMI side (GT6EmiPluginTest). Pinned at the
+		// bytecode layer like the annotation tests: the constant pool must carry the
+		// index-query methodref on this class.
+		try (java.io.InputStream in = GT6JeiPlugin.class.getResourceAsStream("GT6JeiPlugin.class")) {
+			assertNotNull(in, "plugin class resource not found on the test classpath");
+			String tBytes = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+			assertTrue(tBytes.contains("workstationsOf"),
+					"the JEI catalyst arm must consume the shared workstation reverse index");
+			assertTrue(tBytes.contains("addRecipeCatalysts"),
+					"the JEI catalyst registration face must stay");
+		}
+	}
 }
