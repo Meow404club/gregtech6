@@ -57,6 +57,7 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCrucible;
 import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
+import gregtech6.tileentity.multiblocks.TileEntityVonDaGraagg;
 
 public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 
@@ -349,6 +350,27 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
+	static BlockEntityType<PreviewGraagg> sGraaggType;
+
+	/** The offline Von da Graagg — fixture identities over the REAL zero-offset binding. */
+	public static final class PreviewGraagg extends TileEntityVonDaGraagg {
+		PreviewGraagg(BlockPos aPos, BlockState aState) {
+			super(sGraaggType, aPos, aState);
+		}
+		@Override
+		protected Block getBaseWallBlock() {
+			return Blocks.BRICKS;
+		}
+		@Override
+		protected Block getCoilBlock() {
+			return Blocks.IRON_BLOCK;
+		}
+		@Override
+		protected Block getTopWallBlock() {
+			return Blocks.STONE;
+		}
+	}
+
 	@BeforeAll
 	@SuppressWarnings("unchecked")
 	static void buildPreviewFixtures() {
@@ -376,6 +398,9 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		BlockEntityType<PreviewTank>[] tTankValve = (BlockEntityType<PreviewTank>[]) new BlockEntityType<?>[1];
 		tTankValve[0] = BlockEntityType.Builder.of((aPos, aState) -> new PreviewTank(1, aPos, aState), Blocks.BRICKS).build(null);
 		sTankValveType = tTankValve[0];
+		BlockEntityType<PreviewGraagg>[] tGraagg = (BlockEntityType<PreviewGraagg>[]) new BlockEntityType<?>[1];
+		tGraagg[0] = BlockEntityType.Builder.of(PreviewGraagg::new, Blocks.BRICKS, Blocks.IRON_BLOCK, Blocks.STONE).build(null);
+		sGraaggType = tGraagg[0];
 	}
 
 	@Test
@@ -669,8 +694,12 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		List<String> tNames = GT6MultiblockPreviews.entries().stream()
 				.map(GT6MultiblockPreviews.Entry::name).toList();
 		assertTrue(tNames.size() >= tLadder.size(), "the table carries the batch-C segment");
-		assertEquals(tLadder, tNames.subList(tNames.size() - tLadder.size(), tNames.size()),
-				"the batch-C tail segment mirrors the registration ladder traversal");
+		// located by the segment head since batch D1 tail-appends after it (the segment
+		// must stay CONTIGUOUS and ladder-ordered — the anti-handwriting-drift semantics)
+		int tStart = tNames.indexOf(tLadder.get(0));
+		assertTrue(tStart >= 0, "the batch-C segment sits in the table");
+		assertEquals(tLadder, tNames.subList(tStart, tStart + tLadder.size()),
+				"the batch-C segment mirrors the registration ladder traversal");
 		assertEquals(12, GT6LargeMachines.ROWS.size(), "the W3 twelve");
 		assertEquals(2, GT6Distillation.ROWS.size(), "the two towers");
 	}
@@ -854,6 +883,84 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		}
 		assertEquals(13, tSmall, "wood + 6 plain small + 6 dense small ride radius 1");
 		assertEquals(12, tLarge, "6 plain large + 6 dense large ride radius 2");
+	}
+
+	@Test
+	public void bedrockDrillPreviewPinsTheWallHeadAndProbeFloor() {
+		// acceptance ③ — the :1283 row's display declaration over the null BE binding
+		// (the existence-probe seam, TileEntityBedrockDrill:179-181): 54 cells = the y-5
+		// probe floor (9 bedrock) + the y-4 drill-head layer (9) + the four wall layers
+		// y-3..y0 (36) — the SAME function the row composes (the fixture identities ride
+		// the parameters, the batch-C doctrine)
+		GTMultiBlockPattern tPattern = GT6MultiblockPreviews.bedrockDrillShape(Blocks.BRICKS, Blocks.STONE);
+		int tFloor = 0, tHeads = 0, tWalls = 0, tEnergy = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			if (tCell.y == -5) {
+				tFloor++;
+				assertSame(Blocks.BEDROCK, tCell.partBlock, "the y-5 probe floor declares the bedrock identity");
+			} else if (tCell.y == -4) {
+				tHeads++;
+				assertSame(Blocks.BRICKS, tCell.partBlock, "the drill-head identity rides y-4");
+			} else {
+				tWalls++;
+				assertSame(Blocks.STONE, tCell.partBlock, "the Dense Titanium Wall identity rides y-3..y0");
+			}
+			if (tCell.y == -1 && (tCell.x == 0) != (tCell.z == 0)) {
+				tEnergy++;
+				assertEquals(3, tCell.design, "the energy ring carries design 3 (the :113 column)");
+				assertEquals(MultiBlockPartBlockEntity.ONLY_ENERGY_IN, tCell.usage, "the edge cells are the ONLY_ENERGY_IN faces");
+			}
+		}
+		assertEquals(54, tPattern.cells().size(), "9 floor + 9 heads + 36 walls");
+		assertEquals(9, tFloor, "the 3x3 probe floor");
+		assertEquals(9, tHeads, "the 3x3 drill-head layer");
+		assertEquals(36, tWalls, "the four wall layers");
+		assertEquals(4, tEnergy, "the XOR ring: the four edge cells");
+		assertFalse(GT6MultiblockPreviews.structureBlocks(tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING)
+				.isEmpty(), "the shape renders");
+		assertFalse(GT6MultiblockPreviews.materialCounts(tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING)
+				.isEmpty(), "the shopping list renders");
+	}
+
+	@Test
+	public void graaggPreviewPinsTheCornerlessBaseAndThePole() {
+		// acceptance ③ — the :1280 direct collect (TileEntityVonDaGraagg:173, the
+		// zero-offset controller anchor): 64 cells = the cornerless 5x5x2 base (21 cells
+		// x 2 layers, the |i*j|<4 gate) ALL ONLY_ENERGY_IN + the 5m coil pole (5, NOTHING)
+		// + the 17-cell top box (1 centre + the y+6 cornerless ring 8 + the y+5/y+7
+		// crosses 4+4)
+		GTMultiBlockPattern tPattern = new PreviewGraagg(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState())
+				.getStructurePattern();
+		int tBase = 0, tCoils = 0, tTop = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			assertFalse(tCell.isHollow(), "the Graagg declares every cell");
+			assertNotNull(tCell.partBlock, "the binding is formingPart (zero re-stamp)");
+			if (tCell.partBlock == Blocks.BRICKS) {
+				tBase++;
+				assertEquals(MultiBlockPartBlockEntity.ONLY_ENERGY_IN, tCell.usage, "the base walls are ONLY_ENERGY_IN (the :72-73 columns)");
+			} else if (tCell.partBlock == Blocks.IRON_BLOCK) {
+				tCoils++;
+				assertEquals(0, tCell.x, "the pole is the centre column");
+				assertTrue(tCell.y >= 2 && tCell.y <= 6, "the pole spans y+2..y+6");
+			} else {
+				tTop++;
+			}
+		}
+		assertEquals(42, tBase, "the cornerless 5x5x2 base: 21 cells x 2 layers");
+		assertEquals(5, tCoils, "the 5m coil pole");
+		assertEquals(17, tTop, "the top box: 1 centre + 8 ring + 4+4 crosses");
+		assertEquals(64, tPattern.cells().size(), "42 + 5 + 17");
+		// the corner gate: neither base layer declares a |i|=|j|=2 corner
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			assertFalse(tCell.y <= 1 && Math.abs(tCell.x) == 2 && Math.abs(tCell.z) == 2, "the base corners are cut (|i*j|<4)");
+		}
+		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
+				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
+		assertEquals(64, tFill.size(), "every declared cell renders");
+		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(new BlockPos(0, 0, -1)),
+				"the anchor law paints the controller over a base wall (the crucible legacy ① — the true seat (0,0,0) is the zero-offset walk, generalization is D2's)");
+		assertFalse(GT6MultiblockPreviews.materialCounts(tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING)
+				.isEmpty(), "the shopping list renders");
 	}
 
 	@Test

@@ -22,16 +22,20 @@ import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6DynamoHousings;
 import gregtech6.registry.GT6HeatExchangers;
 import gregtech6.registry.GT6LargeMachines;
+import gregtech6.registry.GT6Tanks;
 import gregtech6.registry.GT6Turbines;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.GTGasTurbineBlockEntity;
 import gregtech6.tileentity.multiblocks.GTLargeDynamoBlockEntity;
 import gregtech6.tileentity.multiblocks.GTSteamTurbineBlockEntity;
+import gregtech6.tileentity.multiblocks.GTTankValveBlockEntity;
+import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCrucible;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
+import gregtech6.tileentity.multiblocks.TileEntityVonDaGraagg;
 
 /**
  * The multiblock preview registry (task multiblock-preview-infra): ONE static
@@ -197,7 +201,30 @@ public final class GT6MultiblockPreviews {
 					() -> new GT6Distillation.TileEntityDistillationTower(BlockPos.ZERO,
 							GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get().defaultBlockState()).getStructurePattern()));
 		}
-		// --- then D1/D2 (special) tail-append here --------------------------------------
+		// --- batch D1 (mbpreview-data-d1-special): the special family --------------------
+		// the Bedrock Drill (upstream :1283): the BE binding stays NULL (the
+		// existence-probe seam — the y-5 floor is TERRAIN the declared pattern cannot
+		// judge, TileEntityBedrockDrill:179-181), so the row carries the DISPLAY
+		// declaration: the hand check's geometry (:87-117) with the y-5 probe declared as
+		// the floor's bedrock identity; the part identities are the SAME anyPartBlock
+		// resolutions the BE hooks make (getDrillHeadBlock :159-161 / getWallBlock :164-166)
+		tRows.add(new Entry("bedrock_drill", GTMultiBlocks.BEDROCK_DRILL_ITEM,
+				GT6MultiblockPreviews::bedrockDrillPreview));
+		// the Von da Graagg (upstream :1280): the binding carries the shape (the
+		// cornerless 5x5x2 base + the 5m coil pole + the top box, the zero-offset
+		// controller anchor — TileEntityVonDaGraagg:173-197): direct collect
+		tRows.add(new Entry("von_da_graagg", GTMultiBlocks.VON_DA_GRAAGG_ITEM,
+				() -> new TileEntityVonDaGraagg(BlockPos.ZERO, Blocks.AIR.defaultBlockState()).getStructurePattern()));
+		// the 25 Tank Main Valves (upstream :1195-1222 — GT6Tanks.ROWS IS the upstream
+		// line order): ONE loop off the registration ladder; the binding is the
+		// radius-parametrized shell (GTTankValveBlockEntity getStructurePattern — the
+		// -(r-1)*OFF frame shift lands the valve seat on the anchor law), formingPart
+		// over the row's own wall — zero re-stamp
+		for (GT6Tanks.TankValveRow tRow : GT6Tanks.ROWS) {
+			tRows.add(new Entry(tRow.path(), GT6Tanks.ITEMS_BY_PATH.get(tRow.path()),
+					() -> new GTTankValveBlockEntity(BlockPos.ZERO,
+							GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get().defaultBlockState()).getStructurePattern()));
+		}
 		return List.copyOf(tRows);
 	}
 
@@ -234,6 +261,41 @@ public final class GT6MultiblockPreviews {
 				return GT6Crucibles.wallBlockOf(aRow);
 			}
 		};
+	}
+
+	/**
+	 * The Bedrock Drill row's display pattern: the existence-probe machine's BE binding
+	 * stays null (TileEntityBedrockDrill:179-181 — the y-5 floor is terrain the declared
+	 * pattern cannot judge), so the geometry is declared HERE as display data over the
+	 * hand check's walk (:87-117). Controller-anchored walk (the Graagg/crucible anchor
+	 * family): the seam paints the controller on the anchor cell — the legacy-① ruling,
+	 * generalization is D2's.
+	 */
+	private static GTMultiBlockPattern bedrockDrillPreview() {
+		return bedrockDrillShape(
+				GTMultiBlocks.anyPartBlock("bedrock_drill_head"),   // the getDrillHeadBlock hook's resolution
+				GTMultiBlocks.anyPartBlock("dense_wall_titanium")); // the getWallBlock hook's resolution
+	}
+
+	/**
+	 * The drill shape over injectable part identities (the offline-test seam — the SAME
+	 * function the row composes, the batch-C doctrine): 54 cells = the y-5 probe floor as
+	 * the bedrock display declaration (the ore face of the probe renders as the floor's
+	 * base skin — one display identity), then the four machine layers with the hand
+	 * check's {@code (usage, design)} triples verbatim.
+	 */
+	static GTMultiBlockPattern bedrockDrillShape(Block aHead, Block aWall) {
+		GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
+		for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
+			tBuilder.formingPart(i, -5, j, Blocks.BEDROCK, MultiBlockPartBlockEntity.NOTHING, 0); // :88-107 the probe, display-declared
+			tBuilder.formingPart(i, -4, j, aHead, MultiBlockPartBlockEntity.NOTHING, 0);            // :109
+			tBuilder.formingPart(i, -3, j, aWall, MultiBlockPartBlockEntity.ONLY_FLUID_IN, 0);      // :110
+			tBuilder.formingPart(i, -2, j, aWall, MultiBlockPartBlockEntity.ONLY_FLUID_IN, 0);      // :111
+			if ((i == 0) != (j == 0)) tBuilder.formingPart(i, -1, j, aWall, MultiBlockPartBlockEntity.ONLY_ENERGY_IN, 3); // :113 the energy ring
+			else tBuilder.formingPart(i, -1, j, aWall, MultiBlockPartBlockEntity.ONLY_FLUID_IN, 0); // :115
+			tBuilder.formingPart(i, 0, j, aWall, MultiBlockPartBlockEntity.ONLY_FLUID_IN, 0);       // :117 (the centre is the controller self-cell)
+		}
+		return tBuilder.build();
 	}
 
 	/**
