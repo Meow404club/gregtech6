@@ -2496,6 +2496,57 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shape_simple_ex_hammer");
 		addDirect("item.gt6.shape_simple_ex_file");
 		addDirect("item.gt6.shape_simple_ex_saw");
+		// task mold-extruder-shapes — the FULL family census (dump
+		// gt.multiitem.technological.10000/10200 空白(压模)模具 :10127/:10231 + the
+		// 10002-10014/10023-10026/10028-10031 模具 (…) rows :10131-10195 and the
+		// 10202-10214/10223-10231 低热容压模模具 (…) rows :10235-10299; the r11c
+		// 10015-10022/10215-10222 bands above stay verbatim)
+		addDirect("item.gt6.shape_extruder_empty");
+		addDirect("item.gt6.shape_extruder_rod_long");
+		addDirect("item.gt6.shape_extruder_bolt");
+		addDirect("item.gt6.shape_extruder_ring");
+		addDirect("item.gt6.shape_extruder_cell");
+		addDirect("item.gt6.shape_extruder_ingot");
+		addDirect("item.gt6.shape_extruder_wire");
+		addDirect("item.gt6.shape_extruder_casing");
+		addDirect("item.gt6.shape_extruder_pipe_tiny");
+		addDirect("item.gt6.shape_extruder_pipe_small");
+		addDirect("item.gt6.shape_extruder_pipe_medium");
+		addDirect("item.gt6.shape_extruder_pipe_large");
+		addDirect("item.gt6.shape_extruder_pipe_huge");
+		addDirect("item.gt6.shape_extruder_block");
+		addDirect("item.gt6.shape_extruder_gear");
+		addDirect("item.gt6.shape_extruder_bottle");
+		addDirect("item.gt6.shape_extruder_plate_curved");
+		addDirect("item.gt6.shape_extruder_gear_small");
+		addDirect("item.gt6.shape_extruder_ccc");
+		addDirect("item.gt6.shape_extruder_foil");
+		addDirect("item.gt6.shape_extruder_plate_tiny");
+		addDirect("item.gt6.shape_extruder_wire_fine");
+		addDirect("item.gt6.shape_simple_ex_empty");
+		addDirect("item.gt6.shape_simple_ex_plate");
+		addDirect("item.gt6.shape_simple_ex_rod_long");
+		addDirect("item.gt6.shape_simple_ex_bolt");
+		addDirect("item.gt6.shape_simple_ex_ring");
+		addDirect("item.gt6.shape_simple_ex_cell");
+		addDirect("item.gt6.shape_simple_ex_ingot");
+		addDirect("item.gt6.shape_simple_ex_wire");
+		addDirect("item.gt6.shape_simple_ex_casing");
+		addDirect("item.gt6.shape_simple_ex_pipe_tiny");
+		addDirect("item.gt6.shape_simple_ex_pipe_small");
+		addDirect("item.gt6.shape_simple_ex_pipe_medium");
+		addDirect("item.gt6.shape_simple_ex_pipe_large");
+		addDirect("item.gt6.shape_simple_ex_pipe_huge");
+		addDirect("item.gt6.shape_simple_ex_block");
+		addDirect("item.gt6.shape_simple_ex_gear");
+		addDirect("item.gt6.shape_simple_ex_bottle");
+		addDirect("item.gt6.shape_simple_ex_plate_curved");
+		addDirect("item.gt6.shape_simple_ex_gear_small");
+		addDirect("item.gt6.shape_simple_ex_rod");
+		addDirect("item.gt6.shape_simple_ex_ccc");
+		addDirect("item.gt6.shape_simple_ex_foil");
+		addDirect("item.gt6.shape_simple_ex_plate_tiny");
+		addDirect("item.gt6.shape_simple_ex_wire_fine");
 		addDirect("item.gt6.shape_slicer_grid"); // task slicer-row-domain — dump gt.multiitem.technological.10902 切片器刀片 (栅格式) (:10349)
 		addDirect("item.gt6.shape_slicer_split"); // task slicer-row-domain — dump gt.multiitem.technological.10905 切片器刀片 (分割) (:10355)
 		addDirect("item.gt6.shape_slicer_empty"); // task recipes-obtainability — dump gt.multiitem.technological.10900 切片器刀片框架 (:10345)

@@ -493,20 +493,19 @@ public final class GT6ItemModels extends ItemModelProvider {
         }
         // (the 12 box ITEMS parent their block models from GT6BlockStates.addBatteryBoxes —
         //  the item face validates against the blockstates provider's own output, the dynamo band convention)
-        withExistingParent("shape_extruder_plate", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/shape_extruder/plate"));
-        withExistingParent("shape_extruder_rod", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/shape_extruder/rod"));
-        // the extruder-mold tool-head family (task toolhead-r11c-extruder-heads) — 16
-        // item/generated models over the byte-identical upstream icon borrows (the
-        // gt.multiitem.technological 10015-10022 / 10215-10222 meta tiles now lifted as
+        // the extruder-mold FULL family (task mold-extruder-shapes; the row0 pair rode
+        // task w1-press-extruder-molds, the head family task toolhead-r11c-extruder-heads)
+        // — 64 item/generated models walked over the registration order (the addExtruderMolds
+        // drift-throw form) over the byte-identical upstream icon borrows (the
+        // gt.multiitem.technological 10000-10031 / 10200-10231 meta tiles now lifted as
         // standalone sprites, assets/README.md sha256 ledger; the texture basename drops
         // the family prefix, the shape_foodmold convention)
-        for (String tHead : new String[] {"sword", "pickaxe", "shovel", "axe", "hoe", "hammer", "file", "saw"}) {
-            withExistingParent("shape_extruder_" + tHead, mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/shape_extruder/" + tHead));
-            withExistingParent("shape_simple_ex_" + tHead, mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/shape_simple_ex/" + tHead));
+        for (net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS) {
+            String tPath = tMold.getId().getPath();
+            String tTexture = tPath.startsWith("shape_simple_ex_")
+                    ? "item/shape_simple_ex/" + tPath.substring("shape_simple_ex_".length())
+                    : "item/shape_extruder/" + tPath.substring("shape_extruder_".length());
+            withExistingParent(tPath, mcLoc("item/generated")).texture("layer0", modLoc(tTexture));
         }
         // the slicer-blade row0 subset (task slicer-row-domain) — 2 item/generated models
         // over the composed placeholder icons (the blade-grid/blade-split 16x16 stdlib

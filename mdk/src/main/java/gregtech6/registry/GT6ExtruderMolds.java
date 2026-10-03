@@ -18,19 +18,20 @@ import gregtech6.GT6Mod;
 
 /**
  * The GT6 extruder-mold registration home — task w1-press-extruder-molds (the row0
- * plate/rod pair), extended to the tool-head family by task toolhead-r11c-extruder-heads:
- * the 8 {@code Shape_Extruder_*} head molds + the 8 {@code Shape_SimpleEx_*} low-heat
- * twins that the extruder.json head rows consume (MultiItemTechnological.java:215-222/
- * :276-283; the rest of the 30+30-mold upstream census stays POOLED with the forming/
- * wire/pipe cards). Card-owned self-contained {@code @EventBusSubscriber(MOD)}
- * DeferredRegister attached from the construct event (the GT6FoodCans shape verbatim;
- * GT6Mod.java / GTModBusListener.java stay untouched).
+ * plate/rod pair), extended to the tool-head family by task toolhead-r11c-extruder-heads
+ * (8+8 head molds), and closed to the FULL upstream family by task mold-extruder-shapes:
+ * all 32 {@code Shape_Extruder_*} items + all 32 {@code Shape_SimpleEx_*} low-heat twins
+ * (MultiItemTechnological.java:182-216/:258-292, metas 10000-10031/10200-10231 — the
+ * Empty leads of both families included). Card-owned self-contained
+ * {@code @EventBusSubscriber(MOD)} DeferredRegister attached from the construct event
+ * (the GT6FoodCans shape verbatim; GT6Mod.java / GTModBusListener.java stay untouched).
  *
  * <p>Id flattening (the GT6FoodCans ruling): upstream ids were meta ids on the
- * MultiItemTechnological meta item (10015-10022/10215-10222); the port flattens to one
- * id per mold, snake of the upstream name ({@code "Extruder Shape (Sword Blade)"} →
- * {@code shape_extruder_sword}). The molds are PLAIN items — zero shaping behaviour on
- * the item itself, so a fresh {@code Item} carries the whole declared behaviour.
+ * MultiItemTechnological meta item (10000-10031/10200-10231); the port flattens to one
+ * id per mold, snake of the upstream IL field ({@code Shape_Extruder_Sword} →
+ * {@code shape_extruder_sword}, the r11c form). The molds are PLAIN items — zero shaping
+ * behaviour on the item itself, so a fresh {@code Item} carries the whole declared
+ * behaviour.
  *
  * <p><b>The not-consumable face</b> (the archaeology conclusion, remember id478): upstream
  * marks every mold recipe input with STACK SIZE 0 (RM.java:405/:407/:410-417, the
@@ -55,25 +56,43 @@ public final class GT6ExtruderMolds {
 	 */
 	public static final TagKey<Item> EXTRUDER_SHAPES_TAG = TagKey.create(Registries.ITEM, new net.minecraft.resources.ResourceLocation("gt6", "extruder_shapes"));
 
-	/**
-	 * The plate mold — id {@code gt6:shape_extruder_plate} (upstream meta 10001, the
-	 * RM.Extruder plate row's shaping tool, RM.java:405).
-	 */
+	// ---- the FULL family (task mold-extruder-shapes): every upstream
+	// ---- MultiItemTechnological meta 10000-10031 (:182-216) and 10200-10231 (:258-292),
+	// ---- declared in meta order below and mirrored by {@link #MOLDS}. The row0 pair
+	// ---- (task w1-press-extruder-molds) and the head family (task
+	// ---- toolhead-r11c-extruder-heads, the rows extruder.json consumes) are the seated
+	// ---- ancestors of this walk; the remaining 46 close the upstream census.
+
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_EMPTY = ITEMS.register("shape_extruder_empty",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> SHAPE_EXTRUDER_PLATE = ITEMS.register("shape_extruder_plate",
 			() -> new Item(new Item.Properties()));
-
-	/**
-	 * The rod mold — id {@code gt6:shape_extruder_rod} (upstream meta 10027, the RM.Extruder
-	 * rod row's shaping tool, RM.java:407).
-	 */
-	public static final RegistryObject<Item> SHAPE_EXTRUDER_ROD = ITEMS.register("shape_extruder_rod",
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_ROD_LONG = ITEMS.register("shape_extruder_rod_long",
 			() -> new Item(new Item.Properties()));
-
-	// ---- the tool-head family (task toolhead-r11c-extruder-heads; the rows these shape
-	// ---- live in data/gt6/recipe_maps/extruder.json). Upstream metas 10015-10022 /
-	// ---- 10215-10222 (MultiItemTechnological.java:215-222/:276-283), registration order
-	// ---- preserved in {@link #MOLDS}.
-
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_BOLT = ITEMS.register("shape_extruder_bolt",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_RING = ITEMS.register("shape_extruder_ring",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_CELL = ITEMS.register("shape_extruder_cell",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_INGOT = ITEMS.register("shape_extruder_ingot",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_WIRE = ITEMS.register("shape_extruder_wire",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_CASING = ITEMS.register("shape_extruder_casing",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PIPE_TINY = ITEMS.register("shape_extruder_pipe_tiny",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PIPE_SMALL = ITEMS.register("shape_extruder_pipe_small",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PIPE_MEDIUM = ITEMS.register("shape_extruder_pipe_medium",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PIPE_LARGE = ITEMS.register("shape_extruder_pipe_large",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PIPE_HUGE = ITEMS.register("shape_extruder_pipe_huge",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_BLOCK = ITEMS.register("shape_extruder_block",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> SHAPE_EXTRUDER_SWORD = ITEMS.register("shape_extruder_sword",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> SHAPE_EXTRUDER_PICKAXE = ITEMS.register("shape_extruder_pickaxe",
@@ -90,7 +109,55 @@ public final class GT6ExtruderMolds {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> SHAPE_EXTRUDER_SAW = ITEMS.register("shape_extruder_saw",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_GEAR = ITEMS.register("shape_extruder_gear",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_BOTTLE = ITEMS.register("shape_extruder_bottle",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PLATE_CURVED = ITEMS.register("shape_extruder_plate_curved",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_GEAR_SMALL = ITEMS.register("shape_extruder_gear_small",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_ROD = ITEMS.register("shape_extruder_rod",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_CCC = ITEMS.register("shape_extruder_ccc",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_FOIL = ITEMS.register("shape_extruder_foil",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_PLATE_TINY = ITEMS.register("shape_extruder_plate_tiny",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_EXTRUDER_WIRE_FINE = ITEMS.register("shape_extruder_wire_fine",
+			() -> new Item(new Item.Properties()));
 
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_EMPTY = ITEMS.register("shape_simple_ex_empty",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PLATE = ITEMS.register("shape_simple_ex_plate",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_ROD_LONG = ITEMS.register("shape_simple_ex_rod_long",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_BOLT = ITEMS.register("shape_simple_ex_bolt",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_RING = ITEMS.register("shape_simple_ex_ring",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_CELL = ITEMS.register("shape_simple_ex_cell",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_INGOT = ITEMS.register("shape_simple_ex_ingot",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_WIRE = ITEMS.register("shape_simple_ex_wire",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_CASING = ITEMS.register("shape_simple_ex_casing",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PIPE_TINY = ITEMS.register("shape_simple_ex_pipe_tiny",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PIPE_SMALL = ITEMS.register("shape_simple_ex_pipe_small",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PIPE_MEDIUM = ITEMS.register("shape_simple_ex_pipe_medium",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PIPE_LARGE = ITEMS.register("shape_simple_ex_pipe_large",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PIPE_HUGE = ITEMS.register("shape_simple_ex_pipe_huge",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_BLOCK = ITEMS.register("shape_simple_ex_block",
+			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_SWORD = ITEMS.register("shape_simple_ex_sword",
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PICKAXE = ITEMS.register("shape_simple_ex_pickaxe",
@@ -107,18 +174,49 @@ public final class GT6ExtruderMolds {
 			() -> new Item(new Item.Properties()));
 	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_SAW = ITEMS.register("shape_simple_ex_saw",
 			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_GEAR = ITEMS.register("shape_simple_ex_gear",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_BOTTLE = ITEMS.register("shape_simple_ex_bottle",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PLATE_CURVED = ITEMS.register("shape_simple_ex_plate_curved",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_GEAR_SMALL = ITEMS.register("shape_simple_ex_gear_small",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_ROD = ITEMS.register("shape_simple_ex_rod",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_CCC = ITEMS.register("shape_simple_ex_ccc",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_FOIL = ITEMS.register("shape_simple_ex_foil",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_PLATE_TINY = ITEMS.register("shape_simple_ex_plate_tiny",
+			() -> new Item(new Item.Properties()));
+	public static final RegistryObject<Item> SHAPE_SIMPLE_EX_WIRE_FINE = ITEMS.register("shape_simple_ex_wire_fine",
+			() -> new Item(new Item.Properties()));
 
 	/**
-	 * The mold set in upstream meta order (the plate :186 lead, the head family
-	 * 10015-10022, the rod :212 tail, then the SimpleEx head family 10215-10222).
+	 * The mold set in upstream meta order: the full Shape_Extruder block (10000 Empty lead
+	 * through 10031 Wire_Fine tail, MultiItemTechnological.java:182-216) then the full
+	 * SimpleEx block (10200-10231, :258-292) — the registration walk verbatim.
 	 */
 	public static final List<RegistryObject<Item>> MOLDS = List.of(
-			SHAPE_EXTRUDER_PLATE,
-			SHAPE_EXTRUDER_SWORD, SHAPE_EXTRUDER_PICKAXE, SHAPE_EXTRUDER_SHOVEL, SHAPE_EXTRUDER_AXE,
-			SHAPE_EXTRUDER_HOE, SHAPE_EXTRUDER_HAMMER, SHAPE_EXTRUDER_FILE, SHAPE_EXTRUDER_SAW,
-			SHAPE_EXTRUDER_ROD,
-			SHAPE_SIMPLE_EX_SWORD, SHAPE_SIMPLE_EX_PICKAXE, SHAPE_SIMPLE_EX_SHOVEL, SHAPE_SIMPLE_EX_AXE,
-			SHAPE_SIMPLE_EX_HOE, SHAPE_SIMPLE_EX_HAMMER, SHAPE_SIMPLE_EX_FILE, SHAPE_SIMPLE_EX_SAW);
+			SHAPE_EXTRUDER_EMPTY,
+			SHAPE_EXTRUDER_PLATE, SHAPE_EXTRUDER_ROD_LONG, SHAPE_EXTRUDER_BOLT, SHAPE_EXTRUDER_RING,
+			SHAPE_EXTRUDER_CELL, SHAPE_EXTRUDER_INGOT, SHAPE_EXTRUDER_WIRE, SHAPE_EXTRUDER_CASING,
+			SHAPE_EXTRUDER_PIPE_TINY, SHAPE_EXTRUDER_PIPE_SMALL, SHAPE_EXTRUDER_PIPE_MEDIUM, SHAPE_EXTRUDER_PIPE_LARGE,
+			SHAPE_EXTRUDER_PIPE_HUGE, SHAPE_EXTRUDER_BLOCK, SHAPE_EXTRUDER_SWORD, SHAPE_EXTRUDER_PICKAXE,
+			SHAPE_EXTRUDER_SHOVEL, SHAPE_EXTRUDER_AXE, SHAPE_EXTRUDER_HOE, SHAPE_EXTRUDER_HAMMER,
+			SHAPE_EXTRUDER_FILE, SHAPE_EXTRUDER_SAW, SHAPE_EXTRUDER_GEAR, SHAPE_EXTRUDER_BOTTLE,
+			SHAPE_EXTRUDER_PLATE_CURVED, SHAPE_EXTRUDER_GEAR_SMALL, SHAPE_EXTRUDER_ROD, SHAPE_EXTRUDER_CCC,
+			SHAPE_EXTRUDER_FOIL, SHAPE_EXTRUDER_PLATE_TINY, SHAPE_EXTRUDER_WIRE_FINE,
+			SHAPE_SIMPLE_EX_EMPTY,
+			SHAPE_SIMPLE_EX_PLATE, SHAPE_SIMPLE_EX_ROD_LONG, SHAPE_SIMPLE_EX_BOLT, SHAPE_SIMPLE_EX_RING,
+			SHAPE_SIMPLE_EX_CELL, SHAPE_SIMPLE_EX_INGOT, SHAPE_SIMPLE_EX_WIRE, SHAPE_SIMPLE_EX_CASING,
+			SHAPE_SIMPLE_EX_PIPE_TINY, SHAPE_SIMPLE_EX_PIPE_SMALL, SHAPE_SIMPLE_EX_PIPE_MEDIUM, SHAPE_SIMPLE_EX_PIPE_LARGE,
+			SHAPE_SIMPLE_EX_PIPE_HUGE, SHAPE_SIMPLE_EX_BLOCK, SHAPE_SIMPLE_EX_SWORD, SHAPE_SIMPLE_EX_PICKAXE,
+			SHAPE_SIMPLE_EX_SHOVEL, SHAPE_SIMPLE_EX_AXE, SHAPE_SIMPLE_EX_HOE, SHAPE_SIMPLE_EX_HAMMER,
+			SHAPE_SIMPLE_EX_FILE, SHAPE_SIMPLE_EX_SAW, SHAPE_SIMPLE_EX_GEAR, SHAPE_SIMPLE_EX_BOTTLE,
+			SHAPE_SIMPLE_EX_PLATE_CURVED, SHAPE_SIMPLE_EX_GEAR_SMALL, SHAPE_SIMPLE_EX_ROD, SHAPE_SIMPLE_EX_CCC,
+			SHAPE_SIMPLE_EX_FOIL, SHAPE_SIMPLE_EX_PLATE_TINY, SHAPE_SIMPLE_EX_WIRE_FINE);
 
 	/**
 	 * The mold-identity seam (production default = the {@link #EXTRUDER_SHAPES_TAG} tag
@@ -153,7 +251,7 @@ public final class GT6ExtruderMolds {
 	@net.minecraftforge.eventbus.api.SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			GT6Mod.LOGGER.info("GT6 extruder molds registered: {} molds (row0 pair + the tool-head family + its SimpleEx twins)", MOLDS.size());
+			GT6Mod.LOGGER.info("GT6 extruder molds registered: {} molds (the full 32+32 upstream family)", MOLDS.size());
 			// the registry lookup (not the field name) makes this line real registration
 			// evidence — an unregistered mold would throw here and fail the runServer gate.
 			for (RegistryObject<Item> tMold : MOLDS) {
