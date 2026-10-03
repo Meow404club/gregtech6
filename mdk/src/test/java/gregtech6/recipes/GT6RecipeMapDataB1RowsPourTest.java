@@ -51,7 +51,7 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 	 */
 	private static final Map<String, Integer> CENSUS = Map.of(
 			"fluidbed", 55,    // Loader_Fuels.java:37-43 — 11 burning materials x 5 dust forms
-			"press", 60,       // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT
+			"press", 64,       // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT +4 toolhead-r11e-press-mortar (the HandlerPrefix gem-pickaxe/arrow walk representatives, Handlers:247-250/:252-253)
 			"loom", 35,        // seated :744 (16t corrected) + b2 walks 26 + this card :745/:746/:752/:753/:757-:760 (8)
 			"boxinator", 29,   // seated GT6_Main:350 map row + this card's 28
 			"unboxinator", 21, // seated map row + b2 bookshelf row + this card's 19
@@ -63,6 +63,12 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 
 	@BeforeEach
 	void freshGeneration() {
+		// the reset FIRST (task toolhead-r11e-press-mortar): the neoforge junit FML boot runs
+		// the whole static pour suite at modloading, so a bare init() no-ops there and the
+		// census would count boot residue (the MortarRowsPourTest empirics; PRESS/MORTAR boot
+		// pours are 0 today only by the declared-empty accident). Same hermetic form as the
+		// @AfterEach reset below.
+		GT6RecipeMaps.reset();
 		GT6RecipeMaps.init();
 		GT6RecipeMapJsonLoader.resetForTest();
 		GT6RecipeMapJsonLoader.sItemResolver = aId ->
@@ -231,6 +237,55 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 			}
 		}
 		assertTrue(tMissing.isEmpty(), "unregistered gt6 ids (these rows would WARN-skip live): " + tMissing);
+	}
+
+	/**
+	 * Spot check 4 (task toolhead-r11e-press-mortar) — the Press HandlerPrefix walk
+	 * representatives (Loader_Recipes_Handlers.java:247-250/:252-253, the P8 pooled
+	 * reclaim): 16 EUt / 16 t everywhere, the walk input first and the additional input
+	 * trailing (RecipeMapHandlerPrefix.addRecipeForMaterial:207-208), single output, no
+	 * chance key. The walked material/base axes are the representative faces (Diamond gem,
+	 * Iron base, Flint arrow head) — the full cross-product is the declared pooled face,
+	 * one row per upstream STATEMENT, matching the mortar.json :705-706 Blaze-representative
+	 * convention. The :251 Empty-head retip statement is DECLARED NOT POURABLE: upstream
+	 * force-generates the Empty pickaxeGem head (OP.java:621) but the port force-table
+	 * (GTMaterialItems.forceItemGeneration) has no consuming landing for it, so the row
+	 * would have no real input item — deferred to the tool-head family card.
+	 */
+	@Test
+	public void pressHandlerWalkRowsAreUpstreamVerbatim() throws Exception {
+		JsonArray tRows = pourShipped("press");
+		JsonObject tRaw = findRow(tRows, "Loader_Recipes_Handlers.java:247-248 —");
+		assertEquals(16, tRaw.get("duration").getAsLong(), "the handler duration column");
+		assertEquals(16, tRaw.get("eut").getAsLong(), "the handler eut column");
+		JsonArray tRawInputs = tRaw.getAsJsonArray("inputs");
+		assertEquals(2, tRawInputs.size(), "gemFlawed x2 + the raw any-iron head");
+		assertEquals("gt6:gem_flawed_diamond", slotId(tRawInputs.get(0)));
+		assertEquals(2, slotCount(tRawInputs.get(0)), "the gemFlawed amount column");
+		assertEquals("gt6:tool_head_raw_pickaxe_iron", slotId(tRawInputs.get(1)), "the ANY.Iron raw-head representative, trailing");
+		assertEquals(1, slotCount(tRawInputs.get(1)));
+		assertEquals("gt6:tool_head_pickaxe_gem_diamond", slotId(tRaw.getAsJsonArray("outputs").get(0)));
+		assertEquals(1, slotCount(tRaw.getAsJsonArray("outputs").get(0)));
+
+		JsonObject tFin = findRow(tRows, "Loader_Recipes_Handlers.java:249-250 —");
+		assertEquals("gt6:tool_head_pickaxe_iron", slotId(tFin.getAsJsonArray("inputs").get(1)), "the ANY.Iron finished-head representative");
+		assertEquals("gt6:tool_head_pickaxe_gem_diamond", slotId(tFin.getAsJsonArray("outputs").get(0)));
+
+		JsonObject tWood = findRow(tRows, "Loader_Recipes_Handlers.java:252 —");
+		JsonArray tWoodInputs = tWood.getAsJsonArray("inputs");
+		assertEquals(2, tWoodInputs.size(), "the arrow head + the plain Empty wooden arrow");
+		assertEquals("gt6:tool_head_arrow_flint", slotId(tWoodInputs.get(0)));
+		assertEquals("gt6:arrow_gt_wood_empty", slotId(tWoodInputs.get(1)), "arrowGtWood.mat(MT.Empty, 1) — the Or(toolHeadArrow, EMPTY) plain arrow");
+		assertEquals("gt6:arrow_gt_wood_flint", slotId(tWood.getAsJsonArray("outputs").get(0)));
+
+		JsonObject tPlastic = findRow(tRows, "Loader_Recipes_Handlers.java:253 —");
+		assertEquals("gt6:arrow_gt_plastic_empty", slotId(tPlastic.getAsJsonArray("inputs").get(1)));
+		assertEquals("gt6:arrow_gt_plastic_flint", slotId(tPlastic.getAsJsonArray("outputs").get(0)));
+
+		for (JsonElement tElement : tRows) {
+			String tComment = tElement.getAsJsonObject().has("comment") ? tElement.getAsJsonObject().get("comment").getAsString() : "";
+			assertTrue(!tComment.startsWith("Loader_Recipes_Handlers.java:251"), "the :251 Empty-head retip stays unpoured (the port force-table has no toolHeadPickaxeGem(Empty) landing — declared defer, no base-less exploit row)");
+		}
 	}
 
 	// ------------------------------------------------------------------ helpers

@@ -1,5 +1,5 @@
 {
-  "comment": "task p37-rm-six-maps \u2014 the RM.Mortar row stock (RM.java:133, the p36 census open_faces[0] close): the static rows of Loader_Recipes_Vanilla.java:674-684 + :705-706, transcribed field-for-field (16 EUt everywhere; durations/ticks verbatim). The W-meta wildcard rows (:675/:677) expand to the sixteen 1.20.1 dye-order colour identities (the juicer seed-fold convention; upstream is ONE row matching any meta). :679/:685 are WiMo mod items, CUT. :705-706 are the MT.Blaze representative of the ANY.Blaze.mToThis loop (group expansion pooled). The RecipeMapHandlerPrefix lazy per-material rows (Loader_Recipes_Handlers.java:79-105+) are the not-ported handler layer (the P8 ruling), declared pooled.",
+  "comment": "task p37-rm-six-maps \u2014 the RM.Mortar row stock (RM.java:133, the p36 census open_faces[0] close): the static rows of Loader_Recipes_Vanilla.java:674-684 + :705-706, transcribed field-for-field (16 EUt everywhere; durations/ticks verbatim). The W-meta wildcard rows (:675/:677) expand to the sixteen 1.20.1 dye-order colour identities (the juicer seed-fold convention; upstream is ONE row matching any meta). :679/:685 are WiMo mod items, CUT. :705-706 are the MT.Blaze representative of the ANY.Blaze.mToThis loop (group expansion pooled). The RecipeMapHandlerPrefix lazy per-material rows (Loader_Recipes_Handlers.java:79-105+) are the not-ported handler layer (the P8 ruling), declared pooled; task toolhead-r11e-press-mortar reclaims exactly two of them as representative rows \u2014 the toolHeadArrow/toolHeadRawArrow walks of :100-101 (the MORTAR-tagged Flint representative: one head in, one dustTiny out, eut 0; the full material walk stays pooled).",
   "recipes": [
     {
       "comment": "Loader_Recipes_Vanilla.java:674 \u2014 glass -> 9 Glass dust (16 EUt, 32 t)",
@@ -714,6 +714,40 @@
       ],
       "duration": 64,
       "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:100 \u2014 the toolHeadArrow walk, one arrow head (U9) pulverizes to one dustTiny of the walked material (OM.pulverize:370-372 through the OM.dust ladder :460-467, eut 0 hand-crank, 16 t); the MORTAR-tagged Flint representative (the full material walk pooled; task toolhead-r11e-press-mortar)",
+      "inputs": [
+        {
+          "item": "gt6:tool_head_arrow_flint",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_flint",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:101 \u2014 the toolHeadRawArrow walk, same form (U8 also binds to a single dustTiny); the Flint representative (pooled)",
+      "inputs": [
+        {
+          "item": "gt6:tool_head_raw_arrow_flint",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_flint",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
     }
   ]
 }
