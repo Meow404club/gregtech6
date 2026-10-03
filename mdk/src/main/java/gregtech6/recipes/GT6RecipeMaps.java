@@ -956,6 +956,37 @@ public class GT6RecipeMaps {
 	 */
 	public static volatile RecipeMap HAMMER;
 
+	/**
+	 * RM.java:140 — the Nanoscale Fabricator map (task recipe-b6b): items 2/1/0, fluids
+	 * 1/1/0, MIN 1, AMP 1 — the RM.java:140 row verbatim over the 15-arg port ctor (the
+	 * trailing NEI booleans fold away). RM.Nanofab IS a plain RecipeMap upstream; the
+	 * NBT-copy semantics face stays POOLED with the Printer/Replicator domain (the port
+	 * PRINTER field-doc declaration, this file). The rows pour via the tier-b JSON seam
+	 * (key "nanofab", {@code data/gt6/recipe_maps/nanofab.json}).
+	 */
+	public static volatile RecipeMap NANOFAB;
+
+	/**
+	 * RM.java:159 — the Assembler map (task recipe-b6b): items 2/1/1, fluids 1/0/0,
+	 * MIN 0, AMP 1 — the RM.java:159 row verbatim. Upstream the field IS a
+	 * {@code RecipeMapAssembler} subclass whose only delta is the findRecipe arm copying
+	 * the printed-pages NBT into the book output (RecipeMapAssembler.java:43-54) — the
+	 * UNBOXINATOR judged form: the base class here, the runtime NBT arm stays POOLED
+	 * (the same pool as the PRINTER declaration). The rows pour via the tier-b JSON seam
+	 * (key "assembler", {@code data/gt6/recipe_maps/assembler.json}).
+	 */
+	public static volatile RecipeMap ASSEMBLER;
+
+	/**
+	 * RM.java:160 — the CNC Machine map (task recipe-b6b): items 2/1/2, fluids 1/0/1,
+	 * MIN 0, AMP 1 — the RM.java:160 row verbatim, the base class (RM.CNC IS a plain
+	 * RecipeMap upstream). The rows pour via the tier-b JSON seam (key "cnc",
+	 * {@code data/gt6/recipe_maps/cnc.json}); the GUI texture file is NOT ported — the
+	 * upstream path string rides lowercased for the census (the BEDROCK_ORE_LIST judged
+	 * form, display-only today).
+	 */
+	public static volatile RecipeMap CNC;
+
 	/** Registers all Recipe Maps. Safe to call repeatedly within one generation. */
 	public static synchronized void init() {
 		if (FURNACE != null) return;
@@ -1749,6 +1780,42 @@ public class GT6RecipeMaps {
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,
 				/*AMP=*/ 1);
+		// --- the b6b small-maps tail-append (task recipe-b6b-small-maps-cnc-assembler-nanofab),
+		// upstream RM.java declaration order (Nanofab :140 < Assembler :159 < CNC :160); the MIXER
+		// :74 judged form — the RM.java rows verbatim over the 15-arg port ctor, the trailing NEI
+		// booleans folding away; the rows ride the tier-b JSON seam (nanofab/assembler/cnc.json) ---
+		// RM.java:140 — items 2/1/0, fluids 1/1/0, MIN 1, AMP 1 (the plain RecipeMap upstream;
+		// the NBT-copy face pooled with the Printer/Replicator domain, the PRINTER field doc)
+		NANOFAB = new RecipeMap(new HashSet<>(),
+				"gt.recipe.nanofab", "Nanoscale Fabricator", null,
+				0, 1,
+				"gt6:textures/gui/machines/nanofab",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 0,
+				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
+				/*MIN=*/ 1,
+				/*AMP=*/ 1);
+		// RM.java:159 — items 2/1/1, fluids 1/0/0, MIN 0, AMP 1 (the upstream RecipeMapAssembler
+		// subclass folds to the base class — the printed-pages NBT arm stays pooled, the
+		// UNBOXINATOR judged form, the field doc above)
+		ASSEMBLER = new RecipeMap(new HashSet<>(),
+				"gt.recipe.assembler", "Assembler", null,
+				0, 1,
+				"gt6:textures/gui/machines/assembler",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 1,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
+		// RM.java:160 — items 2/1/2, fluids 1/0/1, MIN 0, AMP 1 (the plain RecipeMap upstream;
+		// the GUI texture file is not ported — the path string rides lowercased, the
+		// BEDROCK_ORE_LIST judged form)
+		CNC = new RecipeMap(new HashSet<>(),
+				"gt.recipe.cncmachine", "CNC Machine", null,
+				0, 1,
+				"gt6:textures/gui/machines/default",
+				/*IN-OUT-MIN-ITEM=*/ 2, 1, 2,
+				/*IN-OUT-MIN-FLUID=*/ 1, 0, 1,
+				/*MIN=*/ 0,
+				/*AMP=*/ 1);
 	}
 
 	/**
@@ -1838,6 +1905,9 @@ public class GT6RecipeMaps {
 		TOOL_HEADS = null;
 		MORTAR = null;
 		HAMMER = null;
+		NANOFAB = null;
+		ASSEMBLER = null;
+		CNC = null;
 		RecipeMap.reset();
 		sPhase = Phase.OPEN; // the phase joins the generation — a fresh generation always registers (task rm-phase-gate)
 		for (Runnable tHook : sGenerationResetHooks) {

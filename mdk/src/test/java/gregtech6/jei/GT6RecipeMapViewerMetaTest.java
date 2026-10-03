@@ -57,7 +57,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	@Test
 	void censusEligibleVisibleAndExcluded() {
 		GT6RecipeMaps.init();
-		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "the merged-shape census (rm-six-maps' Microwave/Cooker/ToolHeads/Mortar/Hammer five maps landed by rebase — the pre-rebase branch pinned 75)");
+		assertEquals(83, RecipeMap.RECIPE_MAPS.size(), "the merged-shape census (rm-six-maps' Microwave/Cooker/ToolHeads/Mortar/Hammer five maps landed by rebase — the pre-rebase branch pinned 75; +3 task recipe-b6b-small-maps-cnc-assembler-nanofab — the Nanofab/Assembler/CNC trio, RM.java:140/:159/:160)");
 
 		// the ruled exclusion table (r-jei-emi-coverage id927) never enters a category
 		// (crucible-viewer-page: the crucible pair LEFT the table — their page rides the
@@ -70,8 +70,10 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		for (String tCrucible : List.of("gt.recipe.cruciblesmelting", "gt.recipe.cruciblealloying")) {
 			assertTrue(GT6RecipeMapViewerMeta.eligible(RecipeMap.RECIPE_MAPS.get(tCrucible)), tCrucible + " joins the category face");
 		}
-		// the upstream mNEIAllowed=F rows stay out the faithful way
-		for (String tDisallowed : List.of("gt.recipe.chisel", "gt.recipe.autocrafting")) {
+		// the upstream mNEIAllowed=F rows stay out the faithful way (the :159/:160 pair joined
+		// the table with task recipe-b6b — upstream ships Assembler/CNC with aNEIAllowed=F)
+		for (String tDisallowed : List.of("gt.recipe.chisel", "gt.recipe.autocrafting",
+				"gt.recipe.assembler", "gt.recipe.cncmachine")) {
 			assertFalse(GT6RecipeMapViewerMeta.eligible(RecipeMap.RECIPE_MAPS.get(tDisallowed)), tDisallowed + " carries upstream mNEIAllowed=F");
 		}
 
@@ -81,7 +83,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 			if (GT6RecipeMapViewerMeta.eligible(tMap)) tEligible++;
 			if (GT6RecipeMapViewerMeta.visibleToViewers(tMap)) tVisible.add(tMap.mNameInternal);
 		}
-		assertEquals(74, tEligible, "80 census - 4 ruled-excluded - 3 upstream-disallowed + 1 overlap (furnacefuel is both) = 74 eligible (crucible-viewer-page lifted the crucible pair)");
+		assertEquals(75, tEligible, "83 census - 4 ruled-excluded - 5 upstream-disallowed + 1 overlap (furnacefuel is both) = 75 eligible (crucible-viewer-page lifted the crucible pair; the b6b trio joins with Nanofab eligible and the Assembler/CNC pair disallowed)");
 		// batch 2 full opening (task debt-jei-emi-batch2): visibility IS eligibility — the
 		// batch-1 canaries (cokeoven/shredder/crusher/lathe/distillery/drying + the
 		// RM.java:153 bedrockorelist display map) ride along automatically; the closure is

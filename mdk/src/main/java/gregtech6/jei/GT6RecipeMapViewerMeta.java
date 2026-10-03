@@ -166,8 +166,14 @@ public final class GT6RecipeMapViewerMeta {
 		public static final MapMeta STANDARD = new MapMeta(true, true, false, "", 1, "");
 	}
 
-	/** The RM.java:138/:63 + FM.java:38 rows whose upstream aNEIAllowed is F. */
-	private static final Set<String> NEI_DISALLOWED = Set.of("gt.recipe.chisel", "gt.recipe.autocrafting", "mc.recipe.furnacefuel");
+	/**
+	 * The rows whose upstream aNEIAllowed is F: RM.java:138/:63 + FM.java:38, joined by
+	 * the RM.java:159/:160 pair (task recipe-b6b) — upstream ships both with aNEIAllowed=F
+	 * (the T-over-F annotation in the source column), so the new Assembler/CNC maps stay
+	 * out of every viewer category the faithful way.
+	 */
+	private static final Set<String> NEI_DISALLOWED = Set.of("gt.recipe.chisel", "gt.recipe.autocrafting", "mc.recipe.furnacefuel",
+			"gt.recipe.assembler", "gt.recipe.cncmachine");
 
 	/**
 	 * The ruled exclusion table (the class doc) — these never enter a category, whatever
