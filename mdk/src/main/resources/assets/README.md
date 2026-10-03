@@ -9548,6 +9548,33 @@ anti-aliasing grays included.
 - `block/tools/kitchen_nei_emi.png` — `2c812935abf7245e00771d0457cb2684a2ecbd3c748e0a53c9a99dea3a0d09aa` (derived: M hand-drawn + E/I extracted from the same sheet, yellow baked)
 - upstream reference (NOT borrowed): `blocks/overlays/characters/nei.png` — `40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2` (the derivation source sheet, sha256 recorded for traceability)
 
+## Mortar tool block textures (task mortar-family)
+
+The mortar family's element models (`GT6BlockStates.addMortars`) borrow the upstream
+grayscale `colored/` tile set AND the `overlay/` detail sheet — the full two-layer pair
+the other tool families left unborrowed (the kitchen overlay pass was the pool cut; the
+mortar model carries both layers, the addMeasuringPot two-layer grammar). Twelve
+byte-identical copies, filenames unchanged, from upstream
+`textures/blocks/machines/tools/mortar/{colored,overlay}/*` (MultiTileEntityMortar.java
+:127-139). The colored band is tint-index-0 (the Ceramic body colour — the registration
+rows all carry `NBT_MATERIAL, MT.Ceramic`, Loader_MultiTileEntities.java:2179-2183) and
+the middle tiles are tint-index-1 (the pestle, `MORTAR_MATERIALS[mStyle].fRGBaSolid`,
+MultiTileEntityMortar.java:149); the overlay band ships un-tinted. Four of the colored
+tiles are byte-identical to the kitchen family's (same upstream art):
+
+- `block/tools/mortar/sides.png` — `1944346bd9064a4960f5e28a1393a23aeeb88c219ddd14526e72676e8c1ea334` (upstream `blocks/machines/tools/mortar/colored/sides.png`; byte-identical to the bathing_pot/mixing_bowl/juicer side tile)
+- `block/tools/mortar/insides.png` — `e6ce4f96c5fbf7f4fe3088e72899827608d9b46f5d0948873e5089c864197251` (upstream `blocks/machines/tools/mortar/colored/insides.png`; byte-identical to the kitchen inside tile)
+- `block/tools/mortar/top.png` — `59880aac68573de2af64d3b5c661ec11b00226d1ea783d0619c6a8ca97c95b60` (upstream `blocks/machines/tools/mortar/colored/top.png`; byte-identical to the kitchen top tile)
+- `block/tools/mortar/bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/mortar/colored/bottom.png`; byte-identical to the kitchen bottom tile)
+- `block/tools/mortar/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/mortar/colored/middleside.png`; the same uniform tile as the bottom)
+- `block/tools/mortar/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/mortar/colored/middletop.png`; the same uniform tile as the bottom)
+- `block/tools/mortar_overlay/sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/sides.png`; all six overlay tiles ship the one sheet)
+- `block/tools/mortar_overlay/insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/insides.png`)
+- `block/tools/mortar_overlay/top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/top.png`)
+- `block/tools/mortar_overlay/bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/bottom.png`)
+- `block/tools/mortar_overlay/middleside.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/middleside.png`)
+- `block/tools/mortar_overlay/middletop.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/middletop.png`)
+
 ## Fluid spring block texture (task spring-texture-tint)
 
 The bedrock fluid-spring nozzle (GTFluidSpringBlock) borrow. Upstream renders the spring
