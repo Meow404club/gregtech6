@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gt6:block/gt6_bookshelf",
+      "model": "gt6:block/gt6_bookshelf_warped",
       "y": 90
     },
     "facing=north": {
-      "model": "gt6:block/gt6_bookshelf"
+      "model": "gt6:block/gt6_bookshelf_warped"
     },
     "facing=south": {
-      "model": "gt6:block/gt6_bookshelf",
+      "model": "gt6:block/gt6_bookshelf_warped",
       "y": 180
     },
     "facing=west": {
-      "model": "gt6:block/gt6_bookshelf",
+      "model": "gt6:block/gt6_bookshelf_warped",
       "y": 270
     }
   }

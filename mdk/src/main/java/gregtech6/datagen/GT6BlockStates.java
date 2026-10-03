@@ -1202,23 +1202,39 @@ public final class GT6BlockStates extends BlockStateProvider {
      * west 270, east 90); the material/plank ladder folds to the kind model. The 28
      * BlockItem models parent their kind model.
      *
-     * <p>BOOKSHELF and BOTTLECRATE keep the grayscale front/side placeholder pairs — the
-     * probe verdict is TRUE NEGATIVE: upstream renders them from plank/material iconsets
-     * plus NBT-driven content boxes (MultiTileEntityBookShelf mShelfIcon = PlankData.
-     * PLANK_ICONS, MultiTileEntityBottleCrate :64-66 + the BOTTLECRATE_BOTTLE_* content
-     * passes :202-208) — no dedicated colored/overlay group exists to borrow, the visible
-     * content is the render pool.</p>
+     * <p>BOOKSHELF and BOTTLECRATE (task r11-geometry-batch) leave the placeholder cubes
+     * for the upstream special shapes as per-plank element models: a shared frame parent
+     * carries the elements, ten plank leaves bind the texture — the upstream renders the
+     * plank ladder through {@code PlankData.PLANK_ICONS}, which are COPIES OF THE VANILLA
+     * PLANK BLOCK TEXTURES (IconContainerCopied(Blocks.planks, meta),
+     * GT_API_Proxy_Client.java:188 / PlankEntry.java:120), so the port points the
+     * {@code plank} key at {@code minecraft:block/<slug>_planks} directly — zero PNG
+     * borrow, the reference IS the upstream semantic. The frame boxes are the upstream
+     * render-pass geometry: the shelf = bottom/top slab + west/east wall + centre spine
+     * + middle shelf with the front AND back open (MultiTileEntityBookShelf
+     * .setBlockBounds2 :294-299, north default); the crate = bottom board + the 3x3
+     * divider grid (5px x-rails / 4px z-rails :161-164) + the two 8px side walls
+     * (:165-166) + the two 5..7px front/back rails (:167-168), half height (the walls
+     * stop at y 8, the bottles rise above). Upstream crate pass 5 (:165) ships an
+     * INVERTED box (min PX_P[15] > max PX_N[15] — a 1.7.10 quad-glitch); the port
+     * draws its INTENT, the second solid wall, the declared fold. The bottles themselves
+     * are the BER's content display (the upstream 27 dynamic passes :170-196), not
+     * model geometry.</p>
      */
     private void addStaticStorages() {
         for (gregtech6.registry.GT6StaticStorages.Kind tKind : gregtech6.registry.GT6StaticStorages.Kind.values()) {
-            ModelFile tModel;
+            Map<String, ModelFile> tPlankModels = null;
+            ModelFile tModel = null;
             if (tKind == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
                     || tKind == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE) {
-                String tTex = "block/" + kindModelName(tKind) + "_";
-                tModel = models().cube("gt6_" + kindModelName(tKind),
-                        modLoc(tTex + "side"), modLoc(tTex + "side"),        // bottom/top
-                        modLoc(tTex + "front"), modLoc(tTex + "side"),       // north(front)/south
-                        modLoc(tTex + "side"), modLoc(tTex + "side"));       // west/east
+                ModelFile tFrame = tKind == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+                        ? bookshelfFrameModel() : bottlecrateFrameModel();
+                tPlankModels = new java.util.LinkedHashMap<>(); // qualified: the import table stays lean
+                for (gregtech6.registry.GT6StaticStorages.Plank tPlank : gregtech6.registry.GT6StaticStorages.PLANKS) {
+                    tPlankModels.put(tPlank.slug(), models().withExistingParent(
+                            "gt6_" + kindModelName(tKind) + "_" + tPlank.slug(), tFrame.getLocation())
+                            .texture("plank", "minecraft:block/" + tPlank.slug() + "_planks"));
+                }
             } else {
                 tModel = storageModel("block/" + kindModelName(tKind),
                         tKind != gregtech6.registry.GT6StaticStorages.Kind.SAFE_MECHANICAL
@@ -1227,6 +1243,8 @@ public final class GT6BlockStates extends BlockStateProvider {
             for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
                 if (tRow.kind() != tKind) continue;
                 Block tBlock = gregtech6.registry.GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get();
+                ModelFile tRowModel = tPlankModels == null ? tModel
+                        : tPlankModels.get(tRow.plank().slug());
                 getVariantBuilder(tBlock).forAllStates(aState -> {
                     int tY;
                     switch (aState.getValue(gregtech6.registry.GT6StaticStorages.GT6StorageBlock.FACING)) {
@@ -1235,11 +1253,69 @@ public final class GT6BlockStates extends BlockStateProvider {
                         case EAST -> tY = 90;
                         default -> tY = 0; // NORTH
                     }
-                    return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+                    return ConfiguredModel.builder().modelFile(tRowModel).rotationY(tY).build();
                 });
-                itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+                itemModels().withExistingParent(tRow.path(), tRowModel.getLocation());
             }
         }
+    }
+
+    /**
+     * The bookshelf frame parent (task r11-geometry-batch) — the upstream render-pass
+     * boxes (MultiTileEntityBookShelf.setBlockBounds2 :294-299, the north-default form):
+     * the 1px bottom/top slabs, the two 1px side walls y 1..15, the centre spine
+     * (z 7..9) and the middle shelf (y 7..9); the front AND back stay OPEN (the books
+     * live in the niches, 28 = 2 faces x 2 rows x 7 columns — the display itself is
+     * another card's render pool). Every face tiles {@code #plank}; the ten plank
+     * leaves (the {@code addStaticStorages} walk) bind the vanilla plank tile.
+     */
+    private ModelFile bookshelfFrameModel() {
+        BlockModelBuilder tModel = plankFrameModel("gt6_bookshelf_frame");
+        plankBox(tModel,  0.0F,  0.0F,  0.0F, 16.0F,  1.0F, 16.0F); // the bottom slab (:294)
+        plankBox(tModel,  0.0F, 15.0F,  0.0F, 16.0F, 16.0F, 16.0F); // the top slab (:295)
+        plankBox(tModel,  0.0F,  1.0F,  0.0F,  1.0F, 15.0F, 16.0F); // the west wall (:296)
+        plankBox(tModel, 15.0F,  1.0F,  0.0F, 16.0F, 15.0F, 16.0F); // the east wall (:297)
+        plankBox(tModel,  1.0F,  1.0F,  7.0F, 15.0F, 15.0F,  9.0F); // the centre spine (:298)
+        plankBox(tModel,  1.0F,  7.0F,  1.0F, 15.0F,  9.0F, 15.0F); // the middle shelf (:299)
+        return tModel;
+    }
+
+    /**
+     * The bottlecrate frame parent (task r11-geometry-batch) — the upstream render-pass
+     * boxes (MultiTileEntityBottleCrate.setBlockBounds2 :160-168, the north-default
+     * form): the 1px bottom board, the 3x3 divider grid (the x-rails z 5..6/10..11 at
+     * 5px, the z-rails x 5..6/10..11 at 4px), the two full 8px side walls and the two
+     * 2px front/back rails at y 5..7 — half height, the bottles (the BER's display)
+     * rise above the walls. Upstream pass 5 (:165) is an INVERTED box (the quad-glitch
+     * javadoc'd at the caller); this parent draws its intent, the second wall.
+     */
+    private ModelFile bottlecrateFrameModel() {
+        BlockModelBuilder tModel = plankFrameModel("gt6_bottlecrate_frame");
+        plankBox(tModel,  1.0F, 0.0F,  1.0F, 15.0F, 1.0F, 15.0F); // the bottom board (:160)
+        plankBox(tModel,  1.0F, 1.0F,  5.0F, 15.0F, 5.0F,  6.0F); // the divider rail z 5..6 (:161)
+        plankBox(tModel,  1.0F, 1.0F, 10.0F, 15.0F, 5.0F, 11.0F); // the divider rail z 10..11 (:162)
+        plankBox(tModel,  5.0F, 1.0F,  1.0F,  6.0F, 4.0F, 15.0F); // the divider rail x 5..6 (:163)
+        plankBox(tModel, 10.0F, 1.0F,  1.0F, 11.0F, 4.0F, 15.0F); // the divider rail x 10..11 (:164)
+        plankBox(tModel,  0.0F, 0.0F,  0.0F,  1.0F, 8.0F, 16.0F); // the west wall (the :165 intent)
+        plankBox(tModel, 15.0F, 0.0F,  0.0F, 16.0F, 8.0F, 16.0F); // the east wall (:166)
+        plankBox(tModel,  1.0F, 5.0F,  0.0F, 15.0F, 7.0F,  1.0F); // the front rail (:167)
+        plankBox(tModel,  1.0F, 5.0F, 15.0F, 15.0F, 7.0F, 16.0F); // the back rail (:168)
+        return tModel;
+    }
+
+    /** The shared frame-parent shell: block/block parent, the plank key defaulting to oak (never baked bare). */
+    private BlockModelBuilder plankFrameModel(String aName) {
+        return models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("plank", "minecraft:block/oak_planks")
+                .texture("particle", "#plank");
+    }
+
+    /** One frame box: all six faces tile {@code #plank} (the upstream mShelfIcon/mIcon everywhere). */
+    private void plankBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ) {
+        aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ)
+                .allFaces((aDir, aFace) -> aFace.texture("#plank")).end();
     }
 
     /**
@@ -3147,39 +3223,93 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * Task storage-hopper-family — the storage-hopper rows (Loader_MultiTileEntities
      * .java:145-146; task hopper-matrix grew the walk 4 to 120 — the full 60-material
-     * metalset loop :186-245 × the pair, the datagen stayed table-driven on ROWS and the
-     * TWO shared kind models carry every row: the material has no per-row art face, the
-     * upstream funnel-shape render pool is the declared defer). Task tex-placeholder-audit
-     * UPGRADED the target (the "no borrowable source" claim was proven false — the
-     * {@code machines/automation/hopper} and {@code queuehopper} groups exist in the snapshot,
-     * MultiTileEntityHopper.java:284-293 / QueueHopper:266-275): ONE {@link #boilerModel}
-     * two-layer TBS cube per KIND over the borrowed groups — the upstream getTexture2 is the
-     * FACES_TBS trio (bottom/top/side, NO front art — the boiler-tank form, the front
-     * placeholder retired), tint seat OFF (the unpaint deviation, the static-storages
-     * ruling). The FACING drives the output semantics (the vanilla Piston 6-way blockstate
-     * convention stays); the three-pass custom funnel shape of upstream :263-277 is the
-     * render pool. The 4 BlockItem models parent their kind model.
+     * metalset loop :186-245 × the pair, the datagen stayed table-driven on ROWS).
+     * Task tex-placeholder-audit borrowed the {@code machines/automation/hopper} and
+     * {@code queuehopper} colored/overlay groups (MultiTileEntityHopper.java:284-293 /
+     * QueueHopper:266-275). Task r11-geometry-batch replaces the placeholder TBS cube
+     * with the upstream funnel (MultiTileEntityHopper.setBlockBounds2 :263-277): the
+     * 16x6x16 rim (y 10..16), the 8x6x8 middle (y 4..10, its up face hidden under the
+     * rim — upstream pass 1 skips SIDES_TOP :281) and the 4px spout. The spout rides
+     * THREE shared models per kind over the FACING variants: {@code _down} (the spout
+     * 6..10 x 0..4 x 6..10, facing=down), the plain {@code gt6_<kind>} (the north
+     * spout 6..10 x 4..8 x 0..4, the four horizontals via the y table) and
+     * {@code _top} (no spout — the upstream pass-2 switch has NO SIDE_Y_POS arm
+     * :268-274, the up-facing hopper draws rim+middle only, quirk declared). Every
+     * face carries the FACES_TBS pair (up=top/down=bottom/else=side colored + the
+     * 0.01-inflated overlay twin, the boiler two-layer grammar), the tint seat OFF
+     * (the unpaint deviation, the static-storages ruling); the spout's MOUTH face is
+     * skipped (upstream pass 2 draws {@code aSide != mFacing} only). The BlockItem
+     * models parent the canonical north-spout model.
      */
     private void addHoppers() {
-        ModelFile tHopper = boilerModel("gt6_hopper", "hopper", false, false);
-        ModelFile tQueue = boilerModel("gt6_queuehopper", "queuehopper", false, false);
-        for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
-            Block tBlock = gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.get(tRow.path()).get();
-            ModelFile tModel = tRow.queue() ? tQueue : tHopper;
-            getVariantBuilder(tBlock).forAllStates(aState -> {
-                int tX = 0, tY = 0;
-                switch (aState.getValue(gregtech6.registry.GT6Hoppers.GT6HopperBlock.FACING)) {
-                    case DOWN -> tX = 90;   // the vanilla Piston blockstate convention
-                    case UP -> tX = 270;
-                    case SOUTH -> tY = 180;
-                    case WEST -> tY = 270;
-                    case EAST -> tY = 90;
-                    default -> {} // NORTH
-                }
-                return ConfiguredModel.builder().modelFile(tModel).rotationX(tX).rotationY(tY).build();
-            });
-            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        for (String tKind : new String[] {"hopper", "queuehopper"}) {
+            ModelFile tDown = hopperModel("gt6_" + tKind + "_down", tKind, Direction.DOWN);
+            ModelFile tNorth = hopperModel("gt6_" + tKind, tKind, Direction.NORTH);
+            ModelFile tTop = hopperModel("gt6_" + tKind + "_top", tKind, null);
+            for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
+                if (tRow.queue() != tKind.equals("queuehopper")) continue;
+                Block tBlock = gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.get(tRow.path()).get();
+                getVariantBuilder(tBlock).forAllStates(aState -> {
+                    Direction tFacing = aState.getValue(gregtech6.registry.GT6Hoppers.GT6HopperBlock.FACING);
+                    if (tFacing == Direction.DOWN) return ConfiguredModel.builder().modelFile(tDown).build();
+                    if (tFacing == Direction.UP) return ConfiguredModel.builder().modelFile(tTop).build();
+                    int tY = switch (tFacing) {
+                        case SOUTH -> 180;
+                        case WEST -> 270;
+                        case EAST -> 90;
+                        default -> 0; // NORTH
+                    };
+                    return ConfiguredModel.builder().modelFile(tNorth).rotationY(tY).build();
+                });
+                itemModels().withExistingParent(tRow.path(), tNorth.getLocation());
+            }
         }
+    }
+
+    /**
+     * One hopper funnel model: the rim + middle boxes plus the spout variant —
+     * {@code aSpout} DOWN = the down spout, NORTH = the north spout, null = none
+     * (the up-facing form). {@see addHoppers} for the box provenance.
+     */
+    private ModelFile hopperModel(String aName, String aBand, Direction aSpout) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("top", modLoc("block/" + aBand + "/colored_top"))
+                .texture("bottom", modLoc("block/" + aBand + "/colored_bottom"))
+                .texture("side", modLoc("block/" + aBand + "/colored_side"))
+                .texture("overlay_top", modLoc("block/" + aBand + "/overlay_top"))
+                .texture("overlay_bottom", modLoc("block/" + aBand + "/overlay_bottom"))
+                .texture("overlay_side", modLoc("block/" + aBand + "/overlay_side"))
+                .texture("particle", "#side")
+                .renderType("cutout");
+        hopperBox(tModel, 0.0F, 10.0F, 0.0F, 16.0F, 16.0F, 16.0F, null);          // the rim (:265)
+        hopperBox(tModel, 4.0F, 4.0F, 4.0F, 12.0F, 10.0F, 12.0F, Direction.UP);   // the middle (:266)
+        switch (aSpout == null ? Direction.UP : aSpout) {
+            case DOWN -> hopperBox(tModel, 6.0F, 0.0F, 6.0F, 10.0F, 4.0F, 10.0F, Direction.DOWN);   // (:269)
+            case NORTH -> hopperBox(tModel, 6.0F, 4.0F, 0.0F, 10.0F, 8.0F, 4.0F, Direction.NORTH);  // (:270)
+            default -> {} // the up-facing form draws rim+middle only (the :268-274 quirk)
+        }
+        return tModel;
+    }
+
+    /** One funnel box: the body layer + the 0.01-inflated overlay twin, the TBS mapping, the mouth face skipped. */
+    private void hopperBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, Direction aSkip) {
+        hopperBoxLayer(aModel, aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, aSkip, "");
+        hopperBoxLayer(aModel, aMinX - 0.01F, aMinY - 0.01F, aMinZ - 0.01F,
+                aMaxX + 0.01F, aMaxY + 0.01F, aMaxZ + 0.01F, aSkip, "overlay_");
+    }
+
+    /** One funnel box layer: all faces but the skip, up=top/down=bottom/else=side over the given band prefix. */
+    private void hopperBoxLayer(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, Direction aSkip, String aBand) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            if (tDir == aSkip) continue;
+            tElement.face(tDir).texture("#" + aBand
+                    + (tDir == Direction.UP ? "top" : tDir == Direction.DOWN ? "bottom" : "side")).end();
+        }
+        tElement.end();
     }
 
     /**
