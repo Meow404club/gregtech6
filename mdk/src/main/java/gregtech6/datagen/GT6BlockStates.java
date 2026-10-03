@@ -2322,7 +2322,7 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@link GTWireSpecs#REDSTONE_ROWS}), the addWireFamily pipe over the redstone variant
      * list. The three materials (RedAlloy/Signalum/Lumium) all resolve to the
      * {@code copper} texture set (clloy/clloymachine construct with SET_COPPER —
-     * MT.java:697/701), which the W2 borrow already shipped, so zero new PNGs. The same
+     * MT.java:252/254), which the W2 borrow already shipped, so zero new PNGs. The same
      * single property-less variant wildcard maps the 64 CONNECTIONS states per block onto
      * the shared tinted model.
      *
