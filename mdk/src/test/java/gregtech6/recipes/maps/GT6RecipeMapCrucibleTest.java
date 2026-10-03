@@ -313,6 +313,37 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
+	 * Acceptance ⑦ — the JEMI red line's row parity: both viewer legs register from the ONE
+	 * rowsOf seam, so the JEI face (rowsOf as-is) and the EMI face (its own rowsOf copy,
+	 * re-sorted — order never changes the count) carry the SAME row universe, and that
+	 * universe is exactly the data-face walk (nothing dropped, nothing doubled). The
+	 * acceptance-① chain surfaces through the seam: the Electrum pair rides the page.
+	 * Offline caveat, pinned deliberately: OreDictMaterial.ALLOYS is completed by
+	 * applyCrucibleAlloyReferences at FML setup (GT6Mod.java:72), which tests don't run —
+	 * the offline walk therefore sees only the MT.init()-era ALLOYS members, so no
+	 * absolute count is pinned here; Invar/StainlessSteel rows are pinned per-alloy above
+	 * (they read mComponents directly) and the runtime universe is the same walk.
+	 */
+	@Test
+	public void viewerLegsRowParityOnBothCrucibleMaps() {
+		for (RecipeMap tMap : new RecipeMap[] {GT6RecipeMaps.CRUCIBLE_SMELTING, GT6RecipeMaps.CRUCIBLE_ALLOYING}) {
+			List<Recipe> tJeiFace = gregtech6.jei.GT6RecipeMapViewerMeta.rowsOf(tMap);
+			List<Recipe> tEmiFace = new java.util.ArrayList<>(gregtech6.jei.GT6RecipeMapViewerMeta.rowsOf(tMap));
+			tEmiFace.sort(java.util.Comparator.comparing(r -> String.valueOf(r.mSpecialValue))); // any deterministic order
+			assertEquals(tJeiFace.size(), tEmiFace.size(), tMap.mNameInternal + ": the legs' row counts are pinned equal");
+		}
+		assertEquals(GT6RecipeMapCrucible.allSmeltingDisplayRows().size(),
+				gregtech6.jei.GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.CRUCIBLE_SMELTING).size(),
+				"the smelting page registers the whole data-face walk");
+		assertEquals(GT6RecipeMapCrucible.allAlloyingDisplayRows().size(),
+				gregtech6.jei.GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.CRUCIBLE_ALLOYING).size(),
+				"the alloying page registers the whole data-face walk");
+		// the acceptance-① chain surfaces through the seam
+		assertTrue(gregtech6.jei.GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.CRUCIBLE_ALLOYING).size() >= 2,
+				"the Electrum pair (or any probed alloy's pair) rides the registered page");
+	}
+
+	/**
 	 * The offline boot + probe-item helper (the GT6RecipeTagFallbackTest posture): the
 	 * probe ids are throwaway registry names local to this test class.
 	 */

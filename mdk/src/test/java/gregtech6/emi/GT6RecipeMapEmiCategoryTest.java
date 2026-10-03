@@ -228,7 +228,7 @@ public class GT6RecipeMapEmiCategoryTest {
 		List<Recipe> tLive = new ArrayList<>(tMixer.mRecipeList);
 
 		// 1. the map scan is row-independent
-		assertEquals(72, gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps().size());
+		assertEquals(74, gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps().size());
 
 		// 2. the registration op — defensive copy, one ROW_ORDER sort, deterministic
 		List<Recipe> tSorted = new ArrayList<>(tLive);

@@ -172,9 +172,14 @@ public class GT6EmiPlugin implements EmiPlugin {
 	 * memoize factory, the GTCEu GTEMIPlugin.java:47-51 loop shape) and one
 	 * {@link GT6RecipeMapEmiRecipe} per
 	 * row, id'd by the map-sorted index (rows carry no registry id — that class's doc).
-	 * The rows ride the map's live list, so registration after the datapack pour sees
-	 * every static-loader and JSON row. THE JEMI RED LINE's new arm: this face and its
-	 * JEI twin ship in the same card, so the gt6 namespace stays balanced on both sides.
+	 * The rows ride the shared {@link gregtech6.jei.GT6RecipeMapViewerMeta#rowsOf} seam
+	 * (crucible-viewer-page): the live list for every stored-row map, the material-graph
+	 * synthesis for the crucible pair — registration after the datapack pour sees every
+	 * static-loader and JSON row AND the registered graph. The fake display rows
+	 * (mFakeRecipe) need no wrapper special-casing: GT6RecipeMapEmiRecipe flattens the
+	 * raw arrays, which is exactly what a display row is. THE JEMI RED LINE's new arm:
+	 * this face and its JEI twin ship through the SAME seam, so the gt6 namespace stays
+	 * balanced on both sides.
 	 */
 	private static void registerRecipeMapCategories(EmiRegistry registry) {
 		for (gregtech6.recipes.RecipeMap tMap : gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps()) {
@@ -187,7 +192,7 @@ public class GT6EmiPlugin implements EmiPlugin {
 			for (gregtech6.jei.GT6RecipeMapIcons.Workstation tWs : gregtech6.jei.GT6RecipeMapIcons.workstationsOf(tMap)) {
 				registry.addWorkstation(tCategory, EmiStack.of(gregtech6.jei.GT6RecipeMapIcons.stackOf(tWs)));
 			}
-			List<gregtech6.recipes.Recipe> tRows = new java.util.ArrayList<>(tMap.mRecipeList);
+			List<gregtech6.recipes.Recipe> tRows = gregtech6.jei.GT6RecipeMapViewerMeta.rowsOf(tMap);
 			tRows.sort(ROW_ORDER);
 			for (int i = 0; i < tRows.size(); i++) {
 				registry.addRecipe(new GT6RecipeMapEmiRecipe(tMap, tRows.get(i), tCategory, i));

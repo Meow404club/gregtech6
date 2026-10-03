@@ -17,6 +17,7 @@ import gregtech6.block.GTBasicMachineBlock;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6BurningBoxes;
+import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6HeatExchangers;
 import gregtech6.registry.GT6Kinetics;
@@ -277,6 +278,12 @@ public final class GT6RecipeMapIcons {
 			if (tMap != null) add(rIndex, tMap, new Workstation(tRow.path(), () -> GT6BurningBoxes.ITEMS_BY_PATH.get(tRow.path()).get()));
 		}
 		single(rIndex, "gt.recipe.fuels.hot", GT6HeatExchangers.HEAT_EXCHANGER_ITEM);
+
+		// the crucible pair (crucible-viewer-page): the Smeltery family (TileEntitySmeltery is
+		// the crucible physics machine) — lowest registered rung, both maps share the
+		// representative (the ITEMS_BY_PATH LinkedHashMap order)
+		single(rIndex, "gt.recipe.cruciblesmelting", GT6Crucibles.ITEMS_BY_PATH.values().iterator().next());
+		single(rIndex, "gt.recipe.cruciblealloying", GT6Crucibles.ITEMS_BY_PATH.values().iterator().next());
 
 		return rIndex;
 	}
