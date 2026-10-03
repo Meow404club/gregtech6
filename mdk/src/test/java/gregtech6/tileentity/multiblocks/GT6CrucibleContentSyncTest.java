@@ -167,7 +167,6 @@ public class GT6CrucibleContentSyncTest extends GTMultiBlocksOfflineTestBase {
 	 */
 	@Test
 	public void contentFaceIsTheSharedColourSource() throws Exception {
-		MT.init();
 		GT6CrucibleDatagen.ContentFace tSteelMolten = GT6CrucibleDatagen.contentFace(MT.Steel, true);
 		assertEquals(STEEL_LIQUID_TINT, tSteelMolten.tintARGB(), "the molten arm is the mRGBaLiquid pack");
 		try (InputStream tStream = getClass().getClassLoader()
