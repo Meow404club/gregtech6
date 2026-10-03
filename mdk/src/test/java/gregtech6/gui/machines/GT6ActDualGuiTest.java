@@ -299,4 +299,39 @@ class GT6ActDualGuiTest extends GTMultiBlocksOfflineTestBase {
 		assertTrue(tLedger.contains("advancedcraftingtable.png"), "the ledger names the plain sheet");
 		assertTrue(tLedger.contains("advancedcraftingtablecharging.png"), "the ledger names the charging sheet");
 	}
+
+	// ---------------------------------------------------------------------------
+	// the factory registration — the OpenGuiPacket client reverse lookup (the crash face)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The two ACT factories must be resolvable from {@code GuiManager} by name: the
+	 * server {@code Factory.open} hands the factory object straight to
+	 * {@code GuiManager.open} (no registry check, GuiManager.java:75), but the client
+	 * {@code OpenGuiPacket} ctor re-resolves it by id (OpenGuiPacket.java:29 →
+	 * GuiManager.getFactory :65-68) — an unregistered factory is the "No UI factory for
+	 * name 'gt6:advanced_crafting_table'" client crash. Drives the production seam
+	 * (the onModConstruct registration body, r11a-act-factory-register).
+	 */
+	@Test
+	public void theActUIFactoriesResolveThroughTheClientLookupPath() {
+		GTBasicMachinesMenus.registerActUIFactories();
+
+		// the wire identities (the route table opens exactly these two)
+		assertEquals("gt6:advanced_crafting_table", GTActMenu.Factory.CRAFT.getFactoryName().toString(),
+				"the crafting factory identity (the PANEL_NAME id)");
+		assertEquals("gt6:advanced_crafting_table_belt", GTActMenu.Factory.BELT.getFactoryName().toString(),
+				"the belt factory identity (the PANEL_NAME_BELT id)");
+		assertTrue(brachy.modularui.factory.GuiManager.hasFactory(GTActMenu.Factory.CRAFT.getFactoryName()),
+				"the crafting factory is registered (the client lookup must not throw)");
+		assertTrue(brachy.modularui.factory.GuiManager.hasFactory(GTActMenu.Factory.BELT.getFactoryName()),
+				"the belt factory is registered (the client lookup must not throw)");
+		// the exact OpenGuiPacket.java:29 call — the same instance comes back
+		assertEquals(GTActMenu.Factory.CRAFT,
+				brachy.modularui.factory.GuiManager.getFactory(GTActMenu.Factory.CRAFT.getFactoryName()),
+				"the crafting factory round-trips (the OpenGuiPacket wire path)");
+		assertEquals(GTActMenu.Factory.BELT,
+				brachy.modularui.factory.GuiManager.getFactory(GTActMenu.Factory.BELT.getFactoryName()),
+				"the belt factory round-trips (the OpenGuiPacket wire path)");
+	}
 }

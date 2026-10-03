@@ -105,5 +105,19 @@ public final class GTBasicMachinesMenus {
 		brachy.modularui.factory.GuiManager.registerFactory(GT6BumbliaryMUI.Factory.NORMAL);
 		brachy.modularui.factory.GuiManager.registerFactory(GT6BumbliaryMUI.Factory.SCOOP);
 		LOGGER.info("GT6 bumbliary UI factories registered (gt6:bumbliary + gt6:bumbliary_scoop — the ModularUI factory-identity wire, task bumbliary-gui)");
+		// task r11a-act-factory-register — the ACT dual-GUI pair rides the same
+		// factory-identity wire (the top face opens CRAFT, the front/back faces BELT)
+		registerActUIFactories();
+	}
+
+	/**
+	 * The ACT UI factory registration — public seam so the offline gate drives the exact
+	 * production path (the GT6ActDualGuiTest r11a pin): the server {@code Factory.open}
+	 * hands the factory object straight to {@code GuiManager.open}, but the client
+	 * {@code OpenGuiPacket} ctor re-resolves it by name (OpenGuiPacket.java:29 →
+	 * GuiManager.getFactory :65-68) — an unregistered factory is the client crash face.
+	 */
+	public static void registerActUIFactories() {
+		// the two registrations land with the fix commit (the red pin runs this body empty)
 	}
 }
