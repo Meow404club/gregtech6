@@ -23,6 +23,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+
 import gregtech6.registry.GT6Cells;
 import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.tileentity.GTOfflineTestBase;
@@ -48,7 +50,10 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * <li>the 40 BlockItem models parent the shell;</li>
  * <li>the CCC-mold defer conclusion: the mold registry carries NO CCC shape and the
  *     generated tree carries NO cell recipe — the acquisition row
- *     (Loader_Recipes_Handlers.java:766/:799) stays deferred to the mold card.</li>
+ *     (Loader_Recipes_Handlers.java:766/:799) stays deferred to the mold card;</li>
+ * <li>task cell-family-closeout: the zh names are the %s单元 form (the user ruling), the
+ *     family owns the dedicated {@code cells} creative tab and no longer rides the
+ *     storage tab.</li>
  * </ul>
  */
 class GT6CellDatagenTest extends GTOfflineTestBase {
@@ -335,13 +340,74 @@ class GT6CellDatagenTest extends GTOfflineTestBase {
 	void theCccMoldIsAbsentAndTheAcquisitionRowStaysDeferred() throws Exception {
 		Set<String> tMoldPaths = new HashSet<>();
 		for (var tMold : GT6ExtruderMolds.MOLDS) tMoldPaths.add(tMold.getId().getPath());
-		assertEquals(Set.of("shape_extruder_plate", "shape_extruder_rod"), tMoldPaths,
-				"the mold registry is the row0 subset — no Shape_Extruder_CCC twin exists to drive the family recipe");
+		// task cell-family-closeout — the exact-set pin died with toolhead-r11c-extruder-heads
+		// (16 tool-head molds landed); the load-bearing face is only "no CCC twin", r11c-proof.
+		assertTrue(tMoldPaths.stream().noneMatch(tPath -> tPath.contains("ccc")),
+				"no Shape_Extruder_CCC/Shape_SimpleEx_CCC twin exists to drive the family recipe — the defer holds");
+		assertTrue(tMoldPaths.containsAll(Set.of("shape_extruder_plate", "shape_extruder_rod")),
+				"the row0 plate+rod subset is still registered");
 		var tRecipesRoot = GT6CellDatagenTest.class.getResource("/data/gt6/recipes");
 		assertNotNull(tRecipesRoot, "the generated recipe tree exists");
 		try (var tWalk = Files.walk(Path.of(tRecipesRoot.toURI()))) {
 			long tCellRecipes = tWalk.filter(p -> p.getFileName().toString().startsWith("cell_")).count();
 			assertEquals(0, tCellRecipes, "no cell recipe is generated — the acquisition row is the declared defer, not a fabricated substitute");
 		}
+	}
+
+	// ---------------------------------------------------------------------------
+	// task cell-family-closeout — the zh 正名 pin + the dedicated-creative-tab pin
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The zh display names carry the IC2-style "_material_ + 单元" form (the user ruling
+	 * 2026-10-03: 蜡单元/金单元) — NOT the bare material the small-tank-cell backfill left
+	 * behind ("block.gt6.cell_aluminium"="铝"). The upstream zh dump face is
+	 * "单元式流体容器 (蜡)" (tmp/gregtech.lang:13481-13520); the port ruling replaces that
+	 * wrapper with the suffix form — the declared deviation.
+	 */
+	@Test
+	void zhNamesFollowTheUnitSuffixForm() throws Exception {
+		JsonObject tZh = generatedJson("assets/gt6/lang/zh_cn.json");
+		for (GT6Cells.CellRow tRow : GT6Cells.ROWS) {
+			assertTrue(tZh.has("block.gt6." + tRow.path()), tRow.path() + ": the zh key exists");
+			String tValue = tZh.get("block.gt6." + tRow.path()).getAsString();
+			assertTrue(tValue.endsWith("单元") && tValue.length() > 2,
+					tRow.path() + ": the zh name must be the %s单元 form, got \"" + tValue + "\"");
+		}
+		// the user's own examples — 蜡单元 / 金单元 / 铝单元
+		assertEquals("蜡单元", tZh.get("block.gt6.cell_wax").getAsString());
+		assertEquals("金单元", tZh.get("block.gt6.cell_gold").getAsString());
+		assertEquals("铝单元", tZh.get("block.gt6.cell_aluminium").getAsString());
+	}
+
+	/**
+	 * The storage-tab ride is gone (the user ruling 2026-10-03: the cells get their own
+	 * creative page, the test-tube-prefix-tab treatment) — the family must not append
+	 * itself into the GTBarrels "Fluid Containers" (zh 储罐) tab anymore. Structural pin:
+	 * no GT6Cells method listens on BuildCreativeModeTabContentsEvent — that ride was the
+	 * only pollution path (GTBarrels' own displayItems never listed the cells).
+	 */
+	@Test
+	void theFamilyNoLongerRidesTheStorageTab() {
+		for (var tMethod : GT6Cells.class.getDeclaredMethods()) {
+			for (var tParam : tMethod.getParameterTypes()) {
+				assertTrue(tParam != BuildCreativeModeTabContentsEvent.class,
+						"GT6Cells." + tMethod.getName() + " still rides the storage tab via BuildCreativeModeTabContentsEvent");
+			}
+		}
+	}
+
+	/**
+	 * The dedicated-tab positive face (the offline share of the GT6Tools tab posture — the
+	 * live face rides the runServer registration-log gate): the family-owned tab exists
+	 * under the {@code cells} id and the icon row is the FIRST registration (the upstream
+	 * lazy-tab face, Wax :1770). The walk feeding it is {@code displayCells over
+	 * BLOCKS_IN_ORDER}, whose full-40 registration-order content is the rowTable census.
+	 */
+	@Test
+	void theFamilyOwnsTheDedicatedCellsTab() {
+		assertEquals("cells", GT6Cells.CELLS_TAB.getId().getPath(), "the dedicated tab id");
+		assertEquals("cell_wax", GT6Cells.BLOCKS_IN_ORDER.get(0).getId().getPath(),
+				"the icon row is the first registration (the upstream lazy-tab icon face)");
 	}
 }
