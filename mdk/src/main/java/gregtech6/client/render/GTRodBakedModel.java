@@ -56,11 +56,15 @@ import gregtech6.block.energy.GTAxleBlock;
  * resolve there (the tex-pipe-textures arms), so this model multiplies
  * {@code tintARGB(modelData, tintMaterialOf(block), 0)} into the tintindex-0 body quads
  * at query time (the {@link GTMachineTintModel} vertex-colour route, tintIndex flipped
- * to -1 on the retinted copies) and passes overlays through untinted. The pipe tint
- * gate is the ModelData emptiness: world rebuilds hand the pipe BE snapshot in
- * (non-empty → pre-tinted, the GTMachineTintModel byte-for-byte semantics), the ITEM
- * render passes EMPTY (raw tintindex-0 quads → the registered
- * {@link GTItemPaintTint} ItemColor tints the inventory form exactly once).
+ * to -1 on the retinted copies) and passes overlays through untinted. Task
+ * r11a-pipe-tint-gate-fix — the pipe arm is UNCONDITIONAL (the axle arm below, and the
+ * GTMachineTintModel :100-102 wrap form, are the precedents): an UNPAINTED plain pipe BE
+ * hands EMPTY ModelData in (TileEntityBase03TicksAndSync.getModelData), so the former
+ * ModelData-emptiness gate never opened and the raw grayscale art rendered white (the
+ * user report); the row material inside tintARGB IS the unpainted identity, and the ITEM
+ * render (state null) still passes raw — the registered {@link GTItemPaintTint} ItemColor
+ * tints the inventory form exactly once. The material-less logistics wire keeps the -1
+ * white identity (tintQuads returns the input unchanged).
  *
  * <p>Task axle-tint-arm — the AXLE rows join the same dye on the CONSUMER side
  * ({@link GTMachinePaintTint} zero-touch): the listener still seats them with
@@ -193,10 +197,17 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 			return GTMachineTintModel.tintQuads(tAll,
 					GTMachinePaintTint.tintARGB(aModelData, axleMaterialOf(tAxle), 0), mTintedQuads);
 		}
-		// the pipe tint gate: world rebuilds hand the BE snapshot in (non-empty ModelData →
-		// the GTMachineTintModel pre-tint); the item render passes EMPTY → raw
-		// tintindex-0 quads, the ItemColor half tints the inventory form exactly once
-		if (aState != null && mBlock != null && !aModelData.getProperties().isEmpty()) {
+		// the pipe tint arm — UNCONDITIONAL (task r11a-pipe-tint-gate-fix, the :192 axle
+		// precedent): an UNPAINTED plain pipe BE hands EMPTY in (TileEntityBase03TicksAndSync
+		// .getModelData), so the former ModelData-emptiness gate never opened and the raw
+		// grayscale pipe_side rendered WHITE (the user report). The material fallback inside
+		// tintARGB IS the unpainted identity (upstream renders BlockTextureDefault(colored,
+		// mRGBa)); a painted pipe's PAINT snapshot still wins there (the spray override).
+		// The item render (state null) falls through raw — tintindex-0 quads, the
+		// GTItemPaintTint ItemColor tints the inventory form exactly once; the logistics
+		// wire resolves materialOf = null → tint -1 → tintQuads returns the list unchanged
+		// (the white identity, byte-identical).
+		if (aState != null && mBlock != null) {
 			return GTMachineTintModel.tintQuads(tAll,
 					GTMachinePaintTint.tintARGB(aModelData, GTMachinePaintTint.tintMaterialOf(mBlock), 0), mTintedQuads);
 		}
