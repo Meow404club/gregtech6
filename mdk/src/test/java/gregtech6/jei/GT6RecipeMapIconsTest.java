@@ -1,6 +1,6 @@
 /**
  * Offline guard tests for task issues #29/#34a (GitHub #29a): the per-map category icon table —
- * every VISIBLE map carries a tabled machine item unless it is on the four-map
+ * every VISIBLE map carries a tabled machine item unless it is on the three-map
  * DECLARED-empty furnace-fallback whitelist (the guard the card's "零兜底或仅白名单兜底"
  * clause turns into a census pin), the whitelist is closed against the live census, and
  * the icon resolution never returns an empty stack. The Forge item registry does not
@@ -79,12 +79,13 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 			tTabled++;
 		}
 		assertEquals(74, tVisible.size(), "the batch-2 census + crucible-viewer-page's pair must stay stable under this guard");
-		// the whitelist is EXACTLY the four declared-empty maps (GT6RecipeMapJsonLoader's
-		// zero-row-stock set) — a wider fallback is the #29a regression this card fixes
+		// the whitelist is EXACTLY the three declared-empty maps (GT6RecipeMapJsonLoader's
+		// zero-row-stock set; the mortar family left it via the mortar-family card) — a
+		// wider fallback is the #29a regression this card fixes
 		assertTrue(tVisible.containsAll(GT6RecipeMapIcons.FURNACE_FALLBACK),
 				"every whitelist entry must be a visible map (dead whitelist rows are silent drift)");
-		assertEquals(4, GT6RecipeMapIcons.FURNACE_FALLBACK.size());
-		assertEquals(70, tTabled, "74 visible - 4 whitelist = 70 tabled machine icons (the crucible pair joined via the Smeltery family)");
+		assertEquals(3, GT6RecipeMapIcons.FURNACE_FALLBACK.size());
+		assertEquals(71, tTabled, "74 visible - 3 whitelist = 71 tabled machine icons (the crucible pair joined via the Smeltery family; the mortar family left the whitelist via the mortar-family card)");
 	}
 
 	@Test
@@ -112,6 +113,18 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 		} finally {
 			GT6RecipeMapIcons.sResolver = tSupplier -> STUB_ITEM;
 		}
+	}
+
+	/** The mortar-family card's wiring: the map left the whitelist and tables its registration-order head. */
+	@Test
+	void theMortarMapTablesItsRegistrationHeadInsteadOfTheFurnaceFallback() {
+		GT6RecipeMaps.init();
+		RecipeMap tMortar = RecipeMap.RECIPE_MAPS.get("gt.recipe.mortar");
+		assertFalse(GT6RecipeMapIcons.FURNACE_FALLBACK.contains("gt.recipe.mortar"),
+				"the mortar machine now exists in the port — the furnace-fallback whitelist row is retired");
+		assertTrue(GT6RecipeMapIcons.has(tMortar), "the icon table carries the mortar row (the workstation walk face)");
+		assertEquals(STUB_ITEM, GT6RecipeMapIcons.iconOf(tMortar).getItem(),
+				"the mortar icon resolves through the table (the first() head = mortar_steel live, the stub offline)");
 	}
 
 	@Test
