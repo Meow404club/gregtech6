@@ -135,7 +135,7 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals(Map.of(
 				"32t x9", 4,   // RM.java:410/:423 + BlockStones:293/:308 — shovel, stone + granite reps
 				"32t x4", 8,   // sword + hoe, both reps x both twins
-				"32t x3", 4,   // pickaxe + axe
+				"32t x3", 8,   // pickaxe + axe, both reps x both twins
 				"32t x1", 4),  // RM.java:417/:430 + BlockStones:300/:315 — hammer
 				tTally, "the 32-t column over the 24 stone rows");
 	}

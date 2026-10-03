@@ -80,16 +80,16 @@ public class GT6ExtruderMoldsCensusTest {
 	@Test
 	public void everyMoldHasAnItemModelAndABorrowedTexture() {
 		for (String tPath : MOLD_IDS) {
-			assertNotNull(read("/assets/gt6/models/item/" + tPath + ".json"), "the item model rides the generated tree: " + tPath);
+			assertNotNull(read("assets/gt6/models/item/" + tPath + ".json"), "the item model rides the generated tree: " + tPath);
 			String tTexture = texturePath(tPath);
-			assertNotNull(read("/assets/gt6/textures/item/" + tTexture + ".png"), "the borrowed sprite rides main resources: " + tTexture);
+			assertNotNull(read("assets/gt6/textures/item/" + tTexture + ".png"), "the borrowed sprite rides main resources: " + tTexture);
 		}
 	}
 
 	/** The not-consumable face: the extruder_shapes tag JSON carries all 18 memberships. */
 	@Test
 	public void theExtruderShapesTagCarriesTheFullFamily() throws Exception {
-		String tJson = read("/data/gt6/tags/item/extruder_shapes.json");
+		String tJson = read("data/gt6/tags/item/extruder_shapes.json");
 		assertNotNull(tJson, "the generated tag file rides the test classpath");
 		List<String> tValues = new ArrayList<>();
 		for (var tElement : JsonParser.parseString(tJson).getAsJsonObject().getAsJsonArray("values")) {

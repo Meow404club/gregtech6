@@ -127,7 +127,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:tool_head_raw_file_iron"
+          "item": "gt6:tool_head_file_iron"
         }
       ],
       "duration": 369,
@@ -278,7 +278,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:tool_head_raw_file_iron"
+          "item": "gt6:tool_head_file_iron"
         }
       ],
       "duration": 96,
