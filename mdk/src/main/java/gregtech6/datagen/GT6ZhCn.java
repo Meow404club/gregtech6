@@ -121,6 +121,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addGasCylinderUnits(); // task small-tank-gas-cylinder — the four Fluid Containers rows (the dump faces verbatim)
 		addCellUnits();         // task small-tank-cell — the 40 Fluid Containers rows (the dump faces verbatim)
 		addCupUnits();          // task small-tank-cup — the cup pair (the dump faces verbatim)
+		addMortarUnits();       // task mortar-family — the five pestle rows (the dump faces verbatim)
 		addJugUnits();          // task small-tank-jug — the jug pair (the dump faces verbatim)
 		addConcreteUnits();     // task concrete-blocks-register — the 16 dye units + 4 templates (the dump faces verbatim)
 		addCrucibleJadeUnits(); // task crucible-jade-face
@@ -504,6 +505,21 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addCupUnits() {
 		addDirect("block.gt6.porcelain_cup");
 		addDirect("item.gt6.modeled_porcelain_cup");
+	}
+
+	/**
+	 * The mortar family (task mortar-family) — the five pestle rows, the dump faces
+	 * verbatim (the addDirect form over the gen script's BLOCK_BACKFILL band): all five
+	 * upstream rows share the one name 研钵 (tmp/gregtech.lang:13556 = MTE 32735 Steel,
+	 * :13115 = 32094 Netherite, :13096 = 32075 Sapphire, :13097 = 32076 Diamond, :13110
+	 * = 32089 Amethyst) — the variants distinguish by the pestle tint, not by name.
+	 */
+	private void addMortarUnits() {
+		addDirect("block.gt6.mortar_steel");
+		addDirect("block.gt6.mortar_netherite");
+		addDirect("block.gt6.mortar_sapphire");
+		addDirect("block.gt6.mortar_diamond");
+		addDirect("block.gt6.mortar_amethyst");
 	}
 
 	/**

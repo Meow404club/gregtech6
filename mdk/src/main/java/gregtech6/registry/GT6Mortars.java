@@ -69,7 +69,13 @@ public final class GT6Mortars {
 	 * @param path   the gt6 registry path (the blockstate/model/lang key tail)
 	 * @param design the upstream {@code NBT_DESIGN} (0-4)
 	 * @param pestle the row of {@code MORTAR_MATERIALS} (MultiTileEntityMortar.java:59) the
-	 *               design selects — the pestle tint seat and the crafting ingredient
+	 *               design selects — the pestle tint seat; the crafting ingredient rides
+	 *               the row too (ingot for the Steel/Netherite rows, gem for the
+	 *               Sapphire/Diamond/Amethyst rows — the GT6CraftingRecipes mortarBuilder
+	 *               switch, the upstream {@code 'P'} column :2179-2183; the prefix stays a
+	 *               datagen-side derivation because an eager {@code OP.ingot} read in this
+	 *               list would race {@code OP.init()} — the @EventBusSubscriber scan loads
+	 *               this class before the enqueueWork init runs)
 	 */
 	public record MortarRow(String path, int design, Supplier<OreDictMaterial> pestle) {}
 
@@ -80,6 +86,15 @@ public final class GT6Mortars {
 			new MortarRow("mortar_sapphire", 2, () -> MT.Sapphire), // :2181 — ID 32075, OP.gem.dat(ANY.Sapphire)
 			new MortarRow("mortar_diamond", 3, () -> MT.Diamond), // :2182 — ID 32076, OP.gem.dat(ANY.Diamond)
 			new MortarRow("mortar_amethyst", 4, () -> MT.Amethyst)); // :2183 — ID 32089, OP.gem.dat(ANY.Amethyst)
+
+	/**
+	 * The crafting ingredient prefix of a row (the upstream {@code 'P'} column,
+	 * :2179-2180 ingot / :2181-2183 gem) — the datagen-time derivation (see the row
+	 * record doc for why this is not an eager row field).
+	 */
+	public static gregapi.oredict.OreDictPrefix pestlePrefix(MortarRow aRow) {
+		return aRow.design() <= 1 ? gregapi.data.OP.ingot : gregapi.data.OP.gem;
+	}
 
 	/** The registered blocks by path (the datagen walkers + the BET multi-mount array). */
 	public static final java.util.Map<String, RegistryObject<GT6MortarBlock>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();

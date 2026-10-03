@@ -2213,6 +2213,14 @@ for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
 # retired with the composed face (task oven-heat-t-ladder — the composed machine word is
 # 熔炉 per lang-batch2-fixes). wire_electric = the × convention on the atomic legacy keys.
 BLOCK_BACKFILL = {
+    # task mortar-family — the five pestle rows (Loader :2179-2183, ids 32735/32094/
+    # 32075/32076/32089), the dump MTE faces verbatim: all five rows share the one
+    # name, tmp/gregtech.lang:13556/:13115/:13096-13097/:13110
+    "block.gt6.mortar_steel": "研钵",                     # dump gt.multitileentity.32735 verbatim (task mortar-family)
+    "block.gt6.mortar_netherite": "研钵",                 # dump gt.multitileentity.32094 verbatim (task mortar-family)
+    "block.gt6.mortar_sapphire": "研钵",                  # dump gt.multitileentity.32075 verbatim (task mortar-family)
+    "block.gt6.mortar_diamond": "研钵",                   # dump gt.multitileentity.32076 verbatim (task mortar-family)
+    "block.gt6.mortar_amethyst": "研钵",                  # dump gt.multitileentity.32089 verbatim (task mortar-family)
     # task small-tank-jug — the Ceramic Jug pair (Loader :2095 id 32740 + the raw
     # randomtools meta 996), the dump faces verbatim
     "block.gt6.ceramic_jug": "陶杯",                      # dump gt.multitileentity.32740 verbatim (task small-tank-jug)
