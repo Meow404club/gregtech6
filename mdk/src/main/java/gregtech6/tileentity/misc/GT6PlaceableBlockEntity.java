@@ -5,6 +5,8 @@ import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,8 +33,21 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * equal held stack MERGES into the pile (the :81-96 arm), any other click gives ONE back
  * (the :98 give arm; the :100-105 top-of-column walk is the declared cut — a nicety over
  * the pile-column nicety it serves upstream).
+ *
+ * <p>The Nameable face (task r11-placed-rock-identity-drops, the surface_rock-parity
+ * ruling): the pile's displayed identity IS the stored stack — {@link #getCustomName()}
+ * hands out the stack's hover name so the Jade default ObjectNameProvider streams it as
+ * the tooltip TITLE (both legs verified: jade-1201 ObjectNameProvider streamData javap
+ * — Nameable + hasCustomName → {@code givenName} = Component.Serializer.toJson(
+ * getCustomName()); jade-1211 :152-157 — → stream getDisplayName()). This is the
+ * {@link gregtech6.block.surface.GT6SurfaceRockBlock} display canon transplanted to the
+ * BE-carried identity: that family is one block instance per material so its
+ * {@code getName()} override carries the material word; the piles are ONE block over six
+ * carriers so the parameterized name must ride the BE. Empty pile → null custom name →
+ * every consumer falls back to the block name (石头, the upstream Rock). Zero Jade code,
+ * zero lang keys — the stack's own name component chain resolves per client locale.
  */
-public class GT6PlaceableBlockEntity extends TileEntityBase03TicksAndSync {
+public class GT6PlaceableBlockEntity extends TileEntityBase03TicksAndSync implements Nameable {
 
 	/** The persisted contents key (the upstream NBT_VALUE fold). */
 	public static final String NBT_VALUE = "gt6.value";
@@ -71,6 +86,33 @@ public class GT6PlaceableBlockEntity extends TileEntityBase03TicksAndSync {
 	@Nullable
 	public gregapi.oredict.OreDictMaterial material() {
 		return mStack.getItem() instanceof MaterialPrefixItem tItem ? tItem.material : null;
+	}
+
+	// --- the Nameable face (class doc): the Jade TITLE name = the stored stack ---
+
+	/** The carrier block's own name (石头) — the empty-pile / generic fallback. */
+	@Override
+	public Component getName() {
+		return this.getBlockState().getBlock().getName();
+	}
+
+	/** The stored stack's hover name (含铁岩石), or null when empty (the Jade fallback gate). */
+	@Nullable
+	@Override
+	public Component getCustomName() {
+		ItemStack tStack = mStack;
+		return tStack.isEmpty() ? null : tStack.getHoverName();
+	}
+
+	/**
+	 * The display name the Jade 1.21.1 leg streams (ObjectNameProvider.java:156) — the
+	 * custom (stack) name when present, else the block name. The 1.20.1 leg streams
+	 * {@link #getCustomName()} directly, so both legs carry the same word.
+	 */
+	@Override
+	public Component getDisplayName() {
+		Component tCustom = getCustomName();
+		return tCustom != null ? tCustom : getName();
 	}
 
 	@Override
