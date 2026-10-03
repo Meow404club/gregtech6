@@ -3,6 +3,8 @@ package gregtech6.gui.machines;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 
+import gregtech6.menu.act.GTActMenu;
+
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -105,5 +107,21 @@ public final class GTBasicMachinesMenus {
 		brachy.modularui.factory.GuiManager.registerFactory(GT6BumbliaryMUI.Factory.NORMAL);
 		brachy.modularui.factory.GuiManager.registerFactory(GT6BumbliaryMUI.Factory.SCOOP);
 		LOGGER.info("GT6 bumbliary UI factories registered (gt6:bumbliary + gt6:bumbliary_scoop — the ModularUI factory-identity wire, task bumbliary-gui)");
+		// task r11a-act-factory-register — the ACT dual-GUI pair rides the same
+		// factory-identity wire (the top face opens CRAFT, the front/back faces BELT)
+		registerActUIFactories();
+	}
+
+	/**
+	 * The ACT UI factory registration — public seam so the offline gate drives the exact
+	 * production path (the GT6ActDualGuiTest r11a pin): the server {@code Factory.open}
+	 * hands the factory object straight to {@code GuiManager.open}, but the client
+	 * {@code OpenGuiPacket} ctor re-resolves it by name (OpenGuiPacket.java:29 →
+	 * GuiManager.getFactory :65-68) — an unregistered factory is the client crash face.
+	 */
+	public static void registerActUIFactories() {
+		brachy.modularui.factory.GuiManager.registerFactory(GTActMenu.Factory.CRAFT);
+		brachy.modularui.factory.GuiManager.registerFactory(GTActMenu.Factory.BELT);
+		LOGGER.info("GT6 ACT UI factories registered (gt6:advanced_crafting_table + gt6:advanced_crafting_table_belt — the ModularUI factory-identity wire, task r11a-act-factory-register)");
 	}
 }
