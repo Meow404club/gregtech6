@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:tool_head_raw_plow_infused_balance"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "X ",
+    " f"
+  ],
+  "result": {
+    "item": "gt6:tool_head_plow_infused_balance"
+  },
+  "show_notification": true
+}

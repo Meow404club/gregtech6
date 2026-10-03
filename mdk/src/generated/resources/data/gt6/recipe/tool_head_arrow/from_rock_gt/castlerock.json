@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:rock_gt_castlerock"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "X ",
+    " f"
+  ],
+  "result": {
+    "count": 8,
+    "id": "gt6:tool_head_arrow_castlerock"
+  }
+}

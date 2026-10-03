@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:tool_head_raw_spade_hsse"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "X ",
+    " f"
+  ],
+  "result": {
+    "item": "gt6:tool_head_spade_hsse"
+  },
+  "show_notification": true
+}

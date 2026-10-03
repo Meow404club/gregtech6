@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:rock_gt_concrete"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "X ",
+    " f"
+  ],
+  "result": {
+    "count": 8,
+    "item": "gt6:tool_head_arrow_concrete"
+  },
+  "show_notification": true
+}

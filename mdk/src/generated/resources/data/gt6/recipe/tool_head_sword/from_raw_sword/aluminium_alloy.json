@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "X": {
+      "item": "gt6:tool_head_raw_sword_aluminium_alloy"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    }
+  },
+  "pattern": [
+    "X ",
+    " f"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_sword_aluminium_alloy"
+  }
+}
