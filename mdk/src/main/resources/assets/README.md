@@ -10222,8 +10222,13 @@ Probe verdicts (family: upstream path — hit? — disposition):
   exists; upstream renders them from plank/material iconsets plus NBT-driven
   content boxes (MultiTileEntityBookShelf mShelfIcon = PlankData.PLANK_ICONS
   :72-74, MultiTileEntityBottleCrate :64-66 + the BOTTLECRATE_BOTTLE_* content
-  passes :202-208) — the placeholders stay, the visible content is the render
-  pool.
+  passes :202-208) — task r11-geometry-batch RESOLVED the true negative by
+  reference: PLANK_ICONS are COPIES OF THE VANILLA PLANK BLOCK TEXTURES
+  (IconContainerCopied(Blocks.planks, meta), GT_API_Proxy_Client.java:188 /
+  PlankEntry.java:120), so the per-plank frame models point the `plank` key at
+  `minecraft:block/<slug>_planks` DIRECTLY — zero PNG borrow, the reference IS
+  the upstream semantic; the four port placeholder PNGs (bookshelf_{front,side},
+  bottlecrate_{front,side}) are retired.
 - hoppers: `machines/automation/hopper/{colored,overlay}/` +
   `machines/automation/queuehopper/{colored,overlay}/` — HIT (MultiTileEntity
   Hopper.java:284-293, QueueHopper:266-275). The p26-era "no borrowable source"

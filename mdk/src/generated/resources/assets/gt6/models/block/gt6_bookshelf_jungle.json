@@ -1,0 +1,6 @@
+{
+  "parent": "gt6:block/gt6_bookshelf_frame",
+  "textures": {
+    "plank": "minecraft:block/jungle_planks"
+  }
+}

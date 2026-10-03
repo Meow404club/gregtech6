@@ -1,8 +1,7 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gt6:block/gt6_hopper",
-      "x": 90
+      "model": "gt6:block/gt6_hopper_down"
     },
     "facing=east": {
       "model": "gt6:block/gt6_hopper",
@@ -16,8 +15,7 @@
       "y": 180
     },
     "facing=up": {
-      "model": "gt6:block/gt6_hopper",
-      "x": 270
+      "model": "gt6:block/gt6_hopper_top"
     },
     "facing=west": {
       "model": "gt6:block/gt6_hopper",

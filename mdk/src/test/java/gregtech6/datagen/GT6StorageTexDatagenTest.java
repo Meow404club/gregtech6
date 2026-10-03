@@ -12,8 +12,9 @@
  *     retired), the locker/drawer quad carrying distinct top/bottom art, the
  *     safes folding the side art onto the vertical pair;</li>
  * <li>the two hopper groups (automation/hopper + queuehopper, MultiTileEntityHopper
- *     .java:284-293): the boilerModel TBS form with the tint seat OFF and no front art
- *     (FACES_TBS), one model per kind;</li>
+ *     .java:284-293): the borrowed TBS art rides the r11-geometry-batch funnel
+ *     elements (up=x270/down=x90 piston rotations retired with the cube), the tint
+ *     seat OFF and no front art (FACES_TBS);</li>
  * <li>the anvils (MultiTileEntityAnvil.java:306 getTextureSmooth): per-row cube_all over
  *     the VANILLA smooth material faces — no gt6 PNG exists for the family;</li>
  * <li>the 44 borrowed PNGs exist and the ten retired placeholder PNGs plus every
@@ -133,44 +134,10 @@ class GT6StorageTexDatagenTest {
     }
 
     // ------------------------------------------------------------------
-    // the hopper two-layer TBS grammar (the boilerModel form, tint OFF, no front)
+    // the hopper funnel geometry + art: superseded by GT6GeometryBatchDatagenTest
+    // (task r11-geometry-batch replaced the boiler TBS cube with the funnel elements;
+    // the borrowed-art existence check stays below)
     // ------------------------------------------------------------------
-
-    private void assertHopperModel(String aName, String aBand) throws IOException {
-        JsonObject tModel = json("assets/gt6/models/block/" + aName + ".json");
-        assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(), aName + ": cube parent");
-        assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(), aName + ": cutout");
-        JsonObject tTextures = tModel.getAsJsonObject("textures");
-        // the FACES_TBS trio: all four horizontals carry the side art, NO front key exists
-        for (String tSide : List.of("north", "south", "west", "east")) {
-            assertEquals("gt6:block/" + aBand + "/colored_side", tTextures.get(tSide).getAsString(),
-                    aName + ": " + tSide + " = the plain colored side (FACES_TBS, no front art)");
-        }
-        assertEquals("gt6:block/" + aBand + "/colored_bottom", tTextures.get("down").getAsString());
-        assertEquals("gt6:block/" + aBand + "/colored_top", tTextures.get("up").getAsString());
-        for (String tSide : List.of("north", "south", "west", "east")) {
-            assertEquals("gt6:block/" + aBand + "/overlay_side", tTextures.get("overlay_" + tSide).getAsString(),
-                    aName + ": overlay " + tSide);
-        }
-        assertEquals("gt6:block/" + aBand + "/overlay_bottom", tTextures.get("overlay_down").getAsString());
-        assertEquals("gt6:block/" + aBand + "/overlay_top", tTextures.get("overlay_up").getAsString());
-        // 7 elements, the tint seat OFF (the aTint=false arm — the unpaint deviation)
-        var tElements = tModel.getAsJsonArray("elements");
-        assertEquals(7, tElements.size(), aName + ": body + 6 decals");
-        for (int i = 0; i < 7; i++) {
-            var tFaces = tElements.get(i).getAsJsonObject().getAsJsonObject("faces");
-            for (String tFace : tFaces.keySet()) {
-                assertTrue(!tFaces.getAsJsonObject(tFace).has("tintindex"),
-                        aName + " element " + i + " face " + tFace + " stays untinted");
-            }
-        }
-    }
-
-    @Test
-    public void hoppersKeepTheTwoLayerTbsGrammarWithoutFrontArt() throws Exception {
-        assertHopperModel("gt6_hopper", "hopper");
-        assertHopperModel("gt6_queuehopper", "queuehopper");
-    }
 
     // ------------------------------------------------------------------
     // the anvil vanilla material faces
@@ -202,8 +169,9 @@ class GT6StorageTexDatagenTest {
                 case DRAWER -> "gt6:block/drawer";
                 case SAFE_MECHANICAL -> "gt6:block/safe_mechanical";
                 case SAFE_KEYLOCKED -> "gt6:block/safe_keylocked";
-                case BOOKSHELF -> "gt6:block/gt6_bookshelf";
-                case BOTTLECRATE -> "gt6:block/gt6_bottlecrate";
+                // task r11-geometry-batch: the wooden kinds ride the per-plank frame leaves
+                case BOOKSHELF -> "gt6:block/gt6_bookshelf_" + tRow.plank().slug();
+                case BOTTLECRATE -> "gt6:block/gt6_bottlecrate_" + tRow.plank().slug();
             };
             for (String tFacing : ROT_Y.keySet()) {
                 JsonObject tVariant = tVariants.getAsJsonObject("facing=" + tFacing);
@@ -222,18 +190,24 @@ class GT6StorageTexDatagenTest {
         for (var tRow : gregtech6.registry.GT6Hoppers.ROWS) {
             JsonObject tVariants = json("assets/gt6/blockstates/" + tRow.path() + ".json").getAsJsonObject("variants");
             assertEquals(6, tVariants.size(), tRow.path() + ": exactly the 6 facing variants");
-            String tModel = "gt6:block/" + (tRow.queue() ? "gt6_queuehopper" : "gt6_hopper");
+            String tBand = tRow.queue() ? "queuehopper" : "hopper";
+            // task r11-geometry-batch: down/up get their own spout models (no rotation —
+            // the boxes are authored per direction), the horizontals rotate the north form
+            JsonObject tDown = tVariants.getAsJsonObject("facing=down");
+            assertEquals("gt6:block/gt6_" + tBand + "_down", tDown.get("model").getAsString(),
+                    tRow.path() + ": the down-spout model");
+            assertFalse(tDown.has("x"), tRow.path() + ": the down model needs no rotation");
+            JsonObject tUp = tVariants.getAsJsonObject("facing=up");
+            assertEquals("gt6:block/gt6_" + tBand + "_top", tUp.get("model").getAsString(),
+                    tRow.path() + ": the spoutless up model");
+            assertFalse(tUp.has("x"), tRow.path() + ": the up model needs no rotation");
             for (String tFacing : List.of("north", "south", "west", "east")) {
                 JsonObject tVariant = tVariants.getAsJsonObject("facing=" + tFacing);
-                assertEquals(tModel, tVariant.get("model").getAsString(), tRow.path() + " " + tFacing);
+                assertEquals("gt6:block/gt6_" + tBand, tVariant.get("model").getAsString(), tRow.path() + " " + tFacing);
                 assertEquals(ROT_Y.get(tFacing).intValue(),
                         tVariant.has("y") ? tVariant.get("y").getAsInt() : 0,
                         tRow.path() + " " + tFacing + ": the horizontal y table");
             }
-            assertEquals(90, tVariants.getAsJsonObject("facing=down").get("x").getAsInt(),
-                    tRow.path() + ": the down x=90 (the Piston convention)");
-            assertEquals(270, tVariants.getAsJsonObject("facing=up").get("x").getAsInt(),
-                    tRow.path() + ": the up x=270");
         }
     }
 
@@ -291,13 +265,15 @@ class GT6StorageTexDatagenTest {
         Path tMdk = mdkRoot();
         for (String tDead : List.of("locker_front.png", "locker_side.png", "drawer_front.png", "drawer_side.png",
                 "safe_front.png", "safe_side.png", "hopper_front.png", "hopper_side.png",
-                "anvil_top.png", "anvil_side.png")) {
+                "anvil_top.png", "anvil_side.png",
+                "bookshelf_front.png", "bookshelf_side.png", "bottlecrate_front.png", "bottlecrate_side.png")) {
             assertFalse(Files.exists(tMdk.resolve("src/main/resources/assets/gt6/textures/block").resolve(tDead)),
                     "the retired placeholder must be deleted: " + tDead);
         }
         List<String> tDeadRefs = List.of("block/locker_front", "block/locker_side", "block/drawer_front",
                 "block/drawer_side", "block/safe_front", "block/safe_side", "block/hopper_front",
-                "block/hopper_side", "block/anvil_top", "block/anvil_side");
+                "block/hopper_side", "block/anvil_top", "block/anvil_side",
+                "block/bookshelf_front", "block/bookshelf_side", "block/bottlecrate_front", "block/bottlecrate_side");
         try (Stream<Path> tWalk = Files.walk(tMdk.resolve("src/generated/resources/assets/gt6"))) {
             for (Path tFile : tWalk.filter(p -> p.toString().endsWith(".json")).toList()) {
                 String tContent = Files.readString(tFile, StandardCharsets.UTF_8);
