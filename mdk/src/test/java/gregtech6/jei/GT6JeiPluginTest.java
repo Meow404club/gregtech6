@@ -16,9 +16,8 @@
  *     keeps compiling on both the 1.20.1 Forge and 1.21.1 NeoForge legs (task
  *     jei-dual-wiring).</li>
  * </ul>
- * The lang-key reconciliation ({@link GT6JeiPlugin#INFO_KEY_COKE_OVEN} ↔ the GT6EnUs
- * provider) rides the datagen-side test (GT6EnUsJeiInfoTest) plus the runData gate; here we
- * pin the consumer half's literal so a silent rename cannot unhook the page.
+ * (The former lang-key reconciliation face retired with the description key itself —
+ * task mbpreview-shell-replicate; the text-face-zero census rides GT6EnUsJeiInfoTest.)
  */
 package gregtech6.jei;
 
@@ -101,11 +100,5 @@ public class GT6JeiPluginTest {
 		assertEquals("gt6:jei_plugin", new GT6JeiPlugin().getPluginUid().toString());
 		assertEquals("gt6", new GT6JeiPlugin().getPluginUid().getNamespace());
 		assertEquals(GT6JeiPlugin.PLUGIN_UID_PATH, new GT6JeiPlugin().getPluginUid().getPath());
-	}
-
-	@Test
-	public void infoKeyPinnedLiteral() {
-		// the consumer half of the lang reconciliation seam (provider half = GT6EnUsJeiInfoTest)
-		assertEquals("gt6.jei.info.multiblock_coke_oven", GT6JeiPlugin.INFO_KEY_COKE_OVEN);
 	}
 }

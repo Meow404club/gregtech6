@@ -684,15 +684,9 @@ HAND_TRANSLATIONS = {
     "block.gt6.transformer_rotation": ("木制转向齿轮箱", "hand"),
     "fluid.gt6.iron_molten": ("熔融铁", "hand"),
     "fluid.gt6.natural_gas": ("天然气", "hand"),
-    "gt6.jei.info.multiblock_coke_oven": (
-        "焦炉是一个 3x3x3 的立方体：将焦炉控制器放在其中一面的中央并朝外，"
-        "保持立方体中心格为空，其余 25 格全部放满焦炉砖。点燃控制器即可启动"
-        "——它自行积攒热量，结构下方一层的储罐会收集杂酚油。",
-        "hand",
-    ),
     # task multiblock-preview-infra — the 3D structure preview category title (the
-    # GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs; the description above
-    # folds into the page itself, this is the category tab title)
+    # GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs; the description
+    # retired with task mbpreview-shell-replicate — the 3D page speaks for itself)
     "gt6.jei.multiblock_preview": ("多方块结构预览", "hand"),
 
     # ---- restoration batch (task p26-pipe-item takeover salvage 2026-09-09): direct

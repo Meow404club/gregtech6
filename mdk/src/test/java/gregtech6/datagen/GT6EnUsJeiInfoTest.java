@@ -1,20 +1,18 @@
 /**
- * Offline test for task jei-integration: the producer half of the lang-key reconciliation
- * (acceptance b — "EnUs lang key 对账断言").
+ * Offline test for the jei-info lang domain (task jei-integration origin, ADR
+ * 2026-09-02-jei-dependency; since task mbpreview-shell-replicate a ZERO face).
  *
- * <p>GT6JeiPlugin.registerRecipes hangs JEI's built-in ingredient info page on the coke oven
- * controller item via {@code Component.translatable(GT6JeiPlugin.INFO_KEY_COKE_OVEN)} — a key
- * that only carries text if the GT6EnUs provider generates it (the hand-written-JSON red line
- * forbids editing en_us.json directly). The reconciliation rides a recording subclass of
- * LanguageProvider: {@code add(String,String)} is public and non-final, so a test subclass in
- * this package can capture every entry {@code addTranslations()} would emit and assert the
- * consumer's key is covered — in a bare JVM, no datagen run needed (the generated file itself
- * is gated by runData + the second-run written:0 check).
+ * <p>The coke oven structure description key (and its whole {@code gt6.jei.info.multiblock_*}
+ * band) is RETIRED — the 3D preview page ({@code GT6MultiblockPreviewWidget}, both viewer
+ * legs) speaks for itself, and no provider may re-grow a description row. The census rides
+ * a recording subclass of LanguageProvider: {@code add(String,String)} is public and
+ * non-final, so a test subclass in this package captures every entry
+ * {@code addTranslations()} would emit and asserts the retired band stays empty — in a
+ * bare JVM, no datagen run needed (the generated files themselves are gated by runData +
+ * the second-run written:0 check).
  */
 package gregtech6.datagen;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
@@ -28,7 +26,6 @@ import net.minecraft.SharedConstants;
 import net.minecraft.data.PackOutput;
 import net.minecraft.server.Bootstrap;
 
-import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.registry.GTMaterialItems;
 
 public class GT6EnUsJeiInfoTest {
@@ -64,30 +61,15 @@ public class GT6EnUsJeiInfoTest {
 	}
 
 	@Test
-	public void providerCoversThePluginInfoKey() {
-		Map<String, String> tEntries = collectTranslations();
-		assertTrue(tEntries.containsKey(GT6JeiPlugin.INFO_KEY_COKE_OVEN),
-			"GT6EnUs must generate the JEI info key — without it the info page renders the raw key");
-	}
-
-	@Test
-	public void infoTextIsNotBlankAndPinsTheStructureFacts() {
-		Map<String, String> tEntries = collectTranslations();
-		String tText = tEntries.get(GT6JeiPlugin.INFO_KEY_COKE_OVEN);
-		assertNotNull(tText);
-		assertTrue(!tText.isBlank());
-		// the live gate (p6 RCON gt6multiblock frame/check, linked_parts=25/25) fixed the facts:
-		// 3x3x3 cube, empty center, controller on one face, 25 bricks
-		assertTrue(tText.contains("3x3x3"), "info text must state the cube size");
-		assertTrue(tText.contains("25"), "info text must state the brick count (linked_parts=25/25)");
-		assertTrue(tText.contains("Coke Oven Bricks"), "info text must name the part block");
-	}
-
-	@Test
-	public void pluginKeyLiteralMatchesTheGeneratedKeyNamespace() {
-		// both halves pinned: consumer literal (GT6JeiPluginTest) vs provider coverage, joined
-		// by the shared constant — this test fails if anyone re-hardcodes either side
-		assertEquals("gt6.jei.info.multiblock_coke_oven", GT6JeiPlugin.INFO_KEY_COKE_OVEN);
-		assertTrue(collectTranslations().containsKey("gt6.jei.info.multiblock_coke_oven"));
+	public void multiblockDescriptionBandStaysRetired() {
+		// the text-face-zero census (task mbpreview-shell-replicate): the description band
+		// must never re-grow a row — the 3D preview replaced the words (the TITLE_KEY
+		// category name under gt6.jei.multiblock_preview is the ONLY survivor, and it
+		// lives OUTSIDE the gt6.jei.info.* band)
+		long tBand = collectTranslations().keySet().stream()
+				.filter(tKey -> tKey.startsWith("gt6.jei.info.multiblock"))
+				.count();
+		assertTrue(tBand == 0, "the gt6.jei.info.multiblock_* description band must stay empty ("
+				+ tBand + " rows re-grown) — the 3D preview page replaced the text");
 	}
 }

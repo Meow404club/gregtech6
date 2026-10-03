@@ -36,7 +36,6 @@ import gregtech6.itemdata.GT6ItemData;
 import gregtech6.itemdata.GT6ToolStats;
 import gregtech6.items.tools.GT6MaterialToolRecipe;
 import gregtech6.jei.GT6JeiPlugin;
-import gregtech6.jei.GT6RecipeViewerText;
 
 public class GT6EmiPluginTest {
 
@@ -93,17 +92,12 @@ public class GT6EmiPluginTest {
 	}
 
 	@Test
-	public void infoKeySharedBetweenTheTwoViewers() throws Exception {
-		// Face 1's seam: the info page text must be the ONE shared key (holder), not an
-		// EMI-side copy — a silent rename on either side would orphan the other's page.
-		// Since task multiblock-preview-infra the key's consumer is the preview widget's
-		// description line (the text-info pages are gone from both plugins); the literal
-		// share pin stays, and the EMI plugin's face is the preview category instead.
-		assertEquals("gt6.jei.info.multiblock_coke_oven", GT6RecipeViewerText.INFO_KEY_COKE_OVEN);
-		assertEquals(GT6JeiPlugin.INFO_KEY_COKE_OVEN, GT6RecipeViewerText.INFO_KEY_COKE_OVEN,
-				"the JEI forwarding constant and the holder literal must stay one seam");
-		// and the plugin bytecode carries the modern replacement face; the RETIRED face is
-		// the coke-oven text page specifically — since task viewer-energy-jump-gear the
+	public void previewCategoryReplacedTheTextPage() throws Exception {
+		// the retirement census: the coke-oven text-info face AND its shared-key holder are
+		// gone (task mbpreview-shell-replicate — the description key, the
+		// GT6RecipeViewerText holder and the plugin forwarding constant all retired); the
+		// EMI plugin's face is the preview category instead. The RETIRED face is the
+		// coke-oven text page specifically — since task viewer-energy-jump-gear the
 		// EmiInfoRecipe API is back for the energy-carrier pages (the seat-IX rebase
 		// adjudication: the retirement targeted the replaced face, not the API):
 		try (java.io.InputStream in = GT6EmiPlugin.class.getResourceAsStream("GT6EmiPlugin.class")) {

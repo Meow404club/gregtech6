@@ -20,7 +20,6 @@ import gregtech6.block.wire.GTWireBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.items.armor.GT6ArmorMaterials;
-import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.jei.GT6MultiblockPreviews;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6Attachments;
@@ -644,24 +643,12 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The multiblock preview page texts (task jei-integration origin, ADR
-     * 2026-09-02-jei-dependency): the coke oven structure description — since task
-     * multiblock-preview-infra rendered as the DESCRIPTION line inside the 3D preview
-     * page ({@code GT6MultiblockPreviewWidget}, both viewer legs; the former text-info
-     * pages are gone), so the key comes from the plugin's constant and cannot drift from
-     * the consumer side.
-     *
-     * <p>Structure facts are pinned by the port's own live gate (task cokeoven-processing,
-     * RCON {@code gt6multiblock frame/check}: {@code linked_parts=25/25}): the 3x3x3 cube has
-     * the controller in the middle of one face and an EMPTY center cell, so the bricks count is
-     * 25 (the structure loop checks 26 cells, one of which is the controller itself).
+     * The viewer page titles and info lines (task jei-integration origin, ADR
+     * 2026-09-02-jei-dependency). The coke oven structure DESCRIPTION key retired with
+     * task mbpreview-shell-replicate — the 3D preview page
+     * ({@code GT6MultiblockPreviewWidget}, both viewer legs) speaks for itself.
      */
     private void addJeiInfo() {
-        add(GT6JeiPlugin.INFO_KEY_COKE_OVEN,
-            "The Coke Oven is a 3x3x3 cube: place the Coke Oven in the middle of one side, facing "
-            + "outward, leave the center cell of the cube empty, and fill the remaining 25 cells "
-            + "with Coke Oven Bricks. Ignite the controller to start it - it makes its own heat, "
-            + "and a tank on the layer below the structure collects the Creosote.");
         // task debt-oregen-title-i18n — the ore-gen distribution page title (the
         // GT6OreGenInfoLayout.TITLE_KEY consumer): hand row, no dump face — the page is
         // a modern enhancement, upstream 1.7.10 has no NEI distribution face

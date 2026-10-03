@@ -1264,7 +1264,6 @@
   "gt6.jei.info.energy.ru": "Rotation Energy. Units are IndustrialCraft EU.",
   "gt6.jei.info.energy.tu": "Time. Units are Ticks.",
   "gt6.jei.info.energy_jump_hint": "Click to see how this energy is produced",
-  "gt6.jei.info.multiblock_coke_oven": "The Coke Oven is a 3x3x3 cube: place the Coke Oven in the middle of one side, facing outward, leave the center cell of the cube empty, and fill the remaining 25 cells with Coke Oven Bricks. Ignite the controller to start it - it makes its own heat, and a tank on the layer below the structure collects the Creosote.",
   "gt6.jei.info.ore_gen_info": "Ore Generation Distribution",
   "gt6.jei.multiblock_preview": "Multiblock Structure Preview",
   "gt6.jei.recipe_map.anvil": "Anvil",

@@ -113,16 +113,6 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 	}
 
 	@Test
-	public void descriptionRidesTheSharedInfoSeam() {
-		// the folded text-info body: the entry's description IS the shared
-		// gt6.jei.info.multiblock_coke_oven component (getString() = the raw key offline —
-		// no Language is loaded bare-JVM, so the key literal is exactly what comes back)
-		GT6MultiblockPreviews.Entry tEntry = GT6MultiblockPreviews.entries().get(0);
-		assertEquals("gt6.jei.info.multiblock_coke_oven", tEntry.description().getString(),
-				"the page description must ride the shared info-page seam, not a fresh key");
-	}
-
-	@Test
 	public void infoPagesRemovedFromBothPlugins() throws Exception {
 		// the swap census: neither plugin may still carry the retired COKE-OVEN text-info
 		// faces — read at the bytecode layer (the same layer the detection-contract tests
