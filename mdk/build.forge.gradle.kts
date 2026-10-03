@@ -327,6 +327,78 @@ tasks.named<Jar>("jar") {
     // 但玩家 mods/ 目录只有本 jar 一个类加载域——缺 gregapi 类即 NoClassDefFoundError
     // （2026-09-06 真机加载实测）。取代 P2「mdk 不 shadow gregapi」开发期口径（仅分发形态，依赖仍 compileOnly 面）。
     from(project(":").sourceSets.main.get().output)
+    // ---- 发行 jar 域排除（task jar-dist-hygiene ①③，2026-10-03）----
+    // 病灶（CI 分发 jar 实测 93M = 46.2M 压缩内容 + ~45M zip 元数据，241727 条目）：上方
+    // sourceSets resources srcDir 把共享 generated 树整树挂入，而共享树里两腿 datagen 命名域并存
+    // （1.20.1 复数 recipes/loot_tables + 1.21.1 单数 recipe/loot_table）与双 loader 域
+    // （forge/ + neoforge/，各 51 biome_modifier）→ 每个 jar 把对面腿产物全数打包。
+    // 正典排除位置选 jar 任务 exclude 而非 sourceSet 级 exclude：分发 jar 是唯一病灶面
+    // （runs/test 走 exploded classpath 不受 zip 元数据爆炸影响）；sourceSet 级会连坐
+    // test/dev 类路径——共享测试以 classpath 直读共享树（GTGrassBlockTest.generated() 形），
+    // 对面腿域从类路径消失会把绿测试打红。gregapi 自包含 from() 不受影响（root 项目无 resources）。
+    // 排除面：对面腿三域 + assets/README.md（借图台账文档 1.17M，assets 命名空间借位、
+    // 零代码消费）+ .cache/（datagen 增量缓存，.gitignore 挡 CI、仅本地构建泄漏，纯防御）。
+    // 裸目录名与 /** 成对写：目录条目 relPath 不带尾斜杠，两形都钉死。
+    exclude(
+        "data/gt6/recipe", "data/gt6/recipe/**",          // 1.21.1 配方命名域（本腿读复数 recipes/）
+        "data/gt6/loot_table", "data/gt6/loot_table/**",  // 1.21.1 loot 命名域（本腿读复数 loot_tables/）
+        "data/gt6/neoforge", "data/gt6/neoforge/**",      // neoforge loader 域（biome_modifier 等）
+        "assets/README.md",
+        ".cache", ".cache/**",
+    )
+}
+
+// ---- 发行 jar 域 census 钉（task jar-dist-hygiene，验收①红绿法）----
+// 钉的是 CI 分发正本（build.yml 上传 glob = build/libs/gt6-*.jar）：本腿 jar 任务产物落
+// devlibs（MDG dev 形），reobfJar 才写 libs 分发正本——census 依赖 assemble（含 reobfJar
+// 全链），按 jar 任务 archiveFileName 读 libs 下同名产物，不取 jar.archiveFile（=devlibs）。
+// 逐条目断言：禁入面（对面腿域 + 打包垃圾，与上方 jar exclude 一字对应）必须为零；本腿
+// 正典域必须非空（防 exclude 误伤把本腿内容排光）。红绿法实证：exclude 落地前跑 jarCensus
+// 必红（forge 腿实测 data/gt6/recipe 32009 + data/gt6/loot_table 15388 + data/gt6/neoforge
+// 51 + assets/README.md 1）；exclude 落地后转绿。advancements/ 条目数随 census 行输出——
+// unlock advancement 砍除（②，2026-10-03 用户裁定，降级为后续小卡）落地后归零，由该卡把
+// data/gt6/advancements 补进禁入面。
+val jarCensusKeys = listOf(
+    "data/gt6/recipes/", "data/gt6/recipe/", "data/gt6/advancements/",
+    "data/gt6/loot_tables/", "data/gt6/loot_table/",
+    "data/gt6/forge/", "data/gt6/neoforge/", "data/forge/", "data/c/", "assets/", ".cache/",
+)
+val jarForbiddenPrefixes = listOf(
+    "data/gt6/recipe/", "data/gt6/loot_table/", "data/gt6/neoforge/",
+    "assets/README.md", ".cache",
+)
+val jarRequiredKeys = listOf("data/gt6/recipes/", "data/gt6/loot_tables/", "data/gt6/forge/", "assets/")
+tasks.register("jarCensus") {
+    dependsOn(tasks.named("assemble"))
+    doLast {
+        val tJar = layout.buildDirectory.dir("libs").get().file(tasks.named<Jar>("jar").get().archiveFileName.get()).asFile
+        val tCounts = linkedMapOf("TOTAL" to 0)
+        val tForbidden = linkedMapOf<String, Int>()
+        ZipFile(tJar).use { tZip ->
+            for (tEntry in tZip.entries()) {
+                if (tEntry.isDirectory) continue
+                tCounts["TOTAL"] = tCounts["TOTAL"]!! + 1
+                jarCensusKeys.firstOrNull { tEntry.name.startsWith(it) }?.let {
+                    tCounts[it] = (tCounts[it] ?: 0) + 1
+                }
+                jarForbiddenPrefixes.firstOrNull { tEntry.name.startsWith(it) }?.let {
+                    tForbidden[it] = (tForbidden[it] ?: 0) + 1
+                }
+            }
+        }
+        logger.lifecycle(
+            "jarCensus ${tJar.name}: " + (tJar.length() * 10 / 1048576.0).toInt() / 10.0
+                + " MB, " + tCounts["TOTAL"] + " entries"
+        )
+        for (tKey in jarCensusKeys) logger.lifecycle("  $tKey = ${tCounts[tKey] ?: 0}")
+        check(tForbidden.isEmpty()) {
+            "jar dist hygiene: forbidden entries in ${tJar.name}: $tForbidden"
+        }
+        val tMissing = jarRequiredKeys.filter { (tCounts[it] ?: 0) == 0 }
+        check(tMissing.isEmpty()) {
+            "jar dist hygiene: own-leg domains missing from ${tJar.name}: $tMissing"
+        }
+    }
 }
 
 // chisel 生成源接线（模板 build.forge.gradle.kts.txt:64-66 同构）：
