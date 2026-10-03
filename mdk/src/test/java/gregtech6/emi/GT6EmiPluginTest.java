@@ -109,6 +109,23 @@ public class GT6EmiPluginTest {
 		}
 	}
 
+	@Test
+	public void rmWorkstationsRideTheReverseIndexLoop() throws Exception {
+		// task r11-emi-workstation-full — the workstation arm walks the shared reverse index
+		// (workstationsOf) per map and registers EVERY machine (the EmiRecipes per-category
+		// list), not the single iconOf representative; the JEMI red line's twin assertion
+		// lives on the JEI side (GT6JeiPluginTest.rmCatalystsRideTheWorkstationLoop). Pinned
+		// at the bytecode layer like the annotation tests above.
+		try (java.io.InputStream in = GT6EmiPlugin.class.getResourceAsStream("GT6EmiPlugin.class")) {
+			assertNotNull(in, "plugin class resource not found on the test classpath");
+			String tBytes = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+			assertTrue(tBytes.contains("workstationsOf"),
+					"the EMI workstation arm must consume the shared workstation reverse index");
+			assertTrue(tBytes.contains("addWorkstation"),
+					"the EMI workstation registration face must stay");
+		}
+	}
+
 	/**
 	 * Face 2's output slot: the replacement row carries the ROW's stamped identity — the
 	 * exact face the JEI extension pins (GT6MaterialToolJeiExtensionTest), so both viewers
