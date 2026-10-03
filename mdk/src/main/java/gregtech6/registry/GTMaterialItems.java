@@ -104,12 +104,13 @@ public final class GTMaterialItems {
     }
 
     /**
-     * The force-table slice (task machines-bumblelyzer-crucible) — the upstream
-     * OP.java:603-625 disable/forceItemGeneration rows the port OP defers with the whole
-     * MT/ANY-dependent block, landed HERE (mdk-side, caller-of-OP.init timing) because a port
-     * row consumes the items. The material-condition-system "47 unlocked prefixes" is the
-     * same pattern: the port keeps the upstream model and lands the table rows per consuming
-     * card. Three rows upstream verbatim:
+     * The force-table slice (task machines-bumblelyzer-crucible, extended by
+     * toolhead-family-closeout) — the upstream OP.java:603-625 disable/forceItemGeneration
+     * rows the port OP defers with the whole MT/ANY-dependent block, landed HERE (mdk-side,
+     * caller-of-OP.init timing) because a port row consumes the items. The
+     * material-condition-system "47 unlocked prefixes" is the same pattern: the port keeps
+     * the upstream model and lands the table rows per consuming card. Exactly four rows,
+     * each upstream verbatim:
      * <ul>
      * <li>{@code :616 bouleGt.forceItemGeneration(MT.Si, MT.Ge, MT.RedstoneAlloy, MT.NikolineAlloy)}
      *     — the boule quartet;</li>
@@ -119,6 +120,12 @@ public final class GTMaterialItems {
      *     cutting-domain card — no port row consumes a Hexorium boule.)</li>
      * <li>{@code :619 plateTiny.forceItemGeneration(MT.Paper)} — the Bumblelyzer scan leg's
      *     paper tiny.</li>
+     * <li>{@code :621 toolHeadPickaxeGem.forceItemGeneration(MT.Empty)} (task
+     *     toolhead-family-closeout) — the blank gem pickaxe head: the base of the press
+     *     retip row (Loader_Recipes_Handlers.java:251) and the return of the head-drop ring
+     *     (GT_Tool_PickaxeGem.java:30 getBrokenItem). The :618-:620 drill/chainsaw/wrench
+     *     blanks stay unlanded — no port row consumes them (GTMaterialItemsForceTest pins
+     *     the scope).</li>
      * </ul>
      * Plus the two port-authority dye-axis rows (task dye-item-axis) — upstream has NO force
      * row for the dyes because the dye() factory routes through dust() whose
@@ -144,6 +151,7 @@ public final class GTMaterialItems {
         gregapi.data.OP.plateTiny.forceItemGeneration(gregapi.data.MT.Paper);
         gregapi.data.OP.dust.forceItemGeneration(gregapi.data.MT.DATA.Dye_Materials); // task dye-item-axis — the 16 vanilla-index dyes
         gregapi.data.OP.plantGtFiber.forceItemGeneration(gregapi.data.MT.DATA.Dye_Materials);
+        gregapi.data.OP.toolHeadPickaxeGem.forceItemGeneration(gregapi.data.MT.Empty); // OP.java:621, task toolhead-family-closeout
     }
 
     /** Segment 2 (RegisterEvent, LOW priority): items and the creative tabs, one listener for both (task card). */
@@ -485,6 +493,23 @@ public final class GTMaterialItems {
         return INDEX.values().stream().map(RegistryObject::get).toArray(Item[]::new);
         //?} else {
         /*return INDEX.values().stream().map(DeferredHolder::get).toArray(Item[]::new);
+         *///?}
+    }
+
+    /**
+     * The leg-neutral (prefix, material) -> ItemStack face for RUNTIME consumers (the
+     * pickaxe-gem head-drop ring, task toolhead-family-closeout — the port {@code mat()}
+     * cut, OreDictPrefix.java:55, routes through the registration bridge instead).
+     * EMPTY when the pair is unregistered or the handle is unresolved (offline/datagen
+     * JVMs never bind INDEX; the caller's vanilla-vanish fallback answers there).
+     */
+    public static ItemStack stackOf(OreDictPrefix prefix, OreDictMaterial material) {
+        //? if forge {
+        RegistryObject<Item> tHandle = sLookup.apply(prefix, material);
+        return tHandle == null || !tHandle.isPresent() ? ItemStack.EMPTY : new ItemStack(tHandle.get());
+        //?} else {
+        /*DeferredHolder<Item, Item> tHandle = sLookup.apply(prefix, material);
+        return tHandle == null || !tHandle.isBound() ? ItemStack.EMPTY : new ItemStack(tHandle.get());
          *///?}
     }
 }

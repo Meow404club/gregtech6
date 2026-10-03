@@ -804,7 +804,7 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertEquals(309, shapelessMaterialsOf("tool_head_construction_pickaxe/from_raw_pickaxe").size(), "the :189 face");
         assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/from_raw_any_iron").size(), "the :190 face");
         assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/from_any_iron").size(), "the :191 face");
-        assertEquals(0, shapelessMaterialsOf("tool_head_pickaxe_gem/retip").size(), "the :192 face (the fixed-slot seam)");
+        assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/retip").size(), "the :192 face — the fixed MT.Empty head slot exists since the :621 force landed (task toolhead-family-closeout); the rows ride the same toolHeadPickaxeGem ∩ gemFlawed face as :191");
     }
 
     private static Set<String> shapelessMaterialsOf(String aFormKey) {
@@ -835,12 +835,15 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         Set<String> tSpade = new HashSet<>(conditionedFace(OP.toolHeadRawUniversalSpade));
         tSpade.retainAll(conditionedFace(OP.toolHeadShovel));
         assertEquals(tSpade, shapelessMaterialsOf("tool_head_raw_universal_spade/from_shovel"), "the :187 universe == the spade-shovel faces");
-        // :192 — the retip face pours ZERO: the fixed MT.Empty head slot does not exist
-        // (toolHeadPickaxeGem generates for gemFlawed-tool materials only — MT.Empty carries none,
-        // so the upstream :192 row is the never-null dat() seam itself; the form stays, the rows
-        // unlock with that item, the fine-wire :169 law)
-        assertFalse(GT6CraftingRecipes.itemPairExists(OP.toolHeadPickaxeGem, gregapi.data.MT.Empty), "the :192 fixed MT.Empty retip head item does not exist (the seam)");
-        assertEquals(0, shapelessMaterialsOf("tool_head_pickaxe_gem/retip").size(), "the :192 rows pour zero — the fixed-slot seam");
+        // :192 — the retip face pours since the :621 force landed (task toolhead-family-closeout):
+        // the fixed MT.Empty head slot exists now; the rows still ride the gemFlawed item truth
+        // (the Empty head itself stays row-less — gemFlawed(Empty) resolves nothing, the
+        // never-unresolvable-ingredient law; upstream shapes the same face: the :192 listener
+        // would fire gemFlawed.dat(Empty) = a dead 1.7.10 row)
+        assertTrue(GT6CraftingRecipes.itemPairExists(OP.toolHeadPickaxeGem, gregapi.data.MT.Empty), "the :192 fixed MT.Empty retip head item exists (the :621 force, the seam closed)");
+        Set<String> tRetipFace = new HashSet<>(conditionedFace(OP.toolHeadPickaxeGem));
+        tRetipFace.retainAll(conditionedFace(OP.gemFlawed));
+        assertEquals(tRetipFace, shapelessMaterialsOf("tool_head_pickaxe_gem/retip"), "the :192 universe == the pickaxeGem ∩ gemFlawed conditioned face (the blank head excluded — no gemFlawed(Empty) item)");
         assertTrue(GT6CraftingRecipes.itemPairExists(OP.arrowGtWood, gregapi.data.MT.Empty), "the :181 fixed MT.Empty shaft item exists");
     }
 

@@ -180,7 +180,7 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		}
 	}
 
-	/** The assembly walk = the head-item truth (7063 measured); the :333 gate excludes the soft materials. */
+	/** The assembly walk = the head-item truth (7063 measured); the :333 gate excludes the soft materials, the ACT:68 gate the Empty blank. */
 	@Test
 	public void theAssemblyWalkIsTheHeadTruth() {
 		List<GT6CraftingRecipes.AssemblyRow> tRows = GT6CraftingRecipes.toolAssemblyRows();
@@ -196,6 +196,8 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		}
 		assertTrue(tRows.stream().anyMatch(tRow -> tRow.aForm().aId().equals("pickaxe")
 				&& tRow.aMaterial() == MT.Iron), "the iron pickaxe assembly rides the walk");
+		assertTrue(tRows.stream().noneMatch(tRow -> tRow.aMaterial() == MT.Empty),
+				"the MT.Empty blank head assembles nothing (AdvancedCraftingTool.java:68 — the :621 forced pickaxeGem blank stays out of the _from_head bands, task toolhead-family-closeout)");
 	}
 
 	/** The representative assembly row: the head item + the wooden-rod tag (the declared deviation) through material_tool. */

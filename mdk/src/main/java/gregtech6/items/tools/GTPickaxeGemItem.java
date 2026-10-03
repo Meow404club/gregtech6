@@ -1,5 +1,10 @@
 package gregtech6.items.tools;
 
+import gregapi.data.MT;
+import gregapi.data.OP;
+import gregtech6.registry.GTMaterialItems;
+import net.minecraft.world.item.ItemStack;
+
 /**
  * The formal GT6 gem pickaxe — item id {@code gt6:pickaxe_gem} (task w5-t1-dig-six,
  * the STEEL body keeps the pre-ladder fallback; the gem identity rides the recipe's
@@ -10,10 +15,14 @@ package gregtech6.items.tools;
  *     0.25F — the ladder face (task dig-ladder): an identity-less stack falls back
  *     to the steel stats at ×0.25 = the flat 128 (512/4, bit-exact the pre-ladder
  *     constant), an identity-carrying stack gets {@code mToolDurability * 100 * 0.25}.</li>
- * <li>{@code getBrokenItem} → {@code toolHeadPickaxeGem of Empty} (:30) → CUT: the port
- *     has no tool-head item family to drop, the pickaxe breaks entirely (vanilla
- *     default; declared deviation — the head-drop revives with the tool-head family
- *     card). The upstream gem-head row family (Loader_Tools.java:293-330) carries NO
+ * <li>{@code getBrokenItem} → {@code toolHeadPickaxeGem of Empty} (:30) → LANDED (task
+ *     toolhead-family-closeout, the previously-CUT face): the broken gem pick returns the
+ *     blank Empty head via {@link #getBrokenItem} — the give-then-consume ring through
+ *     {@link GTPickaxeItem} (the upstream MultiItemTool.java:453-459 consumption face).
+ *     The loop closes with the press retip row (Loader_Recipes_Handlers.java:251): the
+ *     blank head + 2 flawed gems re-press into a gem head. The blank head itself exists
+ *     since the OP.java:621 force row landed in GTMaterialItems.forceItemGeneration.
+ *     The upstream gem-head row family (Loader_Tools.java:293-330) carries NO
  *     toolHeadPickaxeGem OreProcessing row, so the gem pick has NO per-material grid
  *     rows — its ladder face rides the diamond-tip steel row + the identity seam.</li>
  * </ul>
@@ -45,5 +54,16 @@ public class GTPickaxeGemItem extends GTPickaxeItem {
 	@Override
 	public float durabilityMultiplier() {
 		return DURABILITY_MULTIPLIER;
+	}
+
+	/**
+	 * Upstream getBrokenItem (GT_Tool_PickaxeGem.java:30 verbatim): the broken gem pick
+	 * returns the EMPTY pickaxeGem head — always, identity-independent (the base material
+	 * never leaks into the return; upstream :190-192 same). EMPTY when the blank head is
+	 * unregistered (offline/datagen JVMs — the vanilla-vanish fallback of the bridge).
+	 */
+	@Override
+	protected ItemStack getBrokenItem(ItemStack aStack) {
+		return GTMaterialItems.stackOf(OP.toolHeadPickaxeGem, MT.Empty);
 	}
 }

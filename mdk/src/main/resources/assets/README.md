@@ -4023,6 +4023,7 @@ Dedication** (same upstream `README.md` block as above).
   - `bullet_gt_medium.png` `fb7294ffde727a4707ec55770a497dd1bb46a34104782b12ad4d1d43aa8eff02`
   - `bullet_gt_small.png` `99120128d46a3b3f7394ca28dd083f7f6fd599e5dd67090f66fdf6f642695361`
   - `chemtube.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
+  - `tool_head_pickaxe_gem.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510` (task toolhead-family-closeout — the MT.Empty head the OP.java:621 force row + the :251 retip registered)
 - `OPAL` -> `gt6/textures/item/material_sets/opal/`:
   - `arrow_gt_plastic.png` `ed479411dd270dedb4e8e6bab757306fcdd821e255f5644f39573fca6b79b3f4`
   - `arrow_gt_wood.png` `f2ae44101978ce2e482887134a3d97add11917eec704023d74f7f3db76282b24`
@@ -7115,6 +7116,7 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
+  - `tool_head_pickaxe_gem_overlay.png` `e371819eea511b4fde26ccb7bd85d96ff93143f0ea6c7dd9e5c091efe2fa82a8` (task toolhead-family-closeout)
 - `OPAL` -> `assets/gt6/textures/item/material_sets/opal/`:
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`

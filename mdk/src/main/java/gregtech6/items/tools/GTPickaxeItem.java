@@ -280,7 +280,7 @@ public class GTPickaxeItem extends Item implements GT6ToolLadder.LadderTool {
 	@Override
 	public boolean mineBlock(ItemStack aStack, Level aLevel, BlockState aState, BlockPos aPos, LivingEntity aEntity) {
 		if (!aLevel.isClientSide && aState.getDestroySpeed(aLevel, aPos) != 0.0F) {
-			aStack.hurtAndBreak(1, aEntity, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+			hurtTool(aStack, aEntity);
 		}
 		return true;
 	}
@@ -288,8 +288,42 @@ public class GTPickaxeItem extends Item implements GT6ToolLadder.LadderTool {
 	/** Upstream getToolDamagePerEntityAttack :43 — 200 units fold into one point. */
 	@Override
 	public boolean hurtEnemy(ItemStack aStack, LivingEntity aTarget, LivingEntity aAttacker) {
-		aStack.hurtAndBreak(1, aAttacker, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+		hurtTool(aStack, aAttacker);
 		return true;
+	}
+
+	/**
+	 * The shared break seam (mineBlock/hurtEnemy route through here). The lambda keeps the
+	 * exact self-referencing form the stonecutter neo-leg transform anchors on
+	 * (stonecutter.gradle.kts — the 21.1 (int, LivingEntity, Consumer) overload is gone, the
+	 * (int, LivingEntity, EquipmentSlot) form broadcasts the break event itself; do NOT
+	 * reformat). The ring rides AFTER the call: a broken stack comes back shrunk to empty
+	 * (hurtAndBreak is server-side and skips creative, ItemStack.java:334, so the emptiness
+	 * branch only answers server-survival — the upstream doDamage :434 hasInfiniteItems gate
+	 * is the same face), and the broken-item face goes to the player's inventory — the
+	 * upstream give-then-consume shape (MultiItemTool.java:453-459 ST.give then ST.use;
+	 * Inventory.placeItemBackInInventory carries the vanilla overflow-drop semantics).
+	 * Declared deviation: the upstream non-player branch (:460-462 ST.set in-place) has no
+	 * 1.20.1 in-place form — a non-player wielder's broken tool just vanishes (the vanilla
+	 * default; mobs wielding GT picks are not an upstream-shaped face).
+	 */
+	private void hurtTool(ItemStack aStack, LivingEntity aEntity) {
+		aStack.hurtAndBreak(1, aEntity, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+		if (aStack.isEmpty() && aEntity instanceof Player tPlayer) {
+			ItemStack tBroken = getBrokenItem(aStack);
+			if (!tBroken.isEmpty()) tPlayer.getInventory().placeItemBackInInventory(tBroken);
+		}
+	}
+
+	/**
+	 * The broken-item face (upstream IToolStats.getBrokenItem, ToolStats.java:186 default =
+	 * the scrap arm that stays CUT — the port tool system never had it): what the breaker
+	 * receives when the tool dies. Default = EMPTY, the vanilla vanish. Exactly one port
+	 * tool overrides, mirroring upstream: the gem pickaxe (GT_Tool_PickaxeGem.java:30 — the
+	 * only getBrokenItem override in the upstream tool family).
+	 */
+	protected ItemStack getBrokenItem(ItemStack aStack) {
+		return ItemStack.EMPTY;
 	}
 
 	/**

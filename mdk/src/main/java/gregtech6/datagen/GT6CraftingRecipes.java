@@ -5865,7 +5865,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	/**
 	 * The assembly walk face (offline-pure): per form, every registered head item (the
-	 * registrationOrder membership = the head item truth) minus the :333 soft-tag gate.
+	 * registrationOrder membership = the head item truth) minus the :333 soft-tag gate and
+	 * the MT.Empty blank-head gate (AdvancedCraftingTool.java:68 — every ACT row rides the
+	 * same listener, the blank heads are retip/recycle bases, never assembly heads; the
+	 * toolhead-family-closeout :621 force made the pickaxeGem blank real, this gate keeps
+	 * it out of the _from_head bands).
 	 * The handle gate is the declared wood-rod relaxation — no material face beyond the
 	 * head truth.
 	 */
@@ -5877,6 +5881,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		java.util.List<AssemblyRow> rRows = new ArrayList<>();
 		for (AssemblyForm tForm : assemblyForms()) {
 			for (OreDictMaterial tMaterial : tByHead.getOrDefault(tForm.aHead(), java.util.List.of())) {
+				if (tMaterial == gregapi.data.MT.Empty) continue; // AdvancedCraftingTool.java:68 — the blank head assembles nothing
 				if (tForm.aNoSoftTag() && (tMaterial.contains(gregapi.data.TD.Properties.WOOD)
 						|| tMaterial.contains(gregapi.data.TD.Properties.BOUNCY)
 						|| tMaterial.contains(gregapi.data.TD.Properties.STRETCHY))) continue; // :333 Nor(WOOD, BOUNCY, STRETCHY)
