@@ -37,7 +37,7 @@ import gregtech6.registry.GTMaterialItems;
  * column's slot hides behind the box, matching the JEI background-layer z-order). The
  * machine-icon nodes are plain SlotWidgets carrying the merged "via A/B" tooltip; degraded
  * edges (EMPTY machine stack — offline-only) fall back to the v1-style via-label text; the
- * "+N" overflow markers render at {@link MaterialTreeDisplay#OVERFLOW_Y}.
+ * "+N" overflow markers render under their band ({@link MaterialTreeDisplay#overflowY}).
  *
  * <p>Id stability: {@code gt6:material_tree/<snake(material)>} — the snake_case face is the
  * registered-item id convention (GTMaterialItems.itemIdOf), so the id survives a material's
@@ -136,13 +136,13 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		int i = 0;
 		for (Byproduct tByproduct : mDisplay.byproducts()) {
 			aWidgets.add(new SlotWidget(EmiStack.of(tByproduct.stack()),
-					MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT), MaterialTreeDisplay.byproductY(i)))
+					MaterialTreeDisplay.byproductX(i), MaterialTreeDisplay.byproductY()))
 					.appendTooltip(Component.literal(tByproduct.sourceLabel()));
 			i++;
 		}
 		aWidgets.addText(Component.literal(MaterialTreeDisplay.materialName(mDisplay.material)), 4, 4, 0xFF000000, false);
 		aWidgets.addText(Component.literal(MaterialTreeDisplay.BYPRODUCT_HEADER),
-				MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT), 4, 0xFF000000, false);
+				MaterialTreeDisplay.LANE_X0, MaterialTreeDisplay.BYPRODUCT_HEADER_Y, 0xFF000000, false);
 		for (int e = 0; e < tEdges.size(); e++) {
 			EdgeLayout tLayout = tLayouts.get(e);
 			if (tLayout.machine() != null) continue; // the via-label lives on the machine slot's tooltip
@@ -150,7 +150,7 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		}
 		for (Overflow tOverflow : mDisplay.overflow()) {
 			aWidgets.addText(Component.literal("+" + tOverflow.hidden()),
-					MaterialTreeDisplay.columnX(tOverflow.column()), MaterialTreeDisplay.OVERFLOW_Y, 0xFF000000, false);
+					MaterialTreeDisplay.overflowX(), MaterialTreeDisplay.overflowY(tOverflow.column()), 0xFF000000, false);
 		}
 	}
 }

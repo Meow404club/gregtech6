@@ -53,23 +53,27 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 
 /**
- * The v2 node-graph geometry pins (task mattree-v2-nodes acceptance ②③): the
- * {@link MaterialTreeLayout} helper is the ONE coordinate table both viewers render, so the
- * pins are exact rect tables —
+ * The v2 node-graph geometry pins (task mattree-v2-nodes acceptance ②③; rotated VERTICAL by
+ * task mattree-vertical-layout): the {@link MaterialTreeLayout} helper is the ONE coordinate
+ * table both viewers render, so the pins are exact rect tables —
  * <ul>
- * <li><b>canvas budget</b>: pitch 40, the 22 px gap budgeted 2 wire + 16 machine + 4 arrow,
- *     the overflow-marker strip inside the canvas;</li>
- * <li><b>pure edge plans</b>: the straight hop's wire/arrow/machine rect table, the rising
+ * <li><b>canvas budget</b>: stages grow DOWN at band pitch 40 (the 22 px gap budgeted
+ *     2 wire + 16 machine + 4 arrow), lanes grow RIGHT at pitch 28 (18 px slot + 10 px —
+ *     the retired 挤), the per-band overflow markers inside the canvas;</li>
+ * <li><b>the vertical stage map</b>: same band ⇒ same y, lanes step x +28; same lane across
+ *     bands ⇒ same x, stages step y +40 (the 行/列语义映射 in code);</li>
+ * <li><b>pure edge plans</b>: the straight hop's wire/arrow/machine rect table, the diagonal
  *     hop's slot-edge trunk + arrow-back bend, the degraded (machine-less) face with its
- *     via-label spot, and the same-gap midpoint collision stagger (y +2 px per dup);</li>
+ *     via-label spot, and the same-gap midpoint collision stagger (x +2 px per dup);</li>
  * <li><b>the live displays</b>: plan-per-edge alignment, machine presence iff the edge
  *     carries a stack, every rect inside the canvas, the structural machine rule
- *     (x = from slot + entry wire, y = midpoint ± stagger), and the overflow scan over
+ *     (y = from band slot + entry wire, x = midpoint ± stagger), and the overflow scan over
  *     buildAll (hidden counts positive, markers on-canvas — the no-silent-drop clause);</li>
  * <li><b>both viewers land the SAME plans</b> (acceptance ③): the EMI leg's widgets are
  *     captured through a stub {@link WidgetHolder} and the JEI leg's slots through a
  *     {@link Proxy} {@code IRecipeLayoutBuilder} — machine slot bounds equal
- *     {@code (machine.x-1, machine.y-1, 18, 18)} on BOTH legs, and the EMI wires render
+ *     {@code (machine.x-1, machine.y-1, 18, 18)} on BOTH legs, byproduct slots sit at
+ *     {@code (byproductX(i), byproductY())} on BOTH legs, and the EMI wires render
  *     BEFORE the slots (the under-the-slots z-order contract).</li>
  * </ul>
  */
@@ -179,21 +183,53 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void canvasBudget() {
-		assertEquals(40, MaterialTreeDisplay.COLUMN_PITCH);
-		assertEquals(40, MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_CRUSHED) - MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_ORE));
-		assertEquals(40, MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_DUST) - MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_PURIFIED));
-		// the gap budget: 2 px entry wire + 16 px machine icon + 4 px arrowhead = the 22 px gap
+		// stages grow DOWN: band pitch 40, the gap below each band budgeted 2 wire + 16 machine + 4 arrow
+		assertEquals(40, MaterialTreeDisplay.STAGE_PITCH);
+		assertEquals(40, MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_CRUSHED) - MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_ORE));
+		assertEquals(40, MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_DUST) - MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_PURIFIED));
 		assertEquals(22, MaterialTreeLayout.GAP);
 		assertEquals(2, MaterialTreeLayout.ENTRY_WIRE);
 		assertEquals(MaterialTreeLayout.GAP, MaterialTreeLayout.ENTRY_WIRE + MaterialTreeLayout.MACHINE + MaterialTreeLayout.ARROW_HEAD);
-		// the canvas: byproduct column + header text fits; the overflow-marker strip fits
-		assertEquals(228, MaterialTreeDisplay.WIDTH);
-		assertEquals(128, MaterialTreeDisplay.HEIGHT);
-		assertEquals(118, MaterialTreeDisplay.OVERFLOW_Y);
-		assertTrue(MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT) + 18 <= MaterialTreeDisplay.WIDTH);
-		assertTrue(MaterialTreeDisplay.OVERFLOW_Y + 10 <= MaterialTreeDisplay.HEIGHT);
-		assertTrue(MaterialTreeDisplay.nodeY(new Node(OP.dust, MaterialTreeDisplay.COL_DUST, MaterialTreeDisplay.MAX_ROWS - 1, ItemStack.EMPTY)) + 18
-				<= MaterialTreeDisplay.HEIGHT);
+		// lanes grow RIGHT: the ≥28 floor (18 px slot + ≥10 px gap) — the retired 挤 (old ROW_PITCH 20)
+		assertTrue(MaterialTreeDisplay.LANE_PITCH >= 28, "the spec floor: 18 px slot + >=10 px gap");
+		assertEquals(28, MaterialTreeDisplay.LANE_PITCH);
+		// the canvas: 202 wide (7 lanes + margin — under the old 228 width both viewers already shipped), 206 tall
+		assertEquals(202, MaterialTreeDisplay.WIDTH);
+		assertEquals(206, MaterialTreeDisplay.HEIGHT);
+		// every band's slot row and its "+N" marker strip fit the canvas
+		for (int c = MaterialTreeDisplay.COL_ORE; c <= MaterialTreeDisplay.COL_BYPRODUCT; c++) {
+			assertTrue(MaterialTreeDisplay.stageY(c) + 18 <= MaterialTreeDisplay.HEIGHT, "band " + c + " slot row on canvas");
+			assertTrue(MaterialTreeDisplay.overflowY(c) + 9 <= MaterialTreeDisplay.HEIGHT, "band " + c + " overflow marker on canvas");
+			assertTrue(MaterialTreeDisplay.overflowX() >= 0 && MaterialTreeDisplay.overflowX() + 8 <= MaterialTreeDisplay.WIDTH);
+		}
+		// the widest lane fits (7 lanes at pitch 28 from x 4): the last slot's right edge lands exactly on 190
+		assertEquals(190, MaterialTreeDisplay.byproductX(MaterialTreeDisplay.MAX_ROWS - 1) + 18);
+		assertTrue(MaterialTreeDisplay.byproductX(MaterialTreeDisplay.MAX_ROWS - 1) + 18 <= MaterialTreeDisplay.WIDTH);
+		// the byproduct header rides the wire-free gap above its band
+		assertEquals(165, MaterialTreeDisplay.BYPRODUCT_HEADER_Y);
+		assertTrue(MaterialTreeDisplay.BYPRODUCT_HEADER_Y + 9 <= MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT));
+		// the cap re-evaluation: 7 lanes (the raised horizontal budget)
+		assertEquals(7, MaterialTreeDisplay.MAX_ROWS);
+	}
+
+	@Test
+	void stagesGrowDownLanesGrowRight() {
+		// the rotated 行/列语义映射: Node.column() = stage band = y; Node.row() = lane = x
+		Node tOreLane0 = new Node(OP.oreRaw, MaterialTreeDisplay.COL_ORE, 0, ItemStack.EMPTY);
+		Node tOreLane1 = new Node(OP.oreGravel, MaterialTreeDisplay.COL_ORE, 1, ItemStack.EMPTY);
+		Node tCrushedLane0 = new Node(OP.crushed, MaterialTreeDisplay.COL_CRUSHED, 0, ItemStack.EMPTY);
+		// same band: same y, lanes step +28 to the right
+		assertEquals(MaterialTreeDisplay.nodeY(tOreLane0), MaterialTreeDisplay.nodeY(tOreLane1));
+		assertEquals(28, MaterialTreeDisplay.nodeX(tOreLane1) - MaterialTreeDisplay.nodeX(tOreLane0));
+		// same lane across bands: same x, stages step +40 downward
+		assertEquals(MaterialTreeDisplay.nodeX(tOreLane0), MaterialTreeDisplay.nodeX(tCrushedLane0));
+		assertEquals(40, MaterialTreeDisplay.nodeY(tCrushedLane0) - MaterialTreeDisplay.nodeY(tOreLane0));
+		// the full stage ladder descends
+		for (int c = MaterialTreeDisplay.COL_ORE; c < MaterialTreeDisplay.COL_BYPRODUCT; c++)
+			assertTrue(MaterialTreeDisplay.stageY(c) < MaterialTreeDisplay.stageY(c + 1), "stage " + c + " above stage " + (c + 1));
+		// the byproduct band spreads its slots right, all on the band's y
+		assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT), MaterialTreeDisplay.byproductY());
+		assertEquals(28, MaterialTreeDisplay.byproductX(1) - MaterialTreeDisplay.byproductX(0));
 	}
 
 	// ------------------------------------------------------------------
@@ -202,65 +238,67 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void straightEdgePlan() {
-		// col1 row0 (44,16) -> col2 row0 (84,16): everything on the centre line (y 25 = 16 + 9)
-		EdgeLayout tPlan = MaterialTreeLayout.edge(44, 16, 84, 16, true, 0);
-		assertEquals(new Rect(64, 17, 16, 16), tPlan.machine());
-		assertEquals(List.of(new Rect(62, 25, 2, 1)), tPlan.wire());
-		// the arrowhead: solid triangle, tip on the target slot's left edge centre (sorted by row)
-		assertEquals(List.of(new Rect(83, 22, 1, 1), new Rect(82, 23, 2, 1), new Rect(81, 24, 3, 1), new Rect(80, 25, 4, 1),
-				new Rect(81, 26, 3, 1), new Rect(82, 27, 2, 1), new Rect(83, 28, 1, 1)),
+		// band0 lane0 (4,16) -> band1 lane0 (4,56): everything on the centre line (x 13 = 4 + 9)
+		EdgeLayout tPlan = MaterialTreeLayout.edge(4, 16, 4, 56, true, 0);
+		assertEquals(new Rect(5, 36, 16, 16), tPlan.machine());
+		assertEquals(List.of(new Rect(13, 34, 1, 2)), tPlan.wire());
+		// the arrowhead: the v2 triangle rotated 90° with its geometry (flat base flush on the
+		// target slot's top edge y 55, apex 4 px up the wire at (13,52)); widths 4-|dx| per
+		// column, sorted top-down (the same rasterised face the diagonal pin's widest column nails)
+		assertEquals(List.of(new Rect(13, 52, 1, 4), new Rect(12, 53, 1, 3), new Rect(14, 53, 1, 3),
+				new Rect(11, 54, 1, 2), new Rect(15, 54, 1, 2), new Rect(10, 55, 1, 1), new Rect(16, 55, 1, 1)),
 				sorted(tPlan.arrow()));
-		assertEquals(60, tPlan.labelX());
-		assertEquals(12, tPlan.labelY());
+		assertEquals(0, tPlan.labelX());
+		assertEquals(32, tPlan.labelY());
 	}
 
 	@Test
-	void risingEdgePlan() {
-		// col1 row0 (44,16) -> col2 row2 (84,56): exit trunk along the slot's right edge,
-		// bend into the machine, cross and bend at the arrow's back line
-		EdgeLayout tPlan = MaterialTreeLayout.edge(44, 16, 84, 56, true, 0);
-		assertEquals(new Rect(64, 37, 16, 16), tPlan.machine()); // centre-line midpoint y 45 - 8
+	void diagonalEdgePlan() {
+		// band0 lane0 (4,16) -> band1 lane1 (44,56): exit trunk along the slot's bottom edge,
+		// bend into the machine, cross under it and bend at the arrow's back line
+		EdgeLayout tPlan = MaterialTreeLayout.edge(4, 16, 44, 56, true, 0);
+		assertEquals(new Rect(25, 36, 16, 16), tPlan.machine()); // centre-line midpoint x 33 - 8
 		assertEquals(List.of(
-				new Rect(62, 25, 1, 1),   // the 1 px exit stub (trunk sits 1 px off the slot edge)
-				new Rect(63, 25, 1, 20),  // the trunk down the from slot's right edge to the machine centre
-				new Rect(63, 45, 1, 1),   // the bend into the machine icon
-				new Rect(80, 45, 1, 20)), // the cross run bends at the arrow back line (x 80) down to tcy 65
+				new Rect(13, 34, 1, 1),   // the 1 px exit stub (trunk sits 1 px off the slot edge)
+				new Rect(13, 35, 20, 1),  // the trunk along the from slot's bottom edge to the machine centre
+				new Rect(33, 35, 1, 1),   // the bend into the machine icon
+				new Rect(33, 52, 20, 1)), // the cross run under the machine bends at the arrow back line (y 52) across to tcx 53
 				tPlan.wire());
-		// the widest arrowhead row sits flush on the arrow back line, centred on tcy 65
-		Rect tBase = tPlan.arrow().stream().filter(r -> r.w() == MaterialTreeLayout.ARROW_HEAD).findFirst().orElseThrow();
-		assertEquals(new Rect(80, 65, MaterialTreeLayout.ARROW_HEAD, 1), tBase);
+		// the widest arrowhead column sits flush on the arrow back line, centred on tcx 53
+		Rect tBase = tPlan.arrow().stream().filter(r -> r.h() == MaterialTreeLayout.ARROW_HEAD).findFirst().orElseThrow();
+		assertEquals(new Rect(53, 52, 1, MaterialTreeLayout.ARROW_HEAD), tBase);
 	}
 
 	@Test
 	void degradedEdgePlan() {
 		// machine-less face: plain arrow + the v1 via-label spot, no machine box
-		EdgeLayout tPlan = MaterialTreeLayout.edge(44, 16, 84, 16, false, 0);
+		EdgeLayout tPlan = MaterialTreeLayout.edge(4, 16, 4, 56, false, 0);
 		assertNull(tPlan.machine());
-		assertEquals(List.of(new Rect(62, 25, 18, 1)), tPlan.wire());
+		assertEquals(List.of(new Rect(13, 34, 1, 18)), tPlan.wire());
 		assertEquals(7, tPlan.arrow().size());
-		assertEquals(60, tPlan.labelX());
-		assertEquals(12, tPlan.labelY());
-		// the rising degraded face still routes (trunk + arrow-back bend), label at the midpoint
-		EdgeLayout tRising = MaterialTreeLayout.edge(44, 16, 84, 56, false, 0);
-		assertEquals(List.of(new Rect(62, 25, 1, 1), new Rect(63, 25, 1, 40), new Rect(63, 65, 17, 1)), tRising.wire());
-		assertEquals(7, tRising.arrow().size());
+		assertEquals(0, tPlan.labelX());
+		assertEquals(32, tPlan.labelY());
+		// the diagonal degraded face still routes (trunk + arrow-back bend), label at the midpoint
+		EdgeLayout tDiagonal = MaterialTreeLayout.edge(4, 16, 44, 56, false, 0);
+		assertEquals(List.of(new Rect(13, 34, 1, 1), new Rect(13, 35, 40, 1), new Rect(53, 35, 1, 17)), tDiagonal.wire());
+		assertEquals(7, tDiagonal.arrow().size());
 	}
 
 	@Test
 	void collidingMidpointsStagger() {
-		// the same-gap same-midpoint collision rule (spec clause ⑥'s y 错开): 2 px per dup
-		EdgeLayout tFirst = MaterialTreeLayout.edge(44, 16, 84, 16, true, 0);
-		EdgeLayout tSecond = MaterialTreeLayout.edge(44, 16, 84, 16, true, 1);
-		EdgeLayout tThird = MaterialTreeLayout.edge(44, 16, 84, 16, true, 2);
-		assertEquals(new Rect(64, 17, 16, 16), tFirst.machine());
-		assertEquals(new Rect(64, 19, 16, 16), tSecond.machine());
-		assertEquals(new Rect(64, 21, 16, 16), tThird.machine());
+		// the same-gap same-midpoint collision rule (spec clause ⑥'s 错开, rotated HORIZONTAL): 2 px per dup
+		EdgeLayout tFirst = MaterialTreeLayout.edge(4, 16, 4, 56, true, 0);
+		EdgeLayout tSecond = MaterialTreeLayout.edge(4, 16, 4, 56, true, 1);
+		EdgeLayout tThird = MaterialTreeLayout.edge(4, 16, 4, 56, true, 2);
+		assertEquals(new Rect(5, 36, 16, 16), tFirst.machine());
+		assertEquals(new Rect(7, 36, 16, 16), tSecond.machine());
+		assertEquals(new Rect(9, 36, 16, 16), tThird.machine());
 		// dup 0 rides the straight centre line; the stagger jogs the whole run +2 px per dup
-		// (machine centre 27/29 off the slot centres 25 — a 2 px jog in and out at the bends)
-		assertEquals(List.of(new Rect(62, 25, 2, 1)), tFirst.wire());
-		assertEquals(List.of(new Rect(62, 25, 1, 1), new Rect(63, 25, 1, 2), new Rect(63, 27, 1, 1), new Rect(80, 25, 1, 2)),
+		// (machine centre 15/17 off the slot centres 13 — a 2 px jog in and out at the bends)
+		assertEquals(List.of(new Rect(13, 34, 1, 2)), tFirst.wire());
+		assertEquals(List.of(new Rect(13, 34, 1, 1), new Rect(13, 35, 2, 1), new Rect(15, 35, 1, 1), new Rect(13, 52, 2, 1)),
 				tSecond.wire());
-		assertEquals(List.of(new Rect(62, 25, 1, 1), new Rect(63, 25, 1, 4), new Rect(63, 29, 1, 1), new Rect(80, 25, 1, 4)),
+		assertEquals(List.of(new Rect(13, 34, 1, 1), new Rect(13, 35, 4, 1), new Rect(17, 35, 1, 1), new Rect(13, 52, 4, 1)),
 				tThird.wire());
 	}
 
@@ -288,10 +326,10 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 				assertNotNull(tFrom);
 				assertNotNull(tTo);
 				if (tPlan.machine() != null) {
-					// the structural machine rule: x = from slot + entry wire, y = centre-line midpoint - 8 + 2 per dup
-					assertEquals(MaterialTreeDisplay.nodeX(tFrom) + 18 + MaterialTreeLayout.ENTRY_WIRE, tPlan.machine().x());
-					int tMid = (MaterialTreeDisplay.nodeY(tFrom) + MaterialTreeDisplay.nodeY(tTo)) / 2 + MaterialTreeLayout.SLOT / 2;
-					assertTrue((tPlan.machine().y() + 8 - tMid) % 2 == 0, "y = centre-line midpoint - 8 + 2k");
+					// the structural machine rule: y = from band slot + entry wire, x = midpoint lane - 8 + 2 per dup
+					assertEquals(MaterialTreeDisplay.nodeY(tFrom) + 18 + MaterialTreeLayout.ENTRY_WIRE, tPlan.machine().y());
+					int tMid = (MaterialTreeDisplay.nodeX(tFrom) + MaterialTreeDisplay.nodeX(tTo)) / 2 + MaterialTreeLayout.SLOT / 2;
+					assertTrue((tPlan.machine().x() + 8 - tMid) % 2 == 0, "x = centre-line midpoint - 8 + 2k");
 				}
 				// every rect inside the canvas (acceptance ②'s bounds face)
 				for (Rect tRect : tPlan.wire()) assertInside(tRect);
@@ -318,16 +356,23 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 			for (int tColumn = 0; tColumn <= MaterialTreeDisplay.COL_DUST; tColumn++)
 				assertTrue(tShown[tColumn] <= MaterialTreeDisplay.MAX_ROWS, "column cap");
 			assertTrue(tDisplay.byproducts().size() <= MaterialTreeDisplay.MAX_ROWS, "byproduct cap");
-			// every overflow record is a positive on-canvas marker (the explicit clause)
+			// every overflow record is a positive on-canvas marker under its own band (the explicit clause)
 			for (var tOverflow : tDisplay.overflow()) {
 				assertTrue(tOverflow.hidden() > 0);
 				assertTrue(tOverflow.column() >= 0 && tOverflow.column() <= MaterialTreeDisplay.COL_BYPRODUCT);
-				int tMarkerX = MaterialTreeDisplay.columnX(tOverflow.column());
+				int tMarkerX = MaterialTreeDisplay.overflowX();
+				int tMarkerY = MaterialTreeDisplay.overflowY(tOverflow.column());
 				assertTrue(tMarkerX >= 0 && tMarkerX + 8 <= MaterialTreeDisplay.WIDTH, "marker on canvas");
+				assertTrue(tMarkerY >= 0 && tMarkerY + 9 <= MaterialTreeDisplay.HEIGHT, "marker on canvas");
 			}
-			// the Cu ore column sits exactly on the cap — the boundary the census pins
+			// the Cu ore band holds exactly its five reachable nodes (oreRaw + the four DUST_ORE
+			// sifting inputs) — under the raised cap 7 they all fit, so Cu carries NO overflow
 			if (tDisplay.material == MT.Cu) {
-				assertEquals(MaterialTreeDisplay.MAX_ROWS, tShown[MaterialTreeDisplay.COL_ORE]);
+				assertEquals(5, tShown[MaterialTreeDisplay.COL_ORE]);
+				assertTrue(tDisplay.overflow().isEmpty(), "Cu fits the raised cap: " + tDisplay.overflow());
+			}
+			if (tDisplay.material == MT.Fe) {
+				assertTrue(tDisplay.overflow().isEmpty(), "Fe fits the raised cap: " + tDisplay.overflow());
 			}
 			tCappedColumns += tDisplay.overflow().size();
 		}
@@ -381,6 +426,16 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 			tMachineSlots++;
 		}
 		assertTrue(tMachineSlots > 0, "the fixture resolves at least one machine node");
+
+		// the byproduct slots sit at (byproductX(i), byproductY()) with 18x18 hover boxes — the SAME shared table
+		int tByproductSlots = 0;
+		for (int b = 0; b < tDisplay.byproducts().size(); b++) {
+			Bounds tExpected = new Bounds(MaterialTreeDisplay.byproductX(b), MaterialTreeDisplay.byproductY(), 18, 18);
+			assertTrue(tAdded.stream().filter(w -> w instanceof SlotWidget)
+					.anyMatch(w -> ((SlotWidget) w).getBounds().equals(tExpected)), "byproduct slot " + b + " at " + tExpected);
+			tByproductSlots++;
+		}
+		assertTrue(tByproductSlots > 0, "Fe carries byproducts");
 	}
 
 	@Test
@@ -421,6 +476,12 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 			final int tX = tMachine.x() - 1, tY = tMachine.y() - 1;
 			assertTrue(tSlots.stream().anyMatch(s -> s[0] == tExpectedRole && s[1] == tX && s[2] == tY),
 					"RENDER_ONLY machine slot at (" + tX + "," + tY + "), got " + tSlots);
+		}
+		// the byproduct output slots sit at (byproductX(i), byproductY()) — the SAME shared table as the EMI leg
+		for (int b = 0; b < tDisplay.byproducts().size(); b++) {
+			final int tX = MaterialTreeDisplay.byproductX(b), tY = MaterialTreeDisplay.byproductY();
+			assertTrue(tSlots.stream().anyMatch(s -> s[0] == 1 && s[1] == tX && s[2] == tY),
+					"byproduct output slot " + b + " at (" + tX + "," + tY + "), got " + tSlots);
 		}
 	}
 

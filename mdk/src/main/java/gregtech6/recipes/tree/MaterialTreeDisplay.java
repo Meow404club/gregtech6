@@ -98,36 +98,72 @@ public final class MaterialTreeDisplay {
 	public static final String DECLARED_TEXT = "declared";
 
 	// ---- the layout table (the 布局坐标表 constants) ------------------
+	//
+	// ROW/COLUMN SEMANTIC MAP (the rotation, task mattree-vertical-layout):
+	//
+	//   pre-rotation (horizontal)                    post-rotation (vertical)
+	//   -------------------------                    -----------------------
+	//   processing stage = grid column,              processing stage = band row,
+	//     x = COLUMN_X[c], left→right,                 y = STAGE_Y[c], top→down,
+	//     COLUMN_PITCH 40                              STAGE_PITCH 40
+	//   parallel nodes = rows within a column,       parallel nodes = lanes within a band,
+	//     y = ROW_Y0 + r*20, ROW_PITCH 20              x = LANE_X0 + r*28, LANE_PITCH 28
+	//     (18 px slot + 2 px gap = the 挤)             (18 px slot + 10 px gap)
+	//   byproduct side column rides RIGHT,           byproduct band rides BOTTOM,
+	//     slots stack DOWN                             slots spread RIGHT
+	//
+	// Node.column() keeps naming the SEMANTIC stage (the COLUMN_TABLE lookup and the whole
+	// three-fold display filter are UNTOUCHED — the coverage card owns those); Node.row()
+	// keeps naming the parallel index. Only the coordinate functions below rotate.
 
 	public static final int COL_ORE = 0, COL_CRUSHED = 1, COL_PURIFIED = 2, COL_DUST = 3, COL_BYPRODUCT = 4;
 
 	/**
-	 * The v2 node-graph pitch (task mattree-v2-nodes): 28 px columns crushed the v1
-	 * "via" labels against the next column's item icons — 40 px leaves a 22 px wire gap
-	 * between slots with room for the machine-icon node (the 「from –线– [机器] –箭头→ to」
-	 * three-part edge, spec clause ②).
+	 * The band pitch, VERTICAL since the rotation (task mattree-vertical-layout): 18 px slot
+	 * + a 22 px gap BELOW each band that budgets exactly 2 px entry wire + 16 px machine icon
+	 * + 4 px arrowhead (the rotated v2 three-part edge, spec clause ② — the machine rides the
+	 * gap under the from band). Unchanged value from the horizontal COLUMN_PITCH: that axis
+	 * was already loose (the r11 census: 「列距40已松」); the squeeze lived in the old
+	 * ROW_PITCH, now the horizontal LANE_PITCH.
 	 */
-	public static final int COLUMN_PITCH = 40;
+	public static final int STAGE_PITCH = 40;
 
-	/** x of each column's slot (18 px slots + 22 px wire gaps; the byproduct side column rides last). */
-	static final int[] COLUMN_X = {4, 44, 84, 124, 164};
-	/** y of the first node row (the material-name header sits above). */
-	static final int ROW_Y0 = 16;
-	/** vertical slot pitch. */
-	static final int ROW_PITCH = 20;
-	/** row cap per column — overflow is EXPLICIT since v2 (see {@link Overflow}), never silently dropped. */
-	public static final int MAX_ROWS = 5;
 	/**
-	 * The v2 canvas: 4 chain columns at pitch 40 plus the byproduct column, wide enough for
-	 * the "Byproducts" header text (164 + ~60 px + 4). The viewers both declare width/height
-	 * freely (the "fixed 178x166" JEI lore is a misreading — GT6MaterialTreeJeiCategory has
-	 * always shipped its own 152x120).
+	 * The lane pitch, HORIZONTAL since the rotation (task mattree-vertical-layout): 18 px
+	 * slot + 10 px gap — the spec's ≥28 floor, killing the old ROW_PITCH 20 (2 px gap) that
+	 * was the 「挤的太紧」 root cause. Lanes carry no machine icons (chain hops always
+	 * advance stage bands), so 10 px of visual air is the whole budget.
 	 */
-	public static final int WIDTH = 228;
-	/** Grid band plus the overflow-marker strip ({@link #OVERFLOW_Y}) under the last row. */
-	public static final int HEIGHT = ROW_Y0 + MAX_ROWS * ROW_PITCH + 12;
-	/** y of the per-column "+N" overflow markers (the explicit-not-silent clause). */
-	public static final int OVERFLOW_Y = ROW_Y0 + MAX_ROWS * ROW_PITCH + 2;
+	public static final int LANE_PITCH = 28;
+
+	/** y of each stage band's slot row (stages grow DOWN; the material-name header sits above). */
+	static final int[] STAGE_Y = {16, 56, 96, 136, 176};
+	/** x of the first lane (parallel nodes spread RIGHT from here). */
+	public static final int LANE_X0 = 4;
+	/**
+	 * Parallel-slot cap per stage band — EXPLICIT overflow since v2 (see {@link Overflow}),
+	 * never silently dropped. RAISED 5 → 7 by the rotation (task mattree-vertical-layout
+	 * cap re-evaluation): the old cap was a VERTICAL screen budget (a 128 px-tall canvas);
+	 * rotated, that semantic moves to the HORIZONTAL width budget, where the new canvas is
+	 * 202 px wide — under the old 228 px width both viewers already shipped. The live pour's
+	 * chain columns top out at 5 reachable nodes (the ore* wildcard: oreRaw + the four
+	 * DUST_ORE sifting inputs), so Fe/Cu censuses are unchanged; the byproduct-rich declared
+	 * faces (Sn/Cassiterite, MT.java:3812-3813: nine declared each) truncate 5 → 7 shown
+	 * instead of 5.
+	 */
+	public static final int MAX_ROWS = 7;
+	/**
+	 * The rotated canvas: 7 lanes at pitch 28 (the last slot's right edge + 12 px margin).
+	 * The viewers both declare width/height freely (the "fixed 178x166" JEI lore is a
+	 * misreading — GT6MaterialTreeJeiCategory has always shipped its own), and both stacks
+	 * paginate tall categories natively (JEI RecipeGuiLayouts 1-per-page stacking, EMI
+	 * RecipeTab per-recipe heights — the r11 vertical-support evidence).
+	 */
+	public static final int WIDTH = LANE_X0 + (MAX_ROWS - 1) * LANE_PITCH + 18 + 12;
+	/** Last band's slot row plus the 10 px overflow-marker strip ({@link #overflowY}). */
+	public static final int HEIGHT = STAGE_Y[COL_BYPRODUCT] + 18 + 12;
+	/** The "Byproducts" band header rides the wire-free gap just ABOVE its band. */
+	public static final int BYPRODUCT_HEADER_Y = STAGE_Y[COL_BYPRODUCT] - 11;
 
 	/**
 	 * The per-prefix column-position constant table (the 表驱动 layout, spec clause): the
@@ -201,19 +237,25 @@ public final class MaterialTreeDisplay {
 	/**
 	 * The explicit overflow marker (the v2 no-silent-drop clause): {@code hidden} prefixes of
 	 * a chain column (or byproduct slots in the side column) that did not fit under
-	 * {@link #MAX_ROWS}. The viewers render "+N" at ({@link #columnX}, {@link #OVERFLOW_Y});
+	 * {@link #MAX_ROWS}. The viewers render "+N" at ({@link #overflowX}, {@link #overflowY});
 	 * v1 just dropped them (MaterialTreeDisplay :234 of the old world).
 	 */
 	public record Overflow(int column, int hidden) {}
 
-	/** x of a node's slot. */
-	public static int nodeX(Node aNode) { return COLUMN_X[aNode.column()]; }
-	/** y of a node's slot. */
-	public static int nodeY(Node aNode) { return ROW_Y0 + aNode.row() * ROW_PITCH; }
-	/** y of a byproduct slot. */
-	public static int byproductY(int aIndex) { return ROW_Y0 + aIndex * ROW_PITCH; }
-	/** x of a chain-column slot. */
-	public static int columnX(int aColumn) { return COLUMN_X[aColumn]; }
+	/** x of a node's slot (the parallel lane: lanes grow RIGHT). */
+	public static int nodeX(Node aNode) { return LANE_X0 + aNode.row() * LANE_PITCH; }
+	/** y of a node's slot (the stage band: stages grow DOWN). */
+	public static int nodeY(Node aNode) { return STAGE_Y[aNode.column()]; }
+	/** x of a byproduct slot (lane aIndex of the bottom band). */
+	public static int byproductX(int aIndex) { return LANE_X0 + aIndex * LANE_PITCH; }
+	/** y of the byproduct band's slot row. */
+	public static int byproductY() { return STAGE_Y[COL_BYPRODUCT]; }
+	/** y of a stage band's slot row (the rotated columnX: stage depth = downward y). */
+	public static int stageY(int aStage) { return STAGE_Y[aStage]; }
+	/** x of a stage band's "+N" overflow marker (under the band's first lane). */
+	public static int overflowX() { return LANE_X0; }
+	/** y of a stage band's "+N" overflow marker (the explicit-not-silent clause, per band). */
+	public static int overflowY(int aStage) { return STAGE_Y[aStage] + 20; }
 
 	public final OreDictMaterial material;
 	private final List<Node> mNodes;
