@@ -329,23 +329,19 @@ class GT6CellDatagenTest extends GTOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * The 前置核查 verdict: the CCC extruder mold is ZERO-HIT in this repo
-	 * (GT6ExtruderMolds carries the row0 subset plate+rod only) — so the acquisition row
-	 * (upstream Loader_Recipes_Handlers.java:766 Shape_Extruder_CCC / :799
-	 * Shape_SimpleEx_CCC, output OP.capcellcon) is DEFERRED to the mold card, no
-	 * substitute recipe fabricated: the generated tree carries zero cell recipe/
-	 * advancement files.
+	 * The 前置核查 verdict, updated by task mold-extruder-shapes: the CCC extruder mold
+	 * NOW EXISTS (the full 64-mold family registered — Shape_Extruder_CCC meta 10028 /
+	 * Shape_SimpleEx_CCC meta 10228) — but the acquisition row itself (upstream
+	 * Loader_Recipes_Handlers.java:766 Shape_Extruder_CCC / :799 Shape_SimpleEx_CCC,
+	 * output OP.capcellcon) stays DEFERRED to the extruder-row card (b5): the generated
+	 * tree carries zero cell recipe/ files, no substitute recipe fabricated.
 	 */
 	@Test
-	void theCccMoldIsAbsentAndTheAcquisitionRowStaysDeferred() throws Exception {
+	void theCccMoldExistsAndTheAcquisitionRowStaysDeferred() throws Exception {
 		Set<String> tMoldPaths = new HashSet<>();
 		for (var tMold : GT6ExtruderMolds.MOLDS) tMoldPaths.add(tMold.getId().getPath());
-		// task cell-family-closeout — the exact-set pin died with toolhead-r11c-extruder-heads
-		// (16 tool-head molds landed); the load-bearing face is only "no CCC twin", r11c-proof.
-		assertTrue(tMoldPaths.stream().noneMatch(tPath -> tPath.contains("ccc")),
-				"no Shape_Extruder_CCC/Shape_SimpleEx_CCC twin exists to drive the family recipe — the defer holds");
-		assertTrue(tMoldPaths.containsAll(Set.of("shape_extruder_plate", "shape_extruder_rod")),
-				"the row0 plate+rod subset is still registered");
+		assertTrue(tMoldPaths.containsAll(Set.of("shape_extruder_ccc", "shape_simple_ex_ccc")),
+				"the CCC twin molds exist (task mold-extruder-shapes) — the recipe face below is the remaining defer");
 		var tRecipesRoot = GT6CellDatagenTest.class.getResource("/data/gt6/recipes");
 		assertNotNull(tRecipesRoot, "the generated recipe tree exists");
 		try (var tWalk = Files.walk(Path.of(tRecipesRoot.toURI()))) {
