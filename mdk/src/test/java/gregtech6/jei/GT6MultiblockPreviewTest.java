@@ -13,28 +13,38 @@
  * :119-130) because the LIVE pattern supplier rides the frozen mod registry (unreachable
  * offline); the live pattern's equality with this shape is the multiblock tests' pin
  * (GTMultiBlockStructureCheckerFormSeamTest), the north-anchor arithmetic is the pure
- * GTMultiBlockPattern.cellOffset table.
+ * GTMultiBlockPattern.cellOffset table. The batch-A thermal rows pin their family shapes
+ * the same way: fixture-block stand-ins over the REAL TileEntityLargeBoiler /
+ * TileEntityCrucible bindings (the PatternBoiler/TestCrucible recipe from the multiblock
+ * tests) — the per-row wiring itself is the census pin above.
  */
 package gregtech6.jei;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import gregtech6.emi.GT6EmiPlugin;
 import gregtech6.emi.GT6MultiblockPreviewEmiCategory;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
+import gregtech6.tileentity.multiblocks.TileEntityCrucible;
+import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 
@@ -99,18 +109,169 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 	}
 
 	@Test
-	public void tableCensusFirstVersionIsCokeOvenOnly() {
-		// the card face: first version = the Coke Oven row; data cards append rows and this
-		// pin deliberately FAILS — the census is meant to be re-pinned per machine
-		assertEquals(1, GT6MultiblockPreviews.entries().size(), "first version: exactly one preview row");
-		GT6MultiblockPreviews.Entry tEntry = GT6MultiblockPreviews.entries().get(0);
-		assertEquals("multiblock_coke_oven", tEntry.name(), "the row is the coke oven (registry-name census key)");
+	public void tableCensusBatchAThermalAppendsThirteenRows() {
+		// the batch-A face (task mbpreview-data-a-thermal): the coke oven + the THERMAL
+		// pair appended in upstream registration order — the 5 boiler tiers
+		// (Loader_MultiTileEntities.java:1248-1252) then the 8 crucible tiers
+		// (:1270-1277). The pin FAILS until the batch lands (the red→green drill);
+		// every later data batch re-pins the tail (the tail-append doctrine).
+		List<String> tNames = GT6MultiblockPreviews.entries().stream()
+				.map(GT6MultiblockPreviews.Entry::name).toList();
+		assertEquals(List.of(
+				"multiblock_coke_oven",
+				// the boiler ladder — the upstream :1248-1252 line order
+				"large_boiler_stainless_steel", "large_boiler_invar", "large_boiler_titanium",
+				"large_boiler_tungstensteel", "large_boiler_adamantium",
+				// the crucible ladder — the upstream :1270-1277 line order
+				"crucible_steel", "crucible_stainless_steel", "crucible_invar", "crucible_titanium",
+				"crucible_tungstensteel", "crucible_tungsten", "crucible_tantalum_hafnium_carbide",
+				"crucible_adamantium"),
+				tNames, "the row census: coke oven + the batch-A thermal 13, upstream order");
+		// the wiring face the census CAN see offline: every row carries its suppliers
+		// (lazy handles — resolving them rides the live registry, the class doc)
+		for (GT6MultiblockPreviews.Entry tEntry : GT6MultiblockPreviews.entries()) {
+			assertNotNull(tEntry.item(), tEntry.name() + " carries an item supplier (the map-key wiring)");
+			assertNotNull(tEntry.pattern(), tEntry.name() + " carries a pattern supplier");
+		}
 		assertEquals("gt6.jei.multiblock_preview", GT6MultiblockPreviews.TITLE_KEY,
 				"category title key pinned (the ONE text survivor — the category name, kept)");
 		assertEquals("multiblock_preview", GT6MultiblockPreviews.UID_PATH, "category uid path pinned");
 		assertEquals(2, GT6MultiblockPreviews.DISPLAY_FACING, "display facing = north (Direction.get3DDataValue)");
 		assertEquals(200, GT6MultiblockPreviews.PAGE_WIDTH);
 		assertEquals(180, GT6MultiblockPreviews.PAGE_HEIGHT);
+	}
+
+	// ------------------------------------------------------------------
+	// the batch-A thermal fixtures (the PatternBoiler/TestCrucible recipe —
+	// the frozen registry keeps the live wall/transmitter handles out of the
+	// bare-JVM reach, so the fixture blocks stand in for the tier identities)
+	// ------------------------------------------------------------------
+
+	static BlockEntityType<PreviewBoiler> sBoilerType;
+	static BlockEntityType<PreviewCrucible> sCrucibleType;
+
+	/** The offline boiler — fixture wall/transmitter over the REAL pattern binding. */
+	public static final class PreviewBoiler extends TileEntityLargeBoiler {
+		PreviewBoiler(BlockPos aPos, BlockState aState) {
+			super(sBoilerType, aPos, aState);
+		}
+		@Override
+		protected Block getWallBlock() {
+			return Blocks.BRICKS;
+		}
+		@Override
+		protected Block getTransmitterBlock() {
+			return Blocks.STONE;
+		}
+	}
+
+	/** The offline crucible — fixture wall over the REAL pattern binding. */
+	public static final class PreviewCrucible extends TileEntityCrucible {
+		PreviewCrucible(BlockPos aPos, BlockState aState) {
+			super(sCrucibleType, aPos, aState);
+		}
+		@Override
+		protected Block getWallBlock() {
+			return Blocks.BRICKS;
+		}
+	}
+
+	@BeforeAll
+	@SuppressWarnings("unchecked")
+	static void buildPreviewFixtures() {
+		// the base @BeforeAll booted + reopened the BET write window (GTRecipesOfflineTestBase)
+		BlockEntityType<PreviewBoiler>[] tBoiler = (BlockEntityType<PreviewBoiler>[]) new BlockEntityType<?>[1];
+		tBoiler[0] = BlockEntityType.Builder.of(PreviewBoiler::new, Blocks.BRICKS, Blocks.STONE).build(null);
+		sBoilerType = tBoiler[0];
+		BlockEntityType<PreviewCrucible>[] tCrucible = (BlockEntityType<PreviewCrucible>[]) new BlockEntityType<?>[1];
+		tCrucible[0] = BlockEntityType.Builder.of(PreviewCrucible::new, Blocks.BRICKS).build(null);
+		sCrucibleType = tCrucible[0];
+	}
+
+	@Test
+	public void boilerPreviewStampsTheWallAndTransmitterBlocks() {
+		// the boiler binding judges by is(block) predicates with partBlock == null
+		// (TileEntityLargeBoiler getStructurePattern — the BE is display-innocent, the
+		// structure check rides the hand loop), so the row re-stamps the display identity
+		// from its OWN part list before the seam renders: 35 cells = 9 transmitters + 25
+		// walls + the anchor controller (the middle-ring cell behind the anchor)
+		GTMultiBlockPattern tRaw = new PreviewBoiler(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState())
+				.getStructurePattern();
+		for (GTMultiBlockPattern.Cell tCell : tRaw.cells()) {
+			if (!tCell.isHollow()) assertNull(tCell.partBlock, "the raw binding is predicate-only");
+		}
+		GTMultiBlockPattern tStamped = GT6MultiblockPreviews.withDisplayBlocks(tRaw, Blocks.BRICKS, Blocks.STONE);
+		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
+		assertEquals(35, tFill.size(), "the 3x3 bottom + 3x3 middle + two rings + top centre, one relabeled the controller");
+		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(new BlockPos(0, 0, -1)),
+				"the anchor law paints the controller on the front middle-ring cell");
+		assertEquals(Blocks.BRICKS.defaultBlockState(), tFill.get(BlockPos.ZERO),
+				"the anchor cell itself stays a wall (the boiler controller is NOT the structure centre)");
+		Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
+		assertEquals(3, tCounts.size(), "wall + transmitter + controller");
+		assertEquals(Integer.valueOf(25), tCounts.get(Blocks.BRICKS), "26 walls minus the controller cell");
+		assertEquals(Integer.valueOf(9), tCounts.get(Blocks.STONE), "the 3x3 heat-transmitter floor");
+		assertEquals(Integer.valueOf(1), tCounts.get(CONTROLLER));
+	}
+
+	@Test
+	public void cruciblePreviewPinsTheDesign0WallForm() {
+		// the crucible binding IS the forming declaration (acceptance ②): 24 formingPart
+		// walls in three rings + the fail-not-clear hollow pair — zero re-stamp needed.
+		// design 0 on this base; the in-flight mb-formed-crucible-wall re-pins it to 4.
+		GTMultiBlockPattern tPattern = new PreviewCrucible(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState())
+				.getStructurePattern();
+		int tWalls = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			if (tCell.isHollow()) {
+				assertTrue(tCell.y == 1 || tCell.y == 2, "the hollow pair is the centre column at y +1/+2");
+				continue;
+			}
+			tWalls++;
+			assertSame(Blocks.BRICKS, tCell.partBlock, "the crucible-wall form: one uniform tier wall");
+			assertTrue(tCell.forms(), "every wall cell carries the forming expectation");
+			assertEquals(0, tCell.design, "design 0 on this base");
+		}
+		assertEquals(24, tWalls, "three 8-cell rings (26 cells total with the hollow pair)");
+		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
+				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
+		assertEquals(24, tFill.size(), "every wall renders");
+		assertFalse(tFill.containsKey(BlockPos.ZERO),
+				"the bottom centre — the real controller seat — is never declared (the upstream pattern)");
+		assertFalse(GT6MultiblockPreviews.materialCounts(tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING)
+				.isEmpty(), "the shopping list renders");
+	}
+
+	@Test
+	public void everyBatchARowRendersShapeAndShoppingList() {
+		// the per-row acceptance: both thermal ladders table a shape the seam renders
+		// (the live suppliers ride the frozen registry — the class doc — so the family
+		// shapes stand in over the fixture blocks, the SAME functions the row composes)
+		GTMultiBlockPattern tBoilerShape = GT6MultiblockPreviews.withDisplayBlocks(
+				new PreviewBoiler(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
+				Blocks.BRICKS, Blocks.STONE);
+		GTMultiBlockPattern tCrucibleShape = new PreviewCrucible(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState())
+				.getStructurePattern();
+		int tBoiler = 0, tCrucible = 0;
+		for (GT6MultiblockPreviews.Entry tEntry : GT6MultiblockPreviews.entries()) {
+			if (tEntry.name().startsWith("large_boiler_")) {
+				tBoiler++;
+				assertFalse(GT6MultiblockPreviews.structureBlocks(tBoilerShape, CONTROLLER,
+						GT6MultiblockPreviews.DISPLAY_FACING).isEmpty(), tEntry.name() + " renders a shape");
+				assertFalse(GT6MultiblockPreviews.materialCounts(tBoilerShape, CONTROLLER,
+						GT6MultiblockPreviews.DISPLAY_FACING).isEmpty(), tEntry.name() + " renders a shopping list");
+			} else if (tEntry.name().startsWith("crucible_")) {
+				tCrucible++;
+				assertFalse(GT6MultiblockPreviews.structureBlocks(tCrucibleShape, CONTROLLER,
+						GT6MultiblockPreviews.DISPLAY_FACING).isEmpty(), tEntry.name() + " renders a shape");
+				assertFalse(GT6MultiblockPreviews.materialCounts(tCrucibleShape, CONTROLLER,
+						GT6MultiblockPreviews.DISPLAY_FACING).isEmpty(), tEntry.name() + " renders a shopping list");
+			}
+		}
+		assertEquals(5, tBoiler, "the five boiler tiers table the boiler shape");
+		assertEquals(8, tCrucible, "the eight crucible tiers table the crucible shape");
 	}
 
 	@Test
