@@ -1,5 +1,6 @@
 package gregtech6.jei;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,9 +15,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+import gregtech6.block.multiblock.GTLargeBoilerBlock;
 import gregtech6.multiblock.GTMultiBlockPattern;
+import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GTMultiBlocks;
+import gregtech6.tileentity.multiblocks.TileEntityCrucible;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
+import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 /**
  * The multiblock preview registry (task multiblock-preview-infra): ONE static
@@ -29,12 +34,19 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  * row IS the machine census (a data card appends rows; every viewer face picks them up
  * automatically).
  *
- * <p><b>First version = Coke Oven only</b> (the card face): its pattern is the complete
- * forming declaration (26 {@code formingPart} bricks + the hollow centre,
- * TileEntityCokeOven.java:119-130), so the 3D page renders fully. The other 10+ machines
- * with bound patterns join through later data cards — predicate-only cells (no
- * {@code partBlock}) have no representative block and each machine needs its own display
- * ruling (research.multiblock-preview risk column).
+ * <p><b>Growth = data batches (research.r11-mbpreview-batches).</b> First version = the
+ * Coke Oven; batch A (task mbpreview-data-a-thermal) appended the thermal pair — the five
+ * Large Boiler tiers (upstream Loader_MultiTileEntities.java:1248-1252) and the eight
+ * Large Crucible tiers (:1270-1277), rows built off the port's own registration ladders
+ * ({@link GTMultiBlocks#LARGE_BOILER_ROWS} / {@link GT6Crucibles#CRUCIBLE_ROWS} — the
+ * upstream line order lives in exactly one place). Later batches tail-append their
+ * family loop inside {@link #buildEntries()} after the previous batch's; the census test
+ * re-pins the full name list per batch. Predicate-only cells (no {@code partBlock}) still
+ * have no general display ruling — the boiler row is NOT one: its binding is
+ * predicate-shaped, so the row re-stamps the display identity from its own part list
+ * ({@link #withDisplayBlocks}) before tabling it; the per-machine ruling for genuinely
+ * predicate-only machines belongs to the data card that tables them (research.
+ * multiblock-preview risk column).
  *
  * <p>Offline-test contract: loading this class never touches a registry (the
  * {@code Supplier}s are lazy), so the census test runs bare-JVM; the model seam is pure
@@ -85,13 +97,94 @@ public final class GT6MultiblockPreviews {
 	}
 
 	/**
-	 * The table. The coke-oven row's pattern supplier builds a THROWAWAY TileEntity —
-	 * {@code getStructurePattern()} is a pure lazy declaration (no level access,
-	 * TileEntityCokeOven.java:119-130), the cheapest honest reuse of the one binding.
+	 * The table. Every row's pattern supplier builds a THROWAWAY TileEntity —
+	 * {@code getStructurePattern()} is a pure lazy declaration (no level access), the
+	 * cheapest honest reuse of the one binding — and the suppliers stay lazy so the
+	 * offline census never touches a registry.
 	 */
-	private static final List<Entry> ENTRIES = List.of(
-			new Entry("multiblock_coke_oven", GTMultiBlocks.COKE_OVEN_ITEM,
-					() -> new TileEntityCokeOven(BlockPos.ZERO, Blocks.AIR.defaultBlockState()).getStructurePattern()));
+	private static final List<Entry> ENTRIES = buildEntries();
+
+	/**
+	 * The row builder — the data-batch tail-append point (the batch doctrine, class doc):
+	 * each batch adds its family loop BELOW the previous batch's, rows in the upstream
+	 * registration order (the port's ladder lists are the upstream line order), and the
+	 * census test re-pins the full name list per batch.
+	 */
+	private static List<Entry> buildEntries() {
+		List<Entry> tRows = new ArrayList<>();
+		tRows.add(new Entry("multiblock_coke_oven", GTMultiBlocks.COKE_OVEN_ITEM,
+				() -> new TileEntityCokeOven(BlockPos.ZERO, Blocks.AIR.defaultBlockState()).getStructurePattern()));
+		// --- batch A (mbpreview-data-a-thermal): the thermal pair -----------------------
+		// the five Large Boiler tiers (upstream Loader_MultiTileEntities.java:1248-1252):
+		// the throwaway BE carries its tier wall through the VARIANT STATE (the
+		// construction-time-state doctrine — getWallBlock reads the row off the
+		// GTLargeBoilerBlock state, TileEntityLargeBoiler.java:256-262); the binding is
+		// predicate-shaped so the display identity re-stamps from the row's own parts
+		for (GTMultiBlocks.LargeBoilerRow tRow : GTMultiBlocks.LARGE_BOILER_ROWS) {
+			tRows.add(new Entry(tRow.path(), GTMultiBlocks.LARGE_BOILER_ITEMS_BY_PATH.get(tRow.path()),
+					() -> boilerPreview(GTMultiBlocks.LARGE_BOILER_BLOCKS_BY_PATH.get(tRow.path()).get())));
+		}
+		// the eight Large Crucible tiers (upstream :1270-1277): the binding carries the
+		// wall form directly (formingPart — zero re-stamp); the throwaway BE carries its
+		// row's wall through the getWallBlock override (the level-gated production read,
+		// TileEntityCrucible.java:294-299, answers a never-placed BE the fixture — the
+		// override drives the SAME wallBlockOf resolution the placed controller does)
+		for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) {
+			tRows.add(new Entry(tRow.path(), GT6Crucibles.CRUCIBLE_ITEMS_BY_PATH.get(tRow.path()),
+					() -> crucibleOf(tRow).getStructurePattern()));
+		}
+		// --- batch B (energy) tail-appends here; then C (processing), D1/D2 (special) ---
+		return List.copyOf(tRows);
+	}
+
+	/**
+	 * The boiler row's display pattern: the BE binding (display-only — the structure
+	 * check rides the hand loop, TileEntityLargeBoiler.java:287-331) re-stamped with the
+	 * variant's own wall block + the heat transmitter (the two identities the predicates
+	 * judge — zero transcription of the geometry).
+	 */
+	private static GTMultiBlockPattern boilerPreview(GTLargeBoilerBlock aBlock) {
+		return withDisplayBlocks(
+				new TileEntityLargeBoiler(BlockPos.ZERO, aBlock.defaultBlockState()).getStructurePattern(),
+				aBlock.wallBlock(), GTMultiBlocks.HEAT_TRANSMITTER.get());
+	}
+
+	/** The throwaway crucible BE carrying its row's wall (the getWallBlock override above). */
+	private static TileEntityCrucible crucibleOf(GT6Crucibles.CrucibleRow aRow) {
+		return new TileEntityCrucible(BlockPos.ZERO, Blocks.AIR.defaultBlockState()) {
+			@Override
+			protected Block getWallBlock() {
+				return GT6Crucibles.wallBlockOf(aRow);
+			}
+		};
+	}
+
+	/**
+	 * The display-identity stamp for predicate-shaped bindings: cells declared with
+	 * {@code part(predicate)} carry {@code partBlock == null} (the seam draws nothing for
+	 * them), so each cell takes the FIRST part candidate its predicate accepts — the
+	 * judgement and the stamp share one identity. {@code formingPart} cells pass through
+	 * untouched (their partBlock is already the identity); an unresolvable cell keeps its
+	 * predicate shape (the seam's draw-nothing ruling).
+	 */
+	static GTMultiBlockPattern withDisplayBlocks(GTMultiBlockPattern aPattern, Block... aParts) {
+		GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
+		for (GTMultiBlockPattern.Cell tCell : aPattern.cells()) {
+			Block tBlock = tCell.partBlock;
+			if (tBlock == null && !tCell.isHollow()) {
+				for (Block tPart : aParts) {
+					if (tCell.predicate.test(tPart.defaultBlockState())) {
+						tBlock = tPart;
+						break;
+					}
+				}
+			}
+			if (tCell.isHollow()) tBuilder.hollow(tCell.x, tCell.y, tCell.z, tCell.predicate);
+			else if (tBlock != null) tBuilder.formingPart(tCell.x, tCell.y, tCell.z, tBlock, tCell.usage, tCell.design);
+			else tBuilder.part(tCell.x, tCell.y, tCell.z, tCell.predicate);
+		}
+		return tBuilder.build();
+	}
 
 	/** The live rows — one per previewed machine (the data cards' growth point). */
 	public static List<Entry> entries() {
