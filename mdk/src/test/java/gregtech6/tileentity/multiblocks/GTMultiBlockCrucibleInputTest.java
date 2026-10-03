@@ -34,6 +34,7 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterialStack;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.tileentity.GTItemStackHandler;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The LARGE CRUCIBLE item-input face (issue #20 sub-task B): the slot-0 suck (:204),
@@ -349,11 +350,8 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 			} catch (Throwable ignored) {
 				// NetworkHooks.init() failure is expected offline; registries are ready by now.
 			}
-			MaterialRegistry.INSTANCE.open();
-			MT.init();
-			OP.init();
+			GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 			MaterialGraph.applyCrucibleAlloyReferences();
-			MaterialRegistry.INSTANCE.close();
 		}
 
 		static MaterialPrefixItem probePrefix(String aProbeId, java.util.function.Supplier<MaterialPrefixItem> aCreator) {

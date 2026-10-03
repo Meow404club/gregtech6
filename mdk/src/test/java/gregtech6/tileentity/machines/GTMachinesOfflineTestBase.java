@@ -141,6 +141,7 @@ public abstract class GTMachinesOfflineTestBase extends GTRecipesOfflineTestBase
 
 	@BeforeEach
 	void initRecipeMaps() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		// task p8-d3 §③: the option-A fake source is a static test switch now (default
 		// false = grid-fed). The offline fixtures keep it ON so the p4 acceptance keeps

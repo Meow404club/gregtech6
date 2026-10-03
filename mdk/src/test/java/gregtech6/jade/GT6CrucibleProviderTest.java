@@ -34,6 +34,7 @@ import gregtech6.datagen.GT6CrucibleDatagen;
 import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.tools.TileEntitySmeltery;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * Offline gate for the crucible Jade face: the tag contract + the display-line pure
@@ -59,8 +60,7 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	static void fixture() {
 		// the real MT dataset (the GTMultiBlockCruciblePhysicsTest posture) — the slug guard
 		// ladder walks the registered materials, so they must be live before any stack is built
-		MaterialRegistry.INSTANCE.open();
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 		// the self-referencing lambda (the TileEntitySmelteryOfflineTest fixture shape — the
 		// static field is read at create() time, after build() returned)
 		sSmelteryType = BlockEntityType.Builder.of(

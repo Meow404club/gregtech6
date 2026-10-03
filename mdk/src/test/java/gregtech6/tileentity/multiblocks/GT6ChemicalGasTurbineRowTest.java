@@ -61,6 +61,7 @@ public class GT6ChemicalGasTurbineRowTest extends GTMultiBlocksOfflineTestBase {
 	 * GT6ChemicalRowsPourTest.gasFuelRowsCarryTheFuelSemantics assertion).
 	 */
 	private static void pourTheMethaneRow() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		GT6RecipeMaps.GAS_FUELS.addRecipe(new Recipe(true,
 				new net.minecraft.world.item.ItemStack[0], new net.minecraft.world.item.ItemStack[0],

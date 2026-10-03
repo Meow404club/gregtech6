@@ -75,6 +75,7 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	static void buildPanelFixtureBet() {
 		// the row ctor resolves the row's real map (the BE inventory sizes from it) — the
 		// idempotent bootstrap (GTMachinesOfflineTestBase.java:144 form)
+		gregtech6.recipes.GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		gregtech6.recipes.GT6RecipeMaps.init();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<GTLargeMachineBlockEntity>[] tHolder =

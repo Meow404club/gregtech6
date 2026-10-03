@@ -25,6 +25,7 @@ import gregtech6.itemdata.GT6ToolStats;
 
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * Offline tests for task blade-ladder — the blade material ladder over the UNIFIED
@@ -43,7 +44,7 @@ public class GT6BladeLadderTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		MT.init(); // the full material flood (the GT6ItemDataTest boot shape)
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 	}
 
 	private static ItemStack identified(OreDictMaterial aPrimary, OreDictMaterial aSecondary, float aMultiplier) {

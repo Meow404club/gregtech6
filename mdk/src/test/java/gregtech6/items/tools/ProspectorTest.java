@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 public class ProspectorTest {
 
@@ -46,10 +47,7 @@ public class ProspectorTest {
 		// The trace-message pins read MT.Cu/MT.Fe and OP.oreSmall/oreVanillastone directly,
 		// and an isolated test JVM has no other class whose @BeforeAll could flood the
 		// tables first (the fix-three-npe NPE trap).
-		gregapi.oredict.MaterialRegistry.INSTANCE.open();
-		MT.init();
-		gregapi.data.OP.init();
-		gregapi.oredict.MaterialRegistry.INSTANCE.close();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 	}
 
 	// ------------------------------------------------- the classification face

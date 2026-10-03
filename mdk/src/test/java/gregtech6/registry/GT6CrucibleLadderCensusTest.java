@@ -18,6 +18,7 @@ import gregapi.data.MT;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.util.CruciblePhysics;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The crucible 8-material ladder census (task w3-distill-crucible ③ — ACCEPTANCE ③,
@@ -44,9 +45,7 @@ class GT6CrucibleLadderCensusTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		MaterialRegistry.INSTANCE.open();
-		MT.init();
-		MaterialRegistry.INSTANCE.close();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 	}
 
 	@Test

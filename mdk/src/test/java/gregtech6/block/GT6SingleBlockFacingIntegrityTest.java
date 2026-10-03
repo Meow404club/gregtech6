@@ -220,6 +220,7 @@ public class GT6SingleBlockFacingIntegrityTest extends GTOfflineTestBase {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
 		}
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init(); // the BasicMachine ctor requires a non-null RecipeMap (upstream :107 gate)
 		// every BET closure is the explicit 3-arg form (the GTMachinesOfflineTestBase
 		// recipe): the 2-arg BE ctors resolve the never-registered RegistryObjects offline,

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6Hoppers.HopperRow;
+import gregtech6.registry.GT6MaterialTestSupport;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
@@ -40,6 +41,12 @@ public class GT6HopperFamilyTest extends GTOfflineTestBase {
 
 	@BeforeAll
 	static void buildOfflineFixture() {
+		// the hermetic material boot FIRST (task hermetic-pour-tests; closes known_bug
+		// r11-hopper-mt-offline-latch): the row-axis anchors resolve loader materials live
+		// (MT.Pb & co) and an isolated fork has no priming class — the solo run was red
+		// ("no loader material for hopper slug lead"). reset FIRST (the r11e house rule),
+		// then the full refill; also retires any boot-generation drift in this fork.
+		GT6MaterialTestSupport.materials();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<GT6HopperBlockEntity>[] tHopper = (BlockEntityType<GT6HopperBlockEntity>[]) new BlockEntityType<?>[1];
 		tHopper[0] = BlockEntityType.Builder.of(

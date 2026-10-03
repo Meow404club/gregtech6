@@ -109,6 +109,7 @@ public class GTGeneratorSolidBlockEntityTest extends GTOfflineTestBase {
 		BlockEntityType<FixtureBox>[] tHolder = (BlockEntityType<FixtureBox>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(FixtureBox::new, Blocks.STONE).build(null);
 		sType = tHolder[0];
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init(); // the live FURNACE_FUEL instance (the shared append face)
 		try {
 			//? if forge {

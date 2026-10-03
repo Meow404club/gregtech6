@@ -18,6 +18,7 @@ import gregtech6.itemdata.GT6ToolStats;
 
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * Offline tests for task machine-ladder — the machine-family material ladder over
@@ -44,7 +45,7 @@ public class MachineLadderTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 	}
 
 	private static ItemStack stamped(OreDictMaterial aMaterial, float aMultiplier) {

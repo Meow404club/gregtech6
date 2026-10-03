@@ -96,6 +96,7 @@ public class GT6HeatExchangerTest extends GTMultiBlocksOfflineTestBase {
 
 	@BeforeEach
 	void freshMaps() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init(); // the GTMachinesOfflineTestBase :73 form — a sibling class's reset() may have retired the generation
 	}
 

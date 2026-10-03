@@ -54,6 +54,7 @@ public class BurningBoxIgniteTest extends GTOfflineTestBase {
 		tGas[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GTGeneratorGasBlockEntity(tGas[0], aPos, aState), Blocks.STONE).build(null);
 		sGasType = tGas[0];
+		gregtech6.recipes.GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		gregtech6.recipes.GT6RecipeMaps.init(); // the live FURNACE_FUEL/BURN instances (the shared append face)
 	}
 
