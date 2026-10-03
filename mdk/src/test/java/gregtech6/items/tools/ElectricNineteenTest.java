@@ -13,9 +13,13 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -331,5 +335,105 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 		assertNull(GT6ElectricToolItem.specOf("nonexistent_tool"));
 		assertNotNull(GT6Tools.electricTool("mining_drill_lv"));
 		assertNull(GT6Tools.electricTool("not_a_tool"));
+	}
+
+	// ------------------------------------------------------------------ the tooltip energy-stock row (task tooltip-electric-energy)
+
+	private static void callHoverText(GT6ElectricToolItem aItem, ItemStack aStack, List<Component> aTooltip) {
+		//? if forge {
+		aItem.appendHoverText(aStack, null, aTooltip, TooltipFlag.NORMAL);
+		//?} else {
+		/*aItem.appendHoverText(aStack, Item.TooltipContext.EMPTY, aTooltip, TooltipFlag.NORMAL);
+		*///?}
+	}
+
+	/** The energy-stock row of the hover (the one line containing " EU - Size: " — MultiItem.addInformation :259). */
+	private static Component energyRow(GT6ElectricToolItem aItem, ItemStack aStack) {
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(aItem, aStack, tTooltip);
+		Component rRow = null;
+		for (Component tLine : tTooltip) if (tLine.getString().contains(" EU - Size: ")) {
+			assertNull(rRow, "exactly one energy row per hover");
+			rRow = tLine;
+		}
+		return rRow;
+	}
+
+	private static Integer colorOf(Component aLine) {
+		return aLine.getStyle().getColor() == null ? null : aLine.getStyle().getColor().getValue();
+	}
+
+	/**
+	 * The MultiItem.addInformation :259 row VERBATIM: WHITE makeString(min(cap,stored)) " / "
+	 * makeString(cap) " " <EU chat short> WHITE " - Size: " V[tier]. The makeString face rides
+	 * this test through the real numbers: &lt;10000 plain, ≥10000 underscore thousands ("64_000",
+	 * "1_024_000"). The EU sub-run carries the TagData EU chat color (TD.java:81 LH.Chat.BLUE —
+	 * the energyUnit transcription); the rest of the row is WHITE (LH.Chat.WHITE :702).
+	 */
+	@Test
+	public void theEnergyRowPinsTheUpstreamLineShape() {
+		// fresh LV drill (tooltipKey null — the energy row IS the first row)
+		Component tRow = energyRow(sDrillLv, new ItemStack(sDrillLv));
+		assertNotNull(tRow, "the fresh LV drill carries the energy row");
+		assertEquals("0 / 64_000 EU - Size: 32", tRow.getString(), "the :259 row verbatim");
+		assertEquals(ChatFormatting.WHITE.getColor(), colorOf(tRow), "the row base is LH.Chat.WHITE");
+		assertEquals(2, tRow.getSiblings().size(), "the EU short + the Size tail are the styled sub-runs");
+		Component tUnit = tRow.getSiblings().get(0);
+		assertEquals("EU", tUnit.getString(), "the TagData EU short name");
+		assertEquals(ChatFormatting.BLUE.getColor(), colorOf(tUnit), "the EU chat color (TD.java:81)");
+		Component tTail = tRow.getSiblings().get(1);
+		assertEquals(" - Size: 32", tTail.getString(), "the upstream hard-coded-en tail");
+		assertEquals(ChatFormatting.WHITE.getColor(), colorOf(tTail), "the tail resumes LH.Chat.WHITE");
+		// the stored half: a part-charged pool renders the live value (12_345 ≥ 10000 → the underscore face)
+		ItemStack tCharged = new ItemStack(sDrillLv);
+		sDrillLv.setEnergyStored(TD.Energy.EU, tCharged, 12345L);
+		assertEquals("12_345 / 64_000 EU - Size: 32", energyRow(sDrillLv, tCharged).getString());
+		// the makeString boundary: 9999 stays plain, 10000 gains the underscore
+		ItemStack tEdge = new ItemStack(sDrillLv);
+		sDrillLv.setEnergyStored(TD.Energy.EU, tEdge, 9999L);
+		assertEquals("9999 / 64_000 EU - Size: 32", energyRow(sDrillLv, tEdge).getString());
+		sDrillLv.setEnergyStored(TD.Energy.EU, tEdge, 10000L);
+		assertEquals("10_000 / 64_000 EU - Size: 32", energyRow(sDrillLv, tEdge).getString());
+		// the HV wrench (tooltipKey non-null — the energy row rides AFTER the behavior row) at full clamp
+		ItemStack tHv = new ItemStack(sWrenchHv);
+		sWrenchHv.setEnergyStored(TD.Energy.EU, tHv, Long.MAX_VALUE);
+		assertEquals("1_024_000 / 1_024_000 EU - Size: 512", energyRow(sWrenchHv, tHv).getString());
+	}
+
+	/** The row order: behavior tooltip row first (the upstream .tooltip row :249), THEN the energy row (:252), THEN the mode-switch row (the behavior block :273). */
+	@Test
+	public void theEnergyRowSitsBetweenBehaviorAndModeSwitchRows() {
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(sWrenchHv, new ItemStack(sWrenchHv), tTooltip);
+		assertTrue(tTooltip.size() >= 2, "the wrench hover carries behavior + energy rows");
+		assertEquals("item.gt6.wrench_hv.tooltip", ((net.minecraft.network.chat.contents.TranslatableContents)tTooltip.get(0).getContents()).getKey(),
+				"row 0 = the .tooltip behavior row (the :249 face)");
+		assertTrue(tTooltip.get(1).getString().endsWith(" EU - Size: 512"), "row 1 = the energy row");
+		// the jackhammer mode-switch row stays last (the behavior block rides AFTER the energy face)
+		Item tJackItem = GT6Tools.electricTool("jackhammer_hv_normal").get();
+		assertTrue(tJackItem instanceof GT6ElectricToolItem, "the jackhammer is the electric family");
+		List<Component> tJack = new ArrayList<>();
+		callHoverText((GT6ElectricToolItem)tJackItem, new ItemStack(tJackItem), tJack);
+		assertTrue(tJack.size() >= 3, "the jackhammer hover carries behavior + energy + mode-switch rows");
+		assertTrue(tJack.get(1).getString().endsWith(" EU - Size: 512"), "the energy row precedes the mode-switch row");
+		assertEquals("item.gt6.mode_switch.tooltip", ((net.minecraft.network.chat.contents.TranslatableContents)tJack.get(2).getContents()).getKey(),
+				"the mode-switch row stays last (the behavior block)");
+	}
+
+	/** The census: EVERY registered electric id carries the energy row at its tier's capacity/size — no electric tool misses the line (the negative-result evidence face). */
+	@Test
+	public void everyElectricIdCarriesTheEnergyRow() {
+		String[] tExpectedByTier = {"0 / 64_000 EU - Size: 32", "0 / 256_000 EU - Size: 128", "0 / 1_024_000 EU - Size: 512"};
+		int tCensus = 0;
+		for (GT6ElectricToolItem.Spec tSpec : GT6ElectricToolItem.SPECS) {
+			var tHolder = GT6Tools.electricTool(tSpec.aPath());
+			assertNotNull(tHolder, tSpec.aPath() + " is registered");
+			assertTrue(tHolder.get() instanceof GT6ElectricToolItem, tSpec.aPath() + " is the electric family");
+			Component tRow = energyRow((GT6ElectricToolItem)tHolder.get(), new ItemStack(tHolder.get()));
+			assertNotNull(tRow, tSpec.aPath() + " carries the energy row");
+			assertEquals(tExpectedByTier[tSpec.aTier() - 1], tRow.getString(), tSpec.aPath() + " tier row");
+			tCensus++;
+		}
+		assertEquals(19, tCensus, "the 19-id census — none missed");
 	}
 }
