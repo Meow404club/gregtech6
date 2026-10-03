@@ -1218,6 +1218,8 @@ direct	gt6.jei.recipe_map.cooker	烹饪炉	hand
 direct	gt6.jei.recipe_map.crusher	破碎机	hand
 direct	gt6.jei.recipe_map.cryodistillationtower	低温蒸馏塔	hand
 direct	gt6.jei.recipe_map.cryomixer	低温搅拌机	hand
+direct	gt6.jei.recipe_map.cruciblealloying	坩埚合金	hand
+direct	gt6.jei.recipe_map.cruciblesmelting	坩埚熔炼	hand
 direct	gt6.jei.recipe_map.crystallisationcrucible	结晶器	hand
 direct	gt6.jei.recipe_map.cutter	切割机	hand
 direct	gt6.jei.recipe_map.distillationtower	蒸馏塔	hand

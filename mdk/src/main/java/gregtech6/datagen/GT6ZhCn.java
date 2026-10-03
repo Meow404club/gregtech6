@@ -2581,6 +2581,9 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jei.recipe_map.massfab");
 		addDirect("gt6.jei.recipe_map.fusionreactor");
 		addDirect("gt6.jei.recipe_map.crystallisationcrucible");
+		// the crucible pair (crucible-viewer-page) — 坩埚熔炼/坩埚合金, the card's 熔炼/合金 faces
+		addDirect("gt6.jei.recipe_map.cruciblesmelting");
+		addDirect("gt6.jei.recipe_map.cruciblealloying");
 		addDirect("gt6.jei.recipe_map.microwave");
 		addDirect("gt6.jei.recipe_map.cooker");
 		addDirect("gt6.jei.recipe_map.toolhead");

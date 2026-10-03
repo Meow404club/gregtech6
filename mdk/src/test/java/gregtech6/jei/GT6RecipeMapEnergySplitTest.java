@@ -73,6 +73,9 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 			"gt.recipe.cokeoven",                        // solid-fuel burner
 			"gt.recipe.implosioncompressor",             // explosives, no energy input
 			"gt.recipe.bedrockorelist",                  // the RM.java:153 display map
+			// the crucible pair (crucible-viewer-page): GU verbatim — the crucible heats with
+			// raw HU physics, the map rows carry no energy column (RM.java:128/:129 tails)
+			"gt.recipe.cruciblesmelting", "gt.recipe.cruciblealloying",
 			// the fuel maps: the emitting carrier varies per machine (boiler HU / engine RU / turbine …)
 			"gt.recipe.fuels.burn", "gt.recipe.fuels.engine", "gt.recipe.fuels.fluidbed",
 			"gt.recipe.fuels.gas", "gt.recipe.fuels.hot");
@@ -94,8 +97,9 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 				tUnclassified.add(tMap.mNameInternal);
 		}
 		assertEquals(List.of(), tUnclassified, "every visible map must be pinned or declared GU");
-		assertEquals(51, tPinned, "the pinned-carrier count (72 visible - 5 mixed - 16 carrier-less;"
-				+ " the two cracking maps joined the HU column in task viewer-icon-retire-gu-pin)");
+		assertEquals(51, tPinned, "the pinned-carrier count (74 visible - 5 mixed - 18 carrier-less;"
+				+ " the two cracking maps joined the HU column in task viewer-icon-retire-gu-pin,"
+				+ " the crucible pair joined the carrier-less set in crucible-viewer-page)");
 		// the mixed set is never pinned — the GU fallback IS the ruling
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
 			if (GU_MIXED.contains(tMap.mNameInternal))

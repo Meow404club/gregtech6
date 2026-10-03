@@ -751,6 +751,9 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "massfab", "Matter Fabricator");
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "fusionreactor", "Fusion Reactor");
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "crystallisationcrucible", "Crystallisation Crucible");
+        // the crucible pair (crucible-viewer-page) — the maps' own mNameLocal faces verbatim
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cruciblesmelting", "Crucible Smelting");
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cruciblealloying", "Combination Smelting");
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "microwave", "Microwave");
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "cooker", "Cooker");
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "toolhead", "Craft Head on Handle");

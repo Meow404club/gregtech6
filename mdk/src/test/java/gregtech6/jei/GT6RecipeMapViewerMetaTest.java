@@ -60,9 +60,15 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "the merged-shape census (rm-six-maps' Microwave/Cooker/ToolHeads/Mortar/Hammer five maps landed by rebase — the pre-rebase branch pinned 75)");
 
 		// the ruled exclusion table (r-jei-emi-coverage id927) never enters a category
-		for (String tExcluded : List.of("mc.recipe.furnace", "mc.recipe.furnacefuel", "gt.recipe.cruciblesmelting",
-				"gt.recipe.cruciblealloying", "gt.recipe.bumblelyzer", "gt.recipe.plantalyzer")) {
+		// (crucible-viewer-page: the crucible pair LEFT the table — their page rides the
+		// rowsOf synthesis off the material graph)
+		for (String tExcluded : List.of("mc.recipe.furnace", "mc.recipe.furnacefuel",
+				"gt.recipe.bumblelyzer", "gt.recipe.plantalyzer")) {
 			assertFalse(GT6RecipeMapViewerMeta.eligible(RecipeMap.RECIPE_MAPS.get(tExcluded)), tExcluded + " is ruled out of every category");
+		}
+		// the crucible pair is ELIGIBLE now — the user-visible point of crucible-viewer-page
+		for (String tCrucible : List.of("gt.recipe.cruciblesmelting", "gt.recipe.cruciblealloying")) {
+			assertTrue(GT6RecipeMapViewerMeta.eligible(RecipeMap.RECIPE_MAPS.get(tCrucible)), tCrucible + " joins the category face");
 		}
 		// the upstream mNEIAllowed=F rows stay out the faithful way
 		for (String tDisallowed : List.of("gt.recipe.chisel", "gt.recipe.autocrafting")) {
@@ -75,7 +81,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 			if (GT6RecipeMapViewerMeta.eligible(tMap)) tEligible++;
 			if (GT6RecipeMapViewerMeta.visibleToViewers(tMap)) tVisible.add(tMap.mNameInternal);
 		}
-		assertEquals(72, tEligible, "80 census - 6 ruled-excluded - 3 upstream-disallowed + 1 overlap (furnacefuel is both) = 72 eligible (rm-six-maps' five maps are all upstream mNEIAllowed=T standard rows)");
+		assertEquals(74, tEligible, "80 census - 4 ruled-excluded - 3 upstream-disallowed + 1 overlap (furnacefuel is both) = 74 eligible (crucible-viewer-page lifted the crucible pair)");
 		// batch 2 full opening (task debt-jei-emi-batch2): visibility IS eligibility — the
 		// batch-1 canaries (cokeoven/shredder/crusher/lathe/distillery/drying + the
 		// RM.java:153 bedrockorelist display map) ride along automatically; the closure is
@@ -88,6 +94,48 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		List<String> tVisibleMapNames = new ArrayList<>();
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) tVisibleMapNames.add(tMap.mNameInternal);
 		assertEquals(new ArrayList<>(tVisible), tVisibleMapNames);
+	}
+
+	/**
+	 * The rowsOf seam (crucible-viewer-page): the ONE row source both viewer legs register.
+	 * Default arm = the live mRecipeList as a defensive copy; the crucible arms = the
+	 * material-graph synthesis, NOT the (empty) live list — the PhaseGate double-zero pin
+	 * stays untouched because the synthetic rows are display-only.
+	 */
+	@Test
+	void rowsOfSeamFeedsBothViewerLegs() {
+		GT6RecipeMaps.init();
+		// the default arm: an equal copy of the live list, never the same instance
+		List<Recipe> tLatheRows = GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.LATHE);
+		assertEquals(new ArrayList<>(GT6RecipeMaps.LATHE.mRecipeList), tLatheRows,
+				"the default arm is a defensive copy of the live list (List semantics — the live list is a Set)");
+		// the crucible arms: synthesized (non-null), deterministic, and the live lists stay EMPTY
+		List<Recipe> tSmeltingRows = GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.CRUCIBLE_SMELTING);
+		List<Recipe> tAlloyingRows = GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.CRUCIBLE_ALLOYING);
+		assertNotNull(tSmeltingRows);
+		assertNotNull(tAlloyingRows);
+		// determinism: same size + same input/output item fingerprint (Recipe carries no
+		// content equals, so row-level equality is identity — useless across walks; the
+		// fingerprint travels: the forge leg answers the live mat() resolver EMPTY, the neo
+		// leg resolves real items, and both must walk the SAME universe twice)
+		assertEquals(fingerprint(tSmeltingRows), fingerprint(GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.CRUCIBLE_SMELTING)),
+				"the walk is deterministic; the CONTENT pins live in GT6RecipeMapCrucibleTest");
+		assertEquals(fingerprint(tAlloyingRows), fingerprint(GT6RecipeMapViewerMeta.rowsOf(GT6RecipeMaps.CRUCIBLE_ALLOYING)));
+		assertTrue(GT6RecipeMaps.CRUCIBLE_SMELTING.mRecipeList.isEmpty(), "synthetic rows never enter the live list (PhaseGate double-0)");
+		assertTrue(GT6RecipeMaps.CRUCIBLE_ALLOYING.mRecipeList.isEmpty(), "synthetic rows never enter the live list (PhaseGate double-0)");
+	}
+
+	/** The leg-neutral walk fingerprint: every row's input/output item classes in walk order. */
+	private static List<String> fingerprint(List<Recipe> aRows) {
+		List<String> rPrint = new ArrayList<>();
+		for (Recipe tRow : aRows) {
+			StringBuilder tBuilder = new StringBuilder();
+			for (ItemStack tInput : tRow.mInputs) tBuilder.append(tInput.getItem()).append('x').append(tInput.getCount()).append('|');
+			tBuilder.append("->");
+			for (ItemStack tOutput : tRow.mOutputs) tBuilder.append(tOutput.getItem()).append('x').append(tOutput.getCount()).append('|');
+			rPrint.add(tBuilder.toString());
+		}
+		return rPrint;
 	}
 
 	// -------------------------------------------------------------------
@@ -267,13 +315,17 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		}
 		// the affected list, in the record: 9 maps with a 7+-slot side + 12 fluid-lift
 		// maps; canaries MIXER (6 in-items lifted by 6 in-fluids), STEAM_CRACKING (its
-		// OUTPUTS lifted by 9 out-fluids) and FUSION (both) ride the r9-34 fold-table pins
+		// OUTPUTS lifted by 9 out-fluids) and FUSION (both) ride the r9-34 fold-table pins.
+		// crucible-viewer-page deliberately re-ran the acceptance for the newly visible
+		// CRUCIBLE_ALLOYING (12/12 — the 7+ band's y7 folds to viewer y0, the same shape
+		// as SHREDDER); CRUCIBLE_SMELTING (6/6, the y16/34 two-row band) stays out.
 		assertEquals(Set.of("gt.recipe.bedrockorelist", "gt.recipe.burnmixer", "gt.recipe.catalyticcracking",
-				"gt.recipe.centrifuge", "gt.recipe.cokeoven", "gt.recipe.cooker", "gt.recipe.crusher",
-				"gt.recipe.cryodistillationtower", "gt.recipe.cryomixer", "gt.recipe.distillationtower",
-				"gt.recipe.electrolyzer", "gt.recipe.fusionreactor", "gt.recipe.lightning",
-				"gt.recipe.magneticseparator", "gt.recipe.mixer", "gt.recipe.shredder", "gt.recipe.sifter",
-				"gt.recipe.sluice", "gt.recipe.steamcracking", "gt.recipe.unboxinator", "gt.recipe.welder"),
+				"gt.recipe.centrifuge", "gt.recipe.cokeoven", "gt.recipe.cooker", "gt.recipe.cruciblealloying",
+				"gt.recipe.crusher", "gt.recipe.cryodistillationtower", "gt.recipe.cryomixer",
+				"gt.recipe.distillationtower", "gt.recipe.electrolyzer", "gt.recipe.fusionreactor",
+				"gt.recipe.lightning", "gt.recipe.magneticseparator", "gt.recipe.mixer",
+				"gt.recipe.shredder", "gt.recipe.sifter", "gt.recipe.sluice", "gt.recipe.steamcracking",
+				"gt.recipe.unboxinator", "gt.recipe.welder"),
 				tPreFixNegative, "the pre-fix negative-row census drifted — re-run the headroom acceptance");
 		assertTrue(tPreFixNegative.containsAll(List.of("gt.recipe.mixer", "gt.recipe.steamcracking", "gt.recipe.fusionreactor")),
 				"the three named canaries must be among the affected");

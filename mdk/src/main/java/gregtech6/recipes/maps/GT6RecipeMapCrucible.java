@@ -34,6 +34,7 @@ import net.minecraftforge.fluids.FluidStack;
 import gregapi.data.OP;
 import gregapi.data.TD;
 import gregapi.oredict.MaterialGraph;
+import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.oredict.OreDictPrefix;
@@ -75,7 +76,9 @@ import static gregapi.data.CS.U9;
  * <p><b>CRUCIBLE_ALLOYING</b> (the second map this class serves with its static
  * helpers, RM.java:128): zero static rows like its sibling — the display rows are the
  * {@link #alloyingDisplayRows} synthesis off the material graph (the GT6_Main.java:453-481
- * NEI walk), built only when a display consumer asks.
+ * NEI walk, hidden components skipping the pair per :460), built only when a display
+ * consumer asks; {@link #allAlloyingDisplayRows} is the full-universe walk the viewer
+ * pages register.
  *
  * <p><b>Declared deviations</b>:
  * <ul>
@@ -199,6 +202,9 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 		List<Long> tMeltingPoints = new ArrayList<>();
 		List<ItemStack> tDusts = new ArrayList<>(), tIngots = new ArrayList<>();
 		for (OreDictMaterialStack tComponent : tComponents) {
+			// GT6_Main.java:460 — a hidden component skips the WHOLE alloy row pair
+			// ({@code if (tMaterial.mMaterial.mHidden) {temp = F; break;}} verbatim)
+			if (tComponent.mMaterial.mHidden) return Collections.emptyList();
 			tMeltingPoints.add(tComponent.mMaterial.mMeltingPoint);
 			ItemStack tDust = dustOrIngot(tComponent.mMaterial, tComponent.mAmount);
 			ItemStack tIngot = ingotOrDust(tComponent.mMaterial, tComponent.mAmount);
@@ -307,7 +313,48 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 	private static Recipe displayRow(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
 		ItemStack tInput = matStack(aPrefix, aMaterial, 1);
 		if (tInput == null) return null;
-		return findRecipeFor(tInput);
+		Recipe tLive = findRecipeFor(tInput);
+		if (tLive == null) return null;
+		// :96 — the NEI face pair re-pinned at the DISPLAY layer only: SpecialValue =
+		// mMeltingPoint (renders "Temperature: N K") and duration 0, while the live
+		// findRecipe arm keeps duration = mMeltingPoint for the machine side (risk ②
+		// ruling: findRecipe's live semantics untouched — this wrapper is the display fork).
+		Recipe rRow = new Recipe(false, tLive.mInputs, tLive.mOutputs, null, null, 0, 0, aMaterial.mMeltingPoint);
+		rRow.mFakeRecipe = true;
+		return rRow;
+	}
+
+	/**
+	 * The full CRUCIBLE_SMELTING display face — the enumeration the viewer page registers:
+	 * the SELF row of every registered material (dust → its own smelting target; the
+	 * upstream getNEIRecipes :66-67 self arm sits OUTSIDE its {@code tMat != self} skip,
+	 * so "dust iron → ingot iron" is the page's core row) plus every cross-source row of
+	 * {@link #smeltingDisplayRows}. The hidden gate rides the SELF arm: upstream self rows
+	 * only surfaced on the material's own NEI page — unreachable for a hidden material —
+	 * while this global walk would surface them on the public page. Materials without
+	 * representable items drop out through the {@link #displayRow} null-gates. Linear in
+	 * the registry size (the ViewerMeta registration-cost ruling's shape).
+	 */
+	public static List<Recipe> allSmeltingDisplayRows() {
+		List<Recipe> rList = new ArrayList<>();
+		for (OreDictMaterial tMat : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
+			if (tMat.mHidden) continue; // :460 spirit — hidden materials have no public page to mirror
+			Recipe tSelf = displayRow(OP.dust, tMat);
+			if (tSelf != null) rList.add(tSelf);
+			rList.addAll(smeltingDisplayRows(tMat));
+		}
+		return rList;
+	}
+
+	/**
+	 * The full CRUCIBLE_ALLOYING display face — the GT6_Main.java:453-484 client walk
+	 * verbatim: every registered alloy × its creation recipes, hidden components skipping
+	 * the pair (the :460 gate inside {@link #alloyingDisplayRows}).
+	 */
+	public static List<Recipe> allAlloyingDisplayRows() {
+		List<Recipe> rList = new ArrayList<>();
+		for (OreDictMaterial tAlloy : OreDictMaterial.ALLOYS) rList.addAll(alloyingDisplayRows(tAlloy));
+		return rList;
 	}
 
 	/** The public single-stack face of the on-demand arm (the upstream getRecipeFor(:82) name). */

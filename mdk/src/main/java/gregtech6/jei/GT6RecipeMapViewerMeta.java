@@ -16,6 +16,7 @@ import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
+import gregtech6.recipes.maps.GT6RecipeMapCrucible;
 
 /**
  * The viewer-neutral per-map category metadata + layout math + cost-text formatter of the
@@ -64,11 +65,14 @@ import gregtech6.recipes.RecipeMap;
  * true-zero / special-surface maps never enter a category even though their upstream
  * mNEIAllowed may be true — FURNACE (the port is the vanilla smelting mirror, the vanilla
  * viewer category already shows it), FURNACE_FUEL (the on-demand ForgeHooks burn-time
- * synthesizer, zero static rows ever), CRUCIBLE_SMELTING + CRUCIBLE_ALLOYING (the
- * dynamic material-graph derivation, zero static rows), BUMBLELYZER (the display stock
+ * synthesizer, zero static rows ever), BUMBLELYZER (the display stock
  * rides sFakeRecipes OUTSIDE mRecipeList) and PLANTALYZER (the Forestry/IC2 compat dead
  * surface). CHISEL and AUTOCRAFTER are excluded by the upstream mNEIAllowed=F itself
- * (RM.java:138/:63) — the faithful form, no ruling needed.
+ * (RM.java:138/:63) — the faithful form, no ruling needed. The crucible pair LEFT the
+ * table (task crucible-viewer-page — the user could reach no crucible recipe at all):
+ * upstream NEI served both maps a display face (GT6_Main.java:452-484 +
+ * RecipeMapCrucible.getNEIRecipes :50-79), and the port's counterpart is the
+ * material-graph synthesis {@link #rowsOf} feeds both legs.
  *
  * <p><b>The visibility ruling (batch 1 canary → batch 2 full opening):</b> batch 1
  * shipped the six canaries of decisions.2026-09-26-debt-jei-emi-coverage ②
@@ -76,7 +80,8 @@ import gregtech6.recipes.RecipeMap;
  * (upstream RM.java:153 IS a NEI display map, in the acceptance face); batch 2
  * (task debt-jei-emi-batch2) opens visibility to the WHOLE eligible set — a map is
  * visible exactly when {@link #eligible} says so. The closure stays the exclusion
- * table (6) plus the upstream mNEIAllowed=F rows: 80 census maps → 72 visible.
+ * table (4) plus the upstream mNEIAllowed=F rows: 80 census maps → 74 visible
+ * (72 + the crucible pair, crucible-viewer-page).
  *
  * <p><b>The registration-cost ruling (batch 2, the big maps this opens — MIXER's
  * ~56000 rows, MASSFAB's ~4220):</b> structurally linear, no wall clock needed to see
@@ -171,8 +176,6 @@ public final class GT6RecipeMapViewerMeta {
 	private static final Set<String> EXCLUDED = Set.of(
 			"mc.recipe.furnace",            // vanilla mirror: the vanilla viewer category is the face
 			"mc.recipe.furnacefuel",        // on-demand synthesizer, zero static rows
-			"gt.recipe.cruciblesmelting",   // dynamic material-graph derivation, zero static rows
-			"gt.recipe.cruciblealloying",   // dynamic alloying display, zero static rows
 			"gt.recipe.bumblelyzer",        // display stock rides sFakeRecipes outside mRecipeList
 			"gt.recipe.plantalyzer");       // compat dead surface
 
@@ -429,6 +432,24 @@ public final class GT6RecipeMapViewerMeta {
 		for (RecipeMap tMap : RecipeMap.RECIPE_MAPS.values()) if (visibleToViewers(tMap)) tSorted.add(tMap.mNameInternal);
 		for (String tName : tSorted) rMaps.add(RecipeMap.RECIPE_MAPS.get(tName));
 		return rMaps;
+	}
+
+	/**
+	 * The ONE row source both viewer legs register (crucible-viewer-page) — the default
+	 * arm hands the map's live {@code mRecipeList} over as ONE defensive copy (the
+	 * registration-cost ruling's shape, unchanged); the crucible pair synthesizes its
+	 * display rows off the material graph at registration time
+	 * ({@link GT6RecipeMapCrucible#allSmeltingDisplayRows} /
+	 * {@link GT6RecipeMapCrucible#allAlloyingDisplayRows} — upstream
+	 * GT6_Main.java:452-484 + RecipeMapCrucible.getNEIRecipes). The synthetic rows are
+	 * DISPLAY-only: the maps' mRecipeList stays empty (the PhaseGate double-zero pin)
+	 * and {@code findRecipe}'s live semantics are untouched. Linear walks, no wall
+	 * clock (the same ruling's MIXER shape).
+	 */
+	public static List<Recipe> rowsOf(RecipeMap aMap) {
+		if ("gt.recipe.cruciblesmelting".equals(aMap.mNameInternal)) return new ArrayList<>(GT6RecipeMapCrucible.allSmeltingDisplayRows());
+		if ("gt.recipe.cruciblealloying".equals(aMap.mNameInternal)) return new ArrayList<>(GT6RecipeMapCrucible.allAlloyingDisplayRows());
+		return new ArrayList<>(aMap.mRecipeList);
 	}
 
 	/**

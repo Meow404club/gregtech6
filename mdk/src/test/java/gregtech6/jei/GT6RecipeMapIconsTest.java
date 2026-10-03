@@ -35,6 +35,7 @@ import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6BurningBoxes;
+import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6LargeMachines;
@@ -77,13 +78,13 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 					tMap.mNameInternal + " is visible but carries no icon table row and no whitelist entry");
 			tTabled++;
 		}
-		assertEquals(72, tVisible.size(), "the batch-2 census must stay stable under this guard");
+		assertEquals(74, tVisible.size(), "the batch-2 census + crucible-viewer-page's pair must stay stable under this guard");
 		// the whitelist is EXACTLY the four declared-empty maps (GT6RecipeMapJsonLoader's
 		// zero-row-stock set) — a wider fallback is the #29a regression this card fixes
 		assertTrue(tVisible.containsAll(GT6RecipeMapIcons.FURNACE_FALLBACK),
 				"every whitelist entry must be a visible map (dead whitelist rows are silent drift)");
 		assertEquals(4, GT6RecipeMapIcons.FURNACE_FALLBACK.size());
-		assertEquals(68, tTabled, "72 visible - 4 whitelist = 68 tabled machine icons");
+		assertEquals(70, tTabled, "74 visible - 4 whitelist = 70 tabled machine icons (the crucible pair joined via the Smeltery family)");
 	}
 
 	@Test
@@ -236,6 +237,11 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 			if (tMap != null) add.accept(tMap, tRow.path());
 		}
 		add.accept("gt.recipe.fuels.hot", "large_heat_exchanger");
+		// the crucible pair (crucible-viewer-page): the Smeltery family's lowest registered
+		// rung, both maps share the representative — the mirror of the production build()'s
+		// tail entries (the ITEMS_BY_PATH LinkedHashMap order)
+		add.accept("gt.recipe.cruciblesmelting", GT6Crucibles.ITEMS_BY_PATH.keySet().iterator().next());
+		add.accept("gt.recipe.cruciblealloying", GT6Crucibles.ITEMS_BY_PATH.keySet().iterator().next());
 		return r;
 	}
 

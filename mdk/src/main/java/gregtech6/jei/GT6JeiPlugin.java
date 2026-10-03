@@ -147,15 +147,17 @@ public class GT6JeiPlugin implements IModPlugin {
 	 * map the shared {@link GT6RecipeMapViewerMeta} exposes (since batch 2: the whole
 	 * eligible set) gets its {@link GT6RecipeMapJeiCategory} rows — the modern counterpart
 	 * of the upstream one-NEI_RecipeMap-per-map registration (NEI_GT_API_Config.java:62).
-	 * The rows are the map's live list (registration runs client-side after the server
-	 * datapack pour, so the static loaders and the JSON smoke rows are already in). The
-	 * EMI plugin registers the same maps natively in the same card — the JEMI red line
+	 * The rows ride the shared {@link GT6RecipeMapViewerMeta#rowsOf} seam: the live list as
+	 * a defensive copy for every stored-row map, the material-graph synthesis for the
+	 * crucible pair (crucible-viewer-page — registration runs client-side after the server
+	 * datapack pour, so the graph and the JSON smoke rows are already in). The EMI plugin
+	 * registers the same maps natively through the same seam — the JEMI red line
 	 * (GT6EmiPlugin class doc) stays balanced: every gt6 uid namespace face this plugin
 	 * adds has its native EMI twin.
 	 */
 	private static void registerRecipeMapCategoriesRows(IRecipeRegistration registration) {
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
-			registration.addRecipes(GT6RecipeMapJeiCategory.recipeTypeOf(tMap), new ArrayList<>(tMap.mRecipeList));
+			registration.addRecipes(GT6RecipeMapJeiCategory.recipeTypeOf(tMap), GT6RecipeMapViewerMeta.rowsOf(tMap));
 		}
 	}
 
