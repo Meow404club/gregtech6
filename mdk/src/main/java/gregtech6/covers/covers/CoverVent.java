@@ -2,6 +2,11 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import gregtech6.covers.CoverData;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The air vent cover — 1.20.1 port of gregapi/cover/covers/CoverVent.java:40-85 (task
@@ -93,5 +99,16 @@ public class CoverVent extends AbstractCoverDefault {
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/front");
 		 *///?}
+	}
+
+	/**
+	 * Upstream :68-71 — the controller row. The {@code MD.GC} "other Planets" row
+	 * (:70) collapses: the single-mod port registers no Galacticraft (the drain's
+	 * fluid-zoo collapse convention, task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :71
 	}
 }

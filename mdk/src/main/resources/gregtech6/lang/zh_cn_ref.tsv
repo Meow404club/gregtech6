@@ -2194,6 +2194,25 @@ direct	gt6.tooltip.boiler_large.9	容量: %3$s HU	hand
 direct	gt6.tooltip.converter.4	使用建筑之杖快速搭建结构	hand
 direct	gt6.tooltip.converter.5	使用放大镜观察细节	hand
 direct	gt6.tooltip.converter.6	使用扳手设置朝向	hand
+direct	gt6.tooltip.cover.base	可以用作覆盖板	hand
+direct	gt6.tooltip.cover.change_design_chisel	使用凿子改变表面纹理图案	hand
+direct	gt6.tooltip.cover.detail_magnifyingglass	使用放大镜观察细节	hand
+direct	gt6.tooltip.cover.drain_fluid_blocks	Collects Fluid Blocks (if not against Gravity)	hand
+direct	gt6.tooltip.cover.drain_rainwater	Collects Rainwater (not in Dry or Cold Areas)	hand
+direct	gt6.tooltip.cover.drain_river_lake	Will work infinitely in River and Lake Biomes	hand
+direct	gt6.tooltip.cover.filter_not_nbt_sensitive	Not NBT sensitive!	hand
+direct	gt6.tooltip.cover.logistics_display_status	Emits Redstone and Displays Status of Logistics Core.	hand
+direct	gt6.tooltip.cover.pump_no_fluid_blocks	Doesn't do Fluid Blocks! Use Drain for that instead!	hand
+direct	gt6.tooltip.cover.pump_throughput	Transfers %s L/sec	hand
+direct	gt6.tooltip.cover.reset_soft_hammer	使用软锤来重置	hand
+direct	gt6.tooltip.cover.toggle_controller	使用控制器覆盖板控制开关	hand
+direct	gt6.tooltip.cover.toggle_cutter	使用剪线钳切换模式	hand
+direct	gt6.tooltip.cover.toggle_monkey_wrench	使用活动扳手调整模式	hand
+direct	gt6.tooltip.cover.toggle_screwdriver	使用螺丝刀切换模式	hand
+direct	gt6.tooltip.cover.transfer_period	Transfers a Stack every %s	hand
+direct	gt6.tooltip.cover.valve_gases_air	Gases require Air or Tank in front!	hand
+direct	gt6.tooltip.cover.valve_liquids_tank	Liquids require Tank in front!	hand
+direct	gt6.tooltip.cover.valve_release	Releases Fluids when Pipe is full.	hand
 direct	gt6.tooltip.face.any	任何面	hand
 direct	gt6.tooltip.face.back	背面	hand
 direct	gt6.tooltip.face.bottom	底面	hand

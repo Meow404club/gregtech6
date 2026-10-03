@@ -2,9 +2,12 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,14 +26,16 @@ import gregtech6.covers.CoverData;
 import gregtech6.covers.CoverRegistry;
 import gregtech6.covers.ICover;
 import gregtech6.covers.ICoverableTE;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The default implementation for regular covers — 1.20.1 port of
  * gregapi/cover/covers/AbstractCoverDefault.java (:49-112), trimmed to the ported
  * {@link ICover} surface (task cover-core ②). The sound hooks map the upstream
  * custom SFX.GT_SCREWDRIVER/SFX.MC_BREAK onto vanilla equivalents (the GT sound
- * registration system stays pooled); the addToolTips :77 and bounds/collisions :85-88
- * stay pooled; the redstone defaults :78-80 are RESTORED with the cover redstone
+ * registration system stays pooled); the addToolTips :77 base row is RESTORED with the
+ * tooltip face (task tooltip-cover-face — subclasses append after the super call); the
+ * bounds/collisions :85-88 stay pooled; the redstone defaults :78-80 are RESTORED with the cover redstone
  * framework (task redstone-hooks — a plain cover is transparent to redstone); the
  * item-intercept defaults :93-100 are RESTORED with the side-aware item capability
  * framework (task cover-item-intercept — a plain cover is transparent to item
@@ -101,6 +106,17 @@ public abstract class AbstractCoverDefault implements ICover {
 
 	/** Upstream :73 — a plain cover consumes the walk event without acting on it (the ICover doc). */
 	@Override public boolean onWalkOver(byte aCoverSide, CoverData aData, Entity aEntity) {return true;}
+
+	/**
+	 * Upstream :77 — the one row every cover carries: DGRAY "This Item can be used as
+	 * Cover" (LH.Chat.DGRAY + LH.get(LH.COVER_TOOLTIP), LH.java:123/:515; the zh face
+	 * 可以用作覆盖板 rides the tmp/gregtech.lang:3257 dump fragment). Subclasses append
+	 * their own rows after the {@code super} call (the upstream call order).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		aList.add(Component.translatable("gt6.tooltip.cover.base").withStyle(GT6TooltipStyle.DGRAY));
+	}
 
 	/**
 	 * Upstream :78 — the neighbouring block's signal read at the covered face. The

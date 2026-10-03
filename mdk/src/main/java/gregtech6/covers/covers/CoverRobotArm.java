@@ -2,6 +2,10 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +14,7 @@ import net.minecraftforge.items.IItemHandler;
 
 import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
+import gregtech6.tooltip.GT6TooltipStyle;
 import gregtech6.covers.ICoverableTE;
 import gregtech6.util.GTItemMover;
 
@@ -89,6 +94,20 @@ public class CoverRobotArm extends AbstractCoverDefault {
 				CoverConveyor.neighbourHandler(tHost, aCoverSide, false),
 				CoverConveyor.neighbourHandler(tHost, aCoverSide, true));
 		armTransfer(aData.mValues[aCoverSide], aData.mVisuals[aCoverSide], tHostViews, tNeighbourViews);
+	}
+
+	/**
+	 * Upstream :102-107 — the CYAN period row (the "from/to a specific Slot" wording),
+	 * the monkey wrench row and the controller/screwdriver rows over the base row (task
+	 * tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.transfer_period", mTiming == 1 ? "Tick from/to a specific Slot" : mTiming + " Ticks from/to a specific Slot").withStyle(GT6TooltipStyle.CYAN)); // :104
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_monkey_wrench").withStyle(GT6TooltipStyle.DGRAY)); // :105
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :106
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :107
 	}
 
 	/**

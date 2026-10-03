@@ -2,7 +2,10 @@ package gregtech6.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -262,6 +265,22 @@ public interface ICover {
 	 * in-face refuses outgoing fluid, CoverPump.java:93).
 	 */
 	boolean interceptFluidDrain(byte aCoverSide, CoverData aData, byte aSide, @Nullable FluidStack aFluidToDrain);
+
+	/**
+	 * Upstream :143 — the tooltip rows this cover type adds to its ITEM's hover. Dispatched
+	 * by the global hover hook (GT_API_Proxy_Client.onItemTooltip :285-286, the
+	 * {@code ItemTooltipEvent} listener resolving {@code CoverRegistry.get(stack)}) — the
+	 * port carrier is {@code GTCoverTooltipListener} (task tooltip-cover-face). The default
+	 * adds nothing, so a cover without rows stays silent (the upstream interface left the
+	 * body to {@code AbstractCoverDefault :77}; here the base row lives on
+	 * {@link AbstractCoverDefault} too, the default only guards the trimmed classes).
+	 *
+	 * @param aF3_H the F3+H advanced-tooltip flag (upstream
+	 *              {@code showAdvancedItemTooltips}; TooltipFlag.isAdvanced) — pass-through,
+	 *              no upstream cover branches on it
+	 */
+	default void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+	}
 
 	/**
 	 * Convenience for player-type narrowing (upstream callers pass {@code Entity} and

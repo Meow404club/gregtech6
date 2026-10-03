@@ -2,6 +2,10 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The shutter cover — 1.20.1 port of gregapi/cover/covers/CoverShutter.java:40-96
@@ -114,5 +119,17 @@ public class CoverShutter extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		return aData.mVisuals[aCoverSide] == 0 ? SPRITE_NORMAL : SPRITE_INVERTED;
+	}
+
+	/**
+	 * Upstream :44-47 — the controller row is CYAN here (the shutter toggles BY the
+	 * controller cover), plus the screwdriver row over the base row (task
+	 * tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.CYAN)); // :46
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :47
 	}
 }

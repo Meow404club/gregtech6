@@ -2,6 +2,10 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -13,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 
 import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The item filter cover — 1.20.1 port of gregapi/cover/covers/CoverFilterItem.java:42-148
@@ -201,5 +206,29 @@ public class CoverFilterItem extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		return aData.mVisuals[aCoverSide] == 0 ? SPRITE_WHITELIST : SPRITE_BLACKLIST;
+	}
+
+	/**
+	 * Upstream :46-53 — the carried filter's display-name row (CYAN, BEFORE the super
+	 * chain — the upstream order quirk), the unconditional ORANGE NBT note, the base row
+	 * + controller/screwdriver rows and the soft hammer reset row. The lane read rides
+	 * {@link CoverData#laneOf} (the item-stack half of the CoverData lane write; upstream
+	 * :47 {@code ST.load(aStack.getTagCompound(), "gt.filter.item")}), task
+	 * tooltip-cover-face.
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		CompoundTag tLane = CoverData.laneOf(aStack); // :47
+		//? if forge {
+		ItemStack tFilter = tLane != null && tLane.contains(FILTER_KEY, Tag.TAG_COMPOUND) ? ItemStack.of(tLane.getCompound(FILTER_KEY)) : ItemStack.EMPTY;
+		//?} else {
+		/*ItemStack tFilter = tLane != null && tLane.contains(FILTER_KEY, Tag.TAG_COMPOUND) ? ItemStack.parseOptional(nbtAccess(), tLane.getCompound(FILTER_KEY)) : ItemStack.EMPTY;
+		 *///?}
+		if (!tFilter.isEmpty()) aList.add(tFilter.getDisplayName().copy().withStyle(GT6TooltipStyle.CYAN)); // :47-48
+		aList.add(Component.translatable("gt6.tooltip.cover.filter_not_nbt_sensitive").withStyle(GT6TooltipStyle.ORANGE)); // :48 unconditional
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :51
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :52
+		aList.add(Component.translatable("gt6.tooltip.cover.reset_soft_hammer").withStyle(GT6TooltipStyle.DGRAY)); // :53
 	}
 }

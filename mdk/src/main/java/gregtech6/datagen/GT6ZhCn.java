@@ -2789,6 +2789,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt.lang.requirement.ignite.fire");
 		addDirect("gt.lang.requirement.chunk.loader");
 		addMaterialTooltipUnits(); // task material-tooltip-face — table-tail append (the 22 material-domain row keys)
+		addCoverTooltipUnits(); // task tooltip-cover-face — table-tail append (the 19 cover-domain row keys)
     }
 
 	static Map<String, Map<String, RefRow>> loadReference() {
@@ -2848,5 +2849,36 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.tooltip.material.origin_periodic");
 		addDirect("gt6.tooltip.material.origin_random");
 		addDirect("gt6.tooltip.material.origin_mod");
+	}
+
+	/**
+	 * The cover-domain tooltip row zh faces (task tooltip-cover-face, 19 hand rows — the
+	 * addMaterialTooltipUnits shape): the eight LH keys carry the tmp/gregtech.lang dump
+	 * fragments verbatim (cover.tooltip :3257, chisel :3538, controlcover :3539, cutter
+	 * :3542, magnifyingglass :3544, monkey.wrench :3547, screwdriver :3555, soft.hammer
+	 * :3557). The eleven upstream CODE-LITERAL rows stay the hardcoded-en face in both
+	 * locales — the cover tooltip bodies are code literals upstream (no dump face), the
+	 * tank.1 convention.
+	 */
+	private void addCoverTooltipUnits() {
+		addDirect("gt6.tooltip.cover.base");
+		addDirect("gt6.tooltip.cover.toggle_screwdriver");
+		addDirect("gt6.tooltip.cover.toggle_cutter");
+		addDirect("gt6.tooltip.cover.toggle_controller");
+		addDirect("gt6.tooltip.cover.toggle_monkey_wrench");
+		addDirect("gt6.tooltip.cover.reset_soft_hammer");
+		addDirect("gt6.tooltip.cover.detail_magnifyingglass");
+		addDirect("gt6.tooltip.cover.change_design_chisel");
+		addDirect("gt6.tooltip.cover.transfer_period");
+		addDirect("gt6.tooltip.cover.pump_throughput");
+		addDirect("gt6.tooltip.cover.pump_no_fluid_blocks");
+		addDirect("gt6.tooltip.cover.drain_fluid_blocks");
+		addDirect("gt6.tooltip.cover.drain_rainwater");
+		addDirect("gt6.tooltip.cover.drain_river_lake");
+		addDirect("gt6.tooltip.cover.valve_release");
+		addDirect("gt6.tooltip.cover.valve_liquids_tank");
+		addDirect("gt6.tooltip.cover.valve_gases_air");
+		addDirect("gt6.tooltip.cover.filter_not_nbt_sensitive");
+		addDirect("gt6.tooltip.cover.logistics_display_status");
 	}
 }

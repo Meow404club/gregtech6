@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.network.chat.Component;
+
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -28,6 +30,7 @@ import gregtech6.covers.ICover;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.tileentity.connectors.TileEntityBase09Connector;
 import gregtech6.util.GTItemMover;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The item retriever cover — 1.20.1 port of gregapi/cover/covers/CoverRetrieverItem.java
@@ -222,5 +225,25 @@ public class CoverRetrieverItem extends AbstractCoverDefault {
 		/*ItemStack tStack = ItemStack.parseOptional(CoverFilterItem.nbtAccess(), aData.mNBTs[aSide].getCompound(FILTER_KEY)); // 21.1: the codec parse face
 		 *///?}
 		return tStack.isEmpty() ? null : tStack;
+	}
+
+	/**
+	 * Upstream :82-89 — the CoverFilterItem seven-row face (the retriever stores the same
+	 * {@code gt.filter.item} lane), task tooltip-cover-face.
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		net.minecraft.nbt.CompoundTag tLane = CoverData.laneOf(aStack); // :83 ST.load(stack, "gt.filter.item")
+		//? if forge {
+		ItemStack tFilter = tLane != null && tLane.contains(FILTER_KEY, Tag.TAG_COMPOUND) ? ItemStack.of(tLane.getCompound(FILTER_KEY)) : ItemStack.EMPTY;
+		//?} else {
+		/*ItemStack tFilter = tLane != null && tLane.contains(FILTER_KEY, Tag.TAG_COMPOUND) ? ItemStack.parseOptional(CoverFilterItem.nbtAccess(), tLane.getCompound(FILTER_KEY)) : ItemStack.EMPTY;
+		 *///?}
+		if (!tFilter.isEmpty()) aList.add(tFilter.getDisplayName().copy().withStyle(GT6TooltipStyle.CYAN)); // :83-84
+		aList.add(Component.translatable("gt6.tooltip.cover.filter_not_nbt_sensitive").withStyle(GT6TooltipStyle.ORANGE)); // :84 unconditional
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :87
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :88
+		aList.add(Component.translatable("gt6.tooltip.cover.reset_soft_hammer").withStyle(GT6TooltipStyle.DGRAY)); // :89
 	}
 }

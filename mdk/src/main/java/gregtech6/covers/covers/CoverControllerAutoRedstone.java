@@ -2,6 +2,10 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +14,7 @@ import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
 import gregtech6.covers.ICoverableTE;
 import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
+import gregtech6.tooltip.GT6TooltipStyle;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.machines.TileEntityOven;
 
@@ -219,5 +224,16 @@ public class CoverControllerAutoRedstone extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		return sprite();
+	}
+
+	/**
+	 * Upstream :57-60 — the screwdriver and magnifyingglass tool rows over the base row
+	 * (task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // the screwdriver row
+		aList.add(Component.translatable("gt6.tooltip.cover.detail_magnifyingglass").withStyle(GT6TooltipStyle.DGRAY)); // the magnifyingglass row
 	}
 }

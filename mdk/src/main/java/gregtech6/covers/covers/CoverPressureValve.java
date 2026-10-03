@@ -1,8 +1,12 @@
 package gregtech6.covers.covers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,6 +25,7 @@ import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
 import gregtech6.util.UT6;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The pressure valve cover — 1.20.1 port of gregapi/cover/covers/CoverPressureValve
@@ -130,5 +135,18 @@ public class CoverPressureValve extends AbstractCoverDefault {
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/pressurevalve/front");
 		 *///?}
+	}
+
+	/**
+	 * Upstream :67-72 — the CYAN release face and the two ORANGE requirements over the
+	 * base row + controller row (task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.valve_release").withStyle(GT6TooltipStyle.CYAN)); // :68
+		aList.add(Component.translatable("gt6.tooltip.cover.valve_liquids_tank").withStyle(GT6TooltipStyle.ORANGE)); // :69
+		aList.add(Component.translatable("gt6.tooltip.cover.valve_gases_air").withStyle(GT6TooltipStyle.ORANGE)); // :70
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :71
 	}
 }

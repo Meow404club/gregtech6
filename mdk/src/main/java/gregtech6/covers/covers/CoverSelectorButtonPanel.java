@@ -3,12 +3,18 @@ package gregtech6.covers.covers;
 import gregtech6.covers.ICover;
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 import gregtech6.covers.CoverData;
 import gregtech6.tileentity.machines.ITileEntitySwitchableMode;
 import gregtech6.util.UT6;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The button panel selector cover — 1.20.1 port of
@@ -136,5 +142,17 @@ public class CoverSelectorButtonPanel extends AbstractCoverAttachmentSelector {
 	@Override
 	public boolean isOpaque(byte aCoverSide, CoverData aData) {
 		return true;
+	}
+
+	/**
+	 * Upstream :96-100 — the DGRAY chisel row plus the controller/screwdriver rows over
+	 * the base row (task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.change_design_chisel").withStyle(GT6TooltipStyle.DGRAY)); // :97
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :98
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :99
 	}
 }

@@ -203,6 +203,7 @@ public class GT6EnUs extends LanguageProvider {
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
         addBottles(); // task food-bottles-min — the bottles-domain minimum
         addMaterialTooltip(); // task material-tooltip-face — table-tail append (the 22 material-domain row keys)
+        addCoverTooltip(); // task tooltip-cover-face — table-tail append (the 19 cover-domain row keys)
     }
 
     /**
@@ -3181,5 +3182,39 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.tooltip.material.origin_periodic", "Material from the Periodic Table of Elements"); // :489 literal
         add("gt6.tooltip.material.origin_random", "Random Material handled by Greg API"); // :491 literal
         add("gt6.tooltip.material.origin_mod", "Material from %s"); // :494 literal (the mod-id slot)
+    }
+
+    /**
+     * The cover-domain tooltip row keys (task tooltip-cover-face): the eight upstream LH
+     * faces verbatim (COVER_TOOLTIP LH.java:515, TOOL_TO_CHANGE_DESIGN_CHISEL :517,
+     * TOOL_TO_TOGGLE_CONTROLLER_COVER :519, TOOL_TO_TOGGLE_SCREWDRIVER :520,
+     * TOOL_TO_TOGGLE_MONKEY_WRENCH :521, TOOL_TO_TOGGLE_CUTTER :522,
+     * TOOL_TO_DETAIL_MAGNIFYINGGLASS :526, TOOL_TO_RESET_SOFT_HAMMER :535) and the
+     * eleven upstream CODE-LITERAL rows (CoverPump:81-82, CoverDrain:229-231,
+     * CoverPressureValve:68-70, CoverFilterItem:48, CoverRobotArm:104/CoverConveyor:78
+     * the composed period row, AbstractCoverAttachmentLogisticsDisplay:38) — the tank.1
+     * convention: a literal gets a key so the zh client renders the same face upstream
+     * showed.
+     */
+    private void addCoverTooltip() {
+        add("gt6.tooltip.cover.base", "This Item can be used as Cover"); // LH.java:515
+        add("gt6.tooltip.cover.toggle_screwdriver", "Use Screwdriver to toggle Modes"); // LH.java:520
+        add("gt6.tooltip.cover.toggle_cutter", "Use Cutter to toggle Modes"); // LH.java:522
+        add("gt6.tooltip.cover.toggle_controller", "Use Cover Controller Cover to toggle ON/OFF"); // LH.java:519
+        add("gt6.tooltip.cover.toggle_monkey_wrench", "Use Monkey Wrench to toggle Modes"); // LH.java:521
+        add("gt6.tooltip.cover.reset_soft_hammer", "Use Soft Hammer to Reset"); // LH.java:535
+        add("gt6.tooltip.cover.detail_magnifyingglass", "Use Magnifying Glass to see Details"); // LH.java:526
+        add("gt6.tooltip.cover.change_design_chisel", "Use Chisel to change Design"); // LH.java:517
+        add("gt6.tooltip.cover.transfer_period", "Transfers a Stack every %s"); // CoverConveyor:78 literal (the Tick(s) slot composes)
+        add("gt6.tooltip.cover.pump_throughput", "Transfers %s L/sec"); // CoverPump:81 literal (the throughput slot)
+        add("gt6.tooltip.cover.pump_no_fluid_blocks", "Doesn't do Fluid Blocks! Use Drain for that instead!"); // :82 literal
+        add("gt6.tooltip.cover.drain_fluid_blocks", "Collects Fluid Blocks (if not against Gravity)"); // CoverDrain:229 literal
+        add("gt6.tooltip.cover.drain_rainwater", "Collects Rainwater (not in Dry or Cold Areas)"); // :230 literal
+        add("gt6.tooltip.cover.drain_river_lake", "Will work infinitely in River and Lake Biomes"); // :231 literal
+        add("gt6.tooltip.cover.valve_release", "Releases Fluids when Pipe is full."); // CoverPressureValve:68 literal
+        add("gt6.tooltip.cover.valve_liquids_tank", "Liquids require Tank in front!"); // :69 literal
+        add("gt6.tooltip.cover.valve_gases_air", "Gases require Air or Tank in front!"); // :70 literal
+        add("gt6.tooltip.cover.filter_not_nbt_sensitive", "Not NBT sensitive!"); // CoverFilterItem:48 literal
+        add("gt6.tooltip.cover.logistics_display_status", "Emits Redstone and Displays Status of Logistics Core."); // AbstractCoverAttachmentLogisticsDisplay:38 literal
     }
 }

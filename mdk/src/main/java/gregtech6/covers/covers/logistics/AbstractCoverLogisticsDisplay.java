@@ -1,9 +1,14 @@
 package gregtech6.covers.covers.logistics;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import gregtech6.covers.CoverData;
 import gregtech6.covers.covers.AbstractCoverAttachmentLogistics;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The logistics CPU-display base — 1.20.1 port of gregapi/cover/covers/
@@ -61,5 +66,16 @@ public abstract class AbstractCoverLogisticsDisplay extends AbstractCoverAttachm
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/display/" + aFamily + "/" + Math.max(0, Math.min(10, aData.mVisuals[aSide])));
 		 *///?}
+	}
+
+	/**
+	 * Upstream AbstractCoverAttachmentLogisticsDisplay:36-39 — the DGRAY status face (the
+	 * upstream hardcoded-en literal); the super chain adds the controller row (both port
+	 * predicates are F on this family, the class doc), task tooltip-cover-face.
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // the logistics chain (the base + controller rows)
+		aList.add(Component.translatable("gt6.tooltip.cover.logistics_display_status").withStyle(GT6TooltipStyle.DGRAY)); // :38
 	}
 }

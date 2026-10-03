@@ -2,6 +2,11 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import gregtech6.covers.CoverData;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The drain cover — 1.20.1 port of gregapi/cover/covers/CoverDrain.java:63-254 (task
@@ -177,5 +183,21 @@ public class CoverDrain extends AbstractCoverDefault {
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/drain/front");
 		 *///?}
+	}
+
+	/**
+	 * Upstream :227-237 — the three CYAN collection rows and the controller row over the
+	 * base row. The conditional rows collapse with the declared cut (the class doc): the
+	 * Sewage (:231), Liquid-XP/Mob-Essence (:233-236) and OpenBlocks (:237) arms key on
+	 * fluids/mods the port does not register — upstream zh players saw nothing for them
+	 * either (the rows only exist mod-loaded), task tooltip-cover-face.
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.drain_fluid_blocks").withStyle(GT6TooltipStyle.CYAN)); // :229
+		aList.add(Component.translatable("gt6.tooltip.cover.drain_rainwater").withStyle(GT6TooltipStyle.CYAN)); // :230
+		aList.add(Component.translatable("gt6.tooltip.cover.drain_river_lake").withStyle(GT6TooltipStyle.CYAN)); // :231
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :238
 	}
 }
