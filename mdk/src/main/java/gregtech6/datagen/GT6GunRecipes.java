@@ -177,16 +177,13 @@ public class GT6GunRecipes implements net.minecraft.data.DataProvider {
 	@Override
 	public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache) {
 		PackOutput.PathProvider tRecipePaths = mOutput.createPathProvider(PackOutput.Target.DATA_PACK, "recipes");
-		PackOutput.PathProvider tAdvancementPaths = mOutput.createPathProvider(PackOutput.Target.DATA_PACK, "advancements");
+		// the unlock-advancement write stopped here (2026-10-03 user ruling, remember id1359):
+		// JEI/EMI ubiquitous, the vanilla recipe book is dead weight.
 		java.util.List<java.util.concurrent.CompletableFuture<?>> tFutures = new java.util.ArrayList<>();
 		java.util.Set<ResourceLocation> tSeen = new java.util.HashSet<>();
 		build(tFinished -> {
 			if (!tSeen.add(tFinished.getId())) throw new IllegalStateException("Duplicate recipe " + tFinished.getId());
 			tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tFinished.serializeRecipe(), tRecipePaths.json(tFinished.getId())));
-			com.google.gson.JsonObject tAdvancement = tFinished.serializeAdvancement();
-			if (tAdvancement != null) {
-				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tAdvancement, tAdvancementPaths.json(tFinished.getAdvancementId())));
-			}
 		});
 		return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture<?>[0]));
 	}
@@ -194,7 +191,6 @@ public class GT6GunRecipes implements net.minecraft.data.DataProvider {
 	/*@Override
 	public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache) {
 		PackOutput.PathProvider tRecipePaths = mOutput.createRegistryElementsPathProvider(net.minecraft.core.registries.Registries.RECIPE);
-		PackOutput.PathProvider tAdvancementPaths = mOutput.createRegistryElementsPathProvider(net.minecraft.core.registries.Registries.ADVANCEMENT);
 		return mLookup.thenCompose(tRegistries -> {
 			java.util.List<java.util.concurrent.CompletableFuture<?>> tFutures = new java.util.ArrayList<>();
 			java.util.Set<ResourceLocation> tSeen = new java.util.HashSet<>();
@@ -208,12 +204,6 @@ public class GT6GunRecipes implements net.minecraft.data.DataProvider {
 							net.minecraft.world.item.crafting.Recipe.CONDITIONAL_CODEC,
 							java.util.Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(aRecipe, aConditions)),
 							tRecipePaths.json(aId)));
-					if (aAdvancement != null) {
-						tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tRegistries,
-								net.minecraft.advancements.Advancement.CONDITIONAL_CODEC,
-								java.util.Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(aAdvancement.value(), aConditions)),
-								tAdvancementPaths.json(aAdvancement.id())));
-					}
 				}
 
 				@Override

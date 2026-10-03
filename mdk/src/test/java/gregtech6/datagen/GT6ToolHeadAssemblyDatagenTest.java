@@ -223,13 +223,11 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		assertEquals(0.25F, tRow.get("multiplier").getAsFloat(), "the LadderTool x0.25 budget face (MultiItemTool.java:182)");
 	}
 
-	/** The advancement rides the vanilla folder-name path — no orphaned recipes/tools advancement tree. */
+	/** The unlock-advancement stop (2026-10-03 user ruling, remember id1359) — the row JSON stays, the companion file must not grow back. */
 	@Test
-	public void theAdvancementRidesTheToolsFolder() throws Exception {
-		JsonObject tAdvancement = generated("advancements/recipes/tools/pickaxe/iron");
-		List<String> tRewards = tAdvancement.getAsJsonObject("rewards").getAsJsonArray("recipes").asList()
-				.stream().map(JsonElement::getAsString).toList();
-		assertEquals(List.of("gt6:pickaxe/iron"), tRewards, "the recipe reward keeps the row id");
+	public void theUnlockAdvancementIsNoLongerGenerated() throws Exception {
+		assertNull(GT6ToolHeadAssemblyDatagenTest.class.getResourceAsStream("/data/gt6/advancements/recipes/tools/pickaxe/iron.json"),
+				"the pickaxe/iron unlock advancement is stopped at the datagen face");
 	}
 
 	// --------------------------------------------------------------- the #39 completion band

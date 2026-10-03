@@ -154,7 +154,7 @@ public class GT6CompactComponentsJsonTest {
 			assertEquals("forge:gems/" + tGems[i], tagOf(generated("component/signal_emitter_" + tTokens[i]), 'Q'), "the :" + (436 + i) + " gem column");
 			assertEquals("forge:gems/" + tGems[i], tagOf(generated("component/sensor_" + tTokens[i]), 'Q'), "the :" + (447 + i) + " gem column");
 		}
-		// the unlockedBy face rides the sibling advancement file (the 1.20.1 save shape)
-		assertNotNull(getClass().getResourceAsStream("/data/gt6/advancements/recipes/misc/component/signal_emitter_ulv.json"));
+		// the unlock-advancement stop (2026-10-03 user ruling, remember id1359): the row rides alone
+		assertNull(getClass().getResourceAsStream("/data/gt6/advancements/recipes/misc/component/signal_emitter_ulv.json"));
 	}
 }
