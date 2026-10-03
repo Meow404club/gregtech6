@@ -194,6 +194,19 @@ class GT6BatteryBoxMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the r11 clean-base takeover — the theme 9-slice base is the only visual
+	// (task r11-gui-storage-clean; the shared helpers live on the storage gate)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void theThemeHandsTheNineSliceBaseToTheFamilyPanel() throws Exception {
+		ModularPanel<?> tPanel = GT6BatteryBoxMUI.panel(box(0, 4), headlessSyncManager());
+		GT6StorageMUIPanelTest.assertCleanBaseHandsTo(tPanel, "the batterybox family panel");
+		assertEquals(176, GT6StorageMUIPanelTest.sizeOf(tPanel, true), "the standard panel width");
+		assertEquals(166, GT6StorageMUIPanelTest.sizeOf(tPanel, false), "the standard panel height");
+	}
+
+	// ---------------------------------------------------------------------------
 	// the family reach — ONE face over the energy-storage crowd
 	// ---------------------------------------------------------------------------
 

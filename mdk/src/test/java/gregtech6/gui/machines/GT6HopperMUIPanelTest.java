@@ -325,6 +325,19 @@ class GT6HopperMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the r11 clean-base takeover — the theme 9-slice base is the only visual
+	// (task r11-gui-storage-clean; the shared helpers live on the storage gate)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void theThemeHandsTheNineSliceBaseToTheFamilyPanel() throws Exception {
+		ModularPanel<?> tPanel = GT6HopperMUI.panel(beOf(row("hopper_bronze")), headlessSyncManager());
+		GT6StorageMUIPanelTest.assertCleanBaseHandsTo(tPanel, "the hopper family panel");
+		assertEquals(176, GT6StorageMUIPanelTest.sizeOf(tPanel, true), "the standard panel width");
+		assertEquals(166, GT6StorageMUIPanelTest.sizeOf(tPanel, false), "the standard panel height");
+	}
+
+	// ---------------------------------------------------------------------------
 	// the family reach — ONE face over both kinds and every registered row
 	// ---------------------------------------------------------------------------
 
