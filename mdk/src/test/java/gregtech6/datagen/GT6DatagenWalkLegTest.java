@@ -63,6 +63,12 @@ public class GT6DatagenWalkLegTest extends GTOfflineTestBase {
     @BeforeAll
     static void boot() {
         GTMaterialItems.initMaterials();
+        // mdh-6 family gate: the hopper LIST freezes at class-init and is now driver-sensitive
+        // (the registration walk filters ABSENT domains). Load it here in the pristine default
+        // so the arms keep the pre-gate walk shape (full list, null-drop at the lookup,
+        // f8ffa0bd1 semantics) regardless of which pinning class class-loads it first in a
+        // shared JVM fork — a pin active at first touch would freeze the walk shrunk.
+        GT6Hoppers.ROWS.isEmpty();
     }
 
     @AfterEach
