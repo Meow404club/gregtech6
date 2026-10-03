@@ -12,7 +12,12 @@ go through THIS wrapper, and every spawn passes two machine-wide gates:
   (time / used / queued duration).
 - concurrency gate: ``GT6_GATE_MAX_CONCURRENT`` test slots (default 4) as
   O_EXCL files in /tmp/gt6_gate_slots, same shape as the gt6server boot slots
-  (/tmp/gt6_rcon_slots): stale slots (crashed agent) reaped by 2 h mtime age.
+  (/tmp/gt6_rcon_slots): stale slots are reaped when the holding PID is dead
+  or was reused by a non-gate process (gate-slot-pid-reap, 2026-10-03
+  incident: dead slots faked a full board while the 2 h mtime reaper was
+  still pending); the 2 h mtime age stays as the fallback for slots whose
+  name carries no usable PID. A holder whose cmdline still names the gate
+  is never reaped, however old — long gate runs are legal.
 - role gate (test-gating-v2, 2026-09-27 OOM ruling): a FULL test run — any
   gradle invocation naming an unfiltered ``test``/``cleanTest`` task (no
   ``--tests``) — is review-seat only. Roles: ``--role {coder,review}`` or env
@@ -183,7 +188,8 @@ from pathlib import Path
 
 GATE_LOG = Path("/tmp/gt6_gate.log")
 SLOT_DIR = Path("/tmp/gt6_gate_slots")
-SLOT_STALE_SECONDS = 2 * 3600   # crashed agents leak slots; age reaps them
+SLOT_STALE_SECONDS = 2 * 3600   # mtime fallback: reaps slots whose name has
+                                # no usable PID; PID liveness handles the rest
 DEFAULT_MEM_LIMIT_MIB = 30720
 MEMINFO_PATH = Path("/proc/meminfo")
 POLL_SECONDS = 10.0
@@ -968,14 +974,47 @@ def wait_memory(read_used=None, limit_mib=None, poll=POLL_SECONDS,
     return used, queued
 
 
-def reap_stale_slots(slot_dir=SLOT_DIR, log=None):
+def holder_stale_reason(pid):
+    """Why ``pid`` can no longer be a legitimate gate slot holder, or None
+    while it plausibly still is one (never reap those — long gate runs are
+    legal). ``/proc/<pid>`` gone → dead; a live cmdline naming neither the
+    gate nor a jvm means the PID was reused and the slot is leaked
+    (gate-slot-pid-reap, 2026-10-03)."""
+    try:
+        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except OSError:
+        return "pid-dead"
+    if not raw:
+        return "pid-dead"  # zombie: exited, not yet wait()ed
+    argv = raw.replace(b"\0", b" ")
+    if b"gt6testgate" in argv or b"gradlew" in argv or b"java" in argv:
+        return None
+    return "pid-reused"
+
+
+def reap_stale_slots(slot_dir=SLOT_DIR, log=None, log_file=GATE_LOG):
+    """Free slots whose holder is provably gone: PID dead, or PID reused by
+    a non-gate process. The 2 h mtime age only covers slots whose name
+    carries no usable PID. Live gate callers are never reaped."""
     now = time.time()
     for slot in Path(slot_dir).glob("slot.*"):
         try:
-            if now - slot.stat().st_mtime > SLOT_STALE_SECONDS:
-                slot.unlink()
-                if log:
-                    log(f"[gt6testgate] reaped stale gate slot {slot.name}")
+            try:
+                pid = int(slot.name.split(".")[1])
+            except (IndexError, ValueError):
+                pid = None  # malformed name — mtime fallback decides
+            if pid is not None:
+                reason = holder_stale_reason(pid)
+                if reason is None:
+                    continue  # live gate caller — red line, never reap
+            elif now - slot.stat().st_mtime <= SLOT_STALE_SECONDS:
+                continue
+            else:
+                reason = "mtime-age"
+            slot.unlink()
+            _journal("slot-reap", slot.name, f"reason={reason}", log_file)
+            if log:
+                log(f"[gt6testgate] reaped stale gate slot {slot.name} ({reason})")
         except OSError:
             pass  # raced with another reaper/owner
 
@@ -993,7 +1032,7 @@ def acquire_slot(poll=POLL_SECONDS, slot_dir=SLOT_DIR, tag="-",
     started = time.monotonic()
     queued = False
     while True:
-        reap_stale_slots(slot_dir, log)
+        reap_stale_slots(slot_dir, log, log_file)
         live = sorted(slot_dir.glob("slot.*"))
         if len(live) < limit:
             candidate = slot_dir / f"slot.{os.getpid()}.{time.monotonic_ns()}"
