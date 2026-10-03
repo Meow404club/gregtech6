@@ -70,12 +70,7 @@ public class GT6ModDriverFamilyGateTest {
             // offline init noise; the registries are usable by now
         }
         GTMaterialItems.initMaterials();
-        // Freeze every family list in the PRISTINE default: whichever test method runs first
-        // must not be the one class-loading these classes under an active pin (a pin at
-        // class-init freezes the walk shrunk — the live-install mechanism, not a test state).
-        int tTouch = GTBarrels.HIGH_TIER_METAL_DRUMS.size() + GT6Cells.BLOCKS_IN_ORDER.size()
-                + GT6Hoppers.ROWS.size() + GTFluidPipes.ROWS.size() + GTMachines.CRAFTING_TABLE_ROWS.size();
-        assertTrue(tTouch > 0, "all six family classes loaded");
+        GT6DriverTestSupport.loadFamiliesPristine(); // freeze the five family lists BEFORE any pin (see the support class)
     }
 
     @AfterEach

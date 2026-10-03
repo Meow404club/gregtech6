@@ -85,6 +85,7 @@ public class GT6ModDriverClearOutWaveTest {
 
     @BeforeAll
     public static void initMaterialSystem() {
+        GT6DriverTestSupport.loadFamiliesPristine(); // mdh-6: freeze the gated family lists before any pin
         // the fluid-ratchet arm touches GTFluids (ForgeRegistries at clinit) — bootstrap offline
         // instead of relying on a same-fork neighbour to have done it (the GTOfflineTestBase form)
         SharedConstants.tryDetectVersion();

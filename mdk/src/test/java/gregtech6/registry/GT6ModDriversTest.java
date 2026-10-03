@@ -34,6 +34,7 @@ public class GT6ModDriversTest {
     @BeforeAll
     public static void initMaterialSystem() {
         GTMaterialItems.initMaterials();
+        GT6DriverTestSupport.loadFamiliesPristine(); // mdh-6: freeze the gated family lists before any pin
     }
 
     @AfterEach
