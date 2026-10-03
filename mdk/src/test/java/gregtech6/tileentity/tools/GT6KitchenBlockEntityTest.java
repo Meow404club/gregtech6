@@ -176,12 +176,16 @@ class GT6KitchenBlockEntityTest extends gregtech6.tileentity.GTOfflineTestBase {
 		}
 	}
 
-	/** The :190/:210 NEI corner is the declared no-op (no NEI in the port) — the report arm. */
+	/**
+	 * The :190/:210 NEI corner stays the SERVER-side swallow (the viewer jump is the client
+	 * arm since task kitchen-nei-corner-jump — see GT6KitchenNeiCornerTest for the routing
+	 * pins) — the report arm.
+	 */
 	@Test
-	void theNeiCornerIsADeclaredNoOp() {
+	void theNeiCornerIsTheServerSwallow() {
 		GT6MixingBowlBlockEntity tBowl = bowl();
 		String tReport = tBowl.activateChain(null, (byte) 1, ItemStack.EMPTY, 0.1F, 0.0F, 0.1F);
-		assertTrue(tReport.contains("NEI corner"), "the corner quadrant reports the no-op: " + tReport);
+		assertTrue(tReport.contains("NEI corner"), "the corner quadrant reports the swallow: " + tReport);
 	}
 
 	/** With no matching row and nothing else to do, the top face reports "no action". */

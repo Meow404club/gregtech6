@@ -28,11 +28,13 @@ import gregtech6.registry.GT6Kitchen;
  *     base sizes the arrays from the map — the OUTPUT tank only, capacity = the
  *     carrier's block litres).</li>
  * </ul>
- * Declared deviations (the family pool cuts): the plunger/magnifying-glass tool arms
- * (:96-105) and the mDisplay fluid-tint renderer (:109-117) ride the p26 pool; the
- * outputs land in the output slots instead of {@code ST.give} straight to the player
- * (the base's click-economy collects them — the same one-click-extra the bowl family
- * accepted), the NEI corner branch is the declared no-op.
+	 * Declared deviations (the family pool cuts): the plunger/magnifying-glass tool arms
+	 * (:96-105) and the mDisplay fluid-tint renderer (:109-117) ride the p26 pool; the
+	 * outputs land in the output slots instead of {@code ST.give} straight to the player
+	 * (the base's click-economy collects them — the same one-click-extra the bowl family
+	 * accepted). The NEI corner branch is WIRED since task kitchen-nei-corner-jump: the
+	 * 4px corner quadrant (upstream {@code PX_P[4]}, :164 click / :170 openNEI) — the
+	 * rim-corner glyph patch rides the same table (MultiTileEntityJuicer.java:239 case 7).
  *
  * <p>Upstream :2184 tail also ores the Juicer item ({@code IL.Juicer, MT.Ceramic U*4})
  * and ships the clay-Juicer smelting hardening line — the item face rides the
@@ -62,6 +64,14 @@ public class GT6JuicerBlockEntity extends GT6ManualKitchenBlockEntity {
 	protected long exhaustDivisor() {
 		return 10000;
 	}
+
+	/** Upstream :164 {@code PX_P[4]} — the Juicer's 4px corner quadrant (the tub pair rides the base's 2px). */
+	@Override
+	protected float cornerBound() { return 4.0F / 16.0F; }
+
+	/** The symmetric {@code PX_N[4]} = 12px — upstream has no centre quadrant (the unified chain's declared bound). */
+	@Override
+	protected float innerBound() { return 12.0F / 16.0F; }
 
 	@Override
 	public String getTileEntityName() {

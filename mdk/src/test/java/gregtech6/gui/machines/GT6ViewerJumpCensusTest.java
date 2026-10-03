@@ -1,7 +1,8 @@
 /**
  * Offline guard tests for task debt-jei-emi-batch4-transfer: the machine-GUI progress-bar
  * jump face. Pins the click-rect geometry to the {@code ARROW_*} draw cell, the route
- * decision table (JEI first, EMI fallback, neither → no-op), the shared per-map
+ * decision table (EMI first, JEI fallback, neither → no-op — the r11-nei-corner-jump
+ * priority flip, known_bugs.r11-batch2-render.viewer_priority_emi), the shared per-map
  * {@code RecipeType} uid formula and the upstream "Recipes" hover literal — the faces the
  * runtime click rides but which are all assertable without a viewer (the EMI runtime
  * cannot run offline, the tier-b GT6EmiPluginTest boundary; the JEI recipes gui likewise).
@@ -10,6 +11,7 @@ package gregtech6.gui.machines;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
@@ -63,9 +65,21 @@ public class GT6ViewerJumpCensusTest {
 	public void routeTableFallsBackToNothingWithoutReadyViewers() {
 		assertFalse(GTViewerJump.openRecipeMapPage(null, true, true), "no map — nothing to open");
 		assertFalse(GTViewerJump.openRecipeMapPage(anyMap(), false, false), "no viewer installed — no-op");
-		// jei "loaded" offline but its plugin never saw onRuntimeAvailable → sRuntime null →
-		// the JEI arm refuses and the (absent) EMI arm is not reached
+		// (jei only): the JEI arm refuses offline — its plugin never saw onRuntimeAvailable → sRuntime null
 		assertFalse(GTViewerJump.openRecipeMapPage(anyMap(), true, false), "JEI without a ready runtime refuses");
+	}
+
+	/**
+	 * The priority flip (r11-nei-corner-jump): EMI first in BOTH the jump route and the
+	 * shared {@code preferredViewer} predicate the kitchen NEI glyph gate consumes — what
+	 * you see is what you jump to.
+	 */
+	@Test
+	public void preferredViewerIsEmiFirst() {
+		assertEquals("emi", GTViewerJump.preferredViewer(true, true), "dual install → EMI (the ruling)");
+		assertEquals("emi", GTViewerJump.preferredViewer(true, false), "EMI only → EMI");
+		assertEquals("jei", GTViewerJump.preferredViewer(false, true), "JEI only → JEI");
+		assertNull(GTViewerJump.preferredViewer(false, false), "neither → null (no glyph, no jump)");
 	}
 
 	/** The shared uid formula: the click rebuilds exactly the uid the registration used. */

@@ -9502,6 +9502,26 @@ tiles upstream (only `bathing_pot_wood` differs), which is why the digests repea
 - `block/tools/juicer/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middleside.png`; the same uniform tile as the bottom — upstream ships it un-detailed, the mRGBa tint carries the face)
 - `block/tools/juicer/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middletop.png`; the same uniform tile as the bottom)
 
+Derived (the kitchen NEI corner glyphs, task kitchen-nei-corner-jump):
+
+The kitchen family's rim-corner recipe-viewer glyph does NOT borrow the upstream
+`overlays/characters/nei.png` verbatim — the corner glyph is viewer-dynamic now (装 JEI 显
+「JEI」/仅装 EMI 显「EMI」, the r11-nei-corner-jump + viewer_priority_emi rulings; the
+bake-time gate rides `GTViewerJump.preferredViewer()`). The two tiles are DERIVED from the
+upstream NEI sheet instead: same 128x128 canvas with the 8x8 16px-cell tiling, the text
+band y3..12 and the x2 left margin verbatim, the `E`/`I` glyphs pixel-extracted from the
+upstream sheet (the E 4px + I 1px columns at the cell's x8..13), the `J`/`M` glyphs
+hand-drawn in the same 1px-stroke block style (5x10 each — upstream ships no J/M), one
+inter-letter pixel gap. Upstream renders the sheet white and tints it yellow at render
+time (`BI.nei()` x `CA_YELLOW_255 {255,255,0,255}`, CS.java:389); the port's decal is
+untinted (tintIndex -1), so the yellow is BAKED IN: every opaque pixel maps gray
+luminance (g,g,g) → (g,g,0) — the exact product of the upstream white art x yellow tint,
+anti-aliasing grays included.
+
+- `block/tools/kitchen_nei_jei.png` — `7a74e7a8e7e901d20024a417eef56c111afcb216d9eda46b3a43198000157ef0` (derived: J hand-drawn + E/I extracted from upstream `blocks/overlays/characters/nei.png`, yellow baked)
+- `block/tools/kitchen_nei_emi.png` — `2c812935abf7245e00771d0457cb2684a2ecbd3c748e0a53c9a99dea3a0d09aa` (derived: M hand-drawn + E/I extracted from the same sheet, yellow baked)
+- upstream reference (NOT borrowed): `blocks/overlays/characters/nei.png` — `40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2` (the derivation source sheet, sha256 recorded for traceability)
+
 ## Fluid spring block texture (task spring-texture-tint)
 
 The bedrock fluid-spring nozzle (GTFluidSpringBlock) borrow. Upstream renders the spring

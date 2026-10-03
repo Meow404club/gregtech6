@@ -1,5 +1,7 @@
 package gregtech6.gui;
 
+import javax.annotation.Nullable;
+
 import gregtech6.emi.GT6EmiPlugin;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.recipes.RecipeMap;
@@ -7,9 +9,11 @@ import gregtech6.recipes.RecipeMap;
 /**
  * The viewer-jump router (task debt-jei-emi-batch4): routes the machine-GUI progress-bar
  * click ({@code GTBasicMachineScreen}, the modern counterpart of the upstream GT_RectHandler
- * click rect, NEI_RecipeMap.java:399-426) to whichever recipe viewer is installed. JEI has
- * priority (the user-base ruling, decisions.2026-09-26-debt-jei-emi-coverage ①); EMI is the
- * fallback (including the JEI-loaded-but-runtime-not-ready corner). Neither viewer → silent
+ * click rect, NEI_RecipeMap.java:399-426) to whichever recipe viewer is installed. EMI has
+ * priority (the r11-nei-corner-jump ruling, known_bugs.r11-batch2-render
+ * .viewer_priority_emi — "同时装JEI和EMI显示EMI，因为EMI的优先级更高"; supersedes the old
+ * JEI-priority ruling decisions.2026-09-26-debt-jei-emi-coverage ①), JEI is the fallback
+ * (including the EMI-loaded-but-runtime-not-ready corner). Neither viewer → silent
  * no-op, the vanilla click handling continues.
  *
  * <p>The viewer plugin classes ({@link GT6JeiPlugin} / {@link GT6EmiPlugin}) load JEI/EMI
@@ -17,7 +21,8 @@ import gregtech6.recipes.RecipeMap;
  * viewer id — the absent viewer's classes are never touched (the dormant-impl contract the
  * JEI/EMI plugins ride on a dedicated server). {@link #openRecipeMapPage(RecipeMap, boolean,
  * boolean)} is the offline-testable pure arm: the boolean overload below only feeds it the
- * live probe results.
+ * live probe results. {@link #preferredViewer()} is the ONE predicate the jump and the
+ * kitchen NEI corner glyph gate share — what you see is what you jump to.
  *
  * <p>Upstream note: the left/right click arms both opened the SAME NEI handler page
  * (NEI_RecipeMap.java:75-76 dual registration) — this port keeps the single destination,
@@ -35,16 +40,33 @@ public final class GTViewerJump {
 		return isLoaded("jei") || isLoaded("emi");
 	}
 
-	/** The live route: JEI first, EMI fallback (see the class doc). */
+	/**
+	 * The ONE viewer decision — EMI first (see the class doc): {@code "emi"} when EMI is
+	 * present, {@code "jei"} when only JEI is, {@code null} with neither. The kitchen NEI
+	 * corner glyph picks its texture from the same answer (the GT6KitchenNeiModel gate).
+	 */
+	@Nullable
+	public static String preferredViewer() {
+		return preferredViewer(isLoaded("emi"), isLoaded("jei"));
+	}
+
+	/** The pure arm of the predicate — offline-testable decision table over the probe results (public for the census test). */
+	public static String preferredViewer(boolean aEmiLoaded, boolean aJeiLoaded) {
+		if (aEmiLoaded) return "emi";
+		return aJeiLoaded ? "jei" : null;
+	}
+
+	/** The live route: EMI first, JEI fallback (see the class doc). */
 	public static boolean openRecipeMapPage(RecipeMap aMap) {
-		return openRecipeMapPage(aMap, isLoaded("jei"), isLoaded("emi"));
+		String tViewer = preferredViewer();
+		return openRecipeMapPage(aMap, "jei".equals(tViewer), "emi".equals(tViewer));
 	}
 
 	/** The pure route arm — offline-testable decision table over the probe results (public for the census test). */
 	public static boolean openRecipeMapPage(RecipeMap aMap, boolean aJeiLoaded, boolean aEmiLoaded) {
 		if (aMap == null) return false;
-		if (aJeiLoaded && GT6JeiPlugin.openRecipeMapPage(aMap)) return true;
-		return aEmiLoaded && GT6EmiPlugin.openRecipeMapPage(aMap);
+		if (aEmiLoaded && GT6EmiPlugin.openRecipeMapPage(aMap)) return true;
+		return aJeiLoaded && GT6JeiPlugin.openRecipeMapPage(aMap);
 	}
 
 	/**
