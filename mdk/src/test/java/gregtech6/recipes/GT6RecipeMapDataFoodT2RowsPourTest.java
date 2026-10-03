@@ -43,7 +43,7 @@ public class GT6RecipeMapDataFoodT2RowsPourTest extends GTRecipesOfflineTestBase
 
 	/** The per-map census of this card: file key -> expected total rows (smoke + pour, zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"distillery", 21, // :559-579, the whole food face (new file)
+			"distillery", 1499, // :559-579 the 21-row food face + the recipe-b2-bath-potion-domain :35-:323 potion replay (1478 rows) — the ratchet bump is the b2 card's pour receipt
 			"mixer", 216,     // :727, :739-:744, :746-:828 fluid legs with the item-form and fluid-set walks expanded, minus the unregistered gemChipped Sugar form (new file)
 			"melter", 10,     // 1 smoke (Loader_Recipes_Chem.java:486) + :699-707 the 8 oils + the ice melt
 			"smelter", 10);   // 1 smoke (Loader_Recipes_Chem.java:501) + :709-717 the same face on the Smelter map
@@ -114,7 +114,11 @@ public class GT6RecipeMapDataFoodT2RowsPourTest extends GTRecipesOfflineTestBase
 	@Test
 	public void distilleryLegsAreUpstreamVerbatim() throws Exception {
 		JsonArray tRows = pourShipped("distillery");
-		assertEquals(21, tRows.size(), "the whole :559-579 face lands");
+		int tFoodFace = 0;
+		for (JsonElement tElement : tRows) {
+			if (tElement.getAsJsonObject().get("comment").getAsString().startsWith("Loader_Recipes_Food.java:")) tFoodFace++;
+		}
+		assertEquals(21, tFoodFace, "the whole :559-579 face lands (the recipe-b2-bath-potion-domain potion replay joined the file behind it)");
 		JsonObject tJelly = findRow(tRows, "Loader_Recipes_Food.java:559 ");
 		assertEquals("gt6:royal_jelly", tJelly.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("fluid").getAsString(), "RoyalJelly = the p31 \"royal_jelly\" normalization");
 		assertEquals("gt6:distilled_water", tJelly.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("fluid").getAsString(), "DistW = \"ic2distilledwater\" -> the distilled_water carrier");

@@ -327,7 +327,9 @@ class GT6RecipeMapJsonLoaderTest extends GTRecipesOfflineTestBase {
 				"burnmixer", "plantalyzer",
 				// the p37 five (task rm-six-maps): mortar/hammer carry row stocks, the
 				// other three are the declared-empty key-only faces
-				"microwave", "cooker", "toolhead", "mortar", "hammer"}) {
+				"microwave", "cooker", "toolhead", "mortar", "hammer",
+				// task recipe-b2-bath-potion-domain — the second MIXER file key (the sawing form)
+				"mixerpotions"}) {
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + " resolves");
 			assertFalse(tKey.equals("furnace") || tKey.equals("furnace_fuel"), "the forbidden pair stays outside the table");
 		}
