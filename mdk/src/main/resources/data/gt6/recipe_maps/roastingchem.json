@@ -1,0 +1,1764 @@
+{
+  "_header": "RM.ROASTING SO2 face — Loader_Recipes_Chem.java:407-441 (OXYGEN walk x1: oxygen; :445-465 AIR walk x2: netherair/enderair; plain air unregistered) (task recipe-b1-chem-domain). The CO/CO2 + oxide faces (:398-403/:423-427/:434-440) shipped in roasting.json (task recipe-data-b2b1). Item outputs of the AIR legs carry the upstream tChances {8000}; fluid SO2 certain. KJS: datapack domain, zero adaptation.",
+  "recipes": [
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_pyrite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 60
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1834
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_realgar]",
+      "inputs": [
+        {
+          "item": "gt6:dust_realgar",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_arsenic",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_sphalerite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sphalerite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_zinc",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_molybdenite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_molybdenite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_molybdenum",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1334
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_stibnite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_stibnite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_antimony",
+          "count": 28
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1200
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1800
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_pentlandite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pentlandite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_nickel",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 942
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1411
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_chalcopyrite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_chalcopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 45
+        },
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1375
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_arsenopyrite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_arsenopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 60
+        },
+        {
+          "item": "gt6:dust_tiny_arsenic",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1167
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_cobaltite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_cobaltite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_cobalt",
+          "count": 3
+        },
+        {
+          "item": "gt6:dust_tiny_arsenic",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 667
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_galena]",
+      "inputs": [
+        {
+          "item": "gt6:dust_galena",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_silver",
+          "count": 27
+        },
+        {
+          "item": "gt6:dust_div72_lead",
+          "count": 27
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 500
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_cooperite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_cooperite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_platinum",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_div72_nickel",
+          "count": 12
+        },
+        {
+          "item": "gt6:dust_div72_palladium",
+          "count": 12
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 334
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_tetrahedrite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tetrahedrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_copper",
+          "count": 27
+        },
+        {
+          "item": "gt6:dust_div72_antimony",
+          "count": 9
+        },
+        {
+          "item": "gt6:dust_small_hematite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 938
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1125
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_stannite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_stannite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_div72_tin",
+          "count": 9
+        },
+        {
+          "item": "gt6:dust_small_hematite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1188
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:407-441 OXYGEN walk x1 [dust_kesterite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_kesterite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_div72_zinc",
+          "count": 9
+        },
+        {
+          "item": "gt6:dust_div72_tin",
+          "count": 9
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:428-432 OXYGEN walk x1 [dust_sulfur]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sulfur",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:428-432 OXYGEN walk x1 [block_dust_sulfur]",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_sulfur",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 27000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:428-432 OXYGEN walk x1 [dust_tiny_blaze]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:428-432 OXYGEN walk x1 [dust_blaze]",
+      "inputs": [
+        {
+          "item": "gt6:dust_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 27000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:428-432 OXYGEN walk x1 [block_dust_blaze]",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 162000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 243000
+        }
+      ],
+      "duration": 1296,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_pyrite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 60,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_realgar] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_realgar",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_arsenic",
+          "count": 2,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_sphalerite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sphalerite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_zinc",
+          "count": 2,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_molybdenite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_molybdenite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_molybdenum",
+          "count": 3,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_stibnite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_stibnite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_antimony",
+          "count": 28,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1800
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_pentlandite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pentlandite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_nickel",
+          "count": 2,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1411
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_chalcopyrite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_chalcopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 45,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_arsenopyrite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_arsenopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 60,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_tiny_arsenic",
+          "count": 3,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_cobaltite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_cobaltite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_cobalt",
+          "count": 3,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_tiny_arsenic",
+          "count": 3,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_galena] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_galena",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_silver",
+          "count": 27,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_lead",
+          "count": 27,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_cooperite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_cooperite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_platinum",
+          "count": 2,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_nickel",
+          "count": 12,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_palladium",
+          "count": 12,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_tetrahedrite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tetrahedrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_copper",
+          "count": 27,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_antimony",
+          "count": 9,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_small_hematite",
+          "count": 1,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1125
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_stannite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_stannite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_tin",
+          "count": 9,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_small_hematite",
+          "count": 1,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_kesterite] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_kesterite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_zinc",
+          "count": 9,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_tin",
+          "count": 9,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [dust_sulfur] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sulfur",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [block_dust_sulfur] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_sulfur",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 72000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 27000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [dust_tiny_blaze] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [dust_blaze] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 72000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 27000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [block_dust_blaze] [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 648000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 243000
+        }
+      ],
+      "duration": 1296,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_pyrite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 60,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_realgar] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_realgar",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_arsenic",
+          "count": 2,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_sphalerite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sphalerite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_zinc",
+          "count": 2,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_molybdenite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_molybdenite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_molybdenum",
+          "count": 3,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_stibnite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_stibnite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_antimony",
+          "count": 28,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1800
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_pentlandite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pentlandite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_nickel",
+          "count": 2,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1411
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_chalcopyrite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_chalcopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 45,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_arsenopyrite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_arsenopyrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_hematite",
+          "count": 60,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_tiny_arsenic",
+          "count": 3,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_cobaltite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_cobaltite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_cobalt",
+          "count": 3,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_tiny_arsenic",
+          "count": 3,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_galena] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_galena",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_silver",
+          "count": 27,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_lead",
+          "count": 27,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_cooperite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_cooperite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_platinum",
+          "count": 2,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_nickel",
+          "count": 12,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_palladium",
+          "count": 12,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_tetrahedrite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tetrahedrite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_div72_copper",
+          "count": 27,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_antimony",
+          "count": 9,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_small_hematite",
+          "count": 1,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1125
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_stannite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_stannite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_tin",
+          "count": 9,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_small_hematite",
+          "count": 1,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:445-459 AIR walk x2 chances 8000 [dust_kesterite] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_kesterite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_copper",
+          "count": 1,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_zinc",
+          "count": 9,
+          "chance": 8000
+        },
+        {
+          "item": "gt6:dust_div72_tin",
+          "count": 9,
+          "chance": 8000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 1500
+        }
+      ],
+      "duration": 512,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [dust_sulfur] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sulfur",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [block_dust_sulfur] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_sulfur",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 72000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 27000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [dust_tiny_blaze] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [dust_blaze] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 72000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 27000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Roasting Chem:460-464 AIR walk x2 chances 8000 [block_dust_blaze] [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_blaze",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 648000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 243000
+        }
+      ],
+      "duration": 1296,
+      "eut": 16
+    }
+  ]
+}

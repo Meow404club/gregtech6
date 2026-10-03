@@ -1,0 +1,5166 @@
+{
+  "_header": "RM.MIXER Chem face — Loader_Recipes_Chem.java static rows (task recipe-b1-chem-domain). Faces: FL.waters walk x4 (:37-64), ANY.SiO2 walk x22 (:100), ANY.Fe walk x5 of 8 (:169-171; WroughtIron/CastIron/IronCompressed carry no port dust item = declared skip), OXYGEN walk x1 (:223-226), AIR walk x2 netherair/enderair (:229-232; plain air unregistered). DECLARED SKIPS (unregistered carriers): :140-141/:156 H2S, :150 hematite molten, :151/:266 Glycerol/Glyceryl/NitroFuel, :153 Reikygen, :179-181 UF4/Ca/U-235/U-238 molten, :380-381 biodiesel. Catalyst count-0 legs (:223-224/:229-230/:385-386) ship count 1 = the v1 no-notConsumable deviation (w4-f1 precedent). HeatMixer face (:101-102/:121-128/:159/:166/:174) has NO port map instance = pool until a map-registration card. KJS: datapack domain, zero adaptation.",
+  "recipes": [
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:38",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:38",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:38",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:38",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:39",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:39",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:39",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:39",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:40",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:40",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:40",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:40",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:41",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:41",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:41",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:41",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:42",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_bischofite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 2000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:42",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_bischofite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 2000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:42",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_bischofite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 2000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:42",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_bischofite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 2000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:43",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_mirabilite",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 30000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:43",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_mirabilite",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 30000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:43",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_mirabilite",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 30000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:43",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_mirabilite",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 30000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:44",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_trona",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:44",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_trona",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:44",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_trona",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:44",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_trona",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:45",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium_sulfate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_gypsum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:45",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium_sulfate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_gypsum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:45",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium_sulfate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_gypsum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:45",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium_sulfate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_gypsum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:47",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:47",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:47",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:47",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:48",
+      "inputs": [
+        {
+          "item": "gt6:dust_manganese",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_pyrolusite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:48",
+      "inputs": [
+        {
+          "item": "gt6:dust_manganese",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_pyrolusite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:48",
+      "inputs": [
+        {
+          "item": "gt6:dust_manganese",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_pyrolusite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:48",
+      "inputs": [
+        {
+          "item": "gt6:dust_manganese",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_pyrolusite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 6000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 4000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:49",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:49",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:49",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:49",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:50",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:50",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:50",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:50",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:51",
+      "inputs": [
+        {
+          "item": "gt6:dust_lithium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_lithium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:51",
+      "inputs": [
+        {
+          "item": "gt6:dust_lithium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_lithium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:51",
+      "inputs": [
+        {
+          "item": "gt6:dust_lithium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_lithium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:51",
+      "inputs": [
+        {
+          "item": "gt6:dust_lithium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_lithium_hydroxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:53",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_calcite",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:53",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_calcite",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:53",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_calcite",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:53",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_calcite",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:54",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_magnesium_carbonate",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:54",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_magnesium_carbonate",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:54",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_magnesium_carbonate",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:54",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_magnesium_carbonate",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:56",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 6
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        },
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 272,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:56",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 6
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        },
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 272,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:56",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 6
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        },
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 272,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:56",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 6
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        },
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 272,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:57",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:57",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:57",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:57",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:58",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:58",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:58",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:58",
+      "inputs": [
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferric_oxyhydroxide",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 18000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 24000
+        }
+      ],
+      "duration": 208,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:60",
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:60",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:60",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:60",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:61",
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:61",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:61",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:61",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:62",
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:nitrogendioxide",
+          "amount": 9000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 10000
+        },
+        {
+          "fluid": "gt6:nitrogenmonoxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:62",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:nitrogendioxide",
+          "amount": 9000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 10000
+        },
+        {
+          "fluid": "gt6:nitrogenmonoxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:62",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:nitrogendioxide",
+          "amount": 9000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 10000
+        },
+        {
+          "fluid": "gt6:nitrogenmonoxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:62",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:nitrogendioxide",
+          "amount": 9000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 10000
+        },
+        {
+          "fluid": "gt6:nitrogenmonoxide",
+          "amount": 2000
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:64",
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:disulfuricacid",
+          "amount": 11000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 14000
+        }
+      ],
+      "duration": 224,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:64",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:disulfuricacid",
+          "amount": 11000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 14000
+        }
+      ],
+      "duration": 224,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:64",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:disulfuricacid",
+          "amount": 11000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 14000
+        }
+      ],
+      "duration": 224,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer FL.waters walk x4 Chem:64",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:disulfuricacid",
+          "amount": 11000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 14000
+        }
+      ],
+      "duration": 224,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [silicon_dioxide]",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [sand]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sand",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [red_sand]",
+      "inputs": [
+        {
+          "item": "gt6:dust_red_sand",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [white_end_sand]",
+      "inputs": [
+        {
+          "item": "gt6:dust_white_end_sand",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [black_end_sand]",
+      "inputs": [
+        {
+          "item": "gt6:dust_black_end_sand",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [glass]",
+      "inputs": [
+        {
+          "item": "gt6:dust_glass",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [flint]",
+      "inputs": [
+        {
+          "item": "gt6:dust_flint",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [quartzite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_quartzite",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [nether_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_nether_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [certus_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_certus_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [charged_certus_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_charged_certus_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [milky_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_milky_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [fluix]",
+      "inputs": [
+        {
+          "item": "gt6:dust_fluix",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [blaze_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_blaze_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [mana_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_mana_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [quartz_black]",
+      "inputs": [
+        {
+          "item": "gt6:dust_quartz_black",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [red_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_red_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [smokey_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_smokey_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [sunny_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sunny_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [void_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_void_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [lavender_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_lavender_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.SiO2 walk x22 Chem:100 [elven_quartz]",
+      "inputs": [
+        {
+          "item": "gt6:dust_elven_quartz",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 12000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hexafluorosilicicacid",
+          "amount": 9000
+        }
+      ],
+      "duration": 240,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:103",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 18
+        },
+        {
+          "item": "gt6:dust_alumina",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 24000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 27000
+        },
+        {
+          "fluid": "gt6:cryolite_molten",
+          "amount": 2880
+        }
+      ],
+      "duration": 752,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:104",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 18
+        },
+        {
+          "item": "gt6:ingot_alumina",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 24000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 27000
+        },
+        {
+          "fluid": "gt6:cryolite_molten",
+          "amount": 2880
+        }
+      ],
+      "duration": 752,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:105",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_sodium_hydroxide",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_alumina",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 24000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 27000
+        },
+        {
+          "fluid": "gt6:cryolite_molten",
+          "amount": 2880
+        }
+      ],
+      "duration": 752,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:106",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_sodium_hydroxide",
+          "count": 2
+        },
+        {
+          "item": "gt6:ingot_alumina",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 24000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 27000
+        },
+        {
+          "fluid": "gt6:cryolite_molten",
+          "amount": 2880
+        }
+      ],
+      "duration": 752,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:107",
+      "inputs": [
+        {
+          "item": "gt6:dust_tantalum_pentoxide",
+          "count": 7
+        },
+        {
+          "item": "gt6:dust_potassium_fluoride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_heptafluorotantalate",
+          "count": 20
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 20000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 15000
+        }
+      ],
+      "duration": 560,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:108",
+      "inputs": [
+        {
+          "item": "gt6:dust_sugar",
+          "count": 45
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 12
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 1750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 33750
+        },
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 748,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:109",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_sugar",
+          "count": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 12
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 1750
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 33750
+        },
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 748,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:110",
+      "inputs": [
+        {
+          "item": "gt6:dust_borax",
+          "count": 43
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_hydrogen_borate",
+          "count": 28
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 16000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:111",
+      "inputs": [
+        {
+          "item": "gt6:dust_pyrolusite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_manganese_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 2000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:112",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcite",
+          "count": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_calcium_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:113",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium_carbonate",
+          "count": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:114",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcite",
+          "count": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_fluorite",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:116",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_carbonate",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_fluoride",
+          "count": 4
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 160,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:117",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_fluoride",
+          "count": 4
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 160,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:118",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_carbonate",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_nitrate",
+          "count": 10
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 10000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:119",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_nitrate",
+          "count": 10
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 10000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:120",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydrogencarbonate",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:130",
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_calcium_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:131",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:132",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:133",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 4000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:134",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_sulfite",
+          "count": 6
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:135",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_nitrate",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:136",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_nitrate",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 5000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:137",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_carbonate",
+          "count": 6
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:138",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 6
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 3000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 3000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:139",
+      "inputs": [
+        {
+          "item": "gt6:dust_trona",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_hydrogencarbonate",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 500
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 500
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:142",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_nitrate",
+          "count": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_bisulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 5000
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:143",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_nitrate",
+          "count": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_bisulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 5000
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:144",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_bisulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 2000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:145",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_bisulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 2000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:146",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_sulfate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_bisulfate",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 1000
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:147",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_bisulfate",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 1000
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:148",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium_sulfide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenperoxide",
+          "amount": 16000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 12000
+        }
+      ],
+      "duration": 304,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:149",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_sulfide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogenperoxide",
+          "amount": 16000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 12000
+        }
+      ],
+      "duration": 304,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:154",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:nitrogenmonoxide",
+          "amount": 2000
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitrogendioxide",
+          "amount": 3000
+        }
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:155",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:fluorine",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 2000
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:157",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:nitrogendioxide",
+          "amount": 6000
+        },
+        {
+          "fluid": "gt6:hydrogenperoxide",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 10000
+        }
+      ],
+      "duration": 160,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:158",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:sulfuricacid",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:disulfuricacid",
+          "amount": 11000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:160",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_sulfur",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_sulfide",
+          "count": 3
+        }
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:161",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_tiny_blaze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_sulfide",
+          "count": 3
+        }
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:162",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_sulfur",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_sulfide",
+          "count": 3
+        }
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:163",
+      "inputs": [
+        {
+          "item": "gt6:dust_potassium",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_tiny_blaze",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_sulfide",
+          "count": 3
+        }
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:164",
+      "inputs": [
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_sodium_hydrogencarbonate",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_carbonate",
+          "count": 2
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "duration": 48,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:169 [iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_ferric_chloride",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 3000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:170 [iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:171 [iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_iron",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:169 [enori]",
+      "inputs": [
+        {
+          "item": "gt6:dust_enori",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_ferric_chloride",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 3000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:170 [enori]",
+      "inputs": [
+        {
+          "item": "gt6:dust_enori",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:171 [enori]",
+      "inputs": [
+        {
+          "item": "gt6:dust_enori",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:169 [meteoric_iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_meteoric_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_ferric_chloride",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 3000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:170 [meteoric_iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_meteoric_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:171 [meteoric_iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_meteoric_iron",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:169 [meteorite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_meteorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_ferric_chloride",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 3000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:170 [meteorite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_meteorite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:171 [meteorite]",
+      "inputs": [
+        {
+          "item": "gt6:dust_meteorite",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:169 [pig_iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pig_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_small_ferric_chloride",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:chlorine",
+          "amount": 3000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:170 [pig_iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pig_iron",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 3
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        }
+      ],
+      "duration": 80,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer ANY.Fe walk x5 Chem:171 [pig_iron]",
+      "inputs": [
+        {
+          "item": "gt6:dust_pig_iron",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_ferric_chloride",
+          "count": 8
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_ferrous_chloride",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:175",
+      "inputs": [
+        {
+          "item": "gt6:dust_uranium_tetrafluoride",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:fluorine",
+          "amount": 2000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:uraniumhexafluoride",
+          "amount": 7000
+        }
+      ],
+      "duration": 112,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:176",
+      "outputs": [
+        {
+          "item": "gt6:dust_uranium_tetrafluoride",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        },
+        {
+          "fluid": "gt6:uraniumhexafluoride",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 4000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:177",
+      "outputs": [
+        {
+          "item": "gt6:dust_uranium238_tetrafluoride",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        },
+        {
+          "fluid": "gt6:uranium238hexafluoride",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 4000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:178",
+      "outputs": [
+        {
+          "item": "gt6:dust_uranium235_tetrafluoride",
+          "count": 5
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:hydrogen",
+          "amount": 2000
+        },
+        {
+          "fluid": "gt6:uranium235hexafluoride",
+          "amount": 7000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrogenfluoride",
+          "amount": 4000
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:223-224 OXYGEN walk x1 [dust_platinum] (catalyst count 0->1, v1 no notConsumable)",
+      "inputs": [
+        {
+          "item": "gt6:dust_platinum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:223-224 OXYGEN walk x1 [dust_vanadium_pentoxide] (catalyst count 0->1, v1 no notConsumable)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium_pentoxide",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:225 OXYGEN walk x1 (catalyst count n/a — real input)",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:226 OXYGEN walk x1",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:229 AIR walk x2 [gt6:netherair] (catalyst count 0->1)",
+      "inputs": [
+        {
+          "item": "gt6:dust_platinum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        },
+        {
+          "fluid": "gt6:netherair",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:230 AIR walk x2 [gt6:netherair] (catalyst count 0->1)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium_pentoxide",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        },
+        {
+          "fluid": "gt6:netherair",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:231 AIR walk x2 [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:netherair",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:232 AIR walk x2 [gt6:netherair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:netherair",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:229 AIR walk x2 [gt6:enderair] (catalyst count 0->1)",
+      "inputs": [
+        {
+          "item": "gt6:dust_platinum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        },
+        {
+          "fluid": "gt6:enderair",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:230 AIR walk x2 [gt6:enderair] (catalyst count 0->1)",
+      "inputs": [
+        {
+          "item": "gt6:dust_vanadium_pentoxide",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 750
+        },
+        {
+          "fluid": "gt6:enderair",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:sulfurtrioxide",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:231 AIR walk x2 [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_salt",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:enderair",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:saltwater",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:232 AIR walk x2 [gt6:enderair]",
+      "inputs": [
+        {
+          "item": "gt6:dust_sylvite",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_sulfate",
+          "count": 7
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 3000
+        },
+        {
+          "fluid": "gt6:enderair",
+          "amount": 4000
+        },
+        {
+          "fluid": "gt6:saltedwater",
+          "amount": 250
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 4000
+        }
+      ],
+      "duration": 176,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:267",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:nitricacid",
+          "amount": 5000
+        },
+        {
+          "fluid": "gt6:hydrochloricacid",
+          "amount": 8000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:aquaregia",
+          "amount": 13000
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:268",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:helium",
+          "amount": 5
+        },
+        {
+          "fluid": "gt6:neon",
+          "amount": 5
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:heliumneon",
+          "amount": 10
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:385-386 [ethylene] (MgCl2 catalyst count 0->1)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_plastic",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:titaniumtetrachloride",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:ethylene",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Mixer Chem:385-386 [propylene] (MgCl2 catalyst count 0->1)",
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium_chloride",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_plastic",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:titaniumtetrachloride",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:propylene",
+          "amount": 100
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    }
+  ]
+}

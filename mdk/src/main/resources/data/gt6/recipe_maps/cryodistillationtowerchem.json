@@ -1,0 +1,93 @@
+{
+  "_header": "RM.CRYO_DISTILLATION_TOWER Chem face — Loader_Recipes_Chem.java:364-365 (task recipe-b1-chem-domain). The plain-air row (:363) is a DECLARED skip (no air fluid in the port; netherair/enderair live). Gas ladders integer-floor per the upstream long arithmetic (U7->142, U20->50, U100->10, U1000->1 mB). KJS: datapack domain.",
+  "recipes": [
+    {
+      "comment": "RM.CryoDT Chem:364 Nether Air (plain-air row :363 skip — no air fluid)",
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_ashes",
+          "count": 1,
+          "chance": 7000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:netherair",
+          "amount": 200
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitrogen",
+          "amount": 142
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 50
+        },
+        {
+          "fluid": "gt6:sulfurdioxide",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:helium",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:neon",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:argon",
+          "amount": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 64
+    },
+    {
+      "comment": "RM.CryoDT Chem:365 Ender Air",
+      "outputs": [
+        {
+          "item": "gt6:dust_tiny_ashes",
+          "count": 1,
+          "chance": 6000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:enderair",
+          "amount": 200
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:nitrogen",
+          "amount": 142
+        },
+        {
+          "fluid": "gt6:oxygen",
+          "amount": 50
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 10
+        },
+        {
+          "fluid": "gt6:krypton",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:xenon",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:radon",
+          "amount": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 64
+    }
+  ]
+}
