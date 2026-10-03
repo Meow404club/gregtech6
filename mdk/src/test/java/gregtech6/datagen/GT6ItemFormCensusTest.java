@@ -326,10 +326,12 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      */
     @Test
     void casingFamilyItemsRideThe3DCubeModels() throws Exception {
+        // initMaterials FIRST — OP.init() re-creates the prefix objects on every call, so
+        // the family array must read the statics AFTER init (identity == against the walk).
+        gregtech6.registry.GTMaterialItems.initMaterials();
         gregapi.oredict.OreDictPrefix[] tFamilies = {
                 gregapi.data.OP.casingMachine, gregapi.data.OP.casingMachineDouble,
                 gregapi.data.OP.casingMachineQuadruple, gregapi.data.OP.casingMachineDense};
-        gregtech6.registry.GTMaterialItems.initMaterials();
         int tWalked = 0;
         for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair
                 : gregtech6.registry.GTMaterialItems.registrationOrder()) {

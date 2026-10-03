@@ -52,7 +52,17 @@ public final class GT6ItemModels extends ItemModelProvider {
     protected void registerModels() {
         for (GT6DatagenItems.Entry tEntry : GT6DatagenItems.collect()) {
             String tSet = iconsetOf(tEntry.material());
-            String tPrefix = spriteNameOf(tEntry.prefix());
+            String tPrefix = spriteNameOf(tEntry.prefix()); // the wireGt fold — identical to snakeCase for the casing quartet
+            // task casing-family-3d — the four machine-casing families ride the 3D
+            // cube (the casingCubeModel javadoc); every other prefix keeps the flat
+            // item/generated sprite below.
+            if (tEntry.prefix() == gregapi.data.OP.casingMachine
+                    || tEntry.prefix() == gregapi.data.OP.casingMachineDouble
+                    || tEntry.prefix() == gregapi.data.OP.casingMachineQuadruple
+                    || tEntry.prefix() == gregapi.data.OP.casingMachineDense) {
+                casingCubeModel(tEntry.itemId(), tSet, tPrefix);
+                continue;
+            }
             // the OVERLAY second pass (task tool-model-layers): upstream registers
             // every materialicon as a base + "<NAME>_OVERLAY" pair and draws pass0 tinted
             // with the material colour / pass1 un-tinted (TextureSet.java:113-116 and
@@ -981,6 +991,75 @@ public final class GT6ItemModels extends ItemModelProvider {
     private void withExistingParentUnchecked(String aItemId, String aBlockModelPath) {
         getBuilder(aItemId).parent(new net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile(
                 new net.minecraft.resources.ResourceLocation(GT6DataGenerators.MOD_ID, aBlockModelPath)));
+    }
+
+    /**
+     * Task casing-family-3d — the four machine-casing families ride the two-layer tinted
+     * cube instead of the flat sprite: the upstream art is the PrefixBlock_ full cube
+     * (Loader_PrefixBlocks.java:48-51 — the upstream ITEM was therefore the 3D block
+     * form, the vanilla stone-item look), so the {@code item/generated} sprite was the
+     * user-reported anti-pattern (known_bugs.r11-casing-item-model). The shape is the
+     * {@code GT6BlockStates.partModel} body+decal grammar over the material_sets sprites:
+     * the tintindex-0 body cube ({@code MaterialPrefixItem.tintColor} serves the material
+     * colour on element faces exactly as it did on the generated layer0, the ItemColors
+     * registration is per-ITEM so it covers element-face tint indexes unchanged) + the
+     * six 0.01 un-tinted overlay decals (the shared ItemColor -1 arm), cutout for the
+     * transparent decal shells. particle = the body sprite — this walk adds no new
+     * missingno break-particle models (the r11-machine-particle-key lesson; partModel
+     * itself predates it and stays append-only on the mains/rod domain).
+     * <p>ponytail: duplicated from partModel rather than extracted — two providers, two
+     * call sites, one shape; extract when a third cube-family walk appears.
+     */
+    private void casingCubeModel(String aItemId, String aSet, String aPrefix) {
+        String tBase = "item/material_sets/" + aSet + "/" + aPrefix;
+        boolean tOverlay = existingFileHelper.exists(modLoc(tBase + "_overlay"), TEXTURE);
+        ItemModelBuilder tModel = getBuilder(aItemId)
+                .parent(getExistingFile(mcLoc("block/cube")))
+                .texture("particle", modLoc(tBase))
+                .texture("down", modLoc(tBase))
+                .texture("up", modLoc(tBase))
+                .texture("north", modLoc(tBase))
+                .texture("south", modLoc(tBase))
+                .texture("west", modLoc(tBase))
+                .texture("east", modLoc(tBase));
+        if (tOverlay) {
+            tModel.texture("overlay_bottom", modLoc(tBase + "_overlay"))
+                  .texture("overlay_top", modLoc(tBase + "_overlay"))
+                  .texture("overlay_side", modLoc(tBase + "_overlay"))
+                  .renderType("cutout");
+        }
+        // element 0 — the body cube (tintindex 0 = the material tint)
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        if (tOverlay) {
+            // elements 1-6 — the overlay decals (the partModel 0.01-offset form)
+            tModel.element() // north
+                    .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                    .face(net.minecraft.core.Direction.NORTH).texture("#overlay_side").cullface(net.minecraft.core.Direction.NORTH)
+                    .end();
+            tModel.element() // south
+                    .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                    .face(net.minecraft.core.Direction.SOUTH).texture("#overlay_side").cullface(net.minecraft.core.Direction.SOUTH)
+                    .end();
+            tModel.element() // east
+                    .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                    .face(net.minecraft.core.Direction.EAST).texture("#overlay_side").cullface(net.minecraft.core.Direction.EAST)
+                    .end();
+            tModel.element() // west
+                    .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                    .face(net.minecraft.core.Direction.WEST).texture("#overlay_side").cullface(net.minecraft.core.Direction.WEST)
+                    .end();
+            tModel.element() // top
+                    .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                    .face(net.minecraft.core.Direction.UP).texture("#overlay_top").cullface(net.minecraft.core.Direction.UP)
+                    .end();
+            tModel.element() // bottom
+                    .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                    .face(net.minecraft.core.Direction.DOWN).texture("#overlay_bottom").cullface(net.minecraft.core.Direction.DOWN)
+                    .end();
+        }
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */
