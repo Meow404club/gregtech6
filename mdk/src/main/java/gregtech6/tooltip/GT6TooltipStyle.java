@@ -43,6 +43,17 @@ public final class GT6TooltipStyle {
 	public static final ChatFormatting YELLOW = ChatFormatting.YELLOW;
 	/** LH.Chat.WHITE (:702) — the value slot inside a row. */
 	public static final ChatFormatting WHITE = ChatFormatting.WHITE;
+	// task material-tooltip-face — the four material-domain additions (the LH.java:685-710
+	// block order anchored on the pinned pairs above: DRED :690 → DCYAN :689, PURPLE :691,
+	// DGRAY :695 → BLUE :696, RED :699 → PINK :700)
+	/** LH.Chat.BLUE (:696) — the material stat rows (Q/S/D, the origin line, fuel value). */
+	public static final ChatFormatting BLUE = ChatFormatting.BLUE;
+	/** LH.Chat.DCYAN (:689 → DARK_AQUA) — the F3+H contained-materials header. */
+	public static final ChatFormatting DCYAN = ChatFormatting.DARK_AQUA;
+	/** LH.Chat.PURPLE (:691 → DARK_PURPLE) — the possible-enchantments row labels. */
+	public static final ChatFormatting PURPLE = ChatFormatting.DARK_PURPLE;
+	/** LH.Chat.PINK (:700 → LIGHT_PURPLE) — the enchantment names inside a PURPLE row. */
+	public static final ChatFormatting PINK = ChatFormatting.LIGHT_PURPLE;
 
 	private GT6TooltipStyle() {}
 }

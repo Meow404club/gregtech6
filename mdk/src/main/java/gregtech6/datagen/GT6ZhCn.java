@@ -2768,6 +2768,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt.tileentity.portal.end.tooltip.3");
 		addDirect("gt.lang.requirement.ignite.fire");
 		addDirect("gt.lang.requirement.chunk.loader");
+		addMaterialTooltipUnits(); // task material-tooltip-face — table-tail append (the 22 material-domain row keys)
     }
 
 	static Map<String, Map<String, RefRow>> loadReference() {
@@ -2786,5 +2787,46 @@ public class GT6ZhCn extends LanguageProvider {
 			throw new IllegalStateException("failed to read " + REFERENCE_RESOURCE, aE);
 		}
 		return rTable;
+	}
+
+	/**
+	 * The material-domain tooltip row zh faces (task material-tooltip-face, 22 hand rows —
+	 * the addBoilerTooltipUnits shape): the keys are this port's own
+	 * {@code gt6.tooltip.material.*} vocabulary, so the values ride the reference table's
+	 * hand layer via {@link #addDirect}. Twelve keys translate the upstream LH faces with
+	 * the tmp/gregtech.lang dump fragments verbatim (gt.lang.furnacefuel :3329 — the dump
+	 * itself stays untranslated, so zh = en; gt.lang.needs.handle :3340 /
+	 * gt.lang.needs.sharpening :3341; the enchant labels gt.lang.tool.enchants :3450 /
+	 * gt.lang.weapon.enchants :3569 / gt.lang.ammo.enchants :3235 /
+	 * gt.lang.ranged.enchants :3383 / gt.lang.fishing.enchants :3294 /
+	 * gt.lang.armor.enchants :3236; gt.lang.flammable.explosive :3296 /
+	 * gt.lang.flammable :3295 / gt.lang.explosive :3275 / gt.lang.unburnable :3535 /
+	 * gt.lang.contained.materials :3255). The eleven upstream CODE-LITERAL rows
+	 * (tool_stats/source_of/f3h_hint/the four origin faces) stay the hardcoded-en face in
+	 * both locales — upstream zh players saw exactly that (the tank.1 convention).
+	 */
+	private void addMaterialTooltipUnits() {
+		addDirect("gt6.tooltip.material.furnace_fuel");
+		addDirect("gt6.tooltip.material.tool_stats");
+		addDirect("gt6.tooltip.material.needs_sharpening");
+		addDirect("gt6.tooltip.material.needs_handle");
+		addDirect("gt6.tooltip.material.source_of");
+		addDirect("gt6.tooltip.material.tool_enchants");
+		addDirect("gt6.tooltip.material.weapon_enchants");
+		addDirect("gt6.tooltip.material.ammo_enchants");
+		addDirect("gt6.tooltip.material.ranged_enchants");
+		addDirect("gt6.tooltip.material.fishing_enchants");
+		addDirect("gt6.tooltip.material.armor_enchants");
+		addDirect("gt6.tooltip.material.flammable_explosive");
+		addDirect("gt6.tooltip.material.flammable");
+		addDirect("gt6.tooltip.material.explosive");
+		addDirect("gt6.tooltip.material.unburnable");
+		addDirect("gt6.tooltip.material.contained_materials");
+		addDirect("gt6.tooltip.material.f3h_hint");
+		addDirect("gt6.tooltip.material.origin_unknown");
+		addDirect("gt6.tooltip.material.origin_vanilla");
+		addDirect("gt6.tooltip.material.origin_periodic");
+		addDirect("gt6.tooltip.material.origin_random");
+		addDirect("gt6.tooltip.material.origin_mod");
 	}
 }
