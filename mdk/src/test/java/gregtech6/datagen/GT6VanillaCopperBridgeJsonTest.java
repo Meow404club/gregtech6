@@ -3,7 +3,6 @@ package gregtech6.datagen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -144,12 +143,15 @@ public class GT6VanillaCopperBridgeJsonTest {
 	 * the GENERATED TREE on disk (anchored by the mod-only spray_can_empty recipe), NOT
 	 * the classloader — {@code data/minecraft/advancements/recipes/**} is a path the
 	 * vanilla client-extra jar itself ships, so a classpath read can never prove absence.
+	 * The anchor file sits at {@code <gen>/data/gt6/recipes/}, so FOUR parents climb to
+	 * {@code <gen>} (the generated tree root) and {@code data/minecraft/...} resolves the
+	 * real regeneration path (three parents + "data/..." would double the data segment).
 	 */
 	@Test
 	public void theUnlockAdvancementsAreNoLongerGenerated() throws Exception {
 		URL tAnchor = GT6VanillaCopperBridgeJsonTest.class.getResource("/data/gt6/recipes/spray_can_empty.json");
 		assertNotNull(tAnchor, "the mod-only anchor rides the generated-resources classpath");
-		Path tGeneratedRoot = Paths.get(tAnchor.toURI()).getParent().getParent().getParent();
+		Path tGeneratedRoot = Paths.get(tAnchor.toURI()).getParent().getParent().getParent().getParent();
 		String[] tPaths = {"recipes/building_blocks/copper_block", "recipes/redstone/lightning_rod",
 				"recipes/tools/brush", "recipes/tools/spyglass"};
 		for (String tPath : tPaths) {

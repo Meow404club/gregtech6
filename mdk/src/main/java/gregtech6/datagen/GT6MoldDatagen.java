@@ -363,8 +363,8 @@ public final class GT6MoldDatagen {
 		@Override
 		public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache) {
 			PackOutput.PathProvider tRecipePaths = mOutput.createPathProvider(PackOutput.Target.DATA_PACK, "recipes");
-				// the unlock-advancement write stopped here (2026-10-03 user ruling, remember id1359):
-				// JEI/EMI ubiquitous, the vanilla recipe book is dead weight.
+			// the unlock-advancement write stopped here (2026-10-03 user ruling, remember id1359):
+			// JEI/EMI ubiquitous, the vanilla recipe book is dead weight.
 			java.util.List<java.util.concurrent.CompletableFuture<?>> tFutures = new java.util.ArrayList<>();
 			java.util.Set<ResourceLocation> tSeen = new java.util.HashSet<>();
 			build(tFinished -> {
