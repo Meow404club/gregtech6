@@ -263,7 +263,13 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// two-files-one-map form): mixerpotions.json pours the Loader_Recipes_Potions
 				// :325-:354 Dragon_Breath face into the SAME map; the key decouples the domain
 				// censuses (mixer.json = the food face) and the b1-branch mixerchem key
-				"mixerpotions");
+				"mixerpotions",
+				// task toolhead-r11c-extruder-heads — the Extruder map joins with its tool-head
+				// representative rows (the Handlers:750-762/:783-795 metal walks + the stone
+				// stonetypes/BlockStones/Blackstone families); the plate/rod material rows keep
+				// pouring via GT6RecipesExtruder (FMLCommonSetup), the JSON is a second,
+				// independent subset owner (the sawing-key precedent)
+				"extruder");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -706,6 +712,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 
 			// task recipe-b2-bath-potion-domain — the second MIXER file key (the sawing form)
 			case "mixerpotions" -> GT6RecipeMaps.MIXER;
+			// task toolhead-r11c-extruder-heads — the Extruder tool-head representative rows
+			// (the plate/rod material walk stays on GT6RecipesExtruder; two subset owners,
+			// one map — the sawing/cutter two-key precedent)
+			case "extruder" -> GT6RecipeMaps.EXTRUDER;
 		default -> null;
 		};
 	}

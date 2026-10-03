@@ -1,0 +1,975 @@
+{
+  "comment": "task toolhead-r11c-extruder-heads — the RM.Extruder tool-head rows, representative-row form (the B1/r11e walk-declaration convention). Eight upstream walk families, one representative row each per family statement: (1) the metal Shape_Extruder forging rows (Loader_Recipes_Handlers.java:750-762 head subset: raw shovel/sword/hoe/saw/pickaxe/axe + finished file/hammer), walk = OreDictPrefix.VALUES x containsAny(EXTRUDER_FODDER, INGOT_BASED, GEM_BASED) x the material's EXTRUDER gate — representative input gt6:ingot_iron; EUt 96 (the aHot forging column), duration = RecipeMapHandlerPrefixForging.getCosts (max(16, 1+|(meltingPoint-293)*weight|/(75*96)); the Iron representative computes 185/369/554/1107 t; upstream the duration is per-material runtime, the JSON carries the Iron representative value). (2) the metal Shape_SimpleEx mirror (:783-795 head subset), same walk + DUST_BASED, EUt 16, duration = UT.Code.units(outputU, U, 64, T) = 64 t per output unit (64/96/128/192/384). (3)+(4) the stone stonetypes rows (RM.java:410-414/:417 Shape + :423-427/:430 SimpleEx), walk = the GT6 stone-family materials x the four block forms (aStone/aCobble/aSmooth/aDustBlock) — representative input minecraft:stone. (5)+(6) the BlockStones metatype rows (BlockStones.java:293-297/:300 + :308-312/:315), walk = every BlockStones metatype block — representative input gt6:granite. (7)+(8) the Blackstone special rows (Loader_Recipes_Extruder.java:51-58 + :66-73; the SPEC's :51-53 shovel/sword/hoe lines plus their :54-55/:58 pickaxe/axe/hammer continuations), representative input minecraft:blackstone — DECLARED DEVIATION: the upstream input is Module_Blackstone_Generator, a port-absent item; the port substitutes the Blackstone stone item (GT6Anvils: OP.stone.dat(Blackstone) = vanilla BLACKSTONE), counts and durations verbatim. DECLARED DEVIATION (both metal families): upstream each aHot statement emits a config-conditional row pair (96 EUt under EXTRUDER_SIMPLE.NOT + 16 EUt under EXTRUDER_SIMPLE); the config-less JSON keeps one row per statement at its family's column, so both mold families answer on every config. DECLARED POOL: the Shape_Extruder/SimpleEx non-head rows (plate/plateCurved/rod/rodLong/bolt/gear/gearSmall/ingot/block/casing/wire/foil/pipe families) and the mold-crafting chain (needs the port-absent Shape_Extruder_Empty) stay pooled; the plate/rod rows already pour via GT6RecipesExtruder (FMLCommonSetup). Molds enter the second input slot and are never consumed (Recipe.sNotConsumable <- gt6:extruder_shapes tag membership; the upstream size-0 marker port, remember id478).",
+  "recipes": [
+    {
+      "comment": "Handlers:750 — Shape_Extruder_Shovel forging row, Iron representative (1 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_iron"
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:756 — Shape_Extruder_Sword forging row, Iron representative (2 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_iron"
+        }
+      ],
+      "duration": 369,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:757 — Shape_Extruder_Hoe forging row, Iron representative (2 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_iron"
+        }
+      ],
+      "duration": 369,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:758 — Shape_Extruder_Saw forging row, Iron representative (2 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_saw"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_saw_iron"
+        }
+      ],
+      "duration": 369,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:759 — Shape_Extruder_Pickaxe forging row, Iron representative (3 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_iron"
+        }
+      ],
+      "duration": 554,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:760 — Shape_Extruder_Axe forging row, Iron representative (3 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_iron"
+        }
+      ],
+      "duration": 554,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:761 — Shape_Extruder_File forging row, Iron representative (2 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_file"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_file_iron"
+        }
+      ],
+      "duration": 369,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:762 — Shape_Extruder_Hammer forging row, Iron representative (6 ingot -> 1 head, 96 EUt, melting-point duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_iron"
+        }
+      ],
+      "duration": 1107,
+      "eut": 96
+    },
+    {
+      "comment": "Handlers:783 — Shape_SimpleEx_Shovel mirror row, Iron representative (1 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_iron"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Handlers:789 — Shape_SimpleEx_Sword mirror row, Iron representative (2 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_iron"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Handlers:790 — Shape_SimpleEx_Hoe mirror row, Iron representative (2 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_iron"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Handlers:791 — Shape_SimpleEx_Saw mirror row, Iron representative (2 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_saw"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_saw_iron"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Handlers:792 — Shape_SimpleEx_Pickaxe mirror row, Iron representative (3 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_iron"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Handlers:793 — Shape_SimpleEx_Axe mirror row, Iron representative (3 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_iron"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Handlers:794 — Shape_SimpleEx_File mirror row, Iron representative (2 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_file"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_file_iron"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Handlers:795 — Shape_SimpleEx_Hammer mirror row, Iron representative (6 ingot -> 1 head, 16 EUt, units duration)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_iron"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:410 — stonetypes Shape_Extruder_Shovel row, vanilla-stone representative (block + mold -> 9 heads)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:411 — stonetypes Shape_Extruder_Sword row, vanilla-stone representative (block + mold -> 4 heads)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:412 — stonetypes Shape_Extruder_Hoe row, vanilla-stone representative (block + mold -> 4 heads)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:413 — stonetypes Shape_Extruder_Pickaxe row, vanilla-stone representative (block + mold -> 3 heads)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:414 — stonetypes Shape_Extruder_Axe row, vanilla-stone representative (block + mold -> 3 heads)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:417 — stonetypes Shape_Extruder_Hammer row, vanilla-stone representative (block + mold -> 1 heads)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:423 — stonetypes Shape_SimpleEx_Shovel mirror row, vanilla-stone representative",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:424 — stonetypes Shape_SimpleEx_Sword mirror row, vanilla-stone representative",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:425 — stonetypes Shape_SimpleEx_Hoe mirror row, vanilla-stone representative",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:426 — stonetypes Shape_SimpleEx_Pickaxe mirror row, vanilla-stone representative",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:427 — stonetypes Shape_SimpleEx_Axe mirror row, vanilla-stone representative",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "RM.java:430 — stonetypes Shape_SimpleEx_Hammer mirror row, vanilla-stone representative",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:293 — metatype Shape_Extruder_Shovel row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_granite",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:294 — metatype Shape_Extruder_Sword row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_granite",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:295 — metatype Shape_Extruder_Hoe row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_granite",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:296 — metatype Shape_Extruder_Pickaxe row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_granite",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:297 — metatype Shape_Extruder_Axe row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_granite",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:300 — metatype Shape_Extruder_Hammer row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_granite"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:308 — metatype Shape_SimpleEx_Shovel mirror row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_granite",
+          "count": 9
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:309 — metatype Shape_SimpleEx_Sword mirror row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_granite",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:310 — metatype Shape_SimpleEx_Hoe mirror row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_granite",
+          "count": 4
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:311 — metatype Shape_SimpleEx_Pickaxe mirror row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_granite",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:312 — metatype Shape_SimpleEx_Axe mirror row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_granite",
+          "count": 3
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "BlockStones.java:315 — metatype Shape_SimpleEx_Hammer mirror row, granite representative",
+      "inputs": [
+        {
+          "item": "gt6:granite"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_granite"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:51 — Blackstone Shape_Extruder_Shovel row (module input substituted, see header)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:52 — Blackstone Shape_Extruder_Sword row (module input substituted, see header)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_blackstone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:53 — Blackstone Shape_Extruder_Hoe row (module input substituted, see header)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_blackstone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:54 — Blackstone Shape_Extruder_Pickaxe row (module input substituted, see header)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_blackstone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:55 — Blackstone Shape_Extruder_Axe row (module input substituted, see header)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_blackstone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:58 — Blackstone Shape_Extruder_Hammer row (module input substituted, see header)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_blackstone"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:66 — Blackstone Shape_SimpleEx_Shovel mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:67 — Blackstone Shape_SimpleEx_Sword mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_blackstone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:68 — Blackstone Shape_SimpleEx_Hoe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_blackstone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:69 — Blackstone Shape_SimpleEx_Pickaxe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_blackstone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:70 — Blackstone Shape_SimpleEx_Axe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_blackstone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:73 — Blackstone Shape_SimpleEx_Hammer mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_blackstone"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    }
+  ]
+}

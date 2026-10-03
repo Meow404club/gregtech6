@@ -65,9 +65,12 @@ import gregtech6.registry.GTMaterialItems;
  *     carries; the stone-type metatype block domain pools);</li>
  * <li>the :406 plateCurved row pools WITH ITS MOLD (the W2 forming-chain card — the
  *     {@code Shape_Extruder_Plate_Curved} item is not row0);</li>
- * <li>the Blackstone/Basalt/Stone module rows and the forging-handler prefix rows
- *     (Loader_Recipes_Extruder / Loader_Recipes_Handlers :816-838) pool — the module
- *     generator items and the Shape_SimpleEx_* family are not row0.</li>
+ * <li>the Blackstone/Basalt/Stone module rows pool (Loader_Recipes_Extruder — the module
+ *     generator items are not registered; the tool-head rows of that loader lift with the
+ *     Blackstone stone-item substitution, task toolhead-r11c-extruder-heads, and pour via
+ *     the {@code extruder.json} JSON subset); the forging-handler prefix head rows
+ *     (Loader_Recipes_Handlers:750-762/:783-795) likewise pour via {@code extruder.json}
+ *     since that task — this loader stays the plate/rod material walk's owner;</li>
  * </ul>
  *
  * <p><b>Load timing</b>: a self-contained MOD-bus listener pouring at
