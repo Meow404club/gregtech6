@@ -1,14 +1,533 @@
 {
+  "_header": "RM.AUTOCLAVE Bayer face — Loader_Recipes_Chem.java:274-285, the KOH/NaOH legs x 3 bauxite forms x 2 batch tiers (task recipe-b1-chem-domain). THE FORMER kelp ROW (kelp+bone_meal+water500->kelp x2, dur128 eut16) IS DELETED HERE: it was a port-original placeholder with NO 1.7.10 upstream basis (the user bug-report anchor). KJS: datapack domain, zero adaptation.",
   "recipes": [
     {
+      "comment": "RM.Autoclave Bayer Chem:274 [potassium]",
       "inputs": [
-        { "item": "minecraft:kelp", "count": 1 },
-        { "item": "minecraft:bone_meal", "count": 1 }
+        {
+          "item": "gt6:dust_bauxite",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_small_potassium_hydroxide",
+          "count": 6
+        }
       ],
-      "fluidInputs": [{ "fluid": "minecraft:water", "amount": 500 }],
-      "outputs": [{ "item": "minecraft:kelp", "count": 2 }],
-      "duration": 128,
-      "eut": 16
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_aluminate",
+          "count": 2,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 2,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 1,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 48000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1050
+        }
+      ],
+      "duration": 1500,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:275 [potassium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_bauxite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_potassium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_aluminate",
+          "count": 2,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 2,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 1,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 48000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1050
+        }
+      ],
+      "duration": 1500,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:276 [potassium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_bauxite",
+          "count": 9
+        },
+        {
+          "item": "gt6:dust_small_potassium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_aluminate",
+          "count": 2,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 2,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 1,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 48000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1050
+        }
+      ],
+      "duration": 1500,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:277 [potassium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_bauxite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_aluminate",
+          "count": 4,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 4,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 2,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 96000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 2100
+        }
+      ],
+      "duration": 3000,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:278 [potassium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_bauxite",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_aluminate",
+          "count": 4,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 4,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 2,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 96000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 2100
+        }
+      ],
+      "duration": 3000,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:279 [potassium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_bauxite",
+          "count": 18
+        },
+        {
+          "item": "gt6:dust_potassium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_potassium_aluminate",
+          "count": 4,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 4,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 2,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 96000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 2100
+        }
+      ],
+      "duration": 3000,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:280 [sodium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_bauxite",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_small_sodium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_aluminate",
+          "count": 2,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 2,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 1,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 48000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1050
+        }
+      ],
+      "duration": 1500,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:281 [sodium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_bauxite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_small_sodium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_aluminate",
+          "count": 2,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 2,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 1,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 48000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1050
+        }
+      ],
+      "duration": 1500,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:282 [sodium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_bauxite",
+          "count": 9
+        },
+        {
+          "item": "gt6:dust_small_sodium_hydroxide",
+          "count": 6
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_aluminate",
+          "count": 2,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 2,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 1,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 48000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1050
+        }
+      ],
+      "duration": 1500,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:283 [sodium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_bauxite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_aluminate",
+          "count": 4,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 4,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 2,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 96000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 2100
+        }
+      ],
+      "duration": 3000,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:284 [sodium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_bauxite",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_aluminate",
+          "count": 4,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 4,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 2,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 96000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 2100
+        }
+      ],
+      "duration": 3000,
+      "eut": 0
+    },
+    {
+      "comment": "RM.Autoclave Bayer Chem:285 [sodium]",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_bauxite",
+          "count": 18
+        },
+        {
+          "item": "gt6:dust_sodium_hydroxide",
+          "count": 3
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_sodium_aluminate",
+          "count": 4,
+          "chance": 10000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_ilmenite",
+          "count": 4,
+          "chance": 5000
+        },
+        {
+          "item": "gt6:crushed_centrifuged_tiny_rutile",
+          "count": 2,
+          "chance": 5000
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:steam",
+          "amount": 96000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 2100
+        }
+      ],
+      "duration": 3000,
+      "eut": 0
     }
   ]
 }

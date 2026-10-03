@@ -1,0 +1,124 @@
+{
+  "_header": "RM.INJECTOR Chem face — Loader_Recipes_Chem.java:389-394 (task recipe-b1-chem-domain). Molten carriers at 144 mB/U (LiCl 20736/5184/2304/288, the :389 output literal verbatim). KJS: datapack domain.",
+  "recipes": [
+    {
+      "comment": "RM.Injector Chem:389",
+      "inputs": [
+        {
+          "item": "gt6:dust_thorium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lithium_chloride_molten",
+          "amount": 20736
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:thoriumsalt",
+          "amount": 20736
+        }
+      ],
+      "duration": 1152,
+      "eut": 64
+    },
+    {
+      "comment": "RM.Injector Chem:390",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_thorium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lithium_chloride_molten",
+          "amount": 5184
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:thoriumsalt",
+          "amount": 5184
+        }
+      ],
+      "duration": 288,
+      "eut": 64
+    },
+    {
+      "comment": "RM.Injector Chem:391",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_thorium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lithium_chloride_molten",
+          "amount": 2304
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:thoriumsalt",
+          "amount": 2304
+        }
+      ],
+      "duration": 128,
+      "eut": 64
+    },
+    {
+      "comment": "RM.Injector Chem:392",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_thorium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:lithium_chloride_molten",
+          "amount": 288
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:thoriumsalt",
+          "amount": 288
+        }
+      ],
+      "duration": 16,
+      "eut": 64
+    },
+    {
+      "comment": "RM.Injector Chem:394",
+      "inputs": [
+        {
+          "item": "gt6:dust_desh",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dust_workers_alloy",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mercury",
+          "amount": 1000
+        },
+        {
+          "fluid": "gt6:fuel",
+          "amount": 400
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    }
+  ]
+}

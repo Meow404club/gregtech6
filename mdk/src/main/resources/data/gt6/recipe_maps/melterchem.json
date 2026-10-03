@@ -1,0 +1,175 @@
+{
+  "_header": "RM.MELTER Chem ice/snow face — Loader_Recipes_Chem.java:480-492 (task recipe-b1-chem-domain). The minecraft:ice block row (:486) already ships in melter.json; the gemChipped/gemFlawed legs (:483-484) are DECLARED skips (no gem_chipped_ice/gem_flawed_ice items, the b2b1 id-universe ruling); gem leg rides (:485). KJS: datapack domain.",
+  "recipes": [
+    {
+      "comment": "RM.Melter Chem:480/495",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_ice",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 111
+        }
+      ],
+      "duration": 222,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:481/496",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_ice",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 250
+        }
+      ],
+      "duration": 500,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:482/497",
+      "inputs": [
+        {
+          "item": "gt6:dust_ice",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "duration": 2000,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:485/500 (gem leg; gemChipped/gemFlawed items unregistered = declared skip)",
+      "inputs": [
+        {
+          "item": "gt6:gem_ice",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "duration": 2000,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:487/502",
+      "inputs": [
+        {
+          "item": "minecraft:packed_ice",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 2000
+        }
+      ],
+      "duration": 4000,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:488/503",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_snow",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 111
+        }
+      ],
+      "duration": 222,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:489/504",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_snow",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 250
+        }
+      ],
+      "duration": 500,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:490/505",
+      "inputs": [
+        {
+          "item": "gt6:dust_snow",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "duration": 2000,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:491/506",
+      "inputs": [
+        {
+          "item": "minecraft:snowball",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 250
+        }
+      ],
+      "duration": 500,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:492/507",
+      "inputs": [
+        {
+          "item": "minecraft:snow",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "duration": 2000,
+      "eut": 16
+    }
+  ]
+}
