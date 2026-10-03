@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -13,11 +14,14 @@ import java.util.Set;
 
 import brachy.modularui.api.widget.IWidget;
 import brachy.modularui.drawable.UITexture;
+import brachy.modularui.drawable.progress.ProgressDrawable;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.UISettings;
 import brachy.modularui.value.sync.PanelSyncManager;
 import brachy.modularui.value.sync.ModularSyncManager;
 import brachy.modularui.widgets.FluidDisplayWidget;
+import brachy.modularui.widgets.ProgressWidget;
+import brachy.modularui.widgets.TextWidget;
 import brachy.modularui.widgets.slot.ItemSlot;
 
 import net.minecraft.core.BlockPos;
@@ -34,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
+import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
@@ -60,7 +65,15 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  *     clamped through bindInt; the open arm's server half (the BE buildUI delegation) rides
  *     the same seam on a real Drying-machine fixture;</li>
  * <li><b>the zero-fluid-seat face</b> — a default-bank Host (the interface default, the
- *     multiblock/fake shape) renders zero fluid seats — the pre-p34 panel byte-identical.</li>
+ *     multiblock/fake shape) renders zero fluid seats — the pre-p34 panel byte-identical;</li>
+ * <li><b>the clean-base face</b> (r11-gui-basicmachine-clean-sample) — the panel carries NO
+ *     code background (the gt6 theme 9-slice base draws at runtime, so headless
+ *     {@code getBackground()} is null); the title TextWidget prints the served map's local
+ *     name at the upstream (8, 4) in the 0x404040 ink (map-less Hosts render none); the
+ *     progress bar fills with the amazawa arrow part clipped in the mapped direction (the
+ *     full upstream 0-7 case table pinned, drain cases twin their grow case); the drain
+ *     value face inverts with the idle gate; the fluid seats wear the amazawa droplet
+ *     frame.</li>
  * </ul>
  */
 class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
@@ -144,6 +157,21 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 	/** A fresh headless sync manager (the widget binds by sync key — no container/player needed at build). */
 	private static PanelSyncManager headlessSyncManager() {
 		return new PanelSyncManager(new ModularSyncManager(false), true);
+	}
+
+	/**
+	 * A fake bound to a real RecipeMap row (GT6RecipeMaps.init() runs per-test) — the title /
+	 * direction arms need a served map, which the bare {@link FakeHost} deliberately lacks.
+	 */
+	private static final class MappedHost extends FakeHost {
+		private final RecipeMap mMap;
+
+		MappedHost(RecipeMap aMap) {
+			super(12);
+			mMap = aMap;
+		}
+
+		@Override public RecipeMap getRecipeMap() { return mMap; }
 	}
 
 	/** The widget by its build name ({@code null} = absent — the GT6DistillationTowerMUIPanelTest form). */
@@ -444,9 +472,134 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		assertEquals(null, tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_IN + 0), "no input fluid key on the default banks");
 		assertEquals(null, tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_FLUID_OUT + 0), "no output fluid key on the default banks");
 
-		// the background rides the Host GUI path (the same parse the vanilla screen blits)
-		UITexture tBackground = assertInstanceOf(UITexture.class, tPanel.getBackground(), "the panel background is a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/machines/shredder.png"), tBackground.location(),
-				"the mGUIPath parse matches the vanilla screen face");
+		// the clean-base face (r11-gui-basicmachine-clean-sample): the panel carries NO code
+		// background — at runtime the gt6 theme's 9-slice panel base
+		// (parts/panel_base_176x166, the r11 W0 chain pin GT6PanelBaseThemeCensusTest) draws
+		// under it; headless (no theme system) the code face is plain null. The per-machine
+		// mGUIPath sheet stays with the vanilla leg — zero machines/ path may come back here.
+		assertNull(tPanel.getBackground(), "no code background — the theme base owns the panel");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the clean-base face (r11-gui-basicmachine-clean-sample): title / direction / parts arrow
+	// ---------------------------------------------------------------------------
+
+	/** The panel's progress drawable, read off the widget's private field (no getter in the fork). */
+	private static ProgressDrawable progressDrawableOf(ModularPanel<?> aPanel) throws Exception {
+		ProgressWidget tWidget = (ProgressWidget) allWidgets(aPanel).stream()
+				.filter(w -> w instanceof ProgressWidget).findFirst().orElseThrow();
+		java.lang.reflect.Field tField = ProgressWidget.class.getDeclaredField("progress");
+		tField.setAccessible(true);
+		return (ProgressDrawable) tField.get(tWidget);
+	}
+
+	private static void assertPartsArrowFill(ProgressDrawable aDrawable, ProgressDrawable.Direction aDirection, String aWhat) {
+		UITexture tFill = assertInstanceOf(UITexture.class, aDrawable.getFilledTexture(), aWhat + ": the fill is a texture");
+		assertEquals(new ResourceLocation("gt6", "textures/gui/parts/arrow_forward_20x18.png"), tFill.location(),
+				aWhat + ": the fill is the amazawa arrow part");
+		assertEquals(aDirection, aDrawable.getDirection(), aWhat + ": the mapped direction");
+		assertNull(aDrawable.getEmptyBackground(), aWhat + ": fill-only — the F1-03 empty-arrow outline is deferred W3");
+	}
+
+	/**
+	 * The title (F1-01): the served map's local name as a TextWidget at the upstream
+	 * foreground print (8, 4) in the 0x404040 ink (ContainerClientBasicMachine.java:44); a
+	 * map-less Host renders no title.
+	 */
+	@Test
+	void theMapTitlePrintsAtTheUpstreamPositionAndTheMapLessHostSkipsIt() throws Exception {
+		ModularPanel<?> tBare = GTBasicMachineMUI.buildPanel(shredderHost(), headlessSyncManager());
+		assertNull(named(tBare, "title"), "no title without a served map");
+
+		ModularPanel<?> tPanel = GTBasicMachineMUI.buildPanel(new MappedHost(GT6RecipeMaps.SIFTING), headlessSyncManager());
+		IWidget tTitle = named(tPanel, "title");
+		assertInstanceOf(TextWidget.class, tTitle, "the title is a TextWidget");
+		TextWidget<?> tText = (TextWidget<?>) tTitle;
+		assertEquals("Sifter", tText.getKey().getString(), "the title is the map's local name");
+		assertEquals(8, posOf(tTitle, true), "title x (upstream :44)");
+		assertEquals(4, posOf(tTitle, false), "title y (upstream :44)");
+		assertEquals(0x404040, tText.getColor().getAsInt(), "the upstream ink");
+	}
+
+	/**
+	 * The full upstream {@code mProgressBarDirection} case table (F1-02): cases 0-3 are the
+	 * grow quartet (RIGHT/LEFT/DOWN/UP, ContainerClientBasicMachine.java:57-60), cases 4-7
+	 * twin their 0-3 with the drain flag (the step inverted, :61-64), out-of-range rides
+	 * case 0 (the upstream switch's silent fallback).
+	 */
+	@Test
+	void theProgressDirectionTableMapsTheUpstreamEightCases() {
+		ProgressDrawable.Direction[] tGrow = {ProgressDrawable.Direction.RIGHT, ProgressDrawable.Direction.LEFT,
+				ProgressDrawable.Direction.DOWN, ProgressDrawable.Direction.UP};
+		for (int c = 0; c < 4; c++) {
+			assertEquals(tGrow[c], GTBasicMachineMUI.progressDirection(c).direction(), "case " + c + " direction");
+			assertFalse(GTBasicMachineMUI.progressDirection(c).drain(), "case " + c + " grows");
+			assertEquals(tGrow[c], GTBasicMachineMUI.progressDirection(c + 4).direction(),
+					"case " + (c + 4) + " twins case " + c);
+			assertTrue(GTBasicMachineMUI.progressDirection(c + 4).drain(), "case " + (c + 4) + " drains");
+		}
+		assertFalse(GTBasicMachineMUI.progressDirection(42).drain(), "out-of-range rides case 0");
+		assertEquals(ProgressDrawable.Direction.RIGHT, GTBasicMachineMUI.progressDirection(42).direction());
+	}
+
+	/**
+	 * The live direction arms: the map-less default is RIGHT; the Sifter row (the live
+	 * direction-2 map) clips DOWN. Both fill with the amazawa arrow part.
+	 */
+	@Test
+	void thePanelClipsThePartsArrowInTheMapsDirection() throws Exception {
+		assertPartsArrowFill(progressDrawableOf(GTBasicMachineMUI.buildPanel(shredderHost(), headlessSyncManager())),
+				ProgressDrawable.Direction.RIGHT, "the default (case 0) panel");
+		assertPartsArrowFill(progressDrawableOf(GTBasicMachineMUI.buildPanel(new MappedHost(GT6RecipeMaps.SIFTING), headlessSyncManager())),
+				ProgressDrawable.Direction.DOWN, "the Sifter panel (direction 2)");
+	}
+
+	/**
+	 * The drain value face (cases 4-7): the Hammer row (the live direction-6 map) feeds
+	 * {@code 1 - ratio} with the idle gate — idle reads 0 (nothing drawn, the upstream
+	 * {@code mProgressBar >= 0} arm), a running half reads {@code 1 - 16384/32767} (the
+	 * quantization rides {@link #progressRatioMapsTheThreeStates}), success reads 0.
+	 */
+	@Test
+	void theDrainCaseInvertsTheValueWithTheIdleGate() throws Exception {
+		MappedHost tHost = new MappedHost(GT6RecipeMaps.HAMMER);
+		PanelSyncManager tSync = headlessSyncManager();
+		GTBasicMachineMUI.buildPanel(tHost, tSync);
+
+		brachy.modularui.value.sync.DoubleSyncValue tValue =
+				tSync.findSyncHandlerNullable(GTBasicMachineMUI.SYNC_PROGRESS, brachy.modularui.value.sync.DoubleSyncValue.class);
+		assertNotNull(tValue, "the progress sync value");
+
+		// idle (the -1 sentinel): the gate holds the arrow empty
+		tHost.mSuccessful = false;
+		tHost.mProgress = 0;
+		tHost.mMaxProgress = 0;
+		tValue.updateCacheFromSource(true);
+		assertEquals(0.0D, tValue.getDoubleValue(), "idle drain reads 0 (nothing drawn)");
+
+		// running at half: 1 - the quantized ratio
+		tHost.mMaxProgress = 100;
+		tHost.mProgress = 50;
+		tValue.updateCacheFromSource(true);
+		assertEquals(1.0D - 16384.0D / GTBasicMachineMenu.PROGRESS_DONE, tValue.getDoubleValue(),
+				"running drain reads 1 - ratio (the quantized half)");
+
+		// success (the PROGRESS_DONE sentinel): fully drained
+		tHost.mSuccessful = true;
+		tValue.updateCacheFromSource(true);
+		assertEquals(0.0D, tValue.getDoubleValue(), "done drain reads 0");
+	}
+
+	/** The fluid seats wear the amazawa droplet frame with the theme fluidSlot frame disabled (no double frame). */
+	@Test
+	void theFluidSeatsWearTheDropletFrame() {
+		ModularPanel<?> tPanel = GTBasicMachineMUI.buildPanel(new FluidBankHost(), headlessSyncManager());
+		for (String tName : new String[] {"fluid_in_0", "fluid_out_0", "fluid_out_1"}) {
+			FluidDisplayWidget tSeat = (FluidDisplayWidget) named(tPanel, tName);
+			UITexture tFrame = assertInstanceOf(UITexture.class, tSeat.getBackground(), tName + ": the frame is a texture");
+			assertEquals(new ResourceLocation("gt6", "textures/gui/parts/slot_fluid_18x19.png"), tFrame.location(),
+					tName + ": the amazawa droplet frame");
+			assertTrue(tSeat.isDisableThemeBackground(), tName + ": the theme fluidSlot frame is disabled (no double frame)");
+		}
 	}
 }

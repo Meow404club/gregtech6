@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import brachy.modularui.api.widget.IWidget;
-import brachy.modularui.drawable.UITexture;
+import brachy.modularui.drawable.progress.ProgressDrawable;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.value.sync.ModularSyncManager;
 import brachy.modularui.value.sync.PanelSyncManager;
@@ -48,8 +49,10 @@ import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
  * <ul>
  * <li><b>the open chain</b> — the BE implements {@link GT6MuiMachine} (the tryOpen
  *     bound) and the controller block carries the use arm under either leg's name;</li>
- * <li><b>the background</b> — recipes().mGUIPath of the ROW's map (the upstream
- *     MultiTileEntityBasicMachine.java:114 chain), not the base's COKE_OVEN fallback;</li>
+ * <li><b>the clean-base face</b> (r11-gui-basicmachine-clean-sample) — zero code background
+ *     (the gt6 theme 9-slice base draws at runtime; the mGUIPath sheet stays with the
+ *     vanilla leg), the title = the row map's local name, the arrow = the amazawa part
+ *     clipped RIGHT;</li>
  * <li><b>the seat topology</b> — the map's mInputItemsCount inputs + the map's
  *     mOutputItemsCount outputs canPut(false) + the 1/1 fluid banks (the :267/:268
  *     Slot_Render face) + 1 progress bar + the 36 player seats.</li>
@@ -139,22 +142,26 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	@Test
-	public void everyRowBuildsTheSharedPanelOverItsOwnMap() {
+	public void everyRowBuildsTheSharedPanelOverItsOwnMap() throws Exception {
 		assertTrue(GT6LargeMachines.ROWS.size() == 12, "the twelve-row family");
 		for (GT6LargeMachines.LargeMachineRow tRow : GT6LargeMachines.ROWS) {
 			GTLargeMachineBlockEntity tMachine = newMachine(tRow);
 			RecipeMap tMap = tRow.recipes().get();
 			ModularPanel<?> tPanel = tMachine.buildUI(null, headlessSyncManager(), null);
 
-			// the background = the ROW map's mGUIPath (RecipeMap.java:123 appends .png) —
-			// if the BE wiring fell back to the base's COKE_OVEN this diverges
-			UITexture tBackground = assertInstanceOf(UITexture.class, tPanel.getBackground(),
-					tRow.path() + ": the panel background is a texture");
+			// the clean-base face (r11-gui-basicmachine-clean-sample): the shared factory carries
+			// NO code background — the gt6 theme 9-slice base draws at runtime (headless the
+			// code face is null); the mGUIPath sheet stays with the vanilla leg. The map sanity
+			// (the namespaced mGUIPath) stays as the row-wiring guard.
+			assertNull(tPanel.getBackground(), tRow.path() + ": no code background — the theme base owns the panel");
 			String tGuiPath = tMap.mGUIPath;
-			int tColon = tGuiPath.indexOf(':');
-			assertTrue(tColon > 0, tRow.path() + ": namespaced mGUIPath");
-			assertEquals(ResourceLocation.fromNamespaceAndPath(tGuiPath.substring(0, tColon), tGuiPath.substring(tColon + 1)),
-					tBackground.location(), tRow.path() + ": the background is the row map's mGUIPath");
+			assertTrue(tGuiPath.indexOf(':') > 0, tRow.path() + ": namespaced mGUIPath");
+
+			// the title — the row map's local name (the upstream :44 foreground arm)
+			IWidget tTitle = named(tPanel, "title");
+			assertNotNull(tTitle, tRow.path() + ": the title widget");
+			assertEquals(tMap.mNameLocal, ((brachy.modularui.widgets.TextWidget<?>) tTitle).getKey().getString(),
+					tRow.path() + ": the title is the row map's local name");
 
 			// the seat topology — the map's input truth + the map's outputs + the 36 player seats
 			List<IWidget> tAll = allWidgets(tPanel);
@@ -171,6 +178,20 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 			assertEquals(1, tProgress, tRow.path() + ": exactly the progress bar");
 			assertNotNull(tAll.stream().filter(w -> "player_inventory".equals(w.getName())).findFirst().orElse(null),
 					tRow.path() + ": the player inventory widget");
+
+			// the progress arrow — the amazawa part clipped RIGHT (every row map is a
+			// direction-0 case; the direction table itself is pinned in
+			// GT6BasicMachineMUIPanelTest.theProgressDirectionTableMapsTheUpstreamEightCases)
+			ProgressWidget tBar = (ProgressWidget) tAll.stream().filter(w -> w instanceof ProgressWidget).findFirst().orElseThrow();
+			java.lang.reflect.Field tDrawableField = ProgressWidget.class.getDeclaredField("progress");
+			tDrawableField.setAccessible(true);
+			brachy.modularui.drawable.progress.ProgressDrawable tDrawable =
+					(brachy.modularui.drawable.progress.ProgressDrawable) tDrawableField.get(tBar);
+			brachy.modularui.drawable.UITexture tFill = assertInstanceOf(brachy.modularui.drawable.UITexture.class,
+					tDrawable.getFilledTexture(), tRow.path() + ": the arrow fill is a texture");
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/parts/arrow_forward_20x18.png"),
+					tFill.location(), tRow.path() + ": the amazawa arrow part");
+			assertEquals(ProgressDrawable.Direction.RIGHT, tDrawable.getDirection(), tRow.path() + ": the row bars grow right");
 
 			// the bindings — every input accepts, every output refuses (the setCanPut(F) face)
 			for (int i = 0; i < tMap.mInputItemsCount; i++) {
