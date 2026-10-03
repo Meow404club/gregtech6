@@ -146,13 +146,32 @@ public final class GTBarrels {
 	 * @param explicitHU  the upstream NBT_CAPACITY_HU when the row carries one, else -1
 	 *                    (the :66 else-branch applies)
 	 * @param resistanceF the upstream NBT_RESISTANCE (NBT_HARDNESS is 1.0F on every row)
+	 * @param driverDomain the mdh driver domain column (task mdh-6-family-gate): the atlas
+	 *                     PRIMARY modid of the row material ({@code MT.MD.X.mID}) when the row
+	 *                     hides with its owning mod absent, else {@code null} = GT-core /
+	 *                     COMMON_SECONDARY / unattributed = always registers (ADR-MDH1/MDH2).
+	 *                     A String column because the registration loop runs at class-init,
+	 *                     strictly before {@code MT.init()} fills the material fields — the
+	 *                     GTFluids spec-row precedent (the fluid face gated on the same column
+	 *                     shape, mdh-1 mount ②).
 	 */
 	public record MetalDrumRow(String path, String displayName, Supplier<OreDictMaterial> material,
-			long capacityL, long explicitHU, float resistanceF) {
+			long capacityL, long explicitHU, float resistanceF, String driverDomain) {
+
+		/** The pre-mdh-6 short form: unannotated rows are always visible (ADR-MDH1). */
+		public MetalDrumRow(String path, String displayName, Supplier<OreDictMaterial> material,
+				long capacityL, long explicitHU, float resistanceF) {
+			this(path, displayName, material, capacityL, explicitHU, resistanceF, null);
+		}
 
 		/** The block-carrier melting point: explicit NBT_CAPACITY_HU wins, else the :66 material formula. */
 		public long meltingPointK() {
 			return explicitHU >= 0 ? explicitHU : GTBarrels.meltingPointK(material.get());
+		}
+
+		/** The registration decision for one row (the mdh-6 family gate; single source for the loop, the smoke log and the tests). */
+		public boolean registers() {
+			return GT6ModDrivers.isLoaded(driverDomain);
 		}
 	}
 
@@ -169,18 +188,18 @@ public final class GTBarrels {
 	 * a pool cut per the card boundary.
 	 */
 	public static final List<MetalDrumRow> HIGH_TIER_METAL_DRUMS = List.of(
-			new MetalDrumRow("barrel_tungsten_alloy", "Tungsten Alloy Drum", () -> MT.TungstenAlloy, 128000, -1, 9.0F),
+			new MetalDrumRow("barrel_tungsten_alloy", "Tungsten Alloy Drum", () -> MT.TungstenAlloy, 128000, -1, 9.0F, MT.MD.RoC.mID), // MT.java:2429 — TungstenAlloy RoC PRIMARY (atlas, mdh-6)
 			new MetalDrumRow("barrel_titanium", "Titanium Drum", () -> MT.Ti, 128000, -1, 9.0F),
 			new MetalDrumRow("barrel_netherite", "Netherite Drum", () -> MT.Netherite, 128000, -1, 9.0F),
 			new MetalDrumRow("barrel_tungstensteel", "Tungstensteel Drum", () -> MT.TungstenSteel, 256000, -1, 12.5F),
 			new MetalDrumRow("barrel_tungsten", "Tungsten Drum", () -> ANY.W, 256000, -1, 10.0F),
-			new MetalDrumRow("barrel_void_metal", "Voidmetal Drum", () -> MT.VoidMetal, 256000, -1, 10.0F),
+			new MetalDrumRow("barrel_void_metal", "Voidmetal Drum", () -> MT.VoidMetal, 256000, -1, 10.0F, MT.MD.TC.mID), // MT.java:2445 — VoidMetal TC PRIMARY (atlas, mdh-6)
 			new MetalDrumRow("barrel_tantalum_hafnium_carbide", "Tantalum Hafnium Carbide Drum", () -> MT.Ta4HfC5, 512000, -1, 10.0F),
-			new MetalDrumRow("barrel_gaia_spirit", "Gaia Drum", () -> MT.GaiaSpirit, 1024000, -1, 25.0F),
+			new MetalDrumRow("barrel_gaia_spirit", "Gaia Drum", () -> MT.GaiaSpirit, 1024000, -1, 25.0F, MT.MD.BOTA.mID), // MT.java:2471 — GaiaSpirit BOTA PRIMARY (atlas, mdh-6)
 			new MetalDrumRow("barrel_adamantium", "Adamantium Drum", () -> MT.Ad, 4096000, -1, 100.0F),
-			new MetalDrumRow("barrel_draconium", "Draconium Drum", () -> MT.Draconium, 4096000, -1, 100.0F),
-			new MetalDrumRow("barrel_awakened_draconium", "Awakened Draconium Drum", () -> MT.DraconiumAwakened, 8192000, 10000, 100.0F),
-			new MetalDrumRow("barrel_infinity", "Infinity Drum", () -> MT.Infinity, 10000000000L, 1000000000L, 100.0F));
+			new MetalDrumRow("barrel_draconium", "Draconium Drum", () -> MT.Draconium, 4096000, -1, 100.0F), // COMMON_SECONDARY (MT.java:2512) — never hides (ADR-MDH2; the card's Draconium ruling)
+			new MetalDrumRow("barrel_awakened_draconium", "Awakened Draconium Drum", () -> MT.DraconiumAwakened, 8192000, 10000, 100.0F, MT.MD.DE.mID), // MT.java:2513 — DE PRIMARY (atlas, mdh-6)
+			new MetalDrumRow("barrel_infinity", "Infinity Drum", () -> MT.Infinity, 10000000000L, 1000000000L, 100.0F, MT.MD.AV.mID)); // MT.java:2518 — Infinity AV PRIMARY (atlas, mdh-6)
 
 	/**
 	 * The high-tier blocks/BlockItems, one pair per row. The material suppliers resolve
@@ -193,6 +212,7 @@ public final class GTBarrels {
 	public static final Map<String, RegistryObject<Item>> METAL_DRUM_ITEMS = new LinkedHashMap<>();
 	static {
 		for (MetalDrumRow tRow : HIGH_TIER_METAL_DRUMS) {
+			if (!tRow.registers()) continue; // the mdh-6 family gate — ABSENT domain = zero registration (the class-load seed precedes this loop, FMLModContainer.constructMod order)
 			METAL_DRUM_BLOCKS.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTBarrelBlock(tRow.capacityL(), tRow.meltingPointK(), true,
 							() -> GTBarrels.BARREL_METAL_BE.get(), tRow.material(), BlockBehaviour.Properties.of()
@@ -340,6 +360,7 @@ public final class GTBarrels {
 					BARREL_LOGISTICS.getId(), BARREL_LOGISTICS.get().capacityL(), BARREL_LOGISTICS.get().meltingPointK());
 			// the p7 acceptance ④: one log row per drum, capacity + bridge melting point
 			for (MetalDrumRow tRow : HIGH_TIER_METAL_DRUMS) {
+				if (!tRow.registers()) continue; // hidden rows never registered — their handles would throw
 				RegistryObject<GTBarrelBlock> tBlock = GTBarrels.METAL_DRUM_BLOCKS.get(tRow.path());
 				GT6Mod.LOGGER.info("GT6 metal drum registered: {} \"{}\" {} L @ {} K",
 						tBlock.getId(), tRow.displayName(), tRow.capacityL(), tBlock.get().meltingPointK());

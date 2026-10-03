@@ -2676,6 +2676,36 @@ public final class GTMachines {
 				default -> throw new IllegalStateException("no loader material for crafting table slug " + slug);
 			};
 		}
+
+		/**
+		 * The mdh-6 driver domain per slug (task mdh-6-family-gate): the atlas PRIMARY modid
+		 * when the line hides with its owning mod absent, else {@code null} = GT core /
+		 * COMMON_SECONDARY / unattributed = always registers (ADR-MDH1/MDH2). A String because
+		 * the registration walk runs at class-init, before {@code MT.init()} fills the material
+		 * fields — gathered in one switch next to {@link #mt} (the anchors cite the upstream
+		 * MT.java lines the atlas rows carry; the same metalset :186-245 lines as the hoppers).
+		 */
+		public String driverDomain() {
+			return switch (slug) {
+				case "aluminium" -> MT.MD.TiC.mID; // MT.java:2350 — Al TiC PRIMARY (atlas, mdh-6)
+				case "hsla", "tungsten_alloy", "bedrock_hsla_alloy" -> MT.MD.RoC.mID; // MT.java:2426/:2429/:2431 — RoC PRIMARY (atlas, mdh-6)
+				case "lumium" -> MT.MD.TE.mID; // MT.java:2324 — Lumium TE PRIMARY (atlas, mdh-6)
+				case "knightmetal" -> MT.MD.TF.mID; // MT.java:2288 — Knightmetal TF PRIMARY (atlas, mdh-6)
+				case "meteoric_steel" -> MT.MD.GC.mID; // MT.java:2555 — MeteoricSteel GC PRIMARY (atlas, mdh-6)
+				case "tungsten_carbide" -> MT.MD.ReC.mID; // MT.java:2412 — ReC PRIMARY (atlas, mdh-6)
+				case "desh_alloy" -> MT.MD.HBM.mID; // MT.java:2404 — DeshAlloy HBM PRIMARY (atlas, mdh-6)
+				case "manasteel", "terrasteel", "elementium" -> MT.MD.BOTA.mID; // MT.java:2466-2468 — BOTA PRIMARY (atlas, mdh-6)
+				case "void_metal" -> MT.MD.TC.mID; // MT.java:2445 — VoidMetal TC PRIMARY (atlas, mdh-6)
+				case "draconium_awakened" -> MT.MD.DE.mID; // MT.java:2513 — DE PRIMARY (atlas, mdh-6)
+				case "infinity" -> MT.MD.AV.mID; // MT.java:2518 — AV PRIMARY (atlas, mdh-6)
+				default -> null; // GT core / COMMON_SECONDARY (thaumium, efrine, desh, draconium...) / unattributed (adamantium, duranium_alloy) — never hides
+			};
+		}
+
+		/** The registration decision for one line (the mdh-6 family gate; single source for the walk and the tests). */
+		public boolean registers() {
+			return GT6ModDrivers.isLoaded(driverDomain());
+		}
 	}
 
 	/** The 60 metalset materials in loader line order :186-245 (aID + the shared hardness column verbatim). */
@@ -2774,8 +2804,16 @@ public final class GTMachines {
 				Component.translatable(craftingTableMatUnitKeyOf(aRow)));
 	}
 
-	/** The 120 rows in upstream registration order: per material the plain line then the charging line (:136 then :137). */
+	/**
+	 * The 120 rows in upstream registration order: per material the plain line then the
+	 * charging line (:136 then :137). The mdh-6 family gate filters the walk: an ABSENT
+	 * domain's line skips BOTH its pair halves (the class-load seed precedes this walk,
+	 * FMLModContainer.constructMod order); default all-PRESENT = the full 120 (ADR-MDH1).
+	 * Registration, the BE arrays and the tab all consume this one list, so the gate here
+	 * covers every face.
+	 */
 	public static final java.util.List<CraftingTableRow> CRAFTING_TABLE_ROWS = CRAFTING_TABLE_MATERIALS.stream()
+			.filter(CraftingTableMaterial::registers)
 			.flatMap(tMat -> java.util.stream.Stream.of(
 					new CraftingTableRow("advanced_crafting_table_" + tMat.slug(), CRAFTING_TABLE_META_ID_BASE + tMat.metaId(), tMat, false),
 					new CraftingTableRow("charging_crafting_table_" + tMat.slug(), CHARGING_CRAFTING_TABLE_META_ID_BASE + tMat.metaId(), tMat, true)))

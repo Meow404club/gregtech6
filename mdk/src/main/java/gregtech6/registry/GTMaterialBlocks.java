@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -115,6 +116,7 @@ public final class GTMaterialBlocks {
     /** Full walk over ALL prefixes; non-block-path prefixes are skipped whole (aggregate counter). */
     static Enumeration enumerate() {
         Set<OreDictPrefix> tBlockPath = new HashSet<>(blockPathPrefixes());
+        Predicate<OreDictMaterial> tGate = GT6ModDrivers.visibilityGate(); // the unified driver face (mdh-1), the GTMaterialItems:172 mirror (task mdh-6-family-gate)
         List<GTMaterialItems.PrefixMaterial> tRaw = new ArrayList<>();
         int tNonBlockPath = 0, tDuplicatePairs = 0;
         Set<GTMaterialItems.PrefixMaterial> tSeenPairs = new HashSet<>();
@@ -129,6 +131,7 @@ public final class GTMaterialBlocks {
                 GTMaterialItems.PrefixMaterial tPair = new GTMaterialItems.PrefixMaterial(tPrefix, tMaterial);
                 if (!tSeenPairs.add(tPair)) {tDuplicatePairs++; continue;} // alias slot: the target already owns the block
                 if (!tPrefix.isGeneratingItem(tMaterial)) continue; // upstream OreDictPrefix.java:364-366
+                if (!tGate.test(tMaterial)) continue; // the mdh-1 mount (task mdh-6-family-gate) — default all-PRESENT = pair-for-pair unchanged (ADR-MDH1)
                 tRaw.add(tPair);
             }
         }
