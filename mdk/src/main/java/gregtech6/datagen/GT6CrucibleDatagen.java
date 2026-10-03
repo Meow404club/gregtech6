@@ -224,19 +224,25 @@ public final class GT6CrucibleDatagen {
 			gregapi.oredict.OreDictMaterial tMaterial = aRow.material().get();
 			ModelFile tEmptyModel = bowlModel(tEmpty, bodyTexture(tMaterial), bodyTinted(tMaterial));
 			ModelFile[] tFilledModels = new ModelFile[9];
+			boolean tTinted = bodyTinted(tMaterial);
 			for (int tLevel = 1; tLevel <= 8; tLevel++) {
-				// the child parents the shell — its elements APPEND (the vanilla candle idiom),
-				// so the bowl shell lives in exactly one place per row
+				// the r11a-crucible-filled-shell fix: vanilla BlockModel.getElements (1.20.1
+				// :104-105) NEVER merges the parent chain once the child carries its own
+				// elements — the former "candle idiom" parent+one-element form made the game
+				// drop the bowl shell (floating content panel). The child re-writes the FULL
+				// set (the shell verbatim + the content box); the parent stays for the
+				// texture map only.
 				float tTop = 2.0F + (tLevel * 255.0F / 8.0F) / 292.571428F * 16.0F;
-				var tElement = models().getBuilder("block/" + aRow.path() + "_filled_" + tLevel)
+				BlockModelBuilder tBuilder = models().getBuilder("block/" + aRow.path() + "_filled_" + tLevel)
 						.parent(tEmptyModel)
-						.texture("content", loc(CONTENT_TEXTURE))
-						.element()
-						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
+						.texture("content", loc(CONTENT_TEXTURE));
+				addShellElements(tBuilder, tTinted);
 				// the :616 gate — top face only; tintindex 1 = the content seat (task
 				// crucible-large-ber): GT6MoldTintListener answers the BE's synced displayed
 				// material through the ContentFace dispatch (the same colour the large-crucible
 				// BER renders); tintindex 0 stays the shell's material body seat
+				var tElement = tBuilder.element()
+						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
 				tElement.face(Direction.UP).texture("#content").tintindex(1).end();
 				tFilledModels[tLevel] = tElement.end();
 			}
@@ -261,6 +267,23 @@ public final class GT6CrucibleDatagen {
 					.parent(models().getExistingFile(mcLoc("block/block")))
 					.texture("all", loc(aBodyTexture))
 					.texture("particle", "#all");
+			addShellElements(tModel, aTinted);
+			return tModel;
+		}
+
+		/**
+		 * The shell elements — the upstream setBlockBounds2 passes 0-4 verbatim
+		 * (MultiTileEntitySmeltery.java:596-606, four 2px walls full height + the 2px floor,
+		 * px units) — written onto ANY builder: the {@code _empty} model and every
+		 * {@code _filled_N} child (the r11a fix — the child must carry the full element set
+		 * itself, vanilla getElements never merges the parent). Faces follow the getTexture2
+		 * null-gate (:610-619) so no two faces of the shell are coplanar: the X-walls
+		 * (passes 0/2) render west/east/up, the Z-walls (passes 1/3) north/south/up, the
+		 * floor (pass 4) up+down — the corners ride the full-length wall spans, exactly
+		 * upstream. The outer faces carry cullface (the cubeAll convention), the
+		 * interior/rim faces none.
+		 */
+		private static void addShellElements(BlockModelBuilder tModel, boolean aTinted) {
 			// pass 0 — the west wall (x 0..2); pass 2 — the east wall (x 14..16)
 			for (float tX : new float[] {0.0F, 14.0F}) {
 				var tElement = tModel.element().from(tX, 0.0F, 0.0F).to(tX + 2.0F, 16.0F, 16.0F);
@@ -287,7 +310,6 @@ public final class GT6CrucibleDatagen {
 			tFloor.face(Direction.DOWN).texture("#all").cullface(Direction.DOWN).end();
 			if (aTinted) tFloor.faces((aDir, aFace) -> aFace.tintindex(0));
 			tFloor.end();
-			return tModel;
 		}
 	}
 

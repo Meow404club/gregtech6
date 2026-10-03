@@ -28,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.minecraft.client.renderer.block.model.BlockModel;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -122,19 +124,37 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
         }
     }
 
-    /** The content box: the h/292.571428 formula verbatim at the bucket floor, top face only. */
+    /**
+     * The content box: the h/292.571428 formula verbatim at the bucket floor, top face only —
+     * and the r11a-crucible-filled-shell pin: the filled model carries the FULL element set
+     * (the shell + the one content box) in its OWN elements array. Vanilla
+     * {@code BlockModel.getElements} (1.20.1 BlockModel.java:104-105) never walks the parent
+     * chain once the child carries elements — the former "candle idiom" parent + one-element
+     * form made the game drop the bowl shell (the user report: the filled crucible rendered
+     * as a floating content panel).
+     */
     @Test
     void contentBoxHeightRidesTheUpstreamFormula() throws Exception {
         for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) {
+            int tShellCount = generatedJson("assets/gt6/models/block/" + tRow.path() + "_empty.json")
+                    .getAsJsonArray("elements").size();
             for (int tLevel = 1; tLevel <= 8; tLevel++) {
                 JsonObject tModel = generatedJson("assets/gt6/models/block/" + tRow.path() + "_filled_" + tLevel + ".json");
                 assertEquals("gt6:block/" + tRow.path() + "_empty", tModel.get("parent").getAsString(),
-                        tRow.path() + " level " + tLevel + ": the shell lives in the parent, the child appends the box");
-                assertEquals(1, tModel.getAsJsonArray("elements").size(),
-                        tRow.path() + " level " + tLevel + ": exactly the one content element");
-                JsonObject tBox = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
+                        tRow.path() + " level " + tLevel + ": the parent stays (the texture map)");
+                assertEquals(tShellCount + 1, tModel.getAsJsonArray("elements").size(),
+                        tRow.path() + " level " + tLevel + ": the FULL shell + the one content element — "
+                                + "vanilla getElements never merges the parent (BlockModel.java:104-105)");
+                // the game's own accessor — the exact parent-fallback decision point — must see
+                // the full set offline (ponytail: the stand-in for the quad bake, which needs
+                // the atlas + ModelBakery; the layer-level view stays field_test)
+                BlockModel tVanilla = BlockModel.fromString(tModel.toString());
+                assertEquals(tShellCount + 1, tVanilla.getElements().size(),
+                        tRow.path() + " level " + tLevel + ": vanilla BlockModel.getElements sees the shell+content set");
                 // the :603 verbatim — 0.125 block units = 2px, the bucket floor h = L*255/8
                 float tExpectedTop = 2.0F + (tLevel * 255.0F / 8.0F) / 292.571428F * 16.0F;
+                JsonObject tBox = elementAt(tModel, new float[] {0, 2, 0}, new float[] {16, tExpectedTop, 16});
+                assertNotNull(tBox, tRow.path() + " level " + tLevel + ": the content box element");
                 assertEquals(2.0F, tBox.getAsJsonArray("from").get(1).getAsFloat(),
                         tRow.path() + " level " + tLevel + ": the box sits on the floor plate");
                 assertEquals(tExpectedTop, tBox.getAsJsonArray("to").get(1).getAsFloat(), 0.001F,
