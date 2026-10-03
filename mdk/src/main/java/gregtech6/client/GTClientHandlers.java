@@ -122,9 +122,36 @@ public final class GTClientHandlers {
      * <p>Task clienthandlers-2111: split from the former abstract-typed
      * {@code onRegisterWireColors} (instanceof dispatch over the parent) into a concrete
      * {@code .Block} listener — both dispatch arms preserved verbatim as separate methods.</p>
+     *
+     * <p>Task redstone-wire-tint-reg: the registration array is the {@link #wireTintBlocks()}
+     * UNION — the electric list plus the redstone 6 ({@code GTWires.redstoneBlockArray()})
+     * and the laser fiber ({@code GTWires.laserBlockArray()}). The upstream redstone wire
+     * renders the grayscale wire.png × the runtime {@code mRGBa}
+     * (MultiTileEntityWireRedstone.java:81-87; the {@code fRGBaSolid} unpainted default,
+     * TileEntityBase07Paintable.java:83-84) — {@link GTWireTint} already speaks that face,
+     * only this hookup was missing. {@code wireBlockArray()} itself stays UNTOUCHED: it is
+     * the WIRE_ELECTRIC_BE valid-block list and the redstone/laser blocks carry their own
+     * BETs, so the union happens here at the colour-registration call site.</p>
      */
     private static void onRegisterWireBlockColors(RegisterColorHandlersEvent.Block event) {
-        event.getBlockColors().register(GTWireTint.blockColor(), GTWires.wireBlockArray());
+        event.getBlockColors().register(GTWireTint.blockColor(), wireTintBlocks());
+    }
+
+    /**
+     * The wire-family world-half registration seam (task redstone-wire-tint-reg) — the
+     * exact array the event handler registers {@link GTWireTint#blockColor()} over, hoisted
+     * so the offline census pin drives the real membership (the {@link #fourPassToolItems()}
+     * hoist form): the electric list + the redstone 6 + the laser fiber, one array.
+     */
+    public static Block[] wireTintBlocks() {
+        Block[] tElectric = GTWires.wireBlockArray();
+        Block[] tRedstone = GTWires.redstoneBlockArray();
+        Block[] tLaser = GTWires.laserBlockArray();
+        Block[] rBlocks = new Block[tElectric.length + tRedstone.length + tLaser.length];
+        System.arraycopy(tElectric, 0, rBlocks, 0, tElectric.length);
+        System.arraycopy(tRedstone, 0, rBlocks, tElectric.length, tRedstone.length);
+        System.arraycopy(tLaser, 0, rBlocks, tElectric.length + tRedstone.length, tLaser.length);
+        return rBlocks;
     }
 
     /**
@@ -133,13 +160,33 @@ public final class GTClientHandlers {
      *
      * <p>Task clienthandlers-2111: the other dispatch arm of the split, see
      * {@link #onRegisterWireBlockColors}.</p>
+     *
+     * <p>Task redstone-wire-tint-reg: the inventory census joins the redstone 6
+     * ({@code GTWires.REDSTONE_ITEMS}) and the laser fiber ({@code GTWires.LASER_ITEMS}) —
+     * the same union the world half took, so the tab stacks tint with their material
+     * mRGBa (RedAlloy 200,0,0 / Signalum 255,64,0 / Lumium 255,255,80).</p>
      */
     private static void onRegisterWireItemColors(RegisterColorHandlersEvent.Item event) {
-        List<Item> tWireItems = new ArrayList<>();
-        tWireItems.add(GTWires.WIRE_ELECTRIC_1X_ITEM.get());
-        tWireItems.add(GTWires.WIRE_ELECTRIC_2X_ITEM.get());
-        for (RegistryObject<Item> tFamilyItem : GTWires.FAMILY_ITEMS) tWireItems.add(tFamilyItem.get());
-        event.getItemColors().register(GTWireTint.itemColor(), tWireItems.toArray(Item[]::new));
+        event.getItemColors().register(GTWireTint.itemColor(),
+                wireTintItems().stream().map(RegistryObject::get).toArray(Item[]::new));
+    }
+
+    /**
+     * The wire-family inventory-half registration seam (task redstone-wire-tint-reg) — the
+     * exact RegistryObject list the event handler registers {@link GTWireTint#itemColor()}
+     * over (the {@link #fourPassToolItems()} shape: the offline legs pin
+     * {@code getId().getPath()} without touching the live registry): the legacy pair + the
+     * 620 electric family + the redstone 6 + the laser fiber.
+     */
+    public static List<RegistryObject<Item>> wireTintItems() {
+        List<RegistryObject<Item>> tWireItems = new ArrayList<>(2 + GTWires.FAMILY_ITEMS.size()
+                + GTWires.REDSTONE_ITEMS.size() + GTWires.LASER_ITEMS.size());
+        tWireItems.add(GTWires.WIRE_ELECTRIC_1X_ITEM);
+        tWireItems.add(GTWires.WIRE_ELECTRIC_2X_ITEM);
+        tWireItems.addAll(GTWires.FAMILY_ITEMS);
+        tWireItems.addAll(GTWires.REDSTONE_ITEMS);
+        tWireItems.addAll(GTWires.LASER_ITEMS);
+        return tWireItems;
     }
 
     /**
