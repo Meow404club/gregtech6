@@ -12,7 +12,11 @@
  * placeables/bumbliary items were never missing — they ride their block models).
  * Task tex-itemform-b extends the census with the tier-B front-view families (the
  * 28 kinematics/controller/composite rows) on the same 2D form; task diesel-item-3d
- * retired the 8 diesel rows of that band into the block-model 3D form.
+ * retired the 8 diesel rows of that band into the block-model 3D form; task
+ * r11-mains-tint-wrap retires the two remaining mains-controller rows of that band
+ * (the lightning-rod controller + the large heat exchanger — the user-facing flat-white
+ * inventory reports) AND the rod pillar part row into the same 3D form, the coke-oven
+ * item precedent.
  */
 package gregtech6.datagen;
 
@@ -120,23 +124,22 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
 
     /**
      * The tier-B front-view families (tex-itemform-b, the 28 rows less the diesel
-     * eight): 2D icons over the family's own front/side/composite sprite — the single
-     * kinematics rows (crank, the water wheel, the gearbox), the lightning-rod
-     * controller+rod pair and the heat exchanger over their composite sprites, the
+     * eight, the two mains controllers and the rod pillar): 2D icons over the family's
+     * own front/side/composite sprite — the single
+     * kinematics rows (crank, the water wheel, the gearbox), the
      * 12 tap/funnel attachments over their family side sprite and the twin
      * distillation tower controllers over the borrowed parts side sprite. The 8 diesel
      * tiers LEFT this form in task diesel-item-3d — their block model is genuinely
      * faceted (front/back/side, the steam-family form), so the flat sprite was the
-     * anti-pattern; they are pinned 3D below.
+     * anti-pattern; they are pinned 3D below — the lightning-rod CONTROLLER and
+     * the heat exchanger left in task r11-mains-tint-wrap (the same shape), and the
+     * rod PILLAR left with them (the parts-walk item rides its block model now).
      */
     @Test
     void frontViewFamiliesAre2DIcons() throws Exception {
         assert2DForm("crank", "gt6:block/crank");
         assert2DForm("water_wheel", "gt6:block/water_wheel");
         assert2DForm("gearbox", "gt6:block/gearbox");
-        assert2DForm("multiblock_lightning_rod", "gt6:block/lightningrod/main");
-        assert2DForm("lightning_rod", "gt6:block/lightningrod/rod");
-        assert2DForm("large_heat_exchanger", "gt6:block/large_heat_exchanger/main");
         assertEquals(12, GT6Attachments.ROWS.size(), "the 12-attachment walk");
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             assert2DForm(tRow.path(), "gt6:block/" + (tRow.family()
@@ -169,6 +172,30 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
     }
 
     /**
+     * The mains controller items ride the two-layer block models (task r11-mains-tint-wrap
+     * — the diesel-item-3d retirement shape): the lightning-rod controller and the large
+     * heat exchanger LEFT the tex-itemform-b flat composite icons — the inventory face is
+     * the 3D block form upstream shows (the coke-oven item model :1459 precedent), and the
+     * inventory tint rides the already-registered BlockItem ItemColors through the
+     * tintindex-0 body seats ({@code GTMachineTintModel.onRegisterControllerPaintItemColors}).
+     * The {@code lightning_rod} PART item stays 2D above — the declared tex-itemform-b
+     * deviation, the part domain this card does not touch.
+     */
+    @Test
+    void mainsControllerItemsRideTheBlockModels() throws Exception {
+        String[][] tRows = {
+                {"multiblock_lightning_rod", "gt6:block/multiblock_lightning_rod"},
+                {"large_heat_exchanger", "gt6:block/large_heat_exchanger"}};
+        for (String[] tRow : tRows) {
+            JsonObject tModel = generatedJson("assets/gt6/models/item/" + tRow[0] + ".json");
+            assertEquals(tRow[1], tModel.get("parent").getAsString(),
+                    tRow[0] + ": the two-layer block-model parent (the coke-oven 3D form)");
+            assertFalse(tModel.has("textures"), tRow[0]
+                    + ": no local textures object (the flat-sprite pin is retired)");
+        }
+    }
+
+    /**
      * The world-face guard: the touched block models stay the cube_all form over the
      * same sprites — one archetype per family (the item fix must not leak into the
      * blockstate/model chain), extended with the tier-B families (tex-itemform-b).
@@ -178,7 +205,8 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * exchanger left it in task tex-multiblockmains (the same departure shape —
      * the flat bakes were placeholders, the groups' colored/colored_front splits are
      * real two-layer art), pinned by GT6MultiblockMainsTexDatagenTest; their ITEM
-     * rows above stay 2D over the composites, which stay on disk for them.
+     * rows left the 2D composites in task r11-mains-tint-wrap (pinned 3D above), the
+     * composite sprites stay on disk for the rod part and the historical ledger.
      */
     @Test
     void blockModelsKeepTheCubeAllForm() throws Exception {
@@ -198,8 +226,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 // family side sprites, which stay on disk for them)
                 {"water_wheel", "gt6:block/water_wheel"},
                 {"gearbox", "gt6:block/gearbox"},
-                {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"},
-                {"lightning_rod", "gt6:block/lightningrod/rod"}};
+                {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"}};
         for (String[] tCase : tArchetypes) {
             JsonObject tModel = generatedJson("assets/gt6/models/block/" + tCase[0] + ".json");
             assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
@@ -213,7 +240,8 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * The ok3D whitelist — the census families whose BlockItems LEGITIMATELY parent a
      * faceted block model (the vanilla furnace form; the tex-census item_form ok3D
      * column): the basic-machine family, the bridge band, the converter/dynamo two-layer
-     * band, the turbine mains, the parts design_0 walk and the large-machine controllers.
+     * band, the turbine mains, the parts design_0 walk, the large-machine controllers
+     * and the Lightning Rod pillar (the parts-walk item since task r11-mains-tint-wrap).
      * These stay block-parented; only the single-texture cubeAll families went 2D.
      */
     @Test
@@ -225,6 +253,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"electric_dynamo", "gt6:block/electric_dynamo"}, // the dynamo ladder
                 {"steam_turbine_graphene", "gt6:block/turbine_main_steam"}, // the turbine mains
                 {"machine_wall_tungsten", "gt6:block/machine_wall_tungsten_design_0"}, // the parts walk
+                {"lightning_rod", "gt6:block/lightning_rod"}, // the rod pillar part (the parts walk, r11-mains-tint-wrap)
                 {"large_massfab", "gt6:block/large_massfab"}, // the large-machine controllers
                 {"battery_box_lv", "gt6:block/battery_box/battery_box"}}; // the composite-energy band (tex-composite-family flip-back)
         for (String[] tCase : tArchetypes) {

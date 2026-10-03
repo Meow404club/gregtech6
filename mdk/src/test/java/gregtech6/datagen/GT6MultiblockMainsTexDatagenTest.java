@@ -303,17 +303,20 @@ class GT6MultiblockMainsTexDatagenTest {
      * The retired large_boiler/wall placeholder is gone from disk AND no generated JSON
      * references it (its last consumer, the crucible controller borrow, died with this
      * task — the census walk over the generated tree, the boiler-test filesystem shape).
-     * The two borrow-time composites STAY on disk: they are the tex-itemform-b item
-     * layer0 reservation (README-declared, zero block-model consumers).
+     * The two borrow-time composites STAY on disk: their tex-itemform-b item layer0
+     * consumers left in task r11-mains-tint-wrap (the items ride the block models now),
+     * the sprites keep their README ledger rows (the rod pillar's rod sprite left its
+     * last consumer in the same task — the part rides the parts/lightningrod/0
+     * two-layer borrow, the cube_all form is retired).
      */
     @Test
     public void retiredWallPlaceholderIsDeadEverywhereAndCompositesStay() throws Exception {
         Path tMdk = mdkRoot();
         assertFalse(Files.exists(tMdk.resolve("src/main/resources/assets/gt6/textures/block/large_boiler/wall.png")),
                 "the retired wall placeholder must be deleted");
-        for (String tKept : List.of("lightningrod/main.png", "large_heat_exchanger/main.png")) {
+        for (String tKept : List.of("lightningrod/main.png", "large_heat_exchanger/main.png", "lightningrod/rod.png")) {
             assertTrue(Files.exists(tMdk.resolve("src/main/resources/assets/gt6/textures/block").resolve(tKept)),
-                    "the itemform-B item sprite must stay on disk: " + tKept);
+                    "the historical composite sprite must stay on disk: " + tKept);
         }
         try (Stream<Path> tWalk = Files.walk(tMdk.resolve("src/generated/resources/assets/gt6"))) {
             for (Path tFile : tWalk.filter(p -> p.toString().endsWith(".json")).toList()) {
@@ -321,6 +324,41 @@ class GT6MultiblockMainsTexDatagenTest {
                 assertFalse(tContent.contains("gt6:block/large_boiler/wall"),
                         tFile.getFileName() + " still references the retired wall placeholder");
             }
+        }
+    }
+
+    /**
+     * The GTMultiBlocks mains controller census (task r11-mains-tint-wrap): the ONE
+     * {@code controllerPaintableBlockArray} the walk rides totals TWELVE — 1 coke oven
+     * + 5 large boilers + 1 lightning rod + the five large machines — and the former
+     * three walk rows (the tex-large-boilers boilerPaintable array, the coke-oven single
+     * {@code wrapStates} row, the tex-large-machines five-block List.of) retire into it
+     * with zero double registration. Pinned through the offline-safe faces (the row
+     * table + the RegistryObject ids — the .get()-resolving array is the runtime face,
+     * the GT6ControllerPaintRenderDatagenTest walker convention).
+     */
+    @Test
+    public void gtMultiBlocksControllerCensusStaysTwelve() {
+        assertEquals(5, gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS.size(),
+                "the large-boiler row census stays 5");
+        assertEquals("multiblock_coke_oven", gregtech6.registry.GTMultiBlocks.COKE_OVEN.getId().getPath(),
+                "the coke oven controller id");
+        assertEquals("multiblock_lightning_rod", gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.getId().getPath(),
+                "the lightning rod controller id");
+        assertEquals("implosion_compressor", gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.getId().getPath(),
+                "the implosion compressor controller id");
+        assertEquals("von_da_graagg", gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.getId().getPath(),
+                "the VonDaGraagg controller id");
+        assertEquals("large_massfab", gregtech6.registry.GTMultiBlocks.MASSFAB.getId().getPath(),
+                "the massfab controller id");
+        assertEquals("fusion_reactor", gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.getId().getPath(),
+                "the fusion reactor controller id");
+        assertEquals("bedrock_drill", gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.getId().getPath(),
+                "the bedrock drill controller id");
+        // the five boiler paths feed the array through the same registration-order walk
+        for (var tRow : gregtech6.registry.GTMultiBlocks.LARGE_BOILER_ROWS) {
+            assertTrue(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_BLOCKS_BY_PATH.containsKey(tRow.path()),
+                    tRow.path() + ": the boiler variant block is registered");
         }
     }
 

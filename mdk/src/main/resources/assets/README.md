@@ -8645,6 +8645,22 @@ T0 art ever exists upstream).
   `multiblockparts/bedrockdrill/0/` layers, snapshot v6.17.06) joined for the missed
   18103 Bedrock Mining Drill Head part row (Loader :1178, NBT_TEXTURE "bedrockdrill",
   NBT_DESIGNS 0). Upstream license: **CC0 1.0 Universal Public Domain Dedication**.
+
+Lightning-rod-pillar append, task r11-mains-tint-wrap (copied 2026-10-03): the
+`lightningrod/0` family (6 files — colored 3 + overlay 3, byte copies of the upstream
+`multiblockparts/lightningrod/0/` layers) joined for the :1179 Lightning Rod pillar
+part row (NBT_TEXTURE "lightningrod", NBT_DESIGNS 0) — the former single-sprite
+`lightningrod/rod.png` cube_all borrow (byte-identical to `colored/side.png`,
+sha256 `a6b988c32e964fcafeb425c3f4a409f028102d7b75597f62bc97de166dd3cb54`) retired
+for the family two-layer partModel; the sprite stays on disk for the historical
+ledger. Pixel note: the overlay bottom/top plates carry the DARK COLORED cap art
+(96 opaque texels each, sha256 `40b49e9a3738a361078b185e641f4e2ab2ff3e5ea69fafe7107cc586db25598e`
+/ `545ec2565e991ba9d29e9094489bed7577eb4b5d36d672066f513f872b148efb`), the overlay
+side is empty upstream (`3cf5abfad9eeea45bb64d71b4391c58a4a2059c173f03fb8ef75383fe77f72f1`)
+— the upstream rod pillar look IS light wall + dark caps. Per-file hashes:
+colored bottom/top `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+(byte-shared with the multiblockmains colored borrows). Upstream license: **CC0 1.0
+Universal Public Domain Dedication**.
 - `gt6/textures/block/turbine_mains/<family>/<group>/{bottom,top,side}.png` — the Large
   Turbine / Large Dynamo controller main textures (36 files, task w3-turbine-dynamo;
   upstream `textures/blocks/machines/multiblockmains/{largeturbine,gasturbine,largedynamo}/

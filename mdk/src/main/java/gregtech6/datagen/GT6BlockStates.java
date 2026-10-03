@@ -1338,14 +1338,16 @@ public final class GT6BlockStates extends BlockStateProvider {
      * GT6DynamoBlock dispatch shape). Every FORMED state maps to the same model (the
      * formed-look visual is the p9 pool). No facing rotation (the structure is
      * facing-independent — the controller is the centre cell of both layers; the front
-     * pair lands on north, the default-facing view pin). The BlockItem is the 2D icon
-     * over the composite sprite (tex-itemform-b).
+     * pair lands on north, the default-facing view pin). The BlockItem rides the
+     * two-layer block model (task r11-mains-tint-wrap — the multiblock_coke_oven 3D
+     * item form; the tex-itemform-b flat composite icon retired, the user-facing
+     * flat-white inventory face).
      */
     private void addHeatExchanger() {
         ModelFile tMain = boilerModel("large_heat_exchanger", "large_heat_exchanger", true);
         Block tController = gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
-        itemModels().withExistingParent("large_heat_exchanger", mcLoc("item/generated")).texture("layer0", modLoc("block/large_heat_exchanger/main"));
+        itemModels().withExistingParent("large_heat_exchanger", modLoc("block/large_heat_exchanger"));
     }
 
     /**
@@ -3421,8 +3423,10 @@ public final class GT6BlockStates extends BlockStateProvider {
      * p38-c2 form).
      * The facing is structurally meaningless (the rod is vertical), so every state maps to
      * the same model with no rotation (the front pair lands on north); the FORMED variants
-     * map to the same model (the formed-look visual is the p9 pool). The controller and the
-     * rod BlockItems are 2D icons over their composite/rod sprites (tex-itemform-b).
+     * map to the same model (the formed-look visual is the p9 pool). The controller
+     * BlockItem rides the two-layer block model since task r11-mains-tint-wrap (the
+     * coke-oven 3D item form); the rod BlockItem stays the 2D icon over its rod sprite
+     * (tex-itemform-b, the part domain).
      */
     /**
      * Task w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
@@ -3527,26 +3531,18 @@ public final class GT6BlockStates extends BlockStateProvider {
         ModelFile tMain = boilerModel("multiblock_lightning_rod", "lightningrod", true);
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
-        itemModels().withExistingParent("multiblock_lightning_rod", mcLoc("item/generated")).texture("layer0", modLoc("block/lightningrod/main"));
-        // the Tungsten Wall (task world-tint-render-type, the C5 clean-up; task
-        // debt-tungsten-wall-designs): the row IS the :1151 machine_wall row (texture
-        // "metalwall", NBT_DESIGNS 7, ANY.W) — its blockstate/item/models moved to the
-        // addParts() new-form walk (the anyPartBlock lookup), where it emits the full
-        // design 0..7 ladder like its ten siblings; the former single-design
-        // partModel(metalwall, 0) special case is retired.
-        // the Niobium-Titanium Coil (task debt-coil-design): the row IS the :1168 coil
-        // row (texture "coil", NBT_DESIGNS 1 — the designs 0/1 range of all six siblings
-        // :1167-1172) — the same anyPartBlock walk carries it over the two-step design
-        // ladder; the former cube_all borrow (lightningrod/coil) simpleBlock special
-        // case is retired (the family two-layer form replaces it).
-        addLightningRodPart("lightning_rod", "block/lightningrod/rod");
-    }
-
-    /** One cube_all Lightning Rod part block + its 2D-icon BlockItem (the addLargeBoilerPart shape, tex-itemform-b). */
-    private void addLightningRodPart(String aPath, String aTexture) {
-        Block tBlock = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH.get(aPath).get();
-        simpleBlock(tBlock, models().cubeAll(aPath, modLoc(aTexture)));
-        itemModels().withExistingParent(aPath, mcLoc("item/generated")).texture("layer0", modLoc(aTexture));
+        // task r11-mains-tint-wrap — the controller BlockItem rides the two-layer block
+        // model (the multiblock_coke_oven 3D item form; the tex-itemform-b flat composite
+        // icon retired — the user-facing flat-white inventory face).
+        itemModels().withExistingParent("multiblock_lightning_rod", modLoc("block/multiblock_lightning_rod"));
+        // the rod PILLAR part ("lightning_rod", :1179) joined the addParts() new-form walk
+        // in task r11-mains-tint-wrap (the LIGHTNING_ROD_PILLAR_ROW, the
+        // machine_wall_tungsten/niobium_titanium_coil reuse shape): the former cube_all
+        // lightningrod/rod borrow (light-gray, ZERO overlay layer — the user-facing
+        // "pure white bare pillar" report) is retired for the family two-layer partModel
+        // over the parts/lightningrod/0 borrow, the :1179 SteelGalvanized column rides
+        // the paint walk, and the BlockItem parents the block model like every sibling
+        // part row. The former addLightningRodPart special case is deleted.
     }
 
     /**
