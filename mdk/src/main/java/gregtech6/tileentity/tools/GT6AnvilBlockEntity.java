@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.items.tools.GT6ToolActions;
 import gregtech6.block.tools.GTAnvilBlock;
 import gregtech6.datagen.GT6ItemTags;
+import gregtech6.gui.GTViewerJump;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.recipes.GT6RecipeMaps;
@@ -96,6 +97,12 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * {@code activateChain} precedent): the upstream {@code SIDES_TOP_HORIZONTAL ||
  * aPlayer == null} strike gate (:98) accepts any side without a player, and every
  * method returns a human-readable report instead of a chat line.
+ *
+ * <p>The NEI legs-band jump (task manual-nei-four-family): the upstream client arm
+ * opened {@code RM.Anvil}'s NEI page from the lower 4px band on ANY face (:271-272
+ * {@code aHitY < PX_P[4] → RM.Anvil.openNEI()}) — the port routes it through
+ * {@link #openNei} → {@code GTViewerJump.openRecipeMapPage} (EMI first, JEI fallback,
+ * neither = silent), the GT6KitchenNeiModel sibling paints the matching foot-band glyph.
  */
 public class GT6AnvilBlockEntity extends TileEntityBase03TicksAndSync {
 
@@ -325,6 +332,21 @@ public class GT6AnvilBlockEntity extends TileEntityBase03TicksAndSync {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the NEI legs-band jump (upstream :271-272 — the kitchen clientNeiArm form)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The client NEI arm — upstream {@code RM.Anvil.openNEI()} (MultiTileEntityAnvil.java
+	 * :272, Recipe.java:642 → {@code GuiCraftingRecipe.openRecipeGui}): the viewer jump to
+	 * the ANVIL map (the working face — the bend faces share the same block upstream too,
+	 * NEI_RecipeMap registered the one handler). Silent when no viewer is installed or its
+	 * runtime is not ready — the GTViewerJump router bottom-arms both.
+	 */
+	protected void openNei() {
+		GTViewerJump.openRecipeMapPage(GT6RecipeMaps.ANVIL);
+	}
+
+	// ---------------------------------------------------------------------------
 	// the activation chain (upstream onBlockActivated3 :218-274 → activateChain)
 	// ---------------------------------------------------------------------------
 
@@ -336,8 +358,13 @@ public class GT6AnvilBlockEntity extends TileEntityBase03TicksAndSync {
 	 */
 	public String activateChain(@Nullable Player aPlayer, byte aSide, @Nullable ItemStack aHeld,
 			float aHitX, float aHitY, float aHitZ) {
-		if (!isServerSide()) return "client side";
-		if (aHitY < LEGS_BOUND) return "the anvil legs (no action)"; // :220
+		if (!isServerSide()) {
+			// :271-272 — the CLIENT arm opens the recipe viewer from the foot band, on ANY
+			// face (the upstream arm has no side gate) — the NEI legs-band jump
+			if (aHitY < LEGS_BOUND) openNei();
+			return "client side";
+		}
+		if (aHitY < LEGS_BOUND) return "the anvil legs (the recipe-viewer jump is the client arm)"; // :220
 		byte tSlot = pickSlot(aHitX, aHitZ); // :222
 		boolean tTop = aSide == 1; // SIDES_TOP
 
