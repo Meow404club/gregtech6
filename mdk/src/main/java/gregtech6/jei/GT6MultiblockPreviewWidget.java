@@ -126,14 +126,7 @@ public class GT6MultiblockPreviewWidget extends ParentWidget<GT6MultiblockPrevie
 		for (Map.Entry<Block, Integer> tCount : GT6MultiblockPreviews
 				.materialCounts(aEntry.pattern().get(), aEntry.controllerBlock(), GT6MultiblockPreviews.DISPLAY_FACING)
 				.entrySet()) {
-			ItemStack tStack = new ItemStack(tCount.getKey(), tCount.getValue());
-			tParts.add(RecipeViewerSlotWidget.create(ItemStack.class)
-					.recipeSlotRole(RecipeSlotRole.OUTPUT)
-					.value(tStack)
-					.background(IDrawable.EMPTY)
-					.size(16)
-					.margin(1)
-					.tooltip(tText -> tText.addFromItem(tStack)));
+			tParts.add(tMaterialSlot(new ItemStack(tCount.getKey(), tCount.getValue())));
 		}
 
 		this.coverChildren().padding(2)
@@ -152,6 +145,27 @@ public class GT6MultiblockPreviewWidget extends ParentWidget<GT6MultiblockPrevie
 										.height(aHeight - TOP_STRIP - 4)
 										.childPadding(1)
 										.children(tParts))));
+	}
+
+	/**
+	 * The material slot factory — the ONE per-leg fork in the shell: the vendored fork's
+	 * slot API differs by leg (forge 15.x {@code create(Class)} carries the ingredient
+	 * class with a DUMMY fallback, forgeMain RecipeViewerSlotWidget.java:69; the 1.21.1
+	 * create is erased, neoforgeMain :35) — everything after {@code create} is the shared
+	 * GTCEu chain (OUTPUT role, no slot background, 16px, item tooltip).
+	 */
+	private static IWidget tMaterialSlot(ItemStack aStack) {
+		//? if forge {
+		return RecipeViewerSlotWidget.create(ItemStack.class)
+		//?} else {
+		/*return RecipeViewerSlotWidget.create()
+		 *///?}
+				.recipeSlotRole(RecipeSlotRole.OUTPUT)
+				.value(aStack)
+				.background(IDrawable.EMPTY)
+				.size(16)
+				.margin(1)
+				.tooltip(tText -> tText.addFromItem(aStack));
 	}
 
 	/** The clicked cell — the GTCEu SelectionInfo (MultiblockPreviewWidget.java:477-498), degraded. */
