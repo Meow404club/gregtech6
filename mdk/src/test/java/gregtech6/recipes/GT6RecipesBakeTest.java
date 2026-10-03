@@ -422,11 +422,11 @@ class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
 
 	/**
 	 * The committed datagen generation census: 64 crafting + 16 smelt bake rows over
-	 * data/gt6/recipes/ (the bake_*.json set), each with its advancement companion.
+	 * data/gt6/recipes/ (the bake_*.json set).
 	 */
 	@Test
 	void theDatagenBakeGenerationCensus() throws Exception {
-		Map<String, String> tExpected = new HashMap<>();
+		Set<String> tExpected = new HashSet<>();
 		String[] tCraft = {"bake_slice_cookie_raw", "bake_slice_cookie_raisins_raw", "bake_slice_cookie_choco_raisins_raw", "bake_slice_cookie_abyssal_raw",
 				"bake_slice_bun", "bake_slice_bread", "bake_slice_baguette", "bake_slice_toast", "bake_fries_raw",
 				"bake_dough_flat_rolling", "bake_cakebottom_raw", "bake_bun_raw", "bake_bread_raw", "bake_baguette_raw", "bake_toast_raw",
@@ -452,12 +452,13 @@ class GT6RecipesBakeTest extends GTRecipesOfflineTestBase {
 				"bake_smelt_toast", "bake_smelt_toast_sliced", "bake_smelt_egg"};
 		assertEquals(64, tCraft.length, "64 crafting rows (38 food-bake-recipes + 18 food-crafting-tail + 8 pool-drain-food-t5-tail)");
 		assertEquals(16, tSmelt.length, "16 smelt rows (15 + the :317 egg)");
-		for (String tId : tCraft) tExpected.put("data/gt6/recipes/" + tId + ".json", "data/gt6/advancements/recipes/misc/" + tId + ".json");
-		for (String tId : tSmelt) tExpected.put("data/gt6/recipes/" + tId + ".json", "data/gt6/advancements/recipes/misc/" + tId + ".json");
+		// the unlock-advancement stop (2026-10-03 user ruling, remember id1359): the census pins the
+		// recipe JSONs alone — no advancement companions anymore
+		for (String tId : tCraft) tExpected.add("data/gt6/recipes/" + tId + ".json");
+		for (String tId : tSmelt) tExpected.add("data/gt6/recipes/" + tId + ".json");
 		int tFound = 0;
-		for (Map.Entry<String, String> tEntry : tExpected.entrySet()) {
-			assertTrue(classpathHas(tEntry.getKey()), "the generated recipe " + tEntry.getKey() + " is committed");
-			assertTrue(classpathHas(tEntry.getValue()), "the advancement " + tEntry.getValue() + " is committed");
+		for (String tPath : tExpected) {
+			assertTrue(classpathHas(tPath), "the generated recipe " + tPath + " is committed");
 			tFound++;
 		}
 		assertEquals(80, tFound, "80 bake generations (64 + 16)");

@@ -758,11 +758,11 @@ def canonical_head_epoch(canonical_root: Path) -> tuple[int, str] | None:
 # stonecutter 块：21.1 删除 FinishedRecipe，RecipeOutput 流是卡 B 的 21.1 datagen 面；
 # 故下列 canonical 产物在 21.1 节点结构性无输出（非漂移）。逐路径显式白名单、
 # 摘要独立计数打印（绝不静默吞差）；表外仅 canonical 条目照旧 FAIL。
+# advancement-removal 卡随动（2026-10-03）：unlock advancement 停发，表内原 17 行
+# data/gt6/advancements/... 白名单条目随存量删除一并退役（文件已不存在，留之撒谎）。
 FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/recipes/mold_stone.json",
     "data/gt6/recipes/smeltery_stone.json",
-    "data/gt6/advancements/recipes/misc/mold_stone.json",
-    "data/gt6/advancements/recipes/misc/smeltery_stone.json",
     # issue #45 C2 交卡补录（2026-09-29，与 mold_stone 同构 forge-gated）：clay crucible
     # 链三行（7 黏土 shaped / reverse shapeless / Loader:256 smelt 尾）由 forge 腿独产的
     # GT6CrucibleDatagen.Recipes（crucible-physics-smeltery 的 //? if forge crafting 面）
@@ -770,17 +770,13 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/recipes/clay_crucible_raw.json",
     "data/gt6/recipes/clay_crucible_raw_reclaim.json",
     "data/gt6/recipes/smelt_smeltery_ceramic.json",
-    "data/gt6/advancements/recipes/misc/clay_crucible_raw.json",
-    "data/gt6/advancements/recipes/misc/clay_crucible_raw_reclaim.json",
-    "data/gt6/advancements/recipes/misc/smelt_smeltery_ceramic.json",
     # task eu-core-5tier 交卡门禁补录（2026-09-14，非本卡面——c-water-wheel
     # 遗留缺口由本卡新鲜 neo 节点快照首次显形：GT6CraftingRecipes.buildRecipes 的
     # neoforge 分支漏了 waterWheelBuilder()（forge 分支 ：192 有），canonical 树的
-    # data/gt6/recipes/water_wheel.json(+advancement) 由 forge 腿独产，与 mold_stone
+    # data/gt6/recipes/water_wheel.json 由 forge 腿独产（其 advancement 伴生面已砍，advancement-removal 卡），与 mold_stone
     # 同构 forge-gated。runtime 不受影响（generated 树双腿打包共用）；neo 分支补行
     # 归后续水车轮微卡。
     "data/gt6/recipes/water_wheel.json",
-    "data/gt6/advancements/recipes/misc/water_wheel.json",
     # task dig-six 交卡补录（2026-09-16，非漂移）：forge 命名空间的 GLM 索引
     # data/forge/loot_modifiers/global_loot_modifiers.json 由 forge 腿
     # GlobalLootModifierProvider 独产（21.1 同名 provider 写 data/neoforge/...——平台
@@ -792,55 +788,41 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     # task r8-issue45-c3 交卡补录（2026-09-29）：量杯配方面 GT6MeasuringPotDatagen.Recipes
     # 与 GT6CrucibleDatagen.Recipes 同构（//? if forge 整类门控，21.1 节点结构性无输出，
     # RecipeProvider.getName final 的 duplicate-provider 约束 + 卡 B 未来的 RecipeOutput
-    # 面）；shaped :134 / reverse :121 / smelt :2096 三行 ×2（配方+advancement），
+    # 面）；shaped :134 / reverse :121 / smelt :2096 三行（advancement 伴生面已由 advancement-removal 卡砍除，2026-10-03），
     # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
     "data/gt6/recipes/clay_measuring_pot.json",
     "data/gt6/recipes/clay_measuring_pot_reverse.json",
     "data/gt6/recipes/smelt_clay_measuring_pot.json",
-    "data/gt6/advancements/recipes/misc/clay_measuring_pot.json",
-    "data/gt6/advancements/recipes/misc/clay_measuring_pot_reverse.json",
-    "data/gt6/advancements/recipes/misc/smelt_clay_measuring_pot.json",
     # task small-tank-gas-cylinder 交卡补录（2026-09-30，与 clay_measuring_pot 同构
     # forge-gated）：gas cylinder 四行（Loader :2101-2104 inline "RCR"/"BCh"/"TPd" 网格，
-    # GT6GasCylinderDatagen.Recipes 的 //? if forge crafting 面）×2（配方+advancement），
+    # GT6GasCylinderDatagen.Recipes 的 //? if forge crafting 面；advancement 面已砍，advancement-removal 卡），
     # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
     "data/gt6/recipes/gas_cylinder_steel.json",
     "data/gt6/recipes/gas_cylinder_stainless_steel.json",
     "data/gt6/recipes/gas_cylinder_tungsten.json",
     "data/gt6/recipes/gas_cylinder_tantalum_hafnium_carbide.json",
-    "data/gt6/advancements/recipes/misc/gas_cylinder_steel.json",
-    "data/gt6/advancements/recipes/misc/gas_cylinder_stainless_steel.json",
-    "data/gt6/advancements/recipes/misc/gas_cylinder_tungsten.json",
-    "data/gt6/advancements/recipes/misc/gas_cylinder_tantalum_hafnium_carbide.json",
 
     # task small-tank-cup 交卡补录（2026-10-01）：瓷杯配方面 GT6CupDatagen.Recipes 与
     # GT6MeasuringPotDatagen.Recipes 同构（//? if forge 整类门控，21.1 节点结构性无输出）；
-    # shaped :78 "kPR" / reverse :76 / smelt :2094 三行 ×2（配方+advancement），
+    # shaped :78 "kPR" / reverse :76 / smelt :2094 三行（advancement 伴生面已由 advancement-removal 卡砍除，2026-10-03），
     # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
     "data/gt6/recipes/modeled_porcelain_cup.json",
     "data/gt6/recipes/modeled_porcelain_cup_reverse.json",
     "data/gt6/recipes/smelt_modeled_porcelain_cup.json",
-    "data/gt6/advancements/recipes/misc/modeled_porcelain_cup.json",
-    "data/gt6/advancements/recipes/misc/modeled_porcelain_cup_reverse.json",
-    "data/gt6/advancements/recipes/misc/smelt_modeled_porcelain_cup.json",
     # task small-tank-jug 交卡补录（2026-10-01）：陶杯配方面 GT6JugDatagen.Recipes 与
     # GT6CupDatagen.Recipes 同构（//? if forge 整类门控，21.1 节点结构性无输出）；
-    # shaped :133 "kCR"/"C C"/"CCC" / reverse :120 / smelt :2095 三行 ×2（配方+advancement），
+    # shaped :133 "kCR"/"C C"/"CCC" / reverse :120 / smelt :2095 三行（advancement 伴生面已由 advancement-removal 卡砍除，2026-10-03），
     # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
     "data/gt6/recipes/clay_jug.json",
     "data/gt6/recipes/clay_jug_reverse.json",
     "data/gt6/recipes/smelt_clay_jug.json",
-    "data/gt6/advancements/recipes/misc/clay_jug.json",
-    "data/gt6/advancements/recipes/misc/clay_jug_reverse.json",
-    "data/gt6/advancements/recipes/misc/smelt_clay_jug.json",
 
     # task food-meat-recipes 交卡补录（2026-10-02）：肉排烧制行 GT6MeatDatagen.Recipes 与
     # GT6CupDatagen.Recipes 同构（//? if forge 整类门控，21.1 节点结构性无输出）；
-    # smelt :574 DECLARED 行（dogmeat_raw→dogmeat_cooked，骡肉 bug verbatim 转录）×2
-    # （配方+advancement），singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，
+    # smelt :574 DECLARED 行（dogmeat_raw→dogmeat_cooked，骡肉 bug verbatim 转录；
+    # advancement 伴生面已由 advancement-removal 卡砍除），singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，
     # 无需声明。runtime 不受影响。
     "data/gt6/recipes/smelt_food_dogmeat.json",
-    "data/gt6/advancements/recipes/misc/smelt_food_dogmeat.json",
 })
 
 # ── 声明偏离带（canonical 前瞻孪生树，vanilla-tag-dual-tree 引入）──────────────

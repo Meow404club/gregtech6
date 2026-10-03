@@ -215,13 +215,69 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath + "_recast");
 	}
 
+	//? if forge {
+	/** The recipe JSON path provider — the run() override re-derives it (the vanilla 1.20.1 field is private). */
+	private final PackOutput.PathProvider mRecipePaths;
+	//?}
+
 	public GT6CraftingRecipes(PackOutput aOutput, CompletableFuture<HolderLookup.Provider> aLookupProvider) {
 		//? if forge {
 		super(aOutput);
+		mRecipePaths = aOutput.createPathProvider(PackOutput.Target.DATA_PACK, "recipes");
 		//?} else {
 		/*super(aOutput, aLookupProvider);
 		*///?}
 	}
+
+	/**
+	 * The unlock-advancement stop (2026-10-03 user ruling, remember id1359: a tech mod's
+	 * players run JEI/EMI — the vanilla recipe book is dead weight). Both legs run the
+	 * vanilla flow with the advancement persistence branch removed: recipe JSONs
+	 * byte-identical, zero advancement files (the 32009+4 committed stock deleted by the
+	 * same card). Forge: overrides {@code RecipeProvider.run} (1.20.1 RecipeProvider.java:87,
+	 * overridable) verbatim minus the {@code serializeAdvancement()} branch. 21.1: the one-arg
+	 * {@code run} (:77) is final, so the two-arg (:81) is overridden with an
+	 * advancement-dropping RecipeOutput — accept() never persists the holder (vanilla's own
+	 * anonymous output already guards {@code if (advancement != null)}).
+	 */
+	//? if forge {
+	@Override
+	public CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache) {
+		java.util.Set<ResourceLocation> tSeen = new java.util.HashSet<>();
+		java.util.List<CompletableFuture<?>> tFutures = new ArrayList<>();
+		this.buildRecipes(tRow -> {
+			if (!tSeen.add(tRow.getId())) throw new IllegalStateException("Duplicate recipe " + tRow.getId());
+			tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tRow.serializeRecipe(), mRecipePaths.json(tRow.getId())));
+		});
+		return CompletableFuture.allOf(tFutures.toArray(new CompletableFuture[0]));
+	}
+	//?} else {
+	/*@Override
+	protected CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache, HolderLookup.Provider aRegistries) {
+		java.util.Set<ResourceLocation> tSeen = new java.util.HashSet<>();
+		java.util.List<CompletableFuture<?>> tFutures = new ArrayList<>();
+		PackOutput.PathProvider tRecipePaths = recipePathProvider;
+		this.buildRecipes(new net.minecraft.data.recipes.RecipeOutput() {
+			@Override
+			public void accept(ResourceLocation aId, net.minecraft.world.item.crafting.Recipe<?> aRecipe,
+					net.minecraft.advancements.AdvancementHolder aAdvancement,
+					net.neoforged.neoforge.common.conditions.ICondition... aConditions) {
+				if (!tSeen.add(aId)) throw new IllegalStateException("Duplicate recipe " + aId);
+				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, aRegistries,
+						net.minecraft.world.item.crafting.Recipe.CONDITIONAL_CODEC,
+						java.util.Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(aRecipe, aConditions)),
+						tRecipePaths.json(aId)));
+			}
+
+			@Override
+			public net.minecraft.advancements.Advancement.Builder advancement() {
+				return net.minecraft.advancements.Advancement.Builder.recipeAdvancement()
+						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
+			}
+		}, aRegistries);
+		return CompletableFuture.allOf(tFutures.toArray(new CompletableFuture[0]));
+	}
+	*///?}
 
 	//? if forge {
 	@Override

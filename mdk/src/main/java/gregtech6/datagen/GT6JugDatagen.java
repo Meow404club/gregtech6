@@ -84,16 +84,14 @@ public final class GT6JugDatagen {
 		@Override
 		public java.util.concurrent.CompletableFuture<?> run(net.minecraft.data.CachedOutput aCache) {
 			PackOutput.PathProvider tRecipePaths = mOutput.createPathProvider(PackOutput.Target.DATA_PACK, "recipes");
-			PackOutput.PathProvider tAdvancementPaths = mOutput.createPathProvider(PackOutput.Target.DATA_PACK, "advancements");
 			java.util.List<java.util.concurrent.CompletableFuture<?>> tFutures = new java.util.ArrayList<>();
 			java.util.Set<ResourceLocation> tSeen = new HashSet<>();
 			build(tFinished -> {
 				if (!tSeen.add(tFinished.getId())) throw new IllegalStateException("Duplicate recipe " + tFinished.getId());
 				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tFinished.serializeRecipe(), tRecipePaths.json(tFinished.getId())));
-				com.google.gson.JsonObject tAdvancement = tFinished.serializeAdvancement();
-				if (tAdvancement != null) {
-					tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tAdvancement, tAdvancementPaths.json(tFinished.getAdvancementId())));
-				}
+				// the unlock-advancement write stopped here (2026-10-03 user ruling, remember id1359:
+				// JEI/EMI ubiquitous, the vanilla recipe book is dead weight) — the builders keep their
+				// unlockedBy criteria (the builder API needs them); the JSON is simply never saved.
 			});
 			return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture[0]));
 		}

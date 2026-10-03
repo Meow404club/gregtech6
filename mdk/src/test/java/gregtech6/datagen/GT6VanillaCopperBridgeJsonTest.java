@@ -3,15 +3,19 @@ package gregtech6.datagen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -133,22 +137,24 @@ public class GT6VanillaCopperBridgeJsonTest {
 		}
 	}
 
-	/** The unlock-advancement overrides: the vanilla ids carry the tag criterion (the toast fires on either copper face). */
+	/**
+	 * The unlock-advancement stop (2026-10-03 user ruling, remember id1359: JEI/EMI
+	 * ubiquitous, the vanilla recipe book is dead weight): the four bridge rows keep
+	 * their recipe JSONs, the mod's companion advancement files are gone. The pin walks
+	 * the GENERATED TREE on disk (anchored by the mod-only spray_can_empty recipe), NOT
+	 * the classloader — {@code data/minecraft/advancements/recipes/**} is a path the
+	 * vanilla client-extra jar itself ships, so a classpath read can never prove absence.
+	 */
 	@Test
-	public void everyUnlockAdvancementCarriesTheTagCriterion() throws Exception {
-		pinAdvancement("recipes/building_blocks/copper_block", "minecraft:copper_block");
-		pinAdvancement("recipes/redstone/lightning_rod", "minecraft:lightning_rod");
-		pinAdvancement("recipes/tools/brush", "minecraft:brush");
-		pinAdvancement("recipes/tools/spyglass", "minecraft:spyglass");
-	}
-
-	private static void pinAdvancement(String aPath, String aRecipe) throws IOException {
-		JsonObject tAdvancement = json("data/minecraft/advancements/" + aPath + ".json");
-		assertEquals("minecraft:recipes/root", tAdvancement.get("parent").getAsString(), aPath + " parent");
-		JsonObject tCriterion = tAdvancement.getAsJsonObject("criteria").getAsJsonObject("has_copper_ingot");
-		JsonElement tFirst = tCriterion.getAsJsonObject("conditions").getAsJsonArray("items").get(0);
-		assertEquals(FORGE_TAG, tFirst.getAsJsonObject().get("tag").getAsString(), aPath + " the tag criterion");
-		assertEquals(aRecipe, tAdvancement.getAsJsonObject("criteria").getAsJsonObject("has_the_recipe")
-				.getAsJsonObject("conditions").get("recipe").getAsString(), aPath + " the recipe unlock");
+	public void theUnlockAdvancementsAreNoLongerGenerated() throws Exception {
+		URL tAnchor = GT6VanillaCopperBridgeJsonTest.class.getResource("/data/gt6/recipes/spray_can_empty.json");
+		assertNotNull(tAnchor, "the mod-only anchor rides the generated-resources classpath");
+		Path tGeneratedRoot = Paths.get(tAnchor.toURI()).getParent().getParent().getParent();
+		String[] tPaths = {"recipes/building_blocks/copper_block", "recipes/redstone/lightning_rod",
+				"recipes/tools/brush", "recipes/tools/spyglass"};
+		for (String tPath : tPaths) {
+			assertFalse(Files.exists(tGeneratedRoot.resolve("data/minecraft/advancements/" + tPath + ".json")),
+					tPath + " the unlock advancement is stopped at the datagen face");
+		}
 	}
 }

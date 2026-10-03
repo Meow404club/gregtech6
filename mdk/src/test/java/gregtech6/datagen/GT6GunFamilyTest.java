@@ -23,6 +23,7 @@ package gregtech6.datagen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -168,8 +169,9 @@ public class GT6GunFamilyTest extends GTOfflineTestBase {
 		assertTrue(tKey.get("H").getAsJsonObject().has("tag"), "H = the wood-rod tag (the mHandleMaterial port face)");
 		assertTrue(tKey.get("d").getAsJsonObject().has("tag"), "d = the screwdriver tool tag");
 		assertTrue(tKey.get("h").getAsJsonObject().has("tag"), "h = the hammer tool tag");
-		// the advancement pair rides recipes/tools/ (the MaterialToolRow form)
-		JsonObject tAdvancement = generated("advancements/recipes/tools/pistol/iron");
-		assertTrue(tAdvancement.has("criteria"), "the advancement lands beside the row");
+		// the unlock-advancement stop (2026-10-03 user ruling, remember id1359: JEI/EMI ubiquitous,
+		// the vanilla recipe book is dead weight) — the row rides alone, no companion file
+		assertNull(getClass().getResourceAsStream("/data/gt6/advancements/recipes/tools/pistol/iron.json"),
+				"the pistol/iron unlock advancement is stopped at the datagen face");
 	}
 }

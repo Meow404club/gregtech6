@@ -464,8 +464,8 @@ tasks.named<Jar>("jar") {
 // + 打包垃圾）必须为零；本腿正典域必须非空。本腿（1.21.1）正典 = 单数 recipe/loot_table +
 // neoforge loader 域；对面腿（1.20.1）复数域 recipes/loot_tables 与 forge loader 域不得入 jar。
 // 排除位置的裁决理由（jar 任务 exclude 而非 sourceSet 级）与病灶链见 build.forge.gradle.kts
-// jar 块注释，两节点一字同构。advancements/ 条目数随 census 行输出——unlock advancement 砍除
-// （②，2026-10-03 用户裁定，降级为后续小卡）落地后归零，由该卡补进禁入面。
+// jar 块注释，两节点一字同构。advancements/ 已入禁入面（advancement-removal 卡：unlock
+// advancement 停发+存量清零，2026-10-03 用户裁定）；census 行恒 0 即验收④。
 val jarCensusKeys = listOf(
     "data/gt6/recipes/", "data/gt6/recipe/", "data/gt6/advancements/",
     "data/gt6/loot_tables/", "data/gt6/loot_table/",
@@ -473,6 +473,7 @@ val jarCensusKeys = listOf(
 )
 val jarForbiddenPrefixes = listOf(
     "data/gt6/recipes/", "data/gt6/loot_tables/", "data/gt6/forge/",
+    "data/gt6/advancements/",
     "assets/README.md", ".cache",
 )
 val jarRequiredKeys = listOf("data/gt6/recipe/", "data/gt6/loot_table/", "data/gt6/neoforge/", "assets/")

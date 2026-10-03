@@ -355,9 +355,9 @@ tasks.named<Jar>("jar") {
 // 逐条目断言：禁入面（对面腿域 + 打包垃圾，与上方 jar exclude 一字对应）必须为零；本腿
 // 正典域必须非空（防 exclude 误伤把本腿内容排光）。红绿法实证：exclude 落地前跑 jarCensus
 // 必红（forge 腿实测 data/gt6/recipe 32009 + data/gt6/loot_table 15388 + data/gt6/neoforge
-// 51 + assets/README.md 1）；exclude 落地后转绿。advancements/ 条目数随 census 行输出——
-// unlock advancement 砍除（②，2026-10-03 用户裁定，降级为后续小卡）落地后归零，由该卡把
-// data/gt6/advancements 补进禁入面。
+// 51 + assets/README.md 1）；exclude 落地后转绿。advancements/ 已入禁入面（advancement-removal
+// 卡：unlock advancement 停发+存量 32013 清零，2026-10-03 用户裁定——JEI/EMI 必装，配方书是
+// 摆设）；census 行恒 0 即验收④。
 val jarCensusKeys = listOf(
     "data/gt6/recipes/", "data/gt6/recipe/", "data/gt6/advancements/",
     "data/gt6/loot_tables/", "data/gt6/loot_table/",
@@ -365,6 +365,7 @@ val jarCensusKeys = listOf(
 )
 val jarForbiddenPrefixes = listOf(
     "data/gt6/recipe/", "data/gt6/loot_table/", "data/gt6/neoforge/",
+    "data/gt6/advancements/",
     "assets/README.md", ".cache",
 )
 val jarRequiredKeys = listOf("data/gt6/recipes/", "data/gt6/loot_tables/", "data/gt6/forge/", "assets/")
