@@ -489,6 +489,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (ShapelessCraftFromRow tRow : shapelessCraftFromDatagenRows()) {
 			shapelessCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
 		}
+		// task toolhead-r11a-file-belt — the raw→finished tool-head file belt (Loader_Recipes_Handlers.java:420-434)
+		for (FileBeltCraftFromRow tRow : fileBeltCraftFromDatagenRows()) {
+			fileBeltCraftFromBuilder(tRow).save(aConsumer, tRow.aId());
+		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -726,6 +730,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (ShapelessCraftFromRow tRow : shapelessCraftFromDatagenRows()) {
 			shapelessCraftFromBuilder(tRow).save(aOutput, tRow.aId());
+		}
+		// task toolhead-r11a-file-belt — the raw→finished tool-head file belt (Loader_Recipes_Handlers.java:420-434)
+		for (FileBeltCraftFromRow tRow : fileBeltCraftFromDatagenRows()) {
+			fileBeltCraftFromBuilder(tRow).save(aOutput, tRow.aId());
 		}
 		// task debt-stairs-wall-vanilla-recipes — the upstream BlockStones vanilla-degradation rows
 		for (PartFamilyRecipeRow tRow : stairsFromRocksBuilders()) {
@@ -6561,6 +6569,115 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.unlockedBy("has_input", has(aRow.aPrimary()));
 		for (net.minecraft.world.item.crafting.Ingredient tIngredient : aRow.aIngredients()) rBuilder.requires(tIngredient);
 		return rBuilder;
+	}
+
+	// -----------------------------------------------------------------------
+	// The raw→finished tool-head FILE BELT (task toolhead-r11a-file-belt) —
+	// the C2 conversion route of the r11 toolhead census: the OreProcessing_
+	// CraftFrom listener half living in Loader_Recipes_Handlers.java:420-434
+	// (the p37 panel census circled Loader_OreProcessing.java only — the
+	// file-boundary scope miss; the sibling C1 grindstone rows :403-415 are
+	// the toolhead-r11b card, this band is the workbench face only). Fifteen
+	// shaped rows over ONE grid, {"X ", " f"} = the raw head (X) + a file
+	// tool (f) → the finished head:
+	//  - :420 arrow ← gemChipped ×2, And(ANTIMATTER.NOT, COATED.NOT);
+	//  - :421 arrow ← rockGt ×8, And(ANTIMATTER.NOT, COATED.NOT, STONE);
+	//  - :422 arrow ← rawArrow ×1, ANTIMATTER.NOT;
+	//  - :423-434 the twelve one-row families (saw/chisel/sword/pickaxe/
+	//    shovel/spade/universalSpade/axe/axeDouble/hoe/sense/plow), all
+	//    ANTIMATTER.NOT.
+	// The same band translation as the stick family above (the listener walk,
+	// the condition fold, the config-gate drop, the item-truth intersection)
+	// — the listener rides the OUTPUT prefix's registration event (the
+	// aEvent.mStack face), so the universe = the materials whose OUTPUT and
+	// INPUT items both exist; the raw heads carry their finished head's
+	// condition verbatim (OP.java:1303-1315 setCondition(toolHead<Family>)),
+	// so the raw ∩ finished faces coincide for the twelve families. Tool
+	// letter 'f' = the file tool tag (upstream CR.java:231).
+	// -----------------------------------------------------------------------
+
+	/** The condition kind of the :421 rockGt arrow row — the STONE positive leg joins the coated/antimatter pair. */
+	static final int COND_COATED_ANTIMATTER_STONE = 4;
+
+	/** One file-belt row form: the id key + the output prefix + count + the input prefix + the condition kind (Loader_Recipes_Handlers.java:420-434, the amounts and conditions verbatim). Package-private for the pin test. */
+	record FileBeltCraftFromForm(String aKey, gregapi.oredict.OreDictPrefix aOutput, int aCount,
+			gregapi.oredict.OreDictPrefix aInput, int aCondition) {}
+
+	/** The fifteen row forms (upstream order :420-434). A method, not a field — the OP fields live only after OP.init. */
+	static List<FileBeltCraftFromForm> fileBeltCraftFromForms() {
+		return List.of(
+				new FileBeltCraftFromForm("tool_head_arrow/from_gem_chipped", gregapi.data.OP.toolHeadArrow, 2, gregapi.data.OP.gemChipped, COND_COATED_ANTIMATTER), // :420
+				new FileBeltCraftFromForm("tool_head_arrow/from_rock_gt", gregapi.data.OP.toolHeadArrow, 8, gregapi.data.OP.rockGt, COND_COATED_ANTIMATTER_STONE), // :421
+				new FileBeltCraftFromForm("tool_head_arrow/from_raw_arrow", gregapi.data.OP.toolHeadArrow, 1, gregapi.data.OP.toolHeadRawArrow, COND_ANTIMATTER), // :422
+				new FileBeltCraftFromForm("tool_head_saw/from_raw_saw", gregapi.data.OP.toolHeadSaw, 1, gregapi.data.OP.toolHeadRawSaw, COND_ANTIMATTER), // :423
+				new FileBeltCraftFromForm("tool_head_chisel/from_raw_chisel", gregapi.data.OP.toolHeadChisel, 1, gregapi.data.OP.toolHeadRawChisel, COND_ANTIMATTER), // :424
+				new FileBeltCraftFromForm("tool_head_sword/from_raw_sword", gregapi.data.OP.toolHeadSword, 1, gregapi.data.OP.toolHeadRawSword, COND_ANTIMATTER), // :425
+				new FileBeltCraftFromForm("tool_head_pickaxe/from_raw_pickaxe", gregapi.data.OP.toolHeadPickaxe, 1, gregapi.data.OP.toolHeadRawPickaxe, COND_ANTIMATTER), // :426
+				new FileBeltCraftFromForm("tool_head_shovel/from_raw_shovel", gregapi.data.OP.toolHeadShovel, 1, gregapi.data.OP.toolHeadRawShovel, COND_ANTIMATTER), // :427
+				new FileBeltCraftFromForm("tool_head_spade/from_raw_spade", gregapi.data.OP.toolHeadSpade, 1, gregapi.data.OP.toolHeadRawSpade, COND_ANTIMATTER), // :428
+				new FileBeltCraftFromForm("tool_head_universal_spade/from_raw_universal_spade", gregapi.data.OP.toolHeadUniversalSpade, 1, gregapi.data.OP.toolHeadRawUniversalSpade, COND_ANTIMATTER), // :429
+				new FileBeltCraftFromForm("tool_head_axe/from_raw_axe", gregapi.data.OP.toolHeadAxe, 1, gregapi.data.OP.toolHeadRawAxe, COND_ANTIMATTER), // :430
+				new FileBeltCraftFromForm("tool_head_axe_double/from_raw_axe_double", gregapi.data.OP.toolHeadAxeDouble, 1, gregapi.data.OP.toolHeadRawAxeDouble, COND_ANTIMATTER), // :431
+				new FileBeltCraftFromForm("tool_head_hoe/from_raw_hoe", gregapi.data.OP.toolHeadHoe, 1, gregapi.data.OP.toolHeadRawHoe, COND_ANTIMATTER), // :432
+				new FileBeltCraftFromForm("tool_head_sense/from_raw_sense", gregapi.data.OP.toolHeadSense, 1, gregapi.data.OP.toolHeadRawSense, COND_ANTIMATTER), // :433
+				new FileBeltCraftFromForm("tool_head_plow/from_raw_plow", gregapi.data.OP.toolHeadPlow, 1, gregapi.data.OP.toolHeadRawPlow, COND_ANTIMATTER)); // :434
+	}
+
+	/** The material face of one file-belt row (the test-visible walk unit). */
+	record FileBeltCraftFromMaterialRow(FileBeltCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/** The material face of the file belt: per form, the materials whose INPUT and OUTPUT items both exist (the registrationOrder intersection) minus the per-form condition rows — the stick walk + the shapeless condition switch. */
+	static List<FileBeltCraftFromMaterialRow> fileBeltCraftFromMaterialRows() {
+		List<FileBeltCraftFromMaterialRow> rRows = new ArrayList<>();
+		for (FileBeltCraftFromForm tForm : fileBeltCraftFromForms()) {
+			java.util.Set<OreDictMaterial> tInputs = itemTruth(List.of(tForm.aOutput(), tForm.aInput()));
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				switch (tForm.aCondition()) {
+					case COND_COATED_ANTIMATTER -> {
+						if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+						if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+					}
+					case COND_COATED_ANTIMATTER_STONE -> {
+						if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+						if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+						if (!tMaterial.contains(gregapi.data.TD.Properties.STONE)) continue; // STONE — the positive rock face
+					}
+					default -> {
+						if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT — the twelve families + the raw arrow
+					}
+				}
+				rRows.add(new FileBeltCraftFromMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** The datagen row: the id + the output item + count + the input item. */
+	private record FileBeltCraftFromRow(ResourceLocation aId, net.minecraft.world.item.Item aResult, int aCount, net.minecraft.world.item.Item aInput) {}
+
+	/** The datagen face: the material walk resolved onto the live items (the silent-skip guard rides itemOrNull). */
+	private List<FileBeltCraftFromRow> fileBeltCraftFromDatagenRows() {
+		List<FileBeltCraftFromRow> rRows = new ArrayList<>();
+		for (FileBeltCraftFromMaterialRow tMaterialRow : fileBeltCraftFromMaterialRows()) {
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			net.minecraft.world.item.Item tResult = itemOrNull(tMaterialRow.aForm().aOutput(), tMaterialRow.aMaterial());
+			net.minecraft.world.item.Item tInput = itemOrNull(tMaterialRow.aForm().aInput(), tMaterialRow.aMaterial());
+			if (tResult == null || tInput == null) continue; // the item-truth guard (belt and braces over the walk)
+			rRows.add(new FileBeltCraftFromRow(craftFromRowId(tMaterialRow.aForm().aKey(), tSnake), tResult, tMaterialRow.aForm().aCount(), tInput));
+		}
+		return rRows;
+	}
+
+	/** One row's builder — the upstream {"X ", " f"} grid, 'X' = the raw head item, 'f' = the file tag (upstream CR.java:231). */
+	private ShapedRecipeBuilder fileBeltCraftFromBuilder(FileBeltCraftFromRow aRow) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aRow.aResult(), aRow.aCount())
+				.pattern("X ")
+				.pattern(" f")
+				.define('X', aRow.aInput())
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.unlockedBy("has_input", has(aRow.aInput()));
 	}
 
 	// -----------------------------------------------------------------------

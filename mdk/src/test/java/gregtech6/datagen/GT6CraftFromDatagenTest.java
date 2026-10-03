@@ -48,6 +48,15 @@
  * substitution law (the :480-510 .dat(m) face) with the fixed MT.Empty slots, the
  * ANY-group multi-item slots and the tool-tag slots, and the :186 meltmin(293)
  * face (CS.java:135 C+20).
+ *
+ * <p>task toolhead-r11a-file-belt extension (the raw→finished tool-head file
+ * belt): the OreProcessing_CraftFrom listener half living in
+ * Loader_Recipes_Handlers.java:420-434 (the p37 census circled
+ * Loader_OreProcessing.java only — the file-boundary scope miss) — twelve
+ * one-row families + the arrow trio (:420 gemChipped ×2, :421 rockGt ×8, :422
+ * rawArrow ×1), all the {"X ", " f"} grid over the TOOLS_FILE tag; the
+ * universes ride the bare output ∩ input item-truth intersection under the
+ * verbatim condition legs (the :421 STONE positive face included).
  */
 package gregtech6.datagen;
 
@@ -888,5 +897,77 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertTrue(tRow.getAsJsonArray("ingredients").get(4).getAsJsonObject().get("tag").getAsString().endsWith("tools/hard_hammer"), "the hammer slot");
         assertTrue(tRow.getAsJsonArray("ingredients").get(5).getAsJsonObject().get("tag").getAsString().endsWith("tools/saw"), "the saw slot");
         assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.toolHeadPickaxeGem, material("Amethyst")), tRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
+    }
+
+    // ------------------------------------------------------------------
+    // task toolhead-r11a-file-belt — the raw→finished tool-head file belt
+    // (Loader_Recipes_Handlers.java:420-434 — the OreProcessing_CraftFrom
+    // listener half the p37 panel census missed by circling
+    // Loader_OreProcessing.java only: 12 one-row families + the arrow trio,
+    // all the {"X ", " f"} grid)
+    // ------------------------------------------------------------------
+
+    private static Set<String> fileBeltMaterialsOf(String aFormKey) {
+        Set<String> rNames = new HashSet<>();
+        for (GT6CraftingRecipes.FileBeltCraftFromMaterialRow tRow : GT6CraftingRecipes.fileBeltCraftFromMaterialRows()) {
+            if (tRow.aForm().aKey().equals(aFormKey)) rNames.add(tRow.aMaterial().mNameInternal);
+        }
+        return rNames;
+    }
+
+    /** Row-count pin (the measured item truth): 6313 = the arrow trio (95 chipped + 79 rock + 539 raw) + 4x312 + 8x544 family faces. */
+    @Test
+    public void theFileBeltRowCountIsTheMeasuredItemTruth() {
+        assertEquals(6313, GT6CraftingRecipes.fileBeltCraftFromMaterialRows().size(),
+                "95 + 79 + 539 + 4x312 (saw/chisel/universalSpade/axeDouble) + 8x544 (sword/pickaxe/shovel/spade/axe/hoe/sense/plow)");
+        assertEquals(95, fileBeltMaterialsOf("tool_head_arrow/from_gem_chipped").size(), "the :420 chipped face (the flawed-gem-tier face, the :190 twin)");
+        assertEquals(79, fileBeltMaterialsOf("tool_head_arrow/from_rock_gt").size(), "the :421 rock face (the STONE positive leg)");
+        assertEquals(539, fileBeltMaterialsOf("tool_head_arrow/from_raw_arrow").size(), "the :422 raw-arrow face (== the whole toolHeadArrow face, the :181 twin)");
+        assertEquals(312, fileBeltMaterialsOf("tool_head_saw/from_raw_saw").size(), "the :423 saw face");
+        assertEquals(544, fileBeltMaterialsOf("tool_head_sword/from_raw_sword").size(), "the :425 sword face");
+    }
+
+    /** Universe SET pin: every form's rows == the bare output ∩ input item-truth faces under the verbatim condition legs. */
+    @Test
+    public void theFileBeltUniversesAreTheLivePrefixFaces() {
+        for (GT6CraftingRecipes.FileBeltCraftFromForm tForm : GT6CraftingRecipes.fileBeltCraftFromForms()) {
+            Set<String> tExpected = new HashSet<>();
+            Set<String> tOutputs = new HashSet<>(), tInputs = new HashSet<>();
+            for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+                if (tPair.prefix() == tForm.aOutput()) tOutputs.add(tPair.material().mNameInternal);
+                if (tPair.prefix() == tForm.aInput()) tInputs.add(tPair.material().mNameInternal);
+            }
+            tExpected.addAll(tOutputs);
+            tExpected.retainAll(tInputs);
+            tExpected.removeIf(tName -> switch (tForm.aCondition()) {
+                case GT6CraftingRecipes.COND_COATED_ANTIMATTER -> material(tName).contains(gregapi.data.TD.Atomic.ANTIMATTER)
+                        || material(tName).contains(gregapi.data.TD.Compounds.COATED); // :420
+                case GT6CraftingRecipes.COND_COATED_ANTIMATTER_STONE -> material(tName).contains(gregapi.data.TD.Atomic.ANTIMATTER)
+                        || material(tName).contains(gregapi.data.TD.Compounds.COATED)
+                        || !material(tName).contains(gregapi.data.TD.Properties.STONE); // :421
+                default -> material(tName).contains(gregapi.data.TD.Atomic.ANTIMATTER); // :422-434
+            });
+            assertEquals(tExpected, fileBeltMaterialsOf(tForm.aKey()),
+                    "the universe == the output ∩ input faces under the verbatim condition: " + tForm.aKey());
+        }
+    }
+
+    /** Amount pin: the :420-434 output amounts verbatim (2/8/1 + twelve 1s). */
+    @Test
+    public void theFileBeltAmountsAreTheUpstreamVerbatim() {
+        for (GT6CraftingRecipes.FileBeltCraftFromForm tForm : GT6CraftingRecipes.fileBeltCraftFromForms()) {
+            assertEquals(switch (tForm.aKey()) {
+                case "tool_head_arrow/from_gem_chipped" -> 2; // :420
+                case "tool_head_arrow/from_rock_gt" -> 8; // :421
+                default -> 1; // :422-434
+            }, tForm.aCount(), "the output amount: " + tForm.aKey());
+        }
+    }
+
+    /** The row id — the craftFromRowId form over the gt6 namespace (the shared id law). */
+    @Test
+    public void theFileBeltRowIdIsTheFormKeyPlusMaterialLeaf() {
+        assertEquals("gt6:tool_head_saw/from_raw_saw/iron", GT6CraftingRecipes.craftFromRowId("tool_head_saw/from_raw_saw", "iron").toString());
+        assertEquals("gt6:tool_head_arrow/from_rock_gt/andesite", GT6CraftingRecipes.craftFromRowId("tool_head_arrow/from_rock_gt", "andesite").toString());
     }
 }
