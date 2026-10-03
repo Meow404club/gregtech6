@@ -50,10 +50,13 @@ import gregtech6.tileentity.multiblocks.TileEntityCrucible;
  *     {@code mDisplayedHeight != 0 && SIDES_TOP}), at
  *     {@code y = 1.125 + mDisplayedHeight/150.0} (:635 verbatim). The face rides the
  *     {@link ContentFace} dispatch (the crucible-bowl-model seam): the MOLTEN arm
- *     (smeltery_content + mRGBaLiquid, rendered fullbright — the upstream
- *     {@code getTextureMolten} glow, OreDictMaterial.java:996-999) when the synced
- *     displayed fluid exists, the SOLID arm (bodyTexture + mRGBaSolid — the declared port
- *     face over upstream's gray-NULL placeholder :622) otherwise.</li>
+ *     (the {@code GT6CrucibleDatagen.moltenTexture} per-set molten grayscale +
+ *     mRGBaLiquid, rendered fullbright — the upstream {@code getTextureMolten} shape,
+ *     OreDictMaterial.java:996-999; task r11b-crucible-molten-art retired the flat
+ *     smeltery_content placeholder here too) when the synced displayed fluid exists,
+ *     the SOLID arm (bodyTexture + mRGBaSolid — the declared port face over upstream's
+ *     gray-NULL placeholder :622) otherwise. The floor quad (pass 4) stays the machine
+ *     body seat — upstream's :647 machine-texture arm, NOT molten.</li>
  * </ol>
  *
  * <p><b>Melt-down red-shift</b> (upstream :611-616 {@code getRenderPasses2}): with

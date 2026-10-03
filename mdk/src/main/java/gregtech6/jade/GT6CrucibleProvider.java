@@ -52,7 +52,8 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * {@code progressStyle().overlay}，forge FluidView.java:47-48 + FluidStorageProvider.java:68-69 /
  * neo :124 双腿实证），桥材质走 {@link FluidBridge#moltenFluidForMaterial}；②其余态 overlay =
  * 自实现 {@link GT6ContentFaceElement} 渲染 ContentFace 缝同源贴图（固体=bodyTexture+mRGBaSolid
- * / 熔融=smeltery_content+mRGBaLiquid——{@code GT6CrucibleDatagen.contentFace} 只读消费，与碗内
+ * / 熔融=moltenTexture 每材质组 molten 灰度+mRGBaLiquid（task r11b-crucible-molten-art，
+ * 平板占位退役）——{@code GT6CrucibleDatagen.contentFace} 只读消费，与碗内
  * 观感一致；固体臂经 bodyTexture 全铺 SET 分派（task crucible-solid-face-matrix）对全材质
  * 恒可用）；③量纲词 'U'/'份' 进 lang（{@link #LANG_ENTRY} 新键 +
  * total 键 zh 面 份）；④融毁红字联动——闩落时条文字变红（{@code textColor} =
