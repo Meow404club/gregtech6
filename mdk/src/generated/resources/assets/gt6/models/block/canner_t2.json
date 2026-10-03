@@ -165,6 +165,7 @@
     "overlay_left": "gt6:block/canner_overlay_left",
     "overlay_right": "gt6:block/canner_overlay_right",
     "overlay_top": "gt6:block/canner_overlay_top",
+    "particle": "gt6:block/canner_colored_front",
     "south": "gt6:block/canner_colored_back",
     "up": "gt6:block/canner_colored_top",
     "west": "gt6:block/canner_colored_right"

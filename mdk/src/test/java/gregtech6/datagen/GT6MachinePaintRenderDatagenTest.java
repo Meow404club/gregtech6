@@ -24,6 +24,13 @@
  * trio ("" / _active / _running) switches per blockstate variant exactly as the upstream
  * :1014 pick — the p28 static-art ruling (no BE read).
  *
+ * <p>Task r11-machine-particle-key extends the texture set to THIRTEEN keys: the machine
+ * ladders rendered red-black walk/land/dig debris particles because vanilla 1.20.1
+ * {@code block/cube.json} declares elements only — no textures section, no particle
+ * binding (the former "particle = #down" parent belief was false) — so every model needs
+ * an explicit {@code particle} key or the vanilla TerrainParticle chain falls back to the
+ * missing-no sprite (GT6BlockStates.machineModel + familyMachineModel).
+ *
  * <p>Census ground truth: the machine domain is the oven Heat_T ladder (4, task
  * oven-heat-t-ladder) + shredder/crusher/lathe T1-T4
  * (12) + dryer (4) + distillery (4) + canner (4, task canner-machine) + sifter/
@@ -221,9 +228,10 @@ class GT6MachinePaintRenderDatagenTest {
     }
 
     /**
-     * Every machine block model: the block/cube parent, the twelve-texture key set (six
-     * body keys + the six overlay art tokens), the full tinted body cube over the family's
-     * own colored art, and the six thin untinted state decals (task b-port-overlay-render).
+     * Every machine block model: the block/cube parent, the thirteen-texture key set (six
+     * body keys + the six overlay art tokens + particle, task r11-machine-particle-key),
+     * the full tinted body cube over the family's own colored art, and the six thin
+     * untinted state decals (task b-port-overlay-render).
      */
     @Test
     void everyMachineModelCarriesTintIndexZeroOnAllSixFaces() throws Exception {
@@ -234,7 +242,9 @@ class GT6MachinePaintRenderDatagenTest {
                 String tStateSuffix = STATE_SUFFIXES.get(tSuffix);
                 JsonObject tModel = json("assets/gt6/models/block/" + tModelName + ".json");
                 assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
-                        tModelName + ": the block/cube parent (display transforms + particle binding kept)");
+                        tModelName + ": the block/cube parent (display transforms; vanilla 1.20.1"
+                                + " cube.json ships no particle binding — the explicit key below is"
+                                + " the only particle seat)");
                 var tTextures = tModel.getAsJsonObject("textures");
 
                 // the body keys — the family's OWN colored art, mapped per FACING_ROTATIONS
@@ -250,10 +260,17 @@ class GT6MachinePaintRenderDatagenTest {
                             tTextures.get("overlay_" + tToken).getAsString(),
                             tModelName + ": the family " + tToken + " state decal for this state");
                 }
+                // the particle key (task r11-machine-particle-key) — the front art, the
+                // vanilla furnace.json particle = #front precedent: without it the walk/
+                // land/dig debris particles render the missing-no checker.
+                assertEquals("gt6:block/" + tFamily + "_colored_front", tTextures.get("particle").getAsString(),
+                        tModelName + ": particle = the front art (the furnace precedent)");
                 Set<String> tExpectedKeys = new HashSet<>(FACE_KEYS); // the six body keys…
                 for (String tToken : OVERLAY_TOKENS) tExpectedKeys.add("overlay_" + tToken); // …plus the six decals
+                tExpectedKeys.add("particle"); // …plus the debris-particle seat
                 assertEquals(tExpectedKeys, tTextures.keySet(),
-                        tModelName + ": the twelve-texture key set (six body keys + the six art tokens)");
+                        tModelName + ": the thirteen-texture key set (six body keys + the six art"
+                                + " tokens + particle)");
 
                 var tElements = tModel.getAsJsonArray("elements");
                 assertEquals(7, tElements.size(),
@@ -297,6 +314,41 @@ class GT6MachinePaintRenderDatagenTest {
                 }
             }
         }
+    }
+
+    /**
+     * The ACT's shared machineModel output (task act-matrix: one model over all 120 rows,
+     * NOT in the paintableBlockArray census): the block/cube parent, the eight-texture key
+     * set (six body keys over the shared oven body set + the advanced front/overlay pair),
+     * and the r11-machine-particle-key particle seat — the oven side art, the same
+     * storage/boiler precedent as the family ladders.
+     */
+    @Test
+    void actMachineModelCarriesParticleKey() throws Exception {
+        JsonObject tModel = json("assets/gt6/models/block/advanced_crafting_table.json");
+        assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
+                "advanced_crafting_table: the block/cube parent");
+        var tTextures = tModel.getAsJsonObject("textures");
+        assertEquals("gt6:block/oven_bottom", tTextures.get("down").getAsString(),
+                "advanced_crafting_table: the shared oven body set (down)");
+        assertEquals("gt6:block/oven_top", tTextures.get("up").getAsString(),
+                "advanced_crafting_table: the shared oven body set (up)");
+        assertEquals("gt6:block/advanced_colored_front", tTextures.get("north").getAsString(),
+                "advanced_crafting_table: the advanced front art (north)");
+        for (String tSideKey : new String[] {"south", "west", "east"}) {
+            assertEquals("gt6:block/oven_side", tTextures.get(tSideKey).getAsString(),
+                    "advanced_crafting_table: the shared oven side art (" + tSideKey + ")");
+        }
+        assertEquals("gt6:block/advanced_overlay_front", tTextures.get("overlay").getAsString(),
+                "advanced_crafting_table: the advanced front decal");
+        assertEquals("gt6:block/oven_side", tTextures.get("particle").getAsString(),
+                "advanced_crafting_table: particle = the dominant side art (the storage/boiler"
+                        + " precedent; block/cube ships no particle binding)");
+        Set<String> tExpectedKeys = new HashSet<>(FACE_KEYS);
+        tExpectedKeys.add("overlay");
+        tExpectedKeys.add("particle");
+        assertEquals(tExpectedKeys, tTextures.keySet(),
+                "advanced_crafting_table: the eight-texture key set (six body keys + overlay + particle)");
     }
 
     /**

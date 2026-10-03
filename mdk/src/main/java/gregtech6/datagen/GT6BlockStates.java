@@ -1947,8 +1947,15 @@ public final class GT6BlockStates extends BlockStateProvider {
      * from {@link #addMachine}) tint identically; the runtime consumer is the
      * {@code GTMachinePaintTint} BlockColor. Output is otherwise equivalent to the former
      * parent-only {@code models().cube} form (no explicit UVs — they default to the element
-     * bounds; the {@code block/cube} parent keeps the display transforms and its
-     * {@code particle = #down} binding).
+     * bounds; the {@code block/cube} parent keeps the display transforms).
+     *
+     * <p>Task r11-machine-particle-key: vanilla 1.20.1 {@code block/cube.json} declares the
+     * elements only — no textures section, hence NO particle binding (the former
+     * "{@code particle = #down} binding" claim here was false). The walk/land/dig debris
+     * particles (vanilla TerrainParticle reading the model's particle sprite) fell back to
+     * the missing-no checker without an explicit key, so the template binds one: the shared
+     * oven side art, the storage/boiler/converter precedent (the box's dominant side art;
+     * debris particles ignore tintindex and show the texture's own colors).
      *
      * <p>Task paint-front-overlay-split: the former single BAKED front composite
      * (colored base + state overlay flattened, the P20 bake) is retired for the upstream
@@ -1975,6 +1982,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("south", modLoc("block/oven_side"))
                 .texture("west", modLoc("block/oven_side"))
                 .texture("east", modLoc("block/oven_side"))
+                // r11-machine-particle-key: block/cube ships no particle binding (vanilla
+                // 1.20.1 cube.json has no textures section) — without this key the
+                // walk/land/dig debris particles (vanilla TerrainParticle) render the
+                // missing-no checker. The oven side art, the storage/boiler precedent
+                // (the dominant side face; debris ignores tintindex).
+                .texture("particle", modLoc("block/oven_side"))
                 .texture("overlay", modLoc("block/" + aOverlayTexture))
                 // issue #8 (task world-tint-render-type): the 0.01 front decal is a
                 // transparent-texel overlay shell — the default SOLID chunk layer has no
@@ -2043,6 +2056,13 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("south", modLoc("block/" + aTextureBase + "_colored_back"))
                 .texture("west", modLoc("block/" + aTextureBase + "_colored_right")) // FACING_ROTATIONS[north][west]=4=right
                 .texture("east", modLoc("block/" + aTextureBase + "_colored_left")) // FACING_ROTATIONS[north][east]=2=left
+                // r11-machine-particle-key: block/cube ships no particle binding (vanilla
+                // 1.20.1 cube.json has no textures section) — without this key the
+                // walk/land/dig debris particles (vanilla TerrainParticle) render the
+                // missing-no checker. The front art is the machine's identity face (the
+                // vanilla furnace.json particle = #front precedent; debris ignores
+                // tintindex and shows the grayscale base art).
+                .texture("particle", modLoc("block/" + aTextureBase + "_colored_front"))
                 .texture("overlay_front", modLoc("block/" + aTextureBase + "_overlay_front" + aStateSuffix))
                 .texture("overlay_back", modLoc("block/" + aTextureBase + "_overlay_back" + aStateSuffix))
                 .texture("overlay_left", modLoc("block/" + aTextureBase + "_overlay_left" + aStateSuffix))

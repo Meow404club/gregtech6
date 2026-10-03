@@ -70,6 +70,7 @@
     "east": "gt6:block/oven_side",
     "north": "gt6:block/advanced_colored_front",
     "overlay": "gt6:block/advanced_overlay_front",
+    "particle": "gt6:block/oven_side",
     "south": "gt6:block/oven_side",
     "up": "gt6:block/oven_top",
     "west": "gt6:block/oven_side"
