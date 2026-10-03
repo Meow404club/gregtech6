@@ -133,8 +133,13 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		// :1229-1240 line order and the two distillation towers (:1226-1227) + batch D1's
 		// SPECIAL twenty-seven (task mbpreview-data-d1-special): the Bedrock Drill
 		// (:1283) and the Von da Graagg (:1280), then the 25 Tank Main Valves in the
-		// GT6Tanks.ROWS order — the upstream :1195-1222 registration order verbatim. The
-		// pin FAILS until the batch lands (the red→green drill).
+		// GT6Tanks.ROWS order — the upstream :1195-1222 registration order verbatim + batch
+		// D2's AUTHORED four (task mbpreview-data-d2-authored): the no-pattern machines —
+		// Large Matter Fabricator (:1241), Fusion Reactor (:1242), Logistics Core (:1281)
+		// and the Lightning Rod (:1282) — the display shapes authored table-side over the
+		// upstream hand walks (the quota/mActive/probe cases the declarative API
+		// deliberately does not express). The pin FAILS until the batch lands (the
+		// red→green drill).
 		List<String> tNames = GT6MultiblockPreviews.entries().stream()
 				.map(GT6MultiblockPreviews.Entry::name).toList();
 		assertEquals(List.of(
@@ -176,8 +181,11 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 				"tank_large_tungstensteel", "tank_large_tungsten", "tank_large_adamantium",
 				// the dense large 5x5x5 six — :1217-1222
 				"tank_large_dense_stainless_steel", "tank_large_dense_invar", "tank_large_dense_titanium",
-				"tank_large_dense_tungstensteel", "tank_large_dense_tungsten", "tank_large_dense_adamantium"),
-				tNames, "the row census: coke oven + thermal 13 + energy 14 + processing 14 + special 27, upstream order");
+				"tank_large_dense_tungstensteel", "tank_large_dense_tungsten", "tank_large_dense_adamantium",
+				// batch D2 (authored): the four no-pattern machines — the upstream
+				// :1241/:1242/:1281/:1282 registration line order
+				"large_massfab", "fusion_reactor", "logistics_core", "multiblock_lightning_rod"),
+				tNames, "the row census: coke oven + thermal 13 + energy 14 + processing 14 + special 27 + authored 4, upstream order");
 		// the wiring face the census CAN see offline: every row carries its suppliers
 		// (lazy handles — resolving them rides the live registry, the class doc)
 		for (GT6MultiblockPreviews.Entry tEntry : GT6MultiblockPreviews.entries()) {
@@ -961,6 +969,65 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 				"the anchor law paints the controller over a base wall (the crucible legacy ① — the true seat (0,0,0) is the zero-offset walk, generalization is D2's)");
 		assertFalse(GT6MultiblockPreviews.materialCounts(tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING)
 				.isEmpty(), "the shopping list renders");
+	}
+
+	@Test
+	public void controllerSeatsPinTheUpstreamTrueCells() {
+		// task mbpreview-data-d2-authored, user ruling A1: the seam paints the controller
+		// on the row's TRUE controller cell, per-machine upstream evidence (the anchor law
+		// (0,0,-1) stays the FALLBACK for the rows whose seat IS -anchor). Pinned over the
+		// fixture shapes — the same pin the row data carries once the D2 seam lands.
+		byte tFacing = GT6MultiblockPreviews.DISPLAY_FACING;
+		// the crucible (8 tiers): the walk SKIPS the bottom centre (MultiTileEntityCrucible
+		// :118 `if (i != 0 || j != 0)`) — "Main at Bottom-Center" (:140): seat (0,0,0)
+		Map<BlockPos, BlockState> tCrucible = GT6MultiblockPreviews.structureBlocks(
+				new PreviewCrucible(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
+				CONTROLLER, tFacing);
+		assertEquals(CONTROLLER.defaultBlockState(), tCrucible.get(BlockPos.ZERO),
+				"the crucible controller paints its bottom-centre seat (upstream :118/:140)");
+		// the heat exchanger: the y0 ring declares 8, the centre stays undeclared
+		// (MultiTileEntityLargeHeatExchanger :89-96, zero-offset walk :85) — "with Main
+		// inside" (:125): seat (0,0,0), controller-relative frame
+		Map<BlockPos, BlockState> tHex = GT6MultiblockPreviews.structureBlocks(
+				GT6MultiblockPreviews.withDisplayBlocks(
+						new PreviewHeatExchanger(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
+						Blocks.BRICKS, Blocks.STONE),
+				CONTROLLER, tFacing);
+		assertEquals(CONTROLLER.defaultBlockState(), tHex.get(BlockPos.ZERO),
+				"the HEX controller paints its undeclared bottom-centre seat (upstream :89-96/:125)");
+		// the implosion compressor: the shell cube centres on controller + anchor + up
+		// (:48 tY = yCoord+1) — "Main Block centered on Side-Bottom" (:69): the controller
+		// IS the front-bottom-centre shell cell = pattern cell (0,0,-1) — the anchor law
+		// already lands it (the B-batch legacy-① suspicion dissolves: no seat change)
+		Map<BlockPos, BlockState> tImplosion = GT6MultiblockPreviews.structureBlocks(
+				new PreviewImplosion(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
+				CONTROLLER, tFacing);
+		assertEquals(CONTROLLER.defaultBlockState(), tImplosion.get(new BlockPos(0, 0, -1)),
+				"the implosion seat (0,0,-1) IS the anchor law (upstream :48/:69)");
+		// the distillation towers: the pattern frame is the centre one cell behind the
+		// facing (upstream :53, port centre()) and the walk DECLARES the controller seat
+		// as a 18102 part cell — the anchor law (0,0,-1) already lands it
+		Map<BlockPos, BlockState> tTower = GT6MultiblockPreviews.structureBlocks(
+				towerFixture().getStructurePattern(), CONTROLLER, tFacing);
+		assertEquals(CONTROLLER.defaultBlockState(), tTower.get(new BlockPos(0, 0, -1)),
+				"the tower seat (0,0,-1) IS the anchor law (upstream :53, the declared part cell)");
+		// the Von da Graagg: the ZERO-OFFSET walk (upstream :66-93 — no facing
+		// displacement, the port patternWalkFacing 0) — the cornerless base loop declares
+		// the controller's own cell: seat (0,0,0), NOT the anchor law's (0,0,-1)
+		Map<BlockPos, BlockState> tGraagg = GT6MultiblockPreviews.structureBlocks(
+				new PreviewGraagg(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
+				CONTROLLER, tFacing);
+		assertEquals(CONTROLLER.defaultBlockState(), tGraagg.get(BlockPos.ZERO),
+				"the Graagg controller paints its zero-offset seat (upstream :66-93)");
+		assertFalse(tGraagg.containsKey(new BlockPos(0, 0, -1)),
+				"the anchor law's (0,0,-1) stays a base wall for the Graagg");
+		// the bedrock drill: the ZERO-OFFSET walk (upstream :87-117
+		// checkAndSetTargetOffset) — the y0 loop includes the controller's own cell, the
+		// display declaration carries it: seat (0,0,0)
+		Map<BlockPos, BlockState> tDrill = GT6MultiblockPreviews.structureBlocks(
+				GT6MultiblockPreviews.bedrockDrillShape(Blocks.BRICKS, Blocks.STONE), CONTROLLER, tFacing);
+		assertEquals(CONTROLLER.defaultBlockState(), tDrill.get(BlockPos.ZERO),
+				"the drill controller paints its zero-offset self-cell (upstream :87-117)");
 	}
 
 	@Test
