@@ -327,8 +327,8 @@ val neoforgeTagFaces = tasks.register("neoforgeTagFaces", Copy::class) {
 }
 
 // 嫁接产物挂进 main resources（以任务为 srcDir 自动接线任务依赖，generateModMetadata 同构）：
-// 死的复数带 v1 照挂（zip64 已开；打包面排除由 forge-tags-deadweight 卡在 jar 任务级 exclude
-// 落地，runs/test 走 exploded classpath 不受影响——research.p28 build_change_list knob）。
+// srcDir 照挂（共享测试 classpath 直读嫁接面），分发 jar 里的死重由下方 jar 任务 exclude 剥除
+// （jar-dist-hygiene 位置裁决 + jar-sym-sweep 对称 sweep 收尾，research.p28 knob 关账）。
 sourceSets["main"].resources.srcDir(neoforgeTagFaces)
 
 // FML junit 并发竞争根治（task r3-ci-fml-config-race）：maxParallelForks 并发下每个 executor 的
@@ -463,6 +463,24 @@ tasks.named<Jar>("jar") {
         "data/gt6/recipes", "data/gt6/recipes/**",        // 1.20.1 配方命名域（本腿读单数 recipe/）
         "data/gt6/loot_tables", "data/gt6/loot_tables/**", // 1.20.1 loot 命名域（本腿读单数 loot_table/）
         "data/gt6/forge", "data/gt6/forge/**",            // forge loader 域（biome_modifier 等）
+        // ---- 对称残余死带（task jar-sym-sweep，2026-10-03；每条 exclude 均活体验证为死带）----
+        // 1.20.1 复数 tag 面：1.21.1 只读单数（vanilla 1.21.1 Registries.java:255-257
+        // tagsDirPath="tags/"+单数 registry path；vanilla 1.21.1 jar 实物 data/minecraft/tags/item；
+        // 本仓运行时零 raw-path 直读——全仓 grep "tags/items" 仅 datagen provider 与测试）。本腿
+        // 活体 = 共享树内 GT6DualDirectoryFaces 单数镜像 data/gt6/tags/item 98 + data/minecraft/
+        // tags/{item 5,block 11}，下方 jarRequiredKeys 钉非空。
+        "data/gt6/tags/items", "data/gt6/tags/items/**",               // 98
+        "data/minecraft/tags/items", "data/minecraft/tags/items/**",   // 5
+        "data/minecraft/tags/blocks", "data/minecraft/tags/blocks/**", // 11
+        // 1.20.1 复数配方目录：1.21.1 RecipeManager 只读单数（vanilla 1.21.1 RecipeManager.java:45
+        // super(GSON, Registries.elementsDirPath(Registries.RECIPE))="recipe"）——原版铜桥 4 文件
+        // （brush/copper_block/lightning_rod/spyglass）复数面死重；本腿活体 = 单数同 4 文件。
+        "data/minecraft/recipes", "data/minecraft/recipes/**",         // 4（铜桥复数面）
+        // forge GLM 注册表文件：1.21.1 NeoForge 只读 neoforge 命名空间（neoforge-docs
+        // version-1.21.1 resources/server/loottables/glm.md:9 "MUST be placed within
+        // data/neoforge/loot_modifiers/global_loot_modifiers.json"）。22 个 modifier 本体
+        // data/gt6/loot_modifiers/ 两腿同构活体保留；本腿注册表 = data/neoforge/loot_modifiers/。
+        "data/forge/loot_modifiers", "data/forge/loot_modifiers/**",   // 1（注册表文件）
         "assets/README.md",
         ".cache", ".cache/**",
     )
@@ -480,14 +498,31 @@ tasks.named<Jar>("jar") {
 val jarCensusKeys = listOf(
     "data/gt6/recipes/", "data/gt6/recipe/", "data/gt6/advancements/",
     "data/gt6/loot_tables/", "data/gt6/loot_table/",
-    "data/gt6/forge/", "data/gt6/neoforge/", "data/forge/", "data/c/", "assets/", ".cache/",
+    "data/gt6/forge/", "data/gt6/neoforge/",
+    // jar-sym-sweep 面（专用键须排在 data/forge/ 泛键前，firstOrNull 先到先得）：
+    "data/gt6/tags/item/",                        // 本腿活体单数 gt6 tag 带（98）
+    "data/minecraft/tags/",                       // 本腿活体单数原版 tag 带（item 5 + block 11）
+    "data/minecraft/recipe/",                     // 本腿活体铜桥（4）
+    "data/gt6/loot_modifiers/",                   // GLM modifier 本体（22，两腿同构活体）
+    "data/neoforge/loot_modifiers/",              // 本腿 GLM 注册表（1）
+    "data/forge/loot_modifiers/",                 // 对面腿 GLM 注册表（禁入面，归零可见）
+    "data/forge/", "data/c/", "assets/", ".cache/",
 )
 val jarForbiddenPrefixes = listOf(
     "data/gt6/recipes/", "data/gt6/loot_tables/", "data/gt6/forge/",
     "data/gt6/advancements/",
+    // jar-sym-sweep 对称死带（证据链见上方 jar exclude 块注释）：1.20.1 复数 tag/配方面
+    // + forge GLM 注册表。斜杠尾缀防误伤（tags/item/ 不匹配 tags/items/，recipe/ 不匹配 recipes/）。
+    "data/gt6/tags/items/", "data/minecraft/tags/items/", "data/minecraft/tags/blocks/",
+    "data/minecraft/recipes/", "data/forge/loot_modifiers/",
     "assets/README.md", ".cache",
 )
-val jarRequiredKeys = listOf("data/gt6/recipe/", "data/gt6/loot_table/", "data/gt6/neoforge/", "assets/")
+val jarRequiredKeys = listOf(
+    "data/gt6/recipe/", "data/gt6/loot_table/", "data/gt6/neoforge/", "assets/",
+    // jar-sym-sweep：本腿活体域非空钉——exclude 误伤即红（单数 tag 带 + 铜桥 + GLM 注册表）。
+    "data/gt6/tags/item/", "data/minecraft/tags/", "data/minecraft/recipe/",
+    "data/gt6/loot_modifiers/", "data/neoforge/loot_modifiers/",
+)
 tasks.register("jarCensus") {
     dependsOn(tasks.named("assemble"))
     doLast {
