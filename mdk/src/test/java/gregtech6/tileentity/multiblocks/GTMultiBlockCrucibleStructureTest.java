@@ -44,6 +44,10 @@ import gregtech6.multiblock.GTMultiBlockPattern;
 public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestBase {
 
 	static BlockEntityType<TestCrucible> sCrucibleType;
+	/** The census wall block — built ONCE in the fixture (identity with the census part BET's valid set). */
+	static gregtech6.block.multiblock.GTCrucibleWallBlock sCensusWall;
+	/** The census part BET — the shared part BE over {BRICKS, the census wall} (the 21.1 leg validates BE states, see the census test). */
+	static BlockEntityType<MultiBlockPartBlockEntity> sWallPartType;
 
 	/** The concrete test BE — the crucible over a vanilla-block BET, wall and env bound. */
 	public static final class TestCrucible extends TileEntityCrucible {
@@ -82,6 +86,20 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 		BlockEntityType<TestCrucible>[] tHolder = (BlockEntityType<TestCrucible>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(TestCrucible::new, Blocks.BRICKS).build(null);
 		sCrucibleType = tHolder[0];
+		// task mb-formed-crucible-wall — the census fixtures: the wall block joins the part
+		// BET's valid set and the census part BEs are BORN carrying the wall state (the 21.1
+		// BlockEntity.setBlockState validateBlockState gate rejects a re-seat onto an
+		// unregistered block — the 1.20.1 leg has no such gate; construction-time state keeps
+		// one fixture shape for both legs)
+		unfreezeBlockRegistry();
+		sCensusWall = new gregtech6.block.multiblock.GTCrucibleWallBlock(
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
+		BlockEntityType<MultiBlockPartBlockEntity>[] tWallHolder = (BlockEntityType<MultiBlockPartBlockEntity>[]) new BlockEntityType<?>[1];
+		tWallHolder[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new MultiBlockPartBlockEntity(tWallHolder[0], aPos, aState),
+				Blocks.BRICKS, sCensusWall).build(null);
+		sWallPartType = tWallHolder[0];
 	}
 
 	// ------------------------------------------------------------------
@@ -166,7 +184,7 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 	 */
 	@Test
 	public void formedStructurePaintsTheWallsDesign4() {
-		gregtech6.block.multiblock.GTCrucibleWallBlock tWall = newCrucibleWall();
+		gregtech6.block.multiblock.GTCrucibleWallBlock tWall = sCensusWall;
 		MultiBlockLevel tLevel = new MultiBlockLevel();
 		TileEntityCrucible tCrucible = placeController(tLevel, sCrucibleType, new BlockPos(100, 64, 100), (byte)0);
 		((TestCrucible) tCrucible).mWall = tWall;
@@ -174,10 +192,11 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 			if (tDX == 0 && tDZ == 0) continue;
 			for (int tY = 0; tY <= 2; tY++) {
 				BlockPos tPos = new BlockPos(100 + tDX, 64 + tY, 100 + tDZ);
-				placePart(tLevel, tPos);
-				// the wall cell: the part BE re-seated on the wall block's design-0 state
-				// (the BE survives the seat flip — the LevelChunk :292 CHECK branch shape)
-				tLevel.getBlockEntity(tPos).setBlockState(tWall.defaultBlockState());
+				// the wall cell: the part BE BORN on the wall block's design-0 state (the
+				// LevelChunk newBE shape — no setBlockState re-seat, the 21.1 validate gate)
+				MultiBlockPartBlockEntity tPart = sWallPartType.create(tPos, tWall.defaultBlockState());
+				tPart.setLevel(tLevel);
+				tLevel.mBlockEntities.put(tPos, tPart);
 				tLevel.mStates.put(tPos, tWall.defaultBlockState());
 			}
 		}

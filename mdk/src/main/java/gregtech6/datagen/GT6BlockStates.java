@@ -896,17 +896,18 @@ public final class GT6BlockStates extends BlockStateProvider {
      * with the addLargeBoiler rotationY table — the front follows FACING).
      */
     private void addLargeCrucible() {
-        Block tWall = gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL.get();
-        simpleBlock(tWall, tintedCube("crucible_steel_wall",
-                "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side"));
-        itemModels().withExistingParent("crucible_steel_wall", modLoc("block/crucible_steel_wall"));
-        // task w3-distill-crucible ③ — the seven ladder walls (the same metalwall
-        // borrow; the composed names ride the metal-wall template, zero new keys)
+        // task mb-formed-crucible-wall — the walls ride the metalwall DESIGN ladder (the
+        // upstream NBT_DESIGNS 7, Loader:1143-1153): the SAME partModel two-layer walk the
+        // addParts machine_wall_* siblings use, one model per design over the per-design
+        // borrowed textures — the formed crucible repaints design 4 (the checker's
+        // setDesign→syncDesignToState flip, MultiTileEntityCrucible.java:124-128), so the
+        // blockstate needs the full design=0..7 variant set (the former design-0-only
+        // tintedCube singleton left the repaint nothing to land in).
+        crucibleWallLadder("crucible_steel_wall", gregtech6.registry.GT6Crucibles.CRUCIBLE_STEEL_WALL.get());
+        // task w3-distill-crucible ③ — the seven ladder walls (the composed names ride the
+        // metal-wall template, zero new keys)
         for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) {
-            Block tLadderWall = tHandle.get();
-            simpleBlock(tLadderWall, tintedCube(tHandle.getId().getPath(),
-                    "block/parts/metalwall/0/colored/bottom", "block/parts/metalwall/0/colored/top", "block/parts/metalwall/0/colored/side"));
-            itemModels().withExistingParent(tHandle.getId().getPath(), modLoc("block/" + tHandle.getId().getPath()));
+            crucibleWallLadder(tHandle.getId().getPath(), tHandle.get());
         }
         ModelFile tModel = boilerModel("large_crucible", "crucible", true);
         for (gregtech6.registry.GT6Crucibles.CrucibleRow tRow : gregtech6.registry.GT6Crucibles.CRUCIBLE_ROWS) {
@@ -922,6 +923,22 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.path(), tModel.getLocation());
         }
+    }
+
+    /**
+     * One crucible wall's design ladder (task mb-formed-crucible-wall — the addParts
+     * walk shape over the metalwall family): one partModel per design over the borrowed
+     * per-design textures, the blockstate variant {@code design=d} → {@code _design_d},
+     * the item model on design 0 (the placed look). The design count is the BLOCK's own
+     * maxDesign (the metalwall NBT_DESIGNS 7).
+     */
+    private void crucibleWallLadder(String aPath, Block aWall) {
+        GTMultiBlockPartBlock tPart = (GTMultiBlockPartBlock) aWall;
+        for (int d = 0; d <= tPart.maxDesign(); d++) {
+            ModelFile tWallModel = partModel(aPath + "_design_" + d, "metalwall", d);
+            getVariantBuilder(aWall).partialState().with(tPart.DESIGN, d).setModels(new ConfiguredModel(tWallModel));
+        }
+        itemModels().withExistingParent(aPath, modLoc("block/" + aPath + "_design_0"));
     }
 
     /**

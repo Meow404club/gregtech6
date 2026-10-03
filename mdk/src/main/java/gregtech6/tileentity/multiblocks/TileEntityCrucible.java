@@ -382,11 +382,21 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	@Nullable
 	private GTMultiBlockPattern mStructurePattern = null;
 
-	/** One wall ring: the 8 cells around the centre at the given layer height. */
+	/**
+	 * One wall ring: the 8 cells around the centre at the given layer height. The design
+	 * write is 4 — the NET effect of the upstream two-pass check (task mb-formed-crucible-wall):
+	 * pass 1 (:119-121) checks/writes design 0, pass 2 (:124-128, formed only) repaints every
+	 * wall design 4 — the formed crucible's skin change. The declarative pattern declares the
+	 * formed value directly (the checker judges block identity only, the upstream :70 column —
+	 * design is never a FORM precondition); the unformed reset rides the target-invalidation
+	 * arm (MultiBlockPartBlockEntity :203, the upstream MultiBlockPart :208-210 verbatim).
+	 */
+	private static final int FORMED_WALL_DESIGN = 4;
+
 	private static void ring(GTMultiBlockPattern.Builder aBuilder, Block aWall, int aY, int aUsage) {
 		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
 			if (tDX == 0 && tDZ == 0) continue; // the centre column is not a wall cell
-			aBuilder.formingPart(tDX, aY, tDZ, aWall, aUsage, 0);
+			aBuilder.formingPart(tDX, aY, tDZ, aWall, aUsage, FORMED_WALL_DESIGN);
 		}
 	}
 
