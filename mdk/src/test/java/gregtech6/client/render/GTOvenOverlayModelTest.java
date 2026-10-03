@@ -4,16 +4,28 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.imageio.ImageIO;
 
 import gregtech6.block.GTOvenBlock;
 
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -28,15 +40,15 @@ import org.junit.jupiter.api.Test;
 import gregtech6.client.render.GTOvenRenderSnapshot.OvenOverlayGroup;
 import gregtech6.client.render.GTOvenOverlayModel.OvenTextureFace;
 import gregtech6.client.render.GTOvenOverlayModel.OverlayPlan;
-import gregtech6.covers.GTCoverRenderSnapshot;
 
 /**
  * The oven overlay render-path sentinel tests (task render-c-oven-overlay, the
  * GTFluidPipeFlowModelTest shape): the offline quad-level half of the acceptance — the
  * upstream :1014 overlay-pick truth table (four states, mActive winning over mRunning),
  * the CS.java:528-537 FACING_ROTATIONS face table verbatim, the per-face emission and
- * sprite-id rules, the OVEN_SNAPSHOT dispatch gate (the second ModelProperty, the cover
- * chain's key untouched), and the 16 per-state ModelResourceLocation registrations. The
+ * sprite-id rules, the unconditional dispatch with the tinted no-snapshot transient (the
+ * r11-oven-solid-layer-fix form), and the 64 per-state ModelResourceLocation
+ * registrations. The
  * sprite→BakedQuad baker is pinned offline too since uvof-private-copies (the #27
  * GTOreBakedModelSideUvTest form): the overlay PNGs are upright art (the running front's
  * glow window sits in the sprite's bottom half), so the corrected canonical UV walk is
@@ -216,7 +228,7 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the body tint (oven-texture-borrow) — the solid pass retints, the decals don't
+	// the body tint (oven-texture-borrow) — the layerless pass retints, the decals don't
 	// ---------------------------------------------------------------------------
 
 	/** A baked-format body quad (32 ints, white vertex colours, tintIndex 0). */
@@ -258,7 +270,7 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 	}
 
 	@Test
-	void solidPassRetintsTheBodyWithTheRowMaterial() {
+	void layerlessPassRetintsTheBodyWithTheRowMaterial() {
 		GTOvenBlock tBlock = ovenBlock();
 		BakedQuad tBody = bodyQuad(), tDecal = decalQuad();
 		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(List.of(tBody, tDecal)),
@@ -304,19 +316,184 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
+	// the chunk-layer seat (r11-oven-solid-layer-fix) — the static oven.json bakes one
+	// tintindex-0 body cube + six 0.01 alpha-texel decal shells and declares render_type
+	// cutout; the decal PNGs carry alpha<255 texels, so any layer without alpha discard
+	// (solid, GT6BlockStates machineModel :1979-1984) would paint their RGB matte as
+	// opaque full-face plates OVER the tinted body — the field "white oven" report
+	// (research.r11-oven-white, breakpoint P9).
+	// ---------------------------------------------------------------------------
+
+	/** The six static decal faces, in the oven.json elements 1-6 order. */
+	private static final List<String> OVEN_DECAL_FACES = List.of("front", "back", "left", "right", "top", "bottom");
+
+	/** A named atlas stub (the {@link FaceBakePins.IdentitySprite} form) — the name is the pin's membership key. */
+	private static final class NamedSprite extends TextureAtlasSprite {
+		private NamedSprite(ResourceLocation aName) {
+			super(aName,
+					new net.minecraft.client.renderer.texture.SpriteContents(aName,
+							new FrameSize(1, 1),
+							new com.mojang.blaze3d.platform.NativeImage(1, 1, false),
+							//? if forge {
+							net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.EMPTY),
+							//?} else {
+							/*net.minecraft.server.packs.resources.ResourceMetadata.EMPTY),*/
+							//?}
+					1, 1, 0, 0);
+		}
+	}
+
+	/** A baked-format quad with a NAMED sprite (the bodyQuad/decalQuad form) so pins can assert sprite membership. */
+	private static BakedQuad namedQuad(String aNameSpacePath, int aTintIndex) {
+		int[] tVertices = new int[4 * STRIDE];
+		java.util.Arrays.fill(tVertices, 0xFFFFFFFF);
+		return new BakedQuad(tVertices, aTintIndex, Direction.NORTH,
+				new NamedSprite(ResourceLocation.fromNamespaceAndPath("gt6", aNameSpacePath)), true);
+	}
+
+	/** The quad's sprite id (the offline membership probe). */
+	private static ResourceLocation spriteId(BakedQuad aQuad) {
+		return aQuad.getSprite().contents().name();
+	}
+
+	/**
+	 * The static oven.json bake mirrored as quads (the familyMachineModel form,
+	 * GT6BlockStates:2037-2062): the tintindex-0 {@code oven_colored_*} body + the six
+	 * untinted {@code oven_overlay_<face>} decal shells.
+	 */
+	private static List<BakedQuad> staticOvenBakeMirror() {
+		List<BakedQuad> rQuads = new ArrayList<>();
+		rQuads.add(namedQuad("block/oven_colored_front", 0));
+		for (String tFace : OVEN_DECAL_FACES) rQuads.add(namedQuad("block/oven_overlay_" + tFace, -1));
+		return rQuads;
+	}
+
+	@Test
+	void solidLayerCarriesNoOvenOverlayDecal() {
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(staticOvenBakeMirror()),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		List<BakedQuad> tSolid = tModel.getQuads(ovenBlock().defaultBlockState(), Direction.NORTH,
+				RandomSource.create(), ovenData(false, false), RenderType.solid());
+		assertTrue(tSolid.stream().noneMatch(tQuad -> spriteId(tQuad).getPath().startsWith("block/oven_overlay_")),
+				"the solid chunk layer has no alpha discard (GT6BlockStates machineModel :1979-1984), so the "
+						+ "alpha-texel decal shells must never ride it — baked there they paint their RGB matte "
+						+ "over the tinted body (the field white-oven report)");
+	}
+
+	@Test
+	void cutoutLayerCarriesTheStaticDecals() {
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(staticOvenBakeMirror()),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		List<BakedQuad> tCutout = tModel.getQuads(ovenBlock().defaultBlockState(), Direction.NORTH,
+				RandomSource.create(), ovenData(false, false), RenderType.cutout());
+		// the collapsed single list also carries the tinted body (the green pin below), so
+		// the pin is CONTAINS: exactly the six static decal shells among the cutout quads
+		List<BakedQuad> tDecals = tCutout.stream()
+				.filter(tQuad -> spriteId(tQuad).getPath().startsWith("block/oven_overlay_")).toList();
+		assertEquals(OVEN_DECAL_FACES.size(), tDecals.size(), "the six static decal shells ride the declared cutout layer");
+		for (BakedQuad tQuad : tDecals) {
+			assertEquals(-1, tQuad.getTintIndex(), "the static decals deserialize to the -1 default (no tint)");
+		}
+	}
+
+	@Test
+	void layerlessPassIsTheUnion() {
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(staticOvenBakeMirror()),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		List<BakedQuad> tAll = tModel.getQuads(ovenBlock().defaultBlockState(), Direction.NORTH,
+				RandomSource.create(), ovenData(false, false), null);
+		assertEquals(OVEN_DECAL_FACES.size() + 1, tAll.size(), "the null pass is the union: tinted body + six decals");
+	}
+
+	/**
+	 * THE green pin: with the single cutout seat, the tint-product quads (the retinted
+	 * body copies) all carry the {@code oven_colored_*} art and the {@code oven_overlay_*}
+	 * quads are exactly the six untinted static decal shells — nothing oven is left on
+	 * solid for the matte-plate bug to ride.
+	 */
+	@Test
+	void cutoutBodyCopiesAreTheColoredArt() {
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(staticOvenBakeMirror()),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		GTOvenBlock tBlock = ovenBlock();
+		assertTrue(tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH,
+				RandomSource.create(), ovenData(false, false), RenderType.solid()).isEmpty(),
+				"the oven draws on no chunk layer but the declared cutout");
+		List<BakedQuad> tCutout = tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH,
+				RandomSource.create(), ovenData(false, false), RenderType.cutout());
+		assertEquals(OVEN_DECAL_FACES.size() + 1, tCutout.size());
+		int tColored = 0;
+		for (BakedQuad tQuad : tCutout) {
+			if (spriteId(tQuad).getPath().startsWith("block/oven_overlay_")) {
+				assertEquals(-1, tQuad.getTintIndex(), "the static decal shells stay untinted");
+			} else {
+				assertTrue(spriteId(tQuad).getPath().startsWith("block/oven_colored_"),
+						spriteId(tQuad) + ": the tinted body copies are the colored art");
+				tColored++;
+			}
+		}
+		assertEquals(1, tColored, "exactly the body cube is the tinted colored art");
+	}
+
+	/** The asset dir walk (the GT6OvenTexAuditDatagenTest form — cannot be imported across packages). */
+	private static Path blockTexturesDir() {
+		for (Path p = Path.of("").toAbsolutePath(); p != null; p = p.getParent()) {
+			if (Files.isRegularFile(p.resolve("tools").resolve("gen_textures.py"))) {
+				return p.resolve(Path.of("src", "main", "resources", "assets", "gt6", "textures", "block"));
+			}
+		}
+		throw new AssertionError("mdk root (tools/gen_textures.py) not found upward from " + Path.of("").toAbsolutePath());
+	}
+
+	@Test
+	void overlayDecalPngsCarryAlphaTexels() throws IOException {
+		// the pixel-level semantics pin: every oven_overlay_* PNG has alpha<255 texels, so
+		// the family MUST render on an alpha-tested layer (the JSON-declared cutout); on
+		// the discard-less solid layer those texels paint their RGB residue instead.
+		List<Path> tDecals;
+		try (Stream<Path> tWalk = Files.list(blockTexturesDir())) {
+			tDecals = tWalk.map(Path::getFileName).map(Path::toString)
+					.filter(tName -> tName.startsWith("oven_overlay_") && tName.endsWith(".png")).sorted()
+					.map(tName -> blockTexturesDir().resolve(tName)).toList();
+		}
+		assertTrue(tDecals.size() >= 30, "the decal census is non-vacuous: " + tDecals.size() + " oven_overlay PNGs");
+		for (Path tFile : tDecals) {
+			BufferedImage tImage = ImageIO.read(tFile.toFile());
+			assertNotNull(tImage, "decodable PNG: " + tFile);
+			int tAlphaTexels = 0;
+			for (int y = 0; y < tImage.getHeight(); y++) {
+				for (int x = 0; x < tImage.getWidth(); x++) {
+					if ((tImage.getRGB(x, y) >>> 24) < 255) tAlphaTexels++;
+				}
+			}
+			assertTrue(tAlphaTexels > 0,
+					tFile.getFileName() + ": carries alpha<255 texels (must ride the alpha-tested cutout layer)");
+		}
+	}
+
+	// ---------------------------------------------------------------------------
 	// the dispatch gate — the second ModelProperty, the cover key untouched
 	// ---------------------------------------------------------------------------
 
 	@Test
-	void dispatchGatesOnTheOvenSnapshotOnly() {
-		GTOvenOverlayModel tModel = new GTOvenOverlayModel(new StubFallback());
-		// the oven snapshot → dynamic dispatch
-		assertTrue(tModel.supportsDynamicQuads(ModelData.builder().with(GTModelProperties.OVEN_SNAPSHOT, new GTOvenRenderSnapshot(true, false)).build()));
-		// a cover-only snapshot (the p4 chain's RENDER_SNAPSHOT) does NOT route to the oven model…
-		assertFalse(tModel.supportsDynamicQuads(ModelData.builder().with(GTModelProperties.RENDER_SNAPSHOT, GTCoverTestProbe.coverSnapshot()).build()),
-				"the cover chain's key does not dispatch the oven overlay model");
-		// …and an empty ModelData falls back
-		assertFalse(tModel.supportsDynamicQuads(ModelData.EMPTY));
+	void dispatchIsUnconditionalAndTheTransientStillTints() {
+		GTOvenOverlayModel tModel = new GTOvenOverlayModel(quadsFallback(List.of(bodyQuad())),
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		GTOvenBlock tBlock = ovenBlock();
+		// the gate is unconditional (the GTMachineTintModel:85-88 form): the model only
+		// ever sits on the oven's 64 per-state keys, so every render of those keys
+		// assembles here — the no-snapshot transient (BE before its first sync) used to
+		// slip out to the RAW fallback: an untinted white body for a frame (the r11
+		// breakpoint 3).
+		assertTrue(tModel.supportsDynamicQuads(ModelData.EMPTY));
+		List<BakedQuad> tOut = tModel.getQuads(tBlock.defaultBlockState(), Direction.NORTH,
+				RandomSource.create(), ModelData.EMPTY, null);
+		int tTint = GTMachinePaintTint.tintARGB(ModelData.EMPTY,
+				GTMachinePaintTint.tintMaterialOf(tBlock), 0);
+		assertNotEquals(0xFFFFFFFF, tTint, "the Heat_T row material actually colours (not the white identity)");
+		assertEquals(1, tOut.size());
+		assertArrayEquals(GTMachineTintModel.retintVertices(bodyQuad().getVertices(), tTint),
+				tOut.get(0).getVertices(), "the transient frame tints like every other pass");
 	}
 
 	// ---------------------------------------------------------------------------
@@ -382,10 +559,4 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 		@Override public net.minecraft.client.renderer.block.model.ItemOverrides getOverrides() { return net.minecraft.client.renderer.block.model.ItemOverrides.EMPTY; }
 	}
 
-	/** Cover-snapshot fixture without touching the covers test package state. */
-	private static final class GTCoverTestProbe {
-		static GTCoverRenderSnapshot coverSnapshot() {
-			return new GTCoverRenderSnapshot(java.util.Map.of(Direction.DOWN, new ResourceLocation("gt6", "block/cover/test_plate")));
-		}
-	}
 }

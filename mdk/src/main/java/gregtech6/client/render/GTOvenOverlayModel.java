@@ -24,7 +24,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 
-import net.minecraftforge.client.ChunkRenderTypeSet;
 import net.minecraftforge.client.model.data.ModelData;
 
 import gregtech6.block.GTOvenBlock;
@@ -37,15 +36,16 @@ import gregtech6.client.render.GTOvenRenderSnapshot.OvenOverlayGroup;
  * consumer of the C-grade foundation, the {@link GTFluidPipeFlowModel} shape applied to
  * the oven.
  *
- * <p>Two-layer composition per render pass:
+ * <p>Two-layer composition per render pass, both on ONE alpha-tested chunk layer:
  * <ul>
- * <li><b>material layer</b> — the fallback (A-tier blockstate) model's quads, verbatim.
+ * <li><b>material layer</b> — the fallback (A-tier blockstate) model's quads, TINTED.
  *     The A-tier model is the single-writer discipline's fallback anchor: the
  *     ACTIVE/RUNNING properties stay the unique correct source (driven by the BE fields
  *     through {@code applyVisualState} setBlock(state, 3)), so on a snapshot miss the
  *     block renders exactly as before (ADR ③: keeping the property = the single correct source of the A-tier fallback).
- *     It renders on the solid layer (plus the null all-layers pass).</li>
- * <li><b>state overlay layer</b> — six full-face quads on the cutout layer, textured from
+ *     The body quads are retinted with the machine colour (the {@code GTMachineTintModel}
+ *     product) — see {@link #mTintedQuads}.</li>
+ * <li><b>state overlay layer</b> — six full-face quads, textured from
  *     the upstream {@code overlay_active}/{@code overlay_running} groups
  *     (MultiTileEntityBasicMachine.java:174-203 texture-name form), picked by
  *     {@link GTOvenRenderSnapshot#overlayGroup()} — the :1014 pick with the
@@ -54,12 +54,15 @@ import gregtech6.client.render.GTOvenRenderSnapshot.OvenOverlayGroup;
  *     already carried by the A-tier front texture (declared trim, see assets/README.md).</li>
  * </ul>
  *
- * <p>Chunk-layer wiring (the research card's cutout checkpoint): the chunk renderer only
- * queries the layers of {@link #getRenderTypes} (IForgeBakedModel.java:85
- * ChunkRenderTypeSet), so the override extends the set with cutout while the snapshot is
- * present; {@code getDynamicQuads} then filters quads per layer — solid keeps the
- * fallback, cutout carries the overlays (upstream BlockTextureMulti's second layer,
- * :1014).
+ * <p>Chunk-layer seat (r11-oven-solid-layer-fix): the whole model renders on the static
+ * model's declared {@code render_type cutout} alone, riding the {@link
+ * GTDynamicBakedModel#getRenderTypes} forward — no override. The old snapshot-present
+ * solid+cutout split baked the fallback's six 0.01 alpha-texel decal shells into the
+ * solid layer, which has NO alpha discard (GT6BlockStates machineModel :1979-1984): the
+ * decals painted their RGB matte as opaque full-face plates OVER the tinted body — the
+ * field "white oven" report. On cutout the transparent texels discard; this is exactly
+ * how the 20+ {@code GTMachineTintModel}-wrapped machine families render the same
+ * static-decal shape.
  *
  * <p>Overlay quads are the cube-faithful emission: cullface set (upstream
  * {@code aShouldSideBeRendered} gate, :1014), emitted only on the quad face's own pass.
@@ -91,7 +94,7 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 	 * GTMachineTintModel} shape: tint → (source quad → retinted copy)). The oven ladder
 	 * is SKIPPED by the {@link GTMachineTintModel} wrap (its states already carry this
 	 * dynamic model, the {@code instanceof GTDynamicBakedModel} guard), so the body tint
-	 * rides HERE — the solid-layer fallback quads are retinted with the same
+	 * rides HERE — the fallback quads are retinted with the same
 	 * {@link GTMachinePaintTint#tintARGB} colour every other machine gets (upstream
 	 * unpainted = the row NBT_MATERIAL colour, TileEntityBase07Paintable.java:83-84;
 	 * painted = the PAINT snapshot, which TileEntityOven.getModelData co-hosts on the
@@ -119,40 +122,36 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
 	}
 
-	/** This model keys on the oven snapshot property, not the cover chain's RENDER_SNAPSHOT. */
+	/**
+	 * Every oven render assembles here (the {@link GTMachineTintModel} :85-88 form): the
+	 * tint resolves from the state + ModelData alone, so the no-snapshot transient (the
+	 * first frame after placement, before the BE's first {@code getModelData} round-trip)
+	 * renders on the same tinted path — the old strict gate let it slip out to the RAW
+	 * fallback, an untinted white body for a frame (the r11-oven-solid-layer-fix
+	 * breakpoint 3). The model only ever sits on the oven's 64 per-state keys
+	 * (GTOvenClientListener), so the unconditional gate reaches nothing else.
+	 */
 	@Override
 	protected boolean supportsDynamicQuads(ModelData aModelData) {
-		return aModelData.has(GTModelProperties.OVEN_SNAPSHOT);
+		return true;
 	}
 
 	/**
-	 * While the snapshot is present the oven renders on solid (fallback) + cutout
-	 * (overlays); without it the block keeps the blockstate-declared set.
+	 * One alpha-tested list (r11-oven-solid-layer-fix): the tinted body + the static
+	 * decal shells + the snapshot-driven overlays, all on the blockstate-declared cutout
+	 * layer (the base class forwards the chunk-layer query to the fallback's JSON
+	 * {@code render_type}) plus the null all-quads pass. The overlay quads keep
+	 * tintIndex -1, so {@code tintQuads} passes them through as the shared instances and
+	 * only the tintindex-0 body copies multiply.
 	 */
-	@Override
-	public ChunkRenderTypeSet getRenderTypes(BlockState aState, RandomSource aRand, ModelData aData) {
-		if (aData.has(GTModelProperties.OVEN_SNAPSHOT)) {
-			return ChunkRenderTypeSet.of(RenderType.solid(), RenderType.cutout());
-		}
-		return super.getRenderTypes(aState, aRand, aData);
-	}
-
 	@Override
 	protected List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
-		GTOvenRenderSnapshot tSnapshot = aModelData.get(GTModelProperties.OVEN_SNAPSHOT);
-		if (tSnapshot == null) {
-			// no oven snapshot (defensive — supportsDynamicQuads gates this) → pure fallback
-			return getFallbackModel().getQuads(aState, aSide, aRand);
-		}
-		boolean tSolid = aRenderType == null || aRenderType.equals(RenderType.solid());
-		boolean tCutout = aRenderType == null || aRenderType.equals(RenderType.cutout());
-		if (!tSolid && !tCutout) return List.of(); // the machine draws on no other chunk layer
-
-		List<BakedQuad> rQuads = new ArrayList<>();
-		if (tSolid) rQuads.addAll(GTMachineTintModel.tintQuads(getFallbackModel().getQuads(aState, aSide, aRand),
+		if (aRenderType != null && !aRenderType.equals(RenderType.cutout())) return List.of(); // cutout-only seat
+		List<BakedQuad> rQuads = new ArrayList<>(GTMachineTintModel.tintQuads(getFallbackModel().getQuads(aState, aSide, aRand),
 				bodyTint(aState, aModelData), mTintedQuads));
-		if (!tCutout) return rQuads;
+		GTOvenRenderSnapshot tSnapshot = aModelData.get(GTModelProperties.OVEN_SNAPSHOT);
+		if (tSnapshot == null) return rQuads; // the no-snapshot transient: the tinted fallback IS the whole render
 
 		Direction tFacing = aState != null && aState.hasProperty(GTOvenBlock.FACING)
 				? aState.getValue(GTOvenBlock.FACING) : Direction.NORTH;
