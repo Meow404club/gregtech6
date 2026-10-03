@@ -129,10 +129,11 @@ class GT6PaintableRenderTypeCensusTest {
                 "laser_electric", "laser_absorber", "quantum_energizer",
                 "magic_absorber", // addMagicAbsorber
                 "tank_wood", "tank_metal", // addTanks (tintedCube)
-                "crucible_steel_wall", // addLargeCrucible (tintedCube)
                 "steam_boiler_tank")); // addBoilers (the C5 wiring, the two-layer boilerModel form)
-        for (String tPath : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.keySet()) {
-            rModels.add(tPath); // the eight dedicated crucible walls (tintedCube)
+        // the eight dedicated crucible walls (task mb-formed-crucible-wall — the metalwall
+        // design ladder, the partModel two-layer form: 8 walls x designs 0..7)
+        for (String tPath : crucibleWallPaths()) {
+            for (int d = 0; d <= 7; d++) rModels.add(tPath + "_design_" + d);
         }
         // the bee trio (task beehive-tint): the addHive/bumbliaryModel two-layer
         // shells over the tintindex-0 body — model names are bands, not registry paths
@@ -205,6 +206,13 @@ class GT6PaintableRenderTypeCensusTest {
     // ---------------------------------------------------------------------
     // the census
     // ---------------------------------------------------------------------
+
+    /** The 8 dedicated crucible wall paths (the steel rung + the seven ladder rows). */
+    private static List<String> crucibleWallPaths() {
+        List<String> rPaths = new ArrayList<>(List.of("crucible_steel_wall"));
+        rPaths.addAll(gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.keySet());
+        return rPaths;
+    }
 
     /** Every paintable model declares the alpha-discarding cutout chunk layer. */
     @Test
