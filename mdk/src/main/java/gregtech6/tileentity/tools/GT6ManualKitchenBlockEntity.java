@@ -20,6 +20,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.tools.GTKitchenBlock;
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.gui.GTViewerJump;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.recipes.GT6RecipeMaps;
@@ -322,18 +323,24 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 	 * The whole server-side activation chain. Returns the human-readable report (the RCON
 	 * acceptance channel — the GTTapBlockEntity.activateChain precedent; the player path
 	 * ignores the string). {@code aPlayer == null} = the empty-hand RCON arm. The client
-	 * side is a no-op (upstream played the pour sounds client-side :258-273 — the sound
-	 * face rides the pool cut with the mDisplay renderer).
+	 * side carries the NEI corner jump (upstream opened NEI in its client arm :282-285 —
+	 * {@link #clientNeiArm}) and otherwise ignores the click; the pour sounds (:258-273)
+	 * ride the pool cut with the mDisplay renderer.
 	 */
 	public String activateChain(@Nullable Player aPlayer, byte aSide, ItemStack aHeld, float aHitX, float aHitY, float aHitZ) {
-		if (!isServerSide()) return "client side";
+		if (!isServerSide()) {
+			// :282-285 (bowl) / :261-264 (pot) / :168-172 (juicer) — the CLIENT arm opens the
+			// recipe viewer from the top-face corner quadrant (the NEI corner jump)
+			clientNeiArm(aSide, aHitX, aHitZ);
+			return "client side";
+		}
 		ensureTanks();
 		boolean tTop = (aSide == 1); // SIDES_TOP — the CS side order == Direction.get3DDataValue (P4)
 
 		// :188-209 — the top-face manual processing round
 		if (tTop) {
-			// :190/:210 — the NEI corner quadrant opens NEI upstream; no NEI in the port (declared no-op)
-			if (aHitX <= PX_CORNER && aHitZ <= PX_CORNER) return "NEI corner (no NEI in the port — no-op)";
+			// :190/:210 — the NEI corner quadrant is swallowed server-side (the viewer jump is the client arm)
+			if (neiCorner(aHitX, aHitZ)) return "NEI corner (the recipe-viewer jump is the client arm)";
 
 			RecipeMap tMap = recipeMap();
 			ItemStack[] tInputItems = inputStacks();
@@ -381,7 +388,7 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 		// :224-252 — the held item into the input slots / the per-tank fills.
 		// :224 top-centre = items FIRST then fluids; :238 sides = fluids FIRST then items.
 		if (aHeld != null && !aHeld.isEmpty()) {
-			if (tTop && aHitX > PX_CORNER && aHitX < PX_INNER && aHitZ > PX_CORNER && aHitZ < PX_INNER) {
+			if (tTop && aHitX > cornerBound() && aHitX < innerBound() && aHitZ > cornerBound() && aHitZ < innerBound()) {
 				if (aPlayer != null && moveHeldIntoInputSlots(aPlayer)) return "inserted " + aHeld.getItem();
 				FluidStack tPerTank = containerFluid(aHeld);
 				if (tPerTank != null && fillPerTankOrder(tPerTank) > 0) {
@@ -412,10 +419,39 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 		return "no action";
 	}
 
-	/** The corner-quadrant pixel bound — upstream {@code PX_P[2]} = 3/16 (CS PX_P = 2 px/step form). */
-	protected static final float PX_CORNER = 3.0F / 16.0F;
-	/** The centre-quadrant bound — upstream {@code PX_N[2]} = 13/16. */
-	protected static final float PX_INNER = 13.0F / 16.0F;
+	/**
+	 * The corner-quadrant pixel bound — upstream {@code PX_P[2]} = 2px (MixingBowl.java:283,
+	 * BathingPot.java:262); the Juicer overrides to the {@code PX_P[4]} = 4px variant
+	 * (MultiTileEntityJuicer.java:164).
+	 */
+	protected float cornerBound() { return 2.0F / 16.0F; }
+	/**
+	 * The centre-quadrant bound — upstream {@code PX_N[2]} = 14px (MixingBowl.java:238);
+	 * the Juicer rides the symmetric {@code PX_N[4]} = 12px (upstream has no centre
+	 * quadrant — the port's unified chain keeps the bound declared).
+	 */
+	protected float innerBound() { return 14.0F / 16.0F; }
+
+	/** The top-face corner quadrant (upstream {@code tCoords[0] <= PX_P[c] && tCoords[1] <= PX_P[c]}, MixingBowl.java:283). */
+	protected boolean neiCorner(float aHitX, float aHitZ) {
+		return aHitX <= cornerBound() && aHitZ <= cornerBound();
+	}
+
+	/**
+	 * The client NEI corner arm — upstream {@code mRecipes.openNEI()} (MixingBowl.java:284,
+	 * Recipe.java:642 → {@code GuiCraftingRecipe.openRecipeGui}): the viewer jump. Silent when
+	 * no viewer is installed or its runtime is not ready — the GTViewerJump router
+	 * bottom-arms both (the JEI/EMI plugin classes never load without their ModList hit,
+	 * the dormant-impl contract).
+	 */
+	protected void openNei() {
+		GTViewerJump.openRecipeMapPage(recipeMap());
+	}
+
+	/** The client arm the activateChain client side rides (the seam the offline routing pins drive). */
+	protected void clientNeiArm(byte aSide, float aHitX, float aHitZ) {
+		if (aSide == 1 && neiCorner(aHitX, aHitZ)) openNei();
+	}
 
 	/** The input slots as the findRecipe argument (upstream :193). */
 	private ItemStack[] inputStacks() {
