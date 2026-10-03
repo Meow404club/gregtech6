@@ -178,8 +178,8 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 				"HU", ChatFormatting.RED);
 		assertUnit(contents(GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.MASSFAB, row(32, 20, 0)).get(0)).getArgs()[1],
 				"QU", ChatFormatting.DARK_PURPLE);
-		assertUnit(contents(GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(32, 20, 0)).get(0)).getArgs()[1],
-				"TU", ChatFormatting.DARK_BLUE);
+		// FUSION's TU unit line is gone (task r11-tu-costlines-slim: TU prints the time only,
+		// pinned by tuMapsShowOnlyTheTimeLine below)
 		// the two crackers print the HU unit line (task viewer-icon-retire-gu-pin; the
 		// upstream cracker rows are Heat_T, :1570-1579 — the GU one-arg face is gone)
 		var tCrack = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.CATALYTIC_CRACKING, row(32, 64, 0));
@@ -202,11 +202,43 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 	void fusionSpecialValueLineStaysOnTheLuStartFace() {
 		GT6RecipeMaps.init();
 		// FUSION is TU-pinned for the run cost, but the Start special keeps its own LU post
+		// (kept by the r11-tu-costlines-slim ruling) — after the slim-down it is line 2,
+		// right behind the time line
 		var tLines = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(8, 200, 131072));
-		var tSpecial = contents(tLines.get(5));
+		var tSpecial = contents(tLines.get(1));
 		assertEquals("gt6.jei.cost.start", tSpecial.getKey());
 		assertEquals(131072L, tSpecial.getArgs()[0]);
 		assertEquals(" LU", tSpecial.getArgs()[1]);
+	}
+
+	// -------------------------------------------------------------------
+	// TU maps print ONLY the time line (user ruling 2026-10-03, task r11-tu-jei-slim):
+	// TU == TIME — the duration IS the cost, so the Tier/Costs/Usage/Power face is noise
+	// -------------------------------------------------------------------
+
+	@Test
+	void tuMapsShowOnlyTheTimeLine() {
+		GT6RecipeMaps.init();
+		// the four single-block TU maps: the time line is the whole face
+		for (RecipeMap tMap : List.of(GT6RecipeMaps.AUTOCLAVE, GT6RecipeMaps.BATH,
+				GT6RecipeMaps.COAGULATOR, GT6RecipeMaps.GENERIFIER)) {
+			assertEquals(TD.Energy.TU, GT6RecipeMapViewerMeta.energyOf(tMap), tMap.mNameInternal + " must stay TU-pinned");
+			var tLines = GT6RecipeMapViewerMeta.costLines(tMap, row(32, 400, 0));
+			assertEquals(1, tLines.size(), tMap.mNameInternal + " prints the time line only");
+			assertEquals("gt6.jei.cost.time", contents(tLines.get(0)).getKey());
+			assertEquals(400L, contents(tLines.get(0)).getArgs()[0]);
+			// the mEUt==0 face skips the Tier-unspecified line too
+			var tZero = GT6RecipeMapViewerMeta.costLines(tMap, row(0, 400, 0));
+			assertEquals(1, tZero.size(), tMap.mNameInternal + " zero-EUt prints the time line only");
+			assertEquals("gt6.jei.cost.time", contents(tZero.get(0)).getKey());
+		}
+		// FUSION is TU-pinned too — and its Start special keeps its seat next to the time
+		// line (the ruling keeps it; it prints whenever the meta triple exists, 0 LU included)
+		assertEquals(TD.Energy.TU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.FUSION));
+		var tFusion = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(32, 400, 0));
+		assertEquals(2, tFusion.size(), "FUSION = time + Start LU (the Start line is unconditional, upstream faithful)");
+		assertEquals("gt6.jei.cost.time", contents(tFusion.get(0)).getKey());
+		assertEquals("gt6.jei.cost.start", contents(tFusion.get(1)).getKey());
 	}
 
 	// -------------------------------------------------------------------

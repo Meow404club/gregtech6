@@ -320,7 +320,8 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:textures/gui/machines/nei.png", GT6RecipeMapViewerMeta.PLATE_TEXTURE.toString());
 		// the retired text band: the drawExtras lines sit at the FIXED panel y77 for every
 		// map (the pre-fix 73 + the re-anchor's 4 — still 3px under the band bottom edge
-		// 74; the +10 fluid deviation stays dead; FUSION's 6 lines end at 136 < 140)
+		// 74; the +10 fluid deviation stays dead; FUSION's 2 lines since the
+		// r11-tu-costlines-slim slim-down end at 81 < 140)
 		GT6RecipeMaps.init();
 		for (RecipeMap tMap : List.of(GT6RecipeMaps.BATH, GT6RecipeMaps.MIXER, GT6RecipeMaps.FUSION,
 				GT6RecipeMaps.LATHE, GT6RecipeMaps.STEAM_CRACKING))
@@ -441,9 +442,10 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6.jei.cost.time", contents(tFuelLines.get(3)).getKey());
 		assertEquals(4, tFuelLines.size(), "combinePower=T carries no Usage line");
 		// the FUSION special-value triple rides the last line (mSpecialValue × multiplier,
-		// the post unit folded into the second arg slot)
+		// the post unit folded into the second arg slot) — last of TWO lines since the
+		// r11-tu-costlines-slim slim-down: FUSION is TU-pinned, time + Start only
 		var tFusionLines = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(8, 200, 131072));
-		var tSpecial = contents(tFusionLines.get(5));
+		var tSpecial = contents(tFusionLines.get(1));
 		assertEquals("gt6.jei.cost.start", tSpecial.getKey());
 		assertArrayEquals(new Object[]{131072L, " LU"}, tSpecial.getArgs());
 	}
