@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:block/filteritem/normal"
+    "layer0": "gt6:item/covers/item_filter"
   }
 }

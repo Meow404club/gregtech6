@@ -12971,3 +12971,85 @@ Dedication** (same upstream `README.md` block as above).
     (`c012e322529358e6bb442a62daf29734bd1c1ee0a344c32eb04377189dce1fea` — meta 32146, MultiItemBottles.java:354)
   - `dye_flower_white.png` `textures/items/gt.multiitem.bottles/32147.png`
     (`8225574850e42ee284bf9da1f2136500c676917abed754f4f9bfc4bb053e910c` — meta 32147, MultiItemBottles.java:354)
+
+## GT6 cover item icons, the item-domain wave (task cover-item-icons-dual-source, 2026-10-03)
+
+- `gt6/textures/item/covers/*.png` — the 62-file cover ITEM-icon borrow: upstream draws
+  cover item icons and installed cover overlays from TWO SEPARATE domains
+  (item icons = `MultiItemRandom.registerIcons` →
+  `assets/gregtech/textures/items/gt.multiitem.technological/<meta>.png`,
+  MultiItemRandom.java:361-368; overlays = the block-domain `machines/covers/*` set).
+  The port had been feeding every cover item the overlay sprite as layer0 — the user-
+  visible "missing plate base" (the pump icon that painted the pump machine, the
+  shutter icon that painted the frameless door plate). This card re-sources every cover
+  item's layer0 onto its item-domain borrow. All 62 files byte-identical to upstream
+  (cmp-verified 2026-10-03), 16x16 RGBA, CC0 1.0 per the upstream README block.
+
+  - `pump.png`                        `12020.png`  (`bfce9706265a724c6121db8a06c1bc40bb5ac9431e59cb129288a0966156d7a6` — meta 12020, MultiItemTechnological.java:50; the port's single item mirrors the LV tier)
+  - `shutter.png`                     `1026.png`   (`365daaef78dea93560bf8eec0b2d71fa05515c51a2b160509aee3b140a4c859b` — meta 1026, :85)
+  - `item_filter.png`                 `1023.png`   (`9cdba56ac64441e1da9bad03b98b1e12977ccf5952a1fca5648b718fc274dcb3` — meta 1023, :82)
+  - `fluid_filter.png`                `1024.png`   (`46eaf8bbd7af97f44fec13c490425cf2b741dac7d11630d32ce7137147afdcde` — meta 1024, :83)
+  - `item_retriever.png`              `1031.png`   (`3b9344dfad13602a4eebd785804fb5bed51822abbcbcc3ff5eebddf51e0d42d5` — meta 1031, :90)
+  - `vent.png`                        `1022.png`   (`1a900f4d7210e53c4dd9cfd396937112d2030b3e597bca909dda8260cb9eb921` — meta 1022, :81)
+  - `drain.png`                       `1020.png`   (`de32b74f72aee720b2eee2c0078986ab5f020044978bf77431d34a417d824edf` — meta 1020, :79)
+  - `pressure_valve.png`              `2000.png`   (`05ff5b14fe0040d9b4be9e06912e7cbc4e94710ebdb076c4125ff697cf4c0db1` — meta 2000, :176)
+  - `crafting.png`                    `1001.png`   (`37febcf980232ad0ebc5a7ec0d150979b7c5e15b1335eb8396d0b684a126b815` — meta 1001, :60)
+  - `redstone_emitter.png`            `1021.png`   (`f29f37723c614aa3d5aa9a8e0820314ee82ca782684e1511d5d671ac4798f066` — meta 1021, :80)
+  - `redstone_conductor_in.png`       `1029.png`   (`9b1ba4c18296b157b5dd3ff671824623e1bc41812a813ee0266b7ddd49a01024` — meta 1029, :88)
+  - `redstone_conductor_out.png`      `1030.png`   (`139b6e096c1d48dd1de0d0abffee417061fcd8b262d9ca6ce3f5e910775c4efb` — meta 1030, :89)
+  - `redstone_machine_switch.png`     `1005.png`   (`947f8d5b8283eba946cb2d9744450965ac3077118187189291d1d4f55d06a232` — meta 1005, :64)
+  - `auto_redstone_machine_switch.png` `1006.png`  (`96b763922f53a7edd80650e1c2d1c2a1fff165c5ef37014ac973dbe88c167b35` — meta 1006, :65)
+  - `controller.png`                  `1025.png`   (`df3a646b093a73d21b71f6286b6255f4a01258a1534b6d2589a4c5e6ea1e9ba1` — meta 1025, :84)
+  - `machine_display.png`             `1002.png`   (`6a47b2115c9c06563ec7d5cc7cbf3981120839d05678babf831d835eff88567a` — meta 1002, :61)
+  - `auto_switch.png`                 `1003.png`   (`33bd8a91c7a4f072dfb01478a2e5aecc6120e00295b17b0d466ed446c238ef7e` — meta 1003, :62)
+  - `energy_display.png`              `1004.png`   (`d53f329914ec7a99190816b6b108b2bded518a1241f0eaf74704d143d6508dba` — meta 1004, :63)
+  - `scale_energy.png`                `1014.png`   (`84ab66f15c37a3be2e1643f15acab4035db095189e28bdfb9acc7e7d14ee7376` — meta 1014, :73)
+  - `scale_progress.png`              `1018.png`   (`009a62d18b47edfc90475fd765c9cc7d9eef7f8c35c6dc9e4933bcbad0446922` — meta 1018, :77)
+  - `auto_timer_1m.png`               `1009.png`   (`1777ff6277a5fefdd2fc178a73a047c10d6a910bf67f40a9e27769766b38ab39` — meta 1009, :68)
+  - `auto_timer_5m.png`               `1010.png`   (`5dba09d662ef034e510c2743c981231a666c3a8e61c9d8631f9bffa5c8f3fa93` — meta 1010, :69)
+  - `auto_timer_10m.png`              `1011.png`   (`c74c7e417404488d2efd9076872aed423bf0f867f1109844142a631b4aac8810` — meta 1011, :70)
+  - `auto_timer_20m.png`              `1012.png`   (`562a997ff047e08466105627fac9014bd4f1d2a8b6d5883e10ad0efad8bfca5d` — meta 1012, :71)
+  - `auto_timer_30m.png`              `1013.png`   (`806a2fe5b2d42212b8ff6dcb11252e92e1eff8dd45b0822fc62d85b2b769b1a2` — meta 1013, :72)
+  - `selector_redstone.png`           `1007.png`   (`0938904af7bfb6221103a31995ab22099a93bce9d1e0fc450a942b6685ed177a` — meta 1007, :66)
+  - `selector_manual.png`             `1008.png`   (`6f296422d71a1cbc2ebfe94e0f59e498d96000d92cf61d2a37967990e687ac73` — meta 1008, :67)
+  - `selector_button_panel.png`       `1027.png`   (`1273cc10e796a53aa7cb52a30a7ab5d19ebab1d96af7a65fb47fa31469f3f538` — meta 1027, :86)
+  - `display_cpu_logic.png`           `1086.png`   (`665360aca97d5a003b20dfae32ef495862fee6e0c317932ec68ba5313304477e` — meta 1086, :101)
+  - `display_cpu_control.png`         `1087.png`   (`7d5ba87aa6882cffcd130db26a8936fe64dd0a1274293c60f17ebb6f38719240` — meta 1087, :102)
+  - `display_cpu_storage.png`         `1088.png`   (`b8a007d0f4398dde65e037597ddb962af613f8b6b661d2317909f9f68207b3b0` — meta 1088, :103)
+  - `display_cpu_conversion.png`      `1089.png`   (`d36662e023b9811943d89d5a8058bba558090c81c23ebe42c49a7e4a3e10091a` — meta 1089, :104)
+  - `fluid_export.png`                `1090.png`   (`f4e40b41987ea2bb13c62069f4ed9464cc49d257c6c5e7f7842e6d3c56a5129a` — meta 1090, :105)
+  - `fluid_import.png`                `1091.png`   (`34fef95e3cfeb7bab5235c2787648d3a249583a3d89fb5b81ab31254ef0e42e6` — meta 1091, :106)
+  - `fluid_storage.png`               `1092.png`   (`a97cdc5dfb5b95f5a65342da936a3bc1b637e951ae60f4d5563529b6f8b9d13a` — meta 1092, :107)
+  - `item_export.png`                 `1093.png`   (`d028833dbff3a8f5b6154b2eb1f030fca54dab3f0611f61e43d1ac05d5f2fe0d` — meta 1093, :108)
+  - `item_import.png`                 `1094.png`   (`d1d3bf4112582c6c077a74abf621da2d5cc695f38abc68b70173e29e39cd2002` — meta 1094, :109)
+  - `item_storage.png`                `1095.png`   (`6febff9e3b22cd10938e58414c891080e74f13bc6db1d402e68bf6a43038abdf` — meta 1095, :110)
+  - `generic_export.png`              `1096.png`   (`2c86aada1d91d89de71bed815aba2854316b346f57290516cf3e2b99a2d4942c` — meta 1096, :111)
+  - `generic_import.png`              `1097.png`   (`aacb64b37a0f46a0b25876c593f40bf485a7df2e988bccd422df8e92ddec994e` — meta 1097, :112)
+  - `generic_storage.png`             `1098.png`   (`3cab1bd36133ca69f2ca7fc0a068893ada99c9878949f00c2f7e7ff6ee1ba6a2` — meta 1098, :113)
+  - `generic_dump.png`                `1099.png`   (`8cbeb3651233d87e26efe335a9d83a5c524945c13374c73c2cf1303b38e08b67` — meta 1099, :114)
+  - `conveyor_0.png` .. `conveyor_9.png`  `12040.png` .. `12049.png`  (per-tier distinct art, MultiItemTechnological.java:51 — `42f120ea…conveyor_0` `48e7979e…1` `815a6a85…2` `ea07bf98…3` `a8f40341…4` `6cd734e3…5` `7eeacdd0…6` `5eb9f5eb…7` `77001ccb…8` `740fea29…9`, full digests in the GT6CoverItemIconDatagenTest census)
+  - `robot_arm_0.png` .. `robot_arm_9.png` `12080.png` .. `12089.png`  (per-tier distinct art, MultiItemTechnological.java:53 — `3655fc76…0` `20ffabd4…1` `e474626b…2` `3f31e6ee…3` `9bdc60bc…4` `aaf4a604…5` `1b1faa85…6` `b3c1d66a…7` `12282e9a…8` `6d2162aa…9`, full digests in the GT6CoverItemIconDatagenTest census)
+
+- NOT borrowed this card, the declared exceptions:
+  - `cover_redstone_torch` / `cover_redstone_repeater`: upstream these covers ride the
+    VANILLA items (`CoverRegistry.put(ST.make(Blocks.redstone_torch...)` /
+    `Items.repeater`, GT_API.java:799-802) — no GT PNG exists. The item icons point at
+    the vanilla textures the vanilla items draw: `minecraft:block/redstone_torch` and
+    `minecraft:block/repeater` (the repeater row IS the vanilla item model's layer0,
+    `models/item/repeater.json`). Deviation: the vanilla torch GUI face is the 3D
+    cross-plane block model; the port keeps the census-stable 2D sprite form.
+  - `cover_selector_tag_0..15`: upstream the selector-tag covers ride the Integrated
+    Circuit ITEM, damage 0-15 (`CoverRegistry.put(ST.make(this, 1, i),
+    new CoverSelectorTag(i))`, ItemIntegratedCircuit.java:87), whose per-damage icon is
+    the circuit config art (registerIcons :118) — the icons REUSE the existing
+    `item/integrated_circuit/0..15.png` borrows (task circuit-config-icons), zero new
+    files. The in-world digit plates stay in `block/selectortag/`.
+  - `cover_asphalt`: upstream the cover rides the Asphalt Panel MTE item
+    (Loader_MultiTileEntities.java:2053-2055), whose icon IS the asphalt art — no
+    technological-domain PNG exists; the existing `block/asphalt` borrow is already the
+    upstream icon art, layer0 unchanged (declared keep).
+  - plate-family covers (`gt6:plate_iron` etc.): untouched — upstream the plate covers
+    ARE the plate items (Loader_OreProcessing.java:211-215), item and overlay same art.
+
+Copied on 2026-10-03. Upstream license: **CC0 1.0 Universal Public Domain Dedication**
+(the same upstream `README.md` block as the other texture borrows above).
