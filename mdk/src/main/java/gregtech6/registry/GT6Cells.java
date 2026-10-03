@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,10 +39,14 @@ import gregtech6.tileentity.tank.GT6CellBlockEntity;
  * <p><b>The acquisition row is DECLARED DEFERRED</b>: upstream the family is made in
  * the extruder (Loader_Recipes_Handlers.java:766 {@code addExtruderRecipe(tInput,
  * capcellcon, T, IL.Shape_Extruder_CCC)} + :799 the {@code Shape_SimpleEx_CCC} simple
- * twin), but the port has NO CCC extruder mold item (GT6ExtruderMolds carries the
- * row0 subset plate+rod only; Shape_Extruder_CCC/Shape_SimpleEx_CCC are zero-hit in
- * the repo). Per the card ruling: record the row, defer it to the mold card, fabricate
- * NO substitute recipe. The registration face below is otherwise complete.
+ * twin — the mAmount-ratio helper :809-823, so 1 ingot-tier input → the capcellcon U9
+ * ratio, i.e. 8 empty cells per ingot). The port still has NO CCC extruder mold item
+ * (re-verified 2026-10-03: GT6ExtruderMolds carries the row0 plate+rod pair, and the
+ * in-flight toolhead-r11c-extruder-heads card adds the 16 tool-head molds — the CCC
+ * pair stays zero-hit). Per the card ruling: record the row, defer it to the mold
+ * card, fabricate NO substitute recipe. The registration face below is otherwise
+ * complete, and the fill/drain loop is fully wired (gas-only fill, free drain, the
+ * item NBT projection) — the missing face is only the SOURCE.
  *
  * <p><b>The recorded-only columns</b> (the GTBarrels P4 quartet pool cut — the port
  * has no consumer for them): NBT_ACIDPROOF / NBT_MAGICPROOF / NBT_PLASMAPROOF and
@@ -55,10 +60,13 @@ import gregtech6.tileentity.tank.GT6CellBlockEntity;
  * <p>One BlockEntityType over the 40 blocks — the ADR-P3-1 shared-BET multi-mount
  * (all 40 rows are the one upstream TE class, the metal-drum Stream form).
  *
- * <p>Creative tab ownership: the rows' upstream category IS the "Fluid Containers"
- * tab GTBarrels owns — this card rides it through the BuildCreativeModeTabContentsEvent
- * append (the GT6MeasuringPot/GT6GasCylinders form; GTBarrels.java stays untouched,
- * the card red line).
+ * <p>Creative tab ownership (task cell-family-closeout): the family owns its DEDICATED
+ * tab {@link #CELLS_TAB} (the per-prefix-tab treatment the user ruled alongside the test
+ * tube). Upstream truth, re-dug 2026-10-03: the 40 rows carry aCreativeTabID 32719 and
+ * so do the cup/jug/measuring-pot/thermos/gas-cylinder rows (Loader :2094-2104) — one
+ * SHARED lazy CreativeTab (MultiTileEntityRegistry.java:191), so a dedicated page is
+ * the DECLARED user deviation. The former GTBarrels "Fluid Containers" (zh 储罐) ride
+ * via BuildCreativeModeTabContentsEvent is removed — the storage tab shows zero cells.
  *
  * <p><b>KJS surface declaration (the task card wording)</b>: this card produces the
  * REGISTRATION face (40 Block/BlockItem pairs + one BET over the fluid-interaction
@@ -173,6 +181,34 @@ public final class GT6Cells {
 	public static final java.util.Map<String, RegistryObject<GT6CellBlock>> BLOCKS_BY_PATH =
 			BLOCKS_IN_ORDER.stream().collect(java.util.stream.Collectors.toMap(tRow -> tRow.getId().getPath(), tRow -> tRow));
 
+	/** The family's creative tabs DR (the GT6Tools/GTWires self-held form). */
+	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
+
+	/**
+	 * The dedicated "Capsule Cell Containers" tab (task cell-family-closeout) — the user
+	 * ruling 2026-10-03, the test-tube-prefix-tab treatment. Title key
+	 * {@code itemGroup.gt6.cells}; the icon is the FIRST registered row (cell_wax) — the
+	 * upstream lazy-tab face, where the tab's icon item is fixed by the first 32719
+	 * registration (MultiTileEntityRegistry.java:191, the Wax row :1770). The zh title
+	 * 单元 rides the user ruling (zh_cn_ref.tsv hand row).
+	 */
+	public static final RegistryObject<CreativeModeTab> CELLS_TAB = CREATIVE_MODE_TABS.register("cells",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+					.title(Component.translatable("itemGroup.gt6.cells"))
+					.icon(() -> new ItemStack(BLOCKS_IN_ORDER.get(0).get().asItem()))
+					.displayItems((aParameters, aOutput) -> displayCells(aOutput))
+					.build());
+
+	/**
+	 * The tab walk: every registered row, in registration order (the GT6Tools TAB_TABLE
+	 * form). Package-visible so the offline census drives the SAME walk the tab does.
+	 */
+	static void displayCells(CreativeModeTab.Output aOutput) {
+		for (RegistryObject<GT6CellBlock> tBlock : BLOCKS_IN_ORDER) {
+			aOutput.accept(new ItemStack(tBlock.get().asItem()));
+		}
+	}
+
 	private static RegistryObject<GT6CellBlock> registerRow(CellRow aRow) {
 		RegistryObject<GT6CellBlock> tBlock = BLOCKS.register(aRow.path(),
 				// task small-tank-colored-tint — the row's NBT_MATERIAL rides the block
@@ -193,16 +229,6 @@ public final class GT6Cells {
 					GT6CellBlockEntity::new,
 					BLOCKS_IN_ORDER.stream().map(RegistryObject::get).toArray(Block[]::new)).build(null));
 
-	/** The "Fluid Containers" tab ride (the rows' upstream category — the GTBarrels-owned tab, appended not owned). */
-	@SubscribeEvent
-	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
-		if (aEvent.getTabKey().location().equals(GTBarrels.FLUID_CONTAINERS_TAB.getId())) {
-			for (RegistryObject<GT6CellBlock> tBlock : BLOCKS_IN_ORDER) {
-				aEvent.accept(new ItemStack(tBlock.get().asItem()));
-			}
-		}
-	}
-
 	private GT6Cells() {}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (the GT6GasCylinders fork form). */
@@ -217,13 +243,14 @@ public final class GT6Cells {
 		BLOCKS.register(tModBus);
 		BLOCK_ENTITY_TYPES.register(tModBus);
 		ITEMS.register(tModBus);
+		CREATIVE_MODE_TABS.register(tModBus);
 	}
 
 	/** Registration smoke evidence (the GT6GasCylinders.onCommonSetup log shape). */
 	@SubscribeEvent
 	public static void onCommonSetup(FMLCommonSetupEvent aEvent) {
 		aEvent.enqueueWork(() -> {
-			GT6Mod.LOGGER.info("GT6 cells registered: {} rows (1000 L gas-only, the stack-64 family, acquisition deferred to the CCC mold card)",
+			GT6Mod.LOGGER.info("GT6 cells registered: {} rows (1000 L gas-only, the stack-64 family, own creative tab, acquisition deferred to the CCC mold card)",
 					BLOCKS_IN_ORDER.size());
 		});
 	}

@@ -1472,6 +1472,7 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.barrel_infinity", "Infinity Drum");
         add("block.gt6.barrel_logistics", "Logistics Tank"); // task barrel-keepfilter-logistics — the :2171 row name verbatim
         add("itemGroup.gt6.fluid_containers", "Fluid Containers");
+        add("itemGroup.gt6.cells", "Capsule Cell Containers"); // task cell-family-closeout — the dedicated cell tab, the OP.capcellcon category face (OP.java:293); zh 单元 (the user ruling)
     }
 
     /**
