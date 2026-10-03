@@ -29,25 +29,31 @@ import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
 
 /**
- * The material-tree node-graph GEOMETRY (task mattree-v2-nodes) — the viewer-NEUTRAL
- * helper both legs render from (spec clause ⑦): pure vanilla math over the
- * {@link MaterialTreeDisplay} model, zero JEI/EMI imports, every rect pinned by
- * {@code MaterialTreeLayoutTest}. The JEI category's {@code draw(GuiGraphics)} and the EMI
- * recipe's {@code addDrawable} consumer both translate these rects 1:1 through
+ * The material-tree node-graph GEOMETRY (task mattree-v2-nodes; rotated VERTICAL by task
+ * mattree-vertical-layout) — the viewer-NEUTRAL helper both legs render from (spec clause ⑦):
+ * pure vanilla math over the {@link MaterialTreeDisplay} model, zero JEI/EMI imports, every
+ * rect pinned by {@code MaterialTreeLayoutTest}. The JEI category's {@code draw(GuiGraphics)}
+ * and the EMI recipe's {@code addDrawable} consumer both translate these rects 1:1 through
  * {@code GuiGraphics.fill(x, y, x+w, y+h, ink)} (1.20.1 GuiGraphics has no diagonal
  * primitive — hLine/vLine/fill only, tmp/vanilla-1.20.1 GuiGraphics.java:121-190 — so all
  * routing is MANHATTAN and the arrowhead is a rasterised solid triangle, spec clause ⑤).
  *
+ * <p><b>The rotation (task mattree-vertical-layout)</b> — the coordinate table's semantic
+ * map, restated from the layout's point of view (Display javadoc carries the full table):
+ * chain STAGES grow DOWNWARD (the user ruling 「最好是向下的，jei/emi是向下空间比较大」),
+ * so every pre-rotation left→right hop is now a top→bottom hop. The edge budget rotated
+ * with it: the machine icon rides the 22 px gap UNDER the from band (2 px entry wire +
+ * 16 px icon + 4 px arrowhead), the wire exits the from slot's bottom-edge centre, runs a
+ * shared HORIZONTAL TRUNK along the slot's bottom edge (the fan-out trunk, circuit-diagram
+ * style), bends vertically into the machine icon's top edge, crosses under it and bends
+ * again at the arrow's back line before entering the target from above. Same-band-hop
+ * edges whose midpoint-x collide (same from band AND same midpoint lane) stagger the
+ * machine icon and its run 2 px per collision, now HORIZONTALLY. Parallel nodes spread
+ * RIGHT within a band at {@link MaterialTreeDisplay#LANE_PITCH} 28 — the old vertical
+ * ROW_PITCH 20 (2 px gaps) was the 「挤的太紧」 root cause the rotation retires.
+ *
  * <p><b>The three-part edge</b> (spec clause ②): every chain hop renders as
- * 「from slot –wire– [machine icon] –arrow→ to slot」. The machine icon rides the gap right
- * of the FROM column (the 22 px gap budgets exactly 2 px entry wire + 16 px icon + 4 px
- * arrowhead); the wire exits the from slot's right-edge centre, runs a shared vertical TRUNK
- * along the slot's right edge (spec clause ⑥'s 沿槽右缘走 — fan-outs share the trunk,
- * circuit-diagram style), bends horizontally into the machine icon's left edge, crosses from
- * its right edge and bends again at the arrow's back line before entering the target. Same-
- * gap edges whose midpoints collide (same from row AND same to row — e.g. crushed→dust and
- * crushed→crushedPurified) stagger the machine icon and its run 2 px per collision (spec
- * clause ⑥'s y 错开 2-3 px).
+ * 「from slot –wire– [machine icon] –arrow↓ to slot」.
  *
  * <p><b>Degraded edges</b> ({@code Edge.machine()} EMPTY — an untabled map, offline always):
  * same Manhattan path minus the machine box, plus the v1-style via-label position so the
@@ -57,7 +63,7 @@ import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
  *
  * <p>Z-order is the viewers' contract: JEI draws in the category background layer (under
  * slots) and the EMI leg must add the wire widgets BEFORE the slot widgets — a wire crossing
- * an intermediate column's slot hides behind the slot box in both legs.
+ * an intermediate band's slot hides behind the slot box in both legs.
  */
 public final class MaterialTreeLayout {
 
@@ -65,13 +71,13 @@ public final class MaterialTreeLayout {
 	public static final int SLOT = 18;
 	/** The machine-icon node: a bare 16x16 item icon (no slot background — both viewers mount it background-free). */
 	public static final int MACHINE = 16;
-	/** The wire gap between columns ({@link MaterialTreeDisplay#COLUMN_PITCH} - {@link #SLOT}). */
-	public static final int GAP = MaterialTreeDisplay.COLUMN_PITCH - SLOT;
-	/** Arrowhead width in px; the solid triangle is {@value #ARROW_HEAD} wide, 7 px tall. */
+	/** The wire gap UNDER each band ({@link MaterialTreeDisplay#STAGE_PITCH} - {@link #SLOT}). */
+	public static final int GAP = MaterialTreeDisplay.STAGE_PITCH - SLOT;
+	/** Arrowhead extent in the travel direction; since the rotation the solid triangle is {@value #ARROW_HEAD} px tall, 7 px wide. */
 	public static final int ARROW_HEAD = 4;
 	/**
-	 * The gap's exact horizontal budget (22 px = 2 wire + {@value #MACHINE} machine + 4 arrow):
-	 * the machine icon packs LEFT against the entry-wire zone so the arrowhead's 4 px fit
+	 * The gap's exact vertical budget (22 px = 2 wire + {@value #MACHINE} machine + 4 arrow):
+	 * the machine icon packs TOP against the entry-wire zone so the arrowhead's 4 px fit
 	 * flush before the target slot.
 	 */
 	public static final int ENTRY_WIRE = GAP - MACHINE - ARROW_HEAD;
@@ -90,8 +96,8 @@ public final class MaterialTreeLayout {
 	 * {@code machine} is the 16x16 bare-icon box (null on the degraded face; both viewers
 	 * mount the stack background-free ON it — JEI a RENDER_ONLY slot with no background, EMI
 	 * a {@code drawBack(false)} SlotWidget — and both hover-boxes extend one px around it),
-	 * {@code wire} the Manhattan segments, {@code arrow} the solid-triangle rows with the tip
-	 * on the target slot's left edge, {@code labelX/labelY} the degraded via-label spot.
+	 * {@code wire} the Manhattan segments, {@code arrow} the solid-triangle columns with the
+	 * tip on the target slot's top edge, {@code labelX/labelY} the degraded via-label spot.
 	 */
 	public record EdgeLayout(Rect machine, List<Rect> wire, List<Rect> arrow, int labelX, int labelY) {}
 
@@ -101,40 +107,40 @@ public final class MaterialTreeLayout {
 	 * (0 for the first). Pure — the pin tests call this directly with hand-picked coords.
 	 */
 	public static EdgeLayout edge(int aFromX, int aFromY, int aToX, int aToY, boolean aMachine, int aDup) {
-		int fcy = aFromY + SLOT / 2, tcy = aToY + SLOT / 2;
-		int mid = (aFromY + aToY) / 2;
-		int mx = aFromX + SLOT + ENTRY_WIRE; // 16px machine icon left-packed in the gap
-		// the machine rides the CENTRE-LINE midpoint (mid + 9 = (fcy + tcy) / 2) so a same-row
-		// edge stays one straight line (mcy == fcy == tcy); the stagger jogs it +2 px per dup
-		int my = mid + SLOT / 2 - MACHINE / 2 + aDup * DUP_STAGGER;
-		int mcy = my + MACHINE / 2;
-		int trunkX = aFromX + SLOT + 1; // the shared fan-out trunk along the from slot's right edge
-		int backX = aToX - ARROW_HEAD;  // the arrow's back line — the target-side bend sits on it
+		int fcx = aFromX + SLOT / 2, tcx = aToX + SLOT / 2;
+		int mid = (aFromX + aToX) / 2;
+		int my = aFromY + SLOT + ENTRY_WIRE; // 16px machine icon top-packed in the gap below the from band
+		// the machine rides the CENTRE-LINE midpoint (mid + 9 = (fcx + tcx) / 2) so a same-lane
+		// edge stays one straight line (mcx == fcx == tcx); the stagger jogs it +2 px per dup
+		int mx = mid + SLOT / 2 - MACHINE / 2 + aDup * DUP_STAGGER;
+		int mcx = mx + MACHINE / 2;
+		int trunkY = aFromY + SLOT + 1; // the shared fan-out trunk along the from slot's bottom edge
+		int backY = aToY - ARROW_HEAD;  // the arrow's back line — the target-side bend sits on it
 
 		List<Rect> rWire = new ArrayList<>();
 		if (aMachine) {
-			if (mcy != fcy) {
-				add(rWire, h(aFromX + SLOT, trunkX, fcy));
-				add(rWire, v(trunkX, fcy, mcy));
-				add(rWire, h(trunkX, mx, mcy));
+			if (mcx != fcx) {
+				add(rWire, v(fcx, aFromY + SLOT, trunkY));
+				add(rWire, h(fcx, mcx, trunkY));
+				add(rWire, v(mcx, trunkY, my));
 			} else {
-				add(rWire, h(aFromX + SLOT, mx, fcy));
+				add(rWire, v(fcx, aFromY + SLOT, my));
 			}
-			if (mcy != tcy) {
-				add(rWire, h(mx + MACHINE, backX, mcy));
-				add(rWire, v(backX, mcy, tcy));
+			if (mcx != tcx) {
+				add(rWire, v(mcx, my + MACHINE, backY));
+				add(rWire, h(mcx, tcx, backY));
 			} else {
-				add(rWire, h(mx + MACHINE, backX, mcy));
+				add(rWire, v(mcx, my + MACHINE, backY));
 			}
-		} else if (fcy != tcy) {
-			add(rWire, h(aFromX + SLOT, trunkX, fcy));
-			add(rWire, v(trunkX, fcy, tcy));
-			add(rWire, h(trunkX, backX, tcy));
+		} else if (fcx != tcx) {
+			add(rWire, v(fcx, aFromY + SLOT, trunkY));
+			add(rWire, h(fcx, tcx, trunkY));
+			add(rWire, v(tcx, trunkY, backY));
 		} else {
-			add(rWire, h(aFromX + SLOT, backX, fcy));
+			add(rWire, v(fcx, aFromY + SLOT, backY));
 		}
 		return new EdgeLayout(aMachine ? new Rect(mx, my, MACHINE, MACHINE) : null,
-				List.copyOf(rWire), arrowhead(aToX, tcy), aFromX + SLOT - 2, mid - 4);
+				List.copyOf(rWire), arrowhead(tcx, aToY), mid - 4, aFromY + SLOT - 2);
 	}
 
 	/**
@@ -151,7 +157,7 @@ public final class MaterialTreeLayout {
 			if (tFrom == null || tTo == null) continue; // defensive; the assembly only emits displayed endpoints
 			int tFromX = MaterialTreeDisplay.nodeX(tFrom), tFromY = MaterialTreeDisplay.nodeY(tFrom);
 			int tToX = MaterialTreeDisplay.nodeX(tTo), tToY = MaterialTreeDisplay.nodeY(tTo);
-			long tKey = ((long) tFromX << 32) | ((tFromY + tToY) / 2);
+			long tKey = ((long) tFromY << 32) | ((tFromX + tToX) / 2);
 			int tDup = tDups.getOrDefault(tKey, 0);
 			tDups.put(tKey, tDup + 1);
 			rLayouts.add(edge(tFromX, tFromY, tToX, tToY, !tEdge.machine().isEmpty(), tDup));
@@ -159,17 +165,17 @@ public final class MaterialTreeLayout {
 		return rLayouts;
 	}
 
-	/** The solid right-pointing triangle: tip on the target slot's left edge centre, 4x7 rasterised as fill rows. */
+	/** The solid down-pointing triangle: tip on the target slot's top edge centre, 7 px wide, {@value #ARROW_HEAD} px tall, rasterised as fill columns. */
 	public static List<Rect> arrowhead(int aTipX, int aTipY) {
-		List<Rect> rRows = new ArrayList<>(7);
-		for (int dy = -(ARROW_HEAD - 1); dy < ARROW_HEAD; dy++) {
-			int tWidth = ARROW_HEAD - Math.abs(dy);
-			rRows.add(new Rect(aTipX - tWidth, aTipY + dy, tWidth, 1));
+		List<Rect> rCols = new ArrayList<>(7);
+		for (int dx = -(ARROW_HEAD - 1); dx < ARROW_HEAD; dx++) {
+			int tHeight = ARROW_HEAD - Math.abs(dx);
+			rCols.add(new Rect(aTipX + dx, aTipY - tHeight, 1, tHeight));
 		}
-		return rRows;
+		return rCols;
 	}
 
-	private static Rect h(int aX1, int aX2, int aY) { return aX2 > aX1 ? new Rect(aX1, aY, aX2 - aX1, 1) : null; }
+	private static Rect h(int aX1, int aX2, int aY) { return aX2 != aX1 ? new Rect(Math.min(aX1, aX2), aY, Math.abs(aX2 - aX1), 1) : null; }
 	private static Rect v(int aX, int aY1, int aY2) { return aY2 != aY1 ? new Rect(aX, Math.min(aY1, aY2), 1, Math.abs(aY2 - aY1)) : null; }
 	private static void add(List<Rect> aRects, Rect aRect) { if (aRect != null) aRects.add(aRect); }
 

@@ -40,7 +40,7 @@ import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
  * on the edge's midpoint box (a slot that shows and tooltips but never joins lookups), with
  * the merged "via A/B" label as its rich tooltip. Degraded edges (EMPTY machine stack,
  * offline-only) keep the v1 text at the shared label spot. Column overflow renders the
- * explicit "+N" markers ({@link MaterialTreeDisplay#OVERFLOW_Y}) — never silently dropped.
+ * explicit "+N" markers under their band ({@link MaterialTreeDisplay#overflowY}) — never silently dropped.
  *
  * <p>Slot semantics (the U/R native reachability clause): the {@code ore*} column nodes
  * ride INPUT slots (U on an ore item opens its tree — the 按材质聚合 mounting), every
@@ -118,7 +118,7 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 		}
 		int i = 0;
 		for (Byproduct tByproduct : aDisplay.byproducts()) {
-			aBuilder.addOutputSlot(MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT), MaterialTreeDisplay.byproductY(i))
+			aBuilder.addOutputSlot(MaterialTreeDisplay.byproductX(i), MaterialTreeDisplay.byproductY())
 					.addItemStack(tByproduct.stack().copy())
 					.addRichTooltipCallback(staticTooltip(tByproduct.sourceLabel()));
 			i++;
@@ -137,7 +137,7 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 		var tFont = Minecraft.getInstance().font;
 		aGuiGraphics.drawString(tFont, MaterialTreeDisplay.materialName(aDisplay.material), 4, 4, 0xFF000000);
 		aGuiGraphics.drawString(tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
-				MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT), 4, 0xFF000000);
+				MaterialTreeDisplay.LANE_X0, MaterialTreeDisplay.BYPRODUCT_HEADER_Y, 0xFF000000);
 		List<Edge> tEdges = aDisplay.edges();
 		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(aDisplay);
 		for (EdgeLayout tLayout : tLayouts) {
@@ -151,7 +151,7 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 		}
 		for (Overflow tOverflow : aDisplay.overflow()) {
 			aGuiGraphics.drawString(tFont, "+" + tOverflow.hidden(),
-					MaterialTreeDisplay.columnX(tOverflow.column()), MaterialTreeDisplay.OVERFLOW_Y, 0xFF000000);
+					MaterialTreeDisplay.overflowX(), MaterialTreeDisplay.overflowY(tOverflow.column()), 0xFF000000);
 		}
 	}
 

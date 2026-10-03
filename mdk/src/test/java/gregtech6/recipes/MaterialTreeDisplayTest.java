@@ -186,10 +186,10 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 		assertEquals(-1, MaterialTreeDisplay.columnOf(OP.ingot));
 		assertEquals(-1, MaterialTreeDisplay.columnOf(OP.plate));
 		assertEquals(-1, MaterialTreeDisplay.columnOf(OP.gem));
-		// geometry sanity: every slot rectangle fits the fixed category box
-		assertTrue(MaterialTreeDisplay.columnX(MaterialTreeDisplay.COL_BYPRODUCT) + 18 <= MaterialTreeDisplay.WIDTH);
-		assertTrue(MaterialTreeDisplay.nodeY(new Node(OP.dust, MaterialTreeDisplay.COL_DUST, MaterialTreeDisplay.MAX_ROWS - 1, net.minecraft.world.item.ItemStack.EMPTY)) + 18
-				<= MaterialTreeDisplay.HEIGHT);
+		// geometry sanity (the vertical rotation): the deepest band's slot row and the widest
+		// lane's slot column both fit the fixed category box
+		assertTrue(MaterialTreeDisplay.byproductX(MaterialTreeDisplay.MAX_ROWS - 1) + 18 <= MaterialTreeDisplay.WIDTH);
+		assertTrue(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT) + 18 <= MaterialTreeDisplay.HEIGHT);
 	}
 
 	// ------------------------------------------------------------------
