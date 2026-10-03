@@ -39,19 +39,19 @@ on:
 
 jobs:
   rcon-sweep:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # 全名册 62 链 18 簇 + 多次 session boot，比一次普通 build 重得多——
     # 上限放宽到 180 分钟防卡死（hosted runner job 上限 360）。
     timeout-minutes: 180
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: ${{ inputs.node == '1.21.1-neoforge' && 21 || 17 }}
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Warm compile (keep runServer inside the framework 600s boot timeout)
         run: ./gradlew :mdk:${{ inputs.node }}:assemble
       - name: Run RCON sweep
@@ -66,7 +66,7 @@ jobs:
       # 编译期就红时可能一个文件都没有——ignore，不二次报错（build.yml 同款纪律）。
       - name: Upload sweep artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: rcon-sweep-${{ inputs.node }}
           path: /tmp/gt6_rs_*

@@ -8,6 +8,13 @@
 # prerelease 不抢 latest（softprops README 实证 "Drafts and prereleases cannot be set as latest"）；
 # concurrency 组对 main push 为互斥排队（cancel-in-progress 仅 PR 真），滚动更新无竞态。
 # softprops v2→v3：v2.6.2 为 v2 终版停止维护（Node 20 runtime 弃用），v3 inputs 兼容。
+# actions 版本线（task ci-warnings-hygiene 2026-10-03，官方 releases/action.yml 查证）：
+# checkout/setup-java/upload-artifact→v5、setup-gradle→v5 均=Node24 运行时、inputs 零变更；
+# download-artifact 直上 v7——v5/v6 官方仍默认 Node20（v7.0.0 notes 实证），恰是本卡要清的
+# 弃用警告源；setup-gradle 不上 v6：其缓存库抽为闭源组件、升级即视为接受 ToU；
+# softprops 维持 v3（官方 notes：v3.0.0 即 Node20→Node24，无弃用警告）。
+# runner 钉 ubuntu-24.04：runner-images README 表明 ubuntu-latest 当前即指 24.04 镜像（行为
+# 一致），且 -latest 自 2026-10-19 起迁 Ubuntu 26（runner-images#14748），钉版防环境突变。
 # 默认最小权限（S37-2 审查席建议采纳）：全 workflow 只读 token，release job 局部提权。
 permissions:
   contents: read
@@ -29,24 +36,24 @@ jobs:
   # forge 腿：JDK 17（gradle.properties:25 矩阵注释）。root :test 不受 stonecutter 管辖，
   # 与单腿同调用合法（id327 原文，ci_design gradle_commands 定案）。
   build-forge-1-20-1:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
       # 缓存唯一入口=setup-gradle（默认缓存 ~/.gradle/caches+wrapper+build cache；
       # 官方文档警告勿叠加 setup-java cache: gradle，故 setup-java 不带 cache 项）。
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Build forge 1.20.1
         run: |
           nproc
           ./gradlew :test :mdk:1.20.1-forge:build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: gt6-1.20.1-forge
           path: mdk/versions/1.20.1-forge/build/libs/gt6-1.20.1-forge-*.jar
@@ -55,7 +62,7 @@ jobs:
       # if-no-files-found: ignore——编译期失败时无 report，不该二次报错。
       - name: Upload forge test report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: forge-test-report
           path: |
@@ -67,32 +74,32 @@ jobs:
 
   # neoforge 腿：JDK 21（gradle.properties:26 矩阵注释）。
   # ponytail: 本 job 只显式装 21——neo 腿连带编译 root gregapi（toolchain 17，build.gradle:6-8），
-  # 依赖 ubuntu-latest /usr/lib/jvm 预装 temurin 17 被 Gradle 自动探测；settings 无 foojay 供给。
+  # 依赖 ubuntu-24.04 /usr/lib/jvm 预装 temurin 17 被 Gradle 自动探测；settings 无 foojay 供给。
   # 若 runner 镜像砍掉预装 17：setup-java 多版本 + gradle -Porg.gradle.java.installations.fromEnv。
   build-neoforge-1-21-1:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 120
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v5
       - name: Build neoforge 1.21.1
         run: |
           nproc
           ./gradlew :mdk:1.21.1-neoforge:build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: gt6-1.21.1-neoforge
           path: mdk/versions/1.21.1-neoforge/build/libs/gt6-1.21.1-neoforge-*.jar
           if-no-files-found: error
       - name: Upload neoforge test report
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: neo-test-report
           path: |
@@ -108,15 +115,15 @@ jobs:
   release:
     if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
     needs: [build-forge-1-20-1, build-neoforge-1-21-1]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: gt6-1.20.1-forge
           path: dist
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: gt6-1.21.1-neoforge
           path: dist
