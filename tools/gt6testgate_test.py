@@ -8,7 +8,9 @@ python3 tools/gt6testgate_test.py 直跑。全部门控语义用注入桩覆盖�
   * wait_memory 超阈阻塞→阈值回落放行（日志含 mem-queue + mem-admit 行，
     queued>0）；低于阈直通（仅 mem-admit，queued=0）
   * 阈值 env 覆盖（GT6_GATE_MEM_LIMIT_MIB，含非法值回退默认）
-  * 槽并发上限（占满阻塞→释放放行）与陈旧槽回收（2h mtime）
+  * 槽并发上限（占满阻塞→释放放行）与陈旧槽回收（PID 存活判定：死 PID/
+    PID 复用即回收；活门禁持有者无论多旧绝不回收；mtime 兜底畸形槽名，
+    gate-slot-pid-reap）
   * run_gated 退出码透传 / --tag 缺省取命令 basename
   * v2 角色硬闸：command_mode 判全量（gradlew+裸 test/cleanTest 无 --tests）；
     full+coder 立即拒（exit 2，子进程未执行）；full+review 放行持 flock
@@ -212,19 +214,26 @@ class SlotTest(unittest.TestCase):
 
     def test_concurrency_cap_blocks_until_release(self):
         os.environ["GT6_GATE_MAX_CONCURRENT"] = "1"
-        live = self.slot_dir / "slot.999.1"
-        live.write_text(f"{time.time()} other\n")
-        got = []
-        th = threading.Thread(target=lambda: got.append(gate.acquire_slot(
-            poll=0.01, slot_dir=self.slot_dir, tag="t")))
-        th.start()
-        th.join(timeout=0.3)
-        self.assertTrue(th.is_alive(), "acquire_slot did not queue while full")
-        live.unlink()  # the other holder releases
-        th.join(timeout=10)
-        self.assertFalse(th.is_alive(), "acquire_slot never admitted")
-        self.assertEqual(len(got), 1)
-        self.assertTrue(got[0].exists())
+        # gate-slot-pid-reap: the fake holder must look like a live gate
+        # caller now, or the PID-liveness reaper frees the slot at once
+        holder = spawn_holder("gt6testgate.py")
+        try:
+            live = self.slot_dir / f"slot.{holder.pid}.{time.monotonic_ns()}"
+            live.write_text(f"{time.time()} other\n")
+            got = []
+            th = threading.Thread(target=lambda: got.append(gate.acquire_slot(
+                poll=0.01, slot_dir=self.slot_dir, tag="t")))
+            th.start()
+            th.join(timeout=0.3)
+            self.assertTrue(th.is_alive(), "acquire_slot did not queue while full")
+            live.unlink()  # the other holder releases
+            th.join(timeout=10)
+            self.assertFalse(th.is_alive(), "acquire_slot never admitted")
+            self.assertEqual(len(got), 1)
+            self.assertTrue(got[0].exists())
+        finally:
+            holder.kill()
+            holder.wait()
 
     def test_stale_slot_reaped(self):
         stale = self.slot_dir / "slot.1.1"
@@ -242,6 +251,77 @@ class SlotTest(unittest.TestCase):
         slot = gate.acquire_slot(poll=0.01, slot_dir=self.slot_dir, tag="t")
         gate.release_slot(slot)
         gate.release_slot(slot)  # missing_ok — second release must not raise
+
+
+def spawn_holder(*argv, seconds=60):
+    """A live process whose /proc cmdline carries the extra argv verbatim
+    (passed after ``-c <script>`` they land in sys.argv) — used to fake a
+    gate caller ("gt6testgate.py") or an unrelated PID-reuse occupant."""
+    return subprocess.Popen([sys.executable, "-c",
+                             f"import time; time.sleep({seconds})", *argv])
+
+
+class SlotPidReapTest(unittest.TestCase):
+    """gate-slot-pid-reap: PID liveness in the stale-slot judgment.
+
+    2026-10-03 incident: three dead-holder slots faked a full 4/4 and
+    in-flight coders queued 6-10 min; the 2 h mtime reaper was too slow.
+    Judgment now: dead PID → reap; live PID with neither gate nor jvm in
+    its cmdline (PID reuse) → reap; live gate caller → NEVER reap, however
+    old (long gate runs are legal); mtime age stays as the fallback for
+    slots whose name carries no usable PID.
+    """
+
+    def setUp(self):
+        self.dir = tempfile.TemporaryDirectory()
+        self.slot_dir = Path(self.dir.name)
+        self.log_file = Path(self.dir.name) / "gate.log"
+        self.holders = []
+
+    def tearDown(self):
+        for proc in self.holders:
+            proc.kill()
+            proc.wait()
+        self.dir.cleanup()
+
+    def slot(self, pid, age=0.0):
+        path = self.slot_dir / f"slot.{pid}.{time.monotonic_ns()}"
+        path.write_text(f"{time.time()} t\n")
+        if age:
+            old = time.time() - age
+            os.utime(path, (old, old))
+        return path
+
+    def test_dead_pid_slot_reaped(self):
+        done = subprocess.Popen([sys.executable, "-c", "pass"])
+        done.wait()  # guaranteed-dead pid (no reuse this fast on Linux)
+        leaked = self.slot(done.pid)
+        gate.reap_stale_slots(self.slot_dir, log_file=self.log_file)
+        self.assertFalse(leaked.exists(), "dead-holder slot not reaped")
+
+    def test_reused_pid_slot_reaped(self):
+        impostor = spawn_holder()  # live; cmdline names neither gate nor jvm
+        self.holders.append(impostor)
+        leaked = self.slot(impostor.pid)
+        gate.reap_stale_slots(self.slot_dir, log_file=self.log_file)
+        self.assertFalse(leaked.exists(), "pid-reused slot not reaped")
+
+    def test_live_gate_slot_never_reaped(self):
+        holder = spawn_holder("gt6testgate.py")  # a genuine gate caller
+        self.holders.append(holder)
+        live = self.slot(holder.pid, age=gate.SLOT_STALE_SECONDS + 600)
+        gate.reap_stale_slots(self.slot_dir, log_file=self.log_file)
+        self.assertTrue(live.exists(), "live gate slot was reaped")
+
+    def test_reap_journals_slot_name_and_reason(self):
+        done = subprocess.Popen([sys.executable, "-c", "pass"])
+        done.wait()
+        leaked = self.slot(done.pid)
+        gate.reap_stale_slots(self.slot_dir, log_file=self.log_file)
+        line = self.log_file.read_text()
+        self.assertIn("slot-reap", line)
+        self.assertIn(leaked.name, line)
+        self.assertIn("pid-dead", line)
 
 
 class RunGatedTest(unittest.TestCase):
