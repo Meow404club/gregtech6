@@ -147,11 +147,20 @@ public class GT6MoldTintDatagenTest extends GTOfflineTestBase {
 			// the per-level content boxes (task crucible-bowl-model, upgraded task
 			// crucible-large-ber): the content material is per-BE data the static model
 			// cannot know — the up face rides tintindex 1 and the GT6MoldTintListener
-			// index-1 arm answers the synced displayed material at runtime
+			// index-1 arm answers the synced displayed material at runtime. Since
+			// r11a-crucible-filled-shell the filled child carries the FULL shell+content
+			// element set (vanilla getElements never merges the parent), so the content box
+			// is located by its #content up face, not by the append-era index 0.
 			for (int tLevel = 1; tLevel <= 8; tLevel++) {
 				JsonObject tFilled = generatedJson("assets/gt6/models/block/" + tRow.path() + "_filled_" + tLevel + ".json");
-				JsonObject tContentUp = tFilled.getAsJsonArray("elements").get(0).getAsJsonObject()
-						.getAsJsonObject("faces").getAsJsonObject("up");
+				JsonObject tContentUp = null;
+				for (JsonElement tElement : tFilled.getAsJsonArray("elements")) {
+					JsonObject tFaces = tElement.getAsJsonObject().getAsJsonObject("faces");
+					if (tFaces.has("up") && "#content".equals(tFaces.getAsJsonObject("up").get("texture").getAsString())) {
+						tContentUp = tFaces.getAsJsonObject("up");
+					}
+				}
+				assertNotNull(tContentUp, tRow.path() + "_filled_" + tLevel + ": the content box element");
 				assertEquals(1, tContentUp.get("tintindex").getAsInt(),
 						tRow.path() + "_filled_" + tLevel + ": the content seat is tintindex 1");
 			}

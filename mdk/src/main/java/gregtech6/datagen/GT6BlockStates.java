@@ -5020,10 +5020,14 @@ public final class GT6BlockStates extends BlockStateProvider {
      * rim top edge=top; the slab: down=bottom, the interior floor rides the top tile after
      * the upstream pass-4/SIDE_Y_POS mapping :73) each duplicated by a 0.01-inflated
      * overlay shell (the blank overlay set — grammar parity), cutout — the sides window is
-     * genuinely transparent. Levels 1..8 parent the shell and APPEND the fluid box (the
-     * candle idiom): flat eighth-fractions of the 4px interior, from 0.05px above the
-     * slab plane, riding the smeltery_content placeholder (the declared ceiling — the
-     * static model cannot know the BE's actual fluid).
+     * genuinely transparent. Levels 1..8 keep the shell parent (the texture map) but carry
+     * the FULL element set in the child itself — the r11a-crucible-filled-shell fix, vanilla
+     * getElements never merges the parent chain once the child carries elements (the former
+     * "candle idiom" append dropped the shell at render); cutout stays explicit too:
+     * render_type does not ride the parent chain either and the transparent overlay texels
+     * need the alpha-tested layer. Fluid box: flat eighth-fractions of the 4px interior,
+     * from 0.05px above the slab plane, riding the smeltery_content placeholder (the
+     * declared ceiling — the static model cannot know the BE's actual fluid).
      */
     private void addCup() {
         BlockModelBuilder tEmpty = models().getBuilder("porcelain_cup_empty")
@@ -5038,25 +5042,15 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_insides", modLoc("block/cup/overlay_insides"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
-        // the pass 0-3 walls verbatim: west (5,1,6→6,5,10), east (10,1,6→11,5,10),
-        // north (6,1,5→10,5,6), south (6,1,10→10,5,11) — plus their 0.01 overlay twins
-        cupWallBox(tEmpty, 5.0F, 1.0F, 6.0F, 6.0F, 5.0F, 10.0F, "");
-        cupWallBox(tEmpty, 10.0F, 1.0F, 6.0F, 11.0F, 5.0F, 10.0F, "");
-        cupWallBox(tEmpty, 6.0F, 1.0F, 5.0F, 10.0F, 5.0F, 6.0F, "");
-        cupWallBox(tEmpty, 6.0F, 1.0F, 10.0F, 10.0F, 5.0F, 11.0F, "");
-        cupWallBox(tEmpty, 4.99F, 0.99F, 5.99F, 6.01F, 5.01F, 10.01F, "overlay_");
-        cupWallBox(tEmpty, 9.99F, 0.99F, 5.99F, 11.01F, 5.01F, 10.01F, "overlay_");
-        cupWallBox(tEmpty, 5.99F, 0.99F, 4.99F, 10.01F, 5.01F, 6.01F, "overlay_");
-        cupWallBox(tEmpty, 5.99F, 0.99F, 9.99F, 10.01F, 5.01F, 11.01F, "overlay_");
-        // the pass-4 bottom slab (6,0,6→10,1,10) — down=bottom, the interior floor=top (the :73 mapping)
-        cupSlab(tEmpty, 6.0F, 0.0F, 6.0F, 10.0F, 1.0F, 10.0F, "");
-        cupSlab(tEmpty, 5.99F, -0.01F, 5.99F, 10.01F, 1.01F, 10.01F, "overlay_");
+        cupShellElements(tEmpty);
         BlockModelBuilder[] tFilled = new BlockModelBuilder[9];
         for (int tLevel = 1; tLevel <= 8; tLevel++) {
             float tTop = 1.05F + tLevel * 3.5F / 8.0F;
             BlockModelBuilder tModel = models().getBuilder("block/porcelain_cup_filled_" + tLevel)
                     .parent(tEmpty)
-                    .texture("content", modLoc("block/smeltery_content"));
+                    .texture("content", modLoc("block/smeltery_content"))
+                    .renderType("cutout");
+            cupShellElements(tModel);
             BlockModelBuilder.ElementBuilder tElement = tModel.element()
                     .from(6.0F, 1.05F, 6.0F).to(10.0F, tTop, 10.0F);
             for (Direction tDir : Direction.values()) {
@@ -5071,6 +5065,28 @@ public final class GT6BlockStates extends BlockStateProvider {
             return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmpty : tFilled[tLevel]).build();
         });
         itemModels().withExistingParent("porcelain_cup", tEmpty.getLocation());
+    }
+
+    /**
+     * The ten cup shell boxes onto ANY builder — the {@code _empty} model and every
+     * {@code _filled_N} child (the r11a fix: the child must carry the full element set
+     * itself, vanilla getElements never merges the parent). The pass 0-3 walls verbatim:
+     * west (5,1,6→6,5,10), east (10,1,6→11,5,10), north (6,1,5→10,5,6),
+     * south (6,1,10→10,5,11) — plus their 0.01 overlay twins, and the pass-4 bottom slab
+     * (6,0,6→10,1,10 — down=bottom, the interior floor=top, the :73 mapping) with its
+     * overlay twin.
+     */
+    private void cupShellElements(BlockModelBuilder aModel) {
+        cupWallBox(aModel, 5.0F, 1.0F, 6.0F, 6.0F, 5.0F, 10.0F, "");
+        cupWallBox(aModel, 10.0F, 1.0F, 6.0F, 11.0F, 5.0F, 10.0F, "");
+        cupWallBox(aModel, 6.0F, 1.0F, 5.0F, 10.0F, 5.0F, 6.0F, "");
+        cupWallBox(aModel, 6.0F, 1.0F, 10.0F, 10.0F, 5.0F, 11.0F, "");
+        cupWallBox(aModel, 4.99F, 0.99F, 5.99F, 6.01F, 5.01F, 10.01F, "overlay_");
+        cupWallBox(aModel, 9.99F, 0.99F, 5.99F, 11.01F, 5.01F, 10.01F, "overlay_");
+        cupWallBox(aModel, 5.99F, 0.99F, 4.99F, 10.01F, 5.01F, 6.01F, "overlay_");
+        cupWallBox(aModel, 5.99F, 0.99F, 9.99F, 10.01F, 5.01F, 11.01F, "overlay_");
+        cupSlab(aModel, 6.0F, 0.0F, 6.0F, 10.0F, 1.0F, 10.0F, "");
+        cupSlab(aModel, 5.99F, -0.01F, 5.99F, 10.01F, 1.01F, 10.01F, "overlay_");
     }
 
     /** One wall box at x=aMinX..aMaxX, z=aMinZ..aMaxZ: the outer face = sides, the inner face = insides, the rim top = top (the :73 SIDE_Y_POS non-5 mapping), both overlay bands ride the prefix; the colored band carries the tintindex-0 seat, the overlay band untinted. */
