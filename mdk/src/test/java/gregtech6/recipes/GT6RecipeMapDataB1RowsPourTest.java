@@ -59,7 +59,7 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 			"freezer", 10,     // seated smoke row + this card's 9
 			"cryomixer", 62,   // the b2 census 1+37+24 (this card's six water rows ride it, anchor comments kept)
 			"coagulator", 6,   // seated fluid row + this card's 5
-			"sharpening", 3);  // seated smoke row + this card's 2
+			"sharpening", 7574);  // seated smoke row + the B1 Vanilla pair + the r11b walk replay 7571 (task toolhead-r11b-sharpening-rows: the Handlers :396-415 statement-groups expanded per material)
 
 	@BeforeEach
 	void freshGeneration() {
