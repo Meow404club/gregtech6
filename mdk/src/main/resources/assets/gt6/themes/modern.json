@@ -1,5 +1,17 @@
 {
   "parent": "vanilla",
+  "panel": {
+    "background": {
+      "type": "texture",
+      "location": "gt6:gui/parts/panel_base_176x166",
+      "imageWidth": 176,
+      "imageHeight": 166,
+      "bl": 4,
+      "bt": 4,
+      "br": 4,
+      "bb": 4
+    }
+  },
   "itemSlot": {
     "background": {
       "type": "texture",
