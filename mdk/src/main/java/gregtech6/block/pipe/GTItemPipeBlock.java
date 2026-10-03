@@ -98,10 +98,17 @@ public class GTItemPipeBlock extends GTEntityBlock {
 	 * {@link GTFluidPipeBlock#getShape} form over the item-pipe diameters (NBT_DIAMETER
 	 * PX_P[8/12/16], MultiTileEntityPipeItem.java:76-82 — the restrictive twins share
 	 * their base diameter, the upstream :79-82 rows carry the same PX_P column).
+	 *
+	 * <p>Under the wrench-interaction key the outline is the FULL cube (task
+	 * wrench-pipe-fullcube-targeting — the {@link GTFluidPipeBlock#getShape} wrench arm
+	 * verbatim, same seam/deviation/collision-inertness contract: the item pipe is
+	 * clickable through the key, GTItemPipeBlock.use, so it must be AIMABLE through it
+	 * too).
 	 */
 	@Override
 	public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel,
 			BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+		if (GT6ToolActions.isWrenchInteractionContext(aContext)) return net.minecraft.world.phys.shapes.Shapes.block();
 		int tMask = aState.getValue(CONNECTIONS);
 		double tInset = (16 - mRow.variant().diameterPx) / 32.0;
 		return net.minecraft.world.phys.shapes.Shapes.box(
