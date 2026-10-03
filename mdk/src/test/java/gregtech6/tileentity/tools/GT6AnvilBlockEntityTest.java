@@ -167,7 +167,7 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 	@Test
 	public void legsRegionRefuses() {
 		GT6AnvilBlockEntity tAnvil = anvil(30000);
-		assertEquals("the anvil legs (no action)", tAnvil.activateChain(null, (byte) 1, new ItemStack(Items.STONE, 1), 0.5F, 0.1F, 0.5F));
+		assertEquals("the anvil legs (the recipe-viewer jump is the client arm)", tAnvil.activateChain(null, (byte) 1, new ItemStack(Items.STONE, 1), 0.5F, 0.1F, 0.5F));
 		assertTrue(tAnvil.inventory().getStackInSlot(0).isEmpty(), "the :220 PX_P[4] gate");
 	}
 
