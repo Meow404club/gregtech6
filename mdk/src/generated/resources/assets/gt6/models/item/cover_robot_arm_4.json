@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:block/robotarm/out"
+    "layer0": "gt6:item/covers/robot_arm_4"
   }
 }

@@ -266,18 +266,20 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * icon's single sprite. Before the widening the installed plate rendered exactly the
      * item icon (the user-reported relief-valve defect); after it the two forms are
      * naturally distinct — this pin freezes the item half so the distinction cannot rot
-     * back into a shared 3D form.
+     * back into a shared 3D form. Task cover-item-icons-dual-source then re-sourced the
+     * item half: the icons are the upstream ITEM-domain art (MultiItemRandom
+     * registerIcons), no longer the installed overlay sprite.
      */
     @Test
     void gameplayCoverItemsKeepTheFlatPlane() throws Exception {
-        assert2DForm("cover_vent", "gt6:block/vent/front");
-        assert2DForm("cover_drain", "gt6:block/drain/front");
-        assert2DForm("cover_pressure_valve", "gt6:block/pressurevalve/front");
-        assert2DForm("cover_fluid_filter", "gt6:block/filterfluid/normal");
-        assert2DForm("cover_crafting", "gt6:block/crafting/0");
-        assert2DForm("cover_asphalt", "gt6:block/asphalt");
+        assert2DForm("cover_vent", "gt6:item/covers/vent");
+        assert2DForm("cover_drain", "gt6:item/covers/drain");
+        assert2DForm("cover_pressure_valve", "gt6:item/covers/pressure_valve");
+        assert2DForm("cover_fluid_filter", "gt6:item/covers/fluid_filter");
+        assert2DForm("cover_crafting", "gt6:item/covers/crafting");
+        assert2DForm("cover_asphalt", "gt6:block/asphalt"); // the declared keep (the Asphalt Panel MTE icon IS the asphalt art)
         for (int i = 0; i < 16; i++) {
-            assert2DForm("cover_selector_tag_" + i, "gt6:block/selectortag/" + i);
+            assert2DForm("cover_selector_tag_" + i, "gt6:item/integrated_circuit/" + i);
         }
     }
 }

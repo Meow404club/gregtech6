@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:block/crafting/0"
+    "layer0": "gt6:item/covers/crafting"
   }
 }

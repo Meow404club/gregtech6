@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:block/conveyor/out"
+    "layer0": "gt6:item/covers/conveyor_5"
   }
 }

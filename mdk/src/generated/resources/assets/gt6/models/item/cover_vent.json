@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:block/vent/front"
+    "layer0": "gt6:item/covers/vent"
   }
 }

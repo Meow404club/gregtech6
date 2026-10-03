@@ -72,10 +72,14 @@ public final class GT6ItemModels extends ItemModelProvider {
                     .texture("layer0", modLoc("item/material_sets/" + tSet + "/" + tPrefix));
             }
         }
-        // the p5 pump cover item (task barrel-side-rules ruling ⑥) — the item shows the
-        // out-facing plate art; the direction sprites live in the block atlas via GT6Atlases
+        // the p5 pump cover item (task barrel-side-rules ruling ⑥; icon source swap task
+        // cover-item-icons-dual-source) — the ITEM icon is the upstream item-domain art
+        // (items/gt.multiitem.technological/12020.png, the LV pump the port's single item
+        // mirrors, MultiItemRandom.java:366), NOT the machine-face overlay: upstream item
+        // icons and installed overlays are two separate PNG domains, and the out/in
+        // direction sprites stay in the block atlas via GT6Atlases for the INSTALLED face
         withExistingParent("cover_pump", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/cover_pump_out"));
+            .texture("layer0", modLoc("item/covers/pump"));
         // ─── the tool family multi-layer wave (task tool-model-layers) ───
         // Upstream renders every tool icon as FOUR passes (ToolStats.java:267-287):
         // pass0 = head base (tinted with the primary material), pass1 = head OVERLAY
@@ -506,110 +510,140 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_slicer/quarters"));
         withExistingParent("shape_slicer_quarters_hollow", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_slicer/quarters_hollow"));
-        // the p9 redstone-emitter cover item (task redstone-cover-emitter) — the item
-        // shows the tier-0 plate art (the offline-composed keypad panel; the sprites live
-        // in textures/block/, auto-stitched by the vanilla atlas directory source)
+        // the p9 redstone-emitter cover item (task redstone-cover-emitter; icon source
+        // swap task cover-item-icons-dual-source) — the item icon is the upstream
+        // item-domain borrow (items/gt.multiitem.technological/1021.png, meta 1021
+        // Redstone Emitter), the keypad overlay sprites stay in the block atlas for the
+        // INSTALLED face
         withExistingParent("cover_redstone_emitter", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/redstone_emitter/0"));
-        // the p10 redstone conductor pair (task cover-conductor-redstone) — the items
-        // show their own plate art, byte-identical upstream borrows living in
-        // textures/block/redstone_conductor/ (assets/README.md attribution)
+            .texture("layer0", modLoc("item/covers/redstone_emitter"));
+        // the p10 redstone conductor pair (task cover-conductor-redstone; icon source
+        // swap task cover-item-icons-dual-source) — the item icons are the upstream
+        // item-domain borrows (metas 1029/1030, MultiItemTechnological.java:88-89)
         withExistingParent("cover_redstone_conductor_in", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/redstone_conductor/in"));
+            .texture("layer0", modLoc("item/covers/redstone_conductor_in"));
         withExistingParent("cover_redstone_conductor_out", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/redstone_conductor/out"));
-        // the p10 redstone machine switch (task cover-controller-redstone) — the item
-        // shows the switch plate art, a byte-identical upstream borrow living in
-        // textures/block/redstone_switch/ (assets/README.md attribution)
+            .texture("layer0", modLoc("item/covers/redstone_conductor_out"));
+        // the p10 redstone machine switch (task cover-controller-redstone; icon source
+        // swap task cover-item-icons-dual-source) — the item icon is the upstream
+        // item-domain borrow (meta 1005, MultiItemTechnological.java:64)
         withExistingParent("cover_redstone_machine_switch", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/redstone_switch/circuit"));
-        // the p11 shutter + item-filter covers (task cover-shutter-filter) — the items
-        // show their normal/whitelist plate art, byte-identical upstream borrows living in
-        // textures/block/shutter/ and textures/block/filteritem/ (assets/README.md attribution)
+            .texture("layer0", modLoc("item/covers/redstone_machine_switch"));
+        // the p11 shutter + item-filter covers (task cover-shutter-filter; icon source
+        // swap task cover-item-icons-dual-source) — the item icons are the upstream
+        // item-domain borrows (metas 1026/1023 — the shutter's framed plate art is the
+        // card's proof case that the two domains differ), the in-world plate overlays stay in
+        // textures/block/{shutter,filteritem}/ (assets/README.md attribution)
         withExistingParent("cover_shutter", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/shutter/normal"));
+            .texture("layer0", modLoc("item/covers/shutter"));
         withExistingParent("cover_item_filter", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/filteritem/normal"));
-        // the p31 item-retriever cover (task retriever-cover) — the item shows the
-        // normal plate art, a byte-identical upstream borrow living in
-        // textures/block/retrieveritem/ (assets/README.md attribution)
+            .texture("layer0", modLoc("item/covers/item_filter"));
+        // the p31 item-retriever cover (task retriever-cover; icon source swap task
+        // cover-item-icons-dual-source) — the item icon is the upstream item-domain
+        // borrow (meta 1031, MultiItemTechnological.java:90)
         withExistingParent("cover_item_retriever", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/retrieveritem/normal"));
-        // the p33 logistics cover family (task logistics-covers-12) — 12 items, each
-        // showing its role plate art; the sprites ride the display/fluid/item/generic
-        // texture directories (upstream machines/covers/logistics/*, the visual 0 face)
+            .texture("layer0", modLoc("item/covers/item_retriever"));
+        // the p33 logistics cover family (task logistics-covers-12; icon source swap
+        // task cover-item-icons-dual-source) — 14 items, each icon the upstream
+        // item-domain borrow (metas 1086-1099, MultiItemTechnological.java:101-114);
+        // the in-world face sprites stay in the block domain directories
         for (String[] tRow : new String[][] {
-                {"cover_logistics_display_cpu_logic", "display/cpu_logic/0"}, {"cover_logistics_display_cpu_control", "display/cpu_control/0"},
-                {"cover_logistics_display_cpu_storage", "display/cpu_storage/0"}, {"cover_logistics_display_cpu_conversion", "display/cpu_conversion/0"},
-                {"cover_logistics_fluid_export", "fluid/export"}, {"cover_logistics_fluid_import", "fluid/import"}, {"cover_logistics_fluid_storage", "fluid/storage"},
-                {"cover_logistics_item_export", "item/export"}, {"cover_logistics_item_import", "item/import"}, {"cover_logistics_item_storage", "item/storage"},
-                {"cover_logistics_generic_export", "generic/export"}, {"cover_logistics_generic_import", "generic/import"}, {"cover_logistics_generic_storage", "generic/storage"},
-                {"cover_logistics_generic_dump", "generic/dump"}}) {
+                {"cover_logistics_display_cpu_logic", "display_cpu_logic"}, {"cover_logistics_display_cpu_control", "display_cpu_control"},
+                {"cover_logistics_display_cpu_storage", "display_cpu_storage"}, {"cover_logistics_display_cpu_conversion", "display_cpu_conversion"},
+                {"cover_logistics_fluid_export", "fluid_export"}, {"cover_logistics_fluid_import", "fluid_import"}, {"cover_logistics_fluid_storage", "fluid_storage"},
+                {"cover_logistics_item_export", "item_export"}, {"cover_logistics_item_import", "item_import"}, {"cover_logistics_item_storage", "item_storage"},
+                {"cover_logistics_generic_export", "generic_export"}, {"cover_logistics_generic_import", "generic_import"}, {"cover_logistics_generic_storage", "generic_storage"},
+                {"cover_logistics_generic_dump", "generic_dump"}}) {
             withExistingParent(tRow[0], mcLoc("item/generated"))
-                .texture("layer0", modLoc("block/logistics/" + tRow[1]));
+                .texture("layer0", modLoc("item/covers/" + tRow[1]));
         }
-        // the p34 gameplay cover family (task covers-gameplay-10) — the 9 singletons
-        // show their plate art (the visual-0 face); the 16 tag-selector ladder items each
-        // show their own mode plate (upstream the per-meta circuit art, underlay+digit
-        // pre-composited — the CoverSelectorTag class-doc cut)
+        // the p34 gameplay cover family (task covers-gameplay-10; icon source swap task
+        // cover-item-icons-dual-source) — the 7 singletons with a technological-domain
+        // meta show their upstream item icons (metas 1022/1020/2000/1024/1007/1008/1027,
+        // MultiItemTechnological.java:66-90/176); the in-world plate art stays in the
+        // block domain (the vent facet table etc. — task cover-underlay-census)
         for (String[] tRow : new String[][] {
-                {"cover_vent", "vent/front"}, {"cover_drain", "drain/front"}, {"cover_pressure_valve", "pressurevalve/front"},
-                {"cover_fluid_filter", "filterfluid/normal"}, {"cover_redstone_torch", "redstonetorch/on/front"},
-                {"cover_redstone_repeater", "redstonerepeater/on/front"}, {"cover_selector_redstone", "redstoneselector/0"},
-                {"cover_selector_manual", "manualselector/0"}, {"cover_selector_button_panel", "buttonselector/0"}}) {
+                {"cover_vent", "vent"}, {"cover_drain", "drain"}, {"cover_pressure_valve", "pressure_valve"},
+                {"cover_fluid_filter", "fluid_filter"}, {"cover_selector_redstone", "selector_redstone"},
+                {"cover_selector_manual", "selector_manual"}, {"cover_selector_button_panel", "selector_button_panel"}}) {
             withExistingParent(tRow[0], mcLoc("item/generated"))
-                .texture("layer0", modLoc("block/" + tRow[1]));
+                .texture("layer0", modLoc("item/covers/" + tRow[1]));
         }
+        // DECLARED EXCEPTIONS (task cover-item-icons-dual-source): upstream the torch and
+        // repeater covers ride the VANILLA items, not a technological-domain meta
+        // (CoverRegistry.put(ST.make(Blocks.redstone_torch/Items.repeater) —
+        // GT_API.java:799-802), so no GT PNG exists; per upstream semantics the item
+        // icons point at the vanilla textures the vanilla items draw (the repeater row is
+        // byte-for-byte the vanilla item model's layer0; the torch's vanilla GUI face is
+        // a 3D cross-plane block model, the port keeps the census-stable 2D sprite form —
+        // the recorded deviation)
+        withExistingParent("cover_redstone_torch", mcLoc("item/generated"))
+            .texture("layer0", mcLoc("block/redstone_torch"));
+        withExistingParent("cover_redstone_repeater", mcLoc("item/generated"))
+            .texture("layer0", mcLoc("block/repeater"));
+        // the 16 tag-selector ladder items — upstream the selector-tag covers ride the
+        // Integrated Circuit ITEM itself, damage 0-15 (ItemIntegratedCircuit.java:87),
+        // whose icon per damage is the circuit config art (registerIcons :118) — so the
+        // item icons REUSE the circuit-config-icons borrows (item/integrated_circuit/),
+        // zero new PNGs; the in-world digit plates stay in block/selectortag/
         for (int i = 0; i < 16; i++) {
             withExistingParent("cover_selector_tag_" + i, mcLoc("item/generated"))
-                .texture("layer0", modLoc("block/selectortag/" + i));
+                .texture("layer0", modLoc("item/integrated_circuit/" + i));
         }
-        // the p11 controller pair (task cover-controllers) — the items show their
-        // own plate art, byte-identical upstream borrows living in
-        // textures/block/auto_redstone_switch/ and textures/block/cover_switch/
+        // the p11 controller pair (task cover-controllers; icon source swap task
+        // cover-item-icons-dual-source) — the item icons are the upstream item-domain
+        // borrows (metas 1006/1025, MultiItemTechnological.java:65/84); the in-world
+        // circuit plate art stays in textures/block/{auto_redstone_switch,cover_switch}/
         // (assets/README.md attribution)
         withExistingParent("cover_auto_redstone_machine_switch", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/auto_redstone_switch/circuit"));
+            .texture("layer0", modLoc("item/covers/auto_redstone_machine_switch"));
         withExistingParent("cover_controller", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/cover_switch/circuit"));
-        // the p11 conveyor + robot arm tier ladders (task cover-conveyor-robotarm) —
-        // 10 items each (one per 512>>i timing tier), all sharing the out-facing plate art
-        // (upstream's items all show the same cover texture; the in/out sprites live in
-        // textures/block/{conveyor,robotarm}/, byte-identical upstream borrows with their
-        // animation mcmeta — assets/README.md attribution)
+            .texture("layer0", modLoc("item/covers/controller"));
+        // the p11 conveyor + robot arm tier ladders (task cover-conveyor-robotarm; icon
+        // source swap task cover-item-icons-dual-source) — 10 items each, and upstream
+        // gives EVERY tier its own item icon (the 12040+i / 12080+i PNGs are per-tier
+        // distinct art, MultiItemTechnological.java:51/53), so the ladder walks the tier
+        // borrows instead of all tiers sharing one overlay sprite (the in/out sprites
+        // stay in textures/block/{conveyor,robotarm}/ with their animation mcmeta for
+        // the INSTALLED face — assets/README.md attribution)
         for (int i = 0; i < gregtech6.covers.covers.CoverConveyor.TIMING_TIERS.length; i++) {
             withExistingParent("cover_conveyor_" + i, mcLoc("item/generated"))
-                .texture("layer0", modLoc("block/conveyor/out"));
+                .texture("layer0", modLoc("item/covers/conveyor_" + i));
             withExistingParent("cover_robot_arm_" + i, mcLoc("item/generated"))
-                .texture("layer0", modLoc("block/robotarm/out"));
+                .texture("layer0", modLoc("item/covers/robot_arm_" + i));
         }
-        // the p35 display/scale cover family (task covers-display-scale-6) — the five
-        // singletons show their plate art (the status display the bottom style base, the
-        // energy display the empty gauge level 0) and the five reboot-switch ladder items
-        // share the timer circuit art (the byte-identical upstream borrows living in
-        // textures/block/{status_display,energy_display,auto_switch,auto_timer_switch}/ —
-        // assets/README.md attribution; the sensors reuse the existing redstone-sensor
-        // sprites borrowed this card)
+        // the p35 display/scale cover family (task covers-display-scale-6; icon source
+        // swap task cover-item-icons-dual-source) — the item icons are the upstream
+        // item-domain borrows (metas 1002/1003/1004/1014/1018 and the auto-reboot
+        // 1009-1013 ladder, MultiItemTechnological.java:61-78); the in-world display/
+        // circuit plate art stays in textures/block/{status_display,energy_display,
+        // auto_switch,auto_timer_switch}/ (assets/README.md attribution; the sensors
+        // reuse the existing redstone-sensor sprites borrowed this card)
         withExistingParent("cover_machine_display", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/status_display/bottom/base"));
+            .texture("layer0", modLoc("item/covers/machine_display"));
         withExistingParent("cover_auto_switch", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/auto_switch/circuit"));
+            .texture("layer0", modLoc("item/covers/auto_switch"));
         withExistingParent("cover_energy_display", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/energy_display/0"));
+            .texture("layer0", modLoc("item/covers/energy_display"));
         withExistingParent("cover_scale_energy", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/energy_redstone/circuit"));
+            .texture("layer0", modLoc("item/covers/scale_energy"));
         withExistingParent("cover_scale_progress", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/progress_redstone/circuit"));
+            .texture("layer0", modLoc("item/covers/scale_progress"));
         for (int i = 0; i < gregtech6.covers.GT6Covers.AUTO_TIMER_IDS.length; i++) {
             withExistingParent(gregtech6.covers.GT6Covers.AUTO_TIMER_IDS[i], mcLoc("item/generated"))
-                .texture("layer0", modLoc("block/auto_timer_switch/circuit"));
+                .texture("layer0", modLoc("item/covers/" + gregtech6.covers.GT6Covers.AUTO_TIMER_IDS[i].substring("cover_".length())));
         }
-        // the p37 crafting + asphalt cover pair (task covers-crafting-asphalt) — the
-        // items show their plate art (byte-identical upstream borrows living in
-        // textures/block/crafting/ and textures/block/asphalt.png — assets/README.md
-        // attribution); the crafting variant row keeps variant 0 (the declared fold)
+        // the p37 crafting + asphalt cover pair (task covers-crafting-asphalt; icon
+        // source swap task cover-item-icons-dual-source) — the crafting icon is the
+        // upstream item-domain borrow (meta 1001, MultiItemTechnological.java:60); the
+        // in-world crafting plate art stays in textures/block/crafting/. DECLARED KEEP
+        // for the asphalt: upstream the cover rides the Asphalt Panel MTE item
+        // (Loader_MultiTileEntities.java:2053-2055), whose icon IS the asphalt art
+        // itself — no technological-domain PNG exists, so the existing block/asphalt
+        // borrow is already the upstream icon art (the crafting variant row keeps
+        // variant 0, the declared fold)
         withExistingParent("cover_crafting", mcLoc("item/generated"))
-            .texture("layer0", modLoc("block/crafting/0"));
+            .texture("layer0", modLoc("item/covers/crafting"));
         withExistingParent("cover_asphalt", mcLoc("item/generated"))
             .texture("layer0", modLoc("block/asphalt"));
         // the Integrated Circuit item (task distillery-family ①, per-config icon ladder

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "gt6:block/selectortag/12"
+    "layer0": "gt6:item/integrated_circuit/12"
   }
 }
