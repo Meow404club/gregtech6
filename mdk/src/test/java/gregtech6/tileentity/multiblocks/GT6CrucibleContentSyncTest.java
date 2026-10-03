@@ -176,7 +176,18 @@ public class GT6CrucibleContentSyncTest extends GTMultiBlocksOfflineTestBase {
 			JsonObject tModel = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
 			assertEquals(tSteelMolten.texture(), tModel.getAsJsonObject("textures").get("content").getAsString(),
 					"the generated content face rides the same sprite the BER tints");
-			JsonObject tUp = tModel.getAsJsonArray("elements").get(0).getAsJsonObject().getAsJsonObject("faces").getAsJsonObject("up");
+			// the content seat located by its #content up face (the r11a full-shell form made
+			// the child carry 6 elements — shell first, content box last — so the former
+			// elements[0] index assumption answered the west wall's untinted up face)
+			JsonObject tUp = null;
+			for (var tEl : tModel.getAsJsonArray("elements")) {
+				JsonObject tFaces = tEl.getAsJsonObject().getAsJsonObject("faces");
+				if (tFaces != null && tFaces.has("up")
+						&& "#content".equals(tFaces.getAsJsonObject("up").get("texture").getAsString())) {
+					tUp = tFaces.getAsJsonObject("up");
+				}
+			}
+			assertNotNull(tUp, "the child carries the content box (the r11a full-shell element set)");
 			assertEquals(1, tUp.get("tintindex").getAsInt(), "the content seat is tintindex 1 (the listener arm)");
 		}
 		// the listener arm: the smeltery's synced display resolves the molten tint; no level = no tint
