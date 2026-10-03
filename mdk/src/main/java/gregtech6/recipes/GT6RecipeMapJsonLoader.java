@@ -257,7 +257,13 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// faces, cryodistillationtowerchem the dimension-air face, injectorchem the
 				// thorium-salt face. The HEATMIXER face stays keyless ON PURPOSE — the port has no
 				// HEAT_MIXER map instance (a map-registration card unlocks it)
-				"mixerchem", "roastingchem", "melterchem", "smelterchem", "cryodistillationtowerchem", "injectorchem");
+				"mixerchem", "roastingchem", "melterchem", "smelterchem", "cryodistillationtowerchem", "injectorchem",
+
+				// task recipe-b2-bath-potion-domain — the second MIXER file key (the sawing
+				// two-files-one-map form): mixerpotions.json pours the Loader_Recipes_Potions
+				// :325-:354 Dragon_Breath face into the SAME map; the key decouples the domain
+				// censuses (mixer.json = the food face) and the b1-branch mixerchem key
+				"mixerpotions");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -697,6 +703,9 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "smelterchem" -> GT6RecipeMaps.SMELTER;
 			case "cryodistillationtowerchem" -> GT6RecipeMaps.CRYO_DISTILLATION_TOWER;
 			case "injectorchem" -> GT6RecipeMaps.INJECTOR;
+
+			// task recipe-b2-bath-potion-domain — the second MIXER file key (the sawing form)
+			case "mixerpotions" -> GT6RecipeMaps.MIXER;
 		default -> null;
 		};
 	}

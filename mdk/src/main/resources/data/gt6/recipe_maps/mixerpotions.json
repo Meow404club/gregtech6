@@ -1,0 +1,635 @@
+{
+  "comment": "task recipe-b2-bath-potion-domain - the Loader_Recipes_Potions.java:325-:354 MIXER addRecipe0 face (Dragon_Breath 1 mB + potion splash 3 mB -> lingering 3 mB, duration 1, eut 16), 30 rows verbatim. Second file key for the MIXER map (the sawing-two-files-one-map precedent); the domain decouples the census ratchets of mixer.json (food) and the in-flight b1 mixerchem key. All carriers registered (gt6:dragon_breath + the FOOD_B2 splash/lingering families). KubeJS-naturally editable, zero adapter.",
+  "recipes": [
+    {
+      "comment": "Loader_Recipes_Potions.java:325",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.damage.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.damage.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:326",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.health.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.health.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:327",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.jump.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.jump.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:328",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.speed.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.speed.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:329",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.strength.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.strength.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:330",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.regen.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.regen.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:331",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.poison.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.poison.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:332",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.fireresistance.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.fireresistance.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:333",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.nightvision.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.nightvision.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:334",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.weakness.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.weakness.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:335",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.slowness.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.slowness.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:336",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.waterbreathing.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.waterbreathing.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:337",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.invisibility.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.invisibility.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:338",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.damage.strong.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.damage.strong.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:339",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.health.strong.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.health.strong.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:340",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.jump.strong.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.jump.strong.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:341",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.speed.strong.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.speed.strong.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:342",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.strength.strong.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.strength.strong.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:343",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.regen.strong.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.regen.strong.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:344",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.poison.strong.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.poison.strong.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:345",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.speed.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.speed.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:346",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.strength.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.strength.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:347",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.regen.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.regen.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:348",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.poison.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.poison.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:349",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.fireresistance.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.fireresistance.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:350",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.nightvision.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.nightvision.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:351",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.weakness.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.weakness.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:352",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.slowness.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.slowness.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:353",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.waterbreathing.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.waterbreathing.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Potions.java:354",
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dragon_breath",
+          "amount": 1
+        },
+        {
+          "fluid": "gt6:potion.invisibility.long.splash",
+          "amount": 3
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:potion.invisibility.long.lingering",
+          "amount": 3
+        }
+      ],
+      "duration": 1,
+      "eut": 16
+    }
+  ]
+}
