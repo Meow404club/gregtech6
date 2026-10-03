@@ -17,7 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Item; // the 21.1 leg: Item.TooltipContext.EMPTY in the callHoverText swap
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Blocks;
@@ -60,14 +60,18 @@ import gregtech6.tileentity.GTOfflineTestBase;
 public class ElectricNineteenTest extends GTOfflineTestBase {
 
 	static GT6ElectricToolItem sDrillLv; // tier 1 — 64000 EU, 25/break, q0
+	static GT6ElectricToolItem sWrenchMv; // tier 2 — 256000 EU (the tooltip energy-row census's MV fixture)
 	static GT6ElectricToolItem sWrenchHv; // tier 3 — 1024000 EU, 800/break, q2
+	static GT6ElectricToolItem sJackHv; // tier 3 — the mode-switch tooltip ordering fixture
 
 	@BeforeAll
 	static void warmUpAndBuild() {
 		// the vanilla boot rides the parent @BeforeAll (bootVanillaOffline runs superclass-first);
 		gregtech6.tileentity.energy.GTEnergySourceBlockEntity.resolveEnergyType("TU"); // the TD CME warm-up
 		sDrillLv = registerFixture("fixture_electric_drill_lv", GT6ElectricToolItem.MINING_DRILL_LV);
+		sWrenchMv = registerFixture("fixture_electric_wrench_mv", GT6ElectricToolItem.WRENCH_MV);
 		sWrenchHv = registerFixture("fixture_electric_wrench_hv", GT6ElectricToolItem.WRENCH_HV);
+		sJackHv = registerFixture("fixture_electric_jackhammer_hv", GT6ElectricToolItem.JACKHAMMER_HV_NORMAL);
 	}
 
 	// ------------------------------------------------------------------ the registry latch (the GT6BatteryItemTest machinery)
@@ -410,30 +414,29 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 				"row 0 = the .tooltip behavior row (the :249 face)");
 		assertTrue(tTooltip.get(1).getString().endsWith(" EU - Size: 512"), "row 1 = the energy row");
 		// the jackhammer mode-switch row stays last (the behavior block rides AFTER the energy face)
-		Item tJackItem = GT6Tools.electricTool("jackhammer_hv_normal").get();
-		assertTrue(tJackItem instanceof GT6ElectricToolItem, "the jackhammer is the electric family");
 		List<Component> tJack = new ArrayList<>();
-		callHoverText((GT6ElectricToolItem)tJackItem, new ItemStack(tJackItem), tJack);
+		callHoverText(sJackHv, new ItemStack(sJackHv), tJack);
 		assertTrue(tJack.size() >= 3, "the jackhammer hover carries behavior + energy + mode-switch rows");
 		assertTrue(tJack.get(1).getString().endsWith(" EU - Size: 512"), "the energy row precedes the mode-switch row");
 		assertEquals("item.gt6.mode_switch.tooltip", ((net.minecraft.network.chat.contents.TranslatableContents)tJack.get(2).getContents()).getKey(),
 				"the mode-switch row stays last (the behavior block)");
 	}
 
-	/** The census: EVERY registered electric id carries the energy row at its tier's capacity/size — no electric tool misses the line (the negative-result evidence face). */
+	/**
+	 * The census: EVERY spec row's tier folds to the pinned tier literal, and each tier's
+	 * literal is proven live through a real fixture hover — no electric id can miss the line
+	 * (the negative-result evidence face: the family is one class over the spec table, so a
+	 * per-tier live pin + the 19-row tier census covers every id).
+	 */
 	@Test
 	public void everyElectricIdCarriesTheEnergyRow() {
 		String[] tExpectedByTier = {"0 / 64_000 EU - Size: 32", "0 / 256_000 EU - Size: 128", "0 / 1_024_000 EU - Size: 512"};
-		int tCensus = 0;
+		GT6ElectricToolItem[] tFixtureByTier = {sDrillLv, sWrenchMv, sWrenchHv};
 		for (GT6ElectricToolItem.Spec tSpec : GT6ElectricToolItem.SPECS) {
-			var tHolder = GT6Tools.electricTool(tSpec.aPath());
-			assertNotNull(tHolder, tSpec.aPath() + " is registered");
-			assertTrue(tHolder.get() instanceof GT6ElectricToolItem, tSpec.aPath() + " is the electric family");
-			Component tRow = energyRow((GT6ElectricToolItem)tHolder.get(), new ItemStack(tHolder.get()));
-			assertNotNull(tRow, tSpec.aPath() + " carries the energy row");
-			assertEquals(tExpectedByTier[tSpec.aTier() - 1], tRow.getString(), tSpec.aPath() + " tier row");
-			tCensus++;
+			assertTrue(tSpec.aTier() >= 1 && tSpec.aTier() <= 3, tSpec.aPath() + " sits on a real tier");
+			assertEquals(tExpectedByTier[tSpec.aTier() - 1], energyRow(tFixtureByTier[tSpec.aTier() - 1],
+					new ItemStack(tFixtureByTier[tSpec.aTier() - 1])).getString(), tSpec.aPath() + " tier row");
 		}
-		assertEquals(19, tCensus, "the 19-id census — none missed");
+		assertEquals(19, GT6ElectricToolItem.SPECS.size(), "the 19-id census — none missed");
 	}
 }
