@@ -174,6 +174,34 @@ public final class GTFluidPipes {
 				default -> throw new IllegalStateException("no ore-dict material pinned for fluid pipe slug " + slug);
 			};
 		}
+
+		/**
+		 * The mdh-6 driver domain per slug (task mdh-6-family-gate): the atlas PRIMARY modid
+		 * when the row hides with its owning mod absent, else {@code null} = GT core /
+		 * COMMON_SECONDARY / unattributed = always registers (ADR-MDH1/MDH2). A String because
+		 * the registration walk runs at class-init, before {@code MT.init()} fills the material
+		 * fields — the GTFluids spec-row column shape, gathered in one switch next to
+		 * {@link #oreDictMaterial} (the anchors cite the upstream MT.java lines the atlas rows carry).
+		 */
+		public String driverDomain() {
+			return switch (slug) {
+				case "iron_wood" -> gregapi.data.MT.MD.TF.mID; // MT.java:2286 — IronWood TF PRIMARY (atlas, mdh-6)
+				case "aluminium" -> gregapi.data.MT.MD.TiC.mID; // MT.java:2350 — Al TiC PRIMARY (atlas, mdh-6)
+				case "hsla", "tungsten_alloy", "bedrock_hsla_alloy" -> gregapi.data.MT.MD.RoC.mID; // MT.java:2426/:2429/:2431 — RoC PRIMARY (atlas, mdh-6)
+				case "tungsten_carbide" -> gregapi.data.MT.MD.ReC.mID; // MT.java:2412 — ReC PRIMARY (atlas, mdh-6)
+				case "workers_alloy" -> gregapi.data.MT.MD.HBM.mID; // MT.java:2404 — DeshAlloy HBM PRIMARY (atlas, mdh-6)
+				case "gaia_spirit", "manasteel", "terrasteel" -> gregapi.data.MT.MD.BOTA.mID; // MT.java:2466-2471 — BOTA PRIMARY (atlas, mdh-6)
+				case "void_metal" -> gregapi.data.MT.MD.TC.mID; // MT.java:2445 — VoidMetal TC PRIMARY (atlas, mdh-6)
+				case "awakened_draconium" -> gregapi.data.MT.MD.DE.mID; // MT.java:2513 — DE PRIMARY (atlas, mdh-6)
+				case "infinity" -> gregapi.data.MT.MD.AV.mID; // MT.java:2518 — AV PRIMARY (atlas, mdh-6)
+				default -> null; // GT core / COMMON_SECONDARY (thaumium, efrine, desh, draconium) / unattributed (adamantium) — never hides
+			};
+		}
+
+		/** The registration decision for one row (the mdh-6 family gate; single source for the walk and the tests). */
+		public boolean registers() {
+			return GT6ModDrivers.isLoaded(driverDomain());
+		}
 	}
 
 	/**
@@ -301,11 +329,18 @@ public final class GTFluidPipes {
 	/** The registration-order variant list (the addFluidPipes body order, :92-98). */
 	public static final List<FluidPipeVariant> VARIANTS = List.of(FluidPipeVariant.values());
 
-	/** All 280 rows in registration order (material-major, then the addFluidPipes variant order). */
+	/**
+	 * All rows in registration order (material-major, then the addFluidPipes variant order).
+	 * The mdh-6 family gate filters the walk: an ABSENT domain's material skips all its
+	 * variants entirely (the class-load seed precedes this walk, FMLModContainer.constructMod
+	 * order); default all-PRESENT = the full 280 (ADR-MDH1). Registration, the tab walk and
+	 * the BET arrays all consume this one list, so the gate here covers every face.
+	 */
 	public static final List<FluidPipeRow> ROWS;
 	static {
 		List<FluidPipeRow> tRows = new ArrayList<>();
 		for (FluidPipeMaterial tMat : MATERIALS) {
+			if (!tMat.registers()) continue; // the mdh-6 family gate
 			for (FluidPipeVariant tVariant : VARIANTS) {
 				tRows.add(new FluidPipeRow(tMat, tVariant));
 			}

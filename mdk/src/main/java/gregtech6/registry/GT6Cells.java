@@ -86,7 +86,36 @@ public final class GT6Cells {
 	 */
 	public record CellRow(String path, String displayName, boolean woodHost,
 			boolean plasmaProof, boolean acidProof, boolean magicProof, TemperatureNote temperature,
-			Supplier<gregapi.oredict.OreDictMaterial> material) {}
+			Supplier<gregapi.oredict.OreDictMaterial> material) {
+
+		/** The registration decision for one row (the mdh-6 family gate; single source for the walk and the tests). */
+		public boolean registers() {
+			return GT6ModDrivers.isLoaded(GT6Cells.driverDomainOf(this));
+		}
+	}
+
+	/**
+	 * The mdh-6 driver domain per row (task mdh-6-family-gate): the atlas PRIMARY modid when
+	 * the row hides with its owning mod absent, else {@code null} = GT core /
+	 * COMMON_SECONDARY / unattributed = always registers (ADR-MDH1/MDH2). A String keyed by
+	 * path because the registration walk runs at class-init, before {@code MT.init()} fills
+	 * the material fields — the GTFluids spec-row column shape, gathered in one switch
+	 * instead of a per-row constructor column.
+	 */
+	public static String driverDomainOf(CellRow aRow) {
+		return switch (aRow.path()) {
+			case "cell_plant_wax" -> gregapi.data.MT.MD.HaC.mID; // MT.java:2120 — WaxPlant HaC PRIMARY (atlas, mdh-6)
+			case "cell_aluminium" -> gregapi.data.MT.MD.TiC.mID; // MT.java:2350 — Al TiC PRIMARY (atlas, mdh-6)
+			case "cell_tungsten_alloy" -> gregapi.data.MT.MD.RoC.mID; // MT.java:2429 — TungstenAlloy RoC PRIMARY (atlas, mdh-6)
+			case "cell_tungsten_carbide" -> gregapi.data.MT.MD.ReC.mID; // MT.java:2412 — TungstenCarbide ReC PRIMARY (atlas, mdh-6)
+			case "cell_workers_alloy" -> gregapi.data.MT.MD.HBM.mID; // MT.java:2404 — DeshAlloy HBM PRIMARY (atlas, mdh-6)
+			case "cell_void" -> gregapi.data.MT.MD.TC.mID; // MT.java:2445 — VoidMetal TC PRIMARY (atlas, mdh-6)
+			case "cell_manasteel", "cell_terrasteel", "cell_elementium", "cell_gaia_spirit" -> gregapi.data.MT.MD.BOTA.mID; // MT.java:2466-2471 — BOTA PRIMARY (atlas, mdh-6)
+			case "cell_awakened_draconium" -> gregapi.data.MT.MD.DE.mID; // MT.java:2513 — DraconiumAwakened DE PRIMARY (atlas, mdh-6)
+			case "cell_infinity" -> gregapi.data.MT.MD.AV.mID; // MT.java:2518 — Infinity AV PRIMARY (atlas, mdh-6)
+			default -> null; // GT core / COMMON_SECONDARY (thaumium, desh, syrmorite, efrine, draconium) / unattributed — never hides
+		};
+	}
 
 	/** The 40 rows in registration order (upstream :1770-1809; the en names are the "Capsule-Cell-Container (" + aMat.getLocal() + ")" forms verbatim). */
 	public static final List<CellRow> ROWS = List.of(
@@ -131,8 +160,14 @@ public final class GT6Cells {
 			new CellRow("cell_awakened_draconium", "Capsule-Cell-Container (Awakened Draconium)", false, true, true, true, TemperatureNote.MELTING_POINT_MINUS_50, () -> gregapi.data.MT.DraconiumAwakened), // :1808
 			new CellRow("cell_infinity", "Capsule-Cell-Container (Infinity)", false, true, true, true, TemperatureNote.INFINITE, () -> gregapi.data.MT.Infinity)); // :1809
 
-	/** The blocks, one per row, in registration order (the 40-row table loop — the gas-cylinder four-field form degenerates here). */
-	public static final List<RegistryObject<GT6CellBlock>> BLOCKS_IN_ORDER = ROWS.stream().map(GT6Cells::registerRow).toList();
+	/**
+	 * The blocks, one per registered row, in registration order (the 40-row table loop —
+	 * the gas-cylinder four-field form degenerates here). The mdh-6 family gate filters the
+	 * walk: an ABSENT domain's rows skip registration entirely (the class-load seed precedes
+	 * this walk, FMLModContainer.constructMod order); default all-PRESENT = all 40 (ADR-MDH1).
+	 */
+	public static final List<RegistryObject<GT6CellBlock>> BLOCKS_IN_ORDER =
+			ROWS.stream().filter(CellRow::registers).map(GT6Cells::registerRow).toList();
 
 	/** The blocks by registration path (the GT6Crucibles lookup form — the datagen walk). */
 	public static final java.util.Map<String, RegistryObject<GT6CellBlock>> BLOCKS_BY_PATH =

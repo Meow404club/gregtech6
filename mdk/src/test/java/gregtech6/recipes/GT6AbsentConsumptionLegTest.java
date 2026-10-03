@@ -75,6 +75,7 @@ public class GT6AbsentConsumptionLegTest extends GTRecipesOfflineTestBase {
     @BeforeAll
     public static void initMaterialSystem() {
         GTMaterialItems.initMaterials();
+        gregtech6.registry.GT6DriverTestSupport.loadFamiliesPristine(); // mdh-6: freeze the gated family lists before any pin
     }
 
     @AfterEach

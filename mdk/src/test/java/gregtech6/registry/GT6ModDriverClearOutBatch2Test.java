@@ -118,6 +118,7 @@ public class GT6ModDriverClearOutBatch2Test {
     public static void initMaterialSystem() {
         // the fluid-ratchet arm touches GTFluids (ForgeRegistries at clinit) — bootstrap offline
         // instead of relying on a same-fork neighbour to have done it (the GTOfflineTestBase form)
+        GT6DriverTestSupport.loadFamiliesPristine(); // mdh-6: freeze the gated family lists before any pin
         SharedConstants.tryDetectVersion();
         try {
             Bootstrap.bootStrap();
