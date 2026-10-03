@@ -8687,11 +8687,18 @@ SAME visible pixels, the lightningrod one-texture ruling).
   and `gt6/textures/item/battery/cell.png` — the battery-family item sprites (task
   w4-battery-storage), byte-copy borrows from upstream
   `src/main/resources/assets/gregtech/textures/blocks/machines/batteries/…/sides.png|top.png`
-  (eu/standard 8/32/128, eu/advanced 8/32, lu/8/32; the cell = eu/standard/8/top).
+  (eu/standard 8/32/128, eu/advanced 8/32; the cell = eu/standard/8/top).
   Upstream tints the grayscale colored icons per battery family via the MTE NBT_COLOR
   mRGBa lane; the port BAKES the per-family sprites instead (the crank un-tinted borrow
   posture one declared step further — the runtime tint lane is the render-pool card).
-  Produced by `mdk/tools/bake_battery_textures.py` (pure stdlib, byte-copy mode).
+  The energium pair (task r11-energium-tint, 2026-10-03) is the BAKE made real: the two
+  lu sprites (lu/8, lu/32) are byte-identical grayscale, and the plain p29-w4 copy left
+  all twelve LU crystals the same grey-white — they now carry the upstream family mRGBa
+  multiplied in (MT.java:1581-1582: red 255,0,0 / cyan 0,255,255; the
+  MultiTileEntityBatteryLU8/32 getTexture2 tint), pinned by
+  `GT6EnergiumItemTexDatagenTest`.
+  Produced by `mdk/tools/bake_battery_textures.py` (pure stdlib; byte-copy mode plus the
+  energium mRGBa multiply).
 - `gt6/textures/block/battery_box.png` and `battery_box_large.png` — the BatteryBox side
   sprites (task w4-battery-storage), BAKED src-over composites of upstream
   `textures/blocks/machines/energystorages/battery_electric[_large]/colored/side.png`
