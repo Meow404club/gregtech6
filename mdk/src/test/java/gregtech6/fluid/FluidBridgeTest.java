@@ -1,7 +1,9 @@
 package gregtech6.fluid;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -57,5 +59,26 @@ public class FluidBridgeTest extends GTOfflineTestBase {
 		assertEquals(144, FluidBridge.L_PER_MOLTEN_UNIT);
 		// the long→int boundary behaviour matches the tank clamp
 		assertEquals(Integer.MAX_VALUE, FluidTankGT.bindInt(144L * Integer.MAX_VALUE));
+	}
+
+	/**
+	 * The molten-family id judge (task r11b-crucible-molten-art ③) — the exact set the
+	 * client still-texture seam switches to the borrowed molten carrier on: the
+	 * {@code _molten} convention rows AND the five legacy FL shorthand ids (all molten
+	 * carriers upstream without the suffix), nothing else.
+	 */
+	@Test
+	public void isMoltenIdJudgesTheConventionAndTheLegacyShorthandRows() {
+		assertTrue(FluidBridge.isMoltenId("iron_molten"), "the convention seed");
+		assertTrue(FluidBridge.isMoltenId("lithium_chloride_molten"), "the convention form over a molecule");
+		assertTrue(FluidBridge.isMoltenId("plastic"), "legacy FL shorthand, Loader_Fluids.java:191");
+		assertTrue(FluidBridge.isMoltenId("glass"), "legacy FL shorthand, :192");
+		assertTrue(FluidBridge.isMoltenId("molten_latex"), "legacy FL shorthand, :197");
+		assertTrue(FluidBridge.isMoltenId("molten_hsla"), "legacy FL shorthand, :199");
+		assertFalse(FluidBridge.isMoltenId("hydrogen"), "a gas-closure row stays on the water carrier");
+		assertFalse(FluidBridge.isMoltenId("saltwater"), "a liquid row stays on the water carrier");
+		assertFalse(FluidBridge.isMoltenId("liquid_heavy_oil"), "an oil row stays on the water carrier");
+		assertFalse(FluidBridge.isMoltenId("steam"), "non-molten");
+		assertFalse(FluidBridge.isMoltenId("distilled_water"), "non-molten");
 	}
 }
