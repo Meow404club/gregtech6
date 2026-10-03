@@ -124,7 +124,17 @@ public final class GTClientHandlers {
      * {@code .Block} listener — both dispatch arms preserved verbatim as separate methods.</p>
      */
     private static void onRegisterWireBlockColors(RegisterColorHandlersEvent.Block event) {
-        event.getBlockColors().register(GTWireTint.blockColor(), GTWires.wireBlockArray());
+        event.getBlockColors().register(GTWireTint.blockColor(), wireTintBlocks());
+    }
+
+    /**
+     * The wire-family world-half registration seam (task redstone-wire-tint-reg) — the
+     * exact array the event handler registers {@link GTWireTint#blockColor()} over,
+     * hoisted so the offline census pin drives the real membership (the
+     * {@link #fourPassToolItems()} hoist form).
+     */
+    public static Block[] wireTintBlocks() {
+        return GTWires.wireBlockArray();
     }
 
     /**
@@ -135,11 +145,22 @@ public final class GTClientHandlers {
      * {@link #onRegisterWireBlockColors}.</p>
      */
     private static void onRegisterWireItemColors(RegisterColorHandlersEvent.Item event) {
-        List<Item> tWireItems = new ArrayList<>();
-        tWireItems.add(GTWires.WIRE_ELECTRIC_1X_ITEM.get());
-        tWireItems.add(GTWires.WIRE_ELECTRIC_2X_ITEM.get());
-        for (RegistryObject<Item> tFamilyItem : GTWires.FAMILY_ITEMS) tWireItems.add(tFamilyItem.get());
-        event.getItemColors().register(GTWireTint.itemColor(), tWireItems.toArray(Item[]::new));
+        event.getItemColors().register(GTWireTint.itemColor(),
+                wireTintItems().stream().map(RegistryObject::get).toArray(Item[]::new));
+    }
+
+    /**
+     * The wire-family inventory-half registration seam (task redstone-wire-tint-reg) — the
+     * exact RegistryObject list the event handler registers {@link GTWireTint#itemColor()}
+     * over (the {@link #fourPassToolItems()} shape: the offline legs pin
+     * {@code getId().getPath()} without touching the live registry).
+     */
+    public static List<RegistryObject<Item>> wireTintItems() {
+        List<RegistryObject<Item>> tWireItems = new ArrayList<>();
+        tWireItems.add(GTWires.WIRE_ELECTRIC_1X_ITEM);
+        tWireItems.add(GTWires.WIRE_ELECTRIC_2X_ITEM);
+        tWireItems.addAll(GTWires.FAMILY_ITEMS);
+        return tWireItems;
     }
 
     /**
