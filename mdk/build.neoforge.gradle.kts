@@ -9,6 +9,7 @@ import org.gradle.jvm.tasks.Jar
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
+import java.util.zip.ZipFile
 
 plugins {
     id("net.neoforged.moddev")
@@ -442,6 +443,70 @@ tasks.named<Jar>("jar") {
     setZip64(true)
     // gregapi 根项目类打进 mod jar（真机分发自包含）——与 forge 节点同构，2026-09-06 真机加载实测缺口。
     from(project(":").sourceSets.main.get().output)
+    // ---- 发行 jar 域排除（task jar-dist-hygiene ①③，2026-10-03）——与 forge 节点对称----
+    // 本腿（1.21.1）正典 = 单数 recipe/loot_table + neoforge loader 域；对面腿（1.20.1）复数域
+    // recipes/loot_tables 与 forge loader 域（biome_modifier 等 51 文件）不得入 jar。
+    // 位置裁决与病灶链见 build.forge.gradle.kts jar 块注释（jar 任务 exclude 正典，不取
+    // sourceSet 级以免连坐 test/dev 类路径）。README/.cache 两行双节点一字同构。
+    exclude(
+        "data/gt6/recipes", "data/gt6/recipes/**",        // 1.20.1 配方命名域（本腿读单数 recipe/）
+        "data/gt6/loot_tables", "data/gt6/loot_tables/**", // 1.20.1 loot 命名域（本腿读单数 loot_table/）
+        "data/gt6/forge", "data/gt6/forge/**",            // forge loader 域（biome_modifier 等）
+        "assets/README.md",
+        ".cache", ".cache/**",
+    )
+}
+
+// ---- 发行 jar 域 census 钉（task jar-dist-hygiene，验收①红绿法）——与 forge 节点同构镜像----
+// 钉 CI 分发正本（build.yml 上传 glob = build/libs/gt6-*.jar）：按 jar 任务 archiveFileName 读
+// libs 产物、依赖 assemble 保全链就绪（本腿 jar 直落 libs、无 forge 腿的 reobfJar 中转，
+// 两腿同式读 libs 下的 archiveFileName——与 CI glob 一字对应）。逐条目断言：禁入面（对面腿域
+// + 打包垃圾）必须为零；本腿正典域必须非空。本腿（1.21.1）正典 = 单数 recipe/loot_table +
+// neoforge loader 域；对面腿（1.20.1）复数域 recipes/loot_tables 与 forge loader 域不得入 jar。
+// 排除位置的裁决理由（jar 任务 exclude 而非 sourceSet 级）与病灶链见 build.forge.gradle.kts
+// jar 块注释，两节点一字同构。advancements/ 条目数随 census 行输出——unlock advancement 砍除
+// （②，2026-10-03 用户裁定，降级为后续小卡）落地后归零，由该卡补进禁入面。
+val jarCensusKeys = listOf(
+    "data/gt6/recipes/", "data/gt6/recipe/", "data/gt6/advancements/",
+    "data/gt6/loot_tables/", "data/gt6/loot_table/",
+    "data/gt6/forge/", "data/gt6/neoforge/", "data/forge/", "data/c/", "assets/", ".cache/",
+)
+val jarForbiddenPrefixes = listOf(
+    "data/gt6/recipes/", "data/gt6/loot_tables/", "data/gt6/forge/",
+    "assets/README.md", ".cache",
+)
+val jarRequiredKeys = listOf("data/gt6/recipe/", "data/gt6/loot_table/", "data/gt6/neoforge/", "assets/")
+tasks.register("jarCensus") {
+    dependsOn(tasks.named("assemble"))
+    doLast {
+        val tJar = layout.buildDirectory.dir("libs").get().file(tasks.named<Jar>("jar").get().archiveFileName.get()).asFile
+        val tCounts = linkedMapOf("TOTAL" to 0)
+        val tForbidden = linkedMapOf<String, Int>()
+        ZipFile(tJar).use { tZip ->
+            for (tEntry in tZip.entries()) {
+                if (tEntry.isDirectory) continue
+                tCounts["TOTAL"] = tCounts["TOTAL"]!! + 1
+                jarCensusKeys.firstOrNull { tEntry.name.startsWith(it) }?.let {
+                    tCounts[it] = (tCounts[it] ?: 0) + 1
+                }
+                jarForbiddenPrefixes.firstOrNull { tEntry.name.startsWith(it) }?.let {
+                    tForbidden[it] = (tForbidden[it] ?: 0) + 1
+                }
+            }
+        }
+        logger.lifecycle(
+            "jarCensus ${tJar.name}: " + (tJar.length() * 10 / 1048576.0).toInt() / 10.0
+                + " MB, " + tCounts["TOTAL"] + " entries"
+        )
+        for (tKey in jarCensusKeys) logger.lifecycle("  $tKey = ${tCounts[tKey] ?: 0}")
+        check(tForbidden.isEmpty()) {
+            "jar dist hygiene: forbidden entries in ${tJar.name}: $tForbidden"
+        }
+        val tMissing = jarRequiredKeys.filter { (tCounts[it] ?: 0) == 0 }
+        check(tMissing.isEmpty()) {
+            "jar dist hygiene: own-leg domains missing from ${tJar.name}: $tMissing"
+        }
+    }
 }
 
 // chisel 生成源接线（模板 build.neoforge.gradle.kts.txt:53-55 同构）：
