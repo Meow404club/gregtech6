@@ -39,7 +39,7 @@ import gregtech6.registry.GT6Molds;
  *     upstream 6-pass setBlockBounds2 render verbatim, MultiTileEntitySmeltery.java:596-606:
  *     four 2px walls full height + the 2px floor, the {@link #bodyTexture} faces), levels
  *     1..8 the bowl shell + the content box whose top rides the upstream h/292.571428
- *     height formula (:603, the top-face-only gate :616, the molten-indicator texture).</li>
+ *     height formula (:603, the top-face-only gate :616, the molten art).</li>
  * <li><b>item models</b>: the BlockItems parent the bowl-shell block model.</li>
  * <li><b>lang</b>: the four composed display keys (the GT6Crucibles/GT6Molds getName
  *     carriers).</li>
@@ -153,11 +153,38 @@ public final class GT6CrucibleDatagen {
 	}
 
 	/**
-	 * The molten-content face (the script-generated placeholder PNG, the p2 pipeline — the
-	 * one flat-orange sprite; the per-material liquid colour rides {@link #contentFace}'s
-	 * molten arm for the consumers that can tint). Fully-qualified like {@link #bodyTexture}.
+	 * The texture-set folders whose {@code molten} grayscale the port borrowed verbatim
+	 * (assets/gt6/textures/block/materialicons/&lt;set&gt;/molten.png + the shared
+	 * .png.mcmeta — task r11b-crucible-molten-art). Upstream ships a molten icon for EVERY
+	 * texture set ({@code TextureSet.addToAll(MD.GT.mID, F, "molten")}, GT_API.java:157)
+	 * and the byte census of the upstream tree says the art comes in THREE distinct files
+	 * plus ONE shared animation mcmeta (the sha256 ledger in assets/README.md): the
+	 * standard 16x320 animated strip (27 sets), the soft 16x512 family (10 sets) and the
+	 * RAD singleton. The upstream GAS/PLASMA sets carry a fourth static art the port has
+	 * no folder for, and FLUID rides the soft-family bytes — those set names fall through
+	 * to the byte-different rough/ art (the declared deviation). Total like
+	 * {@link #bodyTexture}: the setless default IS a set (OreDictMaterial.java:252).
 	 */
-	private static final String CONTENT_TEXTURE = "gt6:block/smeltery_content";
+	private static final java.util.Set<String> BORROWED_MOLTEN = java.util.Set.of(
+			"brick", "copper", "cube", "cube_shiny", "diamond", "dull", "emerald", "fiery", "fine", "flint",
+			"food", "gem_horizontal", "gem_vertical", "glass", "hex", "lapis", "leaf", "lignite", "magnetic",
+			"metallic", "netherstar", "none", "opal", "paper", "powder", "prismarine", "quartz", "rad",
+			"redstone", "rough", "rubber", "ruby", "sand", "shards", "shiny", "space", "stone", "wood");
+
+	/**
+	 * The molten content art — the upstream {@code getTextureMolten} texture source
+	 * (OreDictMaterial.java:990-999, {@code IconsGT.INDEX_BLOCK_MOLTEN}): the material's
+	 * first block texture-set folder's {@code molten} grayscale, byte-identical to what
+	 * upstream registers for that set ({@link #BORROWED_MOLTEN}); the gas/plasma/fluid
+	 * sets and anything unknown ride the shared rough/ borrow. Fully-qualified like
+	 * {@link #bodyTexture}. Public so the tests pin the dispatch the three content
+	 * consumers (bowl tint / large-crucible BER / Jade bar) all draw through.
+	 */
+	public static String moltenTexture(gregapi.oredict.OreDictMaterial aMaterial) {
+		java.util.List<String> tSets = aMaterial.mTextureSetsBlock;
+		String tSet = (tSets.isEmpty() ? "none" : tSets.get(0)).toLowerCase(java.util.Locale.ROOT);
+		return "gt6:block/materialicons/" + (BORROWED_MOLTEN.contains(tSet) ? tSet : "rough") + "/molten";
+	}
 
 	/**
 	 * The content render face — the seam one level up (task crucible-bowl-model, the
@@ -165,8 +192,9 @@ public final class GT6CrucibleDatagen {
 	 * renders with. The SOLID arm is the upstream crucible solid face verbatim (the
 	 * {@link #bodyTexture} blockSolid icon + the {@link #bodyTinted} mRGBaSolid tint — the
 	 * exact faces the bowl shell renders); the MOLTEN arm is the molten face (the
-	 * smeltery_content sprite + the material mRGBaLiquid — the upstream
-	 * {@code getTextureMolten} liquid colour, OreDictMaterial.java:997-998). The
+	 * {@link #moltenTexture} per-set grayscale + the material mRGBaLiquid — the upstream
+	 * {@code getTextureMolten} shape verbatim, OreDictMaterial.java:990-999; task
+	 * r11b-crucible-molten-art retired the flat smeltery_content placeholder). The
 	 * jade-tankbar and the large-crucible BER cards consume THIS dispatch instead of
 	 * re-deriving sprite/colour math; {@code -1} tint = the sprite renders as-is.
 	 */
@@ -174,7 +202,7 @@ public final class GT6CrucibleDatagen {
 
 	/** The dispatch itself — loud on an unmapped material ({@link #bodyTexture} rule). */
 	public static ContentFace contentFace(gregapi.oredict.OreDictMaterial aMaterial, boolean aMolten) {
-		if (aMolten) return new ContentFace(CONTENT_TEXTURE, argb(aMaterial.mRGBaLiquid));
+		if (aMolten) return new ContentFace(moltenTexture(aMaterial), argb(aMaterial.mRGBaLiquid));
 		return new ContentFace(bodyTexture(aMaterial), bodyTinted(aMaterial) ? argb(aMaterial.mRGBaSolid) : -1);
 	}
 
@@ -215,7 +243,7 @@ public final class GT6CrucibleDatagen {
 		 * the 9 LIQUID_LEVEL variants + the BlockItem parent. Level 0 = the bowl shell (the
 		 * {@link #bodyTexture} faces, tintindex 0 on the grayscale-borrow rows — task
 		 * debt-material-tint); levels 1..8 = the shell + the content box, its TOP face the
-		 * molten-indicator sprite at the upstream height (:603
+		 * molten art at the upstream height (:603
 		 * {@code 0.125F + h/292.571428F} block units, the bucket L carrying the census floor
 		 * {@code h = L*255/8}; the :616 top-face-only gate).
 		 */
@@ -231,11 +259,14 @@ public final class GT6CrucibleDatagen {
 				// elements — the former "candle idiom" parent+one-element form made the game
 				// drop the bowl shell (floating content panel). The child re-writes the FULL
 				// set (the shell verbatim + the content box); the parent stays for the
-				// texture map only.
+				// texture map only. The content texture is the ROW material's molten art
+				// (task r11b-crucible-molten-art — the tintindex-1 seat still recolours live
+				// by the displayed material; the borrowed art is shared by 31/41 upstream
+				// sets, so the static bake stays upstream-faithful)
 				float tTop = 2.0F + (tLevel * 255.0F / 8.0F) / 292.571428F * 16.0F;
 				BlockModelBuilder tBuilder = models().getBuilder("block/" + aRow.path() + "_filled_" + tLevel)
 						.parent(tEmptyModel)
-						.texture("content", loc(CONTENT_TEXTURE));
+						.texture("content", loc(moltenTexture(tMaterial)));
 				addShellElements(tBuilder, tTinted);
 				// the :616 gate — top face only; tintindex 1 = the content seat (task
 				// crucible-large-ber): GT6MoldTintListener answers the BE's synced displayed

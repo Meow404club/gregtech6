@@ -13081,3 +13081,35 @@ Dedication** (same upstream `README.md` block as above).
 
 Copied on 2026-10-03. Upstream license: **CC0 1.0 Universal Public Domain Dedication**
 (the same upstream `README.md` block as the other texture borrows above).
+Molten crucible-content textures borrowed from **GregTech 6**
+(https://github.com/GregTech6/gregtech6), snapshot
+`v6.17.06-22-g3703e4030`, files
+`src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/molten.png`
+(+ the sibling `molten.png.mcmeta`), task r11b-crucible-molten-art: the crucible
+content faces (small-crucible bowl tint seat / large-crucible BER content quad /
+Jade content bar) render the material set's molten grayscale multiplied with the
+material `mRGBaLiquid` — the upstream `getTextureMolten` shape
+(OreDictMaterial.java:990-999, `IconsGT.INDEX_BLOCK_MOLTEN`, registered per set
+via `TextureSet.addToAll(MD.GT.mID, F, "molten")`). Byte-identical borrows, one
+copy per set folder (upstream spreads the art per set the same way), 38 sets x 2
+files = 76; the upstream tree ships THREE distinct arts + ONE shared mcmeta:
+
+- sha256 `a308af60c281c5684966bc739a96034a7a4d7ba2e06befdeb1587dc2d571e87e`
+  (16x320, 20 frames) — brick, copper, diamond, dull, emerald, fiery, flint,
+  gem_horizontal, gem_vertical, hex, lapis, leaf, lignite, magnetic, metallic,
+  netherstar, none, opal, quartz, redstone, rough, rubber, ruby, shards, shiny,
+  space, stone
+- sha256 `9dfa1eb2f91d72863a4d042dd0784c8f459c918b13eebee0f873a458aa4a7f55`
+  (16x512, 32 frames) — cube, cube_shiny, fine, food, glass, paper, powder,
+  prismarine, sand, wood
+- sha256 `684b25708938186381f89030fc867c9d1c026614ba808132c5c116dcc18f795b`
+  (16x320) — rad
+- mcmeta sha256 `6a19bef21d66aac8fdcd8032751057733e321446b304d38f5ee8ba35efe99a1d`
+  (all 38, frametime 2, the 38-entry ping-pong)
+
+Deviations declared: the upstream GAS/PLASMA sets carry a fourth static molten
+art (141 B, no mcmeta) that is NOT borrowed (no port set folder — the
+`GT6CrucibleDatagen.moltenTexture` dispatch falls those names, and FLUID, to the
+byte-different rough/ art). Pixel-level spot check (acceptance 5): metallic,
+glass and rad decoded RGBA pixel-identical to the upstream files (2026-10-03).
+The census pin: `GT6MoltenBorrowCensusTest` (sha256 over the committed tree).

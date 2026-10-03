@@ -51,9 +51,13 @@ import gregtech6.registry.GT6ModDrivers;
  * liquid density ~6980 kg/m³. Water/lava stay vanilla (they carry ForgeMod.WATER_TYPE/
  * LAVA_TYPE and need no registration).
  *
- * <p>Client textures: the {@code initializeClient} override points the still/flow layers
- * at the vanilla water textures with a molten tint (FluidTypeTest.java:82-150 shape) —
- * no dedicated PNG this card; the blockstate render-type wiring is a client-pool item.
+ * <p>Client textures: the {@code initializeClient} override originally pointed the
+ * still/flow layers at the vanilla water textures with a molten tint
+ * (FluidTypeTest.java:82-150 shape, "no dedicated PNG" — the fluid-pipes declaration).
+ * Task r11b-crucible-molten-art retired that for the molten family: the layers ride the
+ * borrowed upstream molten carrier {@link #MOLTEN_STILL} (the shared standard grayscale,
+ * tint = the material mRGBaLiquid — for iron the FL.createMolten colour verbatim,
+ * FL.java:1078) so the Jade tank bar and the crucible faces agree.
  *
  * <p>Engine fuel family (task engine-fuel-fluids): nine FURTHER fluids —
  * {@code steam} (the gaseous one), {@code distilled_water}, and the seven FM.Engine fuels
@@ -239,17 +243,15 @@ public final class GTFluids {
 				@Override
 				public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
 					aConsumer.accept(new IClientFluidTypeExtensions() {
-						private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
-						private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
 
 						@Override
-						public ResourceLocation getStillTexture() {return STILL;}
+						public ResourceLocation getStillTexture() {return MOLTEN_STILL;}
 
 						@Override
-						public ResourceLocation getFlowingTexture() {return FLOW;}
+						public ResourceLocation getFlowingTexture() {return MOLTEN_STILL;}
 
 						@Override
-						public int getTintColor() {return 0xFFE8874A;} // molten iron tint over the vanilla textures
+						public int getTintColor() {return 0xFFFF4020;} // the Fe mRGBaLiquid verbatim (MT.java:1434 setRGBaLiquid(255, 64, 32), the upstream FL.createMolten colour, FL.java:1078) over the borrowed molten grayscale
 					});
 				}
 			});
@@ -2564,10 +2566,34 @@ public final class GTFluids {
 	}
 
 	/**
+	 * The borrowed molten carrier sprite (task r11b-crucible-molten-art ③): the shared
+	 * standard molten grayscale — assets/gt6/textures/block/materialicons/rough/molten,
+	 * byte-identical to what 27 of the 38 upstream set folders ship (the upstream
+	 * createMolten fluid texture IS the material set's molten icon, FL.java:1076-1078;
+	 * the per-set art nuance — the soft 16x512 family, RAD — is the declared ceiling, the
+	 * per-row tints carry the material colour). Stitched by the vanilla block-atlas
+	 * directory source (all namespaces' textures/block), so the fluid layers and the Jade
+	 * tank bar both resolve it. The tint stays the per-row mRGBaLiquid literal.
+	 */
+	static final ResourceLocation MOLTEN_STILL = ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/rough/molten");
+
+	/** The client still sprite for one spec row — the molten family rides {@link #MOLTEN_STILL}, everything else vanilla water (the pure offline-pinnable seam). */
+	static ResourceLocation stillTextureOf(String aSpecName) {
+		return FluidBridge.isMoltenId(aSpecName) ? MOLTEN_STILL : ResourceLocation.withDefaultNamespace("block/water_still");
+	}
+
+	/** The client flow sprite for one spec row — the molten family shares the carrier (the dye-chemical still=flow precedent), everything else vanilla water. */
+	static ResourceLocation flowTextureOf(String aSpecName) {
+		return FluidBridge.isMoltenId(aSpecName) ? MOLTEN_STILL : ResourceLocation.withDefaultNamespace("block/water_flow");
+	}
+
+	/**
 	 * The table-driven registration helper for one chemical row — the
 	 * {@link #registerFluidFamily} shape plus the luminosity the plasmas carry
 	 * ({@code .lightLevel}, the iron_molten :132 form). Client layers reuse the vanilla
-	 * water textures over the row's tint (the family initializeClient convention).
+	 * water textures over the row's tint (the family initializeClient convention) —
+	 * except the molten-material rows, which ride the borrowed molten carrier
+	 * ({@link #stillTextureOf}, task r11b-crucible-molten-art ③).
 	 */
 	private static ChemicalFluid chemicalFluid(String aName) {
 		return specFluid(chemicalSpec(aName), "chemical fluid");
@@ -2586,14 +2612,12 @@ public final class GTFluids {
 			@Override
 			public void initializeClient(Consumer<IClientFluidTypeExtensions> aConsumer) {
 				aConsumer.accept(new IClientFluidTypeExtensions() {
-					private static final ResourceLocation STILL = ResourceLocation.withDefaultNamespace("block/water_still");
-					private static final ResourceLocation FLOW = ResourceLocation.withDefaultNamespace("block/water_flow");
 
 					@Override
-					public ResourceLocation getStillTexture() {return STILL;}
+					public ResourceLocation getStillTexture() {return stillTextureOf(aSpec.name());}
 
 					@Override
-					public ResourceLocation getFlowingTexture() {return FLOW;}
+					public ResourceLocation getFlowingTexture() {return flowTextureOf(aSpec.name());}
 
 					@Override
 					public int getTintColor() {return aSpec.tint();}

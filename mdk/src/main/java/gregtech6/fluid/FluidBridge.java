@@ -63,6 +63,18 @@ public final class FluidBridge {
 		return LEGACY_FL_IDS.getOrDefault(aMaterialName, aMaterialName + "_molten");
 	}
 
+	/**
+	 * Whether a registered gt6 fluid id belongs to the molten-material family — the
+	 * {@code "<mat>_molten"} convention rows OR one of the five legacy FL shorthand ids
+	 * ({@link #LEGACY_FL_IDS} values: plastic/glass/molten_latex/molten_hsla/
+	 * lithium_chloride_molten, all molten carriers upstream with no molten suffix). The
+	 * single source the client still-texture seam (GTFluids) judges the borrowed molten
+	 * carrier art against — pure and offline-pinnable (task r11b-crucible-molten-art ③).
+	 */
+	public static boolean isMoltenId(String aFluidId) {
+		return aFluidId.endsWith("_molten") || LEGACY_FL_IDS.containsValue(aFluidId);
+	}
+
 	private FluidBridge() {}
 
 	/**

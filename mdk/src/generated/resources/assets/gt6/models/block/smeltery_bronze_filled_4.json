@@ -152,6 +152,6 @@
     }
   ],
   "textures": {
-    "content": "gt6:block/smeltery_content"
+    "content": "gt6:block/materialicons/copper/molten"
   }
 }

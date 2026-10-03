@@ -383,7 +383,13 @@ class GT6TextureCensusTest {
         // Crafting2By2) need NO entry: the gui-reskin-amazawa card ships them
         // byte-identical as gui/machines/<name>.png, so their rows ground there. If
         // this row ever ships verbatim, it grounds and must leave the list.
-        "df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0");
+        "df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0",
+        // r11b-crucible-molten-art: the molten borrow's SHARED ANIMATION MCMETA sha —
+        // vendored 38x as assets/gt6/textures/block/materialicons/<set>/molten.png.mcmeta
+        // (a JSON metadata file, never a PNG, so it can never ground under this pin's
+        // PNG-only digest set); the three PNG arts of the same borrow ground directly.
+        // GT6MoltenBorrowCensusTest pins the mcmeta bytes per set.
+        "6a19bef21d66aac8fdcd8032751057733e321446b304d38f5ee8ba35efe99a1d");
 
     /**
      * Pin f (task c5-asset-coverage-guard): the FULL sha256 ledger reconciles against

@@ -482,4 +482,26 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 		assertNull(GTFluids.chemicalSpec("kerosene"), "the upstream alias spelling is NOT a port id (the single-name ruling)");
 		assertNull(GTFluids.chemicalSpec(null));
 	}
+
+	/**
+	 * The client still/flow seam (task r11b-crucible-molten-art ③ — the "GTFluids 指向"
+	 * assertion face): the molten-family rows (and only those — the
+	 * {@link FluidBridge#isMoltenId} judge) point the fluid layers at the borrowed molten
+	 * carrier sprite, everything else keeps the vanilla water layers. This is what makes
+	 * the Jade tank bar draw the molten grayscale × mRGBaLiquid instead of tinted water.
+	 */
+	@Test
+	public void theMoltenRowsPointAtTheBorrowedMoltenCarrier() {
+		assertEquals("gt6:block/materialicons/rough/molten", GTFluids.MOLTEN_STILL.toString(),
+				"the carrier = the borrowed shared standard molten art (assets/README.md sha a308af60…)");
+		for (String tMolten : new String[] {"lithium6_molten", "redstone_molten", "silicon_molten", "calcite_molten"}) {
+			assertNotNull(GTFluids.chemicalSpec(tMolten), tMolten + ": the row exists");
+			assertEquals(GTFluids.MOLTEN_STILL, GTFluids.stillTextureOf(tMolten), tMolten + ": still rides the molten carrier");
+			assertEquals(GTFluids.MOLTEN_STILL, GTFluids.flowTextureOf(tMolten), tMolten + ": flow shares the carrier (the dye-chemical still=flow form)");
+		}
+		for (String tWater : new String[] {"hydrogen", "saltwater", "liquidoxygen", "helium_plasma"}) {
+			assertEquals("minecraft:block/water_still", GTFluids.stillTextureOf(tWater).toString(), tWater + ": non-molten keeps water");
+			assertEquals("minecraft:block/water_flow", GTFluids.flowTextureOf(tWater).toString(), tWater + ": non-molten keeps water");
+		}
+	}
 }

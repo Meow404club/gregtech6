@@ -206,22 +206,29 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
         }
     }
 
-    /** The colour-ruling seam: solid = the blockSolid face + mRGBaSolid, molten = the smeltery_content face + mRGBaLiquid. */
+    /**
+     * The colour-ruling seam: solid = the blockSolid face + mRGBaSolid, molten = the
+     * borrowed per-set molten art + mRGBaLiquid (task r11b-crucible-molten-art — the
+     * upstream getTextureMolten shape, OreDictMaterial.java:990-999, the flat
+     * smeltery_content placeholder retired).
+     */
     @Test
     void contentFaceDispatchMatchesTheColourRuling() {
-        // SOLID arm — the exact faces the bowl shell renders
+        // SOLID arm — the exact faces the bowl shell renderers draw (unchanged by r11b)
         GT6CrucibleDatagen.ContentFace tStone = GT6CrucibleDatagen.contentFace(gregapi.data.MT.Stone, false);
         assertEquals("minecraft:block/smooth_stone", tStone.texture(), "stone rides the vanilla finished texture");
         assertEquals(-1, tStone.tintARGB(), "the finished texture takes no tint");
         GT6CrucibleDatagen.ContentFace tCeramic = GT6CrucibleDatagen.contentFace(gregapi.data.MT.Ceramic, false);
         assertEquals("gt6:block/materialicons/rough/block_solid", tCeramic.texture(), "ceramic rides the rough borrow");
         assertEquals(CERAMIC_SOLID_TINT, tCeramic.tintARGB(), "the solid tint is the mRGBaSolid pack");
-        // MOLTEN arm — the molten face + the liquid colour (the Steel setRGBaLiquid tail verbatim)
+        // MOLTEN arm — the per-set molten grayscale + the liquid colour (the Steel setRGBaLiquid tail verbatim)
         GT6CrucibleDatagen.ContentFace tSteelMolten = GT6CrucibleDatagen.contentFace(gregapi.data.MT.Steel, true);
-        assertEquals("gt6:block/smeltery_content", tSteelMolten.texture(), "the molten face is the smeltery_content sprite");
+        assertTrue(tSteelMolten.texture().startsWith("gt6:block/materialicons/") && tSteelMolten.texture().endsWith("/molten"),
+                "the molten face rides the borrowed per-set molten art, got " + tSteelMolten.texture());
         assertEquals(STEEL_LIQUID_TINT, tSteelMolten.tintARGB(), "the molten tint is the mRGBaLiquid pack");
         GT6CrucibleDatagen.ContentFace tBronzeMolten = GT6CrucibleDatagen.contentFace(gregapi.data.MT.Bronze, true);
-        assertEquals("gt6:block/smeltery_content", tBronzeMolten.texture(), "the molten face is material-independent");
+        assertTrue(tBronzeMolten.texture().startsWith("gt6:block/materialicons/") && tBronzeMolten.texture().endsWith("/molten"),
+                "the molten face rides the borrowed per-set molten art, got " + tBronzeMolten.texture());
         assertFalse(tSteelMolten.tintARGB() == tBronzeMolten.tintARGB(), "the molten tint is per-material");
     }
 }
