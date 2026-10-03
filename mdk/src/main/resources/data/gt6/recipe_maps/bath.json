@@ -1,5 +1,5 @@
 {
-  "comment": " | task recipe-b2-bath-potion-domain - the BATH static-replay card. SOURCES + ROWS: Loader_Recipes_Ores.java:108-:188 (the acid-wash walks: vitriol families x crushedPurified/tiny -> H2SO4 -> vitriol + H gas, the Pt-group AquaRegia face, the HF-V/HF-C faces, the MnO2-byproduct walk over the live port family, the noble Au/Cu/Midasium/Sn AquaRegia rows, the Cryotheum gem walks over ANY.Amber/ANY.Glowstone/the Carminite-Nikolite-Redstone-Cinnabar quartet) + Loader_Recipes_Chem.java :91-:95/:189-:196/:197-:203/:240/:260-:263 (the water-oxidation, tantalate, tungstate-HCl, FeCl3, HNO3-coal and TiO2/titanium faces) + Loader_Recipes_Other.java:231 (coal hydration) + Loader_Recipes_Vanilla.java:723-:741/:748 (the chlorine bleach rows, W-wildcards expanded per modern color item, and the reeds->paper FL.waters legs). The pre-existing w1 smoke row (the white wool wash) is preserved untouched. OM.dust ladder amounts resolved per OM.java:460-468 (the dust/dustSmall/dustTiny conditional arms); material fluid units per Loader_Fluids createLiquid/createMolten/createGas (chemicals 1000 mB/U, molten 144 mB/U). FLUID ID MAP: MT.H2SO4=gt6:sulfuricacid, MT.Cl=gt6:chlorine, MT.HCl=gt6:hydrochloricacid, MT.HF=gt6:hydrogenfluoride, MT.NO=gt6:nitrogenmonoxide, MT.NO2=gt6:nitrogendioxide, MT.HNO3=gt6:nitricacid, MT.AquaRegia=gt6:aquaregia, MT.Na.liquid=gt6:sodium_molten (144/U), MT.CaCO3.liquid=gt6:calcite_molten (144/U), MT.NaCl dust=gt6:dust_salt, FL.Steam=gt6:steam (9000*STEAM_PER_WATER=1440000, CS.java:242), MT.O=gt6:oxygen, MT.H=gt6:hydrogen. DECLARED OUT (band-level carrier gaps, the b8 accounting residual): Ores:192-:240 the Pyrotheum chunk band (the TE/IE slag byproduct identity port-absent); Ores:145 the Osmium member (the plain-Osmium item walk is port-absent, only OsmiumElemental exists - 10 of 11 Pt-group members pour); Chem:189 the gem_tantalum slot (no Ta gem form - the row pours with the slot dropped, the Recipe null-slot rule); Chem:191/:262 the Mg/MgCO3 molten faces (unregistered); Vanilla:728-:735 the DYE_FLUIDS dye bath band (dye-domain card); Vanilla:877-:879 the gold-molten face (unregistered); Woods:74-:172 the fireproof log/plank/beam + IE/RC tie bands (BlocksGT FireProof + IE_Treated/RC_Tie absent); Other:204-:214 (event-listener rows, not static); Other:424-:472 (Mana_TE absent, the ST.tag Glue rows = the JSON v1 row-flag boundary, the CFoam/slab dye walk); the MultiItem*/GT6_Main/FL/RM/BlockStones/BlockFlowersB/ItemIterator/Loader_MultiTileEntities BATH scatter + Compat_Recipes_* (the b8 residual + the family COMPAT ruling); the Handlers:660-:669 wood-oil ladder already pours live via GT6RecipesBath - not re-poured. The Loader_Recipes_Potions Fermenter face rides fermenter.json (b2b1). Datapack domain: KubeJS-naturally editable, zero adapter.",
+  "comment": " | task recipe-b2-bath-potion-domain - the BATH static-replay card. SOURCES + ROWS: Loader_Recipes_Ores.java:108-:188 (the acid-wash walks: vitriol families x crushedPurified/tiny -> H2SO4 -> vitriol + H gas, the Pt-group AquaRegia face, the HF-V/HF-C faces, the MnO2-byproduct walk over the live port family, the noble Au/Cu/Midasium/Sn AquaRegia rows, the Cryotheum gem walks over ANY.Amber/ANY.Glowstone/the Carminite-Nikolite-Redstone-Cinnabar quartet) + Loader_Recipes_Chem.java :91-:95/:189-:196/:197-:203/:240/:260-:263 (the water-oxidation, tantalate, tungstate-HCl, FeCl3, HNO3-coal and TiO2/titanium faces) + Loader_Recipes_Other.java:231 (coal hydration) + Loader_Recipes_Vanilla.java:723-:741/:748 (the chlorine bleach rows, W-wildcards expanded per modern color item, and the reeds->paper FL.waters legs) + Loader_Recipes_Vanilla.java:727-:735 (the DYE_FLUIDS dye bath band, task recipe-b3-dye-bath-band: the 16-colour fluid loop — the wool/carpet legs skip DYE_INDEX_White=15 (CS.java:457, upstream has no white dye-bath leg, the w1 smoke row stays the only white-wool row) while the stained trio takes all 16; gt6:squidink rides Black and gt6:indigo Blue as the Loader_Fluids :111/:112 DYE_FLUIDS seeds (black/blue carry 4 fluid legs, the rest 3); amounts FL.mul(tDye,a,b,T) = UT.Code.units (UT.java:1677-1683, roundUp) over the per-fluid base CS.L=144 mB (CS.java:129 — the research-note 62/31/23 was the L=1000 trap): wool/terracotta/glass 9 mB, carpet 5 mB, pane 4 mB; port fluid ids gt6:dye_watermixed_|dye_flower_|dye_chemical_<GTSprayCanItem.DYE_IDS[i]> + gt6:squidink/indigo). The pre-existing w1 smoke row (the white wool wash) is preserved untouched. OM.dust ladder amounts resolved per OM.java:460-468 (the dust/dustSmall/dustTiny conditional arms); material fluid units per Loader_Fluids createLiquid/createMolten/createGas (chemicals 1000 mB/U, molten 144 mB/U). FLUID ID MAP: MT.H2SO4=gt6:sulfuricacid, MT.Cl=gt6:chlorine, MT.HCl=gt6:hydrochloricacid, MT.HF=gt6:hydrogenfluoride, MT.NO=gt6:nitrogenmonoxide, MT.NO2=gt6:nitrogendioxide, MT.HNO3=gt6:nitricacid, MT.AquaRegia=gt6:aquaregia, MT.Na.liquid=gt6:sodium_molten (144/U), MT.CaCO3.liquid=gt6:calcite_molten (144/U), MT.NaCl dust=gt6:dust_salt, FL.Steam=gt6:steam (9000*STEAM_PER_WATER=1440000, CS.java:242), MT.O=gt6:oxygen, MT.H=gt6:hydrogen. DECLARED OUT (band-level carrier gaps, the b8 accounting residual): Ores:192-:240 the Pyrotheum chunk band (the TE/IE slag byproduct identity port-absent); Ores:145 the Osmium member (the plain-Osmium item walk is port-absent, only OsmiumElemental exists - 10 of 11 Pt-group members pour); Chem:189 the gem_tantalum slot (no Ta gem form - the row pours with the slot dropped, the Recipe null-slot rule); Chem:191/:262 the Mg/MgCO3 molten faces (unregistered); Vanilla:877-:879 the gold-molten face (unregistered); Woods:74-:172 the fireproof log/plank/beam + IE/RC tie bands (BlocksGT FireProof + IE_Treated/RC_Tie absent); Other:204-:214 (event-listener rows, not static); Other:424-:472 (Mana_TE absent, the ST.tag Glue rows = the JSON v1 row-flag boundary, the CFoam/slab dye walk); the MultiItem*/GT6_Main/FL/RM/BlockStones/BlockFlowersB/ItemIterator/Loader_MultiTileEntities BATH scatter + Compat_Recipes_* (the b8 residual + the family COMPAT ruling); the Handlers:660-:669 wood-oil ladder already pours live via GT6RecipesBath - not re-poured. The Loader_Recipes_Potions Fermenter face rides fermenter.json (b2b1). Datapack domain: KubeJS-naturally editable, zero adapter.",
   "recipes": [
     {
       "inputs": [
@@ -13752,6 +13752,5618 @@
       "outputs": [
         {
           "item": "minecraft:paper",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[squidink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:squidink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[squidink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:squidink",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[squidink]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:squidink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[squidink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:squidink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[squidink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:squidink",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_black]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_black]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_black",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_black]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_black]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_black]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_black",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_black]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_black]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_black",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_black]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_black]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_black]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_black",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_black]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_black]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_black",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_black]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_black]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_black",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_black]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_black",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:black_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_red]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_red]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_red",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_red]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_red]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_red]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_red",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_red]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_red]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_red",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_red]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_red]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_red]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_red",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_red]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_red]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_red",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_red]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_red]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_red",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_red]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_red",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:red_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_green]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_green]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_green",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_green]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_green]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_green]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_green",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_green]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_green]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_green",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_green]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_green]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_green]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_green",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_green]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_green]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_green",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_green]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_green]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_green",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_green]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_green",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:green_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_brown",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_brown",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_brown",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_brown",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_brown",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_brown",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_brown]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_brown",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:brown_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[indigo]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:indigo",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[indigo]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:indigo",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[indigo]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:indigo",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[indigo]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:indigo",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[indigo]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:indigo",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_blue",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_blue",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_blue",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_blue",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_blue",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_blue",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:blue_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_purple",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_purple",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_purple",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_purple",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_purple",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_purple",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_purple]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_purple",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:purple_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_cyan",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_cyan",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_cyan",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_cyan",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_cyan",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_cyan",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_cyan]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_cyan",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:cyan_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_gray",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_gray",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_gray",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_gray",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_gray",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_light_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_gray",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_gray_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_gray",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_gray",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_gray",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_gray",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_gray",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_gray",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_gray]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_gray",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:gray_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_pink",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_pink",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_pink",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_pink",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_pink",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_pink",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_pink]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_pink",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:pink_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_lime",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_lime",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_lime",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_lime",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_lime",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_lime",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_lime]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_lime",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:lime_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_yellow",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_yellow",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_yellow",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_yellow",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_yellow",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_yellow",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_yellow]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_yellow",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:yellow_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_blue",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_light_blue",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_blue",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_light_blue",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_blue",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_blue",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_light_blue]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_light_blue",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:light_blue_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_magenta",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_magenta",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_magenta",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_magenta",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_magenta",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_magenta",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_magenta]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_magenta",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:magenta_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_watermixed_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_watermixed_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_orange",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_orange",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_flower_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_flower_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_orange",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_orange",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:729[dye_chemical_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:white_wool",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_wool",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:730[dye_chemical_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:white_carpet",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_orange",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_carpet",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_orange",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_orange]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_orange",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:orange_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_watermixed_white]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_white",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_watermixed_white]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_white",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_watermixed_white]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_watermixed_white",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_flower_white]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_white",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_flower_white]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_white",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_flower_white]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_flower_white",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_stained_glass_pane",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:732[dye_chemical_white]",
+      "inputs": [
+        {
+          "item": "minecraft:terracotta",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_white",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_terracotta",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:733[dye_chemical_white]",
+      "inputs": [
+        {
+          "item": "minecraft:glass",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_white",
+          "amount": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_stained_glass",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "Loader_Recipes_Vanilla.java:734[dye_chemical_white]",
+      "inputs": [
+        {
+          "item": "minecraft:glass_pane",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:dye_chemical_white",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:white_stained_glass_pane",
           "count": 1
         }
       ],

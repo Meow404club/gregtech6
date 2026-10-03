@@ -36,8 +36,8 @@ import gregtech6.registry.GTMaterialItems;
 
 /**
  * The recipe-b2-bath-potion-domain row-stock pour test (the b2b1/food-t2 posture): the
- * three card files — {@code bath.json} (334 = the w1 smoke row + the Ores acid-wash walks
- * + the Chem/Other/Vanilla pourable faces), {@code distillery.json} (1499 = the 21-row
+ * three card files — {@code bath.json} (578 = the w1 smoke row + the Ores acid-wash walks
+ * + the Chem/Other/Vanilla pourable faces + the 244-row dye band the b3 card rode in), {@code distillery.json} (1499 = the 21-row
  * food face preserved + the Loader_Recipes_Potions :35-:323 replay) and the new second
  * MIXER file key {@code mixerpotions.json} (30 = the :325-:354 Dragon_Breath face) — pour
  * through the real {@link GT6RecipeMapJsonLoader} seam with zero skips (which also proves
@@ -58,7 +58,7 @@ public class GT6RecipeMapDataB2RowsPourTest extends GTRecipesOfflineTestBase {
 
 	/** The per-file census: file key -> expected total rows (smoke + pour, zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"bath", 334,         // 1 w1 smoke + 225 Ores + 25 Chem + 1 Other + 82 Vanilla
+			"bath", 578,         // 1 w1 smoke + 225 Ores + 25 Chem + 1 Other + 326 Vanilla (82 b2 + the 244 b3 dye band)
 			"distillery", 1499,  // 21 food (preserved, task food-recipes-t2) + 1478 potion replay
 			"mixerpotions", 30); // the :325-:354 Dragon_Breath face, 13+7+10 rows
 
@@ -118,7 +118,7 @@ public class GT6RecipeMapDataB2RowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals(225, tBath.get("Ores"), "bath: the Ores acid-walk face");
 		assertEquals(25, tBath.get("Chem"), "bath: the Chem mineral faces");
 		assertEquals(1, tBath.get("Other"), "bath: the :231 coal hydration");
-		assertEquals(82, tBath.get("Vanilla"), "bath: the 30 bleach + 48 W-expanded stain rows + 4 reeds legs");
+		assertEquals(326, tBath.get("Vanilla"), "bath: the 30 bleach + 48 W-expanded stain rows + 4 reeds legs (b2) + the 244 :727-:735 dye band (b3)");
 		assertEquals(1, tBath.get("(smoke)"), "bath: the preserved w1 smoke row (only-add-never-duplicate)");
 
 		Map<String, Integer> tDist = countSources(pourShipped("distillery"));
@@ -350,6 +350,11 @@ public class GT6RecipeMapDataB2RowsPourTest extends GTRecipesOfflineTestBase {
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.LUBRICANT_FLUID_SPECS) tFluids.add("gt6:" + tSpec.name());
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.QU_FLUID_SPECS) tFluids.add("gt6:" + tSpec.name());
 		for (GTFluids.ChemicalFluidSpec tSpec : GTFluids.NAMING_FLUID_SPECS) tFluids.add("gt6:" + tSpec.name());
+		// the dye bath band families (the b3 pour rides them — the GT6Bottles/GTFluids registration face;
+		// gt6:squidink/indigo ride NAMING_FLUID_SPECS above, the Loader_Fluids :111/:112 seeds)
+		for (GTFluids.DyeFluid tFamily : GTFluids.DYE_WATERMIXED) tFluids.add("gt6:" + tFamily.name());
+		for (GTFluids.DyeFluid tFamily : GTFluids.DYE_FLOWER) tFluids.add("gt6:" + tFamily.name());
+		for (GTFluids.DyeChemicalFluid tFamily : GTFluids.DYE_CHEMICALS) tFluids.add("gt6:" + tFamily.name());
 		// the individually-registered faces (the iron_molten/chlorine shape — DR handles, no spec row)
 		tFluids.add("gt6:chlorine");
 		assertTrue(tFluids.contains("gt6:dragon_breath"), "the closure face is enumerated");
