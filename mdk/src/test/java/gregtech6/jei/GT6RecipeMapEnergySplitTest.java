@@ -219,8 +219,9 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 	@Test
 	void tuMapsShowOnlyTheTimeLine() {
 		GT6RecipeMaps.init();
+		// the four single-block TU maps: the time line is the whole face
 		for (RecipeMap tMap : List.of(GT6RecipeMaps.AUTOCLAVE, GT6RecipeMaps.BATH,
-				GT6RecipeMaps.COAGULATOR, GT6RecipeMaps.GENERIFIER, GT6RecipeMaps.FUSION)) {
+				GT6RecipeMaps.COAGULATOR, GT6RecipeMaps.GENERIFIER)) {
 			assertEquals(TD.Energy.TU, GT6RecipeMapViewerMeta.energyOf(tMap), tMap.mNameInternal + " must stay TU-pinned");
 			var tLines = GT6RecipeMapViewerMeta.costLines(tMap, row(32, 400, 0));
 			assertEquals(1, tLines.size(), tMap.mNameInternal + " prints the time line only");
@@ -231,9 +232,11 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 			assertEquals(1, tZero.size(), tMap.mNameInternal + " zero-EUt prints the time line only");
 			assertEquals("gt6.jei.cost.time", contents(tZero.get(0)).getKey());
 		}
-		// the FUSION Start special value survives the slim-down (the ruling keeps it)
-		var tFusion = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(8, 200, 131072));
-		assertEquals(2, tFusion.size(), "FUSION = time + Start LU");
+		// FUSION is TU-pinned too — and its Start special keeps its seat next to the time
+		// line (the ruling keeps it; it prints whenever the meta triple exists, 0 LU included)
+		assertEquals(TD.Energy.TU, GT6RecipeMapViewerMeta.energyOf(GT6RecipeMaps.FUSION));
+		var tFusion = GT6RecipeMapViewerMeta.costLines(GT6RecipeMaps.FUSION, row(32, 400, 0));
+		assertEquals(2, tFusion.size(), "FUSION = time + Start LU (the Start line is unconditional, upstream faithful)");
 		assertEquals("gt6.jei.cost.time", contents(tFusion.get(0)).getKey());
 		assertEquals("gt6.jei.cost.start", contents(tFusion.get(1)).getKey());
 	}

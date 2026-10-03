@@ -726,7 +726,8 @@ public final class GT6RecipeMapViewerMeta {
 	 * upstream numbers as args — the en values are the :680-717 literals to the character.
 	 * Since task #30a a map with a pinned carrier (the ENERGY_BY_MAP column) prints its
 	 * unit-suffix key with the colored short code as the second arg; carrier-less and
-	 * mixed-carrier maps keep the GU keys byte-identical.
+	 * mixed-carrier maps keep the GU keys byte-identical. Since task r11-tu-costlines-slim
+	 * a TU-pinned map (TU == TIME) prints the time line only.
 	 */
 	public static List<Component> costLines(RecipeMap aMap, Recipe aRecipe) {
 		List<Component> rLines = new ArrayList<>();
@@ -734,26 +735,34 @@ public final class GT6RecipeMapViewerMeta {
 		TagData tEnergy = energyOf(aMap);
 		long tGUt = aRecipe.mEUt;
 		long tDuration = aRecipe.mDuration;
-		if (tGUt == 0) {
-			if (tMeta.showVoltageAmperage()) rLines.add(Component.translatable(KEY_TIER_UNSPECIFIED));
-		} else if (tGUt > 0) {
-			rLines.add(unitLine(KEY_COSTS, KEY_COSTS_UNIT, tGUt * tDuration, tEnergy));
-			if (tMeta.showVoltageAmperage()) {
-				if (!tMeta.combinePower()) rLines.add(unitLine(KEY_USAGE, KEY_USAGE_UNIT, tGUt, tEnergy));
-				rLines.add(unitLine(KEY_TIER, KEY_TIER_UNIT, tGUt / aMap.mPower, tEnergy));
-				rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
-			} else if (tGUt != 1 && !tMeta.combinePower()) {
-				rLines.add(unitLine(KEY_USAGE, KEY_USAGE_UNIT, tGUt, tEnergy));
-			}
-		} else {
-			tGUt *= -1;
-			rLines.add(unitLine(KEY_GAIN, KEY_GAIN_UNIT, tGUt * tDuration, tEnergy));
-			if (tMeta.showVoltageAmperage()) {
-				if (!tMeta.combinePower()) rLines.add(unitLine(KEY_OUTPUT, KEY_OUTPUT_UNIT, tGUt, tEnergy));
-				rLines.add(unitLine(KEY_TIER, KEY_TIER_UNIT, tGUt / aMap.mPower, tEnergy));
-				rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
-			} else if (tGUt != 1 && !tMeta.combinePower()) {
-				rLines.add(unitLine(KEY_OUTPUT, KEY_OUTPUT_UNIT, tGUt, tEnergy));
+		// Task r11-tu-costlines-slim, the user ruling 2026-10-03: TU == TIME — the duration
+		// IS the cost, so a TU-pinned map (autoclave/bath/coagulator/generifier/fusionreactor,
+		// the ENERGY_BY_MAP TU column) skips the whole Tier/Costs/Usage/Power face and the
+		// time line below is its only cost face. The FUSION "Start: n LU" special below
+		// keeps its seat, and the gear jump port (viewerGearPos) is unaffected — it draws
+		// off the spot, not off costLines.
+		if (!TD.Energy.TU.equals(tEnergy)) {
+			if (tGUt == 0) {
+				if (tMeta.showVoltageAmperage()) rLines.add(Component.translatable(KEY_TIER_UNSPECIFIED));
+			} else if (tGUt > 0) {
+				rLines.add(unitLine(KEY_COSTS, KEY_COSTS_UNIT, tGUt * tDuration, tEnergy));
+				if (tMeta.showVoltageAmperage()) {
+					if (!tMeta.combinePower()) rLines.add(unitLine(KEY_USAGE, KEY_USAGE_UNIT, tGUt, tEnergy));
+					rLines.add(unitLine(KEY_TIER, KEY_TIER_UNIT, tGUt / aMap.mPower, tEnergy));
+					rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
+				} else if (tGUt != 1 && !tMeta.combinePower()) {
+					rLines.add(unitLine(KEY_USAGE, KEY_USAGE_UNIT, tGUt, tEnergy));
+				}
+			} else {
+				tGUt *= -1;
+				rLines.add(unitLine(KEY_GAIN, KEY_GAIN_UNIT, tGUt * tDuration, tEnergy));
+				if (tMeta.showVoltageAmperage()) {
+					if (!tMeta.combinePower()) rLines.add(unitLine(KEY_OUTPUT, KEY_OUTPUT_UNIT, tGUt, tEnergy));
+					rLines.add(unitLine(KEY_TIER, KEY_TIER_UNIT, tGUt / aMap.mPower, tEnergy));
+					rLines.add(Component.translatable(KEY_POWER, aMap.mPower));
+				} else if (tGUt != 1 && !tMeta.combinePower()) {
+					rLines.add(unitLine(KEY_OUTPUT, KEY_OUTPUT_UNIT, tGUt, tEnergy));
+				}
 			}
 		}
 		if (tDuration > 0) rLines.add(timeLine(tDuration));
