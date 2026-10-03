@@ -1867,6 +1867,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("itemGroup.gt6.books"); // task tabfix-d-ruling — the written-books tab 说明书 (the tsv hand row; the port-ruling tab, no dump face)
 		addDirect("itemGroup.gt6.multiblocks");
 		addDirect("itemGroup.gt6.fluid_containers");
+		addDirect("itemGroup.gt6.cells"); // task cell-family-closeout — the dedicated cell tab 单元 (the tsv hand row; the port-ruling tab, no dump face)
 		addDirect("itemGroup.gt6.fluid_pipes");
 		addDirect("itemGroup.gt6.electric_wires");
 		addDirect(GTWires.REDSTONE_TAB_TITLE_KEY);
