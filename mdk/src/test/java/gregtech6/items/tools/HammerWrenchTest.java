@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Test;
 
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.registry.GT6Tools;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 public class HammerWrenchTest {
 
@@ -59,7 +60,7 @@ public class HammerWrenchTest {
 		// task machine-ladder: the ladder getMaxDamage read walks the GT.ToolStats
 		// fallback (GT6ToolStats.of(MT.Steel, ...)) — the material flood must be live
 		// (the DigLadderTest boot shape; MT class-load alone registers only NULL).
-		gregapi.data.MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 	}
 
 	private static ResourceLocation rl(String aPath) {

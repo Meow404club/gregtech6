@@ -46,6 +46,7 @@ import org.junit.jupiter.api.Test;
 import gregapi.data.MT;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.registry.GT6Tools;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 public class FileSawTest {
 
@@ -61,7 +62,7 @@ public class FileSawTest {
 		// batches ride MT.init() (the DigLadderTest boot shape). The saw's ladder fallback
 		// reads MT.Steel at getMaxDamage time, and an isolated test JVM has no other class
 		// whose @BeforeAll could flood the table first (the fix-three-npe NPE trap).
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 	}
 
 	private static ResourceLocation rl(String aPath) {

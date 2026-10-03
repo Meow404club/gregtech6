@@ -33,6 +33,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.recipes.maps.GT6RecipeMapCrucible;
 import gregtech6.registry.GT6Molds;
 import gregtech6.tileentity.GTOfflineTestBase;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The card-B mold truth tables (task crucible-mold-faucet acceptance b): the FULL
@@ -86,10 +87,7 @@ public class GT6MoldMaskTest extends GTOfflineTestBase {
 
 	@BeforeAll
 	static void boot() {
-		MaterialRegistry.INSTANCE.open();
-		MT.init();
-		gregapi.data.OP.init();
-		MaterialRegistry.INSTANCE.close();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 		// prime the LAZY MOLD_RECIPES fill HERE, with OP guaranteed ready (the 1210d009
 		// ordering) — the table-size test below must not depend on JUnit method order
 		TileEntityMold.getMoldRecipe(TileEntityMold.ingotShape(0));

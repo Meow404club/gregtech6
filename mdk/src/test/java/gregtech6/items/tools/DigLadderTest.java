@@ -24,6 +24,7 @@ import gregtech6.itemdata.GT6ToolStats;
 
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * Offline tests for task dig-ladder — the dig-family material ladder over the
@@ -47,7 +48,7 @@ public class DigLadderTest {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
 		// the full material flood — MT class-load only registers NULL (the GT6ItemDataTest boot shape)
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 		//? if forge {
 		// the serializer face the materialToolSerializerParsesAndStamps JSON parse consumes
 		// (the isolation card): CraftingHelper's dispatch map starts empty and only

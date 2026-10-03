@@ -487,6 +487,7 @@ public class GT6MultiBlockConverterTest extends GTMultiBlocksOfflineTestBase {
 	private static final long GAS_ROW_POWER = 64L * 30;
 
 	private static void pourFixtureGasRow() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		GT6RecipeMaps.GAS_FUELS.addRecipe(new Recipe(true,
 				new net.minecraft.world.item.ItemStack[0], new net.minecraft.world.item.ItemStack[0],

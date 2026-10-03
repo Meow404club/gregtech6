@@ -22,6 +22,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregapi.data.MT;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 // S31-1 review regression: the 1.21.1 DC registration dead-link. GT6ItemData's
 // @EventBusSubscriber <clinit> runs at mod construct, BEFORE any key-holding class
@@ -42,7 +43,7 @@ public class GT6ItemDataNeoRegistrationTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 	}
 
 	@Test

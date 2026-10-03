@@ -23,6 +23,7 @@ import net.minecraft.world.item.Items;
 
 import gregtech6.item.GT6Circuits;
 import gregtech6.recipes.GT6RecipesWelder.WelderWallRow;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The Welder wall rows in/out (task w3-nbtdesign-parts ④ acceptance ⑤ + task
@@ -224,12 +225,7 @@ public class GT6RecipesWelderRowTest {
 	 */
 	@Test
 	void everyRowMaterialResolvesInTheBootedRegistry() {
-		gregapi.oredict.MaterialRegistry.INSTANCE.open();
-		try {
-			gregapi.data.MT.init();
-		} catch (Throwable aIgnored) {
-			// the best-effort offline boot (the census-test form)
-		}
+		GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 		try {
 			for (WelderWallRow tRow : GT6RecipesWelder.table()) {
 				gregapi.oredict.OreDictMaterial tMat = GT6RecipesWelder.sMaterialResolver.apply(GT6RecipesWelder.materialNameOf(tRow.wallPath()));

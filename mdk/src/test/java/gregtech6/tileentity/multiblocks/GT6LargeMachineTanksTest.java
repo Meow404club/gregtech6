@@ -46,6 +46,7 @@ public class GT6LargeMachineTanksTest extends GTOfflineTestBase {
 	static void bootFixtureBet() {
 		// the idempotent bootstrap (GTMachinesOfflineTestBase.java:144 form) — the row
 		// ctor resolves the row's real map through the lazy supplier
+		gregtech6.recipes.GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		gregtech6.recipes.GT6RecipeMaps.init();
 		@SuppressWarnings("unchecked")
 		BlockEntityType<GTLargeMachineBlockEntity>[] tHolder =

@@ -16,7 +16,6 @@ package gregtech6.jei;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -32,6 +31,7 @@ import gregtech6.itemdata.GT6ItemData;
 import gregtech6.itemdata.GT6ToolStats;
 import gregtech6.items.tools.GT6MaterialToolRecipe;
 import gregtech6.items.tools.GT6ToolLadder;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 public class GT6MaterialToolJeiExtensionTest {
 
@@ -56,7 +56,7 @@ public class GT6MaterialToolJeiExtensionTest {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
 		// the full material flood (the DigLadderTest boot shape)
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 		//? if forge {
 		// duplicate-safe probe, not a boolean flag: in a full-suite JVM another test
 		// class' @BeforeAll may have registered it first (GTRecipesOfflineTestBase), and
@@ -86,9 +86,12 @@ public class GT6MaterialToolJeiExtensionTest {
 		ItemStack tIronDisplay = tIronRow.stampedDisplayResult();
 		ItemStack tBronzeDisplay = tBronzeRow.stampedDisplayResult();
 
-		assertSame(MT.Iron, GT6ItemData.get(tIronDisplay, GT6ToolStats.KEY).primaryMaterial(),
+		// the NAME identity, not the instance identity: the neo leg freezes the boot-registered
+		// recipe rows at mod construct, so a hermetic reset in a later class legitimately
+		// re-floods MT (task hermetic-pour-tests) — across generations the row identity is the name
+		assertEquals(MT.Iron.mNameInternal, GT6ItemData.get(tIronDisplay, GT6ToolStats.KEY).primaryMaterial().mNameInternal,
 				"the iron row's display stack carries the row identity (not bare)");
-		assertSame(MT.Bronze, GT6ItemData.get(tBronzeDisplay, GT6ToolStats.KEY).primaryMaterial(),
+		assertEquals(MT.Bronze.mNameInternal, GT6ItemData.get(tBronzeDisplay, GT6ToolStats.KEY).primaryMaterial().mNameInternal,
 				"the bronze row's display stack carries the row identity");
 
 		assertEquals(0xFFC8C8C8, GT6ToolLadder.fourPassTintARGB(tIronDisplay, 0),

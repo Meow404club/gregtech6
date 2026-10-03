@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.tileentity.GTOfflineTestBase;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 public class GT6CrucibleSolidFaceMatrixTest extends GTOfflineTestBase {
 
@@ -50,7 +51,7 @@ public class GT6CrucibleSolidFaceMatrixTest extends GTOfflineTestBase {
     @BeforeAll
     static void bootMaterials() {
         // the matrix walk dereferences MT statics (the GT6CrucibleBowlDatagenTest shape)
-        gregapi.data.MT.init();
+        GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
     }
 
     /** Every set name the MT.SET_* constants define (reflection, so a new constant can't be forgotten here). */

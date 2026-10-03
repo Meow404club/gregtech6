@@ -61,6 +61,7 @@ public class GT6MachineFamilyHoverTest extends GTOfflineTestBase {
 		// the maps are volatile, NULL until init() — the same lifecycle onModConstruct runs.
 		// On the FML-booted 21.1 leg the mod construct ALREADY walked (GT6Tooltips.register
 		// is fail-loud on duplicates) — the containsKey guard makes the seat both-legs safe.
+		gregtech6.recipes.GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		gregtech6.recipes.GT6RecipeMaps.init();
 		if (!GT6Tooltips.REGISTRY.containsKey("machine:dryer")) {
 			GTMachines.registerMachineTooltipRows();

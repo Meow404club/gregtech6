@@ -122,6 +122,7 @@ public class GT6P34MachineRowsTest extends TileEntityBasicMachineOfflineTestBase
 	/** The RM.java:73/:107 constants rows over the port ctor. */
 	@Test
 	void theTwoMapsCarryTheRMJavaConstantsRows() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		// RM.java:73 — items 1/1/1, fluids 3/0/1, MIN 1, AMP 1
 		assertEquals("gt.recipe.crystallisationcrucible", GT6RecipeMaps.CRYSTALLISATION_CRUCIBLE.mNameInternal, "the :73 unlocalized name");

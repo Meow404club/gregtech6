@@ -17,6 +17,7 @@ import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
 
 import gregapi.data.MT;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * Offline census pin for task redstone-wire-tint-reg — the wire tint registration seams
@@ -56,7 +57,7 @@ public class GTWireTintCensusTest {
         } catch (Throwable ignored) {
             // NetworkHooks.init() failure is expected offline; registries are ready by now.
         }
-        MT.init();
+        GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
     }
 
     /** Acceptance: the ItemColor registration covers the electric + redstone + laser families. */

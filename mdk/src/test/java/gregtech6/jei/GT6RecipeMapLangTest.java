@@ -90,6 +90,7 @@ class GT6RecipeMapLangTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	void everyVisibleMapTitleExistsInBothLocalesAndEnIsTheLiveLocalName() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
 			String tKey = GT6RecipeMapViewerMeta.titleKey(tMap);

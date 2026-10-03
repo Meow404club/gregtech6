@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import gregtech6.client.GTClientHandlers;
 
 import gregapi.data.MT;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * Offline census pin for task tint-coverage-batch — the ItemColors registration seam
@@ -46,7 +47,7 @@ public class ToolIdentityItemColorsCensusTest {
 		} catch (Throwable ignored) {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 	}
 
 	/** Acceptance: the seam carries exactly the ten ids (no drift, no omission — the file row is the root-cause pin). */

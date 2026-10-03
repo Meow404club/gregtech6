@@ -31,6 +31,7 @@ import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
 import net.minecraftforge.fluids.FluidStack;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The CRUCIBLE_SMELTING/CRUCIBLE_ALLOYING map faces (task crucible-physics-smeltery
@@ -113,6 +114,7 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 		INGOT_HID = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_hidden", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, HIDDEN_COMP));
 		DUST_SS = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_stainless_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.StainlessSteel));
 		INGOT_SS = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_stainless_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.StainlessSteel));
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		// the mat() seam rides the probe items (the intrusive-holder lesson: the live
 		// GTMaterialItems index is empty offline); restored in @AfterAll
@@ -355,10 +357,7 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 			} catch (Throwable ignored) {
 				// NetworkHooks.init() failure is expected offline; registries are ready by now.
 			}
-			MaterialRegistry.INSTANCE.open();
-			MT.init();
-			gregapi.data.OP.init();
-			MaterialRegistry.INSTANCE.close();
+			GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 		}
 
 		static MaterialPrefixItem probePrefix(String aProbeId, java.util.function.Supplier<MaterialPrefixItem> aCreator) {

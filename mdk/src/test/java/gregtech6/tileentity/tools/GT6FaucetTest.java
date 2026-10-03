@@ -20,6 +20,7 @@ import gregapi.oredict.OreDictMaterialStack;
 import gregapi.tileentity.machines.ITileEntityCrucible;
 import gregapi.tileentity.machines.ITileEntityMold;
 import gregtech6.tileentity.GTOfflineTestBase;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The card-B faucet truth tables (task crucible-mold-faucet): the monkey-wrench
@@ -41,10 +42,7 @@ public class GT6FaucetTest extends GTOfflineTestBase {
 		// the material boot BEFORE any BE fixture class-loads TileEntityMold — the BE
 		// static blocks read OP.* at <clinit> (the P23/P6 lesson: a null-poisoned static
 		// table never re-runs; the production order is data-init BEFORE BE class-load)
-		gregapi.oredict.MaterialRegistry.INSTANCE.open();
-		MT.init();
-		gregapi.data.OP.init();
-		gregapi.oredict.MaterialRegistry.INSTANCE.close();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 		BlockEntityType<TestFaucet>[] tFaucets = (BlockEntityType<TestFaucet>[]) new BlockEntityType<?>[1];
 		tFaucets[0] = BlockEntityType.Builder.of((aPos, aState) -> new TestFaucet(tFaucets[0], aPos, aState), Blocks.STONE).build(null);
 		sFaucetType = tFaucets[0];

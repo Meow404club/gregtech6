@@ -39,6 +39,7 @@ import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Molds;
 import gregtech6.recipes.maps.GT6RecipeMapCrucible;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The offline Smeltery/Mold BE acceptance (task crucible-physics-smeltery): the
@@ -471,10 +472,7 @@ public class TileEntitySmelteryOfflineTest {
 			} catch (Throwable ignored) {
 				// NetworkHooks.init() failure is expected offline; registries are ready by now.
 			}
-			MaterialRegistry.INSTANCE.open();
-			MT.init();
-			OP.init();
-			MaterialRegistry.INSTANCE.close();
+			GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 		}
 
 		static MaterialPrefixItem probePrefix(String aProbeId, java.util.function.Supplier<MaterialPrefixItem> aCreator) {

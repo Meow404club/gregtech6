@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 
 import gregapi.data.MT;
 import gregtech6.items.tools.GTCrowbarItem;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The GT6ItemData keyed access seam — task identity-seam acceptance: the
@@ -44,7 +45,7 @@ public class GT6ItemDataTest {
 		}
 		// the full material flood — MT class-load only registers NULL (MT.java:1366-1371);
 		// Steel & co. exist after init() (the GT6CrucibleLadderCensusTest boot shape)
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
 	}
 
 	// ------------------------------------------------------------- round trip

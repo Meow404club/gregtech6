@@ -11,11 +11,13 @@ import java.util.List;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregapi.oredict.MaterialStackSerializer;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.data.MT;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * MaterialStackNBT — the CompoundTag Storage adapter over
@@ -25,6 +27,11 @@ import gregapi.data.MT;
  * compatibility (MaterialStackSerializer.java:37-38).
  */
 public class MaterialStackNBTTest extends GTOfflineTestBase {
+
+	@BeforeAll
+	static void bootMaterials() {
+		GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
+	}
 
 	@Test
 	public void idKeyIsStoredAsShortForGt6SaveCompatibility() {
@@ -52,8 +59,6 @@ public class MaterialStackNBTTest extends GTOfflineTestBase {
 
 	@Test
 	public void registeredMaterialRoundTripsThroughIdKey() {
-		MT.init(); // real material identity from the live registry (pure Java flood)
-
 		OreDictMaterialStack tStack = new OreDictMaterialStack(MT.Iron, 12345L);
 		assertTrue(MT.Iron.mID >= 0, "precondition: Iron is a registered material");
 
@@ -95,7 +100,6 @@ public class MaterialStackNBTTest extends GTOfflineTestBase {
 
 	@Test
 	public void crucibleContentListRoundTrips() {
-		MT.init();
 		assertTrue(MT.Iron.mID >= 0 && MT.Copper.mID >= 0, "precondition: registered materials");
 
 		List<OreDictMaterialStack> tContent = new ArrayList<>();
@@ -124,7 +128,6 @@ public class MaterialStackNBTTest extends GTOfflineTestBase {
 
 	@Test
 	public void crucibleContentListDropsNullMaterialEntries() {
-		MT.init();
 		// upstream :136/:152 — MT.NULL entries are skipped on save and on load
 		List<OreDictMaterialStack> tContent = new ArrayList<>();
 		tContent.add(new OreDictMaterialStack(MT.NULL, 25L));

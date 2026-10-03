@@ -100,6 +100,7 @@ public class GT6QuMachinesRegistrationTest {
 	/** The map suppliers: the LIVE subclasses (the p32 runtime chain), not the base map. */
 	@Test
 	public void theRowsSupplierTheLiveRuntimeMaps() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init(); // a sibling class's @AfterEach reset nulls the volatiles — re-init before the reads
 		assertSame(gregtech6.recipes.GT6RecipeMaps.SCANNER_MOLECULAR, GTMachines.MOLECULAR_SCANNER_ROWS.get(0).recipes().get(),
 				"the scanner rides RM.ScannerMolecular");
@@ -117,6 +118,7 @@ public class GT6QuMachinesRegistrationTest {
 		boolean tLive = BuiltInRegistries.BLOCK.containsKey(new ResourceLocation("gt6", "replicator"));
 		String[] tPaths = {"molecular_scanner_t3", "replicator", "replicator_t2", "replicator_t3"};
 		if (tLive) { // the FML-booted leg — the id686 guard
+			GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 			GT6RecipeMaps.init(); // idempotent — the exoticMachine body reads the row's map supplier at BE creation
 			for (String tPath : tPaths) {
 				ResourceLocation tId = new ResourceLocation("gt6", tPath);

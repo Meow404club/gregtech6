@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 /**
  * The LARGE CRUCIBLE offline physics suite (task crucible-multiblock acceptance ②/④):
@@ -100,8 +101,7 @@ public class GTMultiBlockCruciblePhysicsTest extends GTMultiBlocksOfflineTestBas
 		sWallType = tWallHolder[0];
 		// the real MT dataset (the CruciblePhysicsTest posture) — the physics and the
 		// alloy graph must be live before any stack is built
-		MaterialRegistry.INSTANCE.open();
-		MT.init();
+		GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill (task hermetic-pour-tests)
 		MaterialGraph.applyCrucibleAlloyReferences();
 	}
 

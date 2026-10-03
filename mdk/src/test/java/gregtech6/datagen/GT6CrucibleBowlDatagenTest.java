@@ -40,6 +40,7 @@ import com.google.gson.JsonParser;
 
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.tileentity.GTOfflineTestBase;
+import gregtech6.registry.GT6MaterialTestSupport;
 
 public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
 
@@ -55,7 +56,7 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
     @BeforeAll
     static void bootMaterials() {
         // the seam dispatch dereferences MT statics (the GT6MoldTintDatagenTest shape)
-        gregapi.data.MT.init();
+        GT6MaterialTestSupport.materials(); // the hermetic bracket (task hermetic-pour-tests)
     }
 
     private static JsonObject generatedJson(String aPath) throws Exception {

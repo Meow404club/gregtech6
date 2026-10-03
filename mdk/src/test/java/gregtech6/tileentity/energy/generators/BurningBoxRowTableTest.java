@@ -60,6 +60,7 @@ public class BurningBoxRowTableTest extends GTOfflineTestBase {
 
 	@BeforeAll
 	static void initMaps() {
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 	}
 

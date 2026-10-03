@@ -69,6 +69,7 @@ public class GTGeneratorLiquidBlockEntityTest extends GTOfflineTestBase {
 		sLiquidType = BlockEntityType.Builder.of(FixtureLiquidBox::new, Blocks.STONE).build(null);
 		sGasType = BlockEntityType.Builder.of(FixtureGasBox::new, Blocks.STONE).build(null);
 		sFluidBedType = BlockEntityType.Builder.of(FixtureFluidBed::new, Blocks.STONE).build(null);
+		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 	}
 
