@@ -45,6 +45,7 @@ import gregtech6.emi.GT6EmiPlugin;
 import gregtech6.emi.GT6MultiblockPreviewEmiCategory;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
+import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6DynamoHousings;
 import gregtech6.registry.GT6LargeMachines;
@@ -459,10 +460,12 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		}
 		assertEquals(24, tWalls, "three 8-cell rings (26 cells total with the hollow pair)");
 		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
-				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
-		assertEquals(24, tFill.size(), "every wall renders");
-		assertFalse(tFill.containsKey(BlockPos.ZERO),
-				"the bottom centre — the real controller seat — is never declared (the upstream pattern)");
+				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, BlockPos.ZERO);
+		assertEquals(25, tFill.size(), "every wall renders + the additive controller on the undeclared seat");
+		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(BlockPos.ZERO),
+				"the bottom centre — the real controller seat (upstream :118/:140) — paints additively (the D2 ruling)");
+		assertSame(Blocks.BRICKS, tFill.get(new BlockPos(0, 0, -1)).getBlock(),
+				"the anchor law's (0,0,-1) ring wall is back to being a wall");
 		assertFalse(GT6MultiblockPreviews.materialCounts(tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING)
 				.isEmpty(), "the shopping list renders");
 	}
@@ -592,12 +595,13 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void implosionPreviewRendersTheShellAroundTheHollowCentre() {
 		// the :1228 direct collect — the 26 dense-wall cells + the fail-not-clear hollow
-		// centre (the +1-Y bake, (0,1,0)); the controller paints the anchor cell (0,0,-1)
-		// over a shell wall — the crucible legacy ① seam ruling, generalization is D2's
+		// centre (the +1-Y bake, (0,1,0)); the controller paints the front-bottom-centre
+		// shell cell (0,0,-1) — the anchor law IS the true seat (upstream :48/:69), the
+		// D2 row declares it explicitly
 		GTMultiBlockPattern tPattern = new PreviewImplosion(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState())
 				.getStructurePattern();
 		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
-				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
+				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -1));
 		assertEquals(26, tFill.size(), "25 walls + the controller painted on the anchor cell");
 		assertFalse(tFill.containsKey(new BlockPos(0, 1, 0)), "the hollow centre never renders");
 		Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(
@@ -619,11 +623,13 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		}
 		GTMultiBlockPattern tStamped = GT6MultiblockPreviews.withDisplayBlocks(tRaw, Blocks.BRICKS, Blocks.STONE);
 		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
-				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
-		assertEquals(17, tFill.size(), "8 walls + 8 transmitters + the centre wall");
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, BlockPos.ZERO);
+		assertEquals(18, tFill.size(), "8 walls + 8 transmitters + the centre wall + the additive controller");
+		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(BlockPos.ZERO),
+				"the undeclared bottom-centre seat paints additively (upstream :89-96/:125, the D2 ruling)");
 		Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(
-				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
-		assertEquals(Integer.valueOf(8), tCounts.get(Blocks.BRICKS), "9 walls minus the anchor-painted controller");
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, BlockPos.ZERO);
+		assertEquals(Integer.valueOf(9), tCounts.get(Blocks.BRICKS), "the full 9-wall ring — no controller painted over");
 		assertEquals(Integer.valueOf(8), tCounts.get(Blocks.STONE), "the transmitter ring");
 		assertEquals(Integer.valueOf(1), tCounts.get(CONTROLLER));
 	}
@@ -752,7 +758,9 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		// 9 transmitters at y-1 + 72 column cells at y0..y7, GT6Distillation :372), zero
 		// re-stamp. The facing spot-check (the research risk face): the design-1 hole
 		// column rides the +anchor direction, the anchor law paints the controller on the
-		// -anchor cell — collinear opposite, the hole follows the facing
+		// -anchor cell — collinear opposite, the hole follows the facing. (The D2 row
+		// declares that same cell — (0,0,-1) in the canonical north frame; the facing
+		// loop here rides the 3-arg anchor law, which is the facing-rotated form of it.)
 		PreviewTower tFixture = towerFixture();
 		GTMultiBlockPattern tPattern = tFixture.getStructurePattern();
 		assertEquals(81, tPattern.cells().size(), "9 transmitters + 72 column cells");
@@ -963,10 +971,12 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 			assertFalse(tCell.y <= 1 && Math.abs(tCell.x) == 2 && Math.abs(tCell.z) == 2, "the base corners are cut (|i*j|<4)");
 		}
 		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
-				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
+				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, BlockPos.ZERO);
 		assertEquals(64, tFill.size(), "every declared cell renders");
-		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(new BlockPos(0, 0, -1)),
-				"the anchor law paints the controller over a base wall (the crucible legacy ① — the true seat (0,0,0) is the zero-offset walk, generalization is D2's)");
+		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(BlockPos.ZERO),
+				"the controller paints its zero-offset base-centre seat (upstream :66-93, the D2 ruling)");
+		assertSame(Blocks.BRICKS, tFill.get(new BlockPos(0, 0, -1)).getBlock(),
+				"the anchor law's (0,0,-1) stays a base wall");
 		assertFalse(GT6MultiblockPreviews.materialCounts(tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING)
 				.isEmpty(), "the shopping list renders");
 	}
@@ -976,39 +986,48 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		// task mbpreview-data-d2-authored, user ruling A1: the seam paints the controller
 		// on the row's TRUE controller cell, per-machine upstream evidence (the anchor law
 		// (0,0,-1) stays the FALLBACK for the rows whose seat IS -anchor). Pinned over the
-		// fixture shapes — the same pin the row data carries once the D2 seam lands.
+		// fixture shapes with the rows' declared cells (the red commit drove these same
+		// assertions through the seat-less 3-arg seam and they failed for the four
+		// mispainted machines).
 		byte tFacing = GT6MultiblockPreviews.DISPLAY_FACING;
 		// the crucible (8 tiers): the walk SKIPS the bottom centre (MultiTileEntityCrucible
-		// :118 `if (i != 0 || j != 0)`) — "Main at Bottom-Center" (:140): seat (0,0,0)
+		// :118 `if (i != 0 || j != 0)`) — "Main at Bottom-Center" (:140): seat (0,0,0),
+		// painted ADDITIVELY (the pattern never declares it)
 		Map<BlockPos, BlockState> tCrucible = GT6MultiblockPreviews.structureBlocks(
 				new PreviewCrucible(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
-				CONTROLLER, tFacing);
+				CONTROLLER, tFacing, BlockPos.ZERO);
 		assertEquals(CONTROLLER.defaultBlockState(), tCrucible.get(BlockPos.ZERO),
 				"the crucible controller paints its bottom-centre seat (upstream :118/:140)");
+		assertEquals(25, tCrucible.size(), "24 walls + the additive controller (the old anchor paint is gone)");
+		assertSame(Blocks.BRICKS.defaultBlockState().getBlock(), tCrucible.get(new BlockPos(0, 0, -1)).getBlock(),
+				"the anchor law's (0,0,-1) ring wall is back to being a wall");
 		// the heat exchanger: the y0 ring declares 8, the centre stays undeclared
 		// (MultiTileEntityLargeHeatExchanger :89-96, zero-offset walk :85) — "with Main
-		// inside" (:125): seat (0,0,0), controller-relative frame
+		// inside" (:125): seat (0,0,0), controller-relative frame, additive
 		Map<BlockPos, BlockState> tHex = GT6MultiblockPreviews.structureBlocks(
 				GT6MultiblockPreviews.withDisplayBlocks(
 						new PreviewHeatExchanger(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
 						Blocks.BRICKS, Blocks.STONE),
-				CONTROLLER, tFacing);
+				CONTROLLER, tFacing, BlockPos.ZERO);
 		assertEquals(CONTROLLER.defaultBlockState(), tHex.get(BlockPos.ZERO),
 				"the HEX controller paints its undeclared bottom-centre seat (upstream :89-96/:125)");
+		assertEquals(18, tHex.size(), "8 walls + 8 transmitters + the centre wall + the additive controller");
 		// the implosion compressor: the shell cube centres on controller + anchor + up
 		// (:48 tY = yCoord+1) — "Main Block centered on Side-Bottom" (:69): the controller
 		// IS the front-bottom-centre shell cell = pattern cell (0,0,-1) — the anchor law
 		// already lands it (the B-batch legacy-① suspicion dissolves: no seat change)
 		Map<BlockPos, BlockState> tImplosion = GT6MultiblockPreviews.structureBlocks(
 				new PreviewImplosion(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
-				CONTROLLER, tFacing);
+				CONTROLLER, tFacing, new BlockPos(0, 0, -1));
 		assertEquals(CONTROLLER.defaultBlockState(), tImplosion.get(new BlockPos(0, 0, -1)),
 				"the implosion seat (0,0,-1) IS the anchor law (upstream :48/:69)");
+		assertEquals(26, tImplosion.size(), "the declared seat paints over its shell wall — no additive cell");
 		// the distillation towers: the pattern frame is the centre one cell behind the
 		// facing (upstream :53, port centre()) and the walk DECLARES the controller seat
-		// as a 18102 part cell — the anchor law (0,0,-1) already lands it
+		// as a 18102 part cell — the anchor law (0,0,-1) is exactly it, now declared
+		// (the canonical north form of the per-facing cell)
 		Map<BlockPos, BlockState> tTower = GT6MultiblockPreviews.structureBlocks(
-				towerFixture().getStructurePattern(), CONTROLLER, tFacing);
+				towerFixture().getStructurePattern(), CONTROLLER, tFacing, new BlockPos(0, 0, -1));
 		assertEquals(CONTROLLER.defaultBlockState(), tTower.get(new BlockPos(0, 0, -1)),
 				"the tower seat (0,0,-1) IS the anchor law (upstream :53, the declared part cell)");
 		// the Von da Graagg: the ZERO-OFFSET walk (upstream :66-93 — no facing
@@ -1016,18 +1035,306 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		// the controller's own cell: seat (0,0,0), NOT the anchor law's (0,0,-1)
 		Map<BlockPos, BlockState> tGraagg = GT6MultiblockPreviews.structureBlocks(
 				new PreviewGraagg(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState()).getStructurePattern(),
-				CONTROLLER, tFacing);
+				CONTROLLER, tFacing, BlockPos.ZERO);
 		assertEquals(CONTROLLER.defaultBlockState(), tGraagg.get(BlockPos.ZERO),
 				"the Graagg controller paints its zero-offset seat (upstream :66-93)");
-		assertFalse(tGraagg.containsKey(new BlockPos(0, 0, -1)),
+		assertSame(Blocks.BRICKS.defaultBlockState().getBlock(), tGraagg.get(new BlockPos(0, 0, -1)).getBlock(),
 				"the anchor law's (0,0,-1) stays a base wall for the Graagg");
 		// the bedrock drill: the ZERO-OFFSET walk (upstream :87-117
 		// checkAndSetTargetOffset) — the y0 loop includes the controller's own cell, the
 		// display declaration carries it: seat (0,0,0)
 		Map<BlockPos, BlockState> tDrill = GT6MultiblockPreviews.structureBlocks(
-				GT6MultiblockPreviews.bedrockDrillShape(Blocks.BRICKS, Blocks.STONE), CONTROLLER, tFacing);
+				GT6MultiblockPreviews.bedrockDrillShape(Blocks.BRICKS, Blocks.STONE), CONTROLLER, tFacing, BlockPos.ZERO);
 		assertEquals(CONTROLLER.defaultBlockState(), tDrill.get(BlockPos.ZERO),
 				"the drill controller paints its zero-offset self-cell (upstream :87-117)");
+	}
+
+	@Test
+	public void rowSeatDeclarationsPinTheUpstreamTrueCells() {
+		// the D2 seat TABLE on the rows themselves (acceptance ②): the declared cell per
+		// machine — the six retro rows and the four authored ones; every other row keeps
+		// the anchor-law null. Upstream anchors: crucible MultiTileEntityCrucible :118
+		// (skip)+:140; HEX :89-96+:125; implosion :48+:69; tower :53; Graagg :66-93;
+		// drill :87-117; massfab :46 (the corner arithmetic, seat = front-bottom-centre);
+		// fusion :48 (the 2x-anchor core, seat = the front axis tip); logistics :110;
+		// rod :76-84 (zero-offset, "Main at Center" :89)
+		Map<String, BlockPos> tSeats = new java.util.LinkedHashMap<>();
+		for (GT6MultiblockPreviews.Entry tEntry : GT6MultiblockPreviews.entries()) {
+			tSeats.put(tEntry.name(), tEntry.controllerCell());
+		}
+		BlockPos tOrigin = BlockPos.ZERO;
+		BlockPos tFront = new BlockPos(0, 0, -1);
+		BlockPos tCoreFront = new BlockPos(0, 0, -2);
+		for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) {
+			assertEquals(tOrigin, tSeats.get(tRow.path()), tRow.path() + ": the bottom-centre seat");
+		}
+		assertEquals(tFront, tSeats.get("implosion_compressor"), "the implosion front-bottom-centre shell cell");
+		assertEquals(tOrigin, tSeats.get("large_heat_exchanger"), "the HEX undeclared bottom centre");
+		assertEquals(tFront, tSeats.get("distillation_tower"), "the tower's declared part cell at -anchor");
+		assertEquals(tFront, tSeats.get("cryo_distillation_tower"), "the cryo twin");
+		assertEquals(tOrigin, tSeats.get("von_da_graagg"), "the Graagg zero-offset base centre");
+		assertEquals(tOrigin, tSeats.get("bedrock_drill"), "the drill zero-offset self-cell");
+		assertEquals(tCoreFront, tSeats.get("large_massfab"), "the massfab front-bottom-centre of the 5x5x5");
+		assertEquals(tCoreFront, tSeats.get("fusion_reactor"), "the fusion front axis-tip shell cell");
+		assertEquals(tCoreFront, tSeats.get("logistics_core"), "the logistics front-centre vent cell");
+		assertEquals(tOrigin, tSeats.get("multiblock_lightning_rod"), "the rod bottom-centre (zero-offset)");
+		// the anchor-law rows: null keeps the fallback (spot representatives per family)
+		assertNull(tSeats.get("multiblock_coke_oven"), "the coke oven seat IS -anchor (the anchor law)");
+		assertNull(tSeats.get("large_boiler_stainless_steel"), "the boiler keeps the anchor law");
+		assertNull(tSeats.get("steam_turbine_magnalium"), "the converters keep the anchor law");
+		assertNull(tSeats.get("tank_wood"), "the tank valves keep the anchor law (the seat law by construction)");
+		int tDeclared = 0;
+		for (GT6MultiblockPreviews.Entry tEntry : GT6MultiblockPreviews.entries()) {
+			if (tEntry.controllerCell() != null) tDeclared++;
+		}
+		assertEquals(18, tDeclared, "8 crucibles + implosion + HEX + 2 towers + Graagg + drill + the D2 four");
+	}
+
+	// ------------------------------------------------------------------
+	// the batch-D2 authored pins (task mbpreview-data-d2-authored): the
+	// three quota-machine display shapes (the cell ledgers counted
+	// item-by-item against the upstream walks), the rod's minimal
+	// representative, and the predicate-candidate display face
+	// ------------------------------------------------------------------
+
+	/** The fusion fixture identities (distinct vanilla blocks per upstream part id). */
+	private static GTMultiBlockPattern fusionFixture() {
+		return GT6MultiblockPreviews.fusionShape(Blocks.IRON_BLOCK, Blocks.BRICKS, Blocks.STONE,
+				Blocks.GLOWSTONE, Blocks.OBSIDIAN, List.of(Blocks.GOLD_BLOCK, Blocks.LAPIS_BLOCK, Blocks.REDSTONE_BLOCK));
+	}
+
+	@Test
+	public void fusionShapePinsTheCellLedger() {
+		// acceptance ③ — the :47-126 walk transcribed: 887 cells = the 5x5x5 core (27 PU
+		// predicate + 48 walls incl. the (0,0,-2) front axis tip + 50 vents) + the 6 arms
+		// (the facing -z pair dropped, :74-89) + the OCTAGONS base (216 glass + 360
+		// glass/coil + 180 glass/coil/stainless — TileEntityFusionReactor.OCTAGONS verbatim)
+		GTMultiBlockPattern tPattern = fusionFixture();
+		int tPu = 0, tWall = 0, tVent = 0, tGlass = 0, tCoil = 0, tSs = 0, tArms = 0;
+		int tOutTips = 0, tInRing = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			assertFalse(tCell.isHollow(), "the fusion declares every cell");
+			Block tBlock = tCell.partBlock;
+			if (tBlock == null) {
+				tPu++;
+				assertTrue(tCell.predicate.test(Blocks.GOLD_BLOCK.defaultBlockState())
+						&& tCell.predicate.test(Blocks.LAPIS_BLOCK.defaultBlockState())
+						&& tCell.predicate.test(Blocks.REDSTONE_BLOCK.defaultBlockState()),
+						"the PU core cells accept all three quadcores (the :56-64 chain)");
+				continue;
+			}
+			if (tCell.y == 0 && ((Math.abs(tCell.x) == 3 || Math.abs(tCell.x) == 4) && tCell.z == 0
+					|| (Math.abs(tCell.z) == 3 || Math.abs(tCell.z) == 4) && tCell.x == 0)) tArms++; // the ±3/±4 arms
+			if (tBlock == Blocks.IRON_BLOCK) tWall++;
+			else if (tBlock == Blocks.OBSIDIAN) tVent++;
+			else if (tBlock == Blocks.BRICKS) tGlass++;
+			else if (tBlock == Blocks.GLOWSTONE) tCoil++;
+			else if (tBlock == Blocks.STONE) tSs++;
+			if (tCell.usage == MultiBlockPartBlockEntity.ONLY_ENERGY_OUT) {
+				tOutTips++;
+				assertEquals(2, tCell.design, "the ring tips are the design-2 OUT faces (:97)");
+			} else if (tCell.usage == MultiBlockPartBlockEntity.ONLY_ENERGY_IN && tBlock == Blocks.BRICKS) {
+				tInRing++;
+				assertEquals(5, tCell.design, "the idle ring input design (:99, the mActive flip is the BE's)");
+			}
+		}
+		assertEquals(887, tPattern.cells().size(), "the full reactor: 125 core + 6 arms + 756 base");
+		assertEquals(27, tPu, "the d²<4 quadcore quota cells");
+		assertEquals(54, tWall, "48 shell (axis tips included) + 6 arms = the 53 blocks + the controller seat");
+		assertEquals(50, tVent, "the ventilation shell (the :68 fifty)");
+		assertEquals(576, tGlass, "the 216 + 288 + 72 Tungstensteel 'glass' (the :195 tooltip ledger)");
+		assertEquals(144, tCoil, "the 72 + 72 Iridium coils (:196)");
+		assertEquals(36, tSs, "the Stainless Steel wall ring (:196)");
+		assertEquals(6, tArms, "the ±3/±4 arms minus the facing pair");
+		assertEquals(4, tOutTips, "the four orthogonal ring tips");
+		assertEquals(68, tInRing, "the 72-ring minus its four tips");
+		// the dropped facing arm: no cells at (0,0,-3)/(0,0,-4); the back pair declared
+		assertNull(GT6MultiblockPreviews.cellAt(tPattern, new BlockPos(0, 0, -3)),
+				"the facing -z arm is the skipped one (:74-89 at north)");
+		assertNull(GT6MultiblockPreviews.cellAt(tPattern, new BlockPos(0, 0, -4)), "the facing arm's far cell too");
+		assertNotNull(GT6MultiblockPreviews.cellAt(tPattern, new BlockPos(0, 0, 4)), "the back +z arm rides");
+	}
+
+	@Test
+	public void fusionPreviewRendersTheStampedLedgerAndTheFrontSeat() {
+		// the row's composition: withDisplayBlocks stamps the PU core to its FIRST
+		// candidate (the r11 Q3 degrade), the seat (0,0,-2) paints the controller over
+		// the front axis-tip wall — the ledger closes to the :195-197 tooltip counts
+		GTMultiBlockPattern tStamped = GT6MultiblockPreviews.withDisplayBlocks(fusionFixture(),
+				Blocks.GOLD_BLOCK, Blocks.LAPIS_BLOCK, Blocks.REDSTONE_BLOCK);
+		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -2));
+		assertEquals(887, tFill.size(), "every declared cell renders");
+		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(new BlockPos(0, 0, -2)),
+				"the controller paints the front axis tip — the 2x-anchor seat (upstream :48)");
+		assertEquals(Blocks.GOLD_BLOCK.defaultBlockState(), tFill.get(BlockPos.ZERO),
+				"the core centre renders the FIRST quadcore candidate");
+		Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -2));
+		assertEquals(Integer.valueOf(53), tCounts.get(Blocks.IRON_BLOCK), "the 54 declared walls minus the seat");
+		assertEquals(Integer.valueOf(50), tCounts.get(Blocks.OBSIDIAN), "the fifty vents");
+		assertEquals(Integer.valueOf(576), tCounts.get(Blocks.BRICKS), "the glass ledger");
+		assertEquals(Integer.valueOf(144), tCounts.get(Blocks.GLOWSTONE), "the coil ledger");
+		assertEquals(Integer.valueOf(36), tCounts.get(Blocks.STONE), "the stainless ledger");
+		assertEquals(Integer.valueOf(27), tCounts.get(Blocks.GOLD_BLOCK), "the core renders as 27 first candidates");
+		assertEquals(Integer.valueOf(1), tCounts.get(CONTROLLER));
+	}
+
+	@Test
+	public void massfabShapePinsTheCellLedger() {
+		// acceptance ③ — the :45-224 walk: 150 cells = 98 Dense Lead Walls + 26 Osmium
+		// Coils + the fail-not-clear AIR centre + 16 vents + 1 versatile + the 8-cell
+		// 4+4 quota ring (the port class doc's own arithmetic; the upstream :227 tooltip
+		// says 97 — its own miscount, the checks walk 98)
+		GTMultiBlockPattern tPattern = GT6MultiblockPreviews.massfabShape(Blocks.IRON_BLOCK, Blocks.GLOWSTONE,
+				Blocks.OBSIDIAN, Blocks.GOLD_BLOCK, List.of(Blocks.REDSTONE_BLOCK, Blocks.LAPIS_BLOCK));
+		int tWall = 0, tCoil = 0, tVent = 0, tVersatile = 0, tQuota = 0, tHollow = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			if (tCell.isHollow()) {
+				tHollow++;
+				assertEquals(new BlockPos(0, 2, 0), new BlockPos(tCell.x, tCell.y, tCell.z),
+						"the exact centre must stay air (:114)");
+				continue;
+			}
+			if (tCell.partBlock == Blocks.IRON_BLOCK) tWall++;
+			else if (tCell.partBlock == Blocks.GLOWSTONE) tCoil++;
+			else if (tCell.partBlock == Blocks.OBSIDIAN) tVent++;
+			else if (tCell.partBlock == Blocks.GOLD_BLOCK) tVersatile++;
+			else {
+				tQuota++;
+				assertEquals(5, tCell.y, "the quota ring rides the top layer");
+				assertTrue(Math.abs(tCell.x) <= 1 && Math.abs(tCell.z) <= 1, "the inner 3x3 minus the centre");
+			}
+		}
+		assertEquals(150, tPattern.cells().size(), "98 + 26 + 1 air + 16 + 1 + 8");
+		assertEquals(98, tWall, "the lead walls (25+16+16+16+25)");
+		assertEquals(26, tCoil, "the osmium coils (9+8+9)");
+		assertEquals(16, tVent, "the 5x5 ring's 16 vents (:180-195)");
+		assertEquals(1, tVersatile, "the centre versatile PU (:197)");
+		assertEquals(8, tQuota, "the Control/Conversion quota ring (:201-217)");
+		assertEquals(1, tHollow, "the air centre");
+		// the stamped render: the seat (0,0,-2) paints the controller over the
+		// front-bottom-centre wall, the quota ring stamps its first candidate
+		GTMultiBlockPattern tStamped = GT6MultiblockPreviews.withDisplayBlocks(tPattern,
+				Blocks.REDSTONE_BLOCK, Blocks.LAPIS_BLOCK);
+		Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -2));
+		assertEquals(149, GT6MultiblockPreviews.structureBlocks(tStamped, CONTROLLER,
+				GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -2)).size(), "149 render (the air stays air)");
+		assertEquals(Integer.valueOf(97), tCounts.get(Blocks.IRON_BLOCK), "98 walls minus the seat cell");
+		assertEquals(Integer.valueOf(26), tCounts.get(Blocks.GLOWSTONE));
+		assertEquals(Integer.valueOf(16), tCounts.get(Blocks.OBSIDIAN));
+		assertEquals(Integer.valueOf(1), tCounts.get(Blocks.GOLD_BLOCK));
+		assertEquals(Integer.valueOf(8), tCounts.get(Blocks.REDSTONE_BLOCK), "the ring stamps the FIRST candidate");
+		assertEquals(Integer.valueOf(1), tCounts.get(CONTROLLER), "the front-bottom-centre seat");
+	}
+
+	@Test
+	public void logisticsCoreShapePinsTheCellLedger() {
+		// acceptance ③ — the :109-147 walk: 125 cells = the 27 CPU predicate cells of
+		// d²<4 (:119-133, the six candidates incl. the wall cheapskate arm) + the 44
+		// walls of d²>6 (:137-138) + the 54 vents between (:139-140, the seat included)
+		GTMultiBlockPattern tPattern = GT6MultiblockPreviews.logisticsCoreShape(Blocks.IRON_BLOCK, Blocks.OBSIDIAN,
+				List.of(Blocks.GOLD_BLOCK, Blocks.LAPIS_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.DIAMOND_BLOCK,
+						Blocks.EMERALD_BLOCK));
+		int tPu = 0, tWall = 0, tVent = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			assertFalse(tCell.isHollow(), "the core declares every cell");
+			if (tCell.partBlock == null) {
+				tPu++;
+				assertTrue(tCell.predicate.test(Blocks.IRON_BLOCK.defaultBlockState()),
+						"the wall substitution is the last candidate (:132-133)");
+				continue;
+			}
+			if (tCell.partBlock == Blocks.IRON_BLOCK) {
+				tWall++;
+				assertEquals(MultiBlockPartBlockEntity.ONLY_LOGISTICS & MultiBlockPartBlockEntity.ONLY_ENERGY_IN,
+						tCell.usage, "the shell faces (:138)");
+			} else {
+				tVent++;
+				assertEquals(MultiBlockPartBlockEntity.ONLY_LOGISTICS, tCell.usage, "the inner faces (:140)");
+			}
+		}
+		assertEquals(125, tPattern.cells().size(), "27 + 44 + 54");
+		assertEquals(27, tPu, "the d²<4 core");
+		assertEquals(44, tWall, "the d²>6 shell");
+		assertEquals(54, tVent, "the between shell — the 53 blocks + the controller seat");
+		// the stamped render: the front-centre vent cell (0,0,-2) is the seat
+		GTMultiBlockPattern tStamped = GT6MultiblockPreviews.withDisplayBlocks(tPattern,
+				Blocks.GOLD_BLOCK, Blocks.LAPIS_BLOCK, Blocks.REDSTONE_BLOCK, Blocks.DIAMOND_BLOCK, Blocks.EMERALD_BLOCK);
+		Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(
+				tStamped, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -2));
+		assertEquals(125, GT6MultiblockPreviews.structureBlocks(tStamped, CONTROLLER,
+				GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -2)).size(), "every cell renders");
+		assertEquals(Integer.valueOf(53), tCounts.get(Blocks.OBSIDIAN), "54 vents minus the seat (the :150 tooltip)");
+		assertEquals(Integer.valueOf(44), tCounts.get(Blocks.IRON_BLOCK), "the walls (the :150 tooltip)");
+		assertEquals(Integer.valueOf(27), tCounts.get(Blocks.GOLD_BLOCK), "the core renders as 27 versatile");
+		assertEquals(Integer.valueOf(1), tCounts.get(CONTROLLER));
+	}
+
+	@Test
+	public void lightningRodShapePinsTheMinimalRepresentative() {
+		// the :72-86 walk: the five 3x3 layers (walls/coils alternating, the bottom
+		// centre IS the controller — zero-offset) + ONE pillar block as the minimal
+		// representative of the unbounded while probe (the r11 non-binding ruling's
+		// approximate declaration — javadoc'd on the shape)
+		GTMultiBlockPattern tPattern = GT6MultiblockPreviews.lightningRodShape(
+				Blocks.IRON_BLOCK, Blocks.GLOWSTONE, Blocks.STONE);
+		int tWall = 0, tCoil = 0, tRod = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			assertFalse(tCell.isHollow(), "the rod declares every cell");
+			if (tCell.partBlock == Blocks.IRON_BLOCK) tWall++;
+			else if (tCell.partBlock == Blocks.GLOWSTONE) tCoil++;
+			else {
+				tRod++;
+				assertEquals(new BlockPos(0, 5, 0), new BlockPos(tCell.x, tCell.y, tCell.z),
+						"the 1m pillar at the base centre top (:84)");
+			}
+		}
+		assertEquals(46, tPattern.cells().size(), "27 walls + 18 coils + 1 pillar");
+		assertEquals(27, tWall, "the y0/y2/y4 wall layers");
+		assertEquals(18, tCoil, "the y1/y3 coil layers");
+		assertEquals(1, tRod, "the minimal pillar");
+		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
+				tPattern, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, BlockPos.ZERO);
+		assertEquals(46, tFill.size(), "every cell renders, the seat painted over");
+		assertEquals(CONTROLLER.defaultBlockState(), tFill.get(BlockPos.ZERO),
+				"the bottom-centre wall cell is the controller seat (upstream :76-84/:89)");
+	}
+
+	@Test
+	public void candidateFacesPinTheQuotaListsAndTheTooltipCellGate() {
+		// acceptance ④ — the r11 Q3 degrade data: the predicate rows carry their full
+		// candidate path lists (first = the rendered identity); the mechanism gates the
+		// tooltip to the predicate cells only
+		assertEquals(List.of("processor_unit_versatile", "processor_unit_logic", "processor_unit_control"),
+				GT6MultiblockPreviews.candidatePaths("fusion_reactor"),
+				"the fusion core quota (≥3V/≥12L/≥12C — the :56-64 chain)");
+		assertEquals(List.of("processor_unit_control", "processor_unit_conversion"),
+				GT6MultiblockPreviews.candidatePaths("large_massfab"), "the massfab 4+4 ring (:201-217)");
+		assertEquals(List.of("processor_unit_versatile", "processor_unit_logic", "processor_unit_control",
+				"processor_unit_storage", "processor_unit_conversion", "machine_wall_galvanized_steel"),
+				GT6MultiblockPreviews.candidatePaths("logistics_core"),
+				"the free combination + the wall cheapskate last (:119-133)");
+		assertTrue(GT6MultiblockPreviews.candidatePaths("multiblock_coke_oven").isEmpty(),
+				"rows without predicate cells list nothing");
+		// the tooltip gate: a fusion PU cell lists, a forming wall does not, a hollow
+		// cell does not, an unknown cell does not
+		GTMultiBlockPattern tPattern = fusionFixture();
+		GTMultiBlockPattern.Cell tPu = GT6MultiblockPreviews.cellAt(tPattern, BlockPos.ZERO);
+		assertNotNull(tPu, "the core centre cell");
+		assertEquals(3, GT6MultiblockPreviews.cellCandidatePaths("fusion_reactor", tPu).size(),
+				"the predicate cell lists its candidates");
+		GTMultiBlockPattern.Cell tWall = GT6MultiblockPreviews.cellAt(tPattern, new BlockPos(0, 0, -2));
+		assertTrue(GT6MultiblockPreviews.cellCandidatePaths("fusion_reactor", tWall).isEmpty(),
+				"the forming seat cell lists nothing");
+		assertTrue(GT6MultiblockPreviews.cellCandidatePaths("fusion_reactor", null).isEmpty(),
+				"an unknown cell lists nothing");
+		GTMultiBlockPattern tMassfab = GT6MultiblockPreviews.massfabShape(Blocks.IRON_BLOCK, Blocks.GLOWSTONE,
+				Blocks.OBSIDIAN, Blocks.GOLD_BLOCK, List.of(Blocks.REDSTONE_BLOCK, Blocks.LAPIS_BLOCK));
+		assertTrue(GT6MultiblockPreviews.cellCandidatePaths("large_massfab",
+				GT6MultiblockPreviews.cellAt(tMassfab, new BlockPos(0, 2, 0))).isEmpty(),
+				"the hollow air centre lists nothing");
 	}
 
 	@Test

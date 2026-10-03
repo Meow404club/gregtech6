@@ -217,9 +217,10 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 	/**
 	 * The core-shell cell kind (upstream :55/:65): d² &lt; 4 = the PU cross (-1 = the PU
 	 * fallback chain decides), d² &gt; 6 or the j==0 axis tips = the GalvSteel wall (0),
-	 * otherwise the vent shell (1). Pure so the tests drive the geometry.
+	 * otherwise the vent shell (1). Pure so the tests and the preview seam drive it
+	 * (task mbpreview-data-d2-authored: the display shape reuses this, never transcribes).
 	 */
-	static int shellKind(int i, int j, int k) {
+	public static int shellKind(int i, int j, int k) {
 		int d2 = i * i + j * j + k * k;
 		if (d2 < 4) return -1;
 		if (d2 > 6 || (j == 0 && (((i == -2 || i == 2) && k == 0) || ((k == -2 || k == 2) && i == 0)))) return 0;
@@ -227,7 +228,7 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 	}
 
 	/** The glass-ring edge-midpoint test (upstream :96): the four orthogonal ring tips are the design-2 OUT faces. */
-	static boolean isRingOutTip(int i, int j) {
+	public static boolean isRingOutTip(int i, int j) {
 		return (i == 9 && (j == 0 || j == 18)) || (j == 9 && (i == 0 || i == 18));
 	}
 

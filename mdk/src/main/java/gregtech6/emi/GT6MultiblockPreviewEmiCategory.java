@@ -88,7 +88,8 @@ public final class GT6MultiblockPreviewEmiCategory extends EmiRecipeCategory {
 							GT6MultiblockPreviews.PAGE_HEIGHT));
 			mEntry = aEntry;
 			Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(
-					aEntry.pattern().get(), aEntry.controllerBlock(), GT6MultiblockPreviews.DISPLAY_FACING);
+					aEntry.pattern().get(), aEntry.controllerBlock(), GT6MultiblockPreviews.DISPLAY_FACING,
+					aEntry.controllerCell());
 			tCounts.forEach((tBlock, tCount) -> mInputs.add(EmiStack.of(new ItemStack(tBlock, tCount))));
 		}
 

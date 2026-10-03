@@ -119,7 +119,7 @@ public class GT6MultiblockPreviewJeiCategory extends ModularUIJeiCategory<GT6Mul
 		aBuilder.addOutputSlot(0, 0).addItemStack(tController);
 		for (Map.Entry<net.minecraft.world.level.block.Block, Integer> tCount : GT6MultiblockPreviews
 				.materialCounts(aRecipe.entry().pattern().get(), aRecipe.entry().controllerBlock(),
-						GT6MultiblockPreviews.DISPLAY_FACING)
+						GT6MultiblockPreviews.DISPLAY_FACING, aRecipe.entry().controllerCell())
 				.entrySet()) {
 			aBuilder.addInputSlot(0, 0).addItemStack(new ItemStack(tCount.getKey(), tCount.getValue()));
 		}
