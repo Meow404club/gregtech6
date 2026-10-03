@@ -1338,14 +1338,16 @@ public final class GT6BlockStates extends BlockStateProvider {
      * GT6DynamoBlock dispatch shape). Every FORMED state maps to the same model (the
      * formed-look visual is the p9 pool). No facing rotation (the structure is
      * facing-independent — the controller is the centre cell of both layers; the front
-     * pair lands on north, the default-facing view pin). The BlockItem is the 2D icon
-     * over the composite sprite (tex-itemform-b).
+     * pair lands on north, the default-facing view pin). The BlockItem rides the
+     * two-layer block model (task r11-mains-tint-wrap — the multiblock_coke_oven 3D
+     * item form; the tex-itemform-b flat composite icon retired, the user-facing
+     * flat-white inventory face).
      */
     private void addHeatExchanger() {
         ModelFile tMain = boilerModel("large_heat_exchanger", "large_heat_exchanger", true);
         Block tController = gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
-        itemModels().withExistingParent("large_heat_exchanger", mcLoc("item/generated")).texture("layer0", modLoc("block/large_heat_exchanger/main"));
+        itemModels().withExistingParent("large_heat_exchanger", modLoc("block/large_heat_exchanger"));
     }
 
     /**
@@ -3421,8 +3423,10 @@ public final class GT6BlockStates extends BlockStateProvider {
      * p38-c2 form).
      * The facing is structurally meaningless (the rod is vertical), so every state maps to
      * the same model with no rotation (the front pair lands on north); the FORMED variants
-     * map to the same model (the formed-look visual is the p9 pool). The controller and the
-     * rod BlockItems are 2D icons over their composite/rod sprites (tex-itemform-b).
+     * map to the same model (the formed-look visual is the p9 pool). The controller
+     * BlockItem rides the two-layer block model since task r11-mains-tint-wrap (the
+     * coke-oven 3D item form); the rod BlockItem stays the 2D icon over its rod sprite
+     * (tex-itemform-b, the part domain).
      */
     /**
      * Task w3-tank-valves — the Tank Main Valve family (Loader_MultiTileEntities.java
@@ -3527,7 +3531,11 @@ public final class GT6BlockStates extends BlockStateProvider {
         ModelFile tMain = boilerModel("multiblock_lightning_rod", "lightningrod", true);
         Block tController = gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get();
         getVariantBuilder(tController).forAllStates(aState -> ConfiguredModel.builder().modelFile(tMain).build());
-        itemModels().withExistingParent("multiblock_lightning_rod", mcLoc("item/generated")).texture("layer0", modLoc("block/lightningrod/main"));
+        // task r11-mains-tint-wrap — the controller BlockItem rides the two-layer block
+        // model (the multiblock_coke_oven 3D item form; the tex-itemform-b flat composite
+        // icon retired — the user-facing flat-white inventory face). The rod PART item
+        // below STAYS the 2D icon (the declared part-domain deviation).
+        itemModels().withExistingParent("multiblock_lightning_rod", modLoc("block/multiblock_lightning_rod"));
         // the Tungsten Wall (task world-tint-render-type, the C5 clean-up; task
         // debt-tungsten-wall-designs): the row IS the :1151 machine_wall row (texture
         // "metalwall", NBT_DESIGNS 7, ANY.W) — its blockstate/item/models moved to the

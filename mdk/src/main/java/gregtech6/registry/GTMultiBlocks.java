@@ -357,16 +357,36 @@ public final class GTMultiBlocks {
 	}
 
 	/**
-	 * The large-boiler paint-tint walker (task tex-large-boilers — the r3 C5
-	 * boiler-tank form): the five boiler variant controllers. Every row carries
-	 * NBT_MATERIAL upstream (Loader :1248-1252) and the shared datagen model carries
-	 * tintindex 0 since this card, so the family joins the baked world tint (the
-	 * GTMachineTintModel walk) + the inventory ItemColor half; the colour resolves through
-	 * the {@link GTMultiBlockControllerBlock#materialOf} carrier (the p38-c2 gate). The
-	 * {@code GTMachines.paintableBlockArray} census convention. Client-side call time only.
+	 * The multiblock mains controller paint-tint walker (task r11-mains-tint-wrap — the
+	 * {@code GTMachines.paintableBlockArray} census convention, the
+	 * {@code boilerPaintableBlockArray} row it retires): ONE census array over every
+	 * CONTROLLER block this class registers, in registration order — the coke oven
+	 * (Loader :1193 NBT_MATERIAL MT.Ceramic through the {@link GTCokeOvenBlock} carrier),
+	 * the five large-boiler variants (:1248-1252 SS/Invar/Ti/TungstenSteel/Ad through the
+	 * {@link GTLargeBoilerBlock} row column), the lightning rod (:1282 ANY.W,
+	 * {@link GTLightningRodBlock}), and the five large machines (implosion
+	 * TungstenSteel :1228 / VonDaGraagg SteelGalvanized / massfab Pb / fusion
+	 * SteelGalvanized / bedrock drill Ti — the
+	 * {@code GTMachinePaintTint.largeControllerMaterialOf} constants). The former
+	 * {@code boilerPaintableBlockArray} (tex-large-boilers), the coke-oven single
+	 * {@code wrapStates} row and the five-block {@code List.of} in
+	 * {@code GTMachineTintModel} retire INTO this array — one walk site, zero double
+	 * registration (the {@code wrapStates} dynamic-model guard would no-op a duplicate,
+	 * the census pin keeps the count at 12 regardless). Client-side call time only (the
+	 * handles resolve at the registry event).
 	 */
-	public static net.minecraft.world.level.block.Block[] boilerPaintableBlockArray() {
-		return boilerBlockArray();
+	public static net.minecraft.world.level.block.Block[] controllerPaintableBlockArray() {
+		net.minecraft.world.level.block.Block[] tBoilers = boilerBlockArray();
+		net.minecraft.world.level.block.Block[] rBlocks = new net.minecraft.world.level.block.Block[2 + tBoilers.length + 5];
+		rBlocks[0] = COKE_OVEN.get();
+		System.arraycopy(tBoilers, 0, rBlocks, 1, tBoilers.length);
+		rBlocks[1 + tBoilers.length] = LIGHTNING_ROD.get();
+		rBlocks[2 + tBoilers.length] = IMPLOSION_COMPRESSOR.get();
+		rBlocks[3 + tBoilers.length] = VON_DA_GRAAGG.get();
+		rBlocks[4 + tBoilers.length] = MASSFAB.get();
+		rBlocks[5 + tBoilers.length] = FUSION_REACTOR.get();
+		rBlocks[6 + tBoilers.length] = BEDROCK_DRILL.get();
+		return rBlocks;
 	}
 
 	/** The lookup for /gt6multiblock boiler place — null for an unknown variant path. */

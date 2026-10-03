@@ -185,9 +185,12 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	 * issue8-residual the #8 stragglers (the 25 tank valve controllers, the 8 dedicated
 	 * crucible walls); since task beehive-tint (issue #15) the bee family (the hive
 	 * + the Bumbliary pair — the family colour rides the PAINT model data, the pair's
-	 * row material the {@code GT6BumbliaryBlock} carrier). Blocks that already
-	 * carry a dynamic model (the oven ladder's {@code GTOvenOverlayModel} chain) are
-	 * skipped — they keep their own render route.
+	 * row material the {@code GT6BumbliaryBlock} carrier); since task
+	 * r11-mains-tint-wrap the twelve {@code GTMultiBlocks} mains controllers ride the
+	 * ONE {@code controllerPaintableBlockArray} census walk (the boilerPaintable row,
+	 * the coke-oven single row and the five-block List.of retired into it). Blocks that
+	 * already carry a dynamic model (the oven ladder's {@code GTOvenOverlayModel} chain)
+	 * are skipped — they keep their own render route.
 	 */
 	@SubscribeEvent
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
@@ -221,39 +224,31 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// tanks join (every upstream row carries NBT_MATERIAL, Loader :553-579; the
 		// shared model's body cube is the tintindex-0 seat since this card)
 		for (Block tBlock : gregtech6.registry.GT6Boilers.paintableBlockArray()) wrapStates(tBlock, aEvent);
-		// task tex-large-boilers — the five large boiler controllers join the same
-		// two-layer seat (every row carries NBT_MATERIAL, Loader :1248-1252; the body cube
-		// is the tintindex-0 seat, the front-face overlay decals untinted; the colour
-		// resolves through the GTMultiBlockControllerBlock carrier, the p38-c2 gate)
-		for (Block tBlock : gregtech6.registry.GTMultiBlocks.boilerPaintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task r11-mains-tint-wrap — the TWELVE GTMultiBlocks mains controllers ride the
+		// ONE census array ({@code controllerPaintableBlockArray}: the coke oven, the five
+		// large boilers, the lightning rod, implosion/VonDaGraagg/massfab/fusion/drill).
+		// The former tex-large-boilers boilerPaintable walk (:1248-1252), the coke-oven
+		// single row (:1193) and the tex-large-machines five-block List.of retire INTO it
+		// — every row carries the upstream NBT_MATERIAL, the two-layer front-bearing body
+		// cube is the tintindex-0 seat, the overlay/front decals untinted (the p38-c2
+		// carrier gate + the largeControllerMaterialOf constants)
+		for (Block tBlock : gregtech6.registry.GTMultiBlocks.controllerPaintableBlockArray()) wrapStates(tBlock, aEvent);
 		// task tex-large-machines — the 17 large-controller domains join the same
 		// baked-tint seat: every upstream row carries NBT_MATERIAL (Loader :1228-1283),
 		// the body cube is the tintindex-0 seat (familyMachineModel trio + the two
 		// boilerModel front pairs), the colour resolves through the GTMachinePaintTint
-		// large-controller arm (the row meta id + the five mains classes)
+		// large-controller arm (the row meta id; the five mains moved to the census array)
 		for (Block tBlock : gregtech6.registry.GT6LargeMachines.blockArray()) wrapStates(tBlock, aEvent);
-		for (Block tBlock : java.util.List.of(
-				gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get(),
-				gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get(),
-				gregtech6.registry.GTMultiBlocks.MASSFAB.get(),
-				gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get(),
-				gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get())) wrapStates(tBlock, aEvent);
-		// task tex-multiblockmains — the four multiblockmains controller families join
-		// the same two-layer front-bearing seat (every row carries NBT_MATERIAL upstream:
-		// Loader :1270-1277 crucible eight, :1245 heat exchanger, :1281 logistics core,
-		// :1282 lightning rod; the body cube is the tintindex-0 seat, the front-pair
-		// overlay decals untinted; the colours resolve through the
-		// GTMultiBlockControllerBlock carrier, the p38-c2 gate, and the HEX through its
-		// own materialOf, the GT6DynamoBlock shape)
+		// task tex-multiblockmains — the other-class mains families join the same
+		// two-layer front-bearing seat (every row carries NBT_MATERIAL upstream:
+		// Loader :1270-1277 crucible eight, :1245 heat exchanger, :1281 logistics core;
+		// the :1282 lightning rod moved to the census array above; the body cube is the
+		// tintindex-0 seat, the front-pair overlay decals untinted; the colours resolve
+		// through the GTMultiBlockControllerBlock carrier, the p38-c2 gate, and the HEX
+		// through its own materialOf, the GT6DynamoBlock shape)
 		for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.values()) wrapStates(tHandle.get(), aEvent);
 		wrapStates(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get(), aEvent);
-		wrapStates(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get(), aEvent);
 		wrapStates(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get(), aEvent);
-		// task coke-oven-texture — the coke oven controller joins the same seat: the
-		// :1193 NBT_MATERIAL row (MT.Ceramic, the same column the bricks share) rides
-		// the GTMultiBlockControllerBlock carrier (the p38-c2 gate), the tinted body
-		// cube is the tintindex-0 seat, the overlay/front window decal untinted
-		wrapStates(gregtech6.registry.GTMultiBlocks.COKE_OVEN.get(), aEvent);
 		// issue #15 (task beehive-tint) — the bee family joins the baked-tint domain:
 		// the hive's 15 worldgen family colours ride the BE PAINT model data (the worldgen
 		// paints at placement) and the Bumbliary pair's row material rides the
@@ -375,21 +370,20 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6ElectricTransformers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6ElectricDynamos.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6FluxDynamos.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
-		// task tex-large-boilers — the five large boiler rows join the same controller
-		// lambda (the NBT_MATERIAL column rides the GTMultiBlockControllerBlock carrier)
-		for (Block tBlock : gregtech6.registry.GTMultiBlocks.boilerPaintableBlockArray()) tPaintItems.add(tBlock.asItem());
-		// task tex-multiblockmains — the four multiblockmains controller families' 11
-		// BlockItems (the eight crucible rows + the logistics core + the lightning rod +
-		// the heat exchanger) join the same lambda (the NBT_MATERIAL columns ride the
-		// GTMultiBlockControllerBlock carrier, the HEX its own materialOf)
+		// task r11-mains-tint-wrap — the twelve GTMultiBlocks mains controllers' 12
+		// BlockItems ride the ONE census array (the former tex-large-boilers boiler
+		// rows, the tex-multiblockmains lightning rod, the coke-oven-texture coke oven
+		// and the tex-large-machines five-block List.of retire INTO it; the NBT_MATERIAL
+		// columns ride the GTMultiBlockControllerBlock carrier + the
+		// largeControllerMaterialOf constants)
+		for (Block tBlock : gregtech6.registry.GTMultiBlocks.controllerPaintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		// task tex-multiblockmains — the other-class mains families' 10 BlockItems (the
+		// eight crucible rows + the logistics core + the heat exchanger) join the same
+		// lambda (the NBT_MATERIAL columns ride the GTMultiBlockControllerBlock carrier,
+		// the HEX its own materialOf)
 		for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.values()) tPaintItems.add(tHandle.get().asItem());
 		tPaintItems.add(gregtech6.registry.GT6Logistics.LOGISTICS_CORE_ITEM.get());
-		tPaintItems.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_ITEM.get());
 		tPaintItems.add(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_ITEM.get());
-		// task coke-oven-texture — the coke oven controller's BlockItem joins the same
-		// lambda (the creative-tab face of the Ceramic row colour, the #18 converter-band
-		// note: an unregistered BlockItem renders the item form untinted)
-		tPaintItems.add(gregtech6.registry.GTMultiBlocks.COKE_OVEN_ITEM.get());
 		// task tex-pipe-textures — the three pipe connector families' BlockItems (the
 		// 280 fluid rows — task fluid-pipe-matrix, the 18 item pipe rows, the logistics
 		// wire) join the same lambda; the wire's carrier resolves NULL (upstream
@@ -414,14 +408,10 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6ZpmDechargers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6LongDistanceTransformers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		// task tex-large-machines — the 17 large-controller BlockItems join the same
-		// lambda (the creative-tab face of the row-material colour, the world half above)
+		// lambda (the creative-tab face of the row-material colour, the world half above);
+		// the five mains BlockItems moved to the census array loop above
+		// (task r11-mains-tint-wrap)
 		for (Block tBlock : gregtech6.registry.GT6LargeMachines.blockArray()) tPaintItems.add(tBlock.asItem());
-		for (Block tBlock : java.util.List.of(
-				gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get(),
-				gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get(),
-				gregtech6.registry.GTMultiBlocks.MASSFAB.get(),
-				gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get(),
-				gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get())) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 
