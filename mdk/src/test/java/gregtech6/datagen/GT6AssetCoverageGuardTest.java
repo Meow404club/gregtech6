@@ -329,7 +329,8 @@ public class GT6AssetCoverageGuardTest {
 			GT6GasCylinders.class, // task small-tank-gas-cylinder — the four Fluid Containers rows
 			GT6Placeables.class, GT6Portals.class, GT6QuantumEnergizers.class, GT6Rails.class,
 			GT6Reactors.class, // task debt-reactor-b-2x2-be — the 2x2 core row
-			GT6Sensors.class, GT6SlicerBlades.class, GT6SprayCans.class, GT6StaticStorages.class,
+			GT6Sensors.class, gregtech6.registry.GT6SiftingTables.class, // task sifting-table-family — the manual chain tail (block + item + BET)
+			GT6SlicerBlades.class, GT6SprayCans.class, GT6StaticStorages.class,
 			GT6SurfaceBlocks.class, GT6Tanks.class, GT6Tools.class, GT6TreeBlocks.class,
 			GT6BeamBlocks.class, // task beam-blocks-register — the 8 wood-beam rows
 			GT6CropSeeds.class, // task cbc-3-crop-data-assets — the gt6:crop_seed item (the 59-card seed face)

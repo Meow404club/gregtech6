@@ -18,6 +18,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import net.minecraftforge.items.IItemHandler;
+
 //? if neoforge {
 /*import com.mojang.serialization.MapCodec;
  *///?}
@@ -123,6 +125,17 @@ public class GT6SiftingTableBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+	}
+
+	/**
+	 * The break drop contract (upstream canDrop :442 = T per slot) — the pops ride the
+	 * {@link GTEntityBlock} fallback; this bridge hands over the table BE's differently
+	 * spelled {@code inventory()} accessor (the {@code getInventory()} census default
+	 * finds nothing here, the GTAnvilBlock bridge shape).
+	 */
+	@Override
+	protected IItemHandler dropInventory(BlockEntity aTile) {
+		return aTile instanceof GT6SiftingTableBlockEntity tTable ? tTable.inventory() : super.dropInventory(aTile);
 	}
 
 	//? if forge {

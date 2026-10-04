@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_double_iron"
+    },
+    "S": {
+      "item": "gt6:stick_long_iron"
+    },
+    "T": {
+      "item": "gt6:screw_iron"
+    },
+    "W": {
+      "item": "gt6:wire_fine_iron"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "TdT",
+    "WxW",
+    "SPS"
+  ],
+  "result": {
+    "item": "gt6:sifting_table"
+  },
+  "show_notification": true
+}
