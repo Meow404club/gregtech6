@@ -1940,6 +1940,27 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("itemGroup.gt6.plank"); // task wood-planks-register — the plank prefix tab, the billet-row shape: NO dump
 			// itemGroup row exists (upstream OP.plank has no PrefixItem and hence no creative tab), so the tsv hand row
 			// 木板 (the %s木板 template's noun) joins via the direct band, not the dump itemgroup family
+		// task wire-gt-registration — the sixteen wire multiplier tabs, the plank-row shape: NO dump
+		// itemGroup row exists (upstream OP.wireGt01-16 ride the MTE block path, MultiTileEntityWireElectric
+		// .java:72-109, no PrefixItem and no tab), so the tsv hand rows "1×线".."16×线" (the
+		// gt6.tagprefix.wire_gtNN templates minus their %s slot, the plank ruling applied mechanically;
+		// the adjudicated wire=线 / cable=线缆 split) join via the direct band
+		addDirect("itemGroup.gt6.wire_gt01");
+		addDirect("itemGroup.gt6.wire_gt02");
+		addDirect("itemGroup.gt6.wire_gt03");
+		addDirect("itemGroup.gt6.wire_gt04");
+		addDirect("itemGroup.gt6.wire_gt05");
+		addDirect("itemGroup.gt6.wire_gt06");
+		addDirect("itemGroup.gt6.wire_gt07");
+		addDirect("itemGroup.gt6.wire_gt08");
+		addDirect("itemGroup.gt6.wire_gt09");
+		addDirect("itemGroup.gt6.wire_gt10");
+		addDirect("itemGroup.gt6.wire_gt11");
+		addDirect("itemGroup.gt6.wire_gt12");
+		addDirect("itemGroup.gt6.wire_gt13");
+		addDirect("itemGroup.gt6.wire_gt14");
+		addDirect("itemGroup.gt6.wire_gt15");
+		addDirect("itemGroup.gt6.wire_gt16");
 	}
 
 	/**

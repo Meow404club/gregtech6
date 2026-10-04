@@ -2636,15 +2636,34 @@ MATERIAL_BACKFILL = {
     "gt6.material.superconductor": "超导体",   # TeamNED double-source cross
 }
 
-# ---- itemGroup.gt6.* (3): the P22 spray-can tab + the billet prefix tab (the billet
+# ---- itemGroup.gt6.* (3+16): the P22 spray-can tab + the billet prefix tab (the billet
 # word = the existing %s坯料 template's noun) + the plank prefix tab (task
 # wood-planks-register — NO dump itemGroup row: upstream OP.plank has no PrefixItem
 # and so no creative tab, dump census; the word = the %s木板 template's noun, the
-# billet-row shape).
+# billet-row shape) + the sixteen wire multiplier tabs (task wire-gt-registration —
+# the same NO-dump-row face: upstream wireGt01-16 have no PrefixItem and no tab; the
+# word = the gt6.tagprefix.wire_gtNN template minus its %s slot, the plank ruling
+# applied mechanically — "1×线".."16×线", the adjudicated wire=线/cable=线缆 split).
 TAB_BACKFILL = {
     "itemGroup.gt6.billet": "坯料",
     "itemGroup.gt6.plank": "木板",
     "itemGroup.gt6.spray_cans": "喷漆罐",
+    "itemGroup.gt6.wire_gt01": "1×线",
+    "itemGroup.gt6.wire_gt02": "2×线",
+    "itemGroup.gt6.wire_gt03": "3×线",
+    "itemGroup.gt6.wire_gt04": "4×线",
+    "itemGroup.gt6.wire_gt05": "5×线",
+    "itemGroup.gt6.wire_gt06": "6×线",
+    "itemGroup.gt6.wire_gt07": "7×线",
+    "itemGroup.gt6.wire_gt08": "8×线",
+    "itemGroup.gt6.wire_gt09": "9×线",
+    "itemGroup.gt6.wire_gt10": "10×线",
+    "itemGroup.gt6.wire_gt11": "11×线",
+    "itemGroup.gt6.wire_gt12": "12×线",
+    "itemGroup.gt6.wire_gt13": "13×线",
+    "itemGroup.gt6.wire_gt14": "14×线",
+    "itemGroup.gt6.wire_gt15": "15×线",
+    "itemGroup.gt6.wire_gt16": "16×线",
 }
 
 # ---------------------------------------------------------------------------
