@@ -97,10 +97,12 @@ import gregtech6.registry.GTMaterialItems;
  * the foreign seed mass pool to the recipe-data JSON family); the baleGrass* listeners
  * (:80-124 — the bale item faces are the bale-block card's pool); the foreign crop-food
  * band (:309-870); the generic crop/flower/treeLeaves/treeSapling listeners (:876-925);
- * the {@code Dye_Materials} array face (:719-720 dyed legs) and the plantGtFiber dyed
- * legs (:975-990 — the DYE colors are not PLANTS-flag materials, so no plantGtFiber face
- * exists for them, the b2b1 loom precedent); the FoodsGT/Sandwiches side channels and the
- * vanilla crafting ({@code CR.shaped}) face.
+ * the :720 CR.shaped wool←fiber crafting face (not a RecipeMap row) and the :975-:990
+ * fiber→string GENERIFIER rows (seated in generifier.json, the b2c-generify static replay —
+ * live since the dye-item-axis items landed); the FoodsGT/Sandwiches side channels and the
+ * vanilla crafting ({@code CR.shaped}) face. The :719 i=1..15 dyed-wool shred legs are
+ * ENUMERATED since task recipe-b4-juicer-squeezer-flowerfruit (the MT.DATA.Dye_Materials
+ * array + the 32 dust/plantGtFiber items landed, so the 15 gated legs resolve live).
  *
  * <p><b>Load timing</b>: the Compressor/Bath form — MOD-bus listener at
  * FMLCommonSetup.enqueueWork, lazily built tables (no static MT/OP capture, the a9027ac
@@ -299,11 +301,24 @@ public final class GT6RecipesCrops {
 			rRows.addAll(biomassRows(":41 dust x9 " + tMat.mNameInternal, Slot.mat(OP.dust, tMat, 9), 64));
 			rRows.addAll(biomassRows(":43 blockDust x1 " + tMat.mNameInternal, Slot.mat(OP.blockDust, tMat, 1), 64));
 		}
-		// :719 i==0 — the WHITE wool shred (Vanilla seam; the dyed legs ride the Dye_Materials
-		// pool, the :720 CR.shaped leg the crafting face — both declared)
+		// :719 i==0 — the WHITE wool shred (Vanilla seam; chance 9000 -> 4 string, the special case)
 		rRows.add(new Row("Vanilla:719 wool white", "shredder", true, 16, 16, new long[] {9000},
 				new Slot[] {Slot.id("minecraft:white_wool", 1)}, null,
 				new Slot[] {Slot.id("minecraft:string", 4)}, null));
+		// :719 i=1..15 — the DYED wool shred legs (task recipe-b4-juicer-squeezer-flowerfruit):
+		// plantGtFiber x4 of MT.DATA.Dye_Materials[15-i] at chance 9000, one per dyed wool color.
+		// The wool colors walk the vanilla meta order (1=orange..15=black) while Dye_Materials
+		// runs the vanilla dye order (0=Black..15=White), hence the [15-i] index — the same
+		// expression the upstream loop uses. The array and the dye items are the dye-item-axis
+		// landing; buildTable() is lazy (post-MT-init), so the array read is safe here.
+		String[] tWool = {"orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray",
+				"cyan", "purple", "blue", "brown", "green", "red", "black"};
+		for (int i = 1; i < 16; i++) {
+			rRows.add(new Row(":719 dyed wool i=" + i + " (" + tWool[i - 1] + "_wool)", "shredder", true, 16, 16,
+					new long[] {9000},
+					new Slot[] {Slot.id("minecraft:" + tWool[i - 1] + "_wool", 1)}, null,
+					new Slot[] {Slot.mat(OP.plantGtFiber, MT.DATA.Dye_Materials[15 - i], 4)}, null));
+		}
 		// :125-141 — the itemGrass fodder family, live-wired to the work/food-crop-items ids
 		// (the compact legs of all four listeners ride the bale-item pool — declared)
 		rRows.addAll(biomassRows(":125 itemGrassRotten", Slot.id("gt6:food_grass_rotten", 9), 16));
@@ -450,9 +465,10 @@ public final class GT6RecipesCrops {
 			tPoured++;
 		}
 		sAttempted = tAttempted; sPoured = tPoured; sSkipped = tSkipped;
-		LOGGER.info("GT6 crop consumption rows poured: {} / {} attempted, {} skipped (unresolvable faces = the declared pools; "
-				+ "the seed fan rides juicer.json, the bale/dye/plantGtFiber/Remains/CANS/Shape_Slicer faces their own pools, the P10 foreign mass untouched)",
-				tPoured, tAttempted, tSkipped);
+			LOGGER.info("GT6 crop consumption rows poured: {} / {} attempted, {} skipped (unresolvable faces = the declared pools; "
+					+ "the seed fan rides juicer.json, the bale/Remains/CANS/Shape_Slicer faces their own pools, the dye/plantGtFiber "
+					+ "faces landed with the dye-item-axis + recipe-b4 cards, the P10 foreign mass untouched)",
+					tPoured, tAttempted, tSkipped);
 		sLoaded = true;
 	}
 
@@ -564,11 +580,12 @@ public final class GT6RecipesCrops {
 			+ "items (TRUE NEGATIVE)",
 			":493 the golden-apple Bath leg — apple + MT.Au.liquid(U*8): the molten-gold fluid is not registered (only "
 			+ "gt6:iron_molten carries the molten face) — unlocks with the molten-metal registry card",
-			":719 i=1..15 the dyed-wool shred legs + :720 the CR.shaped wool←fiber legs — the Dye_Materials array is "
-			+ "deferred (MT.java:4216), so the dyed fiber faces have no nameable material; :975-990 the 16 "
-			+ "plantGtFiber→string GENERIFIER rows over the DYE materials (MT.Black..White) ride the same face — the DYE "
-			+ "colors are not PLANTS-flag materials so no plantGtFiber item exists for them (the b2b1 loom precedent, "
-			+ "GT6RecipesCompressor-zero-pour form); both unlock with the PLANTS/dye material card",
+			":720 the CR.shaped wool←fiber legs — the vanilla CRAFTING face, not a RecipeMap row (declared); "
+			+ ":975-990 the 16 plantGtFiber→string GENERIFIER rows over the DYE materials ride generifier.json "
+			+ "(the b2c-generify static replay, live since the dye-item-axis items landed); the :719 i=1..15 "
+			+ "dyed-wool shred legs are ENUMERATED since task recipe-b4-juicer-squeezer-flowerfruit — the "
+			+ "MT.DATA.Dye_Materials array and the 32 dust/plantGtFiber items landed, so the old 'no nameable "
+			+ "material' block is resolved (the unlock declared here, the Dye_Materials/PLANTS ground on record)",
 			":742 the HaC grape→raisins Drying row (MD.HaC grapeItem) — HarvestCraft foreign (TRUE NEGATIVE)",
 			":377-378 cropHops, :453-466 cropCorn/Crop_Devilish_Maize Mash_Corn faces, :826-827 the VINEGAR pickle Bath walk, "
 			+ ":848 the Sandwiches.INGREDIENTS seat — foreign-crop or side-channel faces riding the T5b/potion pools",

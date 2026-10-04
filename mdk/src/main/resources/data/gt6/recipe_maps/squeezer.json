@@ -1,5 +1,5 @@
 {
- "comment": "task squeezer-seed-legs — the cbc-5 leftover (4): the four vanilla seed-oil legs of the Loader_Recipes_Crops.java:256-305 oredict seed fan, poured into the SQUEEZER map (the 'squeezer' key rides GT6RecipeMapJsonLoader POURABLE+mapFor). THE FOLDING RULING (the r8-hotfix-juicer precedent, frozen in juicer.json rows 4-7): 1.7.10 Forge oredicts the vanilla seeds as seedWheat/seedMelon/seedPumpkin, and the listener fan assigns tiers — seedWheat family :271-274 = Oil_Seed 50 mB (Squeezer :273, the Juicer twin :274), seedMelon family :261-264 = 30 mB (Squeezer :263), seedPumpkin family :276-279 = 60 mB (Squeezer :278); 1.7.10 vanilla had NO beetroot (seedBeet was mod-foreign produce), so the ruling maps minecraft:beetroot_seeds onto the seedRice family :266-269 tier = 40 mB (Squeezer :268) — mirroring juicer.json row 6 verbatim. ENGINE SEMANTICS: addRecipe1(T, 16, 16, aEvent.mStack, NF, FL.Oil_Seed.make(N), ZL_IS) = duration 16, eut 16, no fluid input, NO item outputs (ZL_IS); FL.Oil_Seed is the port fluid gt6:seedoil (GTFluids.java:1101, the aqua-spec carrier). The two pre-existing smoke rows (apple/melon_slice) are the earlier phase stock, untouched. DECLARED ABSENCE (the b2_backlog seed-crop-items card): the rest of the :256-305 fan — soybean/coffee/thistle/flower/witherShrub/hellderberry/ghost/quartzBerry/hellBush (20 mB), strawberry/turnip/corn/acresia/misc (30), rice/apple/grape/tea/cabbage/purplePear (40), barley/oats/abyssalOats/rye/camellia (50), darkFruit/aspectrus (60), cotton/hemp (lube 5), flax (lube 10), canola (Oil_Canola 14 + Remains_Plant), sunflower (Oil_Sunflower 100) — has no port item carriers; the canola/flax Remains_Plant byproducts are likewise unported. PROVENANCE: pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest (the census ratchet + verbatim pins + the folding-table live cross-check). KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b2b2 appends its 37 static rows and retires the two fake apple/melon-slice smoke canaries (no upstream counterpart — the :802 melon row is the true face) (the Vanilla :802-:839 flower/ice/juice faces + the Woods :122-:130 rubber-sap faces; the chanced remains/gem-ice legs declared dropped in the row comments).",
+ "comment": "task squeezer-seed-legs — the cbc-5 leftover (4): the four vanilla seed-oil legs of the Loader_Recipes_Crops.java:256-305 oredict seed fan, poured into the SQUEEZER map (the 'squeezer' key rides GT6RecipeMapJsonLoader POURABLE+mapFor). THE FOLDING RULING (the r8-hotfix-juicer precedent, frozen in juicer.json rows 4-7): 1.7.10 Forge oredicts the vanilla seeds as seedWheat/seedMelon/seedPumpkin, and the listener fan assigns tiers — seedWheat family :271-274 = Oil_Seed 50 mB (Squeezer :273, the Juicer twin :274), seedMelon family :261-264 = 30 mB (Squeezer :263), seedPumpkin family :276-279 = 60 mB (Squeezer :278); 1.7.10 vanilla had NO beetroot (seedBeet was mod-foreign produce), so the ruling maps minecraft:beetroot_seeds onto the seedRice family :266-269 tier = 40 mB (Squeezer :268) — mirroring juicer.json row 6 verbatim. ENGINE SEMANTICS: addRecipe1(T, 16, 16, aEvent.mStack, NF, FL.Oil_Seed.make(N), ZL_IS) = duration 16, eut 16, no fluid input, NO item outputs (ZL_IS); FL.Oil_Seed is the port fluid gt6:seedoil (GTFluids.java:1101, the aqua-spec carrier). The two pre-existing smoke rows (apple/melon_slice) are the earlier phase stock, untouched. DECLARED ABSENCE (the b2_backlog seed-crop-items card): the rest of the :256-305 fan — soybean/coffee/thistle/flower/witherShrub/hellderberry/ghost/quartzBerry/hellBush (20 mB), strawberry/turnip/corn/acresia/misc (30), rice/apple/grape/tea/cabbage/purplePear (40), barley/oats/abyssalOats/rye/camellia (50), darkFruit/aspectrus (60), cotton/hemp (lube 5), flax (lube 10), canola (Oil_Canola 14 + Remains_Plant), sunflower (Oil_Sunflower 100) — has no port item carriers; the canola/flax Remains_Plant byproducts are likewise unported. PROVENANCE: pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest (the census ratchet + verbatim pins + the folding-table live cross-check). KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b2b2 appends its 37 static rows and retires the two fake apple/melon-slice smoke canaries (no upstream counterpart — the :802 melon row is the true face) (the Vanilla :802-:839 flower/ice/juice faces + the Woods :122-:130 rubber-sap faces; the chanced remains/gem-ice legs declared dropped in the row comments). task recipe-b4-juicer-squeezer-flowerfruit appends its 13 BlockFlowersA/B run() rows (8 A :90-:97 + 5 B :94-:98, the Tungstus pair at the verbatim FL.Juice_Cactus.make(100) face; the DYE_FLUIDS_FLOWER outputs at CS.L = 144 mB, the LoaderItemList.java:757 IL.Dye_Cactus alias = green_dye).",
  "recipes": [
   {
    "comment": "Loader_Recipes_Crops.java:273 seedWheat family — Squeezer 50 mB (the juicer.json row-4 twin)",
@@ -693,6 +693,305 @@
      "amount": 5
     }
    ]
+  },
+  {
+   "comment": "BlockFlowersA.java:90 flower meta 0 — DYE_FLUIDS_FLOWER[DYE_INDEX_Yellow] at CS.L=144 + OM.dust(MT.Wheat)",
+   "inputs": [
+    {
+     "item": "gt6:flower_altered_andesite_buckwheat",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_yellow",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wheat",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersA.java:91 flower meta 1 — DYE_FLUIDS_FLOWER[DYE_INDEX_Yellow] at CS.L=144 + OM.dust(MT.Wheat)",
+   "inputs": [
+    {
+     "item": "gt6:flower_crosby_buckwheat",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_yellow",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_wheat",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersA.java:92 flower meta 2 — DYE_FLUIDS_FLOWER[DYE_INDEX_Magenta] at CS.L=144 + OM.dust(MT.Magenta)",
+   "inputs": [
+    {
+     "item": "gt6:flower_alpine_catchfly",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_magenta",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_magenta",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersA.java:93 flower meta 3 — DYE_FLUIDS_FLOWER[DYE_INDEX_Yellow] at CS.L=144 + OM.dust(MT.Yellow)",
+   "inputs": [
+    {
+     "item": "gt6:flower_viola_calaminaria",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_yellow",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_yellow",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersA.java:94 flower meta 4 — DYE_FLUIDS_FLOWER[DYE_INDEX_Pink] at CS.L=144 + OM.dust(MT.Pink)",
+   "inputs": [
+    {
+     "item": "gt6:flower_thlaspi_lereschianum",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_pink",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_pink",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersA.java:95 flower meta 5 — DYE_FLUIDS_FLOWER[DYE_INDEX_White] at CS.L=144 + OM.dust(MT.White)",
+   "inputs": [
+    {
+     "item": "gt6:flower_tufted_evening_primrose",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_white",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_white",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersA.java:96 flower meta 6 — DYE_FLUIDS_FLOWER[DYE_INDEX_LightBlue] at CS.L=144 + OM.dust(MT.LightBlue)",
+   "inputs": [
+    {
+     "item": "gt6:flower_narcissus_sheldonia",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_light_blue",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_light_blue",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersA.java:97 flower meta 7 — DYE_FLUIDS_FLOWER[DYE_INDEX_Brown] at CS.L=144 + OM.dust(MT.Brown)",
+   "inputs": [
+    {
+     "item": "gt6:flower_orechid",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_brown",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_brown",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersB.java:94 flower meta 2 — DYE_FLUIDS_FLOWER[DYE_INDEX_Yellow] at CS.L=144 + OM.dust(MT.Yellow)",
+   "inputs": [
+    {
+     "item": "gt6:flower_desert_trumpet",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_yellow",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_yellow",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersB.java:95 flower meta 3 — DYE_FLUIDS_FLOWER[DYE_INDEX_Pink] at CS.L=144 + OM.dust(MT.Pink)",
+   "inputs": [
+    {
+     "item": "gt6:flower_copper_plant",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_pink",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_pink",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersB.java:96 flower meta 4 — DYE_FLUIDS_FLOWER[DYE_INDEX_Yellow] at CS.L=144 + OM.dust(MT.Yellow)",
+   "inputs": [
+    {
+     "item": "gt6:flower_princes_plume",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_yellow",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_yellow",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersB.java:97 flower meta 5 — DYE_FLUIDS_FLOWER[DYE_INDEX_Purple] at CS.L=144 + OM.dust(MT.Purple)",
+   "inputs": [
+    {
+     "item": "gt6:flower_thompsons_locoweed",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:dye_flower_purple",
+     "amount": 144
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_purple",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "BlockFlowersB.java:98 Tungstus — FL.Juice_Cactus.make(100) + IL.Dye_Cactus.get(2) (the LoaderItemList.java:757 vanilla-alias handle = green_dye)",
+   "inputs": [
+    {
+     "item": "gt6:flower_tungstus",
+     "count": 1
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:cactuswater",
+     "amount": 100
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:green_dye",
+     "count": 2
+    }
+   ],
+   "duration": 16,
+   "eut": 16
   }
  ]
 }

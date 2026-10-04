@@ -1,5 +1,5 @@
 {
- "comment": "task b2-residual-maps - the RM.Loom three-walk pour (the B2 residual data card; the RULING-SCOPED face set). CENSUS: the three ruled walks = 26 rows: (1) Loader_Recipes_Vanilla.java:751 the ANY.Iron horse-armor walk (leather x6 + plate x8 -> iron_horse_armor, eut 64 dur 128) = 11 rows - ALL eleven port members carry the plate face, the MT.Enori member rides the plateGem arm (the :751 ternary -> gt6:plate_gem_enori); (2) :755 the ANY.Steel saddle walk (leather x6 + ring x2 + stick x3 -> saddle, eut 64 dur 128) = 3 rows (Steel/Knightmetal/MeteoricSteel); (3) :763-:766 the ANY.Steel chain walk (ring x5/8/7/4 -> chainmail helmet/chestplate/leggings/boots, eut 96 dur 128) = 4 x 3 = 12 rows. DECLARED DEVIATION (the ST.tag selector legs): the :763-:766 ST.tag(4/5/6/7) selector slots are NOT expressible in the JSON v1 schema (damage/NBT config faces, resolveItem is item+count only) - dropped per the loom.json precedent, the row semantics relax to selector-free. ALREADY SEATED: :744 the string->wool smoke row (untouched). DECLARED BLOCKED / NOT POURED: :736-:742 + :743 the 17 dye rows (plantGtFiber + MT.DATA.Dye_Materials[15-i]/MT.Cu -> wool colors) - Dye_Materials is deferred and the PLANTS material band is unported (the plant/dye-items cards; the b2a-midcard BLOCKED ruling stands); :745 the string->web row and :746 the reeds->paper row + :752/:753 the golden/diamond horse-armor statics + :757-:760 the four leather-armor statics are the RULING-UNNAMED sibling statics of the same block - live vanilla ids, declared NOT poured as outside the ruled three-walk scope (next data card). WALK ROW PROVENANCE: the walk rows carry NO further per-row comment - provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check over ANY.Iron/ANY.Steel and the live registration. KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b1 pours the statics the three-walk ruling deferred: :745/:746/:752/:753/:757-:760 (8 rows, the selector slots dropped per the declared deviation above); the seated :744 row is corrected to the upstream 16t (Loader_Recipes_Vanilla.java:744 verbatim — it carried a 128 smoke-era transcription slip).",
+ "comment": "task b2-residual-maps - the RM.Loom three-walk pour (the B2 residual data card; the RULING-SCOPED face set). CENSUS: the three ruled walks = 26 rows: (1) Loader_Recipes_Vanilla.java:751 the ANY.Iron horse-armor walk (leather x6 + plate x8 -> iron_horse_armor, eut 64 dur 128) = 11 rows - ALL eleven port members carry the plate face, the MT.Enori member rides the plateGem arm (the :751 ternary -> gt6:plate_gem_enori); (2) :755 the ANY.Steel saddle walk (leather x6 + ring x2 + stick x3 -> saddle, eut 64 dur 128) = 3 rows (Steel/Knightmetal/MeteoricSteel); (3) :763-:766 the ANY.Steel chain walk (ring x5/8/7/4 -> chainmail helmet/chestplate/leggings/boots, eut 96 dur 128) = 4 x 3 = 12 rows. DECLARED DEVIATION (the ST.tag selector legs): the :763-:766 ST.tag(4/5/6/7) selector slots are NOT expressible in the JSON v1 schema (damage/NBT config faces, resolveItem is item+count only) - dropped per the loom.json precedent, the row semantics relax to selector-free. ALREADY SEATED: :744 the string->wool smoke row (untouched). task recipe-b4-juicer-squeezer-flowerfruit seats the :736 dyed-wool band (16 rows, the MT.DATA.Dye_Materials[15-i] plantGtFiber faces, the ST.tag(0) selector drop per the declared deviation above) — unlocked by the dye-item-axis dust/fiber items landing. STILL DECLARED BLOCKED / NOT POURED: the PLANTS-band remainders of the same block — :720 the CR.shaped wool<-fiber legs (the vanilla CRAFTING face, not a RecipeMap row) and :743 the Cu-fiber orange-wool joke row (MT.Cu has no port plantGtFiber carrier; the b2a-midcard BLOCKED ruling stands); :745 the string->web row and :746 the reeds->paper row + :752/:753 the golden/diamond horse-armor statics + :757-:760 the four leather-armor statics are the RULING-UNNAMED sibling statics of the same block - live vanilla ids, declared NOT poured as outside the ruled three-walk scope (next data card). WALK ROW PROVENANCE: the walk rows carry NO further per-row comment - provenance IS the GT6RecipeMapDataB2ResidualRowsPourTest live-walk cross-check over ANY.Iron/ANY.Steel and the live registration. KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b1 pours the statics the three-walk ruling deferred: :745/:746/:752/:753/:757-:760 (8 rows, the selector slots dropped per the declared deviation above); the seated :744 row is corrected to the upstream 16t (Loader_Recipes_Vanilla.java:744 verbatim — it carried a 128 smoke-era transcription slip).",
  "recipes": [
   {
    "comment": "Loader_Recipes_Vanilla.java:744 — string x4 -> white wool",
@@ -670,6 +670,278 @@
     }
    ],
    "duration": 128,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 0 — plantGtFiber.mat(MT.DATA.Dye_Materials[15], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_white",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:white_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 1 — plantGtFiber.mat(MT.DATA.Dye_Materials[14], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_orange",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:orange_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 2 — plantGtFiber.mat(MT.DATA.Dye_Materials[13], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_magenta",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:magenta_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 3 — plantGtFiber.mat(MT.DATA.Dye_Materials[12], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_light_blue",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:light_blue_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 4 — plantGtFiber.mat(MT.DATA.Dye_Materials[11], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_yellow",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:yellow_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 5 — plantGtFiber.mat(MT.DATA.Dye_Materials[10], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_lime",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:lime_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 6 — plantGtFiber.mat(MT.DATA.Dye_Materials[9], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_pink",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:pink_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 7 — plantGtFiber.mat(MT.DATA.Dye_Materials[8], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_gray",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:gray_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 8 — plantGtFiber.mat(MT.DATA.Dye_Materials[7], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_light_gray",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:light_gray_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 9 — plantGtFiber.mat(MT.DATA.Dye_Materials[6], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_cyan",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:cyan_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 10 — plantGtFiber.mat(MT.DATA.Dye_Materials[5], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_purple",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:purple_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 11 — plantGtFiber.mat(MT.DATA.Dye_Materials[4], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_blue",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:blue_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 12 — plantGtFiber.mat(MT.DATA.Dye_Materials[3], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_brown",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:brown_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 13 — plantGtFiber.mat(MT.DATA.Dye_Materials[2], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_green",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:green_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 14 — plantGtFiber.mat(MT.DATA.Dye_Materials[1], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_red",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:red_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "Vanilla:736 wool meta 15 — plantGtFiber.mat(MT.DATA.Dye_Materials[0], 4) -> wool (the ST.tag(0) selector slot dropped per the seated deviation)",
+   "inputs": [
+    {
+     "item": "gt6:plant_gt_fiber_black",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:black_wool",
+     "count": 1
+    }
+   ],
+   "duration": 16,
    "eut": 16
   }
  ]
