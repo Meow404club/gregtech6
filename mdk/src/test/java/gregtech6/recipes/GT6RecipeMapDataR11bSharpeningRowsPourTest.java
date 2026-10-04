@@ -126,28 +126,37 @@ public class GT6RecipeMapDataR11bSharpeningRowsPourTest extends GTRecipesOffline
 	record Statement(String cite, OreDictPrefix inPrefix, int inCount, OreDictPrefix outPrefix, int outCount,
 			long multiplier, boolean stoneGate, boolean chancesFace) {}
 
-	/** The 20 statements, upstream file order. eUt 16 throughout; duration 0 (the getCosts arm). */
-	private static final List<Statement> STATEMENTS = List.of(
-		new Statement(":396", OP.nugget    , 1, OP.round        , 1, 256, false, true ),
-		new Statement(":397", OP.plateGem  , 1, OP.lens         , 1, 256, false, true ),
-		new Statement(":398", OP.gem       , 1, OP.stick        , 1, 256, false, true ),
-		new Statement(":399", OP.ingot     , 1, OP.stick        , 1, 256, false, true ),
-		new Statement(":400", OP.billet    , 1, OP.stick        , 1, 256, false, true ),
-		new Statement(":401", OP.gemChipped, 1, OP.toolHeadArrow, 2, 256, false, true ),
-		new Statement(":402", OP.rockGt    , 1, OP.toolHeadArrow, 8, 256, true , true ),
-		new Statement(":403", OP.toolHeadRawArrow        , 1, OP.toolHeadArrow        , 1, 16, false, false),
-		new Statement(":404", OP.toolHeadRawSaw          , 1, OP.toolHeadSaw          , 1, 16, false, false),
-		new Statement(":405", OP.toolHeadRawChisel       , 1, OP.toolHeadChisel       , 1, 16, false, false),
-		new Statement(":406", OP.toolHeadRawSword        , 1, OP.toolHeadSword        , 1, 16, false, false),
-		new Statement(":407", OP.toolHeadRawPickaxe      , 1, OP.toolHeadPickaxe      , 1, 16, false, false),
-		new Statement(":408", OP.toolHeadRawShovel       , 1, OP.toolHeadShovel       , 1, 16, false, false),
-		new Statement(":409", OP.toolHeadRawSpade        , 1, OP.toolHeadSpade        , 1, 16, false, false),
-		new Statement(":410", OP.toolHeadRawUniversalSpade, 1, OP.toolHeadUniversalSpade, 1, 16, false, false),
-		new Statement(":411", OP.toolHeadRawAxe          , 1, OP.toolHeadAxe          , 1, 16, false, false),
-		new Statement(":412", OP.toolHeadRawAxeDouble    , 1, OP.toolHeadAxeDouble    , 1, 16, false, false),
-		new Statement(":413", OP.toolHeadRawHoe          , 1, OP.toolHeadHoe          , 1, 16, false, false),
-		new Statement(":414", OP.toolHeadRawSense        , 1, OP.toolHeadSense        , 1, 16, false, false),
-		new Statement(":415", OP.toolHeadRawPlow         , 1, OP.toolHeadPlow         , 1, 16, false, false));
+	/** The 20 statements, upstream file order. eUt 16 throughout; duration 0 (the getCosts arm).
+	 * Lazy: resolved on first CALL (always post-boot, inside a test method) — a static initializer
+	 * reading OP.* class-loads ahead of OP.init() and freezes the null prefixes JVM-wide (the
+	 * GT6RegistryStaticInitGuardTest rule; the early OP class-init also poisoned the neo
+	 * registry+recipes batch order — the seam/surface-rock reds). */
+	private static List<Statement> sStatements;
+
+	private static List<Statement> statements() {
+		if (sStatements != null) return sStatements;
+		return sStatements = List.of(
+			new Statement(":396", OP.nugget    , 1, OP.round        , 1, 256, false, true ),
+			new Statement(":397", OP.plateGem  , 1, OP.lens         , 1, 256, false, true ),
+			new Statement(":398", OP.gem       , 1, OP.stick        , 1, 256, false, true ),
+			new Statement(":399", OP.ingot     , 1, OP.stick        , 1, 256, false, true ),
+			new Statement(":400", OP.billet    , 1, OP.stick        , 1, 256, false, true ),
+			new Statement(":401", OP.gemChipped, 1, OP.toolHeadArrow, 2, 256, false, true ),
+			new Statement(":402", OP.rockGt    , 1, OP.toolHeadArrow, 8, 256, true , true ),
+			new Statement(":403", OP.toolHeadRawArrow        , 1, OP.toolHeadArrow        , 1, 16, false, false),
+			new Statement(":404", OP.toolHeadRawSaw          , 1, OP.toolHeadSaw          , 1, 16, false, false),
+			new Statement(":405", OP.toolHeadRawChisel       , 1, OP.toolHeadChisel       , 1, 16, false, false),
+			new Statement(":406", OP.toolHeadRawSword        , 1, OP.toolHeadSword        , 1, 16, false, false),
+			new Statement(":407", OP.toolHeadRawPickaxe      , 1, OP.toolHeadPickaxe      , 1, 16, false, false),
+			new Statement(":408", OP.toolHeadRawShovel       , 1, OP.toolHeadShovel       , 1, 16, false, false),
+			new Statement(":409", OP.toolHeadRawSpade        , 1, OP.toolHeadSpade        , 1, 16, false, false),
+			new Statement(":410", OP.toolHeadRawUniversalSpade, 1, OP.toolHeadUniversalSpade, 1, 16, false, false),
+			new Statement(":411", OP.toolHeadRawAxe          , 1, OP.toolHeadAxe          , 1, 16, false, false),
+			new Statement(":412", OP.toolHeadRawAxeDouble    , 1, OP.toolHeadAxeDouble    , 1, 16, false, false),
+			new Statement(":413", OP.toolHeadRawHoe          , 1, OP.toolHeadHoe          , 1, 16, false, false),
+			new Statement(":414", OP.toolHeadRawSense        , 1, OP.toolHeadSense        , 1, 16, false, false),
+			new Statement(":415", OP.toolHeadRawPlow         , 1, OP.toolHeadPlow         , 1, 16, false, false));
+	}
 
 	/** One walked row, JSON-face: input id+count, output slots (id, count, chance-or-0), duration. */
 	record Row(Statement st, String inId, int inCount, List<Out> outs, long duration) {
@@ -225,7 +234,7 @@ public class GT6RecipeMapDataR11bSharpeningRowsPourTest extends GTRecipesOffline
 		Map<OreDictPrefix, Set<OreDictMaterial>> tUniverse = universe();
 		List<GTMaterialItems.PrefixMaterial> tOrder = GTMaterialItems.registrationOrder();
 		List<Row> rRows = new ArrayList<>();
-		for (Statement tSt : STATEMENTS) {
+		for (Statement tSt : statements()) {
 			Set<OreDictMaterial> tOutputs = tUniverse.get(tSt.outPrefix());
 			for (GTMaterialItems.PrefixMaterial tPair : tOrder) {
 				if (tPair.prefix() != tSt.inPrefix()) continue;
@@ -329,7 +338,7 @@ public class GT6RecipeMapDataR11bSharpeningRowsPourTest extends GTRecipesOffline
 	private String rowCite(List<JsonObject> aWalkRows, JsonObject aRow) {
 		int tIndex = aWalkRows.indexOf(aRow);
 		int tAcc = 0;
-		for (Statement tSt : STATEMENTS) {
+		for (Statement tSt : statements()) {
 			tAcc += STATEMENT_CENSUS.get(tSt.cite());
 			if (tIndex < tAcc) return tSt.cite();
 		}
