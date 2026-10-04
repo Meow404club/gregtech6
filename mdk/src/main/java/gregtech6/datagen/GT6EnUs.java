@@ -130,6 +130,7 @@ public class GT6EnUs extends LanguageProvider {
         addCup(); // task small-tank-cup — the Porcelain Cup pair (the 32739 row + the 899 raw)
         addJug(); // task small-tank-jug — the Ceramic Jug pair (the 32740 row + the 996 raw)
         addAnvils(); // task c-anvil
+        addMortars(); // task mortar-family — the five pestle rows (the dump-verbatim shared name)
         addEnergySource();
         addFeBattery(); // task eu-bridge-outbound — tail-append
         addFeConverter(); // task b-fe-converter-machine — tail-append
@@ -1453,6 +1454,21 @@ public class GT6EnUs extends LanguageProvider {
     private void addAnvils() {
         add("block.gt6.stone_anvil", "Stone Anvil");
         add("block.gt6.blackstone_anvil", "Blackstone Anvil");
+    }
+
+    /**
+     * The mortar family keys (task mortar-family): the five pestle rows, display names
+     * VERBATIM from the upstream registration rows (all five "Mortar",
+     * Loader_MultiTileEntities.java:2179-2183) — the variants distinguish by the pestle
+     * tint (the GT6MortarTint index-1 seat), not by name. The items ride the machines tab
+     * (the GT6Anvils join form), no tab key here.
+     */
+    private void addMortars() {
+        add("block.gt6.mortar_steel", "Mortar");
+        add("block.gt6.mortar_netherite", "Mortar");
+        add("block.gt6.mortar_sapphire", "Mortar");
+        add("block.gt6.mortar_diamond", "Mortar");
+        add("block.gt6.mortar_amethyst", "Mortar");
     }
 
     private void addBarrels() {

@@ -23,6 +23,7 @@ import gregtech6.registry.GT6HeatExchangers;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6LargeMachines;
+import gregtech6.registry.GT6Mortars;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6Turbines;
 import gregtech6.registry.GTMachines;
@@ -54,9 +55,10 @@ import gregtech6.registry.GTMultiBlocks;
  * ponytail: unsynchronized lazy build — the query face is the client main thread
  * (plugin registration), add a holder idiom only if an off-thread caller ever appears.
  *
- * <p>The upstream fallback face stays FAITHFUL for the four DECLARED-empty maps
- * (microwave/cooker/toolhead/mortar — GT6RecipeMapJsonLoader's zero-row-stock set, no
- * machine exists in the port): {@code #iconOf} hands back the lit-furnace default the
+ * <p>The upstream fallback face stays FAITHFUL for the three DECLARED-empty maps
+ * (microwave/cooker/toolhead — GT6RecipeMapJsonLoader's zero-row-stock set, no
+ * machine exists in the port; the mortar joined the tabled machines in the
+ * mortar-family card): {@code #iconOf} hands back the lit-furnace default the
  * upstream NEI_RecipeMap.init() drew whenever a map's mRecipeMachineList was empty
  * (NEI_RecipeMap.java:82 {@code Blocks.lit_furnace}). That whitelist is the ONLY
  * fallback path — every other visible map must walk at least one machine (the guard test
@@ -80,8 +82,7 @@ public final class GT6RecipeMapIcons {
 	public static final Set<String> FURNACE_FALLBACK = Set.of(
 			"gt.recipe.microwave",  // the p34 easter-egg surface, machine not ported
 			"gt.recipe.cooker",     // declared-empty, never had a consumer
-			"gt.recipe.toolhead",   // declared-empty, the per-material listener walk is the W5 cut
-			"gt.recipe.mortar");    // hand-tool face, no mortar item exists in the port
+			"gt.recipe.toolhead");  // declared-empty, the per-material listener walk is the W5 cut
 
 	/** One machine entry: the registration path (the census/reconciliation face) + the lazy item. */
 	public record Workstation(String path, Supplier<Item> item) {}
@@ -254,6 +255,11 @@ public final class GT6RecipeMapIcons {
 		for (GT6Anvils.AnvilRow tRow : GT6Anvils.ROWS)
 			add(rIndex, "gt.recipe.anvil", new Workstation(tRow.path(), () -> GT6Anvils.ITEMS_BY_PATH.get(tRow.path()).get()));
 		single(rIndex, "gt.recipe.juicer", GT6Kitchen.JUICER_ITEM);
+		// the mortar family (task mortar-family — the hand-tool face leaves the furnace
+		// fallback whitelist: the five tier blocks walk in, registration order, the steel
+		// head is the representative face)
+		for (Map.Entry<String, RegistryObject<Item>> tEntry : GT6Mortars.ITEMS_BY_PATH.entrySet())
+			add(rIndex, "gt.recipe.mortar", new Workstation(tEntry.getKey(), () -> tEntry.getValue().get()));
 		single(rIndex, "gt.recipe.anvil.bend", GT6Tools.BENDING_CYLINDER);
 		single(rIndex, "gt.recipe.hammer", GT6Tools.HAMMER);
 

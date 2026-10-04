@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:mixing_bowl"
+    },
+    {
+      "item": "gt6:ingot_iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:mortar_steel"
+  }
+}

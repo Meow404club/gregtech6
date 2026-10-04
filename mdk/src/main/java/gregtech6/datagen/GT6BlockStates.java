@@ -293,6 +293,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addRails(); // task rails-31-blocks — the 31-rail family (the vanilla rail grammar)
         addPortals(); // task portals-mini-nether-end — the two miniature portals (the ACTIVE cube swap)
         addKitchen(); // task issue7-kitchen-models — the four kitchen blocks (the upstream hollow-tub element forms)
+        addMortars(); // task mortar-family — the five mortar rows (the bowl+pestle element forms, two-layer)
         addMeasuringPot(); // task issue45-c3 — the Measuring Pot (the two-layer colored+overlay sub-cube tub)
         addGasCylinders(); // task small-tank-gas-cylinder — the four gas cylinders (the one shared static bell model, no fluid pass)
         addCells(); // task small-tank-cell — the 40 Capsule-Cell-Container rows (the one shared per-level model family)
@@ -4778,6 +4779,128 @@ public final class GT6BlockStates extends BlockStateProvider {
             tElement.face(tDir).texture(kitchenPanelTexture(tDir, aOutward)).tintindex(0).end();
         }
         tElement.end();
+    }
+
+    /**
+     * Task mortar-family — the five mortar rows (Loader_MultiTileEntities.java:2179-2183).
+     * The upstream render geometry replicated as vanilla element models over the borrowed
+     * two-layer tile set (assets/README.md, the mortar section), the addMeasuringPot
+     * colored+overlay grammar: every box renders its colored art Duplicated by a
+     * 0.01-inflated overlay shell. The render-pass table verbatim
+     * (MultiTileEntityMortar.setBlockBounds2 :114-125):
+     * <ul>
+     * <li>the floor slab (passes 4): (2,0,2)-(14,1,14), up = top / down = bottom, the
+     *     side ring omitted (the walls ring it — the kitchenJuicerModel base-slab form);</li>
+     * <li>the four 2px walls 6px tall (passes 0-3): outward = sides, cavity = insides,
+     *     rim top = top, end caps = sides, down omitted (coplanar with the floor's own —
+     *     the juicer wall form); the tiles DISJOINT (N/S span the full 2..14, W/E inset
+     *     4..12 — the kitchen tub tiling, only opposite-facing coplanar pairs survive);</li>
+     * <li>the central pestle column (pass 5): (6,0,6)-(10,9,10), up = middletop /
+     *     sides = middleside, down omitted (upstream SIDE_BOTTOM renders null, :149) —
+     *     the TINT-INDEX-1 seat, the {@code MORTAR_MATERIALS[mStyle].fRGBaSolid} face the
+     *     GT6MortarTint dispatch resolves per row (the five variants' visual distinctness).</li>
+     * </ul>
+     * The body faces carry tintindex 0 (the constant Ceramic body column, Loader :2179-2183)
+     * resolved by the same dispatch; the overlay band carries NO tint (the P22 decal
+     * contract). The whole model rides cutout (the overlay texels must discard, the
+     * measuring-pot form). One model per row (pairwise distinct bindings); the blockstates
+     * are the property-free single-state form (the mortar is facing-symmetric, no FACING
+     * read anywhere in MultiTileEntityMortar.java:76-180) and the BlockItems parent their
+     * row model (the addAnvils item form; the inventory tint rides the GT6MortarTint
+     * ItemColor).
+     */
+    private void addMortars() {
+        for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) {
+            Block tBlock = gregtech6.registry.GT6Mortars.BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = mortarModel(tRow.path());
+            simpleBlock(tBlock, tModel);
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
+    /** One mortar model: the two-layer texture band + the six body boxes verbatim (see {@link #addMortars}). */
+    private ModelFile mortarModel(String aName) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("sides", modLoc("block/tools/mortar/sides"))
+                .texture("insides", modLoc("block/tools/mortar/insides"))
+                .texture("top", modLoc("block/tools/mortar/top"))
+                .texture("bottom", modLoc("block/tools/mortar/bottom"))
+                .texture("middleside", modLoc("block/tools/mortar/middleside"))
+                .texture("middletop", modLoc("block/tools/mortar/middletop"))
+                .texture("overlay_sides", modLoc("block/tools/mortar_overlay/sides"))
+                .texture("overlay_insides", modLoc("block/tools/mortar_overlay/insides"))
+                .texture("overlay_top", modLoc("block/tools/mortar_overlay/top"))
+                .texture("overlay_bottom", modLoc("block/tools/mortar_overlay/bottom"))
+                .texture("overlay_middleside", modLoc("block/tools/mortar_overlay/middleside"))
+                .texture("overlay_middletop", modLoc("block/tools/mortar_overlay/middletop"))
+                .texture("particle", "#sides")
+                .renderType("cutout");
+        mortarFloor(tModel, false); // the floor slab — pass 4 (:120)
+        mortarWall(tModel,  2.0F,  2.0F, 14.0F,  4.0F, Direction.NORTH, false); // pass 1 (:117)
+        mortarWall(tModel,  2.0F, 12.0F, 14.0F, 14.0F, Direction.SOUTH, false); // pass 3 (:119)
+        mortarWall(tModel,  2.0F,  4.0F,  4.0F, 12.0F, Direction.WEST, false); // pass 0 (:116)
+        mortarWall(tModel, 12.0F,  4.0F, 14.0F, 12.0F, Direction.EAST, false); // pass 2 (:118)
+        mortarPestle(tModel, false); // the pestle column — pass 5 (:121)
+        // the overlay shells — the getTexture2 BlockTextureMulti(colored, overlay) pair
+        // (:144-150), the 0.01-inflated addMeasuringPot duplication
+        mortarFloor(tModel, true);
+        mortarWall(tModel,  2.0F,  2.0F, 14.0F,  4.0F, Direction.NORTH, true);
+        mortarWall(tModel,  2.0F, 12.0F, 14.0F, 14.0F, Direction.SOUTH, true);
+        mortarWall(tModel,  2.0F,  4.0F,  4.0F, 12.0F, Direction.WEST, true);
+        mortarWall(tModel, 12.0F,  4.0F, 14.0F, 12.0F, Direction.EAST, true);
+        mortarPestle(tModel, true);
+        return tModel;
+    }
+
+    /** The floor slab box + its overlay shell: up/down faces only (the side ring is the walls'). */
+    private void mortarFloor(BlockModelBuilder aModel, boolean aOverlayShell) {
+        // the shell inflates 0.01 (the potElement form); the shell mirrors the body face set
+        float tIn = aOverlayShell ? -0.01F : 0.0F;
+        BlockModelBuilder.ElementBuilder tElement = aModel.element()
+                .from(2.0F + tIn, 0.0F + tIn, 2.0F + tIn).to(14.0F - tIn, 1.0F - tIn, 14.0F - tIn);
+        String tBand = aOverlayShell ? "overlay_" : "";
+        int tTint = aOverlayShell ? -1 : 0;
+        tElement.face(Direction.UP).texture("#" + tBand + "top").tintindex(tTint).end();
+        tElement.face(Direction.DOWN).texture("#" + tBand + "bottom").tintindex(tTint).end();
+        tElement.end();
+    }
+
+    /** One wall panel box + its overlay shell: (aMinX,aMinZ)-(aMaxX,aMaxZ), y 0..6, down omitted (coplanar with the floor). */
+    private void mortarWall(BlockModelBuilder aModel, float aMinX, float aMinZ, float aMaxX, float aMaxZ,
+            Direction aOutward, boolean aOverlayShell) {
+        float tIn = aOverlayShell ? -0.01F : 0.0F;
+        BlockModelBuilder.ElementBuilder tElement = aModel.element()
+                .from(aMinX + tIn, 0.0F + tIn, aMinZ + tIn).to(aMaxX - tIn, 6.0F - tIn, aMaxZ - tIn);
+        String tBand = aOverlayShell ? "overlay_" : "";
+        int tTint = aOverlayShell ? -1 : 0;
+        for (Direction tDir : Direction.values()) {
+            if (tDir == Direction.DOWN) continue;
+            tElement.face(tDir).texture("#" + tBand + mortarPanelTexture(tDir, aOutward)).tintindex(tTint).end();
+        }
+        tElement.end();
+    }
+
+    /** The pestle column box + its overlay shell: (6,0,6)-(10,9,10), up = middletop / sides = middleside, down omitted (:149 null). */
+    private void mortarPestle(BlockModelBuilder aModel, boolean aOverlayShell) {
+        float tIn = aOverlayShell ? -0.01F : 0.0F;
+        BlockModelBuilder.ElementBuilder tElement = aModel.element()
+                .from(6.0F + tIn, 0.0F + tIn, 6.0F + tIn).to(10.0F - tIn, 9.0F - tIn, 10.0F - tIn);
+        String tBand = aOverlayShell ? "overlay_" : "";
+        int tTint = aOverlayShell ? -1 : 1;
+        tElement.face(Direction.UP).texture("#" + tBand + "middletop").tintindex(tTint).end();
+        tElement.face(Direction.NORTH).texture("#" + tBand + "middleside").tintindex(tTint).end();
+        tElement.face(Direction.SOUTH).texture("#" + tBand + "middleside").tintindex(tTint).end();
+        tElement.face(Direction.WEST).texture("#" + tBand + "middleside").tintindex(tTint).end();
+        tElement.face(Direction.EAST).texture("#" + tBand + "middleside").tintindex(tTint).end();
+        tElement.end();
+    }
+
+    /** The panel face texture: up top, down bottom, the cavity side insides, everything else (outer + end caps) sides (the kitchenPanelTexture form). */
+    private String mortarPanelTexture(Direction aDir, Direction aOutward) {
+        if (aDir == Direction.UP) return "top";
+        if (aDir == Direction.DOWN) return "bottom";
+        return aDir.getOpposite() == aOutward ? "insides" : "sides";
     }
 
     /**

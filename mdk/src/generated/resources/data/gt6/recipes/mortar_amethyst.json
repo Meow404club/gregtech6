@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:mixing_bowl"
+    },
+    {
+      "item": "gt6:gem_amethyst"
+    }
+  ],
+  "result": {
+    "item": "gt6:mortar_amethyst"
+  }
+}

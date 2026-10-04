@@ -21,6 +21,7 @@ import net.minecraft.world.item.Items;
 
 //? if forge {
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.RegistryObject;
 //?} else {
 /*import net.neoforged.neoforge.common.Tags;
 *///?}
@@ -307,6 +308,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clayJuicerSmeltingBuilder().save(aConsumer, CLAY_JUICER_SMELT_ID);
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aConsumer, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aConsumer, BLACKSTONE_ANVIL_ID);
+		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
+			ShapelessRecipeBuilder tMortarBuilder = mortarBuilder(tRow);
+			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
+			tMortarBuilder.save(aConsumer, mortarRecipeId(tRow));
+		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
@@ -555,6 +561,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clayJuicerSmeltingBuilder().save(aOutput, CLAY_JUICER_SMELT_ID);
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aOutput, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aOutput, BLACKSTONE_ANVIL_ID);
+		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
+			ShapelessRecipeBuilder tMortarBuilder = mortarBuilder(tRow);
+			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
+			tMortarBuilder.save(aOutput, mortarRecipeId(tRow));
+		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
@@ -2531,6 +2542,40 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('R', aStone)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.unlockedBy("has_stone", has(aStone));
+	}
+
+	/**
+	 * The mortar crafting rows (task mortar-family) — the upstream registration tails
+	 * VERBATIM (Loader_MultiTileEntities.java:2179-2183, the {@code "P", "B", 'B',
+	 * IL.Ceramic_Bowl, 'P', OP.<prefix>.dat(<material>)} shapeless pair): the base =
+	 * the port Ceramic-bowl stand-in {@code GT6Kitchen.MIXING_BOWL_ITEM} (the declared
+	 * mixing-bowl mapping, the research.manual-devices-port ruling — upstream
+	 * IL.Ceramic_Bowl is the kitchen bowl's own 1.7.10 identity) + the row's {@code 'P'}
+	 * ingredient ({@link GT6Mortars#pestleIngredient}: the DESIGN-0 STEEL-pestle row
+	 * crafts from an ANY.Iron INGOT (:2179 — the upstream column, not the pestle
+	 * column), Netherite from its ingot (:2180), the three gems from their gems
+	 * (:2181-2183)). 1 + 1 → 1 mortar. The id is the result-path convention
+	 * ({@link #mortarRecipeId}).
+	 */
+	private ShapelessRecipeBuilder mortarBuilder(gregtech6.registry.GT6Mortars.MortarRow aRow) {
+		// the bare-local form (the :3567 rail precedent) — naming the holder type here races
+		// the stonecutter RegistryObject/DeferredHolder swap inside this file's manual
+		// `//? if forge` import guard (the swapped neo import lands inside the dead forge
+		// comment and the 1.21.1 leg stops compiling); `var` never names it
+		var tPestle = gregtech6.registry.GTMaterialItems.get(
+				gregtech6.registry.GT6Mortars.pestlePrefix(aRow), gregtech6.registry.GT6Mortars.pestleIngredient(aRow));
+		if (tPestle == null) return null; // the row's ingredient is driver-hidden — the skip semantics (the hopperRecipeBuilder form)
+		net.minecraft.world.item.Item tPestleItem = tPestle.get();
+		return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gregtech6.registry.GT6Mortars.ITEMS_BY_PATH.get(aRow.path()).get())
+				.requires(GT6Kitchen.MIXING_BOWL_ITEM.get())
+				.requires(tPestleItem)
+				.unlockedBy("has_mixing_bowl", has(GT6Kitchen.MIXING_BOWL_ITEM.get()));
+	}
+
+	/** The id of one mortar row's recipe (the result-path convention, the hopperRecipeId bare-identifier form). */
+	public static ResourceLocation mortarRecipeId(gregtech6.registry.GT6Mortars.MortarRow aRow) {
+		String tPath = aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
