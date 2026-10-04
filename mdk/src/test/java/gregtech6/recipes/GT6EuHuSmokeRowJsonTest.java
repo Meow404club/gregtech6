@@ -89,7 +89,11 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		tData.put(new ResourceLocation("gt6", "fermenter"), resource("fermenter.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
-		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("loom"), "one loom smoke row");
+		// 2 since task recipe-b4-juicer-squeezer-flowerfruit: the seated smoke row + exactly one
+		// of the b4 :736 dyed rows (white fiber -> white_wool — the ONE output the fixture above
+		// resolves; the other 15 dyed outputs WARN-skip, the b2/b1 35-row stock rides its own
+		// census pins in the *RowsPourTest family, not this seam-acceptance fixture)
+		assertEquals(2, GT6RecipeMapJsonLoader.pouredCount("loom"), "the loom smoke row + the fixture-resolvable b4 dyed row");
 		// 11 = the seated smoke row (the only row whose vanilla legs sit in the fixture
 		// whitelist — every other seated row walks minecraft ids the stand-in answers null,
 		// the b2b1 posture) + task robotics-chain's 10 tip-packing rows (all-gt6 legs pour
@@ -123,7 +127,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		assertEquals(25, tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("amount").getAsLong(), "the Ananas output amount");
 
 		// the rows are LIVE in the maps (the findRecipe stock grew by one each)
-		assertEquals(1, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held ONLY the smoke row (the DECLARED-empty card-A state)");
+		assertEquals(2, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held the smoke row + the fixture-resolvable b4 dyed row (the card-A declared-empty era is long gone; the full stock is the *RowsPourTest census)");
 		assertEquals(11, GT6RecipeMaps.BOXINATOR.mRecipeList.size()); // + the robotics-chain ten (the all-gt6 legs pour the stand-in)
 		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size());
 		assertEquals(195, GT6RecipeMaps.FERMENTER.mRecipeList.size());
