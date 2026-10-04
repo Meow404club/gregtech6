@@ -13518,8 +13518,9 @@ the `item/generated` parent (the bottle band convention).
 ## task circuit-chain-items — the 53 circuit synthesis-chain intermediates
 
 - `gt6/textures/item/circuit_chain/{circuit_plate_*,circuit_wire_*,circuit_part_*,
-  circuit_board_*,circuit_crystal_*,processor_crystal_*}.png` — the 53 circuit-chain
-  sprites, byte-identical upstream borrows (task circuit-chain-items). Upstream
+  circuit_board_*,circuit_crystal_*,processor_crystal_*}.png` — the 56 circuit-chain
+  sprites, byte-identical upstream borrows (task circuit-chain-items + the three
+  circuit-chain-recipes gap circuits). Upstream
   `textures/items/gt.multiitem.technological/<meta>.png` (MultiItemTechnological.java
   :546-770, the flat-item registration lines), pre-coloured — the plain-item form, no tint
   seam (the GT6Electrodes posture):
@@ -13576,3 +13577,6 @@ the `item/generated` parent (the bottle band convention).
   - `processor_crystal_ruby.png` (`4dccc3a2b7a0f83edcf41cb20194176af3986a82cf6770688fb529598c2c7b26` — meta 30502, MIT:see the class row table)
   - `processor_crystal_emerald.png` (`59db668797917971172bb17dacedca19d446cc7388d5b1bdc48e079d5608516d` — meta 30503, MIT:see the class row table)
   - `processor_crystal_sapphire.png` (`98f4970ff8900b87a442fdda47f13952563cca31cf77c02b00ab9874db0d0ab3` — meta 30504, MIT:see the class row table)
+  - `circuit_magic.png` (`be6cdb3809242c0a6facb92a8052a69539622a29aebf83032c2ce5a4f8c7dbf4` — meta 30311, MIT:707)
+  - `circuit_enderium.png` (`643d47f3db898ca77520256c7a04a5f764bb2a9258c2313c199db16b4c9d2430` — meta 30313, MIT:708)
+  - `circuit_signalum.png` (`ee59f5f15cbaa40f6776fa81fc100ba140b179aedf74b6b6889453294f62cdd4` — meta 30315, MIT:709)
