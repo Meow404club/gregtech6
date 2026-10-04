@@ -2738,18 +2738,19 @@ public class GT6EnUs extends LanguageProvider {
 
     /**
      * The boiler Jade face keys (task jade-boiler, jade-redesign-core reface —
-     * 6 keys, task jade-boiler-burningbox grows the water band): the heat line (stored/max
+     * 6 keys, task jade-boiler-burningbox grows the water band, task boiler-jade-display
+     * grows the production band to 9): the heat line (stored/max
      * HU — the upstream thermometer wording, MultiTileEntityBoilerTank.java:182 — over the
      * three-slot bar template), the demand line (mOutput/2 HU/t, the getEnergyDemanded
-     * value), the WATER/STEAM TANK BARS now always visible (upgraded from the sneak band —
-     * the empty water tank paints the bar red, the styling lives on the bar not the row)
-     * and the sneak-detail calcification pair (the upstream magnifyingglass wording
-     * :414-419 verbatim). The WATER label slot now carries the ACTUAL fluid display name
-     * (the KEY_WATER_FLUID registry-name wire, the upstream FL.water tank accepts water +
-     * distilled water — the hardcoded "Water" label retired) with the "Empty" word on a
-     * dry/unresolvable tank (the user ruling: show empty when there is none). The two
+     * value), the WATER/STEAM TANK BARS (the water bar renders only on a FILLED tank —
+     * task boiler-jade-display ① ruling: empty is empty, NO row; the "Empty" word survives
+     * only as the unresolvable-identity label fallback), the RATE line (the current steam
+     * production mB/t, the tick conversion formula mirrored — boiler-jade-display ③) and
+     * the EFFICIENCY line (the ten-thousandths heat-to-steam utilization as a plain
+     * percent — boiler-jade-display ④) and the sneak-detail calcification pair (the
+     * upstream magnifyingglass wording :414-419 verbatim). The two
      * output-gate states and the no-water warning retired (the user ruling: the half-gate
-     * lines are noise; the red empty bar IS the warning face). The {@code %%} escape
+     * lines are noise). The {@code %%} escape
      * renders a literal percent (TranslatableContents.java:80-81). Consumed by
      * GT6BoilerProvider; zh faces ride the reference table's hand layer via
      * GT6ZhCn.addBoilerJadeUnits.
@@ -2758,6 +2759,8 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6BoilerProvider.LANG_HEAT, "Stored Heat Units: %s / %s HU (%s%%)");
         add(GT6BoilerProvider.LANG_DEMAND, "Demand: %s HU/t");
         add(GT6BoilerProvider.LANG_STEAM, "Steam: %s / %s mB (%s%%)");
+        add(GT6BoilerProvider.LANG_RATE, "Steam Production: %s mB/t");
+        add(GT6BoilerProvider.LANG_EFFICIENCY, "Efficiency: %s%%");
         add(GT6BoilerProvider.LANG_SCALE, "Calcification: %s%%");
         add(GT6BoilerProvider.LANG_SCALE_CLEAN, "No Calcification in this Boiler");
         add(GT6BoilerProvider.LANG_WATER, "%s: %s / %s mB (%s%%)");

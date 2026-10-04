@@ -1662,13 +1662,18 @@ HAND_TRANSLATIONS = {
     # 双落 discipline: py row + provider/datagen walk in the SAME commit, the regen
     # reproduces the tsv rows.
     "gt6.jade.boiler.demand": ("需求: %s HU/t", "hand"),
+    # task boiler-jade-display: the production band — 效率 (the heat-to-steam utilization
+    # percent, mEfficiency/100) and 蒸汽产量 (the tick conversion formula rate, mB/t).
+    "gt6.jade.boiler.efficiency": ("效率: %s%%", "hand"),
     "gt6.jade.boiler.heat": ("储存热量: %s / %s HU (%s%%)", "hand"),
+    "gt6.jade.boiler.rate": ("蒸汽产量: %s mB/t", "hand"),
     "gt6.jade.boiler.scale": ("水垢: %s%%", "hand"),
     "gt6.jade.boiler.scale.clean": ("锅炉无水垢", "hand"),
     "gt6.jade.boiler.steam": ("蒸汽: %s / %s mB (%s%%)", "hand"),
     # task jade-boiler-burningbox: the water label slot carries the ACTUAL fluid name
     # (the hardcoded 水 retired — the upstream FL.water tank takes water + distilled
-    # water) with 空罐 on a dry tank (the show-empty ruling).
+    # water); 空罐 survives only as the unresolvable-identity fallback (the empty ROW
+    # retired — the boiler-jade-display ① ruling: empty is empty, no row).
     "gt6.jade.boiler.water": ("%s: %s / %s mB (%s%%)", "hand"),
     "gt6.jade.boiler.water.empty": ("空罐", "hand"),
     # task p33-bees-lv3-b-bumbliary: the 2 Bumbliary machine display names are DUMP faces
