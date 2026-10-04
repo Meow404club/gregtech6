@@ -1,8 +1,11 @@
 package gregtech6.tileentity.misc;
 
+import java.time.LocalDate;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -10,6 +13,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -23,6 +27,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import gregtech6.block.GTEntityBlock;
+import gregtech6.block.surface.GT6RockLines;
+import gregtech6.items.tools.GTMagnifyingGlassItem;
 import gregtech6.registry.GT6Placeables;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 
@@ -171,6 +177,19 @@ public class GT6PlaceableBlock extends GTEntityBlock {
 				return InteractionResult.CONSUME;
 			}
 			return InteractionResult.CONSUME;
+		}
+		// the magnifier census arm (task easter-s4-rock-lines — RockPlaced rides
+		// MultiTileEntityRock.onToolClick :85-107): the non-sneak magnifier on a flint
+		// pile SPEAKS (the :107 itemFlint row) instead of giving back; the sneak click
+		// falls through to the give arm (the upstream :87-92 give). Only the flint row
+		// is in census scope — the :108-137 material band is the deferred sibling, a
+		// stone pile keeps the give arm.
+		if (mKind == Kind.ROCK && !aPlayer.isShiftKeyDown() && !tHeld.isEmpty()
+				&& tHeld.canPerformAction(GTMagnifyingGlassItem.ACTION) && tContents.is(Items.FLINT)) {
+			LocalDate tNow = LocalDate.now();
+			aPlayer.displayClientMessage(Component.literal(GT6RockLines.flintLine(aLevel.getRandom(),
+					GT6RockLines.aprilFools(tNow), GT6RockLines.woodmansBday(tNow), GT6RockLines.xmasInJuly(tNow))), false);
+			return InteractionResult.SUCCESS;
 		}
 		// the give arm (base :98): one item back; the empty pile goes to air (:107 setToAir)
 		if (!tContents.isEmpty()) {

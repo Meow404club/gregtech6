@@ -60,6 +60,12 @@ public class GT6SurfaceStickBlock extends GT6SurfaceRockBlock {
 		super(aProperties.sound(SoundType.WOOD).mapColor(MapColor.WOOD), null);
 	}
 
+	/** No chat face — upstream MultiTileEntityStick has no onToolClick (the magnifier census is rock-only, MultiTileEntityRock.java:85). */
+	@Override
+	protected String magnifierLine(net.minecraft.world.level.Level aLevel) {
+		return null;
+	}
+
 	/** MultiTileEntityStick.java:190-191 verbatim — the IForgeBlock 4-arg faces (the GTTankValveBlock form, both legs). */
 	@Override
 	public int getFlammability(BlockState aState, BlockGetter aLevel, BlockPos aPos, Direction aDirection) {
