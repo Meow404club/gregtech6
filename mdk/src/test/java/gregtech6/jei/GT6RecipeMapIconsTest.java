@@ -47,6 +47,9 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 
 	private static final net.minecraft.world.item.Item STUB_ITEM = Items.IRON_INGOT;
 
+	// no static vanilla-item field: a <clinit> Items dereference runs before the base
+	// bootStrap and poisons the worker JVM for every later suite (the run-order lottery)
+
 	@BeforeAll
 	static void bootMaterials() {
 		gregtech6.registry.GTMaterialItems.initMaterials();
@@ -111,7 +114,7 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 			assertEquals(Items.FURNACE, tIcon.getItem(),
 					GT6RecipeMapIcons.FURNACE_FALLBACK + " rides the upstream lit-furnace default");
 		} finally {
-			GT6RecipeMapIcons.sResolver = tSupplier -> STUB_ITEM;
+			GT6RecipeMapIcons.sResolver = tSupplier -> Items.IRON_INGOT;
 		}
 	}
 
@@ -123,7 +126,7 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 		assertFalse(GT6RecipeMapIcons.FURNACE_FALLBACK.contains("gt.recipe.mortar"),
 				"the mortar machine now exists in the port — the furnace-fallback whitelist row is retired");
 		assertTrue(GT6RecipeMapIcons.has(tMortar), "the icon table carries the mortar row (the workstation walk face)");
-		assertEquals(STUB_ITEM, GT6RecipeMapIcons.iconOf(tMortar).getItem(),
+		assertEquals(Items.IRON_INGOT, GT6RecipeMapIcons.iconOf(tMortar).getItem(),
 				"the mortar icon resolves through the table (the first() head = mortar_steel live, the stub offline)");
 	}
 
