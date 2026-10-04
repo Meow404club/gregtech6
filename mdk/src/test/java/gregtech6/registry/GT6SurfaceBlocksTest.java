@@ -91,6 +91,22 @@ class GT6SurfaceBlocksTest {
     }
 
     /**
+     * The four colored-clay blocks (task worldgen-diggables-pits): the BlocksGT.Diggables
+     * IS_CLAY quartet (BlockDiggable.java:47 metas 1/4/5/6 — meta 0 mud rides the vanilla
+     * mud ruling GT6OreBlocks.java:217, meta 2 turf is TURF, meta 3 red clay the
+     * GT6NetherOres nether_red_clay stand-in) joins the obtainable band:
+     * 105 + 4 blocks, 26 + 4 items.
+     */
+    @Test
+    void clayBandRegistrationIsPinned() {
+        assertEquals(109, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 12 obtainable rows + the 57 indicator rocks"
+                        + " + the 18 flowers + the 18 potted companions (the 4 colored clays joined the obtainable band)");
+        assertEquals(30, GT6SurfaceBlocks.ITEMS.getEntries().size(),
+                "the obtainable band's block items (the 4 colored clays carry their BlockItem, the turf face)");
+    }
+
+    /**
      * The 57 vein-indicator rocks (task w6-t3-large-veins; 31 -> 40 with a-ore-axis-extension;
      * 40 -> 57 with b-gem-pool-extension): each literal id snake
      * matches the material's composed path (GTMaterialItems.snakeCase over mNameInternal —
