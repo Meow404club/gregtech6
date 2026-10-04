@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:cable_platinum_gt01"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_iv"
+    },
+    "R": {
+      "item": "gt6:plate_rubber"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "MCM",
+    "RRR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:compact_electric_conveyor_iv"
+  }
+}

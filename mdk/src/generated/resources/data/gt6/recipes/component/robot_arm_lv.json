@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:cable_tin_gt01"
+    },
+    "E": {
+      "tag": "gt6:circuit1"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_lv"
+    },
+    "P": {
+      "item": "gt6:compact_electric_piston_lv"
+    },
+    "S": {
+      "item": "gt6:stick_steel_galvanized"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "MSM",
+    "PES"
+  ],
+  "result": {
+    "item": "gt6:compact_robot_arm_lv"
+  },
+  "show_notification": true
+}

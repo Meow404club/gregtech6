@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_titanium"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_iv"
+    },
+    "P": {
+      "item": "gt6:plate_titanium"
+    },
+    "S": {
+      "item": "gt6:stick_titanium"
+    },
+    "T": {
+      "item": "gt6:screw_titanium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TPP",
+    "dSS",
+    "TMG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:compact_electric_piston_iv"
+  }
+}

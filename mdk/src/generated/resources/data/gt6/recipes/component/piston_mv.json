@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_aluminium"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_mv"
+    },
+    "P": {
+      "item": "gt6:plate_aluminium"
+    },
+    "S": {
+      "item": "gt6:stick_aluminium"
+    },
+    "T": {
+      "item": "gt6:screw_aluminium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TPP",
+    "dSS",
+    "TMG"
+  ],
+  "result": {
+    "item": "gt6:compact_electric_piston_mv"
+  },
+  "show_notification": true
+}

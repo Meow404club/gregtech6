@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:cable_copper_gt01"
+    },
+    "E": {
+      "tag": "gt6:circuit2"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_mv"
+    },
+    "P": {
+      "item": "gt6:compact_electric_piston_mv"
+    },
+    "S": {
+      "item": "gt6:stick_aluminium"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "MSM",
+    "PES"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:compact_robot_arm_mv"
+  }
+}

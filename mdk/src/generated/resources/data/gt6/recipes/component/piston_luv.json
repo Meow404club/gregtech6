@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_iridium"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_luv"
+    },
+    "P": {
+      "item": "gt6:plate_iridium"
+    },
+    "S": {
+      "item": "gt6:stick_iridium"
+    },
+    "T": {
+      "item": "gt6:screw_iridium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TPP",
+    "dSS",
+    "TMG"
+  ],
+  "result": {
+    "item": "gt6:compact_electric_piston_luv"
+  },
+  "show_notification": true
+}

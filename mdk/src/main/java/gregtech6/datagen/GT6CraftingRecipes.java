@@ -516,6 +516,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task debt-emitter-sensor-generators — the 20 live self-crafting rows of the three
 		// technological component families (the pour map in the band javadoc below)
 		compactComponentRows(aConsumer);
+		// task robotics-chain — the 10 Autocrafter tip rows + the 37 live component-family
+		// self-crafting rows (the pour map in the band doc below)
+		robotTipRows(aConsumer);
+		roboticsComponentRows(aConsumer);
 		// task debt-dungeon-keys-recipes — the ten dungeon-key rows (MultiItemRandomTools.java:589-598)
 		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -761,6 +765,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task debt-emitter-sensor-generators — the 20 live self-crafting rows of the three
 		// technological component families (the pour map in the band javadoc below)
 		compactComponentRows(aOutput);
+		// task robotics-chain — the 10 Autocrafter tip rows + the 37 live component-family
+		// self-crafting rows (the pour map in the band doc below)
+		robotTipRows(aOutput);
+		roboticsComponentRows(aOutput);
 		// task debt-dungeon-keys-recipes — the ten dungeon-key rows (MultiItemRandomTools.java:589-598)
 		for (PartFamilyRecipeRow tRow : keyRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
@@ -4301,6 +4309,100 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The FIELD_GENERATORS 'W' Osmium wire gauges per tier (:425-434; index 0 = the unported fine wire). */
 	private static final int[] FIELD_GENERATOR_OS_GAUGES = {1, 2, 4, 6, 8, 10, 12, 14, 16};
 
+	// -------------------------------------------------------------------------
+	// task robotics-chain — the Autocrafter tip rows (MultiItemRandomTools.java:481-490)
+	// and the four compact component families' self-crafting rows
+	// (MultiItemTechnological.java:404-421). Grids and columns VERBATIM:
+	//   - tips: 'P' plateCurved SteelGalvanized, 'C' OD_CIRCUITS[3] → #gt6:circuit3 (the
+	//     HV rung), 'M' MOTORS[3]/PISTONS[3]/CONVEYERS[3], 'X' the per-row tool-head
+	//     column (robotTipXColumn), the saw 'D' dust ANY.Diamond→Diamond; the lowercase
+	//     'w'/'h'/'f'/'d' = the CR.DEF tool letters → the #gt6:tools/* tags, defined per
+	//     row-shape so no phantom keys (the craftfrom convention).
+	//   - motors :404-415: 'I' the magnetic ladder (IronMagnetic row 1 + its :407
+	//     SteelMagnetic DEF twin, SteelMagnetic rows 2-3, NeodymiumMagnetic rows 4-5,
+	//     stickLong rows 6-9), 'P' plateCurved / 'R' stick over Electric_T[i]
+	//     (MT.java:3691), 'W' wireGt01-09 (rows 1-3 walk ANY.Cu → AnnealedCopper — the
+	//     only Cu member carrying port wire items, the WIRES-condition face; rows 4-9
+	//     AnnealedCopper verbatim), 'C' CABLES_01[i] (MT.java:3631 = insulated 01 over
+	//     Pb/Sn/Cu/Au/Al/Pt, then the bare graphene wire01 fold :3638 — the
+	//     compactComponent band precedent). Row 0's pair (:404-405) is CUT —
+	//     OP.wireFine carries no port item/tag face (the FIELD_GENERATORS ULV precedent);
+	//     declared here and pinned in GT6RoboticsCensusTest.
+	//   - conveyers/pistons/robot_arms :419-421 (the shared for-loop; the PUMPS row stays
+	//     POOLED — the pumps are not this card's four prefixes): 'R' plate
+	//     ANY.Rubber→Rubber (ANY.java:144 — the group's only member), 'T' screw / 'P'
+	//     plate / 'S' stick / 'G' gearGtSmall over Electric_T[i], the arms 'E'
+	//     OD_CIRCUITS[i] → #gt6:circuit<i> (rungs 7-9 CUT — no #gt6:circuit7..9 tags, the
+	//     compactComponent band precedent) and 'P' column = the PISTONS[i] item.
+	// LIVE: 10 tips + 10 motors (9 rungs + the SteelMagnetic twin) + 10 conveyers +
+	// 10 pistons + 7 arms = 47; CUT: 2 motor rows (wireFine) + 3 arm rungs (circuit7-9);
+	// POOLED: the 10 PUMPS loop rows.
+	// -------------------------------------------------------------------------
+
+	/** The tip rows, upstream order (:481-490): the kind leaf, the 'M' family index into GT6Robotics, the third-row pattern. */
+	private static final String[][] ROBOT_TIP_ROWS = {
+			{"wrench"     , "MOTORS"   , " X "},
+			{"screwdriver", "MOTORS"   , " X "},
+			{"saw"        , "MOTORS"   , "DXd"},
+			{"hammer"     , "PISTONS"  , " X "},
+			{"cutter"     , "MOTORS"   , "XfX"},
+			{"chisel"     , "PISTONS"  , " X "},
+			{"rubber"     , "PISTONS"  , " X "},
+			{"blade"      , "PISTONS"  , " X "},
+			{"drill"      , "MOTORS"   , "fX "},
+			{"file"       , "CONVEYERS", " X "},
+	};
+
+	/** The kind leaf → the {@link gregtech6.registry.GT6Robotics#ROBOT_TIPS} index (the upstream :470-479 registration order). */
+	private static final java.util.Map<String, Integer> ROBOT_TIP_ROW_INDEX = java.util.Map.ofEntries(
+			java.util.Map.entry("wrench", 0), java.util.Map.entry("screwdriver", 1), java.util.Map.entry("saw", 2),
+			java.util.Map.entry("hammer", 3), java.util.Map.entry("cutter", 4), java.util.Map.entry("chisel", 5),
+			java.util.Map.entry("rubber", 6), java.util.Map.entry("blade", 7), java.util.Map.entry("drill", 8),
+			java.util.Map.entry("file", 9));
+
+	/**
+	 * The tip rows' 'X' column (MultiItemRandomTools.java:481-490 verbatim pairing):
+	 * the tool-head/plate/stick/dust faces. The ANY-group folds are declared inline
+	 * (ANY.Rubber = MT.Rubber only; ANY.Steel/ANY.Diamond fold to the primary member —
+	 * the secondary members carry no port items).
+	 */
+	private Item robotTipXColumn(String aKind) {
+		return switch (aKind) {
+			case "wrench"      -> itemOrNull(gregapi.data.OP.toolHeadWrench, gregapi.data.MT.Cr);
+			case "screwdriver" -> itemOrNull(gregapi.data.OP.toolHeadScrewdriver, gregapi.data.MT.StainlessSteel);
+			case "saw"         -> itemOrNull(gregapi.data.OP.toolHeadBuzzSaw, gregapi.data.MT.CobaltBrass);
+			case "hammer"      -> itemOrNull(gregapi.data.OP.toolHeadHammer, gregapi.data.MT.TungstenCarbide);
+			case "cutter"      -> itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.StainlessSteel);
+			case "chisel"      -> itemOrNull(gregapi.data.OP.toolHeadChisel, gregapi.data.MT.TungstenSteel);
+			case "rubber"      -> itemOrNull(gregapi.data.OP.toolHeadHammer, gregapi.data.MT.Rubber); // ANY.Rubber = MT.Rubber only (ANY.java:144)
+			case "blade"       -> itemOrNull(gregapi.data.OP.toolHeadSword, gregapi.data.MT.Bronze);
+			case "drill"       -> itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.Steel); // ANY.Steel → the primary member
+			case "file"        -> itemOrNull(gregapi.data.OP.dust, gregapi.data.MT.Diamond); // ANY.Diamond → the primary member
+			default            -> null;
+		};
+	}
+
+	/** The CABLES_01[i] wire-spec path (MT.java:3631, index = tier — the graphene tail folds to the bare wire01). */
+	private static String roboticsCablePath(int aTier) {
+		return aTier <= 5 ? componentWirePath(true, COMPONENT_WIRE_TOKENS[aTier], 1) : componentWirePath(false, "graphene", 1);
+	}
+
+	/** The motors 'W' column prefix: the wireGt multiplier faces (rows 1-3 ANY.Cu fold, rows 4-9 AnnealedCopper — the same item either way). */
+	private static gregapi.oredict.OreDictPrefix roboticsMotorWirePrefix(int aTier) {
+		return switch (aTier) {
+			case 1 -> gregapi.data.OP.wireGt01;
+			case 2 -> gregapi.data.OP.wireGt02;
+			case 3 -> gregapi.data.OP.wireGt03;
+			case 4 -> gregapi.data.OP.wireGt04;
+			case 5 -> gregapi.data.OP.wireGt05;
+			case 6 -> gregapi.data.OP.wireGt06;
+			case 7 -> gregapi.data.OP.wireGt07;
+			case 8 -> gregapi.data.OP.wireGt08;
+			case 9 -> gregapi.data.OP.wireGt09;
+			default -> throw new IllegalArgumentException("no motor wire rung: " + aTier);
+		};
+	}
+
 	/** The wire item path of (form, token, gauge) — the GTWireSpecs.registryName composition, zero-padded. */
 	private static String componentWirePath(boolean aInsulated, String aToken, int aGauge) {
 		return (aInsulated ? "cable_" : "wire_") + aToken + "_gt" + (aGauge < 10 ? "0" : "") + aGauge;
@@ -4392,6 +4494,198 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('Q', tGem).define('S', tWire01).define('P', tPlate).define('C', tCircuit)
 					.unlockedBy("has_circuit" + i, has(tCircuit))
 					.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+		}
+	}
+	*///?}
+
+//? if forge {
+	/** The forge leg of the robotics band (the tables/band doc above; the compactComponentRows shape). */
+	private void robotTipRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		Item tPlateCurved = itemOrNull(gregapi.data.OP.plateCurved, gregapi.data.MT.SteelGalvanized);
+		TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit3");
+		for (String[] tSpec : ROBOT_TIP_ROWS) {
+			String tKind = tSpec[0];
+			Item tHead = robotTipXColumn(tKind);
+			Item tRung = switch (tSpec[1]) {
+				case "MOTORS" -> gregtech6.registry.GT6Robotics.MOTORS.get(3).get(); // the HV rung, :481-483/:485/:489
+				case "PISTONS" -> gregtech6.registry.GT6Robotics.PISTONS.get(3).get(); // :484/:486-488
+				default -> gregtech6.registry.GT6Robotics.CONVEYERS.get(3).get(); // :490
+			};
+			if (tPlateCurved == null || tHead == null || tRung == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.ROBOT_TIPS.get(ROBOT_TIP_ROW_INDEX.get(tKind)).get())
+					.pattern("wPh").pattern("CMC").pattern(tSpec[2])
+					.define('P', tPlateCurved).define('C', tCircuit).define('M', tRung).define('X', tHead)
+					.define('w', GT6ItemTags.TOOLS_WRENCH).define('h', GT6ItemTags.TOOLS_HARD_HAMMER);
+			if (tSpec[2].indexOf('d') >= 0) tBuilder.define('d', GT6ItemTags.TOOLS_SCREWDRIVER); // the saw row, no phantom keys
+			if (tSpec[2].indexOf('f') >= 0) tBuilder.define('f', GT6ItemTags.TOOLS_FILE); // the cutter/drill rows
+			if (tSpec[2].indexOf('D') >= 0) tBuilder.define('D', itemOrNull(gregapi.data.OP.dust, gregapi.data.MT.Diamond)); // the saw row
+			tBuilder.unlockedBy("has_circuit3", has(tCircuit))
+					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "robot_tip/" + tKind));
+		}
+	}
+
+	/** The forge leg of the component families' self-crafting rows (the band doc above). */
+	private void roboticsComponentRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+		gregapi.oredict.OreDictMaterial[] tElectricT = componentElectricT();
+		// MOTORS :404-415 — row 0's pair is CUT (wireFine), the live rungs 1-9 + the :407 SteelMagnetic twin
+		for (int i = 1; i <= 9; i++) {
+			String tTier = gregtech6.items.GT6Emitters.TIER_TOKENS[i];
+			Item tWire = itemOrNull(roboticsMotorWirePrefix(i), gregapi.data.MT.AnnealedCopper); // the wireGt multiplier face (rows 1-3 ANY.Cu fold → the refined twin, the WIRES-condition carrier)
+			Item tCable = wireItemByPath(roboticsCablePath(i));
+			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
+			Item tStick = itemOrNull(gregapi.data.OP.stick, tElectricT[i]);
+			Item tMagnetic = switch (i) {
+				case 1 -> itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.IronMagnetic);
+				case 2, 3 -> itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.SteelMagnetic);
+				case 4, 5 -> itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.NeodymiumMagnetic);
+				default -> itemOrNull(gregapi.data.OP.stickLong, gregapi.data.MT.NeodymiumMagnetic);
+			};
+			if (tWire == null || tCable == null || tPlate == null || tStick == null || tMagnetic == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.MOTORS.get(i).get())
+					.pattern("CWR").pattern("WIW").pattern("PWC")
+					.define('C', tCable).define('W', tWire).define('R', tStick).define('I', tMagnetic).define('P', tPlate)
+					.unlockedBy("has_wire", has(tWire))
+					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/motor_" + tTier));
+			if (i == 1) { // the :407 DEF twin — the SteelMagnetic stick variant
+				Item tSteelMag = itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.SteelMagnetic);
+				if (tSteelMag != null) {
+					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.MOTORS.get(1).get())
+							.pattern("CWR").pattern("WIW").pattern("PWC")
+							.define('C', tCable).define('W', tWire).define('R', tStick).define('I', tSteelMag).define('P', tPlate)
+							.unlockedBy("has_wire", has(tWire))
+							.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/motor_lv_steel_magnetic"));
+				}
+			}
+		}
+		for (int i = 0; i < 10; i++) { // the :418-421 loop — PUMPS stays pooled (not this card's prefixes)
+			String tTier = gregtech6.items.GT6Emitters.TIER_TOKENS[i];
+			Item tMotor = gregtech6.registry.GT6Robotics.MOTORS.get(i).get();
+			Item tCable = wireItemByPath(roboticsCablePath(i));
+			Item tPlate = itemOrNull(gregapi.data.OP.plate, tElectricT[i]);
+			Item tStick = itemOrNull(gregapi.data.OP.stick, tElectricT[i]);
+			if (tMotor == null || tCable == null || tPlate == null || tStick == null) continue; // the silent-skip guard
+			// CONVEYERS :419 — "RRR","MCM","RRR"
+			Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber); // ANY.Rubber = MT.Rubber only (ANY.java:144)
+			if (tRubberPlate != null) {
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.CONVEYERS.get(i).get())
+						.pattern("RRR").pattern("MCM").pattern("RRR")
+						.define('R', tRubberPlate).define('M', tMotor).define('C', tCable)
+						.unlockedBy("has_motor", has(tMotor))
+						.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/conveyor_" + tTier));
+			}
+			// PISTONS :420 — "TPP","dSS","TMG"
+			Item tScrew = itemOrNull(gregapi.data.OP.screw, tElectricT[i]);
+			Item tGear = itemOrNull(gregapi.data.OP.gearGtSmall, tElectricT[i]);
+			if (tScrew != null && tGear != null) {
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.PISTONS.get(i).get())
+						.pattern("TPP").pattern("dSS").pattern("TMG")
+						.define('T', tScrew).define('P', tPlate).define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+						.define('S', tStick).define('M', tMotor).define('G', tGear)
+						.unlockedBy("has_motor", has(tMotor))
+						.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/piston_" + tTier));
+			}
+			// ROBOT_ARMS :421 — "CCC","MSM","PES", rungs 7-9 CUT (no #gt6:circuit7..9 tags)
+			if (i <= 6) {
+				TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.ROBOT_ARMS.get(i).get())
+						.pattern("CCC").pattern("MSM").pattern("PES")
+						.define('C', tCable).define('M', tMotor).define('S', tStick)
+						.define('P', gregtech6.registry.GT6Robotics.PISTONS.get(i).get()).define('E', tCircuit)
+						.unlockedBy("has_circuit" + i, has(tCircuit))
+						.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/robot_arm_" + tTier));
+			}
+		}
+	}
+	//?} else {
+	/*private void robotTipRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		Item tPlateCurved = itemOrNull(gregapi.data.OP.plateCurved, gregapi.data.MT.SteelGalvanized);
+		TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit3");
+		for (String[] tSpec : ROBOT_TIP_ROWS) {
+			String tKind = tSpec[0];
+			Item tHead = robotTipXColumn(tKind);
+			Item tRung = switch (tSpec[1]) {
+				case "MOTORS" -> gregtech6.registry.GT6Robotics.MOTORS.get(3).get(); // the HV rung, :481-483/:485/:489
+				case "PISTONS" -> gregtech6.registry.GT6Robotics.PISTONS.get(3).get(); // :484/:486-488
+				default -> gregtech6.registry.GT6Robotics.CONVEYERS.get(3).get(); // :490
+			};
+			if (tPlateCurved == null || tHead == null || tRung == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.ROBOT_TIPS.get(ROBOT_TIP_ROW_INDEX.get(tKind)).get())
+					.pattern("wPh").pattern("CMC").pattern(tSpec[2])
+					.define('P', tPlateCurved).define('C', tCircuit).define('M', tRung).define('X', tHead)
+					.define('w', GT6ItemTags.TOOLS_WRENCH).define('h', GT6ItemTags.TOOLS_HARD_HAMMER);
+			if (tSpec[2].indexOf('d') >= 0) tBuilder.define('d', GT6ItemTags.TOOLS_SCREWDRIVER); // the saw row, no phantom keys
+			if (tSpec[2].indexOf('f') >= 0) tBuilder.define('f', GT6ItemTags.TOOLS_FILE); // the cutter/drill rows
+			if (tSpec[2].indexOf('D') >= 0) tBuilder.define('D', itemOrNull(gregapi.data.OP.dust, gregapi.data.MT.Diamond)); // the saw row
+			tBuilder.unlockedBy("has_circuit3", has(tCircuit))
+					.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "robot_tip/" + tKind));
+		}
+	}
+
+	private void roboticsComponentRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+		gregapi.oredict.OreDictMaterial[] tElectricT = componentElectricT();
+		for (int i = 1; i <= 9; i++) {
+			String tTier = gregtech6.items.GT6Emitters.TIER_TOKENS[i];
+			Item tWire = itemOrNull(roboticsMotorWirePrefix(i), gregapi.data.MT.AnnealedCopper); // the wireGt multiplier face (rows 1-3 ANY.Cu fold → the refined twin, the WIRES-condition carrier)
+			Item tCable = wireItemByPath(roboticsCablePath(i));
+			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
+			Item tStick = itemOrNull(gregapi.data.OP.stick, tElectricT[i]);
+			Item tMagnetic = switch (i) {
+				case 1 -> itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.IronMagnetic);
+				case 2, 3 -> itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.SteelMagnetic);
+				case 4, 5 -> itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.NeodymiumMagnetic);
+				default -> itemOrNull(gregapi.data.OP.stickLong, gregapi.data.MT.NeodymiumMagnetic);
+			};
+			if (tWire == null || tCable == null || tPlate == null || tStick == null || tMagnetic == null) continue; // the silent-skip guard
+			ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.MOTORS.get(i).get())
+					.pattern("CWR").pattern("WIW").pattern("PWC")
+					.define('C', tCable).define('W', tWire).define('R', tStick).define('I', tMagnetic).define('P', tPlate)
+					.unlockedBy("has_wire", has(tWire))
+					.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/motor_" + tTier));
+			if (i == 1) { // the :407 DEF twin — the SteelMagnetic stick variant
+				Item tSteelMag = itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.SteelMagnetic);
+				if (tSteelMag != null) {
+					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.MOTORS.get(1).get())
+							.pattern("CWR").pattern("WIW").pattern("PWC")
+							.define('C', tCable).define('W', tWire).define('R', tStick).define('I', tSteelMag).define('P', tPlate)
+							.unlockedBy("has_wire", has(tWire))
+							.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/motor_lv_steel_magnetic"));
+				}
+			}
+		}
+		for (int i = 0; i < 10; i++) { // the :418-421 loop — PUMPS stays pooled (not this card's prefixes)
+			String tTier = gregtech6.items.GT6Emitters.TIER_TOKENS[i];
+			Item tMotor = gregtech6.registry.GT6Robotics.MOTORS.get(i).get();
+			Item tCable = wireItemByPath(roboticsCablePath(i));
+			Item tPlate = itemOrNull(gregapi.data.OP.plate, tElectricT[i]);
+			Item tStick = itemOrNull(gregapi.data.OP.stick, tElectricT[i]);
+			if (tMotor == null || tCable == null || tPlate == null || tStick == null) continue; // the silent-skip guard
+			Item tRubberPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Rubber); // ANY.Rubber = MT.Rubber only (ANY.java:144)
+			if (tRubberPlate != null) {
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.CONVEYERS.get(i).get())
+						.pattern("RRR").pattern("MCM").pattern("RRR")
+						.define('R', tRubberPlate).define('M', tMotor).define('C', tCable)
+						.unlockedBy("has_motor", has(tMotor))
+						.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/conveyor_" + tTier));
+			}
+			Item tScrew = itemOrNull(gregapi.data.OP.screw, tElectricT[i]);
+			Item tGear = itemOrNull(gregapi.data.OP.gearGtSmall, tElectricT[i]);
+			if (tScrew != null && tGear != null) {
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.PISTONS.get(i).get())
+						.pattern("TPP").pattern("dSS").pattern("TMG")
+						.define('T', tScrew).define('P', tPlate).define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+						.define('S', tStick).define('M', tMotor).define('G', tGear)
+						.unlockedBy("has_motor", has(tMotor))
+						.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/piston_" + tTier));
+			}
+			if (i <= 6) {
+				TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + i);
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Robotics.ROBOT_ARMS.get(i).get())
+						.pattern("CCC").pattern("MSM").pattern("PES")
+						.define('C', tCable).define('M', tMotor).define('S', tStick)
+						.define('P', gregtech6.registry.GT6Robotics.PISTONS.get(i).get()).define('E', tCircuit)
+						.unlockedBy("has_circuit" + i, has(tCircuit))
+						.save(aOutput, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/robot_arm_" + tTier));
+			}
 		}
 	}
 	*///?}

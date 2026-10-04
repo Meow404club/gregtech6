@@ -467,6 +467,16 @@ public final class GT6ItemModels extends ItemModelProvider {
             withExistingParent(tRow.id(), mcLoc("item/generated"))
                 .texture("layer0", modLoc("item/foodside/" + tRow.id()));
         }
+        // the robot-component domain (task robotics-chain) — 60 item/generated models over
+        // the byte-identical upstream multiitem borrows (gt.multiitem.technological
+        // 12000-12009/12040-12049/12060-12069/12080-12089 + gt.multiitem.randomtools
+        // 8000-8009/8500-8509, one standalone sprite per item — assets/README.md sha256
+        // ledger), walked over the ROWS table so model ids cannot drift (the bottle band
+        // convention)
+        for (gregtech6.registry.GT6Robotics.RobotRow tRow : gregtech6.registry.GT6Robotics.ROWS) {
+            withExistingParent(tRow.id(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/robotics/" + tRow.id()));
+        }
         // the extruder-mold row0 subset (task w1-press-extruder-molds) — 2 item/generated
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are

@@ -338,7 +338,8 @@ public class GT6AssetCoverageGuardTest {
 			GTItemPipes.class, GT6Covers.class, GT6Circuits.class, GT6LubricantBucket.class,
 			GT6LaserGas.class, GT6UsbSticks.class, GT6Bumbles.class, gregtech6.items.GT6Keys.class,
 			gregtech6.items.GT6Emitters.class, // review-fix — the emitters card landed the container but missed the guard seat
-			gregtech6.items.GT6ReactorRods.class); // task debt-reactor-c-rods — the 46 rod items
+			gregtech6.items.GT6ReactorRods.class, // task debt-reactor-c-rods — the 46 rod items
+			gregtech6.registry.GT6Robotics.class); // task robotics-chain — the 60 robot-component items
 
 	/** Channel 1 + channel 2 block ids ("ns:path"). */
 	private static Set<String> blockUniverse() throws Exception {

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_chromium"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_ev"
+    },
+    "P": {
+      "item": "gt6:plate_chromium"
+    },
+    "S": {
+      "item": "gt6:stick_chromium"
+    },
+    "T": {
+      "item": "gt6:screw_chromium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TPP",
+    "dSS",
+    "TMG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:compact_electric_piston_ev"
+  }
+}

@@ -13350,3 +13350,79 @@ GT6WireGtRegistrationTest.wireItemsSpanExactlyTheThreeBorrowedTextureSets pins t
 
 Copied on 2026-10-04. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
+
+## Item texture borrows — the robot-component domain (task robotics-chain, 2026-10-04)
+
+The 60 robot-component item sprites, byte-identical borrows renamed to the registered item
+ids — the four compact component ladders ride the upstream TECHNOLOGICAL multiitem
+(`textures/items/gt.multiitem.technological/`, one standalone sprite per tier: motors
+12000-12009, conveyors 12040-12049, pistons 12060-12069, robot arms 12080-12089) and the
+Autocrafter tips/tokens ride the RANDOMTOOLS multiitem (`textures/items/
+gt.multiitem.randomtools/`: tips 8000-8009, tokens 8500-8509). Every file is its own
+upstream art (no shared-sprite aliasing, no tint — the tiers are hand-drawn art, unlike
+the wire multipliers). Destination `gt6/textures/item/robotics/<id>.png`, the id = the
+snake of the upstream registration name (the GT6FoodCans id-flattening ruling), all under
+the `item/generated` parent (the bottle band convention).
+
+| port id | upstream sprite | sha256 |
+| --- | --- | --- |
+| `compact_electric_motor_ulv.png` | `gt.multiitem.technological/12000.png` | `a12635de572a9bb9644256455cb6b3b647a26e463ba945520515f5d2922e82f3` |
+| `compact_electric_motor_lv.png` | `gt.multiitem.technological/12001.png` | `a4c93d82e8728115ff8ccc589a51e44babc487d7149743a85d3e78caa440c0df` |
+| `compact_electric_motor_mv.png` | `gt.multiitem.technological/12002.png` | `b0625839ac660a62e6da11a209c06035c21c558e1be2f6add5dd8a33a8a369b6` |
+| `compact_electric_motor_hv.png` | `gt.multiitem.technological/12003.png` | `0f8343876610e6506f5b76f6dd2d9dc67e8b50e977db441f8afc9936b8d3c629` |
+| `compact_electric_motor_ev.png` | `gt.multiitem.technological/12004.png` | `796c1a9947d9c8b74f59d3514e69aae040db609f1d34c40a09b01fb5e336e21e` |
+| `compact_electric_motor_iv.png` | `gt.multiitem.technological/12005.png` | `81e99444c5b666de33e6ee8282e2b7445aa50ed12f7ea7d4e961d10f05f39749` |
+| `compact_electric_motor_luv.png` | `gt.multiitem.technological/12006.png` | `46b6bfaad3d5d73357ebe2de3a8d36f25d3c15f4dcb4474c9b1acdc934e58c87` |
+| `compact_electric_motor_zpm.png` | `gt.multiitem.technological/12007.png` | `454785d9cf3cc06aa08e77b2e21957ccf6afe6e7030af65aa7e74137f1bdfe2b` |
+| `compact_electric_motor_uv.png` | `gt.multiitem.technological/12008.png` | `22646aa87ef624924043a8242a002df5433e94a8052120a24e9de7048b8cd8b5` |
+| `compact_electric_motor_puv1.png` | `gt.multiitem.technological/12009.png` | `90d7516cce43797499a3ff51aa209abba19bc10ec3f104681abe38a5c0231c41` |
+| `compact_electric_conveyor_ulv.png` | `gt.multiitem.technological/12040.png` | `42f120ea55568a11aec255250210c15bdd0ce2743d9d45fb644f26ef27a45891` |
+| `compact_electric_conveyor_lv.png` | `gt.multiitem.technological/12041.png` | `48e7979ec6ca5dda7fd4ffe155420084cfff19b27b202acfed8265d7e3f09125` |
+| `compact_electric_conveyor_mv.png` | `gt.multiitem.technological/12042.png` | `815a6a858fd4cf04aec6ee0644d1c0cfb62c7f5e956096e7ab1d5fad0b60daeb` |
+| `compact_electric_conveyor_hv.png` | `gt.multiitem.technological/12043.png` | `ea07bf9859da92be6d6d69822d8dfe8f619c8c6f88c198a1a7eab2b2f226ef07` |
+| `compact_electric_conveyor_ev.png` | `gt.multiitem.technological/12044.png` | `a8f40341c0920c579dd3952382e385e64818cefc2fa80176167e724e0ece035f` |
+| `compact_electric_conveyor_iv.png` | `gt.multiitem.technological/12045.png` | `6cd734e3a45239cf4c88ba9c74527cc1f3963c787bca9941e17600f86e98dcac` |
+| `compact_electric_conveyor_luv.png` | `gt.multiitem.technological/12046.png` | `7eeacdd0a4f40ffaf8397acf906c51b04ec382d6a189013245ea1a5b9e8ab09c` |
+| `compact_electric_conveyor_zpm.png` | `gt.multiitem.technological/12047.png` | `5eb9f5eb0bd30b1ca40b7737521835e4fbe8c7e877cd1f46475e4dc6fb4ae09f` |
+| `compact_electric_conveyor_uv.png` | `gt.multiitem.technological/12048.png` | `77001ccba0f32cfa18750a7e6eddca717f778505f177f4b956817d62fc2c8b80` |
+| `compact_electric_conveyor_puv1.png` | `gt.multiitem.technological/12049.png` | `740fea29f87508ea73221ed288f394579766a1ce8a697d8d6b70a8ceb0ebdf4e` |
+| `compact_electric_piston_ulv.png` | `gt.multiitem.technological/12060.png` | `34670bc8a31025521f089d24ac22e9fc2f174010062719a1e5c04d27eca26a8f` |
+| `compact_electric_piston_lv.png` | `gt.multiitem.technological/12061.png` | `b17ed7e8e00985561caa37ea330608e7834b5a8becb5447544808c632b5bfb04` |
+| `compact_electric_piston_mv.png` | `gt.multiitem.technological/12062.png` | `636314f6351a2f523b4acb5e3139a32665f9f8f23e3e58f3f441a9ce08fcb883` |
+| `compact_electric_piston_hv.png` | `gt.multiitem.technological/12063.png` | `27b5227f7a717715f08d6df971700fb6a95783286e893f22443d0a4412ce2373` |
+| `compact_electric_piston_ev.png` | `gt.multiitem.technological/12064.png` | `f91f2c72bc12152ee7ef4175ba4cab758a91aca6026f97e32aeff9ba491bccea` |
+| `compact_electric_piston_iv.png` | `gt.multiitem.technological/12065.png` | `92e172c424eb9ed1456c63c79e11ea8fa1aa5e04313ea8fad52ccc43aa6a4e12` |
+| `compact_electric_piston_luv.png` | `gt.multiitem.technological/12066.png` | `aa1e3641a61d22a1534e41ba36b32cba46985eae97d7b61c5a1889b9158841f8` |
+| `compact_electric_piston_zpm.png` | `gt.multiitem.technological/12067.png` | `b7190463737b4a273e072bc5d2d7a27f31722612ef26f43a1a2eb37248192f56` |
+| `compact_electric_piston_uv.png` | `gt.multiitem.technological/12068.png` | `d1dc0f362b1a9d456ef9c6140ed8c4aba3c58d9eb7931b2cf9fbad5961ed0ff5` |
+| `compact_electric_piston_puv1.png` | `gt.multiitem.technological/12069.png` | `0bd1e2a92f1a6bf3c21fc2d46c2e3db1fd6b5fb82f4fa0d5c175e9915999cec1` |
+| `compact_robot_arm_ulv.png` | `gt.multiitem.technological/12080.png` | `3655fc76ffbd640443e01bf49a6cf5c2c0be6bd240c6ebf72b9e337cb4071150` |
+| `compact_robot_arm_lv.png` | `gt.multiitem.technological/12081.png` | `20ffabd4054defa1b5c4f6eb4cc018f85425c9b38e25aea679d75185d8b44552` |
+| `compact_robot_arm_mv.png` | `gt.multiitem.technological/12082.png` | `e474626bfa1d4b15437f5b96f9bc586fc7642df50bee4bfdedbfc8dff81e8cff` |
+| `compact_robot_arm_hv.png` | `gt.multiitem.technological/12083.png` | `3f31e6ee7123b679d2f39cc77ba3d7e52f1e5878269a3a6699a9dcf5e8153e8e` |
+| `compact_robot_arm_ev.png` | `gt.multiitem.technological/12084.png` | `9bdc60bc8af1cd71b790e9bf33ee526e7f28a14b1f0418e7d8715f422acdb2a0` |
+| `compact_robot_arm_iv.png` | `gt.multiitem.technological/12085.png` | `aaf4a604520c70c400f79f2161e1f2e6c41da4928a6f34bfa46644a4db54de9e` |
+| `compact_robot_arm_luv.png` | `gt.multiitem.technological/12086.png` | `1b1faa85db66dc20a67afa8cd9f0e29c5aeef53576f5c5da2f1a367942a7fe4c` |
+| `compact_robot_arm_zpm.png` | `gt.multiitem.technological/12087.png` | `b3c1d66a74eb90aa461a034c3bf0d96330c4996de5588a38558f290daf6beef2` |
+| `compact_robot_arm_uv.png` | `gt.multiitem.technological/12088.png` | `12282e9a818e6a43eae521bf905ef2e1fb1825a9c7dfbf4bc98060271b1d8639` |
+| `compact_robot_arm_puv1.png` | `gt.multiitem.technological/12089.png` | `6d2162aa2e4182927f583a793a224e83f63f8927e7a4af8d04ed50c973452664` |
+| `robot_arm_wrench_tip.png` | `gt.multiitem.randomtools/8000.png` | `7a49f2e828faf58f17bbfd4d897c53e09503fad0b2d2353f4daa46345645d05e` |
+| `single_use_wrench.png` | `gt.multiitem.randomtools/8500.png` | `2cfbf8718818aea6c1da8ff71cd598bfddb4066c9e82caec987c164f5c074a2f` |
+| `robot_arm_screwdriver_tip.png` | `gt.multiitem.randomtools/8001.png` | `a93d1141be82ab6335b2a7b575b2d03c53aae0184e2df88ea41b61d0a98f2434` |
+| `single_use_screwdriver.png` | `gt.multiitem.randomtools/8501.png` | `43338e428d7315b9e64d1e9552d278afbbc9255d8c489c121f6ba1c2089f11da` |
+| `robot_arm_saw_tip.png` | `gt.multiitem.randomtools/8002.png` | `075d6d89762c144d97afa57ef87a7509fb59fef5b3d1c2caffe92a367c59c28f` |
+| `single_use_saw.png` | `gt.multiitem.randomtools/8502.png` | `df8d95bce58b4b56006e3d71b8ecfca215002247615cf256ec7aa436c60380bf` |
+| `robot_arm_hammer_tip.png` | `gt.multiitem.randomtools/8003.png` | `b3f69c1f9d9452eedcd8a401d600b802764ad0a5a7f9ac2ab7c809168870f8ed` |
+| `single_use_hammer.png` | `gt.multiitem.randomtools/8503.png` | `b69dea4494fe64bf9e5bf5141e53cf4c3cbca5a79132a8005ced4cc96ec1b66d` |
+| `robot_arm_cutter_tip.png` | `gt.multiitem.randomtools/8004.png` | `52ea5a857025e8dc82d9647b14485bf5f448189448158fd25e553de3449d651f` |
+| `single_use_cutter.png` | `gt.multiitem.randomtools/8504.png` | `855b1fa15857634b9721ea4a4ee38515b948eed388ccce0d20b4ee47492afc88` |
+| `robot_arm_chisel_tip.png` | `gt.multiitem.randomtools/8005.png` | `11bd99dcc9bfb7ce90682e17d2865549c303269d0e5919a886cbb69b5d9ccccd` |
+| `single_use_chisel.png` | `gt.multiitem.randomtools/8505.png` | `205695bff01617bf165e33e56cd0538ac5b9460c76cba9ccc7f7c9ed7ecfb005` |
+| `robot_arm_rubber_tip.png` | `gt.multiitem.randomtools/8006.png` | `360ae5debe344a3c97c00356e32e983e32805aee24e9b99de76b019e7969a368` |
+| `single_use_rubber.png` | `gt.multiitem.randomtools/8506.png` | `fb92e031bed8432a083646f8185278dbe5600407f23eca10282386aa55607165` |
+| `robot_arm_blade_tip.png` | `gt.multiitem.randomtools/8007.png` | `dc67041776a5ae91e49619e3c085cb603dfa3592b722c06670eb056fcdc23826` |
+| `single_use_blade.png` | `gt.multiitem.randomtools/8507.png` | `33717a42e2849ae989e801e3eb34e7e010ed95d9edc99f46e9171d3b01236578` |
+| `robot_arm_drill_tip.png` | `gt.multiitem.randomtools/8008.png` | `47ad2fa30ba973b9e6feb586886c7e74041ad1d0c0a20ef476c936efea162f48` |
+| `single_use_drill.png` | `gt.multiitem.randomtools/8508.png` | `efea93acd9b9d863a6f846e8622359033b1a94c206e42b6e0f00a26ef242b159` |
+| `robot_arm_file_tip.png` | `gt.multiitem.randomtools/8009.png` | `34abe18444560b148bc0772a2a9077c0b0fcd9538120fb0f98efa4d472686b6f` |
+| `single_use_file.png` | `gt.multiitem.randomtools/8509.png` | `7513b22e5ae368b1c26326c04199391038355aaad5660261b390f9f763a485a8` |

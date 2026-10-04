@@ -53,7 +53,7 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 			"fluidbed", 55,    // Loader_Fuels.java:37-43 — 11 burning materials x 5 dust forms
 			"press", 64,       // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT +4 toolhead-r11e-press-mortar (the HandlerPrefix gem-pickaxe/arrow walk representatives, Handlers:247-250/:252-253)
 			"loom", 35,        // seated :744 (16t corrected) + b2 walks 26 + this card :745/:746/:752/:753/:757-:760 (8)
-			"boxinator", 29,   // seated GT6_Main:350 map row + this card's 28
+			"boxinator", 39,   // seated GT6_Main:350 map row + this card's 28 + task robotics-chain's 10 tip-packing rows (MultiItemRandomTools.java:503-512)
 			"unboxinator", 21, // seated map row + b2 bookshelf row + this card's 19
 			"lightning", 8,    // the b2 eight (certus identical; the salt legs corrected in place)
 			"freezer", 10,     // seated smoke row + this card's 9
@@ -217,6 +217,9 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		}
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialBlocks.registrationOrder()) {
 			tUniverse.add("gt6:" + gregtech6.registry.GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
+		}
+		for (gregtech6.registry.GT6Robotics.RobotRow tRow : gregtech6.registry.GT6Robotics.ROWS) {
+			tUniverse.add("gt6:" + tRow.id()); // task robotics-chain — the 60 plain-item faces the tip rows walk (the vanilla-alias items convention: the universe = every registered carrier the shipped rows reference)
 		}
 		assertTrue(tUniverse.contains("gt6:dust_coal"), "the id universe built (" + tUniverse.size() + " ids)");
 

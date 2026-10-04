@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_tin_alloy"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_ulv"
+    },
+    "P": {
+      "item": "gt6:plate_tin_alloy"
+    },
+    "S": {
+      "item": "gt6:stick_tin_alloy"
+    },
+    "T": {
+      "item": "gt6:screw_tin_alloy"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TPP",
+    "dSS",
+    "TMG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:compact_electric_piston_ulv"
+  }
+}

@@ -205,6 +205,7 @@ public class GT6EnUs extends LanguageProvider {
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
         addBottles(); // task food-bottles-min — the bottles-domain minimum
         addFoodsideItems(); // task vanilla-alias-foodside — table-tail append
+        addRobotics(); // task robotics-chain — table-tail append
         addMaterialTooltip(); // task material-tooltip-face — table-tail append (the 22 material-domain row keys)
         addCoverTooltip(); // task tooltip-cover-face — table-tail append (the 19 cover-domain row keys)
     }
@@ -2403,6 +2404,26 @@ public class GT6EnUs extends LanguageProvider {
             if (tRow.tooltipKey() != null) add(tRow.tooltipKey(), tRow.enTooltip());
         }
         add(gregtech6.registry.GT6Bottles.TAB_TITLE_KEY, "GregTech: Bottles");
+    }
+
+    /**
+     * Robot-component family keys (task robotics-chain): the four compact component
+     * ladders + the Autocrafter tips/tokens, walked over the
+     * {@link gregtech6.registry.GT6Robotics#ROWS} table so the lang face cannot drift
+     * from the registered ids (the addBottles form). Values are the upstream
+     * registration-row wordings verbatim — the MultiItemTechnological.java:49/:51/:52/:53
+     * "Compact Electric Motor (VN)"/... name column (the CS.VN[0..9] tier words,
+     * CS.java:154) and the MultiItemRandomTools.java:470-479/:492-501 tip/token columns;
+     * the tip/token descs are non-empty on all 20 ("Infinitely usable inside an
+     * Autocrafter" / "Non-Functional-Tool for Crafting only"), the 40 ladder rows carry
+     * empty upstream descs and emit NO tooltip key (the GT6BakeFoods empty-desc ruling).
+     * Table-tail append, append-only.
+     */
+    private void addRobotics() {
+        for (gregtech6.registry.GT6Robotics.RobotRow tRow : gregtech6.registry.GT6Robotics.ROWS) {
+            add(tRow.langKey(), tRow.enName());
+            if (tRow.tooltipKey() != null) add(tRow.tooltipKey(), tRow.enTooltip());
+        }
     }
 
     /**
