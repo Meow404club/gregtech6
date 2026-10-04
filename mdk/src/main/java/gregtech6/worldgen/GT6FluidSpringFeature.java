@@ -53,9 +53,18 @@ import gregtech6.registry.GTBlockEntities;
  * dome layers i &gt; 2) are complete. The shell block is deepslate (the sibling bedrock
  * muffin translation; the
  * upstream OW row picks the Betweenlands deepslate-or-stone fallback, WorldgenFluidSpring
- * .java:69-70 — a compat block this port does not carry). KJS face (card declaration):
- * the 16-row table is datapack JSON (the configured-feature config); the Feature/codec
- * registration is the registry face, out of KJS scope (GT6Features javadoc clause).
+ * .java:69-70 — a compat block this port does not carry).
+ *
+ * <p><b>The dimension face</b> (task worldgen-nether-bedrock-lava): the {@code gt6:nether_
+ * fluid_springs} modifier row ({@code #minecraft:is_nether}) hangs the SAME placed feature
+ * in the nether, and the feature routes itself — {@code dimensionType().hasCeiling()} (the
+ * upstream WD.waterLevel {@code hasNoSky} face, WD.java:430) picks the row mask (the :797
+ * nether lava dome), the ore-replay stream salt (per dimension, the same salt the bedrock
+ * feature draws with — the exclusion stays exact), the nether's own bedrock floor (y=0)
+ * and the NETHERRACK dome shell (WorldgenFluidSpring.java:69 "DIM_NETHER ? netherrack").
+ * KJS face (card declaration): the 16-row table is datapack JSON (the configured-feature
+ * config); the Feature/codec registration is the registry face, out of KJS scope
+ * (GT6Features javadoc clause).
  */
 public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
 
@@ -68,24 +77,29 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
         WorldGenLevel tLevel = aContext.level();
         ChunkPos tWork = tLevel instanceof WorldGenRegion ? ((WorldGenRegion) tLevel).getCenter()
                 : new ChunkPos(aContext.origin());
+        // the dimension face (see the class javadoc): hasCeiling = the nether, the WD.java:430 hasNoSky face
+        boolean tNether = tLevel.dimensionType().hasCeiling();
 
-        // :62 — the GENERATED_NO_BEDROCK_ORE replay (the mutual-exclusion seam, see class javadoc)
+        // :62 — the GENERATED_NO_BEDROCK_ORE replay (the mutual-exclusion seam, see class javadoc);
+        // the replay rides the SAME per-dimension salt the bedrock feature draws with
         Random tOreRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(),
-                GT6VeinGenerator.OVERWORLD_DIMENSION_SALT, tWork.x, tWork.z);
-        if (GT6FluidSpringGenerator.oreClaims(oreTable(tLevel), tOreRandom)) return false;
+                tNether ? GT6VeinGenerator.NETHER_DIMENSION_SALT : GT6VeinGenerator.OVERWORLD_DIMENSION_SALT,
+                tWork.x, tWork.z);
+        if (GT6FluidSpringGenerator.oreClaims(oreTable(tLevel), tOreRandom, tNether)) return false;
 
         // :62/:64 — the spring's own 1/P rolls, first hit claims the chunk
         Random tSpringRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(),
                 GT6Worldgen.SPRING_DIMENSION_SALT, tWork.x, tWork.z);
-        GTFluidSpringConfig tRow = GT6FluidSpringGenerator.drawSpring(aContext.config(), tSpringRandom);
+        GTFluidSpringConfig tRow = GT6FluidSpringGenerator.drawSpring(aContext.config(), tSpringRandom, tNether);
         if (tRow == null) return false;
 
         BlockState tFluid = fluidState(tRow.blockId());
         if (tFluid == null) return false; // the loud-refusal face for an unresolvable id (no silent water fallback)
 
-        int tBedrockY = Math.max(GT6BedrockOreGenerator.BEDROCK_Y, tLevel.getMinBuildHeight());
+        int tBedrockY = Math.max(GT6BedrockOreGenerator.BEDROCK_Y, tLevel.getMinBuildHeight()); // the nether's own y=0 floor
+        Block tShell = tNether ? Blocks.NETHERRACK : Blocks.DEEPSLATE; // :69 "DIM_NETHER ? netherrack"
         return GT6FluidSpringGenerator.generateDome(tRow, tWork.getMinBlockX(), tWork.getMinBlockZ(),
-                tBedrockY, tSpringRandom, levelSink(tLevel, tFluid, tRow));
+                tBedrockY, tSpringRandom, levelSink(tLevel, tFluid, tRow, tBedrockY, tShell));
     }
 
     /**
@@ -106,17 +120,18 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
         return gregtech6.tileentity.misc.GTFluidSpringBlockEntity.sourceState(aBlockId);
     }
 
-    private GT6FluidSpringGenerator.DomeSink levelSink(WorldGenLevel aLevel, BlockState aFluid, GTFluidSpringConfig aRow) {
+    private GT6FluidSpringGenerator.DomeSink levelSink(WorldGenLevel aLevel, BlockState aFluid, GTFluidSpringConfig aRow,
+            int aFloor, Block aShell) {
         return new GT6FluidSpringGenerator.DomeSink() {
             @Override
             public boolean isBedrockFace(int aX, int aZ) {
-                Block tBlock = aLevel.getBlockState(new BlockPos(aX, GT6BedrockOreGenerator.BEDROCK_Y, aZ)).getBlock();
+                Block tBlock = aLevel.getBlockState(new BlockPos(aX, aFloor, aZ)).getBlock();
                 return tBlock == Blocks.BEDROCK || tBlock instanceof GTBedrockOreBlock; // :67 + the idempotent ore face
             }
 
             @Override
             public boolean isBedrock(int aX, int aZ) {
-                Block tBlock = aLevel.getBlockState(new BlockPos(aX, GT6BedrockOreGenerator.BEDROCK_Y, aZ)).getBlock();
+                Block tBlock = aLevel.getBlockState(new BlockPos(aX, aFloor, aZ)).getBlock();
                 return tBlock == Blocks.BEDROCK; // :77 WD.bedrock — the STRICT floor face (no bedrock-ore nozzles)
             }
 
@@ -127,7 +142,7 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
 
             @Override
             public void shell(int aX, int aY, int aZ) {
-                aLevel.setBlock(new BlockPos(aX, aY, aZ), Blocks.DEEPSLATE.defaultBlockState(), 2); // :73 the cave-seal skin
+                aLevel.setBlock(new BlockPos(aX, aY, aZ), aShell.defaultBlockState(), 2); // :73 the cave-seal skin (deepslate ow / netherrack nether :69)
             }
 
             @Override

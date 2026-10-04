@@ -261,7 +261,11 @@ public class GT6NetherWorldgenTest {
 
     // ---------------------------------------------------------------- the nether bedrock-ore / spring legs (task worldgen-nether-bedrock-lava)
 
-    /** The row's nether column, the missing-field face reads false (the old JSON decodes dormant). */
+    /**
+     * The row's nether column. The canonical JSON omits the default (DFU optionalFieldOf
+     * encode-face: only the true rows carry the field), so the missing field reads false —
+     * the old-JSON decode posture.
+     */
     private static boolean rowNether(JsonObject aRow) {
         return aRow.has("nether") && aRow.get("nether").getAsBoolean();
     }
@@ -289,9 +293,10 @@ public class GT6NetherWorldgenTest {
     }
 
     /**
-     * THE configured-table nether columns: the bedrock JSON carries nether=true on exactly
-     * the seven GEN_NETHER rows :758-764; the spring JSON on exactly the :797 lava row.
-     * RED while the band is census-only.
+     * THE configured-table nether columns: the bedrock JSON reads nether=true on exactly
+     * the seven GEN_NETHER rows :758-764 (the canonical encode omits the default — only the
+     * true rows carry the field); the spring JSON on exactly the :797 lava row. RED while
+     * the band is census-only.
      */
     @Test
     public void configuredTablesCarryTheNetherColumnOnExactlyTheGenNetherRows() throws Exception {
@@ -301,7 +306,6 @@ public class GT6NetherWorldgenTest {
         Set<String> tNetherOres = new HashSet<>();
         for (JsonElement tElement : tRows) {
             JsonObject tRow = tElement.getAsJsonObject();
-            assertTrue(tRow.has("nether"), "every row carries the nether column: " + tRow.get("name").getAsString());
             if (rowNether(tRow)) tNetherOres.add(tRow.get("name").getAsString());
         }
         assertEquals(Set.of("ore.bedrock.voidquartz", "ore.bedrock.glowstone", "ore.bedrock.gloomstone",
@@ -313,7 +317,6 @@ public class GT6NetherWorldgenTest {
         Set<String> tNetherSprings = new HashSet<>();
         for (JsonElement tElement : tSpringRows) {
             JsonObject tRow = tElement.getAsJsonObject();
-            assertTrue(tRow.has("nether"), "every row carries the nether column: " + tRow.get("name").getAsString());
             if (rowNether(tRow)) tNetherSprings.add(tRow.get("name").getAsString());
         }
         assertEquals(Set.of("nether.fluid.lava"), tNetherSprings, "the :797 nether lava dome row");
