@@ -13,9 +13,13 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item; // the 21.1 leg: Item.TooltipContext.EMPTY in the callHoverText swap
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -56,14 +60,18 @@ import gregtech6.tileentity.GTOfflineTestBase;
 public class ElectricNineteenTest extends GTOfflineTestBase {
 
 	static GT6ElectricToolItem sDrillLv; // tier 1 — 64000 EU, 25/break, q0
+	static GT6ElectricToolItem sWrenchMv; // tier 2 — 256000 EU (the tooltip energy-row census's MV fixture)
 	static GT6ElectricToolItem sWrenchHv; // tier 3 — 1024000 EU, 800/break, q2
+	static GT6ElectricToolItem sJackHv; // tier 3 — the mode-switch tooltip ordering fixture
 
 	@BeforeAll
 	static void warmUpAndBuild() {
 		// the vanilla boot rides the parent @BeforeAll (bootVanillaOffline runs superclass-first);
 		gregtech6.tileentity.energy.GTEnergySourceBlockEntity.resolveEnergyType("TU"); // the TD CME warm-up
 		sDrillLv = registerFixture("fixture_electric_drill_lv", GT6ElectricToolItem.MINING_DRILL_LV);
+		sWrenchMv = registerFixture("fixture_electric_wrench_mv", GT6ElectricToolItem.WRENCH_MV);
 		sWrenchHv = registerFixture("fixture_electric_wrench_hv", GT6ElectricToolItem.WRENCH_HV);
+		sJackHv = registerFixture("fixture_electric_jackhammer_hv", GT6ElectricToolItem.JACKHAMMER_HV_NORMAL);
 	}
 
 	// ------------------------------------------------------------------ the registry latch (the GT6BatteryItemTest machinery)
@@ -331,5 +339,104 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 		assertNull(GT6ElectricToolItem.specOf("nonexistent_tool"));
 		assertNotNull(GT6Tools.electricTool("mining_drill_lv"));
 		assertNull(GT6Tools.electricTool("not_a_tool"));
+	}
+
+	// ------------------------------------------------------------------ the tooltip energy-stock row (task tooltip-electric-energy)
+
+	private static void callHoverText(GT6ElectricToolItem aItem, ItemStack aStack, List<Component> aTooltip) {
+		//? if forge {
+		aItem.appendHoverText(aStack, null, aTooltip, TooltipFlag.NORMAL);
+		//?} else {
+		/*aItem.appendHoverText(aStack, Item.TooltipContext.EMPTY, aTooltip, TooltipFlag.NORMAL);
+		*///?}
+	}
+
+	/** The energy-stock row of the hover (the one line containing " EU - Size: " — MultiItem.addInformation :259). */
+	private static Component energyRow(GT6ElectricToolItem aItem, ItemStack aStack) {
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(aItem, aStack, tTooltip);
+		Component rRow = null;
+		for (Component tLine : tTooltip) if (tLine.getString().contains(" EU - Size: ")) {
+			assertNull(rRow, "exactly one energy row per hover");
+			rRow = tLine;
+		}
+		return rRow;
+	}
+
+	private static Integer colorOf(Component aLine) {
+		return aLine.getStyle().getColor() == null ? null : aLine.getStyle().getColor().getValue();
+	}
+
+	/**
+	 * The MultiItem.addInformation :259 row VERBATIM: WHITE makeString(min(cap,stored)) " / "
+	 * makeString(cap) " " <EU chat short> WHITE " - Size: " V[tier]. The makeString face rides
+	 * this test through the real numbers: &lt;10000 plain, ≥10000 underscore thousands ("64_000",
+	 * "1_024_000"). The EU sub-run carries the TagData EU chat color (TD.java:81 LH.Chat.BLUE —
+	 * the energyUnit transcription); the rest of the row is WHITE (LH.Chat.WHITE :702).
+	 */
+	@Test
+	public void theEnergyRowPinsTheUpstreamLineShape() {
+		// fresh LV drill (tooltipKey null — the energy row IS the first row)
+		Component tRow = energyRow(sDrillLv, new ItemStack(sDrillLv));
+		assertNotNull(tRow, "the fresh LV drill carries the energy row");
+		assertEquals("0 / 64_000 EU - Size: 32", tRow.getString(), "the :259 row verbatim");
+		assertEquals(ChatFormatting.WHITE.getColor(), colorOf(tRow), "the row base is LH.Chat.WHITE");
+		assertEquals(2, tRow.getSiblings().size(), "the EU short + the Size tail are the styled sub-runs");
+		Component tUnit = tRow.getSiblings().get(0);
+		assertEquals("EU", tUnit.getString(), "the TagData EU short name");
+		assertEquals(ChatFormatting.BLUE.getColor(), colorOf(tUnit), "the EU chat color (TD.java:81)");
+		Component tTail = tRow.getSiblings().get(1);
+		assertEquals(" - Size: 32", tTail.getString(), "the upstream hard-coded-en tail");
+		assertEquals(ChatFormatting.WHITE.getColor(), colorOf(tTail), "the tail resumes LH.Chat.WHITE");
+		// the stored half: a part-charged pool renders the live value (12_345 ≥ 10000 → the underscore face)
+		ItemStack tCharged = new ItemStack(sDrillLv);
+		sDrillLv.setEnergyStored(TD.Energy.EU, tCharged, 12345L);
+		assertEquals("12_345 / 64_000 EU - Size: 32", energyRow(sDrillLv, tCharged).getString());
+		// the makeString boundary: 9999 stays plain, 10000 gains the underscore
+		ItemStack tEdge = new ItemStack(sDrillLv);
+		sDrillLv.setEnergyStored(TD.Energy.EU, tEdge, 9999L);
+		assertEquals("9999 / 64_000 EU - Size: 32", energyRow(sDrillLv, tEdge).getString());
+		sDrillLv.setEnergyStored(TD.Energy.EU, tEdge, 10000L);
+		assertEquals("10_000 / 64_000 EU - Size: 32", energyRow(sDrillLv, tEdge).getString());
+		// the HV wrench (tooltipKey non-null — the energy row rides AFTER the behavior row) at full clamp
+		ItemStack tHv = new ItemStack(sWrenchHv);
+		sWrenchHv.setEnergyStored(TD.Energy.EU, tHv, Long.MAX_VALUE);
+		assertEquals("1_024_000 / 1_024_000 EU - Size: 512", energyRow(sWrenchHv, tHv).getString());
+	}
+
+	/** The row order: behavior tooltip row first (the upstream .tooltip row :249), THEN the energy row (:252), THEN the mode-switch row (the behavior block :273). */
+	@Test
+	public void theEnergyRowSitsBetweenBehaviorAndModeSwitchRows() {
+		List<Component> tTooltip = new ArrayList<>();
+		callHoverText(sWrenchHv, new ItemStack(sWrenchHv), tTooltip);
+		assertTrue(tTooltip.size() >= 2, "the wrench hover carries behavior + energy rows");
+		assertEquals("item.gt6.wrench_hv.tooltip", ((net.minecraft.network.chat.contents.TranslatableContents)tTooltip.get(0).getContents()).getKey(),
+				"row 0 = the .tooltip behavior row (the :249 face)");
+		assertTrue(tTooltip.get(1).getString().endsWith(" EU - Size: 512"), "row 1 = the energy row");
+		// the jackhammer mode-switch row stays last (the behavior block rides AFTER the energy face)
+		List<Component> tJack = new ArrayList<>();
+		callHoverText(sJackHv, new ItemStack(sJackHv), tJack);
+		assertTrue(tJack.size() >= 3, "the jackhammer hover carries behavior + energy + mode-switch rows");
+		assertTrue(tJack.get(1).getString().endsWith(" EU - Size: 512"), "the energy row precedes the mode-switch row");
+		assertEquals("item.gt6.mode_switch.tooltip", ((net.minecraft.network.chat.contents.TranslatableContents)tJack.get(2).getContents()).getKey(),
+				"the mode-switch row stays last (the behavior block)");
+	}
+
+	/**
+	 * The census: EVERY spec row's tier folds to the pinned tier literal, and each tier's
+	 * literal is proven live through a real fixture hover — no electric id can miss the line
+	 * (the negative-result evidence face: the family is one class over the spec table, so a
+	 * per-tier live pin + the 19-row tier census covers every id).
+	 */
+	@Test
+	public void everyElectricIdCarriesTheEnergyRow() {
+		String[] tExpectedByTier = {"0 / 64_000 EU - Size: 32", "0 / 256_000 EU - Size: 128", "0 / 1_024_000 EU - Size: 512"};
+		GT6ElectricToolItem[] tFixtureByTier = {sDrillLv, sWrenchMv, sWrenchHv};
+		for (GT6ElectricToolItem.Spec tSpec : GT6ElectricToolItem.SPECS) {
+			assertTrue(tSpec.aTier() >= 1 && tSpec.aTier() <= 3, tSpec.aPath() + " sits on a real tier");
+			assertEquals(tExpectedByTier[tSpec.aTier() - 1], energyRow(tFixtureByTier[tSpec.aTier() - 1],
+					new ItemStack(tFixtureByTier[tSpec.aTier() - 1])).getString(), tSpec.aPath() + " tier row");
+		}
+		assertEquals(19, GT6ElectricToolItem.SPECS.size(), "the 19-id census — none missed");
 	}
 }

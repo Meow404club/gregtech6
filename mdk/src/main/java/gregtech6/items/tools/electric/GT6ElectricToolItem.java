@@ -35,6 +35,7 @@ import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregtech6.item.energy.GT6BatteryItem;
 import gregtech6.item.energy.IItemEnergy;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The electric-tool family base — task w5-t6-electric-nineteen: NINETEEN flat item
@@ -477,21 +478,67 @@ public class GT6ElectricToolItem extends Item implements IItemEnergy {
 	@Override
 	public void appendHoverText(ItemStack aStack, Level aLevel, java.util.List<Component> aTooltip, TooltipFlag aFlag) {
 		super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
-		tooltipLines(aTooltip);
+		tooltipLines(aStack, aTooltip);
 	}
 	//?} else {
 	/*@Override
 	public void appendHoverText(ItemStack aStack, Item.TooltipContext aLevel, java.util.List<Component> aTooltip, TooltipFlag aFlag) {
 		//21.1: the Level second parameter became Item.TooltipContext (the GTGrassBlock fork face).
 		super.appendHoverText(aStack, aLevel, aTooltip, aFlag);
-		tooltipLines(aTooltip);
+		tooltipLines(aStack, aTooltip);
 	}
 	*///?}
 
-	/** The shared tooltip body: the row tooltip + the jackhammer mode-switch line. */
-	private void tooltipLines(java.util.List<Component> aTooltip) {
+	/**
+	 * The shared tooltip body: the row tooltip, the energy-stock row, then the jackhammer
+	 * mode-switch line — the upstream order (the .tooltip row MultiItem :249-250, the energy
+	 * row :252-262, the behavior block :273-274).
+	 */
+	private void tooltipLines(ItemStack aStack, java.util.List<Component> aTooltip) {
 		if (mSpec.aTooltipKey() != null) aTooltip.add(Component.translatable(mSpec.aTooltipKey()));
+		energyLine(aStack, aTooltip);
 		if (mSpec.aModeSwitchTooltip()) aTooltip.add(Component.translatable("item.gt6.mode_switch.tooltip"));
+	}
+
+	/**
+	 * The energy-stock row, the MultiItem.addInformation :259 face VERBATIM: WHITE
+	 * {@code makeString(min(cap, stored)) + " / " + makeString(cap)} + the EU short name in
+	 * its TagData chat color (TD.java:81 — the {@code energyUnit} transcription) + WHITE
+	 * {@code " - Size: " + V[tier]} (EnergyStat :162 mSize = the recommended packet size, the
+	 * {@link Spec#sizeRec()} column). The makeString face is the UT.Code :1296 underscore
+	 * thousands form ("64_000", "1_024_000"; below 10000 plain).
+	 *
+	 * <p>The upstream {@code EnergyStatDebug} infinite-battery arm (:254-255) has no port
+	 * counterpart — the port energy domain has no debug stat, so the branch collapses.
+	 *
+	 * <p>ponytail: the underscore formatter lives here, not in root UT.Code — promote it
+	 * there when a second energy face (the battery item row) needs it.
+	 */
+	private void energyLine(ItemStack aStack, java.util.List<Component> aTooltip) {
+		aTooltip.add(Component.literal(makeString(getEnergyStored(TD.Energy.EU, aStack)) + " / " + makeString(mSpec.capacity()) + " ")
+				.withStyle(GT6TooltipStyle.WHITE)
+				.append(gregtech6.jei.GT6RecipeMapViewerMeta.energyUnit(TD.Energy.EU))
+				.append(Component.literal(" - Size: " + mSpec.sizeRec()).withStyle(GT6TooltipStyle.WHITE)));
+	}
+
+	/** The UT.Code.makeString :1296-1313 transcription: numbers past 4 digits gain the underscore thousands separator. */
+	private static String makeString(long aNumber) {
+		if (aNumber > -10000 && aNumber < 10000) return Long.toString(aNumber);
+		StringBuilder rString = new StringBuilder();
+		if (aNumber < 0) {
+			aNumber *= -1;
+			rString.append('-');
+		}
+		boolean tLeading = true;
+		for (long i = 1000000000000000000L; i > 0; i /= 10) {
+			long tDigit = (aNumber / i) % 10;
+			if (tLeading && tDigit != 0) tLeading = false;
+			if (!tLeading) {
+				rString.append(tDigit);
+				if (i != 1) for (long j = i; j > 0; j /= 1000) if (j == 1) rString.append('_');
+			}
+		}
+		return rString.toString();
 	}
 
 	@Override
