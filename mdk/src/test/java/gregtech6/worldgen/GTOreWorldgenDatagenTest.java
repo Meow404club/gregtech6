@@ -457,6 +457,67 @@ class GTOreWorldgenDatagenTest {
                 "[4] = the deepslate tag target — the deep mirror's host arm");
     }
 
+    /**
+     * The 10 stone-layer EDGE orphan rows (task worldgen-edge-ores-b2-orphans): the
+     * boundary materials whose ONLY ungated upstream source is a
+     * {@code StoneLayer.bothsides/topbottom} blob (Loader_Worldgen.java:481-571) — no
+     * WorldgenOresSmall row, no large-vein slot (research.stonelayer-edge-ores route B).
+     * Each gains the material-axis membership AND a small-ore row whose Y band is the
+     * boundary call's, VERBATIM; the row tail = the sanitized internal name (the :878
+     * convention — "Dominican Amber" → dominicanamber, "Pink Diamond" → pinkdiamond).
+     *
+     * <p>Declared deviations (the card's "分布面偏差归 strata-mode deferred" ruling):
+     * <ul>
+     * <li>amount = 1 (the gem-pool row precedent): the blob's chance column (U4..U32 of
+     *     U — StoneLayerOres.java:76/:87-95, a 1-in-N roll per BOUNDARY position, not a
+     *     density) has no small-ore analogue; the seam-enrichment face is the strata-mode
+     *     card's.</li>
+     * <li>the biome gates (AmberDominican BIOMES_SHROOM :484, DiamondPink
+     *     BIOMES_JUNGLE :563) are not carried — SmallOreRow has no biome face and the
+     *     distribution deferral covers them; a biome-gate card would extend the placed
+     *     chain (BiomeFilter predicate per row).</li>
+     * <li>never deep-mirrored: the blob is a strata-band phenomenon tied to the layer
+     *     boundaries, not the c2 lower-column rule — even DiamondPink, whose band
+     *     maxes at 32, stays out of {@link GTOreWorldgen#DEEP_MIRROR_TAILS}.</li>
+     * </ul>
+     */
+    @Test
+    void edgeOrphanRowsArePinned() {
+        // tail -> "line minY maxY amount DIMS" — every band transcribed from its
+        // StoneLayer.bothsides/topbottom call in Loader_Worldgen.java:481-571
+        Map<String, String> tEdge = Map.of(
+            "amberdominican", "484 30 70 1 OVERWORLD",  // :481-495 bothsides(Coal|Lignite|Oilshale, Stone) x3, BIOMES_SHROOM
+            "perlite"       , "497  0 16 1 OVERWORLD",  // :496-501 bothsides(Komatiite|Gabbro, Basalt) x2
+            "diatomite"     , "508 16 64 1 OVERWORLD",  // :506-509 topbottom(Dolomite, Diorite)
+            "alunite"       , "530 32 80 1 OVERWORLD",  // :529-531 bothsides(Rhyolite, Quartzite)
+            "mirabilite"    , "533 16 64 1 OVERWORLD",  // :532-535 bothsides(Gneiss, Gypsum)
+            "trona"         , "534 16 64 1 OVERWORLD",  // :532-535 bothsides(Gneiss, Gypsum)
+            "vermiculite"   , "548 48 80 1 OVERWORLD",  // :547-550 bothsides(GraniteRed, Gneiss)
+            "mica"          , "552 16 48 1 OVERWORLD",  // :551-554 bothsides(GraniteBlack, Gneiss)
+            "biotite"       , "553 16 48 1 OVERWORLD",  // :551-554 bothsides(GraniteBlack, Gneiss)
+            "pinkdiamond"   , "563  0 32 1 OVERWORLD"); // :561-565 topbottom(GraniteBlack, Basalt), BIOMES_JUNGLE
+        Set<OreDictMaterial> tAxis = new HashSet<>(GT6OreBlocks.materialAxis());
+        for (Map.Entry<String, String> tEntry : tEdge.entrySet()) {
+            GTOreWorldgen.SmallOreRow tRow = rowOf("ore.small." + tEntry.getKey());
+            String[] tParts = tEntry.getValue().split(" ");
+            assertEquals(Integer.parseInt(tParts[1]), tRow.minY(), tRow.name() + " minY (Loader_Worldgen.java:" + tParts[0] + ")");
+            assertEquals(Integer.parseInt(tParts[2]), tRow.maxY(), tRow.name() + " maxY (Loader_Worldgen.java:" + tParts[0] + ")");
+            assertEquals(Integer.parseInt(tParts[3]), tRow.amount(), tRow.name() + " amount = 1 (the gem-pool precedent; the blob chance is strata-mode deferred)");
+            assertEquals(tParts[4], dimsOf(tRow), tRow.name() + " overworld-only (the stone layers are an overworld face)");
+            OreDictMaterial tMaterial = GTOreWorldgen.resolve(tRow);
+            assertTrue(tMaterial != null && tAxis.contains(tMaterial),
+                    tRow.name() + " material joined the registered axis (route B)");
+            assertTrue(GTOreWorldgen.placementPairs().stream().anyMatch(tPair -> tPair.row() == tRow
+                            && tPair.dim() == GTOreWorldgen.Dim.OVERWORLD),
+                    tRow.name() + " has its overworld placement pair");
+            assertFalse(GTOreWorldgen.DEEP_MIRROR_TAILS.contains(tRow.tail()),
+                    tRow.name() + " never deep-mirrors (the strata-band ruling)");
+        }
+        // the two IHL-gated namesakes (:871/:874, MD.IHL) stay OUT — the boundary row IS
+        // the ungated natural source of mica/trona on this port (the :854-874 compat pool)
+        assertEquals(10, tEdge.size());
+    }
+
     private static GTOreWorldgen.SmallOreRow rowOf(String aName) {
         return GTOreWorldgen.ROWS.stream().filter(tRow -> tRow.name().equals(aName)).findFirst().orElseThrow();
     }
