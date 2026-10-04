@@ -196,6 +196,13 @@ public final class GT6Features {
      */
     public static final GT6CenterFeature CENTER = registerForm("center", new GT6CenterFeature());
 
+     * The deep-ocean prismarine-pylon feature (task worldgen-deepocean-corals) — ONE
+     * registration row {@code gt6:deep_ocean}, NoneFeatureConfiguration (the nether-form
+     * shape; the WorldgenDeepOcean constants live in the class, Loader_Worldgen.java:580).
+     * The configured/placed/biome-modifier rows hang off it in GT6WorldgenDatagen.
+     */
+    public static final GT6DeepOceanFeature DEEP_OCEAN = registerForm("deep_ocean", new GT6DeepOceanFeature());
+
     private static <T extends Feature<?>> T registerForm(String aPath, T aFeature) {
         FEATURES.register(aPath, () -> aFeature);
         return aFeature;

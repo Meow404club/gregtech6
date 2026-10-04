@@ -409,6 +409,11 @@ public final class GT6WorldgenDatagen {
         // lottery constants live in the class).
         FeatureUtils.register(ctx, GT6Worldgen.NETHER_RACKS_CONFIGURED, GT6Features.NETHER_RACKS,
                 NoneFeatureConfiguration.INSTANCE);
+        // task worldgen-deepocean-corals — the ONE deep-ocean pylon configured feature: the
+        // registered GT6DeepOceanFeature instance, NoneFeatureConfiguration (the nether-form
+        // shape — the WorldgenDeepOcean constants live in the class, Loader_Worldgen.java:580).
+        FeatureUtils.register(ctx, GT6Worldgen.DEEP_OCEAN_CONFIGURED, GT6Features.DEEP_OCEAN,
+                NoneFeatureConfiguration.INSTANCE);
         // task bees-lv2 — the ONE bumble-hive configured feature: the registered
         // GT6HiveFeature instance, NoneFeatureConfiguration (the nether-form shape — the
         // WorldgenHives constants live in the class, not a config surface). One Feature
@@ -580,6 +585,13 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.CENTER_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.CENTER_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task worldgen-deepocean-corals — the deep-ocean pylon placed feature: Count 1
+        // CONSTANT + InSquare + BiomeFilter (the nether-form chain shape; the column pick +
+        // noise gate ride the Feature's coordinate-seeded stream, no Y placement — the
+        // pylon carries its own y30..38 domain).
+        PlacementUtils.register(ctx, GT6Worldgen.DEEP_OCEAN_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.DEEP_OCEAN_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task w6-small-ore-datagen — tail-append
         bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
     }
@@ -732,6 +744,20 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_RACKS_PLACED)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+        // task worldgen-deepocean-corals — the deep-ocean pylon biome modifier
+        // (GEN_OVERWORLD, Loader_Worldgen.java:580): the upstream chunk-biome-name
+        // deepOcean probe rides the modern tag face #minecraft:is_deep_ocean (the
+        // small-ore-band dim-flag convention — the tag covers the deep_ocean/deep_cold/
+        // deep_lukewarm/deep_frozen family, the 1.7.10 single-biome face's modern
+        // translation), at the TOP_LAYER_MODIFICATION step (the seabed face — after the
+        // vegetal pass, the pylons overwrite kelp/seagrass the way the upstream WD.set
+        // did; the same step the water-body band rides, keeping the upstream
+        // ocean-then-corals ordering seam per-step).
+        ctx.register(biomeModifierKeyOf("deep_ocean"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_DEEP_OCEAN),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.DEEP_OCEAN_PLACED)),
+                GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
         // task bees-lv2 — the THREE bumble-hive biome modifiers over the SAME placed
         // feature (upstream Loader_Worldgen.java:635-637: overworld.bumblehives /
         // nether.bumblehives / end.bumblehives; the END_YIELD same-placed-key modifier

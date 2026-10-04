@@ -12,15 +12,20 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
+import gregapi.data.MT;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTStoneBlocks;
 
 /**
  * The deep-ocean prismarine-pylon Feature (task worldgen-deepocean-corals) — the
  * {@code WorldgenDeepOcean} port (Loader_Worldgen.java:580 {@code ocean.prismacorals},
- * generator body WorldgenDeepOcean.java:46-106). RED-PIN STUB: the constants and the
- * call shape are pinned by GT6DeepOceanWorldgenTest; {@link #placePylons} lands in the
- * green commit.
+ * generator body WorldgenDeepOcean.java:46-106), a NoneFeatureConfiguration Feature over
+ * the {@link GT6WorleyNoise} port (the nether-form shape). One pylon per gated chunk:
+ * the coordinate-seeded chunk stream picks the column (i, 30..38, k), the water gate
+ * probes it, the 16-cell noise draw picks dark/light/nothing, the pylon steps 7x7 at the
+ * base to 1x1 at the tips with a 1/8 ore roll per body.
  *
  * <p>Despite the upstream config name "prismacorals", the upstream never emits corals:
  * the "Corals maybe?" noise cells 8-11 are a {@code return F} arm (WorldgenDeepOcean.java:
@@ -28,7 +33,18 @@ import gregtech6.registry.GTStoneBlocks;
  * or BlocksGT.PrismarineLight (cells 14-15), each set-block carrying a 1/8 ore roll on
  * the UPPER face only (Garnierite in the darkprismarine family / MnO2 in the
  * lightprismarine family, WorldgenDeepOcean.java:62/:67/:72/:77 and the :85/:90/:95/:100
- * light twins — ores_normal[14]/[13], the 0-based stone-array order).
+ * light twins — ores_normal[14]/[13], the 0-based stone-array order). The blocks ride the
+ * port's GTStoneBlocks prismarine_light/dark STONE rows and the GT6OreBlocks prismarine
+ * families (both registered by the ore-1-mech/stone cards — the coral-block question
+ * resolves to NO new blocks; the CUT face is upstream's own: the coral arm never shipped).
+ *
+ * <p>Determinism: pure coordinate function over (world seed, chunk, dimension salt) —
+ * the chunk stream is {@link GT6VeinGenerator#veinRandom} and the noise is the
+ * {@link GT6WorleyNoise} port (decisions.2026-09-18-p31-strata-lens-determinism-acceptance).
+ *
+ * <p>KJS face (card declaration): zero JSON config (upstream constants live in the
+ * class); the Feature registration is the registry face (the GT6Features javadoc
+ * declaration), the configured/placed/biome-modifier JSONs are the datapack face.
  */
 public class GT6DeepOceanFeature extends Feature<NoneFeatureConfiguration> {
 
@@ -82,17 +98,60 @@ public class GT6DeepOceanFeature extends Feature<NoneFeatureConfiguration> {
         // MnO2 hosted lightprismarine — the family NORMAL form (the placeBlock semantics)
         Block tOre = orePayload(tDark);
         if (tOre == null) return false;
-        placePylons(tBaseX + i, j, tBaseZ + k, tRandom, tStone, tOre,
-                (aX, aY, aZ, aBlock) -> { /* STUB — the live sink lands green */ });
+        int tMinY = tLevel.getMinBuildHeight(), tMaxY = tLevel.getMaxBuildHeight() - 1;
+        // the live WD.set face — chunk-local writes, flag 2 (the nether-form posture); the
+        // band guard keeps a /place in a clipped context from throwing
+        placePylons(tBaseX + i, j, tBaseZ + k, tRandom, tStone, tOre, (aX, aY, aZ, aBlock) -> {
+            if (aY < tMinY || aY > tMaxY) return;
+            tLevel.setBlock(new BlockPos(aX, aY, aZ), aBlock.defaultBlockState(), 2);
+        });
         return true; // :79/:102 — the ran-face semantics
     }
 
-    /** STUB — returns null green-side; the family walk + material pick is the payload face. */
+    /** The payload ore of a pylon: ores_normal[14] Garnierite hosted darkprismarine / ores_normal[13]
+     * MnO2 hosted lightprismarine (WorldgenDeepOcean.java:62/:85 — the 0-based 17-stone array order),
+     * the family NORMAL form (the placeBlock semantics). Null when the family walk or the
+     * registration walk comes up empty (the loud-refusal face). */
     static Block orePayload(boolean aDark) {
-        return null;
+        GT6OreBlocks.OreFamily tFamily = family(aDark ? "darkprismarine" : "lightprismarine");
+        OreDictMaterial tMaterial = aDark ? MT.OREMATS.Garnierite : MT.MnO2;
+        var tHandle = GT6OreBlocks.get(tFamily, GT6OreBlocks.FormKind.NORMAL, tMaterial);
+        return tHandle == null ? null : tHandle.get();
     }
 
-    /** STUB — the stepped-pylon writer (WorldgenDeepOcean.java:59-101) lands green. */
+    /** The ore family by its upstream internal snake (GT6OreBlocks.FAMILIES walk — no new API surface). */
+    private static GT6OreBlocks.OreFamily family(String aSnake) {
+        for (GT6OreBlocks.OreFamily tFamily : GT6OreBlocks.FAMILIES) {
+            if (tFamily.snake().equals(aSnake)) return tFamily;
+        }
+        throw new IllegalStateException("no ore family " + aSnake);
+    }
+
+    /**
+     * The stepped pylon writer (WorldgenDeepOcean.java:59-78 dark / :82-101 light, verbatim
+     * shape): four radius bands — the 1x1 column |dy| 8..10, the 3x3 |dy| 5..7, the 5x5
+     * |dy| 2..4, the 7x7 |dy| 0..1 — every body sets BOTH faces then rolls ONE
+     * {@code nextInt(8)}, the ore replacing the UPPER (+l) set only. 203 bodies per pylon,
+     * one draw each (the GT6DeepOceanWorldgenTest replay pin).
+     */
     public static void placePylons(int aX, int aY, int aZ, Random aRandom, Block aStone, Block aOre, Sink aOut) {
+        band(aX, aY, aZ, 8, 3, 0, aRandom, aStone, aOre, aOut); // :59-63 — the 1x1 top/bottom
+        band(aX, aY, aZ, 5, 3, 1, aRandom, aStone, aOre, aOut); // :64-68 — the 3x3 band
+        band(aX, aY, aZ, 2, 3, 2, aRandom, aStone, aOre, aOut); // :69-73 — the 5x5 band
+        band(aX, aY, aZ, 0, 2, 3, aRandom, aStone, aOre, aOut); // :74-78 — the 7x7 base
+    }
+
+    /** One band: {@code aRows} l-values upward from {@code aL}, square radius {@code aRadius}. */
+    private static void band(int aX, int aY, int aZ, int aL, int aRows, int aRadius,
+            Random aRandom, Block aStone, Block aOre, Sink aOut) {
+        for (int tL = aL; tL < aL + aRows; tL++) {
+            for (int m = -aRadius; m <= aRadius; m++) {
+                for (int n = -aRadius; n <= aRadius; n++) {
+                    aOut.put(aX + m, aY + tL, aZ + n, aStone); // WD.set +l (e.g. :60)
+                    aOut.put(aX + m, aY - tL, aZ + n, aStone); // WD.set -l (:61)
+                    if (aRandom.nextInt(ORE_CHANCE) == 0) aOut.put(aX + m, aY + tL, aZ + n, aOre); // :62
+                }
+            }
+        }
     }
 }

@@ -61,42 +61,45 @@ public class GT6DeepOceanWorldgenTest {
     public void pylonIsTheFourBandSteppedPyramidSymmetricAroundJ() {
         RecordingSink tSink = new RecordingSink();
         GT6DeepOceanFeature.placePylons(100, 34, 200, new Random(42), Blocks.STONE, Blocks.GLASS, tSink);
-        // distinct positions: 203 = 49+49 |dy|<=1, +25*3 |dy| 2..4, +9*3 |dy| 5..7, +1*3 |dy| 8..10
-        assertEquals(203, tSink.blocks.size(), "the stepped pyramid distinct positions");
-        Map<Integer, Integer> tByLayer = new HashMap<>();
-        // replay the (x,z) frame: every |dy| layer keeps the band radius (7x7/5x5/3x3/1x1)
-        Set<Long> tSeen = tSink.blocks.keySet();
-        int tDarkStone = System.identityHashCode(Blocks.STONE), tOre = System.identityHashCode(Blocks.GLASS);
-        for (long tKey : tSeen) {
+        // distinct positions: 357 = |dy|8..10 6 + |dy|5..7 54 + |dy|2..4 150 + |dy|0..1 147
+        // (203 bodies each setting both faces; the l=0 body's two writes collapse)
+        assertEquals(357, tSink.blocks.size(), "the stepped pyramid distinct positions");
+        // per signed-dy layer: the band edge 7/5/3/1 squared — every layer a full square,
+        // centered on the pylon x/z; the mirrored layer holds the mirrored positions
+        Map<Integer, Set<Long>> tLayers = new HashMap<>();
+        for (Long tKey : tSink.blocks.keySet()) {
             int tDy = (int) ((tKey >> 26) & 0xFFF) - 512 - 34; // stored = y+512, y = 34+dy
-            int tAbs = Math.abs(tDy);
-            int tExpectedSpan = tAbs <= 1 ? 7 : tAbs <= 4 ? 5 : tAbs <= 7 ? 3 : 1;
-            int tSpan = spanAt(tSeen, tKey, tDy, 34);
-            assertEquals(tExpectedSpan, tSpan, "the band span at dy " + tDy);
-            tByLayer.merge(tAbs, 1, Integer::sum);
+            tLayers.computeIfAbsent(tDy, tK -> new HashSet<>()).add(tKey);
         }
         for (int tAbs = 0; tAbs <= 10; tAbs++) {
-            assertTrue(tByLayer.containsKey(tAbs), "every |dy| 0..10 present, missing " + tAbs);
+            int tEdge = tAbs <= 1 ? 7 : tAbs <= 4 ? 5 : tAbs <= 7 ? 3 : 1;
+            int[] tSides = tAbs == 0 ? new int[] {0} : new int[] {tAbs, -tAbs};
+            for (int tDy : tSides) {
+                Set<Long> tLayer = tLayers.get(tDy);
+                assertNotNull(tLayer, "the layer dy " + tDy + " present");
+                assertEquals((long) tEdge * tEdge, tLayer.size(), "the full square at dy " + tDy);
+                int tMinX = Integer.MAX_VALUE, tMaxX = Integer.MIN_VALUE, tMinZ = Integer.MAX_VALUE, tMaxZ = Integer.MIN_VALUE;
+                for (long tKey : tLayer) {
+                    tMinX = Math.min(tMinX, (int) (tKey >> 38));
+                    tMaxX = Math.max(tMaxX, (int) (tKey >> 38));
+                    tMinZ = Math.min(tMinZ, (int) (tKey & 0x3FFFFFF));
+                    tMaxZ = Math.max(tMaxZ, (int) (tKey & 0x3FFFFFF));
+                }
+                assertEquals(tEdge, tMaxX - tMinX + 1, "the x edge at dy " + tDy);
+                assertEquals(tEdge, tMaxZ - tMinZ + 1, "the z edge at dy " + tDy);
+            }
+            if (tAbs > 0) {
+                // the mirror: zero the y field (bits 26..37 = 0x3FFC000000), (x,z) coincide
+                Set<Long> tUp = new HashSet<>(), tDown = new HashSet<>();
+                for (long tKey : tLayers.get(tAbs)) tUp.add(tKey & ~0x3FFC000000L);
+                for (long tKey : tLayers.get(-tAbs)) tDown.add(tKey & ~0x3FFC000000L);
+                assertEquals(tUp, tDown, "the ±" + tAbs + " layers mirror in (x,z)");
+            }
         }
         assertTrue(tSink.writes > tSink.blocks.size(), "the l=0 body double-write collapses (writes " + tSink.writes
                 + " > distinct " + tSink.blocks.size() + ")");
-        assertTrue(tSink.blocks.containsValue(tDarkStone), "the prismarine payload present");
-        assertTrue(tSink.blocks.containsValue(tOre), "the ore payload present");
-    }
-
-    /** The x/z span of the |dy| layer holding aKey (the band radius face). */
-    private static int spanAt(Set<Long> aSeen, long aKey, int aDy, int aCenterY) {
-        int tX = (int) (aKey >> 38), tZ = (int) (aKey & 0x3FFFFFF);
-        int tDyAbs = Math.abs(aDy);
-        int tRadius = tDyAbs <= 1 ? 3 : tDyAbs <= 4 ? 2 : tDyAbs <= 7 ? 1 : 0;
-        int tCount = 0;
-        for (int m = -tRadius; m <= tRadius; m++) for (int n = -tRadius; n <= tRadius; n++) {
-            long tProbe = ((long) (tX + m) & 0x3FFFFFF) << 38
-                    | ((long) (aCenterY + aDy + 512) & 0xFFF) << 26
-                    | ((long) (tZ + n) & 0x3FFFFFF);
-            if (aSeen.contains(tProbe)) tCount++;
-        }
-        return tCount;
+        assertTrue(tSink.blocks.containsValue(System.identityHashCode(Blocks.STONE)), "the prismarine payload present");
+        assertTrue(tSink.blocks.containsValue(System.identityHashCode(Blocks.GLASS)), "the ore payload present");
     }
 
     // ---------------------------------------------------------------- the ore roll
