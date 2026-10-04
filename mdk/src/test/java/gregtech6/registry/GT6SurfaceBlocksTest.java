@@ -57,11 +57,13 @@ class GT6SurfaceBlocksTest {
         // 57 since b-gem-pool-extension, the gem-pool axis chain).
         // +36 (task flower-blocks-indicator-family): the 18 indicator flowers + the 18
         // vanilla potted companions (GT6FlowerBlockTest pins the row set).
-        // 4 + 8 + 57 + 36 = 105; the ITEMS register holds the 26
-        // obtainable block items (the rocks/sticks/indicator rocks/potted stay zero-item).
-        assertEquals(105, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+        // +7 (task worldgen-racks): the nether rack rocks.
+        // 4 + 8 + 57 + 36 + 7 = 112; the ITEMS register holds the 26
+        // obtainable block items (the rocks/sticks/indicator rocks/nether rocks/potted
+        // stay zero-item).
+        assertEquals(112, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
                 "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 57 indicator rocks"
-                        + " + the 18 flowers + the 18 potted companions");
+                        + " + the 18 flowers + the 18 potted companions + the 7 nether rack rocks");
         assertEquals(26, GT6SurfaceBlocks.ITEMS.getEntries().size(),
                 "the obtainable band's block items (the rocks/sticks/indicator rocks/potted stay zero-item)");
     }

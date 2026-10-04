@@ -224,14 +224,16 @@ public class GT6RacksWorldgenTest {
             assertEquals(tRow[1], tEntry.get("name").getAsString(), tRow[0] + " carries its material item");
         }
         // the debris rock: the :68 nextInt(4)==0 ? oreRaw : rockGt arm as the 3:1 weights
-        // (the meteorite loot precedent, surface_rock_meteorite)
+        // (the meteorite loot precedent, surface_rock_meteorite — the default-weight 1
+        // entry omits the field, the vanilla LootPool weight face)
         JsonObject tDebris = resourceJson("data/gt6/loot_tables/blocks/surface_rock_ancient_debris.json");
         var tEntries = tDebris.getAsJsonArray("pools").get(0).getAsJsonObject().getAsJsonArray("entries");
         assertEquals(2, tEntries.size(), "the two debris arms");
         assertEquals("gt6:rock_gt_ancient_debris", tEntries.get(0).getAsJsonObject().get("name").getAsString());
         assertEquals(3, tEntries.get(0).getAsJsonObject().get("weight").getAsInt(), "rockGt weight 3");
         assertEquals("gt6:ore_raw_ancient_debris", tEntries.get(1).getAsJsonObject().get("name").getAsString());
-        assertEquals(1, tEntries.get(1).getAsJsonObject().get("weight").getAsInt(), "oreRaw weight 1");
+        assertEquals(1, tEntries.get(1).getAsJsonObject().has("weight")
+                ? tEntries.get(1).getAsJsonObject().get("weight").getAsInt() : 1, "oreRaw weight 1 (the vanilla default, field omitted)");
     }
 
     private static JsonObject resourceJson(String aPath) throws Exception {

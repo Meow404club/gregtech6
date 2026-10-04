@@ -330,6 +330,7 @@ public final class GT6SurfaceBlocks {
 		List<RegistryObject<Block>> tAll = new ArrayList<>(List.of(
 				SURFACE_ROCK_STONE, SURFACE_ROCK_FLINT, SURFACE_ROCK_METEORITE, SURFACE_STICK));
 		tAll.addAll(INDICATOR_ROCKS);
+		tAll.addAll(NETHER_ROCKS); // task worldgen-racks — the nether band rides the same census walk unit
 		ALL = List.copyOf(tAll);
 	}
 
