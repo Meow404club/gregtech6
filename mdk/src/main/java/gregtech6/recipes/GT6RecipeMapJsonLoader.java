@@ -249,6 +249,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// carry ZERO static rows (the runtime face is the on-demand material-graph arm
 				// already ported in GT6RecipeMapCrucible), so there is nothing to replay
 				"press",
+<<<<<<< HEAD
 				// task recipe-b1-chem-domain — the Chem-domain faces (the Loader_Recipes_Chem.java
 				// static rows), each its OWN file key per the sawing 双文件一 map precedent so every
 				// card's census stays independent and /reload replaces per-key: mixerchem pours the
@@ -278,7 +279,14 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// Loader_Recipes_Other.java:818-894 + Loader_Recipes_Ores.java:341-344
 				// Graphene/Dilithium stocks
 				"extruder",
-				"cnc", "assembler", "nanofab");
+				"cnc", "assembler", "nanofab",
+
+				// task circuit-chain-recipes — the second file key of the PRESS map: the
+				// circuit synthesis chain (MultiItemTechnological.java:546-770) pours through
+				// its own key/file so the circuit domain stays isolated from the press.json
+				// tail-append hotspot (the sawing.json second-key precedent; the card
+				// mandate — a domain split, not a size split)
+				"press2");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -711,6 +719,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// task recipe-data-b1 — the Forming Press static stock (the lamp/TNT walks;
 			// the crucible pair deliberately keyless — zero upstream static rows, see POURABLE)
 			case "press" -> GT6RecipeMaps.PRESS;
+<<<<<<< HEAD
 			// task recipe-b1-chem-domain — the Chem-domain file keys, one per face (see POURABLE)
 			case "mixerchem" -> GT6RecipeMaps.MIXER;
 			case "roastingchem" -> GT6RecipeMaps.ROASTING;
@@ -730,6 +739,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "nanofab" -> GT6RecipeMaps.NANOFAB;
 			case "assembler" -> GT6RecipeMaps.ASSEMBLER;
 			case "cnc" -> GT6RecipeMaps.CNC;
+
+			// task circuit-chain-recipes — the circuit chain's second-form press key (the
+			// per-file-key tracker keeps the two subsets replace-independent, see POURABLE)
+			case "press2" -> GT6RecipeMaps.PRESS;
 		default -> null;
 		};
 	}
