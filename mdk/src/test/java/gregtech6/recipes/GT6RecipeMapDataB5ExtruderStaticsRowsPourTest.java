@@ -35,6 +35,10 @@ import net.minecraft.world.level.material.Fluids;
  * census pins the per-source decomposition, the verbatim pins replay whole rows, the
  * discarded-rows ledger is pinned at the file head, and every referenced id is checked
  * against the live registration universe (the GT6RecipeMapDataB1RowsPourTest form).
+ * The follow-up task recipe-b5-backfill-wire-unlocks adds the 7 x 2 formerly-deferred
+ * Handlers statements (wireGt01 / the five pipes / capcellcon) once the unlock faces
+ * registered (wire-gt-registration + the GTFluidPipes / GT6Cells identity mappings),
+ * 227 -> 241 rows, the 64-mold ledger 48 poured + 14 deferred -> 62 poured + 0.
  *
  * <p><b>HERMETIC (the r11e lesson)</b>: {@code reset()} retires the generation BEFORE
  * {@code init()} builds the fresh one, every test — the neo junit FML boot statically
@@ -82,12 +86,13 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 	}
 
 	/**
-	 * The census: 227 rows = the r11c 52 + the b5 175, bucketed by the row comments'
-	 * upstream line anchors — the five 30-row module domains (:44-73 Blackstone = the b5
-	 * 18 remainder + the r11c 12 heads; :75-104 Basalt; :106-135 Stone; :137-166 stone
-	 * W-meta; :168-197 cobblestone), the 9 walk representatives (:200+), the 28 Handlers
-	 * representatives ({@code Loader_Recipes_Handlers.java:} prefix), and the 40 remaining
-	 * r11c rows (the 12 Blackstone heads + 16 metal forging + 12 stone/BlockStones).
+	 * The census: 241 rows = the r11c 52 + the b5 175 + the backfill 14, bucketed by the
+	 * row comments' upstream line anchors — the five 30-row module domains (:44-73
+	 * Blackstone = the b5 18 remainder + the r11c 12 heads; :75-104 Basalt; :106-135
+	 * Stone; :137-166 stone W-meta; :168-197 cobblestone), the 9 walk representatives
+	 * (:200+), the 42 Handlers representatives ({@code Loader_Recipes_Handlers.java:}
+	 * prefix), and the 40 remaining r11c rows (the 12 Blackstone heads + 16 metal
+	 * forging + 12 stone/BlockStones).
 	 */
 	@Test
 	public void theAppendDecomposesBySource() throws Exception {
@@ -115,18 +120,18 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 		assertEquals(30, tStoneW, "the stone W-meta domain (:137-166)");
 		assertEquals(30, tCobble, "the cobblestone domain (:168-197)");
 		assertEquals(9, tWalk, "the prefix-walk representatives");
-		assertEquals(28, tHandlers, "the Handlers forging representatives (14 statements x 2)");
+		assertEquals(42, tHandlers, "the Handlers representatives (14 original + 7 backfilled statements x 2)");
 		assertEquals(40, tR11cRest, "the r11c metal + stone rows stay untouched");
-		assertEquals(227, GT6RecipeMaps.EXTRUDER.mRecipeList.size(), "the full pour lands 227 rows");
-		assertEquals(227, GT6RecipeMapJsonLoader.pouredCount("extruder"));
+		assertEquals(241, GT6RecipeMaps.EXTRUDER.mRecipeList.size(), "the full pour lands 241 rows");
+		assertEquals(241, GT6RecipeMapJsonLoader.pouredCount("extruder"));
 	}
 
 	/**
 	 * The mold-slot ledger: every row carries exactly one mold in its last input slot;
-	 * the 227 rows split 114 Shape_Extruder / 113 Shape_SimpleEx (the Zr walk row has no
-	 * SimpleEx twin upstream); the poured stock covers 24 usable mold types per family
-	 * (the ledger's 48 poured molds) while the 7 deferred types (wire/pipes x5/ccc,
-	 * port-absent output items) carry NO row.
+	 * the 241 rows split 121 Shape_Extruder / 120 Shape_SimpleEx (the Zr walk row has no
+	 * SimpleEx twin upstream); the poured stock covers 31 usable mold types per family —
+	 * the ledger's 24 + 7 backfilled types (wire/pipes x5/ccc, the recipe-b5-backfill-
+	 * wire-unlocks rows) — 62 poured molds total, zero deferred.
 	 */
 	@Test
 	public void theMoldLedgerCoversTheFullFamily() throws Exception {
@@ -141,18 +146,22 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 			if (tSecond.startsWith("gt6:shape_extruder_")) { tShapeRows++; tShapeMolds.add(tSecond); }
 			else { tSimpleRows++; tSimpleMolds.add(tSecond); }
 		}
-		assertEquals(227, tShapeRows + tSimpleRows, "every row carries exactly one mold");
-		assertEquals(114, tShapeRows, "the Shape_Extruder half");
-		assertEquals(113, tSimpleRows, "the Shape_SimpleEx half (the Zr walk row has no twin)");
-		// the deferred types: wire, the five pipes, ccc — port-absent output items, rows deferred
+		assertEquals(241, tShapeRows + tSimpleRows, "every row carries exactly one mold");
+		assertEquals(121, tShapeRows, "the Shape_Extruder half");
+		assertEquals(120, tSimpleRows, "the Shape_SimpleEx half (the Zr walk row has no twin)");
+		// the backfilled types (task recipe-b5-backfill-wire-unlocks): wire, the five pipes,
+		// ccc — one row per family statement over the three declared identity mappings
+		// (wire = the wire-gt-registration WIRES face, pipes = the GTFluidPipes block items,
+		// ccc = the GT6Cells block items)
 		for (String tMold : new String[] {"wire", "pipe_tiny", "pipe_small", "pipe_medium", "pipe_large", "pipe_huge", "ccc"}) {
-			assertTrue(!tShapeMolds.contains("gt6:shape_extruder_" + tMold), "the deferred type carries no row: shape_extruder_" + tMold);
-			assertTrue(!tSimpleMolds.contains("gt6:shape_simple_ex_" + tMold), "the deferred type carries no row: shape_simple_ex_" + tMold);
+			assertTrue(tShapeMolds.contains("gt6:shape_extruder_" + tMold), "the backfilled type carries its Shape row: shape_extruder_" + tMold);
+			assertTrue(tSimpleMolds.contains("gt6:shape_simple_ex_" + tMold), "the backfilled type carries its SimpleEx row: shape_simple_ex_" + tMold);
 		}
 		// the poured types per family: the 14 stone-domain r11c + saw/file r11c metal + the
-		// six Handlers additions (ingot/ring/casing/plateTiny/foil/wireFine) + bottle/cell = 24
-		assertEquals(24, tShapeMolds.size(), "the Shape_Extruder poured-type census");
-		assertEquals(24, tSimpleMolds.size(), "the Shape_SimpleEx poured-type census");
+		// six Handlers additions (ingot/ring/casing/plateTiny/foil/wireFine) + bottle/cell
+		// + the 7 backfilled types = 31
+		assertEquals(31, tShapeMolds.size(), "the Shape_Extruder poured-type census");
+		assertEquals(31, tSimpleMolds.size(), "the Shape_SimpleEx poured-type census");
 	}
 
 	/**
@@ -184,7 +193,22 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 			// Handlers:765 — the block forging row (9 in, the 1661-t melting-point column)
 			"{\"comment\":\"Loader_Recipes_Handlers.java:765 — Shape_Extruder_Block forging row, Iron representative (96 EUt, getCosts melting-point column 1661t at 9 ingots in)\","
 			+ "\"inputs\":[{\"item\":\"gt6:ingot_iron\",\"count\":9},{\"item\":\"gt6:shape_extruder_block\"}],"
-			+ "\"outputs\":[{\"item\":\"gt6:block_solid_iron\"}],\"duration\":1661,\"eut\":96}");
+			+ "\"outputs\":[{\"item\":\"gt6:block_solid_iron\"}],\"duration\":1661,\"eut\":96}",
+			// Handlers:748 — the backfill wire row (the WIRES-face AnnealedCopper representative;
+			// getCosts dT = 2800-293 over 1 ingot = 347t; the declared identity mapping)
+			"{\"comment\":\"Loader_Recipes_Handlers.java:748 — Shape_Extruder_Wire forging row, Annealed Copper representative (96 EUt, getCosts melting-point column 347t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.wireGt01 x material — the WIRES gate has no Iron member, the representative rides the wire-gt-registration item path)\","
+			+ "\"inputs\":[{\"item\":\"gt6:ingot_annealed_copper\"},{\"item\":\"gt6:shape_extruder_wire\"}],"
+			+ "\"outputs\":[{\"item\":\"gt6:wire_gt01_annealed_copper\",\"count\":2}],\"duration\":347,\"eut\":96}",
+			// Handlers:766 — the backfill ccc row (the GT6Cells Tin representative; 9 cells per
+			// ingot, the U9 ratio; 24t = the low melting-point column)
+			"{\"comment\":\"Loader_Recipes_Handlers.java:766 — Shape_Extruder_CCC forging row, Tin representative (96 EUt, getCosts melting-point column 24t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.capcellcon x material — the U9 capsule-cell-container ratio lands on the GT6Cells block items)\","
+			+ "\"inputs\":[{\"item\":\"gt6:ingot_tin\"},{\"item\":\"gt6:shape_extruder_ccc\"}],"
+			+ "\"outputs\":[{\"item\":\"gt6:cell_tin\",\"count\":9}],\"duration\":24,\"eut\":96}",
+			// Handlers:788 — the backfill pipeHuge SimpleEx mirror (12 in, the 768t units column;
+			// the declared GTFluidPipes identity mapping)
+			"{\"comment\":\"Loader_Recipes_Handlers.java:788 — Shape_SimpleEx_Pipe_Huge mirror row, Copper representative (16 EUt, units column 768t at 12 ingots in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeHuge x material — the port pipe items are the GTFluidPipes block items, slug copper)\","
+			+ "\"inputs\":[{\"item\":\"gt6:ingot_copper\",\"count\":12},{\"item\":\"gt6:shape_simple_ex_pipe_huge\"}],"
+			+ "\"outputs\":[{\"item\":\"gt6:copper_fluid_pipe_huge\"}],\"duration\":768,\"eut\":16}");
 		Set<JsonObject> tRows = new HashSet<>();
 		for (var tRow : tDoc.getAsJsonArray("recipes")) tRows.add(tRow.getAsJsonObject());
 		for (String tExpectedRow : tExpected) assertTrue(tRows.contains(JsonParser.parseString(tExpectedRow).getAsJsonObject()),
@@ -193,10 +217,11 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 
 	/**
 	 * The discarded-rows ledger: the file head declares every upstream call site the card
-	 * does NOT pour (16 LRE walk sites with port-absent outputs + the 7 x 2 Handlers
-	 * statements with port-absent outputs), and no poured row references a discarded id
-	 * or a deferred mold. The Shape_*_Empty leads carry no consumption row anywhere —
-	 * the declared TRUE NEGATIVE.
+	 * does NOT pour (the 16 LRE walk sites with port-absent outputs — the remaining open
+	 * face), the recipe-b5-backfill-wire-unlocks declaration paragraph (the 7 x 2 formerly
+	 * deferred Handlers statements now poured over the three identity mappings), and no
+	 * poured row references a discarded LRE id. The Shape_*_Empty leads carry no
+	 * consumption row anywhere — the declared TRUE NEGATIVE.
 	 */
 	@Test
 	public void theDiscardedRowsLedgerIsDeclaredAtTheFileHead() throws Exception {
@@ -204,14 +229,15 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 		String tHead = tDoc.get("comment").getAsString();
 		for (String tMarker : new String[] {
 				"DISCARDED-ROWS LEDGER", ":210/:211", "Pill_Empty", "FR_*", "PlasticCan", "Cell_Empty",
-				"IC2_Food_Can_Empty", ":748/:781-wire", "pipeTiny/Small/Medium/Large/Huge", ":766/:799 capcellcon",
-				"THE 64-MOLD LEDGER", "48 + 14 + 2 = 64", "W-meta domains"}) {
+				"IC2_Food_Can_Empty",
+				"BACKFILLED-BY recipe-b5-backfill-wire-unlocks", ":748/:781-wire", "pipeTiny/Small/Medium/Large/Huge",
+				":766/:799 capcellcon", "wire_gt01_annealed_copper", "copper_fluid_pipe_", "cell_tin",
+				"THE 64-MOLD LEDGER", "62 + 0 + 2 = 64", "W-meta domains"}) {
 			assertTrue(tHead.contains(tMarker), "the file head declares: " + tMarker);
 		}
 		String tAllRows = tDoc.getAsJsonArray("recipes").toString();
 		for (String tDiscarded : new String[] {"pill", "fr_wax", "fr_refractory", "fr_magic", "plastic_can",
-				"cell_empty", "ic2_", "shape_extruder_wire\"", "shape_simple_ex_wire\"", "shape_extruder_pipe",
-				"shape_simple_ex_pipe", "shape_extruder_ccc", "shape_simple_ex_ccc", "shape_extruder_empty\"",
+				"cell_empty", "ic2_", "shape_extruder_empty\"",
 				"shape_simple_ex_empty\""}) {
 			assertTrue(!tAllRows.contains(tDiscarded), "no row references the discarded face " + tDiscarded);
 		}
@@ -220,9 +246,10 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 	/**
 	 * The live-id face, offline: every id the file references must be a member of the
 	 * registration universe (GTMaterialItems + GTMaterialBlocks registrationOrder, the
-	 * GTStoneBlocks variant composition, the 64-mold registry, the three fixed walk
-	 * outputs; the GT6RecipeMapDataB1RowsPourTest form) and every minecraft: id rides a
-	 * four-entry vanilla whitelist.
+	 * GTStoneBlocks variant composition, the 64-mold registry, the GTFluidPipes and
+	 * GT6Cells block-item families, the three fixed walk outputs; the
+	 * GT6RecipeMapDataB1RowsPourTest form) and every minecraft: id rides a four-entry
+	 * vanilla whitelist.
 	 */
 	@Test
 	public void everyIdTheFileReferencesIsRegistered() throws Exception {
@@ -237,6 +264,11 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 				tUniverse.add("gt6:" + tStone.snake() + (tVariant == gregtech6.block.stone.StoneVariant.STONE ? "" : "_" + tVariant.snake));
 		for (var tMold : gregtech6.registry.GT6ExtruderMolds.MOLDS)
 			tUniverse.add("gt6:" + tMold.getId().getPath());
+		// the pipe + cell block-item families (the recipe-b5-backfill-wire-unlocks output faces)
+		for (gregtech6.registry.GTFluidPipes.FluidPipeRow tPipe : gregtech6.registry.GTFluidPipes.ROWS)
+			tUniverse.add("gt6:" + tPipe.path());
+		for (gregtech6.registry.GT6Cells.CellRow tCell : gregtech6.registry.GT6Cells.ROWS)
+			tUniverse.add("gt6:" + tCell.path());
 		for (String tFixed : new String[] {"gt6:bottle_empty", "gt6:food_can_empty", "gt6:empty_reactor_rod"})
 			tUniverse.add(tFixed);
 		assertTrue(tUniverse.contains("gt6:dust_glass"), "the universe built (" + tUniverse.size() + " ids)");
@@ -254,6 +286,6 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 				}
 		assertTrue(tMissing.isEmpty(), "every referenced id is registered (missing: " + tMissing + ")");
 		// and the pour resolved the ids through the stand-ins without a skip
-		assertEquals(227, GT6RecipeMaps.EXTRUDER.mRecipeList.size());
+		assertEquals(241, GT6RecipeMaps.EXTRUDER.mRecipeList.size());
 	}
 }

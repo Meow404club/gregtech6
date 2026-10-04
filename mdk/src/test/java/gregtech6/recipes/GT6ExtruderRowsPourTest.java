@@ -28,7 +28,8 @@ import net.minecraft.world.level.material.Fluids;
  * {@code data/gt6/recipe_maps/extruder.json} pours through the real
  * {@link GT6RecipeMapJsonLoader} seam into {@code GT6RecipeMaps.EXTRUDER}. The census
  * (the r11c 52 representative rows + the task recipe-b5-extruder-statics append of 175
- * rows = 227) and the item-id faces are the acceptance. The per-family tallies below
+ * rows + the recipe-b5-backfill-wire-unlocks append of 14 rows = 241) and the item-id
+ * faces are the acceptance. The per-family tallies below
  * partition the FULL shipped stock on the (EUt, duration, count) signatures and carry
  * their b5 additions inline (the b5 card owns the row-level decomposition pins in
  * GT6RecipeMapDataB5ExtruderStaticsRowsPourTest).
@@ -86,17 +87,19 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * The census: 227 rows — the r11c 52 representative rows (8 metal Shape_Extruder +
+	 * The census: 241 rows — the r11c 52 representative rows (8 metal Shape_Extruder +
 	 * 8 metal Shape_SimpleEx + 6+6 stone stonetypes + 6+6 BlockStones + 6+6 Blackstone)
 	 * plus the task recipe-b5-extruder-statics append of 175 rows (138 module-domain
-	 * literals + 9 walk representatives + 28 Handlers forging representatives).
+	 * literals + 9 walk representatives + 28 Handlers forging representatives) plus the
+	 * recipe-b5-backfill-wire-unlocks append of 14 rows (the 7 x 2 formerly-deferred
+	 * Handlers statements over the wire/GTFluidPipes/GT6Cells identity mappings).
 	 */
 	@Test
 	public void theShippedStockPoursTheFullRepresentativeCensus() throws Exception {
 		pourShipped();
-		assertEquals(227, GT6RecipeMaps.EXTRUDER.mRecipeList.size(),
-				"the r11c 52 + the b5 175 (138 module literals + 9 walk + 28 Handlers)");
-		assertEquals(227, GT6RecipeMapJsonLoader.pouredCount("extruder"), "the loader keyed the pour under the extruder map key");
+		assertEquals(241, GT6RecipeMaps.EXTRUDER.mRecipeList.size(),
+				"the r11c 52 + the b5 175 (138 module literals + 9 walk + 28 Handlers) + the backfill 14");
+		assertEquals(241, GT6RecipeMapJsonLoader.pouredCount("extruder"), "the loader keyed the pour under the extruder map key");
 	}
 
 	/**
@@ -126,7 +129,15 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 		tExpected.put("96EU 1107t x1", 1);  // :762 hammer
 		tExpected.put("96EU 1661t x1", 1);  // b5 :765 block (9 ingots in)
 		tExpected.put("96EU 216t x1", 1);   // b5 walk :292 Zr cell (the melting-point column)
-		assertEquals(tExpected, tTally, "the forging column over the 23 96-EUt rows");
+		// the recipe-b5-backfill-wire-unlocks rows (the identity-mapping representatives)
+		tExpected.put("96EU 24t x9", 1);    // backfill :766 ccc, Tin rep (9 cells out, the U9 ratio)
+		tExpected.put("96EU 148t x1", 1);   // backfill :752 pipeSmall, Copper rep
+		tExpected.put("96EU 148t x2", 1);   // backfill :751 pipeTiny, Copper rep
+		tExpected.put("96EU 347t x2", 1);   // backfill :748 wire, AnnealedCopper rep (WIRES face)
+		tExpected.put("96EU 442t x1", 1);   // backfill :753 pipeMedium, Copper rep (3 in)
+		tExpected.put("96EU 883t x1", 1);   // backfill :754 pipeLarge, Copper rep (6 in)
+		tExpected.put("96EU 1766t x1", 1);  // backfill :755 pipeHuge, Copper rep (12 in)
+		assertEquals(tExpected, tTally, "the forging column over the 30 96-EUt rows");
 	}
 
 	/**
@@ -172,24 +183,25 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 		Map<String, Integer> tExpected = new java.util.TreeMap<>();
 		tExpected.put("8t x8", 4);     // b5 W-meta bolts (:141/:172 x both twins)
 		tExpected.put("16t x1", 6);    // b5 module bolts (:48/:63 + :79/:94 + :110/:125)
-		tExpected.put("64t x1", 62);   // the r11c shovels (:783 + :51/:66) + the b5 module/walk/Handlers x1 columns
-		tExpected.put("64t x2", 2);    // b5 :777 rod / :782 casing mirrors
+		tExpected.put("64t x1", 63);   // the r11c shovels (:783 + :51/:66) + the b5 module/walk/Handlers x1 columns + backfill :785 pipeSmall
+		tExpected.put("64t x2", 4);    // b5 :777 rod / :782 casing mirrors + backfill :781 wire / :784 pipeTiny (AnnealedCopper rep)
 		tExpected.put("64t x3", 2);    // b5 walk :254/:255 glass cells (chemtube x3)
 		tExpected.put("64t x4", 2);    // b5 :780 ring / :801 foil mirrors
 		tExpected.put("64t x8", 2);    // b5 :779 bolt / :802 wireFine mirrors
-		tExpected.put("64t x9", 1);    // b5 :800 plateTiny mirror
+		tExpected.put("64t x9", 2);    // b5 :800 plateTiny mirror + backfill :799 ccc (Tin cell x9)
 		tExpected.put("96t x1", 9);    // r11c :794 file + the b5 W-meta pickaxe/axe pairs
 		tExpected.put("128t x1", 19);  // r11c sword/hoe/saw column + the b5 module sword/hoe pairs
-		tExpected.put("192t x1", 18);  // r11c pickaxe/axe column + the b5 module pickaxe/axe + W-meta hammers
+		tExpected.put("192t x1", 19);  // r11c pickaxe/axe column + the b5 module pickaxe/axe + W-meta hammers + backfill :786 pipeMedium
 		tExpected.put("256t x1", 7);   // b5 module gears + the Handlers:796 gear mirror
-		tExpected.put("384t x1", 7);   // r11c hammer column + the b5 module hammers
+		tExpected.put("384t x1", 8);   // r11c hammer column + the b5 module hammers + backfill :787 pipeLarge
 		tExpected.put("576t x1", 1);   // b5 Handlers:798 block mirror (9U in)
-		assertEquals(tExpected, tTally, "the units column over the 142 merged rows");
+		tExpected.put("768t x1", 1);   // backfill :788 pipeHuge mirror (12U in)
+		assertEquals(tExpected, tTally, "the units column over the 149 merged rows");
 	}
 
 	/**
-	 * The id faces: the mold slots, the Iron metal walk, the stone representatives and
-	 * their head sets.
+	 * The id faces: the mold slots, the Iron metal walk, the stone representatives, their
+	 * head sets, and the recipe-b5-backfill-wire-unlocks representative faces.
 	 */
 	@Test
 	public void theIdFacesCoverTheMoldsAndTheRepresentatives() throws Exception {
@@ -210,6 +222,11 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 				"gt6:granite", "gt6:tool_head_raw_sword_granite", "minecraft:blackstone", "gt6:tool_head_raw_pickaxe_blackstone",
 				"gt6:tool_head_hammer_blackstone"}) {
 			assertTrue(mRequestedItems.contains(tStone), "the stone representative face: " + tStone);
+		}
+		for (String tBackfill : new String[] {"gt6:ingot_annealed_copper", "gt6:wire_gt01_annealed_copper",
+				"gt6:ingot_copper", "gt6:copper_fluid_pipe_tiny", "gt6:copper_fluid_pipe_small", "gt6:copper_fluid_pipe_medium",
+				"gt6:copper_fluid_pipe_large", "gt6:copper_fluid_pipe_huge", "gt6:ingot_tin", "gt6:cell_tin"}) {
+			assertTrue(mRequestedItems.contains(tBackfill), "the backfill representative face: " + tBackfill);
 		}
 	}
 }
