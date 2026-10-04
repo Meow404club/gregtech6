@@ -59,10 +59,11 @@ import net.minecraft.world.level.material.Fluids;
  */
 public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTestBase {
 
-	/** The per-file row census (the seated rows, the recipe-data-b1 shared-file rows and the
-	 * recipe-b4 flower/fruit band included: juicer +13 BlockFlowersA/B rows, loom +16 :736 dyed rows). */
+	/** The per-file row census (the seated rows, the recipe-data-b1 shared-file rows, the
+	 * recipe-b4 flower/fruit band (juicer +13 BlockFlowersA/B rows, loom +16 :736 dyed rows)
+	 * and the smoke-juice-squeeze-vanilla-crops residue band (juicer +16 the :841-:853/:855/:856/:874 rows)). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"juicer", 35, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 51, "unboxinator", 11312);
+			"juicer", 51, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 51, "unboxinator", 11312);
 
 	/** The frozen FRUIT_JUICE walk (FL.java:187-224, the 37 members; Juice :186 is NOT one). */
 	private static final String[] JUICES = {"kiwijuice", "juicelime", "juicelemon", "juiceorange", "persimmonjuice",
