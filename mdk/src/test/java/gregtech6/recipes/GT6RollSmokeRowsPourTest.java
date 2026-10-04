@@ -35,7 +35,7 @@ public class GT6RollSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	private static final Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
 
-	/** The iron-pair stand-ins, rebuilt per test — distinct entries, one per shipped gt6: id (identity only). The Items references stay OUT of class init (the fixture map is built inside the test lifecycle, after the JVM boot the suite's launcher listener runs). */
+	/** The iron-pair stand-ins, rebuilt per test — distinct entries, one per shipped smoke-row gt6: id (identity only); the recipe-b7 walk rows (the roll walk rides the same two files) fall back to a BARRIER stand-in that matches no smoke-row pin. The Items references stay OUT of class init (the fixture map is built inside the test lifecycle, after the JVM boot the suite's launcher listener runs). */
 	private Map<String, Item> mStandins;
 
 	@BeforeEach
@@ -54,7 +54,7 @@ public class GT6RollSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 				Map.entry("gt6:plate_clay", Items.BRICK));
 		GT6RecipeMaps.init();
 		GT6RecipeMapJsonLoader.resetForTest();
-		GT6RecipeMapJsonLoader.sItemResolver = aId -> mStandins.get(aId.toString());
+		GT6RecipeMapJsonLoader.sItemResolver = aId -> mStandins.getOrDefault(aId.toString(), Items.BARRIER);
 		GT6RecipeMapJsonLoader.sFluidResolver = aId -> Fluids.EMPTY;
 	}
 
@@ -79,14 +79,19 @@ public class GT6RollSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 	void theFourShippedSmokeFilesPourIntoTheirMaps() throws Exception {
 		for (String tKey : new String[] {"rollingmill", "rollbender", "rollformer", "clustermill"}) {
 			pourShipped(tKey);
-			int tExpectedRows = "rollingmill".equals(tKey) ? 2 : "rollbender".equals(tKey) ? 3 : 1; // rollingmill carries the ULV-rung clay leg; rollbender the W3 plate+stick+stickLong trio
-			assertEquals(tExpectedRows, GT6RecipeMapJsonLoader.pouredCount(tKey), tKey + ": the smoke rows poured");
+			int tExpectedRows = switch (tKey) {
+					case "rollingmill" -> 2434; // the smoke pair + the recipe-b7 roll walk 2432
+					case "rollbender" -> 935;   // the W3 trio + the recipe-b7 roll walk 932 (task w3-heat-smelter)
+					case "rollformer" -> 28;    // the b2c-roll pilot walk (c7f09391c, the :314/:316 plate->railGt legs)
+					default -> 307;             // clustermill: the b2c-roll pilot walk (the :309/:311 plate->foil legs)
+			};
+			assertEquals(tExpectedRows, GT6RecipeMapJsonLoader.pouredCount(tKey), tKey + ": the rows poured (smoke + the walk rows where present)");
 			assertNotNull(GT6RecipeMapJsonLoader.mapFor(tKey), tKey + ": the whitelist key resolves its map");
 		}
-		assertEquals(2, GT6RecipeMaps.ROLLING_MILL.mRecipeList.size(), "the rollingmill map holds the iron row + the ULV-rung clay row");
-		assertEquals(3, GT6RecipeMaps.ROLL_BENDER.mRecipeList.size(), "the rollbender map holds the plate/stick/stickLong trio (task w3-heat-smelter)");
-		assertEquals(1, GT6RecipeMaps.ROLL_FORMER.mRecipeList.size(), "the rollformer map holds the corrected plate row");
-		assertEquals(1, GT6RecipeMaps.CLUSTER_MILL.mRecipeList.size(), "the clustermill map holds the smoke row");
+		assertEquals(2434, GT6RecipeMaps.ROLLING_MILL.mRecipeList.size(), "the rollingmill map holds the iron row + the ULV-rung clay row + the recipe-b7 roll walk 2432");
+		assertEquals(935, GT6RecipeMaps.ROLL_BENDER.mRecipeList.size(), "the rollbender map holds the plate/stick/stickLong trio + the recipe-b7 roll walk 932 (task w3-heat-smelter)");
+		assertEquals(28, GT6RecipeMaps.ROLL_FORMER.mRecipeList.size(), "the rollformer map holds the b2c-roll pilot plate->railGt walk");
+		assertEquals(307, GT6RecipeMaps.CLUSTER_MILL.mRecipeList.size(), "the clustermill map holds the b2c-roll pilot plate->foil walk");
 	}
 
 	/**
@@ -107,7 +112,9 @@ public class GT6RollSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 				.filter(r -> r.mInputs.length == 1 && r.mInputs[0].getItem() == mStandins.get("gt6:stick_long_iron"))
 				.findFirst().orElseThrow();
 		assertEquals(1, tSpring.mOutputs[0].getCount(), "stickLong -> spring x1 (:300)");
-		Recipe tRail = GT6RecipeMaps.ROLL_FORMER.mRecipeList.iterator().next();
+		Recipe tRail = GT6RecipeMaps.ROLL_FORMER.mRecipeList.stream()
+				.filter(r -> r.mInputs.length == 1 && r.mInputs[0].getItem() == mStandins.get("gt6:plate_iron"))
+				.findFirst().orElseThrow();
 		assertEquals(mStandins.get("gt6:plate_iron"), tRail.mInputs[0].getItem(), "the rollformer row consumes a PLATE (:314)");
 		assertEquals(4, tRail.mOutputs[0].getCount(), "plate -> railGt x4 (:314)");
 	}
@@ -118,8 +125,10 @@ public class GT6RollSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		// electric rung consume ONE ROLLING_MILL map — the port pours the row, both
 		// machine domains find it through the same mRecipeList
 		pourShipped("rollingmill");
+		// the dur leg discriminates the smoke row from the walk's ingot face (:262-284, dur 768) —
+		// mRecipeList is a Set, there is no file order to lean on
 		Recipe tRow = GT6RecipeMaps.ROLLING_MILL.mRecipeList.stream()
-				.filter(r -> r.mInputs.length == 1 && r.mInputs[0].getItem() == mStandins.get("gt6:ingot_iron"))
+				.filter(r -> r.mInputs.length == 1 && r.mInputs[0].getItem() == mStandins.get("gt6:ingot_iron") && r.mDuration == 32L)
 				.findFirst().orElseThrow();
 		assertEquals(16L, tRow.mEUt, "the smoke row's eut 16 (the upstream RollingMill row shape, MultiItemFood.java:167)");
 		assertEquals(32L, tRow.mDuration, "the smoke row's duration 32");

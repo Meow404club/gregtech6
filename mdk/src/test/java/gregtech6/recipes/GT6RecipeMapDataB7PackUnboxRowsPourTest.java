@@ -66,7 +66,7 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 	private static final Map<String, Integer> CENSUS = Map.of(
 			"rollingmill", 2434,  // 2 seated smoke + 2432 walk (22 statements :262-284)
 			"rollbender",   935,  // 3 seated smoke +  932 walk ( 8 statements :298-306)
-			"boxinator",  12348,  // 29 seated (smoke + b1) + 12319 walk (55 statements :492-550)
+			"boxinator",  12358,  // 39 seated (smoke + b1 28 + robotics-chain 10, the review-seat rebase roll) + 12319 walk (55 statements :492-550)
 			"unboxinator", 11312); // 21 seated (smoke + bookshelf + b1) + 11291 walk (34 statements :451-489)
 
 	private static final java.util.function.Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
