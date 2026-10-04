@@ -247,11 +247,14 @@ public class GT6RecipeMapDataStrippedLogQolRowsPourTest extends GTRecipesOffline
 		assertTrue(tBeamUniverse.contains("gt6:wood_beam"), "the generify target gt6:wood_beam lives in the beam universe");
 	}
 
-	/** The tag-membership pin (acceptance 3): the 8-beam mirror is untouched, the QoL rows are explicit rows. */
+	/** The tag-membership pin (acceptance 3): the beam mirror stays the registration walk, the QoL rows are explicit rows. */
 	@Test
-	public void theBeamTagMirrorStaysTheEightUpstreamBeams() throws Exception {
-		assertEquals(8, GT6BeamKind.values().length,
-				"#gt6:beam_wood mirrors the upstream 8 beams (BlockBaseBeam.java:48 OD.beamWood) — no stripped member joins");
+	public void theBeamTagMirrorStaysTheRegistrationWalk() throws Exception {
+		// task beam-fireproof-closeout: 8 -> 21 kinds (Beam3/A/B/C residual families join) —
+		// the beam_wood tag rides the live registration walk (BLOCKS + FIREPROOF_BLOCKS), still
+		// NO stripped member joins (a stripped log is a log face, never a beam face)
+		assertEquals(21, GT6BeamKind.values().length,
+				"#gt6:beam_wood mirrors the upstream beam block set (BlockBaseBeam.java:48 OD.beamWood, now incl. the Beam3/A/B/C families + the fireproof twins) — no stripped member joins");
 		// the beam-input segments of the two sawing/generifier faces keep their exact pre-card shape
 		int tSawingBeamRows = 0;
 		for (JsonElement tElement : pourShipped("sawing")) {
