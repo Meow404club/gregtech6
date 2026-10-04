@@ -96,6 +96,16 @@ public final class GT6Mortars {
 		return aRow.design() <= 1 ? gregapi.data.OP.ingot : gregapi.data.OP.gem;
 	}
 
+	/**
+	 * The crafting ingredient MATERIAL of a row — the upstream {@code 'P'} column, which
+	 * is NOT the pestle column on the steel row: the DESIGN-0 (Steel pestle) row crafts
+	 * from {@code OP.ingot.dat(ANY.Iron)} (:2179 — the iron group, the port
+	 * representative MT.Iron), the other four from their pestle material (:2180-2183).
+	 */
+	public static OreDictMaterial pestleIngredient(MortarRow aRow) {
+		return aRow.design() == 0 ? MT.Iron : aRow.pestle().get();
+	}
+
 	/** The registered blocks by path (the datagen walkers + the BET multi-mount array). */
 	public static final java.util.Map<String, RegistryObject<GT6MortarBlock>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
 

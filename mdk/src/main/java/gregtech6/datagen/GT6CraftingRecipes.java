@@ -2550,15 +2550,16 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * IL.Ceramic_Bowl, 'P', OP.<prefix>.dat(<material>)} shapeless pair): the base =
 	 * the port Ceramic-bowl stand-in {@code GT6Kitchen.MIXING_BOWL_ITEM} (the declared
 	 * mixing-bowl mapping, the research.manual-devices-port ruling — upstream
-	 * IL.Ceramic_Bowl is the kitchen bowl's own 1.7.10 identity) + the row's pestle
-	 * material item (the row's {@code pestlePrefix} column: ingot for Steel/Netherite,
-	 * gem for Sapphire/Diamond/Amethyst — the ANY groups ride their port representatives,
-	 * the single-tier ruling). 1 + 1 → 1 mortar. The id is the result-path convention
+	 * IL.Ceramic_Bowl is the kitchen bowl's own 1.7.10 identity) + the row's {@code 'P'}
+	 * ingredient ({@link GT6Mortars#pestleIngredient}: the DESIGN-0 STEEL-pestle row
+	 * crafts from an ANY.Iron INGOT (:2179 — the upstream column, not the pestle
+	 * column), Netherite from its ingot (:2180), the three gems from their gems
+	 * (:2181-2183)). 1 + 1 → 1 mortar. The id is the result-path convention
 	 * ({@link #mortarRecipeId}).
 	 */
 	private ShapelessRecipeBuilder mortarBuilder(gregtech6.registry.GT6Mortars.MortarRow aRow) {
 		RegistryObject<net.minecraft.world.item.Item> tPestle = gregtech6.registry.GTMaterialItems.get(
-				gregtech6.registry.GT6Mortars.pestlePrefix(aRow), aRow.pestle().get());
+				gregtech6.registry.GT6Mortars.pestlePrefix(aRow), gregtech6.registry.GT6Mortars.pestleIngredient(aRow));
 		if (tPestle == null) return null; // the row's ingredient is driver-hidden — the skip semantics (the hopperRecipeBuilder form)
 		net.minecraft.world.item.Item tPestleItem = tPestle.get();
 		return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gregtech6.registry.GT6Mortars.ITEMS_BY_PATH.get(aRow.path()).get())
