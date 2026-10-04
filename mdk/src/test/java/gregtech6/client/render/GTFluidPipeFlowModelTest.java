@@ -2,6 +2,7 @@ package gregtech6.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -91,12 +92,123 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 		assertEquals(1 - t, tEast[0], 1e-9);
 	}
 
+	/**
+	 * THE pipe-flow-arrow-render-fix killer-1 pin: a bake-table key is the per-state
+	 * ModelResourceLocation {@code gt6:<path>#connections=N} (GTRenderModelListener class
+	 * doc — model-file ids are NEVER keys and mismatched registrations are silently
+	 * skipped), so a live registration id must be the per-state form. The historical
+	 * regression: the {@code "block/<path>"} model-file ids were registered, every one
+	 * skipped silently, and the arrow chain never installed. The old count-only pin
+	 * ({@code registeredCount}) was exactly the blind spot that let it through.
+	 */
 	@Test
-	void clientListenerRegistersBothTierModels() {
-		int tBefore = GTRenderModelListener.registeredCount();
-		GTPipeFlowClientListener.register();
-		assertEquals(tBefore + GTPipeFlowClientListener.TARGET_MODELS.size(), GTRenderModelListener.registeredCount(),
-				"both pipe tier blockstate models registered");
+	void registeredFlowTargetsAreAllRealPerStateBakedKeys() {
+		for (String tTarget : GTPipeFlowClientListener.TARGET_MODELS) {
+			assertTrue(tTarget.contains("#connections="),
+					tTarget + ": a model-file id never matches a per-state bake key");
+		}
+	}
+
+	/** A body model that records the Forge 5-arg dispatch (the ModelData forward pin). */
+	private static final class RecordingBody implements net.minecraft.client.resources.model.BakedModel {
+		static final List<BakedQuad> BODY_QUADS = List.of();
+		ModelData mSeenVia5Arg;
+		@Override public List<BakedQuad> getQuads(net.minecraft.world.level.block.state.BlockState aState,
+				Direction aSide, RandomSource aRand) { return BODY_QUADS; }
+		@Override public List<BakedQuad> getQuads(net.minecraft.world.level.block.state.BlockState aState,
+				Direction aSide, RandomSource aRand, ModelData aData, net.minecraft.client.renderer.RenderType aRenderType) {
+			mSeenVia5Arg = aData;
+			return BODY_QUADS;
+		}
+		@Override public boolean useAmbientOcclusion() { return false; }
+		@Override public boolean isGui3d() { return false; }
+		@Override public boolean usesBlockLight() { return true; }
+		@Override public boolean isCustomRenderer() { return false; }
+		@Override public net.minecraft.client.renderer.texture.TextureAtlasSprite getParticleIcon() { return null; }
+		@Override public net.minecraft.client.renderer.block.model.ItemTransforms getTransforms() {
+			return net.minecraft.client.renderer.block.model.ItemTransforms.NO_TRANSFORMS; }
+		@Override public net.minecraft.client.renderer.block.model.ItemOverrides getOverrides() {
+			return net.minecraft.client.renderer.block.model.ItemOverrides.EMPTY; }
+	}
+
+	/** The composed chain over a recording body — the live GTRodClientListener shape. */
+	private static GTFluidPipeFoamModel chainOver(RecordingBody aBody) {
+		java.util.function.Function<ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite> tLookup =
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE;
+		return new GTFluidPipeFoamModel(new GTFluidPipeFlowModel(aBody, tLookup), tLookup);
+	}
+
+	private static ModelData dataWithFlowAndPaint() {
+		return GTModelProperties.snapshot()
+				.with(GTModelProperties.FLOW_SNAPSHOT, new PipeFlowSnapshot((byte) 1))
+				.with(GTModelProperties.PAINT, 0x00FF00).build();
+	}
+
+	/**
+	 * THE killer-2/5-arg pin: the composed chain must hand the BE's ModelData down to the
+	 * rod body — the body's paint tint resolves inside tintARGB off the PAINT property, so
+	 * a 3-arg body call (ModelData dropped) sprays an arrowed pipe back to its material
+	 * colour (the 掉漆 bug).
+	 */
+	@Test
+	void chainForwardsTheSnapshotToTheBodyModel() {
+		RecordingBody tBody = new RecordingBody();
+		GTFluidPipeFoamModel tChain = chainOver(tBody);
+		ModelData tData = dataWithFlowAndPaint();
+		tChain.getQuads(null, Direction.UP, RandomSource.create(), tData, null);
+		assertSame(tData, tBody.mSeenVia5Arg, "the body must see the BE ModelData (5-arg forward, paint kept)");
+	}
+
+	/** The acceptance pin: one FLOW dispatch serves the arrow quads BESIDE the pipe body quads. */
+	@Test
+	void flowDispatchServesArrowsBesideTheBodyQuads() {
+		GTFluidPipeFoamModel tChain = chainOver(new RecordingBody());
+		List<BakedQuad> tQuads = tChain.getQuads(null, null, RandomSource.create(), dataWithFlowAndPaint(), null);
+		assertTrue(tQuads.containsAll(RecordingBody.BODY_QUADS), "the body quads ride along");
+		assertTrue(tQuads.size() > RecordingBody.BODY_QUADS.size(), "the arrows are appended");
+	}
+
+	/**
+	 * The spray-keep pin: a PAINTED plain pipe carries PAINT-only ModelData — the chain
+	 * must still dispatch down to the body (both gates) or the paint drops to the material
+	 * colour on the very first frame.
+	 */
+	@Test
+	void paintOnlyModelDataStillDispatchesTheChain() {
+		ModelData tPaintOnly = GTModelProperties.snapshot().with(GTModelProperties.PAINT, 0x00FF00).build();
+		GTFluidPipeFoamModel tFoam = chainOver(new RecordingBody());
+		assertTrue(tFoam.supportsDynamicQuads(tPaintOnly), "the outer gate must open for paint-only data");
+		GTFluidPipeFlowModel tFlow = new GTFluidPipeFlowModel(new RecordingBody(), aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		assertTrue(tFlow.supportsDynamicQuads(tPaintOnly), "the inner gate must pass paint-only data through to the body");
+	}
+
+	/** A foamed pipe paints the body too (applyFoam) — the foam-only forward must keep the data. */
+	@Test
+	void foamOnlyPipeKeepsItsPaintOnTheBodyForward() {
+		RecordingBody tBody = new RecordingBody();
+		GTFluidPipeFoamModel tChain = chainOver(tBody);
+		ModelData tData = GTModelProperties.snapshot()
+				.with(GTModelProperties.FOAM_SNAPSHOT, new PipeFoamSnapshot(false, false))
+				.with(GTModelProperties.PAINT, 0x00FF00).build();
+		tChain.getQuads(null, Direction.UP, RandomSource.create(), tData, null);
+		assertSame(tData, tBody.mSeenVia5Arg, "foam-only: the body still sees the ModelData (fresh overlay pass)");
+	}
+
+	/**
+	 * The layer-gate pin: the pipe rows declare {@code render_type: cutout} (the r8-tex
+	 * shared models), so the chunk bake runs ONLY the cutout pass — arrows and foam gated
+	 * to the solid layer are never baked at all.
+	 */
+	@Test
+	void cutoutPassCarriesTheArrowsAndTheFoam() {
+		GTFluidPipeFoamModel tChain = chainOver(new RecordingBody());
+		List<BakedQuad> tArrows = tChain.getQuads(null, Direction.UP, RandomSource.create(),
+				dataWithFlowAndPaint(), net.minecraft.client.renderer.RenderType.cutout());
+		assertEquals(1, tArrows.size() - RecordingBody.BODY_QUADS.size(), "one arrow on the UP pass, cutout layer");
+		List<BakedQuad> tFoam = tChain.getQuads(null, Direction.UP, RandomSource.create(),
+				GTModelProperties.snapshot().with(GTModelProperties.FOAM_SNAPSHOT, new PipeFoamSnapshot(false, false)).build(),
+				net.minecraft.client.renderer.RenderType.cutout());
+		assertTrue(tFoam.size() > RecordingBody.BODY_QUADS.size(), "the fresh foam overlay rides the cutout layer");
 	}
 
 	/**
