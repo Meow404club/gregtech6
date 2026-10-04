@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import com.google.common.hash.Hashing;
@@ -39,13 +40,17 @@ import net.minecraft.data.PackOutput;
  * provider, it reads the freshly emitted {@code data/gt6/<brand>/biome_modifier/<row>
  * .json} and rewrites it with the row's conditions under THIS leg's brand key; the
  * brand mirror rebrands it onto the sibling directory (byte-identical modulo brand).
- *
- * <p>THE ROW: exactly {@link GT6WorldgenDatagen#END_YIELD_MODIFIER_KEY} — the End
- * large-vein biome modifier carrying the {@code not(mod_loaded <planet mod>)} yield
- * inversion ({@link GT6WorldgenDatagen#PLANET_VEIN_TRIGGER_MODID}; the condition types
- * are limited to mod_loaded/item_exists by the card spec, both loaders evaluate them
- * TAGS_INVALID — tag conditions would throw). Everything else the native provider
- * emits stays untouched.
+ * <p>THE REGISTRY (task twilight-adaptation-pilot — the single-row injector generalized
+ * into the condition-row registry, the mod-dimension adaptation skeleton's detection
+ * face): {@link #CONDITION_ROWS} maps each conditioned biome-modifier row path to its
+ * brand-keyed conditions builder. Entry order is registration-stable; every unlisted
+ * row the native provider emits stays untouched (the backward-compat ratchet, pinned by
+ * GT6NetherWorldgenTest). Condition TYPES are limited to mod_loaded/item_exists by the
+ * card spec (both loaders evaluate them TAGS_INVALID — tag conditions would throw); the
+ * registry's FIRST entry is the historical End large-vein row (the
+ * {@code not(mod_loaded <planet mod>)} yield inversion,
+ * {@link GT6WorldgenDatagen#PLANET_VEIN_TRIGGER_MODID}) — its emitted bytes are
+ * unchanged by the generalization (the committed-tree byte gate).
  *
  * <p>Idempotent under the HashCache bookkeeping (the GT6DualDirectoryFaces doctrine):
  * run N's injection content is run N+1's native provider's cached no-op, the file keeps
@@ -87,14 +92,41 @@ public class GT6BiomeModifierConditions implements DataProvider {
         mOutput = aOutput;
     }
 
+    /**
+     * One conditioned biome-modifier row: the JSON path under
+     * {@code data/gt6/<brand>/biome_modifier/} (no {@code .json}) and the brand-keyed
+     * conditions builder. The row is the registry's unit — a future mod-dimension card
+     * appends one entry and the emission, brand mirror and tree gate follow with zero
+     * further edits here.
+     */
+    public record ConditionRow(String rowPath, java.util.function.Function<String, JsonArray> conditions) {}
+
+    /**
+     * The condition-row registry (the class javadoc's skeleton face): path → conditions
+     * builder, in emission order. The single-condition positive form for a mod-dimension
+     * mount is {@link #modLoadedConditions}; composite faces (the yield inversion's
+     * {@code not} wrapper) bring their own builder.
+     */
+    public static final List<ConditionRow> CONDITION_ROWS = List.of(
+            new ConditionRow(GT6WorldgenDatagen.END_YIELD_MODIFIER_KEY.location().getPath(),
+                    GT6BiomeModifierConditions::conditionsArray));
+
     @Override
     public CompletableFuture<?> run(CachedOutput aCache) {
         Path tData = mOutput.getOutputFolder(PackOutput.Target.DATA_PACK);
         // THIS leg's brand directory — the class is registered on both legs and the
-        // brand mirror duplicates the row onto the sibling directory afterwards
+        // brand mirror duplicates the rows onto the sibling directory afterwards
         String tBrand = GT6WorldgenDatagen.biomeModifierRegistryKey().location().getNamespace();
-        Path tFile = tData.resolve("gt6").resolve(tBrand).resolve("biome_modifier")
-                .resolve(GT6WorldgenDatagen.END_YIELD_MODIFIER_KEY.location().getPath() + ".json");
+        for (ConditionRow tRow : CONDITION_ROWS) {
+            injectConditions(tData, tBrand, tRow);
+        }
+        return CompletableFuture.completedFuture(null);
+    }
+
+    /** The one-row injection, verbatim mechanics of the pre-registry single-row form. */
+    private static void injectConditions(Path aData, String aBrand, ConditionRow aRow) {
+        Path tFile = aData.resolve("gt6").resolve(aBrand).resolve("biome_modifier")
+                .resolve(aRow.rowPath() + ".json");
         if (!Files.isRegularFile(tFile)) {
             throw new RuntimeException("the conditions injection expects the native worldgen provider to have "
                     + "emitted " + tFile + " earlier in this run (provider order contract, GT6DataGenerators)");
@@ -106,11 +138,11 @@ public class GT6BiomeModifierConditions implements DataProvider {
                 throw new RuntimeException("the conditions injection expects a JSON object (got " + tJson + ")");
             }
             JsonObject tRoot = tJson.getAsJsonObject();
-            String tKey = tBrand + ":conditions";
+            String tKey = aBrand + ":conditions";
             if (tRoot.has(tKey)) {
                 tRoot.remove(tKey); // the re-run face: rebuild from the carrier alone
             }
-            tRoot.add(tKey, conditionsArray(tBrand));
+            tRoot.add(tKey, aRow.conditions().apply(aBrand));
             // DIRECT content-compare write, NOT saveStable: the path is owned by TWO
             // providers (the native base writer + this one), so saveStable's per-provider
             // shouldWrite skip would leave a sibling's bytes on disk. The bytes replicate
@@ -121,7 +153,6 @@ public class GT6BiomeModifierConditions implements DataProvider {
             if (!java.util.Arrays.equals(tTarget, tCurrent)) {
                 Files.write(tFile, tTarget);
             }
-            return CompletableFuture.completedFuture(null);
         } catch (IOException tError) {
             throw new RuntimeException("the conditions injection failed processing " + tFile, tError);
         }
@@ -175,11 +206,12 @@ public class GT6BiomeModifierConditions implements DataProvider {
      * {@code type} the first member of every condition object (the byte contract with
      * the neo leg's native emission — GT6DualDirectoryFaces rebrands it 1:1).
      *
-     * <p>Division of labor (mdh-4 closeout, KEEP ruling): this emission is the port's ONE
-     * live runtime mod-presence condition and it stays — datapack conditions evaluate at
-     * datapack-load time, before any registry face exists, so they cannot migrate to the
-     * registry-side unified driver GT6ModDrivers (mdh series; isLoaded/visibilityGate);
-     * that driver owns the registration face only.
+     * <p>Division of labor (mdh-4 closeout, KEEP ruling; the registry's multi-row face
+     * keeps the rule per-row): this emission is a live runtime mod-presence condition and
+     * it stays — datapack conditions evaluate at datapack-load time, before any registry
+     * face exists, so they cannot migrate to the registry-side unified driver
+     * GT6ModDrivers (mdh series; isLoaded/visibilityGate); that driver owns the
+     * registration face only.
      */
     public static JsonArray conditionsArray(String aBrand) {
         JsonObject tModLoaded = new JsonObject();
@@ -190,6 +222,23 @@ public class GT6BiomeModifierConditions implements DataProvider {
         tNot.add("value", tModLoaded);
         JsonArray rList = new JsonArray();
         rList.add(tNot);
+        return rList;
+    }
+
+    /**
+     * The POSITIVE single-condition form (task twilight-adaptation-pilot — the new face
+     * the generalization exists for): {@code [mod_loaded <modid>]}, brand-keyed. A mount
+     * row built with it applies when the mod IS present and is skipped at datapack load
+     * (the RegistryDataLoader debug-level skip) when absent — the TF-absence semantics.
+     * Same {@code type}-first member order as {@link #conditionsArray} (the rebrand walk
+     * treats it identically, KNOWN_CONDITION_TYPES mod_loaded).
+     */
+    public static JsonArray modLoadedConditions(String aBrand, String aModid) {
+        JsonObject tModLoaded = new JsonObject();
+        tModLoaded.addProperty("type", aBrand + ":mod_loaded");
+        tModLoaded.addProperty("modid", aModid);
+        JsonArray rList = new JsonArray();
+        rList.add(tModLoaded);
         return rList;
     }
 
