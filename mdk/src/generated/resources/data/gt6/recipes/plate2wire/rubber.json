@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_rubber"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "Px"
+  ],
+  "result": {
+    "item": "gt6:wire_gt01_rubber"
+  },
+  "show_notification": true
+}

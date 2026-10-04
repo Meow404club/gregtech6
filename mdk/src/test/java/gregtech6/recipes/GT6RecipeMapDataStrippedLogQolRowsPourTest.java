@@ -42,7 +42,7 @@ import net.minecraft.world.level.material.Fluids;
  *     carrying a 'qol twin of' comment naming its twin — the census 4274 -> 4304;</li>
  * <li><b>generifier.json</b> as 6 rows into the IL.Beam target gt6:wood_beam (the
  *     already-debarked wood's beam face, the row shape of the Woods:190 beam rows,
- *     duration 1, eut 0) — the census 9117 -> 9123;</li>
+ *     duration 1, eut 0) — the census 9117 -> 9123 -> 9187 (the +64 task wire-gt-registration generifier walk re-pour);</li>
  * <li><b>pressurewasher.json</b> as a HEAD-ONLY declaration: the 28 wash rows' explicit
  *     input id set contains NO stripped_* log (the debarking wash strips the bark — an
  *     already-stripped log has no bark face to wash), pinned live by
@@ -59,7 +59,7 @@ import net.minecraft.world.level.material.Fluids;
 public class GT6RecipeMapDataStrippedLogQolRowsPourTest extends GTRecipesOfflineTestBase {
 
 	/** The censuses after this card: sawing +30, generifier +6, wash untouched at 28. */
-	private static final int SAWING_CENSUS = 4304, GENERIFIER_CENSUS = 9123, WASH_CENSUS = 28;
+	private static final int SAWING_CENSUS = 4304, GENERIFIER_CENSUS = 9187, WASH_CENSUS = 28;
 
 	/** The six vanilla species (LoaderWoodDictionary.java:51-56, the LIST_WOODS vanilla subset). */
 	private static final String[] SPECIES = {"oak", "spruce", "birch", "jungle", "acacia", "dark_oak"};
@@ -111,7 +111,7 @@ public class GT6RecipeMapDataStrippedLogQolRowsPourTest extends GTRecipesOffline
 		assertEquals(SAWING_CENSUS, GT6RecipeMapJsonLoader.mapFor("sawing").mRecipeList.size(), "sawing: 4274 + 30 twin rows");
 		assertEquals(SAWING_CENSUS, GT6RecipeMapJsonLoader.pouredCount("sawing"), "sawing: zero skips");
 		pourShipped("generifier");
-		assertEquals(GENERIFIER_CENSUS, GT6RecipeMapJsonLoader.mapFor("generifier").mRecipeList.size(), "generifier: 9117 + 6 stripped rows");
+		assertEquals(GENERIFIER_CENSUS, GT6RecipeMapJsonLoader.mapFor("generifier").mRecipeList.size(), "generifier: 9181 + 6 stripped rows (+64 the wire-gt walk re-pour)");
 		assertEquals(GENERIFIER_CENSUS, GT6RecipeMapJsonLoader.pouredCount("generifier"), "generifier: zero skips");
 		pourShipped("pressurewasher");
 		assertEquals(WASH_CENSUS, GT6RecipeMapJsonLoader.mapFor("pressurewasher").mRecipeList.size(), "wash: the head-only card moves no row");

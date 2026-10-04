@@ -56,8 +56,10 @@ public class GT6ModDriverClearOutWaveTest {
      * other family's count byte-identical; REVIEW FIX merge seat XVI) + 130 task
      * wood-planks-register (the plank WOOD domain; +1 creative-visible prefix family,
      * TAB_PREFIX_COUNT 101 → 102; REVIEW FIX seat XVII — the rebase exposed this
-     * post-freeze pin to the card's +130). */
-    private static final int BASELINE = 57243;
+     * post-freeze pin to the card's +130) + 224 task wire-gt-registration (the sixteen
+     * wireGt multipliers x the 14 WIRES-condition materials — the 13 explicit WIRES rows
+     * plus the Graphene G_MACHINE expansion leg; +16 creative-visible families). */
+    private static final int BASELINE = 57467;
     /** The per-domain kept-drop ledger (the card report's 对账表, offline-measured 2026-10-01),
      * re-measured at review on the post-casing universe (probe run, forge offline leg): the
      * casingMachine 210-material axis overlaps five domains' PRIMARY materials, whose casing
@@ -72,20 +74,19 @@ public class GT6ModDriverClearOutWaveTest {
             MT.MD.IC2.mID, 75,
             MT.MD.TE.mID, 336,
             MT.MD.EIO.mID, 873,
-            MT.MD.HBM.mID, 908,
+            MT.MD.HBM.mID, 988, // +80 task wire-gt-registration: Bakelite/Mingrade/PVC/Polycarbonate/Teflon are HBM PRIMARY, the 16 wireGt pairs each join the drop
             MT.MD.BOTA.mID, 1132,
             MT.MD.GC_EXTRAPLANETS.mID, 1510,
             MT.MD.MET.mID, 3192);
-    /** 57243 − 8237 = 49006: the eight-domain joint pin keeps the ledger arithmetic honest. */
+    /** 57467 − 8317 = 49150: the eight-domain joint pin keeps the ledger arithmetic honest (the universe rode the +224 task wire-gt-registration re-measure; the HBM drop rode +80 — Bakelite/Mingrade/PVC/Polycarbonate/Teflon are HBM PRIMARY). */
     private static final int TOTAL_DROP = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
     /** Creative-visible prefix families before and after the wave — no family empties out
      * (97 + the 4 casingMachine families that landed post-freeze + plank, task
      * wood-planks-register, see BASELINE). */
-    private static final int TAB_PREFIX_COUNT = 102;
+    private static final int TAB_PREFIX_COUNT = 118; // +16 the wireGt01-16 families (task wire-gt-registration)
 
     @BeforeAll
     public static void initMaterialSystem() {
-        GT6DriverTestSupport.loadFamiliesPristine(); // mdh-6: freeze the gated family lists before any pin
         // the fluid-ratchet arm touches GTFluids (ForgeRegistries at clinit) — bootstrap offline
         // instead of relying on a same-fork neighbour to have done it (the GTOfflineTestBase form)
         SharedConstants.tryDetectVersion();
@@ -94,6 +95,7 @@ public class GT6ModDriverClearOutWaveTest {
         } catch (Throwable ignored) {
             // offline init noise; the registries are usable by now
         }
+        GT6DriverTestSupport.loadFamiliesPristine(); // mdh-6: freeze the gated family lists before any pin (AFTER the bootstrap — the GTBarrels/ForgeRegistries clinit needs it when no same-fork neighbour bootstrapped first; found by task wire-gt-registration's isolated-class run)
         GTMaterialItems.initMaterials();
     }
 
@@ -107,7 +109,7 @@ public class GT6ModDriverClearOutWaveTest {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (acceptance 2, zero-change proof)");
-        assertEquals(8237, TOTAL_DROP, "the eight-domain drop total (57243 → 49006)");
+        assertEquals(8317, TOTAL_DROP, "the eight-domain drop total (57467 → 49150; +80 task wire-gt-registration: the HBM-primary wireGt pairs)");
 
         Set<String> allDroppedNames = new HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {

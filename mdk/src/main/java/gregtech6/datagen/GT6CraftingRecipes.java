@@ -5895,11 +5895,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// The same digLadder band translation as the plateGem/stick families above
 	// (the listener walk, the And(ANTIMATTER.NOT, COATED.NOT) fold, the
 	// config-gate drop, the item-truth intersection). Tool letter 'x' = the
-	// wire-cutter tag (upstream CR.java:359). THE :169 ROWS POUR ZERO today —
-	// the wireGt01 output face lives in the GTWires block domain (one
-	// BlockItem per band block, the material rides the blockstate — no
-	// per-material MaterialPrefixItems), the GT6RecipesWiremill seam verbatim;
-	// the form stays in the table so the rows unlock with that item family.
+	// wire-cutter tag (upstream CR.java:359). THE :169 ROWS POURED ZERO until
+	// task wire-gt-registration — the wireGt01 output face lived in the GTWires
+	// block domain (one BlockItem per band block, the material rides the
+	// blockstate — no per-material MaterialPrefixItems), the GT6RecipesWiremill
+	// seam verbatim; that card lifted OP.wireGt01-16 onto the item path (the 13
+	// WIRES materials), so the rows now pour over the item-truth face
+	// (wireGt01 ∩ plate, minus COATED/ANTIMATTER) — the form's declared unlock.
 	// -----------------------------------------------------------------------
 
 	/** One upstream row form: the id key + the output prefix + count + the input prefix + the single pattern row (Loader_OreProcessing.java:168-169, the grid and amount verbatim). Package-private for the pin test. */

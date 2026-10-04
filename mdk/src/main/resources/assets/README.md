@@ -13317,3 +13317,36 @@ Note: the upstream `12100-12103.png` basenames are ALSO borrowed as the
 MultiItemTechnological field-generator/emitter tiles (the
 `gt6/textures/item/field_generator_*.png` rows above) — different atlas, same
 meta numbers, no byte or path collision.
+
+## Item material_sets borrows — the sixteen wire multipliers (task wire-gt-registration, 2026-10-04)
+
+The shared wire sprite pair (6 PNGs: 3 sets x 2 sprites), byte-identical borrows from upstream
+`src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/{wire,wire_OVERLAY}.png` —
+the BLOCK materialicons domain, deliberately NOT the items domain: upstream registers the wire
+multipliers ONLY as MTE blocks (MultiTileEntityWireElectric.addElectricWires :72-109, one
+OreDictManager.setTarget_ row per multiplier; the items materialicons domain carries ZERO wireGt
+sprites — census, tmp/gt6-1.7.10 assets tree), so the block face IS the upstream wire art. The
+port lifts OP.wireGt01-16 onto flat items (the declared third item-path deviation,
+GTMaterialItems.itemPathPrefixes javadoc) and all sixteen multipliers share the ONE `wire` sprite
+name per set (the GT6ItemModels.spriteNameOf alias — upstream differentiates the multipliers by
+the MTE block model, not by sprite art; the item sprite is uniform by upstream construction).
+One pair per reachable material set, the base tinted at runtime by the ItemColor material tint
+(tintIndex 0 — the grayscale + mRGBa modulation semantics the upstream wire rendering uses,
+TileEntityBase07Paintable.java:83-84 family) and the OVERLAY pass un-tinted (the standard
+layer1 gate). Set list = the 3 texture sets reachable from the 13 WIRES-tagged materials (the
+census: copper 8 = AnnealedCopper + the clloy band (SET_COPPER, MT.java:712 clloy_ =) / dull 5 =
+the polymer band Plastic/Teflon/PVC/Bakelite/Polycarbonate / rubber 1 = Rubber;
+GT6WireGtRegistrationTest.wireItemsSpanExactlyTheThreeBorrowedTextureSets pins the spread).
+
+- `COPPER` -> `gt6/textures/item/material_sets/copper/`:
+  - `wire.png` `d9343ea989b6585f8fea8ed6aba7db86f477bc7f63553db1f8d4d06794077bad`
+  - `wire_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `DULL` -> `gt6/textures/item/material_sets/dull/`:
+  - `wire.png` `d9343ea989b6585f8fea8ed6aba7db86f477bc7f63553db1f8d4d06794077bad`
+  - `wire_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `RUBBER` -> `gt6/textures/item/material_sets/rubber/`:
+  - `wire.png` `d9343ea989b6585f8fea8ed6aba7db86f477bc7f63553db1f8d4d06794077bad`
+  - `wire_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+
+Copied on 2026-10-04. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).

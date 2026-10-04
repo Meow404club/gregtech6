@@ -69,11 +69,13 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * mMultiplier*mToolQuality, T)} with round-up.
  *
  * <p><b>Skipped upstream rows (the pool, not silent — declared in {@link #SKIPPED_UPSTREAM})</b>:
- * the {@code ingot→wireGt01} and {@code compressed→wireGt01} templates resolve to ZERO
- * pours because the port item universe carries no wireGt01 MaterialPrefixItems (the wire
- * family lives in the GTWires block/item domain, GTMaterialItems.itemPathPrefixes has no
- * OP.wireGt01) — the templates stay transcribed as DATA and the pour log reports the skips;
- * all Compat_* feeders (the P10 59-class ruling).
+ * the {@code ingot→wireGt01} and {@code compressed→wireGt01} templates POURED ZERO while the
+ * port item universe had no wireGt01 MaterialPrefixItems (the wire family lived in the GTWires
+ * block domain) — task wire-gt-registration landed those items (the 13 WIRES materials, the
+ * declared item-path deviation, GTMaterialItems.itemPathPrefixes javadoc), so the four
+ * :289/:290/:294/:295 rows now pour over the item-truth face (the WIRES condition rides the
+ * item existence via {@code resolveItem} → null outside the 13); the templates stay transcribed
+ * as DATA either way; all Compat_* feeders remain the P10 59-class ruling.
  *
  * <p><b>Load timing</b> (the GT6RecipesShCL precedent + the a9027ac lesson): a
  * self-contained MOD-bus listener pouring at FMLCommonSetup.enqueueWork; the
@@ -129,9 +131,12 @@ public final class GT6RecipesWiremill {
 
 	/**
 	 * The skipped upstream surface, kept as DATA for the audit walk (see class doc).
+	 * The wireGt01 arm UNLOCKED with task wire-gt-registration (the wireGt01 items ride the
+	 * item path since then, 13 WIRES materials — the :289/:290/:294/:295 templates pour over
+	 * the item-truth face); the entry stays as the historical record of the declared pool.
 	 */
 	public static final List<String> SKIPPED_UPSTREAM = List.of(
-			"Loader_Recipes_Handlers.java:289/:290/:294/:295 ingot|compressed → wireGt01 templates pour ZERO rows: the port item universe has no wireGt01 MaterialPrefixItems (GTMaterialItems.itemPathPrefixes carries OP.wireFine only — the 1x-wire family lives in the GTWires block domain); the wiremill's wireGt01 rows unlock with that item family (pool)",
+			"Loader_Recipes_Handlers.java:289/:290/:294/:295 ingot|compressed → wireGt01 templates POURED ZERO rows until task wire-gt-registration: the port item universe had no wireGt01 MaterialPrefixItems (GTMaterialItems.itemPathPrefixes carried OP.wireFine only — the 1x-wire family lived in the GTWires block domain); the wireGt01 arm is UNLOCKED since that card (GTMaterialItems.get(OP.wireGt01, mat) resolves on the 13 WIRES materials)",
 			"all Compat_Recipes_* RM.Wiremill feeders — the P10 ruling (59 compat classes not ported)");
 
 	/** Poured flag — one generation, one pour (upstream loaders run once per JVM). */
@@ -160,7 +165,7 @@ public final class GT6RecipesWiremill {
 				tPoured++;
 			}
 		}
-		LOGGER.info("GT6 Wiremill recipes poured: {} loaded, {} skipped (condition-arm materials + unresolvable prefix items, = upstream addRecipeForMaterial false returns; the wireGt01 arm is the declared zero-pour pool)", tPoured, tSkipped);
+		LOGGER.info("GT6 Wiremill recipes poured: {} loaded, {} skipped (condition-arm materials + unresolvable prefix items, = upstream addRecipeForMaterial false returns; the wireGt01 arm pours since task wire-gt-registration)", tPoured, tSkipped);
 		sLoaded = true;
 	}
 
