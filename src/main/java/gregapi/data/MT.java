@@ -2760,6 +2760,11 @@ public class MT {
 		// Enderium :2529). Late-bound so a registry-reset re-run re-binds to the current
 		// generation's instances (the TECH fields ruling, p2-registry-reset-idempotency).
 		FLUX_T = new OreDictMaterial[] {Sn, Pb, Invar, Electrum, EnderiumBase, Enderium};
+		// task dye-item-axis: the dye axis (upstream MT.java:3687 DATA.Dye_Materials — the 16
+		// vanilla-index dye materials, the b4 recipe band's referenced table). Late-bound like
+		// FLUX_T so a registry-reset re-run re-binds to the current generation's instances (the
+		// dyes register in reg0014, MT.java:1876-1891).
+		DATA.Dye_Materials = new OreDictMaterial[] {Black, Red, Green, Brown, Blue, Purple, Cyan, LightGray, Gray, Pink, Lime, Yellow, LightBlue, Magenta, Orange, White};
 		// Making sure shit is statically loaded, damn it. // upstream :1890-1900
 		H.getClass();
 		OREMATS.init(); // upstream OREMATS.Magnetite.getClass(); the port's re-runnable batch replaces the class-init
@@ -4211,9 +4216,11 @@ public class MT {
 			VoidMetal.mHandleMaterial = InfusedAir.mHandleMaterial = InfusedBalance.mHandleMaterial = InfusedDull.mHandleMaterial = InfusedEarth.mHandleMaterial = InfusedEntropy.mHandleMaterial = InfusedFire.mHandleMaterial = InfusedOrder.mHandleMaterial = InfusedWater.mHandleMaterial = InfusedVis.mHandleMaterial = DarkThaumium.mHandleMaterial = ANY.MagicIron;
 		}	}
 
-	/** Upstream MT.DATA :3593-3695 is a pure OreDictItemData[]/OreDictPrefix (OP.dat) table set. OreDictItemData and OP belong to the oredict-manager/prefix tasks (cards 4/5), so this table is deferred; nothing in the Phase-1 material graph consumes it. */
+	/** Upstream MT.DATA :3593-3695 is a pure OreDictItemData[]/OreDictPrefix (OP.dat) table set. OreDictItemData and OP belong to the oredict-manager/prefix tasks (cards 4/5), so this table is deferred; nothing in the Phase-1 material graph consumes it. Dye_Materials is landed (task dye-item-axis) — the one member a port card consumes. */
 	public static class DATA {
-		// deferred: WIRES_01..CABLES_16, Dye_Materials, etc. (upstream MT.java:3595-3694)
+		/** The 16 vanilla dye materials in vanilla dye-index order (upstream MT.java:3687). Bound per-generation in {@link #init} next to FLUX_T (a registry-reset re-run re-binds to the current generation's instances), NOT a class-init static like upstream — the port refill re-creates the dyes in reg0014 (MT.java:1876-1891). */
+		public static OreDictMaterial[] Dye_Materials;
+		// deferred: WIRES_01..CABLES_16, etc. (upstream MT.java:3595-3694)
 	}
 
 	public static class OREMATS {
