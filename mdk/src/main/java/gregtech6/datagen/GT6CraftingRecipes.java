@@ -2558,7 +2558,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * ({@link #mortarRecipeId}).
 	 */
 	private ShapelessRecipeBuilder mortarBuilder(gregtech6.registry.GT6Mortars.MortarRow aRow) {
-		RegistryObject<net.minecraft.world.item.Item> tPestle = gregtech6.registry.GTMaterialItems.get(
+		// the bare-local form (the :3567 rail precedent) — naming the holder type here races
+		// the stonecutter RegistryObject/DeferredHolder swap inside this file's manual
+		// `//? if forge` import guard (the swapped neo import lands inside the dead forge
+		// comment and the 1.21.1 leg stops compiling); `var` never names it
+		var tPestle = gregtech6.registry.GTMaterialItems.get(
 				gregtech6.registry.GT6Mortars.pestlePrefix(aRow), gregtech6.registry.GT6Mortars.pestleIngredient(aRow));
 		if (tPestle == null) return null; // the row's ingredient is driver-hidden — the skip semantics (the hopperRecipeBuilder form)
 		net.minecraft.world.item.Item tPestleItem = tPestle.get();
