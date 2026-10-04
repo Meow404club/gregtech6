@@ -78,7 +78,7 @@ class GT6OreBlocksRegistrationTest {
      * tenths of it materials no ore placement ever references) — the 45732-block face
      * is gone.
      */
-    private static final int PINNED_M = 122;
+    private static final int PINNED_M = 144;
     /** The pinned total block count (74 x M) — see materialAxisIsPinned. */
     private static final int PINNED_TOTAL = PINNED_ROWS * PINNED_M;
 
@@ -139,7 +139,7 @@ class GT6OreBlocksRegistrationTest {
     void materialAxisIsPinned() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
         assertEquals(PINNED_M, tAxis.size(),
-                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions + the 56 gem-pool materials — bump PINNED_M only with an upstream row delta");
+                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions + the 56 gem-pool materials + the 22 large-vein compensation materials — bump PINNED_M only with an upstream row delta");
         // every axis material passes the authoritative oredict filter (OP.java:1098 setCondition(ORES))
         for (OreDictMaterial tMaterial : tAxis) {
             assertTrue(OP.ore.isGeneratingItem(tMaterial), "every axis material passes the OP.ore criterion");
@@ -168,9 +168,15 @@ class GT6OreBlocksRegistrationTest {
             "Fluorite", "RedFluorite", "PinkFluorite", "BlueFluorite", "GreenFluorite", "BlackFluorite",
             "WhiteFluorite", "YellowFluorite", "OrangeFluorite", "MagentaFluorite",
             "Topaz", "BlueTopaz", "Tanzanite", "Amazonite", "Opal", "OnyxRed", "OnyxBlack",
-            "Amethyst", "Dioptase", "Jade");
+            "Amethyst", "Dioptase", "Jade",
+            // the 22 large-vein compensation materials (worldgen-edge-ores-b1, LARGE_VEIN_ORES
+            // order = upstream :889-911 first appearance; Gypsum stays outside by the B1 ruling)
+            "Lazurite", "Sodalite", "Bauxite", "Ilmenite", "IodineSalt", "Lepidolite", "Spodumene",
+            "Talc", "Bastnasite", "Monazite", "Neodymium", "MilkyQuartz", "Barite", "CertusQuartz",
+            "Kyanite", "Glauconite", "Wulfenite", "Molybdenite", "Molybdenum", "Powellite",
+            "Rutile", "Zircon");
         assertEquals(tExpected, tAxis.stream().map(m -> m.mNameInternal).toList(),
-                "the axis is the pinned worldgen set + stone-layer companions in row order");
+                "the axis is the pinned worldgen set + stone-layer companions + large-vein compensation in row order");
         assertEquals(PINNED_TOTAL, GT6OreBlocks.registrationOrder().size(), "74 x M total blocks");
     }
 

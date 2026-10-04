@@ -72,9 +72,9 @@ public class GT6KineticRecipesPourTest extends GTRecipesOfflineTestBase {
 		// COMPRESSOR-SNAPSHOT convention) — the walk's own pour test is
 		// GT6SifterDustOreRowsTest with probe resolvers
 		//? if forge {
-		assertEquals(1, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour — the offline default resolvers drop the DUST_ORE walk's 264 rows");
+		assertEquals(1, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour — the offline default resolvers drop the DUST_ORE walk's 576 rows");
 		//?} else {
-		/*assertEquals(489, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour + the live-registry DUST_ORE walk (1 + 4 families x the 122-material axis)");
+		/*assertEquals(577, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour + the live-registry DUST_ORE walk (1 + 4 families x the 144-material axis)");
 		*///?}
 		Recipe tRow = null; // the walk rows pour AFTER row0, but do not rely on the order — select by identity
 		for (Recipe tCandidate : GT6RecipeMaps.SIFTING.mRecipeList) {
