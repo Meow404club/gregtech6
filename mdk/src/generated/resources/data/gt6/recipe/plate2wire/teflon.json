@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_teflon"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "Px"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:wire_gt01_teflon"
+  }
+}
