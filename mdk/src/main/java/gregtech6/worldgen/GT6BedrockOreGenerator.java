@@ -200,12 +200,15 @@ public final class GT6BedrockOreGenerator {
      * column scan. The wasteland (:150) and streets (:147) exclusions and the rocks
      * competition (:162 nextInt(4)) are the declared CUTs/deviations (see
      * GTBedrockOreConfig javadoc) — every ring attempt of a flower row reaches the sink.
-     *
-     * <p>STUB (the red-pin commit): the ring math lands with the arm implementation.
      */
     public static void generateFlowers(GTBedrockOreConfig aRow, Random aRandom, int aChunkMinX, int aChunkMinZ,
             BedrockSink aSink) {
-        // ponytail: red-pin stub — the :155-176 loop arrives with the feat commit
+        if (aRow.flower().isEmpty()) return;
+        for (int tD = 4; tD <= 16; tD *= 2) for (int i = 0; i < tD; i++) { // :154-155, verbatim rings
+            int tX = aChunkMinX + aRandom.nextInt(tD * 2) + 8 - tD; // :156, verbatim
+            int tZ = aChunkMinZ + aRandom.nextInt(tD * 2) + 8 - tD;
+            aSink.flower(tX, tZ, aRow.flower());
+        }
     }
 
     /** The placement callbacks — the level face (GT6BedrockOreFeature) and the offline-test face. */

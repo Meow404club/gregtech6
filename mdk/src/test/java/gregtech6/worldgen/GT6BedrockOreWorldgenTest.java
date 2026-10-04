@@ -270,7 +270,7 @@ class GT6BedrockOreWorldgenTest {
         assertEquals(62, GT6BedrockOreGenerator.FLOWER_MIN_Y, "tMinHeight = min(getHeight()-2, waterLevel-1) (:152)");
         assertEquals(140, GT6BedrockOreGenerator.FLOWER_MAX_Y, "tMaxHeight = min(getHeight()-1, tMin*2+16) (:153)");
 
-        GTBedrockOreConfig tRow = new GTBedrockOreConfig("ring", MT.Coal, 1, true, "flower_orechid");
+        GTBedrockOreConfig tRow = new GTBedrockOreConfig("ring", MT.Coal, 1, true, false, "flower_orechid");
         RecordingSink tSink = new RecordingSink();
         Random tRandom = new Random(SEED);
         assertTrue(GT6BedrockOreGenerator.generateVein(tRow, tRandom, 100, 100, -64, tSink), "the vein places first");
@@ -372,16 +372,16 @@ class GT6BedrockOreWorldgenTest {
     @Test
     void netherDrawWalksOnlyTheNetherRows() {
         GTBedrockOreConfig.Table tTable = new GTBedrockOreConfig.Table(List.of(
-                new GTBedrockOreConfig("n", MT.Coal, 1, false, true),   // the :758-764 posture
-                new GTBedrockOreConfig("ow", MT.Graphite, 1, true, false),
-                new GTBedrockOreConfig("off", MT.Desh, 1, false, false))); // the :765-770 census-only posture
+                new GTBedrockOreConfig("n", MT.Coal, 1, false, true, ""),   // the :758-764 posture
+                new GTBedrockOreConfig("ow", MT.Graphite, 1, true, false, ""),
+                new GTBedrockOreConfig("off", MT.Desh, 1, false, false, ""))); // the :765-770 census-only posture
         assertEquals(List.of("n"), GT6BedrockOreGenerator.drawRows(tTable, new Random(SEED), true).stream()
                 .map(GTBedrockOreConfig::name).toList(), "the nether roll walks the nether rows only");
         assertEquals(List.of("ow"), GT6BedrockOreGenerator.drawRows(tTable, new Random(SEED), false).stream()
                 .map(GTBedrockOreConfig::name).toList(), "the overworld roll walks the GEN_FLOOR rows only");
         // the dormant rows roll in NEITHER dimension
         assertTrue(GT6BedrockOreGenerator.drawRows(new GTBedrockOreConfig.Table(List.of(
-                new GTBedrockOreConfig("off", MT.Desh, 1, false, false))), new Random(SEED), true).isEmpty(),
+                new GTBedrockOreConfig("off", MT.Desh, 1, false, false, ""))), new Random(SEED), true).isEmpty(),
                 "the census-only mars/BL rows never roll");
     }
 
@@ -391,7 +391,7 @@ class GT6BedrockOreWorldgenTest {
      */
     @Test
     void netherVeinRidesTheNetherFloorAndWaterLine() {
-        GTBedrockOreConfig tRow = new GTBedrockOreConfig("nether.shape", MT.Coal, 1, false, true);
+        GTBedrockOreConfig tRow = new GTBedrockOreConfig("nether.shape", MT.Coal, 1, false, true, "");
         RecordingSink tSink = new RecordingSink();
         assertTrue(GT6BedrockOreGenerator.generateVein(tRow, new Random(SEED), 0, 0, 0,
                 GT6BedrockOreGenerator.NETHER_TAIL_TOP_Y, tSink), "an all-bedrock nether chunk passes the :185 gate");
