@@ -857,7 +857,7 @@ public class GT6LangParityTest {
 				}
 			}
 		}
-		assertEquals(61020, tChecked, "the registry-pair compose domain census (+130 task wood-planks-register: the plank prefix joins the item path over its WOOD-gated domain, 130 pairs measured) (+840 task casing-machine-register: the four casingMachine* families x 210, the port PARTS^SMITHABLE domain): the item universe (56253 + 24 task machines-bumblelyzer-crucible: the 11 bouleGt row outputs + the plateTiny Paper scan leg + the plateGem Or-condition cascade (4 gem plates + 4 tiny gem plates over the quartet) + the 4 blockPlateGem carriers)"
+		assertEquals(61244, tChecked, "the registry-pair compose domain census (+130 task wood-planks-register: the plank prefix joins the item path over its WOOD-gated domain, 130 pairs measured) (+840 task casing-machine-register: the four casingMachine* families x 210, the port PARTS^SMITHABLE domain) (+224 task wire-gt-registration: the sixteen wireGt multipliers x the 14 WIRES-condition materials — the 13 explicit WIRES rows (MT.java:1301-1306/:1656/:1744-1763, the :1306 internal name HardPlastic) plus the Graphene G_MACHINE expansion leg, GT6WireGtRegistrationTest.WIRES_MATERIALS): the item universe (56253 + 24 task machines-bumblelyzer-crucible: the 11 bouleGt row outputs + the plateTiny Paper scan leg + the plateGem Or-condition cascade (4 gem plates + 4 tiny gem plates over the quartet) + the 4 blockPlateGem carriers)"
 			+ " + the storage-block universe (3773 + 4 = 3777, the same cascade) — bump this pin ONLY with a real registration change");
 		assertTrue(tMissing.isEmpty(), "every registered pair's material key must exist on the en face"
 			+ " (a missing face renders the RAW key at runtime): " + tMissing);
