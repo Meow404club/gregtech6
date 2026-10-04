@@ -979,6 +979,17 @@ public final class GT6WorldgenDatagen {
     public static final ResourceKey<BiomeModifier> END_YIELD_MODIFIER_KEY = biomeModifierKeyOf("large_veins_end");
 
     /**
+     * The twilight RockOres biome-modifier key (task twilight-adaptation-pilot): the ONE
+     * mod-dimension row — biomes {@code #twilightforest:in_twilight_forest} (TF's own tag,
+     * GTOreWorldgen.twilightBiomeTag), features = the axis-valid twilight rows, the
+     * conditions ride the emission registry (GT6BiomeModifierConditions, the positive
+     * {@code [mod_loaded twilightforest]} = the TF-absence skip semantics). The bootstrap
+     * itself is condition-free, the loader brand keys are added at emission time (the
+     * END_YIELD row's division of labor).
+     */
+    public static final ResourceKey<BiomeModifier> TWILIGHT_ORES_MODIFIER_KEY = biomeModifierKeyOf("twilight_ores");
+
+    /**
      * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card
      * MUST verify the target planet mod's actual modern modid before shipping the flip
      * (coordinator ruling 2026-09-18; "galacticraft" = the GT6 1.7.10 planet-domain
