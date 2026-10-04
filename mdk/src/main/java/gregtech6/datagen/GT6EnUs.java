@@ -204,6 +204,7 @@ public class GT6EnUs extends LanguageProvider {
         addCropFoods(); // task food-crop-items — table-tail append
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
         addBottles(); // task food-bottles-min — the bottles-domain minimum
+        addFoodsideItems(); // task vanilla-alias-foodside — table-tail append
         addMaterialTooltip(); // task material-tooltip-face — table-tail append (the 22 material-domain row keys)
         addCoverTooltip(); // task tooltip-cover-face — table-tail append (the 19 cover-domain row keys)
     }
@@ -2319,6 +2320,24 @@ public class GT6EnUs extends LanguageProvider {
             if (!tRow.enTooltip().isEmpty()) add(tRow.tooltipKey(), tRow.enTooltip());
         }
         add(gregtech6.registry.GT6Foods.TAB_TITLE_KEY, "GregTech: Nature & Foods");
+    }
+
+    /**
+     * Food-item family keys (task vanilla-alias-foodside): the foodside small-item band's
+     * display names, walked over the {@link gregtech6.registry.GT6FoodsideItems#ROWS}
+     * table so the lang face cannot drift from the registered ids (the addFoodItems form).
+     * The four remains names are the MultiItemFood.java:113-116 registration-row wordings
+     * verbatim; the two honey-drop names are the new-native wordings (the FAITHFUL-CALIBER
+     * declaration: upstream has no GT6 item to be verbatim against — the user 2026-10-04
+     * 全补 ruling opened the pair). All six rows carry EMPTY desc columns — no tooltip keys
+     * (the GT6BakeFoods empty-desc ruling). The tab title already landed with addFoodItems
+     * (the T1 band owns the single tab).
+     * Table-tail append, append-only.
+     */
+    private void addFoodsideItems() {
+        for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+            add("item.gt6." + tRow.id(), tRow.enName());
+        }
     }
 
     /**

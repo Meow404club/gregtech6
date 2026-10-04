@@ -166,6 +166,24 @@ public class GT6ZhCn extends LanguageProvider {
 		addTechnologicalComponents(); // task debt-emitter-sensor-generators — the 30 component names (dump faces verbatim)
 		addRecipeMapViewerUnits(); // task issues #29/#34a — the 72 RM titles + the 16 cost-line keys (hand rows, the tsv direct band)
 		addCropCardUnits(); // task cbc-3-crop-data-assets — the 59 crop names + the seed item (hand rows, the tsv direct band; the dump carries zero gt.crop.* faces)
+		addFoodsideUnits(); // task vanilla-alias-foodside — the 4 Remains names (the dump gt.multiitem.food.1210x faces verbatim) + the 2 new-native honey drops (hand rows)
+	}
+
+	/**
+	 * The foodside small-item band zh faces (task vanilla-alias-foodside, the
+	 * addTechnologicalComponents shape): the 6 display names riding the reference table's
+	 * direct layer — the four remains values are the DUMP faces verbatim (tmp/gregtech.lang
+	 * :8823-8829 植物废料/水果废料/蔬菜废料/坚果废料, the {@code gt.multiitem.food
+	 * .12100-12103} rows) and the two honey-drop values are the hand rows (new-native
+	 * items — no dump face exists; 蜂蜜滴/蜜露滴 reuse the established 蜂蜜/蜜露 fluid words,
+	 * the tsv :649/:650 faces). The upstream tooltip column is EMPTY on the remains rows
+	 * ({@code .tooltip=} empty) — no zh tooltip keys, exact en cardinality (the backfill
+	 * zero-missing invariant).
+	 */
+	private void addFoodsideUnits() {
+		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+			addDirect("item.gt6." + tRow.id());
+		}
 	}
 
 	/**

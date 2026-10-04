@@ -103,6 +103,36 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static final TagKey<Item> BEAM_WOOD = gt6("beam_wood");
 
 	/**
+	 * The {@code OD.itemPlantRemains} oredient translation — #gt6:item_plant_remains
+	 * (task vanilla-alias-foodside, the BEAM_WOOD snake shape). Upstream seats all four
+	 * Remains items on it (MultiItemFood.java:113-116, the per-row oredict column) — the
+	 * port's four per-item faces ARE that membership universe (the
+	 * {@link gregtech6.registry.GT6FoodsideItems#ROWS} walk, the addCombTags shape).
+	 * Future consumers key the TAG, not the items (the upstream faces:
+	 * Compat_Recipes_Forestry.java:56 the Mulch shapeless, :363 the listener walk).
+	 * KJS surface: datagen-domain JSON is pack-editable as-is; the registration-face KJS
+	 * bindings defer to the kjs binding card (the GT6Bumbles.java:71-72 precedent).
+	 */
+	public static final TagKey<Item> ITEM_PLANT_REMAINS = gt6("item_plant_remains");
+
+	/**
+	 * The {@code OD.dropHoney} oredient translation — #gt6:drop_honey (task
+	 * vanilla-alias-foodside). Upstream this is a Forestry ore-dict name with NO GT6 item
+	 * (OD.java:159; the GT6RecipesFood:178 TRUE NEGATIVE probe) — the user 2026-10-04
+	 * 全补 ruling opened the GT6-native {@code drop_honey} item (the FAITHFUL-CALIBER
+	 * declaration lives on {@link gregtech6.registry.GT6FoodsideItems}); the tag carries
+	 * exactly that one item. Downstream consumers key the TAG (the
+	 * Loader_Recipes_Food.java:534-550 squeeze/juice listeners unlock against it).
+	 */
+	public static final TagKey<Item> DROP_HONEY = gt6("drop_honey");
+
+	/**
+	 * The {@code OD.dropHoneydew} oredient translation — #gt6:drop_honeydew (task
+	 * vanilla-alias-foodside, the DROP_HONEY face over OD.java:160).
+	 */
+	public static final TagKey<Item> DROP_HONEYDEW = gt6("drop_honeydew");
+
+	/**
 	 * The craftingToolHardHammer oredient translation — #gt6:tools/hard_hammer (task
 	 * tool-hammer-wrench spec ④, the TOOLS_FILE/TOOLS_SAW snake shape). Upstream key
 	 * {@code OreDictToolNames.hammer = "craftingToolHardHammer"} (CS.java:1890); the
@@ -478,6 +508,22 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		addFallenLogTags(); // task w6-t2-surface-blocks — the 4 fallen-log item faces (the coke-oven rebuild source)
 		addCombTags(); // task bumbliary-recipes — the OD.beeCombCrossbred face over the ten crossbred combs
 		addBeamTags(); // task beam-oredict-seam — the OD.beamWood face over the 8 wood beams
+		addFoodsideTags(); // task vanilla-alias-foodside — the OD.itemPlantRemains/dropHoney/dropHoneydew faces
+	}
+
+	/**
+	 * The foodside oredient band (task vanilla-alias-foodside): the four Remains items
+	 * join the shared {@code #gt6:item_plant_remains} (the OD.itemPlantRemains face,
+	 * MultiItemFood.java:113-116) and the two new-native honey drops carry their own
+	 * {@code #gt6:drop_honey}/{@code #gt6:drop_honeydew} (the OD.dropHoney/dropHoneydew
+	 * faces, OD.java:159-160) — one walk over {@link gregtech6.registry.GT6FoodsideItems
+	 * #ROWS} so the tag face cannot drift from the registration rows (the addBeamTags
+	 * single-source shape).
+	 */
+	private void addFoodsideTags() {
+		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+			tag(gt6(tRow.tagPath())).add(item(gt6Rl(tRow.id())));
+		}
 	}
 
 	/**

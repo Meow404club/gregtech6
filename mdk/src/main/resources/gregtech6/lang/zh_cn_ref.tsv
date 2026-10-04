@@ -2580,6 +2580,8 @@ direct	item.gt6.diablosauce_strong	老干爹辣椒酱	hand
 direct	item.gt6.diabolosauce	恶魔辣酱	hand
 direct	item.gt6.dragonblood	龙血	hand
 direct	item.gt6.dressing	调料	hand
+direct	item.gt6.drop_honey	蜂蜜滴	hand
+direct	item.gt6.drop_honeydew	蜜露滴	hand
 direct	item.gt6.dye_chemical_black	罐装化学染料	hand
 direct	item.gt6.dye_chemical_black.tooltip	颜色: 黑色	hand
 direct	item.gt6.dye_chemical_blue	罐装化学染料	hand
@@ -3344,6 +3346,10 @@ direct	item.gt6.reactor_rod.reflector	将中子反射回其源头，增强反应
 direct	item.gt6.reactor_rod.used_in_core	用于核反应堆核心	hand
 direct	item.gt6.redgrapesmoothie	葡萄冰沙	hand
 direct	item.gt6.reedwater	甘蔗汁	hand
+direct	item.gt6.remains_fruit	水果废料	hand
+direct	item.gt6.remains_nut	坚果废料	hand
+direct	item.gt6.remains_plant	植物废料	hand
+direct	item.gt6.remains_veggie	蔬菜废料	hand
 direct	item.gt6.ricardosanchez	里卡多·桑切斯	hand
 direct	item.gt6.ricevinegar	米醋	hand
 direct	item.gt6.ricewater	酒酿	hand

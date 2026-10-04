@@ -457,6 +457,15 @@ public final class GT6ItemModels extends ItemModelProvider {
                     .texture("layer0", modLoc("item/bottle/" + tRow.texture()));
             }
         }
+        // the foodside small-item band (task vanilla-alias-foodside) — 6 item/generated
+        // models over the item/foodside/ textures: the four Remains icons are the
+        // byte-identical upstream atlas borrows (gt.multiitem.food/12100-12103 per row —
+        // assets/README.md attribution), the two honey drops are the COMPOSED placeholders
+        // (the P20 stdlib generator convention — no upstream sprite exists to borrow)
+        for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+            withExistingParent(tRow.id(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/foodside/" + tRow.id()));
+        }
         // the extruder-mold row0 subset (task w1-press-extruder-molds) — 2 item/generated
         // models over the composed placeholder icons (the mold-plate/mold-rod 16x16 stdlib
         // generator, the P20 placeholder-PNG convention; the upstream multiitem icons are

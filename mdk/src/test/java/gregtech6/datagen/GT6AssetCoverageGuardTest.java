@@ -117,6 +117,7 @@ import gregtech6.registry.GT6FoamSprays;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6CropFoods;
 import gregtech6.registry.GT6Foods;
+import gregtech6.registry.GT6FoodsideItems;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GT6HeatExchangers;
 import gregtech6.registry.GT6Hoppers;
@@ -311,6 +312,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6ElectricDynamos.class, GT6ElectricTransformers.class, GT6ExtruderMolds.class,
 			GT6FeBatteries.class, GT6FeConverters.class, GT6FluxDynamos.class, GT6FoamBlocks.class,
 			GT6FoamSprays.class, GT6FoodCans.class, GT6Foods.class, // task food-items-core — the food-item T1 subset container
+			GT6FoodsideItems.class, // task vanilla-alias-foodside — the foodside small-item band (4 remains + 2 new-native drops + the dye alias handles)
 			GT6BakeFoods.class, // task food-bake-items — the food T3 bake-chain container
 			GT6CropFoods.class, // task food-crop-items — the T5a berry/nut/fruit + fodder container
 			gregtech6.registry.GT6CropSticks.class, // task cbc-1-cropstick-base — the crop-stick block/BE/item container
