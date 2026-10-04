@@ -431,7 +431,7 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 			tUniverse.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
 		// the flower band items are plain BlockItems, not material-prefix ids (the b4 BlockFlowers rows)
-		for (net.minecraftforge.registries.RegistryObject<Item> tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) {
+		for (var tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) {
 			tUniverse.add("gt6:" + tFlower.getId().getPath());
 		}
 		tUniverse.addAll(vanillaWhitelist());

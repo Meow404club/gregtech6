@@ -248,7 +248,7 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 		GT6RecipesCrops.Row tOrange = GT6RecipesCrops.table().stream()
 				.filter(aRow -> aRow.note().contains(":719 dyed") && aRow.note().contains("i=1 ")).findFirst().get();
 		assertEquals("minecraft:orange_wool", tOrange.inputs()[0].id(), "wool meta 1");
-		assertEquals("gt6:plant_gt_fiber_orange", GTMaterialItems.itemIdOf(tOrange.outputs()[0].prefix(), tOrange.outputs()[0].material()),
+		assertEquals("plant_gt_fiber_orange", GTMaterialItems.itemIdOf(tOrange.outputs()[0].prefix(), tOrange.outputs()[0].material()),
 				"Dye_Materials[15-1] = Orange");
 		assertEquals(4, tOrange.outputs()[0].count(), "fiber x4");
 		assertEquals(9000, tOrange.chances()[0], "the :719 9000 chance");
@@ -260,21 +260,28 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 				"the i==0 row keeps the Items.string special case");
 	}
 
-	/** The declared absences: the smoke-card Vanilla residue and the out-of-run() metas stay out of these files. */
+	/** The declared absences: the smoke-card juicer Vanilla residue and the out-of-run() metas stay out.
+	 * The SQUEEZER file seats the b2b2 vanilla-flower rows, so the poppy/dandelion/cactus exclusions are
+	 * juicer-only; the shared exclusions (the chanced Remains legs, the B metas without run() rows, the
+	 * :743 Cu fiber) hold on both files. */
 	@Test
 	public void theDeclaredAbsencesStayAbsent() throws Exception {
 		for (String tKey : new String[] {"juicer", "squeezer"}) {
 			JsonArray tRows = pourShipped(tKey);
-			for (String tAbsent : new String[] {"minecraft:poppy", "minecraft:dandelion", "minecraft:cactus",
-					"minecraft:sugar_cane", "gt6:remains_plant", "gt6:flower_sagebrush", "gt6:flower_four_wing_saltbush",
-					"gt6:flower_pandanus_candelabrum", "gt6:flower_hexalily", "gt6:flower_vindicator_flower"}) {
+			java.util.List<String> tAbsent = new java.util.ArrayList<>(java.util.List.of(
+					"gt6:remains_plant", "gt6:flower_sagebrush", "gt6:flower_four_wing_saltbush",
+					"gt6:flower_pandanus_candelabrum", "gt6:flower_hexalily", "gt6:flower_vindicator_flower"));
+			if (tKey.equals("juicer")) tAbsent.addAll(java.util.List.of("minecraft:poppy", "minecraft:dandelion",
+					"minecraft:cactus", "minecraft:sugar_cane"));
+			for (String tFace : tAbsent) {
+				String tAbsentFace = tFace;
 				for (JsonElement tElement : tRows) {
 					JsonObject tRow = tElement.getAsJsonObject();
 					for (String tLeg : new String[] {"inputs", "outputs"}) {
 						if (!tRow.has(tLeg)) continue;
 						for (JsonElement tSlot : tRow.getAsJsonArray(tLeg)) {
-							assertTrue(!tAbsent.equals(tSlot.getAsJsonObject().get("item").getAsString()),
-									tKey + ": " + tAbsent + " stays absent (the smoke-card/blocked face)");
+							assertTrue(!tAbsentFace.equals(tSlot.getAsJsonObject().get("item").getAsString()),
+									tKey + ": " + tAbsentFace + " stays absent (the smoke-card/blocked face)");
 						}
 					}
 				}
@@ -303,9 +310,13 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 		for (GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialBlocks.registrationOrder()) {
 			tUniverse.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
-		for (net.minecraftforge.registries.RegistryObject<Item> tFlower : GT6SurfaceBlocks.FLOWER_ITEMS) {
+		for (var tFlower : GT6SurfaceBlocks.FLOWER_ITEMS) {
 			tUniverse.add("gt6:" + tFlower.getId().getPath()); // the flower band items are plain BlockItems, not material-prefix ids
 		}
+		for (var tTree : gregtech6.registry.GT6TreeBlocks.ITEMS) {
+			tUniverse.add("gt6:" + tTree.getId().getPath()); // the seated b2b2 Woods rows (rubber sapling/leaves)
+		}
+		tUniverse.add("gt6:comb_honey"); // the seated juicer Food:266 flat item (the b2-residual precedent)
 		tUniverse.addAll(vanillaWhitelist());
 		Set<String> tMissing = new HashSet<>();
 		for (String tFile : CENSUS.keySet()) {
@@ -330,6 +341,8 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 		for (gregtech6.fluid.GTFluids.DyeFluid tRow : gregtech6.fluid.GTFluids.DYE_WATERMIXED) tDye.add(tRow.name());
 		for (gregtech6.fluid.GTFluids.DyeFluid tRow : gregtech6.fluid.GTFluids.DYE_FLOWER) tDye.add(tRow.name());
 		assertEquals(32, tDye.size(), "the two compose families, 16+16");
+		Set<String> tDyeChemical = new HashSet<>();
+		for (int i = 0; i < 16; i++) tDyeChemical.add(gregtech6.fluid.GTFluids.dyeChemicalName(i)); // the seated b2b2 rows' family
 		Set<String> tMissing = new HashSet<>();
 		for (String tFile : CENSUS.keySet()) {
 			for (JsonElement tElement : pourShipped(tFile)) {
@@ -340,7 +353,7 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 						String tId = tSlot.getAsJsonObject().get("fluid").getAsString();
 						if (tId.startsWith("minecraft:")) continue; // the vanilla carriers resolve live
 						String tPath = tId.substring("gt6:".length());
-						if (tDye.contains(tPath)) continue;
+						if (tDye.contains(tPath) || tDyeChemical.contains(tPath)) continue;
 						if (!fluidRegistered(tPath)) tMissing.add(tFile + ": " + tId);
 					}
 				}
@@ -443,7 +456,11 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 		Set<String> rSet = new HashSet<>();
 		for (String tId : new String[] {
 				// juicer/squeezer seated stock + the b4 Tungstus legs
-				"green_dye", "sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
+				"green_dye", "yellow_dye", "sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
+				// the seated b2b2 vanilla-flower identity band (:803-:817 the 1.20.1 mapping)
+				"poppy", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip", "white_tulip",
+				"pink_tulip", "oxeye_daisy", "dandelion", "lilac", "peony", "rose_bush", "cactus",
+				"melon", "melon_slice", "golden_carrot", "golden_apple",
 				"red_mushroom", "poisonous_potato", "spider_eye", "pufferfish",
 				"slime_ball", "wheat_seeds", "melon_seeds", "beetroot_seeds", "pumpkin_seeds",
 				// loom seated stock + the b4 dyed band
