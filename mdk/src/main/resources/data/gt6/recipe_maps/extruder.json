@@ -1,5 +1,5 @@
 {
-  "comment": "task toolhead-r11c-extruder-heads — the RM.Extruder tool-head rows, representative-row form (the B1/r11e walk-declaration convention). Eight upstream walk families, one representative row each per family statement: (1) the metal Shape_Extruder forging rows (Loader_Recipes_Handlers.java:750-762 head subset: raw shovel/sword/hoe/saw/pickaxe/axe + finished file/hammer), walk = OreDictPrefix.VALUES x containsAny(EXTRUDER_FODDER, INGOT_BASED, GEM_BASED) x the material's EXTRUDER gate — representative input gt6:ingot_iron; EUt 96 (the aHot forging column), duration = RecipeMapHandlerPrefixForging.getCosts (max(16, 1+|(meltingPoint-293)*weight|/(75*96)); the Iron representative computes 185/369/554/1107 t; upstream the duration is per-material runtime, the JSON carries the Iron representative value). (2) the metal Shape_SimpleEx mirror (:783-795 head subset), same walk + DUST_BASED, EUt 16, duration = UT.Code.units(outputU, U, 64, T) = 64 t per output unit (64/96/128/192/384). (3)+(4) the stone stonetypes rows (RM.java:410-414/:417 Shape + :423-427/:430 SimpleEx), walk = the GT6 stone-family materials x the four block forms (aStone/aCobble/aSmooth/aDustBlock) — representative input minecraft:stone. (5)+(6) the BlockStones metatype rows (BlockStones.java:293-297/:300 + :308-312/:315), walk = every BlockStones metatype block — representative input gt6:granite. (7)+(8) the Blackstone special rows (Loader_Recipes_Extruder.java:51-58 + :66-73; the SPEC's :51-53 shovel/sword/hoe lines plus their :54-55/:58 pickaxe/axe/hammer continuations), representative input minecraft:blackstone — DECLARED DEVIATION: the upstream input is Module_Blackstone_Generator, a port-absent item; the port substitutes the Blackstone stone item (GT6Anvils: OP.stone.dat(Blackstone) = vanilla BLACKSTONE), counts and durations verbatim. DECLARED DEVIATION (both metal families): upstream each aHot statement emits a config-conditional row pair (96 EUt under EXTRUDER_SIMPLE.NOT + 16 EUt under EXTRUDER_SIMPLE); the config-less JSON keeps one row per statement at its family's column, so both mold families answer on every config. DECLARED POOL: the Shape_Extruder/SimpleEx non-head rows (plate/plateCurved/rod/rodLong/bolt/gear/gearSmall/ingot/block/casing/wire/foil/pipe families) and the mold-crafting chain (needs the port-absent Shape_Extruder_Empty) stay pooled; the plate/rod rows already pour via GT6RecipesExtruder (FMLCommonSetup). Molds enter the second input slot and are never consumed (Recipe.sNotConsumable <- gt6:extruder_shapes tag membership; the upstream size-0 marker port, remember id478).\n\ntask recipe-b5-extruder-statics appends 175 rows: (A) the Loader_Recipes_Extruder literal module-domain\nstations, 138 rows — the five 30-row domains (:44-73 Blackstone, :75-104 Basalt, :106-135 Stone,\n:137-166 stone W-meta, :168-197 cobblestone) minus the 12 head rows r11c already shipped; the\nModule_*_Generator inputs are port-absent and ride the declared r11c substitution (minecraft:blackstone /\ngt6:basalt / minecraft:stone / minecraft:cobblestone). (B) the LRE prefix-walk (the :202 qualifying filter\nover 37 port prefixes) as 9 representative rows — the walk call sites whose output items the port\nregisters (glass plate/cell/bottle, TinAlloy cell, Zr cell).\nDISCARDED-ROWS LEDGER (file-head disclosure, the acceptance pin):\n  LRE walk call sites NOT poured (16, output item port-absent): :210/:211 + :218/:219 wax pills\n    (Pill_Empty unported), :221/:222 WaxBee + :231/:232 WaxRefractory + :241/:242 WaxMagic/WaxAmnesic\n    cell rows (FR_* Forestry capsules unported), :265/:266 Plastic (PlasticCan unported),\n    :274/:275 Sn cells (Cell_Empty item unported), :276/:277 Sn bottles (IC2_Food_Can_Empty unported).\n  Loader_Recipes_Handlers extruder statements NOT poured (7 x 2 families, output items port-absent):\n    :748/:781-wire wireGt01, :751-755/:784-788 pipeTiny/Small/Medium/Large/Huge, :766/:799 capcellcon —\n    deferred to the pipe/wire/CCC domain cards.\n  (C) the Handlers non-head forging walk as 28 representative rows — 14 statements x 2 families\n    (:741-747/:749/:763-769 Shape 96-EUt melting-point columns,\n    :774-780/:782/:796-798/:800-802 SimpleEx 16-EUt units\n    columns), Iron representative, the r11c head-row convention.\nTHE 64-MOLD LEDGER (the mold-extruder-shapes family, per family 31 usable + 1 Empty lead):\n  poured rows exist for 24 types (14 stone-domain r11c + saw/file r11c metal + ingot/ring/casing/\n  plateTiny/foil/wireFine here + bottle/cell here) = 48 molds; deferred 7 types x 2 = 14 molds\n  (wire/pipes/ccc, output items port-absent); the 2 Shape_*_Empty leads carry no consumption rows\n  upstream (crafting-chain only, the mold card's forge rows) = TRUE NEGATIVE. 48 + 14 + 2 = 64.\nDECLARED DEVIATION (the W-meta domains :137-166/:168-197): the upstream inputs are meta-wildcard\n  stone/cobblestone and overlap the r11c stonetypes rows on input pairs (both sets coexist upstream;\n  the JSON rows carry the count-1 canonical representative, the findRecipe first-hit order is the\n  documented three-owner limitation).",
+  "comment": "task toolhead-r11c-extruder-heads — the RM.Extruder tool-head rows, representative-row form (the B1/r11e walk-declaration convention). Eight upstream walk families, one representative row each per family statement: (1) the metal Shape_Extruder forging rows (Loader_Recipes_Handlers.java:750-762 head subset: raw shovel/sword/hoe/saw/pickaxe/axe + finished file/hammer), walk = OreDictPrefix.VALUES x containsAny(EXTRUDER_FODDER, INGOT_BASED, GEM_BASED) x the material's EXTRUDER gate — representative input gt6:ingot_iron; EUt 96 (the aHot forging column), duration = RecipeMapHandlerPrefixForging.getCosts (max(16, 1+|(meltingPoint-293)*weight|/(75*96)); the Iron representative computes 185/369/554/1107 t; upstream the duration is per-material runtime, the JSON carries the Iron representative value). (2) the metal Shape_SimpleEx mirror (:783-795 head subset), same walk + DUST_BASED, EUt 16, duration = UT.Code.units(outputU, U, 64, T) = 64 t per output unit (64/96/128/192/384). (3)+(4) the stone stonetypes rows (RM.java:410-414/:417 Shape + :423-427/:430 SimpleEx), walk = the GT6 stone-family materials x the four block forms (aStone/aCobble/aSmooth/aDustBlock) — representative input minecraft:stone. (5)+(6) the BlockStones metatype rows (BlockStones.java:293-297/:300 + :308-312/:315), walk = every BlockStones metatype block — representative input gt6:granite. (7)+(8) the Blackstone special rows (Loader_Recipes_Extruder.java:51-58 + :66-73; the SPEC's :51-53 shovel/sword/hoe lines plus their :54-55/:58 pickaxe/axe/hammer continuations), representative input minecraft:blackstone — DECLARED DEVIATION: the upstream input is Module_Blackstone_Generator, a port-absent item; the port substitutes the Blackstone stone item (GT6Anvils: OP.stone.dat(Blackstone) = vanilla BLACKSTONE), counts and durations verbatim. DECLARED DEVIATION (both metal families): upstream each aHot statement emits a config-conditional row pair (96 EUt under EXTRUDER_SIMPLE.NOT + 16 EUt under EXTRUDER_SIMPLE); the config-less JSON keeps one row per statement at its family's column, so both mold families answer on every config. DECLARED POOL: the Shape_Extruder/SimpleEx non-head rows (plate/plateCurved/rod/rodLong/bolt/gear/gearSmall/ingot/block/casing/wire/foil/pipe families) and the mold-crafting chain (needs the port-absent Shape_Extruder_Empty) stay pooled; the plate/rod rows already pour via GT6RecipesExtruder (FMLCommonSetup). Molds enter the second input slot and are never consumed (Recipe.sNotConsumable <- gt6:extruder_shapes tag membership; the upstream size-0 marker port, remember id478).\n\ntask recipe-b5-extruder-statics appends 175 rows: (A) the Loader_Recipes_Extruder literal module-domain\nstations, 138 rows — the five 30-row domains (:44-73 Blackstone, :75-104 Basalt, :106-135 Stone,\n:137-166 stone W-meta, :168-197 cobblestone) minus the 12 head rows r11c already shipped; the\nModule_*_Generator inputs are port-absent and ride the declared r11c substitution (minecraft:blackstone /\ngt6:basalt / minecraft:stone / minecraft:cobblestone). (B) the LRE prefix-walk (the :202 qualifying filter\nover 37 port prefixes) as 9 representative rows — the walk call sites whose output items the port\nregisters (glass plate/cell/bottle, TinAlloy cell, Zr cell).\nDISCARDED-ROWS LEDGER (file-head disclosure, the acceptance pin):\n  LRE walk call sites NOT poured (16, output item port-absent): :210/:211 + :218/:219 wax pills\n    (Pill_Empty unported), :221/:222 WaxBee + :231/:232 WaxRefractory + :241/:242 WaxMagic/WaxAmnesic\n    cell rows (FR_* Forestry capsules unported), :265/:266 Plastic (PlasticCan unported),\n    :274/:275 Sn cells (Cell_Empty item unported), :276/:277 Sn bottles (IC2_Food_Can_Empty unported).\n  BACKFILLED-BY recipe-b5-backfill-wire-unlocks — the 7 x 2 formerly deferred Handlers statements\n    are live rows now: :748/:781-wire wireGt01 (output = the WIRES-face AnnealedCopper representative\n    gt6:wire_gt01_annealed_copper — the WIRES gate has no Iron member; DECLARED IDENTITY MAPPING\n    over the wire-gt-registration item path), :751-755/:784-788 pipeTiny/Small/Medium/Large/Huge\n    (output = the GTFluidPipes block items gt6:copper_fluid_pipe_*, slug copper; DECLARED IDENTITY\n    MAPPING — the upstream OP.pipe* targets ride the MultiTileEntityPipeFluid block path,\n    Loader_MultiTileEntities setTarget_), :766/:799 capcellcon (output = the GT6Cells block item\n    gt6:cell_tin, the U9 capsule ratio; DECLARED IDENTITY MAPPING over the Loader_MultiTileEntities\n    :1770-1809 cell family). Durations: the getCosts replica calibrated on the shipped Iron columns\n    (185/369/554/738/1107/1661 verbatim) evaluated on the representatives — Copper 148/442/883/1766,\n    Tin 24, AnnealedCopper 347; the SimpleEx units column 64/192/384/768.\n  (C) the Handlers non-head forging walk as 28 representative rows — 14 statements x 2 families\n    (:741-747/:749/:763-769 Shape 96-EUt melting-point columns,\n    :774-780/:782/:796-798/:800-802 SimpleEx 16-EUt units\n    columns), Iron representative, the r11c head-row convention.\nTHE 64-MOLD LEDGER (the mold-extruder-shapes family, per family 31 usable + 1 Empty lead):\n  poured rows exist for 31 types per family (14 stone-domain r11c + saw/file r11c metal +\n  ingot/ring/casing/plateTiny/foil/wireFine + bottle/cell + wire/pipes x5/ccc by the backfill card)\n  = 62 molds; zero deferred (the backfill resolved the last 7 types over the declared identity\n  mappings); the 2 Shape_*_Empty leads carry no consumption rows upstream (crafting-chain only,\n  the mold card's forge rows) = TRUE NEGATIVE. 62 + 0 + 2 = 64.\nDECLARED DEVIATION (the W-meta domains :137-166/:168-197): the upstream inputs are meta-wildcard\n  stone/cobblestone and overlap the r11c stonetypes rows on input pairs (both sets coexist upstream;\n  the JSON rows carry the count-1 canonical representative, the findRecipe first-hit order is the\n  documented three-owner limitation).",
   "recipes": [
     {
       "comment": "Handlers:750 — Shape_Extruder_Shovel forging row, Iron representative (1 ingot -> 1 head, 96 EUt, melting-point duration)",
@@ -17,6 +17,100 @@
         }
       ],
       "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:751 — Shape_Extruder_Pipe_Tiny forging row, Copper representative (96 EUt, getCosts melting-point column 148t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeTiny x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper"
+        },
+        {
+          "item": "gt6:shape_extruder_pipe_tiny"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_tiny",
+          "count": 2
+        }
+      ],
+      "duration": 148,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:752 — Shape_Extruder_Pipe_Small forging row, Copper representative (96 EUt, getCosts melting-point column 148t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeSmall x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper"
+        },
+        {
+          "item": "gt6:shape_extruder_pipe_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_small"
+        }
+      ],
+      "duration": 148,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:753 — Shape_Extruder_Pipe_Medium forging row, Copper representative (96 EUt, getCosts melting-point column 442t at 3 ingots in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeMedium x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_extruder_pipe_medium"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_medium"
+        }
+      ],
+      "duration": 442,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:754 — Shape_Extruder_Pipe_Large forging row, Copper representative (96 EUt, getCosts melting-point column 883t at 6 ingots in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeLarge x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_extruder_pipe_large"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_large"
+        }
+      ],
+      "duration": 883,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:755 — Shape_Extruder_Pipe_Huge forging row, Copper representative (96 EUt, getCosts melting-point column 1766t at 12 ingots in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeHuge x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper",
+          "count": 12
+        },
+        {
+          "item": "gt6:shape_extruder_pipe_huge"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_huge"
+        }
+      ],
+      "duration": 1766,
       "eut": 96
     },
     {
@@ -168,6 +262,100 @@
         }
       ],
       "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:784 — Shape_SimpleEx_Pipe_Tiny mirror row, Copper representative (16 EUt, units column 64t) (DECLARED IDENTITY MAPPING: upstream output OP.pipeTiny x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper"
+        },
+        {
+          "item": "gt6:shape_simple_ex_pipe_tiny"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_tiny",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:785 — Shape_SimpleEx_Pipe_Small mirror row, Copper representative (16 EUt, units column 64t) (DECLARED IDENTITY MAPPING: upstream output OP.pipeSmall x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper"
+        },
+        {
+          "item": "gt6:shape_simple_ex_pipe_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_small"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:786 — Shape_SimpleEx_Pipe_Medium mirror row, Copper representative (16 EUt, units column 192t at 3 ingots in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeMedium x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_simple_ex_pipe_medium"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_medium"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:787 — Shape_SimpleEx_Pipe_Large mirror row, Copper representative (16 EUt, units column 384t at 6 ingots in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeLarge x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_simple_ex_pipe_large"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_large"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:788 — Shape_SimpleEx_Pipe_Huge mirror row, Copper representative (16 EUt, units column 768t at 12 ingots in) (DECLARED IDENTITY MAPPING: upstream output OP.pipeHuge x material — the port pipe items are the GTFluidPipes block items, slug copper)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_copper",
+          "count": 12
+        },
+        {
+          "item": "gt6:shape_simple_ex_pipe_huge"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:copper_fluid_pipe_huge"
+        }
+      ],
+      "duration": 768,
       "eut": 16
     },
     {
@@ -3781,6 +3969,25 @@
       "eut": 96
     },
     {
+      "comment": "Loader_Recipes_Handlers.java:748 — Shape_Extruder_Wire forging row, Annealed Copper representative (96 EUt, getCosts melting-point column 347t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.wireGt01 x material — the WIRES gate has no Iron member, the representative rides the wire-gt-registration item path)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_annealed_copper"
+        },
+        {
+          "item": "gt6:shape_extruder_wire"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_gt01_annealed_copper",
+          "count": 2
+        }
+      ],
+      "duration": 347,
+      "eut": 96
+    },
+    {
       "comment": "Loader_Recipes_Handlers.java:749 — Shape_Extruder_Casing forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
       "inputs": [
         {
@@ -3853,6 +4060,25 @@
         }
       ],
       "duration": 1661,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:766 — Shape_Extruder_CCC forging row, Tin representative (96 EUt, getCosts melting-point column 24t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.capcellcon x material — the U9 capsule-cell-container ratio lands on the GT6Cells block items)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_tin"
+        },
+        {
+          "item": "gt6:shape_extruder_ccc"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cell_tin",
+          "count": 9
+        }
+      ],
+      "duration": 24,
       "eut": 96
     },
     {
@@ -4042,6 +4268,25 @@
       "eut": 16
     },
     {
+      "comment": "Loader_Recipes_Handlers.java:781 — Shape_SimpleEx_Wire mirror row, Annealed Copper representative (16 EUt, units column 64t) (DECLARED IDENTITY MAPPING: upstream output OP.wireGt01 x material — the WIRES gate has no Iron member, the representative rides the wire-gt-registration item path)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_annealed_copper"
+        },
+        {
+          "item": "gt6:shape_simple_ex_wire"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_gt01_annealed_copper",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
       "comment": "Loader_Recipes_Handlers.java:782 — Shape_SimpleEx_Casing mirror row, Iron representative (16 EUt, units column 64t)",
       "inputs": [
         {
@@ -4114,6 +4359,25 @@
         }
       ],
       "duration": 576,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:799 — Shape_SimpleEx_CCC mirror row, Tin representative (16 EUt, units column 64t) (DECLARED IDENTITY MAPPING: upstream output OP.capcellcon x material — the U9 capsule-cell-container ratio lands on the GT6Cells block items)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_tin"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ccc"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cell_tin",
+          "count": 9
+        }
+      ],
+      "duration": 64,
       "eut": 16
     },
     {

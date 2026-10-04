@@ -130,7 +130,7 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 		tExpected.put("96EU 1661t x1", 1);  // b5 :765 block (9 ingots in)
 		tExpected.put("96EU 216t x1", 1);   // b5 walk :292 Zr cell (the melting-point column)
 		// the recipe-b5-backfill-wire-unlocks rows (the identity-mapping representatives)
-		tExpected.put("96EU 24t x1", 1);    // backfill :766 ccc, Tin rep (9 cells out, the U9 ratio)
+		tExpected.put("96EU 24t x9", 1);    // backfill :766 ccc, Tin rep (9 cells out, the U9 ratio)
 		tExpected.put("96EU 148t x1", 1);   // backfill :752 pipeSmall, Copper rep
 		tExpected.put("96EU 148t x2", 1);   // backfill :751 pipeTiny, Copper rep
 		tExpected.put("96EU 347t x2", 1);   // backfill :748 wire, AnnealedCopper rep (WIRES face)
@@ -184,7 +184,7 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 		tExpected.put("8t x8", 4);     // b5 W-meta bolts (:141/:172 x both twins)
 		tExpected.put("16t x1", 6);    // b5 module bolts (:48/:63 + :79/:94 + :110/:125)
 		tExpected.put("64t x1", 63);   // the r11c shovels (:783 + :51/:66) + the b5 module/walk/Handlers x1 columns + backfill :785 pipeSmall
-		tExpected.put("64t x2", 3);    // b5 :777 rod / :782 casing mirrors + backfill :781 wire (AnnealedCopper rep)
+		tExpected.put("64t x2", 4);    // b5 :777 rod / :782 casing mirrors + backfill :781 wire / :784 pipeTiny (AnnealedCopper rep)
 		tExpected.put("64t x3", 2);    // b5 walk :254/:255 glass cells (chemtube x3)
 		tExpected.put("64t x4", 2);    // b5 :780 ring / :801 foil mirrors
 		tExpected.put("64t x8", 2);    // b5 :779 bolt / :802 wireFine mirrors
