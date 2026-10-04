@@ -96,10 +96,10 @@ public final class GT6VeinGenerator {
      * The dimension-filtered draw (task nether-lens-end-yield): {@code aEndRows}
      * selects the ORE_END rows (exactly platinum/molybdenum/cassiterite/naquadah/
      * trinium, Loader_Worldgen.java:904-919) instead of the ORE_OVERWORLD rows — the
-     * draw sum rides the dimension's own rows, the upstream :93 semantics. NOTE the
-     * molybdenum row carries all four slots outside the modern registration axis, so
-     * the validity gate drops it from BOTH draws (the p30-t3 declared mapping, the
-     * axis-extension face — the End drawable set is 4 rows today).
+     * draw sum rides the dimension's own rows, the upstream :93 semantics. The
+     * molybdenum row — all four slots outside the registration axis at the p30-t3
+     * freeze, dropped from BOTH draws — lit up with the worldgen-edge-ores-b1 axis
+     * extension (zero row edits), so the End drawable set is 5 rows.
      */
     public static GTVeinConfig drawVein(List<GTVeinConfig> aTable, Random aRandom, boolean aEndRows) {
         int tMaxWeight = 0;
