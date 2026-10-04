@@ -164,6 +164,32 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
         return RoadMode.LAND; // :383 generateRoadX(T,T,F,F,T)
     }
 
+    /** The 4-chunk testing box {@code (aMinX!=32&&aMinX!=48)||(aMinZ!=-32&&aMinZ!=-48)} (:67) — chunk-min block coords 32/48 = cx {2,3}, -48/-32 = cz {-3,-2}. Disjoint from the trio (nexus (1,-3), plaza {-2..1}², road bands {-1,0}). */
+    public static boolean isTestingChunk(int aCx, int aCz) {
+        return (aCx == 2 || aCx == 3) && (aCz == -3 || aCz == -2);
+    }
+
+    /**
+     * The world-origin testing shell (task worldgen-center-testing, upstream
+     * worldgen/center/WorldgenTesting.java) — the 4-chunk concrete box at the spawn
+     * frontier: the solid gray-concrete pedestal k=1..HEIGHT (:70), the sky clear
+     * HEIGHT+2..255 (:71, the 1.7.10 world cap carried verbatim), the gray CFoam floor
+     * (:73), the CFoam walls on the box rim (:74-88, LightBlue body + Yellow bands at
+     * +3/+13 + Gray cap), the slab ceiling (:89-93) and the west-wall doorway (:96-131,
+     * the (2,-2) chunk). The upstream setSpawnLocation(0, H+5, 0) (:374) rides the Env.
+     *
+     * <p><b>SKIPPED_UPSTREAM — the cheat room</b>: everything the shell encloses is not
+     * ported (no port identity) — the MTE furniture band (:133-371: 7133 shelves, 4033
+     * chests, 32757/26304 pipes, 32057/32737/32727 ... the full filler arm), the
+     * ToolsGT.sMetaTool / IL.Tool_Chunk_Remover / IL.Tool_Cheat / IL.IC2_Debug /
+     * IL.TC_Thaumonomicon inventory rows (:186-344, the Tool_* IL same-scope ruling) and
+     * the vanilla crafting-table/cauldron/anvil/ender-chest props (:153/:177/:183/:366-371).
+     * The port ships the shell only: walls, doorway, interior clearing.
+     */
+    public static void testing(Sink aSink, int aCx, int aCz) {
+        // ponytail: the red-commit stub — the shell body lands with the green commit
+    }
+
     // ------------------------------------------------------------ the place dispatch
 
     @Override
@@ -210,6 +236,13 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
                 RoadMode tMode = aCx < -6 || aCx > 5 ? aFar.scan(aCx, aCz, false) : RoadMode.RING;
                 GT6CenterStreets.road(aSink, aEnv, GT6CenterStreets.Axis.Z, aCx, aCz, tMode, !CENTER_BIOMES);
                 rPlaced = true; // :412
+            }
+        }
+        if (TESTING) {
+            if (isTestingChunk(aCx, aCz)) {
+                testing(aSink, aCx, aCz);
+                aEnv.spawn(0, HEIGHT + 5, 0); // :374 every box chunk re-asserts the spawn
+                rPlaced = true;
             }
         }
         return rPlaced;

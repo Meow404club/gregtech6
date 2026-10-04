@@ -420,6 +420,106 @@ class GT6CenterWorldgenTest {
 		return rOut;
 	}
 
+	// ---------------------------------------------------------------- Testing shell (task worldgen-center-testing, WorldgenTesting.java)
+
+	@Test
+	void testingGateMatchesTheUpstreamIfTranslation() {
+		// :67 (aMinX!=32&&aMinX!=48)||(aMinZ!=-32&&aMinZ!=-48) — the 4-chunk box, columns {2,3} x rows {-3,-2}
+		// (aMinX/aMinZ are chunk-min BLOCK coords: 32/48 = cx 2/3, -48/-32 = cz -3/-2)
+		assertTrue(GT6CenterFeature.isTestingChunk(2, -3));
+		assertTrue(GT6CenterFeature.isTestingChunk(2, -2));
+		assertTrue(GT6CenterFeature.isTestingChunk(3, -3));
+		assertTrue(GT6CenterFeature.isTestingChunk(3, -2));
+		for (int cx = -4; cx <= 4; cx++) for (int cz = -5; cz <= 5; cz++) {
+			boolean tExpected = (cx == 2 || cx == 3) && (cz == -3 || cz == -2);
+			assertEquals(tExpected, GT6CenterFeature.isTestingChunk(cx, cz), cx + "," + cz);
+		}
+		// the box never overlaps the trio: nexus (1,-3), plaza {-2..1}^2, roads on the {-1,0} bands
+		assertFalse(GT6CenterFeature.isTestingChunk(1, -3));
+		assertFalse(GT6CenterFeature.isTestingChunk(2, -1));
+		assertFalse(GT6CenterFeature.isTestingChunk(0, -2));
+	}
+
+	@Test
+	void testingShellGeometryReplay() {
+		GT6CenterFeature.TESTING = true;
+		// chunk (2,-3) — the west+north edge chunk, blocks x 32..47, z -48..-33
+		Recorder tRows = new Recorder();
+		TestEnv tEnv = new TestEnv();
+		assertTrue(GT6CenterFeature.dispatch(tRows, tEnv, 2, -3, (cx, cz, ax) -> RoadMode.RING));
+		// the solid pedestal k=1..HEIGHT (:70) — gray concrete, the offline-unresolvable GT block = null attempts
+		assertEquals(256, tRows.countWhere(t -> t.y == 1 && t.x >= 32 && t.x < 48 && t.z >= -48 && t.z < -32));
+		assertEquals(256, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT));
+		// the gray CFoam floor at H+1 (:73) — every column
+		assertEquals(256, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 1));
+		// the sky clear H+2..255 (:71) — the 1.7.10 world cap carries verbatim; nothing above it
+		assertEquals(256, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 63));
+		assertEquals(256, tRows.countWhere(t -> t.y == 255));
+		assertEquals(0, tRows.countWhere(t -> t.y > 255));
+		// the edge walls (:74-88): west i=0 + north j=0 share the corner column → 31 columns x 14 rows
+		assertEquals(31 * 14, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15
+				&& ((t.x == 32 && t.z >= -48 && t.z < -32) || (t.z == -48 && t.x >= 32 && t.x < 48))));
+		// the ceiling (:89-93): 225 interior columns — the glow-glass field (i,j outside {1,5,10,14}) = 11x11 = 121,
+		// the cfoam-slab cross = 104 (the offline nulls; the glow glass rides the vanilla stained glass)
+		assertEquals(121, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 15
+				&& t.state != null && t.state.is(Blocks.LIGHT_BLUE_STAINED_GLASS)));
+		assertEquals(104, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 15
+				&& t.x >= 33 && t.x < 48 && t.z >= -47 && t.z < -32 && t.state == null));
+		// the slab cross hits the {1,5,10,14} lanes (x 33/37/42/46 = i, z -47/-43/-38/-34 = j)
+		assertTrue(tRows.at(33, GT6CenterFeature.HEIGHT + 15, -43).size() > 0);
+		// the spawn (:374) — (0, HEIGHT+5, 0) from every box chunk
+		assertEquals(1, tEnv.spawns.size());
+		assertEquals(0L, tEnv.spawns.get(0)[0]);
+		assertEquals(GT6CenterFeature.HEIGHT + 5, tEnv.spawns.get(0)[1]);
+		// the switch-off gate: the same chunk stays silent
+		GT6CenterFeature.TESTING = false;
+		Recorder tOff = new Recorder();
+		assertFalse(GT6CenterFeature.dispatch(tOff, new TestEnv(), 2, -3, (cx, cz, ax) -> RoadMode.RING));
+		assertEquals(0, tOff.rows.size());
+	}
+
+	@Test
+	void testingShellEdgePatternIsChunkRelative() {
+		GT6CenterFeature.TESTING = true;
+		// chunk (3,-2) — the east+south edge chunk (x 48..63, z -32..-17): the mirrored edges
+		Recorder tRows = new Recorder();
+		GT6CenterFeature.dispatch(tRows, new TestEnv(), 3, -2, (cx, cz, ax) -> RoadMode.RING);
+		assertEquals(31 * 14, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15
+				&& ((t.x == 63 && t.z >= -32 && t.z < -16) || (t.z == -17 && t.x >= 48 && t.x < 64))));
+		// no door in the (3,-2) chunk — the west wall x=48 keeps its full wall run at H+2..H+5
+		assertEquals(14, tRows.countWhere(t -> t.x == 48 && t.z == -25
+				&& t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15));
+	}
+
+	@Test
+	void testingDoorwayReplay() {
+		GT6CenterFeature.TESTING = true;
+		// :96-131 live in the (aMinX==32 && aMinZ==-32) chunk = (2,-2) — x 32..47, z -32..-17
+		Recorder tRows = new Recorder();
+		GT6CenterFeature.dispatch(tRows, new TestEnv(), 2, -2, (cx, cz, ax) -> RoadMode.RING);
+		// the 4-wide 3-high opening at x=32, j=6..9 (z -26..-23), H+2..H+4 — the door carve wins over the wall run
+		for (int z = -26; z <= -23; z++) for (int y = GT6CenterFeature.HEIGHT + 2; y <= GT6CenterFeature.HEIGHT + 4; y++) {
+			Attempt tLast = tRows.lastAt(32, y, z);
+			assertTrue(tLast.state != null && tLast.state.isAir(), "opening " + y + "," + z);
+		}
+		// the H+2 gray jamb pair (:97/:102) + the interior pilasters (:103-104) — null cfoam attempts at the spots
+		assertTrue(tRows.at(32, GT6CenterFeature.HEIGHT + 2, -27).size() > 0);
+		assertTrue(tRows.at(32, GT6CenterFeature.HEIGHT + 2, -22).size() > 0);
+		assertTrue(tRows.at(33, GT6CenterFeature.HEIGHT + 2, -26).size() > 0);
+		assertTrue(tRows.at(33, GT6CenterFeature.HEIGHT + 2, -23).size() > 0);
+		// the H+3 yellow band (:106-113)
+		assertTrue(tRows.at(32, GT6CenterFeature.HEIGHT + 3, -27).size() > 0);
+		assertTrue(tRows.at(33, GT6CenterFeature.HEIGHT + 3, -26).size() > 0);
+		for (int z = -26; z <= -23; z++) assertTrue(tRows.lastAt(32, GT6CenterFeature.HEIGHT + 3, z).state.isAir());
+		// the H+4 gray band with the full pilaster run (:115-124)
+		assertTrue(tRows.at(32, GT6CenterFeature.HEIGHT + 4, -27).size() > 0);
+		for (int z = -26; z <= -23; z++) assertTrue(tRows.at(33, GT6CenterFeature.HEIGHT + 4, z).size() > 0);
+		// the H+5 gray lintel row (:126-131)
+		for (int z = -27; z <= -22; z++) assertTrue(tRows.at(32, GT6CenterFeature.HEIGHT + 5, z).size() > 0);
+		// the wall above the door keeps the LightBlue rows H+6.. (the edge wall pass is not re-cut above the lintel)
+		assertTrue(tRows.at(32, GT6CenterFeature.HEIGHT + 6, -25).size() > 0);
+	}
+
 	// ---------------------------------------------------------------- datagen rows (the RED pin)
 
 	@Test
