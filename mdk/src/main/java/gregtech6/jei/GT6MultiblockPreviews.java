@@ -18,9 +18,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.registry.GT6Crucibles;
+import gregtech6.registry.GT6DynamoHousings;
+import gregtech6.registry.GT6HeatExchangers;
+import gregtech6.registry.GT6Turbines;
 import gregtech6.registry.GTMultiBlocks;
+import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
+import gregtech6.tileentity.multiblocks.GTGasTurbineBlockEntity;
+import gregtech6.tileentity.multiblocks.GTLargeDynamoBlockEntity;
+import gregtech6.tileentity.multiblocks.GTSteamTurbineBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCrucible;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
+import gregtech6.tileentity.multiblocks.TileEntityImplosionCompressor;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 /**
@@ -133,8 +141,55 @@ public final class GT6MultiblockPreviews {
 			tRows.add(new Entry(tRow.path(), GT6Crucibles.CRUCIBLE_ITEMS_BY_PATH.get(tRow.path()),
 					() -> crucibleOf(tRow).getStructurePattern()));
 		}
-		// --- batch B (energy) tail-appends here; then C (processing), D1/D2 (special) ---
+		// --- batch B (mbpreview-data-b-energy): the energy family -----------------------
+		// the three converter families share the ONE GTMultiBlockConverter binding
+		// (GTMultiBlockConverter.java:395 — the facing-rotated 3x3x4 shell): the throwaway
+		// BE carries its TIER through the VARIANT STATE (the batch-A boiler doctrine —
+		// getWallBlock reads the row's Dense Wall off the state, GTSteamTurbineBlockEntity
+		// :47-53 / GTGasTurbineBlockEntity :100-106 / GTLargeDynamoBlockEntity :43-49) and
+		// the binding is formingPart, so the wall identity rides the cells — zero re-stamp
+		for (GT6Turbines.SteamTurbineRow tRow : GT6Turbines.STEAM_ROWS) {
+			tRows.add(new Entry(tRow.path(), GT6Turbines.ITEMS_BY_PATH.get(tRow.path()),
+					() -> new GTSteamTurbineBlockEntity(BlockPos.ZERO,
+							GT6Turbines.BLOCKS_BY_PATH.get(tRow.path()).get().defaultBlockState()).getStructurePattern()));
+		}
+		for (GT6Turbines.GasTurbineRow tRow : GT6Turbines.GAS_ROWS) {
+			tRows.add(new Entry(tRow.path(), GT6Turbines.ITEMS_BY_PATH.get(tRow.path()),
+					() -> new GTGasTurbineBlockEntity(BlockPos.ZERO,
+							GT6Turbines.BLOCKS_BY_PATH.get(tRow.path()).get().defaultBlockState()).getStructurePattern()));
+		}
+		for (GT6DynamoHousings.DynamoRow tRow : GT6DynamoHousings.DYNAMO_ROWS) {
+			tRows.add(new Entry(tRow.path(), GT6DynamoHousings.ITEMS_BY_PATH.get(tRow.path()),
+					() -> new GTLargeDynamoBlockEntity(BlockPos.ZERO,
+							GT6DynamoHousings.BLOCKS_BY_PATH.get(tRow.path()).get().defaultBlockState()).getStructurePattern()));
+		}
+		// the Implosion Compressor (upstream :1228) — the binding carries the shell form
+		// directly (formingPart over the getPartBlock hook, TileEntityImplosionCompressor
+		// :131-142; state-blind like the Coke Oven collect)
+		tRows.add(new Entry("implosion_compressor", GTMultiBlocks.IMPLOSION_COMPRESSOR_ITEM,
+				() -> new TileEntityImplosionCompressor(BlockPos.ZERO,
+						Blocks.AIR.defaultBlockState()).getStructurePattern()));
+		// the Large Heat Exchanger (upstream :1245) — the binding is predicate-shaped
+		// (part() cells, GT6HeatExchangerBlockEntity:266-285), so the row re-stamps the
+		// display identity from its own part list (the boiler form); the throwaway BE
+		// carries the real carrier state so getWallBlock answers the Dense Tungsten Wall
+		tRows.add(new Entry("large_heat_exchanger", GT6HeatExchangers.HEAT_EXCHANGER_ITEM,
+				GT6MultiblockPreviews::heatExchangerPreview));
+		// --- batch C (processing) tail-appends here; then D1/D2 (special) ---------------
 		return List.copyOf(tRows);
+	}
+
+	/**
+	 * The heat exchanger row's display pattern: the BE binding (predicate-only) re-stamped
+	 * with the Dense Tungsten Wall + the Heat Transmitter (the two identities the
+	 * predicates judge — zero transcription of the geometry).
+	 */
+	private static GTMultiBlockPattern heatExchangerPreview() {
+		return withDisplayBlocks(
+				new GT6HeatExchangerBlockEntity(BlockPos.ZERO,
+						GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get().defaultBlockState()).getStructurePattern(),
+				GTMultiBlocks.WALL_BLOCKS_BY_PATH.get("dense_wall_tungsten").get(),
+				GTMultiBlocks.HEAT_TRANSMITTER.get());
 	}
 
 	/**
