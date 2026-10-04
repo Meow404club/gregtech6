@@ -58,18 +58,20 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * enumeration (tasks.p30-arch-ore-registration.enumeration.block_rows_per_material).
  *
  * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16, extended 2026-09-28 by
- * task a-ore-axis-extension and task b-gem-pool-extension, then 2026-10-05 by task
- * worldgen-edge-ores-b1-vein-axis): the upstream always-on
+ * task a-ore-axis-extension and task b-gem-pool-extension, then 2026-10-05 by tasks
+ * worldgen-edge-ores-b2-orphans and worldgen-edge-ores-b1-vein-axis): the upstream always-on
  * worldgen small-ore materials
  * (Loader_Worldgen.java:800-852 + :875 — {@link #WORLDGEN_ORES}) UNION the stone-layer
  * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION
+ * the stone-layer EDGE orphan materials ({@link #EDGE_ORES}, the boundary-blob route B)
+ * UNION
  * the RANDOM_SMALL_GEM_ORE pool gap ({@link #GEM_POOL_ORES}, the r7-b second seam) UNION
  * the large-vein compensation materials ({@link #LARGE_VEIN_ORES}, the B1 third seam), each
  * passing the authoritative {@link OP#ore}
  * {@code isGeneratingItem} filter (OP.java:1098 setCondition(ORES); the same
  * per-material criterion as the GTMaterialItems.java:146 item walk), UNIFIED across
- * all 26 families and all three forms. M = 53 + 13 + 56 + 22 = 144 distinct materials; total
- * blocks = 74 x 144 = 10656, pinned by
+ * all 26 families and all three forms. M = 53 + 13 + 10 + 56 + 22 = 154 distinct materials; total
+ * blocks = 74 x 154 = 11384, pinned by
  * GT6OreBlocksRegistrationTest. (The bare isGeneratingItem walk over the whole
  * MATERIAL_ARRAY measures 618 — nine tenths of it materials no ore placement ever
  * references; that over-registration face was REJECTED in review and removed.)
@@ -395,6 +397,37 @@ public final class GT6OreBlocks {
     );
 
     /**
+     * The stone-layer EDGE orphan materials (task worldgen-edge-ores-b2-orphans, the
+     * research.stonelayer-edge-ores route B): the 10 boundary materials whose ONLY
+     * ungated upstream source is a {@code StoneLayer.bothsides/topbottom} blob
+     * (Loader_Worldgen.java:481-571) — no WorldgenOresSmall row, no large-vein slot.
+     * Upstream rows (the boundary calls, Y bands verbatim): AmberDominican
+     * (U8, 30-70, BIOMES_SHROOM, the Coal/Lignite/Oilshale-Stone boundaries :481-495);
+     * Perlite (U4, 0-16, Komatiite/Gabbro-Basalt :496-501); Diatomite (U16, 16-64,
+     * topbottom Dolomite-Diorite :506-509); Alunite (U4, 32-80, Rhyolite-Quartzite
+     * :529-531); Mirabilite + Trona (U8, 16-64, Gneiss-Gypsum :532-535); Vermiculite
+     * (U8, 48-80, GraniteRed-Gneiss :547-550); Mica + Biotite (U8/U16, 16-48,
+     * GraniteBlack-Gneiss :551-554); DiamondPink (U32, 0-32, BIOMES_JUNGLE,
+     * topbottom GraniteBlack-Basalt :561-565).
+     *
+     * <p>Mica/Trona also have IHL-gated WorldgenOresSmall namesakes (:871/:874, MD.IHL)
+     * which stay in the :854-874 compat pool — the boundary IS their ungated natural
+     * source. Deviations declared on the rows (GTOreWorldgen): amount 1 (the blob
+     * chance column is a per-boundary-position 1-in-N roll, not a density — the seam
+     * enrichment is strata-mode deferred), the biome gates (:484/:563) not carried,
+     * never deep-mirrored. Unlike {@link #STONE_LAYER_ORES} these DO gain small-ore
+     * rows ({@code GTOreWorldgen.ROWS}, 10 overworld pairs).
+     *
+     * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
+     */
+    public static final List<Supplier<OreDictMaterial>> EDGE_ORES = List.of(
+        () -> MT.AmberDominican,            () -> MT.OREMATS.Perlite,      () -> MT.OREMATS.Diatomite,     // :484/:497/:508
+        () -> MT.OREMATS.Alunite,           () -> MT.OREMATS.Mirabilite,   () -> MT.OREMATS.Trona,         // :530/:533/:534
+        () -> MT.OREMATS.Vermiculite,       () -> MT.OREMATS.Mica,         () -> MT.Biotite,               // :548/:552/:553
+        () -> MT.DiamondPink                                                                                              // :563
+    );
+
+    /**
      * The RANDOM_SMALL_GEM_ORE pool materials (task b-gem-pool-extension): the 56 pool
      * members that sit OUTSIDE {@link #WORLDGEN_ORES} and {@link #STONE_LAYER_ORES} — the
      * second axis seam (the r7-a review finding made quantitative). Upstream pool census
@@ -498,17 +531,19 @@ public final class GT6OreBlocks {
 
     /**
      * The material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * a-ore-axis-extension, b-gem-pool-extension and worldgen-edge-ores-b1-vein-axis):
-     * the upstream always-on worldgen small-ore materials ({@link #WORLDGEN_ORES},
+     * a-ore-axis-extension, b-gem-pool-extension, worldgen-edge-ores-b2-orphans and
+     * worldgen-edge-ores-b1-vein-axis): the upstream always-on worldgen small-ore
+     * materials ({@link #WORLDGEN_ORES},
      * Loader_Worldgen.java:800-852 + :875) UNION the stone-layer companion materials
-     * ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION the
+     * ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION the stone-layer
+     * EDGE orphan materials ({@link #EDGE_ORES}, the boundary-blob route B) UNION the
      * RANDOM_SMALL_GEM_ORE pool gap ({@link #GEM_POOL_ORES}, the r7-b second seam)
      * UNION the large-vein compensation materials ({@link #LARGE_VEIN_ORES}, the B1
      * third seam), each passing the authoritative oredict filter {@link OP#ore}
      * {@code isGeneratingItem} (OP.java:1098 setCondition(ORES) — the same
      * per-material criterion as the GTMaterialItems.java:146 item walk, whose
      * resolve/dedup shape this walk mirrors), unified across all families and forms.
-     * M = 53 + 13 + 56 + 22 = 144, total 74 x 144 = 10656, pinned by
+     * M = 53 + 13 + 10 + 56 + 22 = 154, total 74 x 154 = 11384, pinned by
      * GT6OreBlocksRegistrationTest.
      *
      * <p>mdh-5 axis-takeover census (task mdh-5-block-worldgen-axis, CLOSED — ruling (a),
@@ -533,6 +568,9 @@ public final class GT6OreBlocks {
             addAxisMember(tSupply, tSeen, rAxis);
         }
         for (Supplier<OreDictMaterial> tSupply : STONE_LAYER_ORES) {
+            addAxisMember(tSupply, tSeen, rAxis);
+        }
+        for (Supplier<OreDictMaterial> tSupply : EDGE_ORES) {
             addAxisMember(tSupply, tSeen, rAxis);
         }
         for (Supplier<OreDictMaterial> tSupply : GEM_POOL_ORES) {

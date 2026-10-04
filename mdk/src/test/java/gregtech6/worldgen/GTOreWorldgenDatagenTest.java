@@ -2,7 +2,9 @@
  * Tests for task w6-small-ore-datagen: the small-ore table + the (row, dim)
  * placement pairs — the acceptance's offline parity unit. The table grew 54 → 115
  * rows and the pairs 91 → 152 with b-gem-pool-extension (the RANDOM_SMALL_GEM_ORE
- * pool loop joined).
+ * pool loop joined), and 115 → 125 rows / 152 → 162 pairs with
+ * worldgen-edge-ores-b2-orphans (the 10 StoneLayer boundary-blob translations,
+ * :481-571 — see {@link #edgeOrphanRowsArePinned}).
  *
  * <p>Compile anchors (transcribed independently here, production and test must agree
  * or a conscious decision is forced):
@@ -188,11 +190,24 @@ class GTOreWorldgenDatagenTest {
         Map.entry("ore.small.amazonite"       , "877 5 250 1 OVERWORLD"),
         Map.entry("ore.small.opal"            , "877 5 250 1 OVERWORLD"),
         Map.entry("ore.small.onyxred"         , "877 5 250 1 OVERWORLD"),
-        Map.entry("ore.small.onyxblack"       , "877 5 250 1 OVERWORLD"),
-        Map.entry("ore.small.peridot"         , "877 5 250 1 OVERWORLD"),
-        Map.entry("ore.small.amethyst"        , "877 5 250 1 OVERWORLD"),
-        Map.entry("ore.small.dioptase"        , "877 5 250 1 OVERWORLD"),
-        Map.entry("ore.small.jade"            , "877 5 250 1 OVERWORLD"));
+          Map.entry("ore.small.onyxblack"       , "877 5 250 1 OVERWORLD"),
+          Map.entry("ore.small.peridot"         , "877 5 250 1 OVERWORLD"),
+          Map.entry("ore.small.amethyst"        , "877 5 250 1 OVERWORLD"),
+          Map.entry("ore.small.dioptase"        , "877 5 250 1 OVERWORLD"),
+          Map.entry("ore.small.jade"            , "877 5 250 1 OVERWORLD"),
+          // -- :481-571, the StoneLayer boundary blobs (worldgen-edge-ores-b2-orphans) —
+          // 10 rows, each citing its bothsides/topbottom call line; amount 1 + OVERWORLD
+          // (the declared deviations on edgeOrphanRowsArePinned).
+          Map.entry("ore.small.dominicanamber"  , "484 30 70 1 OVERWORLD"),
+          Map.entry("ore.small.perlite"         , "497 0 16 1 OVERWORLD"),
+          Map.entry("ore.small.diatomite"       , "508 16 64 1 OVERWORLD"),
+          Map.entry("ore.small.alunite"         , "530 32 80 1 OVERWORLD"),
+          Map.entry("ore.small.mirabilite"      , "533 16 64 1 OVERWORLD"),
+          Map.entry("ore.small.trona"           , "534 16 64 1 OVERWORLD"),
+          Map.entry("ore.small.vermiculite"     , "548 48 80 1 OVERWORLD"),
+          Map.entry("ore.small.mica"            , "552 16 48 1 OVERWORLD"),
+          Map.entry("ore.small.biotite"         , "553 16 48 1 OVERWORLD"),
+          Map.entry("ore.small.pinkdiamond"     , "563 0 32 1 OVERWORLD"));
 
     private static String dimsOf(GTOreWorldgen.SmallOreRow aRow) {
         StringBuilder r = new StringBuilder();
@@ -202,10 +217,10 @@ class GTOreWorldgenDatagenTest {
         return r.isEmpty() ? "-" : r.substring(1);
     }
 
-    /** The 115-row table, pinned row-by-row against the Loader_Worldgen.java transcriptions. */
+    /** The 125-row table, pinned row-by-row against the Loader_Worldgen.java transcriptions. */
     @Test
     void rowTableIsPinned() {
-        assertEquals(115, GTOreWorldgen.ROWS.size(), "53 always-on rows (:800-852) + nikolite (:875) + the 61 gem-pool rows (:877-878)");
+        assertEquals(125, GTOreWorldgen.ROWS.size(), "53 always-on rows (:800-852) + nikolite (:875) + the 61 gem-pool rows (:877-878) + the 10 boundary rows (:481-571)");
         Set<String> tSeen = new HashSet<>();
         for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.ROWS) {
             String tUpstream = UPSTREAM_ROWS.get(tRow.name());
@@ -217,7 +232,7 @@ class GTOreWorldgenDatagenTest {
             int tMaxY = Integer.parseInt(tParts[2]);
             int tAmount = Integer.parseInt(tParts[3]);
             String tDims = tParts.length > 4 ? String.join(" ", java.util.Arrays.copyOfRange(tParts, 4, tParts.length)) : "-";
-            assertTrue(tLine >= 800 && tLine <= 878, tRow.name() + " cites the Loader_Worldgen.java row range");
+            assertTrue(tLine >= 481 && tLine <= 878, tRow.name() + " cites the Loader_Worldgen.java row range (the :800-878 small rows + the :481-571 boundary rows)");
             assertEquals(tMinY, tRow.minY(), tRow.name() + " minY (Loader_Worldgen.java:" + tLine + ")");
             assertEquals(tMaxY, tRow.maxY(), tRow.name() + " maxY (Loader_Worldgen.java:" + tLine + ")");
             assertEquals(tAmount, tRow.amount(), tRow.name() + " amount (Loader_Worldgen.java:" + tLine + ")");
@@ -228,12 +243,12 @@ class GTOreWorldgenDatagenTest {
         assertEquals(UPSTREAM_ROWS.size(), tSeen.size(), "every transcription consumed");
     }
 
-    /** The 152 placement pairs = the verbatim GEN-flag walk: 99 overworld + 20 nether + 33 end. */
+    /** The 162 placement pairs = the verbatim GEN-flag walk: 109 overworld + 20 nether + 33 end. */
     @Test
     void placementPairsArePinned() {
         List<GTOreWorldgen.Placement> tPairs = GTOreWorldgen.placementPairs();
-        assertEquals(152, tPairs.size(), "99 OW + 20 NETHER + 33 END (the coordinator-ruled verbatim walk, r7-b pool rows included)");
-        assertEquals(99, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.OVERWORLD).count(), "overworld pairs");
+        assertEquals(162, tPairs.size(), "109 OW + 20 NETHER + 33 END (the coordinator-ruled verbatim walk, r7-b pool + b2 boundary rows included)");
+        assertEquals(109, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.OVERWORLD).count(), "overworld pairs");
         assertEquals(20, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.NETHER).count(), "nether pairs (21 table rows − ancientdebris gate)");
         assertEquals(33, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.END).count(), "end pairs");
         // the gate: the ancientdebris row keeps its NETHER dim in the table but produces no pair
@@ -486,16 +501,16 @@ class GTOreWorldgenDatagenTest {
         // tail -> "line minY maxY amount DIMS" — every band transcribed from its
         // StoneLayer.bothsides/topbottom call in Loader_Worldgen.java:481-571
         Map<String, String> tEdge = Map.of(
-            "amberdominican", "484 30 70 1 OVERWORLD",  // :481-495 bothsides(Coal|Lignite|Oilshale, Stone) x3, BIOMES_SHROOM
-            "perlite"       , "497  0 16 1 OVERWORLD",  // :496-501 bothsides(Komatiite|Gabbro, Basalt) x2
-            "diatomite"     , "508 16 64 1 OVERWORLD",  // :506-509 topbottom(Dolomite, Diorite)
-            "alunite"       , "530 32 80 1 OVERWORLD",  // :529-531 bothsides(Rhyolite, Quartzite)
-            "mirabilite"    , "533 16 64 1 OVERWORLD",  // :532-535 bothsides(Gneiss, Gypsum)
-            "trona"         , "534 16 64 1 OVERWORLD",  // :532-535 bothsides(Gneiss, Gypsum)
-            "vermiculite"   , "548 48 80 1 OVERWORLD",  // :547-550 bothsides(GraniteRed, Gneiss)
-            "mica"          , "552 16 48 1 OVERWORLD",  // :551-554 bothsides(GraniteBlack, Gneiss)
-            "biotite"       , "553 16 48 1 OVERWORLD",  // :551-554 bothsides(GraniteBlack, Gneiss)
-            "pinkdiamond"   , "563  0 32 1 OVERWORLD"); // :561-565 topbottom(GraniteBlack, Basalt), BIOMES_JUNGLE
+            "dominicanamber" , "484 30 70 1 OVERWORLD",  // :481-495 bothsides(Coal|Lignite|Oilshale, Stone) x3, BIOMES_SHROOM
+            "perlite"        , "497 0 16 1 OVERWORLD",   // :496-501 bothsides(Komatiite|Gabbro, Basalt) x2
+            "diatomite"      , "508 16 64 1 OVERWORLD",  // :506-509 topbottom(Dolomite, Diorite)
+            "alunite"        , "530 32 80 1 OVERWORLD",  // :529-531 bothsides(Rhyolite, Quartzite)
+            "mirabilite"     , "533 16 64 1 OVERWORLD",  // :532-535 bothsides(Gneiss, Gypsum)
+            "trona"          , "534 16 64 1 OVERWORLD",  // :532-535 bothsides(Gneiss, Gypsum)
+            "vermiculite"    , "548 48 80 1 OVERWORLD",  // :547-550 bothsides(GraniteRed, Gneiss)
+            "mica"           , "552 16 48 1 OVERWORLD",  // :551-554 bothsides(GraniteBlack, Gneiss)
+            "biotite"        , "553 16 48 1 OVERWORLD",  // :551-554 bothsides(GraniteBlack, Gneiss)
+            "pinkdiamond"    , "563 0 32 1 OVERWORLD");  // :561-565 topbottom(GraniteBlack, Basalt), BIOMES_JUNGLE
         Set<OreDictMaterial> tAxis = new HashSet<>(GT6OreBlocks.materialAxis());
         for (Map.Entry<String, String> tEntry : tEdge.entrySet()) {
             GTOreWorldgen.SmallOreRow tRow = rowOf("ore.small." + tEntry.getKey());

@@ -66,19 +66,22 @@ class GT6OreBlocksRegistrationTest {
     private static final int PINNED_ROWS = 74;
     /**
      * The pinned material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * a-ore-axis-extension and b-gem-pool-extension): the 53 distinct upstream
+     * a-ore-axis-extension, b-gem-pool-extension and worldgen-edge-ores-b2-orphans):
+     * the 53 distinct upstream
      * always-on worldgen small-ore
      * materials (Loader_Worldgen.java:800-852 — 53 rows whose redcinnabar :828 /
      * cinnabar :851 pair shares MT.OREMATS.Cinnabar — plus nikolite :875) UNION the 13
      * stone-layer companion materials (GT6OreBlocks.STONE_LAYER_ORES, the r6-c3 lens
-     * preconditions) UNION the 56 gem-pool gap materials (GT6OreBlocks.GEM_POOL_ORES,
+     * preconditions) UNION the 10 stone-layer EDGE orphans (GT6OreBlocks.EDGE_ORES,
+     * the boundary-blob route B :481-571) UNION the 56 gem-pool gap materials
+     * (GT6OreBlocks.GEM_POOL_ORES,
      * the RANDOM_SMALL_GEM_ORE seam — 61 pool members minus the 5 stone-layer
      * companions), each passing OP.ore.isGeneratingItem. The bare isGeneratingItem
      * walk over the whole MATERIAL_ARRAY measures 618 and was REJECTED in review (nine
      * tenths of it materials no ore placement ever references) — the 45732-block face
      * is gone.
      */
-    private static final int PINNED_M = 144;
+    private static final int PINNED_M = 154;
     /** The pinned total block count (74 x M) — see materialAxisIsPinned. */
     private static final int PINNED_TOTAL = PINNED_ROWS * PINNED_M;
 
@@ -139,7 +142,7 @@ class GT6OreBlocksRegistrationTest {
     void materialAxisIsPinned() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
         assertEquals(PINNED_M, tAxis.size(),
-                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions + the 56 gem-pool materials + the 22 large-vein compensation materials — bump PINNED_M only with an upstream row delta");
+                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions + the 10 boundary-blob EDGE orphans + the 56 gem-pool materials + the 22 large-vein compensation materials — bump PINNED_M only with an upstream row delta");
         // every axis material passes the authoritative oredict filter (OP.java:1098 setCondition(ORES))
         for (OreDictMaterial tMaterial : tAxis) {
             assertTrue(OP.ore.isGeneratingItem(tMaterial), "every axis material passes the OP.ore criterion");
@@ -157,6 +160,10 @@ class GT6OreBlocksRegistrationTest {
             // the 13 stone-layer companions (a-ore-axis-extension, STONE_LAYER_ORES order)
             "Peridot", "Uvarovite", "Grossular", "Chromite", "Spinel", "BalasRuby",
             "Pitchblende", "Uraninite", "Tantalite", "Columbite", "MagnesiumCarbonate", "Stannite", "Kesterite",
+            // the 10 stone-layer EDGE orphans (worldgen-edge-ores-b2-orphans, EDGE_ORES order
+            // = the boundary-call line order :481-571)
+            "DominicanAmber", "Perlite", "Diatomite", "Alunite", "Mirabilite", "Trona",
+            "Vermiculite", "Mica", "Biotite", "PinkDiamond",
             // the 56 gem-pool gap materials (b-gem-pool-extension, GEM_POOL_ORES order —
             // internal names are the oredict strings space/apostrophe-stripped)
             "Sapphire", "Ruby", "BlueSapphire", "GreenSapphire", "PurpleSapphire", "YellowSapphire", "OrangeSapphire",
