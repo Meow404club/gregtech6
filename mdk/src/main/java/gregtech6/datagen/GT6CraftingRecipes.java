@@ -160,6 +160,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation MINI_PORTAL_END_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mini_portal_end");
 	/** The Fluid-O-Meter Sensor crafting row (task sensors-core, Loader :1986). */
 	public static final ResourceLocation FLUIDOMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fluidometer");
+	/** The circuit wiring crafting row (task circuit-chain-recipes, MIT:571) — the result-path convention. */
+	public static final ResourceLocation CIRCUIT_WIRE_COPPER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "circuit_wire_copper");
 	/**
 	 * The ULV FE→EU converter crafting row (task b-fe-converter-machine) — DECLARED
 	 * NEW DESIGN, no upstream recipe exists (the machine itself is the declared deviation):
@@ -321,6 +323,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tBuilder.save(aConsumer, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
+		circuitWireCopperBuilder().save(aConsumer, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
 		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
 		miniPortalEndBuilder().save(aConsumer, MINI_PORTAL_END_ID); // task portals-mini-nether-end
 		fluidometerBuilder().save(aConsumer, FLUIDOMETER_ID);
@@ -580,6 +583,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tBuilder.save(aOutput, hopperRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
+		circuitWireCopperBuilder().save(aOutput, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
 		miniPortalNetherBuilder().save(aOutput, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
 		miniPortalEndBuilder().save(aOutput, MINI_PORTAL_END_ID); // task portals-mini-nether-end
 		fluidometerBuilder().save(aOutput, FLUIDOMETER_ID);
@@ -2861,6 +2865,27 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * tolerated that, the vanilla builder throws ("Ingredients are defined but not used"),
 	 * so those two keys stay out. Result 1x {@code gt6:progressmeter}.
 	 */
+	/**
+	 * The circuit wiring crafting row (task circuit-chain-recipes) — the upstream
+	 * {@code CR.shaped(IL.Circuit_Wire_Copper.get(1), CR.DEF, "WWW", "WxW", "WWW", 'W',
+	 * OP.wireFine.dat(ANY.Cu))} VERBATIM (MultiItemTechnological.java:571): eight fine
+	 * wires in a ring, the empty center (the CR 'x' empty-slot marker ports to the vanilla
+	 * space — the builder rejects undefined symbols). 'W' = {@code OP.wireFine.dat(ANY.Cu)}
+	 * → the {@code #forge:fine_wires/copper} material tag (the Progress Sensor 'W'
+	 * precedent, TagPrefix.java:575) — the tag carries the whole ANY.Cu family (Copper +
+	 * AnnealedCopper), so the single upstream oredict row ports as one tag row. Result
+	 * 1x {@code gt6:circuit_wire_copper} (the GT6CircuitChain carrier, meta 30001).
+	 */
+	private ShapedRecipeBuilder circuitWireCopperBuilder() {
+		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.Copper);
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6CircuitChain.ITEMS_BY_PATH.get("circuit_wire_copper").get())
+				.pattern("WWW")
+				.pattern("W W")
+				.pattern("WWW")
+				.define('W', tFineWires)
+				.unlockedBy("has_fine_wire", has(tFineWires));
+	}
+
 	private ShapedRecipeBuilder progressmeterBuilder() {
 		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.TinAlloy);
 		TagKey<Item> tFineWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.RedAlloy);
