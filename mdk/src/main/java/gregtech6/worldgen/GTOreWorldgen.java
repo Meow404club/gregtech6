@@ -540,23 +540,50 @@ public final class GTOreWorldgen {
     public static final List<ResourceKey<PlacedFeature>> DEEP_PLACED_KEYS =
             deepMirrorRows().stream().map(GTOreWorldgen::deepPlacedKey).toList();
 
-    // ---------------------------------------------------------------- twilight RockOres band (task twilight-adaptation-pilot)
+    // ---------------------------------------------------------------- twilight band (tasks twilight-adaptation-pilot + twilight-vanilla-ores-deadrock)
 
     /**
-     * One upstream twilight {@code WorldgenOresVanilla} row (Loader_Worldgen.java:666-673,
-     * the {@code BlocksGT.RockOres} block): the identifying triple only — all eight rows
-     * share the {@link WorldgenBlob} columns amount=1/size=50/probability=100/Y16-32 (the
-     * ctor bind, WorldgenBlob.java:53-57), pinned as the band constants below. The meta is
-     * the RockOres block meta; the material mapping is BlockRockOres.ORE_MATERIALS
-     * (BlockRockOres.java:36) — Coal/Lignite/NaCl/KCl/OREMATS.Bauxite/Oilshale/Gypsum/
-     * MilkyQuartz for metas 0-7.
+     * One upstream twilight {@code WorldgenOresVanilla} row (Loader_Worldgen.java:666-692
+     * + :712, ctor order name/block/meta/amount/size/probability/minY/maxY/replaceBlock/
+     * replaceMeta/biomeList): the identifying columns plus the verbatim WorldgenBlob binds
+     * (WorldgenBlob.java:53-57) and the two translation carriers —
+     * <ul>
+     * <li>{@code biomes}: the upstream {@code BIOMES_*} group marker ({@code "swamp"} =
+     * BIOMES_SWAMP CS.java:263, {@code "lake"} = BIOMES_LAKE :250, {@code "mountains"} =
+     * BIOMES_MOUNTAINS :281), null = no group. DATA ONLY this card — modern TF ships no
+     * per-group biome tag (harvest twilightforest-120x: the generated tags are
+     * in_twilight_forest + the valid_* structure tags only), so every row mounts TF-wide
+     * off the ONE twilight_ores modifier; the per-group split is a future card's tag
+     * work (the deadrock tag-indirection precedent applies).</li>
+     * <li>{@code hostTag}: null = the {@code replaceBlock==null} face (WorldgenOresVanilla
+     * .java:53 — target resolves to the vanilla stone default, state = the GT ore-stone
+     * NORMAL form); non-null = the {@code gt6:} block-TAG path suffix hosting the row
+     * (the other-mod-block-ids-forbidden-in-JSON red line — the tag indirection keeps the
+     * foreign id in OUR tag file, {@code required:false}), and the state is the row's
+     * standalone block (the netherite ancient-debris face).</li>
+     * </ul>
+     * The meta is the upstream block meta; material mappings are
+     * BlockRockOres.ORE_MATERIALS (BlockRockOres.java:36) for the RockOres band and
+     * BlockVanillaOresA.ORE_MATERIALS (BlockVanillaOresA.java:48) for the VanillaOresA
+     * band.
      */
-    public record TwilightOreRow(String name, int meta, java.util.function.Supplier<OreDictMaterial> material) {
+    public record TwilightOreRow(String name, int meta, java.util.function.Supplier<OreDictMaterial> material,
+            int amount, int size, int probability, int minY, int maxY, String biomes, String hostTag) {
 
         /** The upstream config name's tail = the feature-key segment (the small-ore band rule). */
         public String tail() {
             return name.substring(name.lastIndexOf('.') + 1);
         }
+    }
+
+    /** The shared WorldgenOresVanilla columns of the RockOres band (WorldgenBlob.java:53-57 config binds, all 8 rows identical). */
+    public static final int TWILIGHT_ORE_AMOUNT = 1, TWILIGHT_ORE_SIZE = 50,
+            TWILIGHT_ORE_PROBABILITY = 100, TWILIGHT_ORE_MIN_Y = 16, TWILIGHT_ORE_MAX_Y = 32;
+
+    /** The RockOres-band row filler: the shared band constants as the per-row columns. */
+    private static TwilightOreRow rockOre(String aName, int aMeta, java.util.function.Supplier<OreDictMaterial> aMaterial) {
+        return new TwilightOreRow(aName, aMeta, aMaterial, TWILIGHT_ORE_AMOUNT, TWILIGHT_ORE_SIZE,
+                TWILIGHT_ORE_PROBABILITY, TWILIGHT_ORE_MIN_Y, TWILIGHT_ORE_MAX_Y, null, null);
     }
 
     /**
@@ -566,18 +593,56 @@ public final class GTOreWorldgen {
      * lights up then, the JSON never changes).
      */
     public static final List<TwilightOreRow> TWILIGHT_ORE_ROWS = List.of(
-        new TwilightOreRow("twilight.ore.anthracite" , 0, () -> MT.Coal               ),  // :666
-        new TwilightOreRow("twilight.ore.lignite"    , 1, () -> MT.Lignite            ),  // :667
-        new TwilightOreRow("twilight.ore.salt"       , 2, () -> MT.NaCl               ),  // :668
-        new TwilightOreRow("twilight.ore.rocksalt"   , 3, () -> MT.KCl                ),  // :669
-        new TwilightOreRow("twilight.ore.bauxite"    , 4, () -> MT.OREMATS.Bauxite    ),  // :670
-        new TwilightOreRow("twilight.ore.oilshale"   , 5, () -> MT.Oilshale           ),  // :671
-        new TwilightOreRow("twilight.ore.gypsum"     , 6, () -> MT.Gypsum             ),  // :672
-        new TwilightOreRow("twilight.ore.milkyquartz", 7, () -> MT.MilkyQuartz        )); // :673
+        rockOre("twilight.ore.anthracite" , 0, () -> MT.Coal               ),  // :666
+        rockOre("twilight.ore.lignite"    , 1, () -> MT.Lignite            ),  // :667
+        rockOre("twilight.ore.salt"       , 2, () -> MT.NaCl               ),  // :668
+        rockOre("twilight.ore.rocksalt"   , 3, () -> MT.KCl                ),  // :669
+        rockOre("twilight.ore.bauxite"    , 4, () -> MT.OREMATS.Bauxite    ),  // :670
+        rockOre("twilight.ore.oilshale"   , 5, () -> MT.Oilshale           ),  // :671
+        rockOre("twilight.ore.gypsum"     , 6, () -> MT.Gypsum             ),  // :672
+        rockOre("twilight.ore.milkyquartz", 7, () -> MT.MilkyQuartz        )); // :673
 
-    /** The shared WorldgenOresVanilla columns (WorldgenBlob.java:53-57 config binds, all 8 rows identical). */
-    public static final int TWILIGHT_ORE_AMOUNT = 1, TWILIGHT_ORE_SIZE = 50,
-            TWILIGHT_ORE_PROBABILITY = 100, TWILIGHT_ORE_MIN_Y = 16, TWILIGHT_ORE_MAX_Y = 32;
+    /**
+     * The 16 VanillaOresA rows, Loader_Worldgen.java:677-692 order, every column verbatim
+     * (the meta mapping = BlockVanillaOresA.ORE_MATERIALS, BlockVanillaOresA.java:48 —
+     * NOTE meta 11 "Rutile Ore" is MT.TiO2, the display/material mismatch kin of the
+     * KCl-sylvite pair). Same axis gate as the RockOres band: on-axis rows emit, off-axis
+     * rows stay table data.
+     */
+    public static final List<TwilightOreRow> TWILIGHT_ORE_ROWS_A = List.of(
+        new TwilightOreRow("twilight.ore.sulfur"       ,  0, () -> MT.S                      , 1, 16,  1,  0,  8, null      , null),  // :677
+        new TwilightOreRow("twilight.ore.apatite"      ,  1, () -> MT.Apatite                , 1, 16,  2, 24, 32, null      , null),  // :678
+        new TwilightOreRow("twilight.ore.ruby"         ,  2, () -> MT.Ruby                   , 1, 12,  1, 40, 52, null      , null),  // :679
+        new TwilightOreRow("twilight.ore.amber"        ,  3, () -> MT.Amber                  , 1, 12,  1, 40, 52, null      , null),  // :680
+        new TwilightOreRow("twilight.ore.amethyst"     ,  4, () -> MT.Amethyst               , 1, 12,  1, 40, 52, null      , null),  // :681
+        new TwilightOreRow("twilight.ore.galena"       ,  5, () -> MT.OREMATS.Galena         , 1, 24,  4,  8, 32, null      , null),  // :682
+        new TwilightOreRow("twilight.ore.tetrahedrite" ,  6, () -> MT.OREMATS.Tetrahedrite   , 1, 24,  4,  8, 32, null      , null),  // :683
+        new TwilightOreRow("twilight.ore.cassiterite"  ,  7, () -> MT.OREMATS.Cassiterite    , 1, 24,  4,  8, 32, null      , null),  // :684
+        new TwilightOreRow("twilight.ore.cooperite"    ,  8, () -> MT.OREMATS.Cooperite      , 1,  6,  1, 40, 52, null      , null),  // :685
+        new TwilightOreRow("twilight.ore.pentlandite"  ,  9, () -> MT.OREMATS.Pentlandite    , 1, 16,  4,  8, 24, null      , null),  // :686
+        new TwilightOreRow("twilight.ore.scheelite"    , 10, () -> MT.OREMATS.Scheelite      , 1, 12,  4,  8, 24, null      , null),  // :687
+        new TwilightOreRow("twilight.ore.rutile"       , 11, () -> MT.TiO2                   , 1,  6,  1,  8, 24, null      , null),  // :688
+        new TwilightOreRow("twilight.ore.bastnasite"   , 12, () -> MT.OREMATS.Bastnasite     , 1, 16,  1, 40, 52, null      , null),  // :689
+        new TwilightOreRow("twilight.ore.graphite"     , 13, () -> MT.Graphite               , 1,  6,  2,  0,  8, null      , null),  // :690
+        new TwilightOreRow("twilight.ore.pitchblende"  , 14, () -> MT.OREMATS.Pitchblende    , 1, 16,  1,  8, 16, "swamp"   , null),  // :691 BIOMES_SWAMP
+        new TwilightOreRow("twilight.ore.borax"        , 15, () -> MT.OREMATS.Borax          , 2,  6,  1,  0, 16, "lake"    , null)); // :692 BIOMES_LAKE
+
+    /**
+     * The one netherite row, Loader_Worldgen.java:712 verbatim (amount=8/size=8/
+     * probability=1/Y8-80, biome group MOUNTAINS): the placed block is the standalone
+     * ancient debris (vanilla {@code minecraft:ancient_debris} — the upstream
+     * {@code IL.Ancient_Debris} carrier, and 1.20.1 ships it), the host is the TF
+     * deadrock meta2 — the meta mapping is GT6's own LoaderItemList.java:979-981 binds
+     * (meta 0 weathered / meta 1 cracked / meta 2 plain {@code IL.TF_Deadrock}), and the
+     * modern TF counterpart of meta 2 is {@code twilightforest:deadrock} (TFBlocks.java
+     * :163-165 deadrock/cracked_deadrock/weathered_deadrock; TFSurfaceRules.java:66-71
+     * puts weathered on the floor, cracked under it, plain deadrock the filler mass —
+     * the 1:1 meta correspondence). The foreign id lives ONLY in the
+     * {@link #twilightDeadrockTag} tag file ({@code required:false}), never in the
+     * feature JSON.
+     */
+    public static final TwilightOreRow TWILIGHT_NETHERITE_ROW =
+        new TwilightOreRow("twilight.ore.netherite", 0, () -> MT.AncientDebris, 8, 8, 1, 8, 80, "mountains", "tf_deadrock");  // :712
 
     /** The Twilight Forest modid — the conditions trigger AND the biome-tag namespace ({@link #twilightBiomeTag}). */
     public static final String TWILIGHT_MODID = "twilightforest";
@@ -597,10 +662,32 @@ public final class GTOreWorldgen {
     }
 
     /**
+     * The tag-host face of a row ({@code hostTag != null}): the {@code gt6:<hostTag>}
+     * BLOCK tag as the feature's target filter — the deadrock red-line indirection (a
+     * foreign block id may never appear in a configured_feature JSON; the OUR-tag file
+     * carries it with {@code required:false}, TF absent = empty tag = the feature targets
+     * nothing). The tag file itself is emitted by GT6BlockTags.
+     */
+    public static TagKey<net.minecraft.world.level.block.Block> twilightHostTag(TwilightOreRow aRow) {
+        return TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath("gt6", aRow.hostTag()));
+    }
+
+    /** The deadrock tag path ({@code gt6:tf_deadrock}) — the tag-file census key AND the GT6BlockTags band's tag. */
+    public static TagKey<net.minecraft.world.level.block.Block> twilightDeadrockTag() {
+        return TagKey.create(Registries.BLOCK,
+                ResourceLocation.fromNamespaceAndPath("gt6", "tf_deadrock"));
+    }
+
+    /**
      * The axis gate (the GTVeinConfig validity face over a row): the row emits JSON only
      * when its resolved material has registrable ore blocks — an identity scan over
      * {@link GT6OreBlocks#materialAxis()} (the same canonical instances the resolve walk
-     * produces; OreDictMaterial has no equals override, identity IS the comparison).
+     * produces; OreDictMaterial has no equals override, identity IS the comparison). The
+     * netherite row rides the gate too — its axis slot is the :852 always-on small-ore
+     * row (the emission precondition is belt-and-braces there: the placed state is the
+     * vanilla ancient-debris block, not a GT ore face, and vanilla 1.20.1 always ships
+     * it, the upstream {@code IL.Ancient_Debris.exists()} gate statically true).
      */
     public static boolean twilightOnAxis(TwilightOreRow aRow) {
         OreDictMaterial tMaterial = aRow.material().get();
@@ -613,12 +700,20 @@ public final class GTOreWorldgen {
         return false;
     }
 
-    /** The axis-valid rows in table order — the 3-row emission set (Coal/NaCl/KCl today). */
+    /**
+     * The axis-valid rows in band order — RockOres table, then the VanillaOresA table,
+     * then the netherite row (the emission set hanging off the ONE twilight_ores
+     * modifier: 3 + 12 + 1 = 16 today).
+     */
     public static List<TwilightOreRow> twilightOnAxisRows() {
-        List<TwilightOreRow> rRows = new ArrayList<>(3);
+        List<TwilightOreRow> rRows = new ArrayList<>(16);
         for (TwilightOreRow tRow : TWILIGHT_ORE_ROWS) {
             if (twilightOnAxis(tRow)) rRows.add(tRow);
         }
+        for (TwilightOreRow tRow : TWILIGHT_ORE_ROWS_A) {
+            if (twilightOnAxis(tRow)) rRows.add(tRow);
+        }
+        if (twilightOnAxis(TWILIGHT_NETHERITE_ROW)) rRows.add(TWILIGHT_NETHERITE_ROW);
         return rRows;
     }
 
