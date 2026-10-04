@@ -13186,3 +13186,51 @@ art (141 B, no mcmeta) that is NOT borrowed (no port set folder — the
 byte-different rough/ art). Pixel-level spot check (acceptance 5): metallic,
 glass and rad decoded RGBA pixel-identical to the upstream files (2026-10-03).
 The census pin: `GT6MoltenBorrowCensusTest` (sha256 over the committed tree).
+
+
+
+## Indicator-flower block textures (task flower-blocks-indicator-family)
+
+18 upstream block-texture borrows from
+`src/main/resources/assets/gregtech/textures/blocks/iconsets/` (GregTech 6,
+snapshot `v6.17.06-22-g3703e4030`) onto `gt6/textures/block/`, renamed to the
+block ids at borrow time (the fallen-log rename precedent). Byte-identical
+borrows, `cmp`-verified; the BlockFlowersA/B meta rows ride the iconset the
+upstream Textures.java:440/:458 FLOWERS_A/FLOWERS_B arrays point at:
+
+- `flower_altered_andesite_buckwheat.png` — upstream `FLOWER_ALTERED_ANDESITE_BUCKWHEAT.png`
+  (meta 0); sha256 `f6838b215d151b1f58333a342850e217529c85df9973be2be8d39f24cede1cb4`
+- `flower_crosby_buckwheat.png` — upstream `FLOWER_CROSBY_BUCKWHEAT.png` (meta 1);
+  sha256 `20a6205ada96dea5334bf4fd27a6aa57949fe6a5cc7f07f063a3f669bd83debe`
+- `flower_alpine_catchfly.png` — upstream `FLOWER_ALPINE_CATCHFLY.png` (meta 2);
+  sha256 `806cd84df4c0ed7988de35f90a8156335d7971d71e3c95d9e5d5369263f6ad96`
+- `flower_viola_calaminaria.png` — upstream `FLOWER_VIOLA_CALAMINARIA.png` (meta 3);
+  sha256 `d69ceced11ebbb2192002957b1eb6d253b078632fd9c03c109e303c2f6248ea3`
+- `flower_thlaspi_lereschianum.png` — upstream `FLOWER_THLASPI_LERESCHIANUM.png` (meta 4);
+  sha256 `84e2f1af29fa55d67740965d62d9a4ddc457f29909dea61bf3bc6ad9d78fbf70`
+- `flower_tufted_evening_primrose.png` — upstream `FLOWER_TUFTED_EVENING_PRIMROSE.png` (meta 5);
+  sha256 `5e6cf536bc03add36d9bd934b35ca78bb2ff5dcd9a785c80fdaada90ee737175`
+- `flower_narcissus_sheldonia.png` — upstream `FLOWER_NARCISSUS_SHELDONIA.png` (meta 6);
+  sha256 `6114c438921b7aeedce4934e8766ace8685a7a3cd1ecb74c7ff27302c53eef06`
+- `flower_orechid.png` — upstream `FLOWER_ORECHID.png` (meta 7); sha256
+  `9eaeb3b654f27880e906c282910c065e4bc1ad263aa9df4d11876f014b6cf33b`
+- `flower_hexalily.png` — upstream `FLOWER_HEXALILY.png` (meta 8); sha256
+  `5d38646292bcd474315c07652bd2aa041217bbc4f38dc0d4a7428232ced528fa`
+- `flower_vindicator_flower.png` — upstream `FLOWER_VINDICATOR_FLOWER.png` (meta 9); sha256
+  `7b14320497e66c330107c93677e63e8060b1faefaeb7cb3f86b7c20281cf6432`
+- `flower_sagebrush.png` — upstream `FLOWER_SAGEBRUSH.png` (meta 0); sha256
+  `ddf8b7b7ca01938f2de3bc751567478d12663387ea31748912bf207fe1d7352b`
+- `flower_four_wing_saltbush.png` — upstream `FLOWER_FOUR_WING_SALTBUSH.png` (meta 1); sha256
+  `bffe163e62cda0b21a47d8662aeb36d917e6536f0a22168ced053286f28050ad`
+- `flower_desert_trumpet.png` — upstream `FLOWER_DESERT_TRUMPET.png` (meta 2); sha256
+  `8a7cd869da3fc1e852aa0a63ed00492c1008d189c394de9326f0b7965ff9e4fb`
+- `flower_copper_plant.png` — upstream `FLOWER_COPPER_PLANT.png` (meta 3); sha256
+  `93567e747659b7dc2a26995fc3343483e62153ea5331c89a914ef6706179c4a3`
+- `flower_princes_plume.png` — upstream `FLOWER_PRINCE_S_PLUME.png` (meta 4); sha256
+  `31d80262c4a37f5612f37cb88fe0cb256fea974ced4476a825f6a89ba9b04e7f`
+- `flower_thompsons_locoweed.png` — upstream `FLOWER_THOMPSONS_LOCOWEED.png` (meta 5); sha256
+  `80e4d10ba3effba3e749a3c787466ebeda7e9dc946a0863fb18a39f7fc82fe6b`
+- `flower_pandanus_candelabrum.png` — upstream `FLOWER_PANDANUS_CANDELABRUM.png` (meta 6); sha256
+  `c65887975f278302b72d31609c86b28cfc582c463031a366c64cb35b98f2745c`
+- `flower_tungstus.png` — upstream `FLOWER_TUNGSTUS.png` (meta 7); sha256
+  `ba6e2a58b780fe1225cd3acbf00e31a9edf50fc19e54b69e724c0f2e9512d725`

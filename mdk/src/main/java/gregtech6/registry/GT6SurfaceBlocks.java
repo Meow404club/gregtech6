@@ -8,6 +8,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FlowerPotBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -23,6 +24,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.data.MT;
 import gregtech6.block.surface.GT6BlackSandBlock;
+import gregtech6.block.surface.GT6FlowerBlock;
 import gregtech6.block.surface.GT6GlowtusBlock;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.surface.GT6SurfaceRockBlock;
@@ -169,7 +171,110 @@ public final class GT6SurfaceBlocks {
 		return SURFACE_ROCK_STONE.get();
 	}
 
-	/** All surface deco blocks, registration order — the census/exemption walk unit (GT6LangParityTest, Jade name face). */
+	// ------------------------------------------------------------------
+	// The indicator-flower band (task flower-blocks-indicator-family)
+	// — tail-append. The upstream two-meta deco blocks (gt.block.flower.a
+	// = BlockFlowersA 10 metas / gt.block.flower.b = BlockFlowersB 8 metas,
+	// Loader_Blocks.java:120-121) land as 18 INDEPENDENT blocks (the
+	// INDICATOR_ROCKS spec-list precedent), one shared GT6FlowerBlock class
+	// over the BlockBaseFlower semantics, each with its BlockItem (the
+	// obtainable plant-band face). The 18 vanilla potted companions ride
+	// the same register (the Blocks.flowerPot pairing — no items, the
+	// vanilla potted parity).
+	// ------------------------------------------------------------------
+
+	/**
+	 * One indicator-flower row: the literal id snake, the sand-soil flag (the
+	 * BlockFlowersB.java:136-138 canBlockStay override vs the base :131 dirt face), and
+	 * the tooltip faces (the upstream hardcoded addInformation rows, BlockFlowersA
+	 * .java:62-81 + BlockFlowersB.java:65-84 — the indicator line + the "* exists in Real
+	 * Life" flag).
+	 */
+	public record FlowerSpec(String snake, boolean sandSoil, String indicator, boolean realLife) {}
+
+	/**
+	 * The 18 rows, upstream order: BlockFlowersA metas 0-9 then BlockFlowersB metas 0-7
+	 * (Loader_Blocks.java:120-121 registration order). Names live in the lang providers
+	 * (the upstream LH.add rows verbatim), textures at {@code gt6:block/<snake>.png} (the
+	 * upstream iconsets byte-borrows, assets/README.md rows this card).
+	 */
+	public static final List<FlowerSpec> FLOWER_SPECS = List.of(
+			// BlockFlowersA metas 0-9 (BlockFlowersA.java:41-50)
+			new FlowerSpec("flower_altered_andesite_buckwheat", false, "Indicates presence of a Gold Deposit nearby", true),
+			new FlowerSpec("flower_crosby_buckwheat", false, "Indicates presence of a Silver Deposit nearby", true),
+			new FlowerSpec("flower_alpine_catchfly", false, "Indicates presence of a Copper Deposit nearby", true),
+			new FlowerSpec("flower_viola_calaminaria", false, "Indicates presence of a Zinc Deposit nearby", true),
+			new FlowerSpec("flower_thlaspi_lereschianum", false, "Indicates presence of a Nickel Deposit nearby", true),
+			new FlowerSpec("flower_tufted_evening_primrose", false, "Indicates presence of an Uranium Deposit nearby", true),
+			new FlowerSpec("flower_narcissus_sheldonia", false, "Indicates presence of a Platinum Deposit nearby", false),
+			new FlowerSpec("flower_orechid", false, "Indicates presence of an Ore Deposit nearby", false),
+			new FlowerSpec("flower_hexalily", false, "Indicates presence of a Hexorium Deposit nearby", false),
+			new FlowerSpec("flower_vindicator_flower", false, "Vindicates presence of a Rare Earth Deposit nearby", false),
+			// BlockFlowersB metas 0-7 (BlockFlowersB.java:45-52) — the sand soil family
+			new FlowerSpec("flower_sagebrush", true, "Indicates presence of an Arsenic Deposit nearby", true),
+			new FlowerSpec("flower_four_wing_saltbush", true, "Indicates presence of an Antimony Deposit nearby", true),
+			new FlowerSpec("flower_desert_trumpet", true, "Indicates presence of a Gold Deposit nearby", true),
+			new FlowerSpec("flower_copper_plant", true, "Indicates presence of a Copper Deposit nearby", true),
+			new FlowerSpec("flower_princes_plume", true, "Indicates presence of a Redstone Deposit nearby", true),
+			new FlowerSpec("flower_thompsons_locoweed", true, "Indicates presence of an Uranium Deposit nearby", true),
+			new FlowerSpec("flower_pandanus_candelabrum", true, "Indicates presence of a Diamond Deposit nearby", true),
+			new FlowerSpec("flower_tungstus", true, "Indicates presence of a Tungsten Deposit nearby", false));
+
+	/** The 18 indicator-flower blocks, FLOWER_SPECS order. */
+	public static final List<RegistryObject<Block>> FLOWERS = FLOWER_SPECS.stream()
+			.map(tRow -> BLOCKS.<Block>register(tRow.snake(),
+					() -> new GT6FlowerBlock(flowerProperties(), tRow.sandSoil())))
+			.toList();
+
+	/**
+	 * The 18 vanilla potted companions (the upstream TileEntityFlowerPot intercept
+	 * BlockBaseFlower.java:152-160, translated to the platform pairing): the blessed
+	 * {@code FlowerPotBlock(Supplier emptyPot, Supplier content, Properties)} ctor plus the
+	 * explicit {@code addPlant} row on the vanilla empty pot (both legs — Forge
+	 * FlowerPotBlock.java.patch / NeoForge FlowerPotBlock.java.patch, the deprecated
+	 * {@code (Block, Properties)} ctor is exactly this dance). The vanilla pot properties
+	 * (Blocks.java:7363 {@code instabreak().noOcclusion().pushReaction(DESTROY)}); NO
+	 * BlockItem — the vanilla potted parity (potted blocks are pot-fill reachable only).
+	 */
+	public static final List<RegistryObject<Block>> POTTED_FLOWERS = registerPottedFlowers();
+
+	private static List<RegistryObject<Block>> registerPottedFlowers() {
+		List<RegistryObject<Block>> rList = new ArrayList<>(FLOWER_SPECS.size());
+		for (int i = 0; i < FLOWER_SPECS.size(); i++) {
+			final int tI = i;
+			rList.add(BLOCKS.<Block>register("potted_" + FLOWER_SPECS.get(i).snake(), () -> {
+				FlowerPotBlock tPotBlock = new FlowerPotBlock(
+						() -> (FlowerPotBlock)net.minecraft.world.level.block.Blocks.FLOWER_POT,
+						() -> FLOWERS.get(tI).get(),
+						BlockBehaviour.Properties.of().instabreak().noOcclusion()
+								.pushReaction(PushReaction.DESTROY));
+				((FlowerPotBlock)net.minecraft.world.level.block.Blocks.FLOWER_POT).addPlant(
+						FLOWERS.get(tI).getId(), () -> tPotBlock);
+				return tPotBlock;
+			}));
+		}
+		return List.copyOf(rList);
+	}
+
+	/** The vanilla flower row (Blocks.java:986-992 dandelion properties — mapColor PLANT /
+	 * noCollission / instabreak / GRASS / offset XZ / DESTROY — the upstream hardness 0
+	 * BlockBaseFlower.java:86-88 and the grass step sound map onto the vanilla pair). */
+	private static BlockBehaviour.Properties flowerProperties() {
+		return BlockBehaviour.Properties.of()
+				.mapColor(MapColor.PLANT)
+				.noCollission()
+				.instabreak()
+				.sound(SoundType.GRASS)
+				.offsetType(BlockBehaviour.OffsetType.XZ)
+				.pushReaction(PushReaction.DESTROY);
+	}
+
+	/** All ROCK-FAMILY surface deco blocks, registration order — the census/exemption
+	 * walk unit (GT6LangParityTest, Jade name face) + the three rock consumers (the
+	 * surface-rock tint listener, the addSurfaceBand FACING walk, the collected-rock
+	 * loot). The 18 indicator flowers (task flower-blocks-indicator-family) stay OUT —
+	 * they are not tinted rocks; their faces ride the FLOWERS/POTTED_FLOWERS lists and
+	 * the DeferredRegister census walk covers them. */
 	public static final List<RegistryObject<Block>> ALL;
 
 	static {
@@ -240,6 +345,20 @@ public final class GT6SurfaceBlocks {
 	/** The four fallen-log block items, registration order (the building-tab walk, the t1 log row). */
 	public static final List<RegistryObject<Item>> LOG_TAB_ITEMS = PLANT_ITEMS.subList(PLANT_BAND.size(), PLANT_ITEMS.size());
 
+	/** The 18 block items, FLOWER_SPECS order (the natural-tab walk + the tooltip carrier). */
+	public static final List<RegistryObject<Item>> FLOWER_ITEMS = registerFlowerItems();
+
+	private static List<RegistryObject<Item>> registerFlowerItems() {
+		List<RegistryObject<Item>> rList = new ArrayList<>(FLOWER_SPECS.size());
+		for (int i = 0; i < FLOWER_SPECS.size(); i++) {
+			final FlowerSpec tRow = FLOWER_SPECS.get(i);
+			final RegistryObject<Block> tBlock = FLOWERS.get(i);
+			rList.add(ITEMS.register(tRow.snake(), () -> new GT6FlowerBlock.Item(
+					tBlock.get(), new Item.Properties(), tRow.indicator(), tRow.realLife())));
+		}
+		return List.copyOf(rList);
+	}
+
 	/** The shared behaviour properties (MultiTileEntityRock.java:238/:248/:249/:250 verbatim). */
 	private static BlockBehaviour.Properties surfaceProperties(MapColor aColor, SoundType aSound) {
 		return BlockBehaviour.Properties.of()
@@ -289,6 +408,12 @@ public final class GT6SurfaceBlocks {
 			}
 		} else if (aEvent.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
 			for (RegistryObject<Item> tItem : PLANT_TAB_ITEMS) {
+				aEvent.accept(new net.minecraft.world.item.ItemStack(tItem.get()));
+			}
+			// the 18 indicator flowers (task flower-blocks-indicator-family) — the vanilla
+			// flower row face (upstream CreativeTabs.tabDecorations, the port plant-band
+			// pooling)
+			for (RegistryObject<Item> tItem : FLOWER_ITEMS) {
 				aEvent.accept(new net.minecraft.world.item.ItemStack(tItem.get()));
 			}
 		}
