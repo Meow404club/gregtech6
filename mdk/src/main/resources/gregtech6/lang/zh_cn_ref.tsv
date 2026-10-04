@@ -624,6 +624,8 @@ direct	fluid.gt6.germanium_molten	熔融锗	hand
 direct	fluid.gt6.glass	熔融玻璃	hand
 direct	fluid.gt6.glenmckenner	格伦·麦肯纳苏格兰威士忌, 格雷窖藏35年陈酿	hand
 direct	fluid.gt6.glue	胶水	hand
+direct	fluid.gt6.glycerol	丙三醇	hand
+direct	fluid.gt6.glyceryl	硝化甘油	hand
 direct	fluid.gt6.goldencarrotjuice	金胡萝卜汁	hand
 direct	fluid.gt6.gooseberryjuice	鹅莓汁	hand
 direct	fluid.gt6.gooseberrysmoothie	鹅莓冰沙	hand
@@ -637,6 +639,7 @@ direct	fluid.gt6.grc_honey	蜂蜜 (生长工艺)	hand
 direct	fluid.gt6.grcmilk_cream	生奶油(生长工艺)	hand
 direct	fluid.gt6.grcmilk_milk	牛奶	hand
 direct	fluid.gt6.greenvitriol	硫酸亚铁	hand
+direct	fluid.gt6.heavyoil	重质原油	hand
 direct	fluid.gt6.heavywater	重水	hand
 direct	fluid.gt6.helium	氦	hand
 direct	fluid.gt6.helium3	氦-3	hand
@@ -651,6 +654,7 @@ direct	fluid.gt6.honeydew	蜜露	hand
 direct	fluid.gt6.hopsmash	啤酒花浆	hand
 direct	fluid.gt6.hot_water	热水	hand
 direct	fluid.gt6.hotcarbondioxide	热二氧化碳	hand
+direct	fluid.gt6.hotcrude	热原油	hand
 direct	fluid.gt6.hotfryingoil	热食用油	hand
 direct	fluid.gt6.hotheavywater	热重水	hand
 direct	fluid.gt6.hothelium	热氦	hand
@@ -704,6 +708,7 @@ direct	fluid.gt6.latex	胶乳	hand
 direct	fluid.gt6.lemonade	柠檬水	hand
 direct	fluid.gt6.lemonsmoothie	柠檬冰沙	hand
 direct	fluid.gt6.leninade	列宁柠檬水	hand
+direct	fluid.gt6.lightoil	轻质原油	hand
 direct	fluid.gt6.limesmoothie	酸橙冰沙	hand
 direct	fluid.gt6.limoncello	柠檬切罗利口酒	hand
 direct	fluid.gt6.linoil	亚麻籽油	hand
@@ -1215,11 +1220,11 @@ direct	gt6.jei.recipe_map.coagulator	凝结器	hand
 direct	gt6.jei.recipe_map.cokeoven	焦炉	hand
 direct	gt6.jei.recipe_map.compressor	压缩机	hand
 direct	gt6.jei.recipe_map.cooker	烹饪炉	hand
+direct	gt6.jei.recipe_map.cruciblealloying	坩埚合金	hand
+direct	gt6.jei.recipe_map.cruciblesmelting	坩埚熔炼	hand
 direct	gt6.jei.recipe_map.crusher	破碎机	hand
 direct	gt6.jei.recipe_map.cryodistillationtower	低温蒸馏塔	hand
 direct	gt6.jei.recipe_map.cryomixer	低温搅拌机	hand
-direct	gt6.jei.recipe_map.cruciblealloying	坩埚合金	hand
-direct	gt6.jei.recipe_map.cruciblesmelting	坩埚熔炼	hand
 direct	gt6.jei.recipe_map.crystallisationcrucible	结晶器	hand
 direct	gt6.jei.recipe_map.cutter	切割机	hand
 direct	gt6.jei.recipe_map.distillationtower	蒸馏塔	hand

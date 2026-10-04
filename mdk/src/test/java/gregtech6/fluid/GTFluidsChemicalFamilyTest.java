@@ -62,14 +62,16 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 				"aluminiumfluoride_molten", "cryolite_molten",
 				"bluevitriol", "redvitriol", "pinkvitriol", "cyanvitriol", "whitevitriol",
 				"grayvitriol", "greenvitriol", "martianvitriol", "vitriolofclay",
-				"chloroauricacid", "chloroplatinicacid", "stannicchloride");
+				"chloroauricacid", "chloroplatinicacid", "stannicchloride",
+				// task chem-fluid-registration — the b1/b2 recorded-gap batch, in table order
+				"glycerol", "glyceryl", "lightoil", "hotcrude", "heavyoil");
 
 
 	@Test
 	public void tableCarriesTheChemicalRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.CHEMICAL_SPECS.stream().map(GTFluids.ChemicalFluidSpec::name).toList());
-		assertEquals(80, GTFluids.CHEMICAL_SPECS.size());
-		assertEquals(80, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
+		assertEquals(85, GTFluids.CHEMICAL_SPECS.size());
+		assertEquals(85, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
 	}
 
 	/** Acceptance ①: the per-fluid declared census, one block per sub-family. */
@@ -444,8 +446,9 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 		assertNull(GTFluids.chemicalSpec("rc heavy water"), "Heavy_Reiker: the RC-compat alias the upstream Chem:467 exists() gate hides — faithful absence (the b2a Reikygen ruling)");
 		assertNull(GTFluids.simpleLiquidSpec("rc heavy water"), "no simple-liquid face either");
 		assertNull(GTFluids.chemicalSpec("blackvitriol"), "BlackVitriol: zero B2 loader consumers — stays pooled (the YAGNI ruling)");
-		// and the batch is 32 strong on the table (the census split above pins the legs)
-		assertEquals(32, IDS.size() - 48, "the batch census: 9 gases + 21 liquids + 2 moltens");
+		// and the batch is 32 strong on the table (the census split above pins the legs;
+		// rows 49-80 = the unlock slice before the chem-fluid-registration tail)
+		assertEquals(32, IDS.subList(48, 80).size(), "the batch census: 9 gases + 21 liquids + 2 moltens");
 	}
 
 	/**
@@ -473,6 +476,85 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 		}
 		assertEquals("cryolite_molten", GTFluids.specOf(MT.Na3AlF6, true).name());
 		assertEquals("aluminiumfluoride_molten", GTFluids.specOf(MT.AlF3, true).name());
+	}
+
+	/**
+	 * Task chem-fluid-registration — the recorded-gap batch (5 rows): the two
+	 * LIQUID-material createLiquid walks (Loader_Fluids.java:658 over MT.Glycerol/
+	 * MT.Glyceryl, the port rows MT.java:1924-1925 verbatim with upstream MT.java:1040-1041)
+	 * and the second-grade oil trio (FL.java:402/:405/:407 — SIMPLE|LIQUID GT6-owned ids the
+	 * upstream standalone never creates, every consumer behind the exists() guard: the
+	 * Chem:336-339 distillery and the Other:624-626 mixer faces; the b1 DT biomass pair
+	 * Chem:350-351 consumes Glycerol). Liquids ride the :1072 createLiquid walk (mp&lt;300 →
+	 * min(300, bp−1) = 300 everywhere here; the :1104 viscosity); glycerol/glyceryl densities
+	 * are the :1128-1136 1000·g formula over the setDensity(1.5) literals; the oils carry
+	 * ZERO upstream create rows — honest defaults 300/1000/1000 with the port-owned oil-dark
+	 * ramp tints (the :2379-:2383 declared-tint precedent).
+	 */
+	@Test
+	public void chemGapBatchCarriesTheUpstreamWalkParameters() {
+		// {id, display, temp, density, tint} — the two material walks
+		Object[][] tMaterials = {
+			{"glycerol", "Glycerol", 300, 1500, 0xFF00B4B4}, // mp 291 → min(300, 563−1) = 300; setDensity 1.5 → 1500; RGBa 0,180,180 (MT.java:1924)
+			{"glyceryl", "Glyceryl", 300, 1500, 0xFF009696}, // mp 287 → min(300, 323−1) = 300; setDensity 1.5 → 1500; RGBa 0,150,150 (:1925)
+		};
+		for (Object[] tRow : tMaterials) {
+			GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec((String)tRow[0]);
+			assertNotNull(tSpec, (String)tRow[0]);
+			assertEquals(tRow[1], tSpec.displayName(), (String)tRow[0] + ": the mNameLocal face");
+			assertEquals(tRow[2], tSpec.temperature(), (String)tRow[0] + ": the :1072 rule over the material heat() points");
+			assertEquals(tRow[3], tSpec.density(), (String)tRow[0] + ": the :1128-1136 1000·g formula over setDensity 1.5");
+			assertEquals(1000, tSpec.viscosity(), (String)tRow[0] + ": the :1104 STATE_LIQUID viscosity");
+			assertEquals(tRow[4], tSpec.tint(), (String)tRow[0] + ": the material RGBa");
+			assertTrue(!tSpec.gas(), (String)tRow[0] + ": a liquid");
+			assertEquals(0, tSpec.luminosity(), (String)tRow[0] + ": unlit");
+		}
+		// the three declared oil rows — {id, display, tint}; the honest-default carriers
+		Object[][] tOils = {
+			{"lightoil", "Light Crude Oil", 0xFF42301A}, // FL.java:402 (Oil_Light2)
+			{"hotcrude", "Hot Crude Oil" , 0xFF321E10}, // FL.java:405 (Oil_HotCrude)
+			{"heavyoil", "Heavy Crude Oil", 0xFF241808}, // FL.java:407 (Oil_Heavy2)
+		};
+		for (Object[] tRow : tOils) {
+			GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec((String)tRow[0]);
+			assertNotNull(tSpec, (String)tRow[0]);
+			assertEquals(tRow[1], tSpec.displayName(), (String)tRow[0] + ": the port-declared family face (no upstream create row)");
+			assertEquals(300, tSpec.temperature(), (String)tRow[0] + ": the honest default (zero upstream literals)");
+			assertEquals(1000, tSpec.density(), (String)tRow[0] + ": the honest default");
+			assertEquals(1000, tSpec.viscosity(), (String)tRow[0] + ": the :1104 STATE_LIQUID viscosity");
+			assertEquals(tRow[2], tSpec.tint(), (String)tRow[0] + ": the port-owned oil-dark ramp tint (declared)");
+			assertTrue(!tSpec.gas(), (String)tRow[0] + ": a liquid");
+		}
+		// the material↔spec binding seam round-trips over the new pair
+		GTMaterialItems.initMaterials();
+		assertSame(GTFluids.chemicalSpec("glycerol"), GTFluids.specOf(MT.Glycerol, false), "specOf(MT.Glycerol) binds the createLiquid walk row");
+		assertSame(GTFluids.chemicalSpec("glyceryl"), GTFluids.specOf(MT.Glyceryl, false), "specOf(MT.Glyceryl) binds");
+		assertSame(MT.Glycerol, GTFluids.materialOf(GTFluids.chemicalSpec("glycerol")), "materialOf round-trips");
+		assertSame(MT.Glyceryl, GTFluids.materialOf(GTFluids.chemicalSpec("glyceryl")), "materialOf round-trips");
+		// the oils are id-only declarations — they bind no material
+		assertNull(GTFluids.materialOf(GTFluids.chemicalSpec("lightoil")), "lightoil binds no material");
+		assertNull(GTFluids.materialOf(GTFluids.chemicalSpec("hotcrude")), "hotcrude binds no material");
+		assertNull(GTFluids.materialOf(GTFluids.chemicalSpec("heavyoil")), "heavyoil binds no material");
+	}
+
+	/**
+	 * Task chem-fluid-registration — the skip census (the 防重复 face): the ids the task
+	 * card named that ALREADY live on the other tables are NOT re-registered as chemical
+	 * rows. NitroFuel rides the ENGINE table (the upstream Loader_Fluids.java:76 create row);
+	 * brine/spruceresin ride SIMPLE_LIQUID (the chem-fluids-unlock rows); pinkslime and the
+	 * Cream pair stay the FOOD_B1 rows (the theDifferenceSetStaysClean pins); the vitriol
+	 * nine-family and the acid chain are the unlock batch (pinned by the census above).
+	 */
+	@Test
+	public void theTaskCardSkipListStaysOnTheirOwnTables() {
+		assertNull(GTFluids.chemicalSpec("nitrofuel"), "NitroFuel lives on the ENGINE table — no chemical duplicate");
+		assertNotNull(GTFluids.engineSpec("nitrofuel"), "the ENGINE row stays the NitroFuel carrier");
+		assertNull(GTFluids.chemicalSpec("brine"), "brine lives on SIMPLE_LIQUID — no chemical duplicate");
+		assertNotNull(GTFluids.simpleLiquidSpec("brine"), "the SIMPLE_LIQUID row stays the brine carrier");
+		assertNull(GTFluids.chemicalSpec("spruceresin"), "spruceresin lives on SIMPLE_LIQUID");
+		assertNotNull(GTFluids.simpleLiquidSpec("spruceresin"), "the SIMPLE_LIQUID row stays the spruceresin carrier");
+		assertNull(GTFluids.chemicalSpec("grcmilk_cream"), "the Cream carrier stays the FOOD_B1 row");
+		assertNull(GTFluids.chemicalSpec("pinkslime"), "pinkslime stays the FOOD_B1 row");
 	}
 
 	@Test

@@ -2512,7 +2512,18 @@ public final class GTFluids {
 		new ChemicalFluidSpec("vitriolofclay"      , "Vitriol Of Clay"         ,  300, 33215, 1000, 0xFF42DEDE, false,  0), // vitriolofclay=硫酸铝 (:910) — MT.VitriolOfClay (MT.java:1177, LIQUID); g = 5×5.400287+3×2.067+9×0.001429 = 33.215296 → 33215
 		new ChemicalFluidSpec("chloroauricacid"    , "Chloroauric Acid"        ,  300, 19294, 1000, 0xFFFFC846, false,  0), // chloroauricacid=氯金酸 (:169) — MT.ChloroauricAcid (MT.java:1163, LIQUID, the Chem:83 electrolyzer input); g = 19.282+4×0.003214+0.00008988 = 19.29494588 → 19294
 		new ChemicalFluidSpec("chloroplatinicacid" , "Chloroplatinic Acid"     ,  300, 21479, 1000, 0xFFFF4646, false,  0), // chloroplatinicacid=氯铂酸 (:174) — MT.ChloroplatinicAcid (MT.java:1164, LIQUID, the Chem:84 input); g = 21.46+6×0.003214+2×0.00008988 = 21.47946376 → 21479
-		new ChemicalFluidSpec("stannicchloride"    , "Stannic Chloride"        ,  300,  7299, 1000, 0xFFD2FAFA, false,  0)); // stannicchloride=四氯化锡 (:870) — MT.StannicChloride (MT.java:1165, LIQUID, the Chem:85 input); g = 7.287+4×0.003214 = 7.299856 → 7299
+		new ChemicalFluidSpec("stannicchloride"    , "Stannic Chloride"        ,  300,  7299, 1000, 0xFFD2FAFA, false,  0), // stannicchloride=四氯化锡 (:870) — MT.StannicChloride (MT.java:1165, LIQUID, the Chem:85 input); g = 7.287+4×0.003214 = 7.299856 → 7299
+		// the b1/b2 recorded-gap batch (task chem-fluid-registration): the two LIQUID-material
+		// createLiquid walks (Loader_Fluids.java:658 — the Chem:151 nitroglycerin mixer, the
+		// Chem:266 NitroFuel mixer, the Chem:346-351 distillery/DT biomass pair) and the
+		// second-grade oil trio (FL.java:402/:405/:407 — SIMPLE|LIQUID GT6-owned ids the
+		// upstream standalone never creates, every consumer behind the exists() guard: the
+		// Chem:336-339 distillery grades and the Other:624-626 mixer grades)
+		new ChemicalFluidSpec("glycerol"           , "Glycerol"                ,  300,  1500, 1000, 0xFF00B4B4, false,  0), // glycerol=丙三醇 — MT.Glycerol (MT.java:1924, LIQUID, the Chem:151/:266/:346-351 carriers); mp 291 → min(300, 563−1) = 300, setDensity 1.5 → 1500
+		new ChemicalFluidSpec("glyceryl"           , "Glyceryl"                ,  300,  1500, 1000, 0xFF009696, false,  0), // glyceryl=硝化甘油 — MT.Glyceryl (MT.java:1925, LIQUID, the Chem:151/:266 carriers); mp 287 → min(300, 323−1) = 300, setDensity 1.5 → 1500
+		new ChemicalFluidSpec("lightoil"           , "Light Crude Oil"         ,  300,  1000, 1000, 0xFF42301A, false,  0), // FL.java:402 (Oil_Light2, SIMPLE, LIQUID) — no upstream create row; honest defaults, the port-owned oil-dark ramp (declared)
+		new ChemicalFluidSpec("hotcrude"           , "Hot Crude Oil"           ,  300,  1000, 1000, 0xFF321E10, false,  0), // FL.java:405 (Oil_HotCrude, SIMPLE, LIQUID) — same declared row
+		new ChemicalFluidSpec("heavyoil"           , "Heavy Crude Oil"         ,  300,  1000, 1000, 0xFF241808, false,  0)); // FL.java:407 (Oil_Heavy2, SIMPLE, LIQUID) — same declared row
 
 	/** The chemical row for a gt6 id path, or null (the {@link #engineSpec} lookup shape). */
 	public static ChemicalFluidSpec chemicalSpec(String aName) {
@@ -2687,7 +2698,11 @@ public final class GTFluids {
 			chemicalFluid("bluevitriol"), chemicalFluid("redvitriol"), chemicalFluid("pinkvitriol"),
 			chemicalFluid("cyanvitriol"), chemicalFluid("whitevitriol"), chemicalFluid("grayvitriol"),
 			chemicalFluid("greenvitriol"), chemicalFluid("martianvitriol"), chemicalFluid("vitriolofclay"),
-			chemicalFluid("chloroauricacid"), chemicalFluid("chloroplatinicacid"), chemicalFluid("stannicchloride"));
+			chemicalFluid("chloroauricacid"), chemicalFluid("chloroplatinicacid"), chemicalFluid("stannicchloride"),
+			// the b1/b2 recorded-gap batch (task chem-fluid-registration) — in table order:
+			// the two createLiquid material walks + the second-grade oil trio
+			chemicalFluid("glycerol"), chemicalFluid("glyceryl"),
+			chemicalFluid("lightoil"), chemicalFluid("hotcrude"), chemicalFluid("heavyoil"));
 
 	/**
 	 * The source-fluid handle for a chemical-family row name, or null when the name is not a
