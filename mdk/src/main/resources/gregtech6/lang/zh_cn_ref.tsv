@@ -2538,7 +2538,11 @@ direct	item.gt6.circuit_crystal_ruby.tooltip	红宝石---控制	hand
 direct	item.gt6.circuit_crystal_sapphire	蓝宝石晶体电路	hand
 direct	item.gt6.circuit_crystal_sapphire.tooltip	蓝宝石---转换	hand
 direct	item.gt6.circuit_elite	精英电子电路	hand
+direct	item.gt6.circuit_enderium	末影电子电路	hand
+direct	item.gt6.circuit_enderium.tooltip	在另一个维度处理您的数据	hand
 direct	item.gt6.circuit_good	优质电子电路	hand
+direct	item.gt6.circuit_magic	魔法电子电路	hand
+direct	item.gt6.circuit_magic.tooltip	像魔法师那样处理事务!	hand
 direct	item.gt6.circuit_master	主控电子电路	hand
 direct	item.gt6.circuit_part_advanced	进阶电子元件	hand
 direct	item.gt6.circuit_part_advanced.tooltip	装配到金电路主板上	hand
@@ -2579,6 +2583,8 @@ direct	item.gt6.circuit_plate_platinum.tooltip	需要电子元件	hand
 direct	item.gt6.circuit_plate_signalum	电路主板 (信素)	hand
 direct	item.gt6.circuit_plate_signalum.tooltip	需要电子元件	hand
 direct	item.gt6.circuit_primitive	原始电路	hand
+direct	item.gt6.circuit_signalum	信素电子电路	hand
+direct	item.gt6.circuit_signalum.tooltip	逻辑电路板	hand
 direct	item.gt6.circuit_ultimate	终极电子电路	hand
 direct	item.gt6.circuit_wire_copper	蚀刻电路 (铜)	hand
 direct	item.gt6.circuit_wire_copper.tooltip	把它装配到电路底板上!	hand
