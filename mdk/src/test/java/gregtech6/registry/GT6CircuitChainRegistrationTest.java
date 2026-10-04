@@ -99,13 +99,18 @@ public class GT6CircuitChainRegistrationTest {
 	}
 
 	/**
-	 * The tier fallback chain (the card's UNKNOWN ④): upstream re-registers every
-	 * {@code gt:circuitN} member one rung down (LoaderOreDictReRegistrations.java:375-383;
-	 * OreDictManager.java:204-215 + :384-385 — the mapping key is the REGISTERED name, so a
-	 * T2 circuit lands in circuit1 AND circuit0: the HIGHER tier satisfies the LOWER slot).
-	 * The port shape = tag inclusion: each carrier joins its own tag AND every
-	 * lower-tier tag, i.e. {@code #gt6:circuitN = all carriers of tier >= N}. Clipped at
-	 * [0..6] — the [7..9] Quantum rungs are the p24 census CUT.
+	 * The tier fallback chain (the card's UNKNOWN ④ — the three-state declaration):
+	 * (a) upstream INTENT = a full cascade (the re-reg chain
+	 * LoaderOreDictReRegistrations.java:375-383 re-registers every {@code gt:circuitN}
+	 * member onto {@code gt:circuitN-1}); (b) upstream ACTUAL = one rung down only — the
+	 * chain runs ascending and OreDictManager.java:204-216 batch-copies the CURRENT
+	 * members while {@code mReRegistrationMappings} is write-only (:73/:208-209, never
+	 * consulted on later registrations), so the +2-and-up substitution silently fails;
+	 * (c) the PORT = the full monotone cascade (the ruling: circuits are sNotConsumable
+	 * selectors, the slack has zero economy impact, the wider face is the sane reading of
+	 * the declared intent): each carrier joins its own tag AND every lower-tier tag, i.e.
+	 * {@code #gt6:circuitN = all carriers of tier >= N} (GT6ItemTags.addBatteryTags).
+	 * Clipped at [0..6] — the [7..9] Quantum rungs are the p24 census CUT.
 	 */
 	@Test
 	public void tierFallbackChainCascadesDownward() throws Exception {

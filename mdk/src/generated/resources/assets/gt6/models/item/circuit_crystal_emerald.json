@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:item/circuit_chain/circuit_crystal_emerald"
+  }
+}

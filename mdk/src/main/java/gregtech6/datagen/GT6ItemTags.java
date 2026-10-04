@@ -599,13 +599,29 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	 * CS.java:166) becomes {@code #gt6:circuit0..6} over the seven carrier items. The
 	 * recipe rows key their 'C' column on the TAG (the oredict semantics — any item of
 	 * that circuit tier matches), not the carrier item.
+	 *
+	 * <p>The tier fallback (task circuit-chain-items, the UNKNOWN④ ruling — the
+	 * three-state declaration): (a) upstream INTENT = a full cascade — the re-reg chain
+	 * (LoaderOreDictReRegistrations.java:375-383) re-registers every {@code gt:circuitN}
+	 * member onto {@code gt:circuitN-1} so a higher circuit can be programmed into any
+	 * lower slot; (b) upstream ACTUAL = one rung down only — the chain runs ascending and
+	 * OreDictManager.java:204-216 batch-copies the CURRENT members, while
+	 * {@code mReRegistrationMappings} is write-only (:73/:208-209, never consulted on
+	 * later registrations), so tier N lands in circuitN ∪ circuit(N-1) and the +2-and-up
+	 * substitution silently fails; (c) the PORT = the full monotone cascade (the ruling:
+	 * circuits are sNotConsumable selectors, the substitution slack has zero economy
+	 * impact, and the wider face is the sane reading of the declared intent): a tier-N
+	 * carrier joins circuit[0..N]. Clipped at [0..6] — the [7..9] Quantum rungs are the
+	 * p24 census CUT.
 	 */
 	private void addBatteryTags(HolderLookup.Provider aProvider) {
 		for (gregtech6.registry.GT6Batteries.BatteryRow tRow : gregtech6.registry.GT6Batteries.ROWS) {
 			tag(gt6(tRow.tagPath())).add(item(gt6Rl(tRow.path())));
 		}
 		for (gregtech6.registry.GT6Batteries.CircuitRow tRow : gregtech6.registry.GT6Batteries.CIRCUIT_ROWS) {
-			tag(gt6(tRow.tagPath())).add(item(gt6Rl(tRow.path())));
+			for (int tTier = 0; tTier <= tRow.tier(); tTier++) {
+				tag(gt6("circuit" + tTier)).add(item(gt6Rl(tRow.path())));
+			}
 		}
 	}
 

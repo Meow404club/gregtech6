@@ -241,6 +241,20 @@ public class GT6ZhCn extends LanguageProvider {
 	 * gt.multiitem.technological.29987-29999 rows 电子管元件 (铜)..(末影) + the shared
 	 * 需要玻璃外壳 tooltip column).
 	 */
+	/**
+	 * The circuit-chain zh faces (task circuit-chain-items, the addElectrodeBand shape): the
+	 * 53 display names + the 53 tooltip keys riding the reference table's hand layer — the
+	 * values are the DUMP faces verbatim (tmp/gregtech.lang :10575-10730, the
+	 * gt.multiitem.technological.30000-30504 rows; the tsv + py hand layer carry the
+	 * values, the row records in GT6CircuitChain mirror them as the test pin).
+	 */
+	private void addCircuitChainBand() {
+		for (gregtech6.registry.GT6CircuitChain.ChainRow tRow : gregtech6.registry.GT6CircuitChain.ROWS) {
+			addDirect("item.gt6." + tRow.path());
+			addDirect("item.gt6." + tRow.path() + ".tooltip");
+		}
+	}
+
 	private void addElectrodeBand() {
 		for (gregtech6.registry.GT6Electrodes.ElectrodeRow tRow : gregtech6.registry.GT6Electrodes.ROWS) {
 			addDirect("item.gt6." + tRow.path());
@@ -2625,6 +2639,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shape_press_bullet_casing_medium"); // task explosives-chain — dump gt.multiitem.technological.10897 弹壳模具 (中型) (:10339)
 		addDirect("item.gt6.shape_press_bullet_casing_large"); // task explosives-chain — dump gt.multiitem.technological.10898 弹壳模具 (大型) (:10341)
 		addElectrodeBand(); // task press-electrodes — the 13 electrode names + tooltips (dump gt.multiitem.technological.29987-29999, tmp/gregtech.lang :10579-10604)
+		addCircuitChainBand(); // task circuit-chain-items — the 53 chain names + tooltips (dump gt.multiitem.technological.30000-30504, tmp/gregtech.lang :10575-10730)
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

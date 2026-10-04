@@ -161,6 +161,7 @@ public class GT6EnUs extends LanguageProvider {
         addSlicerBlades(); // task slicer-row-domain — table-tail append
         addExplosivesMoldsBand(); // task explosives-chain — table-tail append
         addElectrodeBand(); // task press-electrodes — table-tail append
+        addCircuitChainBand(); // task circuit-chain-items — table-tail append
         addSensors(); // task sensors-core — table-tail append
         addPortals(); // task portals-mini-nether-end — table-tail append
         addCrucibleJade(); // task crucible-jade-face — table-tail append
@@ -2577,6 +2578,23 @@ public class GT6EnUs extends LanguageProvider {
      * (MultiItemTechnological.java:488-500 addItem name+subtitle columns). Table-tail
      * append, append-only.
      */
+    /**
+     * The circuit-chain band (task circuit-chain-items): the 53 synthesis-chain
+     * intermediates — empty plate, 6 wirings, 8 plates, 11 parts, 19 boards, 4 crystal
+     * circuits, 5 crystal processors — walked over the
+     * {@link gregtech6.registry.GT6CircuitChain} registry rows so the lang face cannot
+     * drift from the registered ids (the addElectrodeBand form). Values are the ROW
+     * columns verbatim (the upstream MIT:546-770 addItem name + subtitle wordings; the
+     * zh half rides the tsv hand layer via GT6ZhCn.addCircuitChainBand). Table-tail
+     * append, append-only.
+     */
+    private void addCircuitChainBand() {
+        for (gregtech6.registry.GT6CircuitChain.ChainRow tRow : gregtech6.registry.GT6CircuitChain.ROWS) {
+            add("item.gt6." + tRow.path(), tRow.enName());
+            add("item.gt6." + tRow.path() + ".tooltip", tRow.enTooltip());
+        }
+    }
+
     private void addElectrodeBand() {
         for (gregtech6.registry.GT6Electrodes.ElectrodeRow tRow : gregtech6.registry.GT6Electrodes.ROWS) {
             String tPath = tRow.path();
