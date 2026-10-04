@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:shape_simple_ex_plate_curved"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    " x ",
+    " P ",
+    "   "
+  ],
+  "result": {
+    "item": "gt6:shape_simple_ex_pipe_small"
+  },
+  "show_notification": true
+}

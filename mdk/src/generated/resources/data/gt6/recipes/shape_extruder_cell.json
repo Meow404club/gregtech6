@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:shape_extruder_ring"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "   ",
+    " Px",
+    "   "
+  ],
+  "result": {
+    "item": "gt6:shape_extruder_cell"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:shape_extruder_rod"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    " x ",
+    " P ",
+    "   "
+  ],
+  "result": {
+    "item": "gt6:shape_extruder_wire"
+  },
+  "show_notification": true
+}
