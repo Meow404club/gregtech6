@@ -66,23 +66,25 @@ public class GT6ExtruderMoldsTest {
 		assertEquals(Registries.ITEM, GT6ExtruderMolds.ITEMS.getRegistryKey());
 	}
 
-	/** The row0 pair: exactly two molds, upstream meta order :186 plate before :212 rod. */
+	/** The census order: plate leads, the head family 10015-10022 follows, rod rides the :212 slot, SimpleEx 10215-10222 closes. */
 	@Test
 	public void row0SubsetIsPlateThenRod() {
-		assertEquals(2, GT6ExtruderMolds.MOLDS.size(), "the row0 minimal subset is exactly two molds");
+		assertEquals(18, GT6ExtruderMolds.MOLDS.size(), "row0 pair + the tool-head family + its SimpleEx twins");
 		assertSame(GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE, GT6ExtruderMolds.MOLDS.get(0), "row 0 is the plate mold");
-		assertSame(GT6ExtruderMolds.SHAPE_EXTRUDER_ROD, GT6ExtruderMolds.MOLDS.get(1), "row 1 is the rod mold");
+		assertSame(GT6ExtruderMolds.SHAPE_EXTRUDER_ROD, GT6ExtruderMolds.MOLDS.get(9), "the rod rides the :212 slot (the head family 10015-10022 between)");
+		assertSame(GT6ExtruderMolds.SHAPE_SIMPLE_EX_SWORD, GT6ExtruderMolds.MOLDS.get(10), "the SimpleEx twins close the census");
 		assertEquals(rl("shape_extruder_plate"), GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.getId(), "upstream meta 10001");
 		assertEquals(rl("shape_extruder_rod"), GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.getId(), "upstream meta 10027");
 	}
 
-	/** The DR entry ids are exactly the two mold paths (nothing else rides this register). */
+	/** The DR entry ids are exactly the 18 mold paths (nothing else rides this register). */
 	@Test
 	public void deferredRegisterEntriesAreExactlyTheMoldPair() {
 		Set<ResourceLocation> tIds = new LinkedHashSet<>();
 		GT6ExtruderMolds.ITEMS.getEntries().forEach(tEntry -> tIds.add(tEntry.getKey().location()));
-		Set<ResourceLocation> tExpected = Set.of(rl("shape_extruder_plate"), rl("shape_extruder_rod"));
-		assertEquals(tExpected, tIds, "the mold register carries exactly the row0 pair");
+		assertEquals(18, tIds.size(), "the mold register carries exactly the 18-mold census");
+		assertTrue(tIds.containsAll(java.util.List.of(rl("shape_extruder_plate"), rl("shape_extruder_rod"),
+				rl("shape_extruder_sword"), rl("shape_simple_ex_saw"))), "the row0 pair and the family bookends ride the register");
 	}
 
 	/**

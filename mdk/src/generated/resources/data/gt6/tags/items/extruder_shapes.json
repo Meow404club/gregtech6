@@ -1,6 +1,22 @@
 {
   "values": [
     "gt6:shape_extruder_plate",
-    "gt6:shape_extruder_rod"
+    "gt6:shape_extruder_sword",
+    "gt6:shape_extruder_pickaxe",
+    "gt6:shape_extruder_shovel",
+    "gt6:shape_extruder_axe",
+    "gt6:shape_extruder_hoe",
+    "gt6:shape_extruder_hammer",
+    "gt6:shape_extruder_file",
+    "gt6:shape_extruder_saw",
+    "gt6:shape_extruder_rod",
+    "gt6:shape_simple_ex_sword",
+    "gt6:shape_simple_ex_pickaxe",
+    "gt6:shape_simple_ex_shovel",
+    "gt6:shape_simple_ex_axe",
+    "gt6:shape_simple_ex_hoe",
+    "gt6:shape_simple_ex_hammer",
+    "gt6:shape_simple_ex_file",
+    "gt6:shape_simple_ex_saw"
   ]
 }

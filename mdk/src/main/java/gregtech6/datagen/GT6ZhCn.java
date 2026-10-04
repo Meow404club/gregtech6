@@ -2414,6 +2414,25 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.mode_switch.tooltip");
 		addDirect("item.gt6.shape_extruder_plate"); // task w1-press-extruder-molds — dump gt.multiitem.technological.10001 模具 (板) (:10129)
 		addDirect("item.gt6.shape_extruder_rod"); // task w1-press-extruder-molds — dump gt.multiitem.technological.10027 模具 (杆) (:10185)
+		// task toolhead-r11c-extruder-heads — the tool-head mold family (dump
+		// gt.multiitem.technological.10015-10022 模具 (剑身/镐头/锹头/斧头/锄头/锤头/锉刀刀头/锯刃) :10159-10175
+		// + 10215-10222 低热容压模模具 twins :10263-10279)
+		addDirect("item.gt6.shape_extruder_sword");
+		addDirect("item.gt6.shape_extruder_pickaxe");
+		addDirect("item.gt6.shape_extruder_shovel");
+		addDirect("item.gt6.shape_extruder_axe");
+		addDirect("item.gt6.shape_extruder_hoe");
+		addDirect("item.gt6.shape_extruder_hammer");
+		addDirect("item.gt6.shape_extruder_file");
+		addDirect("item.gt6.shape_extruder_saw");
+		addDirect("item.gt6.shape_simple_ex_sword");
+		addDirect("item.gt6.shape_simple_ex_pickaxe");
+		addDirect("item.gt6.shape_simple_ex_shovel");
+		addDirect("item.gt6.shape_simple_ex_axe");
+		addDirect("item.gt6.shape_simple_ex_hoe");
+		addDirect("item.gt6.shape_simple_ex_hammer");
+		addDirect("item.gt6.shape_simple_ex_file");
+		addDirect("item.gt6.shape_simple_ex_saw");
 		addDirect("item.gt6.shape_slicer_grid"); // task slicer-row-domain — dump gt.multiitem.technological.10902 切片器刀片 (栅格式) (:10349)
 		addDirect("item.gt6.shape_slicer_split"); // task slicer-row-domain — dump gt.multiitem.technological.10905 切片器刀片 (分割) (:10355)
 		addDirect("item.gt6.shape_slicer_empty"); // task recipes-obtainability — dump gt.multiitem.technological.10900 切片器刀片框架 (:10345)
