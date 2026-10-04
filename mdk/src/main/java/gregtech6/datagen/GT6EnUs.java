@@ -180,6 +180,7 @@ public class GT6EnUs extends LanguageProvider {
         addKeys(); // task dungeon-keys — the key family display + behavior lines
         addSurfaceBand(); // task w6-rocks-sticks — table-tail append
         addSurfacePlants(); // task w6-t2-surface-blocks — table-tail append
+        addFlowerUnits(); // task flower-blocks-indicator-family — the 18 indicator flowers, table-tail append
         add("block.gt6.bumble_hive", "Bumble Hive"); // task bees-lv2 — the MTE 32755 display name (Loader_MultiTileEntities.java:2041)
         add("block.gt6.bumbliary", "Bumbliary"); // task bees-lv3-b-bumbliary — the MTE 32741 name column (:2222)
         add("block.gt6.bumbliary_advanced", "Advanced Bumbliary"); // the MTE 32007 name column (:2223)
@@ -316,6 +317,34 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.rotten_log", "Rotten Log");
         add("block.gt6.mossy_log", "Mossy Log");
         add("block.gt6.frozen_log", "Frozen Log");
+    }
+
+    /**
+     * The indicator-flower keys (task flower-blocks-indicator-family, 18 rows): the
+     * upstream LH.add display names VERBATIM (BlockFlowersA.java:41-50 + BlockFlowersB
+     * .java:45-52 — the upstream ids gt.block.flower.a.0-9/.b.0-7 row order). Table-tail
+     * append, append-only. The potted companions stay UNNAMED (the vanilla potted
+     * parity — potted_* carries no display name in vanilla either).
+     */
+    private void addFlowerUnits() {
+        add("block.gt6.flower_altered_andesite_buckwheat", "Altered Andesite Buckwheat"); // BlockFlowersA meta 0
+        add("block.gt6.flower_crosby_buckwheat", "Crosby Buckwheat"); // meta 1
+        add("block.gt6.flower_alpine_catchfly", "Alpine Catchfly"); // meta 2
+        add("block.gt6.flower_viola_calaminaria", "Viola Calaminaria"); // meta 3
+        add("block.gt6.flower_thlaspi_lereschianum", "Thlaspi Lereschianum"); // meta 4
+        add("block.gt6.flower_tufted_evening_primrose", "Tufted Evening Primrose"); // meta 5
+        add("block.gt6.flower_narcissus_sheldonia", "Narcissus Sheldonia"); // meta 6
+        add("block.gt6.flower_orechid", "Orechid"); // meta 7
+        add("block.gt6.flower_hexalily", "Hexalily"); // meta 8
+        add("block.gt6.flower_vindicator_flower", "Vindicator Flower"); // meta 9
+        add("block.gt6.flower_sagebrush", "Artemisia Tridentata"); // BlockFlowersB meta 0
+        add("block.gt6.flower_four_wing_saltbush", "Atriplex Canescens"); // meta 1
+        add("block.gt6.flower_desert_trumpet", "Desert Trumpet"); // meta 2
+        add("block.gt6.flower_copper_plant", "Becium Homblei"); // meta 3
+        add("block.gt6.flower_princes_plume", "Prince's Plume"); // meta 4
+        add("block.gt6.flower_thompsons_locoweed", "Thompsons Locoweed"); // meta 5
+        add("block.gt6.flower_pandanus_candelabrum", "Pandanus Candelabrum"); // meta 6
+        add("block.gt6.flower_tungstus", "Tungstus"); // meta 7
     }
 
     /**

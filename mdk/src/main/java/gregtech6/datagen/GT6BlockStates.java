@@ -287,6 +287,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addAnvils(); // task c-anvil — the stone anvil pair
         addSurfaceBand(); // task w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
         addSurfacePlants(); // task w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
+        addFlowers(); // task flower-blocks-indicator-family — the 18 cross flowers + the 18 potted companions
         addHive(); // task bees-lv2 — the bumble hive (the tinted body + the six-overlay two-layer form)
         addBumbliary(); // task bees-lv3-b-bumbliary — the Bumbliary pair (the hive two-layer grammar over the facing cube)
         addPlaceables(); // task placeables — the Greg o'Lantern (the carved-front cube)
@@ -3970,6 +3971,33 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
         LOGGER.info("GT6 surface plants: 8 blockstate bands (1 plate + 1 bush trio + 2 cubes + 4 axis columns), 10 models");
+    }
+
+    /**
+     * Task flower-blocks-indicator-family — the indicator-flower band ({@link
+     * GT6SurfaceBlocks} FLOWERS + POTTED_FLOWERS, 18 + 18 blocks). The flowers render the
+     * vanilla cross idiom over the 18 borrowed FLOWER_* iconsets (cutout — the sprites
+     * carry transparency; the {@code addTreeBlocks} sapling form), the items the flat
+     * {@code item/generated} face (the vanilla flower item form, the rail band shape); the
+     * 18 potted companions parent the vanilla {@code block/flower_pot_cross} template with
+     * the plant texture (the vanilla potted_dandelion form, no item — no BlockItem exists).
+     * All 18 textures are upstream iconsets byte-borrows (assets/README.md rows this card).
+     */
+    private void addFlowers() {
+        for (int i = 0; i < GT6SurfaceBlocks.FLOWERS.size(); i++) {
+            String tSnake = GT6SurfaceBlocks.FLOWERS.get(i).getId().getPath();
+            // the flower: cross + cutout
+            ModelFile tFlowerModel = models().cross(tSnake,
+                    modLoc("block/" + tSnake)).renderType("cutout");
+            simpleBlock(GT6SurfaceBlocks.FLOWERS.get(i).get(), tFlowerModel);
+            itemModels().withExistingParent(tSnake, mcLoc("item/generated"))
+                    .texture("layer0", modLoc("block/" + tSnake));
+            // the potted companion: the vanilla pot template + the plant texture
+            simpleBlock(GT6SurfaceBlocks.POTTED_FLOWERS.get(i).get(),
+                    models().withExistingParent("potted_" + tSnake, mcLoc("block/flower_pot_cross"))
+                            .texture("plant", modLoc("block/" + tSnake)));
+        }
+        LOGGER.info("GT6 flowers: 36 blockstate bands (18 cross + 18 potted), 36 models");
     }
 
     /**

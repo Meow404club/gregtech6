@@ -3776,6 +3776,32 @@ LEGACY_BLOCK_BACKFILL = {
     'block.gt6.rotten_log': '腐朽原木',
     'block.gt6.mossy_log': '苔藓原木',
     'block.gt6.frozen_log': '冰冻原木',
+    # ---- the indicator flowers (task flower-blocks-indicator-family): the dump
+    # verbatim (tmp/gregtech.lang:1981-1996 gt.block.flower.a.0-8 / .b.0-7); a.9 has no
+    # dump row — the one hand-coined row (the vanilla Vindicator 卫道士 word).
+    'block.gt6.flower_altered_andesite_buckwheat': '粗壮绒毛蓼',
+    'block.gt6.flower_crosby_buckwheat': '克罗斯比绒毛蓼',
+    'block.gt6.flower_alpine_catchfly': '瑞典蝇子草',
+    'block.gt6.flower_viola_calaminaria': '卡拉明堇菜',
+    # ---- the r11 crucible page backfill (the committed-tsv drift the flower card's regen
+    # exposed: two direct rows lived only in the committed tsv — the gen_zhcn_ref backfill
+    # the chem-fluid card's ledger describes)
+    'gt6.jei.recipe_map.cruciblealloying': '坩埚合金',
+    'gt6.jei.recipe_map.cruciblesmelting': '坩埚熔炼',
+    'block.gt6.flower_thlaspi_lereschianum': '勒雷舍遏蓝菜',
+    'block.gt6.flower_tufted_evening_primrose': '丛生月见草',
+    'block.gt6.flower_narcissus_sheldonia': '谢尔登水仙花',
+    'block.gt6.flower_orechid': '凝矿兰',
+    'block.gt6.flower_hexalily': '黑克斯百合',
+    'block.gt6.flower_vindicator_flower': '卫道士花',
+    'block.gt6.flower_sagebrush': '三齿蒿',
+    'block.gt6.flower_four_wing_saltbush': '四翅滨藜',
+    'block.gt6.flower_desert_trumpet': '袋状绒毛蓼',
+    'block.gt6.flower_copper_plant': '铁苋菜',
+    'block.gt6.flower_princes_plume': '荒漠圆锥花',
+    'block.gt6.flower_thompsons_locoweed': '软毛黄芪',
+    'block.gt6.flower_pandanus_candelabrum': '露兜树',
+    'block.gt6.flower_tungstus': '仙人钨掌',
     # ---- the placeable deco piles (task p32-placeables)
     'block.gt6.placed_gem_plate': '宝石板',
     'block.gt6.placed_ingot': '锭',

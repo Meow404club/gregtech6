@@ -2772,6 +2772,10 @@ public final class GT6LootTables extends LootTableProvider {
         protected Iterable<Block> getKnownBlocks() {
             List<Block> rList = new java.util.ArrayList<>(surfaceLootBlocks());
             rList.addAll(plantLootBlocks());
+            // task flower-blocks-indicator-family — the 18 flowers (self-drop) + the 18
+            // potted companions (the vanilla pot+flower two-pool face)
+            for (RegistryObject<Block> tRow : GT6SurfaceBlocks.FLOWERS) rList.add(tRow.get());
+            for (RegistryObject<Block> tRow : GT6SurfaceBlocks.POTTED_FLOWERS) rList.add(tRow.get());
             return rList;
         }
 
@@ -2781,6 +2785,18 @@ public final class GT6LootTables extends LootTableProvider {
                     LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
                             .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
                             .add(LootItem.lootTableItem(aItem))));
+        }
+
+        /** The potted-companion table: the vanilla two-pool face (pot + flower, each
+         * survives_explosion-gated — the potted_dandelion.json shape). */
+        private LootTable.Builder pottedTable(Block aFlower) {
+            return LootTable.lootTable()
+                    .withPool(this.applyExplosionCondition(Items.FLOWER_POT,
+                            LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                                    .add(LootItem.lootTableItem(Items.FLOWER_POT))))
+                    .withPool(this.applyExplosionCondition(aFlower,
+                            LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                                    .add(LootItem.lootTableItem(aFlower))));
         }
 
         @Override
@@ -2800,6 +2816,17 @@ public final class GT6LootTables extends LootTableProvider {
             // task w6-t2-surface-blocks — the obtainable band: self-drop
             for (Block tBlock : plantLootBlocks()) {
                 dropSelf(tBlock);
+            }
+            // task flower-blocks-indicator-family — the 18 flowers drop themselves
+            // (the upstream damageDropped/getItemDropped self face, no seeds) and the 18
+            // potted companions pay the vanilla pot + flower two-pool face
+            // (data/minecraft/loot_tables/blocks/potted_dandelion.json)
+            for (RegistryObject<Block> tRow : GT6SurfaceBlocks.FLOWERS) {
+                dropSelf(tRow.get());
+            }
+            for (int i = 0; i < GT6SurfaceBlocks.POTTED_FLOWERS.size(); i++) {
+                add(GT6SurfaceBlocks.POTTED_FLOWERS.get(i).get(),
+                        pottedTable(GT6SurfaceBlocks.FLOWERS.get(i).get()));
             }
             // task w6-t3-large-veins — the 31 vein-indicator rocks: the WorldgenOresLarge
             // .java:104 arm (the rock carries rockGt of the picked vein material) as one
