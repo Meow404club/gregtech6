@@ -1,5 +1,5 @@
 {
-  "comment": "task toolhead-r11c-extruder-heads — the RM.Extruder tool-head rows, representative-row form (the B1/r11e walk-declaration convention). Eight upstream walk families, one representative row each per family statement: (1) the metal Shape_Extruder forging rows (Loader_Recipes_Handlers.java:750-762 head subset: raw shovel/sword/hoe/saw/pickaxe/axe + finished file/hammer), walk = OreDictPrefix.VALUES x containsAny(EXTRUDER_FODDER, INGOT_BASED, GEM_BASED) x the material's EXTRUDER gate — representative input gt6:ingot_iron; EUt 96 (the aHot forging column), duration = RecipeMapHandlerPrefixForging.getCosts (max(16, 1+|(meltingPoint-293)*weight|/(75*96)); the Iron representative computes 185/369/554/1107 t; upstream the duration is per-material runtime, the JSON carries the Iron representative value). (2) the metal Shape_SimpleEx mirror (:783-795 head subset), same walk + DUST_BASED, EUt 16, duration = UT.Code.units(outputU, U, 64, T) = 64 t per output unit (64/96/128/192/384). (3)+(4) the stone stonetypes rows (RM.java:410-414/:417 Shape + :423-427/:430 SimpleEx), walk = the GT6 stone-family materials x the four block forms (aStone/aCobble/aSmooth/aDustBlock) — representative input minecraft:stone. (5)+(6) the BlockStones metatype rows (BlockStones.java:293-297/:300 + :308-312/:315), walk = every BlockStones metatype block — representative input gt6:granite. (7)+(8) the Blackstone special rows (Loader_Recipes_Extruder.java:51-58 + :66-73; the SPEC's :51-53 shovel/sword/hoe lines plus their :54-55/:58 pickaxe/axe/hammer continuations), representative input minecraft:blackstone — DECLARED DEVIATION: the upstream input is Module_Blackstone_Generator, a port-absent item; the port substitutes the Blackstone stone item (GT6Anvils: OP.stone.dat(Blackstone) = vanilla BLACKSTONE), counts and durations verbatim. DECLARED DEVIATION (both metal families): upstream each aHot statement emits a config-conditional row pair (96 EUt under EXTRUDER_SIMPLE.NOT + 16 EUt under EXTRUDER_SIMPLE); the config-less JSON keeps one row per statement at its family's column, so both mold families answer on every config. DECLARED POOL: the Shape_Extruder/SimpleEx non-head rows (plate/plateCurved/rod/rodLong/bolt/gear/gearSmall/ingot/block/casing/wire/foil/pipe families) and the mold-crafting chain (needs the port-absent Shape_Extruder_Empty) stay pooled; the plate/rod rows already pour via GT6RecipesExtruder (FMLCommonSetup). Molds enter the second input slot and are never consumed (Recipe.sNotConsumable <- gt6:extruder_shapes tag membership; the upstream size-0 marker port, remember id478).",
+  "comment": "task toolhead-r11c-extruder-heads — the RM.Extruder tool-head rows, representative-row form (the B1/r11e walk-declaration convention). Eight upstream walk families, one representative row each per family statement: (1) the metal Shape_Extruder forging rows (Loader_Recipes_Handlers.java:750-762 head subset: raw shovel/sword/hoe/saw/pickaxe/axe + finished file/hammer), walk = OreDictPrefix.VALUES x containsAny(EXTRUDER_FODDER, INGOT_BASED, GEM_BASED) x the material's EXTRUDER gate — representative input gt6:ingot_iron; EUt 96 (the aHot forging column), duration = RecipeMapHandlerPrefixForging.getCosts (max(16, 1+|(meltingPoint-293)*weight|/(75*96)); the Iron representative computes 185/369/554/1107 t; upstream the duration is per-material runtime, the JSON carries the Iron representative value). (2) the metal Shape_SimpleEx mirror (:783-795 head subset), same walk + DUST_BASED, EUt 16, duration = UT.Code.units(outputU, U, 64, T) = 64 t per output unit (64/96/128/192/384). (3)+(4) the stone stonetypes rows (RM.java:410-414/:417 Shape + :423-427/:430 SimpleEx), walk = the GT6 stone-family materials x the four block forms (aStone/aCobble/aSmooth/aDustBlock) — representative input minecraft:stone. (5)+(6) the BlockStones metatype rows (BlockStones.java:293-297/:300 + :308-312/:315), walk = every BlockStones metatype block — representative input gt6:granite. (7)+(8) the Blackstone special rows (Loader_Recipes_Extruder.java:51-58 + :66-73; the SPEC's :51-53 shovel/sword/hoe lines plus their :54-55/:58 pickaxe/axe/hammer continuations), representative input minecraft:blackstone — DECLARED DEVIATION: the upstream input is Module_Blackstone_Generator, a port-absent item; the port substitutes the Blackstone stone item (GT6Anvils: OP.stone.dat(Blackstone) = vanilla BLACKSTONE), counts and durations verbatim. DECLARED DEVIATION (both metal families): upstream each aHot statement emits a config-conditional row pair (96 EUt under EXTRUDER_SIMPLE.NOT + 16 EUt under EXTRUDER_SIMPLE); the config-less JSON keeps one row per statement at its family's column, so both mold families answer on every config. DECLARED POOL: the Shape_Extruder/SimpleEx non-head rows (plate/plateCurved/rod/rodLong/bolt/gear/gearSmall/ingot/block/casing/wire/foil/pipe families) and the mold-crafting chain (needs the port-absent Shape_Extruder_Empty) stay pooled; the plate/rod rows already pour via GT6RecipesExtruder (FMLCommonSetup). Molds enter the second input slot and are never consumed (Recipe.sNotConsumable <- gt6:extruder_shapes tag membership; the upstream size-0 marker port, remember id478).\n\ntask recipe-b5-extruder-statics appends 175 rows: (A) the Loader_Recipes_Extruder literal module-domain\nstations, 138 rows — the five 30-row domains (:44-73 Blackstone, :75-104 Basalt, :106-135 Stone,\n:137-166 stone W-meta, :168-197 cobblestone) minus the 12 head rows r11c already shipped; the\nModule_*_Generator inputs are port-absent and ride the declared r11c substitution (minecraft:blackstone /\ngt6:basalt / minecraft:stone / minecraft:cobblestone). (B) the LRE prefix-walk (the :202 qualifying filter\nover 37 port prefixes) as 9 representative rows — the walk call sites whose output items the port\nregisters (glass plate/cell/bottle, TinAlloy cell, Zr cell).\nDISCARDED-ROWS LEDGER (file-head disclosure, the acceptance pin):\n  LRE walk call sites NOT poured (16, output item port-absent): :210/:211 + :218/:219 wax pills\n    (Pill_Empty unported), :221/:222 WaxBee + :231/:232 WaxRefractory + :241/:242 WaxMagic/WaxAmnesic\n    cell rows (FR_* Forestry capsules unported), :265/:266 Plastic (PlasticCan unported),\n    :274/:275 Sn cells (Cell_Empty item unported), :276/:277 Sn bottles (IC2_Food_Can_Empty unported).\n  Loader_Recipes_Handlers extruder statements NOT poured (7 x 2 families, output items port-absent):\n    :748/:781-wire wireGt01, :751-755/:784-788 pipeTiny/Small/Medium/Large/Huge, :766/:799 capcellcon —\n    deferred to the pipe/wire/CCC domain cards.\n  (C) the Handlers non-head forging walk as 28 representative rows — 14 statements x 2 families\n    (:741-747/:749/:763-769 Shape 96-EUt melting-point columns,\n    :774-780/:782/:796-798/:800-802 SimpleEx 16-EUt units\n    columns), Iron representative, the r11c head-row convention.\nTHE 64-MOLD LEDGER (the mold-extruder-shapes family, per family 31 usable + 1 Empty lead):\n  poured rows exist for 24 types (14 stone-domain r11c + saw/file r11c metal + ingot/ring/casing/\n  plateTiny/foil/wireFine here + bottle/cell here) = 48 molds; deferred 7 types x 2 = 14 molds\n  (wire/pipes/ccc, output items port-absent); the 2 Shape_*_Empty leads carry no consumption rows\n  upstream (crafting-chain only, the mold card's forge rows) = TRUE NEGATIVE. 48 + 14 + 2 = 64.\nDECLARED DEVIATION (the W-meta domains :137-166/:168-197): the upstream inputs are meta-wildcard\n  stone/cobblestone and overlap the r11c stonetypes rows on input pairs (both sets coexist upstream;\n  the JSON rows carry the count-1 canonical representative, the findRecipe first-hit order is the\n  documented three-owner limitation).",
   "recipes": [
     {
       "comment": "Handlers:750 — Shape_Extruder_Shovel forging row, Iron representative (1 ingot -> 1 head, 96 EUt, melting-point duration)",
@@ -969,6 +969,3208 @@
         }
       ],
       "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:44 — Blackstone Shape_Extruder_Plate module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:45 — Blackstone Shape_Extruder_Plate_Curved module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:46 — Blackstone Shape_Extruder_Rod module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_blackstone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:47 — Blackstone Shape_Extruder_Rod_Long module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:48 — Blackstone Shape_Extruder_Bolt module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_blackstone"
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:49 — Blackstone Shape_Extruder_Ingot module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt_bricks"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:50 — Blackstone Shape_Extruder_Block module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:56 — Blackstone Shape_Extruder_Gear module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_blackstone"
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:57 — Blackstone Shape_Extruder_Gear_Small module row (module input substituted: Module_Blackstone_Generator port-absent, the r11c declared deviation)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_extruder_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:59 — Blackstone Shape_SimpleEx_Plate mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:60 — Blackstone Shape_SimpleEx_Plate_Curved mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:61 — Blackstone Shape_SimpleEx_Rod mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_blackstone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:62 — Blackstone Shape_SimpleEx_Rod_Long mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:63 — Blackstone Shape_SimpleEx_Bolt mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_blackstone"
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:64 — Blackstone Shape_SimpleEx_Ingot mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt_bricks"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:65 — Blackstone Shape_SimpleEx_Block mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:71 — Blackstone Shape_SimpleEx_Gear mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_blackstone"
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:72 — Blackstone Shape_SimpleEx_Gear_Small mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:blackstone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_blackstone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:75 — Basalt Shape_Extruder_Plate module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:76 — Basalt Shape_Extruder_Plate_Curved module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:77 — Basalt Shape_Extruder_Rod module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_basalt"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:78 — Basalt Shape_Extruder_Rod_Long module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:79 — Basalt Shape_Extruder_Bolt module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_basalt"
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:80 — Basalt Shape_Extruder_Ingot module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt_bricks"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:81 — Basalt Shape_Extruder_Block module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:82 — Basalt Shape_Extruder_Shovel module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:83 — Basalt Shape_Extruder_Sword module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_basalt"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:84 — Basalt Shape_Extruder_Hoe module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_basalt"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:85 — Basalt Shape_Extruder_Pickaxe module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_basalt"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:86 — Basalt Shape_Extruder_Axe module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_basalt"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:87 — Basalt Shape_Extruder_Gear module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_basalt"
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:88 — Basalt Shape_Extruder_Gear_Small module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:89 — Basalt Shape_Extruder_Hammer module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_basalt"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:90 — Basalt Shape_SimpleEx_Plate mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:91 — Basalt Shape_SimpleEx_Plate_Curved mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:92 — Basalt Shape_SimpleEx_Rod mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_basalt"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:93 — Basalt Shape_SimpleEx_Rod_Long mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:94 — Basalt Shape_SimpleEx_Bolt mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_basalt"
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:95 — Basalt Shape_SimpleEx_Ingot mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt_bricks"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:96 — Basalt Shape_SimpleEx_Block mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:97 — Basalt Shape_SimpleEx_Shovel mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:98 — Basalt Shape_SimpleEx_Sword mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_basalt"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:99 — Basalt Shape_SimpleEx_Hoe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_basalt"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:100 — Basalt Shape_SimpleEx_Pickaxe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_basalt"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:101 — Basalt Shape_SimpleEx_Axe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_basalt"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:102 — Basalt Shape_SimpleEx_Gear mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_basalt"
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:103 — Basalt Shape_SimpleEx_Gear_Small mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_basalt"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:104 — Basalt Shape_SimpleEx_Hammer mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "gt6:basalt"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_basalt"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:106 — Stone Shape_Extruder_Plate module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:107 — Stone Shape_Extruder_Plate_Curved module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:108 — Stone Shape_Extruder_Rod module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:109 — Stone Shape_Extruder_Rod_Long module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:110 — Stone Shape_Extruder_Bolt module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_stone"
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:111 — Stone Shape_Extruder_Ingot module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone_bricks"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:112 — Stone Shape_Extruder_Block module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:113 — Stone Shape_Extruder_Shovel module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:114 — Stone Shape_Extruder_Sword module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:115 — Stone Shape_Extruder_Hoe module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:116 — Stone Shape_Extruder_Pickaxe module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:117 — Stone Shape_Extruder_Axe module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:118 — Stone Shape_Extruder_Gear module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_stone"
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:119 — Stone Shape_Extruder_Gear_Small module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:120 — Stone Shape_Extruder_Hammer module row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:121 — Stone Shape_SimpleEx_Plate mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:122 — Stone Shape_SimpleEx_Plate_Curved mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:123 — Stone Shape_SimpleEx_Rod mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:124 — Stone Shape_SimpleEx_Rod_Long mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:125 — Stone Shape_SimpleEx_Bolt mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_stone"
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:126 — Stone Shape_SimpleEx_Ingot mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone_bricks"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:127 — Stone Shape_SimpleEx_Block mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:128 — Stone Shape_SimpleEx_Shovel mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:129 — Stone Shape_SimpleEx_Sword mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:130 — Stone Shape_SimpleEx_Hoe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:131 — Stone Shape_SimpleEx_Pickaxe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:132 — Stone Shape_SimpleEx_Axe mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:133 — Stone Shape_SimpleEx_Gear mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_stone"
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:134 — Stone Shape_SimpleEx_Gear_Small mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:135 — Stone Shape_SimpleEx_Hammer mirror row (module input substituted)",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 384,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:137 — Stone Shape_Extruder_Plate wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:138 — Stone Shape_Extruder_Plate_Curved wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:139 — Stone Shape_Extruder_Rod wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_stone",
+          "count": 2
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:140 — Stone Shape_Extruder_Rod_Long wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:141 — Stone Shape_Extruder_Bolt wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_stone",
+          "count": 8
+        }
+      ],
+      "duration": 8,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:142 — Stone Shape_Extruder_Ingot wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone_bricks"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:143 — Stone Shape_Extruder_Block wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:144 — Stone Shape_Extruder_Shovel wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:145 — Stone Shape_Extruder_Sword wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:146 — Stone Shape_Extruder_Hoe wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:147 — Stone Shape_Extruder_Pickaxe wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:148 — Stone Shape_Extruder_Axe wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:149 — Stone Shape_Extruder_Gear wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 4
+        },
+        {
+          "item": "gt6:shape_extruder_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:150 — Stone Shape_Extruder_Gear_Small wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_extruder_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:151 — Stone Shape_Extruder_Hammer wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:152 — Stone Shape_SimpleEx_Plate mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:153 — Stone Shape_SimpleEx_Plate_Curved mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:154 — Stone Shape_SimpleEx_Rod mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_stone",
+          "count": 2
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:155 — Stone Shape_SimpleEx_Rod_Long mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:156 — Stone Shape_SimpleEx_Bolt mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_stone",
+          "count": 8
+        }
+      ],
+      "duration": 8,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:157 — Stone Shape_SimpleEx_Ingot mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone_bricks"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:158 — Stone Shape_SimpleEx_Block mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:159 — Stone Shape_SimpleEx_Shovel mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:160 — Stone Shape_SimpleEx_Sword mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:161 — Stone Shape_SimpleEx_Hoe mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:162 — Stone Shape_SimpleEx_Pickaxe mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:163 — Stone Shape_SimpleEx_Axe mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:164 — Stone Shape_SimpleEx_Gear mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 4
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:165 — Stone Shape_SimpleEx_Gear_Small mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:166 — Stone Shape_SimpleEx_Hammer mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:stone",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:168 — Cobblestone Shape_Extruder_Plate wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:169 — Cobblestone Shape_Extruder_Plate_Curved wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:170 — Cobblestone Shape_Extruder_Rod wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_stone",
+          "count": 2
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:171 — Cobblestone Shape_Extruder_Rod_Long wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:172 — Cobblestone Shape_Extruder_Bolt wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_stone",
+          "count": 8
+        }
+      ],
+      "duration": 8,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:173 — Cobblestone Shape_Extruder_Ingot wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone_bricks"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:174 — Cobblestone Shape_Extruder_Block wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:175 — Cobblestone Shape_Extruder_Shovel wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:176 — Cobblestone Shape_Extruder_Sword wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:177 — Cobblestone Shape_Extruder_Hoe wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_extruder_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:178 — Cobblestone Shape_Extruder_Pickaxe wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_extruder_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:179 — Cobblestone Shape_Extruder_Axe wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_extruder_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:180 — Cobblestone Shape_Extruder_Gear wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 4
+        },
+        {
+          "item": "gt6:shape_extruder_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:181 — Cobblestone Shape_Extruder_Gear_Small wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_extruder_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:182 — Cobblestone Shape_Extruder_Hammer wildcard-meta row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_extruder_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:183 — Cobblestone Shape_SimpleEx_Plate mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:184 — Cobblestone Shape_SimpleEx_Plate_Curved mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:185 — Cobblestone Shape_SimpleEx_Rod mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_stone",
+          "count": 2
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:186 — Cobblestone Shape_SimpleEx_Rod_Long mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:187 — Cobblestone Shape_SimpleEx_Bolt mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_stone",
+          "count": 8
+        }
+      ],
+      "duration": 8,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:188 — Cobblestone Shape_SimpleEx_Ingot mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone_bricks"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:189 — Cobblestone Shape_SimpleEx_Block mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:190 — Cobblestone Shape_SimpleEx_Shovel mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_shovel"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_shovel_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:191 — Cobblestone Shape_SimpleEx_Sword mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_sword"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_sword_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:192 — Cobblestone Shape_SimpleEx_Hoe mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 2
+        },
+        {
+          "item": "gt6:shape_simple_ex_hoe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_hoe_stone"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:193 — Cobblestone Shape_SimpleEx_Pickaxe mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_simple_ex_pickaxe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_pickaxe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:194 — Cobblestone Shape_SimpleEx_Axe mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 3
+        },
+        {
+          "item": "gt6:shape_simple_ex_axe"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_raw_axe_stone"
+        }
+      ],
+      "duration": 96,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:195 — Cobblestone Shape_SimpleEx_Gear mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 4
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_stone"
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:196 — Cobblestone Shape_SimpleEx_Gear_Small mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_stone"
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:197 — Cobblestone Shape_SimpleEx_Hammer mirror row",
+      "inputs": [
+        {
+          "item": "minecraft:cobblestone",
+          "count": 6
+        },
+        {
+          "item": "gt6:shape_simple_ex_hammer"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:tool_head_hammer_stone"
+        }
+      ],
+      "duration": 192,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:251 — Glass Shape_Extruder_Plate walk row, dust_glass representative (the prefix-walk representative (dust/ingot/gem/plate/plateGem x the material, LRE.java:202 filter over 37 qualifying port prefixes); output plateGem, the plateGem-prefix self-row is the upstream equal-check skip)",
+      "inputs": [
+        {
+          "item": "gt6:dust_glass"
+        },
+        {
+          "item": "gt6:shape_extruder_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_gem_glass"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:252 — Glass Shape_SimpleEx_Plate walk row, dust_glass representative",
+      "inputs": [
+        {
+          "item": "gt6:dust_glass"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_gem_glass"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:254 — Glass Shape_Extruder_Cell walk row, dust_glass representative (chemtube x3)",
+      "inputs": [
+        {
+          "item": "gt6:dust_glass"
+        },
+        {
+          "item": "gt6:shape_extruder_cell"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:chemtube_empty",
+          "count": 3
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:255 — Glass Shape_SimpleEx_Cell walk row, dust_glass representative",
+      "inputs": [
+        {
+          "item": "gt6:dust_glass"
+        },
+        {
+          "item": "gt6:shape_simple_ex_cell"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:chemtube_empty",
+          "count": 3
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:256 — Glass Shape_Extruder_Bottle walk row, dust_glass representative",
+      "inputs": [
+        {
+          "item": "gt6:dust_glass"
+        },
+        {
+          "item": "gt6:shape_extruder_bottle"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bottle_empty"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:257 — Glass Shape_SimpleEx_Bottle walk row, dust_glass representative",
+      "inputs": [
+        {
+          "item": "gt6:dust_glass"
+        },
+        {
+          "item": "gt6:shape_simple_ex_bottle"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bottle_empty"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:284 — TinAlloy Shape_Extruder_Cell walk row, ingot_tin_alloy representative (Food Can)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_tin_alloy"
+        },
+        {
+          "item": "gt6:shape_extruder_cell"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:food_can_empty"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:285 — TinAlloy Shape_SimpleEx_Cell walk row, ingot_tin_alloy representative",
+      "inputs": [
+        {
+          "item": "gt6:ingot_tin_alloy"
+        },
+        {
+          "item": "gt6:shape_simple_ex_cell"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:food_can_empty"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Extruder.java:292 — Zr Shape_Extruder_Cell walk row, ingot_zirconium representative (duration = max(64, (2128-293)*(1+getWeight(U))/6144) = 216, the only 96-EUt walk column; NO SimpleEx twin upstream)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_zirconium"
+        },
+        {
+          "item": "gt6:shape_extruder_cell"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:empty_reactor_rod"
+        }
+      ],
+      "duration": 216,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:741 — Shape_Extruder_Ingot forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_iron"
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:742 — Shape_Extruder_Plate forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_iron"
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:743 — Shape_Extruder_Plate_Curved forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_iron"
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:744 — Shape_Extruder_Rod forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_iron",
+          "count": 2
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:745 — Shape_Extruder_Rod_Long forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_iron"
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:746 — Shape_Extruder_Bolt forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_iron",
+          "count": 8
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:747 — Shape_Extruder_Ring forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_ring"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ring_iron",
+          "count": 4
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:749 — Shape_Extruder_Casing forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_casing"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:casing_small_iron",
+          "count": 2
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:763 — Shape_Extruder_Gear forging row, Iron representative (96 EUt, getCosts melting-point column 738t at 4 ingots in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:shape_extruder_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_iron"
+        }
+      ],
+      "duration": 738,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:764 — Shape_Extruder_Gear_Small forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_iron"
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:765 — Shape_Extruder_Block forging row, Iron representative (96 EUt, getCosts melting-point column 1661t at 9 ingots in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 9
+        },
+        {
+          "item": "gt6:shape_extruder_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:block_solid_iron"
+        }
+      ],
+      "duration": 1661,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:767 — Shape_Extruder_Plate_Tiny forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_plate_tiny"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_tiny_iron",
+          "count": 9
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:768 — Shape_Extruder_Foil forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in) (SMITHABLE.NOT condition face — JSON carries the unconditional row, the declared r11c convention)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_foil"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_iron",
+          "count": 4
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:769 — Shape_Extruder_Wire_Fine forging row, Iron representative (96 EUt, getCosts melting-point column 185t at 1 ingot in) (SMITHABLE.NOT condition face — JSON carries the unconditional row, the declared r11c convention)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_extruder_wire_fine"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_fine_iron",
+          "count": 8
+        }
+      ],
+      "duration": 185,
+      "eut": 96
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:774 — Shape_SimpleEx_Ingot mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ingot"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_iron"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:775 — Shape_SimpleEx_Plate mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_iron"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:776 — Shape_SimpleEx_Plate_Curved mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate_curved"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_iron"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:777 — Shape_SimpleEx_Rod mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:778 — Shape_SimpleEx_Rod_Long mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_rod_long"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_iron"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:779 — Shape_SimpleEx_Bolt mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_bolt"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_iron",
+          "count": 8
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:780 — Shape_SimpleEx_Ring mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_ring"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ring_iron",
+          "count": 4
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:782 — Shape_SimpleEx_Casing mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_casing"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:casing_small_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:796 — Shape_SimpleEx_Gear mirror row, Iron representative (16 EUt, units column 256t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_iron"
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:797 — Shape_SimpleEx_Gear_Small mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_gear_small"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_iron"
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:798 — Shape_SimpleEx_Block mirror row, Iron representative (16 EUt, units column 576t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron",
+          "count": 9
+        },
+        {
+          "item": "gt6:shape_simple_ex_block"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:block_solid_iron"
+        }
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:800 — Shape_SimpleEx_Plate_Tiny mirror row, Iron representative (16 EUt, units column 64t)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_plate_tiny"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_tiny_iron",
+          "count": 9
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:801 — Shape_SimpleEx_Foil mirror row, Iron representative (16 EUt, units column 64t) (SMITHABLE.NOT condition face — JSON carries the unconditional row, the declared r11c convention)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_foil"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_iron",
+          "count": 4
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Handlers.java:802 — Shape_SimpleEx_Wire_Fine mirror row, Iron representative (16 EUt, units column 64t) (SMITHABLE.NOT condition face — JSON carries the unconditional row, the declared r11c convention)",
+      "inputs": [
+        {
+          "item": "gt6:ingot_iron"
+        },
+        {
+          "item": "gt6:shape_simple_ex_wire_fine"
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_fine_iron",
+          "count": 8
+        }
+      ],
+      "duration": 64,
       "eut": 16
     }
   ]
