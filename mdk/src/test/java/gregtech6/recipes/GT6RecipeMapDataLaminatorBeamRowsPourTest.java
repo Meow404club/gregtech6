@@ -60,9 +60,9 @@ public class GT6RecipeMapDataLaminatorBeamRowsPourTest extends GTRecipesOfflineT
 
 	private static final String LAMINATOR = "laminator";
 
-	/** The frozen census: 42 beam rows + the w2-eu-special smoke row (the conscious-bump ratchet). */
+	/** The frozen census: 42 beam rows + the w2-eu-special smoke row (the conscious-bump ratchet; FILE census bumped 43 -> 329 by task recipe-b6-small-maps-batch, the serial-note tail-append — the b6 wire segment's 286 rows ride AFTER this segment and its own ratchet is GT6RecipeMapDataB6SmallMapsRowsPourTest). */
 	private static final int BEAM_CENSUS = 42;
-	private static final int FILE_CENSUS = BEAM_CENSUS + 1;
+	private static final int FILE_CENSUS = 329;
 
 	/** The two wax legs (the additive item ids + counts, Loader_Recipes_Woods.java:53/:66 shapes). */
 	private static final String PLATE = "gt6:plate_wax_refractory";
@@ -156,8 +156,9 @@ public class GT6RecipeMapDataLaminatorBeamRowsPourTest extends GTRecipesOfflineT
 		int tBeamRows = 0;
 		for (int i = 1; i < tRows.size(); i++) {
 			JsonObject tRow = tRows.get(i).getAsJsonObject();
-			assertTrue(tRow.has("comment"), LAMINATOR + ": every beam row carries its citation");
+			assertTrue(tRow.has("comment"), LAMINATOR + ": every row carries its citation");
 			String tCite = tRow.get("comment").getAsString();
+			if (!tCite.startsWith("Loader_Recipes_Woods.java:")) continue; // the b6 wire segment (task recipe-b6-small-maps-batch) rides its own citations
 			assertTrue(tCite.startsWith("Loader_Recipes_Woods.java:"), LAMINATOR + ": the citation names the upstream line");
 			assertTrue(tCite.contains("; plate x6)") || tCite.contains("; foil x24)"), LAMINATOR + ": the citation names the wax leg");
 			tBeamRows++;
@@ -177,6 +178,7 @@ public class GT6RecipeMapDataLaminatorBeamRowsPourTest extends GTRecipesOfflineT
 			JsonObject tRow = tElement.getAsJsonObject();
 			if (!tRow.has("comment")) continue; // the smoke row
 			String tCite = tRow.get("comment").getAsString();
+			if (!tCite.startsWith("Loader_Recipes_Woods.java:")) continue; // the b6 wire segment (task recipe-b6-small-maps-batch) rides its own ratchet
 			tActual.merge(tCite, 1, Integer::sum);
 		}
 		assertEquals(PLATE_LINES.size() + FOIL_LINES.size(), tActual.size(),
@@ -201,6 +203,7 @@ public class GT6RecipeMapDataLaminatorBeamRowsPourTest extends GTRecipesOfflineT
 		for (JsonElement tElement : pourShipped()) {
 			JsonObject tRow = tElement.getAsJsonObject();
 			if (!tRow.has("comment")) continue; // the smoke row
+			if (!tRow.get("comment").getAsString().startsWith("Loader_Recipes_Woods.java:")) continue; // the b6 wire segment rides GT6RecipeMapDataB6SmallMapsRowsPourTest
 			tShipped.add(rowKey(tRow));
 		}
 		Set<String> tMissing = new HashSet<>(tExpected);
@@ -243,6 +246,9 @@ public class GT6RecipeMapDataLaminatorBeamRowsPourTest extends GTRecipesOfflineT
 		int tBeamRows = 0;
 		for (JsonElement tElement : pourShipped()) {
 			JsonObject tRow = tElement.getAsJsonObject();
+			// the b6 wire segment (task recipe-b6-small-maps-batch) rides its own ratchet — this
+			// test's typed/twin-shaped stock face is the BEAM segment only (the serial-note seam)
+			if (tRow.has("comment") && !tRow.get("comment").getAsString().startsWith("Loader_Recipes_Woods.java:")) continue;
 			for (String tLeg : new String[] {"inputs", "outputs"}) {
 				for (JsonElement tSlot : tRow.getAsJsonArray(tLeg)) {
 					String tId = tSlot.getAsJsonObject().get("item").getAsString();
