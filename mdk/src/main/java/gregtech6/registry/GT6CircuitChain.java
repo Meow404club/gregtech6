@@ -37,11 +37,13 @@ import net.minecraftforge.registries.RegistryObject;
  * <li><b>Circuit Board ×19</b> — Basic..Ultimate 30201-30206, Magic 30211, Enderium 30213,
  *     Signalum 30215, BC ×8 30280-30287, HSLA Circuit 30298, Power Module 30299
  *     (:651-672).</li>
+ * <li><b>Gap Circuit ×3</b> (task circuit-chain-recipes) — Magic 30311, Enderium 30313,
+ *     Signalum 30315 (:707-709); the BC ×8 (:711-718) stay CUT.</li>
  * <li><b>Crystal ×9</b> — Crystal Circuit ×4 30401-30404 (:754-757), Crystal Processor
  *     Socket 30500 + Processor ×4 30501-30504 (:759-763).</li>
  * </ul>
- * (the card面 "~48" was the census-card estimate; the per-family columns 8/6/11/19/4+5 sum
- * to 53 — the archaeology-verified number the registration test pins.)
+ * (the card面 "~48" was the census-card estimate; the per-family columns 8/6/11/19/3/9 sum
+ * to 56 — the archaeology-verified number the registration test pins.)
  *
  * <p>Id flattening (the GT6FoodCans/GT6Electrodes ruling): upstream ids were meta ids on
  * the MultiItemTechnological meta item; the port flattens to one id per item, snake of the
@@ -88,7 +90,18 @@ public final class GT6CircuitChain {
 	/** The family sizes the census pins (plate incl. the Empty base, crystal = 4 circuits + 5 processors). */
 	public static final int PLATES = 8, WIRES = 6, PARTS = 11, BOARDS = 19, CRYSTALS = 9;
 
-	/** The 53 rows in upstream meta order (MultiItemTechnological.java:546-770). */
+	/**
+	 * The card-2 gap circuits (task circuit-chain-recipes): the three Bath outputs whose
+	 * material faces live in the port tree — Circuit (Magic) 30311 ({@code OP.circuit.dat
+	 * (MT.Magic)} upstream), Circuit (Enderium) 30313, Circuit (Signalum) 30315. The other
+	 * eight Bath outputs (Circuit_BC_* 30380-30387) are {@code MD.BC_SILICON}-gated
+	 * upstream content and stay UNREGISTERED here — the port has no BuildCraft (the CUT
+	 * disposition lives in the bath.json head declaration; the card-1 circuit_board_bc_*
+	 * eight are the declared input-side orphans).
+	 */
+	public static final int GAP_CIRCUITS = 3;
+
+	/** The 56 rows in upstream meta order (MultiItemTechnological.java:546-770 + the :707-:709 gap circuits). */
 	public static final List<ChainRow> ROWS = List.of(
 			// the empty base + the wiring/plate pairs (:546-:569)
 			new ChainRow("circuit_plate_empty"       , 30000, "Circuit Plate"                , "Needs Circuit Wiring"                              , "电路底板", "需要蚀刻电路"),
@@ -137,6 +150,11 @@ public final class GT6CircuitChain {
 			new ChainRow("circuit_board_bc_emerald"  , 30287, "Circuit Board (BC Emerald)"   , "Needs to be soldered properly"                     , "BC绿宝石电路板", "需要焊接"),
 			new ChainRow("circuit_board_hsla_circuit", 30298, "Circuit Board (HSLA Circuit)" , "Needs to be soldered properly"                     , "HSLA电路板", "需要焊接"),
 			new ChainRow("circuit_board_power_module", 30299, "Circuit Board (Power Module)" , "Needs to be soldered properly"                     , "电池组电路板", "需要焊接"),
+			// the three gap circuits (task circuit-chain-recipes — the :707-:709 Bath outputs;
+			// the 8 BC circuits :711-:718 stay CUT, see GAP_CIRCUITS)
+			new ChainRow("circuit_magic"             , 30311, "Circuit (Magic)"              , "Computes simple Data magically"                    , "魔法电子电路", "像魔法师那样处理事务!"),
+			new ChainRow("circuit_enderium"          , 30313, "Circuit (Enderium)"           , "Computes simple Data somewhere else"               , "末影电子电路", "在另一个维度处理您的数据"),
+			new ChainRow("circuit_signalum"          , 30315, "Circuit (Signalum)"           , "Computes simple Logic"                             , "信素电子电路", "逻辑电路板"),
 			// the four crystal circuits + the five crystal processors (:754-:763)
 			new ChainRow("circuit_crystal_diamond"   , 30401, "Crystal Circuit (Diamond)"    , "Logic Diamond"                                     , "钻石晶体电路", "钻石---逻辑"),
 			new ChainRow("circuit_crystal_ruby"      , 30402, "Crystal Circuit (Ruby)"       , "Control Ruby"                                      , "红宝石晶体电路", "红宝石---控制"),
