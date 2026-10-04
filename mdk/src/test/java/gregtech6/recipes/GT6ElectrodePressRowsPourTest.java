@@ -274,6 +274,7 @@ public class GT6ElectrodePressRowsPourTest extends GTRecipesOfflineTestBase {
 		tUniverse.add("gt6:dust_redstone");
 		tUniverse.add("gt6:dust_small_endstone");
 		tUniverse.add("gt6:dust_endstone");
+		tUniverse.add("gt6:dust_small_ender_eye");
 		tUniverse.add("gt6:dust_ender_eye");
 		tUniverse.add("gt6:gem_ender_eye");
 		for (String tPath : new String[] {"electrode_fr_copper", "electrode_fr_tin", "electrode_fr_bronze",

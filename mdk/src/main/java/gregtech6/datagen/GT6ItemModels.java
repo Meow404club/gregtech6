@@ -540,6 +540,14 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("dynamite_strong", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/explosives/dynamite"))
             .texture("layer1", modLoc("item/explosives/dynamite_overlay"));
+        // the electrode thirteen (task press-electrodes, MultiItemTechnological.java:488-500
+        // metas 29987-29999) — walked over the GT6Electrodes registry rows so the model face
+        // cannot drift from the registered ids; single-layer models over the borrowed
+        // pre-coloured multiitem sprites (the plain-item form — no tint seam)
+        for (gregtech6.registry.GT6Electrodes.ElectrodeRow tRow : gregtech6.registry.GT6Electrodes.ROWS) {
+            withExistingParent(tRow.path(), mcLoc("item/generated"))
+                .texture("layer0", modLoc("item/electrode/" + tRow.path()));
+        }
         // the slicer-blade row0 subset (task slicer-row-domain) — 2 item/generated models
         // over the composed placeholder icons (the blade-grid/blade-split 16x16 stdlib
         // generator, the shape_extruder band convention; the upstream multiitem icons are

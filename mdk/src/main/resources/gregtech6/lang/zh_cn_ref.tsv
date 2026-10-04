@@ -3557,6 +3557,32 @@ direct	item.gt6.dynamite_strong	强化矿用雷管	hand
 direct	item.gt6.shape_press_bullet_casing_small	弹壳模具 (小型)	hand
 direct	item.gt6.shape_press_bullet_casing_medium	弹壳模具 (中型)	hand
 direct	item.gt6.shape_press_bullet_casing_large	弹壳模具 (大型)	hand
+direct	item.gt6.electrode_fr_copper	电子管元件 (铜)	hand
+direct	item.gt6.electrode_fr_copper.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_tin	电子管元件 (锡)	hand
+direct	item.gt6.electrode_fr_tin.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_bronze	电子管元件 (青铜)	hand
+direct	item.gt6.electrode_fr_bronze.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_iron	电子管元件 (铁)	hand
+direct	item.gt6.electrode_fr_iron.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_gold	电子管元件 (金)	hand
+direct	item.gt6.electrode_fr_gold.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_diamond	电子管元件 (钻石)	hand
+direct	item.gt6.electrode_fr_diamond.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_obsidian	电子管元件 (黑曜石)	hand
+direct	item.gt6.electrode_fr_obsidian.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_blaze	电子管元件 (烈焰)	hand
+direct	item.gt6.electrode_fr_blaze.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_rubber	电子管元件 (橡胶)	hand
+direct	item.gt6.electrode_fr_rubber.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_emerald	电子管元件 (绿宝石)	hand
+direct	item.gt6.electrode_fr_emerald.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_apatite	电子管元件 (磷灰石)	hand
+direct	item.gt6.electrode_fr_apatite.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_lapis	电子管元件 (青金石)	hand
+direct	item.gt6.electrode_fr_lapis.tooltip	需要玻璃外壳	hand
+direct	item.gt6.electrode_fr_ender	电子管元件 (末影)	hand
+direct	item.gt6.electrode_fr_ender.tooltip	需要玻璃外壳	hand
 direct	item.gt6.shape_slicer_split	切片器刀片 (分割)	hand
 direct	item.gt6.short_mead	蜂蜜酒	hand
 direct	item.gt6.shovel	锹	hand

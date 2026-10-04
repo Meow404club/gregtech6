@@ -1,5 +1,5 @@
 {
-  "comment": "task recipe-data-b1 — the RM.Press lamp/TNT walks (Loader_Recipes_Vanilla.java:776-799 verbatim). Family expansion is the PORT-universe subset of the upstream ANY groups: ANY.Glowstone = {Glowstone, Gloomstone} (the 5 planet glowstones are the GC-compat faces absent from the port material tree) and ANY.SiO2 = {SiO2, NetherQuartz, CertusQuartz, Quartzite}. The ST.tag(1) selector legs are DROPPED — the JSON v1 row schema carries no damage/NBT faces and the configured Integrated Circuit is not expressible as a plain item id (the loom.json precedent; declared deviation: the rows answer without the circuit). DECLARED B2/POOL: the bullet-casing rows (Loader_Recipes_Other.java:657-668 — their mold input is size-0 not-consumable, a face the JSON v1 row schema does not carry either; the molds are registered by task explosives-chain), the food-mold event rows (Loader_Recipes_Food.java:146-152), the :254-259 bullet retips (the round/bolt walk onto the blank bulletGt{Small,Medium,Large} of MT.Empty — the Or(PROJECTILES, EMPTY) carriers make them pourable but the pool card owns them) and the electrode station walk reference port-absent items or per-material rule walks, neither is a static JSON row face. Task toolhead-r11e-press-mortar reclaimed the tool-head statements as ONE representative row per upstream walk (the mortar.json :705-706 Blaze convention): :247-250 (the ANY.Iron raw/finished pickaxe-head bases, Diamond gem / Iron base representatives) and :252-253 (the arrow retips onto the plain Empty arrows). Task toolhead-family-closeout reclaims the :251 Empty-pickaxeGem-head retip — the OP.java:621 force row landed in GTMaterialItems.forceItemGeneration so the blank head exists, and the GT_Tool_PickaxeGem.java:30 drop ring returns exactly this blank: break -> blank -> press with 2 flawed gems -> new head. Still POOLED: the Shape_Extruder_Empty mold-synthesis chain (a crafting-table band, MultiItemTechnological.java:184-222 — zero Empty rows exist in the upstream extruder map, so extruder.json carries none; the r11c pooled face). Task explosives-chain reclaims the dynamite/boomstick rows (Loader_Recipes_Other.java:641-655): the ANY.SiO2 walk is the 4-statement x 4-port-member expansion (:642-645) plus the four Dynamite (:647-650) and four Dynamite_Strong (:652-655) rows — the same ST.tag selector-leg drop as the b1 rows above (the dust amounts 1-vs-2 keep the two families non-colliding without the circuit).",
+  "comment": "task recipe-data-b1 — the RM.Press lamp/TNT walks (Loader_Recipes_Vanilla.java:776-799 verbatim). Family expansion is the PORT-universe subset of the upstream ANY groups: ANY.Glowstone = {Glowstone, Gloomstone} (the 5 planet glowstones are the GC-compat faces absent from the port material tree) and ANY.SiO2 = {SiO2, NetherQuartz, CertusQuartz, Quartzite}. The ST.tag(1) selector legs are DROPPED — the JSON v1 row schema carries no damage/NBT faces and the configured Integrated Circuit is not expressible as a plain item id (the loom.json precedent; declared deviation: the rows answer without the circuit). DECLARED B2/POOL: the bullet-casing rows (Loader_Recipes_Other.java:657-668 — their mold input is size-0 not-consumable, a face the JSON v1 row schema does not carry either; the molds are registered by task explosives-chain), the food-mold event rows (Loader_Recipes_Food.java:146-152), the :254-259 bullet retips (the round/bolt walk onto the blank bulletGt{Small,Medium,Large} of MT.Empty — the Or(PROJECTILES, EMPTY) carriers make them pourable but the pool card owns them). Task toolhead-r11e-press-mortar reclaimed the tool-head statements as ONE representative row per upstream walk (the mortar.json :705-706 Blaze convention): :247-250 (the ANY.Iron raw/finished pickaxe-head bases, Diamond gem / Iron base representatives) and :252-253 (the arrow retips onto the plain Empty arrows). Task toolhead-family-closeout reclaims the :251 Empty-pickaxeGem-head retip — the OP.java:621 force row landed in GTMaterialItems.forceItemGeneration so the blank head exists, and the GT_Tool_PickaxeGem.java:30 drop ring returns exactly this blank: break -> blank -> press with 2 flawed gems -> new head. Still POOLED: the Shape_Extruder_Empty mold-synthesis chain (a crafting-table band, MultiItemTechnological.java:184-222 — zero Empty rows exist in the upstream extruder map, so extruder.json carries none; the r11c pooled face). Task explosives-chain reclaims the dynamite/boomstick rows (Loader_Recipes_Other.java:641-655): the ANY.SiO2 walk is the 4-statement x 4-port-member expansion (:642-645) plus the four Dynamite (:647-650) and four Dynamite_Strong (:652-655) rows — the same ST.tag selector-leg drop as the b1 rows above (the dust amounts 1-vs-2 keep the two families non-colliding without the circuit). Task press-electrodes reclaims the electrode band (MultiItemTechnological.java:502-543 — the b1 header's former \"electrode station walk\" pool note; the registration face is the GT6Electrodes thirteen, MIT :488-500): 31 statements whose five material walks (ANY.Cu :502/:521, ANY.Iron :506/:525, ANY.Diamond :509/:528, ANY.Rubber :513/:532, ANY.Emerald :515/:534) expand over the PORT-universe subset of each group folded by input item-truth — a member rides only when the port registers both its stick and its bolt (the GTMaterialItems live dump 2026-10-04): ANY.Cu = {AnnealedCopper, Copper}, ANY.Iron = 11 members, ANY.Diamond = 12, ANY.Rubber = {Rubber}, ANY.Emerald = 8, all item-true. Block 1 (:502-519, output x1) = 42 rows, block 2 (:521-539, output x2) = 43, block 3 (:540-543, the Ender dust/gem x4 quartet) = 4 — 89 rows total, every one the addRecipeX(T, 16, 64, ...) columns verbatim (16 EUt / 64 t). Still POOLED with the electrodes adjacent: the Food 5 rows (Loader_Recipes_Food.java:146-152, food T3) and the Handlers 11 prefix walk (Loader_Recipes_Handlers.java:248-259).",
   "recipes": [
     {
       "comment": "Loader_Recipes_Vanilla.java:777 — redstone lamp, blockDust leg xGlowstone (144 t)",
@@ -1932,6 +1932,2203 @@
         }
       ],
       "duration": 576,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:503 — Electrode (Copper), Cu walk xAnnealedCopper (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_annealed_copper",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_annealed_copper",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_copper",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:503 — Electrode (Copper), Cu walk xCopper (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_copper",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_copper",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_copper",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:504 — Electrode (Tin) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_tin",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_tin",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_tin",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:505 — Electrode (Bronze) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_bronze",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_bronze",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_bronze",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xCastIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_cast_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_cast_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xEnori (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_enori",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_enori",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xWroughtIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_wrought_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_wrought_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xKnightmetal (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_knightmetal",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_knightmetal",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xMeteoricIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_meteoric_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_meteoric_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xMeteoricSteel (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_meteoric_steel",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_meteoric_steel",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xSteel (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_steel",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_steel",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xPigIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_pig_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_pig_iron",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xMeteorite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_meteorite",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_meteorite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:507 — Electrode (Iron), Iron walk xIronCompressed (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_iron_compressed",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_iron_compressed",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:508 — Electrode (Gold) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_gold",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_gold",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_gold",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xBlueDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_blue_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_blue_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xGreenDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_green_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_green_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xPurpleDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_purple_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_purple_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xDiamantine (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_diamantine",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_diamantine",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xRedDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_red_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_red_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xYellowDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_yellow_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_yellow_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xPinkDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_pink_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_pink_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xDiamondIndustrial (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_diamond_industrial",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_diamond_industrial",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xManaDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_mana_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_mana_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xElvenDragonstone (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_elven_dragonstone",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_elven_dragonstone",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xGravitite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_gravitite",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_gravitite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:510 — Electrode (Diamond), Diamond walk xDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_diamond",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:511 — Electrode (Obsidian) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_obsidian",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_obsidian",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_obsidian",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:512 — Electrode (Blaze) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_blaze",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_blaze",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_blaze",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:514 — Electrode (Rubber), Rubber walk xRubber (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_rubber",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xMaxixe (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_maxixe",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_maxixe",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xEmeradic (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_emeradic",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_emeradic",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xEmerald (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_emerald",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_emerald",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xAquamarine (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_aquamarine",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_aquamarine",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xMorganite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_morganite",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_morganite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xHeliodor (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_heliodor",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_heliodor",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xGoshenite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_goshenite",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_goshenite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:516 — Electrode (Emerald), Emerald walk xBixbite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_bixbite",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_bixbite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:517 — Electrode (Apatite) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_apatite",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_apatite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_apatite",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:518 — Electrode (Lapis) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_lapis",
+          "count": 2
+        },
+        {
+          "item": "gt6:bolt_lapis",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_small_redstone",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_lapis",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:519 — Electrode (Ender), single leg (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_endstone",
+          "count": 5
+        },
+        {
+          "item": "gt6:dust_small_ender_eye",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_ender",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:522 — Electrode (Copper), Cu walk xAnnealedCopper (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_annealed_copper",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_annealed_copper",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_copper",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:522 — Electrode (Copper), Cu walk xCopper (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_copper",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_copper",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_copper",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:523 — Electrode (Tin) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_tin",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_tin",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_tin",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:524 — Electrode (Bronze) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_bronze",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_bronze",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_bronze",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xCastIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_cast_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_cast_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xEnori (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_enori",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_enori",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xWroughtIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_wrought_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_wrought_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xKnightmetal (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_knightmetal",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_knightmetal",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xMeteoricIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_meteoric_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_meteoric_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xMeteoricSteel (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_meteoric_steel",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_meteoric_steel",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xSteel (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_steel",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_steel",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xPigIron (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_pig_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_pig_iron",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xMeteorite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_meteorite",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_meteorite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:526 — Electrode (Iron), Iron walk xIronCompressed (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_iron_compressed",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_iron_compressed",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_iron",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:527 — Electrode (Gold) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_gold",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_gold",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_gold",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xBlueDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_blue_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_blue_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xGreenDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_green_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_green_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xPurpleDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_purple_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_purple_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xDiamantine (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_diamantine",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_diamantine",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xRedDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_red_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_red_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xYellowDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_yellow_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_yellow_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xPinkDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_pink_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_pink_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xDiamondIndustrial (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_diamond_industrial",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_diamond_industrial",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xManaDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_mana_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_mana_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xElvenDragonstone (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_elven_dragonstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_elven_dragonstone",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xGravitite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_gravitite",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_gravitite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:529 — Electrode (Diamond), Diamond walk xDiamond (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_diamond",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_diamond",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:530 — Electrode (Obsidian) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_obsidian",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_obsidian",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_obsidian",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:531 — Electrode (Blaze) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_blaze",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_blaze",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_blaze",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:533 — Electrode (Rubber), Rubber walk xRubber (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_rubber",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xMaxixe (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_maxixe",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_maxixe",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xEmeradic (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_emeradic",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_emeradic",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xEmerald (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_emerald",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_emerald",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xAquamarine (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_aquamarine",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_aquamarine",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xMorganite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_morganite",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_morganite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xHeliodor (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_heliodor",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_heliodor",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xGoshenite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_goshenite",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_goshenite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:535 — Electrode (Emerald), Emerald walk xBixbite (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_bixbite",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_bixbite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_emerald",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:536 — Electrode (Apatite) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_apatite",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_apatite",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_apatite",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:537 — Electrode (Lapis) (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:stick_lapis",
+          "count": 4
+        },
+        {
+          "item": "gt6:bolt_lapis",
+          "count": 4
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_lapis",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:538 — Electrode (Ender), dust leg (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_endstone",
+          "count": 10
+        },
+        {
+          "item": "gt6:dust_ender_eye",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_ender",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:539 — Electrode (Ender), gem leg (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_endstone",
+          "count": 10
+        },
+        {
+          "item": "gt6:gem_ender_eye",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_ender",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:540 — Electrode (Ender), full-dust/dust leg (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_endstone",
+          "count": 5
+        },
+        {
+          "item": "gt6:dust_ender_eye",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_ender",
+          "count": 4
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:541 — Electrode (Ender), full-dust/gem leg (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_endstone",
+          "count": 5
+        },
+        {
+          "item": "gt6:gem_ender_eye",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_ender",
+          "count": 4
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:542 — Electrode (Ender), end_stone/dust leg (64 t)",
+      "inputs": [
+        {
+          "item": "minecraft:end_stone",
+          "count": 5
+        },
+        {
+          "item": "gt6:dust_ender_eye",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_ender",
+          "count": 4
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "MultiItemTechnological.java:543 — Electrode (Ender), end_stone/gem leg (64 t)",
+      "inputs": [
+        {
+          "item": "minecraft:end_stone",
+          "count": 5
+        },
+        {
+          "item": "gt6:gem_ender_eye",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:electrode_fr_ender",
+          "count": 4
+        }
+      ],
+      "duration": 64,
       "eut": 16
     }
   ]

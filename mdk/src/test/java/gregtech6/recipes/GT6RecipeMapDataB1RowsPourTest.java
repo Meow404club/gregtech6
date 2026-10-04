@@ -233,6 +233,11 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		for (var tMold : gregtech6.registry.GT6PressMolds.MOLDS) {
 			tUniverse.add("gt6:" + tMold.getId().getPath());
 		}
+		// task press-electrodes — the electrode thirteen join the plain-item universe (the
+		// same DR-entry form; the var keeps the RegistryObject unnamed for the neo leg)
+		for (var tElectrode : gregtech6.registry.GT6Electrodes.ROWS) {
+			tUniverse.add("gt6:" + tElectrode.item().getId().getPath());
+		}
 		assertTrue(tUniverse.contains("gt6:dust_coal"), "the id universe built (" + tUniverse.size() + " ids)");
 
 		java.util.Set<String> tMissing = new java.util.TreeSet<>();

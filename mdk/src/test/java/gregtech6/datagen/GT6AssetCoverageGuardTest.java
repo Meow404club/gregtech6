@@ -341,7 +341,8 @@ public class GT6AssetCoverageGuardTest {
 			gregtech6.items.GT6ReactorRods.class, // task debt-reactor-c-rods — the 46 rod items
 			gregtech6.registry.GT6Robotics.class, // task robotics-chain — the 60 robot-component items
 			gregtech6.registry.GT6Explosives.class, // task explosives-chain — the dynamite trio (plain items)
-			gregtech6.registry.GT6PressMolds.class); // task explosives-chain — the bullet-casing mold trio
+			gregtech6.registry.GT6PressMolds.class, // task explosives-chain — the bullet-casing mold trio
+			gregtech6.registry.GT6Electrodes.class); // task press-electrodes — the electrode thirteen (plain items)
 
 	/** Channel 1 + channel 2 block ids ("ns:path"). */
 	private static Set<String> blockUniverse() throws Exception {

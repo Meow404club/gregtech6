@@ -1,4 +1,3 @@
-# assets — borrowed textures attribution
 
 Machine GUI backgrounds borrowed from **GregTech 6**
 (https://github.com/GregTech6/gregtech6), snapshot
@@ -13494,3 +13493,25 @@ the `item/generated` parent (the bottle band convention).
   (upstream `textures/blocks/machines/tools/dynamite/overlay/side.png`, task
   explosives-chain; sha256
   `58907ffe4a297a960d3c2ea05990f307e7212eaf0065be088d4b22fd0040693f`).
+## task press-electrodes — the Forestry electrode thirteen
+
+- `gt6/textures/item/electrode/electrode_fr_{copper,tin,bronze,iron,gold,diamond,obsidian,
+  blaze,rubber,emerald,apatite,lapis,ender}.png` — the thirteen electrode sprites,
+  byte-identical upstream borrows (snapshot `v6.17.06-22-g3703e4030`, task
+  press-electrodes; the r11c head-family standalone-file form). Upstream
+  `textures/items/gt.multiitem.technological/29987.png` .. `29999.png`
+  (MultiItemTechnological.java:488-500), pre-coloured — the plain-item form, no tint
+  seam (these sprites carry their own colour; the upstream item has no ItemColor pass):
+  - `electrode_fr_copper.png` (`503bc9d798269718ae9574e99456198dd863c602a02952ec9aaaca4ed1fe49f0` — meta 29987, MIT:488)
+  - `electrode_fr_tin.png` (`b1be0f6742a9a348f36488326457326e0720eb38b001b7058d09d2327ddff88b` — meta 29988, MIT:489)
+  - `electrode_fr_bronze.png` (`319d4e8ef6a4a614b2fe3d251ab07ade51a020ad6b61bb89ce901659c5e442ae` — meta 29989, MIT:490)
+  - `electrode_fr_iron.png` (`1ce8bbc99a1a3eabbb1c5d9ffeb6d7b9a6295e1925528afa3253cfb1a4fd7add` — meta 29990, MIT:491)
+  - `electrode_fr_gold.png` (`50d3ffda1d66b0d32c48644709e10c8ce745ccc3b97d22e4f775dfa486048d97` — meta 29991, MIT:492)
+  - `electrode_fr_diamond.png` (`50b7cb8e0d57b1a2eafe7e28f83ef16ec70d79259756fbd18e25a485013e93db` — meta 29992, MIT:493)
+  - `electrode_fr_obsidian.png` (`5c15ee6e62be98a9bbc38c056dd5bc60abff6e107abad0a5c7470893aa15e77d` — meta 29993, MIT:494)
+  - `electrode_fr_blaze.png` (`34baef4c207e25d008321c8f400aab166230142dd8838525b32b767eeed98867` — meta 29994, MIT:495)
+  - `electrode_fr_rubber.png` (`73ce7d4d998aa4f20fb1020a9e792692485ee484a6c50d7560c7c1570cc869af` — meta 29995, MIT:496)
+  - `electrode_fr_emerald.png` (`303d03b6159cc2c7a9bafbd0d3315a51b86b41c3588961e5434a0f7a294570e1` — meta 29996, MIT:497)
+  - `electrode_fr_apatite.png` (`6905cee8c005f3ed3bc492aeae6a9613a3d994365a9a075ffc388366ebd776fe` — meta 29997, MIT:498)
+  - `electrode_fr_lapis.png` (`9bde240accf300dd31b50e1cfa2c39e1df3945cc1a06a3eeee56912888c37533` — meta 29998, MIT:499)
+  - `electrode_fr_ender.png` (`9f54f0adf174acd76d60949ff9d3b42cfdff3e42d10fed505def753bce5abd85` — meta 29999, MIT:500)
