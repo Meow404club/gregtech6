@@ -12,7 +12,7 @@
  * <li>bedrock face 32 = 33 overworld rows - 1 gold.a/b duplicate (both MT.Au);</li>
  * <li>vein face 98 = the distinct materials of the 33 generating rows (overworld || end;
  * the 7 offworld rows :917-925 excluded, their 14 row-unique materials among them);</li>
- * <li>union 169 = 120 small + 12 bedrock-only + 37 vein-only (r7-b: the 61 gem rows joined; b2: the 10 boundary-blob EDGE orphans joined as small rows).</li>
+ * <li>union 170 = 125 small + 12 bedrock-only + 33 vein-only (r7-b: the 61 gem rows joined; b2: the 10 boundary-blob EDGE orphans joined as small rows; batch2: the 5 anchors joined as small rows — Oilshale the one brand-new entry, the other four already rode vein faces).</li>
  * </ul>
  *
  * <p>DISPLAY口径 (the acceptance's required note): the asserted {@code amount} values are
@@ -59,8 +59,8 @@ class OreDistributionInfoTest {
     @Test
     void materialAxisIsPinned() {
         List<OreDistributionInfo.Entry> tEntries = OreDistributionInfo.entries();
-        assertEquals(169, tEntries.size(), "120 small + 12 bedrock-only + 37 vein-only (the class javadoc decomposition)");
-        assertEquals(120, tEntries.stream().filter(e -> !e.smallOres().isEmpty()).count(), "small-ore materials");
+        assertEquals(170, tEntries.size(), "125 small + 12 bedrock-only + 33 vein-only (the class javadoc decomposition)");
+        assertEquals(125, tEntries.stream().filter(e -> !e.smallOres().isEmpty()).count(), "small-ore materials");
         assertEquals(98, tEntries.stream().filter(e -> !e.veins().isEmpty()).count(), "large-vein materials (generating rows only)");
         assertEquals(32, tEntries.stream().filter(e -> !e.bedrockOres().isEmpty()).count(), "overworld bedrock-ore materials");
 

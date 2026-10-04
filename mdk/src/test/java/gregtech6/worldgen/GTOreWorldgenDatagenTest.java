@@ -4,7 +4,9 @@
  * rows and the pairs 91 → 152 with b-gem-pool-extension (the RANDOM_SMALL_GEM_ORE
  * pool loop joined), and 115 → 125 rows / 152 → 162 pairs with
  * worldgen-edge-ores-b2-orphans (the 10 StoneLayer boundary-blob translations,
- * :481-571 — see {@link #edgeOrphanRowsArePinned}).
+ * :481-571 — see {@link #edgeOrphanRowsArePinned}), and 125 → 130 rows /
+ * 162 → 167 pairs with worldgen-axis-batch2 (the 5 fuel/evaporite/quartz
+ * stone-layer + lens anchors — see {@link #axisBatch2RowsArePinned}).
  *
  * <p>Compile anchors (transcribed independently here, production and test must agree
  * or a conscious decision is forced):
@@ -207,7 +209,18 @@ class GTOreWorldgenDatagenTest {
           Map.entry("ore.small.vermiculite"     , "548 48 80 1 OVERWORLD"),
           Map.entry("ore.small.mica"            , "552 16 48 1 OVERWORLD"),
           Map.entry("ore.small.biotite"         , "553 16 48 1 OVERWORLD"),
-          Map.entry("ore.small.pinkdiamond"     , "563 0 32 1 OVERWORLD"));
+          Map.entry("ore.small.pinkdiamond"     , "563 0 32 1 OVERWORLD"),
+          // -- the 5 stone-layer / lens anchors (worldgen-axis-batch2): each cites the
+          // Loader_Worldgen.java line naming its material — Bauxite :84 (the EtFu
+          // deepslate-list StoneLayerOres row, the band verbatim), Lignite :486 /
+          // Oilshale :491 (the bothsides boundaries ON their strata, band = the
+          // boundary blob's), Gypsum :532 (the Gneiss-Gypsum boundary, ditto),
+          // MilkyQuartz :901 (the ore.large.quartz lens row, band verbatim).
+          Map.entry("ore.small.bauxite"         , "84 16 32 1 OVERWORLD"),
+          Map.entry("ore.small.lignite"         , "486 30 70 1 OVERWORLD"),
+          Map.entry("ore.small.oilshale"        , "491 30 70 1 OVERWORLD"),
+          Map.entry("ore.small.gypsum"          , "532 16 64 1 OVERWORLD"),
+          Map.entry("ore.small.milkyquartz"     , "901 40 80 1 OVERWORLD"));
 
     private static String dimsOf(GTOreWorldgen.SmallOreRow aRow) {
         StringBuilder r = new StringBuilder();
@@ -217,10 +230,10 @@ class GTOreWorldgenDatagenTest {
         return r.isEmpty() ? "-" : r.substring(1);
     }
 
-    /** The 125-row table, pinned row-by-row against the Loader_Worldgen.java transcriptions. */
+    /** The 130-row table, pinned row-by-row against the Loader_Worldgen.java transcriptions. */
     @Test
     void rowTableIsPinned() {
-        assertEquals(125, GTOreWorldgen.ROWS.size(), "53 always-on rows (:800-852) + nikolite (:875) + the 61 gem-pool rows (:877-878) + the 10 boundary rows (:481-571)");
+        assertEquals(130, GTOreWorldgen.ROWS.size(), "53 always-on rows (:800-852) + nikolite (:875) + the 61 gem-pool rows (:877-878) + the 10 boundary rows (:481-571) + the 5 stone-layer/lens anchor rows (:84/:486/:491/:532/:901)");
         Set<String> tSeen = new HashSet<>();
         for (GTOreWorldgen.SmallOreRow tRow : GTOreWorldgen.ROWS) {
             String tUpstream = UPSTREAM_ROWS.get(tRow.name());
@@ -232,7 +245,7 @@ class GTOreWorldgenDatagenTest {
             int tMaxY = Integer.parseInt(tParts[2]);
             int tAmount = Integer.parseInt(tParts[3]);
             String tDims = tParts.length > 4 ? String.join(" ", java.util.Arrays.copyOfRange(tParts, 4, tParts.length)) : "-";
-            assertTrue(tLine >= 481 && tLine <= 878, tRow.name() + " cites the Loader_Worldgen.java row range (the :800-878 small rows + the :481-571 boundary rows)");
+            assertTrue(tLine >= 84 && tLine <= 901, tRow.name() + " cites the Loader_Worldgen.java row range (the :800-878 small rows + the :481-571 boundary rows + the :84/:486/:491/:532/:901 stone-layer/lens anchors)");
             assertEquals(tMinY, tRow.minY(), tRow.name() + " minY (Loader_Worldgen.java:" + tLine + ")");
             assertEquals(tMaxY, tRow.maxY(), tRow.name() + " maxY (Loader_Worldgen.java:" + tLine + ")");
             assertEquals(tAmount, tRow.amount(), tRow.name() + " amount (Loader_Worldgen.java:" + tLine + ")");
@@ -243,12 +256,12 @@ class GTOreWorldgenDatagenTest {
         assertEquals(UPSTREAM_ROWS.size(), tSeen.size(), "every transcription consumed");
     }
 
-    /** The 162 placement pairs = the verbatim GEN-flag walk: 109 overworld + 20 nether + 33 end. */
+    /** The 167 placement pairs = the verbatim GEN-flag walk: 114 overworld + 20 nether + 33 end. */
     @Test
     void placementPairsArePinned() {
         List<GTOreWorldgen.Placement> tPairs = GTOreWorldgen.placementPairs();
-        assertEquals(162, tPairs.size(), "109 OW + 20 NETHER + 33 END (the coordinator-ruled verbatim walk, r7-b pool + b2 boundary rows included)");
-        assertEquals(109, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.OVERWORLD).count(), "overworld pairs");
+        assertEquals(167, tPairs.size(), "114 OW + 20 NETHER + 33 END (the coordinator-ruled verbatim walk, r7-b pool + b2 boundary + batch2 anchor rows included)");
+        assertEquals(114, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.OVERWORLD).count(), "overworld pairs");
         assertEquals(20, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.NETHER).count(), "nether pairs (21 table rows − ancientdebris gate)");
         assertEquals(33, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.END).count(), "end pairs");
         // the gate: the ancientdebris row keeps its NETHER dim in the table but produces no pair
@@ -531,6 +544,63 @@ class GTOreWorldgenDatagenTest {
         // the two IHL-gated namesakes (:871/:874, MD.IHL) stay OUT — the boundary row IS
         // the ungated natural source of mica/trona on this port (the :854-874 compat pool)
         assertEquals(10, tEdge.size());
+    }
+
+    /**
+     * The 5 stone-layer / lens anchor rows (task worldgen-axis-batch2): Lignite /
+     * Bauxite / Oilshale / Gypsum / MilkyQuartz — the TF-domain RockOres census's
+     * off-axis remainder (BlockRockOres meta0-7 carried only Coal/NaCl/KCl on the axis
+     * through b2). Each gains the material-axis membership AND a small-ore row whose
+     * Y band cites ITS upstream anchor call, VERBATIM:
+     * <ul>
+     * <li>Bauxite :84 — the EtFu deepslate-list {@code StoneLayerOres} row carries its
+     *     own band (16-32); the EtFu host block + BIOMES_PLAINS gates are not carried
+     *     (the b2 biome-gate grammar — the ungated stone-layer row is the natural
+     *     source).</li>
+     * <li>Lignite :486 / Oilshale :491 / Gypsum :532 — the strata themselves carry no
+     *     Y numbers (the StoneLayer stratum is depth-driven, no band in the call); the
+     *     band is the layer's BOUNDARY call's, verbatim (30-70 / 30-70 / 16-64 — the
+     *     same bothsides lines that fed b2's amber/mirabilite/trona rows), amount 1
+     *     (the b2 blob-chance grammar).</li>
+     * <li>MilkyQuartz :901 — the ore.large.quartz lens row's band (40-80) verbatim;
+     *     the lens face itself revives through the axis (GT6VeinGenerator.valid), the
+     *     small row is the scatter face (amount 1, the gem-pool precedent).</li>
+     * </ul>
+     *
+     * <p>Declared deviations (the b2 grammar carried over): the :486/:491 blob rows'
+     * biome gates (BIOMES_OCEAN_BEACH/RIVER_LAKE/SHROOM) and the :84 PLAINS gate are
+     * not carried; never deep-mirrored (the fuels keep the carbon-near-surface c2
+     * rule, the strata/lens bands are layer phenomena); the Gypsum row shares its tail
+     * with the IHL-gated :872 namesake (compat pool — same posture as b2's
+     * mica/trona warning).
+     */
+    @Test
+    void axisBatch2RowsArePinned() {
+        // tail -> "line minY maxY amount DIMS" — every band cited from its own anchor call
+        Map<String, String> tBatch2 = Map.of(
+            "bauxite"     , "84 16 32 1 OVERWORLD",    // :84 StoneLayerOres(EtFu deepslate list), BIOMES_PLAINS dropped
+            "lignite"     , "486 30 70 1 OVERWORLD",   // :371 stratum + :486 bothsides(Lignite, Stone) band
+            "oilshale"    , "491 30 70 1 OVERWORLD",   // stratum + :491 bothsides(Oilshale, Stone) band
+            "gypsum"      , "532 16 64 1 OVERWORLD",   // stratum host + :532 bothsides(Gneiss, Gypsum) band
+            "milkyquartz" , "901 40 80 1 OVERWORLD");  // :901 ore.large.quartz lens band
+        Set<OreDictMaterial> tAxis = new HashSet<>(GT6OreBlocks.materialAxis());
+        for (Map.Entry<String, String> tEntry : tBatch2.entrySet()) {
+            GTOreWorldgen.SmallOreRow tRow = rowOf("ore.small." + tEntry.getKey());
+            String[] tParts = tEntry.getValue().split(" ");
+            assertEquals(Integer.parseInt(tParts[1]), tRow.minY(), tRow.name() + " minY (Loader_Worldgen.java:" + tParts[0] + ")");
+            assertEquals(Integer.parseInt(tParts[2]), tRow.maxY(), tRow.name() + " maxY (Loader_Worldgen.java:" + tParts[0] + ")");
+            assertEquals(Integer.parseInt(tParts[3]), tRow.amount(), tRow.name() + " amount = 1 (the b2 blob-chance / gem-pool grammar)");
+            assertEquals(tParts[4], dimsOf(tRow), tRow.name() + " overworld-only (the strata/lens anchors are an overworld face)");
+            OreDictMaterial tMaterial = GTOreWorldgen.resolve(tRow);
+            assertTrue(tMaterial != null && tAxis.contains(tMaterial),
+                    tRow.name() + " material joined the registered axis (worldgen-axis-batch2)");
+            assertTrue(GTOreWorldgen.placementPairs().stream().anyMatch(tPair -> tPair.row() == tRow
+                            && tPair.dim() == GTOreWorldgen.Dim.OVERWORLD),
+                    tRow.name() + " has its overworld placement pair");
+            assertFalse(GTOreWorldgen.DEEP_MIRROR_TAILS.contains(tRow.tail()),
+                    tRow.name() + " never deep-mirrors (the b2 strata-band ruling; the fuels keep the c2 carbon-near-surface rule)");
+        }
+        assertEquals(5, tBatch2.size());
     }
 
     private static GTOreWorldgen.SmallOreRow rowOf(String aName) {
