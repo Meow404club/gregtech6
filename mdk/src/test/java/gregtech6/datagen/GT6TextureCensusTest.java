@@ -339,6 +339,12 @@ class GT6TextureCensusTest {
         "20c309d9ff4175bf0f04b4c57efbd58fa1915f1c69907abd3bd91d6d01b70138",
         "2efd256b8f70385118ecff73075b3b20d62ae9c6a6f7e674c0d7253b0c89eb70",
         "3ac3ffc4f17a13b6ffdb9ed2c18f845100315854467acdec0c45b7ca772969d0",
+        // the kitchen NEI derivation source sheet (README "upstream reference, NOT
+        // borrowed" row — the GT6KitchenNeiModel/GT6MortarNeiModel/GT6AnvilNeiModel glyph
+        // family derives from it; the sheet itself never ships so the row can never
+        // ground). Ratchet随动 by mortar-family — the queued ratchet commits (0f51d0637 /
+        // ae88a4965) carry the identical line, merge dedupes.
+        "40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2",
         "40ac47fac76cd859703bde605b0095cb33f55ffa9da9323fe5299f4dec75aee9",
         "4c787010041ea75483b4eedffb17e402c8763de27e2271a4eacccf960972ec71",
         "4d02bba819e7368ae9b8ef5441fca9d586ddc37f4a9b3b553af2802fa2e923c3",

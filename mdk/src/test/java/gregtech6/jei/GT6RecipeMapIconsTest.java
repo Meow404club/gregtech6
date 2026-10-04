@@ -34,6 +34,7 @@ import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.registry.GT6Anvils;
+import gregtech6.registry.GT6Mortars;
 import gregtech6.registry.GT6BurningBoxes;
 import gregtech6.registry.GT6Crucibles;
 import gregtech6.registry.GT6Distillation;
@@ -240,6 +241,10 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 		add.accept("gt.recipe.juicer", "juicer");
 		add.accept("gt.recipe.anvil.bend", "bending_cylinder");
 		add.accept("gt.recipe.hammer", "hammer");
+		// the mortar family (task mortar-family — the hand-tool face joins the tabled
+		// machines; the keySet order IS the registration order, the same source the
+		// production walk reads)
+		for (String tPath : GT6Mortars.ITEMS_BY_PATH.keySet()) add.accept("gt.recipe.mortar", tPath);
 		// the fuel faces (diesels ride the same spec-driven derivation as production — the
 		// DIESEL_ITEMS map fills at the mod-bus event, not at class-init, so offline the
 		// expected list is the spec names and the supplier stays unresolved under the stub)

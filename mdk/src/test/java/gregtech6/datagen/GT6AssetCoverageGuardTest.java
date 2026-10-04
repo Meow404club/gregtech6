@@ -318,6 +318,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6LargeMachines.class,
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
 			GT6LongDistPipes.class, GT6LongDistWires.class, GT6MagicAbsorbers.class, GT6Molds.class,
+			gregtech6.registry.GT6Mortars.class, // task mortar-family — the manual-chain mortar family (5 rows, block + item + shared BET)
 			GT6Cells.class, // task small-tank-cell — the 40 Capsule-Cell-Container rows
 			GT6ConcreteBlocks.class, // task concrete-blocks-register — the 64 per-pair concrete blocks
 			GT6Cups.class, // task small-tank-cup — the Porcelain Cup row (block + raw item)

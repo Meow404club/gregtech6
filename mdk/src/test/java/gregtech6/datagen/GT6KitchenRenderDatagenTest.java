@@ -4,8 +4,9 @@
  * missing-model checkerboard: zero blockstates/models/item-models in the generated tree.
  * This census pins the fix end to end (the {@link GT6StoneBlocksRenderDatagenTest} split):
  * <ul>
- * <li>the 18-PNG borrow tree (block/tools/, the upstream colored/ tile sets) is 1:1 with
- *     the declared face sets — zero strays, zero gaps;</li>
+ * <li>the 18-PNG kitchen borrow tree (block/tools/, the upstream colored/ tile sets)
+ *     plus the declared non-kitchen tool-tree residents ({@link #OTHER_TOOL_TREE_RESIDENTS})
+ *     is 1:1 with the declared face sets — zero strays, zero gaps;</li>
  * <li>every borrowed PNG is grounded in assets/README.md by basename AND by the actual
  *     sha256 of its bytes (the p31 attribution-nail pattern — the name check alone can
  *     pass while the prose describes a different file);</li>
@@ -57,6 +58,21 @@ class GT6KitchenRenderDatagenTest {
     /** 4 + 4 + 4 + 6 — the walk upstream found exactly these colored/ files per family (the Table faces stay unborrowed). */
     private static final int PINNED_PNG_TOTAL = 18;
 
+    /**
+     * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
+     * walks the whole directory, so every later band must be declared here): the two
+     * DERIVED NEI glyph tiles (the kitchen-nei card, tools root) + the mortar 12-PNG
+     * two-layer band (task mortar-family — colored+overlay x sides/insides/top/bottom/
+     * middleside/middletop). The grindstone/sifting-table siblings extend this list at
+     * their own cards — with the sifting band (+8) landed the walk is 18 + 14 + 8 = 40.
+     */
+    private static final List<String> OTHER_TOOL_TREE_RESIDENTS = List.of(
+            "tools/kitchen_nei_jei.png", "tools/kitchen_nei_emi.png", // the walk keys parentDir/file
+            "mortar/sides.png", "mortar/insides.png", "mortar/top.png",
+            "mortar/bottom.png", "mortar/middleside.png", "mortar/middletop.png",
+            "mortar_overlay/sides.png", "mortar_overlay/insides.png", "mortar_overlay/top.png",
+            "mortar_overlay/bottom.png", "mortar_overlay/middleside.png", "mortar_overlay/middletop.png");
+
     private static List<String> declaredFaces(String aBlockId) {
         return aBlockId.equals("juicer") ? JUICER_FACES : TUB_FACES;
     }
@@ -95,8 +111,8 @@ class GT6KitchenRenderDatagenTest {
     }
 
     /**
-     * PNG census, NEGATIVE side: the borrow tree hosts exactly the 18 declared files —
-     * no strays (the whole directory is this card's borrow).
+     * PNG census, NEGATIVE side: the borrow tree hosts exactly the 18 declared kitchen
+     * files + the declared non-kitchen tool-tree residents — no strays.
      */
     @Test
     void borrowedPngTreeIsExactlyTheDeclaredSet() throws Exception {
@@ -107,13 +123,15 @@ class GT6KitchenRenderDatagenTest {
             tWalk.filter(p -> p.toString().endsWith(".png"))
                     .forEach(p -> tFound.add(p.getParent().getFileName() + "/" + p.getFileName()));
         }
-        assertEquals(PINNED_PNG_TOTAL, tFound.size(), "4+4+4+6 borrowed PNGs, walked");
+        assertEquals(PINNED_PNG_TOTAL + OTHER_TOOL_TREE_RESIDENTS.size(), tFound.size(),
+                "18 kitchen borrowed PNGs + the declared non-kitchen tool-tree residents, walked");
         Set<String> tDeclared = new HashSet<>();
         for (Map.Entry<String, String> tRow : BLOCK_FAMILIES.entrySet()) {
             for (String tFace : declaredFaces(tRow.getKey())) {
                 tDeclared.add(tRow.getValue() + "/" + tFace + ".png");
             }
         }
+        tDeclared.addAll(OTHER_TOOL_TREE_RESIDENTS);
         assertEquals(tDeclared, tFound, "the borrow is 1:1 with the declared face sets — zero strays, zero gaps");
     }
 
