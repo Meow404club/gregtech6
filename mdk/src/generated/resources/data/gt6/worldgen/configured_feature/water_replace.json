@@ -1,0 +1,22 @@
+{
+  "type": "gt6:water_replace",
+  "config": {
+    "rows": [
+      {
+        "block": "gt6:seawater_block",
+        "gate": "ocean",
+        "name": "ocean.seawater"
+      },
+      {
+        "block": "gt6:riverwater_block",
+        "gate": "river",
+        "name": "river.riverwater"
+      },
+      {
+        "block": "gt6:waterdirty_block",
+        "gate": "swamp",
+        "name": "swamp.dirtywater"
+      }
+    ]
+  }
+}

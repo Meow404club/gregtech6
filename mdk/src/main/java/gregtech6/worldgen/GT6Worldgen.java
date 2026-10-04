@@ -430,6 +430,19 @@ public final class GT6Worldgen {
     /** The bedrock-spring placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk). */
     public static final ResourceKey<PlacedFeature> FLUID_SPRINGS_PLACED = placedKeyOf("fluid_springs");
 
+    // ------------------------------------------------------------------
+    // The vanilla-water replacement band (task worldgen-water-replace) — the single
+    // Feature over the 3-row water table (ocean/river/swamp, Loader_Worldgen.java
+    // :576-578); key form = the fluid-spring band's path-direct shape. The row order
+    // lives in the configured-feature table (the OCEAN→RIVER→SWAMP hard constraint is
+    // the table iteration, immune to modifier application order).
+    // ------------------------------------------------------------------
+
+    /** The vanilla-water replacement configured feature (the GT6WaterReplaceFeature instance + the 3-row table). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> WATER_REPLACE_CONFIGURED = configKey("water_replace");
+    /** The vanilla-water replacement placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk). */
+    public static final ResourceKey<PlacedFeature> WATER_REPLACE_PLACED = placedKeyOf("water_replace");
+
     /**
      * The port-owned synthetic salt of the spring row stream ({@link GT6VeinGenerator#veinRandom}
      * face): upstream the spring row gates drew from the SHARED per-chunk random after the
