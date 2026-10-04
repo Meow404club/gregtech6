@@ -99,6 +99,18 @@ public class MaterialPrefixItem extends Item {
      * word. Public static seam: the lang parity test pins the fill shape offline (no Item
      * instance — the GTWireDisplayNameTest posture).
      */
+    /**
+     * The String face of the same seam, for the deliberately-NOT-localized chat rows
+     * (GT6Prospector, the ToolCompat.java:400-401 ruling): the flag consult lands the
+     * rename table, then the live {@code mNameLocal} word answers — flag off stays the
+     * plain local word, byte-identical to the pre-seam reads (task
+     * easter-prospector-chat-line, the easter-tooltip-rename leftover chat face).
+     */
+    public static String materialWord(OreDictMaterial aMaterial) {
+        if (GT6Calendars.APRIL_FOOLS) GT6Calendars.ensureFoolsApplied();
+        return aMaterial.getLocal();
+    }
+
     public static MutableComponent materialFill(OreDictMaterial aMaterial) {
         // April Fools: the live (renamed) local word replaces the lang key (task
         // easter-s2-date-flags-fools — the setLocal display face, GT_API.java:363-477).
