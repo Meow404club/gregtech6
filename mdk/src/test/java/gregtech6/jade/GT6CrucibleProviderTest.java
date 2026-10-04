@@ -413,4 +413,50 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 		assertEquals(GT6CrucibleProvider.LANG_EMPTY, tEmpty.getKey());
 		assertEquals(0, tEmpty.getArgs().length);
 	}
+
+	// ------------------------------------------------------------------------------------
+	// group ⑤ the temperature ramp (task r11c-jade-bar-fluid-color ③ — the steel-heating
+	// color ladder, the user ruling: the melt ceiling is the top)
+	// ------------------------------------------------------------------------------------
+
+	@Test
+	public void theTemperatureRampAnswersTheSixStopsExactly() {
+		// ratio 0 / 0.2 / 0.4 / 0.6 / 0.8 / 1.0 — black / dark red / red / orange / yellow /
+		// white; ratio = temp/tempMax (the shell melt point x the heat-resistance bonus,
+		// CruciblePhysics.temperatureMax :207-209), so ratio 1.0 IS the melt ceiling
+		assertEquals(0xFF000000, GT6JadeRows.heatColor(0.0), "the ambient floor");
+		assertEquals(0xFF8B0000, GT6JadeRows.heatColor(0.2), "the dark red band");
+		assertEquals(0xFFFF0000, GT6JadeRows.heatColor(0.4), "the red band");
+		assertEquals(0xFFFF8800, GT6JadeRows.heatColor(0.6), "the orange shared with the boiler heat bar");
+		assertEquals(0xFFFFFF00, GT6JadeRows.heatColor(0.8), "the yellow band");
+		assertEquals(0xFFFFFFFF, GT6JadeRows.heatColor(1.0), "the melt ceiling = white");
+	}
+
+	@Test
+	public void theTemperatureRampInterpolatesMonotonicallyBetweenStops() {
+		// two mid-band literal pins (the red->orange and yellow->white halves), then the
+		// full 0..1 walk — every RGB channel non-decreasing (the continuous steel gradient,
+		// never a backwards step)
+		assertEquals(0xFFFF4400, GT6JadeRows.heatColor(0.5), "red->orange midpoint");
+		assertEquals(0xFFFFFF80, GT6JadeRows.heatColor(0.9), "yellow->white midpoint");
+		int tPrevR = 0, tPrevG = 0, tPrevB = 0;
+		for (int tStep = 0; tStep <= 100; tStep++) {
+			int tColor = GT6JadeRows.heatColor(tStep / 100.0);
+			int tR = (tColor >>> 16) & 0xFF, tG = (tColor >>> 8) & 0xFF, tB = tColor & 0xFF;
+			assertTrue(tR >= tPrevR && tG >= tPrevG && tB >= tPrevB,
+					"a channel steps backwards at " + tStep + "%");
+			tPrevR = tR;
+			tPrevG = tG;
+			tPrevB = tB;
+		}
+	}
+
+	@Test
+	public void theTemperatureRampClampsPastTheEdges() {
+		assertEquals(0xFF000000, GT6JadeRows.heatColor(-1.0), "below zero clamps to black, never a wrapped channel");
+		assertEquals(0xFFFFFFFF, GT6JadeRows.heatColor(1.5), "over the ceiling clamps to white");
+		// the ramp feeds off the shared clamp: temp == tempMax pins ratio at 1.0 — exactly
+		// where the melt-down warning gate lives (temp+100>max, CruciblePhysics :212-214)
+		assertEquals(1.0F, GT6JadeRows.ratio(5000, 5000), 1e-6F);
+	}
 }

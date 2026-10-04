@@ -279,12 +279,14 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 			return; // 非坩埚（本 provider 挂全 GT6 BE 面，键存在即坩埚族——GT6MachineProvider 同门）
 		}
 		// 行 1：温度条（task jade-converter-crucible-restyle，B 形收编）——temp/tempmax 钳位
-		// 比例（GT6JadeRows.ratio），两槽文本（单位词尾置一次），条面中性白。条本体组装
-		// live-only（IElementHelper 需客户端），离线钉 = 线契约 + 行函数 + 钳位。
+		// 比例（GT6JadeRows.ratio），两槽文本（单位词尾置一次），条面 = 钢铁加热色阶
+		// （r11c ③——{@link GT6JadeRows#heatColor} 六停靠连续插值，ratio 1.0 = 熔毁顶 =
+		// 白；融毁红字仍在内容条的文字色，此条面色独立）。条本体组装 live-only
+		// （IElementHelper 需客户端），离线钉 = 线契约 + 行函数 + 色阶纯函数。
 		long tTemp = aData.getLong(KEY_TEMP);
 		long tTempMax = aData.getLong(KEY_TEMP_MAX);
-		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tTemp, tTempMax),
-				temperatureBarLine(tTemp, tTempMax), GT6JadeRows.COLOR_NEUTRAL);
+		float tRatio = GT6JadeRows.ratio(tTemp, tTempMax);
+		GT6JadeRows.bar(aTooltip, tRatio, temperatureBarLine(tTemp, tTempMax), GT6JadeRows.heatColor(tRatio));
 		// 行 2：内容 tank 条（task crucible-jade-tankbar v3）——overlay = 服务端分派好的载荷
 		// （官方流体元素 / ContentFace 同源元素），条文本 = 总量行；融毁闩落时条文字变红
 		// （④：独立红色警报行废除，红字面并入此条——v3 覆盖 r8 '旧行保留' 裁定）。

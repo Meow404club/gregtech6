@@ -1,5 +1,7 @@
 package gregtech6.jade;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -14,6 +16,9 @@ import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.fluid.JadeFluidObject;
+import snownee.jade.api.ui.IElement;
+import snownee.jade.api.ui.IElementHelper;
 
 import gregapi.util.UT;
 import gregtech6.fluid.FluidTankGT;
@@ -35,12 +40,15 @@ import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
  * <ol>
  * <li><b>热量条</b>——mEnergy/mCapacity（GTBoilerTankBlockEntity:153/:155；LargeBoiler
  *     :178/:180），"Stored Heat Units: %s / %s HU (Z%)" 借上游温度计读数 verbatim 加百分槽
- *     （thermometer :408-411）；热量 &gt; 0 绿 / 空红（有热 = 在干活）。</li>
+ *     （thermometer :408-411）；热量 &gt; 0 橙（{@link GT6JadeRows#COLOR_HEAT}，r11c ②——
+ *     GTOvenScreen COLOR_FILL 同值，热量是温度面非进度面）/ 空红。</li>
  * <li><b>水条常态显示</b>（从潜行升级，ruling boiler_water）——mTanks[0]，标签 = 实际流体名
  *     （KEY_WATER_FLUID 注册名串过缝，task jade-boiler-burningbox）。<b>空罐零行</b>
  *     （task boiler-jade-display ①，用户裁定「空就是空，不显示」——旧「Empty/空罐」空态行
  *     退役；门 = {@link #waterRowVisible}，空态词仅存于水行标签的解析失败防御回落）。</li>
- * <li><b>汽条常态显示</b>——mTanks[1]。两罐文本统一三槽 X / Y (Z%)。</li>
+ * <li><b>汽条常态显示</b>——mTanks[1]。两罐文本统一三槽 X / Y (Z%)。水/汽条 overlay =
+ *     Jade 官方流体元素（r11c ①——水随 KEY_WATER_FLUID 身份、汽 {@link #STEAM_FLUID}
+ *     固定身份，白条→流体贴图；{@link #fluidOverlay} 坩埚 overlayElement 同款链）。</li>
  * <li><b>产气速率行</b>（task boiler-jade-display ③）——当前蒸汽产率 mB/t。显示口径：BE
  *     tick 转换公式的纯镜像（两 BE tick 体逐字孪生 :256-265/:392-401）——
  *     {@code conversions = min(汽罐容/2560, min(热/80, 水量))}，产率 = units(conversions,
@@ -87,6 +95,13 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 	public static final String KEY_WATER_FLUID = "GT6BoilerWaterFluid";
 	/** 当前蒸汽产率（mB/t，BE tick 转换公式纯镜像——boiler-jade-display ③）。 */
 	public static final String KEY_RATE = "GT6BoilerRate";
+
+	/**
+	 * 汽条流体身份（task r11c-jade-bar-fluid-color ①——GTFluids.STEAM 源流体注册名；
+	 * FluidType 客户端扩展声明 still = 原版 water_still + tint 0xFFC8C8C8 浅灰蒸汽
+	 * （GTFluids ENGINE_SPECS steam 行），贴图身份即此处注册名反查）。
+	 */
+	public static final String STEAM_FLUID = "gt6:steam";
 
 	/** lang 键（GT6EnUs/GT6ZhCn 双侧同发，四落纪律）。 */
 	public static final String LANG_HEAT = "gt6.jade.boiler.heat";
@@ -202,25 +217,28 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 		if (!aData.contains(KEY_HEAT_MAX)) {
 			return; // 非锅炉（本 provider 挂全 GT6 BE 面，键存在即锅炉族——GT6CrucibleProvider 同门）
 		}
-		// ① 热量条：mEnergy/mCapacity 比例，"Stored Heat Units: X / Y HU (Z%)"; 有热绿 / 空红。
+		// ① 热量条：mEnergy/mCapacity 比例，"Stored Heat Units: X / Y HU (Z%)"; 有热橙
+		// （r11c ②——GTOvenScreen COLOR_FILL 同值，热量是温度面非进度面）/ 空红。
 		long tHeat = aData.getLong(KEY_HEAT);
 		long tHeatMax = aData.getLong(KEY_HEAT_MAX);
 		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tHeat, tHeatMax), heatLine(tHeat, tHeatMax),
-				tHeat > 0 ? GT6JadeRows.COLOR_OK : GT6JadeRows.COLOR_STALLED);
+				tHeat > 0 ? GT6JadeRows.COLOR_HEAT : GT6JadeRows.COLOR_STALLED);
 		// ② 水条：仅非空罐（boiler-jade-display ①「空就是空」——空罐零行，水行不渲染）；
-		// 标签 = 实际流体名（门 = waterRowVisible，读的正是 KEY_WATER/KEY_WATER_FLUID 两键）。
+		// 标签 = 实际流体名（门 = waterRowVisible，读的正是 KEY_WATER/KEY_WATER_FLUID 两键）；
+		// overlay = 流体身份反查的官方流体元素（r11c ①，白条→贴图）。
 		if (waterRowVisible(aData)) {
 			long tWater = aData.getLong(KEY_WATER);
 			long tWaterMax = aData.getLong(KEY_WATER_MAX);
 			GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tWater, tWaterMax),
 					waterLine(waterLabel(aData.getString(KEY_WATER_FLUID)), tWater, tWaterMax),
-					GT6JadeRows.COLOR_NEUTRAL);
+					GT6JadeRows.COLOR_NEUTRAL, -1, fluidOverlay(aData.getString(KEY_WATER_FLUID), tWater));
 		}
-		// ③ 汽条：常态显示。
+		// ③ 汽条：常态显示；overlay = gt6:steam 固定身份（r11c ①——still=water_still+
+		// 0xFFC8C8C8 浅灰蒸汽，{@link #STEAM_FLUID}）。
 		long tSteam = aData.getLong(KEY_STEAM);
 		long tSteamMax = aData.getLong(KEY_STEAM_MAX);
 		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tSteam, tSteamMax), steamLine(tSteam, tSteamMax),
-				GT6JadeRows.COLOR_NEUTRAL);
+				GT6JadeRows.COLOR_NEUTRAL, -1, fluidOverlay(STEAM_FLUID, tSteam));
 		// ④ 产气速率行（boiler-jade-display ③）：当前蒸汽产率 mB/t（0 = 未在产，保留）。
 		aTooltip.add(rateLine(aData.getLong(KEY_RATE)));
 		// ⑤ 需求行。
@@ -281,6 +299,18 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 		return aEfficiency < 10000
 				? Component.translatable(LANG_SCALE, (10000 - aEfficiency) / 100)
 				: Component.translatable(LANG_SCALE_CLEAN);
+	}
+
+	/**
+	 * 条 overlay 组装（live-only 客户端面，task r11c ①——{@link GT6CrucibleProvider}
+	 * overlayElement 同款先例）：注册名串反查流体 → Jade 官方流体元素
+	 * （{@code IElementHelper.fluid(JadeFluidObject)}——坩埚内容条已验收链）；解析失败答
+	 * null = 纯色条，绝不 crash（守卫臂在 live-only 助手之前，离线可钉）。
+	 */
+	@Nullable
+	static IElement fluidOverlay(String aFluidId, long aAmount) {
+		Fluid tFluid = GT6FluidProvider.resolveFluid(aFluidId);
+		return tFluid == null ? null : IElementHelper.get().fluid(JadeFluidObject.of(tFluid, aAmount));
 	}
 
 }

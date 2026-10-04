@@ -47,6 +47,16 @@ public final class GT6JadeRows {
 	public static final int COLOR_STALLED = 0xFFBB1C28;
 	/** 无语义着色 = Jade ProgressStyle 构造器默认白（jade-1201 ProgressStyle.java:32 color(0xFFFFFFFF)）。 */
 	public static final int COLOR_NEUTRAL = 0xFFFFFFFF;
+	/** 热量 = 橙（task r11c-jade-bar-fluid-color ②——GTOvenScreen.java:31 COLOR_FILL 同值先例，
+	 * 同为热语义；有进展绿 {@link #COLOR_OK} 语义留在进度面，锅炉热量条改走此处）。 */
+	public static final int COLOR_HEAT = 0xFFFF8800;
+
+	/**
+	 * 坩埚温度条色阶六停靠（task r11c ③，用户裁定「以熔毁为顶……参考钢铁加热的变色」）：
+	 * ARGB 黑/暗红/红/橙/黄/白（橙橙同 {@link #COLOR_HEAT}，钢铁加热序）。
+	 */
+	private static final int[] HEAT_STOPS = {
+			0xFF000000, 0xFF8B0000, 0xFFFF0000, 0xFFFF8800, 0xFFFFFF00, 0xFFFFFFFF};
 
 	/** 状态行字色（ChatFormatting 形）——Active/Running/formed 绿（GT6ConverterProvider 状态行的
 	 * 第三份复制收编本处，task jade-converter-crucible-restyle——J1 交卡遗留债）。 */
@@ -80,6 +90,25 @@ public final class GT6JadeRows {
 	public static long percent(long aCur, long aMax) {
 		if (aMax <= 0) return 0;
 		return Math.max(0, Math.min(aCur, aMax)) * 100 / aMax;
+	}
+
+	/**
+	 * 坩埚温度条色阶（纯函数，task r11c ③，离线可测）：ratio 六停靠分段线性插值——
+	 * 0 黑 / 0.2 暗红 / 0.4 红 / 0.6 橙 / 0.8 黄 / 1.0 白（{@link #HEAT_STOPS}，用户裁定的
+	 * 钢铁加热变色序）；RGB 三通道独立插值，alpha 恒 FF。钳位臂 &lt;0 → 黑、&gt;1 → 白。
+	 * 输入 = {@link #ratio} 的温度比（tempMax = 壳熔点×耐热系数，CruciblePhysics
+	 * :207-209），熔毁门 temp+100&gt;max（:212-214）⇒ ratio 1.0 = 熔毁顶 = 白。
+	 */
+	public static int heatColor(double aRatio) {
+		double tPos = Math.max(0.0, Math.min(1.0, aRatio)) * (HEAT_STOPS.length - 1);
+		int tIndex = (int)tPos;
+		if (tIndex >= HEAT_STOPS.length - 1) return HEAT_STOPS[HEAT_STOPS.length - 1];
+		int tFrom = HEAT_STOPS[tIndex], tTo = HEAT_STOPS[tIndex + 1];
+		double tFrac = tPos - tIndex;
+		int tR = (int)Math.round(((tFrom >>> 16) & 0xFF) + (((tTo >>> 16) & 0xFF) - ((tFrom >>> 16) & 0xFF)) * tFrac);
+		int tG = (int)Math.round(((tFrom >>> 8) & 0xFF) + (((tTo >>> 8) & 0xFF) - ((tFrom >>> 8) & 0xFF)) * tFrac);
+		int tB = (int)Math.round((tFrom & 0xFF) + ((tTo & 0xFF) - (tFrom & 0xFF)) * tFrac);
+		return 0xFF000000 | (tR << 16) | (tG << 8) | tB;
 	}
 
 	/**

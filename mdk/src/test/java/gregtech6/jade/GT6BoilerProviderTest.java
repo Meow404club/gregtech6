@@ -3,6 +3,7 @@ package gregtech6.jade;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import snownee.jade.api.view.ViewGroup;
 
 import gregtech6.tileentity.GTOfflineTestBase;
+import gregtech6.fluid.GTFluids;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
@@ -353,5 +355,42 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		List<ViewGroup<CompoundTag>> tLargeGroups = GT6FluidProvider.groupsOfTarget(tLarge);
 		assertNotNull(tLargeGroups, "the large boiler arm is banned the same way");
 		assertTrue(tLargeGroups.isEmpty());
+	}
+
+	// ------------------------------------------------------------------------------------
+	// group ⑦ the bar colors + the overlay identities (task r11c-jade-bar-fluid-color)
+	// ------------------------------------------------------------------------------------
+
+	@Test
+	public void theHeatBarPaintsTheOvenOrangeNotTheGreen() {
+		// ② the hot arm rides the oven-fill orange (GTOvenScreen.java:31 COLOR_FILL — the
+		// same heat semantics, the user-reported green read as "cold"), NOT the progress
+		// green; the drained arm keeps COLOR_STALLED red (untouched face)
+		assertEquals(0xFFFF8800, GT6JadeRows.COLOR_HEAT, "the oven orange");
+		assertEquals(0xFF4CBB17, GT6JadeRows.COLOR_OK,
+				"the green stays the progress face — a guard against the two semantics conflating back");
+	}
+
+	@Test
+	public void theWaterBarOverlayFollowsTheWireIdentity() {
+		// ① the water bar overlay = the official fluid element over the SAME registry name
+		// the wire carries (KEY_WATER_FLUID); minecraft:water resolves offline through the
+		// vanilla registry (the tankFluidName pin's mirror), and the unresolvable arm
+		// answers null = the plain bar, never a crash (the crucible overlayElement guard posture)
+		assertSame(Fluids.WATER, GT6FluidProvider.resolveFluid("minecraft:water"));
+		assertNull(GT6BoilerProvider.fluidOverlay("gt6:not_a_fluid", 1),
+				"garbage identity = no overlay, not a crash");
+	}
+
+	@Test
+	public void theSteamBarOverlayIsTheSteamIdentity() {
+		// ① the steam bar = the fixed gt6:steam source (GTFluids.STEAM) — the FluidType
+		// client extensions declare still = the vanilla water_still over the spec's tint
+		// (GTFluids engineFluid template), and the spec row is the offline-readable half
+		// ("readable OFFLINE — the live FluidType carries the same numbers at registration")
+		assertEquals("gt6:steam", GT6BoilerProvider.STEAM_FLUID);
+		assertNotNull(GTFluids.engineSpec("steam"), "the steam spec row is live");
+		assertEquals(0xFFC8C8C8, GTFluids.engineSpec("steam").tint(),
+				"the light-grey steam tint — the tint half of the still+tint identity");
 	}
 }
