@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "gt6:block/beam_top_blue_mahoe",
+    "side": "gt6:block/beam_side_blue_mahoe"
+  }
+}

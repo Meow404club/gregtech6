@@ -113,8 +113,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     /** The runData-side barrel tint census counter (task barrel-paint-render — the datagen-JVM half of the pinned 16 audit). */
     private int mBarrelTintModels;
 
+    /** The existence helper (the Beam fireproof twins' existing-model reuse, the addBeams face). */
+    private final ExistingFileHelper mExistingFileHelper;
+
     public GT6BlockStates(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, GT6DataGenerators.MOD_ID, existingFileHelper);
+        mExistingFileHelper = existingFileHelper;
     }
 
     @Override
@@ -5339,14 +5343,18 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * The wood-beam family (task beam-blocks-register, 8 blocks): one {@code cube_column}
-     * model per kind over the two borrowed upstream PNGs (end = beam_top_&lt;kind&gt;, side =
-     * beam_side_&lt;kind&gt; — the BEAMS_1/BEAMS_2 icon pairs, Textures.java:260-277, indexed
-     * 2*(meta&amp;PILLAR_DATA)+(axis?0:1) at BlockBaseBeam.java:65), the axle axis band
-     * rotation map verbatim (X = x90+y90 / Y = none / Z = x90+y180 — the vanilla axisBlock
-     * idiom, the addAxles :2340-2344 form). Geometry is the full cube: upstream render id
-     * 31 (CS.java:764 PILLAR_RENDER) IS the vanilla log renderer — the beam has no reduced
-     * cross-section. The item form parents the block model (the axle band row).
+     * The wood-beam family (task beam-blocks-register + beam-fireproof-closeout, 21 + 21
+     * blocks): one {@code cube_column} model per kind over the two borrowed upstream PNGs
+     * (end = beam_top_&lt;kind&gt;, side = beam_side_&lt;kind&gt; — the BEAMS_1/2/3/A/B/C icon
+     * pairs, Textures.java:260-319, indexed 2*(meta&amp;PILLAR_DATA)+(axis?0:1) at
+     * BlockBaseBeam.java:65), the axle axis band rotation map verbatim (X = x90+y90 /
+     * Y = none / Z = x90+y180 — the vanilla axisBlock idiom, the addAxles :2340-2344
+     * form). Geometry is the full cube: upstream render id 31 (CS.java:764
+     * PILLAR_RENDER) IS the vanilla log renderer — the beam has no reduced cross-section.
+     * The item form parents the block model (the axle band row). The 21 FireProof twins
+     * (Loader_Woods.java:49-61) render IDENTICALLY upstream (BlockTreeBeam*FireProof pass
+     * the same texture arrays) — the twins reuse the base kind's model file, zero new
+     * models, their item forms parent the same model.
      */
     private void addBeams() {
         for (RegistryObject<Block> tHandle : gregtech6.registry.GT6BeamBlocks.BLOCKS) {
@@ -5354,13 +5362,25 @@ public final class GT6BlockStates extends BlockStateProvider {
             gregtech6.block.tree.GT6BeamKind tKind = ((gregtech6.block.tree.GT6BeamBlock) tBlock).kind();
             ModelFile tModel = models().cubeColumn(tHandle.getId().getPath(),
                     modLoc("block/beam_side_" + tKind.snake()), modLoc("block/beam_top_" + tKind.snake()));
-            getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
-                case X -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 90, false)};
-                case Y -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
-                case Z -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 180, false)};
-            });
+            beamBlockstate(tBlock, tModel);
             itemModels().withExistingParent(tHandle.getId().getPath(), tModel.getLocation());
         }
+        // the FireProof twins: same render face, the base kind's model reused
+        for (RegistryObject<Block> tHandle : gregtech6.registry.GT6BeamBlocks.FIREPROOF_BLOCKS) {
+            Block tBlock = tHandle.get();
+            gregtech6.block.tree.GT6BeamKind tKind = ((gregtech6.block.tree.GT6BeamBlock) tBlock).kind();
+            beamBlockstate(tBlock, new ModelFile.ExistingModelFile(modLoc("block/" + gregtech6.registry.GT6BeamBlocks.path(tKind)), mExistingFileHelper));
+            itemModels().withExistingParent(gregtech6.registry.GT6BeamBlocks.fireproofPath(tKind), modLoc("block/" + gregtech6.registry.GT6BeamBlocks.path(tKind)));
+        }
+    }
+
+    /** The three-axis rotation map over one model (the shared beam/twin blockstate body). */
+    private void beamBlockstate(Block aBlock, ModelFile aModel) {
+        getVariantBuilder(aBlock).forAllStates(aState -> switch (aState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
+            case X -> new ConfiguredModel[] {new ConfiguredModel(aModel, 90, 90, false)};
+            case Y -> new ConfiguredModel[] {new ConfiguredModel(aModel)};
+            case Z -> new ConfiguredModel[] {new ConfiguredModel(aModel, 90, 180, false)};
+        });
     }
     /**
      * Task concrete-blocks-register — the 64 per-pair concrete blocks

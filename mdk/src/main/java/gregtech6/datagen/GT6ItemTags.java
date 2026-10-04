@@ -528,13 +528,17 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	}
 
 	/**
-	 * The wood-beam oredient band (task beam-oredict-seam): the 8 beam items join
-	 * {@code #gt6:beam_wood} — the OD.beamWood face (BlockBaseBeam.java:48, the whole-meta
-	 * registration the port's per-wood items subsume). Kind order, the addFallenLogTags
-	 * walk shape over the registration list.
+	 * The wood-beam oredient band (task beam-oredict-seam + beam-fireproof-closeout): the
+	 * beam items AND their FireProof twins join {@code #gt6:beam_wood} — the OD.beamWood
+	 * face (BlockBaseBeam.java:48 runs in the constructor of EVERY BlockBaseBeam subclass,
+	 * the FireProof twins included — BlockTreeBeam1FireProof.java:27). Kind order, the
+	 * addFallenLogTags walk shape over the registration list.
 	 */
 	private void addBeamTags() {
 		for (RegistryObject<Item> tBeam : gregtech6.registry.GT6BeamBlocks.ITEMS) {
+			tag(BEAM_WOOD).add(item(tBeam.getId()));
+		}
+		for (RegistryObject<Item> tBeam : gregtech6.registry.GT6BeamBlocks.FIREPROOF_ITEMS) {
 			tag(BEAM_WOOD).add(item(tBeam.getId()));
 		}
 	}

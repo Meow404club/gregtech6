@@ -3113,15 +3113,17 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The wood-beam family keys (task beam-blocks-register, 8 rows): block display names
-     * walked from {@link gregtech6.registry.GT6BeamBlocks#KINDS}, the en column IS the
-     * upstream LH row (BlockTreeBeam1.java:31-48 Oak/Spruce/Birch/Jungle,
-     * BlockTreeBeam2.java:31-48 Acacia/Dark Oak/Rubber Wood/Wood) — the kind's enName
-     * carries the composed name whole. Table-tail append, append-only.
+     * The wood-beam family keys (task beam-blocks-register + beam-fireproof-closeout,
+     * 21 + 21 rows): block display names walked from
+     * {@link gregtech6.registry.GT6BeamBlocks#KINDS}, the en column IS the upstream LH row
+     * (BlockTreeBeam1/2/3/A/B/C.java:31-48 — the fireproof LH rows carry the
+     * " (Fireproof)" suffix verbatim, BlockTreeBeam1FireProof.java:31) — the kind's
+     * enName carries the composed name whole. Table-tail append, append-only.
      */
     private void addBeams() {
         for (gregtech6.block.tree.GT6BeamKind tKind : gregtech6.registry.GT6BeamBlocks.KINDS) {
             add("block.gt6." + gregtech6.registry.GT6BeamBlocks.path(tKind), tKind.enName());
+            add("block.gt6." + gregtech6.registry.GT6BeamBlocks.fireproofPath(tKind), tKind.enName() + " (Fireproof)");
         }
     }
 

@@ -43,7 +43,12 @@ class GT6EuSpecialSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		case "minecraft:piston" -> Items.PISTON;
 		case "minecraft:slime_ball" -> Items.SLIME_BALL;
 		case "minecraft:sticky_piston" -> Items.STICKY_PISTON;
-		default -> null;
+		// task beam-fireproof-closeout: the tail-appended beam rows carry gt6 ids — the
+		// identity stand-in keeps them pouring, PRECISELY the beam/wax id tails (the b2
+		// lightning rows must keep WARN-skipping here as on main — the 8-row pin)
+		default -> "gt6".equals(aId.getNamespace())
+				&& (aId.getPath().endsWith("_beam") || aId.getPath().endsWith("_fireproof")
+						|| aId.getPath().endsWith("_wax_refractory")) ? Items.IRON_INGOT : null;
 	};
 
 	private static final java.util.function.Function<ResourceLocation, Fluid> FLUID_FIXTURE = aId -> Fluids.WATER;

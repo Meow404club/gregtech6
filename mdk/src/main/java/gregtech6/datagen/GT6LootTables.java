@@ -154,7 +154,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register — the 8 wood beams self-drop
+                new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register + beam-fireproof-closeout — the wood beams + fireproof twins self-drop
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -219,7 +219,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6SurfaceBlockLoot::new, LootContextParamSets.BLOCK), // task w6-rocks-sticks — the surface deco band
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
-                new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register — the 8 wood beams self-drop
+                new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register + beam-fireproof-closeout — the wood beams + fireproof twins self-drop
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -404,14 +404,17 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The wood-beam block list (task beam-blocks-register): the 8 kind rows. The upstream
-     * damageDropped collapses the orientation meta to the wood base (BlockBaseBeam.java:55
+     * The wood-beam block list (task beam-blocks-register + beam-fireproof-closeout): the
+     * 21 kind rows + their 21 FireProof twins. The upstream damageDropped collapses the
+     * orientation meta to the wood base (BlockBaseBeam.java:55
      * {@code aMeta &amp; PILLAR_DATA}), which the one-block-per-wood AXIS form gets for free —
      * the 1.20.1 equivalent is exactly {@code dropSelf} like the axle/tree families.
      */
     public static List<Block> beamLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (RegistryObject<Block> tHandle : GT6BeamBlocks.BLOCKS) rBlocks.add(tHandle.get());
+        // task beam-fireproof-closeout: the FireProof twins self-drop too (the MTE Drops default, the same damageDropped-free form)
+        for (RegistryObject<Block> tHandle : GT6BeamBlocks.FIREPROOF_BLOCKS) rBlocks.add(tHandle.get());
         return rBlocks;
     }
 

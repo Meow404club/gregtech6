@@ -1,13 +1,907 @@
 {
+  "comment": "task beam-fireproof-closeout - the RM.Laminator fire-proofing BEAM segment (Loader_Recipes_Woods.java:46-72, the fire proofing loop): 21 beam woods x 2 wax legs = 42 rows, each the addRecipe2(T, 16, 192, wax, beam, beamFireproof) shape - eut 16, duration 192, the wax additive leading (plate.mat(MT.WaxRefractory, 6) / foil.mat(MT.WaxRefractory, 24)), the output the input beam's <kind>_beam_fireproof twin. ERRATUM: the card face cited ':56-72'; the actual beam segment is :53-58 (plate) + :66-71 (foil) - the per-row citations carry the exact line. OUT OF THIS FILE (declared): the log FireProof segment :48-51/:61-64 (BlocksGT.Log1/A/B/C FireProof = the plank/log FireProof defer, NOT this card); the Bath fire-resistance walk :74+ (the potion fluid face is another card's domain). The w2-eu-special sticky-piston smoke row stays row 0 (tail-append seam). SERIAL NOTE: the laminator plastic-sheet 40-row body is the b6 card's face - it tail-appends AFTER this segment (merge order beam-fireproof-closeout -> b6). PhaseGate LAMINATOR stays pinned 0 (the JSON seam rides the per-file pour-test ratchet GT6RecipeMapDataLaminatorBeamRowsPourTest, the wash precedent). Row census: 42 beam rows + 1 smoke row.",
   "recipes": [
     {
       "inputs": [
-        { "item": "minecraft:piston", "count": 1 },
-        { "item": "minecraft:slime_ball", "count": 1 }
+        {
+          "item": "minecraft:piston",
+          "count": 1
+        },
+        {
+          "item": "minecraft:slime_ball",
+          "count": 1
+        }
       ],
-      "outputs": [{ "item": "minecraft:sticky_piston", "count": 1 }],
+      "outputs": [
+        {
+          "item": "minecraft:sticky_piston",
+          "count": 1
+        }
+      ],
       "duration": 16,
       "eut": 16
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (oak; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (spruce; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (birch; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (jungle; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (acacia; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (dark_oak; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (rubber_wood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (wood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:greatwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:greatwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (greatwood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:silverwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:silverwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (silverwood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:skyroot_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:skyroot_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (skyroot; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:darkwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:darkwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (darkwood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:rubber_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (rubber; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:maple_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:maple_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (maple; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:willow_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:willow_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (willow; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:blue_mahoe_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_mahoe_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (blue_mahoe; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:hazel_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:hazel_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (hazel; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:cinnamon_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cinnamon_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (cinnamon; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:coconut_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:coconut_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (coconut; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:rainbowood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rainbowood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (rainbowood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:blue_spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:58 (blue_spruce; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (oak; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (spruce; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (birch; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (jungle; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (acacia; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (dark_oak; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (rubber_wood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (wood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:greatwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:greatwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (greatwood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:silverwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:silverwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (silverwood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:skyroot_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:skyroot_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (skyroot; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:darkwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:darkwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (darkwood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:rubber_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (rubber; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:maple_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:maple_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (maple; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:willow_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:willow_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (willow; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:blue_mahoe_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_mahoe_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (blue_mahoe; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:hazel_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:hazel_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (hazel; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:cinnamon_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cinnamon_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (cinnamon; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:coconut_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:coconut_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (coconut; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:rainbowood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rainbowood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (rainbowood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:blue_spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:71 (blue_spruce; foil x24)"
     }
   ]
 }

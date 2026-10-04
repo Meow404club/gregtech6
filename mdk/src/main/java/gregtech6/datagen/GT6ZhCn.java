@@ -967,16 +967,20 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The wood-beam family zh faces (task beam-blocks-register, the addTreeUnits shape):
-	 * the 8 display names ride the reference table's hand layer, whose values are the
-	 * 1.7.10 zh dump faces verbatim (gt.block.beam.1.0-.3 橡木梁/云杉木梁/白桦木梁/丛林木梁,
-	 * gt.block.beam.2.0-.3 金合欢木梁/深色橡木梁/橡胶木梁/木梁 — the per-orientation dump
-	 * metas all repeat the four base words per block).
+	 * The wood-beam family zh faces (task beam-blocks-register + beam-fireproof-closeout,
+	 * the addTreeUnits shape): the 21 + 21 display names ride the reference table's hand
+	 * layer, whose values are the 1.7.10 zh dump faces verbatim (gt.block.beam.1.0-.3
+	 * 橡木梁/云杉木梁/白桦木梁/丛林木梁, gt.block.beam.2.0-.3 金合欢木梁/深色橡木梁/橡胶木梁/木梁,
+	 * gt.block.beam.3/a/b/c 宏伟之木梁/银树梁/天根木梁/黑树梁/橡胶梁/枫树梁/柳树梁/高红槿梁/
+	 * 榛树梁/肉桂梁/椰子树木梁/彩虹树梁/北美云杉梁 — the per-orientation dump metas all repeat
+	 * the base words per block) and the fireproof twins carry the dump's " (防火)" suffix
+	 * (gt.block.beam.*.fireproof).
 	 * Hand rows (the TSV regen and this walk land in the SAME commit).
 	 */
 	private void addBeamUnits() {
 		for (gregtech6.block.tree.GT6BeamKind tKind : gregtech6.registry.GT6BeamBlocks.KINDS) {
 			addDirect("block.gt6." + gregtech6.registry.GT6BeamBlocks.path(tKind));
+			addDirect("block.gt6." + gregtech6.registry.GT6BeamBlocks.fireproofPath(tKind));
 		}
 	}
 

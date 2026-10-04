@@ -137,11 +137,11 @@ public class GT6RecipeMapDataLaminatorBeamRowsPourTest extends GTRecipesOfflineT
 		assertTrue(tHead.contains(":53-58") && tHead.contains(":66-71"), "the beam segment's plate and foil families are cited");
 		assertTrue(tLower.contains("erratum") && tHead.contains(":56-72"), "the card's line-range erratum is declared");
 		assertTrue(tHead.contains("eut") && tHead.contains("16") && tHead.contains("192"), "the wrapper constants (eut 16 / duration 192) are cited");
-		assertTrue(tLower.contains("log segment") && tHead.contains(":48-51") && tHead.contains(":61-64"),
+		assertTrue(tLower.contains("log fireproof segment") && tHead.contains(":48-51") && tHead.contains(":61-64"),
 				"the log FireProof segment is declared OUT (the plank/log FireProof defer)");
 		assertTrue(tLower.contains("bath") && tHead.contains(":74"), "the Bath fire-resistance walk is declared OUT (the potion fluid face)");
 		assertTrue(tLower.contains("b6"), "the laminator serial note vs the b6 plastic-sheet card is declared");
-		assertTrue(tLower.contains("smoke row") && tHead.contains("sticky_piston"), "the w2-eu-special smoke row stays row 0");
+		assertTrue(tLower.contains("smoke row") && tHead.contains("sticky-piston"), "the w2-eu-special smoke row stays row 0");
 		assertTrue(tHead.contains("LAMINATOR") && tLower.contains("pinned 0"), "the PhaseGate zero-bump posture is declared");
 		assertTrue(tHead.contains("Row census: 42 beam rows"), "the row census statement is present");
 	}
