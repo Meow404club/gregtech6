@@ -43,6 +43,12 @@ public final class GT6BedrockOreGenerator {
     public static final int SEA_LEVEL = 63;
     /** The tail top face: upstream {@code tY = tD1.length..waterLevel-1} = 7..62 -> -57..62. */
     public static final int TAIL_TOP_Y = SEA_LEVEL - 1;
+    /**
+     * The nether tail top face (task worldgen-nether-bedrock-lava): upstream
+     * WD.waterLevel(WD.java:430 {@code hasNoSky ? 31 : 62}) = 31 for a ceiling world, so the
+     * :216 loop {@code tY < tW} spans 7..30 from the nether's own y=0 bedrock floor.
+     */
+    public static final int NETHER_TAIL_TOP_Y = 31 - 1;
 
     /** WorldgenOresBedrock.java:198-199 — the muffin trapezoid, x/z lower/upper bounds per layer, verbatim. */
     public static final int[] MUFFIN_D1 = {5, 4, 2, 1, 0, 2, 5};
@@ -51,9 +57,19 @@ public final class GT6BedrockOreGenerator {
     private GT6BedrockOreGenerator() {
     }
 
-    /** The bedrock-row validity (the modern mID > 0 face: the row's material has registrable bedrock blocks). */
+    /** The bedrock-row validity overworld face (the pre-nether callers). */
     public static boolean valid(GTBedrockOreConfig aRow) {
-        return aRow.overworld() && aRow.material() != null && aRow.material().mID > 0
+        return valid(aRow, false);
+    }
+
+    /**
+     * The bedrock-row validity (the modern mID > 0 face: the row's material has registrable
+     * bedrock blocks) — the dimension mask rides the row's own column (WorldgenOresBedrock
+     * walks only its dimension's rows, the per-object iteration semantics: {@code overworld}
+     * for the GEN_FLOOR rows :725-757, {@code nether} for the GEN_NETHER rows :758-764).
+     */
+    public static boolean valid(GTBedrockOreConfig aRow, boolean aNether) {
+        return (aNether ? aRow.nether() : aRow.overworld()) && aRow.material() != null && aRow.material().mID > 0
                 && axis().contains(aRow.material());
     }
 
@@ -75,10 +91,16 @@ public final class GT6BedrockOreGenerator {
      * chunk-seeded stream — the hits return in table order (the draw order the shape
      * stream then continues on).
      */
+    /** The per-chunk row rolls, overworld face (the pre-nether callers). */
     public static List<GTBedrockOreConfig> drawRows(GTBedrockOreConfig.Table aTable, Random aRandom) {
+        return drawRows(aTable, aRandom, false);
+    }
+
+    /** The dimension-aware face — see {@link #valid(GTBedrockOreConfig, boolean)}. */
+    public static List<GTBedrockOreConfig> drawRows(GTBedrockOreConfig.Table aTable, Random aRandom, boolean aNether) {
         List<GTBedrockOreConfig> rHits = new ArrayList<>(1);
         for (GTBedrockOreConfig tRow : aTable.rows()) {
-            if (!valid(tRow)) continue;
+            if (!valid(tRow, aNether)) continue;
             if (aRandom.nextInt(tRow.probability()) == 0) rHits.add(tRow);
         }
         return rHits;
@@ -97,8 +119,19 @@ public final class GT6BedrockOreGenerator {
      * @param aSink the placement callbacks (the level face and the offline-test face)
      * @return false when the chunk center is not a bedrock face (the :185 gate)
      */
+    /** The overworld vein face (the pre-nether callers: tails to {@link #TAIL_TOP_Y}). */
     public static boolean generateVein(GTBedrockOreConfig aRow, Random aRandom, int aChunkMinX, int aChunkMinZ,
             int aWorldMinY, BedrockSink aSink) {
+        return generateVein(aRow, aRandom, aChunkMinX, aChunkMinZ, aWorldMinY, TAIL_TOP_Y, aSink);
+    }
+
+    /**
+     * The dimension-aware vein face — {@code aTailTopY} is the dimension's own water-level
+     * face ({@link #TAIL_TOP_Y} overworld / {@link #NETHER_TAIL_TOP_Y} nether, the upstream
+     * {@code tY < WD.waterLevel(aWorld)} loop bound, :216).
+     */
+    public static boolean generateVein(GTBedrockOreConfig aRow, Random aRandom, int aChunkMinX, int aChunkMinZ,
+            int aWorldMinY, int aTailTopY, BedrockSink aSink) {
         // :183-185 — Requires existing Bedrock! (the chunk center's bedrock face)
         if (!aSink.isBedrockFace(aChunkMinX + 8, aChunkMinZ + 8)) return false;
         int tBedrockY = Math.max(BEDROCK_Y, aWorldMinY); // the flat floor, clamped to the world (datagen/other dims)
@@ -131,10 +164,10 @@ public final class GT6BedrockOreGenerator {
             }
         }
 
-        // :213-225 — the 5-7 random-walk small-ore tails up to just below sea level
+        // :213-225 — the 5-7 random-walk small-ore tails up to just below the water level
         for (int i = 5 + aRandom.nextInt(3); i-- > 0;) {
             int tX = 5 + aRandom.nextInt(6), tZ = 5 + aRandom.nextInt(6);
-            for (int tLayer = MUFFIN_D1.length; tLayer + tBedrockY <= TAIL_TOP_Y; tLayer++) {
+            for (int tLayer = MUFFIN_D1.length; tLayer + tBedrockY <= aTailTopY; tLayer++) {
                 switch (aRandom.nextInt(7)) {case 0: tX++; break; case 1: tX--; break; case 2: tZ++; break; case 3: tZ--;}
                 if (tX <= 0 || tX >= 15 || tZ <= 0 || tZ >= 15) {
                     aSink.ore(aChunkMinX + tX, tBedrockY + tLayer, aChunkMinZ + tZ, aRow.material(), true);

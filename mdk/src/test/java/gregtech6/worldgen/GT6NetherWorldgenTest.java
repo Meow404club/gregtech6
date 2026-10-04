@@ -259,6 +259,66 @@ public class GT6NetherWorldgenTest {
         }
     }
 
+    // ---------------------------------------------------------------- the nether bedrock-ore / spring legs (task worldgen-nether-bedrock-lava)
+
+    /** The row's nether column, the missing-field face reads false (the old JSON decodes dormant). */
+    private static boolean rowNether(JsonObject aRow) {
+        return aRow.has("nether") && aRow.get("nether").getAsBoolean();
+    }
+
+    /**
+     * THE is_nether modifier legs: gt6:nether_bedrock_ores / gt6:nether_fluid_springs ship
+     * in EACH leg's brand, keyed on #minecraft:is_nether, at the ore pass, pointing at the
+     * SAME placed features the overworld rows hang (the nether_bumble_hives same-placed-key
+     * convention). RED while the nether band hangs no modifiers.
+     */
+    @Test
+    public void netherBedrockAndSpringModifierLegsShipBothBrands() throws Exception {
+        for (String tBrand : new String[] {"forge", "neoforge"}) {
+            JsonObject tOres = resourceJson("data/gt6/" + tBrand + "/biome_modifier/nether_bedrock_ores.json");
+            assertEquals(tBrand + ":add_features", tOres.get("type").getAsString(), tBrand + " type brand");
+            assertEquals("#minecraft:is_nether", tOres.get("biomes").getAsString(), "the nether biome gate");
+            assertEquals("gt6:bedrock_ores", tOres.get("features").getAsString(), "the shared placed feature");
+            assertEquals("underground_ores", tOres.get("step").getAsString(), "the ore pass");
+            JsonObject tSprings = resourceJson("data/gt6/" + tBrand + "/biome_modifier/nether_fluid_springs.json");
+            assertEquals(tBrand + ":add_features", tSprings.get("type").getAsString(), tBrand + " type brand");
+            assertEquals("#minecraft:is_nether", tSprings.get("biomes").getAsString(), "the nether biome gate");
+            assertEquals("gt6:fluid_springs", tSprings.get("features").getAsString(), "the shared placed feature");
+            assertEquals("underground_ores", tSprings.get("step").getAsString(), "the ore pass");
+        }
+    }
+
+    /**
+     * THE configured-table nether columns: the bedrock JSON carries nether=true on exactly
+     * the seven GEN_NETHER rows :758-764; the spring JSON on exactly the :797 lava row.
+     * RED while the band is census-only.
+     */
+    @Test
+    public void configuredTablesCarryTheNetherColumnOnExactlyTheGenNetherRows() throws Exception {
+        JsonObject tOres = resourceJson("data/gt6/worldgen/configured_feature/bedrock_ores.json");
+        List<JsonElement> tRows = tOres.getAsJsonObject("config").getAsJsonArray("rows").asList();
+        assertEquals(46, tRows.size());
+        Set<String> tNetherOres = new HashSet<>();
+        for (JsonElement tElement : tRows) {
+            JsonObject tRow = tElement.getAsJsonObject();
+            assertTrue(tRow.has("nether"), "every row carries the nether column: " + tRow.get("name").getAsString());
+            if (rowNether(tRow)) tNetherOres.add(tRow.get("name").getAsString());
+        }
+        assertEquals(Set.of("ore.bedrock.voidquartz", "ore.bedrock.glowstone", "ore.bedrock.gloomstone",
+                "ore.bedrock.efrine", "ore.bedrock.netherquartz", "ore.bedrock.firestone", "ore.bedrock.ancientdebris"),
+                tNetherOres, "the seven GEN_NETHER rows :758-764");
+        JsonObject tSprings = resourceJson("data/gt6/worldgen/configured_feature/fluid_springs.json");
+        List<JsonElement> tSpringRows = tSprings.getAsJsonObject("config").getAsJsonArray("rows").asList();
+        assertEquals(16, tSpringRows.size());
+        Set<String> tNetherSprings = new HashSet<>();
+        for (JsonElement tElement : tSpringRows) {
+            JsonObject tRow = tElement.getAsJsonObject();
+            assertTrue(tRow.has("nether"), "every row carries the nether column: " + tRow.get("name").getAsString());
+            if (rowNether(tRow)) tNetherSprings.add(tRow.get("name").getAsString());
+        }
+        assertEquals(Set.of("nether.fluid.lava"), tNetherSprings, "the :797 nether lava dome row");
+    }
+
     /** The 40-row configured table ships the end column; the five rows are true, the rest false. */
     @Test
     public void largeVeinTableShipsTheEndColumnOnExactlyFiveRows() throws Exception {

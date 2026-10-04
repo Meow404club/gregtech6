@@ -12,11 +12,12 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
 /**
  * One bedrock-ore row (task bedrock-ore-worldgen spec ②) — the {@code WorldgenOresBedrock}
  * ctor read face verbatim (WorldgenOresBedrock.java:61-65: aName, aProbability, aPrimary;
- * the indicator columns ride the deferred-decor deviation below), plus the one modern table
- * column the upstream per-dimension registration lists carried ({@code overworld} = the row
- * listed GEN_FLOOR, Loader_Worldgen.java:725-757 — true; the nether/mars/BL rows :758-770
- * false; the per-chunk independent rolls only walk the dimension's own rows, the upstream
- * per-object iteration semantics).
+ * the indicator columns ride the deferred-decor deviation below), plus the modern table
+ * columns the upstream per-dimension registration lists carried ({@code overworld} = the row
+ * listed GEN_FLOOR, Loader_Worldgen.java:725-757; {@code nether} = the row listed GEN_NETHER,
+ * the seven rows :758-764, task worldgen-nether-bedrock-lava; the mars/BL rows :765-770 carry
+ * neither — census-only until their dim cards hang modifiers; the per-chunk independent rolls
+ * only walk the dimension's own rows, the upstream per-object iteration semantics).
  *
  * <p>The probability is the 1/P per-chunk roll (WorldgenOresBedrock.java:142
  * {@code aRandom.nextInt(mProbability) != 0 -> return F}): diamond 128000 .. cassiterite
@@ -38,8 +39,13 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * cards; ponytail: the arm is ~25 lines reusing the GT6VeinGenerator.SliceSink probe shape
  * when it does.
  */
-public record GTBedrockOreConfig(String name, OreDictMaterial material, int probability, boolean overworld)
-        implements FeatureConfiguration {
+public record GTBedrockOreConfig(String name, OreDictMaterial material, int probability, boolean overworld,
+        boolean nether) implements FeatureConfiguration {
+
+    /** The legacy 4-arg face (the pre-nether call sites) — nether=false, the :765-770 posture. */
+    public GTBedrockOreConfig(String aName, OreDictMaterial aMaterial, int aProbability, boolean aOverworld) {
+        this(aName, aMaterial, aProbability, aOverworld, false);
+    }
 
     /** The full-registry name codec — unknown names decode to MT.NULL (the upstream invalid slot). */
     public static final Codec<OreDictMaterial> MATERIAL_CODEC = Codec.STRING
@@ -49,7 +55,8 @@ public record GTBedrockOreConfig(String name, OreDictMaterial material, int prob
             Codec.STRING.fieldOf("name").forGetter(GTBedrockOreConfig::name),
             MATERIAL_CODEC.fieldOf("ore").forGetter(GTBedrockOreConfig::material),
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("probability").forGetter(GTBedrockOreConfig::probability),
-            Codec.BOOL.fieldOf("overworld").forGetter(GTBedrockOreConfig::overworld))
+            Codec.BOOL.fieldOf("overworld").forGetter(GTBedrockOreConfig::overworld),
+            Codec.BOOL.optionalFieldOf("nether", false).forGetter(GTBedrockOreConfig::nether))
             .apply(aFields, GTBedrockOreConfig::new));
 
     /**
