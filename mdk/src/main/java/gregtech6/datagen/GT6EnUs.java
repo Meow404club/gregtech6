@@ -2431,16 +2431,32 @@ public class GT6EnUs extends LanguageProvider {
 
     /**
      * Extruder-mold family keys (task w1-press-extruder-molds; the tool-head family rides
-     * task toolhead-r11c-extruder-heads): the FULL 18-mold census display names, walked
-     * over the {@link GT6ExtruderMolds} registry constants so the lang face cannot drift
-     * from the registered ids (the addFoodCans form). Values are the upstream registration
-     * rows verbatim: the head family "Extruder Shape (Sword Blade)".. and the low-heat
-     * twins "Low Heat Extruder Shape (Sword Blade)".. (MultiItemTechnological.java
-     * :215-222/:276-283). Table-tail append, append-only.
+     * task toolhead-r11c-extruder-heads; the FULL family rides task mold-extruder-shapes):
+     * the complete 64-mold census display names, walked over the {@link GT6ExtruderMolds}
+     * registry constants so the lang face cannot drift from the registered ids (the
+     * addFoodCans form). Values are the upstream registration rows verbatim: the
+     * Shape_Extruder family "Extruder Shape (X)" (MultiItemTechnological.java:182-216),
+     * the low-heat twins "Low Heat Extruder Shape (X)" (:258-292), and both Empties
+     * sharing the upstream "Empty Extruder Shape" wording verbatim (:182/:258 — the
+     * upstream duplicate-name quirk kept). Table-tail append, append-only.
      */
     private void addExtruderMolds() {
         java.util.Map<String, String> tNames = java.util.Map.ofEntries(
+                java.util.Map.entry("shape_extruder_empty", "Empty Extruder Shape"),
                 java.util.Map.entry("shape_extruder_plate", "Extruder Shape (Plate)"),
+                java.util.Map.entry("shape_extruder_rod_long", "Extruder Shape (Long Rod)"),
+                java.util.Map.entry("shape_extruder_bolt", "Extruder Shape (Bolt)"),
+                java.util.Map.entry("shape_extruder_ring", "Extruder Shape (Ring)"),
+                java.util.Map.entry("shape_extruder_cell", "Extruder Shape (Cell)"),
+                java.util.Map.entry("shape_extruder_ingot", "Extruder Shape (Ingot)"),
+                java.util.Map.entry("shape_extruder_wire", "Extruder Shape (Wire)"),
+                java.util.Map.entry("shape_extruder_casing", "Extruder Shape (Casing)"),
+                java.util.Map.entry("shape_extruder_pipe_tiny", "Extruder Shape (Tiny Pipe)"),
+                java.util.Map.entry("shape_extruder_pipe_small", "Extruder Shape (Small Pipe)"),
+                java.util.Map.entry("shape_extruder_pipe_medium", "Extruder Shape (Normal Pipe)"),
+                java.util.Map.entry("shape_extruder_pipe_large", "Extruder Shape (Large Pipe)"),
+                java.util.Map.entry("shape_extruder_pipe_huge", "Extruder Shape (Huge Pipe)"),
+                java.util.Map.entry("shape_extruder_block", "Extruder Shape (Block)"),
                 java.util.Map.entry("shape_extruder_sword", "Extruder Shape (Sword Blade)"),
                 java.util.Map.entry("shape_extruder_pickaxe", "Extruder Shape (Pickaxe Head)"),
                 java.util.Map.entry("shape_extruder_shovel", "Extruder Shape (Shovel Head)"),
@@ -2449,7 +2465,30 @@ public class GT6EnUs extends LanguageProvider {
                 java.util.Map.entry("shape_extruder_hammer", "Extruder Shape (Hammer Head)"),
                 java.util.Map.entry("shape_extruder_file", "Extruder Shape (File Head)"),
                 java.util.Map.entry("shape_extruder_saw", "Extruder Shape (Saw Blade)"),
+                java.util.Map.entry("shape_extruder_gear", "Extruder Shape (Gear)"),
+                java.util.Map.entry("shape_extruder_bottle", "Extruder Shape (Bottle)"),
+                java.util.Map.entry("shape_extruder_plate_curved", "Extruder Shape (Curved Plate)"),
+                java.util.Map.entry("shape_extruder_gear_small", "Extruder Shape (Small Gear)"),
                 java.util.Map.entry("shape_extruder_rod", "Extruder Shape (Rod)"),
+                java.util.Map.entry("shape_extruder_ccc", "Extruder Shape (Capsule-Cell-Container)"),
+                java.util.Map.entry("shape_extruder_foil", "Extruder Shape (Foil)"),
+                java.util.Map.entry("shape_extruder_plate_tiny", "Extruder Shape (Tiny Plate)"),
+                java.util.Map.entry("shape_extruder_wire_fine", "Extruder Shape (Fine Wire)"),
+                java.util.Map.entry("shape_simple_ex_empty", "Empty Extruder Shape"),
+                java.util.Map.entry("shape_simple_ex_plate", "Low Heat Extruder Shape (Plate)"),
+                java.util.Map.entry("shape_simple_ex_rod_long", "Low Heat Extruder Shape (Long Rod)"),
+                java.util.Map.entry("shape_simple_ex_bolt", "Low Heat Extruder Shape (Bolt)"),
+                java.util.Map.entry("shape_simple_ex_ring", "Low Heat Extruder Shape (Ring)"),
+                java.util.Map.entry("shape_simple_ex_cell", "Low Heat Extruder Shape (Cell)"),
+                java.util.Map.entry("shape_simple_ex_ingot", "Low Heat Extruder Shape (Ingot)"),
+                java.util.Map.entry("shape_simple_ex_wire", "Low Heat Extruder Shape (Wire)"),
+                java.util.Map.entry("shape_simple_ex_casing", "Low Heat Extruder Shape (Casing)"),
+                java.util.Map.entry("shape_simple_ex_pipe_tiny", "Low Heat Extruder Shape (Tiny Pipe)"),
+                java.util.Map.entry("shape_simple_ex_pipe_small", "Low Heat Extruder Shape (Small Pipe)"),
+                java.util.Map.entry("shape_simple_ex_pipe_medium", "Low Heat Extruder Shape (Normal Pipe)"),
+                java.util.Map.entry("shape_simple_ex_pipe_large", "Low Heat Extruder Shape (Large Pipe)"),
+                java.util.Map.entry("shape_simple_ex_pipe_huge", "Low Heat Extruder Shape (Huge Pipe)"),
+                java.util.Map.entry("shape_simple_ex_block", "Low Heat Extruder Shape (Block)"),
                 java.util.Map.entry("shape_simple_ex_sword", "Low Heat Extruder Shape (Sword Blade)"),
                 java.util.Map.entry("shape_simple_ex_pickaxe", "Low Heat Extruder Shape (Pickaxe Head)"),
                 java.util.Map.entry("shape_simple_ex_shovel", "Low Heat Extruder Shape (Shovel Head)"),
@@ -2457,7 +2496,16 @@ public class GT6EnUs extends LanguageProvider {
                 java.util.Map.entry("shape_simple_ex_hoe", "Low Heat Extruder Shape (Hoe Head)"),
                 java.util.Map.entry("shape_simple_ex_hammer", "Low Heat Extruder Shape (Hammer Head)"),
                 java.util.Map.entry("shape_simple_ex_file", "Low Heat Extruder Shape (File Head)"),
-                java.util.Map.entry("shape_simple_ex_saw", "Low Heat Extruder Shape (Saw Blade)"));
+                java.util.Map.entry("shape_simple_ex_saw", "Low Heat Extruder Shape (Saw Blade)"),
+                java.util.Map.entry("shape_simple_ex_gear", "Low Heat Extruder Shape (Gear)"),
+                java.util.Map.entry("shape_simple_ex_bottle", "Low Heat Extruder Shape (Bottle)"),
+                java.util.Map.entry("shape_simple_ex_plate_curved", "Low Heat Extruder Shape (Curved Plate)"),
+                java.util.Map.entry("shape_simple_ex_gear_small", "Low Heat Extruder Shape (Small Gear)"),
+                java.util.Map.entry("shape_simple_ex_rod", "Low Heat Extruder Shape (Rod)"),
+                java.util.Map.entry("shape_simple_ex_ccc", "Low Heat Extruder Shape (Capsule-Cell-Container)"),
+                java.util.Map.entry("shape_simple_ex_foil", "Low Heat Extruder Shape (Foil)"),
+                java.util.Map.entry("shape_simple_ex_plate_tiny", "Low Heat Extruder Shape (Tiny Plate)"),
+                java.util.Map.entry("shape_simple_ex_wire_fine", "Low Heat Extruder Shape (Fine Wire)"));
         for (RegistryObject<Item> tMold : GT6ExtruderMolds.MOLDS) {
             String tPath = tMold.getId().getPath();
             String tName = tNames.get(tPath);

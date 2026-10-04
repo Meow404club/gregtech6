@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "P": {
-      "tag": "c:plates/tungsten_carbide"
+      "item": "gt6:shape_extruder_foil"
     },
     "x": {
-      "tag": "gt6:tools/file"
+      "tag": "gt6:tools/wire_cutter"
     }
   },
   "pattern": [

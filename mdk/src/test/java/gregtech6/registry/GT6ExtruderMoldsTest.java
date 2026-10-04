@@ -15,7 +15,6 @@ package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -66,25 +65,32 @@ public class GT6ExtruderMoldsTest {
 		assertEquals(Registries.ITEM, GT6ExtruderMolds.ITEMS.getRegistryKey());
 	}
 
-	/** The census order: plate leads, the head family 10015-10022 follows, rod rides the :212 slot, SimpleEx 10215-10222 closes. */
+	/**
+	 * The census order: the full family in upstream meta order — the Empty leads (10000),
+	 * the Shape_Extruder block 10001-10031 follows (plate at :186 → slot 1, rod at :212 →
+	 * slot 27), the SimpleEx family 10200-10231 closes. Path-pinned (the field constants
+	 * are asserted by name in the census test's id walk).
+	 */
 	@Test
 	public void row0SubsetIsPlateThenRod() {
-		assertEquals(18, GT6ExtruderMolds.MOLDS.size(), "row0 pair + the tool-head family + its SimpleEx twins");
-		assertSame(GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE, GT6ExtruderMolds.MOLDS.get(0), "row 0 is the plate mold");
-		assertSame(GT6ExtruderMolds.SHAPE_EXTRUDER_ROD, GT6ExtruderMolds.MOLDS.get(9), "the rod rides the :212 slot (the head family 10015-10022 between)");
-		assertSame(GT6ExtruderMolds.SHAPE_SIMPLE_EX_SWORD, GT6ExtruderMolds.MOLDS.get(10), "the SimpleEx twins close the census");
+		assertEquals(64, GT6ExtruderMolds.MOLDS.size(), "the full 32+32 mold family");
+		assertEquals("shape_extruder_empty", GT6ExtruderMolds.MOLDS.get(0).getId().getPath(), "the Empty leads (upstream meta 10000)");
+		assertEquals("shape_extruder_plate", GT6ExtruderMolds.MOLDS.get(1).getId().getPath(), "the plate rides the :186 slot");
+		assertEquals("shape_extruder_rod", GT6ExtruderMolds.MOLDS.get(27).getId().getPath(), "the rod rides the :212 slot (meta 10027)");
+		assertEquals("shape_simple_ex_empty", GT6ExtruderMolds.MOLDS.get(32).getId().getPath(), "the SimpleEx family closes the census (meta 10200)");
+		assertEquals("shape_simple_ex_wire_fine", GT6ExtruderMolds.MOLDS.get(63).getId().getPath(), "the census tail is the fine-wire twin (meta 10231)");
 		assertEquals(rl("shape_extruder_plate"), GT6ExtruderMolds.SHAPE_EXTRUDER_PLATE.getId(), "upstream meta 10001");
 		assertEquals(rl("shape_extruder_rod"), GT6ExtruderMolds.SHAPE_EXTRUDER_ROD.getId(), "upstream meta 10027");
 	}
 
-	/** The DR entry ids are exactly the 18 mold paths (nothing else rides this register). */
+	/** The DR entry ids are exactly the 64 mold paths (nothing else rides this register). */
 	@Test
 	public void deferredRegisterEntriesAreExactlyTheMoldPair() {
 		Set<ResourceLocation> tIds = new LinkedHashSet<>();
 		GT6ExtruderMolds.ITEMS.getEntries().forEach(tEntry -> tIds.add(tEntry.getKey().location()));
-		assertEquals(18, tIds.size(), "the mold register carries exactly the 18-mold census");
-		assertTrue(tIds.containsAll(java.util.List.of(rl("shape_extruder_plate"), rl("shape_extruder_rod"),
-				rl("shape_extruder_sword"), rl("shape_simple_ex_saw"))), "the row0 pair and the family bookends ride the register");
+		assertEquals(64, tIds.size(), "the mold register carries exactly the 64-mold census");
+		assertTrue(tIds.containsAll(java.util.List.of(rl("shape_extruder_empty"), rl("shape_extruder_plate"), rl("shape_extruder_rod"),
+				rl("shape_extruder_sword"), rl("shape_simple_ex_empty"), rl("shape_simple_ex_saw"))), "the family bookends ride the register");
 	}
 
 	/**

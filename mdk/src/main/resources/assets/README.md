@@ -1006,37 +1006,84 @@ Press + Extruder family fronts, task w1-press-extruder-molds:
   - `extruder_overlay_front_active.png`  `33bc918a0a541c8e42a3b82c32e8126ba22a80c4cc3785909499e7ad9f9167a2` (FRAME 0 of 6 frames)
   - `extruder_overlay_front_running.png` `1aef3ed947ed362664674372b3ed0602da79dcf3303a4cadf40ba072dc182805` (borrowed)
 
-- `gt6/textures/item/shape_extruder/{plate,rod}.png` — COMPOSED placeholders (the P20
-  stdlib generator convention, 16x16 RGBA): the upstream Shape_Extruder_* icons are
-  meta-atlas tiles on the MultiItemTechnological spritesheet with no standalone sprite
-  file to borrow, so the two row0 mold icons are hand-rolled mold-blank pixels. NOT
-  byte-identical to upstream — declared placeholder.
+- `gt6/textures/item/shape_extruder/*.png` (32 files) — BORROWED byte-identical (task
+  mold-extruder-shapes): the FULL Shape_Extruder family lifted verbatim from the
+  MultiItemTechnological meta tiles
+  `assets/gregtech/textures/items/gt.multiitem.technological/10000.png`-`10031.png`
+  (supersedes the w1 plate/rod COMPOSED placeholders and folds the
+  toolhead-r11c-extruder-heads head-family borrows into one census). sha256 per file
+  (upstream tile in parentheses):
+  `ef4436d19a27827a7b6b2c601399ce6f5df30b84e7fe1fc94820f5587cdfffce` (empty, 10000) /
+  `96b2de9fa1702e329a4bfeccbbba0d683e7a9b751f930277d166220d925e430e` (plate, 10001) /
+  `7db43f0bd313577866574ccbd376c0b7ae1290917d1478255f7813d410cbeb0e` (rod_long, 10002) /
+  `c23d2751eb50b4c9f6661c348ffafac90445ea8bc0dd46bad8c527d3993e39cb` (bolt, 10003) /
+  `b9e801dede98b55dae2d5c93cb66bdc26e252b4442e50348f71f547d16e96aa0` (ring, 10004) /
+  `9925ded2f1b923dc316f08a736914fd7282b9499db92a019aa2faa40ccae1b4c` (cell, 10005) /
+  `43c316f0997e9293cdff8bdb47d9bc1f8754fdbacbe8d256bd2ad3bddf70c271` (ingot, 10006) /
+  `7479002eabd965a428d5b95628df8a2a1335946d99f57e19deb171ed383b59d6` (wire, 10007) /
+  `6f6f93a6428722c2726dc036bd4872969264e12bda929354e76383f8e466802b` (casing, 10008) /
+  `96fffd8e9787e06e8599356f2513ba35213bb2b44f434f599f527bbe9d4bb3eb` (pipe_tiny, 10009) /
+  `ed6f848afd89194efa438e2843191c7845742c04c1b7c644756c38c6ee37d369` (pipe_small, 10010) /
+  `0079dde2cf3576e00155d3b1284ab661241c51fadb19ca4e080131764a15872e` (pipe_medium, 10011) /
+  `d64767d37ca393c2d8b6f76cfb072e0ee928e4d22775462cee003bef3f133880` (pipe_large, 10012) /
+  `0f842757309473ca7a9d53b39ce1feb8bd548118e2690dd4d290d8e5a2e52458` (pipe_huge, 10013) /
+  `ef7f2d5a70b937b30216d4ba66b551db76b1b7fd4c107cb49daf4fc102e45df8` (block, 10014) /
+  `fc8b5ff2372161b99d40d2aa19039c03954c2199a2afeae1cb3f6987eddec1dc` (sword, 10015) /
+  `9b4af16d6bd419ecaf4126b2e15675612f82d4fbfe4351c275c423116110d0d2` (pickaxe, 10016) /
+  `ab4772450917c8e6ee57183e59a29a92df94a68d9aaf9d6e4bf58d4c6e1e9b8d` (shovel, 10017) /
+  `fc45f32bea6511d4ac6f94b88842fef9184235db24ceaac7cf15c551f3f77f23` (axe, 10018) /
+  `35228d7bea410c9e5baced12c330a9cdec2a5c7f0816a6ef77ce16ead4fe309b` (hoe, 10019) /
+  `85f78f67cad71e223c26aa1f9c78e4d03b430788773caf7c2a2915fcb9466521` (hammer, 10020) /
+  `291f040306ab21f2d46c6040b49887aba3bd14c93d238563fd0e1dd74a6c5273` (file, 10021) /
+  `96df559099165bc2a8bb8b85ad31314b70ad75cae9d872e85dcd96572f518eb9` (saw, 10022) /
+  `6188087c3f0b5652449de32b586fdb231b4c7bab25448a569e087d344e5fae38` (gear, 10023) /
+  `722c48d120eb0bf49366d78ba04e57af8727bc70ac555ba27d34f185f3a71f7e` (bottle, 10024) /
+  `cec4f91ab0feb539f81db12f6918a485f944bac9a2a126c322f5c2af64828f02` (plate_curved, 10025) /
+  `8dd63e8afec52cf920697cda87bd3a2765dd76b1d52a1d2071bd9430a2103d84` (gear_small, 10026) /
+  `7db43f0bd313577866574ccbd376c0b7ae1290917d1478255f7813d410cbeb0e` (rod, 10027 — shares
+  the rod_long tile bytes: upstream ships the identical sprite for both metas) /
+  `cd15ba46c49e37a4cae86f0d768524130e9d4c4a9d0e3e070517368c11148037` (ccc, 10028) /
+  `709a0c3a799a22b7768bef336db52afb167dcdb579c204e659e8cd65f8969e6e` (foil, 10029) /
+  `85c932c4f27066c483f59a27dca3f3863a43ddf65ab2fbc0ac36058822571b79` (plate_tiny, 10030) /
+  `6876d631b224a74e2cd39cccf65459b9b273ddf6aa15fdc9bd1dfc1c45cde8ad` (wire_fine, 10031).
 
-- `gt6/textures/item/shape_extruder/{sword,pickaxe,shovel,axe,hoe,hammer,file,saw}.png` —
-  BORROWED byte-identical (task toolhead-r11c-extruder-heads): the upstream
-  MultiItemTechnological meta tiles ARE standalone files after all —
-  `assets/gregtech/textures/items/gt.multiitem.technological/10015.png`-`10022.png`
-  lifted verbatim. sha256
-  `fc8b5ff2372161b99d40d2aa19039c03954c2199a2afeae1cb3f6987eddec1dc` (sword) /
-  `9b4af16d6bd419ecaf4126b2e15675612f82d4fbfe4351c275c423116110d0d2` (pickaxe) /
-  `ab4772450917c8e6ee57183e59a29a92df94a68d9aaf9d6e4bf58d4c6e1e9b8d` (shovel) /
-  `fc45f32bea6511d4ac6f94b88842fef9184235db24ceaac7cf15c551f3f77f23` (axe) /
-  `35228d7bea410c9e5baced12c330a9cdec2a5c7f0816a6ef77ce16ead4fe309b` (hoe) /
-  `85f78f67cad71e223c26aa1f9c78e4d03b430788773caf7c2a2915fcb9466521` (hammer) /
-  `291f040306ab21f2d46c6040b49887aba3bd14c93d238563fd0e1dd74a6c5273` (file) /
-  `96df559099165bc2a8bb8b85ad31314b70ad75cae9d872e85dcd96572f518eb9` (saw).
-
-- `gt6/textures/item/shape_simple_ex/{sword,pickaxe,shovel,axe,hoe,hammer,file,saw}.png` —
-  BORROWED byte-identical (same task): the low-heat twins, the
-  `gt.multiitem.technological/10215.png`-`10222.png` tiles verbatim. sha256
-  `f13cb60d97bcfafadd31cb02222d14bcb6004b719141d643d3899011dbb0b222` (sword) /
-  `22eafa51a53168db3fd3baf25fef5e0a65f0e416a634b31bcbca9956fee50eef` (pickaxe) /
-  `42f05a68f9f5063bb3641adcf4c3c05a9fa0607d3023214a0828912b73a08694` (shovel) /
-  `47c0f8c7c9873bdfd4fbe15b106b7bb2e07a101ad8dd8341f3ad93850ee863a3` (axe) /
-  `3cc8e0163ff3328002d10ecf2eb53c3a2d7f3e2345923210690a1ccc90686ee3` (hoe) /
-  `c2aa74066305e73c22a50c6ec7c43f70678ae80c8136f08fd70870507cde4b3f` (hammer) /
-  `f64e36e2947e8f9d3c5b200228500e37bd1b0d60b3a9c49c5276be80594c9ee8` (file) /
-  `1bbbbc87113b718549778c0b80a85bef7d94cae46faab1e0af6a1afd1c76e7e4` (saw).
+- `gt6/textures/item/shape_simple_ex/*.png` (32 files) — BORROWED byte-identical (same
+  task): the full low-heat twin family, the
+  `gt.multiitem.technological/10200.png`-`10231.png` tiles verbatim (folds the
+  toolhead-r11c-extruder-heads twin borrows into one census). sha256 per file
+  (upstream tile in parentheses):
+  `e72491229d4d5ea7d5a083d6ed776ed0f4cc528331c52ef135282ac0fb99ab4c` (empty, 10200) /
+  `4e982bc5ffc66437d7334e147229438f8b182f0fee449fccbc9a6e71e678fb9e` (plate, 10201) /
+  `dea56dad53df9585202551f7f7c757e8179323a293a34787c37c3e80272711eb` (rod_long, 10202) /
+  `a9ec5c1519ecfac6fb49e9620a1277eb390cbf2114d93f11f0af4b2549eb0b7c` (bolt, 10203) /
+  `77db61098055f2ff721c563a45ba8698138e2457ceffa925a4f943b03a4e26ae` (ring, 10204) /
+  `d7f745abf5aee3b82ffa4c908c4676e9a13307669da5e5e5c423ab13b4b3d3e2` (cell, 10205) /
+  `71f42d270b4f9db402d7a899e6f17099a7b67ace31d39d65fce93070e94285d2` (ingot, 10206) /
+  `590c464b78497ea00d136bdc62e81861a410f6c17692b8c4c0a4e91396d5abbd` (wire, 10207) /
+  `b5e77033214c099afb75c8ea2b17fb68735436ed1e046d4ea659290155c7cfeb` (casing, 10208) /
+  `9a8c75b9701c74f59c46e6f5fa19a32ec38d36f7ae336eb74db8f65599be755c` (pipe_tiny, 10209) /
+  `bf16a729f0c73e177153ac458369d6e1eceec414b06373120ffd37c0a3b6f63f` (pipe_small, 10210) /
+  `52adfbe13c5686763a54b99eb204f95909054ed39bc38a568a9f897d4fe71e0b` (pipe_medium, 10211) /
+  `668337348f654ed37abd1359bf7dd247822eae3ecf0ff2546621eab43f164b07` (pipe_large, 10212) /
+  `7543b6a93ca647075e135694b47ca913a9732be3b6349b3d3d56a4d6c510125e` (pipe_huge, 10213) /
+  `5056c97cf108c12bc8eca50a832f65e01eead4522b308fbe9d6af9ea9f3a03b6` (block, 10214) /
+  `f13cb60d97bcfafadd31cb02222d14bcb6004b719141d643d3899011dbb0b222` (sword, 10215) /
+  `22eafa51a53168db3fd3baf25fef5e0a65f0e416a634b31bcbca9956fee50eef` (pickaxe, 10216) /
+  `42f05a68f9f5063bb3641adcf4c3c05a9fa0607d3023214a0828912b73a08694` (shovel, 10217) /
+  `47c0f8c7c9873bdfd4fbe15b106b7bb2e07a101ad8dd8341f3ad93850ee863a3` (axe, 10218) /
+  `3cc8e0163ff3328002d10ecf2eb53c3a2d7f3e2345923210690a1ccc90686ee3` (hoe, 10219) /
+  `c2aa74066305e73c22a50c6ec7c43f70678ae80c8136f08fd70870507cde4b3f` (hammer, 10220) /
+  `f64e36e2947e8f9d3c5b200228500e37bd1b0d60b3a9c49c5276be80594c9ee8` (file, 10221) /
+  `1bbbbc87113b718549778c0b80a85bef7d94cae46faab1e0af6a1afd1c76e7e4` (saw, 10222) /
+  `e7b4b4144710529f3925001d1df63e9d667032ce5822070cd1a7047466f59f1b` (gear, 10223) /
+  `a69fe79da6b1cc226c46088d218f7a2afe90c474aebc946f3ec4ecea0ea0f11c` (bottle, 10224) /
+  `621a1dc97d4e2675d45c41d3796d033d875af80c9117f1a2c628affc47e07006` (plate_curved, 10225) /
+  `8b6c808ee942475f042b07aec2afe4b509b88148036451a6b4232a02ca0ab6d2` (gear_small, 10226) /
+  `75e04ba4b01e7469a7249428ab2fb1e4300aa7ee356da00db0a7c723c24d3645` (rod, 10227) /
+  `fa19e058f96d137091bcb7fcafa7b7a4e618d72d59ad37dc6b87789f7bb670e5` (ccc, 10228) /
+  `fa6d2ff3c05b75477722eed57306f5ebe7cd8d9f7ed2009d268f2b09973fd280` (foil, 10229) /
+  `e8a0819d04444112b0f0fcd7049ec676b9977f50fde9be073a6d9c07264bd51c` (plate_tiny, 10230) /
+  `2e51307d058b2caf61cd471259a505e3196d72f5c0f2ec4811ac5890e380a85d` (wire_fine, 10231).
 
 - `gt6/textures/item/shape_slicer/{grid,split}.png` — COMPOSED placeholders (the P20
   stdlib generator convention, 16x16 RGBA, task slicer-row-domain): the upstream

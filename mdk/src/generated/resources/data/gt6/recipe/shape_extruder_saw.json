@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:shape_extruder_plate_tiny"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "   ",
+    " P ",
+    "  x"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:shape_extruder_saw"
+  }
+}
