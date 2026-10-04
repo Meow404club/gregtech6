@@ -55,12 +55,15 @@ class GT6SurfaceBlocksTest {
         // the vein-indicator rocks, pickup-only like the first-batch rocks/sticks
         // (31 at w6-t3-large-veins; 40 since a-ore-axis-extension;
         // 57 since b-gem-pool-extension, the gem-pool axis chain).
-        // 4 + 8 + 57 = 69; the ITEMS register holds the 8
-        // obtainable block items (the rocks/sticks/indicator rocks stay zero-item).
-        assertEquals(69, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
-                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 57 indicator rocks");
-        assertEquals(8, GT6SurfaceBlocks.ITEMS.getEntries().size(),
-                "the obtainable band's block items (the rocks/sticks/indicator rocks stay zero-item)");
+        // +36 (task flower-blocks-indicator-family): the 18 indicator flowers + the 18
+        // vanilla potted companions (GT6FlowerBlockTest pins the row set).
+        // 4 + 8 + 57 + 36 = 105; the ITEMS register holds the 26
+        // obtainable block items (the rocks/sticks/indicator rocks/potted stay zero-item).
+        assertEquals(105, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 57 indicator rocks"
+                        + " + the 18 flowers + the 18 potted companions");
+        assertEquals(26, GT6SurfaceBlocks.ITEMS.getEntries().size(),
+                "the obtainable band's block items (the rocks/sticks/indicator rocks/potted stay zero-item)");
     }
 
     /** The obtainable band paths + item pairing (task w6-t2-surface-blocks). */

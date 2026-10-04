@@ -141,6 +141,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addBeamUnits();         // task beam-blocks-register — the 8 wood-beam rows (hand, the tsv direct band)
 		addSurfaceUnits();      // task w6-rocks-sticks
 		addSurfacePlantUnits(); // task w6-t2-surface-blocks — the 8 plant/log rows (hand, the tsv direct band)
+		addFlowerUnits(); // task flower-blocks-indicator-family — the 18 indicator flowers (the dump verbatim, the tsv hand band)
 		// task ore-1-mech — 模板钉说明，本卡零键（zh ratchet 0）：矿域注册面
 		//（GT6OreBlocks，26 族 x 74 form-rows x M=53）不加任何 zh 键——每个矿块物品
 		// 走既有 gt6.tagprefix.<prefix_snake> 模板组合（addPrefixTemplates 覆盖全 OP 前缀，
@@ -358,6 +359,34 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.rotten_log");
 		addDirect("block.gt6.mossy_log");
 		addDirect("block.gt6.frozen_log");
+	}
+
+	/**
+	 * The indicator-flower zh faces (task flower-blocks-indicator-family) — the upstream
+	 * dump rows VERBATIM over the addDirect tsv band (tmp/gregtech.lang:1981-1996
+	 * "gt.block.flower.a.0-8"/"b.0-7"; a.9 has NO dump row — the one hand-coined row, the
+	 * 卫道士花 word after the vanilla Vindicator). The potted companions stay unnamed
+	 * (the vanilla potted parity).
+	 */
+	private void addFlowerUnits() {
+		addDirect("block.gt6.flower_altered_andesite_buckwheat");
+		addDirect("block.gt6.flower_crosby_buckwheat");
+		addDirect("block.gt6.flower_alpine_catchfly");
+		addDirect("block.gt6.flower_viola_calaminaria");
+		addDirect("block.gt6.flower_thlaspi_lereschianum");
+		addDirect("block.gt6.flower_tufted_evening_primrose");
+		addDirect("block.gt6.flower_narcissus_sheldonia");
+		addDirect("block.gt6.flower_orechid");
+		addDirect("block.gt6.flower_hexalily");
+		addDirect("block.gt6.flower_vindicator_flower");
+		addDirect("block.gt6.flower_sagebrush");
+		addDirect("block.gt6.flower_four_wing_saltbush");
+		addDirect("block.gt6.flower_desert_trumpet");
+		addDirect("block.gt6.flower_copper_plant");
+		addDirect("block.gt6.flower_princes_plume");
+		addDirect("block.gt6.flower_thompsons_locoweed");
+		addDirect("block.gt6.flower_pandanus_candelabrum");
+		addDirect("block.gt6.flower_tungstus");
 	}
 
 	/**
