@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import gregapi.data.OP;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.block.tree.GT6TreeXmasItem;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.items.tools.GTPistolItem;
 
@@ -343,5 +345,53 @@ public class GT6CalendarsTest {
 		// the words ride literals — no lang keys behind the jokes
 		assertFalse(tBoth.get(0).getContents() instanceof TranslatableContents);
 		assertFalse(tBoth.get(1).getContents() instanceof TranslatableContents);
+	}
+
+	// ---------------------------------------------------------------------------
+	// The Christmas-in-July tooltip census (the 8-file grep of "Christmas in July")
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The 8-carrier census (research.easter-egg-census id1451 face 3): every upstream file
+	 * gates the SAME RAINBOW_SLOW line on XMAS_IN_JULY, differing only in the meta guard —
+	 * {upstream anchor, meta guard, port carrier (null = dormant, no port domain)}.
+	 */
+	private static final String[][] XMAS_TOOLTIP_CENSUS = {
+		{"BlockTreePlanks2.java:96-98",            "aMeta == 0",       "planks"},
+		{"BlockTreeLogC.java:105-106",             "(aMeta & 3) == 0", "log"},
+		{"BlockTreeLeavesCD.java:130-131",         "(aMeta & 7) == 0", "leaves"},
+		{"BlockTreeSaplingCD.java:110-111",        "(aMeta & 7) == 0", "sapling"},
+		{"BlockTreePlanks2FireProof.java:96-97",   "aMeta == 0",       null},
+		{"BlockTreeLogCFireProof.java:103-104",    "(aMeta & 3) == 0", null},
+		{"BlockTreeBeamC.java:61-62",              "(aMeta & 3) == 0", null},
+		{"BlockTreeBeamCFireProof.java:61-62",     "(aMeta & 3) == 0", null},
+	};
+
+	@Test
+	public void xmasTooltipCensusSharesTheOneRainbowLineWithAtLeastThreeCarriers() {
+		// the census shape: 8 rows, >= 3 sampled into port carriers (the fireproof twins +
+		// the Blue Spruce beams stay dormant — no port domain)
+		assertEquals(8, XMAS_TOOLTIP_CENSUS.length, "the full grep census");
+		int tCarried = 0;
+		for (String[] tRow : XMAS_TOOLTIP_CENSUS) if (tRow[2] != null) tCarried++;
+		assertTrue(tCarried >= 3, "acceptance: at least 3 of the 8 rows sampled into port carriers, got " + tCarried);
+		// the sampled rows' shared body, live: flag down no line; flag up exactly the one
+		// verbatim literal line in the pinned RAINBOW_SLOW colour (injected clock — no race)
+		assertFalse(GT6Calendars.XMAS_IN_JULY);
+		List<Component> tTooltip = new ArrayList<>();
+		GT6TreeXmasItem.addXmasLine(tTooltip, 0);
+		assertTrue(tTooltip.isEmpty(), "flag down, no line");
+		long t0 = 1_700_000_000_000L;
+		GT6Calendars.XMAS_IN_JULY = true;
+		GT6TreeXmasItem.addXmasLine(tTooltip, t0);
+		assertEquals(1, tTooltip.size(), "exactly the one line");
+		Component tLine = tTooltip.get(0);
+		assertEquals("Save on everything at Christmas in July!", tLine.getString(), "the verbatim census text");
+		assertFalse(tLine.getContents() instanceof TranslatableContents, "no lang key behind the joke line");
+		assertEquals(ChatFormatting.RED.getColor().intValue(), tLine.getStyle().getColor().getValue(),
+				"RAINBOW_SLOW slot 0 at t0 (:572) rides the style");
+		GT6TreeXmasItem.addXmasLine(tTooltip, t0 + 5000);
+		assertEquals(ChatFormatting.AQUA.getColor().intValue(), tTooltip.get(1).getStyle().getColor().getValue(),
+				"slot 4 CYAN=AQUA (:576) — the tooltip colour animates with the cycle");
 	}
 }

@@ -81,7 +81,7 @@ class GT6SeasonalAssetsTest {
 	void borrowedSeasonalArtIsByteIdentical() throws Exception {
 		Path tRoot = mdkRoot();
 		for (String[] tRow : BORROWED) {
-			Path tFile = tRoot.resolve("mdk/src/main/resources").resolve(tRow[0]);
+			Path tFile = tRoot.resolve("src/main/resources").resolve(tRow[0]);
 			assertTrue(Files.isRegularFile(tFile), tRow[0] + " missing (upstream " + tRow[2] + ")");
 			assertEquals(tRow[1], sha256(tFile), tRow[0] + " drifted from upstream " + tRow[2]);
 		}
@@ -91,7 +91,7 @@ class GT6SeasonalAssetsTest {
 	void baseLeavesArtIsUntouched() throws Exception {
 		// the pre-existing borrows stay byte-identical: the seasonal face REPLACES the baked
 		// model at client bake time, never the base PNG (an overwrite would lose the plain-months art)
-		Path tTree = mdkRoot().resolve("mdk/src/main/resources/assets/gt6/textures/block/tree");
+		Path tTree = mdkRoot().resolve("src/main/resources/assets/gt6/textures/block/tree");
 		assertEquals("abfd1a7b9ed372353f119a6d1bbefb99a63086cf5904f297862c48cae1da3679",
 				sha256(tTree.resolve("leaves_blue_spruce.png")), "the blue spruce base");
 		assertEquals("1cd28c8bc82579ad6d81d8ca9a95f8a46b9e3ccf9fea83e7763543459643cbd1",
@@ -109,7 +109,7 @@ class GT6SeasonalAssetsTest {
 
 	@Test
 	void seasonalVariantModelsExistOverTheBorrowedTextures() throws Exception {
-		Path tModels = mdkRoot().resolve("mdk/src/generated/resources/assets/gt6/models/block");
+		Path tModels = mdkRoot().resolve("src/generated/resources/assets/gt6/models/block");
 		for (String[] tRow : SEASONAL_MODELS) {
 			Path tJson = tModels.resolve(tRow[0] + ".json");
 			assertTrue(Files.isRegularFile(tJson), tRow[0] + " model missing from the generated tree");
@@ -129,7 +129,7 @@ class GT6SeasonalAssetsTest {
 		// the upstream face swaps the icon POINTER (Textures.BlockIcons array rows); the
 		// blockstate layer never changes — pin the single plain variant so no seasonal
 		// variant can leak into the blockstate JSONs
-		Path tStates = mdkRoot().resolve("mdk/src/generated/resources/assets/gt6/blockstates");
+		Path tStates = mdkRoot().resolve("src/generated/resources/assets/gt6/blockstates");
 		for (String tName : new String[] {"blue_spruce_leaves", "maple_leaves"}) {
 			JsonObject tState = JsonParser.parseString(
 					Files.readString(tStates.resolve(tName + ".json"), StandardCharsets.UTF_8)).getAsJsonObject();
@@ -146,7 +146,7 @@ class GT6SeasonalAssetsTest {
 		// acceptance 1: every borrowed seasonal file carries its assets/README.md attribution
 		// row (name + sha256, the TextureCensusTest pin-e face for this card's wave)
 		String tReadme = Files.readString(
-				mdkRoot().resolve("mdk/src/main/resources/assets/README.md"), StandardCharsets.UTF_8);
+				mdkRoot().resolve("src/main/resources/assets/README.md"), StandardCharsets.UTF_8);
 		for (String[] tRow : BORROWED) {
 			String tName = Path.of(tRow[0]).getFileName().toString();
 			assertTrue(tReadme.contains(tName), tName + " absent from the assets ledger");

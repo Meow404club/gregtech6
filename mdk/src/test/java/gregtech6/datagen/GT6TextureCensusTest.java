@@ -395,7 +395,12 @@ class GT6TextureCensusTest {
         // (a JSON metadata file, never a PNG, so it can never ground under this pin's
         // PNG-only digest set); the three PNG arts of the same borrow ground directly.
         // GT6MoltenBorrowCensusTest pins the mcmeta bytes per set.
-        "6a19bef21d66aac8fdcd8032751057733e321446b304d38f5ee8ba35efe99a1d");
+        "6a19bef21d66aac8fdcd8032751057733e321446b304d38f5ee8ba35efe99a1d",
+        // easter-s3-xmas-seasonal: the XMAS leaves borrow's ANIMATION MCMETA sha — vendored
+        // as assets/gt6/textures/block/tree/leaves_blue_spruce_xmas.png.mcmeta (same
+        // JSON-metadata-never-a-PNG face as the molten row above); the XMAS PNG grounds
+        // directly. GT6SeasonalAssetsTest pins the mcmeta bytes.
+        "6fa30d635125baf1212840c239add6b9e7f0d5be8e11094191f950c557881913");
 
     /**
      * Pin f (task c5-asset-coverage-guard): the FULL sha256 ledger reconciles against
