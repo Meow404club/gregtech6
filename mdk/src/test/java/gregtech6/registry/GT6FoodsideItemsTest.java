@@ -204,9 +204,14 @@ public class GT6FoodsideItemsTest {
 		return tList;
 	}
 
-	/** The committed generated tag JSON as an object (the classpath carries src/generated/resources). */
+	/**
+	 * The committed generated tag JSON as an object — the tags live under
+	 * {@code data/gt6/tags/items/} (the 1.20.1 datapack spelling; the classpath carries
+	 * src/generated/resources where BOTH leg spellings are committed, so the path is
+	 * leg-neutral).
+	 */
 	private static JsonObject tagJson(String aPath) {
-		return generatedJson("assets/gt6/tags/items/" + aPath + ".json");
+		return generatedJson("data/gt6/tags/items/" + aPath + ".json");
 	}
 
 	/** The mdk root (src/main/resources/assets/README.md), walked upward from the leg-dependent test working dir. */

@@ -13234,3 +13234,39 @@ upstream Textures.java:440/:458 FLOWERS_A/FLOWERS_B arrays point at:
   `c65887975f278302b72d31609c86b28cfc582c463031a366c64cb35b98f2745c`
 - `flower_tungstus.png` — upstream `FLOWER_TUNGSTUS.png` (meta 7); sha256
   `ba6e2a58b780fe1225cd3acbf00e31a9edf50fc19e54b69e724c0f2e9512d725`
+## GT6 foodside small-item icons (task vanilla-alias-foodside, 2026-10-03)
+
+The six foodside item icons under `gt6/textures/item/foodside/` — the four
+Remains icons are byte-identical upstream borrows from the MultiItemFood
+spritesheet (`src/main/resources/assets/gregtech/textures/items/gt.multiitem
+.food/`, snapshot `v6.17.06-22-g3703e4030`), one atlas tile per port item
+(the GT6Foods borrow form); the two honey-drop icons are COMPOSED placeholders
+(the P20 stdlib generator convention, 16x16 RGBA teardrops — NO upstream GT6
+sprite exists to borrow: OD.dropHoney/dropHoneydew are Forestry ore-dict names
+with no GT6 item behind them, the new-native pair rides hand-rolled amber
+(honey) / pale-honey (honeydew) pixels). NOT byte-identical to upstream —
+declared placeholder (the shape_extruder/shape_slicer form):
+
+- `gt6/textures/item/foodside/remains_plant.png` (upstream `12100.png`,
+  MultiItemFood.java:113) sha256
+  `94e526aeb9f9da4d2cbb2e3cc4eee561ab4d65d87028534d343df9ec30ebfe0a`
+- `gt6/textures/item/foodside/remains_fruit.png` (upstream `12101.png`,
+  MultiItemFood.java:114) sha256
+  `b5d1b45194d8210fb82f18a2e016a86bcd7c2d837c53a75c32a0d51590f8ed1b`
+- `gt6/textures/item/foodside/remains_veggie.png` (upstream `12102.png`,
+  MultiItemFood.java:115) sha256
+  `8defbe061f15f0005b205698cfcf66b3de55bbd5091f9f18354df0d9ca436fac`
+- `gt6/textures/item/foodside/remains_nut.png` (upstream `12103.png`,
+  MultiItemFood.java:116) sha256
+  `c068598ebac9008b361a6fbc25cdb63b3ef47cdc5f079a9873e5ae9eeba15a45`
+- `gt6/textures/item/foodside/drop_honey.png` — COMPOSED placeholder, task
+  vanilla-alias-foodside, sha256
+  `200cc96a8ca9bca7eeaf96e6ea10b1fbaeaabe562a397b077418bbffd794bc24`
+- `gt6/textures/item/foodside/drop_honeydew.png` — COMPOSED placeholder, task
+  vanilla-alias-foodside, sha256
+  `e53e831382890d8a131de2465021c5f79f3960d4b4c0970dc8eeabdd2148ba52`
+
+Note: the upstream `12100-12103.png` basenames are ALSO borrowed as the
+MultiItemTechnological field-generator/emitter tiles (the
+`gt6/textures/item/field_generator_*.png` rows above) — different atlas, same
+meta numbers, no byte or path collision.
