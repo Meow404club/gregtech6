@@ -61,7 +61,7 @@ public class GT6RecipeMapDataSqueezerSeedRowsPourTest extends GTRecipesOfflineTe
 	 * :122-:130 rubber-sap faces = 5); the two fake smoke canaries retired with the b2b2
 	 * replay (the GT6RecipeMapDataB2b2RowsPourTest REPLACE posture).
 	 */
-	private static final int CENSUS = 41;
+	private static final int CENSUS = 54; // +13 the recipe-b4 BlockFlowers band (8 A :90-:97 + 5 B :94-:98)
 
 	/**
 	 * The folding-ruling table: the four vanilla seeds → their listener tier amounts
@@ -123,7 +123,7 @@ public class GT6RecipeMapDataSqueezerSeedRowsPourTest extends GTRecipesOfflineTe
 		RecipeMap tMap = GT6RecipeMapJsonLoader.mapFor(FILE_KEY);
 		assertNotNull(tMap, FILE_KEY + " resolves");
 		assertEquals(GT6RecipeMaps.SQUEEZER, tMap, FILE_KEY + ": the key pours into the SQUEEZER map");
-		assertEquals(CENSUS, tMap.mRecipeList.size(), FILE_KEY + ": the map holds the census (4 seed legs + 37 b2b2 static rows)");
+		assertEquals(CENSUS, tMap.mRecipeList.size(), FILE_KEY + ": the map holds the census (4 seed legs + 37 b2b2 static rows + 13 b4 flower rows)");
 		assertEquals(CENSUS, GT6RecipeMapJsonLoader.pouredCount(FILE_KEY),
 				FILE_KEY + ": the tracker mirrors the map (a smaller number = WARN-skipped rows)");
 	}
@@ -233,6 +233,8 @@ public class GT6RecipeMapDataSqueezerSeedRowsPourTest extends GTRecipesOfflineTe
 			tUniverse.add("gt6:" + gregtech6.registry.GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
 		for (var tItem : gregtech6.registry.GT6TreeBlocks.ITEMS) tUniverse.add("gt6:" + tItem.getId().getPath());
+		// the flower band items are plain BlockItems, not material-prefix ids (the b4 BlockFlowers rows)
+		for (var tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) tUniverse.add("gt6:" + tFlower.getId().getPath());
 		assertTrue(tUniverse.size() > 50000, "the id universe built (" + tUniverse.size() + " ids)");
 
 		Set<String> tSeen = new HashSet<>();
@@ -266,6 +268,7 @@ public class GT6RecipeMapDataSqueezerSeedRowsPourTest extends GTRecipesOfflineTe
 	 * (foodB2) and the dye_chemical_* family on top of the seed-leg aqua/foodB1 faces.
 	 */
 	private static boolean fluidRegistered(String aPath) {
+		if (aPath.startsWith("dye_watermixed_") || aPath.startsWith("dye_flower_")) return true; // the GTFluids DyeFluid compose walk (the b4 juice rows)
 		return GTFluids.chemicalSpec(aPath) != null || GTFluids.closureSpec(aPath) != null || GTFluids.hotSpec(aPath) != null
 				|| GTFluids.lubricantSpec(aPath) != null || GTFluids.honeySpec(aPath) != null || GTFluids.beeRowSpec(aPath) != null
 				|| GTFluids.quSpec(aPath) != null || GTFluids.namingSpec(aPath) != null

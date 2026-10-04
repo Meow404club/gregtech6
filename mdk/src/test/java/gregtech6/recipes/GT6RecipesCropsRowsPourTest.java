@@ -82,14 +82,14 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 		List<GT6RecipesCrops.Row> tRows = GT6RecipesCrops.table();
 		int tFlour = ANY.FlourGrains.mToThis.size();
 		assertTrue(tFlour >= 8, "the FlourGrains family is live (7 grains + potato = 8): " + tFlour);
-		// flour walk: 2 feeders x 66 legs per material; wool seam 1; fodder: 4x66 + 1; grains:
-		// 4x73; wheat listener: 1+4+2+66+1 = 74; baleWheat: 1+66+1 = 68; the food band: 2+2+2+2+4
-		int tExpected = tFlour * 132 + 1 + (4 * 66 + 1) + (4 * 73) + (1 + 4 + 2 + 66 + 1) + (1 + 66 + 1) + (2 + 2 + 2 + 2 + 4);
+		// flour walk: 2 feeders x 66 legs per material; wool seam 16 (white + the 15 b4 dyed legs);
+		// fodder: 4x66 + 1; grains: 4x73; wheat listener: 1+4+2+66+1 = 74; baleWheat: 1+66+1 = 68; the food band: 2+2+2+2+4
+		int tExpected = tFlour * 132 + 16 + (4 * 66 + 1) + (4 * 73) + (1 + 4 + 2 + 66 + 1) + (1 + 66 + 1) + (2 + 2 + 2 + 2 + 4);
 		assertEquals(tExpected, tRows.size(), "the enumerated table ratchet (" + tRows.size() + ")");
 		// map destinations census
 		long tFermenter = tRows.stream().filter(aRow -> aRow.map().equals("fermenter")).count();
 		assertEquals((tFlour * 2 + 10) * 66, tFermenter, "the biomass legs: flour feeders + fodder + grains + wheat + hay");
-		assertEquals(1, tRows.stream().filter(aRow -> aRow.note().contains(":719")).count(), "the wool seam live row (white shred)");
+		assertEquals(16, tRows.stream().filter(aRow -> aRow.note().contains(":719")).count(), "the wool seam live rows (white shred + the 15 b4 dyed legs)");
 	}
 
 	/** Verbatim spot checks: the exact upstream integer-division amounts and durations. */
@@ -139,17 +139,18 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 
 	// ------------------------------------------------------------------ the declared faces
 
-	/** The plantGtFiber seam faces: ZERO registered items (no PLANTS material) — the dyed
-	 * shred/generify legs are the declared pool; the white-wool row is the one live row. */
+	/** The plantGtFiber seam faces: the dye-item-axis items lit the 15 dyed :719 legs (the b4
+	 * enumeration); the white-wool row keeps the string special case; the :975-:990 fiber→string
+	 * rows ride generifier.json (the b2c-generify seat, declared here as seated-elsewhere). */
 	@Test
 	void plantGtFiberFacesAreTheDeclaredPool() {
-		assertEquals(0, GT6RecipesCrops.table().stream()
-				.filter(aRow -> aRow.note().contains(":719") && !aRow.inputs()[0].id().equals("minecraft:white_wool")).count(),
-				"only the white-wool row is enumerated from :719 (the dyed legs ride the Dye_Materials pool)");
+		assertEquals(15, GT6RecipesCrops.table().stream()
+				.filter(aRow -> aRow.note().contains(":719 dyed")).count(),
+				"the 15 dyed-wool legs are enumerated since b4 (the Dye_Materials + plantGtFiber items landed)");
 		assertTrue(GT6RecipesCrops.SKIPPED_UPSTREAM.stream().anyMatch(aEntry -> aEntry.contains(":975-990")),
-				"the generify fiber→string legs are declared");
-		assertTrue(GT6RecipesCrops.SKIPPED_UPSTREAM.stream().anyMatch(aEntry -> aEntry.contains("not PLANTS-flag materials")),
-				"the dye-color fiber face is pinned");
+				"the generify fiber→string legs are declared (seated in generifier.json)");
+		assertTrue(GT6RecipesCrops.SKIPPED_UPSTREAM.stream().anyMatch(aEntry -> aEntry.contains(":720")),
+				"the CR.shaped wool←fiber crafting face is pinned (not a RecipeMap row)");
 		// the blockDust arm of :41-44 is enumerated but the prefix is not an item path
 		assertFalse(GTMaterialItems.registrationOrder().stream().anyMatch(aPair -> aPair.prefix() == OP.blockDust),
 				"blockDust is not an item-path prefix — the :43 arm pours zero");
@@ -234,9 +235,9 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 			// food-crop-items landed, +8 biomass feeders + the fodder/grain side rows)
 			assertEquals((tFlour + 10) * 66, GT6RecipeMaps.FERMENTER.mRecipeList.size(),
 					"the flour dust feeders + wheat/hay + the 4 fodder + the 4 grain-crop biomass legs");
-			assertEquals(1240, GT6RecipesCrops.lastPoured(), "the bound pour ratchet (the merge-state face)");
-			assertEquals(tAttempted - 1240, GT6RecipesCrops.lastSkipped(), "the bound skip ledger (the blockDust arm)");
-			assertEquals(8, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool + wheat mortarize + hay shred + potato remains + the 4 grain mortarizes");
+			assertEquals(1255, GT6RecipesCrops.lastPoured(), "the bound pour ratchet (the merge-state face, +15 the b4 dyed shred legs)");
+			assertEquals(tAttempted - 1255, GT6RecipesCrops.lastSkipped(), "the bound skip ledger (the blockDust arm)");
+			assertEquals(23, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool seam 16 + wheat mortarize + hay shred + potato remains + the 4 grain mortarizes");
 			assertEquals(6, GT6RecipeMaps.MORTAR.mRecipeList.size(), "the wheat mortarize + the 4 grain mortarizes + the potato remains");
 			assertEquals(1, GT6RecipeMaps.COMPRESSOR.mRecipeList.size(), "the wheat compact → hay block");
 			assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size(), "the hay unpack → 9 wheat");
@@ -266,7 +267,7 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 		int tFlour = ANY.FlourGrains.mToThis.size();
 		int tBiomassRows = (tFlour * 2 + 10) * 66;
 		assertEquals(tBiomassRows, GT6RecipeMaps.FERMENTER.mRecipeList.size(), "the fermenter = the biomass walk");
-		assertEquals(8, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool + wheat mortarize + hay shred + 4 grain mortarizes + potato remains");
+		assertEquals(23, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool seam 16 + wheat mortarize + hay shred + 4 grain mortarizes + potato remains");
 		assertEquals(6, GT6RecipeMaps.MORTAR.mRecipeList.size(), "the wheat mortarize + 4 grain mortarizes + potato remains");
 		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mRecipeList.size(), "the wheat compact");
 		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size(), "the hay unpack");
@@ -299,8 +300,12 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 			for (GT6RecipesCrops.Slot tSlot : tRow.outputs()) if (tSlot.id() != null && tSlot.id().startsWith("minecraft:")) tVanilla.add(tSlot.id());
 		}
 		assertEquals(Set.of("minecraft:white_wool", "minecraft:string", "minecraft:wheat", "minecraft:hay_block",
-				"minecraft:apple", "minecraft:melon_slice", "minecraft:beetroot", "minecraft:carrot", "minecraft:potato"),
-				tVanilla, "the exact vanilla face set (Bale_Wheat = hay_block / Crop_Wheat = wheat per LoaderItemList:760/:761)");
+				"minecraft:apple", "minecraft:melon_slice", "minecraft:beetroot", "minecraft:carrot", "minecraft:potato",
+				"minecraft:orange_wool", "minecraft:magenta_wool", "minecraft:light_blue_wool", "minecraft:yellow_wool",
+				"minecraft:lime_wool", "minecraft:pink_wool", "minecraft:gray_wool", "minecraft:light_gray_wool",
+				"minecraft:cyan_wool", "minecraft:purple_wool", "minecraft:blue_wool", "minecraft:brown_wool",
+				"minecraft:green_wool", "minecraft:red_wool", "minecraft:black_wool"),
+				tVanilla, "the exact vanilla face set (Bale_Wheat = hay_block / Crop_Wheat = wheat per LoaderItemList:760/:761; the 15 dyed wools the b4 :719 legs)");
 	}
 
 	// ------------------------------------------------------------------ fixture helpers

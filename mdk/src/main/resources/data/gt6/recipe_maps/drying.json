@@ -1,0 +1,741 @@
+{
+ "comment": "task recipe-b4-juicer-squeezer-flowerfruit — the dye-axis Drying band (32 rows): the Loader_Recipes_Other.java:672-675 loop transcribed, 16 dye indices x the two compose families. TRUE SOURCE: RM.Drying.addRecipe0(T, 16, 40, FL.mul(DYE_FLUIDS_WATER[i], 1, 6, T), FL.DistW.make(20), dustTiny.mat(MT.DATA.Dye_Materials[i], 1)) (:673) + the FLOWER twin at duration 20 / DistW 10 (:674). UNITS: the dye fluids ride CS.L = 144 mB (Loader_Fluids.java:121/:122 FL.make(..., L)), so FL.mul(x, 1, 6, T) = 24 mB exact. THE CARRIER: a NEW file — the 'drying' key rode POURABLE + mapFor since w2-energy-types-5tier and the GT6RecipesDrying Java loader predates this card (its Chem :510-:568 stock is outside this file; the PhaseGate DRYING snapshot counts only the Java stock, JSON pours ride outside it per the squeezer-seed-legs ruling). THE DYE ORDER: MT.DATA.Dye_Materials is the vanilla dye order 0=Black..15=White (upstream MT.java:3687, the dye-item-axis port binding) — the DYE_IDS snake carries the light_gray deviation. ALREADY SEATED ELSEWHERE: the :975-:990 fiber->string GENERIFIER axis rides generifier.json (the b2c-generify static replay); the Vanilla:719/:736 dyed-wool shred/loom legs ride GT6RecipesCrops (Java) and loom.json. DECLARED OUT: the :141 generify OreDict-listener face (the b1 event-row precedent). PROVENANCE: pinned per-file by GT6RecipeMapDataB4FlowerFruitRowsPourTest (census + verbatim + id universes). KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
+ "recipes": [
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[0] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny black x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_black",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_black",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[0] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny black x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_black",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_black",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[1] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny red x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_red",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_red",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[1] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny red x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_red",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_red",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[2] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny green x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_green",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_green",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[2] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny green x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_green",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_green",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[3] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny brown x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_brown",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_brown",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[3] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny brown x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_brown",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_brown",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[4] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny blue x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_blue",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_blue",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[4] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny blue x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_blue",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_blue",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[5] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny purple x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_purple",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_purple",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[5] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny purple x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_purple",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_purple",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[6] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny cyan x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_cyan",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_cyan",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[6] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny cyan x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_cyan",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_cyan",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[7] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny light_gray x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_light_gray",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_light_gray",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[7] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny light_gray x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_light_gray",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_light_gray",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[8] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny gray x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_gray",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_gray",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[8] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny gray x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_gray",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_gray",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[9] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny pink x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_pink",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_pink",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[9] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny pink x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_pink",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_pink",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[10] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny lime x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_lime",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_lime",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[10] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny lime x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_lime",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_lime",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[11] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny yellow x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_yellow",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_yellow",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[11] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny yellow x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_yellow",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_yellow",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[12] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny light_blue x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_light_blue",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_light_blue",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[12] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny light_blue x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_light_blue",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_light_blue",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[13] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny magenta x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_magenta",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_magenta",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[13] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny magenta x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_magenta",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_magenta",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[14] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny orange x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_orange",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_orange",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[14] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny orange x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_orange",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_orange",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:673 — DYE_FLUIDS_WATER[15] FL.mul 1/6 (144->24) -> DistW 20 + dustTiny white x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_watermixed_white",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 20
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_white",
+     "count": 1
+    }
+   ],
+   "duration": 40,
+   "eut": 16
+  },
+  {
+   "comment": "Loader_Recipes_Other.java:674 — DYE_FLUIDS_FLOWER[15] FL.mul 1/6 (144->24) -> DistW 10 + dustTiny white x1",
+   "fluidInputs": [
+    {
+     "fluid": "gt6:dye_flower_white",
+     "amount": 24
+    }
+   ],
+   "fluidOutputs": [
+    {
+     "fluid": "gt6:distilled_water",
+     "amount": 10
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:dust_tiny_white",
+     "count": 1
+    }
+   ],
+   "duration": 20,
+   "eut": 16
+  }
+ ]
+}

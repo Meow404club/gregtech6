@@ -52,7 +52,7 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 	private static final Map<String, Integer> CENSUS = Map.of(
 			"fluidbed", 55,    // Loader_Fuels.java:37-43 — 11 burning materials x 5 dust forms
 			"press", 64,       // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT +4 toolhead-r11e-press-mortar (the HandlerPrefix gem-pickaxe/arrow walk representatives, Handlers:247-250/:252-253)
-			"loom", 35,        // seated :744 (16t corrected) + b2 walks 26 + this card :745/:746/:752/:753/:757-:760 (8)
+			"loom", 51,        // seated :744 (16t corrected) + b2 walks 26 + card :745/:746/:752/:753/:757-:760 (8) + the b4 :736 dyed band 16 (task recipe-b4-juicer-squeezer-flowerfruit)
 			"boxinator", 39,   // seated GT6_Main:350 map row + this card's 28 + task robotics-chain's 10 tip-packing rows (MultiItemRandomTools.java:503-512)
 			"unboxinator", 21, // seated map row + b2 bookshelf row + this card's 19
 			"lightning", 8,    // the b2 eight (certus identical; the salt legs corrected in place)

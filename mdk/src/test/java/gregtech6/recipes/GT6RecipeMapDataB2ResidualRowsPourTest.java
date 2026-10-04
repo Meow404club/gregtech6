@@ -59,9 +59,10 @@ import net.minecraft.world.level.material.Fluids;
  */
 public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTestBase {
 
-	/** The per-file row census (the seated rows and the recipe-data-b1 shared-file rows included). */
+	/** The per-file row census (the seated rows, the recipe-data-b1 shared-file rows and the
+	 * recipe-b4 flower/fruit band included: juicer +13 BlockFlowersA/B rows, loom +16 :736 dyed rows). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"juicer", 22, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 35, "unboxinator", 21);
+			"juicer", 35, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 51, "unboxinator", 21);
 
 	/** The frozen FRUIT_JUICE walk (FL.java:187-224, the 37 members; Juice :186 is NOT one). */
 	private static final String[] JUICES = {"kiwijuice", "juicelime", "juicelemon", "juiceorange", "persimmonjuice",
@@ -429,6 +430,10 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) {
 			tUniverse.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
+		// the flower band items are plain BlockItems, not material-prefix ids (the b4 BlockFlowers rows)
+		for (var tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) {
+			tUniverse.add("gt6:" + tFlower.getId().getPath());
+		}
 		tUniverse.addAll(vanillaWhitelist());
 		// the bee-comb flat item (not a material-prefix id; the b2b1 COMB_SPECS universe precedent)
 		tUniverse.add("gt6:comb_honey");
@@ -481,8 +486,10 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		return rReg;
 	}
 
-	/** The offline fluid-universe lookup: the union of the GTFluids spec-table lookups (the sawing shape, widened). */
+	/** The offline fluid-universe lookup: the union of the GTFluids spec-table lookups (the sawing shape, widened
+	 * with the two dye compose families the b4 loom/juicer bands reference). */
 	private static boolean fluidRegistered(String aPath) {
+		if (aPath.startsWith("dye_watermixed_") || aPath.startsWith("dye_flower_")) return true; // the GTFluids DyeFluid compose walk
 		return gregtech6.fluid.GTFluids.aquaSpec(aPath) != null || gregtech6.fluid.GTFluids.engineSpec(aPath) != null
 				|| gregtech6.fluid.GTFluids.chemicalSpec(aPath) != null || gregtech6.fluid.GTFluids.simpleLiquidSpec(aPath) != null
 				|| gregtech6.fluid.GTFluids.lubricantSpec(aPath) != null || gregtech6.fluid.GTFluids.foodSpec(aPath) != null
@@ -568,12 +575,16 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 				"sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
 				"red_mushroom", "poisonous_potato", "spider_eye", "pufferfish",
 				"slime_ball", "wheat_seeds", "melon_seeds", "beetroot_seeds", "pumpkin_seeds",
-				// loom + unboxinator + lightning smoke
-				"leather", "iron_horse_armor", "saddle",
-				"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
-				// "oak_planks" left at plank-mapping-sweep: the bookshelf unbox's IL.Plank leg
-				// re-poured onto gt6:plank_wood, which rides the registration union above
-				"string", "white_wool", "bookshelf", "book",
+					// the b4 band: the Tungstus IL.Dye_Cactus face + the :736 dyed-wool outputs
+					"green_dye", "white_wool", "orange_wool", "magenta_wool", "light_blue_wool", "yellow_wool",
+					"lime_wool", "pink_wool", "gray_wool", "light_gray_wool", "cyan_wool", "purple_wool",
+					"blue_wool", "brown_wool", "green_wool", "red_wool", "black_wool",
+					// loom + unboxinator + lightning smoke
+					"leather", "iron_horse_armor", "saddle",
+					"chainmail_helmet", "chainmail_chestplate", "chainmail_leggings", "chainmail_boots",
+					// "oak_planks" left at plank-mapping-sweep: the bookshelf unbox's IL.Plank leg
+					// re-poured onto gt6:plank_wood, which rides the registration union above
+					"string", "bookshelf", "book",
 				"quartz", "glowstone_dust", "water", "prismarine_crystals",
 				// cryomixer smoke
 				"clay_ball", "snow_block", "map", "paper", "compass",
