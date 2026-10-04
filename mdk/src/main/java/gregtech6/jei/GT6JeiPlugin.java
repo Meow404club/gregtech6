@@ -325,4 +325,24 @@ public class GT6JeiPlugin implements IModPlugin {
 		sRuntime.getRecipesGui().show(tFocus);
 		return true;
 	}
+
+	/**
+	 * The item jump face (task nav-s4-tree-screen): opens the recipes-for-item page — the R
+	 * axis (how to obtain it), the screen's node-click destination on the JEI leg. The focus
+	 * comes from the same {@code getFocusFactory()} seam {@link #openEnergyCarrierInfo}
+	 * rides ({@code createFocus(role, type, ingredient)}, identical on both pinned
+	 * generations), with {@code VanillaTypes.ITEM_STACK} as the type. Never call unguarded:
+	 * the class loads JEI API — only the ModList-gated routing in
+	 * {@link gregtech6.gui.GT6MaterialTreeScreen#openInViewer} may reach it.
+	 *
+	 * @return false (no-op) when the runtime is not available or the stack is empty.
+	 */
+	public static boolean openItemPage(ItemStack aStack) {
+		if (aStack == null || aStack.isEmpty() || sRuntime == null) return false;
+		mezz.jei.api.recipe.IFocus<ItemStack> tFocus = sRuntime.getJeiHelpers().getFocusFactory()
+				.createFocus(mezz.jei.api.recipe.RecipeIngredientRole.OUTPUT,
+						mezz.jei.api.constants.VanillaTypes.ITEM_STACK, aStack);
+		sRuntime.getRecipesGui().show(tFocus);
+		return true;
+	}
 }
