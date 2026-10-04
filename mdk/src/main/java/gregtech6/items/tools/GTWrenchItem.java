@@ -1,7 +1,16 @@
 package gregtech6.items.tools;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
 
 /**
@@ -31,6 +40,13 @@ import net.minecraftforge.common.ToolAction;
  * wrench that classified as HOE_DIG would fire the wrench UI everywhere (the crowbar
  * card's regression wall, family-wide). The wrench enters recipes through the
  * {@code #gt6:tools/wrench} tag and nothing else until the interaction card lands.
+ *
+ * <p>MINING FACE (task wrench-mining-face, ruling A): the tag-driven dig surface —
+ * {@link #MINEABLE_WITH_WRENCH} members dig at the ladder speed, everything else at
+ * ZERO (the upstream {@code isMinableBlock ? 1 : 0} semantics); the monkey wrench
+ * inherits the whole face (the upstream GT_Tool_MonkeyWrench extends GT_Tool_Wrench).
+ * Ruling C: {@code requiresCorrectToolForDrops} deliberately NOT set (the punitive
+ * no-drop is the defer pool — never requested).
  *
  * <p>MATERIAL LADDER (task machine-ladder): the stack's {@code GT.ToolStats} identity
  * scales durability (the {@link GT6ToolLadder} j/100 points), the composed display name
@@ -82,6 +98,74 @@ public class GTWrenchItem extends Item implements GT6ToolLadder.LadderTool {
 	@Override
 	public boolean canPerformAction(ItemStack aStack, ToolAction aToolAction) {
 		return classifies(aToolAction);
+	}
+
+	// ------------------------------ the mining face (task wrench-mining-face) ------------------------------
+
+	/**
+	 * The wrench-mineable block tag — the mining surface, the datagen {@code addWrenchBand}
+	 * product: the whole GTMachines register + the twelve battery boxes (the reported
+	 * symptom family) + the nine vanilla members unfolded from
+	 * {@code GT_Tool_Wrench.isMinableBlock} (:72-81 — the piston material ×4, the
+	 * redstoneLight lamp, the bars pane, hopper/dispenser/dropper). Machine blocks are a
+	 * DOUBLE-tool set (ruling B: mineable/pickaxe kept AND this tag added, no yielding).
+	 * Self-owned {@code gt6:} namespace — one name both legs, no ecosystem fork.
+	 */
+	public static final TagKey<Block> MINEABLE_WITH_WRENCH =
+			TagKey.create(Registries.BLOCK, new ResourceLocation("gt6", "mineable/wrench"));
+
+	/** The form speed multiplier — the wrench carries none (ToolStats.java default 1.0), so the face speed is the material mToolSpeed. */
+	public static final float FORM_SPEED_MULTIPLIER = 1.0F;
+
+	/**
+	 * The membership seam — the tag check (static so the offline tests pin it without
+	 * constructing the item, the crowbar {@code mines()} family form).
+	 */
+	public static boolean mines(BlockState aState) {
+		return aState.is(MINEABLE_WITH_WRENCH);
+	}
+
+	/**
+	 * The dig-speed seam — the face digs at the ladder speed (MultiItemTool.getDigSpeed
+	 * :472-484 = {@code isMinableBlock 1 × getSpeedMultiplier 1.0 × mToolSpeed}, the Steel
+	 * anchor 6.0 — the battery box 4.0 hardness drops from the vanilla-divided 6 s to the
+	 * upstream ~1 s), everything else at ZERO (ruling A: the upstream
+	 * {@code isMinableBlock ? 1 : 0} semantics — the wrench cannot dig stone; NOT the
+	 * crowbar's 1.0F hand-speed deviation).
+	 */
+	public static float destroySpeed(ItemStack aStack, BlockState aState) {
+		return mines(aState) ? GT6ToolLadder.speed(FORM_SPEED_MULTIPLIER, GT6ToolLadder.materialOf(aStack)) : 0.0F;
+	}
+
+	/** The drop authorization (SwordItem.java:68 shape, the crowbar instance-override form). */
+	@Override
+	//? if forge {
+	public boolean isCorrectToolForDrops(BlockState aState) {
+	//?} else {
+	/*public boolean isCorrectToolForDrops(ItemStack aStack, BlockState aState) {
+	//21.1: the stack parameter joined the signature (the crowbar leg fork); the face is a
+	//pure BlockState check here, the identity rides getDestroySpeed only.
+	*///?}
+		return mines(aState);
+	}
+
+	/** The dig speed (SwordItem.java:44 shape). */
+	@Override
+	public float getDestroySpeed(ItemStack aStack, BlockState aState) {
+		return destroySpeed(aStack, aState);
+	}
+
+	/**
+	 * The per-block-break wear — the upstream 50 units (getToolDamagePerBlockBreak,
+	 * GT_Tool_Wrench.java:58) fold into ONE point (the p24 damage-mapping), the
+	 * DiggerItem.mineBlock verbatim shape (vanilla DiggerItem.java:50-55).
+	 */
+	@Override
+	public boolean mineBlock(ItemStack aStack, Level aLevel, BlockState aState, BlockPos aPos, LivingEntity aEntity) {
+		if (!aLevel.isClientSide && aState.getDestroySpeed(aLevel, aPos) != 0.0F) {
+			aStack.hurtAndBreak(1, aEntity, e -> e.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+		}
+		return true;
 	}
 
 	// ------------------------------ the GT6ToolLadder identity faces (task machine-ladder) ------------------------------
