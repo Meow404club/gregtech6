@@ -23,6 +23,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 
+import gregtech6.worldgen.GTOreWorldgen;
+
 /**
  * The both-legs loader-conditions emission pass (task nether-lens-end-yield,
  * the research.p31-nether-conditional-api asymmetry face): forge 1.20.1 RUNTIME gates
@@ -109,7 +111,15 @@ public class GT6BiomeModifierConditions implements DataProvider {
      */
     public static final List<ConditionRow> CONDITION_ROWS = List.of(
             new ConditionRow(GT6WorldgenDatagen.END_YIELD_MODIFIER_KEY.location().getPath(),
-                    GT6BiomeModifierConditions::conditionsArray));
+                    GT6BiomeModifierConditions::conditionsArray),
+            // task twilight-adaptation-pilot — the SECOND row and the positive form's first
+            // tenant: the twilight_ores modifier mounts only WITH Twilight Forest present
+            // (the mod-dimension adaptation skeleton's detection face). TF absent: the
+            // entry skips at datapack load before the #twilightforest:in_twilight_forest
+            // tag resolves (forge ICondition.java:24-30 shouldRegisterEntry) — zero mounts,
+            // zero errors, the unconditioned rows untouched.
+            new ConditionRow(GT6WorldgenDatagen.TWILIGHT_ORES_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)));
 
     @Override
     public CompletableFuture<?> run(CachedOutput aCache) {

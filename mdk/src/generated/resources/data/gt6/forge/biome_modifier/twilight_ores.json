@@ -1,0 +1,16 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#twilightforest:in_twilight_forest",
+  "features": [
+    "gt6:twilight_ore/anthracite",
+    "gt6:twilight_ore/salt",
+    "gt6:twilight_ore/rocksalt"
+  ],
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "step": "underground_ores"
+}

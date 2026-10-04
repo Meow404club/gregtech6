@@ -450,6 +450,7 @@ public final class GT6WorldgenDatagen {
                 new GT6WaterReplaceConfig.Table(WATER_REPLACE_TABLE));
         bootstrapOreConfigured(ctx); // task w6-small-ore-datagen — tail-append
         bootstrapLensOreConfigured(ctx); // task c3-lens-ores — tail-append
+        bootstrapTwilightOreConfigured(ctx); // task twilight-adaptation-pilot — tail-append
     }
 
     /**
@@ -594,6 +595,7 @@ public final class GT6WorldgenDatagen {
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task w6-small-ore-datagen — tail-append
         bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
+        bootstrapTwilightOrePlaced(ctx, tFeatures); // task twilight-adaptation-pilot — tail-append
     }
 
     /**
@@ -804,6 +806,18 @@ public final class GT6WorldgenDatagen {
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         bootstrapOreBiomeModifiers(ctx, tBiomes, tPlaced); // task w6-small-ore-datagen — tail-append
         bootstrapVanillaDeblob(ctx, tBiomes, tPlaced); // issue #32 vanilla-deblob — tail-append
+        // task twilight-adaptation-pilot — the ONE mod-dimension biome modifier (the
+        // adaptation skeleton's first tenant): the 3 axis-valid RockOres rows over TF's own
+        // tag, at the ore step. The tag lookup resolves EMPTY at datagen (RegistrySetBuilder
+        // .EmptyTagLookup — any tag key serializes as the "#..." string) and the ROW's
+        // mod_loaded condition gates the entry before the tag resolves at runtime — the
+        // bootstrap itself is condition-free (the END_YIELD division of labor), the loader
+        // brand keys are added by the emission registry (GT6BiomeModifierConditions).
+        ctx.register(TWILIGHT_ORES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GTOreWorldgen.twilightBiomeTag()),
+                HolderSet.direct(GTOreWorldgen.twilightOnAxisRows().stream()
+                        .map(tRow -> tPlaced.getOrThrow(GTOreWorldgen.twilightPlacedKey(tRow))).toList()),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
     }
 
     /**
@@ -1335,6 +1349,73 @@ public final class GT6WorldgenDatagen {
                             VerticalAnchor.absolute(tRow.maxY())),
                     BiomeFilter.biome());
         }
+    }
+
+    // ------------------------------------------------------------------
+    // The twilight RockOres band (task twilight-adaptation-pilot — the mod-dimension
+    // adaptation skeleton's first tenant). The 8-row census table lives in GTOreWorldgen
+    // (TWILIGHT_ORE_ROWS, Loader_Worldgen.java:666-673 verbatim); ONLY the axis-valid rows
+    // emit (the axis gate — a registrable ore block universe is the emission precondition,
+    // the GTVeinConfig validity face), the rest stay table data for the axis extension to
+    // revive. All faces below hang off the ONE twilight_ores biome modifier
+    // ({@link #TWILIGHT_ORES_MODIFIER_KEY}); the mod_loaded conditions ride the emission
+    // registry (GT6BiomeModifierConditions.CONDITION_ROWS), never the bootstrap.
+    // ------------------------------------------------------------------
+
+    /**
+     * The axis-valid twilight configured features: vanilla {@code Feature.ORE} at the
+     * verbatim size 50 (WorldgenBlob.java:55 bind — under the 64 codec cap, no clamp the
+     * blob band needed) over the ONE verbatim stone host. The upstream
+     * {@code WorldgenOresVanilla} replaceBlock=null face resolves to the vanilla default
+     * {@code target == Blocks.stone} (WorldgenOresVanilla.java:60-62 {@code
+     * isReplaceableOreGen} — the vanilla {@code target == this} body), NOT the small-ore
+     * band's 24-target WD.setSmallOre walk (a different upstream method). The placed block
+     * = the material's NORMAL ore form on the stone family — the dense-block translation:
+     * upstream places BlocksGT.RockOres (OP.oreDense, BlockRockOres.java:82, the 2x-oreRaw
+     * "Dense Ores" carrier), this port has no dense form, NORMAL is the full-block near
+     * kin (the declared deviation, coordinator-approved 2026-10-05; the dense prefix is a
+     * future axis-extension-family card — the upgrade is one block reference swap).
+     */
+    private static void bootstrapTwilightOreConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        for (GTOreWorldgen.TwilightOreRow tRow : GTOreWorldgen.twilightOnAxisRows()) {
+            FeatureUtils.register(ctx, GTOreWorldgen.twilightConfiguredKey(tRow), Feature.ORE,
+                    new OreConfiguration(List.of(OreConfiguration.target(new BlockMatchTest(Blocks.STONE),
+                            GT6OreBlocks.get(GTOreWorldgen.oreFamily("stone"), GT6OreBlocks.FormKind.NORMAL,
+                                    resolve(tRow)).get().defaultBlockState())),
+                            GTOreWorldgen.TWILIGHT_ORE_SIZE));
+        }
+    }
+
+    /** The axis-valid twilight placed features: 1/100 rarity + InSquare + the 16..32 uniform band + BiomeFilter — NO count modifier (Amount=1 IS the default count, the blob band convention; the WorldgenBlob amount loop is a plain for, no per-chunk j roll to mirror). */
+    private static void bootstrapTwilightOrePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        for (GTOreWorldgen.TwilightOreRow tRow : GTOreWorldgen.twilightOnAxisRows()) {
+            PlacementUtils.register(ctx, GTOreWorldgen.twilightPlacedKey(tRow),
+                    aFeatures.getOrThrow(GTOreWorldgen.twilightConfiguredKey(tRow)),
+                    RarityFilter.onAverageOnceEvery(GTOreWorldgen.TWILIGHT_ORE_PROBABILITY),
+                    InSquarePlacement.spread(),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(GTOreWorldgen.TWILIGHT_ORE_MIN_Y),
+                            VerticalAnchor.absolute(GTOreWorldgen.TWILIGHT_ORE_MAX_Y)),
+                    BiomeFilter.biome());
+        }
+    }
+
+    /** The row's resolved registration material — the {@link GTOreWorldgen#resolve} alias walk over a twilight supplier. */
+    private static OreDictMaterial resolve(GTOreWorldgen.TwilightOreRow aRow) {
+        OreDictMaterial tMaterial = aRow.material().get();
+        if (tMaterial == null || tMaterial.mID < 0) return null;
+        return MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target (MaterialRegistry.java:182-185)
     }
 
     private static void bootstrapSurfaceBiomeModifiers(

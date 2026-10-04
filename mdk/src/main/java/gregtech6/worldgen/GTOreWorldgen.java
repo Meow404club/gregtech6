@@ -565,7 +565,15 @@ public final class GTOreWorldgen {
      * the molybdenum large-vein precedent: an off-axis row waits for its axis extension and
      * lights up then, the JSON never changes).
      */
-    public static final List<TwilightOreRow> TWILIGHT_ORE_ROWS = List.of(); // RED stub: the :666-673 transcription rides the green commit
+    public static final List<TwilightOreRow> TWILIGHT_ORE_ROWS = List.of(
+        new TwilightOreRow("twilight.ore.anthracite" , 0, () -> MT.Coal               ),  // :666
+        new TwilightOreRow("twilight.ore.lignite"    , 1, () -> MT.Lignite            ),  // :667
+        new TwilightOreRow("twilight.ore.salt"       , 2, () -> MT.NaCl               ),  // :668
+        new TwilightOreRow("twilight.ore.rocksalt"   , 3, () -> MT.KCl                ),  // :669
+        new TwilightOreRow("twilight.ore.bauxite"    , 4, () -> MT.OREMATS.Bauxite    ),  // :670
+        new TwilightOreRow("twilight.ore.oilshale"   , 5, () -> MT.Oilshale           ),  // :671
+        new TwilightOreRow("twilight.ore.gypsum"     , 6, () -> MT.Gypsum             ),  // :672
+        new TwilightOreRow("twilight.ore.milkyquartz", 7, () -> MT.MilkyQuartz        )); // :673
 
     /** The shared WorldgenOresVanilla columns (WorldgenBlob.java:53-57 config binds, all 8 rows identical). */
     public static final int TWILIGHT_ORE_AMOUNT = 1, TWILIGHT_ORE_SIZE = 50,

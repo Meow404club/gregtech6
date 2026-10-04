@@ -184,7 +184,10 @@ public class GT6TwilightWorldgenTest {
     @Test
     public void twilightOreFeatureJsonsShipTheUpstreamColumns() throws Exception {
         List<String> tTails = List.of("anthracite", "salt", "rocksalt");
-        List<String> tSnakes = List.of("coal", "salt", "rocksalt");
+        // the material snakes = GTMaterialItems.snakeCase(mNameInternal): Coal->coal,
+        // NaCl->"Salt"->salt, KCl->"Sylvite"->sylvite (the upstream meta-3 display name,
+        // BlockRockOres.java:50 "Sylvite" — the ROW tail says rocksalt, the MATERIAL says sylvite)
+        List<String> tSnakes = List.of("coal", "salt", "sylvite");
         for (int i = 0; i < tTails.size(); i++) {
             String tTail = tTails.get(i);
             JsonObject tConfigured = resourceJson("data/gt6/worldgen/configured_feature/twilight_ore/" + tTail + ".json");
