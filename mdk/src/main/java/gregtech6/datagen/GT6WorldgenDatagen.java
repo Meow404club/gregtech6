@@ -1363,18 +1363,18 @@ public final class GT6WorldgenDatagen {
     // ------------------------------------------------------------------
 
     /**
-     * The axis-valid twilight configured features: vanilla {@code Feature.ORE} at the
-     * verbatim size 50 (WorldgenBlob.java:55 bind — under the 64 codec cap, no clamp the
-     * blob band needed) over the ONE verbatim stone host. The upstream
-     * {@code WorldgenOresVanilla} replaceBlock=null face resolves to the vanilla default
-     * {@code target == Blocks.stone} (WorldgenOresVanilla.java:60-62 {@code
-     * isReplaceableOreGen} — the vanilla {@code target == this} body), NOT the small-ore
-     * band's 24-target WD.setSmallOre walk (a different upstream method). The placed block
-     * = the material's NORMAL ore form on the stone family — the dense-block translation:
-     * upstream places BlocksGT.RockOres (OP.oreDense, BlockRockOres.java:82, the 2x-oreRaw
-     * "Dense Ores" carrier), this port has no dense form, NORMAL is the full-block near
-     * kin (the declared deviation, coordinator-approved 2026-10-05; the dense prefix is a
-     * future axis-extension-family card — the upgrade is one block reference swap).
+     * The axis-valid twilight configured features: vanilla {@code Feature.ORE} at the row's
+     * verbatim size (WorldgenBlob.java:55 bind — every twilight size is under the 64 codec
+     * cap) over the row's host face. The {@code hostTag == null} rows keep the upstream
+     * {@code replaceBlock=null} face: the vanilla default {@code target == Blocks.stone}
+     * (WorldgenOresVanilla.java:53 {@code isReplaceableOreGen}) and the material's NORMAL
+     * ore-stone state (the dense-block translation: upstream places BlocksGT.RockOres/
+     * VanillaOresA — OP.oreDense/oreVanillastone carriers, this port has no dense form,
+     * NORMAL is the full-block near kin — the declared deviation, coordinator-approved
+     * 2026-10-05; the dense prefix is a future axis-extension-family card). The netherite
+     * row is tag-hosted: {@code TagMatchTest(#gt6:tf_deadrock)} over the vanilla
+     * ancient-debris state — the foreign block id lives only in the tag file, never here
+     * (the configured-feature JSON red line).
      */
     private static void bootstrapTwilightOreConfigured(
         //? if forge {
@@ -1384,15 +1384,29 @@ public final class GT6WorldgenDatagen {
         *///?}
     ) {
         for (GTOreWorldgen.TwilightOreRow tRow : GTOreWorldgen.twilightOnAxisRows()) {
+            OreConfiguration.TargetBlockState tTarget;
+            if (tRow.hostTag() == null) {
+                tTarget = OreConfiguration.target(new BlockMatchTest(Blocks.STONE),
+                        GT6OreBlocks.get(GTOreWorldgen.oreFamily("stone"), GT6OreBlocks.FormKind.NORMAL,
+                                resolve(tRow)).get().defaultBlockState());
+            } else {
+                tTarget = OreConfiguration.target(
+                        new TagMatchTest(GTOreWorldgen.twilightHostTag(tRow)),
+                        Blocks.ANCIENT_DEBRIS.defaultBlockState());
+            }
             FeatureUtils.register(ctx, GTOreWorldgen.twilightConfiguredKey(tRow), Feature.ORE,
-                    new OreConfiguration(List.of(OreConfiguration.target(new BlockMatchTest(Blocks.STONE),
-                            GT6OreBlocks.get(GTOreWorldgen.oreFamily("stone"), GT6OreBlocks.FormKind.NORMAL,
-                                    resolve(tRow)).get().defaultBlockState())),
-                            GTOreWorldgen.TWILIGHT_ORE_SIZE));
+                    new OreConfiguration(List.of(tTarget), tRow.size()));
         }
     }
 
-    /** The axis-valid twilight placed features: 1/100 rarity + InSquare + the 16..32 uniform band + BiomeFilter — NO count modifier (Amount=1 IS the default count, the blob band convention; the WorldgenBlob amount loop is a plain for, no per-chunk j roll to mirror). */
+    /**
+     * The axis-valid twilight placed features: [rarity?][count?] + InSquare + the row's
+     * verbatim uniform band + BiomeFilter. Rarity only when probability &gt; 1 (the 1/N
+     * chunk gate — probability 1 = every chunk = no filter, the old band's 1/100 shape
+     * unchanged); count only when amount &gt; 1 (Amount=1 IS the default count, the blob
+     * band convention; the WorldgenBlob amount loop is a plain for, mirrored 1:1 by the
+     * count attempts).
+     */
     private static void bootstrapTwilightOrePlaced(
         //? if forge {
         BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
@@ -1401,13 +1415,16 @@ public final class GT6WorldgenDatagen {
         *///?}
     ) {
         for (GTOreWorldgen.TwilightOreRow tRow : GTOreWorldgen.twilightOnAxisRows()) {
+            List<PlacementModifier> tChain = new ArrayList<>(5);
+            if (tRow.probability() > 1) tChain.add(RarityFilter.onAverageOnceEvery(tRow.probability()));
+            if (tRow.amount() > 1) tChain.add(CountPlacement.of(tRow.amount()));
+            tChain.add(InSquarePlacement.spread());
+            tChain.add(HeightRangePlacement.uniform(VerticalAnchor.absolute(tRow.minY()),
+                    VerticalAnchor.absolute(tRow.maxY())));
+            tChain.add(BiomeFilter.biome());
             PlacementUtils.register(ctx, GTOreWorldgen.twilightPlacedKey(tRow),
                     aFeatures.getOrThrow(GTOreWorldgen.twilightConfiguredKey(tRow)),
-                    RarityFilter.onAverageOnceEvery(GTOreWorldgen.TWILIGHT_ORE_PROBABILITY),
-                    InSquarePlacement.spread(),
-                    HeightRangePlacement.uniform(VerticalAnchor.absolute(GTOreWorldgen.TWILIGHT_ORE_MIN_Y),
-                            VerticalAnchor.absolute(GTOreWorldgen.TWILIGHT_ORE_MAX_Y)),
-                    BiomeFilter.biome());
+                    tChain.toArray(new PlacementModifier[0]));
         }
     }
 

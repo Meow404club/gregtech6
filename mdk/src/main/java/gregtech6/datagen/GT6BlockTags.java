@@ -5,10 +5,13 @@ import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+
+import gregtech6.worldgen.GTOreWorldgen;
 
 //? if forge {
 import net.minecraftforge.common.data.BlockTagsProvider;
@@ -74,13 +77,16 @@ import gregtech6.registry.GTWires;
  * <p><b>Strictness is the acceptance asset</b>: vanilla TagsProvider throws
  * IllegalArgumentException for any reference that fails
  * {@code TagEntry.verifyIfPresent} (TagsProvider.java:85-94 — "Couldn't define tag %s as
- * it is missing following references"), and nothing here uses
- * {@code addOptional}/{@code addOptionalTag}. Every member below is a live-registered
- * block at datagen time (registration events precede GatherDataEvent — the GT6LootTables
- * live-block precedent), so a membership gap fails runData loudly instead of shipping a
- * silently dangling tag. The produced files carry {@code "replace": false} implicitly
- * (TagsProvider.java:96-97 {@code new TagFile(entries, false)}), i.e. the mod file JOINS
- * the vanilla tag datapack-wide — the GT6Atlases.java:21-25 merge-semantics precedent.
+ * it is missing following references"), and the bands use NO optional members EXCEPT the
+ * sanctioned foreign-mod indirection (the twilight deadrock band, task
+ * twilight-vanilla-ores-deadrock — its member is legitimately absent at datagen time and
+ * {@code required:false} is the card's TF-absence semantics). Every other member below is
+ * a live-registered block at datagen time (registration events precede GatherDataEvent —
+ * the GT6LootTables live-block precedent), so a membership gap fails runData loudly
+ * instead of shipping a silently dangling tag. The produced files carry
+ * {@code "replace": false} implicitly (TagsProvider.java:96-97
+ * {@code new TagFile(entries, false)}), i.e. the mod file JOINS the vanilla tag
+ * datapack-wide — the GT6Atlases.java:21-25 merge-semantics precedent.
  */
 public final class GT6BlockTags extends BlockTagsProvider {
 
@@ -105,8 +111,39 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addPlankBand(); // task gt-tree-planks — the 9 plank cubes (planks/axe)
 		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
 		addWrenchBand(); // task wrench-mining-face — the gt6:mineable/wrench face (ruling B)
+		addTwilightDeadrockBand(); // task twilight-vanilla-ores-deadrock — the gt6:tf_deadrock host-indirection tag
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (tags-prefix-materials: rolling batches).
+	}
+
+	/**
+	 * The twilight deadrock host tag (task twilight-vanilla-ores-deadrock): the ONE
+	 * {@code gt6:tf_deadrock} block tag with the single {@code twilightforest:deadrock}
+	 * entry — THE other-mod-block-id indirection face. The netherite worldgen row's
+	 * configured feature targets this tag ({@code minecraft:tag_match}), never the
+	 * foreign id directly (the configured-feature JSON red line), and the entry is
+	 * {@code required:false} so TF-absent installs resolve the tag EMPTY (the feature
+	 * targets nothing; the modifier is unmounted by its mod_loaded condition anyway) —
+	 * no crash, no hang, the acceptance semantics.
+	 *
+	 * <p>THE ARCHAEOLOGY (why exactly this one block): the upstream row replaces
+	 * {@code IL.TF_Deadrock} meta 2 (Loader_Worldgen.java:712), and GT6's own item binds
+	 * (LoaderItemList.java:979-981) map meta 0 weathered / meta 1 cracked / meta 2 plain.
+	 * Modern TF splits the meta into three blocks — TFBlocks.java:163-165
+	 * {@code deadrock}/{@code cracked_deadrock}/{@code weathered_deadrock}, with the
+	 * surface rules (TFSurfaceRules.java:66-71) putting weathered on the floor, cracked
+	 * under it, and PLAIN DEADROCK the filler mass — so meta 2 is the 1:1 counterpart
+	 * {@code twilightforest:deadrock}. NOT the surface variants: the upstream row never
+	 * replaced them.
+	 *
+	 * <p>This band is the tags-provider doctrine's FIRST sanctioned
+	 * {@code addOptional} user (the class javadoc's live-block strictness): the member is
+	 * a foreign-mod block that is legitimately absent at datagen time — required:false is
+	 * the card-mandated shape, not a looseness regression.
+	 */
+	private void addTwilightDeadrockBand() {
+		tag(GTOreWorldgen.twilightDeadrockTag())
+				.addOptional(ResourceLocation.fromNamespaceAndPath("twilightforest", "deadrock"));
 	}
 
 	/**
