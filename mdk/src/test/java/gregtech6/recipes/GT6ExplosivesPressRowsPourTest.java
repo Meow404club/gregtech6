@@ -46,7 +46,7 @@ import net.minecraft.world.level.material.Fluids;
  */
 public class GT6ExplosivesPressRowsPourTest extends GTRecipesOfflineTestBase {
 
-	private static final int THE_PRESS_CENSUS = 89; // 65 baseline + 24 explosives rows
+	private static final int THE_PRESS_CENSUS = 178; // 89 with the explosives rows + 89 press-electrodes rows (MultiItemTechnological.java:502-543, task press-electrodes)
 
 	private static final java.util.function.Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final java.util.function.Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
@@ -82,7 +82,7 @@ public class GT6ExplosivesPressRowsPourTest extends GTRecipesOfflineTestBase {
 		return tDoc.getAsJsonArray("recipes");
 	}
 
-	/** The census: the 65 baseline rows + the 24 explosives rows, zero skips. */
+	/** The census: the 65 baseline rows + the 24 explosives rows + the 89 electrode rows, zero skips. */
 	@Test
 	public void thePressFilePoursTheExplosivesCensusWithZeroSkips() throws Exception {
 		pourShippedPress();

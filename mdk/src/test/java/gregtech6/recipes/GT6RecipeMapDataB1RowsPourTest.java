@@ -51,10 +51,10 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 	 */
 	private static final Map<String, Integer> CENSUS = Map.of(
 			"fluidbed", 55,    // Loader_Fuels.java:37-43 — 11 burning materials x 5 dust forms
-			"press", 89,       // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT +4 toolhead-r11e-press-mortar (the HandlerPrefix gem-pickaxe/arrow walk representatives, Handlers:247-250/:252-253) +1 toolhead-family-closeout (:251 Empty-head retip; :254-259 stay pooled) +24 explosives-chain (Loader_Recipes_Other.java:641-655, the dynamite/boomstick rows; :657-668 casings stay pooled)
-			"loom", 51,        // seated :744 (16t corrected) + b2 walks 26 + card :745/:746/:752/:753/:757-:760 (8) + the b4 :736 dyed band 16 (task recipe-b4-juicer-squeezer-flowerfruit)
-			"boxinator", 12358,   // seated GT6_Main:350 map row + this card's 28 + task robotics-chain's 10 tip-packing rows (MultiItemRandomTools.java:503-512) + the recipe-b7 pack walk 12319
-			"unboxinator", 11312, // seated map row + b2 bookshelf row + this card's 19 + the recipe-b7 unbox walk 11291
+			"press", 178,      // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT +4 toolhead-r11e-press-mortar (Handlers:247-250/:252-253) +1 toolhead-family-closeout (:251 Empty-head retip; :254-259 stay pooled) +24 explosives-chain (Loader_Recipes_Other.java:641-655, the dynamite/boomstick rows; :657-668 casings stay pooled) +89 press-electrodes (MultiItemTechnological.java:488-500 the electrode thirteen, :502-543 the rows; the Food 5 stay pooled with food T3, the Handlers 11 walk with the prefix card)
+			"loom", 35,        // seated :744 (16t corrected) + b2 walks 26 + this card :745/:746/:752/:753/:757-:760 (8)
+			"boxinator", 29,   // seated GT6_Main:350 map row + this card's 28
+			"unboxinator", 21, // seated map row + b2 bookshelf row + this card's 19
 			"lightning", 8,    // the b2 eight (certus identical; the salt legs corrected in place)
 			"freezer", 10,     // seated smoke row + this card's 9
 			"cryomixer", 62,   // the b2 census 1+37+24 (this card's six water rows ride it, anchor comments kept)
