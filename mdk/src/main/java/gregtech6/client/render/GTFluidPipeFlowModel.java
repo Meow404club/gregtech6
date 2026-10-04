@@ -41,7 +41,8 @@ import net.minecraftforge.client.model.data.ModelData;
  * <li>pass side == null (unculled pass) → the same quad;</li>
  * <li>any other pass side → nothing (tangent passes never see the face plane).</li>
  * </ul>
- * Opaque quads: solid layer only (plus the null all-layers pass).
+ * Opaque quads: the layers the pipe family bakes — solid or cutout (the r8-tex pipe
+ * models declare cutout), plus the null all-layers pass.
  *
  * <p>Key (task cover-narrowing-render-snapshot): the arrows ride the dedicated
  * {@link GTModelProperties#FLOW_SNAPSHOT} — the generic {@code RENDER_SNAPSHOT} stayed
@@ -50,7 +51,8 @@ import net.minecraftforge.client.model.data.ModelData;
  *
  * <p>RED LINE: reads ONLY the immutable snapshot — no BlockEntity is reachable from
  * here (render-thread semantics, GTDynamicBakedModel class doc). CLIENT-ONLY class:
- * instantiated exclusively through the Dist.CLIENT {@code GTPipeFlowClientListener}.
+ * instantiated exclusively INSIDE the composed chain ({@link GTFluidPipeFoamModel#over},
+ * seated by GTRodClientListener — task pipe-flow-arrow-render-fix).
  */
 public class GTFluidPipeFlowModel extends GTDynamicBakedModel {
 
@@ -81,18 +83,34 @@ public class GTFluidPipeFlowModel extends GTDynamicBakedModel {
 		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
 	}
 
-	/** The p35 split: the flow model keys on the dedicated flow snapshot, not the cover chain's generic key. */
+	/**
+	 * The chain pass-through gate (task pipe-flow-arrow-render-fix): the flow model sits
+	 * INSIDE the composed Foam(Flow(rod)) chain, so its gate must admit everything the
+	 * outer foam gate admits — a closed gate would route the base-class miss down the 3-arg
+	 * fallback path and DROP the ModelData, leaving the rod body painting from EMPTY
+	 * (a painted pipe spraying back to its material colour). The arrows themselves still
+	 * key on FLOW_SNAPSHOT only (checked in getDynamicQuads).
+	 */
 	@Override
 	protected boolean supportsDynamicQuads(ModelData aModelData) {
-		return aModelData.has(GTModelProperties.FLOW_SNAPSHOT);
+		return aModelData.has(GTModelProperties.FLOW_SNAPSHOT)
+				|| aModelData.has(GTModelProperties.RENDER_SNAPSHOT)
+				|| aModelData.has(GTModelProperties.FOAM_SNAPSHOT)
+				|| aModelData.has(GTModelProperties.PAINT);
 	}
 
 	@Override
 	protected List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
-		List<BakedQuad> rQuads = new ArrayList<>(getFallbackModel().getQuads(aState, aSide, aRand));
-		// opaque arrows: solid layer (+ the null all-layers pass)
-		if (aRenderType != null && !aRenderType.equals(RenderType.solid())) return rQuads;
+		// the 5-ARG forward — the body is the rod model, whose paint tint reads the PAINT
+		// property off this ModelData; the old 3-arg form (the pre-chain standalone
+		// fallback) dropped it and arrowed pipes lost their spray (the 掉漆 bug)
+		List<BakedQuad> rQuads = new ArrayList<>(getFallbackModel().getQuads(aState, aSide, aRand, aModelData, aRenderType));
+		// opaque arrows: the layers the pipe family actually bakes. The r8-tex shared pipe
+		// models declare render_type:cutout, so the chunk bake runs ONLY the cutout pass —
+		// the solid-only gate of the pre-cutout era never baked an arrow at all (the
+		// GTRodBakedModel:183 layer posture, solid+cutout)
+		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) return rQuads;
 		// the typed property hands the snapshot back directly — absent = null (the FoamModel form)
 		PipeFlowSnapshot tSnapshot = aModelData.get(GTModelProperties.FLOW_SNAPSHOT);
 		if (tSnapshot == null) return rQuads;

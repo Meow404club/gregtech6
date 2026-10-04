@@ -16,7 +16,7 @@ import gregtech6.registry.GTWireSpecs;
 
 /**
  * The client-side wiring of the wire family models (task wire-family-w2, the
- * {@code GTPipeFlowClientListener} shape: card-local {@code @EventBusSubscriber},
+ * {@code GTRodClientListener} shape: card-local {@code @EventBusSubscriber},
  * GT6Mod/GTModBusListener untouched; Dist.CLIENT — the dedicated server never loads this
  * class). Two jobs:
  *

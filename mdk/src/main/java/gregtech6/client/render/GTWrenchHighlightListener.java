@@ -28,7 +28,7 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 
 /**
  * The FORGE-bus listener of the wrench 3x3 grid overlay (task wrench-ui-gtceu) —
- * the first main-bus listener of this repo (the existing GTPipeFlowClientListener /
+ * the first main-bus listener of this repo (the existing GTRodClientListener /
  * GTCoverClientListener are MOD-bus model-wiring and must not be copied; the GTCEu
  * precedent is ClientEventListener.java:55 {@code bus = FORGE, Dist.CLIENT}).
  *
