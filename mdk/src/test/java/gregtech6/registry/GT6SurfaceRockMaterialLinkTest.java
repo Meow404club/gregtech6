@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -66,24 +64,28 @@ public class GT6SurfaceRockMaterialLinkTest extends GTOfflineTestBase {
 			// the NetworkHooks tail is expected offline; registries are usable by now
 		}
 		ourItemsRegistered = BuiltInRegistries.ITEM.containsKey(new ResourceLocation("gt6", "rock_gt_iron"));
-		if (!ourItemsRegistered) {
-			// the material system must exist before any MT/OP dereference (the
-			// GT6PlaceablesRegistrationTest offline bracket)
-			try {
-				Class<?> tItems = Class.forName("gregtech6.registry.GTMaterialItems");
-				Method tInit = tItems.getMethod("initMaterials");
-				tInit.setAccessible(true);
-				tInit.invoke(null);
-			} catch (Throwable aE) {
-				throw new IllegalStateException("could not init the material system offline", aE);
-			}
-		}
+		// The hermetic bracket (reset-first, task hermetic-fml-seam-generation): the material
+		// universe is class-local on BOTH legs — a prior batch class's materials() reflow
+		// cannot leave a stale generation here. Replaces the offline-only reflection arm
+		// (same package, the reflection indirection bought nothing — GT6MaterialTestSupport).
+		GT6MaterialTestSupport.materials();
 	}
 
 	/** The rockGt stack source: the real item on the FML leg, a fixture instance offline. */
 	private static ItemStack rockGt(OreDictMaterial aMaterial) {
 		if (ourItemsRegistered) {
-			return new ItemStack(GTMaterialItems.get(OP.rockGt, aMaterial).get());
+			// NAME identity over the frozen registration INDEX (the GT6MaterialToolJeiExtensionTest
+			// rule): the INDEX keys freeze the boot-generation material objects and OreDictMaterial
+			// has no equals, so after any batch class's hermetic reset the re-flooded MT static
+			// cannot identity-hit the direct seam — across generations the pair identity is the
+			// name (the prefix fields are OP.init-once, stable across reflows).
+			for (var tEntry : GTMaterialItems.items().entrySet()) {
+				if (tEntry.getKey().prefix() == OP.rockGt
+						&& aMaterial.mNameInternal.equals(tEntry.getKey().material().mNameInternal)) {
+					return new ItemStack(tEntry.getValue().get());
+				}
+			}
+			throw new IllegalStateException("no registered rockGt item for " + aMaterial.mNameInternal);
 		}
 		String tSnake = MaterialPrefixItem.snakeCase(aMaterial.mNameInternal);
 		MaterialPrefixItem tItem = registerItemFixture("rock_gt_" + tSnake,
@@ -110,7 +112,10 @@ public class GT6SurfaceRockMaterialLinkTest extends GTOfflineTestBase {
 					tMaterial.mNameInternal + " rockGt dispatches the ROCK pile kind");
 			GT6PlaceableBlockEntity tPile = freshPile();
 			tPile.setStack(tRock);
-			assertSame(tMaterial, tPile.material(),
+			// NAME identity, not instance identity: the FML-registered item freezes its
+			// boot-generation material object, and a hermetic reset in this or a batch
+			// sibling class legitimately re-floods MT (hermetic-fml-seam-generation).
+			assertEquals(tMaterial.mNameInternal, tPile.material().mNameInternal,
 					tMaterial.mNameInternal + " placed pile must read back its own material (the tint source)");
 		}
 	}
@@ -127,7 +132,7 @@ public class GT6SurfaceRockMaterialLinkTest extends GTOfflineTestBase {
 				"the update tag must carry the pile contents key");
 		GT6PlaceableBlockEntity tClientPile = freshPile();
 		tClientPile.load(tTag);
-		assertSame(MT.Iron, tClientPile.material(), "the client-side BE rehydrates the material");
+		assertEquals(MT.Iron.mNameInternal, tClientPile.material().mNameInternal, "the client-side BE rehydrates the material");
 		assertEquals(tRock.getItem(), tClientPile.stack().getItem(), "the carried item identity rides the channel");
 		assertEquals(1, tClientPile.stack().getCount(), "the rock pile consumes one item");
 	}
@@ -149,7 +154,7 @@ public class GT6SurfaceRockMaterialLinkTest extends GTOfflineTestBase {
 		tGiven.setCount(1);
 		GT6PlaceableBlockEntity tReplaced = freshPile();
 		tReplaced.setStack(tGiven);
-		assertSame(MT.Gold, tReplaced.material(), "pickup → re-place keeps the material identity");
+		assertEquals(MT.Gold.mNameInternal, tReplaced.material().mNameInternal, "pickup → re-place keeps the material identity");
 		assertEquals(tPile.stack().getItem(), tReplaced.stack().getItem());
 	}
 
@@ -162,6 +167,6 @@ public class GT6SurfaceRockMaterialLinkTest extends GTOfflineTestBase {
 		tPile.setStack(rockGt(MT.Iron));
 		tPile.sendClientData(); // no level offline — the tick() resend body must no-op, not throw
 		tPile.load(tPile.saveWithoutMetadata()); // the client re-bake arm: hasLevel()=false — no-op
-		assertSame(MT.Iron, tPile.material(), "the hardening faces leave the data path untouched");
+		assertEquals(MT.Iron.mNameInternal, tPile.material().mNameInternal, "the hardening faces leave the data path untouched");
 	}
 }

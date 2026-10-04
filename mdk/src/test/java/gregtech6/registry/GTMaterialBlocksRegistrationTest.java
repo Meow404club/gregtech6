@@ -54,9 +54,12 @@ class GTMaterialBlocksRegistrationTest {
 
     @BeforeAll
     static void initMaterialSystem() {
-        // The single-class JVM probe lesson (class-load cycle): the material system must
-        // exist before any OP/MT field is dereferenced (GT6RecipesCokeOvenTest @BeforeAll shape).
-        GTMaterialItems.initMaterials();
+        // The hermetic bracket (reset-first, task hermetic-fml-seam-generation): the material
+        // universe is class-local — a prior batch class's materials() reflow cannot leave a
+        // stale generation here, and a cold fork-JVM lot is self-sufficient (the
+        // GT6MaterialTestSupport javadoc; the bare initMaterials form rode whatever
+        // generation the batch had already left behind).
+        GT6MaterialTestSupport.materials();
     }
 
     /** Independent census walk: VALUES order x MATERIAL_ARRAY x isGeneratingItem, alias-merged, pair-deduped. */
@@ -196,9 +199,11 @@ class GTMaterialBlocksRegistrationTest {
      * The get seam, per leg (GTOfflineTestBase javadoc :25-33 — the 21.1 test JVM boots through
      * FML itself, so registration has really fired there): on 1.20.1 offline the RegistryObject
      * index is never populated, so the seam returns null (the resolver fallback treats that as
-     * absent); on 21.1 that premise is unreachable and the seam hands out the live deferred
-     * holder — pinned as the positive proposition (constructed with its id, getId pinned to the
-     * GTMaterialItems.itemIdOf composition rule).
+     * absent); on 21.1 the boot registered for real — pinned by NAME identity over the frozen
+     * INDEX (the GT6MaterialToolJeiExtensionTest rule): the INDEX keys freeze the
+     * boot-generation material objects and OreDictMaterial has no equals, so after any batch
+     * class's hermetic reset the re-flooded MT static cannot identity-hit the direct seam —
+     * across generations the pair identity is the name.
      */
     @org.junit.jupiter.api.Test
     void getSeamIsNullBeforeRegistration() {
@@ -206,10 +211,13 @@ class GTMaterialBlocksRegistrationTest {
         org.junit.jupiter.api.Assertions.assertNull(GTMaterialBlocks.get(OP.blockIngot, MT.Coal),
                 "no RegisterEvent has fired offline — the seam must be null, not a dangling handle");
         //?} else {
-        /*var tHandle = GTMaterialBlocks.get(OP.blockIngot, MT.Coal);
-        org.junit.jupiter.api.Assertions.assertNotNull(tHandle, "the FML-booted 21.1 JVM registered for real — the seam returns the live deferred holder, not null");
+        /*var tHit = GTMaterialBlocks.items().entrySet().stream().filter(tEntry ->
+                tEntry.getKey().prefix() == OP.blockIngot && "Coal".equals(tEntry.getKey().material().mNameInternal))
+                .findFirst().orElse(null);
+        org.junit.jupiter.api.Assertions.assertNotNull(tHit,
+                "the FML-booted JVM registered for real — the INDEX holds the blockIngot Coal pair (name identity)");
         org.junit.jupiter.api.Assertions.assertEquals(
-                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block_ingot_coal"), tHandle.getId(),
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block_ingot_coal"), tHit.getValue().getId(),
                 "the deferred holder id follows the GTMaterialItems.itemIdOf rule (gt6:block_ingot_coal)");
         *///?}
     }
