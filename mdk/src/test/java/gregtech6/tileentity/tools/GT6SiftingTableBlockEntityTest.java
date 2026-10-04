@@ -248,11 +248,12 @@ public class GT6SiftingTableBlockEntityTest extends GTOfflineTestBase {
 		var tHandler = tTable.newSideHandler();
 		assertEquals(GT6SiftingTableBlockEntity.SLOTS, tHandler.getSlots(), "the :445 ACCESSIBLE_SLOTS all 13");
 
-		// a row input rides slot 0
+		// a row input rides slot 0 (the forge handler is NON-MUTATING — the remainder is
+		// the return value, the ItemStackHandler convention)
 		ItemStack tGrass = new ItemStack(Items.GRASS_BLOCK, 4);
-		tHandler.insertItem(0, tGrass, false);
+		ItemStack tRemainder = tHandler.insertItem(0, tGrass, false);
 		assertEquals(1, tTable.inventory().getStackInSlot(0).getCount(), "the slot-0 stack limit 1");
-		assertEquals(3, tGrass.getCount(), "the surplus stays in the offer");
+		assertEquals(3, tRemainder.getCount(), "the surplus returns to the caller");
 
 		// a non-row material is refused everywhere (:452 containsInput)
 		ItemStack tDiamond = new ItemStack(Items.DIAMOND, 1);
@@ -262,8 +263,11 @@ public class GT6SiftingTableBlockEntityTest extends GTOfflineTestBase {
 		tTable.inventory().setStackInSlot(3, new ItemStack(Items.DIRT, 1));
 		assertEquals(Items.DIRT, tHandler.extractItem(3, 1, false).getItem());
 		assertTrue(tHandler.extractItem(0, 1, false).isEmpty(), "the input slot never extracts");
-		// the output slot never inserts (:452 aSlot == 0)
-		assertEquals(new ItemStack(Items.GRASS_BLOCK, 1), tHandler.insertItem(2, new ItemStack(Items.GRASS_BLOCK, 1), false),
+		// the output slot never inserts (:452 aSlot == 0) — ItemStack has NO instance
+		// equals in 1.20.1 (the static matches, vanilla ItemStack.java:416 — the refused
+		// offer comes back as a distinct instance, identity asserts would pin nothing)
+		assertTrue(ItemStack.matches(new ItemStack(Items.GRASS_BLOCK, 1),
+						tHandler.insertItem(2, new ItemStack(Items.GRASS_BLOCK, 1), false)),
 				"the output slot is insert-blind");
 	}
 
@@ -277,7 +281,9 @@ public class GT6SiftingTableBlockEntityTest extends GTOfflineTestBase {
 		tTable.inventory().setStackInSlot(0, new ItemStack(Items.GRASS_BLOCK, 1));
 		tTable.mState = (byte) (GT6SiftingTableBlockEntity.HAS_INPUT | GT6SiftingTableBlockEntity.ACTIVE);
 		tTable.mClickCount = 3;
-		net.minecraft.nbt.CompoundTag tTag = tTable.saveWithFullMetadata();
+		// saveWithoutMetadata — the fixture BET is not registry-mapped offline (the
+		// saveWithFullMetadata id write needs the live registration)
+		net.minecraft.nbt.CompoundTag tTag = tTable.saveWithoutMetadata();
 		GT6SiftingTableBlockEntity tLoaded = new GT6SiftingTableBlockEntity(sTableType, POS, Blocks.STONE.defaultBlockState());
 		tLoaded.load(tTag);
 		assertEquals(Items.GRASS_BLOCK, tLoaded.inventory().getStackInSlot(0).getItem());
