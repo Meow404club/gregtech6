@@ -191,6 +191,10 @@ public class GT6RecipeMapDataB2b2RowsPourTest extends GTRecipesOfflineTestBase {
 		for (var tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) tUniverse.add("gt6:" + tFlower.getId().getPath());
 		for (var tComb : GT6BeeCombs.COMBS) tUniverse.add("gt6:" + tComb.getId().getPath());
 		for (GT6ReactorRods.RodRow tRod : GT6ReactorRods.ROWS) tUniverse.add("gt6:" + tRod.path());
+		// the vanilla-alias foodside family (the smoke-card remains legs on the squeezer rows)
+		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+			tUniverse.add("gt6:" + tRow.id());
+		}
 		assertTrue(tUniverse.size() > 50000, "the id universe built (" + tUniverse.size() + " ids)");
 
 		Set<String> tMissing = new java.util.TreeSet<>();

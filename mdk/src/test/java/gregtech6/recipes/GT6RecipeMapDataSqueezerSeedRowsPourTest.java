@@ -235,6 +235,10 @@ public class GT6RecipeMapDataSqueezerSeedRowsPourTest extends GTRecipesOfflineTe
 		for (var tItem : gregtech6.registry.GT6TreeBlocks.ITEMS) tUniverse.add("gt6:" + tItem.getId().getPath());
 		// the flower band items are plain BlockItems, not material-prefix ids (the b4 BlockFlowers rows)
 		for (var tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) tUniverse.add("gt6:" + tFlower.getId().getPath());
+		// the vanilla-alias foodside family (the smoke-card remains legs on the seated vanilla rows)
+		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+			tUniverse.add("gt6:" + tRow.id());
+		}
 		assertTrue(tUniverse.size() > 50000, "the id universe built (" + tUniverse.size() + " ids)");
 
 		Set<String> tSeen = new HashSet<>();

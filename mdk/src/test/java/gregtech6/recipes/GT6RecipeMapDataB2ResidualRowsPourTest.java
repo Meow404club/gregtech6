@@ -438,6 +438,10 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		tUniverse.addAll(vanillaWhitelist());
 		// the bee-comb flat item (not a material-prefix id; the b2b1 COMB_SPECS universe precedent)
 		tUniverse.add("gt6:comb_honey");
+		// the vanilla-alias foodside family (the smoke-card remains legs ride gt6:remains_plant/remains_fruit)
+		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+			tUniverse.add("gt6:" + tRow.id());
+		}
 		Set<String> tMissing = new HashSet<>();
 		for (String tFile : CENSUS.keySet()) {
 			for (JsonElement tElement : pourShipped(tFile)) {
@@ -576,6 +580,10 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 				"sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
 				"red_mushroom", "poisonous_potato", "spider_eye", "pufferfish",
 				"slime_ball", "wheat_seeds", "melon_seeds", "beetroot_seeds", "pumpkin_seeds",
+					// the smoke-card residue band: the :841-:856/:874 vanilla-crops inputs
+					"poppy", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip",
+					"white_tulip", "pink_tulip", "oxeye_daisy", "dandelion", "lilac", "peony",
+					"rose_bush", "cactus", "sugar_cane", "ink_sac",
 					// the b4 band: the Tungstus IL.Dye_Cactus face + the :736 dyed-wool outputs
 					"green_dye", "white_wool", "orange_wool", "magenta_wool", "light_blue_wool", "yellow_wool",
 					"lime_wool", "pink_wool", "gray_wool", "light_gray_wool", "cyan_wool", "purple_wool",
