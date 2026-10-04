@@ -1,22 +1,38 @@
-# TODO（镜像·维护期版 2026-09-30 · r10）
+# TODO（镜像·维护期版 2026-10-03 · pool-drain 收官）
 
-> 权威数据在 MCP `gt6-brain` state（`tasks.r9-issue-wave` 等）。
+> 权威数据在 MCP `gt6-brain` state（`tasks.pool-drain-wave` 及 cards.* 平键）。
 > P1-P38 已完成项全史见 [docs/archive/ARCHIVE-2026-09-27-p1-p37.md](archive/ARCHIVE-2026-09-27-p1-p37.md)。
 
-## r10 还债波 · 已收官（2026-09-30）
+## pool-drain 波 · 已收官并 push（2026-10-03）
+
+16 卡三席（5+5+1）全 approve，main=origin/main=82a6be2fb（push 41 提交）。要点：
+**P0 实机崩端修复**（GTFluids 外域门控家族 null 守卫；根因=CHEMICALS 三行带 IHL/FZ 域，
+裸装装载期 NPE——用户可拉新构建复验）；T5 8 行+ice_cream_raisin+sandwich off-by-one 闭合；
+机器行族 85 行九图（chum 4 行裁定转录零灌=Scrap Meat 属 T3 池）；骡肉 :574/mutton-rabbit
+零代码关闭（维持照灌/维持 declared deviation）；vanilla 配方移除通道（cake/cookie/golden_apple/
+golden_carrot 四行运行时过滤，桶 2 行=现代版无 crafting id 声明 no-op）；berry overlay 三模型
+双层；mdh-5 #46 worldgen/block 轴四面 census 静态关闭；**余瓶链全域**（35 流体+219 瓶含
+48 染料瓶，tab 图标回正+栈列忠实修正）；small-gem-1pct 石层 1% 回退序（浮出吸收项）。
+终局全量 567 类 4506 测 0F/0E/5S。
+
+## 残账池（下波候选，显式不扩本波）
+
+- **瓶 capability 容器面决策卡**（250mB 饮用/空瓶返还/腐链 :428-438）+机器灌装行随卡
+- blob 石面 1% 小宝石覆盖（需 post-placement 处理器另卡）；nether 透镜 1% 面
+- Scrap Meat 1998+锭条 32101-32115=T3 物品池族（另波；解锁 chum 4 行实灌）
+- 圣水 CureZombie/Drop_Loot 行为卡 defer
+- field_test 目验族：浆果层上屏/相邻壳细缝/透镜挖 ore_small 宝石/瓶外观/移除通道 /reload 实机
+- r4-24b 大机 active 贴图三态属性接线（素材 r8 已备齐）
+- FML 预算墙 ops 裁定（等用户）：测试启动面 12-13.5G 三撞 filtered 12G——调预算 or 查增重根因
+- EMI 槽底叠画观感（等 field）；黏土带形（等用户）；温度计读数行（等温度计移植卡）
+- r9 defer 维持：SHARPENING 磨床 13 行/Press 宝石镐/电动直合成行
+- 治理：KG 蒸馏（4187 节点超旧阈，孤儿 4 健康）
+
+## 前态 r10 还债波 · 已收官（2026-09-30）
 
 七卡两席全 approve 合入（main=fb479f3f1）：数据丢失级两枚（大机输入罐遮蔽=存档即失+多流体不可达；
 六族破坏掉落缺口）+玩家面（nojade 崩溃+齿轮装饰）+观感面（材质 tint+#17 锅炉过半满两脸）+
 宝石姊妹行。盘点销卡 r4-24c；r4-19b/24d 债清。
-
-## 次批待池
-
-- **r4-24b 大机 active 贴图三态属性接线**（素材 r8 已备齐，GTMultiBlockControllerBlock 仅 FACING+FORMED，
-  缺 active/running 属性+换模接线；单块机先例齐全；风险=共享基类属性面+datagen 变体矩阵增长）
-- **FML 预算墙 ops 裁定（等用户）**：测试启动面 12-13.5G 三撞 filtered 12G——调预算 or 查增重根因（疑似 KJS）
-- 量锅/BlockStates javadoc 措辞陈旧（tint 卡遗留 docs-sweep，顺带次批任何卡）
-- EMI 槽底叠画观感（等 field）；黏土带形（等用户）；温度计读数行（等温度计移植卡）
-- r9 defer 维持：SHARPENING 磨床 13 行/Press 宝石镐/电动直合成行/NEI 齿轮已清/宝石姊妹已清
 
 ## 前态 r9 波（#34/#39/#41）· 已收官（2026-09-30）
 
