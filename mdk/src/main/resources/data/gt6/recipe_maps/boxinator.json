@@ -1,5 +1,5 @@
 {
- "comment": "task recipe-data-b1 appends its 28 rows after the seated map smoke row (the :152-:154 rock packs, the :418-:421 minecart box halves, the :967-:973 brick packs, the :424-:458 typemin(1) tool box halves).",
+ "comment": "task recipe-data-b1 appends its 28 rows after the seated map smoke row (the :152-:154 rock packs, the :418-:421 minecart box halves, the :967-:973 brick packs, the :424-:458 typemin(1) tool box halves); task robotics-chain tail-appends its 10 tip-packing rows (MultiItemRandomTools.java:503-512, the tip template input rides the Recipe.sNotConsumable face).",
  "recipes": [
   {
    "inputs": [
@@ -571,6 +571,216 @@
     }
    ],
    "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:503 — Robot_Tip_wrench tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_wrench x2",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_wrench_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_wrench",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:504 — Robot_Tip_screwdriver tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_screwdriver x32",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_screwdriver_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_screwdriver",
+     "count": 32
+    }
+   ],
+   "duration": 512,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:505 — Robot_Tip_saw tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_saw x32",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_saw_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_saw",
+     "count": 32
+    }
+   ],
+   "duration": 512,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:506 — Robot_Tip_hammer tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_hammer x2",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_hammer_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_hammer",
+     "count": 2
+    }
+   ],
+   "duration": 32,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:507 — Robot_Tip_cutter tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_cutter x4",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_cutter_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_cutter",
+     "count": 4
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:508 — Robot_Tip_chisel tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_chisel x9",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_chisel_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_chisel",
+     "count": 9
+    }
+   ],
+   "duration": 144,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:509 — Robot_Tip_rubber tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + nugget rubber → Tool_Token_rubber x4",
+   "inputs": [
+    {
+     "item": "gt6:nugget_rubber",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_rubber_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_rubber",
+     "count": 4
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:510 — Robot_Tip_blade tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_blade x32",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_blade_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_blade",
+     "count": 32
+    }
+   ],
+   "duration": 512,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:511 — Robot_Tip_drill tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_drill x32",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_drill_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_drill",
+     "count": 32
+    }
+   ],
+   "duration": 512,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemRandomTools.java:512 — Robot_Tip_file tip template (size-0, the never-consumed face rides Recipe.sNotConsumable) + plateTiny Steel → Tool_Token_file x9",
+   "inputs": [
+    {
+     "item": "gt6:plate_tiny_steel",
+     "count": 1
+    },
+    {
+     "item": "gt6:robot_arm_file_tip",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:single_use_file",
+     "count": 9
+    }
+   ],
+   "duration": 144,
    "eut": 16
   }
  ]

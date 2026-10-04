@@ -90,7 +90,11 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("loom"), "one loom smoke row");
-		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "one boxinator smoke row");
+		// 11 = the seated smoke row (the only row whose vanilla legs sit in the fixture
+		// whitelist — every other seated row walks minecraft ids the stand-in answers null,
+		// the b2b1 posture) + task robotics-chain's 10 tip-packing rows (all-gt6 legs pour
+		// the stand-in; their registration universe is guarded by the B1 id-universe pin)
+		assertEquals(11, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "the boxinator smoke row + the robotics-chain ten");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "one unboxinator smoke row");
 		assertEquals(195, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — the landed b2b1 census (7 smoke + 188 pour; the seat-IX reconciliation bump)");
 
@@ -120,7 +124,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 
 		// the rows are LIVE in the maps (the findRecipe stock grew by one each)
 		assertEquals(1, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held ONLY the smoke row (the DECLARED-empty card-A state)");
-		assertEquals(1, GT6RecipeMaps.BOXINATOR.mRecipeList.size());
+		assertEquals(11, GT6RecipeMaps.BOXINATOR.mRecipeList.size()); // + the robotics-chain ten (the all-gt6 legs pour the stand-in)
 		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size());
 		assertEquals(195, GT6RecipeMaps.FERMENTER.mRecipeList.size());
 	}
