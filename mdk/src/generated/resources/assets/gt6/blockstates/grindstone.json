@@ -1,0 +1,208 @@
+{
+  "variants": {
+    "facing=east,stone=0": {
+      "model": "gt6:block/grindstone_x"
+    },
+    "facing=east,stone=1": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=10": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=11": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=12": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=13": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=14": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=15": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=16": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=2": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=3": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=4": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=5": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=6": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=7": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=8": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=east,stone=9": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=north,stone=0": {
+      "model": "gt6:block/grindstone_z"
+    },
+    "facing=north,stone=1": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=10": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=11": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=12": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=13": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=14": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=15": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=16": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=2": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=3": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=4": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=5": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=6": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=7": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=8": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=north,stone=9": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=0": {
+      "model": "gt6:block/grindstone_z"
+    },
+    "facing=south,stone=1": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=10": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=11": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=12": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=13": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=14": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=15": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=16": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=2": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=3": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=4": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=5": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=6": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=7": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=8": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=south,stone=9": {
+      "model": "gt6:block/grindstone_z_stone"
+    },
+    "facing=west,stone=0": {
+      "model": "gt6:block/grindstone_x"
+    },
+    "facing=west,stone=1": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=10": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=11": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=12": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=13": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=14": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=15": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=16": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=2": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=3": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=4": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=5": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=6": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=7": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=8": {
+      "model": "gt6:block/grindstone_x_stone"
+    },
+    "facing=west,stone=9": {
+      "model": "gt6:block/grindstone_x_stone"
+    }
+  }
+}

@@ -44,12 +44,20 @@ public class GT6DataComponents {
 	public static final DataComponentType<CustomData> COVER_PAYLOAD = DataComponentType
 			.<CustomData>builder().persistent(CustomData.CODEC).networkSynchronized(CustomData.STREAM_CODEC).build();
 
+	// TOOLSTATE: the grindstone abrasive payload — the 1.20.1 item tag 'gt.toolstate' byte
+	// (GT6GrindstoneBlock.NBT_TOOLSTATE, the upstream writeItemNBT2 face), read/written by
+	// GT6GrindstoneBlock getStateForPlacement/getDrops (task grindstone-family).
+	public static final DataComponentType<CustomData> TOOLSTATE = DataComponentType
+			.<CustomData>builder().persistent(CustomData.CODEC).networkSynchronized(CustomData.STREAM_CODEC).build();
+
 	@SubscribeEvent
 	public static void onRegister(RegisterEvent aEvent) {
 		aEvent.register(Registries.DATA_COMPONENT_TYPE,
 				ResourceLocation.fromNamespaceAndPath("gt6", "barrel_content"), () -> BARREL_CONTENT);
 		aEvent.register(Registries.DATA_COMPONENT_TYPE,
 				ResourceLocation.fromNamespaceAndPath("gt6", "cover_payload"), () -> COVER_PAYLOAD);
+		aEvent.register(Registries.DATA_COMPONENT_TYPE,
+				ResourceLocation.fromNamespaceAndPath("gt6", "toolstate"), () -> TOOLSTATE);
 	}
 }
  *///?}

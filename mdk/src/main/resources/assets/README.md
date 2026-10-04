@@ -13679,3 +13679,25 @@ models + plain blockstates).
   (the three identical colored + three identical overlay hashes are the upstream
   files' own shared art — the legs/plate/border tiles are the same gray square
   upstream; NOT a copy mistake, cmp-verified against the source paths.)
+## Grindstone block textures (task grindstone-family)
+
+The Grindstone's sub-cube element models (`GT6BlockStates.addGrindstone`) borrow the
+upstream `colored/` + `overlay/` tile set of
+`textures/blocks/machines/tools/grindstone/*`, byte-identical copies, filenames
+unchanged — the full eight-tile set (upstream `getTexture2`,
+MultiTileEntityGrindStone.java:234-249, rides all four parts on both bands: the
+legs/bottom/axle/stone pass boxes over `BlockTextureMulti(colored, overlay)`).
+Upstream tints the `colored/` band at runtime with the machine colour (the ANY.Steel
+row mRGBa, the paintable-machine pass); the port ships the grayscale tiles with
+tintindex 0 reserved on every body face and NO tint dispatch row — declared
+deviation, the family runtime-tint pool (the kitchen c3-kitchen-tint-shape follow-up
+form): an unpainted grindstone renders the untinted grayscale until that pool card.
+
+- `block/tools/grindstone/colored/legs.png` — `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b` (upstream `blocks/machines/tools/grindstone/colored/legs.png`; byte-identical to the axle + bottom colored tiles)
+- `block/tools/grindstone/colored/axle.png` — `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b` (upstream `blocks/machines/tools/grindstone/colored/axle.png`)
+- `block/tools/grindstone/colored/bottom.png` — `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b` (upstream `blocks/machines/tools/grindstone/colored/bottom.png`)
+- `block/tools/grindstone/colored/stone.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/colored/stone.png`)
+- `block/tools/grindstone/overlay/legs.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/legs.png`; byte-identical to the axle + bottom overlay tiles)
+- `block/tools/grindstone/overlay/axle.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/axle.png`)
+- `block/tools/grindstone/overlay/bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/bottom.png`)
+- `block/tools/grindstone/overlay/stone.png` — `d706e3a18b45b7688e489fb362789c6ad5dc206378216905aa9919db6d159fc6` (upstream `blocks/machines/tools/grindstone/overlay/stone.png`)

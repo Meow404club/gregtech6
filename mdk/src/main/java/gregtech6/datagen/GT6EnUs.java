@@ -132,6 +132,7 @@ public class GT6EnUs extends LanguageProvider {
         addAnvils(); // task c-anvil
         addMortars(); // task mortar-family — the five pestle rows (the dump-verbatim shared name)
         addSiftingTables(); // task sifting-table-family — the manual chain tail (the :2227 name column)
+        addGrindstones(); // task grindstone-family
         addEnergySource();
         addFeBattery(); // task eu-bridge-outbound — tail-append
         addFeConverter(); // task b-fe-converter-machine — tail-append
@@ -1527,6 +1528,16 @@ public class GT6EnUs extends LanguageProvider {
      */
     private void addSiftingTables() {
         add("block.gt6.sifting_table", "Sifting Table");
+    }
+
+    /**
+     * The grindstone key (task grindstone-family): the display name VERBATIM from the
+     * upstream registration row (Loader_MultiTileEntities.java:2226 "Grindstone", the
+     * "Misc Tool Blocks" category). The item rides the machines tab (the kitchen join
+     * form), no tab key here.
+     */
+    private void addGrindstones() {
+        add("block.gt6.grindstone", "Grindstone");
     }
 
     private void addBarrels() {

@@ -136,6 +136,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addWirePipeSensorTooltipUnits(); // task tooltip-wire-pipe-sensor — the T5 connector band (hand rows, the tsv direct band)
 		addMachineTooltipUnits(); // task tooltip-basic-machine-family — the machine row-table band (hand rows, the tsv direct band)
 		addAnvilUnits();        // task c-anvil
+		addGrindstoneUnits();   // task grindstone-family — the 32703 row (hand, the tsv direct band)
 		addPocketUnits();       // task w5-t7-pocket-eight — the 8+7 pocket face (hand rows, no dump face exists)
 		addArmorUnits();        // task w5-t8-armor-24
 		addTreeUnits();         // task w6-t1-trees-nine — the 27 tree-family rows (hand, the tsv direct band)
@@ -471,6 +472,17 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addAnvilUnits() {
 		addDirect("block.gt6.stone_anvil");
 		addDirect("block.gt6.blackstone_anvil");
+	}
+
+	/**
+	 * The grindstone zh face (task grindstone-family) — the upstream zh dump row VERBATIM
+	 * (tmp/gregtech.lang: "打磨石" = meta 32703 Grindstone). Hand row (the reference dump
+	 * key is the meta-keyed 1.7 form, lifted onto the direct hand layer — the addDirect
+	 * absent-row skip is why the TSV regen and this walk land in the SAME commit, the
+	 * noHandRowIsOrphaned pin).
+	 */
+	private void addGrindstoneUnits() {
+		addDirect("block.gt6.grindstone");
 	}
 
 	/**

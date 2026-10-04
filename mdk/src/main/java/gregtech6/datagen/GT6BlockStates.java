@@ -289,6 +289,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addFoamBlocks(); // task c-foam-block-family — the C-Foam pair + slabs + the owned carrier
         addSensors(); // task sensors-core — the three pioneer sensor blocks
         addAnvils(); // task c-anvil — the stone anvil pair
+        addGrindstone(); // task grindstone-family — the Grindstone (the two-layer sub-cube frame, the axis models)
         addSurfaceBand(); // task w6-rocks-sticks — the surface rock trio + the stick (shared models, no items)
         addSurfacePlants(); // task w6-t2-surface-blocks — the plant quartet + the four fallen-log woods
         addFlowers(); // task flower-blocks-indicator-family — the 18 cross flowers + the 18 potted companions
@@ -773,6 +774,95 @@ public final class GT6BlockStates extends BlockStateProvider {
     /** The smooth material face of an anvil row (the getTextureSmooth mapping). */
     private net.minecraft.resources.ResourceLocation anvilBodyTexture(String aPath) {
         return mcLoc("stone_anvil".equals(aPath) ? "block/smooth_stone" : "block/blackstone");
+    }
+
+    /**
+     * Task grindstone-family — the Grindstone (Loader_MultiTileEntities.java:2226, single
+     * variant). The upstream render-pass geometry (MultiTileEntityGrindStone
+     * .setBlockBounds2 :209-219) translated VERBATIM into sub-cube elements over the
+     * borrowed two-layer colored+overlay grammar (getTexture2 :234-249 = BlockTextureMulti
+     * per part, the addMeasuringPot 0.01-inflated overlay shell form, cutout): the bottom
+     * slab (pass 1), the two legs (passes 2-3, their DOWN faces omitted — coplanar with the
+     * slab's own bottom, the juicer wall face rule), the axle disc (pass 4) and the abrasive
+     * stone slab (pass 5 — ONLY in the loaded models). The pass-0 corner post carries NO
+     * static element: its only visible face upstream was the BI.nei() glyph top (rendered
+     * when mStone != 0, getTexture2 :244) — that face is the GT6GrindstoneNeiModel appended
+     * quad (the kitchen corner sibling, the same viewer-dynamic bake-time gate).
+     *
+     * <p>The geometry depends on the facing AXIS only (the SIDES_AXIS_Z/X conditions, not
+     * the sign — the NORTH and SOUTH boxes are identical upstream), so the blockstate maps
+     * TWO models per axis, unrotated: {@code grindstone_z} for the Z-axis facings
+     * (NORTH/SOUTH), {@code grindstone_x} for the X-axis facings (EAST/WEST = the exact
+     * coordinate swap), each with an empty and a loaded ({@code _stone}) form off the STONE
+     * property. The body faces carry tintindex 0 (the #8 reservation — no dispatch row, the
+     * README declared deviation), the overlay shells none (the P22 decal contract).
+     */
+    private void addGrindstone() {
+        Block tBlock = gregtech6.registry.GT6Grindstones.GRINDSTONE.get();
+        ModelFile tZEmpty = grindstoneModel("grindstone_z", false, false);
+        ModelFile tZStone = grindstoneModel("grindstone_z", true, false);
+        ModelFile tXEmpty = grindstoneModel("grindstone_x", false, true);
+        ModelFile tXStone = grindstoneModel("grindstone_x", true, true);
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            boolean tAxisZ = aState.getValue(gregtech6.block.tools.GT6GrindstoneBlock.FACING).getAxis()
+                    == net.minecraft.core.Direction.Axis.Z;
+            boolean tLoaded = aState.getValue(gregtech6.block.tools.GT6GrindstoneBlock.STONE) > 0;
+            return ConfiguredModel.builder()
+                    .modelFile(tAxisZ ? (tLoaded ? tZStone : tZEmpty) : (tLoaded ? tXStone : tXEmpty))
+                    .build();
+        });
+        itemModels().withExistingParent("grindstone", tZEmpty.getLocation()); // the anvil item form (GT6BlockStates:755)
+    }
+
+    /**
+     * One Grindstone model: the frame elements (bottom slab + two legs + axle) plus the
+     * abrasive slab when {@code aStone}, over the colored+overlay two-layer grammar. The
+     * boxes are the upstream pass table verbatim (px): Z-form (6,3,2)-(10,15,14) stone /
+     * (3,8,7)-(13,10,9) axle / (5,0,5)-(6,11,11) + (10,0,5)-(11,11,11) legs / (0,0,0)-
+     * (16,2,16) bottom; the X-form is the exact coordinate swap (the SIDES_AXIS conditions).
+     */
+    private ModelFile grindstoneModel(String aName, boolean aStone, boolean aSwap) {
+        BlockModelBuilder tModel = models().getBuilder(aName + (aStone ? "_stone" : ""))
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("legs", modLoc("block/tools/grindstone/colored/legs"))
+                .texture("axle", modLoc("block/tools/grindstone/colored/axle"))
+                .texture("stone", modLoc("block/tools/grindstone/colored/stone"))
+                .texture("bottom", modLoc("block/tools/grindstone/colored/bottom"))
+                .texture("overlay_legs", modLoc("block/tools/grindstone/overlay/legs"))
+                .texture("overlay_axle", modLoc("block/tools/grindstone/overlay/axle"))
+                .texture("overlay_stone", modLoc("block/tools/grindstone/overlay/stone"))
+                .texture("overlay_bottom", modLoc("block/tools/grindstone/overlay/bottom"))
+                .texture("particle", "#legs")
+                .renderType("cutout");
+        // the bottom slab — upstream pass 1 (:212)
+        grindstoneBox(tModel, 0, 0, 0, 16, 2, 16, "#bottom", "#overlay_bottom", aSwap, false);
+        // the two legs — upstream passes 2-3 (:213-214); down faces omitted (the juicer rule)
+        grindstoneBox(tModel, 5, 0, 5, 6, 11, 11, "#legs", "#overlay_legs", aSwap, true);
+        grindstoneBox(tModel, 10, 0, 5, 11, 11, 11, "#legs", "#overlay_legs", aSwap, true);
+        // the axle disc — upstream pass 4 (:215)
+        grindstoneBox(tModel, 3, 8, 7, 13, 10, 9, "#axle", "#overlay_axle", aSwap, false);
+        if (aStone) grindstoneBox(tModel, 6, 3, 2, 10, 15, 14, "#stone", "#overlay_stone", aSwap, false); // pass 5 (:216)
+        return tModel;
+    }
+
+    /** One Grindstone box + its 0.01-inflated overlay shell (the potElement form; aSwap = the x/z coordinate swap). */
+    private void grindstoneBox(BlockModelBuilder aModel, float aX1, float aY1, float aZ1, float aX2, float aY2, float aZ2,
+            String aBody, String aOverlay, boolean aSwap, boolean aNoDown) {
+        float tX1 = aSwap ? aZ1 : aX1, tZ1 = aSwap ? aX1 : aZ1;
+        float tX2 = aSwap ? aZ2 : aX2, tZ2 = aSwap ? aX2 : aZ2;
+        BlockModelBuilder.ElementBuilder tBody = aModel.element().from(tX1, aY1, tZ1).to(tX2, aY2, tZ2);
+        for (Direction tDir : Direction.values()) {
+            if (aNoDown && tDir == Direction.DOWN) continue;
+            tBody.face(tDir).texture(aBody).tintindex(0).end();
+        }
+        tBody.end();
+        BlockModelBuilder.ElementBuilder tShell = aModel.element()
+                .from(tX1 - 0.01F, aY1 - 0.01F, tZ1 - 0.01F).to(tX2 + 0.01F, aY2 + 0.01F, tZ2 + 0.01F);
+        for (Direction tDir : Direction.values()) {
+            if (aNoDown && tDir == Direction.DOWN) continue;
+            tShell.face(tDir).texture(aOverlay).end();
+        }
+        tShell.end();
     }
 
     /**
