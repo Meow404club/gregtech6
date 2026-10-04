@@ -109,6 +109,7 @@ public class Recipe {
 			aStack -> gregtech6.item.GT6Circuits.isSelector(aStack) || gregtech6.registry.GT6ExtruderMolds.isMold(aStack)
 					|| gregtech6.items.GT6UsbSticks.readData(aStack) != null // task qu-scanner-replicator — the replicator's ST.amount(0, aUSB) data-medium face (RecipeMapReplicator.java:94/:108)
 					|| gregtech6.registry.GT6SlicerBlades.isBlade(aStack) // task slicer-row-domain — the Slicer rows' size-0 blade face (Loader_Recipes_Vanilla.java:638)
+					|| gregtech6.registry.GT6Robotics.isRobotTip(aStack) // task robotics-chain — the Boxinator rows' size-0 tip-template face (MultiItemRandomTools.java:503-512, IL.Robot_Tip_*.get(0)) — only the RM.Boxinator tip rows carry such an input, so the claim stays narrow
 					|| GT6RecipesBake.isFoodShapingTool(aStack); // task food-bake-recipes — the bake rows' size-0 shaping-tool face: the six food molds (MultiItemFood.java:146-152) + the flat blade (:602-:629/:785, registered but outside GT6SlicerBlades.isBlade's row0 pair) — only the GT6RecipesBake rows carry such inputs, so the claim stays narrow
 
 	/**

@@ -164,6 +164,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addBookUnits();         // task books-written — the 15 written-book display names (hand rows, the tsv direct band; the dump carries zero book-title faces)
 		addLongDistancePipes(); // task long-distance-pipes — the 16 wire metas + the two endpoints (hand rows, the dump faces)
 		addTechnologicalComponents(); // task debt-emitter-sensor-generators — the 30 component names (dump faces verbatim)
+		addRoboticsUnits(); // task robotics-chain — the 60 component names + the 20 tooltips (dump faces verbatim, the tsv direct band)
 		addRecipeMapViewerUnits(); // task issues #29/#34a — the 72 RM titles + the 16 cost-line keys (hand rows, the tsv direct band)
 		addCropCardUnits(); // task cbc-3-crop-data-assets — the 59 crop names + the seed item (hand rows, the tsv direct band; the dump carries zero gt.crop.* faces)
 		addFoodsideUnits(); // task vanilla-alias-foodside — the 4 Remains names (the dump gt.multiitem.food.1210x faces verbatim) + the 2 new-native honey drops (hand rows)
@@ -197,6 +198,24 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addTechnologicalComponents() {
 		for (gregtech6.items.GT6Emitters.ComponentRow tRow : gregtech6.items.GT6Emitters.ROWS) {
 			addDirect("item.gt6." + tRow.path());
+		}
+	}
+
+	/**
+	 * The robot-component zh faces (task robotics-chain, the addTechnologicalComponents
+	 * shape): the 60 display names + the 20 tip/token tooltips riding the reference
+	 * table's hand layer — the values are the DUMP faces verbatim (tmp/gregtech.lang
+	 * :10397-10415 微型电机 (ULV..PUV1) / :10437-10455 输送机模块 / :10457-10475 电动活塞 /
+	 * :10477-10495 机械臂 — the {@code gt.multiitem.technological.12*} rows — and
+	 * :9984-10003 the ten *机械臂 tip names + :9985.. 在自动工作台中无限耐久 tooltips +
+	 * :10004-10023 the ten 一次性* token names + 该工具只能用于合成 tooltips — the
+	 * {@code gt.multiitem.randomtools.8*} rows). The 40 ladder rows carry EMPTY dump
+	 * tooltip columns — no {@code .tooltip} zh keys (the empty-desc ruling).
+	 */
+	private void addRoboticsUnits() {
+		for (gregtech6.registry.GT6Robotics.RobotRow tRow : gregtech6.registry.GT6Robotics.ROWS) {
+			addDirect("item.gt6." + tRow.id());
+			if (tRow.tooltipKey() != null) addDirect(tRow.tooltipKey());
 		}
 	}
 

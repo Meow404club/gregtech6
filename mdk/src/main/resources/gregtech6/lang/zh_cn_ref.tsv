@@ -2507,6 +2507,46 @@ direct	item.gt6.comp_laser_gas_ne	氖激光镭射器	hand
 direct	item.gt6.comp_laser_gas_ne.tooltip	用途: 弱光电器	hand
 direct	item.gt6.comp_laser_gas_xe	氙激光镭射器	hand
 direct	item.gt6.comp_laser_gas_xe.tooltip	用途: 科研用具	hand
+direct	item.gt6.compact_electric_conveyor_ev	输送机模块 (EV)	hand
+direct	item.gt6.compact_electric_conveyor_hv	输送机模块 (HV)	hand
+direct	item.gt6.compact_electric_conveyor_iv	输送机模块 (IV)	hand
+direct	item.gt6.compact_electric_conveyor_luv	输送机模块 (LuV)	hand
+direct	item.gt6.compact_electric_conveyor_lv	输送机模块 (LV)	hand
+direct	item.gt6.compact_electric_conveyor_mv	输送机模块 (MV)	hand
+direct	item.gt6.compact_electric_conveyor_puv1	输送机模块 (PUV1)	hand
+direct	item.gt6.compact_electric_conveyor_ulv	输送机模块 (ULV)	hand
+direct	item.gt6.compact_electric_conveyor_uv	输送机模块 (UV)	hand
+direct	item.gt6.compact_electric_conveyor_zpm	输送机模块 (ZPM)	hand
+direct	item.gt6.compact_electric_motor_ev	微型电机 (EV)	hand
+direct	item.gt6.compact_electric_motor_hv	微型电机 (HV)	hand
+direct	item.gt6.compact_electric_motor_iv	微型电机 (IV)	hand
+direct	item.gt6.compact_electric_motor_luv	微型电机 (LuV)	hand
+direct	item.gt6.compact_electric_motor_lv	微型电机 (LV)	hand
+direct	item.gt6.compact_electric_motor_mv	微型电机 (MV)	hand
+direct	item.gt6.compact_electric_motor_puv1	微型电机 (PUV1)	hand
+direct	item.gt6.compact_electric_motor_ulv	微型电机 (ULV)	hand
+direct	item.gt6.compact_electric_motor_uv	微型电机 (UV)	hand
+direct	item.gt6.compact_electric_motor_zpm	微型电机 (ZPM)	hand
+direct	item.gt6.compact_electric_piston_ev	电动活塞 (EV)	hand
+direct	item.gt6.compact_electric_piston_hv	电动活塞 (HV)	hand
+direct	item.gt6.compact_electric_piston_iv	电动活塞 (IV)	hand
+direct	item.gt6.compact_electric_piston_luv	电动活塞 (LuV)	hand
+direct	item.gt6.compact_electric_piston_lv	电动活塞 (LV)	hand
+direct	item.gt6.compact_electric_piston_mv	电动活塞 (MV)	hand
+direct	item.gt6.compact_electric_piston_puv1	电动活塞 (PUV1)	hand
+direct	item.gt6.compact_electric_piston_ulv	电动活塞 (ULV)	hand
+direct	item.gt6.compact_electric_piston_uv	电动活塞 (UV)	hand
+direct	item.gt6.compact_electric_piston_zpm	电动活塞 (ZPM)	hand
+direct	item.gt6.compact_robot_arm_ev	机械臂 (EV)	hand
+direct	item.gt6.compact_robot_arm_hv	机械臂 (HV)	hand
+direct	item.gt6.compact_robot_arm_iv	机械臂 (IV)	hand
+direct	item.gt6.compact_robot_arm_luv	机械臂 (LuV)	hand
+direct	item.gt6.compact_robot_arm_lv	机械臂 (LV)	hand
+direct	item.gt6.compact_robot_arm_mv	机械臂 (MV)	hand
+direct	item.gt6.compact_robot_arm_puv1	机械臂 (PUV1)	hand
+direct	item.gt6.compact_robot_arm_ulv	机械臂 (ULV)	hand
+direct	item.gt6.compact_robot_arm_uv	机械臂 (UV)	hand
+direct	item.gt6.compact_robot_arm_zpm	机械臂 (ZPM)	hand
 direct	item.gt6.cover_asphalt	沥青覆盖板	hand
 direct	item.gt6.cover_auto_redstone_machine_switch	自动红石机器开关	hand
 direct	item.gt6.cover_auto_switch	自动开关	hand
@@ -3357,6 +3397,26 @@ direct	item.gt6.ricevinegar	米醋	hand
 direct	item.gt6.ricewater	酒酿	hand
 direct	item.gt6.rifle	步枪	hand
 direct	item.gt6.rifle.tooltip	单发, 伤害极高	hand
+direct	item.gt6.robot_arm_blade_tip	机械刀	hand
+direct	item.gt6.robot_arm_blade_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_chisel_tip	凿子机械臂	hand
+direct	item.gt6.robot_arm_chisel_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_cutter_tip	剪线钳机械臂	hand
+direct	item.gt6.robot_arm_cutter_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_drill_tip	机械钻	hand
+direct	item.gt6.robot_arm_drill_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_file_tip	锉刀机械臂	hand
+direct	item.gt6.robot_arm_file_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_hammer_tip	锤子机械臂	hand
+direct	item.gt6.robot_arm_hammer_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_rubber_tip	软锤机械臂	hand
+direct	item.gt6.robot_arm_rubber_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_saw_tip	锯刃机械臂	hand
+direct	item.gt6.robot_arm_saw_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_screwdriver_tip	螺丝刀机械臂	hand
+direct	item.gt6.robot_arm_screwdriver_tip.tooltip	在自动工作台中无限耐久	hand
+direct	item.gt6.robot_arm_wrench_tip	扳手机械臂	hand
+direct	item.gt6.robot_arm_wrench_tip.tooltip	在自动工作台中无限耐久	hand
 direct	item.gt6.rolling_pin	擀面杖	hand
 direct	item.gt6.rottendrink	腐坏的饮料	hand
 direct	item.gt6.royal_jelly	蜂王浆	hand
@@ -3470,6 +3530,26 @@ direct	item.gt6.signal_emitter_puv1	信号发射器 (PUV1)	hand
 direct	item.gt6.signal_emitter_ulv	信号发射器 (ULV)	hand
 direct	item.gt6.signal_emitter_uv	信号发射器 (UV)	hand
 direct	item.gt6.signal_emitter_zpm	信号发射器 (ZPM)	hand
+direct	item.gt6.single_use_blade	一次性刀	hand
+direct	item.gt6.single_use_blade.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_chisel	一次性凿子	hand
+direct	item.gt6.single_use_chisel.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_cutter	一次性剪线钳	hand
+direct	item.gt6.single_use_cutter.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_drill	一次性钻头	hand
+direct	item.gt6.single_use_drill.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_file	一次性锉刀	hand
+direct	item.gt6.single_use_file.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_hammer	一次性锤子	hand
+direct	item.gt6.single_use_hammer.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_rubber	一次性软锤	hand
+direct	item.gt6.single_use_rubber.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_saw	一次性锯	hand
+direct	item.gt6.single_use_saw.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_screwdriver	一次性螺丝刀	hand
+direct	item.gt6.single_use_screwdriver.tooltip	该工具只能用于合成	hand
+direct	item.gt6.single_use_wrench	一次性扳手	hand
+direct	item.gt6.single_use_wrench.tooltip	该工具只能用于合成	hand
 direct	item.gt6.soda	苏打水	hand
 direct	item.gt6.soft_hammer	软锤	hand
 direct	item.gt6.soymilk	豆浆	hand
