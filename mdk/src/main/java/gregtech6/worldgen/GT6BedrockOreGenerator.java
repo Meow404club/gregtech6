@@ -54,6 +54,16 @@ public final class GT6BedrockOreGenerator {
     public static final int[] MUFFIN_D1 = {5, 4, 2, 1, 0, 2, 5};
     public static final int[] MUFFIN_D2 = {11, 12, 14, 15, 16, 14, 11};
 
+    /**
+     * The flower-scan window, WorldgenOresBedrock.java:152-153 verbatim formula over the
+     * modern overworld ({@code getHeight()} = 384, {@code WD.waterLevel} = {@link #SEA_LEVEL}):
+     * tMinHeight = min(384-2, 63-1) = 62, tMaxHeight = min(384-1, 62*2+16) = 140. The 140
+     * ceiling is the upstream quirk kept verbatim (modern mountain surface above y=140
+     * simply has no indicator flower — the fidelity-over-heightmap ruling).
+     */
+    public static final int FLOWER_MIN_Y = Math.min(384 - 2, SEA_LEVEL - 1);
+    public static final int FLOWER_MAX_Y = Math.min(384 - 1, FLOWER_MIN_Y * 2 + 16);
+
     private GT6BedrockOreGenerator() {
     }
 
@@ -180,6 +190,24 @@ public final class GT6BedrockOreGenerator {
         return true;
     }
 
+    /**
+     * The indicator-flower arm (task worldgen-flower-arm; WorldgenOresBedrock.java:147-179,
+     * the :155-176 loop). Runs AFTER the row's vein on the SAME chunk-seeded stream (the
+     * upstream generate() call order :141-178 — the vein draws continue into the ring).
+     * The ring: tD = 4, 8, 16 — first an 8x8 of 4, then 16x16 of 8, then 32x32 of 16
+     * attempts, denser in the middle (:154 comment); each attempt draws
+     * {@code nextInt(tD*2)+8-tD} for x and z (:156) and hands the spot to the sink's
+     * column scan. The wasteland (:150) and streets (:147) exclusions and the rocks
+     * competition (:162 nextInt(4)) are the declared CUTs/deviations (see
+     * GTBedrockOreConfig javadoc) — every ring attempt of a flower row reaches the sink.
+     *
+     * <p>STUB (the red-pin commit): the ring math lands with the arm implementation.
+     */
+    public static void generateFlowers(GTBedrockOreConfig aRow, Random aRandom, int aChunkMinX, int aChunkMinZ,
+            BedrockSink aSink) {
+        // ponytail: red-pin stub — the :155-176 loop arrives with the feat commit
+    }
+
     /** The placement callbacks — the level face (GT6BedrockOreFeature) and the offline-test face. */
     interface BedrockSink {
         /** The :185 gate: the chunk-center block at the bedrock floor is bedrock (or a bedrock ore). */
@@ -193,5 +221,13 @@ public final class GT6BedrockOreGenerator {
 
         /** The muffin/tail ore: the position becomes the host stone's large/small ore (WD.setOre/setSmallOre — the host resolves in the sink, the just-written deepslate or the natural stone). */
         void ore(int aX, int aY, int aZ, OreDictMaterial aMaterial, boolean aSmall);
+
+        /**
+         * The indicator-flower attempt (task worldgen-flower-arm; WorldgenOresBedrock
+         * .java:157-172 the column scan + place face, delegated to the sink — only the live
+         * face has terrain). The flower id is the GT6SurfaceBlocks.FLOWER_SPECS snake.
+         * No-op default keeps the pre-flower sinks compiling.
+         */
+        default void flower(int aX, int aZ, String aFlower) {}
     }
 }
