@@ -207,17 +207,27 @@ class GT6TagsDatagenTest {
      */
     @Test
     void axeBandIsExactlyTheWoodBarrelAndTheTreeLogs() throws Exception {
-        assertEquals(List.of("gt6:barrel_wood",
+        List<String> tBeams = List.of(
+                "gt6:oak_beam", "gt6:spruce_beam", "gt6:birch_beam", "gt6:jungle_beam",
+                "gt6:acacia_beam", "gt6:dark_oak_beam", "gt6:rubber_wood_beam", "gt6:wood_beam",
+                // task beam-fireproof-closeout — the residual families (Beam3/A/B/C), kind order
+                "gt6:greatwood_beam", "gt6:silverwood_beam", "gt6:skyroot_beam", "gt6:darkwood_beam",
+                "gt6:rubber_beam", "gt6:maple_beam", "gt6:willow_beam", "gt6:blue_mahoe_beam",
+                "gt6:hazel_beam", "gt6:cinnamon_beam", "gt6:coconut_beam", "gt6:rainbowood_beam",
+                "gt6:blue_spruce_beam");
+        List<String> tFireproof = tBeams.stream().map(id -> id + "_fireproof").toList();
+        List<String> tBand = new ArrayList<>(List.of("gt6:barrel_wood",
                 "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
                 "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
                 "gt6:blue_spruce_log",
-                "gt6:dead_log", "gt6:rotten_log", "gt6:mossy_log", "gt6:frozen_log",
-                "gt6:oak_beam", "gt6:spruce_beam", "gt6:birch_beam", "gt6:jungle_beam",
-                "gt6:acacia_beam", "gt6:dark_oak_beam", "gt6:rubber_wood_beam", "gt6:wood_beam",
+                "gt6:dead_log", "gt6:rotten_log", "gt6:mossy_log", "gt6:frozen_log"));
+        tBand.addAll(tBeams);
+        tBand.addAll(tFireproof);
+        tBand.addAll(List.of(
                 "gt6:rubber_planks", "gt6:maple_planks", "gt6:willow_planks", "gt6:blue_mahoe_planks",
                 "gt6:hazel_planks", "gt6:cinnamon_planks", "gt6:coconut_planks", "gt6:rainbowood_planks",
-                "gt6:blue_spruce_planks"),
-                tagValues("minecraft/tags/blocks/mineable/axe.json"));
+                "gt6:blue_spruce_planks"));
+        assertEquals(tBand, tagValues("minecraft/tags/blocks/mineable/axe.json"));
     }
 
     /**
@@ -253,19 +263,26 @@ class GT6TagsDatagenTest {
     }
 
     /**
-     * The wood-beam oredient band (task beam-oredict-seam): the 8 beam items are exactly
-     * the OD.beamWood members — upstream registers EVERY beam meta to the single oredict
-     * name "beamWood" (BlockBaseBeam.java:48 {@code for (i < 16) OM.reg(ST.make(this, 1, i),
-     * OD.beamWood)}; OD.java:150 the key; OP.java:393 the prefix comment "Usually as
-     * \"beamWood\""), so the port's per-wood items are that meta universe, kind order.
-     * Both tree faces pinned (the plural 1.20.1 form + the singular 21.1 form — the
-     * vanilla-tag-dual-tree discipline).
+     * The wood-beam oredient band (task beam-oredict-seam + beam-fireproof-closeout): the
+     * beam items are exactly the OD.beamWood members — upstream registers EVERY beam meta
+     * of EVERY beam block (flammable AND fireproof — BlockTreeBeam1FireProof extends
+     * BlockBaseBeam) to the single oredict name "beamWood" (BlockBaseBeam.java:48
+     * {@code for (i < 16) OM.reg(ST.make(this, 1, i), OD.beamWood)}; OD.java:150 the key;
+     * OP.java:393 the prefix comment "Usually as \"beamWood\""), so the port's per-wood
+     * items + their fireproof twins are that meta universe: 21 kinds + 21 twins, kind
+     * order. Both tree faces pinned (the plural 1.20.1 form + the singular 21.1 form —
+     * the vanilla-tag-dual-tree discipline).
      */
     @Test
-    void beamWoodBandIsExactlyTheEightBeamItems() throws Exception {
-        List<String> tBeams = List.of(
+    void beamWoodBandIsExactlyTheBeamRegistrations() throws Exception {
+        List<String> tBeams = new ArrayList<>(List.of(
                 "gt6:oak_beam", "gt6:spruce_beam", "gt6:birch_beam", "gt6:jungle_beam",
-                "gt6:acacia_beam", "gt6:dark_oak_beam", "gt6:rubber_wood_beam", "gt6:wood_beam");
+                "gt6:acacia_beam", "gt6:dark_oak_beam", "gt6:rubber_wood_beam", "gt6:wood_beam",
+                "gt6:greatwood_beam", "gt6:silverwood_beam", "gt6:skyroot_beam", "gt6:darkwood_beam",
+                "gt6:rubber_beam", "gt6:maple_beam", "gt6:willow_beam", "gt6:blue_mahoe_beam",
+                "gt6:hazel_beam", "gt6:cinnamon_beam", "gt6:coconut_beam", "gt6:rainbowood_beam",
+                "gt6:blue_spruce_beam"));
+        tBeams.addAll(tBeams.stream().map(id -> id + "_fireproof").toList());
         assertEquals(tBeams, tagValues("gt6/tags/items/beam_wood.json"));
         assertEquals(tBeams, tagValues("gt6/tags/item/beam_wood.json"));
     }

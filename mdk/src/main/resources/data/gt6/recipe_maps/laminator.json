@@ -1,13 +1,6913 @@
 {
+  "comment": "task beam-fireproof-closeout - the RM.Laminator fire-proofing BEAM segment (Loader_Recipes_Woods.java:46-72, the fire proofing loop): 21 beam woods x 2 wax legs = 42 rows, each the addRecipe2(T, 16, 192, wax, beam, beamFireproof) shape - eut 16, duration 192, the wax additive leading (plate.mat(MT.WaxRefractory, 6) / foil.mat(MT.WaxRefractory, 24)), the output the input beam's <kind>_beam_fireproof twin. ERRATUM: the card face cited ':56-72'; the actual beam segment is :53-58 (plate) + :66-71 (foil) - the per-row citations carry the exact line. OUT OF THIS FILE (declared): the log FireProof segment :48-51/:61-64 (BlocksGT.Log1/A/B/C FireProof = the plank/log FireProof defer, NOT this card); the Bath fire-resistance walk :74+ (the potion fluid face is another card's domain). The w2-eu-special sticky-piston smoke row stays row 0 (tail-append seam). SERIAL NOTE: the laminator plastic-sheet 40-row body is the b6 card's face - it tail-appends AFTER this segment (merge order beam-fireproof-closeout -> b6). PhaseGate LAMINATOR stays pinned 0 (the JSON seam rides the per-file pour-test ratchet GT6RecipeMapDataLaminatorBeamRowsPourTest, the wash precedent). Row census: 42 beam rows + 1 smoke row. B6 SEGMENT (task recipe-b6-small-maps-batch, tail-append AFTER the beam segment, merge order beam-fireproof-closeout -> b6): the wire-insulation face — MultiTileEntityWireElectric.java:95-107, the addElectricWires ANY.Rubber x 10-statement insulation walk (plate x1/x1/x2/x3/x4 at dur 16/16/32/48/64 over wireGt01/02/04/08/12 -> cableGt01/02/04/08/12, plus the foil x4/x4/x8/x12/x16 twin legs), expanded over the 28 cable-bearing GTWireSpecs electric rows = 280 rows, plus the redstone-wire insulation face Loader_MultiTileEntities.java:1904-1911 (6 statements) over the 3 GTWireSpecs REDSTONE_ROWS = 6 rows. ERRATUM vs the task card: the card's 'Laminator 49 stations' arithmetic counted Woods 36 + piston listeners 3 + WireElectric 10 and excluded the redstone face — the redstone rows pour anyway because the port carriers exist (gt6 wire_red_alloy/cable_red_alloy + wire/cable_signalum + wire/cable_lumium, GTWireSpecs REDSTONE_ROWS), and the b3plus 'laminator plastic-sheet 40-station' note anticipated the Woods fire-proofing body which the port cannot carry (see OUT below). ANY.Rubber = {Rubber} both upstream and port (single-member walk, zero drift). OUT OF THIS FILE: the Woods log/plank/FR fire-proofing faces (:48-51/:61-64 log, :86-94 plank, :104-112 Forestry) — the log/plank FireProof twins have no port blocks (the FireProof twin family landed for beams only, GT6BeamBlocks) and Forestry is out of domain; the unlock is a log/plank fireproof-twin registration card plus backfill. The three sticky-piston listener stations (OreDict.java:103 itemTar / :119 slimeball / Loader_Recipes_Other.java:190 itemResin) are covered by row 0 (the slime leg verbatim; the tar and resin legs have no port items — declared faithful absences). Census: 42 beam rows + 286 b6 wire rows + 1 smoke row = 329.",
   "recipes": [
     {
       "inputs": [
-        { "item": "minecraft:piston", "count": 1 },
-        { "item": "minecraft:slime_ball", "count": 1 }
+        {
+          "item": "minecraft:piston",
+          "count": 1
+        },
+        {
+          "item": "minecraft:slime_ball",
+          "count": 1
+        }
       ],
-      "outputs": [{ "item": "minecraft:sticky_piston", "count": 1 }],
+      "outputs": [
+        {
+          "item": "minecraft:sticky_piston",
+          "count": 1
+        }
+      ],
       "duration": 16,
       "eut": 16
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (oak; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (spruce; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (birch; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:53 (jungle; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (acacia; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (dark_oak; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (rubber_wood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:54 (wood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:greatwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:greatwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (greatwood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:silverwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:silverwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (silverwood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:skyroot_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:skyroot_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (skyroot; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:darkwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:darkwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:55 (darkwood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:rubber_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (rubber; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:maple_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:maple_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (maple; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:willow_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:willow_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (willow; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:blue_mahoe_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_mahoe_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:56 (blue_mahoe; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:hazel_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:hazel_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (hazel; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:cinnamon_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cinnamon_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (cinnamon; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:coconut_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:coconut_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (coconut; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:rainbowood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rainbowood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:57 (rainbowood; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_wax_refractory",
+          "count": 6
+        },
+        {
+          "item": "gt6:blue_spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:58 (blue_spruce; plate x6)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (oak; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (spruce; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:birch_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:birch_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (birch; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:jungle_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:jungle_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:66 (jungle; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:acacia_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:acacia_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (acacia; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:dark_oak_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dark_oak_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (dark_oak; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:rubber_wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (rubber_wood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:wood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:67 (wood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:greatwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:greatwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (greatwood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:silverwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:silverwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (silverwood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:skyroot_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:skyroot_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (skyroot; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:darkwood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:darkwood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:68 (darkwood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:rubber_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rubber_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (rubber; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:maple_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:maple_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (maple; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:willow_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:willow_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (willow; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:blue_mahoe_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_mahoe_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:69 (blue_mahoe; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:hazel_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:hazel_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (hazel; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:cinnamon_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cinnamon_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (cinnamon; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:coconut_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:coconut_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (coconut; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:rainbowood_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rainbowood_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:70 (rainbowood; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_wax_refractory",
+          "count": 24
+        },
+        {
+          "item": "gt6:blue_spruce_beam",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:blue_spruce_beam_fireproof",
+          "count": 1
+        }
+      ],
+      "duration": 192,
+      "eut": 16,
+      "comment": "Loader_Recipes_Woods.java:71 (blue_spruce; foil x24)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_tin_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (tin gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tin_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (tin gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_tin_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (tin gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tin_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (tin gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_tin_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (tin gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_tin_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (tin gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_tin_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (tin gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_tin_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (tin gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tin_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (tin gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_tin_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tin_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (tin gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_lead_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (lead gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_lead_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (lead gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_lead_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (lead gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_lead_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (lead gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_lead_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (lead gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_lead_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (lead gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_lead_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (lead gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_lead_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (lead gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_lead_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (lead gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_lead_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lead_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (lead gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_constantan_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (constantan gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_constantan_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (constantan gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_constantan_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (constantan gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_constantan_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (constantan gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_constantan_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (constantan gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_constantan_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (constantan gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_constantan_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (constantan gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_constantan_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (constantan gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_constantan_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (constantan gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_constantan_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_constantan_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (constantan gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_copper_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (copper gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_copper_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (copper gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_copper_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (copper gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_copper_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (copper gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_copper_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (copper gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_copper_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (copper gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_copper_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (copper gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_copper_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (copper gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_copper_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (copper gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_copper_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_copper_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (copper gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (annealed_copper gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (annealed_copper gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (annealed_copper gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (annealed_copper gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (annealed_copper gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (annealed_copper gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (annealed_copper gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (annealed_copper gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (annealed_copper gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_annealed_copper_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_annealed_copper_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (annealed_copper gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_efrine_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (efrine gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_efrine_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (efrine gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_efrine_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (efrine gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_efrine_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (efrine gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_efrine_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (efrine gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_efrine_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (efrine gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_efrine_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (efrine gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_efrine_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (efrine gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_efrine_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (efrine gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_efrine_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_efrine_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (efrine gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_kanthal_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (kanthal gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_kanthal_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (kanthal gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_kanthal_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (kanthal gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_kanthal_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (kanthal gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_kanthal_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (kanthal gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_kanthal_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (kanthal gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_kanthal_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (kanthal gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_kanthal_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (kanthal gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_kanthal_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (kanthal gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_kanthal_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_kanthal_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (kanthal gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_silver_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (silver gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_silver_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (silver gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_silver_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (silver gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_silver_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (silver gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_silver_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (silver gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_silver_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (silver gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_silver_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (silver gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_silver_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (silver gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_silver_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (silver gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_silver_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_silver_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (silver gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_gold_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (gold gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_gold_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (gold gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_gold_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (gold gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_gold_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (gold gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_gold_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (gold gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_gold_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (gold gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_gold_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (gold gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_gold_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (gold gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_gold_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (gold gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_gold_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_gold_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (gold gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_electrum_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (electrum gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_electrum_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (electrum gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_electrum_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (electrum gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_electrum_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (electrum gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_electrum_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (electrum gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_electrum_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (electrum gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_electrum_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (electrum gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_electrum_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (electrum gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_electrum_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (electrum gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_electrum_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrum_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (electrum gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (blue_alloy gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (blue_alloy gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (blue_alloy gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (blue_alloy gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (blue_alloy gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (blue_alloy gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (blue_alloy gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (blue_alloy gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (blue_alloy gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_blue_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_blue_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (blue_alloy gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (electrotine_alloy gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (electrotine_alloy gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (electrotine_alloy gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (electrotine_alloy gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (electrotine_alloy gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (electrotine_alloy gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (electrotine_alloy gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (electrotine_alloy gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (electrotine_alloy gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_electrotine_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_electrotine_alloy_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (electrotine_alloy gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_nichrome_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (nichrome gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_nichrome_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (nichrome gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_nichrome_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (nichrome gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_nichrome_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (nichrome gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_nichrome_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (nichrome gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_nichrome_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (nichrome gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_nichrome_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (nichrome gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_nichrome_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (nichrome gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_nichrome_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (nichrome gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_nichrome_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_nichrome_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (nichrome gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_steel_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (steel gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_steel_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (steel gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_steel_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (steel gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_steel_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (steel gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_steel_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (steel gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_steel_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (steel gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_steel_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (steel gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_steel_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (steel gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_steel_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (steel gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_steel_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_steel_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (steel gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (hslasteel gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (hslasteel gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (hslasteel gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (hslasteel gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (hslasteel gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (hslasteel gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (hslasteel gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (hslasteel gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (hslasteel gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_hslasteel_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_hslasteel_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (hslasteel gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_aluminium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (aluminium gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_aluminium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (aluminium gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_aluminium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (aluminium gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_aluminium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (aluminium gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_aluminium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (aluminium gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_aluminium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (aluminium gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_aluminium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (aluminium gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_aluminium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (aluminium gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_aluminium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (aluminium gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_aluminium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_aluminium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (aluminium gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (tungstensteel gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (tungstensteel gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (tungstensteel gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (tungstensteel gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (tungstensteel gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (tungstensteel gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (tungstensteel gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (tungstensteel gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (tungstensteel gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_tungstensteel_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungstensteel_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (tungstensteel gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_tungsten_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (tungsten gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tungsten_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (tungsten gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_tungsten_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (tungsten gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tungsten_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (tungsten gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_tungsten_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (tungsten gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_tungsten_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (tungsten gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_tungsten_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (tungsten gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_tungsten_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (tungsten gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_tungsten_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (tungsten gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_tungsten_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_tungsten_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (tungsten gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_netherite_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (netherite gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_netherite_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (netherite gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_netherite_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (netherite gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_netherite_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (netherite gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_netherite_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (netherite gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_netherite_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (netherite gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_netherite_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (netherite gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_netherite_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (netherite gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_netherite_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (netherite gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_netherite_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_netherite_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (netherite gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (osmium_elemental gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (osmium_elemental gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (osmium_elemental gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (osmium_elemental gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (osmium_elemental gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (osmium_elemental gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (osmium_elemental gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (osmium_elemental gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (osmium_elemental gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_osmium_elemental_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmium_elemental_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (osmium_elemental gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_platinum_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (platinum gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_platinum_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (platinum gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_platinum_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (platinum gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_platinum_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (platinum gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_platinum_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (platinum gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_platinum_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (platinum gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_platinum_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (platinum gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_platinum_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (platinum gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_platinum_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (platinum gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_platinum_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_platinum_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (platinum gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (osmiridium gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (osmiridium gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (osmiridium gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (osmiridium gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (osmiridium gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (osmiridium gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (osmiridium gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (osmiridium gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (osmiridium gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_osmiridium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_osmiridium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (osmiridium gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_carborundum_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (carborundum gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_carborundum_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (carborundum gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_carborundum_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (carborundum gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_carborundum_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (carborundum gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_carborundum_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (carborundum gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_carborundum_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (carborundum gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_carborundum_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (carborundum gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_carborundum_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (carborundum gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_carborundum_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (carborundum gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_carborundum_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_carborundum_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (carborundum gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_iridium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (iridium gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_iridium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (iridium gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_iridium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (iridium gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_iridium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (iridium gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_iridium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (iridium gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_iridium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (iridium gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_iridium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (iridium gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_iridium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (iridium gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_iridium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (iridium gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_iridium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_iridium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (iridium gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_naquadah_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (naquadah gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_naquadah_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (naquadah gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_naquadah_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (naquadah gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_naquadah_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (naquadah gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_naquadah_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (naquadah gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_naquadah_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (naquadah gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_naquadah_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (naquadah gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_naquadah_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (naquadah gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_naquadah_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (naquadah gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_naquadah_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_naquadah_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (naquadah gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (niobium_titanium gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (niobium_titanium gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (niobium_titanium gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (niobium_titanium gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (niobium_titanium gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (niobium_titanium gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (niobium_titanium gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (niobium_titanium gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (niobium_titanium gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_niobium_titanium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_niobium_titanium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (niobium_titanium gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (vanadium_gallium gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (vanadium_gallium gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (vanadium_gallium gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (vanadium_gallium gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (vanadium_gallium gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (vanadium_gallium gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (vanadium_gallium gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (vanadium_gallium gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (vanadium_gallium gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_vanadium_gallium_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_vanadium_gallium_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (vanadium_gallium gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:96 (yttrium_barium_cuprate gt01; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt01",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt01",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:102 (yttrium_barium_cuprate gt01; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:97 (yttrium_barium_cuprate gt02; plate x1)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt02",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt02",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:103 (yttrium_barium_cuprate gt02; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 2
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:98 (yttrium_barium_cuprate gt04; plate x2)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt04",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt04",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:104 (yttrium_barium_cuprate gt04; foil x8)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 3
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:99 (yttrium_barium_cuprate gt08; plate x3)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 12
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt08",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt08",
+          "count": 1
+        }
+      ],
+      "duration": 48,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:105 (yttrium_barium_cuprate gt08; foil x12)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:100 (yttrium_barium_cuprate gt12; plate x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 16
+        },
+        {
+          "item": "gt6:wire_yttrium_barium_cuprate_gt12",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_yttrium_barium_cuprate_gt12",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16,
+      "comment": "MultiTileEntityWireElectric.java:106 (yttrium_barium_cuprate gt12; foil x16)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_red_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_red_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_MultiTileEntities.java:1905 (red_alloy; plate)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_red_alloy",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_red_alloy",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_MultiTileEntities.java:1906 (red_alloy; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_signalum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_signalum",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_MultiTileEntities.java:1907 (signalum; plate)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_signalum",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_signalum",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_MultiTileEntities.java:1908 (signalum; foil x4)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:plate_rubber",
+          "count": 1
+        },
+        {
+          "item": "gt6:wire_lumium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lumium",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_MultiTileEntities.java:1909 (lumium; plate)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:foil_rubber",
+          "count": 4
+        },
+        {
+          "item": "gt6:wire_lumium",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:cable_lumium",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_MultiTileEntities.java:1910 (lumium; foil x4)"
     }
   ]
 }

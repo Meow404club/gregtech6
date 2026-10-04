@@ -43,7 +43,12 @@ class GT6EuSpecialSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		case "minecraft:piston" -> Items.PISTON;
 		case "minecraft:slime_ball" -> Items.SLIME_BALL;
 		case "minecraft:sticky_piston" -> Items.STICKY_PISTON;
-		default -> null;
+		// task beam-fireproof-closeout: the tail-appended beam rows carry gt6 ids — the
+		// identity stand-in keeps them pouring, PRECISELY the beam/wax id tails (the b2
+		// lightning rows must keep WARN-skipping here as on main — the 8-row pin)
+		default -> "gt6".equals(aId.getNamespace())
+				&& (aId.getPath().endsWith("_beam") || aId.getPath().endsWith("_fireproof")
+						|| aId.getPath().endsWith("_wax_refractory")) ? Items.IRON_INGOT : null;
 	};
 
 	private static final java.util.function.Function<ResourceLocation, Fluid> FLUID_FIXTURE = aId -> Fluids.WATER;
@@ -85,13 +90,16 @@ class GT6EuSpecialSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("autocrafter"), "one autocrafter smoke row");
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("lightning"), "one lightning smoke row");
-		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("laminator"), "one laminator smoke row");
+		// task beam-fireproof-closeout: the laminator stock tail-appended its 42 beam rows
+		// AFTER the smoke row (row 0 stays put — the GT6RecipeMapDataLaminatorBeamRowsPourTest
+		// owns the beam segment's census), the b6 plastic-sheet card appends after THAT.
+		assertEquals(43, GT6RecipeMapJsonLoader.pouredCount("laminator"), "one laminator smoke row + the 42 beam-fireproof rows");
 
 		// the rows are LIVE in the maps (the findRecipe stock grew by one each — the
 		// DECLARED-empty card-① state is the whole pre-pour stock)
 		assertEquals(1, GT6RecipeMaps.AUTOCRAFTER.mRecipeList.size(), "the AUTOCRAFTER map held ONLY the smoke row");
 		assertEquals(1, GT6RecipeMaps.LIGHTNING.mRecipeList.size());
-		assertEquals(1, GT6RecipeMaps.LAMINATOR.mRecipeList.size());
+		assertEquals(43, GT6RecipeMaps.LAMINATOR.mRecipeList.size());
 	}
 
 	/** The RM.java declaration columns the smoke rows must fit (:63/:94/:90 — the card-① transcription). */

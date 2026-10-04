@@ -11440,6 +11440,44 @@ upstream, cmp + sha256 verified per file:
 - `beam_top_spruce.png`       `109cf88ed3e8c9710e1f23ed19c7e60d3508a32ba42dd377ce6fbfe63bf5deb0`
 - `beam_top_wood.png`         `32abe24f27715308c9f3f613f50c9c2437499e4943a87986a360a8472adb6072`
 
+Task beam-fireproof-closeout addendum: the 26 further PNGs under the same
+convention come from the SAME upstream iconsets dir — wood ∈ GREATWOOD/
+SILVERWOOD/SKYROOT/DARKWOOD (the BEAMS_3 group, Textures.java:280-289, the
+BlockTreeBeam3 faces), RUBBER/MAPLE/WILLOW/BLUEMAHOE (the BEAMS_A group,
+:290-299) + HAZEL/CINNAMON/COCONUT/RAINBOWOOD (the BEAMS_B group, :300-309) +
+BLUESPRUCE (the BEAMS_C group, :310-319), cmp clean 26/26 + sha256 verified
+per file. The FireProof twin blocks reuse these same per-kind pairs (the
+upstream FireProof subclasses pass the identical texture arrays,
+BlockTreeBeam1FireProof.java:29 vs BlockTreeBeam1.java:29) — zero new PNGs
+for the twins:
+
+- `beam_side_blue_mahoe.png`   `110a41ae8f5af400f66b9e5c4dbc55664c1e74767ece3b3154346e49889373a5` (upstream `BEAM_SIDE_BLUEMAHOE.png`)
+- `beam_side_blue_spruce.png`  `f74a0ff1cee6ae2f355e15493588bd885a788d70e92f57d3f50e7b4d9532bd65` (upstream `BEAM_SIDE_BLUESPRUCE.png`)
+- `beam_side_cinnamon.png`    `844a6c6d51e21de8ce85a542b91cf49ef4b0efff0327192a673012cec31b146b` (upstream `BEAM_SIDE_CINNAMON.png`)
+- `beam_side_coconut.png`     `5f51ca29b5f7ceef08ee1a041f3e48ff0827de5613cebfdfbde764e176ec1eb6` (upstream `BEAM_SIDE_COCONUT.png`)
+- `beam_side_darkwood.png`    `31d4b195c85005120c83d0d2844f6d284c83138f90797fe3fe46d227b1e4357e` (upstream `BEAM_SIDE_DARKWOOD.png`)
+- `beam_side_greatwood.png`   `c23abe01f43e5b8d251ffa59e9c32ab710ca1443b82fb155b1fc3cbbe20bce5f` (upstream `BEAM_SIDE_GREATWOOD.png`)
+- `beam_side_hazel.png`       `2094a04f2b5287fec284e1a696efd72d911d550eb040d750f75f4af74e59fed0` (upstream `BEAM_SIDE_HAZEL.png`)
+- `beam_side_maple.png`       `ed2aa38252d965b3043ba8f323c01884b47833c557677b33d6bb0813b7f842b7` (upstream `BEAM_SIDE_MAPLE.png`)
+- `beam_side_rainbowood.png`  `763fc6956b26c0d5f8dda05d8952e12810694449a0ec9d234fa7d5b222a0fa33` (upstream `BEAM_SIDE_RAINBOWOOD.png`)
+- `beam_side_rubber.png`      `a27ce4309b6b4a466156af7772d8d6ca92183f3a41f2f501c6de5b2e33b301af` (upstream `BEAM_SIDE_RUBBER.png`)
+- `beam_side_silverwood.png`  `c727b99851c6431f2ffbedba98e5f6c2e4f19273781d8ba5868104d946e9b748` (upstream `BEAM_SIDE_SILVERWOOD.png`)
+- `beam_side_skyroot.png`     `dc6876d991a3b6365c3b1a9a1e06a199ef05fa903487112fb2e1a651e4459728` (upstream `BEAM_SIDE_SKYROOT.png`)
+- `beam_side_willow.png`      `9e64da2f487333ba753b3b669abd70f10b894b1c44ecde998a8e10373928439d` (upstream `BEAM_SIDE_WILLOW.png`)
+- `beam_top_blue_mahoe.png`    `ab2e8dcf880d9f0ca779923499be07f062722cbf0be3e9c1465a4e335dcbe418` (upstream `BEAM_TOP_BLUEMAHOE.png`)
+- `beam_top_blue_spruce.png`   `df4d3dfb0edd02fa35bc9c0caee5e08f95641f5c67387d0c9b693d2c89cf3523` (upstream `BEAM_TOP_BLUESPRUCE.png`)
+- `beam_top_cinnamon.png`     `04a9fb7728ef8b5ee4ed8f287306db92f3b672b8f2b0f80f90ca3ac2387acb63` (upstream `BEAM_TOP_CINNAMON.png`)
+- `beam_top_coconut.png`      `1fdb9df130b18537010b29689976903bc2d72a964be66f3d39b56b6fbc3d74d1` (upstream `BEAM_TOP_COCONUT.png`)
+- `beam_top_darkwood.png`     `0b5683a7ada26e801c3795a464ef4c6387fdcb2a60c80bbe471e2068cf3569c4` (upstream `BEAM_TOP_DARKWOOD.png`)
+- `beam_top_greatwood.png`    `56b8f023f1f98802867786fe9cb4fc23a1493097b1af61719f3eac23f7233a78` (upstream `BEAM_TOP_GREATWOOD.png`)
+- `beam_top_hazel.png`        `28bfea218176e32facc65820881952d3fc902a8eb09444005f8a9c7b03dc056f` (upstream `BEAM_TOP_HAZEL.png`)
+- `beam_top_maple.png`        `7bbc36e69096bfd9ef7ccc259c69c912e154a2eac63eca763d9a90aba3f1f685` (upstream `BEAM_TOP_MAPLE.png`)
+- `beam_top_rainbowood.png`   `2aaa8076abaac37fe1f9f8056b8de5938cc7a5b464b94a97e1c9ef03b955754b` (upstream `BEAM_TOP_RAINBOWOOD.png`)
+- `beam_top_rubber.png`       `330a5aad910068fbd7aeafe8bb54c4018bec7ad00a21ad6638e5cf87173a3a1a` (upstream `BEAM_TOP_RUBBER.png`)
+- `beam_top_silverwood.png`   `245cf31f55c081ac012f3948c67904ffd8ce385d3d571b582b97ffd525c25312` (upstream `BEAM_TOP_SILVERWOOD.png`)
+- `beam_top_skyroot.png`      `16626fddb57cb4310647ca79e57399f90ae9303645fe54c2356844e242b61f14` (upstream `BEAM_TOP_SKYROOT.png`)
+- `beam_top_willow.png`       `769ac3953c79fe5a25dabbe0c71642525f5b1dbf9111083b7435e899f0f3d159` (upstream `BEAM_TOP_WILLOW.png`)
+
 Filenames were lowercased/flat-mapped onto the `textures/block/` convention on
 borrow (1.20.1 `ResourceLocation` charset; the sprite ids are
 `gt6:block/beam_top_<wood>` / `gt6:block/beam_side_<wood>`); the PNG contents

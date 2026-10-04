@@ -1,13 +1,1345 @@
 {
+  "_header": "RM.INJECTOR Food/Other/Temp/Vanilla static faces (task recipe-b6-small-maps-batch; the Chem face lives in injectorchem.json). Faces: Loader_Recipes_Temporary.java:64-75 the Lapis/Lazurite/Sodalite coolant walk x4 water legs = 12 rows (ic2coolant); Loader_Recipes_Food.java:596-603 the FL.waters(1000) x4 walk (FL.java:689 order water/mnwtr/distilled_water/spdew) = 21 rows — :598 carries OM.dust(MT.Ambrosium, U9) shipped as count 1 = the v1 no-mass deviation; Loader_Recipes_Other.java:121-127 = 20 rows (RefinedObsidian over the live ANY.Diamond 12 members + RefinedGlowstone over ANY.Glowstone 7 + the :127 re-melt, Ge = gt6:germanium_molten 144); Loader_Recipes_Vanilla.java:904-905 the FluidsGT.SLIME walk = 3 rows (bawls; the HashSet pinned to the FL.java:279-281 declaration order slime_blue/pinkslime/slime). DECLARED SKIPS: Loader_Recipes_Other.java:489 the dyed-CFoam AIR walk (the dyed fresh-foam outputs have no port items — BlocksGT.CFoamFresh is one blockstate-coloured block, no per-colour item faces) and :602-605 the GlowGlass walk (BlocksGT.Glass/GlowGlass unported). Census: 56 poured rows + 1 smoke row = 57. KJS: datapack domain, zero adaptation.",
   "recipes": [
     {
       "inputs": [
-        { "item": "minecraft:stick", "count": 1 },
-        { "item": "minecraft:flint", "count": 1 }
+        {
+          "item": "minecraft:stick",
+          "count": 1
+        },
+        {
+          "item": "minecraft:flint",
+          "count": 1
+        }
       ],
-      "outputs": [{ "item": "minecraft:arrow", "count": 1 }],
+      "outputs": [
+        {
+          "item": "minecraft:arrow",
+          "count": 1
+        }
+      ],
       "duration": 16,
       "eut": 16
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lapis",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:64 (lapis; gt6:distilled_water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lapis",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:65 (lapis; gt6:spdew leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lapis",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:66 (lapis; gt6:mnwtr leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lapis",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:67 (lapis; minecraft:water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lazurite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:68 (lazurite; gt6:distilled_water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lazurite",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:69 (lazurite; gt6:spdew leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lazurite",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:70 (lazurite; gt6:mnwtr leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_lazurite",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:71 (lazurite; minecraft:water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_sodalite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:72 (sodalite; gt6:distilled_water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_sodalite",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:73 (sodalite; gt6:spdew leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_sodalite",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:74 (sodalite; gt6:mnwtr leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_sodalite",
+          "count": 2
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:ic2coolant",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Temporary.java:75 (sodalite; minecraft:water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:596 (magnesium; minecraft:water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:596 (magnesium; gt6:mnwtr leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:596 (magnesium; gt6:distilled_water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_magnesium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:596 (magnesium; gt6:spdew leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:597 (calcium; minecraft:water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:597 (calcium; gt6:mnwtr leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:597 (calcium; gt6:distilled_water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_calcium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:597 (calcium; gt6:spdew leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_ambrosium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:598 (ambrosium; minecraft:water leg; the OM.dust(MT.Ambrosium, U9) mass face ships count 1 = the v1 no-mass deviation)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_ambrosium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:598 (ambrosium; gt6:mnwtr leg; the OM.dust(MT.Ambrosium, U9) mass face ships count 1 = the v1 no-mass deviation)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_ambrosium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:598 (ambrosium; gt6:distilled_water leg; the OM.dust(MT.Ambrosium, U9) mass face ships count 1 = the v1 no-mass deviation)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_ambrosium",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:598 (ambrosium; gt6:spdew leg; the OM.dust(MT.Ambrosium, U9) mass face ships count 1 = the v1 no-mass deviation)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_holystone",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:599 (holystone; minecraft:water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_holystone",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:599 (holystone; gt6:mnwtr leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_holystone",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:599 (holystone; gt6:distilled_water leg)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_holystone",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 1000
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:holywater",
+          "amount": 1000
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:599 (holystone; gt6:spdew leg)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:soda",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:601 (soda; minecraft:water leg)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:soda",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:601 (soda; gt6:mnwtr leg)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "gt6:distilled_water",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:soda",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:601 (soda; gt6:distilled_water leg)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "gt6:spdew",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:soda",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:601 (soda; gt6:spdew leg)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "gt6:mnwtr",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:mineralsoda",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Food.java:603 (mineralsoda)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_blue_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_blue_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_green_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_green_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_purple_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_purple_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_diamantine",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_diamantine; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_red_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_red_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_yellow_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_yellow_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_pink_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_pink_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_diamond_industrial",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_diamond_industrial; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_mana_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_mana_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_elven_dragonstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_elven_dragonstone; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_gravitite",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_gravitite; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian",
+          "count": 1
+        },
+        {
+          "item": "gt6:dust_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:123 (obsidian+dust_diamond; ANY.Diamond walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_glowstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:126 (dust_glowstone; ANY.Glowstone walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_glowstone_ceres",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:126 (dust_glowstone_ceres; ANY.Glowstone walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_glowstone_io",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:126 (dust_glowstone_io; ANY.Glowstone walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_glowstone_enceladus",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:126 (dust_glowstone_enceladus; ANY.Glowstone walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_glowstone_proteus",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:126 (dust_glowstone_proteus; ANY.Glowstone walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_glowstone_pluto",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:126 (dust_glowstone_pluto; ANY.Glowstone walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_gloomstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_glowstone_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:126 (dust_gloomstone; ANY.Glowstone walk)"
+    },
+    {
+      "inputs": [
+        {
+          "item": "gt6:dust_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ingot_obsidian_refined",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:germanium_molten",
+          "amount": 144
+        }
+      ],
+      "duration": 256,
+      "eut": 16,
+      "comment": "Loader_Recipes_Other.java:127 (refined obsidian re-melt)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "gt6:slime_blue",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:bawls",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Vanilla.java:905 (bawls; slime_blue leg; the FluidsGT.SLIME HashSet pinned to the FL.java declaration order)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "gt6:pinkslime",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:bawls",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Vanilla.java:905 (bawls; pinkslime leg; the FluidsGT.SLIME HashSet pinned to the FL.java declaration order)"
+    },
+    {
+      "fluidInputs": [
+        {
+          "fluid": "gt6:slime",
+          "amount": 250
+        },
+        {
+          "fluid": "gt6:carbondioxide",
+          "amount": 36
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "gt6:bawls",
+          "amount": 250
+        }
+      ],
+      "duration": 16,
+      "eut": 16,
+      "comment": "Loader_Recipes_Vanilla.java:905 (bawls; slime leg; the FluidsGT.SLIME HashSet pinned to the FL.java declaration order)"
     }
   ]
 }

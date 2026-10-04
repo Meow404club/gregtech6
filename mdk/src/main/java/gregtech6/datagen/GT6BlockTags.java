@@ -303,6 +303,11 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (RegistryObject<Block> tHandle : GT6BeamBlocks.BLOCKS) {
 			tAxe.add(tHandle.get());
 		}
+		// task beam-fireproof-closeout: the FireProof twins ride the same BlockBaseBeam.java:54
+		// TOOL_axe face (BlockTreeBeam*FireProof extends BlockBaseBeam, no override)
+		for (RegistryObject<Block> tHandle : GT6BeamBlocks.FIREPROOF_BLOCKS) {
+			tAxe.add(tHandle.get());
+		}
 	}
 
 	/**

@@ -236,7 +236,12 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 			tShipped.add(tIn);
 		}
 		Set<String> tExpected = new HashSet<>();
-		for (GT6BeamKind tKind : GT6BeamKind.values()) {
+		// task beam-fireproof-closeout: the consume walk (Loader_Recipes_Woods.java:190) for the
+		// 13 residual kinds (Beam3/A/B/C, enum slots 8+) is the declared UNPOURED face — those
+		// rows land with the recipe-backfill wave (the consume walk is that wave's domain), the
+		// pin stays the original 8-kind slice (Beam1x4 + Beam2x4 minus the WOOD self-row).
+		for (int i = 0; i < 8; i++) {
+			GT6BeamKind tKind = GT6BeamKind.values()[i];
 			if (tKind == GT6BeamKind.WOOD) continue; // the self-row: declared degenerate skip
 			tExpected.add("gt6:" + tKind.snake() + "_beam");
 		}

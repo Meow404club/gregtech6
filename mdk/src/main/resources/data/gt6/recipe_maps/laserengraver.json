@@ -1,11 +1,23 @@
 {
+  "_header": "RM.LaserEngraver — task recipe-b6-small-maps-batch: the card's 36 upstream stations are accounted, ZERO pour in the port universe, this file keeps its smoke row only. The 36: 13 = Loader_Recipes_Other.java:147-167 (the green/red lens listeners — the IL.Circuit_Crystal_Diamond/Emerald/Sapphire/Ruby and IL.Circuit_Wire_* outputs are unported, the absence is declared by the port itself, GT6CraftingRecipes.java:1642 'IL.Processor_Crystal_* absent port'); 3 = Loader_Recipes_Temporary.java:215-221 (MD.MO Mekanism Ore isolinear circuits, foreign mod); 3 = Loader_Recipes_OreDict.java:76-78 (IL.Module_Stone/Basalt/Blackstone_Generator + the NeLi basalt blocks, unported — the same face that stays BLOCKED in sawing.json); 8 = RM.java:650-667 the stoneshapes() laser arms = TRUE NEGATIVE (every stoneshapes caller is foreign-mod Compat_Recipes_*, the b2c-sawing RM.java:328/:351 ruling verbatim); 9 = BlockStones.java:492-540 the 8 lens faces + Loader_Recipes_OreDict.java:75 (the craftingLens colour axis is unported — the port generates 114 lens items but carries no lens(COLOUR) assignment face, upstream MT.java:418-422 the 44 .lens() sites are the Phase-2 defer), unlock = a lens-colour registration card plus a ~2000-row backfill over the 17 GTStoneBlocks stones. KJS: datapack domain, zero adaptation.",
   "recipes": [
     {
       "inputs": [
-        {"item": "minecraft:paper", "count": 1},
-        {"item": "minecraft:ink_sac", "count": 1}
+        {
+          "item": "minecraft:paper",
+          "count": 1
+        },
+        {
+          "item": "minecraft:ink_sac",
+          "count": 1
+        }
       ],
-      "outputs": [{"item": "minecraft:name_tag", "count": 1}],
+      "outputs": [
+        {
+          "item": "minecraft:name_tag",
+          "count": 1
+        }
+      ],
       "duration": 16,
       "eut": 16
     }
