@@ -2,6 +2,10 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -20,6 +24,7 @@ import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
 import gregtech6.covers.ICoverableTE;
 import gregtech6.util.GTItemMover;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The conveyor cover — 1.20.1 port of gregapi/cover/covers/CoverConveyor.java:40-95
@@ -192,5 +197,18 @@ public class CoverConveyor extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		return aData.mVisuals[aCoverSide] == 0 ? CONVEYOR_OUT_SPRITE : CONVEYOR_IN_SPRITE; // :83
+	}
+
+	/**
+	 * Upstream :76-81 — the CYAN period row (the {@code mTiming == 1 ? "Tick" : mTiming +
+	 * " Ticks"} literal composes into the transfer_period slot) plus the controller and
+	 * screwdriver rows over the base row (task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.transfer_period", mTiming == 1 ? "Tick" : mTiming + " Ticks").withStyle(GT6TooltipStyle.CYAN)); // :78
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :79
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :80
 	}
 }

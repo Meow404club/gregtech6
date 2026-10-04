@@ -2,11 +2,17 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
 import gregtech6.covers.CoverData;
 import gregtech6.tileentity.machines.ITileEntitySwitchableOnOff;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The machine status display cover — 1.20.1 port of gregapi/cover/covers/
@@ -179,5 +185,16 @@ public class CoverControllerDisplay extends AbstractCoverAttachmentController {
 			case 5: return new float[] {Math.min(0.99F, Math.max(0, 1 - aHitZ)), Math.min(0.99F, Math.max(0, 1 - aHitY))};
 			default: return new float[] {0.5F, 0.5F};
 		}
+	}
+
+	/**
+	 * Upstream :89 — the chisel design row over the base row. Upstream adds
+	 * {@code LH.get(LH.TOOL_TO_CHANGE_DESIGN_CHISEL)} WITHOUT a Chat prefix — the only
+	 * unstyled cover row (task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.change_design_chisel")); // :89 — deliberately NO style
 	}
 }

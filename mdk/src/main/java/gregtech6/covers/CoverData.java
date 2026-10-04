@@ -122,6 +122,23 @@ public class CoverData {
 		 *///?}
 	}
 
+	/**
+	 * The cover value lane riding an item stack — the read half of the
+	 * {@link #set(byte, ItemStack)} write (task tooltip-cover-face): the tooltip family
+	 * (upstream ICover.addToolTips, e.g. CoverFilterItem:47 {@code ST.load(stack, "gt.filter.item")})
+	 * reads the per-cover NBT lane off the hovered stack. {@code null} = the stack carries
+	 * no lane (the upstream null-tag arm — no filter rows).
+	 */
+	public static @Nullable CompoundTag laneOf(@Nullable ItemStack aStack) {
+		if (aStack == null || aStack.isEmpty()) return null;
+		//? if forge {
+		return aStack.getTag();
+		//?} else {
+		/*CustomData tData = aStack.get(GT6DataComponents.COVER_PAYLOAD);
+		return tData == null ? null : tData.copyTag();
+		 *///?}
+	}
+
 	/** Upstream :126-131 verbatim — empty NBT compounds are not stored (:129). */
 	public CoverData set(byte aSide, short aID, short aMeta, @Nullable CompoundTag aNBT) {
 		mIDs[aSide] = aID;

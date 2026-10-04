@@ -2,11 +2,18 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.entity.Entity;
 
 import gregapi.tileentity.logistics.ITileEntityLogistics;
 import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The logistics attachment base — 1.20.1 counterpart of gregapi/cover/covers/
@@ -81,4 +88,18 @@ public abstract class AbstractCoverAttachmentLogistics extends AbstractCoverDefa
 
 	/** Upstream :109 — the stacksize lane defaults off (the filtered Export family flips it). */
 	public boolean useTargetStackSize() {return false;}
+
+	/**
+	 * Upstream :50-55 — the base row, then the controller row and the two PREDICATE rows:
+	 * the same {@link #usePriorities()}/{@link #useTargetStackSize()} the tool-click arms
+	 * read (:59/:71), so the hover can never disagree with the class behaviour (task
+	 * tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :52
+		if (usePriorities()) aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :53
+		if (useTargetStackSize()) aList.add(Component.translatable("gt6.tooltip.cover.toggle_cutter").withStyle(GT6TooltipStyle.DGRAY)); // :54
+	}
 }

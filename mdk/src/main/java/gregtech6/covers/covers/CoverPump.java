@@ -2,9 +2,13 @@ package gregtech6.covers.covers;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -21,6 +25,7 @@ import gregtech6.covers.ICover;
 import gregtech6.covers.ICoverableTE;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.tank.TileEntityBase08Barrel;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The pump cover — 1.20.1 port of gregapi/cover/covers/CoverPump.java:42-98 (task
@@ -149,5 +154,20 @@ public class CoverPump extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		return aData.mVisuals[aCoverSide] == 0 ? PUMP_OUT_SPRITE : PUMP_IN_SPRITE; // :93 textures pair
+	}
+
+	/**
+	 * Upstream :79-84 — the CYAN throughput row (the {@link #THROUGHPUT} slot; the upstream
+	 * {@code "Transfers " + mThroughput + " L/sec"} literal), the ORANGE no-fluid-blocks
+	 * warning and the controller/screwdriver tool rows over the base row (task
+	 * tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.pump_throughput", THROUGHPUT).withStyle(GT6TooltipStyle.CYAN)); // :81
+		aList.add(Component.translatable("gt6.tooltip.cover.pump_no_fluid_blocks").withStyle(GT6TooltipStyle.ORANGE)); // :82
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :83
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :84
 	}
 }

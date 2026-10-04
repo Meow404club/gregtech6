@@ -494,6 +494,32 @@ HAND_TRANSLATIONS = {
     "gt6.tooltip.material.origin_periodic": ("Material from the Periodic Table of Elements", "hand"),
     "gt6.tooltip.material.origin_random": ("Random Material handled by Greg API", "hand"),
     "gt6.tooltip.material.origin_mod": ("Material from %s", "hand"),
+    # ---- task tooltip-cover-face — the 19 cover-domain tooltip row keys (the
+    # GT6ZhCn.addCoverTooltipUnits walk). Eight zh faces are the tmp/gregtech.lang dump
+    # fragments verbatim (gt.lang.cover.tooltip :3257 / chisel :3538 / controlcover :3539
+    # / cutter :3542 / magnifyingglass :3544 / monkey.wrench :3547 / screwdriver :3555 /
+    # soft.hammer :3557); the eleven upstream CODE-LITERAL rows (the pump/drain/valve/
+    # filter/composed-period/logistics-display row bodies) have no dump face — zh = the
+    # hardcoded-en face, the tank.1 convention.
+    "gt6.tooltip.cover.base": ("可以用作覆盖板", "hand"),
+    "gt6.tooltip.cover.toggle_screwdriver": ("使用螺丝刀切换模式", "hand"),
+    "gt6.tooltip.cover.toggle_cutter": ("使用剪线钳切换模式", "hand"),
+    "gt6.tooltip.cover.toggle_controller": ("使用控制器覆盖板控制开关", "hand"),
+    "gt6.tooltip.cover.toggle_monkey_wrench": ("使用活动扳手调整模式", "hand"),
+    "gt6.tooltip.cover.reset_soft_hammer": ("使用软锤来重置", "hand"),
+    "gt6.tooltip.cover.detail_magnifyingglass": ("使用放大镜观察细节", "hand"),
+    "gt6.tooltip.cover.change_design_chisel": ("使用凿子改变表面纹理图案", "hand"),
+    "gt6.tooltip.cover.transfer_period": ("Transfers a Stack every %s", "hand"),
+    "gt6.tooltip.cover.pump_throughput": ("Transfers %s L/sec", "hand"),
+    "gt6.tooltip.cover.pump_no_fluid_blocks": ("Doesn't do Fluid Blocks! Use Drain for that instead!", "hand"),
+    "gt6.tooltip.cover.drain_fluid_blocks": ("Collects Fluid Blocks (if not against Gravity)", "hand"),
+    "gt6.tooltip.cover.drain_rainwater": ("Collects Rainwater (not in Dry or Cold Areas)", "hand"),
+    "gt6.tooltip.cover.drain_river_lake": ("Will work infinitely in River and Lake Biomes", "hand"),
+    "gt6.tooltip.cover.valve_release": ("Releases Fluids when Pipe is full.", "hand"),
+    "gt6.tooltip.cover.valve_liquids_tank": ("Liquids require Tank in front!", "hand"),
+    "gt6.tooltip.cover.valve_gases_air": ("Gases require Air or Tank in front!", "hand"),
+    "gt6.tooltip.cover.filter_not_nbt_sensitive": ("Not NBT sensitive!", "hand"),
+    "gt6.tooltip.cover.logistics_display_status": ("Emits Redstone and Displays Status of Logistics Core.", "hand"),
     # task p26-pipe-item — the item pipe family: the six variant templates over the three
     # material words. task p27-lang-fix P1 §2.2 + batch rule B5: the dump's 物流管道 word
     # set (tmp/gregtech.lang 25002..25007 黄铜物流管道 family / 25027..25032 康铜 /

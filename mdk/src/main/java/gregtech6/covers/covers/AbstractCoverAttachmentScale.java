@@ -1,10 +1,15 @@
 package gregtech6.covers.covers;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 
 import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
 import gregtech6.util.UT6;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The scale base — 1.20.1 port of gregapi/cover/covers/AbstractCoverAttachmentScale.java
@@ -65,4 +70,16 @@ public abstract class AbstractCoverAttachmentScale extends AbstractCoverAttachme
 
 	/** Upstream CS.TOOL_magnifyingglass (CS.java:1066) — the read-only inspector id. In-class on purpose: the ICover tool-id constants are a frozen surface (the CoverRedstoneEmitter ruling). */
 	public static final String TOOL_MAGNIFYINGGLASS = "magnifyingglass";
+
+	/**
+	 * Upstream :72-76 — the screwdriver/cutter/magnifyingglass sensor rows over the base
+	 * row; both scale sensors inherit them (task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :74
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_cutter").withStyle(GT6TooltipStyle.DGRAY)); // :75
+		aList.add(Component.translatable("gt6.tooltip.cover.detail_magnifyingglass").withStyle(GT6TooltipStyle.DGRAY)); // :76
+	}
 }

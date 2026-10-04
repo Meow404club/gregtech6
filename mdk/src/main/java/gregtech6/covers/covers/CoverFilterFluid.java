@@ -1,6 +1,9 @@
 package gregtech6.covers.covers;
 
+import java.util.List;
 import java.util.Optional;
+
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nullable;
 
@@ -10,7 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -18,6 +23,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The fluid filter cover — 1.20.1 port of gregapi/cover/covers/CoverFilterFluid.java
@@ -183,5 +189,31 @@ public class CoverFilterFluid extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		return aData.mVisuals[aCoverSide] == 0 ? SPRITE_WHITELIST : SPRITE_BLACKLIST;
+	}
+
+	/**
+	 * Upstream :50-57 — the carried fluid's display-name row (CYAN, before the super
+	 * chain), the ORANGE NBT note, the base + controller/screwdriver rows and the soft
+	 * hammer reset row. The string lane ({@code gt.filter.fluid} → the registry id, the
+	 * {@code filterTagFor} write form) resolves through BuiltInRegistries; the display
+	 * face is the fluid block's name (createLegacyBlock().getBlock().getName() — matches
+	 * the upstream FL.name word for water/lava; the offline JVM cannot drive
+	 * FluidStack.getDisplayName, task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		CompoundTag tLane = CoverData.laneOf(aStack); // :51 FL.load(stack, "gt.filter.fluid")
+		Fluid tFluid = null;
+		if (tLane != null && tLane.contains(FILTER_KEY, Tag.TAG_STRING)) {
+			ResourceLocation tId = ResourceLocation.tryParse(tLane.getString(FILTER_KEY));
+			tFluid = tId == null ? null : BuiltInRegistries.FLUID.get(tId); // .get → EMPTY on a miss
+			if (tFluid == Fluids.EMPTY) tFluid = null;
+		}
+		if (tFluid != null) aList.add(tFluid.defaultFluidState().createLegacyBlock().getBlock().getName().copy().withStyle(GT6TooltipStyle.CYAN)); // :52
+		aList.add(Component.translatable("gt6.tooltip.cover.filter_not_nbt_sensitive").withStyle(GT6TooltipStyle.ORANGE)); // :53 unconditional
+		super.addToolTips(aList, aStack, aF3_H); // AbstractCoverDefault :77 — the base row
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_controller").withStyle(GT6TooltipStyle.DGRAY)); // :55
+		aList.add(Component.translatable("gt6.tooltip.cover.toggle_screwdriver").withStyle(GT6TooltipStyle.DGRAY)); // :56
+		aList.add(Component.translatable("gt6.tooltip.cover.reset_soft_hammer").withStyle(GT6TooltipStyle.DGRAY)); // :57
 	}
 }

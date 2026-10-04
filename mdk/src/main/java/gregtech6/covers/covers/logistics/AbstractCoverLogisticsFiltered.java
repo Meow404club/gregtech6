@@ -2,6 +2,12 @@ package gregtech6.covers.covers.logistics;
 
 import javax.annotation.Nullable;
 
+import java.util.List;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -9,12 +15,15 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.ItemStack;
 
 import gregtech6.covers.CoverData;
 import gregtech6.covers.ICover;
 import gregtech6.covers.covers.AbstractCoverAttachmentLogistics;
 import gregtech6.covers.covers.CoverFilterItem;
+import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
  * The filtered logistics bus base — 1.20.1 port of the shared body of
@@ -136,5 +145,41 @@ public abstract class AbstractCoverLogisticsFiltered extends AbstractCoverAttach
 	@Override
 	public boolean useTargetStackSize() {
 		return true; // upstream :104 (the filtered bus family)
+	}
+
+	/**
+	 * The filter-name + reset rows of the six upstream filtered covers (CoverLogisticsItemImport:47-52
+	 * the item branch, CoverLogisticsFluidImport:51-56 the fluid branch): the carried
+	 * filter's display-name row (CYAN, BEFORE the super chain — the upstream order quirk),
+	 * the unconditional ORANGE NBT note, then the super chain and the soft hammer reset.
+	 * The lane shape IS the branch discriminator: TAG_COMPOUND = the item payload (the
+	 * {@code filterLaneFor} write form), TAG_STRING = the fluid id (the
+	 * {@code AbstractCoverLogisticsFluid.filterLaneFor} write form) — one override covers
+	 * both, the port unified filtered base. The fluid display face is the fluid block's
+	 * name (createLegacyBlock().getBlock().getName() — the water/lava words match the
+	 * upstream FL.name face; the offline JVM cannot drive FluidStack.getDisplayName,
+	 * whose vanilla fluid-type RegistryObject only binds in the mod lifecycle).
+	 * The port filtered family answers the cutter toggle ({@link #useTargetStackSize()}
+	 * T — the upstream concrete covers too, :104), so the super chain carries its row
+	 * (task tooltip-cover-face).
+	 */
+	@Override
+	public void addToolTips(List<Component> aList, ItemStack aStack, boolean aF3_H) {
+		net.minecraft.nbt.CompoundTag tLane = CoverData.laneOf(aStack);
+		if (tLane != null && tLane.contains(filterKey, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+			//? if forge {
+			ItemStack tFilter = ItemStack.of(tLane.getCompound(filterKey)); // upstream :47 ST.load
+			//?} else {
+			/*ItemStack tFilter = ItemStack.parseOptional(CoverFilterItem.nbtAccess(), tLane.getCompound(filterKey)); // 21.1: the codec parse face
+			 *///?}
+			if (!tFilter.isEmpty()) aList.add(tFilter.getDisplayName().copy().withStyle(GT6TooltipStyle.CYAN)); // item branch :47-48
+		} else if (tLane != null && tLane.contains(filterKey, net.minecraft.nbt.Tag.TAG_STRING)) {
+			net.minecraft.resources.ResourceLocation tId = net.minecraft.resources.ResourceLocation.tryParse(tLane.getString(filterKey));
+			Fluid tFluid = tId == null ? null : BuiltInRegistries.FLUID.get(tId); // .get → EMPTY on a miss
+			if (tFluid != null && tFluid != Fluids.EMPTY) aList.add(tFluid.defaultFluidState().createLegacyBlock().getBlock().getName().copy().withStyle(GT6TooltipStyle.CYAN)); // fluid branch :51-52
+		}
+		aList.add(Component.translatable("gt6.tooltip.cover.filter_not_nbt_sensitive").withStyle(GT6TooltipStyle.ORANGE)); // :48/:52 unconditional
+		super.addToolTips(aList, aStack, aF3_H); // the logistics chain (base + controller + the predicate rows)
+		aList.add(Component.translatable("gt6.tooltip.cover.reset_soft_hammer").withStyle(GT6TooltipStyle.DGRAY)); // :49/:53
 	}
 }
