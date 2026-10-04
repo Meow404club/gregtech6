@@ -26,6 +26,7 @@ import net.minecraft.world.level.material.FluidState;
 
 import net.minecraftforge.registries.RegistryObject;
 
+import gregtech6.block.foam.GT6CFoamFreshBlock;
 import gregtech6.registry.GT6ConcreteBlocks;
 import gregtech6.registry.GT6FoamBlocks;
 import gregtech6.registry.GT6Rails;
@@ -35,7 +36,8 @@ import gregtech6.registry.GTStoneBlocks.StoneSpec;
 /**
  * The world-origin Center showcase (task worldgen-center-nexus) — the {@code
  * worldgen/center/} trio Nexus/Streets/Beacon port ({@code Loader_Worldgen.java:646-650}
- * rows 2-4; CenterBiomes and Testing ride the follow-up card). ONE Feature
+ * rows 2-4; CenterBiomes rides the follow-up card, Testing landed with
+ * worldgen-center-testing). ONE Feature
  * ({@code gt6:center}, the single-feature shape of LARGE_VEINS/NETHER_QUARTZ) attached
  * to #minecraft:is_overworld at TOP_LAYER_MODIFICATION (runs after every other pass, so
  * the hand-built terrain overwrites whatever generated before — the upstream
@@ -69,9 +71,12 @@ import gregtech6.registry.GTStoneBlocks.StoneSpec;
  *
  * <p><b>Block mapping</b> (the 对账 declaration): BlocksGT.Concrete/CFoam/CFoam-slab →
  * gt6:concrete_{dye} / gt6:cfoam / gt6:cfoam_slab (the dye index order is the upstream
- * CS.DYE_INDEX, GTSprayCanItem.DYE_IDS verbatim); BlocksGT.Asphalt → minecraft:
+ * CS.DYE_INDEX, GTSprayCanItem.DYE_IDS verbatim; the testing shell carries the dye on
+ * the 16-step COLOR property, the c-foam-block-family one-block ruling); BlocksGT.Asphalt → minecraft:
  * black_concrete + white_concrete stripes (GT asphalt block not yet ported); BlocksGT.
- * Glass DYE_INDEX_LightBlue → minecraft:light_blue_stained_glass; BlocksGT.RailRoad
+ * Glass DYE_INDEX_LightBlue → minecraft:light_blue_stained_glass (the testing ceiling's
+ * GlowGlass slab rides the same mapping — vanilla has no glass slab, the full block is
+ * the declared stand-in); BlocksGT.RailRoad
  * meta 0/8 → rail_road SHAPE NORTH_SOUTH + POWERED false/true and meta 1/9 → EAST_WEST
  * (the PoweredRail SHAPE property cannot carry the upstream meta-8/9 texture cadence —
  * the powered texture is the declared stand-in, the cadence math stays verbatim);
@@ -85,7 +90,7 @@ import gregtech6.registry.GTStoneBlocks.StoneSpec;
  */
 public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
 
-    /** The five WorldgenObject switches, upstream defaults F (:646-650). CenterBiomes and Testing land on the follow-up card. */
+    /** The five WorldgenObject switches, upstream defaults F (:646-650) — the testing shell rides TESTING since worldgen-center-testing; CenterBiomes stays on the follow-up card. */
     public static boolean CENTER_BIOMES = false;
     public static boolean STREETS = false;
     public static boolean NEXUS = false;
@@ -187,7 +192,55 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
      * The port ships the shell only: walls, doorway, interior clearing.
      */
     public static void testing(Sink aSink, int aCx, int aCz) {
-        // ponytail: the red-commit stub — the shell body lands with the green commit
+        int tX0 = aCx * 16, tZ0 = aCz * 16;
+        BlockState tAir = Blocks.AIR.defaultBlockState();
+        for (int i = 0; i < 16; i++) for (int j = 0; j < 16; j++) {
+            int tX = tX0 + i, tZ = tZ0 + j;
+            for (int k = 1; k <= HEIGHT; k++) aSink.set(tX, k, tZ, state(concrete(8))); // :70 the solid gray-concrete pedestal (DYE_INDEX_Gray)
+            for (int k = HEIGHT + 2; k < 256; k++) aSink.set(tX, k, tZ, tAir); // :71 the sky clear — the 1.7.10 world cap verbatim (the modern 320 above stays untouched)
+            aSink.set(tX, HEIGHT + 1, tZ, cfoam(8)); // :73 the gray CFoam floor
+            boolean tEdge = (i == 0 && aCx == 2) || (i == 15 && aCx == 3) || (j == 0 && aCz == -3) || (j == 15 && aCz == -2); // :74 the box rim
+            if (tEdge) {
+                aSink.set(tX, HEIGHT + 2, tZ, cfoam(12)); // :75 LightBlue
+                aSink.set(tX, HEIGHT + 3, tZ, cfoam(11)); // :76 Yellow
+                for (int k = 4; k <= 12; k++) aSink.set(tX, HEIGHT + k, tZ, cfoam(12)); // :77-85
+                aSink.set(tX, HEIGHT + 13, tZ, cfoam(11)); // :86 Yellow
+                aSink.set(tX, HEIGHT + 14, tZ, cfoam(12)); // :87
+                aSink.set(tX, HEIGHT + 15, tZ, cfoam(8)); // :88 the gray cap
+            } else if ((i != 1 && i != 5 && i != 10 && i != 14) && (j != 1 && j != 5 && j != 10 && j != 14)) { // :89
+                // :90 the GlowGlass slab LightBlue — vanilla has no glass slab, the full stained
+                // glass is the declared stand-in (the nexus BlocksGT.Glass mapping precedent)
+                aSink.set(tX, HEIGHT + 15, tZ, Blocks.LIGHT_BLUE_STAINED_GLASS.defaultBlockState());
+            } else {
+                aSink.set(tX, HEIGHT + 15, tZ, cfoamSlab(7)); // :92 the LightGray CFoam slab cross
+            }
+        }
+        if (aCx == 2 && aCz == -2) testingDoorway(aSink, tX0, tZ0); // :96-131 (aMinX==32 && aMinZ==-32)
+    }
+
+    /** The west-wall doorway (:96-131), the (2,-2) chunk only: the 4x3 opening at i=0, j=6..9 (H+2..H+4), the Gray/Yellow CFoam jambs + H+5 lintel and the interior pilasters at i=1. */
+    private static void testingDoorway(Sink aSink, int aX0, int aZ0) {
+        BlockState tAir = Blocks.AIR.defaultBlockState();
+        aSink.set(aX0, HEIGHT + 2, aZ0 + 5, cfoam(8)); // :97
+        for (int j = 6; j <= 9; j++) aSink.set(aX0, HEIGHT + 2, aZ0 + j, tAir); // :98-101
+        aSink.set(aX0, HEIGHT + 2, aZ0 + 10, cfoam(8)); // :102
+        aSink.set(aX0 + 1, HEIGHT + 2, aZ0 + 6, cfoam(8)); // :103
+        aSink.set(aX0 + 1, HEIGHT + 2, aZ0 + 9, cfoam(8)); // :104
+
+        aSink.set(aX0, HEIGHT + 3, aZ0 + 5, cfoam(11)); // :106
+        for (int j = 6; j <= 9; j++) aSink.set(aX0, HEIGHT + 3, aZ0 + j, tAir); // :107-110
+        aSink.set(aX0, HEIGHT + 3, aZ0 + 10, cfoam(11)); // :111
+        aSink.set(aX0 + 1, HEIGHT + 3, aZ0 + 6, cfoam(11)); // :112
+        aSink.set(aX0 + 1, HEIGHT + 3, aZ0 + 9, cfoam(11)); // :113
+
+        aSink.set(aX0, HEIGHT + 4, aZ0 + 5, cfoam(8)); // :115
+        for (int j = 6; j <= 9; j++) {
+            aSink.set(aX0, HEIGHT + 4, aZ0 + j, tAir); // :116-119
+            aSink.set(aX0 + 1, HEIGHT + 4, aZ0 + j, cfoam(8)); // :120-123 the full pilaster run
+        }
+        aSink.set(aX0, HEIGHT + 4, aZ0 + 10, cfoam(8)); // :124
+
+        for (int j = 5; j <= 10; j++) aSink.set(aX0, HEIGHT + 5, aZ0 + j, cfoam(8)); // :126-131 the gray lintel
     }
 
     // ------------------------------------------------------------ the place dispatch
@@ -371,6 +424,18 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
 
     public static Block cfoamSlab() {
         return resolve(GT6FoamBlocks.CFOAM_SLAB);
+    }
+
+    /** gt6:cfoam with the upstream dye — the 16-step COLOR property (GT6CFoamFreshBlock.COLOR, the GTSprayCanItem.DYE_IDS order; gray 8, light_gray 7, yellow 11, light_blue 12). */
+    public static BlockState cfoam(int aDyeIndex) {
+        Block tBlock = cfoam();
+        return tBlock == null ? null : tBlock.defaultBlockState().setValue(GT6CFoamFreshBlock.COLOR, aDyeIndex & 15);
+    }
+
+    /** gt6:cfoam_slab with the upstream dye. */
+    public static BlockState cfoamSlab(int aDyeIndex) {
+        Block tBlock = cfoamSlab();
+        return tBlock == null ? null : tBlock.defaultBlockState().setValue(GT6CFoamFreshBlock.COLOR, aDyeIndex & 15);
     }
 
     /** The RailRoad block (gt6:rail_road, the GT6Rails ROAD_BLOCK row). */

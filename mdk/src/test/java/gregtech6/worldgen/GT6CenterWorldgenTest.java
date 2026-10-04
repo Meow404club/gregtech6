@@ -77,6 +77,11 @@ class GT6CenterWorldgenTest {
 		long countWhere(java.util.function.Predicate<Attempt> p) {
 			return rows.stream().filter(p).count();
 		}
+		/** The distinct spots whose WINNING (last) attempt satisfies p — the leg-neutral state pin (GT blocks resolve on the neo leg, null only on forge). */
+		long spotsWhereLast(java.util.function.Predicate<Attempt> p) {
+			return rows.stream().collect(java.util.stream.Collectors.groupingBy(t -> t.x + "," + t.y + "," + t.z))
+					.values().stream().filter(v -> p.test(v.get(v.size() - 1))).count();
+		}
 	}
 
 	static final class TestEnv implements Env {
@@ -456,15 +461,24 @@ class GT6CenterWorldgenTest {
 		assertEquals(256, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 63));
 		assertEquals(256, tRows.countWhere(t -> t.y == 255));
 		assertEquals(0, tRows.countWhere(t -> t.y > 255));
-		// the edge walls (:74-88): west i=0 + north j=0 share the corner column → 31 columns x 14 rows
-		assertEquals(31 * 14, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15
+		// the edge walls (:74-88): west i=0 + north j=0 share the corner column → 31 columns x 14 rows,
+		// every spot double-written (the :71 sky clear passes first, the wall pass overwrites = upstream-faithful)
+		assertEquals(31 * 14 * 2, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15
 				&& ((t.x == 32 && t.z >= -48 && t.z < -32) || (t.z == -48 && t.x >= 32 && t.x < 48))));
+		// the wall wins over the clear — the last write at a rim spot is the wall (null cfoam
+		// on forge, the bound block on neo), never the clear's air
+		assertFalse(tRows.lastAt(32, GT6CenterFeature.HEIGHT + 2, -40).state != null
+				&& tRows.lastAt(32, GT6CenterFeature.HEIGHT + 2, -40).state.isAir());
+		assertFalse(tRows.lastAt(40, GT6CenterFeature.HEIGHT + 15, -48).state != null
+				&& tRows.lastAt(40, GT6CenterFeature.HEIGHT + 15, -48).state.isAir());
 		// the ceiling (:89-93): 225 interior columns — the glow-glass field (i,j outside {1,5,10,14}) = 11x11 = 121,
-		// the cfoam-slab cross = 104 (the offline nulls; the glow glass rides the vanilla stained glass)
+		// the cfoam-slab cross = 104 (winning-state pins: the vanilla glass resolves on both legs,
+		// the GT slab is null on forge / bound on neo — the slab is every non-glass winner)
 		assertEquals(121, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 15
 				&& t.state != null && t.state.is(Blocks.LIGHT_BLUE_STAINED_GLASS)));
-		assertEquals(104, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 15
-				&& t.x >= 33 && t.x < 48 && t.z >= -47 && t.z < -32 && t.state == null));
+		assertEquals(104, tRows.spotsWhereLast(t -> t.y == GT6CenterFeature.HEIGHT + 15
+				&& t.x >= 33 && t.x < 48 && t.z >= -47 && t.z < -32
+				&& (t.state == null || !t.state.is(Blocks.LIGHT_BLUE_STAINED_GLASS))));
 		// the slab cross hits the {1,5,10,14} lanes (x 33/37/42/46 = i, z -47/-43/-38/-34 = j)
 		assertTrue(tRows.at(33, GT6CenterFeature.HEIGHT + 15, -43).size() > 0);
 		// the spawn (:374) — (0, HEIGHT+5, 0) from every box chunk
@@ -481,14 +495,16 @@ class GT6CenterWorldgenTest {
 	@Test
 	void testingShellEdgePatternIsChunkRelative() {
 		GT6CenterFeature.TESTING = true;
-		// chunk (3,-2) — the east+south edge chunk (x 48..63, z -32..-17): the mirrored edges
+		// chunk (3,-2) — the east+south edge chunk (x 48..63, z -32..-17): the mirrored edges,
+		// same double-write shape (the :71 clear + the :75-88 wall pass)
 		Recorder tRows = new Recorder();
 		GT6CenterFeature.dispatch(tRows, new TestEnv(), 3, -2, (cx, cz, ax) -> RoadMode.RING);
-		assertEquals(31 * 14, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15
+		assertEquals(31 * 14 * 2, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15
 				&& ((t.x == 63 && t.z >= -32 && t.z < -16) || (t.z == -17 && t.x >= 48 && t.x < 64))));
-		// no door in the (3,-2) chunk — the west wall x=48 keeps its full wall run at H+2..H+5
-		assertEquals(14, tRows.countWhere(t -> t.x == 48 && t.z == -25
-				&& t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15));
+		assertTrue(tRows.lastAt(63, GT6CenterFeature.HEIGHT + 2, -25).state == null
+				|| !tRows.lastAt(63, GT6CenterFeature.HEIGHT + 2, -25).state.isAir());
+		// no door here — the doorway lives in chunk (2,-2) only, nothing leaks below x=48
+		assertEquals(0, tRows.countWhere(t -> t.x < 48));
 	}
 
 	@Test
