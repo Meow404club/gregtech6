@@ -18,8 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import gregtech6.block.multiblock.GTLargeBoilerBlock;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.registry.GT6Crucibles;
+import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6DynamoHousings;
 import gregtech6.registry.GT6HeatExchangers;
+import gregtech6.registry.GT6LargeMachines;
 import gregtech6.registry.GT6Turbines;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
@@ -175,7 +177,27 @@ public final class GT6MultiblockPreviews {
 		// carries the real carrier state so getWallBlock answers the Dense Tungsten Wall
 		tRows.add(new Entry("large_heat_exchanger", GT6HeatExchangers.HEAT_EXCHANGER_ITEM,
 				GT6MultiblockPreviews::heatExchangerPreview));
-		// --- batch C (processing) tail-appends here; then D1/D2 (special) ---------------
+		// --- batch C (mbpreview-data-c-processing): the processing family ---------------
+		// the twelve W3 large machines (upstream Loader_MultiTileEntities.java:1229-1240):
+		// ONE loop off the registration ladder (GT6LargeMachines.ROWS IS the upstream line
+		// order); the throwaway BE carries its row through the BLOCK STATE (the registry
+		// constructor resolves it, GTLargeMachineBlock.row()) and the binding is
+		// formingPart over the row's own wall/inner/base paths (StructureKind.build) —
+		// zero re-stamp
+		for (GT6LargeMachines.LargeMachineRow tRow : GT6LargeMachines.ROWS) {
+			tRows.add(new Entry(tRow.path(), GT6LargeMachines.ITEMS_BY_PATH.get(tRow.path()),
+					() -> new GT6LargeMachines.GTLargeMachineBlockEntity(BlockPos.ZERO,
+							GT6LargeMachines.BLOCKS_BY_PATH.get(tRow.path()).get().defaultBlockState()).getStructurePattern()));
+		}
+		// the two distillation towers (upstream :1226-1227, the verbatim-clone Cryo shape):
+		// the binding is formingPart with the per-facing hole column (GT6Distillation
+		// getStructurePattern :372) — zero re-stamp
+		for (GT6Distillation.TowerRow tRow : GT6Distillation.ROWS) {
+			tRows.add(new Entry(tRow.path(), GT6Distillation.TOWER_ITEMS_BY_PATH.get(tRow.path()),
+					() -> new GT6Distillation.TileEntityDistillationTower(BlockPos.ZERO,
+							GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get().defaultBlockState()).getStructurePattern()));
+		}
+		// --- then D1/D2 (special) tail-append here --------------------------------------
 		return List.copyOf(tRows);
 	}
 

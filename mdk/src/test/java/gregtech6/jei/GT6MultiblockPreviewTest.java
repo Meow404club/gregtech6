@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,9 @@ import gregtech6.emi.GT6EmiPlugin;
 import gregtech6.emi.GT6MultiblockPreviewEmiCategory;
 import gregtech6.multiblock.GTMultiBlockPattern;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
+import gregtech6.registry.GT6Distillation;
 import gregtech6.registry.GT6DynamoHousings;
+import gregtech6.registry.GT6LargeMachines;
 import gregtech6.registry.GT6Turbines;
 import gregtech6.tileentity.multiblocks.GT6HeatExchangerBlockEntity;
 import gregtech6.tileentity.multiblocks.GTMultiBlockConverter;
@@ -121,8 +124,10 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		// :1248-1252, the 8 crucible tiers :1270-1277) + batch B's ENERGY fourteen (task
 		// mbpreview-data-b-energy): the 4 steam turbine tiers (:1254-1257), the 4 gas
 		// turbine tiers (:1264-1267), the 4 dynamo housings (:1259-1262), the Implosion
-		// Compressor (:1228) and the Large Heat Exchanger (:1245). The pin FAILS until
-		// the batch lands (the red→green drill).
+		// Compressor (:1228) and the Large Heat Exchanger (:1245) + batch C's PROCESSING
+		// fourteen (task mbpreview-data-c-processing): the W3 twelve in the upstream
+		// :1229-1240 line order and the two distillation towers (:1226-1227). The pin
+		// FAILS until the batch lands (the red→green drill).
 		List<String> tNames = GT6MultiblockPreviews.entries().stream()
 				.map(GT6MultiblockPreviews.Entry::name).toList();
 		assertEquals(List.of(
@@ -142,8 +147,14 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 				"large_dynamo_stainless_steel", "large_dynamo_titanium",
 				"large_dynamo_tungstensteel", "large_dynamo_adamantium",
 				"implosion_compressor",
-				"large_heat_exchanger"),
-				tNames, "the row census: coke oven + thermal 13 + energy 14, upstream order");
+				"large_heat_exchanger",
+				// batch C (processing): the W3 twelve — the upstream :1229-1240 line order —
+				// then the two distillation towers (:1226-1227)
+				"large_centrifuge", "large_electrolyzer", "large_coagulator", "large_autoclave",
+				"large_bath", "large_batch_mixer", "large_fermenter", "large_electric_oven",
+				"large_sluice", "large_crusher", "large_shredder", "large_squeezer",
+				"distillation_tower", "cryo_distillation_tower"),
+				tNames, "the row census: coke oven + thermal 13 + energy 14 + processing 14, upstream order");
 		// the wiring face the census CAN see offline: every row carries its suppliers
 		// (lazy handles — resolving them rides the live registry, the class doc)
 		for (GT6MultiblockPreviews.Entry tEntry : GT6MultiblockPreviews.entries()) {
@@ -169,6 +180,7 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 	static BlockEntityType<PreviewConverter> sConverterType;
 	static BlockEntityType<PreviewImplosion> sImplosionType;
 	static BlockEntityType<PreviewHeatExchanger> sHexType;
+	static BlockEntityType<PreviewTower> sTowerType;
 
 	/** The offline boiler — fixture wall/transmitter over the REAL pattern binding. */
 	public static final class PreviewBoiler extends TileEntityLargeBoiler {
@@ -266,6 +278,30 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
+	// ------------------------------------------------------------------
+	// the batch-C processing fixtures (the same recipe): the distillation
+	// tower over the REAL :372 binding (the fixture part identities ride the
+	// two protected hooks — the GT6DistillationTowerTest form). The W3 twelve
+	// need no BE fixture: their family shapes ride the public
+	// StructureKind.build with the fixture part identities (the
+	// GT6LargeMachineRowTest form — the SAME functions the binding composes)
+	// ------------------------------------------------------------------
+
+	/** The offline distillation tower — fixture part identities over the REAL binding. */
+	public static final class PreviewTower extends GT6Distillation.TileEntityDistillationTower {
+		PreviewTower(BlockPos aPos, BlockState aState) {
+			super(sTowerType, aPos, aState);
+		}
+		@Override
+		protected Block getTransmitterBlock() {
+			return Blocks.STONE;
+		}
+		@Override
+		protected Block getPartBlock() {
+			return Blocks.BRICKS;
+		}
+	}
+
 	@BeforeAll
 	@SuppressWarnings("unchecked")
 	static void buildPreviewFixtures() {
@@ -287,6 +323,9 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		BlockEntityType<PreviewHeatExchanger>[] tHex = (BlockEntityType<PreviewHeatExchanger>[]) new BlockEntityType<?>[1];
 		tHex[0] = BlockEntityType.Builder.of(PreviewHeatExchanger::new, Blocks.BRICKS, Blocks.STONE).build(null);
 		sHexType = tHex[0];
+		BlockEntityType<PreviewTower>[] tTower = (BlockEntityType<PreviewTower>[]) new BlockEntityType<?>[1];
+		tTower[0] = BlockEntityType.Builder.of(PreviewTower::new, Blocks.BRICKS, Blocks.STONE).build(null);
+		sTowerType = tTower[0];
 	}
 
 	@Test
@@ -557,6 +596,113 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 		PreviewConverter tFixture = new PreviewConverter(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState(),
 				true, false, 3);
 		tFixture.mFacing = aFacing;
+		return tFixture;
+	}
+
+	// ------------------------------------------------------------------
+	// the batch-C processing pins (task mbpreview-data-c-processing): the
+	// ROWS anti-drift pin, the twelve W3 identity anchors over the REAL
+	// StructureKind builds, and the distillation tower's binding + facing
+	// hole spot check
+	// ------------------------------------------------------------------
+
+	@Test
+	public void processingRowLadderMirrorsTheRegistrationRows() {
+		// acceptance ② — the anti-handwriting-drift pin: the table's batch-C segment IS
+		// the ladder traversal (GT6LargeMachines.ROWS = the upstream :1229-1240 line
+		// order, GT6Distillation.ROWS = :1226-1227), not a transcribed list — a hand-
+		// written row in the table (or a typo) breaks the mirror, the census pin's
+		// hand-written list breaks with it
+		List<String> tLadder = new ArrayList<>();
+		for (GT6LargeMachines.LargeMachineRow tRow : GT6LargeMachines.ROWS) tLadder.add(tRow.path());
+		for (GT6Distillation.TowerRow tRow : GT6Distillation.ROWS) tLadder.add(tRow.path());
+		List<String> tNames = GT6MultiblockPreviews.entries().stream()
+				.map(GT6MultiblockPreviews.Entry::name).toList();
+		assertTrue(tNames.size() >= tLadder.size(), "the table carries the batch-C segment");
+		assertEquals(tLadder, tNames.subList(tNames.size() - tLadder.size(), tNames.size()),
+				"the batch-C tail segment mirrors the registration ladder traversal");
+		assertEquals(12, GT6LargeMachines.ROWS.size(), "the W3 twelve");
+		assertEquals(2, GT6Distillation.ROWS.size(), "the two towers");
+	}
+
+	@Test
+	public void everyProcessingMachineCarriesItsWallAndSpecialIdentity() {
+		// acceptance ③ — per-machine identity anchors: each of the twelve builds its REAL
+		// family geometry (StructureKind.build — the same functions the binding composes;
+		// fixture part identities stand in for the frozen-registry handles, the class
+		// doc): the wall identity renders for ALL twelve, and each row's DECLARED special
+		// blocks ride along — the Fermenter's transmitter base, the Oven's coil ring, the
+		// Sluice trough parts, the Crusher/Shredder wheels/blades (the innerPath rows)
+		int tAnchored = 0, tInner = 0, tBase = 0;
+		for (GT6LargeMachines.LargeMachineRow tRow : GT6LargeMachines.ROWS) {
+			Block tWall = Blocks.BRICKS;
+			Block tInnerBlock = tRow.innerPath() != null ? Blocks.IRON_BLOCK : tWall;
+			Block tBaseBlock = tRow.basePath() != null ? Blocks.STONE : null;
+			GTMultiBlockPattern tPattern = tRow.structure().build(tRow, GT6MultiblockPreviews.DISPLAY_FACING,
+					tWall, tInnerBlock, tInnerBlock, tBaseBlock);
+			Map<Block, Integer> tCounts = GT6MultiblockPreviews.materialCounts(tPattern, CONTROLLER,
+					GT6MultiblockPreviews.DISPLAY_FACING);
+			assertFalse(tCounts.isEmpty(), tRow.path() + " renders a shopping list");
+			assertTrue(tCounts.getOrDefault(tWall, 0) > 0, tRow.path() + " carries its wall identity");
+			if (tRow.innerPath() != null) {
+				assertTrue(tCounts.getOrDefault(Blocks.IRON_BLOCK, 0) > 0, tRow.path() + " carries its inner part");
+				tInner++;
+			}
+			if (tRow.basePath() != null) {
+				assertTrue(tCounts.getOrDefault(Blocks.STONE, 0) > 0, tRow.path() + " carries its transmitter base");
+				tBase++;
+			}
+			tAnchored++;
+		}
+		assertEquals(12, tAnchored, "the W3 twelve each anchored");
+		assertEquals(4, tInner, "the inner-part rows: Oven / Sluice / Crusher / Shredder");
+		assertEquals(1, tBase, "the transmitter-base row: the Fermenter");
+	}
+
+	@Test
+	public void distillationTowerPreviewPinsTheBindingAndTheFacingHole() {
+		// the :1226-1227 direct collects — the binding is formingPart (81 declared cells:
+		// 9 transmitters at y-1 + 72 column cells at y0..y7, GT6Distillation :372), zero
+		// re-stamp. The facing spot-check (the research risk face): the design-1 hole
+		// column rides the +anchor direction, the anchor law paints the controller on the
+		// -anchor cell — collinear opposite, the hole follows the facing
+		PreviewTower tFixture = towerFixture();
+		GTMultiBlockPattern tPattern = tFixture.getStructurePattern();
+		assertEquals(81, tPattern.cells().size(), "9 transmitters + 72 column cells");
+		int tHoles = 0;
+		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
+			assertFalse(tCell.isHollow(), "the tower declares every cell");
+			assertNotNull(tCell.partBlock, "the binding is formingPart (zero re-stamp)");
+			if (tCell.design == 1) tHoles++;
+		}
+		assertEquals(8, tHoles, "the back-centre hole column, one cell per y");
+		for (byte tFacing : new byte[] {2, 3, 4, 5}) {
+			PreviewTower tRotated = towerFixture();
+			tRotated.mFacing = tFacing;
+			GTMultiBlockPattern tRotatedPattern = tRotated.getStructurePattern();
+			Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(tRotatedPattern, CONTROLLER, tFacing);
+			assertEquals(81, tFill.size(), "facing " + tFacing + ": the full column renders");
+			int[] tAnchor = GTMultiBlockPattern.anchorOffset(tFacing);
+			assertEquals(CONTROLLER.defaultBlockState(), tFill.get(new BlockPos(-tAnchor[0], -tAnchor[1], -tAnchor[2])),
+					"facing " + tFacing + ": the anchor law paints the controller");
+			int tHoleAtAnchor = 0;
+			for (GTMultiBlockPattern.Cell tCell : tRotatedPattern.cells()) {
+				if (tCell.design == 1) {
+					assertEquals(tAnchor[0], tCell.x, "facing " + tFacing + ": the hole column rides +anchor x");
+					assertEquals(tAnchor[2], tCell.z, "facing " + tFacing + ": the hole column rides +anchor z");
+					tHoleAtAnchor++;
+				}
+			}
+			assertEquals(8, tHoleAtAnchor, "facing " + tFacing + ": the hole column follows the facing");
+			assertFalse(GT6MultiblockPreviews.materialCounts(tRotatedPattern, CONTROLLER, tFacing).isEmpty(),
+					"facing " + tFacing + ": the shopping list renders");
+		}
+	}
+
+	/** The offline distillation tower fixture at the display facing (north). */
+	private static PreviewTower towerFixture() {
+		PreviewTower tFixture = new PreviewTower(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState());
+		tFixture.mFacing = GT6MultiblockPreviews.DISPLAY_FACING;
 		return tFixture;
 	}
 
