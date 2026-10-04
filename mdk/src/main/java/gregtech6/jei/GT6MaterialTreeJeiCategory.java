@@ -18,6 +18,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 
 import gregtech6.emi.GT6MaterialTreeEmiRecipe;
+import gregtech6.gui.GT6MaterialTreeScreen;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
@@ -172,10 +173,12 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 	}
 
 	/**
-	 * The nav face registration (task nav-m3-jei): one fresh viewport per layout (JEI keeps
-	 * extras alive exactly as long as the layout is on screen — the EMI twin's per-page-open
-	 * closure), mounted as BOTH the draw widget and the input listener, plus the three hover
-	 * hints on the EMI-parity strip cells. The recipe is not touched here (the viewport is
+	 * The extras registration: the M3 nav face (task nav-m3-jei) + the S4 corner entry
+	 * (task nav-s4-tree-screen), one override mounting both — one fresh viewport per
+	 * layout (JEI keeps extras alive exactly as long as the layout is on screen — the EMI
+	 * twin's per-page-open closure), each face BOTH the draw widget and the input listener
+	 * (the one-instance-two-hats shape), plus the four hover hints (the three EMI-parity
+	 * strip cells + the corner cell). The recipe is not touched here (the viewport is
 	 * display-agnostic), so a null display is as good as any.
 	 */
 	@Override
@@ -183,11 +186,16 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 		GT6MaterialTreeJeiNavWidget tNav = new GT6MaterialTreeJeiNavWidget(new MaterialTreeViewport());
 		aBuilder.addWidget(tNav);
 		aBuilder.addGuiEventListener(tNav);
+		GT6MaterialTreeJeiScreenButton tButton = new GT6MaterialTreeJeiScreenButton(aDisplay);
+		aBuilder.addWidget(tButton);
+		aBuilder.addGuiEventListener(tButton);
 		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.BUTTON_X0, GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12)
 				.setTooltip(Component.literal("Zoom in (+)"));
 		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.BUTTON_X0 + GT6MaterialTreeEmiRecipe.BUTTON_PITCH,
 				GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12).setTooltip(Component.literal("Zoom out (-)"));
 		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 2 * GT6MaterialTreeEmiRecipe.BUTTON_PITCH,
 				GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12).setTooltip(Component.literal("Reset view (R/0)"));
+		aBuilder.addTooltipArea(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12)
+				.setTooltip(Component.literal("Open full tree view"));
 	}
 }
