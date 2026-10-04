@@ -1,5 +1,5 @@
 {
- "comment": "task recipe-data-b1 appends its 9 rows after the seated smoke row (the :662-:668 freezing walk + the Chem :208/:214 oxygen legs).",
+ "comment": "task recipe-data-b1 appends its 9 rows after the seated smoke row (the :662-:668 freezing walk + the Chem :208/:214 oxygen legs). task circuit-config-face backfills the selector legs the b1 pour had to drop (JSON v1 had no config face): the six collision-group rows (:662/:663 water250 + :665-:668 water1000, same-input first-hit-wins) now carry the upstream ST.tag(n) config numbers, making all 7 walk rows reachable — Recipe.isSameItemAndTag routes the Damage=n carrier exactly, Recipe.sNotConsumable never consumes it.",
  "recipes": [
   {
    "inputs": [
@@ -24,7 +24,13 @@
    "eut": 16
   },
   {
-   "comment": "Loader_Recipes_Vanilla.java:662 — water x250 -> ice fluid (FL.Ice; the FL.waters walk lands vanilla water only in the port, tMul 1; selector dropped)",
+   "comment": "Loader_Recipes_Vanilla.java:662 — water x250 -> ice fluid (FL.Ice; the FL.waters walk lands vanilla water only in the port, tMul 1; selector leg = config:0, upstream ST.tag(0))",
+   "inputs": [
+    {
+     "item": "gt6:integrated_circuit",
+     "config": 0
+    }
+   ],
    "fluidInputs": [
     {
      "fluid": "minecraft:water",
@@ -41,7 +47,13 @@
    "eut": 16
   },
   {
-   "comment": "Loader_Recipes_Vanilla.java:663 — water x250 -> snowball",
+   "comment": "Loader_Recipes_Vanilla.java:663 — water x250 -> snowball (selector leg = config:1, upstream ST.tag(1))",
+   "inputs": [
+    {
+     "item": "gt6:integrated_circuit",
+     "config": 1
+    }
+   ],
    "fluidInputs": [
     {
      "fluid": "minecraft:water",
@@ -58,7 +70,7 @@
    "eut": 16
   },
   {
-   "comment": "Loader_Recipes_Vanilla.java:664 — water x500 -> snow layer (Blocks.snow_layer -> the 1.20.1 snow identity)",
+   "comment": "Loader_Recipes_Vanilla.java:664 — water x500 -> snow layer (Blocks.snow_layer -> the 1.20.1 snow identity; no config leg: the row is input-unique (no collision group), the card scope backfills only the six first-hit-shadowed rows — the upstream ST.tag(2) gate stays a declared deviation, this row stays reachable circuit-less)",
    "fluidInputs": [
     {
      "fluid": "minecraft:water",
@@ -75,7 +87,13 @@
    "eut": 16
   },
   {
-   "comment": "Loader_Recipes_Vanilla.java:665 — water x1000 -> snow block (Blocks.snow -> the 1.20.1 snow_block identity)",
+   "comment": "Loader_Recipes_Vanilla.java:665 — water x1000 -> snow block (Blocks.snow -> the 1.20.1 snow_block identity; selector leg = config:3, upstream ST.tag(3))",
+   "inputs": [
+    {
+     "item": "gt6:integrated_circuit",
+     "config": 3
+    }
+   ],
    "fluidInputs": [
     {
      "fluid": "minecraft:water",
@@ -92,7 +110,13 @@
    "eut": 16
   },
   {
-   "comment": "Loader_Recipes_Vanilla.java:666 — water x1000 -> ice block",
+   "comment": "Loader_Recipes_Vanilla.java:666 — water x1000 -> ice block (selector leg = config:4, upstream ST.tag(4))",
+   "inputs": [
+    {
+     "item": "gt6:integrated_circuit",
+     "config": 4
+    }
+   ],
    "fluidInputs": [
     {
      "fluid": "minecraft:water",
@@ -109,7 +133,13 @@
    "eut": 16
   },
   {
-   "comment": "Loader_Recipes_Vanilla.java:667 — water x1000 -> snow dust",
+   "comment": "Loader_Recipes_Vanilla.java:667 — water x1000 -> snow dust (selector leg = config:9, upstream ST.tag(9))",
+   "inputs": [
+    {
+     "item": "gt6:integrated_circuit",
+     "config": 9
+    }
+   ],
    "fluidInputs": [
     {
      "fluid": "minecraft:water",
@@ -126,7 +156,13 @@
    "eut": 16
   },
   {
-   "comment": "Loader_Recipes_Vanilla.java:668 — water x1000 -> ice dust",
+   "comment": "Loader_Recipes_Vanilla.java:668 — water x1000 -> ice dust (selector leg = config:8, upstream ST.tag(8))",
+   "inputs": [
+    {
+     "item": "gt6:integrated_circuit",
+     "config": 8
+    }
+   ],
    "fluidInputs": [
     {
      "fluid": "minecraft:water",

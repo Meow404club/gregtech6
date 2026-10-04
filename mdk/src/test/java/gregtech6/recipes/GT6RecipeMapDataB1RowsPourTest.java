@@ -238,6 +238,10 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		for (var tElectrode : gregtech6.registry.GT6Electrodes.ROWS) {
 			tUniverse.add("gt6:" + tElectrode.item().getId().getPath());
 		}
+		// task circuit-config-face — the freezer selector legs ride the GT6Circuits
+		// DeferredRegister item (GT6Circuits.java:71, id gt6:integrated_circuit), a registry
+		// item outside the material-item universe above
+		tUniverse.add("gt6:integrated_circuit");
 		assertTrue(tUniverse.contains("gt6:dust_coal"), "the id universe built (" + tUniverse.size() + " ids)");
 
 		java.util.Set<String> tMissing = new java.util.TreeSet<>();
