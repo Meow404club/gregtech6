@@ -415,6 +415,11 @@ public final class GT6WorldgenDatagen {
         // over one generator body).
         FeatureUtils.register(ctx, GT6Worldgen.BUMBLE_HIVES_CONFIGURED, GT6Features.BUMBLE_HIVES,
                 NoneFeatureConfiguration.INSTANCE);
+        // task worldgen-coltan — the ONE coltan-contention configured feature: the
+        // registered GT6ColtanFeature instance, NoneFeatureConfiguration (the nether-form
+        // shape — the upstream WorldgenColtan constants live in GT6ColtanGenerator).
+        FeatureUtils.register(ctx, GT6Worldgen.COLTAN_CONFIGURED, GT6Features.COLTAN,
+                NoneFeatureConfiguration.INSTANCE);
         // task bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
         // registered GT6BedrockOreFeature instance over the 46-row table (the same tier-a
         // face as the vein/lens tables).
@@ -528,6 +533,13 @@ public final class GT6WorldgenDatagen {
         // their own Y domains). The hive hangs off THREE biome modifiers (the next method).
         PlacementUtils.register(ctx, GT6Worldgen.BUMBLE_HIVES_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.BUMBLE_HIVES_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task worldgen-coltan — the coltan placed feature: Count 1 CONSTANT + InSquare
+        // + BiomeFilter (the bedrock-ore chain shape; the seed-derived center + the ring
+        // gates live in the Feature's coordinate-seeded stream, no Y placement — the
+        // scatter carries its own 20..40 band).
+        PlacementUtils.register(ctx, GT6Worldgen.COLTAN_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.COLTAN_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_CLAY_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_CLAY_CONFIGURED),
@@ -696,6 +708,13 @@ public final class GT6WorldgenDatagen {
         ctx.register(biomeModifierKeyOf("end_bumble_hives"), addFeatures(
                 tBiomes.getOrThrow(BiomeTags.IS_END),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task worldgen-coltan — the coltan biome modifier: EVERY overworld biome
+        // (upstream GEN_OVERWORLD, Loader_Worldgen.java:779 — the small-ore band's
+        // IS_OVERWORLD convention; the Feature routes by the seed-derived center, not by
+        // biome), at the UNDERGROUND_ORES step (the small-ore pass the rings ride).
+        ctx.register(biomeModifierKeyOf("coltan"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.COLTAN_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         // task nether-lens-end-yield — the END large-vein modifier over the SAME
         // gt6:large_veins placed feature (the Feature's biome probe picks the ORE_END

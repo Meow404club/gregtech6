@@ -166,6 +166,14 @@ public final class GT6Features {
      */
     public static final GT6HiveFeature BUMBLE_HIVES = registerForm("bumble_hives", new GT6HiveFeature());
 
+    /**
+     * The coltan-contention feature (task worldgen-coltan) — ONE registration row
+     * {@code gt6:coltan}, NoneFeatureConfiguration (the nether-form shape: the upstream
+     * WorldgenColtan constants live in GT6ColtanGenerator, not a config surface). The
+     * configured/placed/biome-modifier rows hang off it in GT6WorldgenDatagen.
+     */
+    public static final GT6ColtanFeature COLTAN = registerForm("coltan", new GT6ColtanFeature());
+
     private static <T extends Feature<?>> T registerForm(String aPath, T aFeature) {
         FEATURES.register(aPath, () -> aFeature);
         return aFeature;
