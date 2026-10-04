@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -257,6 +258,64 @@ public class GT6CalendarsTest {
 				gregtech6.registry.GTWireSpecs.Row.Family.ELECTRIC, 1, false, false).getContents()).getArgs()[1];
 		assertEquals("Pyrite", tFooled.getString());
 		assertFalse(tFooled.getContents() instanceof TranslatableContents);
+	}
+
+	// ---------------------------------------------------------------------------
+	// The month binding + the maple season table (GT_API_Proxy_Client.java:144-167)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void monthBindsOnceAtClassLoad() {
+		// the static init bound the wall clock beside the flags (the :144 new Date() face —
+		// computed once per launch, never refreshed; same declared semantics as flagsBindOnceAtClassLoad)
+		assertEquals(GT6Calendars.computeMonth(System.currentTimeMillis()), GT6Calendars.sMonth);
+		assertTrue(GT6Calendars.sMonth >= 1 && GT6Calendars.sMonth <= 12);
+	}
+
+	@Test
+	public void computeMonthReadsTheCalendarMonth() {
+		assertEquals(1, GT6Calendars.computeMonth(noon(2026, 1, 15)));
+		assertEquals(6, GT6Calendars.computeMonth(noon(2026, 6, 20)));
+		assertEquals(9, GT6Calendars.computeMonth(noon(2026, 9, 30)));
+		assertEquals(12, GT6Calendars.computeMonth(noon(2026, 12, 5)));
+	}
+
+	@Test
+	public void mapleSeasonTableIsTheUpstreamSwitch() {
+		// GT_API_Proxy_Client.java:146-167 verbatim: case 1/12 BROWN, 9 YELLOW, 10 ORANGE,
+		// 11 RED; every other month falls through the switch (the pre-coloured base art stays)
+		assertEquals(GT6Calendars.MapleSeason.BROWN, GT6Calendars.mapleSeasonOfMonth(1));
+		assertEquals(GT6Calendars.MapleSeason.NONE, GT6Calendars.mapleSeasonOfMonth(2));
+		assertEquals(GT6Calendars.MapleSeason.NONE, GT6Calendars.mapleSeasonOfMonth(8));
+		assertEquals(GT6Calendars.MapleSeason.YELLOW, GT6Calendars.mapleSeasonOfMonth(9));
+		assertEquals(GT6Calendars.MapleSeason.ORANGE, GT6Calendars.mapleSeasonOfMonth(10));
+		assertEquals(GT6Calendars.MapleSeason.RED, GT6Calendars.mapleSeasonOfMonth(11));
+		assertEquals(GT6Calendars.MapleSeason.BROWN, GT6Calendars.mapleSeasonOfMonth(12));
+	}
+
+	// ---------------------------------------------------------------------------
+	// The RAINBOW_SLOW tooltip cycle (GT_API_Proxy_Client.java:571-582)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void rainbowSlowCyclesTheTenUpstreamColors() {
+		// CLIENT_TIME steps 25 ticks per color = 1.25 s (the 1.7.10 client tick), full cycle 12.5 s;
+		// the LH.Chat:687-701 constants map onto ChatFormatting GOLD/AQUA/DARK_AQUA/DARK_BLUE/
+		// DARK_PURPLE/LIGHT_PURPLE verbatim
+		long t0 = 1_700_000_000_000L;
+		assertEquals(ChatFormatting.RED, GT6Calendars.rainbowSlow(t0), ":572 case 0");
+		assertEquals(ChatFormatting.GOLD, GT6Calendars.rainbowSlow(t0 + 1250), ":573 ORANGE=GOLD");
+		assertEquals(ChatFormatting.YELLOW, GT6Calendars.rainbowSlow(t0 + 2500), ":574");
+		assertEquals(ChatFormatting.GREEN, GT6Calendars.rainbowSlow(t0 + 3750), ":575");
+		assertEquals(ChatFormatting.AQUA, GT6Calendars.rainbowSlow(t0 + 5000), ":576 CYAN=AQUA");
+		assertEquals(ChatFormatting.DARK_AQUA, GT6Calendars.rainbowSlow(t0 + 6250), ":577 DCYAN");
+		assertEquals(ChatFormatting.DARK_BLUE, GT6Calendars.rainbowSlow(t0 + 7500), ":578 DBLUE");
+		assertEquals(ChatFormatting.BLUE, GT6Calendars.rainbowSlow(t0 + 8750), ":579");
+		assertEquals(ChatFormatting.DARK_PURPLE, GT6Calendars.rainbowSlow(t0 + 10000), ":580 PURPLE");
+		assertEquals(ChatFormatting.LIGHT_PURPLE, GT6Calendars.rainbowSlow(t0 + 11250), ":581 PINK");
+		assertEquals(ChatFormatting.RED, GT6Calendars.rainbowSlow(t0 + 12500), "the cycle wraps at 250 ticks");
+		// mid-step holds the same color (a switch on the 25-tick slot, not a smooth lerp)
+		assertEquals(GT6Calendars.rainbowSlow(t0), GT6Calendars.rainbowSlow(t0 + 1249));
 	}
 
 	// ---------------------------------------------------------------------------
