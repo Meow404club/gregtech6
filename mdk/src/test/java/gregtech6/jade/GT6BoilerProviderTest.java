@@ -2,17 +2,17 @@ package gregtech6.jade;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,6 +23,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import snownee.jade.api.view.ViewGroup;
 
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
@@ -38,15 +40,20 @@ import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
  * (the GT6MachineProviderTest posture), and so is the {@code showDetails()} gate and the
  * bar element assembly.
  *
- * <p>The r8 pin set (task jade-boiler-burningbox grows the fluid-identity face): the EIGHT
+ * <p>The r8 pin set (task jade-boiler-burningbox grows the fluid-identity face): the NINE
  * wire keys survive verbatim plus the KEY_WATER_FLUID registry-name string (written only
- * when the tank holds a fluid — a dry tank shows the Empty word), the four-slot water bar
+ * when the tank holds a fluid), the four-slot water bar
  * template LABEL / X / Y (Z%) with the label = the actual fluid's display name, the
  * three-slot bar template X / Y (Z%) on heat/steam, the
  * half-gate pair and the no-water warning RETIRED (the user ruling: the red empty bar IS
  * the warning face — the row itself stays unstyled) and the sneak band shrunk to the
- * calcification face only. The tooltip language VALUES (en/zh) are pinned by the datagen
- * faces + runData, not here.
+ * calcification face only. Task boiler-jade-display grows the production face: the rate
+ * key (the current steam production, the tick conversion formula mirrored) and the
+ * efficiency key (the ten-thousandths heat-to-steam utilization as a percent), and
+ * REVERSES the empty-water face per the newer user ruling (空就是空): a DRY tank rides NO
+ * water row at all — the "Empty" word survives only as the unresolvable-identity label
+ * fallback (the burningbox garbage pin). The tooltip language VALUES (en/zh) are pinned
+ * by the datagen faces + runData, not here.
  */
 public class GT6BoilerProviderTest extends GTOfflineTestBase {
 
@@ -108,7 +115,7 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 	// ------------------------------------------------------------------------------------
 
 	@Test
-	public void tankBoilerFieldsRideTheEightKeys() {
+	public void tankBoilerFieldsRideTheNineKeys() {
 		FixtureTankBoiler tBoiler = new FixtureTankBoiler(POS, Blocks.STONE.defaultBlockState());
 		tBoiler.mEnergy = 320000;
 		tBoiler.mOutput = 64; // the :78 re-derivation pairs the steam tank with the HU ceiling
@@ -125,6 +132,9 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		assertEquals(9400L, tTag.getShort(GT6BoilerProvider.KEY_EFFICIENCY));
 		assertEquals(2000L, tTag.getLong(GT6BoilerProvider.KEY_WATER));
 		assertEquals(4000L, tTag.getLong(GT6BoilerProvider.KEY_WATER_MAX));
+		// the production face (task boiler-jade-display ③): min(640000/2560=250,
+		// min(320000/80=4000, 2000)) = 250 conversions x 9400/10000 x 160 mB = 37600 mB/t
+		assertEquals(37600L, tTag.getLong(GT6BoilerProvider.KEY_RATE), "the tick conversion formula mirrored server-side");
 		// the fluid identity face (task jade-boiler-burningbox): a filled water tank rides
 		// its registry name over the wire
 		assertEquals("minecraft:water", tTag.getString(GT6BoilerProvider.KEY_WATER_FLUID));
@@ -132,7 +142,7 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		// the key faces: longs except the ten-thousandths efficiency (short)
 		for (String tKey : Arrays.asList(GT6BoilerProvider.KEY_HEAT, GT6BoilerProvider.KEY_HEAT_MAX,
 				GT6BoilerProvider.KEY_DEMAND, GT6BoilerProvider.KEY_STEAM, GT6BoilerProvider.KEY_STEAM_MAX,
-				GT6BoilerProvider.KEY_WATER, GT6BoilerProvider.KEY_WATER_MAX)) {
+				GT6BoilerProvider.KEY_WATER, GT6BoilerProvider.KEY_WATER_MAX, GT6BoilerProvider.KEY_RATE)) {
 			assertEquals(Tag.TAG_LONG, tTag.getTagType(tKey), tKey + " rides the long face");
 		}
 		assertEquals(Tag.TAG_SHORT, tTag.getTagType(GT6BoilerProvider.KEY_EFFICIENCY));
@@ -143,20 +153,25 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		FixtureLargeBoiler tBoiler = new FixtureLargeBoiler(POS, Blocks.BRICKS.defaultBlockState());
 		assertEquals(20480000L, tBoiler.mCapacity, "the class-default row (2048 SU → 20480000)");
 		tBoiler.mEnergy = 5000000;
+		tBoiler.mTanks[0].add(2000, new FluidStack(Fluids.WATER, 2000));
 		CompoundTag tTag = syncOf(tBoiler);
 		assertEquals(5000000L, tTag.getLong(GT6BoilerProvider.KEY_HEAT));
 		assertEquals(20480000L, tTag.getLong(GT6BoilerProvider.KEY_HEAT_MAX));
 		assertEquals(1024L, tTag.getLong(GT6BoilerProvider.KEY_DEMAND), "2048/2 — the :371-380 demand");
 		assertEquals(128000L, tTag.getLong(GT6BoilerProvider.KEY_WATER_MAX));
 		assertEquals(10000L, tTag.getShort(GT6BoilerProvider.KEY_EFFICIENCY), "the 10000 clean default");
+		// the rate rides the SAME formula in both BEs (the tick bodies are verbatim twins):
+		// min(tank 2048000/2560=800, min(5000000/80=62500, 2000)) = 800 conversions x 160 mB
+		// — the pre-row field-init tank (the foreign-block fixture never ran setOutput),
+		// which is the exact capacity face the tick itself reads (:392)
+		assertEquals(128000L, tTag.getLong(GT6BoilerProvider.KEY_RATE));
 	}
 
 	@Test
 	public void theTankKeysStayOnTheDrainedBoiler() {
-		// the r8 "always visible" ruling: the water/steam bars render for EVERY boiler, so
-		// the tag carries the tank faces even at zero content (the drained boiler still
-		// shows the red bar — the warning face) — and the FLUID IDENTITY KEY STAYS ABSENT
-		// (an empty tank = the Empty/空罐 label word, task jade-boiler-burningbox).
+		// the tag carries the tank faces even at zero content (the bar faces when filled),
+		// and the FLUID IDENTITY KEY STAYS ABSENT on a dry tank — task boiler-jade-display ①
+		// (空就是空): the dry tank rides NO water row at all (the empty-word face retired).
 		FixtureTankBoiler tBoiler = new FixtureTankBoiler(POS, Blocks.STONE.defaultBlockState());
 		CompoundTag tTag = syncOf(tBoiler);
 		assertTrue(tTag.contains(GT6BoilerProvider.KEY_WATER));
@@ -164,14 +179,17 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		assertTrue(tTag.contains(GT6BoilerProvider.KEY_STEAM));
 		assertTrue(tTag.contains(GT6BoilerProvider.KEY_STEAM_MAX));
 		assertFalse(tTag.contains(GT6BoilerProvider.KEY_WATER_FLUID),
-				"a dry tank writes no fluid identity — the client shows the empty word");
-		assertEquals(0L, tTag.getLong(GT6BoilerProvider.KEY_WATER));
-		// the empty-label row: the four-slot template with the empty word in the label slot
-		TranslatableContents tEmpty = (TranslatableContents) GT6BoilerProvider
-				.waterLine(Component.translatable(GT6BoilerProvider.LANG_WATER_EMPTY), 0, 4000).getContents();
-		assertEquals(GT6BoilerProvider.LANG_WATER, tEmpty.getKey());
-		assertEquals(GT6BoilerProvider.LANG_WATER_EMPTY,
-				((TranslatableContents) ((Component) tEmpty.getArgs()[0]).getContents()).getKey());
+				"a dry tank writes no fluid identity");
+		assertFalse(GT6BoilerProvider.waterRowVisible(tTag),
+				"empty = empty — the row gate answers false on the drained boiler");
+		// the filled tank opens the gate (the two facts the gate reads are coupled server-side)
+		tBoiler.mTanks[0].add(2000, new FluidStack(Fluids.WATER, 2000));
+		assertTrue(GT6BoilerProvider.waterRowVisible(syncOf(tBoiler)));
+		// defensive: an amount without an identity (cannot happen through writeBoilerData)
+		// stays hidden rather than rendering a labelless bar
+		CompoundTag tIdless = new CompoundTag();
+		tIdless.putLong(GT6BoilerProvider.KEY_WATER, 2000);
+		assertFalse(GT6BoilerProvider.waterRowVisible(tIdless));
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -201,10 +219,9 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 
 	@Test
 	public void waterAndSteamLinesAreTheFourSlotTankFaces() {
-		// the water bar (always visible — upgraded from the sneak band): the row itself is
-		// UNSTYLED even when empty (the alarm face moved onto the red bar element); the
-		// LABEL SLOT carries the resolved fluid name (task jade-boiler-burningbox — the
-		// hardcoded "Water" retired)
+		// the water bar (the filled-tank face — task boiler-jade-display ① hides it when
+		// empty): the row itself is UNSTYLED (the label slot carries the resolved fluid
+		// name, task jade-boiler-burningbox — the hardcoded "Water" retired)
 		Component tLabel = Component.translatable("test.water.label");
 		TranslatableContents tWater = (TranslatableContents) GT6BoilerProvider.waterLine(tLabel, 2000, 4000).getContents();
 		assertEquals(GT6BoilerProvider.LANG_WATER, tWater.getKey());
@@ -213,9 +230,6 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 		assertEquals(2000L, tWater.getArgs()[1]);
 		assertEquals(4000L, tWater.getArgs()[2]);
 		assertEquals(50L, tWater.getArgs()[3]);
-		Component tEmptyWater = GT6BoilerProvider.waterLine(Component.translatable(GT6BoilerProvider.LANG_WATER_EMPTY), 0, 4000);
-		assertFalse(TextColor.fromLegacyFormat(ChatFormatting.RED).equals(tEmptyWater.getStyle().getColor()),
-				"the empty-tank red lives on the BAR color, the row stays plain");
 		// the steam bar (three slots — the steam tank has no identity face)
 		TranslatableContents tSteam = (TranslatableContents) GT6BoilerProvider.steamLine(160000, 640000).getContents();
 		assertEquals(GT6BoilerProvider.LANG_STEAM, tSteam.getKey());
@@ -272,5 +286,72 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 				((TranslatableContents) GT6BoilerProvider.scaleLine(10000).getContents()).getKey());
 		assertEquals(0, ((TranslatableContents) GT6BoilerProvider.scaleLine(10000).getContents()).getArgs().length);
 		assertEquals(50, ((TranslatableContents) GT6BoilerProvider.scaleLine(5000).getContents()).getArgs()[0]);
+	}
+
+	// ------------------------------------------------------------------------------------
+	// group ⑤ the production face (task boiler-jade-display ③④ — rate + efficiency)
+	// ------------------------------------------------------------------------------------
+
+	@Test
+	public void steamRateMirrorsTheTickConversionFormula() {
+		// the BE tick pure mirror (:256-265 tank / :392-401 large — verbatim twins):
+		// conversions = min(steamTank/2560, min(heat/80, water)); rate = units(conversions,
+		// 10000, eff*160) — 80 HU + 1 L water -> 160 mB steam at full efficiency.
+		assertEquals(40000L, GT6BoilerProvider.steamRate(320000, 640000, 2000, 10000),
+				"min(250, min(4000, 2000)) = 250 conversions x 160 mB at full efficiency");
+		assertEquals(37600L, GT6BoilerProvider.steamRate(320000, 640000, 2000, 9400),
+				"the scale factor rides the same units() chain as the tick body");
+		assertEquals(0L, GT6BoilerProvider.steamRate(0, 640000, 2000, 10000), "no heat = no production");
+		assertEquals(0L, GT6BoilerProvider.steamRate(320000, 640000, 0, 10000), "no water = no production");
+		assertEquals(0L, GT6BoilerProvider.steamRate(320000, 640000, 2000, 0),
+				"a zero efficiency answers zero, never a crash");
+		// the 2560 ceiling arm: a small steam tank caps the conversions before the heat does
+		assertEquals(16000L, GT6BoilerProvider.steamRate(Long.MAX_VALUE / 4, 256000, Long.MAX_VALUE / 4, 10000),
+				"256000/2560 = 100 conversions -> 16000 mB");
+	}
+
+	@Test
+	public void rateLineCarriesTheCurrentProductionValue() {
+		TranslatableContents tContents = (TranslatableContents) GT6BoilerProvider.rateLine(37600).getContents();
+		assertEquals(GT6BoilerProvider.LANG_RATE, tContents.getKey());
+		assertEquals(1, tContents.getArgs().length);
+		assertEquals(37600L, tContents.getArgs()[0]);
+	}
+
+	@Test
+	public void efficiencyLineIsTheHeatUtilizationPercent() {
+		// the display convention (declared in the provider javadoc): mEfficiency is the
+		// ten-thousandths heat-to-steam utilization (the scale-decay face, 5000 floor),
+		// shown as a plain percent — 9400 -> 94%, 5000 -> 50%, pristine -> 100%.
+		TranslatableContents tContents = (TranslatableContents) GT6BoilerProvider.efficiencyLine(9400).getContents();
+		assertEquals(GT6BoilerProvider.LANG_EFFICIENCY, tContents.getKey());
+		assertEquals(1, tContents.getArgs().length);
+		assertEquals(94, tContents.getArgs()[0]);
+		assertEquals(50, ((TranslatableContents) GT6BoilerProvider.efficiencyLine(5000).getContents()).getArgs()[0]);
+		assertEquals(100, ((TranslatableContents) GT6BoilerProvider.efficiencyLine(10000).getContents()).getArgs()[0]);
+	}
+
+	// ------------------------------------------------------------------------------------
+	// group ⑥ the native universal fluid face ban (task boiler-jade-display ②)
+	// ------------------------------------------------------------------------------------
+
+	@Test
+	public void theNativeUniversalFluidFaceIsBannedOnBoilers() {
+		// both boiler BEs expose the FLUID_HANDLER capability (GTBoilerTankBlockEntity
+		// :492-502 / TileEntityLargeBoiler :780-787), so Jade's builtin universal
+		// FluidStorageProvider renders their tanks a SECOND time beside the GT rows — the
+		// user-visible double steam tank. The ban = a non-null EMPTY group list: the
+		// universal chain is first-non-null-wins-then-stop (jade-1201
+		// FluidStorageProvider.putData — ifnull->next / return-after-first-non-null
+		// bytecode; jade-1211 CommonProxy.getServerExtensionData same shape), and the
+		// client renders nothing for empty groups.
+		FixtureTankBoiler tTank = new FixtureTankBoiler(POS, Blocks.STONE.defaultBlockState());
+		List<ViewGroup<CompoundTag>> tTankGroups = GT6FluidProvider.groupsOfTarget(tTank);
+		assertNotNull(tTankGroups, "null hands the face back to Jade's builtin capability provider — ban failed");
+		assertTrue(tTankGroups.isEmpty(), "the empty list short-circuits the builtin and renders nothing");
+		FixtureLargeBoiler tLarge = new FixtureLargeBoiler(POS, Blocks.BRICKS.defaultBlockState());
+		List<ViewGroup<CompoundTag>> tLargeGroups = GT6FluidProvider.groupsOfTarget(tLarge);
+		assertNotNull(tLargeGroups, "the large boiler arm is banned the same way");
+		assertTrue(tLargeGroups.isEmpty());
 	}
 }

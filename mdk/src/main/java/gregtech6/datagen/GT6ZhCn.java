@@ -639,9 +639,12 @@ public class GT6ZhCn extends LanguageProvider {
 
 	/**
 	 * The boiler Jade face zh units (task jade-boiler, jade-redesign-core reface —
-	 * 6 hand rows — the addMachineJadeUnits shape): the heat/demand lines, the WATER and
-	 * STEAM tank bars (always visible now — the empty-tank warning moved onto the red
-	 * bar face) and the sneak-detail calcification pair. The two output-gate states and
+	 * 6 hand rows, task jade-boiler-burningbox grows the water band, task
+	 * boiler-jade-display grows the production band to 9 — the addMachineJadeUnits shape):
+	 * the heat/demand lines, the RATE (蒸汽产量 mB/t) and EFFICIENCY (效率 %) lines, the
+	 * WATER and STEAM tank bars (the water bar renders only on a filled tank — the
+	 * empty-row face retired, the 空就是空 ruling) and the sneak-detail calcification pair.
+	 * The two output-gate states and
 	 * the no-water warning retired (the user ruling). No dump face exists (upstream has
 	 * zero WAILA integration), so these ride the reference table's hand layer via
 	 * {@link #addDirect} — the tsv rows, this walk and the datagen output land in the
@@ -651,11 +654,13 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addBoilerJadeUnits() {
 		addDirect(GT6BoilerProvider.LANG_HEAT);
 		addDirect(GT6BoilerProvider.LANG_DEMAND);
+		addDirect(GT6BoilerProvider.LANG_EFFICIENCY); // task boiler-jade-display — 效率: %s%%
 		addDirect(GT6BoilerProvider.LANG_STEAM);
+		addDirect(GT6BoilerProvider.LANG_RATE);       // task boiler-jade-display — 蒸汽产量: %s mB/t
 		addDirect(GT6BoilerProvider.LANG_SCALE);
 		addDirect(GT6BoilerProvider.LANG_SCALE_CLEAN);
 		addDirect(GT6BoilerProvider.LANG_WATER);
-		addDirect(GT6BoilerProvider.LANG_WATER_EMPTY); // task jade-boiler-burningbox — the empty-water face
+		addDirect(GT6BoilerProvider.LANG_WATER_EMPTY); // the unresolvable-identity fallback (the empty ROW retired, boiler-jade-display ①)
 	}
 
 	/**

@@ -28,7 +28,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.tileentity.TileEntityBase01Root;
+import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
+import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
 
 /**
  * GT6 机器流体段 Jade universal provider（task jade-universal-fluid，升级 P22 v1 b9b0b23f）：
@@ -161,13 +163,24 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	*///?}
 
 	/**
-	 * 服务端取数语义（与 v1 共用，离线单测面）：单分支（类 doc C-1，tasks.p22-arch-feature-wave——
-	 * 多方块 TileEntityBase10MultiBlockMachine 全文 168 行零罐字段）——只有
-	 * {@link TileEntityBasicMachine} 带罐面；非机器返回 null（不短路 Jade 默认 provider）。
+	 * 服务端取数语义（与 v1 共用，离线单测面）：锅炉族 ban（task boiler-jade-display ②）→
+	 * BasicMachine 单分支（类 doc C-1，tasks.p22-arch-feature-wave——多方块
+	 * TileEntityBase10MultiBlockMachine 全文 168 行零罐字段）→ 其余 null。
+	 * <b>锅炉族 ban</b>：双锅炉 BE 暴露 FLUID_HANDLER capability（GTBoilerTankBlockEntity
+	 * :492-502 / TileEntityLargeBoiler :780-787），Jade 自家 universal capability 面会把
+	 * 水/汽罐渲染在 {@link GT6BoilerProvider} 自有行旁边 = 用户实机报的「两个蒸汽罐」——
+	 * 这里回答<b>非 null 空表</b>把脸抢死：universal 链服务端是「按 priority 序逐 provider
+	 * 试、首个非 null 赢并短路」（jade-1201 addon/universal/FluidStorageProvider.putData
+	 * 字节码 ifnull→下一个 / 首个非 null 后 return；jade-1211 util/CommonProxy
+	 * getServerExtensionData 同形——双腿 javap 实证），空表客户端渲染零行（jade-1201 append
+	 * isEmpty→return）——Jade 原生脸死，GT 自有行留。null（不短路）仅对非机器非锅炉。
 	 * 数据源 = {@code mTanksInput}/{@code mTanksOutput} public final
 	 * （TileEntityBasicMachine.java:285/:287），只读公开字段，禁改 BE（铁律）。
 	 */
 	public static List<ViewGroup<CompoundTag>> groupsOfTarget(Object aTarget) {
+		if (aTarget instanceof GTBoilerTankBlockEntity || aTarget instanceof TileEntityLargeBoiler) {
+			return List.of(); // boiler-jade-display ②：非 null 空表 = 抢死 universal 脸 + 零渲染
+		}
 		if (!(aTarget instanceof TileEntityBasicMachine aMachine)) {
 			return null;
 		}
