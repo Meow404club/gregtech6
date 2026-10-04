@@ -59,7 +59,7 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  *
  * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16, extended 2026-09-28 by
  * task a-ore-axis-extension and task b-gem-pool-extension, then 2026-10-05 by tasks
- * worldgen-edge-ores-b2-orphans and worldgen-edge-ores-b1-vein-axis): the upstream always-on
+ * worldgen-edge-ores-b2-orphans, worldgen-edge-ores-b1-vein-axis and worldgen-axis-batch2): the upstream always-on
  * worldgen small-ore materials
  * (Loader_Worldgen.java:800-852 + :875 — {@link #WORLDGEN_ORES}) UNION the stone-layer
  * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION
@@ -70,8 +70,8 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * passing the authoritative {@link OP#ore}
  * {@code isGeneratingItem} filter (OP.java:1098 setCondition(ORES); the same
  * per-material criterion as the GTMaterialItems.java:146 item walk), UNIFIED across
- * all 26 families and all three forms. M = 53 + 13 + 10 + 56 + 22 = 154 distinct materials; total
- * blocks = 74 x 154 = 11384, pinned by
+ * all 26 families and all three forms. M = 53 + 13 + 15 + 56 + 22 = 159 distinct materials; total
+ * blocks = 74 x 159 = 11766, pinned by
  * GT6OreBlocksRegistrationTest. (The bare isGeneratingItem walk over the whole
  * MATERIAL_ARRAY measures 618 — nine tenths of it materials no ore placement ever
  * references; that over-registration face was REJECTED in review and removed.)
@@ -418,13 +418,28 @@ public final class GT6OreBlocks {
      * never deep-mirrored. Unlike {@link #STONE_LAYER_ORES} these DO gain small-ore
      * rows ({@code GTOreWorldgen.ROWS}, 10 overworld pairs).
      *
+     * <p>worldgen-axis-batch2 appended the 5 fuel/evaporite/quartz anchors (axis
+     * 132→137): Bauxite (:84, the EtFu deepslate-list {@code StoneLayerOres} row whose
+     * OWN band 16-32 rides the call; the EtFu host block + BIOMES_PLAINS gates are the
+     * b2 biome-gate grammar, not carried), Lignite (:371 stratum, boundary band
+     * :486), Oilshale (:491 boundary band on its stratum), Gypsum (:532 boundary band
+     * on its stratum) and MilkyQuartz (:901, the ore.large.quartz LENS row whose band
+     * 40-80 rides the call — the lens face itself revives through the axis, the row is
+     * the scatter face). The strata carry no Y numbers of their own (depth-driven),
+     * so the three stratum anchors cite their layer's boundary call verbatim — the
+     * same lines that fed b2's amber/mirabilite/trona rows. Unlike
+     * {@link #STONE_LAYER_ORES} these DO gain small-ore rows (5 more overworld pairs).
+     *
      * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
      */
     public static final List<Supplier<OreDictMaterial>> EDGE_ORES = List.of(
         () -> MT.AmberDominican,            () -> MT.OREMATS.Perlite,      () -> MT.OREMATS.Diatomite,     // :484/:497/:508
         () -> MT.OREMATS.Alunite,           () -> MT.OREMATS.Mirabilite,   () -> MT.OREMATS.Trona,         // :530/:533/:534
         () -> MT.OREMATS.Vermiculite,       () -> MT.OREMATS.Mica,         () -> MT.Biotite,               // :548/:552/:553
-        () -> MT.DiamondPink                                                                                              // :563
+        () -> MT.DiamondPink,                                                                                             // :563
+        // -- worldgen-axis-batch2: the 5 fuel/evaporite/quartz anchors, anchor-line order (:84/:371-486/:491/:532/:901)
+        () -> MT.OREMATS.Bauxite,           () -> MT.Lignite,              () -> MT.Oilshale,              // :84 stone-layer row / :371 stratum / :491 stratum
+        () -> MT.Gypsum,                    () -> MT.MilkyQuartz                                                                           // :532 stratum host / :901 lens
     );
 
     /**
@@ -531,19 +546,21 @@ public final class GT6OreBlocks {
 
     /**
      * The material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * a-ore-axis-extension, b-gem-pool-extension, worldgen-edge-ores-b2-orphans and
-     * worldgen-edge-ores-b1-vein-axis): the upstream always-on worldgen small-ore
+     * a-ore-axis-extension, b-gem-pool-extension, worldgen-edge-ores-b2-orphans,
+     * worldgen-edge-ores-b1-vein-axis and worldgen-axis-batch2): the upstream always-on
+     * worldgen small-ore
      * materials ({@link #WORLDGEN_ORES},
      * Loader_Worldgen.java:800-852 + :875) UNION the stone-layer companion materials
      * ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION the stone-layer
-     * EDGE orphan materials ({@link #EDGE_ORES}, the boundary-blob route B) UNION the
+     * EDGE orphan materials ({@link #EDGE_ORES}, the boundary-blob route B — 10 since b2,
+     * +5 stone-layer/lens anchors since batch2) UNION the
      * RANDOM_SMALL_GEM_ORE pool gap ({@link #GEM_POOL_ORES}, the r7-b second seam)
      * UNION the large-vein compensation materials ({@link #LARGE_VEIN_ORES}, the B1
      * third seam), each passing the authoritative oredict filter {@link OP#ore}
      * {@code isGeneratingItem} (OP.java:1098 setCondition(ORES) — the same
      * per-material criterion as the GTMaterialItems.java:146 item walk, whose
      * resolve/dedup shape this walk mirrors), unified across all families and forms.
-     * M = 53 + 13 + 10 + 56 + 22 = 154, total 74 x 154 = 11384, pinned by
+     * M = 53 + 13 + 15 + 56 + 22 = 159, total 74 x 159 = 11766, pinned by
      * GT6OreBlocksRegistrationTest.
      *
      * <p>mdh-5 axis-takeover census (task mdh-5-block-worldgen-axis, CLOSED — ruling (a),

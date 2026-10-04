@@ -58,8 +58,8 @@ class GT6VeinAxisExtensionTest {
         "Wulfenite", "Molybdenite", "Molybdenum", "Powellite",              // :905 molybdenum top/bottom/between/spread
         "Rutile", "Zircon");                                                // :911 titanium top+bottom/between (MT.TiO2)
 
-    /** The axis M after the extension: 154 = 122 (53 worldgen + 13 stone-layer + 56 gem-pool) + 22 large-vein, with the 10 worldgen-edge-ores-b2 EDGE orphans riding between STONE_LAYER and GEM_POOL (review-seat union rebase). */
-    private static final int PINNED_M = 154;
+    /** The axis M after the extension: 157 = 122 (53 worldgen + 13 stone-layer + 56 gem-pool) + 22 large-vein, with the EDGE band riding between STONE_LAYER and GEM_POOL (10 worldgen-edge-ores-b2 orphans + 5 worldgen-axis-batch2 anchors — the anchors dedup to +3: Bauxite/MilkyQuartz already rode the B1 vein faces) (review-seat union rebase). */
+    private static final int PINNED_M = 157;
 
     @BeforeAll
     static void boot() {
@@ -133,12 +133,12 @@ class GT6VeinAxisExtensionTest {
 
         // THE revival face: every pinned slot passes the gate (zero row edits — the gate
         // itself moved). This is the assertion that is RED before the axis extension.
-        // The asbestos row rides it with THREE of four slots: its Gypsum between slot
-        // (:893) stays OUTSIDE the axis by the B1 ruling — the row already drew (Chromite/
-        // Asbestos on the axis) and Gypsum's only revival faces are the mod-gated small-ore
-        // pool (upstream :872 MD.IHL), another card's territory. The boundary pin:
-        assertTrue(!GT6VeinGenerator.valid(mat("Gypsum")),
-                "the B1 boundary: Gypsum stays outside the axis (the asbestos row draws via Chromite/Talc/Asbestos)");
+        // The asbestos row rides it with all FOUR slots now: the B1 "Gypsum stays outside"
+        // boundary was superseded by worldgen-axis-batch2 (Gypsum joined the axis via the
+        // EDGE face — the :532 Gneiss-Gypsum stratum host), so the :893 between slot draws
+        // verbatim too. The superseded-boundary pin:
+        assertTrue(GT6VeinGenerator.valid(mat("Gypsum")),
+                "the batch2 union: Gypsum rides the axis (the B1 outside-ruling superseded by worldgen-axis-batch2), the :893 asbestos between slot draws");
         for (GTVeinConfig tVein : List.of(
                 vein("ore.large.lapis"), vein("ore.large.iodinesalt"), vein("ore.large.rocksalt"),
                 vein("ore.large.peridot"), vein("ore.large.titanium"),
@@ -225,15 +225,17 @@ class GT6VeinAxisExtensionTest {
                 "the END draw list after the extension (the :904-919 ORE_END rows, 4 -> 5)");
     }
 
-    /** The axis census: M = 154 = 132 + 22 (the 122 base grew to 132 with the b2 EDGE orphans), the 22 appended in upstream :889-911 first-appearance order at the axis tail. */
+    /** The axis census: M = 157 = 135 + 22 (the 122 base grew to 135 with the b2 EDGE orphans + the batch2 anchors; Bauxite/MilkyQuartz dedup into the EDGE band, so the LV tail adds 20), in upstream :889-911 first-appearance order at the axis tail. */
     @Test
     void axisGrowsByThe22LargeVeinMembers() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
-        assertEquals(PINNED_M, tAxis.size(), "M = 154 = 122 (53+13+56) + 22 large-vein members, +10 EDGE orphans inside the 122 base (worldgen-edge-ores-b2)");
+        assertEquals(PINNED_M, tAxis.size(), "M = 157 = 122 (53+13+56) + 22 large-vein members, +13 net-new EDGE band members inside the 122 base (10 b2 orphans + 3 batch2 anchors after the B1-face dedup)");
         List<String> tNames = tAxis.stream().map(m -> m.mNameInternal).toList();
-        List<String> tTail = tNames.subList(132, tNames.size());
-        assertEquals(NEW_AXIS_MEMBERS, tTail,
-                "the 22 new members appended in LARGE_VEIN_ORES order = upstream :889-911 first appearance");
+        List<String> tTail = tNames.subList(137, tNames.size());
+        // the LV suppliers dedup to 20 net-new on the union axis: Bauxite/MilkyQuartz first
+        // occur in the EDGE band (worldgen-axis-batch2), so the tail carries the other 20
+        assertEquals(NEW_AXIS_MEMBERS.stream().filter(tN -> !tN.equals("Bauxite") && !tN.equals("MilkyQuartz")).toList(), tTail,
+                "the 20 net-new large-vein members at the axis tail, LARGE_VEIN_ORES order = upstream :889-911 first appearance (Bauxite/MilkyQuartz deduped into the EDGE band)");
         for (String tName : NEW_AXIS_MEMBERS) {
             assertTrue(tNames.contains(tName), "axis member: " + tName);
         }

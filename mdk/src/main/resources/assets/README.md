@@ -8847,19 +8847,15 @@ the CUTTER pair serves the wire-cutter form). Renamed to the snake id tails unde
 scissors/chisel + _overlay), 16x16 RGBA, sha256s of the copies match the sources.
 
 
-GT6 ore block overlay textures, task ore-2-textures: the 80
+GT6 ore block overlay textures, task p30-ore-2-textures: the 88
 `gt6/textures/block/materialicons/<set>/{ore,ore_small,ore_overlay,ore_small_overlay}.png`
 files come from upstream `https://github.com/GregTech6/gregtech6` snapshot `v6.17.06-22-g3703e4030`, files
 `src/main/resources/assets/gregtech/textures/blocks/materialicons/<SET>/<Name>.png`,
 byte-identical to upstream, sha256 verified per file (manifest below). Consumers:
 the ore block atlas sources `gt6:block/materialicons/<set>/{ore,ore_small}`
-(GT6Atlases <- GTOreBakedModel.overlaySprites(), 20 SETs over the 122-material
-registration axis, task ore-1-mech; the GEM_VERTICAL quartet joined with
-task a-ore-axis-extension — the SET of the stone-layer companions Spinel/
-BalasRuby; the EMERALD/GLASS/GEM_HORIZONTAL/OPAL quartets joined with task
-b-gem-pool-extension — the SETs of the RANDOM_SMALL_GEM_ORE pool members,
-borrowed byte-identical, same snapshot) — the missingno intermediate state of
-ore-3-datagen closes with this wave; the `_overlay` pair is the upstream
+(GT6Atlases <- GTOreBakedModel.overlaySprites(), 15 SETs over the 53-material
+registration axis, task p30-ore-1-mech) — the missingno intermediate state of
+p30-ore-3-datagen closes with this wave; the `_overlay` pair is the upstream
 pass-1 extension (TextureSet.java:113-116), borrowed for pair completeness
 (the p27 posture), no modern consumer yet. Naming follows the P20/P27 rules:
 set folder lowercased, icon segment camelCase -> snake_case
@@ -8941,6 +8937,11 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   - `ore_small.png` `8c021e43df7c644075a9402b8a5bc735583f6f17e3ec2f0f5e566699f5feb305`
   - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
   - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `POWDER` -> `gt6/textures/block/materialicons/powder/`:
+  - `ore.png` `7e409880ff4df0945dd757f094bc688a507e6dfc18145cb11ed23c5e678fdd81`
+  - `ore_small.png` `66b1ff5ef23aebbf83549a4788e197c4e21c76be4fc6289cec790e932d3221e1`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
 - `QUARTZ` -> `gt6/textures/block/materialicons/quartz/`:
   - `ore.png` `7c7d321145547b556739f43f1187fd75d9614913ddc8bb6c4c43ff067f916b9b`
   - `ore_small.png` `e2ea0bbee3f2ef1295a68142cc015f5c4f32fece0929edddbc183ac063840774`
@@ -8967,6 +8968,11 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
   - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
 - `SPACE` -> `gt6/textures/block/materialicons/space/`:
+  - `ore.png` `406b03465bbf84a9fb1d1be0a0aa750d11572e5e72e44eed466f8b6906c57081`
+  - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
+  - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+  - `ore_small_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `STONE` -> `gt6/textures/block/materialicons/stone/`:
   - `ore.png` `406b03465bbf84a9fb1d1be0a0aa750d11572e5e72e44eed466f8b6906c57081`
   - `ore_small.png` `da732a986333a1f319175ba007eabf7db01d2c3509ac3bdeaf2f098c802df6d3`
   - `ore_overlay.png` `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`

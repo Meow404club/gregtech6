@@ -83,7 +83,7 @@ class GT6OreBlocksRegistrationTest {
      * tenths of it materials no ore placement ever references) — the 45732-block face
      * is gone.
      */
-    private static final int PINNED_M = 159;
+    private static final int PINNED_M = 157;
     /** The pinned total block count (74 x M) — see materialAxisIsPinned. */
     private static final int PINNED_TOTAL = PINNED_ROWS * PINNED_M;
 
@@ -144,7 +144,7 @@ class GT6OreBlocksRegistrationTest {
     void materialAxisIsPinned() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
         assertEquals(PINNED_M, tAxis.size(),
-                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions + the 15 boundary-blob/lens EDGE anchors + the 56 gem-pool materials + the 22 large-vein compensation materials — bump PINNED_M only with an upstream row delta");
+                "M = the 53 worldgen small-ore materials + the 13 stone-layer companions + the 15 boundary-blob/lens EDGE anchors (13 net-new after the B1-face dedup) + the 56 gem-pool materials + the 22 large-vein compensation materials — bump PINNED_M only with an upstream row delta");
         // every axis material passes the authoritative oredict filter (OP.java:1098 setCondition(ORES))
         for (OreDictMaterial tMaterial : tAxis) {
             assertTrue(OP.ore.isGeneratingItem(tMaterial), "every axis material passes the OP.ore criterion");
@@ -180,10 +180,12 @@ class GT6OreBlocksRegistrationTest {
             "WhiteFluorite", "YellowFluorite", "OrangeFluorite", "MagentaFluorite",
             "Topaz", "BlueTopaz", "Tanzanite", "Amazonite", "Opal", "OnyxRed", "OnyxBlack",
             "Amethyst", "Dioptase", "Jade",
-            // the 22 large-vein compensation materials (worldgen-edge-ores-b1, LARGE_VEIN_ORES
-            // order = upstream :889-911 first appearance; Gypsum stays outside by the B1 ruling)
-            "Lazurite", "Sodalite", "Bauxite", "Ilmenite", "IodineSalt", "Lepidolite", "Spodumene",
-            "Talc", "Bastnasite", "Monazite", "Neodymium", "MilkyQuartz", "Barite", "CertusQuartz",
+            // the large-vein compensation materials (worldgen-edge-ores-b1, LARGE_VEIN_ORES
+            // order = upstream :889-911 first appearance) — 20 net-new: the Bauxite/MilkyQuartz
+            // suppliers dedup against their EDGE-band first occurrence (worldgen-axis-batch2),
+            // and Gypsum rides the EDGE band too (the B1 outside-ruling superseded)
+            "Lazurite", "Sodalite", "Ilmenite", "IodineSalt", "Lepidolite", "Spodumene",
+            "Talc", "Bastnasite", "Monazite", "Neodymium", "Barite", "CertusQuartz",
             "Kyanite", "Glauconite", "Wulfenite", "Molybdenite", "Molybdenum", "Powellite",
             "Rutile", "Zircon");
         assertEquals(tExpected, tAxis.stream().map(m -> m.mNameInternal).toList(),

@@ -290,6 +290,38 @@
     },
     {
       "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/stone/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/stone/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/stone/ore_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/stone/ore_small_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/powder/ore"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/powder/ore_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/powder/ore_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/powder/ore_small_overlay"
+    },
+    {
+      "type": "minecraft:single",
       "resource": "gt6:block/materialicons/emerald/ore"
     },
     {

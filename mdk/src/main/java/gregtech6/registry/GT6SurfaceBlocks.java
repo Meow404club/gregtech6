@@ -89,12 +89,13 @@ public final class GT6SurfaceBlocks {
 	 * datagen vein table, and each literal snake against GTMaterialItems.snakeCase.
 	 */
 	private static final List<IndicatorSpec> INDICATOR_SPECS = List.of(
+			new IndicatorSpec("lignite",      () -> MT.Lignite),              // ore.large.lignite top/bottom/between (worldgen-axis-batch2)
 			new IndicatorSpec("coal",         () -> MT.Coal),                 // ore.large.lignite/.coal (the coal-arm slots)
 			new IndicatorSpec("lazurite",     () -> MT.Lazurite),             // ore.large.lapis top (worldgen-edge-ores-b1)
 			new IndicatorSpec("sodalite",     () -> MT.Sodalite),             // ore.large.lapis bottom (worldgen-edge-ores-b1)
 			new IndicatorSpec("lapis",        () -> MT.Lapis),                // ore.large.lapis between
 			new IndicatorSpec("azurite",      () -> MT.Azurite),              // ore.large.lapis spread
-			new IndicatorSpec("bauxite",      () -> MT.OREMATS.Bauxite),      // ore.large.bauxite top/bottom/between (B1: the whole-dead row)
+			new IndicatorSpec("bauxite",      () -> MT.OREMATS.Bauxite),      // ore.large.bauxite top/bottom/between (B1: the whole-dead row; also the batch2 :84 stone-layer anchor material)
 			new IndicatorSpec("ilmenite",     () -> MT.OREMATS.Ilmenite),     // ore.large.bauxite spread / titanium spread (B1)
 			new IndicatorSpec("iodine_salt",  () -> MT.KIO3),                 // ore.large.iodinesalt top (B1)
 			new IndicatorSpec("salt",         () -> MT.NaCl),                 // ore.large.iodinesalt bottom
@@ -105,7 +106,8 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("lepidolite",   () -> MT.OREMATS.Lepidolite),   // ore.large.rocksalt between (B1)
 			new IndicatorSpec("spodumene",    () -> MT.OREMATS.Spodumene),    // ore.large.rocksalt spread (B1)
 			new IndicatorSpec("chromite",     () -> MT.OREMATS.Chromite),             // ore.large.asbestos top (a-ore-axis-extension: the stone-layer axis member)
-			new IndicatorSpec("talc",         () -> MT.Talc),                 // ore.large.asbestos bottom (B1; the Gypsum between slot stays outside the axis by the B1 ruling)
+			new IndicatorSpec("talc",         () -> MT.Talc),                 // ore.large.asbestos bottom (B1)
+			new IndicatorSpec("gypsum",       () -> MT.Gypsum),               // ore.large.asbestos between (worldgen-axis-batch2: the :532 Gneiss-Gypsum stratum host joins the axis — the B1 "stays outside" ruling superseded)
 			new IndicatorSpec("asbestos",     () -> MT.Asbestos),             // ore.large.asbestos spread
 			new IndicatorSpec("blue_sapphire", () -> MT.BlueSapphire),        // ore.large.sapphire top (b-gem-pool-extension: the gem-pool axis members)
 			new IndicatorSpec("orange_sapphire", () -> MT.OrangeSapphire),    // ore.large.sapphire bottom (r7-b)
@@ -127,7 +129,7 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("galena",       () -> MT.OREMATS.Galena),       // ore.large.galena top/bottom
 			new IndicatorSpec("silver",      () -> MT.Ag),                    // ore.large.galena between
 			new IndicatorSpec("lead",        () -> MT.Pb),                    // ore.large.galena spread
-			new IndicatorSpec("milky_quartz", () -> MT.MilkyQuartz),          // ore.large.quartz top (B1: the whole-dead row)
+			new IndicatorSpec("milky_quartz", () -> MT.MilkyQuartz),          // ore.large.quartz top (B1: the whole-dead row; also the batch2 :901 lens anchor material)
 			new IndicatorSpec("barite",       () -> MT.OREMATS.Barite),       // ore.large.quartz bottom (B1)
 			new IndicatorSpec("certus_quartz", () -> MT.CertusQuartz),        // ore.large.quartz between/spread (B1)
 			new IndicatorSpec("kyanite",      () -> MT.OREMATS.Kyanite),      // ore.large.peridot top (B1)
@@ -169,7 +171,7 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("hematite",     () -> MT.Fe2O3),                // ore.large.iron between / copper bottom
 			new IndicatorSpec("malachite",    () -> MT.OREMATS.Malachite));   // ore.large.iron spread
 
-	/** The 79 indicator rock handles, INDICATOR_SPECS order (31 + 9 since a-ore-axis-extension + 17 since b-gem-pool-extension + 22 since worldgen-edge-ores-b1 lit the dormant compensation rows). */
+	/** The 81 indicator rock handles, INDICATOR_SPECS order (31 + 9 since a-ore-axis-extension + 17 since b-gem-pool-extension + 22 since worldgen-edge-ores-b1 + 2 since worldgen-axis-batch2: lignite/gypsum — its bauxite/milky_quartz faces already rode the B1 specs). */
 	public static final List<RegistryObject<Block>> INDICATOR_ROCKS = INDICATOR_SPECS.stream()
 			.map(tRow -> BLOCKS.<Block>register("surface_rock_" + tRow.snake(),
 					() -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), tRow.material().get())))

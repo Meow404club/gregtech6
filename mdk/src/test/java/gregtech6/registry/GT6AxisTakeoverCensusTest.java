@@ -7,8 +7,8 @@
  *
  * <p>The four faces and their census basis:
  * <ol>
- * <li>block axis — {@link GT6OreBlocks#materialAxis()} (159, the :486 isGeneratingItem
- * filter is its only gate; 154 through b2+B1, 159 since worldgen-axis-batch2);</li>
+ * <li>block axis — {@link GT6OreBlocks#materialAxis()} (157, the :486 isGeneratingItem
+ * filter is its only gate; 154 through b2+B1, 157 since worldgen-axis-batch2 (the +5 EDGE anchors dedup to +3: Bauxite/MilkyQuartz already rode the B1 vein faces));</li>
  * <li>bedrock axis — {@link GT6BedrockOreBlocks#materialAxis()} (45, no driver gate);</li>
  * <li>worldgen rows — {@link GTOreWorldgen#ROWS} (130 rows / 167 placement pairs, the
  * mod-gated Loader_Worldgen.java:854-874 rows stay out as the compat pool; 125/162
@@ -147,7 +147,7 @@ public class GT6AxisTakeoverCensusTest {
     @Test
     public void faceCounts_pinTheCensusBasis() {
         assertEquals(441, GT6ForeignMaterialAtlas.rows().size(), "atlas universe: 164 batch-1 + 277 batch-2");
-        assertEquals(159, GT6OreBlocks.materialAxis().size(), "block axis: 53 + 13 + 15 + 56 + 22 (the 15 EDGE = b2's 10 boundary blobs + batch2's 5 stone-layer/lens anchors)");
+        assertEquals(157, GT6OreBlocks.materialAxis().size(), "block axis: 53 + 13 + 15 + 56 + 22 (the 15 EDGE suppliers = b2's 10 boundary blobs + batch2's 5 anchors; Bauxite/MilkyQuartz dedup against the B1 vein faces, 13 net-new)");
         assertEquals(45, GT6BedrockOreBlocks.materialAxis().size(), "bedrock axis: 46 table rows, gold.a/b share");
         assertEquals(130, GTOreWorldgen.ROWS.size(), "54 always-on rows + 61 gem-pool rows + the 10 boundary-blob rows (b2) + the 5 stone-layer/lens anchor rows (batch2)");
         assertEquals(167, GTOreWorldgen.placementPairs().size(), "overworld 114 + nether 20 + end 33, ancientdebris gated (b2 boundary + batch2 anchor rows joined)");
