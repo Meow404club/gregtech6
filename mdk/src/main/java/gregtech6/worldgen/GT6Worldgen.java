@@ -184,6 +184,16 @@ public final class GT6Worldgen {
     public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_RACKS_CONFIGURED = configKey("nether_racks");
     public static final ResourceKey<PlacedFeature> NETHER_RACKS_PLACED = placedKeyOf("nether_racks");
 
+    // The world-origin center showcase (task worldgen-center-nexus): the Nexus/
+    // Streets/Beacon trio over ONE feature (the upstream three WorldgenObject rows,
+    // Loader_Worldgen.java:647-649 — row 646 biomes and row 650 testing ride the
+    // follow-up card). All default F upstream; the flags live on the feature class
+    // (the MaterialTreeDisplay.SHOWN static precedent).
+    // ------------------------------------------------------------------
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> CENTER_CONFIGURED = configKey("center");
+    public static final ResourceKey<PlacedFeature> CENTER_PLACED = placedKeyOf("center");
+
     // ------------------------------------------------------------------ the tree band (task w6-t1-trees-nine)
 
     /**
