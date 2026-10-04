@@ -131,9 +131,10 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * The surface-plants band (task w6-t2-surface-blocks): the four fallen-log woods
 	 * join {@code #minecraft:logs} + mineable/axe (the t1 log row — NOTE the coke-oven
 	 * recipe rebuild counts #minecraft:logs, 40 vanilla + 9 gt6 becomes +4 with this
-	 * card, the coordinator-noted census drift), and the soil pair (turf + black sand)
-	 * joins mineable/shovel (the vanilla dirt/sand row). The glowtus and the bush stay
-	 * tool-less (the instant flower row).
+	 * card, the coordinator-noted census drift), and the soil band (turf + black sand +
+	 * the four colored clays, task worldgen-diggables-pits — BlockDiggable.java:137
+	 * TOOL_shovel on every meta) joins mineable/shovel (the vanilla dirt/sand row). The
+	 * glowtus and the bush stay tool-less (the instant flower row).
 	 */
 	private void addSurfacePlantBand() {
 		var tLogs = tag(BlockTags.LOGS);
@@ -145,6 +146,9 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		var tShovel = tag(BlockTags.MINEABLE_WITH_SHOVEL);
 		tShovel.add(GT6SurfaceBlocks.TURF.get());
 		tShovel.add(GT6SurfaceBlocks.BLACK_SAND.get());
+		for (RegistryObject<Block> tHandle : GT6SurfaceBlocks.CLAY_BAND) {
+			tShovel.add(tHandle.get());
+		}
 	}
 
 	/**

@@ -1339,7 +1339,11 @@ public final class GT6WorldgenDatagen {
     //   disks at LOCAL_MODIFICATIONS (the vanilla disk pass).
     // ------------------------------------------------------------------
 
-    /** The band's nine biome-modifier keys, worldgen order (glowtus/bush/blacksand/turf/pit + the 4 logs). */
+    /**
+     * The band's nine biome-modifier keys, worldgen order (glowtus/bush/blacksand/turf/pit + the 4 logs); the
+     * four colored-clay pit rows (task worldgen-diggables-pits) ride {@link #PIT_CLAY_MODIFIER_KEYS} — one key
+     * per row, the per-row modifier family face (the PLANT list shape), on the SHARED pit biome tag.
+     */
     public static final List<ResourceKey<BiomeModifier>> PLANT_BIOME_MODIFIER_KEYS = List.of(
             biomeModifierKeyOf(GT6Worldgen.GLOWTUS_PATH),
             biomeModifierKeyOf(GT6Worldgen.BUSH_PATH),
@@ -1350,6 +1354,10 @@ public final class GT6WorldgenDatagen {
             biomeModifierKeyOf("log_rotten"),
             biomeModifierKeyOf("log_mossy"),
             biomeModifierKeyOf("log_frozen"));
+
+    /** The 4 colored-clay pit modifier keys, {@link GT6Worldgen#PIT_CLAY_PATHS} order (all on the shared gt6:surface_pit_clay tag). */
+    public static final List<ResourceKey<BiomeModifier>> PIT_CLAY_MODIFIER_KEYS =
+            GT6Worldgen.PIT_CLAY_PATHS.stream().map(GT6WorldgenDatagen::biomeModifierKeyOf).toList();
 
     private static void bootstrapPlantsConfigured(
         //? if forge {
@@ -1394,6 +1402,15 @@ public final class GT6WorldgenDatagen {
         FeatureUtils.register(ctx, GT6Worldgen.PIT_CLAY_CONFIGURED, Feature.DISK, new DiskConfiguration(
                 RuleBasedBlockStateProvider.simple(Blocks.CLAY), tSoil, // the upstream pit places Blocks.clay verbatim
                 GT6Worldgen.SOIL_DISK_RADIUS, GT6Worldgen.PIT_CLAY_HALF_HEIGHT));
+        // The four colored-clay pits (task worldgen-diggables-pits, Loader_Worldgen.java
+        // :593/:595-597): the pit_clay_vanilla clone family — same DISK face over the same
+        // soil target (WorldgenPit.java:67-69), the pit fills its own colored-clay block
+        // (the Diggables meta stand-in). The :594 red row stays OUT (nether-only closure).
+        for (int i = 0; i < GT6Worldgen.PIT_CLAY_CONFIGURED_KEYS.size(); i++) {
+            FeatureUtils.register(ctx, GT6Worldgen.PIT_CLAY_CONFIGURED_KEYS.get(i), Feature.DISK, new DiskConfiguration(
+                    RuleBasedBlockStateProvider.simple(GT6SurfaceBlocks.CLAY_BAND.get(i).get()), tSoil,
+                    GT6Worldgen.SOIL_DISK_RADIUS, GT6Worldgen.PIT_CLAY_HALF_HEIGHT));
+        }
         for (int i = 0; i < GT6Worldgen.FALLEN_LOG_CONFIGURED_KEYS.size(); i++) {
             @SuppressWarnings("unchecked")
             Feature<NoneFeatureConfiguration> tFeature =
@@ -1452,6 +1469,17 @@ public final class GT6WorldgenDatagen {
                 InSquarePlacement.spread(),
                 PlacementUtils.HEIGHTMAP,
                 BiomeFilter.biome());
+        // The four colored-clay pits (task worldgen-diggables-pits): the pit_clay_vanilla
+        // placed chain verbatim — the 1/320 chunk gate is the SHARED divider (all five pit
+        // rows carry tChance=320, Loader_Worldgen.java:584).
+        for (int i = 0; i < GT6Worldgen.PIT_CLAY_PLACED_KEYS.size(); i++) {
+            PlacementUtils.register(ctx, GT6Worldgen.PIT_CLAY_PLACED_KEYS.get(i),
+                    aFeatures.getOrThrow(GT6Worldgen.PIT_CLAY_CONFIGURED_KEYS.get(i)),
+                    RarityFilter.onAverageOnceEvery(GT6Worldgen.PIT_CLAY_DIVIDER),
+                    InSquarePlacement.spread(),
+                    PlacementUtils.HEIGHTMAP,
+                    BiomeFilter.biome());
+        }
         // The fallen logs: the four gates (Loader_Worldgen.java:603-606); the ground
         // checks ride INSIDE the feature (the shapes need the water/snow arms).
         for (int i = 0; i < GT6Worldgen.FALLEN_LOG_PLACED_KEYS.size(); i++) {
@@ -1484,6 +1512,14 @@ public final class GT6WorldgenDatagen {
             ctx.register(PLANT_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tTags[i]), tPlaced[i],
                     i < 2 ? GenerationStep.Decoration.VEGETAL_DECORATION // the plant rows ride the deco pass
                           : GenerationStep.Decoration.LOCAL_MODIFICATIONS)); // the soil disks ride the vanilla disk pass
+        }
+        // The four colored-clay pit modifiers (task worldgen-diggables-pits): per-row keys
+        // over the SHARED pit biome tag (WorldgenPit.java:58 plains|savanna — all five pit
+        // rows carry the identical biome list), the disk step.
+        for (int i = 0; i < PIT_CLAY_MODIFIER_KEYS.size(); i++) {
+            ctx.register(PIT_CLAY_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(GT6Worldgen.PIT_CLAY_BIOMES),
+                    HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.PIT_CLAY_PLACED_KEYS.get(i))),
+                    GenerationStep.Decoration.LOCAL_MODIFICATIONS));
         }
         for (int i = 0; i < GT6Worldgen.FALLEN_LOG_PLACED_KEYS.size(); i++) {
             TagKey<Biome> tLogTag = new TagKey[] {GT6Worldgen.LOG_DRY_BIOMES, GT6Worldgen.LOG_ROTTEN_BIOMES,

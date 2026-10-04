@@ -269,7 +269,8 @@ public final class GT6Worldgen {
     public static final int TURF_DIVIDER = 32;
     /**
      * WorldgenPit.java:58 {@code nextInt(mDivider) > mChance} with mChance=bindInt(1-1)=0
-     * (the pit ctor's aChance=1, Loader_Worldgen.java:592) — the 1/320 chunk gate.
+     * (the pit ctor's aChance=1; the vanilla row Loader_Worldgen.java:592 and the four
+     * colored-clay rows :593/:595-597 share the divider) — the 1/320 chunk gate.
      */
     public static final int PIT_CLAY_DIVIDER = 320;
     /** Loader_Worldgen.java:603-606 — the four fallen-log gates, dry/rotten/mossy/frozen (amount=1 all four). */
@@ -300,6 +301,14 @@ public final class GT6Worldgen {
     public static final String BLACKSAND_PATH = "river_magnetite";
     public static final String TURF_PATH = "swamp_turf";
     public static final String PIT_CLAY_PATH = "pit_clay_vanilla";
+    /**
+     * The four colored-clay pit paths, upstream row order (Loader_Worldgen.java:593/:595-597
+     * — pit.clay.brown/yellow/blue/white over BlocksGT.Diggables metas 1/4/5/6). The :594
+     * pit.clay.red row stays OUT: upstream default F ("supposed to be only in the Nether",
+     * the WorldgenNetherClay face the GT6NetherOres nether_red_clay stand-in carries) — the
+     * row is not a gap, it is the declared nether-domain closure.
+     */
+    public static final List<String> PIT_CLAY_PATHS = List.of("pit_clay_brown", "pit_clay_yellow", "pit_clay_blue", "pit_clay_white");
     /** The four fallen-log paths, upstream log.dry/rotten/mossy/frozen (Loader_Worldgen.java:603-606). */
     public static final List<String> FALLEN_LOG_PATHS = List.of("log_dry", "log_rotten", "log_mossy", "log_frozen");
 
@@ -314,6 +323,13 @@ public final class GT6Worldgen {
     public static final ResourceKey<PlacedFeature> TURF_PLACED = placedKeyOf(TURF_PATH);
     public static final ResourceKey<ConfiguredFeature<?, ?>> PIT_CLAY_CONFIGURED = configKey(PIT_CLAY_PATH);
     public static final ResourceKey<PlacedFeature> PIT_CLAY_PLACED = placedKeyOf(PIT_CLAY_PATH);
+
+    /** The 4 colored-clay pit configured keys, {@link #PIT_CLAY_PATHS} order (the pit_clay_vanilla clone family). */
+    public static final List<ResourceKey<ConfiguredFeature<?, ?>>> PIT_CLAY_CONFIGURED_KEYS =
+            PIT_CLAY_PATHS.stream().map(GT6Worldgen::configKey).toList();
+    /** The 4 colored-clay pit placed keys, same order. */
+    public static final List<ResourceKey<PlacedFeature>> PIT_CLAY_PLACED_KEYS =
+            PIT_CLAY_PATHS.stream().map(GT6Worldgen::placedKeyOf).toList();
 
     /** The 4 fallen-log configured keys, {@link #FALLEN_LOG_PATHS} order. */
     public static final List<ResourceKey<ConfiguredFeature<?, ?>>> FALLEN_LOG_CONFIGURED_KEYS =

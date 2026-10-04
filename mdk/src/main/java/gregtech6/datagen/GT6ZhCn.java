@@ -420,6 +420,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.berry_bush");
 		addDirect("block.gt6.black_sand");
 		addDirect("block.gt6.turf");
+		// the colored clays (task worldgen-diggables-pits): 棕/黄/蓝/白 + the 粘土 word
+		// (the dump's ceramic-band convention, zh_cn_ref.tsv 粘土坩埚/粘土杯 rows)
+		addDirect("block.gt6.brown_clay");
+		addDirect("block.gt6.yellow_clay");
+		addDirect("block.gt6.blue_clay");
+		addDirect("block.gt6.white_clay");
 		addDirect("block.gt6.dead_log");
 		addDirect("block.gt6.rotten_log");
 		addDirect("block.gt6.mossy_log");

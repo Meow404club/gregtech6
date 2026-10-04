@@ -9027,6 +9027,27 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
   `3d3b5a8f1973c6714f859cec1381e042f58b3ee9621e9bd97532502f10142366` /
   `ca3053f9843ff4f3475051e21667ccce90a4c575dc7dd7fbf7b59e207771b33c`)
 
+### Colored-clay block textures (task worldgen-diggables-pits)
+
+4 upstream block-texture borrows from `src/main/resources/assets/gregtech/textures/blocks/`
+(GregTech 6, snapshot `v6.17.06-22-g3703e4030`) onto `gt6/textures/block/` — the Diggables
+IS_CLAY quartet's DIGGABLES iconset rows (BlockDiggable.java:47 metas 1/4/5/6), renamed to
+the block ids at borrow time:
+
+- `gt6/textures/block/brown_clay.png` — the brown clay (upstream
+  `iconsets/CLAY_BROWN.png`; sha256
+  `da41a22d561d56ab77557c3aba8c8dee8e659dd7fe4fe57db9297a00c96323a0`)
+- `gt6/textures/block/yellow_clay.png` — the yellow clay (upstream
+  `iconsets/CLAY_YELLOW.png`; sha256
+  `3fb4ce6729fd5ca99dcd64d7cbf22de82b59caa3e833736fdeb33672b543a67c`)
+- `gt6/textures/block/blue_clay.png` — the blue clay (upstream
+  `iconsets/CLAY_BLUE.png`; sha256
+  `4c2a70debbcf819e5318da77df4d2d58d3a1bb0cfe4b566519e720c46355fe04`)
+- `gt6/textures/block/white_clay.png` — the white clay (upstream
+  `iconsets/CLAY_WHITE.png`; sha256
+  `e39c4fb3660f6c000390c06498a70010ef6f3594b6232b754cb39f891953beb1`)
+
+
 - `gt6/textures/block/tree/planks_<snake>.png` (×9) — the GT6 tree plank cubes (task
   gt-tree-planks; upstream `iconsets/PLANKS_*.png`, renamed to the block ids at borrow
   time — the upstream BlockTreePlanks renders `Textures.BlockIcons.PLANKS[meta]` on every

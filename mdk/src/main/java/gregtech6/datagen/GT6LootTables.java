@@ -2766,9 +2766,14 @@ public final class GT6LootTables extends LootTableProvider {
 
     /**
      * The obtainable surface-plants + fallen-woods block list (task w6-t2-surface-blocks):
-     * the plant quartet (glowtus/bush/black sand/turf) + the four fallen-log woods — all
-     * drop themselves (the bush's berries ride the right-click harvest, NOT loot —
-     * GT6WildBushBlock; breaking pays the bush itself, every state).
+     * the plant/soil band (glowtus/bush/black sand/turf + the 4 colored clays, task
+     * worldgen-diggables-pits) + the four fallen-log woods — all drop themselves (the
+     * bush's berries ride the right-click harvest, NOT loot — GT6WildBushBlock; breaking
+     * pays the bush itself, every state). DECLARED for the clays: the upstream drops are
+     * 4x the colored clay ball (BlockDiggable.java:117-122) — the balls are
+     * SKIPPED_UPSTREAM (no port identity, the GT6RecipesCompressor SKIPPED list /
+     * generifier.json "clay-ball colors x5" rows), so the self-drop is the turf
+     * precedent (upstream turf pays 4 peat ingots, the port self-drops).
      */
     public static List<Block> plantLootBlocks() {
         List<Block> rList = new java.util.ArrayList<>();
