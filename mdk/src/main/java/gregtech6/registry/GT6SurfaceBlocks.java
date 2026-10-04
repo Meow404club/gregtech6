@@ -157,6 +157,55 @@ public final class GT6SurfaceBlocks {
 	public static final List<Supplier<OreDictMaterial>> INDICATOR_MATERIALS =
 			INDICATOR_SPECS.stream().map(IndicatorSpec::material).toList();
 
+	// ------------------------------------------------------------------
+	// The nether rack band (task worldgen-racks) — tail-append after the
+	// indicator rocks, before the flower band. The WorldgenRacks universe
+	// (Loader_Worldgen.java:619 "nether.rocks"): the same MTE 32757 surface
+	// rock as the overworld band, carrying the nether loot table
+	// (WorldgenRacks.java:66-89 the 24-case NBT lottery → per-pair blocks
+	// over the zero-material-NBT-port ruling). The FLINT arm reuses the
+	// first-batch {@link #SURFACE_ROCK_FLINT} (same carried item both bands,
+	// WorldgenRacks.java:72 {@code ST.make(Items.flint, 1, 0)}).
+	// ------------------------------------------------------------------
+
+	/** The nether-quartz gem rock (the :66 arm). */
+	public static final RegistryObject<Block> SURFACE_ROCK_NETHER_QUARTZ =
+			BLOCKS.register("surface_rock_nether_quartz", () -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), MT.NetherQuartz));
+
+	/** The glowstone gem rock (the :67 arm). */
+	public static final RegistryObject<Block> SURFACE_ROCK_GLOWSTONE =
+			BLOCKS.register("surface_rock_glowstone", () -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), MT.Glowstone));
+
+	/** The ancient-debris rock (the :2/:3/:4/:5 brick arms — the 3:1 rockGt/oreRaw lottery rides the loot table, the meteorite precedent). */
+	public static final RegistryObject<Block> SURFACE_ROCK_ANCIENT_DEBRIS =
+			BLOCKS.register("surface_rock_ancient_debris", () -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), MT.AncientDebris));
+
+	/** The obsidian rockGt rock (the :5 non-brick/:12 arms). */
+	public static final RegistryObject<Block> SURFACE_ROCK_OBSIDIAN =
+			BLOCKS.register("surface_rock_obsidian", () -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), MT.Obsidian));
+
+	/** The basalt rockGt rock (the :13-15 arms). */
+	public static final RegistryObject<Block> SURFACE_ROCK_BASALT =
+			BLOCKS.register("surface_rock_basalt", () -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), MT.STONES.Basalt));
+
+	/** The blackstone rockGt rock (the :16-23 non-gravel arms). */
+	public static final RegistryObject<Block> SURFACE_ROCK_BLACKSTONE =
+			BLOCKS.register("surface_rock_blackstone", () -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), MT.STONES.Blackstone));
+
+	/** The gloomstone gem rock (the :6/:7 soul-sand arms). */
+	public static final RegistryObject<Block> SURFACE_ROCK_GLOOMSTONE =
+			BLOCKS.register("surface_rock_gloomstone", () -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), MT.Gloomstone));
+
+	/** The 7 nether rack rock handles, the {@code gregtech6.worldgen.GT6RacksFeature.Rack} draw-table order (flint stays the first-batch row). */
+	public static final List<RegistryObject<Block>> NETHER_ROCKS = List.of(
+			SURFACE_ROCK_NETHER_QUARTZ, SURFACE_ROCK_GLOWSTONE, SURFACE_ROCK_ANCIENT_DEBRIS,
+			SURFACE_ROCK_OBSIDIAN, SURFACE_ROCK_BASALT, SURFACE_ROCK_BLACKSTONE, SURFACE_ROCK_GLOOMSTONE);
+
+	/** The nether rack rock materials, NETHER_ROCKS order (the bare-descriptionId lang walk). */
+	public static final List<Supplier<OreDictMaterial>> NETHER_MATERIALS = List.of(
+			() -> MT.NetherQuartz, () -> MT.Glowstone, () -> MT.AncientDebris,
+			() -> MT.Obsidian, () -> MT.STONES.Basalt, () -> MT.STONES.Blackstone, () -> MT.Gloomstone);
+
 	/**
 	 * The vein-indicator rock of a picked material (GT6LargeVeinFeature's IO face): the
 	 * per-material rock, or the default rock for a null/unregistered pick — the upstream
