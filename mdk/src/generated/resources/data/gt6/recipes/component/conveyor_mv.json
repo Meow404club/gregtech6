@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:cable_copper_gt01"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_mv"
+    },
+    "R": {
+      "item": "gt6:plate_rubber"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "MCM",
+    "RRR"
+  ],
+  "result": {
+    "item": "gt6:compact_electric_conveyor_mv"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_steel_galvanized"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_lv"
+    },
+    "P": {
+      "item": "gt6:plate_steel_galvanized"
+    },
+    "S": {
+      "item": "gt6:stick_steel_galvanized"
+    },
+    "T": {
+      "item": "gt6:screw_steel_galvanized"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TPP",
+    "dSS",
+    "TMG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:compact_electric_piston_lv"
+  }
+}

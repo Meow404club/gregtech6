@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:cable_platinum_gt01"
+    },
+    "E": {
+      "tag": "gt6:circuit5"
+    },
+    "M": {
+      "item": "gt6:compact_electric_motor_iv"
+    },
+    "P": {
+      "item": "gt6:compact_electric_piston_iv"
+    },
+    "S": {
+      "item": "gt6:stick_titanium"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "MSM",
+    "PES"
+  ],
+  "result": {
+    "item": "gt6:compact_robot_arm_iv"
+  },
+  "show_notification": true
+}
