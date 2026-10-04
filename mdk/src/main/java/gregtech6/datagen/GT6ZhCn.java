@@ -2604,6 +2604,12 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shape_slicer_eigths_hollow"); // task recipes-obtainability — dump gt.multiitem.technological.10904 切片器刀片 (中空八分之一) (:10353)
 		addDirect("item.gt6.shape_slicer_quarters"); // task recipes-obtainability — dump gt.multiitem.technological.10906 切片器刀片 (四分之一) (:10357)
 		addDirect("item.gt6.shape_slicer_quarters_hollow"); // task recipes-obtainability — dump gt.multiitem.technological.10907 切片器刀片 (中空四分之一) (:10359)
+		addDirect("item.gt6.boomstick"); // task explosives-chain — dump gt.multitileentity.32104 火药棒 (:13125)
+		addDirect("item.gt6.dynamite"); // task explosives-chain — dump gt.multitileentity.32713 锯末炸药 (:13534)
+		addDirect("item.gt6.dynamite_strong"); // task explosives-chain — dump gt.multitileentity.32712 强化矿用雷管 (:13533)
+		addDirect("item.gt6.shape_press_bullet_casing_small"); // task explosives-chain — dump gt.multiitem.technological.10896 弹壳模具 (小型) (:10337)
+		addDirect("item.gt6.shape_press_bullet_casing_medium"); // task explosives-chain — dump gt.multiitem.technological.10897 弹壳模具 (中型) (:10339)
+		addDirect("item.gt6.shape_press_bullet_casing_large"); // task explosives-chain — dump gt.multiitem.technological.10898 弹壳模具 (大型) (:10341)
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

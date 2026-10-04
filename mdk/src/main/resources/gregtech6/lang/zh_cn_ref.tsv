@@ -3551,6 +3551,12 @@ direct	item.gt6.shape_slicer_flat	切片器刀片 (扁平式)	hand
 direct	item.gt6.shape_slicer_grid	切片器刀片 (栅格式)	hand
 direct	item.gt6.shape_slicer_quarters	切片器刀片 (四分之一)	hand
 direct	item.gt6.shape_slicer_quarters_hollow	切片器刀片 (中空四分之一)	hand
+direct	item.gt6.boomstick	火药棒	hand
+direct	item.gt6.dynamite	锯末炸药	hand
+direct	item.gt6.dynamite_strong	强化矿用雷管	hand
+direct	item.gt6.shape_press_bullet_casing_small	弹壳模具 (小型)	hand
+direct	item.gt6.shape_press_bullet_casing_medium	弹壳模具 (中型)	hand
+direct	item.gt6.shape_press_bullet_casing_large	弹壳模具 (大型)	hand
 direct	item.gt6.shape_slicer_split	切片器刀片 (分割)	hand
 direct	item.gt6.short_mead	蜂蜜酒	hand
 direct	item.gt6.shovel	锹	hand

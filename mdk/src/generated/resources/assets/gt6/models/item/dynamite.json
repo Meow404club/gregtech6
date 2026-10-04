@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gt6:item/explosives/dynamite",
+    "layer1": "gt6:item/explosives/dynamite_overlay"
+  }
+}

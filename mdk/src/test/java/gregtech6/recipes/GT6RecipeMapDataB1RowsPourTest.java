@@ -221,6 +221,18 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		for (gregtech6.registry.GT6Robotics.RobotRow tRow : gregtech6.registry.GT6Robotics.ROWS) {
 			tUniverse.add("gt6:" + tRow.id()); // task robotics-chain — the 60 plain-item faces the tip rows walk (the vanilla-alias items convention: the universe = every registered carrier the shipped rows reference)
 		}
+		// task explosives-chain — the plain-item registration homes are part of the id
+		// universe too (the prefix walks cannot see them): the DR entries resolve to their
+		// declared ids offline (the holder getId, the GT6ExtruderMoldsTest face). The
+		// element types stay UNNAMED (var / receiver inference) — naming RegistryObject
+		// here breaks the neoforge leg, the stonecutter import swap rewrites the import
+		// line only, not the named usages
+		for (gregtech6.registry.GT6Explosives.DynamiteRow tRow : gregtech6.registry.GT6Explosives.ROWS) {
+			tUniverse.add("gt6:" + gregtech6.registry.GT6Explosives.ITEMS_BY_PATH.get(tRow.path()).getId().getPath());
+		}
+		for (var tMold : gregtech6.registry.GT6PressMolds.MOLDS) {
+			tUniverse.add("gt6:" + tMold.getId().getPath());
+		}
 		assertTrue(tUniverse.contains("gt6:dust_coal"), "the id universe built (" + tUniverse.size() + " ids)");
 
 		java.util.Set<String> tMissing = new java.util.TreeSet<>();

@@ -39,6 +39,7 @@ import gregtech6.registry.GT6Placeables;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GTWires;
 import gregtech6.registry.GTWireSpecs;
+import gregtech6.registry.GT6PressMolds;
 import gregtech6.registry.GT6BakeFoods;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6FoodCans;
@@ -108,6 +109,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation MONKEY_WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "monkey_wrench");
 	public static final ResourceLocation MAGNIFYING_GLASS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "magnifying_glass");
 	public static final ResourceLocation PINCERS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pincers");
+	/** The bullet-casing mold crafting trio (task explosives-chain, MultiItemTechnological.java:356-358 strokes). */
+	public static final ResourceLocation SHAPE_PRESS_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_small");
+	public static final ResourceLocation SHAPE_PRESS_MEDIUM_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_medium");
+	public static final ResourceLocation SHAPE_PRESS_LARGE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_large");
 	/** The LARGE Steel Crucible crafting row (task crucible-multiblock SPEC ⑦). */
 	public static final ResourceLocation LARGE_STEEL_CRUCIBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "large_steel_crucible");
 	/**
@@ -288,6 +293,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		magnifyingGlassBuilder().save(aConsumer, MAGNIFYING_GLASS_ID);
 		pincersBuilder().save(aConsumer, PINCERS_ID);
 		for (MoldRecipeRow tRow : extruderMoldChainRows()) tRow.builder().save(aConsumer, tRow.id()); // task mold-extruder-shapes — the full 64-row mold chain
+		shapePressBulletCasingSmallBuilder().save(aConsumer, SHAPE_PRESS_SMALL_ID); // task explosives-chain
+		shapePressBulletCasingMediumBuilder().save(aConsumer, SHAPE_PRESS_MEDIUM_ID);
+		shapePressBulletCasingLargeBuilder().save(aConsumer, SHAPE_PRESS_LARGE_ID);
 		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id()); // task food-bake-items
 		for (BakeCraftRow tRow : bakeCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aConsumer, tRow.id()); else tRow.shapeless().save(aConsumer, tRow.id());} // task food-bake-recipes
 		for (BakeCraftRow tRow : bottleCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aConsumer, tRow.id()); else tRow.shapeless().save(aConsumer, tRow.id());} // task food-bottles-min — the independent bottles band
@@ -544,6 +552,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		magnifyingGlassBuilder().save(aOutput, MAGNIFYING_GLASS_ID);
 		pincersBuilder().save(aOutput, PINCERS_ID);
 		for (MoldRecipeRow tRow : extruderMoldChainRows()) tRow.builder().save(aOutput, tRow.id()); // task mold-extruder-shapes — the full 64-row mold chain
+		shapePressBulletCasingSmallBuilder().save(aOutput, SHAPE_PRESS_SMALL_ID); // task explosives-chain
+		shapePressBulletCasingMediumBuilder().save(aOutput, SHAPE_PRESS_MEDIUM_ID);
+		shapePressBulletCasingLargeBuilder().save(aOutput, SHAPE_PRESS_LARGE_ID);
 		for (FoodMoldRecipeRow tRow : foodMoldRecipeBuilders()) tRow.builder().save(aOutput, tRow.id()); // task food-bake-items
 		for (BakeCraftRow tRow : bakeCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aOutput, tRow.id()); else tRow.shapeless().save(aOutput, tRow.id());} // task food-bake-recipes
 		for (BakeCraftRow tRow : bottleCraftRows()) {if (tRow.shaped() != null) tRow.shaped().save(aOutput, tRow.id()); else tRow.shapeless().save(aOutput, tRow.id());} // task food-bottles-min — the independent bottles band
@@ -2001,6 +2012,49 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			}
 		}
 		return rRows;
+	}
+
+	/**
+	 * The bullet-casing mold crafting rows (task explosives-chain) — the upstream stroke
+	 * VERBATIM: {@code "TPT", "dyh", "SPS"} (MultiItemTechnological.java:356-358, Small/
+	 * Medium/Large differing only in the 'P' plate tier). Letters per CR.java:342/:346/:360:
+	 * 'd' = {@code #gt6:tools/screwdriver}, 'h' = {@code #gt6:tools/hard_hammer}, 'y' =
+	 * chisel — the port has no {@code tools/chisel} tag at baseline, so 'y' rides the
+	 * {@code gt6:chisel} item directly (the declared substitution face). 'T'/'S'/'P' = the
+	 * MT.Steel representative of the upstream ANY.Steel group (screw/stick and the
+	 * plateDouble/plateTriple/plateQuadruple tier) — the vanilla JSON cannot walk the
+	 * material group, the w1 single-ingredient flattening convention. Result 1x mold —
+	 * the RM.Press bullet-casing rows' shaping tool (Loader_Recipes_Other.java:657-668,
+	 * the rows pooled with the bullet card).
+	 */
+	private ShapedRecipeBuilder shapePressBulletCasingSmallBuilder() {
+		return shapePressBulletCasingBuilder(GT6PressMolds.SHAPE_PRESS_BULLET_CASING_SMALL.get(),
+				gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateDouble, MT.Steel).get());
+	}
+
+	private ShapedRecipeBuilder shapePressBulletCasingMediumBuilder() {
+		return shapePressBulletCasingBuilder(GT6PressMolds.SHAPE_PRESS_BULLET_CASING_MEDIUM.get(),
+				gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateTriple, MT.Steel).get());
+	}
+
+	private ShapedRecipeBuilder shapePressBulletCasingLargeBuilder() {
+		return shapePressBulletCasingBuilder(GT6PressMolds.SHAPE_PRESS_BULLET_CASING_LARGE.get(),
+				gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateQuadruple, MT.Steel).get());
+	}
+
+	/** The shared :356-358 stroke — the plate tier is the only per-mold leg. */
+	private ShapedRecipeBuilder shapePressBulletCasingBuilder(net.minecraft.world.item.Item aMold, net.minecraft.world.item.Item aPlateTier) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aMold)
+				.pattern("TPT")
+				.pattern("dyh")
+				.pattern("SPS")
+				.define('T', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.screw, MT.Steel).get())
+				.define('P', aPlateTier)
+				.define('S', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stick, MT.Steel).get())
+				.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.define('y', GT6Tools.CHISEL.get())
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_steel_screw", has(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.screw, MT.Steel).get()));
 	}
 
 	/**

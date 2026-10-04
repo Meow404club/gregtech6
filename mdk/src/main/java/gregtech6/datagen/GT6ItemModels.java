@@ -518,6 +518,28 @@ public final class GT6ItemModels extends ItemModelProvider {
                     : "item/shape_extruder/" + tPath.substring("shape_extruder_".length());
             withExistingParent(tPath, mcLoc("item/generated")).texture("layer0", modLoc(tTexture));
         }
+        // the press-mold trio (task explosives-chain, MultiItemTechnological.java:352-354
+        // metas 10896-10898) — 3 item/generated models over the byte-identical upstream
+        // sprite borrows (assets/README.md sha256 ledger; the r11c head-family borrow form)
+        withExistingParent("shape_press_bullet_casing_small", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_press/bullet_casing_small"));
+        withExistingParent("shape_press_bullet_casing_medium", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_press/bullet_casing_medium"));
+        withExistingParent("shape_press_bullet_casing_large", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/shape_press/bullet_casing_large"));
+        // the dynamite family (task explosives-chain, Loader_MultiTileEntities.java:2236-2238
+        // metas 32104/32713/32712) — one shared 2-layer model form per item over the borrowed
+        // greyscale block sprites: layer 0 = the "colored" body (the ItemColor material tint,
+        // GT6ExplosivesTintListener), layer 1 = the overlay (as-is)
+        withExistingParent("boomstick", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/explosives/dynamite"))
+            .texture("layer1", modLoc("item/explosives/dynamite_overlay"));
+        withExistingParent("dynamite", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/explosives/dynamite"))
+            .texture("layer1", modLoc("item/explosives/dynamite_overlay"));
+        withExistingParent("dynamite_strong", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/explosives/dynamite"))
+            .texture("layer1", modLoc("item/explosives/dynamite_overlay"));
         // the slicer-blade row0 subset (task slicer-row-domain) — 2 item/generated models
         // over the composed placeholder icons (the blade-grid/blade-split 16x16 stdlib
         // generator, the shape_extruder band convention; the upstream multiitem icons are

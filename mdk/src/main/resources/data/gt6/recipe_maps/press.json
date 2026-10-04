@@ -1,5 +1,5 @@
 {
-  "comment": "task recipe-data-b1 — the RM.Press lamp/TNT walks (Loader_Recipes_Vanilla.java:776-799 verbatim). Family expansion is the PORT-universe subset of the upstream ANY groups: ANY.Glowstone = {Glowstone, Gloomstone} (the 5 planet glowstones are the GC-compat faces absent from the port material tree) and ANY.SiO2 = {SiO2, NetherQuartz, CertusQuartz, Quartzite}. The ST.tag(1) selector legs are DROPPED — the JSON v1 row schema carries no damage/NBT faces and the configured Integrated Circuit is not expressible as a plain item id (the loom.json precedent; declared deviation: the rows answer without the circuit). DECLARED B2/POOL: the dynamite/boomstick/bullet-casing rows (Loader_Recipes_Other.java:640-669), the food-mold event rows (Loader_Recipes_Food.java:146-152), the :254-259 bullet retips (the round/bolt walk onto the blank bulletGt{Small,Medium,Large} of MT.Empty — the Or(PROJECTILES, EMPTY) carriers make them pourable but the pool card owns them) and the electrode station walk reference port-absent items or per-material rule walks, neither is a static JSON row face. Task toolhead-r11e-press-mortar reclaimed the tool-head statements as ONE representative row per upstream walk (the mortar.json :705-706 Blaze convention): :247-250 (the ANY.Iron raw/finished pickaxe-head bases, Diamond gem / Iron base representatives) and :252-253 (the arrow retips onto the plain Empty arrows). Task toolhead-family-closeout reclaims the :251 Empty-pickaxeGem-head retip — the OP.java:621 force row landed in GTMaterialItems.forceItemGeneration so the blank head exists, and the GT_Tool_PickaxeGem.java:30 drop ring returns exactly this blank: break -> blank -> press with 2 flawed gems -> new head. Still POOLED: the Shape_Extruder_Empty mold-synthesis chain (a crafting-table band, MultiItemTechnological.java:184-222 — zero Empty rows exist in the upstream extruder map, so extruder.json carries none; the r11c pooled face).",
+  "comment": "task recipe-data-b1 — the RM.Press lamp/TNT walks (Loader_Recipes_Vanilla.java:776-799 verbatim). Family expansion is the PORT-universe subset of the upstream ANY groups: ANY.Glowstone = {Glowstone, Gloomstone} (the 5 planet glowstones are the GC-compat faces absent from the port material tree) and ANY.SiO2 = {SiO2, NetherQuartz, CertusQuartz, Quartzite}. The ST.tag(1) selector legs are DROPPED — the JSON v1 row schema carries no damage/NBT faces and the configured Integrated Circuit is not expressible as a plain item id (the loom.json precedent; declared deviation: the rows answer without the circuit). DECLARED B2/POOL: the bullet-casing rows (Loader_Recipes_Other.java:657-668 — their mold input is size-0 not-consumable, a face the JSON v1 row schema does not carry either; the molds are registered by task explosives-chain), the food-mold event rows (Loader_Recipes_Food.java:146-152), the :254-259 bullet retips (the round/bolt walk onto the blank bulletGt{Small,Medium,Large} of MT.Empty — the Or(PROJECTILES, EMPTY) carriers make them pourable but the pool card owns them) and the electrode station walk reference port-absent items or per-material rule walks, neither is a static JSON row face. Task toolhead-r11e-press-mortar reclaimed the tool-head statements as ONE representative row per upstream walk (the mortar.json :705-706 Blaze convention): :247-250 (the ANY.Iron raw/finished pickaxe-head bases, Diamond gem / Iron base representatives) and :252-253 (the arrow retips onto the plain Empty arrows). Task toolhead-family-closeout reclaims the :251 Empty-pickaxeGem-head retip — the OP.java:621 force row landed in GTMaterialItems.forceItemGeneration so the blank head exists, and the GT_Tool_PickaxeGem.java:30 drop ring returns exactly this blank: break -> blank -> press with 2 flawed gems -> new head. Still POOLED: the Shape_Extruder_Empty mold-synthesis chain (a crafting-table band, MultiItemTechnological.java:184-222 — zero Empty rows exist in the upstream extruder map, so extruder.json carries none; the r11c pooled face). Task explosives-chain reclaims the dynamite/boomstick rows (Loader_Recipes_Other.java:641-655): the ANY.SiO2 walk is the 4-statement x 4-port-member expansion (:642-645) plus the four Dynamite (:647-650) and four Dynamite_Strong (:652-655) rows — the same ST.tag selector-leg drop as the b1 rows above (the dust amounts 1-vs-2 keep the two families non-colliding without the circuit).",
   "recipes": [
     {
       "comment": "Loader_Recipes_Vanilla.java:777 — redstone lamp, blockDust leg xGlowstone (144 t)",
@@ -1364,6 +1364,574 @@
         }
       ],
       "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:642 — Boomstick, dust leg xSiO2 (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:643 — Boomstick, dust leg xSiO2 (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_silicon_dioxide",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:644 — Boomstick, blockDust leg xSiO2 (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_silicon_dioxide",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:645 — Boomstick, blockDust leg xSiO2 (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_silicon_dioxide",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:642 — Boomstick, dust leg xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nether_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:643 — Boomstick, dust leg xNetherQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_nether_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:644 — Boomstick, blockDust leg xNetherQuartz (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_nether_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:645 — Boomstick, blockDust leg xNetherQuartz (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_nether_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:642 — Boomstick, dust leg xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_certus_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:643 — Boomstick, dust leg xCertusQuartz (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_certus_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:644 — Boomstick, blockDust leg xCertusQuartz (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_certus_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:645 — Boomstick, blockDust leg xCertusQuartz (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_certus_quartz",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:642 — Boomstick, dust leg xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_quartzite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:643 — Boomstick, dust leg xQuartzite (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_quartzite",
+          "count": 2
+        },
+        {
+          "item": "gt6:dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:644 — Boomstick, blockDust leg xQuartzite (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_quartzite",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:645 — Boomstick, blockDust leg xQuartzite (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_quartzite",
+          "count": 2
+        },
+        {
+          "item": "gt6:block_dust_gunpowder",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:boomstick",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:647 — Dynamite, dust leg, the ST.tag(1) selector leg DROPPED (the loom precedent) (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_dynamite",
+          "count": 1
+        },
+        {
+          "item": "minecraft:string",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:648 — Dynamite, dust leg, the ST.tag(1) selector leg DROPPED (16 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_dynamite",
+          "count": 1
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite",
+          "count": 1
+        }
+      ],
+      "duration": 16,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:649 — Dynamite, blockDust leg, the ST.tag(1) selector leg DROPPED (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_dynamite",
+          "count": 1
+        },
+        {
+          "item": "minecraft:string",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:650 — Dynamite, blockDust leg, the ST.tag(1) selector leg DROPPED (144 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_dynamite",
+          "count": 1
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite",
+          "count": 9
+        }
+      ],
+      "duration": 144,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:652 — Dynamite_Strong, dust leg x2, the ST.tag(2) selector leg DROPPED (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_dynamite",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite_strong",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:653 — Dynamite_Strong, dust leg x2, the ST.tag(2) selector leg DROPPED (64 t)",
+      "inputs": [
+        {
+          "item": "gt6:dust_dynamite",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite_strong",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:654 — Dynamite_Strong, blockDust leg x2, the ST.tag(2) selector leg DROPPED (576 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_dynamite",
+          "count": 2
+        },
+        {
+          "item": "minecraft:string",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite_strong",
+          "count": 9
+        }
+      ],
+      "duration": 576,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:655 — Dynamite_Strong, blockDust leg x2, the ST.tag(2) selector leg DROPPED (576 t)",
+      "inputs": [
+        {
+          "item": "gt6:block_dust_dynamite",
+          "count": 2
+        },
+        {
+          "item": "gt6:plant_gt_fiber_wood",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:dynamite_strong",
+          "count": 9
+        }
+      ],
+      "duration": 576,
       "eut": 16
     }
   ]

@@ -159,6 +159,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodCans(); // task food-can-row0 — table-tail append
         addExtruderMolds(); // task w1-press-extruder-molds — table-tail append
         addSlicerBlades(); // task slicer-row-domain — table-tail append
+        addExplosivesMoldsBand(); // task explosives-chain — table-tail append
         addSensors(); // task sensors-core — table-tail append
         addPortals(); // task portals-mini-nether-end — table-tail append
         addCrucibleJade(); // task crucible-jade-face — table-tail append
@@ -2532,6 +2533,37 @@ public class GT6EnUs extends LanguageProvider {
             String tName = tNames.get(tPath);
             if (tName == null) throw new IllegalStateException("extruder mold id drifted: " + tPath);
             add("item.gt6." + tPath, tName);
+        }
+    }
+
+    /**
+     * The explosives band (task explosives-chain): the dynamite trio + the press-mold trio
+     * display names, walked over the {@link gregtech6.registry.GT6Explosives} and
+     * {@link gregtech6.registry.GT6PressMolds} registry rows so the lang face cannot drift
+     * from the registered ids (the addExtruderMolds form). Values are the upstream
+     * registration-row wordings verbatim: "Boomstick"/"Dynamite"/"Strong Dynamite"
+     * (Loader_MultiTileEntities.java:2236-2238 aRegistry.add names) and "Bullet Casing Mold
+     * (Small)"/"(Medium)"/"(Large)" (MultiItemTechnological.java:352-354). Table-tail
+     * append, append-only.
+     */
+    private void addExplosivesMoldsBand() {
+        for (RegistryObject<Item> tItem : gregtech6.registry.GT6Explosives.ITEMS_BY_PATH.values()) {
+            String tPath = tItem.getId().getPath();
+            switch (tPath) {
+                case "boomstick": add("item.gt6." + tPath, "Boomstick"); break;
+                case "dynamite": add("item.gt6." + tPath, "Dynamite"); break;
+                case "dynamite_strong": add("item.gt6." + tPath, "Strong Dynamite"); break;
+                default: throw new IllegalStateException("explosives item id drifted: " + tPath);
+            }
+        }
+        for (RegistryObject<Item> tMold : gregtech6.registry.GT6PressMolds.MOLDS) {
+            String tPath = tMold.getId().getPath();
+            switch (tPath) {
+                case "shape_press_bullet_casing_small": add("item.gt6." + tPath, "Bullet Casing Mold (Small)"); break;
+                case "shape_press_bullet_casing_medium": add("item.gt6." + tPath, "Bullet Casing Mold (Medium)"); break;
+                case "shape_press_bullet_casing_large": add("item.gt6." + tPath, "Bullet Casing Mold (Large)"); break;
+                default: throw new IllegalStateException("press mold id drifted: " + tPath);
+            }
         }
     }
 

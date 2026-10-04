@@ -13466,3 +13466,31 @@ the `item/generated` parent (the bottle band convention).
 | `single_use_drill.png` | `gt.multiitem.randomtools/8508.png` | `efea93acd9b9d863a6f846e8622359033b1a94c206e42b6e0f00a26ef242b159` |
 | `robot_arm_file_tip.png` | `gt.multiitem.randomtools/8009.png` | `34abe18444560b148bc0772a2a9077c0b0fcd9538120fb0f98efa4d472686b6f` |
 | `single_use_file.png` | `gt.multiitem.randomtools/8509.png` | `7513b22e5ae368b1c26326c04199391038355aaad5660261b390f9f763a485a8` |
+## task explosives-chain — the bullet-casing molds + the dynamite family
+
+- `gt6/textures/item/shape_press/bullet_casing_{small,medium,large}.png` — the bullet
+  casing mold sprites, byte-identical upstream borrows (snapshot
+  `v6.17.06-22-g3703e4030`, task explosives-chain; the r11c head-family
+  standalone-file form):
+  - `bullet_casing_small.png` `textures/items/gt.multiitem.technological/10896.png`
+    (`0440d4b15c64242cf21ecd8657e013df2d62a27f4f75e0c8ba8ce701f20162e3` — meta 10896,
+    MultiItemTechnological.java:352)
+  - `bullet_casing_medium.png` `textures/items/gt.multiitem.technological/10897.png`
+    (`08d925a7373d23b00b452293b07dda8db1ddbba8b37d890e312f15193e35f4bf` — meta 10897,
+    MultiItemTechnological.java:353)
+  - `bullet_casing_large.png` `textures/items/gt.multiitem.technological/10898.png`
+    (`32b9b6cde83110d7971ec12bdaf4dffd705cf634d25863c56965e3e08c97951d` — meta 10898,
+    MultiItemTechnological.java:354)
+- `gt6/textures/item/explosives/dynamite.png` — the dynamite body sprite
+  (upstream `textures/blocks/machines/tools/dynamite/colored/side.png`, task
+  explosives-chain; sha256
+  `96f4e2814ebe7dc8ce455fb249476f0ce15c18cdc0b2142408e50e80faab5044`).
+  Upstream tints this grayscale block face with the MTE material colour
+  (Loader_MultiTileEntities.java:2236-2238, MT.Orange/Red/Purple); the port keeps
+  the same grey body + overlay pair on the flat item and answers the tint through
+  the per-item ItemColor seam (GT6ExplosivesTintListener) — one shared sprite for
+  all three variants, the colour identity riding the tint, not the file.
+- `gt6/textures/item/explosives/dynamite_overlay.png` — the dynamite overlay sprite
+  (upstream `textures/blocks/machines/tools/dynamite/overlay/side.png`, task
+  explosives-chain; sha256
+  `58907ffe4a297a960d3c2ea05990f307e7212eaf0065be088d4b22fd0040693f`).
