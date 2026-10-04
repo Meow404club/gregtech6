@@ -58,10 +58,11 @@ public class GT6RecipeMapDataB2b2RowsPourTest extends GTRecipesOfflineTestBase {
 	 * canaries (apple/melon-slice -> stick + water, no upstream counterpart) retire with
 	 * the true :802 melon row landed (the card's REPLACE posture, now fully realized).
 	 * The electrolyzer/centrifuge seated smoke rows have no true-row supersedes — they
-	 * stay seated, so those censuses carry +2 each.
+	 * stay seated, so those censuses carry +2 each. The recipe-b4 flower band tail-appends
+	 * 13 more squeezer rows (BlockFlowersA :90-:97 + BlockFlowersB :94-:98).
 	 */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"squeezer", 41,     // seeds 4 (landed cbc-5 leftover) + Vanilla :802-:839 minus :835-:837/:839 (32) + Woods :122+:123/:124+:125/:126/:129/:130 (5)
+			"squeezer", 54,     // seeds 4 (landed cbc-5 leftover) + Vanilla :802-:839 minus :835-:837/:839 (32) + Woods (5) + the b4 BlockFlowers band (13)
 			"electrolyzer", 43, // seated clay/snow smoke rows (2) + Chem :66-:71 x4 waters (24) + :300-:304 (5) + :312-:319 pour legs (10) + Vanilla :899-:900 (2)
 			"centrifuge", 96);  // seated snow smoke rows (2) + Ores :43-:93/:361-:380 (36) + MTE rods (20) + Chem waters (10) + Vanilla slime (3) + Other oils (2) + combs (20)
 
@@ -186,6 +187,8 @@ public class GT6RecipeMapDataB2b2RowsPourTest extends GTRecipesOfflineTestBase {
 			tUniverse.add("gt6:" + gregtech6.registry.GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
 		for (var tItem : GT6TreeBlocks.ITEMS) tUniverse.add("gt6:" + tItem.getId().getPath());
+		// the flower band items are plain BlockItems, not material-prefix ids (the b4 BlockFlowers rows)
+		for (var tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) tUniverse.add("gt6:" + tFlower.getId().getPath());
 		for (var tComb : GT6BeeCombs.COMBS) tUniverse.add("gt6:" + tComb.getId().getPath());
 		for (GT6ReactorRods.RodRow tRod : GT6ReactorRods.ROWS) tUniverse.add("gt6:" + tRod.path());
 		assertTrue(tUniverse.size() > 50000, "the id universe built (" + tUniverse.size() + " ids)");
@@ -240,6 +243,7 @@ public class GT6RecipeMapDataB2b2RowsPourTest extends GTRecipesOfflineTestBase {
 	 * (chemical/closure/hot/lubricant/honey/bee/qu/naming/aqua/simple-liquid/food families)
 	 * plus the standalone chlorine row (R3 ruling). */
 	private static boolean fluidRegistered(String aPath) {
+		if (aPath.startsWith("dye_watermixed_") || aPath.startsWith("dye_flower_")) return true; // the GTFluids DyeFluid compose walk (the b4 juice rows)
 		return GTFluids.chemicalSpec(aPath) != null || GTFluids.closureSpec(aPath) != null || GTFluids.hotSpec(aPath) != null
 				|| GTFluids.lubricantSpec(aPath) != null || GTFluids.honeySpec(aPath) != null || GTFluids.beeRowSpec(aPath) != null
 				|| GTFluids.quSpec(aPath) != null || GTFluids.namingSpec(aPath) != null
