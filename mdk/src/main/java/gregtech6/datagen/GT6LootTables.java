@@ -146,6 +146,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
                 new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
+                new SubProviderEntry(GT6BatteryBoxBlockLoot::new, LootContextParamSets.BLOCK), // task battery-box-loot-selfdrop — the twelve box self-drops
                 new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task long-distance-pipes
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task portals-mini-nether-end — the portal pair self-drops
@@ -210,6 +211,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
                 new SubProviderEntry(GT6CrystalChargerBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
+                new SubProviderEntry(GT6BatteryBoxBlockLoot::new, LootContextParamSets.BLOCK), // task battery-box-loot-selfdrop — the twelve box self-drops
                 new SubProviderEntry(GT6LongDistancePipeBlockLoot::new, LootContextParamSets.BLOCK), // task long-distance-pipes
                 new SubProviderEntry(GT6DynamoUlvBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-dynamo-row — the T0 self-drop
                 new SubProviderEntry(GT6PortalBlockLoot::new, LootContextParamSets.BLOCK), // task portals-mini-nether-end — the portal pair self-drops
@@ -1381,6 +1383,48 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : crystalChargerLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The Battery Box block list (task battery-box-loot-selfdrop): the 12 tier-closed rows
+     * (GT6Batteries.BOX_ROWS), self-drop — upstream registers every box MTE with the default
+     * {@code Drops} (canDrop all-true, TileEntityBase10EnergyBatBox.java:220), so breaking a
+     * box drops the EMPTY box body (the TE.getDrops registered item,
+     * TileEntityBase04MultiTileEntities.java:166-171, keepSlot gate 05Inventories.java:74)
+     * while the contents scatter via the onRemove bridge. The 1.20.1 equivalent = dropSelf
+     * (the charger shape).
+     */
+    public static List<Block> batteryBoxLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6Batteries.BoxRow tRow : gregtech6.registry.GT6Batteries.BOX_ROWS) {
+            rBlocks.add(gregtech6.registry.GT6Batteries.BATTERY_BOX_BLOCKS.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The Battery Box self-drop provider (task battery-box-loot-selfdrop, the charger shape verbatim). */
+    public static final class GT6BatteryBoxBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6BatteryBoxBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6BatteryBoxBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return batteryBoxLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : batteryBoxLootBlocks()) dropSelf(tBlock);
         }
     }
 
