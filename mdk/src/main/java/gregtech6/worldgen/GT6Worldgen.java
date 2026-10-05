@@ -194,6 +194,18 @@ public final class GT6Worldgen {
     public static final ResourceKey<ConfiguredFeature<?, ?>> CENTER_CONFIGURED = configKey("center");
     public static final ResourceKey<PlacedFeature> CENTER_PLACED = placedKeyOf("center");
 
+    // The deep-ocean pylon band (task worldgen-deepocean-corals):
+    // WorldgenDeepOcean ("ocean.prismacorals", :580), default T upstream, GEN_OVERWORLD —
+    // one NoneFeatureConfiguration feature over the GT6WorleyNoise port (the nether-form
+    // shape). Despite the config name, the payload is prismarine pylons, not corals
+    // (the coral noise arm never shipped upstream, WorldgenDeepOcean.java:54-56).
+    // ------------------------------------------------------------------
+
+    /** The deep-ocean configured feature (the GT6DeepOceanFeature instance, no config). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> DEEP_OCEAN_CONFIGURED = configKey("deep_ocean");
+    /** The deep-ocean placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk; the gate rolls live in the Feature). */
+    public static final ResourceKey<PlacedFeature> DEEP_OCEAN_PLACED = placedKeyOf("deep_ocean");
+
     // ------------------------------------------------------------------ the tree band (task w6-t1-trees-nine)
 
     /**

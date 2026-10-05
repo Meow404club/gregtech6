@@ -134,6 +134,10 @@ SEGMENT_MAP = {
     "advancement": "advancements",
     "c": "forge",
     "block": "blocks",
+    # worldgen-deepocean-corals 席修（minecraft:water 扩展带首入双树）：
+    #   fluid → fluids   data/*/tags/fluid(s)（1.21 单数化；GT6FluidTags 首例，
+    #                    GT6DualDirectoryFaces RENAMES 行随动；对称施用）
+    "fluid": "fluids",
 }
 
 # biome_modifier 产物带（P27 品牌段折叠 → P30 双目录终态退役）：带坐得比普通带深一层

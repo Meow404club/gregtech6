@@ -1,0 +1,28 @@
+{
+  "values": [
+    {
+      "id": "gt6:seawater",
+      "required": false
+    },
+    {
+      "id": "gt6:seawater_flowing",
+      "required": false
+    },
+    {
+      "id": "gt6:riverwater",
+      "required": false
+    },
+    {
+      "id": "gt6:riverwater_flowing",
+      "required": false
+    },
+    {
+      "id": "gt6:waterdirty",
+      "required": false
+    },
+    {
+      "id": "gt6:waterdirty_flowing",
+      "required": false
+    }
+  ]
+}
