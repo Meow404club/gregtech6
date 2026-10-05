@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_double_steel"
+    },
+    "S": {
+      "item": "gt6:stick_steel"
+    },
+    "T": {
+      "item": "gt6:screw_steel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "y": {
+      "item": "gt6:chisel"
+    }
+  },
+  "pattern": [
+    "TPT",
+    "dyh",
+    "SPS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:shape_press_bullet_casing_small"
+  }
+}

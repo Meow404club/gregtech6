@@ -235,6 +235,20 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
+	 * The electrode zh faces (task press-electrodes, the addUsbStickUnits shape): the 13
+	 * display names + the 13 tooltip keys riding the reference table's hand layer — the
+	 * values are the DUMP faces verbatim (tmp/gregtech.lang :10579-10604, the
+	 * gt.multiitem.technological.29987-29999 rows 电子管元件 (铜)..(末影) + the shared
+	 * 需要玻璃外壳 tooltip column).
+	 */
+	private void addElectrodeBand() {
+		for (gregtech6.registry.GT6Electrodes.ElectrodeRow tRow : gregtech6.registry.GT6Electrodes.ROWS) {
+			addDirect("item.gt6." + tRow.path());
+			addDirect("item.gt6." + tRow.path() + ".tooltip");
+		}
+	}
+
+	/**
 	 * The USB peripheral zh faces (task usb-peripherals, the addUsbStickUnits shape):
 	 * the 8 display names + 8 tooltips + the exempted He emitter pair, riding the
 	 * reference table's hand layer — the values are the DUMP faces verbatim
@@ -2604,6 +2618,13 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.shape_slicer_eigths_hollow"); // task recipes-obtainability — dump gt.multiitem.technological.10904 切片器刀片 (中空八分之一) (:10353)
 		addDirect("item.gt6.shape_slicer_quarters"); // task recipes-obtainability — dump gt.multiitem.technological.10906 切片器刀片 (四分之一) (:10357)
 		addDirect("item.gt6.shape_slicer_quarters_hollow"); // task recipes-obtainability — dump gt.multiitem.technological.10907 切片器刀片 (中空四分之一) (:10359)
+		addDirect("item.gt6.boomstick"); // task explosives-chain — dump gt.multitileentity.32104 火药棒 (:13125)
+		addDirect("item.gt6.dynamite"); // task explosives-chain — dump gt.multitileentity.32713 锯末炸药 (:13534)
+		addDirect("item.gt6.dynamite_strong"); // task explosives-chain — dump gt.multitileentity.32712 强化矿用雷管 (:13533)
+		addDirect("item.gt6.shape_press_bullet_casing_small"); // task explosives-chain — dump gt.multiitem.technological.10896 弹壳模具 (小型) (:10337)
+		addDirect("item.gt6.shape_press_bullet_casing_medium"); // task explosives-chain — dump gt.multiitem.technological.10897 弹壳模具 (中型) (:10339)
+		addDirect("item.gt6.shape_press_bullet_casing_large"); // task explosives-chain — dump gt.multiitem.technological.10898 弹壳模具 (大型) (:10341)
+		addElectrodeBand(); // task press-electrodes — the 13 electrode names + tooltips (dump gt.multiitem.technological.29987-29999, tmp/gregtech.lang :10579-10604)
 		addDirect("item.gt6.cover_redstone_emitter");
 		addDirect("item.gt6.cover_redstone_conductor_in");
 		addDirect("item.gt6.cover_redstone_conductor_out");

@@ -1,4 +1,3 @@
-# assets — borrowed textures attribution
 
 Machine GUI backgrounds borrowed from **GregTech 6**
 (https://github.com/GregTech6/gregtech6), snapshot
@@ -4023,6 +4022,7 @@ Dedication** (same upstream `README.md` block as above).
   - `bullet_gt_medium.png` `fb7294ffde727a4707ec55770a497dd1bb46a34104782b12ad4d1d43aa8eff02`
   - `bullet_gt_small.png` `99120128d46a3b3f7394ca28dd083f7f6fd599e5dd67090f66fdf6f642695361`
   - `chemtube.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
+  - `tool_head_pickaxe_gem.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510` (task toolhead-family-closeout — the MT.Empty head the OP.java:621 force row + the :251 retip registered)
 - `OPAL` -> `gt6/textures/item/material_sets/opal/`:
   - `arrow_gt_plastic.png` `ed479411dd270dedb4e8e6bab757306fcdd821e255f5644f39573fca6b79b3f4`
   - `arrow_gt_wood.png` `f2ae44101978ce2e482887134a3d97add11917eec704023d74f7f3db76282b24`
@@ -7115,6 +7115,7 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
+  - `tool_head_pickaxe_gem_overlay.png` `e371819eea511b4fde26ccb7bd85d96ff93143f0ea6c7dd9e5c091efe2fa82a8` (task toolhead-family-closeout)
 - `OPAL` -> `assets/gt6/textures/item/material_sets/opal/`:
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
@@ -13464,3 +13465,53 @@ the `item/generated` parent (the bottle band convention).
 | `single_use_drill.png` | `gt.multiitem.randomtools/8508.png` | `efea93acd9b9d863a6f846e8622359033b1a94c206e42b6e0f00a26ef242b159` |
 | `robot_arm_file_tip.png` | `gt.multiitem.randomtools/8009.png` | `34abe18444560b148bc0772a2a9077c0b0fcd9538120fb0f98efa4d472686b6f` |
 | `single_use_file.png` | `gt.multiitem.randomtools/8509.png` | `7513b22e5ae368b1c26326c04199391038355aaad5660261b390f9f763a485a8` |
+## task explosives-chain — the bullet-casing molds + the dynamite family
+
+- `gt6/textures/item/shape_press/bullet_casing_{small,medium,large}.png` — the bullet
+  casing mold sprites, byte-identical upstream borrows (snapshot
+  `v6.17.06-22-g3703e4030`, task explosives-chain; the r11c head-family
+  standalone-file form):
+  - `bullet_casing_small.png` `textures/items/gt.multiitem.technological/10896.png`
+    (`0440d4b15c64242cf21ecd8657e013df2d62a27f4f75e0c8ba8ce701f20162e3` — meta 10896,
+    MultiItemTechnological.java:352)
+  - `bullet_casing_medium.png` `textures/items/gt.multiitem.technological/10897.png`
+    (`08d925a7373d23b00b452293b07dda8db1ddbba8b37d890e312f15193e35f4bf` — meta 10897,
+    MultiItemTechnological.java:353)
+  - `bullet_casing_large.png` `textures/items/gt.multiitem.technological/10898.png`
+    (`32b9b6cde83110d7971ec12bdaf4dffd705cf634d25863c56965e3e08c97951d` — meta 10898,
+    MultiItemTechnological.java:354)
+- `gt6/textures/item/explosives/dynamite.png` — the dynamite body sprite
+  (upstream `textures/blocks/machines/tools/dynamite/colored/side.png`, task
+  explosives-chain; sha256
+  `96f4e2814ebe7dc8ce455fb249476f0ce15c18cdc0b2142408e50e80faab5044`).
+  Upstream tints this grayscale block face with the MTE material colour
+  (Loader_MultiTileEntities.java:2236-2238, MT.Orange/Red/Purple); the port keeps
+  the same grey body + overlay pair on the flat item and answers the tint through
+  the per-item ItemColor seam (GT6ExplosivesTintListener) — one shared sprite for
+  all three variants, the colour identity riding the tint, not the file.
+- `gt6/textures/item/explosives/dynamite_overlay.png` — the dynamite overlay sprite
+  (upstream `textures/blocks/machines/tools/dynamite/overlay/side.png`, task
+  explosives-chain; sha256
+  `58907ffe4a297a960d3c2ea05990f307e7212eaf0065be088d4b22fd0040693f`).
+## task press-electrodes — the Forestry electrode thirteen
+
+- `gt6/textures/item/electrode/electrode_fr_{copper,tin,bronze,iron,gold,diamond,obsidian,
+  blaze,rubber,emerald,apatite,lapis,ender}.png` — the thirteen electrode sprites,
+  byte-identical upstream borrows (snapshot `v6.17.06-22-g3703e4030`, task
+  press-electrodes; the r11c head-family standalone-file form). Upstream
+  `textures/items/gt.multiitem.technological/29987.png` .. `29999.png`
+  (MultiItemTechnological.java:488-500), pre-coloured — the plain-item form, no tint
+  seam (these sprites carry their own colour; the upstream item has no ItemColor pass):
+  - `electrode_fr_copper.png` (`503bc9d798269718ae9574e99456198dd863c602a02952ec9aaaca4ed1fe49f0` — meta 29987, MIT:488)
+  - `electrode_fr_tin.png` (`b1be0f6742a9a348f36488326457326e0720eb38b001b7058d09d2327ddff88b` — meta 29988, MIT:489)
+  - `electrode_fr_bronze.png` (`319d4e8ef6a4a614b2fe3d251ab07ade51a020ad6b61bb89ce901659c5e442ae` — meta 29989, MIT:490)
+  - `electrode_fr_iron.png` (`1ce8bbc99a1a3eabbb1c5d9ffeb6d7b9a6295e1925528afa3253cfb1a4fd7add` — meta 29990, MIT:491)
+  - `electrode_fr_gold.png` (`50d3ffda1d66b0d32c48644709e10c8ce745ccc3b97d22e4f775dfa486048d97` — meta 29991, MIT:492)
+  - `electrode_fr_diamond.png` (`50b7cb8e0d57b1a2eafe7e28f83ef16ec70d79259756fbd18e25a485013e93db` — meta 29992, MIT:493)
+  - `electrode_fr_obsidian.png` (`5c15ee6e62be98a9bbc38c056dd5bc60abff6e107abad0a5c7470893aa15e77d` — meta 29993, MIT:494)
+  - `electrode_fr_blaze.png` (`34baef4c207e25d008321c8f400aab166230142dd8838525b32b767eeed98867` — meta 29994, MIT:495)
+  - `electrode_fr_rubber.png` (`73ce7d4d998aa4f20fb1020a9e792692485ee484a6c50d7560c7c1570cc869af` — meta 29995, MIT:496)
+  - `electrode_fr_emerald.png` (`303d03b6159cc2c7a9bafbd0d3315a51b86b41c3588961e5434a0f7a294570e1` — meta 29996, MIT:497)
+  - `electrode_fr_apatite.png` (`6905cee8c005f3ed3bc492aeae6a9613a3d994365a9a075ffc388366ebd776fe` — meta 29997, MIT:498)
+  - `electrode_fr_lapis.png` (`9bde240accf300dd31b50e1cfa2c39e1df3945cc1a06a3eeee56912888c37533` — meta 29998, MIT:499)
+  - `electrode_fr_ender.png` (`9f54f0adf174acd76d60949ff9d3b42cfdff3e42d10fed505def753bce5abd85` — meta 29999, MIT:500)

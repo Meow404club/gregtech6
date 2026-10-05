@@ -1,13 +1,15 @@
 /**
  * Tests for task machines-bumblelyzer-crucible: the GTMaterialItems force-table slice —
- * the upstream OP.java:616/:619/:624 forceItemGeneration rows the port OP defers with the
+ * the upstream OP.java:616-:625 forceItemGeneration rows the port OP defers with the
  * MT/ANY-dependent block, landed mdk-side (the coordinator ruling C: the minimal boule
  * registration takes the 39-crystallisation-row output material set as the real count).
  *
  * <p>Pins: the eleven bouleGt items (the quartet + the seven sapphires), the plateTiny
- * Paper item (the Bumblelyzer scan leg), the KNOWN plateGem cascade (the Or(gem, bouleGt)
+ * Paper item (the Bumblelyzer scan leg), the toolHeadPickaxeGem Empty blank (the :621
+ * force, task toolhead-family-closeout), the KNOWN plateGem cascade (the Or(gem, bouleGt)
  * condition face — upstream-faithful, the Crystalline Silicon/Germanium/Alloy plates), and
- * the negative face (no boule items beyond the forced set).
+ * the negative face (no boule items beyond the forced set; the :618-:620 drill/chainsaw/
+ * wrench blanks stay per-consuming-card unlanded).
  *
  * <p>Task dye-item-axis extension: the dye item axis — MT.DATA.Dye_Materials (upstream
  * MT.java:3687, the 16 vanilla-index dye materials) and the OP.dust×16 + OP.plantGtFiber×16
@@ -86,6 +88,29 @@ public class GTMaterialItemsForceTest {
     @Test
     public void paperTinyGenerates() {
         assertTrue(generates(OP.plateTiny, "Paper"), "plateTiny.Paper generates (the upstream :619 force, the scan leg)");
+    }
+
+    @Test
+    public void theEmptyPickaxeGemHeadGenerates() {
+        // task toolhead-family-closeout: the upstream :621 force row (OP.java:621 verbatim)
+        // lands for the consuming press row (:251 Empty-head retip) and the drop ring
+        // (GT_Tool_PickaxeGem.java:30 broken-item face). The pickaxeGem condition itself
+        // (And(gemFlawed, typemin(1)), OP.java:1299) rejects MT.Empty — the force row IS
+        // the landing.
+        assertTrue(generates(OP.toolHeadPickaxeGem, "Empty"), "toolHeadPickaxeGem.Empty generates (the upstream :621 force, the :251 retip base + the drop ring)");
+    }
+
+    /**
+     * The per-consuming-card scope: only the :621 row is landed (a port row consumes the
+     * pickaxeGem blank). The :618-:620 drill/chainsaw/wrench force rows stay unlanded —
+     * no port row consumes those blanks, and their conditions (the typemin(2) legs, the
+     * chainsaw chain leg) reject MT.Empty anyway.
+     */
+    @Test
+    public void theOtherEmptyHeadRowsStayUnlanded() {
+        for (OreDictPrefix tPrefix : new OreDictPrefix[] {OP.toolHeadDrill, OP.toolHeadChainsaw, OP.toolHeadWrench}) {
+            assertFalse(generates(tPrefix, "Empty"), tPrefix.mNameInternal + ".Empty must NOT generate (the :618-:620 rows stay per-consuming-card unlanded)");
+        }
     }
 
     @Test

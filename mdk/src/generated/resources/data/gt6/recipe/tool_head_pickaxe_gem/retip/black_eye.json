@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:gem_flawed_black_eye"
+    },
+    {
+      "item": "gt6:gem_flawed_black_eye"
+    },
+    {
+      "item": "gt6:tool_head_pickaxe_gem_empty"
+    },
+    {
+      "tag": "gt6:tools/file"
+    },
+    {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    {
+      "tag": "gt6:tools/saw"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_pickaxe_gem_black_eye"
+  }
+}

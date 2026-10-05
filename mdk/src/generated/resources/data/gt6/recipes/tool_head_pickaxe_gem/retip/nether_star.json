@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "gt6:gem_flawed_nether_star"
+    },
+    {
+      "item": "gt6:gem_flawed_nether_star"
+    },
+    {
+      "item": "gt6:tool_head_pickaxe_gem_empty"
+    },
+    {
+      "tag": "gt6:tools/file"
+    },
+    {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    {
+      "tag": "gt6:tools/saw"
+    }
+  ],
+  "result": {
+    "item": "gt6:tool_head_pickaxe_gem_nether_star"
+  }
+}

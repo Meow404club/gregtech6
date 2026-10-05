@@ -51,7 +51,7 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 	 */
 	private static final Map<String, Integer> CENSUS = Map.of(
 			"fluidbed", 55,    // Loader_Fuels.java:37-43 — 11 burning materials x 5 dust forms
-			"press", 64,       // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT +4 toolhead-r11e-press-mortar (the HandlerPrefix gem-pickaxe/arrow walk representatives, Handlers:247-250/:252-253)
+			"press", 178,      // Loader_Recipes_Vanilla.java:776-799 — 2x10 lamp + 4x10 TNT +4 toolhead-r11e-press-mortar (Handlers:247-250/:252-253) +1 toolhead-family-closeout (:251 Empty-head retip; :254-259 stay pooled) +24 explosives-chain (Loader_Recipes_Other.java:641-655, the dynamite/boomstick rows; :657-668 casings stay pooled) +89 press-electrodes (MultiItemTechnological.java:488-500 the electrode thirteen, :502-543 the rows; the Food 5 stay pooled with food T3, the Handlers 11 walk with the prefix card)
 			"loom", 51,        // seated :744 (16t corrected) + b2 walks 26 + card :745/:746/:752/:753/:757-:760 (8) + the b4 :736 dyed band 16 (task recipe-b4-juicer-squeezer-flowerfruit)
 			"boxinator", 12358,   // seated GT6_Main:350 map row + this card's 28 + task robotics-chain's 10 tip-packing rows (MultiItemRandomTools.java:503-512) + the recipe-b7 pack walk 12319
 			"unboxinator", 11312, // seated map row + b2 bookshelf row + this card's 19 + the recipe-b7 unbox walk 11291
@@ -221,6 +221,23 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		for (gregtech6.registry.GT6Robotics.RobotRow tRow : gregtech6.registry.GT6Robotics.ROWS) {
 			tUniverse.add("gt6:" + tRow.id()); // task robotics-chain — the 60 plain-item faces the tip rows walk (the vanilla-alias items convention: the universe = every registered carrier the shipped rows reference)
 		}
+		// task explosives-chain — the plain-item registration homes are part of the id
+		// universe too (the prefix walks cannot see them): the DR entries resolve to their
+		// declared ids offline (the holder getId, the GT6ExtruderMoldsTest face). The
+		// element types stay UNNAMED (var / receiver inference) — naming RegistryObject
+		// here breaks the neoforge leg, the stonecutter import swap rewrites the import
+		// line only, not the named usages
+		for (gregtech6.registry.GT6Explosives.DynamiteRow tRow : gregtech6.registry.GT6Explosives.ROWS) {
+			tUniverse.add("gt6:" + gregtech6.registry.GT6Explosives.ITEMS_BY_PATH.get(tRow.path()).getId().getPath());
+		}
+		for (var tMold : gregtech6.registry.GT6PressMolds.MOLDS) {
+			tUniverse.add("gt6:" + tMold.getId().getPath());
+		}
+		// task press-electrodes — the electrode thirteen join the plain-item universe (the
+		// same DR-entry form; the var keeps the RegistryObject unnamed for the neo leg)
+		for (var tElectrode : gregtech6.registry.GT6Electrodes.ROWS) {
+			tUniverse.add("gt6:" + tElectrode.item().getId().getPath());
+		}
 		assertTrue(tUniverse.contains("gt6:dust_coal"), "the id universe built (" + tUniverse.size() + " ids)");
 
 		java.util.Set<String> tMissing = new java.util.TreeSet<>();
@@ -243,17 +260,17 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 	}
 
 	/**
-	 * Spot check 4 (task toolhead-r11e-press-mortar) — the Press HandlerPrefix walk
-	 * representatives (Loader_Recipes_Handlers.java:247-250/:252-253, the P8 pooled
-	 * reclaim): 16 EUt / 16 t everywhere, the walk input first and the additional input
-	 * trailing (RecipeMapHandlerPrefix.addRecipeForMaterial:207-208), single output, no
-	 * chance key. The walked material/base axes are the representative faces (Diamond gem,
-	 * Iron base, Flint arrow head) — the full cross-product is the declared pooled face,
-	 * one row per upstream STATEMENT, matching the mortar.json :705-706 Blaze-representative
-	 * convention. The :251 Empty-head retip statement is DECLARED NOT POURABLE: upstream
-	 * force-generates the Empty pickaxeGem head (OP.java:621) but the port force-table
-	 * (GTMaterialItems.forceItemGeneration) has no consuming landing for it, so the row
-	 * would have no real input item — deferred to the tool-head family card.
+	 * Spot check 4 (task toolhead-r11e-press-mortar, extended by toolhead-family-closeout) —
+	 * the Press HandlerPrefix walk representatives (Loader_Recipes_Handlers.java:247-253,
+	 * the P8 pooled reclaim): 16 EUt / 16 t everywhere, the walk input first and the
+	 * additional input trailing (RecipeMapHandlerPrefix.addRecipeForMaterial:207-208),
+	 * single output, no chance key. The walked material/base axes are the representative
+	 * faces (Diamond gem, Iron base, Flint arrow head) — the full cross-product is the
+	 * declared pooled face, one row per upstream STATEMENT, matching the mortar.json
+	 * :705-706 Blaze-representative convention. The :251 Empty-head retip joined with
+	 * toolhead-family-closeout: the OP.java:621 force row landed the blank pickaxeGem head
+	 * (GTMaterialItemsForceTest), so the retip base exists and the drop ring (the broken
+	 * gem pick returns the blank) closes the loop.
 	 */
 	@Test
 	public void pressHandlerWalkRowsAreUpstreamVerbatim() throws Exception {
@@ -274,6 +291,17 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:tool_head_pickaxe_iron", slotId(tFin.getAsJsonArray("inputs").get(1)), "the ANY.Iron finished-head representative");
 		assertEquals("gt6:tool_head_pickaxe_gem_diamond", slotId(tFin.getAsJsonArray("outputs").get(0)));
 
+		JsonObject tEmpty = findRow(tRows, "Loader_Recipes_Handlers.java:251 —");
+		assertEquals(16, tEmpty.get("duration").getAsLong(), "the handler duration column");
+		assertEquals(16, tEmpty.get("eut").getAsLong(), "the handler eut column");
+		JsonArray tEmptyInputs = tEmpty.getAsJsonArray("inputs");
+		assertEquals(2, tEmptyInputs.size(), "gemFlawed x2 + the blank Empty pickaxeGem head");
+		assertEquals("gt6:gem_flawed_diamond", slotId(tEmptyInputs.get(0)), "the gemFlawed walk slot");
+		assertEquals(2, slotCount(tEmptyInputs.get(0)));
+		assertEquals("gt6:tool_head_pickaxe_gem_empty", slotId(tEmptyInputs.get(1)), "toolHeadPickaxeGem.mat(MT.Empty, 1) — the OP.java:621 forced blank, trailing");
+		assertEquals(1, slotCount(tEmptyInputs.get(1)));
+		assertEquals("gt6:tool_head_pickaxe_gem_diamond", slotId(tEmpty.getAsJsonArray("outputs").get(0)), "the walked gem's gem head");
+
 		JsonObject tWood = findRow(tRows, "Loader_Recipes_Handlers.java:252 —");
 		JsonArray tWoodInputs = tWood.getAsJsonArray("inputs");
 		assertEquals(2, tWoodInputs.size(), "the arrow head + the plain Empty wooden arrow");
@@ -285,9 +313,15 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:arrow_gt_plastic_empty", slotId(tPlastic.getAsJsonArray("inputs").get(1)));
 		assertEquals("gt6:arrow_gt_plastic_flint", slotId(tPlastic.getAsJsonArray("outputs").get(0)));
 
-		for (JsonElement tElement : tRows) {
-			String tComment = tElement.getAsJsonObject().has("comment") ? tElement.getAsJsonObject().get("comment").getAsString() : "";
-			assertTrue(!tComment.startsWith("Loader_Recipes_Handlers.java:251"), "the :251 Empty-head retip stays unpoured (the port force-table has no toolHeadPickaxeGem(Empty) landing — declared defer, no base-less exploit row)");
+		// the :254-259 bullet retips stay POOLED (the card-scope boundary): the blank
+		// bulletGt carriers exist (the Or(PROJECTILES, EMPTY) face) but the pool card owns
+		// those statements — no bullet row ships here
+		for (int tLine = 254; tLine <= 259; tLine++) {
+			for (JsonElement tElement : tRows) {
+				String tComment = tElement.getAsJsonObject().has("comment") ? tElement.getAsJsonObject().get("comment").getAsString() : "";
+				assertTrue(!tComment.startsWith("Loader_Recipes_Handlers.java:" + tLine + " —"),
+						"the :" + tLine + " bullet retip stays pooled (the card-scope boundary; the pool card reclaims it)");
+			}
 		}
 	}
 
