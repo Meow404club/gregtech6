@@ -29,6 +29,8 @@ import brachy.modularui.widgets.dynamic.DynamicHandler;
 import brachy.modularui.widgets.dynamic.DynamicWidget;
 import brachy.modularui.widgets.layout.Flow;
 
+import gregtech6.multiblock.GTMultiBlockPattern;
+
 /**
  * The multiblock structure preview page (task multiblock-preview-infra, shell replicated
  * in task mbpreview-shell-replicate) — the GT6 port of GTCEu Modern's
@@ -69,8 +71,11 @@ public class GT6MultiblockPreviewWidget extends ParentWidget<GT6MultiblockPrevie
 	private final DynamicHandler selectedBlockHandler = new DynamicHandler();
 
 	public GT6MultiblockPreviewWidget(GT6MultiblockPreviews.Entry aEntry, int aWidth, int aHeight) {
+		// the pattern captured once — the tooltip's candidate lookups ride the SAME
+		// instance (the fusion page is 887 cells; per-frame supplier calls would churn)
+		GTMultiBlockPattern tPattern = aEntry.pattern().get();
 		Map<BlockPos, BlockState> tBlocks = GT6MultiblockPreviews.structureBlocks(
-				aEntry.pattern().get(), aEntry.controllerBlock(), GT6MultiblockPreviews.DISPLAY_FACING);
+				tPattern, aEntry.controllerBlock(), GT6MultiblockPreviews.DISPLAY_FACING, aEntry.controllerCell());
 
 		// the ray-tracing renderer with the green frame — the GTCEu renderer face
 		// (MultiblockPreviewWidget.java:102-103, verbatim color/thickness)
@@ -98,7 +103,16 @@ public class GT6MultiblockPreviewWidget extends ParentWidget<GT6MultiblockPrevie
 					BlockHitResult tHit = tRenderer.lastRayTrace();
 					if (tHit != null && tHit.getType() == HitResult.Type.BLOCK) {
 						BlockState tState = tBlocks.get(tHit.getBlockPos());
-						if (tState != null) tText.addFromItem(new ItemStack(tState.getBlock()));
+						if (tState != null) {
+							tText.addFromItem(new ItemStack(tState.getBlock()));
+							// the predicate quota cells list their REMAINING candidates
+							// (the r11 Q3 degrade ruling: first candidate renders, the
+							// rest join the tooltip — GT6MultiblockPreviews D2 face)
+							for (Block tCandidate : GT6MultiblockPreviews.cellCandidateBlocks(aEntry.name(),
+									GT6MultiblockPreviews.cellAt(tPattern, tHit.getBlockPos()))) {
+								if (!tState.is(tCandidate)) tText.addFromItem(new ItemStack(tCandidate));
+							}
+						}
 					}
 				})
 				.tooltipAutoUpdate(true)
@@ -124,7 +138,8 @@ public class GT6MultiblockPreviewWidget extends ParentWidget<GT6MultiblockPrevie
 		// parts face :119-134, U-hover works on the listed materials)
 		List<IWidget> tParts = new ArrayList<>();
 		for (Map.Entry<Block, Integer> tCount : GT6MultiblockPreviews
-				.materialCounts(aEntry.pattern().get(), aEntry.controllerBlock(), GT6MultiblockPreviews.DISPLAY_FACING)
+				.materialCounts(tPattern, aEntry.controllerBlock(), GT6MultiblockPreviews.DISPLAY_FACING,
+						aEntry.controllerCell())
 				.entrySet()) {
 			tParts.add(tMaterialSlot(new ItemStack(tCount.getKey(), tCount.getValue())));
 		}
