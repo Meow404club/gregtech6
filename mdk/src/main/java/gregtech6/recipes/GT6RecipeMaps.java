@@ -1796,11 +1796,12 @@ public class GT6RecipeMaps {
 				/*AMP=*/ 1);
 		// RM.java:159 — items 2/1/1, fluids 1/0/0, MIN 0, AMP 1 (the upstream RecipeMapAssembler
 		// subclass folds to the base class — the printed-pages NBT arm stays pooled, the
-		// UNBOXINATOR judged form, the field doc above)
+		// UNBOXINATOR judged form, the field doc above; the GUI texture file is not ported —
+		// default is the fallback, the CNC precedent below)
 		ASSEMBLER = new RecipeMap(new HashSet<>(),
 				"gt.recipe.assembler", "Assembler", null,
 				0, 1,
-				"gt6:textures/gui/machines/assembler",
+				"gt6:textures/gui/machines/default",
 				/*IN-OUT-MIN-ITEM=*/ 2, 1, 1,
 				/*IN-OUT-MIN-FLUID=*/ 1, 0, 0,
 				/*MIN=*/ 0,
