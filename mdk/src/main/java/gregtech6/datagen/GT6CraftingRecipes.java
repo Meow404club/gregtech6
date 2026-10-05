@@ -47,6 +47,7 @@ import gregtech6.registry.GT6Anvils;
 import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6SprayCans;
+import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6StaticStorages;
 import gregtech6.registry.GT6Rails;
@@ -310,6 +311,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clayJuicerBuilder().save(aConsumer, CLAY_JUICER_ID);
 		clayJuicerReverseBuilder().save(aConsumer, CLAY_JUICER_REVERSE_ID);
 		clayJuicerSmeltingBuilder().save(aConsumer, CLAY_JUICER_SMELT_ID);
+		for (BakeSmeltRow tRow : clayPitSmeltRows()) tRow.builder().save(aConsumer, tRow.id()); // task worldgen-diggables-pits — the 4 colored-clay hardening smelts
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aConsumer, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aConsumer, BLACKSTONE_ANVIL_ID);
 		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
@@ -570,6 +572,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clayJuicerBuilder().save(aOutput, CLAY_JUICER_ID);
 		clayJuicerReverseBuilder().save(aOutput, CLAY_JUICER_REVERSE_ID);
 		clayJuicerSmeltingBuilder().save(aOutput, CLAY_JUICER_SMELT_ID);
+		for (BakeSmeltRow tRow : clayPitSmeltRows()) tRow.builder().save(aOutput, tRow.id()); // task worldgen-diggables-pits — the 4 colored-clay hardening smelts
 		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aOutput, STONE_ANVIL_ID);
 		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aOutput, BLACKSTONE_ANVIL_ID);
 		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
@@ -2845,6 +2848,39 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						RecipeCategory.MISC, new ItemStack(GT6Kitchen.MIXING_BOWL.get()), 0.0F, 200)
 				.unlockedBy("has_clay_bowl_raw", has(GT6Kitchen.CLAY_BOWL_RAW.get()));
 		*///?}
+	}
+
+	/**
+	 * The four colored-clay hardening smelts (task worldgen-diggables-pits) — the
+	 * BlockDiggable.java:80-84 registration rows VERBATIM (the Diggables metas 1/4/5/6 →
+	 * hardened_clay, 1.20.1 TERRACOTTA): xp 0 (the aEXP overload default), 200 ticks —
+	 * the clayBowlSmeltingBuilder face. The 5-arg {@code add_smelting}'s EtFu
+	 * smoker/blast flags are the foreign-mod leg (the mdh ruling, CUT). The ids are
+	 * INPUT-named — the four rows share the terracotta output, so the output-path
+	 * CLAY_BOWL_SMELT_ID convention cannot discriminate. The :82 red-clay row stays OUT —
+	 * the meta 3 block is the GT6NetherOres nether_red_clay stand-in domain.
+	 */
+	private static List<BakeSmeltRow> clayPitSmeltRows() {
+		String[] tColors = {"brown", "yellow", "blue", "white"};
+		List<BakeSmeltRow> rRows = new ArrayList<>();
+		for (int i = 0; i < GT6SurfaceBlocks.CLAY_BAND.size(); i++) {
+			net.minecraft.world.level.ItemLike tIn = GT6SurfaceBlocks.CLAY_BAND.get(i).get();
+			String tColor = tColors[i];
+			//? if forge {
+			rRows.add(new BakeSmeltRow(SimpleCookingRecipeBuilder.smelting(
+							net.minecraft.world.item.crafting.Ingredient.of(tIn),
+							RecipeCategory.MISC, net.minecraft.world.level.block.Blocks.TERRACOTTA, 0.0F, 200)
+					.unlockedBy("has_" + tColor + "_clay", has(tIn)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, "smelt_" + tColor + "_clay")));
+			//?} else {
+			/*rRows.add(new BakeSmeltRow(SimpleCookingRecipeBuilder.smelting(
+							net.minecraft.world.item.crafting.Ingredient.of(tIn),
+							RecipeCategory.MISC, new ItemStack(net.minecraft.world.level.block.Blocks.TERRACOTTA), 0.0F, 200)
+					.unlockedBy("has_" + tColor + "_clay", has(tIn)),
+					new ResourceLocation(GT6DataGenerators.MOD_ID, "smelt_" + tColor + "_clay")));
+			*///?}
+		}
+		return rRows;
 	}
 
 	/**

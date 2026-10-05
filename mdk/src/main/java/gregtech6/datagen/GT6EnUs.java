@@ -321,6 +321,12 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.berry_bush", "Berry Bush");
         add("block.gt6.black_sand", "Black Sand");
         add("block.gt6.turf", "Turf");
+        // the colored clays (task worldgen-diggables-pits): the upstream LH.add names
+        // verbatim (BlockDiggable.java:52-57, metas 1/4/5/6)
+        add("block.gt6.brown_clay", "Brown Clay");
+        add("block.gt6.yellow_clay", "Yellow Clay");
+        add("block.gt6.blue_clay", "Blue Clay");
+        add("block.gt6.white_clay", "White Clay");
         add("block.gt6.dead_log", "Dead Log");
         add("block.gt6.rotten_log", "Rotten Log");
         add("block.gt6.mossy_log", "Mossy Log");

@@ -69,4 +69,32 @@ class GT6SurfacePlantsWorldgenTest {
         assertEquals("gt6:surface_glowtus", GT6Worldgen.GLOWTUS_BIOMES.location().toString());
         assertEquals("gt6:surface_log_frozen", GT6Worldgen.LOG_FROZEN_BIOMES.location().toString());
     }
+
+    /**
+     * The four colored-clay pit rows (task worldgen-diggables-pits): the path/key lists in
+     * the upstream row order (Loader_Worldgen.java:593/:595-597 — the :594 red row is the
+     * nether-only closure, not a gap) and the per-row modifier keys over the SHARED pit
+     * biome tag (WorldgenPit.java:58 — all five pit rows carry the identical plains|savanna
+     * list, so one tag carries the family).
+     */
+    @Test
+    void coloredClayPitRowsArePinned() {
+        assertEquals(List.of("pit_clay_brown", "pit_clay_yellow", "pit_clay_blue", "pit_clay_white"),
+                GT6Worldgen.PIT_CLAY_PATHS, "the four colored-clay pit paths, upstream row order");
+        for (int i = 0; i < GT6Worldgen.PIT_CLAY_PATHS.size(); i++) {
+            String tPath = GT6Worldgen.PIT_CLAY_PATHS.get(i);
+            assertEquals("gt6:" + tPath, GT6Worldgen.PIT_CLAY_CONFIGURED_KEYS.get(i).location().toString(),
+                    tPath + ": the configured key, path-direct");
+            assertEquals("gt6:" + tPath, GT6Worldgen.PIT_CLAY_PLACED_KEYS.get(i).location().toString(),
+                    tPath + ": the placed key, path-direct");
+        }
+        assertEquals("gt6:surface_pit_clay", GT6Worldgen.PIT_CLAY_BIOMES.location().toString(),
+                "the shared pit tag");
+        assertEquals(9, gregtech6.datagen.GT6WorldgenDatagen.PLANT_BIOME_MODIFIER_KEYS.size(),
+                "the plant/soil/log band keeps its nine keys; the clay rows ride PIT_CLAY_MODIFIER_KEYS");
+        assertEquals(4, gregtech6.datagen.GT6WorldgenDatagen.PIT_CLAY_MODIFIER_KEYS.size(),
+                "4 colored-clay pit modifier keys");
+        assertEquals("gt6:pit_clay_brown", gregtech6.datagen.GT6WorldgenDatagen.PIT_CLAY_MODIFIER_KEYS.get(0).location().toString(),
+                "the first clay modifier key, path-direct");
+    }
 }

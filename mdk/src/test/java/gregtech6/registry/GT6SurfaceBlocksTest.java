@@ -52,6 +52,7 @@ class GT6SurfaceBlocksTest {
                 GT6SurfaceBlocks.ALL.stream().map(tRow -> tRow.getId().getPath()).limit(4).toList(),
                 "the first-batch surface deco blocks, rocks first (the WorldgenRocks first-batch set + the stick)");
         // +8 (task w6-t2-surface-blocks): the plant quartet + the 4 fallen-log woods.
+        // +4 (task worldgen-diggables-pits): the colored-clay band joined the obtainable tail.
         // the vein-indicator rocks, pickup-only like the first-batch rocks/sticks
         // (31 at w6-t3-large-veins; 40 since a-ore-axis-extension;
         // 57 since b-gem-pool-extension, the gem-pool axis chain;
@@ -59,22 +60,23 @@ class GT6SurfaceBlocksTest {
         // +36 (task flower-blocks-indicator-family): the 18 indicator flowers + the 18
         // vanilla potted companions (GT6FlowerBlockTest pins the row set).
         // +7 (task worldgen-racks): the nether rack rocks.
-        // 4 + 8 + 81 + 36 + 7 = 136; the ITEMS register holds the 26
+        // 4 + 12 + 81 + 36 + 7 = 140; the ITEMS register holds the 30
         // obtainable block items (the rocks/sticks/indicator rocks/nether rocks/potted
         // stay zero-item).
-        assertEquals(136, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
-                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 81 indicator rocks"
+        assertEquals(140, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 12 obtainable rows + the 81 indicator rocks"
                         + " + the 18 flowers + the 18 potted companions + the 7 nether rack rocks");
-        assertEquals(26, GT6SurfaceBlocks.ITEMS.getEntries().size(),
+        assertEquals(30, GT6SurfaceBlocks.ITEMS.getEntries().size(),
                 "the obtainable band's block items (the rocks/sticks/indicator rocks/potted stay zero-item)");
     }
 
     /** The obtainable band paths + item pairing (task w6-t2-surface-blocks). */
     @Test
     void surfacePlantPathsArePinned() {
-        assertEquals(List.of("glowtus", "berry_bush", "black_sand", "turf"),
+        assertEquals(List.of("glowtus", "berry_bush", "black_sand", "turf",
+                        "brown_clay", "yellow_clay", "blue_clay", "white_clay"),
                 GT6SurfaceBlocks.PLANT_BAND.stream().map(tRow -> tRow.getId().getPath()).toList(),
-                "the plant quartet, registration order");
+                "the obtainable band with the clay tail (task worldgen-diggables-pits), registration order");
         assertEquals(List.of("dead_log", "rotten_log", "mossy_log", "frozen_log"),
                 GT6SurfaceBlocks.FALLEN_LOGS.stream().map(tRow -> tRow.getId().getPath()).toList(),
                 "the fallen-log woods, Log1 meta order (BlockTreeLog1.java:46-62)");
@@ -89,6 +91,40 @@ class GT6SurfaceBlocksTest {
                     "log block item i pairs fallen-log block i");
         }
     }
+
+    /**
+     * The four colored-clay blocks (task worldgen-diggables-pits): the BlocksGT.Diggables
+     * IS_CLAY quartet (BlockDiggable.java:47 metas 1/4/5/6 — meta 0 mud rides the vanilla
+     * mud ruling GT6OreBlocks.java:217, meta 2 turf is TURF, meta 3 red clay the
+     * GT6NetherOres nether_red_clay stand-in) joins the obtainable band:
+     * 136 + 4 blocks (the racks rocks rode main at the rebase), 26 + 4 items.
+     */
+    @Test
+    void clayBandRegistrationIsPinned() {
+        assertEquals(140, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 12 obtainable rows + the 81 indicator rocks"
+                        + " + the 18 flowers + the 18 potted companions + the 7 nether rack rocks (the 4 colored clays joined the obtainable band)");
+        assertEquals(30, GT6SurfaceBlocks.ITEMS.getEntries().size(),
+                "the obtainable band's block items (the 4 colored clays carry their BlockItem, the turf face)");
+        // the color-first id style (the black_sand family face; the nether red clay is the
+        // GT6NetherOres nether_red_clay prefixed stand-in), registration order = the
+        // upstream meta order 1/4/5/6 (BlockDiggable.java:47, Loader_Worldgen.java:593-597)
+        assertEquals(List.of("brown_clay", "yellow_clay", "blue_clay", "white_clay"),
+                GT6SurfaceBlocks.CLAY_BAND.stream().map(tRow -> tRow.getId().getPath()).toList(),
+                "the colored-clay quartet, upstream meta order");
+        assertEquals(List.of("glowtus", "berry_bush", "black_sand", "turf",
+                        "brown_clay", "yellow_clay", "blue_clay", "white_clay"),
+                GT6SurfaceBlocks.PLANT_BAND.stream().map(tRow -> tRow.getId().getPath()).toList(),
+                "the obtainable band with the clay tail, registration order");
+        for (int i = 0; i < GT6SurfaceBlocks.CLAY_BAND.size(); i++) {
+            assertEquals(GT6SurfaceBlocks.CLAY_BAND.get(i).getId().getPath(),
+                    GT6SurfaceBlocks.PLANT_ITEMS.get(PLANT_BAND_SOIL_OFFSET + i).getId().getPath(),
+                    "clay block item i pairs clay block i (the band walk pairing)");
+        }
+    }
+
+    /** The obtainable band's soil tail offset inside PLANT_ITEMS (4 plants + 4 clays = the soils head). */
+    private static final int PLANT_BAND_SOIL_OFFSET = 4;
 
     /**
      * The 57 vein-indicator rocks (task w6-t3-large-veins; 31 -> 40 with a-ore-axis-extension;

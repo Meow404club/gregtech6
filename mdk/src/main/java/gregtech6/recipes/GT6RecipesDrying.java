@@ -50,6 +50,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.fluid.GTFluids;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GT6SurfaceBlocks;
 
 /**
  * The RM.Drying recipe book — task loop-closure-chain (the water family foundation)
@@ -399,6 +400,16 @@ public final class GT6RecipesDrying {
 			}
 			// BlockDiggable.java:73 — vanilla clay block → hardened_clay (1.20.1 TERRACOTTA)
 			tRows.add(DehydrationRow.ofVanilla(":73", () -> Blocks.CLAY.asItem(), () -> Blocks.TERRACOTTA.asItem(), 64));
+			// BlockDiggable.java:74/:76-78 — the four colored-clay blocks (task
+			// worldgen-diggables-pits, the Diggables metas 1/4/5/6): the same
+			// hardened_clay face, duration 64 verbatim. The :75 red-clay row stays OUT —
+			// the meta 3 block is the GT6NetherOres nether_red_clay stand-in domain.
+			// The registry-safe face keeps the offline pour offline-safe (the null-skip
+			// buildDehydrationRecipe semantics — the unregistered-registry path).
+			tRows.add(DehydrationRow.ofVanilla(":74", () -> GT6SurfaceBlocks.clayBandItemOrNull(0), () -> Blocks.TERRACOTTA.asItem(), 64));
+			tRows.add(DehydrationRow.ofVanilla(":76", () -> GT6SurfaceBlocks.clayBandItemOrNull(1), () -> Blocks.TERRACOTTA.asItem(), 64));
+			tRows.add(DehydrationRow.ofVanilla(":77", () -> GT6SurfaceBlocks.clayBandItemOrNull(2), () -> Blocks.TERRACOTTA.asItem(), 64));
+			tRows.add(DehydrationRow.ofVanilla(":78", () -> GT6SurfaceBlocks.clayBandItemOrNull(3), () -> Blocks.TERRACOTTA.asItem(), 64));
 			sDehydrationTable = tTable = List.copyOf(tRows);
 		}
 		return tTable;

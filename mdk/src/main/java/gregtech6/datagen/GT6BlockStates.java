@@ -3932,7 +3932,8 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * Task w6-t2-surface-blocks — the obtainable surface band ({@link GT6SurfaceBlocks}
-     * PLANT_BAND + FALLEN_LOGS, 8 per-pair Block+Item blocks). The glowtus renders the
+     * PLANT_BAND + FALLEN_LOGS, 12 per-pair Block+Item blocks since the colored clays
+     * joined, task worldgen-diggables-pits). The glowtus renders the
      * lily-pad face (BlockGlowtus = BlockBaseLilyPad): a hand-built 1px flat plate over the
      * borrowed GLOWTUS_RED.png (cutout — the texture carries transparency; the tintedSlab
      * element grammar), the sand/turf are cube_all over the borrowed PNGs, the bush is the
@@ -3974,10 +3975,12 @@ public final class GT6BlockStates extends BlockStateProvider {
         // the item face = the upstream SIDES_ITEM_RENDER row (MultiTileEntityBush.java:233-234):
         // the berry layer is ALWAYS shown, at the stage-2 colour
         itemModels().withExistingParent("berry_bush", modLoc("block/berry_bush_stage2"));
-        // the two finished cubes: black sand, turf
-        for (String tPath : new String[] {"black_sand", "turf"}) {
-            Block tBlock = tPath.equals("black_sand") ? GT6SurfaceBlocks.BLACK_SAND.get() : GT6SurfaceBlocks.TURF.get();
-            simpleBlock(tBlock, models().cubeAll(tPath, modLoc("block/" + tPath)));
+        // the finished cubes: black sand, turf + the four colored clays (task
+        // worldgen-diggables-pits, the same cube_all borrow face)
+        for (RegistryObject<Block> tSoil : GT6SurfaceBlocks.PLANT_BAND) {
+            String tPath = tSoil.getId().getPath();
+            if (tPath.equals("glowtus") || tPath.equals("berry_bush")) continue; // the plate + the bush trio above
+            simpleBlock(tSoil.get(), models().cubeAll(tPath, modLoc("block/" + tPath)));
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
         // the four fallen-log woods: the t1 log idiom (axis blockstate + cube_column)
@@ -3998,7 +4001,7 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
-        LOGGER.info("GT6 surface plants: 8 blockstate bands (1 plate + 1 bush trio + 2 cubes + 4 axis columns), 10 models");
+        LOGGER.info("GT6 surface plants: 8 blockstate bands (1 plate + 1 bush trio + 6 cubes + 4 axis columns), 14 models");
     }
 
     /**

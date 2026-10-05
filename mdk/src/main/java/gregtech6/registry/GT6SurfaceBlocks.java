@@ -387,6 +387,53 @@ public final class GT6SurfaceBlocks {
 			BLOCKS.register("turf", () -> new Block(BlockBehaviour.Properties.of()
 					.mapColor(MapColor.COLOR_GREEN).strength(0.6F).sound(SoundType.GRASS)));
 
+	// ------------------------------------------------------------------
+	// The colored-clay band (task worldgen-diggables-pits) — tail-append.
+	// The BlocksGT.Diggables IS_CLAY quartet (BlockDiggable.java:47 metas
+	// 1/4/5/6; meta 0 mud = the vanilla MUD ruling GT6OreBlocks.java:217,
+	// meta 2 = TURF above, meta 3 = GT6NetherOres nether_red_clay) lands as
+	// 4 INDEPENDENT plain blocks (the register-per-block family form — the
+	// FLOWERS/PLANT_BAND precedents; no state property exists to collapse,
+	// the upstream 16-meta block used 7 of its slots). Behaviour: dirt
+	// hardness/resistance verbatim (BlockDiggable.java:139-140), gravel
+	// sound (:50), the IS_CLAY faces are plain-Block defaults (no gravity
+	// :132, no walk slowdown :133). KJS: registration face, defer.
+	// ------------------------------------------------------------------
+
+	/** The brown clay (Diggables meta 1, pit.clay.brown — MT.ClayBrown). */
+	public static final RegistryObject<Block> CLAY_BROWN =
+			BLOCKS.register("brown_clay", () -> new Block(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BROWN).strength(0.5F, 0.5F).sound(SoundType.GRAVEL)));
+	/** The yellow clay (Diggables meta 4, pit.clay.yellow — MT.Bentonite). */
+	public static final RegistryObject<Block> CLAY_YELLOW =
+			BLOCKS.register("yellow_clay", () -> new Block(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_YELLOW).strength(0.5F, 0.5F).sound(SoundType.GRAVEL)));
+	/** The blue clay (Diggables meta 5, pit.clay.blue — MT.Palygorskite). */
+	public static final RegistryObject<Block> CLAY_BLUE =
+			BLOCKS.register("blue_clay", () -> new Block(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BLUE).strength(0.5F, 0.5F).sound(SoundType.GRAVEL)));
+	/** The white clay (Diggables meta 6, pit.clay.white — MT.Kaolinite); the white map color is the vanilla SNOW face (no COLOR_WHITE in MapColor). */
+	public static final RegistryObject<Block> CLAY_WHITE =
+			BLOCKS.register("white_clay", () -> new Block(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.SNOW).strength(0.5F, 0.5F).sound(SoundType.GRAVEL)));
+
+	/** The 4 colored-clay handles, registration order = the upstream meta order 1/4/5/6 (the loot/lang/tag/blockstate walk unit). */
+	public static final List<RegistryObject<Block>> CLAY_BAND = List.of(CLAY_BROWN, CLAY_YELLOW, CLAY_BLUE, CLAY_WHITE);
+
+	/**
+	 * The registry-safe item face of a {@link #CLAY_BAND} row: null when the register has
+	 * not run (the offline recipe-pour path — the GT6RecipesDrying null-skip semantics).
+	 * The presence probe is the one leg split: {@code RegistryObject.isPresent()} forge /
+	 * {@code DeferredHolder.isBound()} 21.1.
+	 */
+	public static net.minecraft.world.item.Item clayBandItemOrNull(int aIndex) {
+		//? if forge {
+		return CLAY_BAND.get(aIndex).isPresent() ? CLAY_BAND.get(aIndex).get().asItem() : null;
+		//?} else {
+		/*return CLAY_BAND.get(aIndex).isBound() ? CLAY_BAND.get(aIndex).get().asItem() : null;
+		 *///?}
+	}
+
 	/** The four fallen-log woods (Dead/Rotten/Mossy/Frozen — the Log1 meta variants, see GT6FallenLogBlock), path order. */
 	public static final List<RegistryObject<Block>> FALLEN_LOGS = List.of(
 			BLOCKS.register("dead_log", GT6FallenLogBlock::new),
@@ -394,13 +441,15 @@ public final class GT6SurfaceBlocks {
 			BLOCKS.register("mossy_log", GT6FallenLogBlock::new),
 			BLOCKS.register("frozen_log", GT6FallenLogBlock::new));
 
-	/** The obtainable-band blocks, registration order (the census/lang walk unit). */
+	/** The obtainable-band blocks, registration order (the census/lang walk unit); the
+	 * colored clays (task worldgen-diggables-pits) joined the tail — the loot self-drop,
+	 * BlockItem and NATURAL-tab walks ride the list. */
 	public static final List<RegistryObject<Block>> PLANT_BAND = List.of(
-			GLOWTUS, BERRY_BUSH, BLACK_SAND, TURF);
+			GLOWTUS, BERRY_BUSH, BLACK_SAND, TURF, CLAY_BROWN, CLAY_YELLOW, CLAY_BLUE, CLAY_WHITE);
 
 	/** The obtainable band's item register (the GT6TreeBlocks shape). */
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "gt6");
-	/** The 8 block items, registration order (the 4 plants, then the 4 fallen logs — the tab walks use the sub-lists). */
+	/** The 12 block items, registration order (the 8 plants/soils, then the 4 fallen logs — the tab walks use the sub-lists). */
 	public static final List<RegistryObject<Item>> PLANT_ITEMS = registerPlantItems();
 
 	private static List<RegistryObject<Item>> registerPlantItems() {

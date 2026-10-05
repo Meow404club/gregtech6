@@ -50,6 +50,7 @@ direct	block.gt6.birch_beam	白桦木梁	hand
 direct	block.gt6.birch_beam_fireproof	白桦木梁 (防火)	hand
 direct	block.gt6.black_sand	黑沙	hand
 direct	block.gt6.blackstone_anvil	黑石砧	hand
+direct	block.gt6.blue_clay	蓝色粘土块	hand
 direct	block.gt6.blue_mahoe_beam	高红槿梁	hand
 direct	block.gt6.blue_mahoe_beam_fireproof	高红槿梁 (防火)	hand
 direct	block.gt6.blue_mahoe_leaves	蓝梧桐树叶	hand
@@ -84,6 +85,7 @@ direct	block.gt6.bottlecrate_spruce	云杉木瓶箱	hand
 direct	block.gt6.bottlecrate_warped	诡异木瓶箱	hand
 direct	block.gt6.brick_burning_box	砖块燃烧室 (固体)	hand
 direct	block.gt6.bucketometer	流体体积传感器(单位: 桶)	hand
+direct	block.gt6.brown_clay	棕色粘土块	hand
 direct	block.gt6.bumble_hive	熊蜂窝	hand
 direct	block.gt6.bumbliary	黄蜂蜂箱	auto
 direct	block.gt6.bumbliary_advanced	高级黄蜂蜂箱	auto
@@ -475,6 +477,7 @@ direct	block.gt6.transformer_rotation	木制转向齿轮箱	hand
 direct	block.gt6.turf	草皮	hand
 direct	block.gt6.ventilation_unit	通风单元	hand
 direct	block.gt6.water_wheel	水车	hand
+direct	block.gt6.white_clay	白色粘土块	hand
 direct	block.gt6.willow_beam	柳树梁	hand
 direct	block.gt6.willow_beam_fireproof	柳树梁 (防火)	hand
 direct	block.gt6.willow_leaves	柳树树叶	hand
@@ -487,6 +490,7 @@ direct	block.gt6.wire_laser	激光光纤导线	hand
 direct	block.gt6.wood_beam	木梁	hand
 direct	block.gt6.wood_beam_fireproof	木梁 (防火)	hand
 direct	block.gt6.wood_wall	木壁板	hand
+direct	block.gt6.yellow_clay	黄色粘土块	hand
 direct	block.gt6.zpm_decharger_electric	零点模块放能器 (电能)	hand
 direct	block.gt6.zpm_decharger_quantum	零点模块放能器 (量子能)	hand
 direct	fluid.gt6.adamantium_molten	熔融艾德曼合金	hand

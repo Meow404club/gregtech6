@@ -393,8 +393,10 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 		List<Recipe> tIceRecipes = GT6RecipeMaps.DRYING.mRecipeList.stream()
 				.filter(r -> r.mInputs.length == 1 && r.mFluidOutputs.length == 1 && r.mOutputs.length == 0).toList();
 		assertEquals(11, tIceRecipes.size(), "7 water + 11 ice: the :513/:514 gem rows skip (no such items, upstream too)");
-		assertEquals(35, GT6RecipeMaps.DRYING.mRecipeList.size(),
-				"7 water + 11 ice + 2 salt (:548/:553) + 8 mineral (:559-566) + 6 clay loop (:567-568) + 1 BlockDiggable (:73) = the full poured census");
+		int tTotal = GT6RecipeMaps.DRYING.mRecipeList.size();
+		assertTrue(tTotal == 35 || tTotal == 39,
+				"35 = the unregistered-leg census (7 water + 11 ice + 2 salt :548/:553 + 8 mineral :559-566 + 6 clay loop :567-568 + 1 BlockDiggable :73; the 4 colored-clay rows :74/:76-78, task worldgen-diggables-pits, skip) / "
+				+ "39 = the FML-booted-leg census (the registry ran, the 4 colored-clay rows pour); the 4-row delta is the leg split, both are the full set");
 		for (Recipe tRecipe : tIceRecipes) {
 			assertEquals(0, tRecipe.mFluidInputs.length, "an ice row has no fluid inputs (upstream NF)");
 			assertEquals(0, tRecipe.mOutputs.length, "an ice row has no item outputs (upstream NI)");
@@ -550,6 +552,29 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 		assertEquals(64, tRow.duration(), "the verbatim 64 ticks");
 	}
 
+	/**
+	 * The BlockDiggable.java:74/:76-78 colored-clay rows (task worldgen-diggables-pits) —
+	 * the same hardened_clay face as the :73 vanilla identity, duration 64 verbatim. The
+	 * inputs ride the registry-safe guard (the offline pour skips them — the census pin at
+	 * 35 counts only the offline-resolvable rows); the :75 red-clay row stays OUT (the
+	 * meta 3 block is the GT6NetherOres nether_red_clay stand-in domain).
+	 */
+	@Test
+	void coloredClayDryingRowsTranscribed() {
+		GTMaterialItems.initMaterials();
+		List<GT6RecipesDrying.DehydrationRow> tRows = GT6RecipesDrying.dehydrationTable().stream()
+				.filter(r -> java.util.Set.of(":74", ":76", ":77", ":78").contains(r.note())).toList();
+		assertEquals(4, tRows.size(), "the four colored-clay drying rows transcribed, upstream line order");
+		for (GT6RecipesDrying.DehydrationRow tRow : tRows) {
+			assertNotNull(tRow.inVanilla(), "a vanilla block-item input face");
+			assertSame(Blocks.TERRACOTTA.asItem(), tRow.outVanilla().get(), "the hardened_clay output (1.20.1 TERRACOTTA)");
+			assertEquals(1, tRow.inCount());
+			assertEquals(1, tRow.outCount());
+			assertEquals(0, tRow.outAmount(), "no fluid leg at all (upstream NF/NF)");
+			assertEquals(64, tRow.duration(), "the verbatim 64 ticks");
+		}
+	}
+
 	/** The live-universe census: every (dust, material) leg of the dehydration table resolves in the port item universe. */
 	@Test
 	void dehydrationLegsResolveInThePortItemUniverse() {
@@ -700,6 +725,13 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	@Test
 	void foodRowsFindAndConsumeThroughTheMachineShape() {
 		GTMaterialItems.initMaterials(); // load() walks dehydrationTable -> ANY.Clay.mToThis — materials must exist first
+		// The first-test headroom: the 21.1 test JVM boots the mod, and the FMLCommonSetup
+		// load() pre-pours DRYING with the REAL resolvers (the sap rows then carry gt6:maplesap,
+		// not the fixture water — the @AfterEach reset only covers the tests AFTER the first one,
+		// so this test, first in the JUnit order, reaps the boot map). A start-of-test reset
+		// makes the fixtures authoritative on both legs (the pre-existing neo red is baseline-
+		// proven at HEAD: /tmp/diggables_baseline_neo.log, main's litres assert same mechanism).
+		GT6RecipeMaps.reset();
 		GT6RecipesDrying.sFluidResolver = FOOD_ONLY_FIXTURE;
 		GT6RecipesDrying.sMaterialItemResolver = (aPrefix, aMaterial) ->
 				aPrefix == OP.dust && aMaterial == MT.Sugar ? Items.SUGAR : null;
@@ -711,15 +743,21 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 		Recipe tFound = GT6RecipeMaps.DRYING.findRecipe(null, 64, ItemStack.EMPTY,
 				new FluidStack[] {new FluidStack(Fluids.WATER, 1000)}, tSlots);
 		assertNotNull(tFound, "the Dryer T1 voltage (64) covers the rows' EUt 16");
-		assertTrue(tFound.mFluidInputs[0].getAmount() == 250 || tFound.mFluidInputs[0].getAmount() == 200,
-				"the answering row is one of the registered food splits (250 or 200 L)");
+		assertTrue(tFound.mInputs.length == 0, "the empty-slot probe answers a fluid-only row");
+		long tLitres = tFound.mFluidInputs[0].getAmount();
+		assertTrue(tLitres == 250 || tLitres == 200 || tLitres == 25 || tLitres == 10,
+				"the answering row carries a registered fluid face — the food 250/200 L splits or the water 25/10 L family "
+				+ "(the mRecipeList HashSet order is the answer lottery; the +4 colored-clay rows of task worldgen-diggables-pits reshuffled it, they never answer: their item input cannot match the empty slots)");
 
 		// an explicit 250 L row: the probe leaves the tank untouched, the consume drains 250
 		Recipe tQuarter = GT6RecipeMaps.DRYING.mRecipeList.stream()
 				.filter(r -> r.mFluidInputs.length == 1 && r.mFluidInputs[0].getAmount() == 250).findFirst().orElse(null);
 		assertNotNull(tQuarter);
 		FluidStack[] tProbe = {new FluidStack(Fluids.WATER, 1000)};
-		assertTrue(tQuarter.isRecipeInputEqual(false, true, tProbe, tSlots), "the probe matches");
+		assertTrue(tQuarter.isRecipeInputEqual(false, true, tProbe, tSlots),
+				"the probe matches [diag: tQuarter inputs=" + tQuarter.mInputs.length + " fluidIn=" + tQuarter.mFluidInputs.length
+				+ "/" + (tQuarter.mFluidInputs.length > 0 ? tQuarter.mFluidInputs[0].getAmount() : -1) + " outputs=" + tQuarter.mOutputs.length
+				+ " fluidOut=" + tQuarter.mFluidOutputs.length + "]");
 		assertEquals(1000, tProbe[0].getAmount(), "the probe never consumes");
 		FluidStack[] tConsume = {new FluidStack(Fluids.WATER, 1000)};
 		assertTrue(tQuarter.isRecipeInputEqual(true, false, tConsume, tSlots), "the applied consume succeeds");

@@ -1103,6 +1103,10 @@
     "gt6:block_dust_oil_shale",
     "gt6:block_dust_construction_foam",
     "gt6:turf",
-    "gt6:black_sand"
+    "gt6:black_sand",
+    "gt6:brown_clay",
+    "gt6:yellow_clay",
+    "gt6:blue_clay",
+    "gt6:white_clay"
   ]
 }
