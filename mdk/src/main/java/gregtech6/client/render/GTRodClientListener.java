@@ -46,6 +46,14 @@ import gregtech6.registry.GTItemPipes;
  * carriers and the item parents (the addWireFamily posture — the datagen shape of the
  * pipe/axle rows is UNCHANGED).
  *
+ * <p>③ FLOW CHAIN (task pipe-flow-arrow-render-fix): the fluid-pipe per-state keys seat
+ * the composed {@code Foam(Flow(Rod(baked)))} chain ({@link #replacementFor}) — this
+ * listener is the SINGLE writer of those keys. The former GTPipeFlowClientListener
+ * factory-table registration (deleted with the task) both registered the WRONG key form
+ * (model-file ids {@code block/<path>} that never match a per-state bake key,
+ * GTRenderModelListener class doc) and lost the last-wins race against this replacement —
+ * arrows, foam and the cover snapshot never rendered on any build.
+ *
  * <p>Order safety with the {@link GTMachineTintModel} bake walk (both hooks legally
  * replace the same entries): this model extends GTDynamicBakedModel, so the tint walk's
  * {@code instanceof} guard skips it — and if the tint walk ran first, this
@@ -94,9 +102,38 @@ public final class GTRodClientListener {
 			Entry tEntry2 = PARAMS.get(tPath);
 			if (tEntry2 == null) continue;
 			// one model instance per block — per-state keys and the item key share it
-			tEntry.setValue(tModels.computeIfAbsent(tPath,
-					tP -> new GTRodBakedModel(tEntry.getValue(), tEntry2.params(), tEntry2.block())));
+			GTRodBakedModel tRod = tModels.computeIfAbsent(tPath,
+					tP -> new GTRodBakedModel(tEntry.getValue(), tEntry2.params(), tEntry2.block()));
+			tEntry.setValue(replacementFor(tKeyString, tRod));
 		}
+	}
+
+	/**
+	 * The flow-chain key test (task pipe-flow-arrow-render-fix): TRUE exactly on the
+	 * FLUID-pipe per-state bake keys {@code gt6:<path>#connections=0..63} — the only keys
+	 * whose BE can carry the FLOW/FOAM/RENDER snapshots (GTFluidPipeBlockEntity
+	 * .getModelData). Every other rod key — the item keys, the item pipes, the logistics
+	 * wire, the axles — renders the raw rod.
+	 */
+	static boolean isFlowChainKey(String aBakedKey) {
+		int tHash = aBakedKey.indexOf('#');
+		if (tHash < 0) return false;
+		if (!aBakedKey.startsWith("connections=", tHash + 1)) return false;
+		return GTFluidPipes.BLOCKS_BY_PATH.containsKey(
+				aBakedKey.substring(GTRenderModelListener.MOD_ID.length() + 1, tHash));
+	}
+
+	/**
+	 * The replacement value for one rod key (task pipe-flow-arrow-render-fix): the fluid
+	 * per-state keys seat the composed {@code Foam(Flow(Rod(baked)))} chain — the foam
+	 * outer (its any-snapshot+PAINT gate), the flow middle (arrows), the rod innermost
+	 * (body + material/paint tint). This listener is the SINGLE writer of those keys (the
+	 * dead GTPipeFlowClientListener registration is gone): the old form had
+	 * GTRenderModelListener wrap the keys and this replacement overwrite the wrapper
+	 * last-wins, burying arrows AND foam AND the cover snapshot under plain rod geometry.
+	 */
+	static net.minecraft.client.resources.model.BakedModel replacementFor(String aBakedKey, GTRodBakedModel aRod) {
+		return isFlowChainKey(aBakedKey) ? GTFluidPipeFoamModel.over(aRod) : aRod;
 	}
 
 	/**

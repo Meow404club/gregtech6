@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 /**
  * The client-side wiring of the oven overlay model (task render-c-oven-overlay, the
- * {@link GTPipeFlowClientListener} shape: card-local {@code @EventBusSubscriber},
+ * {@link GTRodClientListener} shape: card-local {@code @EventBusSubscriber},
  * GT6Mod/GTModBusListener untouched; Dist.CLIENT — the dedicated server never loads this
  * class). Registration runs at mod construct, strictly before the first resource reload
  * that fires {@code ModelEvent.ModifyBakingResult} (GTRenderModelListener class doc).

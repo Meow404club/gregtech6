@@ -35,16 +35,17 @@ import net.minecraftforge.client.model.data.ModelData;
  * quads carry {@link #FOAM_TINT_INDEX} and the registered pipe BlockColor resolves the
  * PAINT colour (applyFoam paints the pipe the foam colour, upstream :161/:163).
  *
- * <p>CHAIN: registered as the outer wrapper of the flow model ({@link #chain()} — one
- * registration per per-state key, GTRenderModelListener last-wins), so an arrowed+foamed
- * pipe renders arrows AND foam; a foam-only pipe hits {@link #supportsDynamicQuads} on the
- * FOAM key (the flow model alone would fall back on its FLOW_SNAPSHOT gate). Geometry:
- * full-cube quads inflated {@value #FOAM_EPSILON} past the block boundary (the GTCEu
- * StaticFaceBakery epsilon, the arrow precedent) — never culled, solid layer only.
+ * <p>CHAIN: the OUTER wrapper of the flow model ({@link #over(BakedModel)} — seated by
+ * GTRodClientListener on the fluid-pipe per-state keys, task pipe-flow-arrow-render-fix),
+ * so an arrowed+foamed pipe renders arrows AND foam; a foam-only pipe hits
+ * {@link #supportsDynamicQuads} on the FOAM key (the flow model alone would fall back on
+ * its FLOW_SNAPSHOT gate). Geometry: full-cube quads inflated {@value #FOAM_EPSILON} past
+ * the block boundary (the GTCEu StaticFaceBakery epsilon, the arrow precedent) — never
+ * culled, solid or cutout layer (the r8-tex pipe rows bake cutout).
  *
  * <p>RED LINE: reads ONLY the immutable snapshot — no BlockEntity is reachable from here
  * (render-thread semantics, GTDynamicBakedModel class doc). CLIENT-ONLY class:
- * instantiated exclusively through the Dist.CLIENT chain registration (and the offline
+ * instantiated exclusively inside the composed chain (and the offline
  * tests, which exercise the pure planner over its {@link FoamQuad} records).
  */
 public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
@@ -84,21 +85,38 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 	}
 
 	/**
-	 * The runtime chain factory: the foam model wraps the flow model, the flow model wraps
-	 * the baked blockstate model. ONE registration site (GTPipeFlowClientListener) — the
-	 * per-state keys stay single-registered, no ordering hazard.
+	 * The composed chain over one body model: Foam(Flow(body)) — the foam outer, the flow
+	 * middle, the body innermost (the rod model in the live composition,
+	 * GTRodClientListener). Task pipe-flow-arrow-render-fix: exactly ONE writer seats this
+	 * per baked key — the old two-listener form (a GTRenderModelListener registration plus
+	 * the GTRodClientListener replacement of the same keys) resolved by last-wins and the
+	 * rod replacement buried the whole chain.
 	 */
-	public static Function<BakedModel, BakedModel> chain() {
-		return aBaked -> new GTFluidPipeFoamModel(new GTFluidPipeFlowModel(aBaked));
+	public static BakedModel over(BakedModel aBody) {
+		return new GTFluidPipeFoamModel(new GTFluidPipeFlowModel(aBody));
 	}
 
+	/**
+	 * The runtime chain factory (the over() form as a bake-table function).
+	 */
+	public static Function<BakedModel, BakedModel> chain() {
+		return GTFluidPipeFoamModel::over;
+	}
+
+	/**
+	 * The outer chain gate (the p35 split: the flow model keys on FLOW_SNAPSHOT, the cover
+	 * chain on RENDER_SNAPSHOT — the foam wrapper dispatches whenever any inner consumer
+	 * has data). Task pipe-flow-arrow-render-fix adds PAINT: a painted plain pipe carries
+	 * PAINT-only ModelData, and the paint tint resolves INSIDE the rod body — a closed
+	 * outer gate would drop the whole ModelData on the 3-arg miss path and spray the pipe
+	 * back to its material colour.
+	 */
 	@Override
 	protected boolean supportsDynamicQuads(ModelData aModelData) {
-		// the p35 split: the flow model keys on FLOW_SNAPSHOT, the cover chain on
-		// RENDER_SNAPSHOT — the foam wrapper dispatches whenever any inner consumer has data
 		return aModelData.has(GTModelProperties.FLOW_SNAPSHOT)
 				|| aModelData.has(GTModelProperties.RENDER_SNAPSHOT)
-				|| aModelData.has(GTModelProperties.FOAM_SNAPSHOT);
+				|| aModelData.has(GTModelProperties.FOAM_SNAPSHOT)
+				|| aModelData.has(GTModelProperties.PAINT);
 	}
 
 	@Override
@@ -118,11 +136,13 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 		return rQuads;
 	}
 
-	/** The solid-layer gate + the six planned quads, resolved against the atlas. */
+	/** The baked-layer gate + the six planned quads, resolved against the atlas. */
 	private List<BakedQuad> foamQuads(PipeFoamSnapshot aSnapshot, @Nullable Direction aSide, @Nullable RenderType aRenderType) {
 		List<BakedQuad> rQuads = new ArrayList<>();
-		// opaque foam: solid layer only (+ the null all-layers pass)
-		if (aRenderType != null && !aRenderType.equals(RenderType.solid())) return rQuads;
+		// opaque foam: the layers the pipe family bakes — the r8-tex pipe models declare
+		// render_type:cutout, so a solid-only gate never baked foam at all (the
+		// GTRodBakedModel:183 posture, solid+cutout, plus the null all-layers pass)
+		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) return rQuads;
 		for (FoamQuad tPlan : planQuads(aSnapshot, aSide)) {
 			TextureAtlasSprite tSprite = mSpriteLookup.apply(tPlan.sprite());
 			if (tSprite == null) continue; // atlas gap: skip the quad instead of rendering garbage
