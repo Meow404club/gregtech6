@@ -421,6 +421,13 @@ public final class GT6WorldgenDatagen {
         // shape — the upstream WorldgenColtan constants live in GT6ColtanGenerator).
         FeatureUtils.register(ctx, GT6Worldgen.COLTAN_CONFIGURED, GT6Features.COLTAN,
                 NoneFeatureConfiguration.INSTANCE);
+        // task worldgen-center-nexus — the ONE world-origin center configured feature: the
+        // registered GT6CenterFeature instance, NoneFeatureConfiguration (the trio Nexus/
+        // Streets/Beacon dispatches on chunk coordinates inside the Feature — the upstream
+        // three WorldgenObject rows, Loader_Worldgen.java:647-649, over one generator body,
+        // the WorldgenHives one-Feature-three-rows precedent).
+        FeatureUtils.register(ctx, GT6Worldgen.CENTER_CONFIGURED, GT6Features.CENTER,
+                NoneFeatureConfiguration.INSTANCE);
         // task bedrock-ore-worldgen — the ONE bedrock-ore configured feature: the
         // registered GT6BedrockOreFeature instance over the 46-row table (the same tier-a
         // face as the vein/lens tables).
@@ -565,6 +572,14 @@ public final class GT6WorldgenDatagen {
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_RACKS_CONFIGURED),
                 RarityFilter.onAverageOnceEvery(2), CountPlacement.of(1), InSquarePlacement.spread(),
                 BiomeFilter.biome());
+
+        // task worldgen-center-nexus — the center placed feature: Count 1 CONSTANT +
+        // InSquare + BiomeFilter (the conflict-audit posture; the fixed world-origin chunk
+        // gates live in the Feature's coordinate dispatch, no Y placement — the bodies
+        // carry their own HEIGHT-anchored bands).
+        PlacementUtils.register(ctx, GT6Worldgen.CENTER_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.CENTER_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task w6-small-ore-datagen — tail-append
         bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
     }
@@ -743,6 +758,16 @@ public final class GT6WorldgenDatagen {
         ctx.register(biomeModifierKeyOf("coltan"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.COLTAN_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+
+        // task worldgen-center-nexus — the center biome modifier: EVERY overworld biome
+        // (upstream Loader_Worldgen.java:647-649 gates on DIM_OVERWORLD, not biomes), at
+        // the TOP_LAYER_MODIFICATION step (the last decoration pass — the hand-built
+        // terrain overwrites whatever generated before, the upstream
+        // WorldgenCenterBiomes.reset :63-65 GENERATING_SPECIAL suppression face becomes
+        // plain overwriting; the water-replace frozen-row step precedent).
+        ctx.register(biomeModifierKeyOf("center"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.CENTER_PLACED)),
+                GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
         // task nether-lens-end-yield — the END large-vein modifier over the SAME
         // gt6:large_veins placed feature (the Feature's biome probe picks the ORE_END
         // rows there), at the ore step. The CONDITIONS ride the emission providers

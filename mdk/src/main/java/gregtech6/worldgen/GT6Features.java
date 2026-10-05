@@ -186,6 +186,16 @@ public final class GT6Features {
      */
     public static final GT6ColtanFeature COLTAN = registerForm("coltan", new GT6ColtanFeature());
 
+    /**
+     * The world-origin center showcase (task worldgen-center-nexus) — ONE registration row
+     * {@code gt6:center}, NoneFeatureConfiguration (the nether-form shape): the Nexus/
+     * Streets/Beacon trio dispatches on chunk coordinates inside the feature (the upstream
+     * three WorldgenObject rows, Loader_Worldgen.java:647-649 — the biomes/testing rows
+     * ride the follow-up card). The configured/placed/biome-modifier rows hang off it in
+     * GT6WorldgenDatagen.
+     */
+    public static final GT6CenterFeature CENTER = registerForm("center", new GT6CenterFeature());
+
     private static <T extends Feature<?>> T registerForm(String aPath, T aFeature) {
         FEATURES.register(aPath, () -> aFeature);
         return aFeature;
