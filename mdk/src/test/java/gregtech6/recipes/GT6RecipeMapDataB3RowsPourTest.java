@@ -73,8 +73,8 @@ public class GT6RecipeMapDataB3RowsPourTest extends GTRecipesOfflineTestBase {
 	private static final Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
 
-	/** The band census: bath.json = the 334 pre-b3 rows + the 244 dye-band rows. */
-	private static final int CENSUS = 578;
+	/** The band census: bath.json = the 334 pre-b3 rows + the 244 dye-band rows + the 7 Sn soldering legs (task circuit-chain-recipes — the review-seat ratchet). */
+	private static final int CENSUS = 585;
 
 	/** The band comment lines (the five upstream statements) and the vanilla-id block face each dyes. */
 	private static final int[] BAND_LINES = {729, 730, 732, 733, 734};
@@ -333,6 +333,10 @@ public class GT6RecipeMapDataB3RowsPourTest extends GTRecipesOfflineTestBase {
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			tItems.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
+		// task circuit-chain-recipes — the circuit chain's registered siblings (the bath soldering
+		// legs' board/circuit outputs ride these walks, the card's own id-universe pin shape)
+		for (var tRow : gregtech6.registry.GT6CircuitChain.ROWS) tItems.add("gt6:" + tRow.path());
+		for (var tRow : gregtech6.registry.GT6Batteries.CIRCUIT_ROWS) tItems.add("gt6:" + tRow.path());
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) {
 			tItems.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}

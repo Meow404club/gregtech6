@@ -74,7 +74,7 @@ public class GT6RecipeMapDataB6SmallMapsRowsPourTest extends GTRecipesOfflineTes
 	private static final int LAM_FILE_CENSUS = 329; // 1 smoke + 42 beam + 286 b6 wire rows
 	private static final int LAM_WIRE_CENSUS = 286; // 280 electric + 6 redstone
 	private static final int INJ_FILE_CENSUS = 57;  // 1 smoke + 56 poured rows
-	private static final int LAS_FILE_CENSUS = 1;   // the smoke row only, by declaration
+	private static final int LAS_FILE_CENSUS = 448; // was 1 (the smoke row only); +447 task circuit-chain-recipes — the 447 lens-band rows (11 green x 27 + 15 red x 10), the review-seat ratchet; the 36-station head accounting stays (13 of the 36 now POURED via the two listener bands)
 
 	/** The wire-insulation leg table, MultiTileEntityWireElectric.java:96-106 verbatim: size -> {wire tail, dur, plate count, foil count, plate line, foil line}. */
 	private static final long[][] WIRE_LEGS = {{1, 16, 1, 4, 96, 102}, {2, 16, 1, 4, 97, 103}, {4, 32, 2, 8, 98, 104}, {8, 48, 3, 12, 99, 105}, {12, 64, 4, 16, 100, 106}};
@@ -429,6 +429,9 @@ public class GT6RecipeMapDataB6SmallMapsRowsPourTest extends GTRecipesOfflineTes
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			tMaterialItems.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
+		// task circuit-chain-recipes — the crystal/wiring circuit outputs (the lens bands'
+		// outputs ride this walk, the card's own id-universe pin shape)
+		for (var tRow : gregtech6.registry.GT6CircuitChain.ROWS) tMaterialItems.add("gt6:" + tRow.path());
 		Set<String> tWireItems = new HashSet<>();
 		for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
 			tWireItems.add("gt6:" + GTWireSpecs.registryName(tVariant));

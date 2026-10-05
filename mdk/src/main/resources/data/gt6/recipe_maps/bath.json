@@ -1,5 +1,5 @@
 {
-  "comment": " | task recipe-b2-bath-potion-domain - the BATH static-replay card. SOURCES + ROWS: Loader_Recipes_Ores.java:108-:188 (the acid-wash walks: vitriol families x crushedPurified/tiny -> H2SO4 -> vitriol + H gas, the Pt-group AquaRegia face, the HF-V/HF-C faces, the MnO2-byproduct walk over the live port family, the noble Au/Cu/Midasium/Sn AquaRegia rows, the Cryotheum gem walks over ANY.Amber/ANY.Glowstone/the Carminite-Nikolite-Redstone-Cinnabar quartet) + Loader_Recipes_Chem.java :91-:95/:189-:196/:197-:203/:240/:260-:263 (the water-oxidation, tantalate, tungstate-HCl, FeCl3, HNO3-coal and TiO2/titanium faces) + Loader_Recipes_Other.java:231 (coal hydration) + Loader_Recipes_Vanilla.java:723-:741/:748 (the chlorine bleach rows, W-wildcards expanded per modern color item, and the reeds->paper FL.waters legs) + Loader_Recipes_Vanilla.java:727-:735 (the DYE_FLUIDS dye bath band, task recipe-b3-dye-bath-band: the 16-colour fluid loop — the wool/carpet legs skip DYE_INDEX_White=15 (CS.java:457, upstream has no white dye-bath leg, the w1 smoke row stays the only white-wool row) while the stained trio takes all 16; gt6:squidink rides Black and gt6:indigo Blue as the Loader_Fluids :111/:112 DYE_FLUIDS seeds (black/blue carry 4 fluid legs, the rest 3); amounts FL.mul(tDye,a,b,T) = UT.Code.units (UT.java:1677-1683, roundUp) over the per-fluid base CS.L=144 mB (CS.java:129 — the research-note 62/31/23 was the L=1000 trap): wool/terracotta/glass 9 mB, carpet 5 mB, pane 4 mB; port fluid ids gt6:dye_watermixed_|dye_flower_|dye_chemical_<GTSprayCanItem.DYE_IDS[i]> + gt6:squidink/indigo). The pre-existing w1 smoke row (the white wool wash) is preserved untouched. OM.dust ladder amounts resolved per OM.java:460-468 (the dust/dustSmall/dustTiny conditional arms); material fluid units per Loader_Fluids createLiquid/createMolten/createGas (chemicals 1000 mB/U, molten 144 mB/U). FLUID ID MAP: MT.H2SO4=gt6:sulfuricacid, MT.Cl=gt6:chlorine, MT.HCl=gt6:hydrochloricacid, MT.HF=gt6:hydrogenfluoride, MT.NO=gt6:nitrogenmonoxide, MT.NO2=gt6:nitrogendioxide, MT.HNO3=gt6:nitricacid, MT.AquaRegia=gt6:aquaregia, MT.Na.liquid=gt6:sodium_molten (144/U), MT.CaCO3.liquid=gt6:calcite_molten (144/U), MT.NaCl dust=gt6:dust_salt, FL.Steam=gt6:steam (9000*STEAM_PER_WATER=1440000, CS.java:242), MT.O=gt6:oxygen, MT.H=gt6:hydrogen. DECLARED OUT (band-level carrier gaps, the b8 accounting residual): Ores:192-:240 the Pyrotheum chunk band (the TE/IE slag byproduct identity port-absent); Ores:145 the Osmium member (the plain-Osmium item walk is port-absent, only OsmiumElemental exists - 10 of 11 Pt-group members pour); Chem:189 the gem_tantalum slot (no Ta gem form - the row pours with the slot dropped, the Recipe null-slot rule); Chem:191/:262 the Mg/MgCO3 molten faces (unregistered); Vanilla:877-:879 the gold-molten face (unregistered); Woods:74-:172 the fireproof log/plank/beam + IE/RC tie bands (BlocksGT FireProof + IE_Treated/RC_Tie absent); Other:204-:214 (event-listener rows, not static); Other:424-:472 (Mana_TE absent, the ST.tag Glue rows = the JSON v1 row-flag boundary, the CFoam/slab dye walk); the MultiItem*/GT6_Main/FL/RM/BlockStones/BlockFlowersB/ItemIterator/Loader_MultiTileEntities BATH scatter + Compat_Recipes_* (the b8 residual + the family COMPAT ruling); the Handlers:660-:669 wood-oil ladder already pours live via GT6RecipesBath - not re-poured. The Loader_Recipes_Potions Fermenter face rides fermenter.json (b2b1). Datapack domain: KubeJS-naturally editable, zero adapter.",
+  "comment": " | task recipe-b2-bath-potion-domain - the BATH static-replay card. SOURCES + ROWS: Loader_Recipes_Ores.java:108-:188 (the acid-wash walks: vitriol families x crushedPurified/tiny -> H2SO4 -> vitriol + H gas, the Pt-group AquaRegia face, the HF-V/HF-C faces, the MnO2-byproduct walk over the live port family, the noble Au/Cu/Midasium/Sn AquaRegia rows, the Cryotheum gem walks over ANY.Amber/ANY.Glowstone/the Carminite-Nikolite-Redstone-Cinnabar quartet) + Loader_Recipes_Chem.java :91-:95/:189-:196/:197-:203/:240/:260-:263 (the water-oxidation, tantalate, tungstate-HCl, FeCl3, HNO3-coal and TiO2/titanium faces) + Loader_Recipes_Other.java:231 (coal hydration) + Loader_Recipes_Vanilla.java:723-:741/:748 (the chlorine bleach rows, W-wildcards expanded per modern color item, and the reeds->paper FL.waters legs) + Loader_Recipes_Vanilla.java:727-:735 (the DYE_FLUIDS dye bath band, task recipe-b3-dye-bath-band: the 16-colour fluid loop — the wool/carpet legs skip DYE_INDEX_White=15 (CS.java:457, upstream has no white dye-bath leg, the w1 smoke row stays the only white-wool row) while the stained trio takes all 16; gt6:squidink rides Black and gt6:indigo Blue as the Loader_Fluids :111/:112 DYE_FLUIDS seeds (black/blue carry 4 fluid legs, the rest 3); amounts FL.mul(tDye,a,b,T) = UT.Code.units (UT.java:1677-1683, roundUp) over the per-fluid base CS.L=144 mB (CS.java:129 — the research-note 62/31/23 was the L=1000 trap): wool/terracotta/glass 9 mB, carpet 5 mB, pane 4 mB; port fluid ids gt6:dye_watermixed_|dye_flower_|dye_chemical_<GTSprayCanItem.DYE_IDS[i]> + gt6:squidink/indigo). The pre-existing w1 smoke row (the white wool wash) is preserved untouched. OM.dust ladder amounts resolved per OM.java:460-468 (the dust/dustSmall/dustTiny conditional arms); material fluid units per Loader_Fluids createLiquid/createMolten/createGas (chemicals 1000 mB/U, molten 144 mB/U). FLUID ID MAP: MT.H2SO4=gt6:sulfuricacid, MT.Cl=gt6:chlorine, MT.HCl=gt6:hydrochloricacid, MT.HF=gt6:hydrogenfluoride, MT.NO=gt6:nitrogenmonoxide, MT.NO2=gt6:nitrogendioxide, MT.HNO3=gt6:nitricacid, MT.AquaRegia=gt6:aquaregia, MT.Na.liquid=gt6:sodium_molten (144/U), MT.CaCO3.liquid=gt6:calcite_molten (144/U), MT.NaCl dust=gt6:dust_salt, FL.Steam=gt6:steam (9000*STEAM_PER_WATER=1440000, CS.java:242), MT.O=gt6:oxygen, MT.H=gt6:hydrogen. DECLARED OUT (band-level carrier gaps, the b8 accounting residual): Ores:192-:240 the Pyrotheum chunk band (the TE/IE slag byproduct identity port-absent); Ores:145 the Osmium member (the plain-Osmium item walk is port-absent, only OsmiumElemental exists - 10 of 11 Pt-group members pour); Chem:189 the gem_tantalum slot (no Ta gem form - the row pours with the slot dropped, the Recipe null-slot rule); Chem:191/:262 the Mg/MgCO3 molten faces (unregistered); Vanilla:877-:879 the gold-molten face (unregistered); Woods:74-:172 the fireproof log/plank/beam + IE/RC tie bands (BlocksGT FireProof + IE_Treated/RC_Tie absent); Other:204-:214 (event-listener rows, not static); Other:424-:472 (Mana_TE absent, the ST.tag Glue rows = the JSON v1 row-flag boundary, the CFoam/slab dye walk); the MultiItem*/GT6_Main/FL/RM/BlockStones/BlockFlowersB/ItemIterator/Loader_MultiTileEntities BATH scatter + Compat_Recipes_* (the b8 residual + the family COMPAT ruling); the Handlers:660-:669 wood-oil ladder already pours live via GT6RecipesBath - not re-poured. The Loader_Recipes_Potions Fermenter face rides fermenter.json (b2b1). Datapack domain: KubeJS-naturally editable, zero adapter. | task circuit-chain-recipes — the soldering band (MultiItemTechnological.java:720-752, 31 rows) folds to 7 pour rows + 24 CUT rows. CUT declaration (acceptance ②, each named): [Pb legs — :720/:723/:726/:729/:732/:735/:741] gt6:lead_molten is UNREGISTERED (MT.Pb carries MOLTEN but no ChemicalFluidSpec row exists; the b2a lightning H2O2/NO precedent — revival when a molten-fluid backlog card lands the spec); [SolderingAlloy legs — :722/:725/:728/:731/:734/:737/:739/:740/:743] gt6:soldering_alloy_molten UNREGISTERED (same ruling); [BC circuits — :745-:752, 8 rows] the OUTPUT items Circuit_BC_* (30380-30387) are MD.BC_SILICON-gated upstream content and the port has no BuildCraft — the eight circuit_bc_* items are CUT per the card ruling, which orphans the card-1 circuit_board_bc_* eight (registered visibly, now input-less: declared, revival = a BC-compat registration card). THE 11-ITEM DISPOSITION (card-2 acceptance ②): circuit_magic 30311 / circuit_enderium 30313 / circuit_signalum 30315 REGISTERED this card as GT6CircuitChain siblings (MT.Magic/MT.Enderium/MT.Signalum all live in the port material tree); the eight circuit_bc_* CUT. Poured: the 7 Sn legs (:721/:724/:727/:730/:733/:736/:742), gt6:tin_molten at 288 mB = upstream MT.Sn.liquid(U2) at the 144 L/unit molten convention (FluidBridge.L_PER_MOLTEN_UNIT), 0 EUt / 64 t verbatim.",
   "recipes": [
     {
       "inputs": [
@@ -19368,6 +19368,167 @@
         }
       ],
       "duration": 16,
+      "eut": 0
+    },
+    {
+      "comment": "MultiItemTechnological.java:721 — Circuit Board: Sn bath -> circuit_basic (64 t, 0 EUt)",
+      "inputs": [
+        {
+          "item": "gt6:circuit_board_basic",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:tin_molten",
+          "amount": 288
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:circuit_basic",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 0
+    },
+    {
+      "comment": "MultiItemTechnological.java:724 — Circuit Board: Sn bath -> circuit_good (64 t, 0 EUt)",
+      "inputs": [
+        {
+          "item": "gt6:circuit_board_good",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:tin_molten",
+          "amount": 288
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:circuit_good",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 0
+    },
+    {
+      "comment": "MultiItemTechnological.java:727 — Circuit Board: Sn bath -> circuit_good (64 t, 0 EUt)",
+      "inputs": [
+        {
+          "item": "gt6:circuit_board_advanced",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:tin_molten",
+          "amount": 288
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:circuit_good",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 0
+    },
+    {
+      "comment": "MultiItemTechnological.java:730 — Circuit Board: Sn bath -> circuit_advanced (64 t, 0 EUt)",
+      "inputs": [
+        {
+          "item": "gt6:circuit_board_elite",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:tin_molten",
+          "amount": 288
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:circuit_advanced",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 0
+    },
+    {
+      "comment": "MultiItemTechnological.java:733 — Circuit Board: Sn bath -> circuit_elite (64 t, 0 EUt)",
+      "inputs": [
+        {
+          "item": "gt6:circuit_board_master",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:tin_molten",
+          "amount": 288
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:circuit_elite",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 0
+    },
+    {
+      "comment": "MultiItemTechnological.java:736 — Circuit Board: Sn bath -> circuit_master (64 t, 0 EUt)",
+      "inputs": [
+        {
+          "item": "gt6:circuit_board_ultimate",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:tin_molten",
+          "amount": 288
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:circuit_master",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 0
+    },
+    {
+      "comment": "MultiItemTechnological.java:742 — Circuit Board: Sn bath -> circuit_signalum (64 t, 0 EUt)",
+      "inputs": [
+        {
+          "item": "gt6:circuit_board_signalum",
+          "count": 1
+        }
+      ],
+      "fluidInputs": [
+        {
+          "fluid": "gt6:tin_molten",
+          "amount": 288
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:circuit_signalum",
+          "count": 1
+        }
+      ],
+      "duration": 64,
       "eut": 0
     }
   ]

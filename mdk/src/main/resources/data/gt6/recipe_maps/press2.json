@@ -1,0 +1,4554 @@
+{
+ "comment": "task circuit-chain-recipes — the circuit synthesis-chain Press band (MultiItemTechnological.java:546-770) via the SECOND press file key (the sawing.json size-split ruling; press.json keeps the b1 lamp/TNT stock + the electrode rows). 205 rows = 15 statement blocks expanded over the PORT-universe walks (live dump 2026-10-04): Plate Empty walk :548-553 = ANY.SiO2 {22 members, all dust-true} x ANY.Plastic {5, all plate-true} = 110; :573-581 = 7; Cu parts :597-610 = ANY.Cu {AnnealedCopper, Copper} x 12 = 24; :611-616 = 6; Magic :618-629 = 12 (Thaumium/Manasteel/Mithril/Netherite all wireFine-true); :630-636 = 7; Ender parts :638-649 = 12; boards :674-698 = 23; crystal processors :767-770 = 4. All rows 16 EUt; 64 t for plates/boards, 16 t for parts. The lens bands of the chain (wirings/crystal circuits) live in laserengraver.json; the soldering band lives in bath.json; the :765 Crystal Socket crafting row is the MTE crafting 'C' column = the machines-domain card (declared out).",
+ "recipes": [
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsilicon_dioxide x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_silicon_dioxide",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsilicon_dioxide x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_silicon_dioxide",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsilicon_dioxide x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_silicon_dioxide",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsilicon_dioxide x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_silicon_dioxide",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsilicon_dioxide x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_silicon_dioxide",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xglass x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_glass",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xglass x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_glass",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xglass x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_glass",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xglass x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_glass",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xglass x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_glass",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xflint x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_flint",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xflint x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_flint",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xflint x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_flint",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xflint x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_flint",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xflint x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_flint",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmilky_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_milky_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmilky_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_milky_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmilky_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_milky_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmilky_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_milky_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmilky_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_milky_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xnether_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_nether_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xnether_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_nether_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xnether_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_nether_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xnether_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_nether_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xnether_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_nether_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xvoid_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_void_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xvoid_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_void_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xvoid_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_void_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xvoid_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_void_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xvoid_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_void_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsunny_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sunny_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsunny_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sunny_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsunny_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sunny_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsunny_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sunny_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsunny_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sunny_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartzite x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartzite",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartzite x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartzite",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartzite x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartzite",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartzite x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartzite",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartzite x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartzite",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xlavender_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_lavender_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xlavender_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_lavender_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xlavender_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_lavender_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xlavender_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_lavender_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xlavender_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_lavender_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblaze_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_blaze_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblaze_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_blaze_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblaze_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_blaze_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblaze_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_blaze_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblaze_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_blaze_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsmokey_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_smokey_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsmokey_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_smokey_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsmokey_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_smokey_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsmokey_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_smokey_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsmokey_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_smokey_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsand x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsand x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsand x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsand x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xsand x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_sand x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_sand x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_sand x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_sand x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xred_sand x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_red_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmana_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_mana_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmana_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_mana_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmana_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_mana_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmana_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_mana_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xmana_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_mana_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xwhite_end_sand x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_white_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xwhite_end_sand x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_white_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xwhite_end_sand x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_white_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xwhite_end_sand x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_white_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xwhite_end_sand x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_white_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xelven_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_elven_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xelven_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_elven_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xelven_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_elven_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xelven_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_elven_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xelven_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_elven_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblack_end_sand x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_black_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblack_end_sand x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_black_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblack_end_sand x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_black_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblack_end_sand x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_black_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xblack_end_sand x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_black_end_sand",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartz_black x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartz_black",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartz_black x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartz_black",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartz_black x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartz_black",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartz_black x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartz_black",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xquartz_black x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_quartz_black",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcertus_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcertus_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcertus_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcertus_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcertus_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcharged_certus_quartz x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_charged_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcharged_certus_quartz x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_charged_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcharged_certus_quartz x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_charged_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcharged_certus_quartz x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_charged_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xcharged_certus_quartz x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_charged_certus_quartz",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xfluix x ANY.Plastic plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_fluix",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xfluix x ANY.Plastic teflon (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_teflon",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_fluix",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xfluix x ANY.Plastic pvc (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_pvc",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_fluix",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xfluix x ANY.Plastic bakelite (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_bakelite",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_fluix",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:551 — Circuit Plate Empty, ANY.SiO2 walk xfluix x ANY.Plastic hard_plastic (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hard_plastic",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_fluix",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:573 — Circuit Plate (Copper): Empty + Wiring (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_wire_copper",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_copper",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:574 — Circuit Plate (Gold): Empty + Wiring (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_wire_gold",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_gold",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:575 — Circuit Plate (Platinum): Empty + Wiring (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_wire_platinum",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_platinum",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:577 — Circuit Plate (Magic): Empty + Wiring (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_wire_magic",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_magic",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:578 — Circuit Plate (Enderium): Empty + Wiring (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_wire_enderium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_enderium",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:579 — Circuit Plate (Signalum): Empty + Wiring (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_wire_signalum",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_signalum",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:581 — Circuit Plate (HSLA): HSLA plate + Gold Wiring (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_hslasteel",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_wire_gold",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_plate_hsla",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:598 — Circuit Part (Basic) x9, ANY.Cu walk xannealed_copper, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:599 — Circuit Part (Basic) x9, ANY.Cu walk xannealed_copper, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:600 — Circuit Part (Basic) x9, ANY.Cu walk xannealed_copper, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:601 — Circuit Part (Basic), ANY.Cu walk xannealed_copper, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:602 — Circuit Part (Basic), ANY.Cu walk xannealed_copper, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:603 — Circuit Part (Basic), ANY.Cu walk xannealed_copper, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:604 — Circuit Part (Good), ANY.Cu walk xannealed_copper + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:606 — Circuit Part (Good), ANY.Cu walk xannealed_copper + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:608 — Circuit Part (Good), ANY.Cu walk xannealed_copper + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:605 — Circuit Part (Good), ANY.Cu walk xannealed_copper + RedAlloy wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_red_alloy",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:607 — Circuit Part (Good), ANY.Cu walk xannealed_copper + RedAlloy wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_red_alloy",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:609 — Circuit Part (Good), ANY.Cu walk xannealed_copper + RedAlloy wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_annealed_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_red_alloy",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:598 — Circuit Part (Basic) x9, ANY.Cu walk xcopper, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:599 — Circuit Part (Basic) x9, ANY.Cu walk xcopper, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:600 — Circuit Part (Basic) x9, ANY.Cu walk xcopper, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:601 — Circuit Part (Basic), ANY.Cu walk xcopper, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:602 — Circuit Part (Basic), ANY.Cu walk xcopper, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:603 — Circuit Part (Basic), ANY.Cu walk xcopper, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:604 — Circuit Part (Good), ANY.Cu walk xcopper + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:606 — Circuit Part (Good), ANY.Cu walk xcopper + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:608 — Circuit Part (Good), ANY.Cu walk xcopper + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:605 — Circuit Part (Good), ANY.Cu walk xcopper + RedAlloy wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_red_alloy",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:607 — Circuit Part (Good), ANY.Cu walk xcopper + RedAlloy wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_red_alloy",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:609 — Circuit Part (Good), ANY.Cu walk xcopper + RedAlloy wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_red_alloy",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:611 — Circuit Part (Advanced): Gold + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_advanced",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:612 — Circuit Part (Advanced): Gold + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_advanced",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:613 — Circuit Part (Elite): Gold + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_elite",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:614 — Circuit Part (Master): Platinum + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_master",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:615 — Circuit Part (Master): Platinum + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_master",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:616 — Circuit Part (Ultimate): Platinum + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ultimate",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:618 — Circuit Part (Magic): thaumium + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_thaumium",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:619 — Circuit Part (Magic): thaumium + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_thaumium",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:620 — Circuit Part (Magic): thaumium + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_thaumium",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:621 — Circuit Part (Magic): manasteel + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_manasteel",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:622 — Circuit Part (Magic): manasteel + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_manasteel",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:623 — Circuit Part (Magic): manasteel + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_manasteel",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:624 — Circuit Part (Magic): mithril + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_mithril",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:625 — Circuit Part (Magic): mithril + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_mithril",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:626 — Circuit Part (Magic): mithril + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_mithril",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:627 — Circuit Part (Magic): netherite + Signalum wire, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_netherite",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:628 — Circuit Part (Magic): netherite + Signalum wire, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_netherite",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:629 — Circuit Part (Magic): netherite + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_netherite",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:630 — Circuit Part (Enderium): Enderium + Signalum wire, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_enderium",
+     "count": 1
+    },
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_enderium",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:631 — Circuit Part (Signalum) x9, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_signalum",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:632 — Circuit Part (Signalum) x9, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_signalum",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:633 — Circuit Part (Signalum) x9, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_signalum",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:634 — Circuit Part (Signalum), plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_signalum",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:635 — Circuit Part (Signalum), plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_signalum",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:636 — Circuit Part (Signalum), plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:wire_fine_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_signalum",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:638 — Circuit Part (Enderpearl) x9, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_pearl",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_pearl",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:639 — Circuit Part (Enderpearl) x9, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_pearl",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_pearl",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:640 — Circuit Part (Enderpearl) x9, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_pearl",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_pearl",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:644 — Circuit Part (Enderpearl), plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_pearl",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_pearl",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:645 — Circuit Part (Enderpearl), plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_pearl",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_pearl",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:646 — Circuit Part (Enderpearl), plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_pearl",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_pearl",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:641 — Circuit Part (Ender Eye) x9, plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_eye",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_eye",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:642 — Circuit Part (Ender Eye) x9, plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_eye",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_eye",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:643 — Circuit Part (Ender Eye) x9, plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_eye",
+     "count": 9
+    },
+    {
+     "item": "gt6:dust_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 9
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_eye",
+     "count": 9
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:647 — Circuit Part (Ender Eye), plateGemTiny silicon (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_eye",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_silicon",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_eye",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:648 — Circuit Part (Ender Eye), plateGemTiny germanium (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_eye",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_germanium",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_eye",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:649 — Circuit Part (Ender Eye), plateGemTiny redstone_alloy (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:plate_gem_tiny_ender_eye",
+     "count": 1
+    },
+    {
+     "item": "gt6:dust_tiny_redstone",
+     "count": 1
+    },
+    {
+     "item": "gt6:plate_gem_tiny_redstone_alloy",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_part_ender_eye",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:674 — Circuit Board (Basic): Copper plate + 4 Circuit Part (Basic) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_basic",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:675 — Circuit Board (Good): Copper plate + 4 Circuit Part (Good) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_good",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:676 — Circuit Board (Good): Copper plate + 4 Circuit Part (Advanced) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_advanced",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_good",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:677 — Circuit Board (Good): Copper plate + 4 Circuit Part (Elite) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_elite",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_good",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:678 — Circuit Board (Good): Copper plate + 4 Circuit Part (Master) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_master",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_good",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:679 — Circuit Board (Good): Copper plate + 4 Circuit Part (Ultimate) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_copper",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_ultimate",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_good",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:680 — Circuit Board (Basic): Gold plate + 4 Circuit Part (Basic) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_basic",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:681 — Circuit Board (Good): Gold plate + 4 Circuit Part (Good) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_good",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:682 — Circuit Board (Advanced): Gold plate + 4 Circuit Part (Advanced) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_advanced",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_advanced",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:683 — Circuit Board (Elite): Gold plate + 4 Circuit Part (Elite) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_elite",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_elite",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:684 — Circuit Board (Elite): Gold plate + 4 Circuit Part (Master) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_master",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_elite",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:685 — Circuit Board (Elite): Gold plate + 4 Circuit Part (Ultimate) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_gold",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_ultimate",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_elite",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:686 — Circuit Board (Basic): Platinum plate + 4 Circuit Part (Basic) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_basic",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_basic",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:687 — Circuit Board (Good): Platinum plate + 4 Circuit Part (Good) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_good",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_good",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:688 — Circuit Board (Advanced): Platinum plate + 4 Circuit Part (Advanced) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_advanced",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_advanced",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:689 — Circuit Board (Elite): Platinum plate + 4 Circuit Part (Elite) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_elite",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_elite",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:690 — Circuit Board (Master): Platinum plate + 4 Circuit Part (Master) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_master",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_master",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:691 — Circuit Board (Ultimate): Platinum plate + 4 Circuit Part (Ultimate) (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_platinum",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_ultimate",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_ultimate",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:693 — Circuit Board (Magic): plate + 4 parts (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_magic",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_magic",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_magic",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:694 — Circuit Board (Enderium): plate + 4 parts (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_enderium",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_enderium",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_enderium",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:695 — Circuit Board (Signalum): plate + 4 parts (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_signalum",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_signalum",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_signalum",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:697 — Circuit Board (HSLA Circuit): HSLA plate + 4 Enderpearl parts (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_hsla",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_ender_pearl",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_hsla_circuit",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:698 — Circuit Board (Power Module): HSLA plate + 4 Ender Eye parts (64 t)",
+   "inputs": [
+    {
+     "item": "gt6:circuit_plate_hsla",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_part_ender_eye",
+     "count": 4
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:circuit_board_power_module",
+     "count": 1
+    }
+   ],
+   "duration": 64,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:767 — Crystal Processor (Diamond): Socket + Crystal Circuit (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:processor_crystal_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_crystal_diamond",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:processor_crystal_diamond",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:768 — Crystal Processor (Ruby): Socket + Crystal Circuit (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:processor_crystal_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_crystal_ruby",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:processor_crystal_ruby",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:769 — Crystal Processor (Emerald): Socket + Crystal Circuit (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:processor_crystal_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_crystal_emerald",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:processor_crystal_emerald",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  },
+  {
+   "comment": "MultiItemTechnological.java:770 — Crystal Processor (Sapphire): Socket + Crystal Circuit (16 t)",
+   "inputs": [
+    {
+     "item": "gt6:processor_crystal_empty",
+     "count": 1
+    },
+    {
+     "item": "gt6:circuit_crystal_sapphire",
+     "count": 1
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:processor_crystal_sapphire",
+     "count": 1
+    }
+   ],
+   "duration": 16,
+   "eut": 16
+  }
+ ]
+}

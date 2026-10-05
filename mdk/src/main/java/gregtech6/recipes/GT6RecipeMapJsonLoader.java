@@ -278,7 +278,14 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// Loader_Recipes_Other.java:818-894 + Loader_Recipes_Ores.java:341-344
 				// Graphene/Dilithium stocks
 				"extruder",
-				"cnc", "assembler", "nanofab");
+				"cnc", "assembler", "nanofab",
+
+				// task circuit-chain-recipes — the second file key of the PRESS map: the
+				// circuit synthesis chain (MultiItemTechnological.java:546-770) pours through
+				// its own key/file so the circuit domain stays isolated from the press.json
+				// tail-append hotspot (the sawing.json second-key precedent; the card
+				// mandate — a domain split, not a size split)
+				"press2");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -730,6 +737,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			case "nanofab" -> GT6RecipeMaps.NANOFAB;
 			case "assembler" -> GT6RecipeMaps.ASSEMBLER;
 			case "cnc" -> GT6RecipeMaps.CNC;
+
+			// task circuit-chain-recipes — the circuit chain's second-form press key (the
+			// per-file-key tracker keeps the two subsets replace-independent, see POURABLE)
+			case "press2" -> GT6RecipeMaps.PRESS;
 		default -> null;
 		};
 	}

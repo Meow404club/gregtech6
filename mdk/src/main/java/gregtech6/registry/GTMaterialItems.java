@@ -250,6 +250,28 @@ public final class GTMaterialItems {
     }
 
     /**
+     * The lens-catalyst probe (task circuit-chain-recipes): the port face of the upstream
+     * {@code ST.amount(0, lens)} non-consumable leg — every LaserEngraver lens band row
+     * (Loader_Recipes_Other.java:147-167) keeps its lens across the craft. Consumed by
+     * {@code Recipe.sNotConsumable} (the replicator-USB/slicer-blade disjunct posture):
+     * the predicate is the ITEM face — a lens is a shaping tool, never consumed stock —
+     * so only the rows carrying a lens input feel it.
+     *
+     * <p>The production default is the {@code MaterialPrefixItem.prefix == OP.lens} identity;
+     * the seam exists because a mod-Item is NOT constructible in the offline test JVM (the
+     * forge intrusive-holder wall — the GT6SlicerBlades.sBladeTest shape verbatim).
+     */
+    public static java.util.function.Predicate<ItemStack> sLensTest =
+            aStack -> aStack != null && !aStack.isEmpty()
+                    && aStack.getItem() instanceof MaterialPrefixItem tItem
+                    && tItem.prefix == OP.lens;
+
+    /** The swappable binding (production default: the lens prefix identity). */
+    public static boolean isLens(ItemStack aStack) {
+        return sLensTest.test(aStack);
+    }
+
+    /**
      * Registration-side camelCase to snake_case (GTCEu FormattingUtil.toLowerCaseUnderscore semantics,
      * TagPrefix.java:1306-1308). Lives here — not on {@link gregtech6.item.MaterialPrefixItem} — so the
      * id composition is testable in a plain JVM (MaterialPrefixItem extends Item, which drags vanilla

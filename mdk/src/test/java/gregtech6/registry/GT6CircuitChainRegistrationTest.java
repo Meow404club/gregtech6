@@ -3,6 +3,7 @@
  * 53 circuit synthesis-chain intermediates (MultiItemTechnological.java:546-770): the
  * empty plate + 6 wirings + 8 plates + 11 parts + 19 boards + 4 crystal circuits + 5
  * crystal processors, the "有物无方" face of the 7 circuit carriers (GT6Batteries).
+ * Task circuit-chain-recipes joins the three gap circuits (30311/30313/30315) for 56.
  *
  * <p>The GT6ElectrodesRegistrationTest posture: the items are NOT constructible in this
  * bootstrapped-and-frozen JVM (the mod-Item intrusive-holder wall), so the assertion
@@ -42,23 +43,27 @@ public class GT6CircuitChainRegistrationTest {
 	}
 
 	/**
-	 * The 53 chain items in upstream meta order (MultiItemTechnological.java:546-770), ids
+	 * The 56 chain items in upstream meta order (MultiItemTechnological.java:546-770), ids
 	 * the snake of the IL field names (the GT6FoodCans ruling), family columns
-	 * 8/6/11/19/4+5 (the card's "~48" was the estimate, the archaeology sum is 53).
+	 * 8/6/11/19/4+5 + the card-2 gap circuits (task circuit-chain-recipes: the 30311/
+	 * 30313/30315 Bath outputs whose materials live in the port tree — the 8 BC circuits
+	 * 30380-30387 stay CUT, BuildCraft-gated upstream).
 	 */
 	@Test
 	public void chainRowsAreTheUpstreamFiftyThree() {
-		assertEquals(53, GT6CircuitChain.ROWS.size(), "MultiItemTechnological.java:546-770 registers exactly 53 chain items");
+		assertEquals(56, GT6CircuitChain.ROWS.size(), "MultiItemTechnological.java:546-770 + the three gap circuits = 56");
 		assertEquals(8, GT6CircuitChain.PLATES, "plate census: Empty+Cu+Au+Pt+Magic+Enderium+Signalum+HSLA");
 		assertEquals(6, GT6CircuitChain.WIRES, "wiring census: Cu+Au+Pt+Magic+Enderium+Signalum");
 		assertEquals(11, GT6CircuitChain.PARTS, "part census: 6 tiers + Magic/Enderium/Signalum + EnderPearl/EnderEye");
 		assertEquals(19, GT6CircuitChain.BOARDS, "board census: 6 tiers + Magic/Enderium/Signalum + BC×8 + HSLA/PowerModule");
 		assertEquals(9, GT6CircuitChain.CRYSTALS, "crystal census: 4 crystal circuits + socket + 4 processors");
+		assertEquals(3, GT6CircuitChain.GAP_CIRCUITS, "gap circuits: Magic/Enderium/Signalum (the 8 BC = CUT)");
 
 		int[] tMetas = {30000, 30001, 30002, 30003, 30004, 30005, 30006, 30011, 30012, 30013, 30014, 30015, 30016,
 				30099, 30101, 30102, 30103, 30104, 30105, 30106, 30111, 30113, 30115, 30198, 30199,
 				30201, 30202, 30203, 30204, 30205, 30206, 30211, 30213, 30215,
 				30280, 30281, 30282, 30283, 30284, 30285, 30286, 30287, 30298, 30299,
+				30311, 30313, 30315,
 				30401, 30402, 30403, 30404, 30500, 30501, 30502, 30503, 30504};
 		assertEquals(GT6CircuitChain.ROWS.size(), tMetas.length, "the meta parity column matches the row walk");
 		for (int i = 0; i < tMetas.length; i++) {
