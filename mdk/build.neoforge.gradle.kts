@@ -327,7 +327,8 @@ val neoforgeTagFaces = tasks.register("neoforgeTagFaces", Copy::class) {
 }
 
 // 嫁接产物挂进 main resources（以任务为 srcDir 自动接线任务依赖，generateModMetadata 同构）：
-// 死的复数带 v1 照挂不 exclude（zip64 已开，死重另卡声明，research.p28 build_change_list knob）。
+// 死的复数带 v1 照挂（zip64 已开；打包面排除由 forge-tags-deadweight 卡在 jar 任务级 exclude
+// 落地，runs/test 走 exploded classpath 不受影响——research.p28 build_change_list knob）。
 sourceSets["main"].resources.srcDir(neoforgeTagFaces)
 
 // FML junit 并发竞争根治（task r3-ci-fml-config-race）：maxParallelForks 并发下每个 executor 的
@@ -441,6 +442,16 @@ tasks.withType(Test::class).configureEach {
 // 用显式 setter。与 forge 节点同构。
 tasks.named<Jar>("jar") {
     setZip64(true)
+    // 死的复数 tag 带不进 neo 产物（task forge-tags-deadweight；上方 :329 "死重另卡" knob 落地）：
+    // 1.21.1 只读单数 tags/item（vanilla 1.21.1 TagManager.java:54 → Registries.java:255-257
+    // tagsDirPath="tags/"+registryPath，CUSTOM_REGISTRY_DIRECTORIES 复数硬编码表已删）——复数
+    // tags/items 全族在本腿 loader 结构性死亡，活体=上方 neoforgeTagFaces 嫁接 data/c/tags/item/**
+    // （assemble 实测 7901）。正典树零改动：1.20.1 forge 腿仍读复数（vanilla 1.20.1 TagManager.java
+    // :20-31 CUSTOM_REGISTRY_DIRECTORIES Registries.ITEM→"tags/items"、:43-46 getTagDir）且本仓
+    // forge 腿 15840 条配方引用 forge:* 实证活体——只剥打包面，不改生成面（runs/test 走 exploded
+    // classpath 不受影响，jar 卡 W2 先例）。jar 任务级 exclude，非 sourceSet 级。
+    exclude("data/forge/tags/**")   // 死带本体：7901 文件（RED census 2026-10-03）
+    exclude("data/c/tags/items/**") // p28 孪生复数带：26 文件（活体=嫁接面同相对路径副本）
     // gregapi 根项目类打进 mod jar（真机分发自包含）——与 forge 节点同构，2026-09-06 真机加载实测缺口。
     from(project(":").sourceSets.main.get().output)
     // ---- 发行 jar 域排除（task jar-dist-hygiene ①③，2026-10-03）——与 forge 节点对称----
