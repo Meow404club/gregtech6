@@ -243,8 +243,9 @@ public class GTWireBlock extends GTEntityBlock {
 		if (aMaterial == null || aFamily == Family.LASER) return null;
 		Component tForm = Component.translatable(
 				aInsulated ? FORM_CABLE_KEY : aLuminous ? FORM_WIRELAMP_KEY : FORM_WIRE_KEY);
-		Component tMaterial = Component.translatable(
-				"gt6.material." + MaterialPrefixItem.snakeCase(aMaterial.mNameInternal));
+		// through the materialFill seam: the April-Fools setLocal face rides it too
+		// (task easter-s2-date-flags-fools; flags off = the plain gt6.material.<snake> unit)
+		Component tMaterial = MaterialPrefixItem.materialFill(aMaterial);
 		if (aFamily == Family.REDSTONE) return Component.translatable(DISPLAY_PLAIN_KEY, tMaterial, tForm);
 		return Component.translatable(DISPLAY_KEY, aSize, tMaterial, tForm);
 	}

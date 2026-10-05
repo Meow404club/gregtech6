@@ -10,6 +10,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import gregtech6.easter.GT6Calendars;
+
 /**
  * The GT6 gun family — item ids {@code gt6:pistol}/{@code gt6:carbine}/{@code gt6:rifle}
  * (task pistol-family-items, the R11-C row of the research.tool-crafting-audit matrix).
@@ -142,5 +144,24 @@ public class GTPistolItem extends Item {
 	/** The registration id of a kind (the GT6Tools registration seam). */
 	public static String pathOf(Kind aKind) {
 		return aKind.name().toLowerCase(Locale.ROOT);
+	}
+
+	/**
+	 * The April-Fools tool name (Loader_Tools.java:198-200 — {@code APRIL_FOOLS?"Small
+	 * Crossbow":"Pistol"} family; the desc tooltips stay unfooled, upstream same). Static
+	 * seam: pinnable without an Item instance. Null-safe flag check lives at the caller
+	 * ({@link #getName}) so the offline test can pin the strings directly.
+	 */
+	public static Component foolDisplayName(Kind aKind) {
+		return switch (aKind) {
+			case PISTOL -> Component.literal("Small Crossbow");
+			case CARBINE -> Component.literal("Medium Crossbow");
+			case RIFLE -> Component.literal("Big Crossbow");
+		};
+	}
+
+	@Override
+	public Component getName(ItemStack aStack) {
+		return GT6Calendars.APRIL_FOOLS ? foolDisplayName(mKind) : super.getName(aStack);
 	}
 }

@@ -27,6 +27,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.oredict.OreDictPrefix;
 import gregapi.util.UT;
+import gregtech6.easter.GT6Calendars;
 import gregtech6.recipes.RecipeMapFurnaceFuel;
 import gregtech6.tooltip.GT6TooltipStyle;
 
@@ -99,11 +100,20 @@ public class MaterialPrefixItem extends Item {
      * instance — the GTWireDisplayNameTest posture).
      */
     public static MutableComponent materialFill(OreDictMaterial aMaterial) {
+        // April Fools: the live (renamed) local word replaces the lang key (task
+        // easter-s2-date-flags-fools — the setLocal display face, GT_API.java:363-477).
+        if (GT6Calendars.APRIL_FOOLS) {
+            GT6Calendars.ensureFoolsApplied();
+            return Component.literal(aMaterial.mNameLocal);
+        }
         return Component.translatable("gt6.material." + snakeCase(aMaterial.mNameInternal));
     }
 
     @Override
     public Component getName(ItemStack stack) {
+        // April Fools: the fool fill bypasses even the specialKey face — upstream has no
+        // per-pair overrides, the joke word rides the template (LanguageHandler.getLocalName).
+        if (GT6Calendars.APRIL_FOOLS) return Component.translatable(templateKey, Component.literal(GT6Calendars.foolFill(prefix, material)));
         // The %s fill only works on the returned Component (Card R3); TagPrefix.java:1314-1316 isomorph.
         if (hasTranslation(specialKey)) return Component.translatable(specialKey);
         return Component.translatable(templateKey, materialFill(material));
