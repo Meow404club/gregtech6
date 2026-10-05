@@ -71,10 +71,13 @@ public class GT6KineticRecipesPourTest extends GTRecipesOfflineTestBase {
 		// the real ore blocks resolve and the full walk pours (the per-leg pin, the
 		// COMPRESSOR-SNAPSHOT convention) — the walk's own pour test is
 		// GT6SifterDustOreRowsTest with probe resolvers
+		// the 629 = 1 + 4 x 157: the axis grew 144 -> 157 (+52 = 4 x 13, the B2/batch2
+		// large-vein wave, merges 9d6f16a1a/b05af17a4; the PhaseGateTest SIFTING ratchet,
+		// commit 2698ff77e, is the same-root precedent)
 		//? if forge {
-		assertEquals(1, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour — the offline default resolvers drop the DUST_ORE walk's 576 rows");
+		assertEquals(1, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour — the offline default resolvers drop the DUST_ORE walk's 628 rows");
 		//?} else {
-		/*assertEquals(577, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour + the live-registry DUST_ORE walk (1 + 4 families x the 144-material axis)");
+		/*assertEquals(629, GT6RecipeMaps.SIFTING.mRecipeList.size(), "the row0 pour + the live-registry DUST_ORE walk (1 + 4 families x the 157-material axis)");
 		*///?}
 		Recipe tRow = null; // the walk rows pour AFTER row0, but do not rely on the order — select by identity
 		for (Recipe tCandidate : GT6RecipeMaps.SIFTING.mRecipeList) {
