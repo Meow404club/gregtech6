@@ -256,7 +256,7 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 	@Test
 	public void theJuicerRowsAreUpstreamVerbatim() throws Exception {
 		JsonArray tRows = pourShipped("juicer");
-		assertRow(findRow(tRows, "minecraft:sunflower"), "gt6:sunfloweroil:75>minecraft:blue_dye:2", 16, 16);
+		assertRow(findRow(tRows, "minecraft:sunflower"), "gt6:sunfloweroil:75>minecraft:yellow_dye:2", 16, 16); // review-seat: dye:11 = DYE_INDEX_Yellow, the :816 squeezer twin mapping
 		assertRow(findRow(tRows, "minecraft:packed_ice"), "gt6:ice:2000", 128, 16);
 		assertRow(findRow(tRows, "minecraft:snowball"), "gt6:ice:250", 64, 16);
 		assertRow(findRow(tRows, "gt6:dust_tiny_ice"), "gt6:ice:111", 64, 16);
@@ -577,7 +577,7 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		Set<String> rSet = new HashSet<>();
 		for (String tId : new String[] {
 				// juicer
-				"sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
+				"sunflower", "yellow_dye", "ice", "packed_ice", "snowball", "snow",
 				"red_mushroom", "poisonous_potato", "spider_eye", "pufferfish",
 				"slime_ball", "wheat_seeds", "melon_seeds", "beetroot_seeds", "pumpkin_seeds",
 					// the smoke-card residue band: the :841-:856/:874 vanilla-crops inputs

@@ -391,7 +391,7 @@ public class GT6RecipeMapDataVanillaCropsResidueRowsPourTest extends GTRecipesOf
 		Set<String> rSet = new HashSet<>();
 		for (String tId : new String[] {
 				// juicer/squeezer seated stock + the b4 Tungstus legs
-				"green_dye", "yellow_dye", "sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
+				"green_dye", "yellow_dye", "sunflower", "ice", "packed_ice", "snowball", "snow",
 				// the seated b2b2 vanilla-flower identity band (:803-:817 the 1.20.1 mapping)
 				"poppy", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip", "white_tulip",
 				"pink_tulip", "oxeye_daisy", "dandelion", "lilac", "peony", "rose_bush", "cactus",
