@@ -59,10 +59,11 @@ import net.minecraft.world.level.material.Fluids;
  */
 public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTestBase {
 
-	/** The per-file row census (the seated rows, the recipe-data-b1 shared-file rows and the
-	 * recipe-b4 flower/fruit band included: juicer +13 BlockFlowersA/B rows, loom +16 :736 dyed rows). */
+	/** The per-file row census (the seated rows, the recipe-data-b1 shared-file rows, the
+	 * recipe-b4 flower/fruit band (juicer +13 BlockFlowersA/B rows, loom +16 :736 dyed rows)
+	 * and the smoke-juice-squeeze-vanilla-crops residue band (juicer +16 the :841-:853/:855/:856/:874 rows)). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"juicer", 35, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 51, "unboxinator", 11312);
+			"juicer", 51, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 51, "unboxinator", 11312);
 
 	/** The frozen FRUIT_JUICE walk (FL.java:187-224, the 37 members; Juice :186 is NOT one). */
 	private static final String[] JUICES = {"kiwijuice", "juicelime", "juicelemon", "juiceorange", "persimmonjuice",
@@ -255,7 +256,7 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 	@Test
 	public void theJuicerRowsAreUpstreamVerbatim() throws Exception {
 		JsonArray tRows = pourShipped("juicer");
-		assertRow(findRow(tRows, "minecraft:sunflower"), "gt6:sunfloweroil:75>minecraft:blue_dye:2", 16, 16);
+		assertRow(findRow(tRows, "minecraft:sunflower"), "gt6:sunfloweroil:75>minecraft:yellow_dye:2", 16, 16); // review-seat: dye:11 = DYE_INDEX_Yellow, the :816 squeezer twin mapping
 		assertRow(findRow(tRows, "minecraft:packed_ice"), "gt6:ice:2000", 128, 16);
 		assertRow(findRow(tRows, "minecraft:snowball"), "gt6:ice:250", 64, 16);
 		assertRow(findRow(tRows, "gt6:dust_tiny_ice"), "gt6:ice:111", 64, 16);
@@ -437,6 +438,10 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		tUniverse.addAll(vanillaWhitelist());
 		// the bee-comb flat item (not a material-prefix id; the b2b1 COMB_SPECS universe precedent)
 		tUniverse.add("gt6:comb_honey");
+		// the vanilla-alias foodside family (the smoke-card remains legs ride gt6:remains_plant/remains_fruit)
+		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+			tUniverse.add("gt6:" + tRow.id());
+		}
 		Set<String> tMissing = new HashSet<>();
 		for (String tFile : CENSUS.keySet()) {
 			for (JsonElement tElement : pourShipped(tFile)) {
@@ -572,9 +577,13 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		Set<String> rSet = new HashSet<>();
 		for (String tId : new String[] {
 				// juicer
-				"sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
+				"sunflower", "yellow_dye", "ice", "packed_ice", "snowball", "snow",
 				"red_mushroom", "poisonous_potato", "spider_eye", "pufferfish",
 				"slime_ball", "wheat_seeds", "melon_seeds", "beetroot_seeds", "pumpkin_seeds",
+					// the smoke-card residue band: the :841-:856/:874 vanilla-crops inputs
+					"poppy", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip",
+					"white_tulip", "pink_tulip", "oxeye_daisy", "dandelion", "lilac", "peony",
+					"rose_bush", "cactus", "sugar_cane", "ink_sac",
 					// the b4 band: the Tungstus IL.Dye_Cactus face + the :736 dyed-wool outputs
 					"green_dye", "white_wool", "orange_wool", "magenta_wool", "light_blue_wool", "yellow_wool",
 					"lime_wool", "pink_wool", "gray_wool", "light_gray_wool", "cyan_wool", "purple_wool",

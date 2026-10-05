@@ -1,5 +1,5 @@
 {
- "comment": "task squeezer-seed-legs — the cbc-5 leftover (4): the four vanilla seed-oil legs of the Loader_Recipes_Crops.java:256-305 oredict seed fan, poured into the SQUEEZER map (the 'squeezer' key rides GT6RecipeMapJsonLoader POURABLE+mapFor). THE FOLDING RULING (the r8-hotfix-juicer precedent, frozen in juicer.json rows 4-7): 1.7.10 Forge oredicts the vanilla seeds as seedWheat/seedMelon/seedPumpkin, and the listener fan assigns tiers — seedWheat family :271-274 = Oil_Seed 50 mB (Squeezer :273, the Juicer twin :274), seedMelon family :261-264 = 30 mB (Squeezer :263), seedPumpkin family :276-279 = 60 mB (Squeezer :278); 1.7.10 vanilla had NO beetroot (seedBeet was mod-foreign produce), so the ruling maps minecraft:beetroot_seeds onto the seedRice family :266-269 tier = 40 mB (Squeezer :268) — mirroring juicer.json row 6 verbatim. ENGINE SEMANTICS: addRecipe1(T, 16, 16, aEvent.mStack, NF, FL.Oil_Seed.make(N), ZL_IS) = duration 16, eut 16, no fluid input, NO item outputs (ZL_IS); FL.Oil_Seed is the port fluid gt6:seedoil (GTFluids.java:1101, the aqua-spec carrier). The two pre-existing smoke rows (apple/melon_slice) are the earlier phase stock, untouched. DECLARED ABSENCE (the b2_backlog seed-crop-items card): the rest of the :256-305 fan — soybean/coffee/thistle/flower/witherShrub/hellderberry/ghost/quartzBerry/hellBush (20 mB), strawberry/turnip/corn/acresia/misc (30), rice/apple/grape/tea/cabbage/purplePear (40), barley/oats/abyssalOats/rye/camellia (50), darkFruit/aspectrus (60), cotton/hemp (lube 5), flax (lube 10), canola (Oil_Canola 14 + Remains_Plant), sunflower (Oil_Sunflower 100) — has no port item carriers; the canola/flax Remains_Plant byproducts are likewise unported. PROVENANCE: pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest (the census ratchet + verbatim pins + the folding-table live cross-check). KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b2b2 appends its 37 static rows and retires the two fake apple/melon-slice smoke canaries (no upstream counterpart — the :802 melon row is the true face) (the Vanilla :802-:839 flower/ice/juice faces + the Woods :122-:130 rubber-sap faces; the chanced remains/gem-ice legs declared dropped in the row comments). task recipe-b4-juicer-squeezer-flowerfruit appends its 13 BlockFlowersA/B run() rows (8 A :90-:97 + 5 B :94-:98, the Tungstus pair at the verbatim FL.Juice_Cactus.make(100) face; the DYE_FLUIDS_FLOWER outputs at CS.L = 144 mB, the LoaderItemList.java:757 IL.Dye_Cactus alias = green_dye).",
+ "comment": "task squeezer-seed-legs — the cbc-5 leftover (4): the four vanilla seed-oil legs of the Loader_Recipes_Crops.java:256-305 oredict seed fan, poured into the SQUEEZER map (the 'squeezer' key rides GT6RecipeMapJsonLoader POURABLE+mapFor). THE FOLDING RULING (the r8-hotfix-juicer precedent, frozen in juicer.json rows 4-7): 1.7.10 Forge oredicts the vanilla seeds as seedWheat/seedMelon/seedPumpkin, and the listener fan assigns tiers — seedWheat family :271-274 = Oil_Seed 50 mB (Squeezer :273, the Juicer twin :274), seedMelon family :261-264 = 30 mB (Squeezer :263), seedPumpkin family :276-279 = 60 mB (Squeezer :278); 1.7.10 vanilla had NO beetroot (seedBeet was mod-foreign produce), so the ruling maps minecraft:beetroot_seeds onto the seedRice family :266-269 tier = 40 mB (Squeezer :268) — mirroring juicer.json row 6 verbatim. ENGINE SEMANTICS: addRecipe1(T, 16, 16, aEvent.mStack, NF, FL.Oil_Seed.make(N), ZL_IS) = duration 16, eut 16, no fluid input, NO item outputs (ZL_IS); FL.Oil_Seed is the port fluid gt6:seedoil (GTFluids.java:1101, the aqua-spec carrier). The two pre-existing smoke rows (apple/melon_slice) are the earlier phase stock, untouched. DECLARED ABSENCE (the b2_backlog seed-crop-items card): the rest of the :256-305 fan — soybean/coffee/thistle/flower/witherShrub/hellderberry/ghost/quartzBerry/hellBush (20 mB), strawberry/turnip/corn/acresia/misc (30), rice/apple/grape/tea/cabbage/purplePear (40), barley/oats/abyssalOats/rye/camellia (50), darkFruit/aspectrus (60), cotton/hemp (lube 5), flax (lube 10), canola (Oil_Canola 14 + Remains_Plant), sunflower (Oil_Sunflower 100) — has no port item carriers; the canola/flax Remains_Plant byproducts are likewise unported. PROVENANCE: pinned per-file by GT6RecipeMapDataSqueezerSeedRowsPourTest (the census ratchet + verbatim pins + the folding-table live cross-check). KJS face: datapack-domain JSON, naturally moddable, zero adaptation. task recipe-data-b2b2 appends its 37 static rows and retires the two fake apple/melon-slice smoke canaries (no upstream counterpart — the :802 melon row is the true face) (the Vanilla :802-:839 flower/ice/juice faces + the Woods :122-:130 rubber-sap faces; the chanced remains/gem-ice legs declared dropped in the row comments). task recipe-b4-juicer-squeezer-flowerfruit appends its 13 BlockFlowersA/B run() rows (8 A :90-:97 + 5 B :94-:98, the Tungstus pair at the verbatim FL.Juice_Cactus.make(100) face; the DYE_FLUIDS_FLOWER outputs at CS.L = 144 mB, the LoaderItemList.java:757 IL.Dye_Cactus alias = green_dye). task smoke-juice-squeeze-vanilla-crops joins the chanced remains legs onto 16 seated Vanilla rows (zero new rows): :802 melon + Remains_Fruit x9 (chance 6000, gt6:remains_fruit); :803-:812 + Remains_Plant x1 (chance 2000); :813-:815 + Remains_Plant x1 (chance 4000); :817 cactus + IL.Dye_Cactus x2 = green_dye (chance 7000); :818 reeds + Remains_Plant x1 (chance 4000) — the vanilla-alias carriers (MultiItemFood.java:113-114, LoaderItemList.java:756-757, GT6FoodsideItems). The seated fluid faces stay byte-untouched (the b2b2-era dye_chemical_* carrier is NOT this card's face to re-key). STILL OUT (the b2b2 declarations stand, not this card's remains band): :822/:823 the gem-form ice rows, :835 pufferfish, :836/:837 the golden-apple potion-fluid faces, :839 the squid-ink twin (its juicer sibling :874 poured with the smoke card). SMOKE FACE CUT: the upstream smoke domain is the Et Futurum SmokerRecipes shim (RM.java:805-821, Loader_Recipes_Furnace.java:47-51/:107-128), not a GT6 recipe map; the 1.20.1 port has no smoker map (vanilla smoking is native datapack domain) — declared CUT, no new map. KJS face: datapack-domain JSON, naturally moddable, zero adaptation.",
  "recipes": [
   {
    "comment": "Loader_Recipes_Crops.java:273 seedWheat family — Squeezer 50 mB (the juicer.json row-4 twin)",
@@ -70,12 +70,19 @@
    "eut": 16
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:802 verbatim: melon block -> melon juice 2250, 128 t / 16 EUt; the chanced Remains_Fruit x9 leg (chance 6000) drops - IL.Remains_Fruit unported (remains items card).",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:802 verbatim: melon block -> melon juice 2250, 128 t / 16 EUt; the chanced Remains_Fruit x9 leg (chance 6000) joined by task smoke-juice-squeeze-vanilla-crops (the vanilla-alias carrier gt6:remains_fruit).",
    "duration": 128,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:melon"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_fruit",
+     "count": 9,
+     "chance": 6000
     }
    ],
    "fluidOutputs": [
@@ -86,12 +93,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:803 verbatim: flower squeeze -> dye.flower.red 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:poppy identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:803 verbatim: flower squeeze -> dye.flower.red 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:poppy identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:poppy"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -102,12 +116,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:804 verbatim: flower squeeze -> dye.flower.light_blue 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:blue_orchid identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:804 verbatim: flower squeeze -> dye.flower.light_blue 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:blue_orchid identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:blue_orchid"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -118,12 +139,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:805 verbatim: flower squeeze -> dye.flower.magenta 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:allium identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:805 verbatim: flower squeeze -> dye.flower.magenta 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:allium identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:allium"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -134,12 +162,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:806 verbatim: flower squeeze -> dye.flower.light_gray 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:azure_bluet identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:806 verbatim: flower squeeze -> dye.flower.light_gray 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:azure_bluet identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:azure_bluet"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -150,12 +185,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:807 verbatim: flower squeeze -> dye.flower.red 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:red_tulip identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:807 verbatim: flower squeeze -> dye.flower.red 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:red_tulip identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:red_tulip"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -166,12 +208,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:808 verbatim: flower squeeze -> dye.flower.orange 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:orange_tulip identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:808 verbatim: flower squeeze -> dye.flower.orange 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:orange_tulip identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:orange_tulip"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -182,12 +231,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:809 verbatim: flower squeeze -> dye.flower.light_gray 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:white_tulip identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:809 verbatim: flower squeeze -> dye.flower.light_gray 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:white_tulip identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:white_tulip"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -198,12 +254,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:810 verbatim: flower squeeze -> dye.flower.pink 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:pink_tulip identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:810 verbatim: flower squeeze -> dye.flower.pink 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:pink_tulip identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:pink_tulip"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -214,12 +277,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:811 verbatim: flower squeeze -> dye.flower.light_gray 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:oxeye_daisy identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:811 verbatim: flower squeeze -> dye.flower.light_gray 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:oxeye_daisy identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:oxeye_daisy"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -230,12 +300,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:812 verbatim: flower squeeze -> dye.flower.yellow 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:dandelion identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:812 verbatim: flower squeeze -> dye.flower.yellow 288 (FL.mul(DYE_FLUIDS_FLOWER, x2), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:dandelion identity mapping; the chanced Remains_Plant x1 leg (chance 2000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:dandelion"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 2000
     }
    ],
    "fluidOutputs": [
@@ -246,12 +323,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:813 verbatim: flower squeeze -> dye.flower.magenta 432 (FL.mul(DYE_FLUIDS_FLOWER, x3 (DYE_INDEX meta 1/4/5 double_plant rows)), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:lilac identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:813 verbatim: flower squeeze -> dye.flower.magenta 432 (FL.mul(DYE_FLUIDS_FLOWER, x3 (DYE_INDEX meta 1/4/5 double_plant rows)), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:lilac identity mapping; the chanced Remains_Plant x1 leg (chance 4000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:lilac"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 4000
     }
    ],
    "fluidOutputs": [
@@ -262,12 +346,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:814 verbatim: flower squeeze -> dye.flower.red 432 (FL.mul(DYE_FLUIDS_FLOWER, x3 (DYE_INDEX meta 1/4/5 double_plant rows)), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:peony identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:814 verbatim: flower squeeze -> dye.flower.red 432 (FL.mul(DYE_FLUIDS_FLOWER, x3 (DYE_INDEX meta 1/4/5 double_plant rows)), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:peony identity mapping; the chanced Remains_Plant x1 leg (chance 4000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:peony"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 4000
     }
    ],
    "fluidOutputs": [
@@ -278,12 +369,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:815 verbatim: flower squeeze -> dye.flower.pink 432 (FL.mul(DYE_FLUIDS_FLOWER, x3 (DYE_INDEX meta 1/4/5 double_plant rows)), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:rose_bush identity mapping; the Remains_Plant leg drops - IL.Remains_Plant unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:815 verbatim: flower squeeze -> dye.flower.pink 432 (FL.mul(DYE_FLUIDS_FLOWER, x3 (DYE_INDEX meta 1/4/5 double_plant rows)), the L=144 mB dye stack base, Loader_Fluids.java:122), 16 t / 16 EUt; 1.7.10 meta->minecraft:rose_bush identity mapping; the chanced Remains_Plant x1 leg (chance 4000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:rose_bush"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 4000
     }
    ],
    "fluidOutputs": [
@@ -316,12 +414,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:817 verbatim: cactus -> cactus juice (FL.Juice_Cactus = cactuswater, FL.java:234) 100, 16 t / 16 EUt; the IL.Dye_Cactus x2 leg (chance 7000) drops - unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:817 verbatim: cactus -> cactus juice (FL.Juice_Cactus = cactuswater, FL.java:234) 100, 16 t / 16 EUt; the IL.Dye_Cactus x2 leg (chance 7000) joined by task smoke-juice-squeeze-vanilla-crops (LoaderItemList.java:757 = green_dye).",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:cactus"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "minecraft:green_dye",
+     "count": 2,
+     "chance": 7000
     }
    ],
    "fluidOutputs": [
@@ -332,12 +437,19 @@
    ]
   },
   {
-   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:818 verbatim: reeds -> reed juice (FL.Juice_Reed = reedwater, FL.java:233) 100, 16 t / 16 EUt; the Remains_Plant leg drops - unported.",
+   "comment": "RM.Squeezer Loader_Recipes_Vanilla.java:818 verbatim: reeds -> reed juice (FL.Juice_Reed = reedwater, FL.java:233) 100, 16 t / 16 EUt; the chanced Remains_Plant x1 leg (chance 4000) joined by task smoke-juice-squeeze-vanilla-crops.",
    "duration": 16,
    "eut": 16,
    "inputs": [
     {
      "item": "minecraft:sugar_cane"
+    }
+   ],
+   "outputs": [
+    {
+     "item": "gt6:remains_plant",
+     "count": 1,
+     "chance": 4000
     }
    ],
    "fluidOutputs": [

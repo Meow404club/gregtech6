@@ -53,28 +53,28 @@ import net.minecraft.world.level.material.Fluids;
  * dye-item-axis items landed — pinned here as seated-elsewhere, not re-poured).</li>
  * </ol>
  *
- * <p>CENSUS (file rows = seated + this card): juicer 22+13=35, squeezer 41+13=54,
- * drying 0+32=32, loom 35+16=51. The upstream row order is preserved inside each band
+ * <p>CENSUS (file rows = seated + this card + the smoke-card residue band): juicer 35+16=51,
+ * squeezer 54, drying 32, loom 51. The upstream row order is preserved inside each band
  * (A block rows then B block rows; the i=0..15 loop order).
  *
- * <p>DECLARED OUT (pinned absent): the juicer/squeezer Vanilla residue (:841-:853 the
- * vanilla red/yellow/double-plant dye rows, :855 cactus, :856 reed, :874 squid ink and
- * their squeezer siblings — smoke-juice-squeeze-vanilla-crops territory), the B-block
- * metas without run() rows (sagebrush/four_wing_saltbush/pandanus; hexalily/vindicator),
- * the :743 Cu-fiber orange-wool joke row and the :720 CR.shaped crafting face.
+ * <p>DECLARED OUT (pinned absent): the B-block metas without run() rows
+ * (sagebrush/four_wing_saltbush/pandanus; hexalily/vindicator), the :743 Cu-fiber
+ * orange-wool joke row and the :720 CR.shaped crafting face. (The juicer/squeezer
+ * Vanilla residue declared here at first landing POURED via
+ * smoke-juice-squeeze-vanilla-crops — the old exclusions retired with that card.)
  *
  * <p>Hermetic form (the hermetic-pour-tests law): the generation reset participates
  * before the init/pour and the live seams are restored after each test.
  */
 public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineTestBase {
 
-	/** The per-file row census (seated rows + the b4 band). */
+	/** The per-file row census (seated rows + the b4 band + the smoke-card residue band). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"juicer", 35, "squeezer", 54, "drying", 32, "loom", 51);
+			"juicer", 51, "squeezer", 54, "drying", 32, "loom", 51);
 
-	/** The seated-file censuses (the b2/b2b2/b2-residual stock this card tail-appends onto). */
+	/** The seated-file censuses (the b2/b2b2/b2-residual stock + the smoke-card residue band this card tail-appends onto). */
 	private static final Map<String, Integer> SEATED = Map.of(
-			"juicer", 22, "squeezer", 41, "drying", 0, "loom", 35);
+			"juicer", 38, "squeezer", 41, "drying", 0, "loom", 35);
 
 	/** The A-block run() inputs, metas 0-7 in upstream line order (A squeezer :90-:97). */
 	private static final String[] FLOWERS_A = {"gt6:flower_altered_andesite_buckwheat", "gt6:flower_crosby_buckwheat",
@@ -260,28 +260,24 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 				"the i==0 row keeps the Items.string special case");
 	}
 
-	/** The declared absences: the smoke-card juicer Vanilla residue and the out-of-run() metas stay out.
-	 * The SQUEEZER file seats the b2b2 vanilla-flower rows, so the poppy/dandelion/cactus exclusions are
-	 * juicer-only; the shared exclusions (the chanced Remains legs, the B metas without run() rows, the
-	 * :743 Cu fiber) hold on both files. */
+	/** The declared absences: the B-block metas without run() rows and the :743 Cu-fiber joke row stay out.
+	 * The vanilla-crops residue (:841-:853/:855/:856/:874 + the squeezer remains legs) POURED via
+	 * smoke-juice-squeeze-vanilla-crops, so the old smoke-card exclusions retired with that card. */
 	@Test
 	public void theDeclaredAbsencesStayAbsent() throws Exception {
 		for (String tKey : new String[] {"juicer", "squeezer"}) {
 			JsonArray tRows = pourShipped(tKey);
 			java.util.List<String> tAbsent = new java.util.ArrayList<>(java.util.List.of(
-					"gt6:remains_plant", "gt6:flower_sagebrush", "gt6:flower_four_wing_saltbush",
+					"gt6:flower_sagebrush", "gt6:flower_four_wing_saltbush",
 					"gt6:flower_pandanus_candelabrum", "gt6:flower_hexalily", "gt6:flower_vindicator_flower"));
-			if (tKey.equals("juicer")) tAbsent.addAll(java.util.List.of("minecraft:poppy", "minecraft:dandelion",
-					"minecraft:cactus", "minecraft:sugar_cane"));
-			for (String tFace : tAbsent) {
-				String tAbsentFace = tFace;
+			for (String tAbsentFace : tAbsent) {
 				for (JsonElement tElement : tRows) {
 					JsonObject tRow = tElement.getAsJsonObject();
 					for (String tLeg : new String[] {"inputs", "outputs"}) {
 						if (!tRow.has(tLeg)) continue;
 						for (JsonElement tSlot : tRow.getAsJsonArray(tLeg)) {
 							assertTrue(!tAbsentFace.equals(tSlot.getAsJsonObject().get("item").getAsString()),
-									tKey + ": " + tAbsentFace + " stays absent (the smoke-card/blocked face)");
+									tKey + ": " + tAbsentFace + " stays absent (the blocked face)");
 						}
 					}
 				}
@@ -317,6 +313,9 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 			tUniverse.add("gt6:" + tTree.getId().getPath()); // the seated b2b2 Woods rows (rubber sapling/leaves)
 		}
 		tUniverse.add("gt6:comb_honey"); // the seated juicer Food:266 flat item (the b2-residual precedent)
+		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
+			tUniverse.add("gt6:" + tRow.id()); // the vanilla-alias foodside family (the smoke-card remains legs)
+		}
 		tUniverse.addAll(vanillaWhitelist());
 		Set<String> tMissing = new HashSet<>();
 		for (String tFile : CENSUS.keySet()) {
@@ -457,6 +456,8 @@ public class GT6RecipeMapDataB4FlowerFruitRowsPourTest extends GTRecipesOfflineT
 		for (String tId : new String[] {
 				// juicer/squeezer seated stock + the b4 Tungstus legs
 				"green_dye", "yellow_dye", "sunflower", "blue_dye", "ice", "packed_ice", "snowball", "snow",
+				// the smoke-card residue band (the :841-:874 juicer rows)
+				"ink_sac",
 				// the seated b2b2 vanilla-flower identity band (:803-:817 the 1.20.1 mapping)
 				"poppy", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip", "white_tulip",
 				"pink_tulip", "oxeye_daisy", "dandelion", "lilac", "peony", "rose_bush", "cactus",
