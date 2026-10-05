@@ -3,7 +3,6 @@ package gregtech6.tileentity.multiblocks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
@@ -289,12 +288,17 @@ public class GT6TankValveFamilyTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	@Test
-	public void structure5x5x5FormsAndPatternStaysUnbound() {
+	public void structure5x5x5FormsAndBindsTheShellPattern() {
 		MultiBlockLevel tLevel = new MultiBlockLevel();
 		TestTank tTank = placedTank(tLevel, (byte)Direction.NORTH.get3DDataValue(), 2);
 		assertEquals(97, placeShell5(tLevel, Blocks.BRICKS), "125 - 27 hollow - 1 controller cell = 97 walls");
 		assertTrue(tTank.checkStructure(true), "the hollow 5x5x5 forms");
-		assertNull(tTank.getStructurePattern(), "the distance-2 anchor stays pattern-less (the class-doc ruling)");
+		// the D1 radius parametrization (task mbpreview-data-d1-special): the shell BINDS
+		// in the -(r-1)*OFF frame shift — the former "pattern-less" ruling and its :405
+		// null are retired; the server truth stays THIS hand walk, the pattern is the
+		// display + builder-wand scaffold face
+		assertNotNull(tTank.getStructurePattern(), "the 5x5x5 binds the shell pattern (the frame-shifted declaration)");
+		assertEquals(125, tTank.getStructurePattern().cells().size(), "98 shell walls + the 27-cell inner hollow");
 	}
 
 	@Test

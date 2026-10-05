@@ -57,14 +57,19 @@ import gregtech6.tileentity.attachment.GTTapBlockEntity;
  * wall band and passes through the self-cell arm (:48-49). The loaded guard is the
  * upstream four-corner probe (:63/:139 — unloaded corners keep the last verdict).
  *
- * <p><b>The declared pattern</b> (the ghost-preview + generic-form face): the 3x3x3 binds
- * 26 formingPart cells + the hollow centre — declaring the controller cell TOO is correct
- * for every facing, the self-cell arm absorbs it exactly like the upstream loop. The
- * 5x5x5 declares NOTHING: its centre sits at anchor distance 2, outside the pattern
- * system's distance-1 {@code cellOffset} convention (GTMultiBlockPattern:344-357) — the
- * existence-probe escape hatch (getStructurePattern default null), the hand-written check
- * stays the server truth for it (declared on the task card, the form arm drives
- * {@link #checkStructure} directly through the family command).
+	 * <p><b>The declared pattern</b> (the ghost-preview + builder-wand-scaffold face): BOTH
+	 * radii bind — 26 formingPart walls + the hollow centre at r=1, the 98-cell shell + the
+	 * inner 3x3x3 hollow at r=2 — declaring the controller cell TOO is correct for every
+	 * facing, the self-cell arm absorbs it exactly like the upstream loop. The cells are
+	 * declared in the frame shift {@code -(r-1)*OFF[facing]} (task mbpreview-data-d1-special):
+	 * r=1 collapses to the upstream loop verbatim; at r=2 the shift is what makes the walk
+	 * through the pattern system's {@code cellOffset} (world = valve + cell - OFF[facing],
+	 * GTMultiBlockPattern:355-357) equal the hand check's centre-relative targets AND land
+	 * the valve seat on the anchor law (the seat's pattern cell collapses to OFF[facing] =
+	 * {@code -anchorOffset} for every radius and facing) — the former radius-2 null (the
+	 * "distance-1 anchor" reading, the old :405 escape hatch) is retired. The hand-written
+	 * check stays the server truth for BOTH radii (the form arm drives {@link
+	 * #checkStructure} through the family command); the pattern is the display + scaffold face.
  *
  * <p><b>The tank semantics (:47-129)</b>: ONE {@link FluidTankGT} at the row capacity
  * (:60), persisted under NBT_TANK (:61/:67). The tick (:84-128, both radii identical
@@ -394,30 +399,45 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 	}
 
 	/**
-	 * The 3x3x3 declared pattern (26 formingPart cells + the hollow centre — the
-	 * controller-in-band cell resolves to the self-cell arm for every facing, so declaring
-	 * all 26 is correct). The 5x5x5 stays unbound: the distance-2 anchor is outside the
-	 * pattern system's distance-1 cellOffset convention (the class-doc ruling).
+	 * The declared pattern over BOTH radii: the hollow {@code (2r+1)^3} of the row's Tank
+	 * Walls — 26 formingPart walls + the hollow centre at r=1, the 98-cell shell + the
+	 * inner 3x3x3 hollow at r=2 — declared in the frame shift {@code -(r-1)*OFF[facing]}
+	 * (the class-doc ruling: the shift walks the checker's cellOffset contract and lands
+	 * the valve seat on the anchor law; r=1 is the upstream loop verbatim). Facing-dependent
+	 * for r&gt;=2, so the cache carries the facing guard (the GTMultiBlockConverter
+	 * {@code mPatternFacing} form).
 	 */
 	@Override
 	@Nullable
 	public GTMultiBlockPattern getStructurePattern() {
-		if (radius() != 1) return null; // the 5x5x5 escape hatch
-		if (mStructurePattern == null) {
+		int r = radius();
+		if (mStructurePattern == null || mStructurePatternFacing != mFacing) {
 			GTMultiBlockPattern.Builder tBuilder = GTMultiBlockPattern.builder();
 			Block tWall = getWallBlock();
-			for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) for (int k = -1; k <= 1; k++) {
-				if (i == 0 && j == 0 && k == 0) continue; // the centre — declared hollow below
-				tBuilder.formingPart(i, j, k, tWall, MultiBlockPartBlockEntity.ONLY_FLUID, 0);
+			Direction tDir = Direction.from3DDataValue(mFacing);
+			int tShift = r - 1; // the frame shift: pattern cell = hand loop (i,j,k) - (r-1)*OFF[facing]
+			int tHollow = r - 1; // the hollow half-width: the centre at r=1 (:66's i==0&&j==0&&k==0), the inner 3x3x3 at r=2 (:66's i*i<=1&&j*j<=1&&k*k<=1)
+			for (int i = -r; i <= r; i++) for (int j = -r; j <= r; j++) for (int k = -r; k <= r; k++) {
+				int tX = i - tDir.getStepX() * tShift, tY = j - tDir.getStepY() * tShift, tZ = k - tDir.getStepZ() * tShift;
+				if (Math.abs(i) <= tHollow && Math.abs(j) <= tHollow && Math.abs(k) <= tHollow) {
+					// :67 — the clear-if-air centre (the STRICT isAir verdict is the hand check's)
+					tBuilder.hollow(tX, tY, tZ, GTMultiBlockPattern.AIR);
+				} else {
+					// :69 — the wall check, design 0 (the LITERAL; the wall choice is the row's wallPath)
+					tBuilder.formingPart(tX, tY, tZ, tWall, MultiBlockPartBlockEntity.ONLY_FLUID, 0);
+				}
 			}
-			tBuilder.hollow(0, 0, 0, GTMultiBlockPattern.AIR);
 			mStructurePattern = tBuilder.build();
+			mStructurePatternFacing = mFacing;
 		}
 		return mStructurePattern;
 	}
 
 	@Nullable
 	private GTMultiBlockPattern mStructurePattern = null;
+
+	/** The facing the cached pattern was declared at (the r&gt;=2 frame shifts with the facing — rebuild on rotate). */
+	private byte mStructurePatternFacing = -1;
 
 	// ---------------------------------------------------------------------------
 	// the tick (:84-128 verbatim)
