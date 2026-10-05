@@ -454,6 +454,28 @@ public final class GT6Worldgen {
     /** The bumble-hive placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk). */
     public static final ResourceKey<PlacedFeature> BUMBLE_HIVES_PLACED = placedKeyOf("bumble_hives");
 
+    // ------------------------------------------------------------------
+    // The coltan-contention band (task worldgen-coltan) — the single Feature over
+    // the ONE special generator (upstream WorldgenColtan, Loader_Worldgen.java:779);
+    // key form = the bedrock-ore band's path-direct shape. The ring/center math
+    // lives in GT6ColtanGenerator (no config surface — the nether-form constants
+    // face), so the configured feature is the bare NoneFeatureConfiguration.
+    // ------------------------------------------------------------------
+
+    /** The coltan configured feature (the GT6ColtanFeature instance, NoneFeatureConfiguration). */
+    public static final ResourceKey<ConfiguredFeature<?, ?>> COLTAN_CONFIGURED = configKey("coltan");
+    /** The coltan placed feature (Count 1 constant + InSquare + BiomeFilter — every chunk runs, the ring gates live in the Feature). */
+    public static final ResourceKey<PlacedFeature> COLTAN_PLACED = placedKeyOf("coltan");
+
+    /**
+     * The port-owned synthetic salt of the coltan chunk stream ({@link GT6VeinGenerator#veinRandom}
+     * face, the {@link #SPRING_DIMENSION_SALT} form): upstream the scatter drew the SHARED
+     * per-chunk random after the bedrock draws — a stream position this port cannot and need
+     * not reproduce (the declared strengthening). 3 is outside the legacy dimension set
+     * (0/-1/1) and the spring's 2, so the coltan stream never collides with any other.
+     */
+    public static final long COLTAN_DIMENSION_SALT = 3;
+
     private GT6Worldgen() {
     }
 }
