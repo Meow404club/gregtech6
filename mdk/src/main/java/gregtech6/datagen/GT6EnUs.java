@@ -799,6 +799,10 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "press", "Press");
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "canner", "Canning Machine");
         add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "replicator", "Matter Replicator");
+        // task recipe-b6b — the nanofab map joined the visible census; the en face is the
+        // live mNameLocal ("Nanoscale Fabricator", the RM.java:140 row), the lang test
+        // pins it against the live map
+        add(GT6RecipeMapViewerMeta.TITLE_KEY_PREFIX + "nanofab", "Nanoscale Fabricator");
         add(GT6RecipeMapViewerMeta.KEY_COSTS, "Costs: %s GU");
         add(GT6RecipeMapViewerMeta.KEY_USAGE, "Usage: %s GU/t");
         add(GT6RecipeMapViewerMeta.KEY_TIER, "Tier: %s GU");

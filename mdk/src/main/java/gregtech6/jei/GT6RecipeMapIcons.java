@@ -55,10 +55,11 @@ import gregtech6.registry.GTMultiBlocks;
  * ponytail: unsynchronized lazy build — the query face is the client main thread
  * (plugin registration), add a holder idiom only if an off-thread caller ever appears.
  *
- * <p>The upstream fallback face stays FAITHFUL for the three DECLARED-empty maps
- * (microwave/cooker/toolhead — GT6RecipeMapJsonLoader's zero-row-stock set, no
- * machine exists in the port; the mortar joined the tabled machines in the
- * mortar-family card): {@code #iconOf} hands back the lit-furnace default the
+	 * <p>The upstream fallback face stays FAITHFUL for the maps with no port machine (the
+	 * three DECLARED-empty microwave/cooker/toolhead — GT6RecipeMapJsonLoader's
+	 * zero-row-stock set — plus the nanofab, recipe-b6b's rows-before-machine card; the
+	 * mortar joined the tabled machines in the mortar-family card): {@code #iconOf} hands
+	 * back the lit-furnace default the
  * upstream NEI_RecipeMap.init() drew whenever a map's mRecipeMachineList was empty
  * (NEI_RecipeMap.java:82 {@code Blocks.lit_furnace}). That whitelist is the ONLY
  * fallback path — every other visible map must walk at least one machine (the guard test
@@ -75,14 +76,19 @@ import gregtech6.registry.GTMultiBlocks;
 public final class GT6RecipeMapIcons {
 
 	/**
-	 * The upstream lit-furnace fallback's whitelist — exactly the DECLARED-empty maps
-	 * (zero static rows, zero machines in the port). Any wider fallback is a regression
-	 * (the guard test pins this set against the visible census).
+	 * The upstream lit-furnace fallback's whitelist — the maps with ZERO port machines:
+	 * the three DECLARED-empty faces (zero static rows, no machine ever) plus the nanofab
+	 * (task recipe-b6b poured its 45-row stock but the machine block is not ported yet —
+	 * upstream runs the same lit-furnace default whenever mRecipeMachineList is empty,
+	 * NEI_RecipeMap.java:82, rows or not; the row retires when the machine card lands).
+	 * Any wider fallback is a regression (the guard test pins this set against the visible
+	 * census).
 	 */
 	public static final Set<String> FURNACE_FALLBACK = Set.of(
 			"gt.recipe.microwave",  // the p34 easter-egg surface, machine not ported
 			"gt.recipe.cooker",     // declared-empty, never had a consumer
-			"gt.recipe.toolhead");  // declared-empty, the per-material listener walk is the W5 cut
+			"gt.recipe.toolhead",   // declared-empty, the per-material listener walk is the W5 cut
+			"gt.recipe.nanofab");   // recipe-b6b: rows poured, machine block still pending
 
 	/** One machine entry: the registration path (the census/reconciliation face) + the lazy item. */
 	public record Workstation(String path, Supplier<Item> item) {}

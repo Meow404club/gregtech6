@@ -1,7 +1,7 @@
 /**
  * Offline guard tests for task issues #29/#34a (GitHub #29a): the per-map category icon table —
- * every VISIBLE map carries a tabled machine item unless it is on the three-map
- * DECLARED-empty furnace-fallback whitelist (the guard the card's "零兜底或仅白名单兜底"
+ * every VISIBLE map carries a tabled machine item unless it is on the no-port-machine
+ * furnace-fallback whitelist (the guard the card's "零兜底或仅白名单兜底"
  * clause turns into a census pin), the whitelist is closed against the live census, and
  * the icon resolution never returns an empty stack. The Forge item registry does not
  * exist offline, so resolution rides the {@code sResolver} fixture seam (the
@@ -82,14 +82,14 @@ class GT6RecipeMapIconsTest extends GTRecipesOfflineTestBase {
 					tMap.mNameInternal + " is visible but carries no icon table row and no whitelist entry");
 			tTabled++;
 		}
-		assertEquals(74, tVisible.size(), "the batch-2 census + crucible-viewer-page's pair must stay stable under this guard");
-		// the whitelist is EXACTLY the three declared-empty maps (GT6RecipeMapJsonLoader's
-		// zero-row-stock set; the mortar family left it via the mortar-family card) — a
-		// wider fallback is the #29a regression this card fixes
+		assertEquals(75, tVisible.size(), "the batch-2 census + crucible pair + recipe-b6b's nanofab must stay stable under this guard");
+		// the whitelist is EXACTLY the no-port-machine maps (the declared-empty trio +
+		// the nanofab, whose rows landed in recipe-b6b but whose machine block is still
+		// pending) — a wider fallback is the #29a regression this card fixes
 		assertTrue(tVisible.containsAll(GT6RecipeMapIcons.FURNACE_FALLBACK),
 				"every whitelist entry must be a visible map (dead whitelist rows are silent drift)");
-		assertEquals(3, GT6RecipeMapIcons.FURNACE_FALLBACK.size());
-		assertEquals(71, tTabled, "74 visible - 3 whitelist = 71 tabled machine icons (the crucible pair joined via the Smeltery family; the mortar family left the whitelist via the mortar-family card)");
+		assertEquals(4, GT6RecipeMapIcons.FURNACE_FALLBACK.size());
+		assertEquals(71, tTabled, "75 visible - 4 whitelist = 71 tabled machine icons (the crucible pair joined via the Smeltery family; nanofab rides the whitelist until its machine card lands)");
 	}
 
 	@Test

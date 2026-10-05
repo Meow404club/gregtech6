@@ -556,7 +556,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 			assertEquals(SNAPSHOT.get(tEntry.getKey()), Integer.valueOf(tEntry.getValue().mRecipeList.size()),
 					tEntry.getKey() + " must be identical across the freeze");
 		}
-		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape; +2 task machines-bumblelyzer-crucible (the crystallisationcrucible row stock + the bumblelyzer declared-empty) +2 task machines-burner-plantalyzer (the Burner Mixer constants row + the declared-empty Plantalyzer compat map) +5 task rm-six-maps (microwave/cooker/toolhead declared-empty + mortar/hammer whose rows ride the JSON seam — JSON-seam maps stay OUT of the SNAPSHOT walk, the juicer/crystallisationcrucible precedent))");
+		assertEquals(83, RecipeMap.RECIPE_MAPS.size(), "the freeze-point registry census (the GT6RecipeMapsTest pin shape; +2 task machines-bumblelyzer-crucible (the crystallisationcrucible row stock + the bumblelyzer declared-empty) +2 task machines-burner-plantalyzer (the Burner Mixer constants row + the declared-empty Plantalyzer compat map) +5 task rm-six-maps (microwave/cooker/toolhead declared-empty + mortar/hammer whose rows ride the JSON seam — JSON-seam maps stay OUT of the SNAPSHOT walk, the juicer/crystallisationcrucible precedent) +3 task recipe-b6b-small-maps-cnc-assembler-nanofab (the Nanofab/Assembler/CNC trio, RM.java:140/:159/:160 — all three JSON-seam maps, the rows ride cnc/assembler/nanofab.json and stay OUT of the SNAPSHOT walk like the mortar/hammer precedent))");
 	}
 
 	/** The JSON reload window: a FROZEN /reload re-pour lands its rows and re-freezes; an OPEN pour owes no re-freeze. */

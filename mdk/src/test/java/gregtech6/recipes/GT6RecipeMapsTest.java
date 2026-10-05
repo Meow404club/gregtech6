@@ -206,7 +206,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertSame(tFirstBurn, GT6RecipeMaps.BURN);
 		assertSame(tFirstDistillery, GT6RecipeMaps.DISTILLERY);
 		assertSame(tFirstDrying, GT6RecipeMaps.DRYING);
-		assertEquals(80, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the chisel-recipes RM.java:138 append, the canner-machine RM.java:148 append, the c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the w1-press-extruder-molds RM.java:99/:136 pair, the crucible-physics-smeltery RM.java:128/:129 pair, the kitchen-pot-bowl RM.java:80 append, the c-ulv-machine-ladder RM.java:113 append, the c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap) + autocrafter + steamcracking + catalyticcracking + coagulator + cryomixer + magneticseparator + injector + laminator + autoclave + freezer + polarizer + lightning + slicer + laserengraver + welder + electrolyzer + printer + scannervisuals + generifier (the w2-energy-types-5tier nineteen-map block, RM.java:63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 — the W2 shared-layer card) + gas_fuels (the w3-turbine-dynamo FM.java:42 append — the Gas Turbine fuel face, FM.Hot/Plasma/Turbine/Magic stay the pool bottom) + distillationtower + cryodistillationtower (the w3-distill-crucible RM.java:65/:66 twin pair, the tower consumer card) + melter + smelter + fuels_hot (the w3-heat-smelter three-map block, RM.java:131/:132 + FM.java:43 — the wave's one recipe-batch card) + roasting (the w4-eu-bridge RM.java:79 append — the Roasting Oven card's map) + implosion (the implosion RM.java:86 append — the Implosion Compressor multiblock's map, the 3/3/3 item shape) + scannermolecular + massfab + replicator (the qu-a-foundation QU trio, RM.java:143-145 — the declared-empty foundation, the machines are the C/D cards) + bedrockorelist (the bedrock-ore-worldgen RM.java:153 append -- the Bedrock Drill NEI display face, no machine consumes it) + fusion (the fusion RM.java:146 append — the Fusion Reactor multiblock\'s map, the 2/6/1 item + 2/6/0 fluid shape, the :949-966 rows pour via GT6RecipesFusion) + juicer (the food-machines-kitchen RM.java:102 append — the b1 declared-empty gap closed, the manual Juicer's map) + crystallisationcrucible + bumblelyzer (the machines-bumblelyzer-crucible RM.java:73/:107 pair — the machine-four card's two, the dynamic scan arm on the Bumblelyzer subclass) + burnmixer + plantalyzer (the machines-burner-plantalyzer RM.java:76/:109 pair — the Burner Mixer constants row and the declared-empty Plantalyzer compat map) + microwave + cooker + toolhead + mortar + hammer (the rm-six-maps five-map append, RM.java:104/:105/:125/:133/:137 — the p36 census open_faces[0] close: microwave/cooker/toolhead declared-empty (upstream zero static rows), mortar/hammer static rows on the JSON seam)");	}
+		assertEquals(83, RecipeMap.RECIPE_MAPS.size(), "furnace + coke oven + shredder + crusher + lathe + chisel + engine fuels + fluid bed + burn + distillery + drying + canner + furnace fuel + mixer + sifter + compressor + wiremill + rollingmill + press + extruder + crucible smelting + crucible alloying + bath + anvil + anvil bend (the p13 RecipeMapFurnaceFuel append, the p14 RM.java:70/:71 pair, the chisel-recipes RM.java:138 append, the canner-machine RM.java:148 append, the c-foam-fluid-refill RM.java:74 append, the p26-w1 RM.java:83/:87/:111 trio, the w1-press-extruder-molds RM.java:99/:136 pair, the crucible-physics-smeltery RM.java:128/:129 pair, the kitchen-pot-bowl RM.java:80 append, the c-ulv-machine-ladder RM.java:113 append, the c-anvil RM.java:118-120 pair with the Small/Big fold) + fermenter + loom + pressurewasher + squeezer + clustermill + rollbender + rollformer + centrifuge + sharpener + cutter + boxinator + unboxinator (the w1-rm-maps-scaffold twelve-map block, RM.java:69/:89/:98/:101/:112-115/:122/:126/:130/:149-150) + sluice (the w1-kinetic-process-ladder batch-C tail-append, RM.java:81 — the Sluice family's map, the card-A enumeration gap) + autocrafter + steamcracking + catalyticcracking + coagulator + cryomixer + magneticseparator + injector + laminator + autoclave + freezer + polarizer + lightning + slicer + laserengraver + welder + electrolyzer + printer + scannervisuals + generifier (the w2-energy-types-5tier nineteen-map block, RM.java:63/:67/:68/:72/:77/:82/:88/:90-94/:96/:116/:117/:123/:141/:142/:151 — the W2 shared-layer card) + gas_fuels (the w3-turbine-dynamo FM.java:42 append — the Gas Turbine fuel face, FM.Hot/Plasma/Turbine/Magic stay the pool bottom) + distillationtower + cryodistillationtower (the w3-distill-crucible RM.java:65/:66 twin pair, the tower consumer card) + melter + smelter + fuels_hot (the w3-heat-smelter three-map block, RM.java:131/:132 + FM.java:43 — the wave's one recipe-batch card) + roasting (the w4-eu-bridge RM.java:79 append — the Roasting Oven card's map) + implosion (the implosion RM.java:86 append — the Implosion Compressor multiblock's map, the 3/3/3 item shape) + scannermolecular + massfab + replicator (the qu-a-foundation QU trio, RM.java:143-145 — the declared-empty foundation, the machines are the C/D cards) + bedrockorelist (the bedrock-ore-worldgen RM.java:153 append -- the Bedrock Drill NEI display face, no machine consumes it) + fusion (the fusion RM.java:146 append — the Fusion Reactor multiblock\'s map, the 2/6/1 item + 2/6/0 fluid shape, the :949-966 rows pour via GT6RecipesFusion) + juicer (the food-machines-kitchen RM.java:102 append — the b1 declared-empty gap closed, the manual Juicer's map) + crystallisationcrucible + bumblelyzer (the machines-bumblelyzer-crucible RM.java:73/:107 pair — the machine-four card's two, the dynamic scan arm on the Bumblelyzer subclass) + burnmixer + plantalyzer (the machines-burner-plantalyzer RM.java:76/:109 pair — the Burner Mixer constants row and the declared-empty Plantalyzer compat map) + microwave + cooker + toolhead + mortar + hammer (the rm-six-maps five-map append, RM.java:104/:105/:125/:133/:137 — the p36 census open_faces[0] close: microwave/cooker/toolhead declared-empty (upstream zero static rows), mortar/hammer static rows on the JSON seam) + nanofab + assembler + cnc (the recipe-b6b-small-maps tail-append, RM.java:140/:159/:160 — the b6b card's three, all rows on the JSON seam; the HeatMixer face joins NO map ever, the RM.java:75 pure alias)");	}
 
 	/** The RM.java:99 Forming Press map constants (task w1-press-extruder-molds). */
 	@Test
@@ -919,5 +919,48 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		// the base-RecipeMap carry over both runtime-synthesis maps (the judged form)
 		assertEquals(RecipeMap.class, GT6RecipeMaps.MICROWAVE.getClass(), "RM.Microwave IS a RecipeMapMicrowave upstream — the synthesis arm stays POOLED (the Chisel judged form)");
 		assertEquals(RecipeMap.class, GT6RecipeMaps.HAMMER.getClass(), "RM.Hammer IS a RecipeMapHammer upstream — the ore→crushed synthesis arm stays POOLED (the Shredder judged form)");
+	}
+
+	/** The b6b small-maps trio constants (task recipe-b6b-small-maps-cnc-assembler-nanofab, upstream declaration order Nanofab :140 < Assembler :159 < CNC :160). */
+	@Test
+	void initRegistersB6bTrioWithUpstreamConstants() {
+		GT6RecipeMaps.init();
+		// RM.java:140 — items 2/1/0, fluids 1/1/0, MIN 1; the plain RecipeMap upstream
+		assertNotNull(GT6RecipeMaps.NANOFAB);
+		assertSame(GT6RecipeMaps.NANOFAB, RecipeMap.RECIPE_MAPS.get("gt.recipe.nanofab"));
+		assertEquals("Nanoscale Fabricator", GT6RecipeMaps.NANOFAB.mNameLocal);
+		assertEquals(2, GT6RecipeMaps.NANOFAB.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mOutputItemsCount);
+		assertEquals(0, GT6RecipeMaps.NANOFAB.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mInputFluidCount);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.NANOFAB.mMinimalInputFluids);
+		assertEquals(1, GT6RecipeMaps.NANOFAB.mMinimalInputs);
+		assertEquals(RecipeMap.class, GT6RecipeMaps.NANOFAB.getClass(), "RM.Nanofab IS a plain RecipeMap upstream");
+		// RM.java:159 — items 2/1/1, fluids 1/0/0, MIN 0; the RecipeMapAssembler subclass
+		// folds to the base class (the printed-pages NBT arm stays POOLED, the UNBOXINATOR judged form)
+		assertNotNull(GT6RecipeMaps.ASSEMBLER);
+		assertSame(GT6RecipeMaps.ASSEMBLER, RecipeMap.RECIPE_MAPS.get("gt.recipe.assembler"));
+		assertEquals("Assembler", GT6RecipeMaps.ASSEMBLER.mNameLocal);
+		assertEquals(2, GT6RecipeMaps.ASSEMBLER.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.ASSEMBLER.mOutputItemsCount);
+		assertEquals(1, GT6RecipeMaps.ASSEMBLER.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.ASSEMBLER.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.ASSEMBLER.mOutputFluidCount);
+		assertEquals(0, GT6RecipeMaps.ASSEMBLER.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.ASSEMBLER.mMinimalInputs);
+		assertEquals(RecipeMap.class, GT6RecipeMaps.ASSEMBLER.getClass(), "the RecipeMapAssembler subclass folds to the base class — its findRecipe NBT arm stays POOLED (RecipeMapAssembler.java:43-54)");
+		// RM.java:160 — items 2/1/2, fluids 1/0/1, MIN 0; the plain RecipeMap upstream
+		assertNotNull(GT6RecipeMaps.CNC);
+		assertSame(GT6RecipeMaps.CNC, RecipeMap.RECIPE_MAPS.get("gt.recipe.cncmachine"));
+		assertEquals("CNC Machine", GT6RecipeMaps.CNC.mNameLocal);
+		assertEquals(2, GT6RecipeMaps.CNC.mInputItemsCount);
+		assertEquals(1, GT6RecipeMaps.CNC.mOutputItemsCount);
+		assertEquals(2, GT6RecipeMaps.CNC.mMinimalInputItems);
+		assertEquals(1, GT6RecipeMaps.CNC.mInputFluidCount);
+		assertEquals(0, GT6RecipeMaps.CNC.mOutputFluidCount);
+		assertEquals(1, GT6RecipeMaps.CNC.mMinimalInputFluids);
+		assertEquals(0, GT6RecipeMaps.CNC.mMinimalInputs);
+		assertEquals(RecipeMap.class, GT6RecipeMaps.CNC.getClass(), "RM.CNC IS a plain RecipeMap upstream");
 	}
 }

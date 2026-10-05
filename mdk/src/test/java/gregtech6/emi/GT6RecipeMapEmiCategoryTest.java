@@ -227,8 +227,9 @@ public class GT6RecipeMapEmiCategoryTest {
 		}
 		List<Recipe> tLive = new ArrayList<>(tMixer.mRecipeList);
 
-		// 1. the map scan is row-independent
-		assertEquals(74, gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps().size());
+		// 1. the map scan is row-independent (75 = the 83-map census minus the 4 excluded
+		// minus the 5 NEI-disallowed plus the 1 overlap — the b6b trio joined, Nanofab visible)
+		assertEquals(75, gregtech6.jei.GT6RecipeMapViewerMeta.visibleMaps().size());
 
 		// 2. the registration op — defensive copy, one ROW_ORDER sort, deterministic
 		List<Recipe> tSorted = new ArrayList<>(tLive);

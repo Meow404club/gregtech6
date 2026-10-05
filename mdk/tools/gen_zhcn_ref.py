@@ -1888,6 +1888,9 @@ HAND_TRANSLATIONS = {
     "gt6.jei.recipe_map.press": ("压力成型机", "hand"),
     "gt6.jei.recipe_map.canner": ("封罐机", "hand"),
     "gt6.jei.recipe_map.replicator": ("物质复制器", "hand"),
+    # task recipe-b6b — the nanofab map joined the visible census; the zh face rides the
+    # upstream MTE 20441-20445 auto band's own word (纳米制造机 LV-IV)
+    "gt6.jei.recipe_map.nanofab": ("纳米制造机", "hand"),
     # cost lines: the en faces are the upstream NEI_RecipeMap :680-717 literals verbatim.
     "gt6.jei.cost.costs": ("总耗: %s GU", "hand"),
     "gt6.jei.cost.usage": ("功耗: %s GU/t", "hand"),
@@ -3844,11 +3847,9 @@ LEGACY_BLOCK_BACKFILL = {
     'block.gt6.flower_crosby_buckwheat': '克罗斯比绒毛蓼',
     'block.gt6.flower_alpine_catchfly': '瑞典蝇子草',
     'block.gt6.flower_viola_calaminaria': '卡拉明堇菜',
-    # ---- the r11 crucible page backfill (the committed-tsv drift the flower card's regen
-    # exposed: two direct rows lived only in the committed tsv — the gen_zhcn_ref backfill
-    # the chem-fluid card's ledger describes)
-    'gt6.jei.recipe_map.cruciblealloying': '坩埚合金',
-    'gt6.jei.recipe_map.cruciblesmelting': '坩埚熔炼',
+    # (the r11 crucible-page backfill rows left: crucible-viewer-page later landed the
+    # same two keys as hand-layer rows at :1881-1882, and the backfill loop rejects any
+    # hand-layer duplicate — the regen was hard-exiting on main since that card)
     'block.gt6.flower_thlaspi_lereschianum': '勒雷舍遏蓝菜',
     'block.gt6.flower_tufted_evening_primrose': '丛生月见草',
     'block.gt6.flower_narcissus_sheldonia': '谢尔登水仙花',
@@ -4406,7 +4407,6 @@ ROBOTICS_BACKFILL = {
 	'item.gt6.single_use_file.tooltip': '该工具只能用于合成',
 };
 
-
 # ---------------------------------------------------------------------------
 # The 53 circuit synthesis-chain zh faces (task circuit-chain-items): the
 # gt.multiitem.technological.30000-30504 dump rows (tmp/gregtech.lang :10575-10730),
@@ -4565,7 +4565,86 @@ EXPLOSIVES_BACKFILL = {
 		"item.gt6.shape_press_bullet_casing_large": "弹壳模具 (大型)",
 };
 
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL, BOTTLES_FAMILIES_A_BACKFILL, BOTTLES_FAMILIES_B_BACKFILL, BOTTLES_DYE_BACKFILL, ROBOTICS_BACKFILL, CIRCUIT_CHAIN_BACKFILL, ELECTRODE_BACKFILL, EXPLOSIVES_BACKFILL):
+
+# ---- the 68 mold/drop/remains direct rows (task recipe-b6b regen-faithfulness
+# write-back, the p34 precedent): mold-extruder-shapes and the food-side cards appended
+# these rows straight to the committed TSV without a py hand row (the known_bugs.
+# zhcn_ref_tsv_py_drift failure mode) — backfilled VERBATIM from the committed table so
+# the regen stays byte-faithful and --check passes again. shape_extruder_plate/rod are
+# NOT here (the py hand layer at :1604-1605 already carries them).
+MOLD_FOOD_DIRECT_BACKFILL = {
+	'item.gt6.drop_honey': '蜂蜜滴',
+	'item.gt6.drop_honeydew': '蜜露滴',
+	'item.gt6.remains_fruit': '水果废料',
+	'item.gt6.remains_nut': '坚果废料',
+	'item.gt6.remains_plant': '植物废料',
+	'item.gt6.remains_veggie': '蔬菜废料',
+	'item.gt6.shape_extruder_sword': '模具 (剑身)',
+	'item.gt6.shape_extruder_pickaxe': '模具 (镐头)',
+	'item.gt6.shape_extruder_shovel': '模具 (锹头)',
+	'item.gt6.shape_extruder_axe': '模具 (斧头)',
+	'item.gt6.shape_extruder_hoe': '模具 (锄头)',
+	'item.gt6.shape_extruder_hammer': '模具 (锤头)',
+	'item.gt6.shape_extruder_file': '模具 (锉刀刀头)',
+	'item.gt6.shape_extruder_saw': '模具 (锯刃)',
+	'item.gt6.shape_simple_ex_sword': '低热容压模模具 (剑身)',
+	'item.gt6.shape_simple_ex_pickaxe': '低热容压模模具 (镐头)',
+	'item.gt6.shape_simple_ex_shovel': '低热容压模模具 (锹头)',
+	'item.gt6.shape_simple_ex_axe': '低热容压模模具 (斧头)',
+	'item.gt6.shape_simple_ex_hoe': '低热容压模模具 (锄头)',
+	'item.gt6.shape_simple_ex_hammer': '低热容压模模具 (锤头)',
+	'item.gt6.shape_simple_ex_file': '低热容压模模具 (锉刀刀头)',
+	'item.gt6.shape_simple_ex_saw': '低热容压模模具 (锯刃)',
+	'item.gt6.shape_extruder_empty': '空白模具',
+	'item.gt6.shape_extruder_rod_long': '模具 (长杆)',
+	'item.gt6.shape_extruder_bolt': '模具 (螺栓)',
+	'item.gt6.shape_extruder_ring': '模具 (环)',
+	'item.gt6.shape_extruder_cell': '模具 (槽)',
+	'item.gt6.shape_extruder_ingot': '模具 (锭)',
+	'item.gt6.shape_extruder_wire': '模具 (线缆)',
+	'item.gt6.shape_extruder_casing': '模具 (外壳)',
+	'item.gt6.shape_extruder_pipe_tiny': '模具 (微型管道)',
+	'item.gt6.shape_extruder_pipe_small': '模具 (小型管道)',
+	'item.gt6.shape_extruder_pipe_medium': '模具 (管道)',
+	'item.gt6.shape_extruder_pipe_large': '模具 (大型管道)',
+	'item.gt6.shape_extruder_pipe_huge': '模具 (巨型管道)',
+	'item.gt6.shape_extruder_block': '模具 (方块)',
+	'item.gt6.shape_extruder_gear': '模具 (齿轮)',
+	'item.gt6.shape_extruder_bottle': '模具 (瓶子)',
+	'item.gt6.shape_extruder_plate_curved': '模具 (弯曲板)',
+	'item.gt6.shape_extruder_gear_small': '模具 (小型齿轮)',
+	'item.gt6.shape_extruder_ccc': '模具 (单元式流体容器)',
+	'item.gt6.shape_extruder_foil': '模具 (箔)',
+	'item.gt6.shape_extruder_plate_tiny': '模具 (小块板)',
+	'item.gt6.shape_extruder_wire_fine': '模具 (精细线缆)',
+	'item.gt6.shape_simple_ex_empty': '空白压模模具',
+	'item.gt6.shape_simple_ex_plate': '低热容压模模具 (板)',
+	'item.gt6.shape_simple_ex_rod_long': '低热容压模模具 (长杆)',
+	'item.gt6.shape_simple_ex_bolt': '低热容压模模具 (螺栓)',
+	'item.gt6.shape_simple_ex_ring': '低热容压模模具 (环)',
+	'item.gt6.shape_simple_ex_cell': '低热容压模模具 (槽)',
+	'item.gt6.shape_simple_ex_ingot': '低热容压模模具 (锭)',
+	'item.gt6.shape_simple_ex_wire': '低热容压模模具 (线缆)',
+	'item.gt6.shape_simple_ex_casing': '低热容压模模具 (外壳)',
+	'item.gt6.shape_simple_ex_pipe_tiny': '低热容压模模具 (微型管道)',
+	'item.gt6.shape_simple_ex_pipe_small': '低热容压模模具 (小型管道)',
+	'item.gt6.shape_simple_ex_pipe_medium': '低热容压模模具 (管道)',
+	'item.gt6.shape_simple_ex_pipe_large': '低热容压模模具 (大型管道)',
+	'item.gt6.shape_simple_ex_pipe_huge': '低热容压模模具 (巨型管道)',
+	'item.gt6.shape_simple_ex_block': '低热容压模模具 (方块)',
+	'item.gt6.shape_simple_ex_gear': '低热容压模模具 (齿轮)',
+	'item.gt6.shape_simple_ex_bottle': '低热容压模模具 (瓶子)',
+	'item.gt6.shape_simple_ex_plate_curved': '低热容压模模具 (弯曲板)',
+	'item.gt6.shape_simple_ex_gear_small': '低热容压模模具 (小型齿轮)',
+	'item.gt6.shape_simple_ex_rod': '低热容压模模具 (杆)',
+	'item.gt6.shape_simple_ex_ccc': '低热容压模模具 (单元式流体容器)',
+	'item.gt6.shape_simple_ex_foil': '低热容压模模具 (箔)',
+	'item.gt6.shape_simple_ex_plate_tiny': '低热容压模模具 (小块板)',
+	'item.gt6.shape_simple_ex_wire_fine': '低热容压模模具 (精细线缆)',
+};
+
+
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL, BOTTLES_FAMILIES_A_BACKFILL, BOTTLES_FAMILIES_B_BACKFILL, BOTTLES_DYE_BACKFILL, ROBOTICS_BACKFILL, CIRCUIT_CHAIN_BACKFILL, ELECTRODE_BACKFILL, EXPLOSIVES_BACKFILL, MOLD_FOOD_DIRECT_BACKFILL):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")

@@ -233,8 +233,9 @@ class GT6EnergyJumpTest {
 			}
 		}
 		assertEquals(51, tCarrierMaps, "the #30a carrier-map census (the ENERGY_BY_MAP transcription)");
-		assertEquals(23, tGuMaps, "the GU remainder: 74 visible - 51 carrier maps (5 mixed + 18 carrier-less;"
-				+ " the crucible pair joined the carrier-less set in crucible-viewer-page)");
+		assertEquals(24, tGuMaps, "the GU remainder: 75 visible - 51 carrier maps (5 mixed + 19 carrier-less;"
+				+ " the crucible pair joined the carrier-less set in crucible-viewer-page,"
+				+ " the nanofab joined in recipe-b6b — its rows poured but no machine row to transcribe a carrier from)");
 	}
 
 	@Test

@@ -1,0 +1,5465 @@
+{
+  "comment": "task recipe-b6b-small-maps-cnc-assembler-nanofab — the Assembler plank-listener pair (Loader_Recipes_OreDict.java:234-238, the OD.plankSkyroot/plankWeedwood/plankWood listener): per registered plank item, 8x plank + 1 redstone dust -> note block (:237, eut 16 / duration 32) and 8x plank + 1 diamond -> jukebox (:238, eut 16 / duration 64), both verbatim. Family expansion is the PORT-universe subset: the 130 registered OP.plank items (task wood-planks-register), rows grouped per material in registration-name order. DECLARED OUT (the same listener's remaining faces, outside this card's bound): the ST.tag(1/2/3/4/6/8) selector rows :242-247 (the press.json:2 form — a configured circuit is not expressible in JSON v1), the bookshelf row :248 (the bookshelf face deferred to the unboxinator card's coordination, the b2a :965 ruling form) and the IGNORED_OREDICT_REGISTRATIONS gate :250. DECLARED SKIPS: the match-stick walk (MultiItemRandomTools.java:344-351, ANY.Wood x ANY.Phosphorus bolt rows) has NO port output carrier — IL.Tool_Matches is not ported (census: zero match item registrations); the Forestry casing row (Compat_Recipes_Forestry.java:319) and the BuildCraft pipe rows (Compat_Recipes_BuildCraft.java:113-118) are the P10 compat cuts. The upstream RecipeMapAssembler subclass face (the printed-pages NBT copy, RecipeMapAssembler.java:43-54) stays POOLED (the GT6RecipeMaps.ASSEMBLER UNBOXINATOR-judged form). KJS: datapack domain, zero adaptation.",
+  "recipes": [
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Acacia planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_acacia",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Acacia planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_acacia",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Alder planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_alder",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Alder planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_alder",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Applewood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_applewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Applewood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_applewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Ashwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ashwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Ashwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ashwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Aspen planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_aspen",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Aspen planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_aspen",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Autumnwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_autumnwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Autumnwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_autumnwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Balsa planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_balsa",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Balsa planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_balsa",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Bamboo planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_bamboo",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Bamboo planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_bamboo",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Baobab planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_baobab",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Baobab planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_baobab",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Bark planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_bark",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Bark planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_bark",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Beech planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_beech",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Beech planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_beech",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Birch planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_birch",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Birch planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_birch",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — BlueMahoe planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_blue_mahoe",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — BlueMahoe planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_blue_mahoe",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — BlueSpruce planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_blue_spruce",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — BlueSpruce planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_blue_spruce",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Boxwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_boxwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Boxwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_boxwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Brazilwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_brazilwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Brazilwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_brazilwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Butternutwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_butternutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Butternutwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_butternutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Cedar planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cedar",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Cedar planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cedar",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Cherrywood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cherrywood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Cherrywood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cherrywood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Chestnutwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_chestnutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Chestnutwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_chestnutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Cinnamonwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cinnamonwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Cinnamonwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cinnamonwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Citruswood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_citruswood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Citruswood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_citruswood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Cocobolowood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cocobolowood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Cocobolowood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cocobolowood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Coconutwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_coconutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Coconutwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_coconutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Crimsonwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_crimsonwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Crimsonwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_crimsonwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Cypress planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cypress",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Cypress planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_cypress",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — DarkOak planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_dark_oak",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — DarkOak planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_dark_oak",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Darkwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_darkwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Darkwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_darkwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — DouglasFir planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_douglas_fir",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — DouglasFir planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_douglas_fir",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Dreamwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_dreamwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Dreamwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_dreamwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Ebony planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ebony",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Ebony planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ebony",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Elderwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_elderwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Elderwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_elderwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Elm planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_elm",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Elm planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_elm",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Etherealwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_etherealwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Etherealwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_etherealwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Eucalyptus planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_eucalyptus",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Eucalyptus planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_eucalyptus",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Figwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_figwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Figwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_figwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Fir planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_fir",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Fir planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_fir",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Fireleaf planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_fireleaf",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Fireleaf planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_fireleaf",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Foxfirewood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_foxfirewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Foxfirewood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_foxfirewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Giganteumwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_giganteumwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Giganteumwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_giganteumwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Gingko planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_gingko",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Gingko planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_gingko",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Goldwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_goldwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Goldwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_goldwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Greatwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_greatwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Greatwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_greatwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Greenheart planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_greenheart",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Greenheart planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_greenheart",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Hawthorn planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hawthorn",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Hawthorn planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hawthorn",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Hazel planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hazel",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Hazel planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hazel",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Hellbark planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hellbark",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Hellbark planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hellbark",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Hemlock planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hemlock",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Hemlock planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hemlock",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Hickory planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hickory",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Hickory planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hickory",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Holly planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_holly",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Holly planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_holly",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Hornbeam planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hornbeam",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Hornbeam planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_hornbeam",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Ipe planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ipe",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Ipe planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ipe",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Iroko planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_iroko",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Iroko planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_iroko",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Ironwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ironwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Ironwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ironwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Jacaranda planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_jacaranda",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Jacaranda planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_jacaranda",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — JapaneseMaple planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_japanese_maple",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — JapaneseMaple planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_japanese_maple",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Junglewood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_junglewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Junglewood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_junglewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Kapok planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_kapok",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Kapok planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_kapok",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Larch planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_larch",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Larch planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_larch",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Limewood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_limewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Limewood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_limewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — LiveRoot planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_live_root",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — LiveRoot planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_live_root",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Livingwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_livingwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Livingwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_livingwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Locust planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_locust",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Locust planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_locust",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Logwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_logwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Logwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_logwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Maclura planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_maclura",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Maclura planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_maclura",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Magicwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_magicwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Magicwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_magicwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Mahoe planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_mahoe",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Mahoe planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_mahoe",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Mahogany planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_mahogany",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Mahogany planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_mahogany",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Mangrove planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_mangrove",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Mangrove planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_mangrove",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Maple planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_maple",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Maple planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_maple",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Marshmallow planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_marshmallow",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Marshmallow planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_marshmallow",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Oak planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_oak",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Oak planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_oak",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Ogrewood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ogrewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Ogrewood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_ogrewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Olivewood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_olivewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Olivewood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_olivewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Padauk planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_padauk",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Padauk planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_padauk",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Palm planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_palm",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Palm planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_palm",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Papayawood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_papayawood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Papayawood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_papayawood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — PeanutWood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_peanut_wood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — PeanutWood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_peanut_wood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Pearwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_pearwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Pearwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_pearwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — PetrifiedWood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_petrified_wood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — PetrifiedWood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_petrified_wood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Pine planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_pine",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Pine planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_pine",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — PinkIvory planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_pink_ivory",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — PinkIvory planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_pink_ivory",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Plumwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_plumwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Plumwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_plumwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Poplar planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_poplar",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Poplar planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_poplar",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Purpleheart planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_purpleheart",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Purpleheart planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_purpleheart",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — RainbowEucalyptus planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rainbow_eucalyptus",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — RainbowEucalyptus planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rainbow_eucalyptus",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Rainbowood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rainbowood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Rainbowood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rainbowood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Redwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_redwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Redwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_redwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Rosewood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rosewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Rosewood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rosewood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Rowan planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rowan",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Rowan planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_rowan",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — SacredOak planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sacred_oak",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — SacredOak planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sacred_oak",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Sakura planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sakura",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Sakura planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sakura",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Sequoia planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sequoia",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Sequoia planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sequoia",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Shimmerwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_shimmerwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Shimmerwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_shimmerwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — SilverPine planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_silver_pine",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — SilverPine planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_silver_pine",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Silverwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_silverwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Silverwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_silverwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Skyroot planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_skyroot",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Skyroot planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_skyroot",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Spruce planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_spruce",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Spruce planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_spruce",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Steeleaf planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_steeleaf",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Steeleaf planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_steeleaf",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Sweetgum planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sweetgum",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Sweetgum planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sweetgum",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Sycamore planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sycamore",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Sycamore planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_sycamore",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Syzgium planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_syzgium",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Syzgium planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_syzgium",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Teak planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_teak",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Teak planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_teak",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Thorntree planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_thorntree",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Thorntree planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_thorntree",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Towerwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_towerwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Towerwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_towerwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Walnutwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_walnutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Walnutwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_walnutwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Warpedwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_warpedwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Warpedwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_warpedwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Weedwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_weedwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Weedwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_weedwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Wenge planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wenge",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Wenge planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wenge",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WhiteCedar planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_white_cedar",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WhiteCedar planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_white_cedar",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WhiteElm planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_white_elm",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WhiteElm planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_white_elm",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Whitebeam planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_whitebeam",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Whitebeam planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_whitebeam",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Willow planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_willow",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Willow planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_willow",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Witchwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_witchwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Witchwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_witchwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Wood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Wood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodBleached planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_bleached",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodBleached planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_bleached",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodCompressed planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_compressed",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodCompressed planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_compressed",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodDead planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_dead",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodDead planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_dead",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodFrozen planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_frozen",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodFrozen planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_frozen",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodMossy planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_mossy",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodMossy planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_mossy",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodPolished planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_polished",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodPolished planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_polished",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodRotten planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_rotten",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodRotten planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_rotten",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodRubber planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodRubber planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_rubber",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodScorched planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_scorched",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodScorched planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_scorched",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodTainted planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_tainted",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodTainted planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_tainted",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodTreated planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_treated",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodTreated planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_treated",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — WoodVarnished planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_varnished",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — WoodVarnished planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wood_varnished",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Wyvernwood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wyvernwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Wyvernwood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_wyvernwood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Yew planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_yew",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Yew planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_yew",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:237 — Zebrawood planks -> note block (the plankGt listener walk; the plank leg is the registered plank item)",
+      "inputs": [
+        {
+          "item": "gt6:plank_zebrawood",
+          "count": 8
+        },
+        {
+          "item": "gt6:dust_redstone",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:note_block",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_OreDict.java:238 — Zebrawood planks -> jukebox (the plankGt listener walk)",
+      "inputs": [
+        {
+          "item": "gt6:plank_zebrawood",
+          "count": 8
+        },
+        {
+          "item": "gt6:gem_diamond",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "minecraft:jukebox",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    }
+  ]
+}

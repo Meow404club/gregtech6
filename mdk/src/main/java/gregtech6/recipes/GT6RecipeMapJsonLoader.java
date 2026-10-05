@@ -255,8 +255,10 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// MIXER Chem face (mixer.json is the Food face), roastingchem the ROASTING SO2 face
 				// (roasting.json is the b2b1 CO/oxide face), melterchem/smelterchem the Chem ice/snow
 				// faces, cryodistillationtowerchem the dimension-air face, injectorchem the
-				// thorium-salt face. The HEATMIXER face stays keyless ON PURPOSE — the port has no
-				// HEAT_MIXER map instance (a map-registration card unlocks it)
+				// thorium-salt face. The HEATMIXER face rides MIXER by ALIAS (task recipe-b6b
+				// flip): upstream RM.java:75 HeatMixer IS Mixer — the pure-alias row, zero
+				// dedicated map instance ever (the old "a map-registration card unlocks it"
+				// judgment is void; the Chem stations pour through mixerchem here)
 				"mixerchem", "roastingchem", "melterchem", "smelterchem", "cryodistillationtowerchem", "injectorchem",
 
 				// task recipe-b2-bath-potion-domain — the second MIXER file key (the sawing
@@ -269,7 +271,14 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// stonetypes/BlockStones/Blackstone families); the plate/rod material rows keep
 				// pouring via GT6RecipesExtruder (FMLCommonSetup), the JSON is a second,
 				// independent subset owner (the sawing-key precedent)
-				"extruder");
+				// task recipe-b6b-small-maps-cnc-assembler-nanofab — the three small-map keys,
+				// each WITH its row stock (the b1 press form, not the declared-empty form):
+				// cnc pours the Loader_Recipes_Woods.java:259-263 per-plank gear walk, assembler
+				// the Loader_Recipes_OreDict.java:237-238 plank-listener pair, nanofab the
+				// Loader_Recipes_Other.java:818-894 + Loader_Recipes_Ores.java:341-344
+				// Graphene/Dilithium stocks
+				"extruder",
+				"cnc", "assembler", "nanofab");
 	/** The two zero-static-row-stock maps: a file for them is a hard ERROR (class doc). */
 	private static final Set<String> FORBIDDEN = Set.of("furnace", "furnace_fuel");
 
@@ -716,6 +725,11 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// (the plate/rod material walk stays on GT6RecipesExtruder; two subset owners,
 			// one map — the sawing/cutter two-key precedent)
 			case "extruder" -> GT6RecipeMaps.EXTRUDER;
+			// task recipe-b6b-small-maps-cnc-assembler-nanofab — the three small-map keys (the
+			// key/field pairs are the field-name snake case; the rows ship with the keys)
+			case "nanofab" -> GT6RecipeMaps.NANOFAB;
+			case "assembler" -> GT6RecipeMaps.ASSEMBLER;
+			case "cnc" -> GT6RecipeMaps.CNC;
 		default -> null;
 		};
 	}

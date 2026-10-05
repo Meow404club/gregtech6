@@ -1,0 +1,770 @@
+{
+  "comment": "task recipe-b6b-small-maps-cnc-assembler-nanofab — the Nanoscale Fabricator stock (Loader_Recipes_Other.java:818-894, the Graphene shapes + Loader_Recipes_Ores.java:341-344, the Dolamide/Dilithium gems): 41 + 4 rows, all port-registered carriers (live registration walk: foil/plate/plateCurved/casingSmall/wireFine/bolt/stick/stickLong/ring/gearGtSmall/gearGt/rotor x Graphene, dust-family x C/Dolamide/Dilithium, gem x Dilithium). The ST.tag(0..17) circuit selector legs are DROPPED (the press.json:2 form) — DECLARED DEVIATION: the same carbon dust input recurs across shape groups (e.g. dust_tiny_carbon x9 selects foil/plate/plateCurved/wireFine/bolt/stick/stickLong/ring/gearGtSmall by circuit config upstream), so the shape a live machine answers is the recipe-set iteration order, NOT the upstream circuit config; JSON v1 cannot express the configured circuit. DECLARED SKIPS (unregistered port carriers): the wireGt01 legs :841-844 (OP.wireGt01 is not in the port item-path prefix set) and the five pipe-size legs :876-879/:881-883/:885-887/:889-891/:893-894 (the pipeTiny..pipeHuge prefixes ride the un-ported block path). The NBT-copy semantics face stays POOLED with the Printer/Replicator domain (the GT6RecipeMaps.ASSEMBLER/PRINTER field docs). KJS: datapack domain, zero adaptation.",
+  "recipes": [
+    {
+      "comment": "Loader_Recipes_Other.java:818 — carbon dustDiv72 x18 -> foil Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_carbon",
+          "count": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:819 — carbon dustTiny x9 -> foil Graphene x4 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_graphene",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:820 — carbon dustSmall x1 -> foil Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:821 — carbon dust x1 -> foil Graphene x4 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:foil_graphene",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:823 — carbon dustTiny x9 -> plate Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:824 — carbon dustSmall x4 -> plate Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:825 — carbon dust x1 -> plate Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:827 — carbon dustTiny x9 -> platecurved Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:828 — carbon dustSmall x4 -> platecurved Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:829 — carbon dust x1 -> platecurved Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:plate_curved_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:831 — carbon dustDiv72 x36 -> casingsmall Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_carbon",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:casing_small_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:832 — carbon dustTiny x9 -> casingsmall Graphene x2 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:casing_small_graphene",
+          "count": 2
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:833 — carbon dustSmall x2 -> casingsmall Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:casing_small_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:834 — carbon dust x1 -> casingsmall Graphene x2 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:casing_small_graphene",
+          "count": 2
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:836 — carbon dustDiv72 x9 -> wirefine Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_fine_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:837 — carbon dustTiny x9 -> wirefine Graphene x8 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_fine_graphene",
+          "count": 8
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:838 — carbon dustSmall x1 -> wirefine Graphene x2 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_fine_graphene",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:839 — carbon dust x1 -> wirefine Graphene x8 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:wire_fine_graphene",
+          "count": 8
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:846 — carbon dustDiv72 x9 -> bolt Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 32,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:847 — carbon dustTiny x9 -> bolt Graphene x8 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_graphene",
+          "count": 8
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:848 — carbon dustSmall x1 -> bolt Graphene x2 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_graphene",
+          "count": 2
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:849 — carbon dust x1 -> bolt Graphene x8 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:bolt_graphene",
+          "count": 8
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:851 — carbon dustDiv72 x36 -> stick Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_carbon",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:852 — carbon dustTiny x9 -> stick Graphene x2 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_graphene",
+          "count": 2
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:853 — carbon dustSmall x2 -> stick Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 128,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:854 — carbon dust x1 -> stick Graphene x2 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_graphene",
+          "count": 2
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:856 — carbon dustTiny x9 -> sticklong Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:857 — carbon dustSmall x4 -> sticklong Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:858 — carbon dust x1 -> sticklong Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:stick_long_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:860 — carbon dustDiv72 x18 -> ring Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_div72_carbon",
+          "count": 18
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ring_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:861 — carbon dustTiny x9 -> ring Graphene x4 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ring_graphene",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:862 — carbon dustSmall x1 -> ring Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ring_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 64,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:863 — carbon dust x1 -> ring Graphene x4 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:ring_graphene",
+          "count": 4
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:865 — carbon dustTiny x9 -> geargtsmall Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:866 — carbon dustSmall x4 -> geargtsmall Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:867 — carbon dust x1 -> geargtsmall Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_small_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 256,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:869 — carbon dustTiny x36 -> geargt Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_tiny_carbon",
+          "count": 36
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:870 — carbon dustSmall x16 -> geargt Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 16
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:871 — carbon dust x4 -> geargt Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gear_gt_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 1024,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:873 — carbon dustSmall x17 -> rotor Graphene x1 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_small_carbon",
+          "count": 17
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rotor_graphene",
+          "count": 1
+        }
+      ],
+      "duration": 1088,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Other.java:874 — carbon dust x17 -> rotor Graphene x4 (the Graphene nanofab stock; ST.tag selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_carbon",
+          "count": 17
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:rotor_graphene",
+          "count": 4
+        }
+      ],
+      "duration": 4352,
+      "eut": 16
+    },
+    {
+      "comment": "Loader_Recipes_Ores.java:341 — dolamide crushedCentrifuged x1 -> dilithium gem x2 (the Dolamide/Dilithium nanofab stock; ST.tag(0) selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:crushed_centrifuged_dolamide",
+          "count": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gem_dilithium",
+          "count": 2
+        }
+      ],
+      "duration": 2048,
+      "eut": 64
+    },
+    {
+      "comment": "Loader_Recipes_Ores.java:342 — dolamide crushedCentrifugedTiny x9 -> dilithium gem x2 (the Dolamide/Dilithium nanofab stock; ST.tag(0) selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:crushed_centrifuged_tiny_dolamide",
+          "count": 9
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gem_dilithium",
+          "count": 2
+        }
+      ],
+      "duration": 2048,
+      "eut": 64
+    },
+    {
+      "comment": "Loader_Recipes_Ores.java:343 — dolamide dust x2 -> dilithium gem x1 (the Dolamide/Dilithium nanofab stock; ST.tag(0) selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_dolamide",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gem_dilithium",
+          "count": 1
+        }
+      ],
+      "duration": 2048,
+      "eut": 512
+    },
+    {
+      "comment": "Loader_Recipes_Ores.java:344 — dilithium dust x2 -> dilithium gem x1 (the Dolamide/Dilithium nanofab stock; ST.tag(0) selector leg dropped per press.json:2)",
+      "inputs": [
+        {
+          "item": "gt6:dust_dilithium",
+          "count": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "gt6:gem_dilithium",
+          "count": 1
+        }
+      ],
+      "duration": 4096,
+      "eut": 512
+    }
+  ]
+}

@@ -3,6 +3,8 @@ package gregtech6.recipes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
@@ -50,8 +52,12 @@ import net.minecraft.world.level.material.Fluids;
  * :151/:266 Glycerol/Glyceryl/NitroFuel, :153 Reikygen, :179-181 the UF4/Ca/U molten
  * legs, :380-381 biodiesel, the ANY.Fe members WroughtIron/CastIron/IronCompressed
  * (no port dust item); melter/smelter gemChipped/gemFlawed legs (:483-484/:498-499).
- * The HEATMIXER face (:101-102/:121-128/:159/:166/:174) has NO port map instance —
- * pooled until a map-registration card. The DISTILLATION_TOWER Chem rows (:350-360)
+ * The HEATMIXER face (:101-102/:121-128/:159/:166/:174) is the RM.java:75 PURE ALIAS —
+ * upstream {@code HeatMixer = Mixer}, so the ten stations ride the MIXER map through
+ * this very mixerchem key (the task recipe-b6b alias flip; the old "pools until a
+ * map-registration card" judgment is void — there is no HeatMixer map and never was
+ * one; the stations' own data pour is a data card's content and the mixerchem.json
+ * header pool-note retires with it). The DISTILLATION_TOWER Chem rows (:350-360)
  * pour nothing new: the biomass pair needs the Glycerol carrier and the
  * Heavy2/HotCrude/Light2 oils are unregistered (six oil faces shipped earlier).
  */
@@ -286,12 +292,22 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 		assertFalse(rowsText("mixerchem.json").contains("reikygen"), ":153 — the RotaryCraft oxygen alias is absent");
 		assertFalse(rowsText("mixerchem.json").contains("biodiesel"), ":380-381 — no biodiesel carrier");
 		assertFalse(rowsText("cryodistillationtowerchem.json").contains("gt6:air\""), ":363 — no plain-air fluid");
-		for (String tKey : CENSUS.keySet()) {
-			for (JsonElement tElement : pourShipped(tKey)) {
-				String tComment = tElement.getAsJsonObject().get("comment").getAsString();
-				assertFalse(tComment.contains("heatmixer") || tComment.contains("HeatMixer"), "the HEATMIXER face pools (no port map): " + tComment);
-			}
-		}
+	}
+
+	/**
+	 * The HeatMixer ALIAS pin (the task recipe-b6b flip, replacing the old no-mention
+	 * assertion): upstream RM.java:75 {@code HeatMixer = Mixer} is the pure-alias row, so
+	 * the ten Chem stations (:101-102/:121-128/:159/:166/:174) own no map — they ride the
+	 * MIXER map instance through this very mixerchem key (zero dedicated Java face, the
+	 * JsonLoader POURABLE carries no heatmixer key on purpose). The old "the HEATMIXER
+	 * face pools until a map-registration card" judgment is VOID.
+	 */
+	@Test
+	public void theHeatMixerAliasRidesTheMixerMap() {
+		assertSame(GT6RecipeMaps.MIXER, GT6RecipeMapJsonLoader.mapFor("mixerchem"),
+				"RM.java:75 HeatMixer = Mixer: the Chem HeatMixer face pours through the mixerchem key onto MIXER");
+		assertNull(GT6RecipeMapJsonLoader.mapFor("heatmixer"),
+				"the alias form: mapFor has no heatmixer case — the stations need none");
 	}
 
 	/**
