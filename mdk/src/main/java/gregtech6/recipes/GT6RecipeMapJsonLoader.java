@@ -249,7 +249,6 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 				// carry ZERO static rows (the runtime face is the on-demand material-graph arm
 				// already ported in GT6RecipeMapCrucible), so there is nothing to replay
 				"press",
-<<<<<<< HEAD
 				// task recipe-b1-chem-domain — the Chem-domain faces (the Loader_Recipes_Chem.java
 				// static rows), each its OWN file key per the sawing 双文件一 map precedent so every
 				// card's census stays independent and /reload replaces per-key: mixerchem pours the
@@ -719,7 +718,6 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			// task recipe-data-b1 — the Forming Press static stock (the lamp/TNT walks;
 			// the crucible pair deliberately keyless — zero upstream static rows, see POURABLE)
 			case "press" -> GT6RecipeMaps.PRESS;
-<<<<<<< HEAD
 			// task recipe-b1-chem-domain — the Chem-domain file keys, one per face (see POURABLE)
 			case "mixerchem" -> GT6RecipeMaps.MIXER;
 			case "roastingchem" -> GT6RecipeMaps.ROASTING;

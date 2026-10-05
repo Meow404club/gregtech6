@@ -80,6 +80,8 @@ public class GT6CircuitChainRecipesRowsPourTest extends GTRecipesOfflineTestBase
 
 	private static final int PRESS2_ROWS = 205;
 	private static final int BATH_CARD_ROWS = 7;
+	/** The full bath.json census: 578 pre-existing (1 w1 smoke + 334 b2 + 244 b3) + the 7 card rows — the review-seat seam ratchet (the card was cut before the b2/b3 replays landed). */
+	private static final int BATH_FILE_ROWS = 585;
 	private static final int LASER_CARD_ROWS = 447;
 	private static final int GREEN_LENS = 11, RED_LENS = 15;
 
@@ -228,15 +230,17 @@ public class GT6CircuitChainRecipesRowsPourTest extends GTRecipesOfflineTestBase
 
 	// ---------------------------------------------------------------- bath
 
-	/** The census: 1 baseline + the 7 Sn soldering rows, zero skips. */
+	/** The full-file census: the 578 pre-existing rows (the b2 334 + the b3 244 dye band) + the 7 Sn soldering rows, zero skips. */
 	@Test
 	public void bathFilePoursTheSolderingCensusWithZeroSkips() throws Exception {
 		JsonArray tRows = pourShipped("bath");
-		assertEquals(1 + BATH_CARD_ROWS, tRows.size(), "the baseline smoke row + the seven Sn legs");
+		assertEquals(BATH_FILE_ROWS, tRows.size(), "the full shipped bath stock: 578 prior (the w1 smoke + the b2/b3 faces) + the seven Sn legs");
 		RecipeMap tMap = GT6RecipeMapJsonLoader.mapFor("bath");
 		assertNotNull(tMap, "bath resolves");
-		assertEquals(1 + BATH_CARD_ROWS, GT6RecipeMapJsonLoader.pouredCount("bath"),
+		assertEquals(BATH_FILE_ROWS, GT6RecipeMapJsonLoader.pouredCount("bath"),
 				"bath: the tracker mirrors the pour (a smaller number = WARN-skipped rows)");
+		assertEquals(BATH_CARD_ROWS, cardRows(tRows, "MultiItemTechnological.java:").size(),
+				"exactly the seven Sn legs cite the card's anchors (the pre-existing rows predate the card)");
 	}
 
 	/** The seven Sn rows verbatim: board + tin_molten 288 mB -> circuit, 0 EUt / 64 t. */
@@ -393,7 +397,14 @@ public class GT6CircuitChainRecipesRowsPourTest extends GTRecipesOfflineTestBase
 			InputStream tStream = GT6CircuitChainRecipesRowsPourTest.class.getResourceAsStream("/data/gt6/recipe_maps/" + tFile + ".json");
 			assertNotNull(tStream);
 			JsonObject tDoc = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
+			// the review-seat seam: bath.json is a SHARED file (the b2/b3 faces predate this card) —
+			// this id-universe pin judges the CARD's rows only; the shared faces are the b2/b3 tests' scope
+			boolean tSharedBath = "bath".equals(tFile);
 			for (JsonElement tElement : tDoc.getAsJsonArray("recipes")) {
+				if (tSharedBath) {
+					JsonObject tPeek = tElement.getAsJsonObject();
+					if (!tPeek.has("comment") || !tPeek.get("comment").getAsString().startsWith("MultiItemTechnological.java:")) continue;
+				}
 				JsonObject tRow = tElement.getAsJsonObject();
 				for (String tLeg : new String[] {"inputs", "outputs"}) {
 					if (!tRow.has(tLeg)) continue;

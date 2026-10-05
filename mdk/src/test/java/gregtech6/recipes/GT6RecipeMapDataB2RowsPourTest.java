@@ -31,6 +31,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 
 import gregtech6.fluid.GTFluids;
+import gregtech6.registry.GT6CircuitChain;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
@@ -58,7 +59,7 @@ public class GT6RecipeMapDataB2RowsPourTest extends GTRecipesOfflineTestBase {
 
 	/** The per-file census: file key -> expected total rows (smoke + pour, zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"bath", 578,         // 1 w1 smoke + 225 Ores + 25 Chem + 1 Other + 326 Vanilla (82 b2 + the 244 b3 dye band)
+			"bath", 585,         // 1 w1 smoke + 225 Ores + 25 Chem + 1 Other + 326 Vanilla (82 b2 + the 244 b3 dye band) + the 7 Sn soldering legs (task circuit-chain-recipes — the review-seat ratchet)
 			"distillery", 1499,  // 21 food (preserved, task food-recipes-t2) + 1478 potion replay
 			"mixerpotions", 30); // the :325-:354 Dragon_Breath face, 13+7+10 rows
 
@@ -334,6 +335,10 @@ public class GT6RecipeMapDataB2RowsPourTest extends GTRecipesOfflineTestBase {
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) {
 			tItems.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
+		// task circuit-chain-recipes — the circuit chain's registered siblings (the bath soldering
+		// legs' board/circuit outputs ride this walk, the card's own id-universe pin shape)
+		for (var tRow : GT6CircuitChain.ROWS) tItems.add("gt6:" + tRow.path());
+		for (var tRow : gregtech6.registry.GT6Batteries.CIRCUIT_ROWS) tItems.add("gt6:" + tRow.path());
 		Set<String> tFluids = new HashSet<>();
 		for (GTFluids.EngineFluidSpec tSpec : GTFluids.ENGINE_SPECS) tFluids.add("gt6:" + tSpec.name());
 		for (GTFluids.AquaFluidSpec tSpec : GTFluids.AQUA_SPECS) tFluids.add("gt6:" + tSpec.name());
