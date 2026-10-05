@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:stick_iron"
+    },
+    "P": {
+      "tag": "forge:double_plates/iron"
+    },
+    "S": {
+      "item": "gt6:stick_long_iron"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "SwS",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:grindstone"
+  },
+  "show_notification": true
+}

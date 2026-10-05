@@ -139,6 +139,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The Sifting Table crafting row (task sifting-table-family, Loader_MultiTileEntities.java:2227) — the result-path convention. */
 	public static final ResourceLocation SIFTING_TABLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sifting_table");
 
+	/** The Grindstone crafting row id (task grindstone-family, the :2226 row, result-path convention). */
+	public static final ResourceLocation GRINDSTONE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "grindstone");
+
 	/** The storage-hopper crafting ids — the result-path convention, one per row (Loader :145-146). */
 	public static final java.util.List<ResourceLocation> HOPPER_RECIPE_IDS = gregtech6.registry.GT6Hoppers.ROWS.stream()
 			.map(GT6CraftingRecipes::hopperRecipeId)
@@ -322,6 +325,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tMortarBuilder.save(aConsumer, mortarRecipeId(tRow));
 		}
 		siftingTableBuilder().save(aConsumer, SIFTING_TABLE_ID); // task sifting-table-family
+		grindstoneBuilder().save(aConsumer, GRINDSTONE_ID); // task grindstone-family — the :2226 row
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
@@ -584,6 +588,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tMortarBuilder.save(aOutput, mortarRecipeId(tRow));
 		}
 		siftingTableBuilder().save(aOutput, SIFTING_TABLE_ID); // task sifting-table-family
+		grindstoneBuilder().save(aOutput, GRINDSTONE_ID); // task grindstone-family — the :2226 row
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
@@ -2740,6 +2745,30 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('S', GTMaterialItems.get(gregapi.data.OP.stickLong, MT.Iron).get())
 				.define('P', GTMaterialItems.get(gregapi.data.OP.plateDouble, MT.Iron).get())
 				.unlockedBy("has_plate_double", has(GTMaterialItems.get(gregapi.data.OP.plateDouble, MT.Iron).get()));
+	}
+
+	/**
+	 * The Grindstone crafting row (task grindstone-family) — the upstream registration
+	 * pattern VERBATIM (Loader_MultiTileEntities.java:2226 {@code "SAS","SwS","PPP"}):
+	 * 'S' = {@code OP.stickLong.dat(ANY.Iron)} → the iron-member fold {@code gt6:stick_long_iron}
+	 * (the bumbliary screw_iron precedent — stickLong has no tag family in the port), 'A' =
+	 * {@code OP.stick.dat(ANY.Iron)} → {@code gt6:stick_iron}, 'P' = {@code OP.plateDouble
+	 * .dat(ANY.Iron)} → the {@code #gt6:double_plates/iron} tag (the transformer-row form),
+	 * 'w' = {@code #gt6:tools/wrench} (the tool letter, not consumed). Result 1x
+	 * {@code gt6:grindstone}. The vanilla shaped auto-mirror carries CR.DEF_MIR (the
+	 * bathing-pot note).
+	 */
+	private ShapedRecipeBuilder grindstoneBuilder() {
+		TagKey<Item> tDoublePlates = GT6ItemTags.materialTag(GT6ItemTags.DOUBLE_PLATES_FAMILY, MT.Iron);
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, gregtech6.registry.GT6Grindstones.GRINDSTONE.get())
+				.pattern("SAS")
+				.pattern("SwS")
+				.pattern("PPP")
+				.define('S', GTMaterialItems.get(gregapi.data.OP.stickLong, MT.Iron).get())
+				.define('A', GTMaterialItems.get(gregapi.data.OP.stick, MT.Iron).get())
+				.define('P', tDoublePlates)
+				.define('w', GT6ItemTags.TOOLS_WRENCH)
+				.unlockedBy("has_stick_long_iron", has(GTMaterialItems.get(gregapi.data.OP.stickLong, MT.Iron).get()));
 	}
 
 	/**

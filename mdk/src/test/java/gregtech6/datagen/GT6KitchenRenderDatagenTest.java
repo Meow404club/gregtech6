@@ -51,36 +51,52 @@ class GT6KitchenRenderDatagenTest {
             "mixing_bowl", "mixing_bowl",
             "juicer", "juicer");
 
+    /**
+     * The grindstone's colored/overlay subdir band (task grindstone-family — the
+     * MultiTileEntityGrindStone getTexture2 :238-241 eight-tile borrow). OUTSIDE
+     * {@link #BLOCK_FAMILIES}: that map also feeds the property-free blockstate pin and
+     * the grindstone is a FACING x STONE state machine, not a kitchen vessel. The faces
+     * are SUBDIR-QUALIFIED — the family root carries the two pass bands, not flat tiles.
+     */
+    private static final String GRINDSTONE_FAMILY = "grindstone";
+    private static final List<String> GRINDSTONE_FACES = List.of(
+            "colored/legs", "colored/axle", "colored/stone", "colored/bottom",
+            "overlay/legs", "overlay/axle", "overlay/stone", "overlay/bottom");
+
     /** The tub faces (pot pair + bowl) and the juicer's extra pestle faces. */
     private static final List<String> TUB_FACES = List.of("sides", "insides", "top", "bottom");
     private static final List<String> JUICER_FACES = List.of("sides", "insides", "top", "bottom", "middletop", "middleside");
 
-    /** 4 + 4 + 4 + 6 — the walk upstream found exactly these colored/ files per family (the Table faces stay unborrowed). */
-    private static final int PINNED_PNG_TOTAL = 18;
+    /** 4 + 4 + 4 + 6 + 2 + 8 — the walk upstream found exactly these per family; the kitchen_nei pair is the manual-nei derived art at the tools root (the Table faces stay unborrowed). */
+    private static final int PINNED_PNG_TOTAL = 28;
+
+    /** The manual-nei viewer-dynamic pair — port-GENERATED art sitting directly at the tools root (no family subdir). */
+    private static final List<String> ROOT_DERIVED_TILES = List.of("kitchen_nei_jei.png", "kitchen_nei_emi.png");
 
     /**
      * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
      * walks the whole directory, so every later band must be declared here): the two
     /**
      * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
-     * walks the whole directory, so every later band must be declared here): the two
-     * DERIVED NEI glyph tiles (the kitchen-nei card, tools root) + the mortar 12-PNG
-     * two-layer band (task mortar-family — colored+overlay x sides/insides/top/bottom/
-     * middleside/middletop) + the sifting-table 8-PNG two-layer band (task
+     * walks the whole directory, so every later band must be declared here): the mortar
+     * 12-PNG two-layer band (task mortar-family — colored+overlay x sides/insides/top/
+     * bottom/middleside/middletop) + the sifting-table 8-PNG two-layer band (task
      * sifting-table-family — colored+overlay x legs/grid/border/plate). The grindstone
      * sibling extends this list at its own card — with the sifting band (+8) landed the
-     * walk is 18 + 14 + 8 = 40.
+     * walk is 28 + 20 = 48 (the grindstone sibling's union: the kitchen_nei pair rides the
+     * ROOT_DERIVED_TILES pin inside the 28, the sifting band rides the 3-shape keys —
+     * family dir leads — because the two-level colored/overlay subdirs collide in the old
+     * two-shape key space).
      */
     private static final List<String> OTHER_TOOL_TREE_RESIDENTS = List.of(
-            "tools/kitchen_nei_jei.png", "tools/kitchen_nei_emi.png", // the walk keys parentDir/file
             "mortar/sides.png", "mortar/insides.png", "mortar/top.png",
             "mortar/bottom.png", "mortar/middleside.png", "mortar/middletop.png",
             "mortar_overlay/sides.png", "mortar_overlay/insides.png", "mortar_overlay/top.png",
             "mortar_overlay/bottom.png", "mortar_overlay/middleside.png", "mortar_overlay/middletop.png",
-            "colored/legs.png", "colored/grid.png",
-            "colored/border.png", "colored/plate.png",
-            "overlay/legs.png", "overlay/grid.png",
-            "overlay/border.png", "overlay/plate.png");
+            "sifting_table/colored/legs.png", "sifting_table/colored/grid.png",
+            "sifting_table/colored/border.png", "sifting_table/colored/plate.png",
+            "sifting_table/overlay/legs.png", "sifting_table/overlay/grid.png",
+            "sifting_table/overlay/border.png", "sifting_table/overlay/plate.png");
 
     private static List<String> declaredFaces(String aBlockId) {
         return aBlockId.equals("juicer") ? JUICER_FACES : TUB_FACES;
@@ -106,7 +122,7 @@ class GT6KitchenRenderDatagenTest {
 
     /**
      * PNG census, POSITIVE side: every declared (family, face) has its borrowed PNG under
-     * {@code textures/block/tools/<family>/} (18/18, zero gaps).
+     * {@code textures/block/tools/<family>/} (18/18 + the grindstone 8/8, zero gaps).
      */
     @Test
     void everyDeclaredFaceHasItsBorrowedPng() {
@@ -117,30 +133,51 @@ class GT6KitchenRenderDatagenTest {
                         tRow.getValue() + "/" + tFace + ".png must be borrowed");
             }
         }
+        for (String tFace : GRINDSTONE_FACES) {
+            assertNotNull(GT6KitchenRenderDatagenTest.class.getResource(
+                    "/assets/gt6/textures/block/tools/" + GRINDSTONE_FAMILY + "/" + tFace + ".png"),
+                    GRINDSTONE_FAMILY + "/" + tFace + ".png must be borrowed");
+        }
     }
 
     /**
-     * PNG census, NEGATIVE side: the borrow tree hosts exactly the 18 declared kitchen
-     * files + the declared non-kitchen tool-tree residents — no strays.
+     * PNG census, NEGATIVE side: the borrow tree hosts exactly the 28 pinned files (the
+     * 18 kitchen + the kitchen_nei root pair + the grindstone subdir band) + the declared
+     * non-kitchen tool-tree residents — no strays. The walk roots at the
+     * mdk SOURCE tree (the mdkRoot() walk, the GT6GrindstoneNeiModelTest form): the neo
+     * test classpath overlays a resources root whose getResource URL does not resolve to
+     * the tools dir, so the classpath-URI root is leg-dependent — the source tree is not.
      */
     @Test
     void borrowedPngTreeIsExactlyTheDeclaredSet() throws Exception {
-        var tUrl = GT6KitchenRenderDatagenTest.class.getResource("/assets/gt6/textures/block/tools");
-        assertNotNull(tUrl, "the tools borrow root must exist");
+        Path tRoot = mdkRoot().resolve("src/main/resources/assets/gt6/textures/block/tools");
+        assertTrue(Files.isDirectory(tRoot), "the tools borrow root must exist: " + tRoot);
         Set<String> tFound = new HashSet<>();
-        try (var tWalk = Files.walk(Path.of(tUrl.toURI()))) {
-            tWalk.filter(p -> p.toString().endsWith(".png"))
-                    .forEach(p -> tFound.add(p.getParent().getFileName() + "/" + p.getFileName()));
+        try (var tWalk = Files.walk(tRoot)) {
+            tWalk.filter(p -> p.toString().endsWith(".png")).forEach(p -> {
+                Path tParent = p.getParent();
+                // three key shapes: the bare root tiles (kitchen_nei_*), the flat family
+                // dirs (juicer/sides.png) and the two-level subdir bands
+                // (grindstone/colored/legs.png — the FAMILY dir leads, collision-free)
+                String tKey;
+                if (tParent.equals(tRoot)) tKey = p.getFileName().toString();
+                else if (tParent.getParent().equals(tRoot)) tKey = tParent.getFileName() + "/" + p.getFileName();
+                else tKey = tParent.getParent().getFileName() + "/" + tParent.getFileName() + "/" + p.getFileName();
+                tFound.add(tKey);
+            });
         }
         assertEquals(PINNED_PNG_TOTAL + OTHER_TOOL_TREE_RESIDENTS.size(), tFound.size(),
-                "18 kitchen borrowed PNGs + the declared non-kitchen tool-tree residents, walked");
-        Set<String> tDeclared = new HashSet<>();
+                "28 pinned PNGs (kitchen + root NEI pair + grindstone) + the declared non-kitchen residents, walked");
+        Set<String> tDeclared = new HashSet<>(ROOT_DERIVED_TILES);
         for (Map.Entry<String, String> tRow : BLOCK_FAMILIES.entrySet()) {
             for (String tFace : declaredFaces(tRow.getKey())) {
                 tDeclared.add(tRow.getValue() + "/" + tFace + ".png");
             }
         }
         tDeclared.addAll(OTHER_TOOL_TREE_RESIDENTS);
+        for (String tFace : GRINDSTONE_FACES) {
+            tDeclared.add(GRINDSTONE_FAMILY + "/" + tFace + ".png");
+        }
         assertEquals(tDeclared, tFound, "the borrow is 1:1 with the declared face sets — zero strays, zero gaps");
     }
 
@@ -153,8 +190,7 @@ class GT6KitchenRenderDatagenTest {
         String tReadme = Files.readString(mdkRoot().resolve("src/main/resources/assets/README.md"), StandardCharsets.UTF_8);
         MessageDigest tSha256 = MessageDigest.getInstance("SHA-256");
         List<String> tViolations = new ArrayList<>();
-        try (var tWalk = Files.walk(Path.of(GT6KitchenRenderDatagenTest.class
-                .getResource("/assets/gt6/textures/block/tools").toURI()))) {
+        try (var tWalk = Files.walk(mdkRoot().resolve("src/main/resources/assets/gt6/textures/block/tools"))) {
             List<Path> tPngs = tWalk.filter(p -> p.toString().endsWith(".png")).toList();
             for (Path tPng : tPngs) {
                 String tName = tPng.getFileName().toString();

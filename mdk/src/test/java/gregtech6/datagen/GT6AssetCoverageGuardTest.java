@@ -316,6 +316,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6BakeFoods.class, // task food-bake-items — the food T3 bake-chain container
 			GT6CropFoods.class, // task food-crop-items — the T5a berry/nut/fruit + fodder container
 			gregtech6.registry.GT6CropSticks.class, // task cbc-1-cropstick-base — the crop-stick block/BE/item container
+			gregtech6.registry.GT6Grindstones.class, // task grindstone-family — the 32703 Grindstone row (block + item + BET)
 			GTGrassBlocks.class, GT6HeatExchangers.class,
 			GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6LargeMachines.class,
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
