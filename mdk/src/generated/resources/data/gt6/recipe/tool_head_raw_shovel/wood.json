@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "minecraft:wooden_buttons"
+    },
+    "r": {
+      "tag": "gt6:tools/soft_hammer"
+    },
+    "v": [
+      {
+        "tag": "gt6:tools/axe"
+      },
+      {
+        "tag": "gt6:tools/saw"
+      }
+    ]
+  },
+  "pattern": [
+    "rPv"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_raw_shovel_wood"
+  }
+}

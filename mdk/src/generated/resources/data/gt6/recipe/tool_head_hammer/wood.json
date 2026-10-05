@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "minecraft:wooden_buttons"
+    },
+    "g": {
+      "tag": "gt6:tools/hand_drill"
+    },
+    "v": [
+      {
+        "tag": "gt6:tools/axe"
+      },
+      {
+        "tag": "gt6:tools/saw"
+      }
+    ]
+  },
+  "pattern": [
+    "PP ",
+    "PPg",
+    "PPv"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:tool_head_hammer_wood"
+  }
+}

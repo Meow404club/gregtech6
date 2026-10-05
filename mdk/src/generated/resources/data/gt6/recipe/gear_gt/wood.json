@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "tag": "minecraft:wooden_buttons"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "BPB",
+    "PsP",
+    "BPB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:gear_gt_wood"
+  }
+}

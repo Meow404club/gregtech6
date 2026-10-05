@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {
+      "tag": "minecraft:wooden_buttons"
+    },
+    "g": {
+      "tag": "gt6:tools/hand_drill"
+    },
+    "r": {
+      "tag": "gt6:tools/soft_hammer"
+    },
+    "v": [
+      {
+        "tag": "gt6:tools/axe"
+      },
+      {
+        "tag": "gt6:tools/saw"
+      }
+    ]
+  },
+  "pattern": [
+    "PPP",
+    "rgv"
+  ],
+  "result": {
+    "item": "gt6:tool_head_raw_pickaxe_wood"
+  },
+  "show_notification": true
+}

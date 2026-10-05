@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "minecraft:wooden_buttons"
+    },
+    "f": {
+      "tag": "gt6:tools/file"
+    },
+    "k": {
+      "tag": "gt6:tools/knife"
+    }
+  },
+  "pattern": [
+    "P ",
+    "fk"
+  ],
+  "result": {
+    "count": 9,
+    "id": "gt6:round_wood"
+  }
+}
