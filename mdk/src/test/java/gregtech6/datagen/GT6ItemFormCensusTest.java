@@ -311,4 +311,46 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
             assert2DForm("cover_selector_tag_" + i, "gt6:item/integrated_circuit/" + i);
         }
     }
+
+    /**
+     * The four machine-casing families (task casing-family-3d, 840 prefix items — the
+     * user's known_bugs.r11-casing-item-model report「所有机械外壳都是 2D」): the upstream
+     * art is the PrefixBlock_ full cube (Loader_PrefixBlocks.java:48-51 — the upstream
+     * ITEM was therefore the 3D block form, the vanilla stone-item look), so the flat
+     * {@code item/generated} sprite was the anti-pattern. They ride the two-layer tinted
+     * cube directly (the {@code GT6BlockStates.partModel} body+decal shape over the
+     * material_sets sprites, built in GT6ItemModels): the tintindex-0 body cube
+     * ({@code MaterialPrefixItem.tintColor} serves the material colour on element faces
+     * exactly as it did on the generated layer0) + the six un-tinted 0.01 overlay decals
+     * (the shared ItemColor -1 arm), cutout for the transparent decal shells.
+     */
+    @Test
+    void casingFamilyItemsRideThe3DCubeModels() throws Exception {
+        // initMaterials FIRST — OP.init() re-creates the prefix objects on every call, so
+        // the family array must read the statics AFTER init (identity == against the walk).
+        gregtech6.registry.GTMaterialItems.initMaterials();
+        gregapi.oredict.OreDictPrefix[] tFamilies = {
+                gregapi.data.OP.casingMachine, gregapi.data.OP.casingMachineDouble,
+                gregapi.data.OP.casingMachineQuadruple, gregapi.data.OP.casingMachineDense};
+        int tWalked = 0;
+        for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair
+                : gregtech6.registry.GTMaterialItems.registrationOrder()) {
+            boolean tCasing = false;
+            for (gregapi.oredict.OreDictPrefix tPrefix : tFamilies) tCasing |= tPair.prefix() == tPrefix;
+            if (!tCasing) continue;
+            tWalked++;
+            String tId = gregtech6.registry.GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material());
+            JsonObject tModel = generatedJson("assets/gt6/models/item/" + tId + ".json");
+            assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
+                    tId + ": the 3D cube parent (the upstream PrefixBlock_ item form)");
+            assertEquals(7, tModel.getAsJsonArray("elements").size(),
+                    tId + ": the body cube + the six overlay decals (the partModel two-layer form)");
+            assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(),
+                    tId + ": cutout for the transparent decal shells");
+            JsonObject tTextures = tModel.getAsJsonObject("textures");
+            assertFalse(tTextures.has("layer0"), tId + ": the flat-sprite form is retired");
+            assertTrue(tTextures.has("particle"), tId + ": the break-particle seat is set");
+        }
+        assertEquals(840, tWalked, "the quartet walk (210 per family, the casing-machine-register census)");
+    }
 }
