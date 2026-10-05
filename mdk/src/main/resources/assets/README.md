@@ -10346,6 +10346,13 @@ them; same style source as the 73 above), same matching rules and canvas:
 
 - `gui/machines/bedrockorelist.png` ← amazawa `BedrockOreList.png` sha256 `3722cae8d75171c1c8c75384b72a00c7979b6ff5cfc7cd3b83ce00631fa9865d`
 - `gui/machines/nei.png` ← amazawa `NEI.png` sha256 `93fda523222f02a0dbc2b405e2226a9454cbaca0e776c65b861352f8d965b4ac`
+
+One more file joined with the texturecensus-mguipath hotfix (the ASSEMBLER
+mGUIPath→default ruling): the `nanofab.png` machine background ported from the
+1.7.10 upstream (byte-identical 256×256 RGBA) — the modern mass-fab GUI the
+reskin pack predates, so its provenance is the upstream borrow, not amazawa:
+
+- `gui/machines/nanofab.png` ← upstream `nanofab.png` sha256 `5ce15567eeece0d4c69ba531d96cbd2c2eaaec2de0250b404f0e054a2756046e`
 ## Static storages + hoppers + anvils placeholder audit (task tex-placeholder-audit)
 
 The tex-census tierC batch-5 probe verdicts, then the borrows the probes found.

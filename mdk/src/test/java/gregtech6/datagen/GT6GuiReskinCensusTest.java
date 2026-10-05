@@ -123,6 +123,7 @@ class GT6GuiReskinCensusTest {
         {"melter", "Melter.png", "e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df", "256", "256"},
         {"mixer", "Mixer.png", "9e053f82c6dd8ab0f45d7f4cb021bbb16504d9699ce15705f2bd5605e86e233e", "256", "256"},
         {"mortar", "Mortar.png", "bc40d341fcfc2862ab5e8047c0a5a4c4a4c8ca261bc2ba1b5a3031e7e97ea07d", "256", "256"},
+        {"nanofab", "nanofab.png", "5ce15567eeece0d4c69ba531d96cbd2c2eaaec2de0250b404f0e054a2756046e", "256", "256"},
         {"nei", "NEI.png", "93fda523222f02a0dbc2b405e2226a9454cbaca0e776c65b861352f8d965b4ac", "256", "256"},
         {"oven", "Oven.png", "cc6f224752b815458c361911dd38456ecf3f5fdf2283cc650ed23c2dea1b099a", "256", "256"},
         {"plantalyzer", "Plantalyzer.png", "e188555f8d656ab35885673ea2c20719e1e75eeb765960a0a0295f1dfde2f801", "256", "256"},
@@ -235,7 +236,9 @@ class GT6GuiReskinCensusTest {
             .split("## task gui-reskin-amazawa", 2)[1];
         Set<String> readmeRows = new LinkedHashSet<>();
         java.util.regex.Matcher m = java.util.regex.Pattern
-            .compile("`gui/machines/([a-z0-9_-]+)\\.png` ← amazawa `([^`]+)` sha256 `([0-9a-f]{64})`")
+            // the provenance word is part of the copy, not the ledger key (the nanofab
+            // row rides the upstream borrow, not the amazawa pack — review-seat hotfix)
+            .compile("`gui/machines/([a-z0-9_-]+)\\.png` ← (?:amazawa|upstream) `([^`]+)` sha256 `([0-9a-f]{64})`")
             .matcher(section);
         while (m.find()) {
             readmeRows.add(m.group(1) + "|" + m.group(2) + "|" + m.group(3));
