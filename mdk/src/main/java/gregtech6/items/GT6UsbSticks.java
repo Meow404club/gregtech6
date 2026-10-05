@@ -24,6 +24,7 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.data.TD;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMachines;
 
 /**
@@ -331,11 +332,14 @@ public final class GT6UsbSticks {
 			// the getDataToolTip material branch (UT.java:2246-2267, the all-details form) — the
 			// upstream lines are hardcoded en (the 1.7.10 dump carries zero zh rows for them),
 			// so the port keeps the literals verbatim and the lang surface stays at the 8 item keys.
+			// The material word reads through the S2 flag seam (task easter-tooltip-rename):
+			// upstream's live .getLocal() face rides the setLocal renames landed at proxy
+			// construction (GT_API.java:364); here the seam consult is what lands them.
 			OreDictMaterial tMaterial = materialOf(aStack);
 			if (tMaterial != null) {
 				if (tMaterial.contains(TD.Processing.UUM)) {
 					aTooltip.add(Component.literal("Material Data: ").withStyle(ChatFormatting.AQUA)
-							.append(Component.literal(tMaterial.getLocal()).withStyle(ChatFormatting.WHITE)));
+							.append(MaterialPrefixItem.materialFill(tMaterial).withStyle(ChatFormatting.WHITE)));
 					aTooltip.add(Component.literal("Can be Replicated using").withStyle(ChatFormatting.AQUA));
 					String tNeutral = tMaterial.contains(TD.Atomic.ANTIMATTER) ? "Neutral Antimatter" : "Neutral Matter";
 					String tCharged = tMaterial.contains(TD.Atomic.ANTIMATTER) ? "Charged Antimatter" : "Charged Matter";
@@ -348,7 +352,7 @@ public final class GT6UsbSticks {
 									+ TD.Energy.QU.getLocalisedNameShort()).withStyle(ChatFormatting.AQUA)));
 				} else {
 					aTooltip.add(Component.literal("Material Data: ").withStyle(ChatFormatting.AQUA)
-							.append(Component.literal(tMaterial.getLocal()).withStyle(ChatFormatting.WHITE))
+							.append(MaterialPrefixItem.materialFill(tMaterial).withStyle(ChatFormatting.WHITE))
 							.append(Component.literal(" (Not Replicatable)").withStyle(ChatFormatting.GOLD)));
 				}
 			}
@@ -430,7 +434,7 @@ public final class GT6UsbSticks {
 			if (tMaterial == null) return; // the Code.exists gate (UT.java:2258) — a non-material slot renders nothing
 			if (tMaterial.contains(TD.Processing.UUM)) {
 				aTooltip.add(Component.literal("Mat Data: ").withStyle(ChatFormatting.AQUA)
-						.append(Component.literal(tMaterial.getLocal()).withStyle(ChatFormatting.WHITE))
+						.append(MaterialPrefixItem.materialFill(tMaterial).withStyle(ChatFormatting.WHITE))
 						.append(Component.literal(" (").withStyle(ChatFormatting.WHITE))
 						.append(Component.literal("" + tMaterial.mNeutrons).withStyle(ChatFormatting.YELLOW))
 						.append(Component.literal("/").withStyle(ChatFormatting.WHITE))
@@ -441,7 +445,7 @@ public final class GT6UsbSticks {
 						.append(Component.literal(")").withStyle(ChatFormatting.WHITE)));
 			} else {
 				aTooltip.add(Component.literal("Material Data: ").withStyle(ChatFormatting.AQUA)
-						.append(Component.literal(tMaterial.getLocal()).withStyle(ChatFormatting.WHITE))
+						.append(MaterialPrefixItem.materialFill(tMaterial).withStyle(ChatFormatting.WHITE))
 						.append(Component.literal(" (Not Replicatable)").withStyle(ChatFormatting.GOLD)));
 			}
 		}
