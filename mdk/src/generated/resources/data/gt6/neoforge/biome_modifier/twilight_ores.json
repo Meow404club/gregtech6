@@ -9,7 +9,22 @@
     "gt6:twilight_ore/bauxite",
     "gt6:twilight_ore/oilshale",
     "gt6:twilight_ore/gypsum",
-    "gt6:twilight_ore/milkyquartz"
+    "gt6:twilight_ore/milkyquartz",
+    "gt6:twilight_ore/sulfur",
+    "gt6:twilight_ore/ruby",
+    "gt6:twilight_ore/amber",
+    "gt6:twilight_ore/amethyst",
+    "gt6:twilight_ore/galena",
+    "gt6:twilight_ore/cassiterite",
+    "gt6:twilight_ore/cooperite",
+    "gt6:twilight_ore/pentlandite",
+    "gt6:twilight_ore/scheelite",
+    "gt6:twilight_ore/rutile",
+    "gt6:twilight_ore/bastnasite",
+    "gt6:twilight_ore/graphite",
+    "gt6:twilight_ore/pitchblende",
+    "gt6:twilight_ore/borax",
+    "gt6:twilight_ore/netherite"
   ],
   "neoforge:conditions": [
     {
