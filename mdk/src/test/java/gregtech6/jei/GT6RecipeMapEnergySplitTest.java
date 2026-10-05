@@ -78,7 +78,10 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 			"gt.recipe.cruciblesmelting", "gt.recipe.cruciblealloying",
 			// the fuel maps: the emitting carrier varies per machine (boiler HU / engine RU / turbine …)
 			"gt.recipe.fuels.burn", "gt.recipe.fuels.engine", "gt.recipe.fuels.fluidbed",
-			"gt.recipe.fuels.gas", "gt.recipe.fuels.hot");
+			"gt.recipe.fuels.gas", "gt.recipe.fuels.hot",
+			// the nanofab (recipe-b6b): the 45-row stock landed but the machine block is not
+			// ported — no registration row to transcribe an accepted carrier from, GU verbatim
+			"gt.recipe.nanofab");
 	// NOTE (task viewer-icon-retire-gu-pin): the two cracking maps LEFT this set — both
 	// cracker machines carry HU upstream (Loader_MultiTileEntities:1570-1579, all 8 rows
 	// NBT_ENERGY_ACCEPTED TD.Energy.HU) and the port registered them (GTMachines
@@ -97,9 +100,10 @@ class GT6RecipeMapEnergySplitTest extends GTRecipesOfflineTestBase {
 				tUnclassified.add(tMap.mNameInternal);
 		}
 		assertEquals(List.of(), tUnclassified, "every visible map must be pinned or declared GU");
-		assertEquals(51, tPinned, "the pinned-carrier count (74 visible - 5 mixed - 18 carrier-less;"
+		assertEquals(51, tPinned, "the pinned-carrier count (75 visible - 5 mixed - 19 carrier-less;"
 				+ " the two cracking maps joined the HU column in task viewer-icon-retire-gu-pin,"
-				+ " the crucible pair joined the carrier-less set in crucible-viewer-page)");
+				+ " the crucible pair joined the carrier-less set in crucible-viewer-page,"
+				+ " the nanofab joined it in recipe-b6b)");
 		// the mixed set is never pinned — the GU fallback IS the ruling
 		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
 			if (GU_MIXED.contains(tMap.mNameInternal))
