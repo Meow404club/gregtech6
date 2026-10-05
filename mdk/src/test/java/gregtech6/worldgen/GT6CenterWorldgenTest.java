@@ -16,6 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EndPortalFrameBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -88,6 +90,8 @@ class GT6CenterWorldgenTest {
 		final List<String> signs = new ArrayList<>();
 		final List<String> beacons = new ArrayList<>();
 		final List<long[]> spawns = new ArrayList<>();
+		final List<String> biomeFills = new ArrayList<>();
+		final List<String> trees = new ArrayList<>();
 		@Override public boolean opq(int aX, int aY, int aZ) { return false; }
 		@Override public String biomeName(int aX, int aZ) { return "test_biome_" + aX + "_" + aZ; }
 		@Override public boolean infiniteWater(int aX, int aZ) { return false; }
@@ -98,6 +102,23 @@ class GT6CenterWorldgenTest {
 			beacons.add(aX + "," + aY + "," + aZ + ":" + aPrimary + "," + aSecondary);
 		}
 		@Override public void spawn(int aX, int aY, int aZ) { spawns.add(new long[] {aX, aY, aZ}); }
+		@Override public void fillBiome(String aBiomeName) { biomeFills.add(aBiomeName); }
+		@Override public void tree(String aKind, int aX, int aY, int aZ) { trees.add(aKind + "@" + aX + "," + aY + "," + aZ); }
+	}
+
+	/** The draw-counting RNG — the flower-arm "exact draws" pin face (the delegation shape shifts nextBoolean→nextInt(2), so only the TOTAL is pinned). */
+	static final class CountingRandom extends net.minecraft.world.level.levelgen.LegacyRandomSource {
+		long total = 0;
+		long nextIntCalls = 0;
+		long nextInt16Calls = 0;
+		CountingRandom(long aSeed) { super(aSeed); }
+		@Override public boolean nextBoolean() { total++; return super.nextBoolean(); }
+		@Override public int nextInt(int aBound) {
+			total++;
+			nextIntCalls++;
+			if (aBound == 16) nextInt16Calls++;
+			return super.nextInt(aBound);
+		}
 	}
 
 	/** The chunk dispatch with the given flags — the shared replay driver. */
@@ -106,7 +127,15 @@ class GT6CenterWorldgenTest {
 		GT6CenterFeature.NEXUS = aNexus;
 		GT6CenterFeature.BEACON = aBeacon;
 		Recorder tRows = new Recorder();
-		GT6CenterFeature.dispatch(tRows, aEnv, aCx, aCz, (cx, cz, axisX) -> aFar);
+		GT6CenterFeature.dispatch(tRows, aEnv, new CountingRandom(1L), aCx, aCz, (cx, cz, axisX) -> aFar);
+		return tRows;
+	}
+
+	/** The CENTER_BIOMES-only dispatch — the biome-ring replay driver (all companion switches off). */
+	private static Recorder runBiomes(int aCx, int aCz, RandomSource aRng, TestEnv aEnv) {
+		GT6CenterFeature.CENTER_BIOMES = true;
+		Recorder tRows = new Recorder();
+		GT6CenterFeature.dispatch(tRows, aEnv, aRng, aCx, aCz, (cx, cz, axisX) -> RoadMode.RING);
 		return tRows;
 	}
 
@@ -355,7 +384,7 @@ class GT6CenterWorldgenTest {
 		GT6CenterFeature.BEACON = true;
 		Recorder tRows = new Recorder();
 		TestEnv tEnv = new TestEnv();
-		GT6CenterFeature.dispatch(tRows, tEnv, -1, -1, (cx, cz, ax) -> RoadMode.RING);
+		GT6CenterFeature.dispatch(tRows, tEnv, new CountingRandom(1L), -1, -1, (cx, cz, ax) -> RoadMode.RING);
 		// the sky clear over the own 16x16 plaza columns (:70) — the k∈[2,63] band, 62 rows each
 		assertEquals(256 * 62, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 63
 				&& t.x >= -16 && t.x < 0 && t.z >= -16 && t.z < 0));
@@ -381,12 +410,12 @@ class GT6CenterWorldgenTest {
 		GT6CenterFeature.STREETS = true;
 		// the west sign pair x=-30, z=0 lives in chunk (-2, 0)
 		TestEnv tEnv = new TestEnv();
-		GT6CenterFeature.dispatch(new Recorder(), tEnv, -2, 0, (cx, cz, ax) -> RoadMode.RING);
+		GT6CenterFeature.dispatch(new Recorder(), tEnv, new CountingRandom(1L), -2, 0, (cx, cz, ax) -> RoadMode.RING);
 		assertEquals(2, tEnv.signs.size()); // the H+3 + H+2 pair
 		assertTrue(tEnv.signs.get(0).endsWith(":test_biome_-4096_95|test_biome_-3584_95|test_biome_-3072_95|test_biome_-2560_95"));
 		// the east sign pair x=29 lives in chunk (1, 0)
 		TestEnv tEnv2 = new TestEnv();
-		GT6CenterFeature.dispatch(new Recorder(), tEnv2, 1, 0, (cx, cz, ax) -> RoadMode.RING);
+		GT6CenterFeature.dispatch(new Recorder(), tEnv2, new CountingRandom(1L), 1, 0, (cx, cz, ax) -> RoadMode.RING);
 		assertEquals(2, tEnv2.signs.size());
 	}
 
@@ -394,15 +423,15 @@ class GT6CenterWorldgenTest {
 	void dispatchReturnsTrueOnlyOnOwnedChunks() {
 		Recorder tRows = new Recorder();
 		GT6CenterFeature.STREETS = true;
-		assertTrue(GT6CenterFeature.dispatch(tRows, new TestEnv(), -1, 2, (cx, cz, ax) -> RoadMode.RING)); // the X-road
-		assertTrue(GT6CenterFeature.dispatch(tRows, new TestEnv(), -8, -1, (cx, cz, ax) -> RoadMode.RING)); // the Z-road
+		assertTrue(GT6CenterFeature.dispatch(tRows, new TestEnv(), new CountingRandom(1L), -1, 2, (cx, cz, ax) -> RoadMode.RING)); // the X-road
+		assertTrue(GT6CenterFeature.dispatch(tRows, new TestEnv(), new CountingRandom(1L), -8, -1, (cx, cz, ax) -> RoadMode.RING)); // the Z-road
 		// (1,-3) with the nexus flag off: no road, no plaza, no beacon column → nothing
 		GT6CenterFeature.NEXUS = false;
 		Recorder tRows2 = new Recorder();
-		assertFalse(GT6CenterFeature.dispatch(tRows2, new TestEnv(), 1, -3, (cx, cz, ax) -> RoadMode.RING));
+		assertFalse(GT6CenterFeature.dispatch(tRows2, new TestEnv(), new CountingRandom(1L), 1, -3, (cx, cz, ax) -> RoadMode.RING));
 		// all off → nothing generates
 		GT6CenterFeature.STREETS = false;
-		assertFalse(GT6CenterFeature.dispatch(tRows2, new TestEnv(), -1, 2, (cx, cz, ax) -> RoadMode.RING));
+		assertFalse(GT6CenterFeature.dispatch(tRows2, new TestEnv(), new CountingRandom(1L), -1, 2, (cx, cz, ax) -> RoadMode.RING));
 		assertEquals(0, tRows2.rows.size());
 	}
 
@@ -416,7 +445,371 @@ class GT6CenterWorldgenTest {
 
 	private static Set<String> replay(int aCx, int aCz) {
 		Recorder tRows = new Recorder();
-		GT6CenterFeature.dispatch(tRows, new TestEnv(), aCx, aCz, (cx, cz, ax) -> RoadMode.RING);
+		GT6CenterFeature.dispatch(tRows, new TestEnv(), new CountingRandom(1L), aCx, aCz, (cx, cz, ax) -> RoadMode.RING);
+		Set<String> rOut = new HashSet<>();
+		for (Attempt tAttempt : tRows.rows) {
+			rOut.add(tAttempt.x + "," + tAttempt.y + "," + tAttempt.z + ","
+					+ (tAttempt.state == null ? "null" : tAttempt.state.toString()));
+		}
+		return rOut;
+	}
+
+	// ---------------------------------------------------------------- the biome ring (task worldgen-center-biomes)
+
+	/** The hand-computed zone census — 144 in-region chunks: river 44 (2 cols + 2 rows − 4 overlap), 4 each for the 2x2 specials, 21 per quadrant fill (36 − 11 river − 4 special). */
+	@Test
+	void biomeZonesCensusAndExtents() {
+		assertEquals(44, countZones(GT6CenterBiomes.Zone.RIVER));
+		assertEquals(4, countZones(GT6CenterBiomes.Zone.ICE));
+		assertEquals(4, countZones(GT6CenterBiomes.Zone.FOREST));
+		assertEquals(4, countZones(GT6CenterBiomes.Zone.MESA));
+		assertEquals(4, countZones(GT6CenterBiomes.Zone.SWAMP));
+		assertEquals(21, countZones(GT6CenterBiomes.Zone.TAIGA));
+		assertEquals(21, countZones(GT6CenterBiomes.Zone.PLAINS));
+		assertEquals(21, countZones(GT6CenterBiomes.Zone.DESERT));
+		assertEquals(21, countZones(GT6CenterBiomes.Zone.JUNGLE));
+		// everything outside [-6,5]² is NONE — 52 out-of-region samples of the swept 196 ([-7..6]²)
+		int tNone = 0;
+		for (int cx = -7; cx <= 6; cx++) for (int cz = -7; cz <= 6; cz++) {
+			if (GT6CenterBiomes.zone(cx, cz) == GT6CenterBiomes.Zone.NONE) tNone++;
+		}
+		assertEquals(196 - 144, tNone);
+		// the spot pins — one per zone + the river-cross row/col sweep
+		assertEquals(GT6CenterBiomes.Zone.TAIGA, GT6CenterBiomes.zone(-6, -6));
+		assertEquals(GT6CenterBiomes.Zone.ICE, GT6CenterBiomes.zone(-5, -5));
+		assertEquals(GT6CenterBiomes.Zone.PLAINS, GT6CenterBiomes.zone(-2, 2));
+		assertEquals(GT6CenterBiomes.Zone.FOREST, GT6CenterBiomes.zone(-5, 3));
+		assertEquals(GT6CenterBiomes.Zone.DESERT, GT6CenterBiomes.zone(2, -2));
+		assertEquals(GT6CenterBiomes.Zone.MESA, GT6CenterBiomes.zone(3, -5));
+		assertEquals(GT6CenterBiomes.Zone.JUNGLE, GT6CenterBiomes.zone(5, 5));
+		assertEquals(GT6CenterBiomes.Zone.SWAMP, GT6CenterBiomes.zone(3, 3));
+		assertEquals(GT6CenterBiomes.Zone.RIVER, GT6CenterBiomes.zone(-1, 5));
+		assertEquals(GT6CenterBiomes.Zone.RIVER, GT6CenterBiomes.zone(5, -1));
+		assertEquals(GT6CenterBiomes.Zone.RIVER, GT6CenterBiomes.zone(0, 0));
+		// the upstream 1.7.10 gates verbatim: aMinX=-96 → cx=-6 in, aMinX=80 → cx=5 in, aMinX=96 → cx=6 out
+		assertFalse(GT6CenterBiomes.inRegion(6, 0));
+		assertFalse(GT6CenterBiomes.inRegion(-7, 0));
+		assertTrue(GT6CenterBiomes.inRegion(-6, 5));
+		assertTrue(GT6CenterBiomes.inRegion(5, -6));
+	}
+
+	private static int countZones(GT6CenterBiomes.Zone aZone) {
+		int rCount = 0;
+		for (int cx = -6; cx <= 5; cx++) for (int cz = -6; cz <= 5; cz++) {
+			if (GT6CenterBiomes.zone(cx, cz) == aZone) rCount++;
+		}
+		return rCount;
+	}
+
+	/** The companion-switch couplings (:70 plaza-river-fill when STREETS, :74 nexus, :78 testing — each beats the zone cascade). */
+	@Test
+	void biomeZoneCompanionSwitchCouplings() {
+		// the plaza beats the river cross (:70 before :82)
+		GT6CenterFeature.STREETS = true;
+		assertEquals(GT6CenterBiomes.Zone.PLAZA_FILL, GT6CenterBiomes.zone(-1, -1));
+		GT6CenterFeature.STREETS = false;
+		assertEquals(GT6CenterBiomes.Zone.RIVER, GT6CenterBiomes.zone(-1, -1));
+		// the nexus chunk (:74 aMinX==16&&aMinZ==-48) — desert without the flag
+		GT6CenterFeature.NEXUS = true;
+		assertEquals(GT6CenterBiomes.Zone.NEXUS_FILL, GT6CenterBiomes.zone(1, -3));
+		GT6CenterFeature.NEXUS = false;
+		assertEquals(GT6CenterBiomes.Zone.DESERT, GT6CenterBiomes.zone(1, -3));
+		// the testing 2x2 (:78 aMinX∈{32,48} && aMinZ∈{-48,-32}) — desert without the flag
+		GT6CenterFeature.TESTING = true;
+		assertEquals(GT6CenterBiomes.Zone.TESTING_FILL, GT6CenterBiomes.zone(2, -2));
+		assertEquals(GT6CenterBiomes.Zone.TESTING_FILL, GT6CenterBiomes.zone(3, -3));
+		assertEquals(GT6CenterBiomes.Zone.DESERT, GT6CenterBiomes.zone(2, -4)); // outside the testing rows
+		GT6CenterFeature.TESTING = false;
+	}
+
+	/** The 9-zone biome table — the 1.7.10 biome ids → the vanilla key paths (icePlains→snowy_plains, coldTaiga→snowy_taiga, mesa→badlands, swampland→swamp). */
+	@Test
+	void biomeNamesMatchTheVanillaKeys() {
+		assertEquals("river", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.RIVER)); // :71/:83
+		assertEquals("plains", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.NEXUS_FILL)); // :75
+		assertEquals("plains", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.TESTING_FILL)); // :79
+		assertEquals("plains", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.PLAINS)); // :162
+		assertEquals("snowy_plains", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.ICE)); // :103 icePlains
+		assertEquals("snowy_taiga", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.TAIGA)); // :115 coldTaiga
+		assertEquals("forest", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.FOREST)); // :140
+		assertEquals("badlands", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.MESA)); // :195 mesa
+		assertEquals("desert", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.DESERT)); // :213
+		assertEquals("swamp", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.SWAMP)); // :227 swampland
+		assertEquals("jungle", GT6CenterBiomes.biome(GT6CenterBiomes.Zone.JUNGLE)); // :244
+	}
+
+	/** The Diggables meta→path table (BlockDiggable.java:47-57) — the quartet rides the diggables-pits parallel branch names, meta 0 is the vanilla-MUD ruling marker. */
+	@Test
+	void diggableNameTableMatchesTheParallelBranch() {
+		assertEquals("minecraft:mud", GT6CenterBiomes.diggableName(0)); // the GT6OreBlocks.java:217 ruling marker
+		assertEquals("brown_clay", GT6CenterBiomes.diggableName(1)); // meta 1
+		assertEquals("turf", GT6CenterBiomes.diggableName(2)); // meta 2
+		assertEquals("nether_red_clay", GT6CenterBiomes.diggableName(3)); // meta 3
+		assertEquals("yellow_clay", GT6CenterBiomes.diggableName(4)); // meta 4
+		assertEquals("blue_clay", GT6CenterBiomes.diggableName(5)); // meta 5
+		assertEquals("white_clay", GT6CenterBiomes.diggableName(6)); // meta 6
+		// the quartet rides the unmerged diggables branch — null on both legs today, and the
+		// pin stays true after it lands (the name must match whenever a block resolves)
+		Block tBrown = GT6CenterBiomes.diggable(1);
+		assertTrue(tBrown == null || "gt6:brown_clay".equals(
+				net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(tBrown).toString()));
+		assertEquals(Blocks.MUD, GT6CenterBiomes.diggable(0)); // the vanilla face resolves
+		// the sands stand-in table — all three black sands ride the ported gt6:black_sand
+		assertEquals("black_sand", GT6CenterBiomes.sandName(0));
+		assertEquals("black_sand", GT6CenterBiomes.sandName(1));
+		assertEquals("black_sand", GT6CenterBiomes.sandName(2));
+		// the quadrant meta expression (:90) verbatim
+		assertEquals(0, GT6CenterBiomes.sandMeta(-1, -3)); // NW
+		assertEquals(1, GT6CenterBiomes.sandMeta(-1, 2)); // SW
+		assertEquals(2, GT6CenterBiomes.sandMeta(2, -1)); // NE
+		assertEquals(0, GT6CenterBiomes.sandMeta(2, 2)); // SE
+	}
+
+	/**
+	 * The gt6-block attempt pin, leg-adaptive: the forge offline face never registers the
+	 * mod (null state), the neo test fixture DOES (the resolved block must carry the
+	 * mapped registry name). Either way the name table is what is pinned.
+	 */
+	private static void assertGt6NameOrOfflineNull(String aGt6Path, Attempt aAttempt) {
+		if (aAttempt.state == null) return; // the forge offline face
+		assertEquals("gt6:" + aGt6Path,
+				net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(aAttempt.state.getBlock()).toString());
+	}
+
+	/** The fake river column (:82-98) — no RNG at all: the full cross-section pinned exactly (the BlocksGT.River→water ×3, sand, gravel, clay×2, the stone pillar, the spawn face). */
+	@Test
+	void riverCrossColumnReplayVerbatim() {
+		CountingRandom tRng = new CountingRandom(7L);
+		TestEnv tEnv = new TestEnv();
+		Recorder tRows = runBiomes(-1, -3, tRng, tEnv);
+		// the NW quadrant chunk — x=-16, z=-48
+		int tX = -16, tZ = -48;
+		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 4, tZ).state.getBlock()); // :87
+		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ).state.getBlock()); // :88
+		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 6, tZ).state.getBlock()); // :89
+		assertGt6NameOrOfflineNull("black_sand", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 7, tZ)); // :90 the quadrant meta 0 row
+		assertEquals(Blocks.GRAVEL, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 8, tZ).state.getBlock()); // :91
+		assertEquals(Blocks.CLAY, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 9, tZ).state.getBlock()); // :92
+		assertEquals(Blocks.CLAY, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 10, tZ).state.getBlock()); // :93
+		assertEquals(Blocks.STONE, tRows.lastAt(tX, 1, tZ).state.getBlock()); // :94 the pillar reaches y=1
+		assertEquals(Blocks.STONE, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 11, tZ).state.getBlock());
+		assertEquals(Blocks.AIR, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 3, tZ).state.getBlock()); // :86 the air band opens at H-3
+		assertEquals(Blocks.AIR, tRows.lastAt(tX, GT6CenterFeature.HEIGHT + 63, tZ).state.getBlock());
+		assertEquals(0, tRows.countWhere(t -> t.x == tX && t.z == tZ && t.y > GT6CenterFeature.HEIGHT + 63));
+		// the biome fill rode first (:83)
+		assertEquals(List.of("river"), tEnv.biomeFills);
+		// the spawn face (:97) — (0, H+5, 0) per river chunk
+		assertEquals(1, tEnv.spawns.size());
+		assertEquals(0L, tEnv.spawns.get(0)[0]);
+		assertEquals(GT6CenterFeature.HEIGHT + 5, tEnv.spawns.get(0)[1]);
+		// zero draws (:82-98 consumes no RNG)
+		assertEquals(0, tRng.total);
+	}
+
+	/** The mesa and desert fixed zones (:194-224) — zero-RNG columns pinned exactly. */
+	@Test
+	void mesaDesertFixedColumnsReplay() {
+		CountingRandom tRng = new CountingRandom(7L);
+		Recorder tMesa = runBiomes(3, -5, tRng, new TestEnv());
+		int tX = 48, tZ = -80;
+		assertEquals(Blocks.RED_SAND, tMesa.lastAt(tX, GT6CenterFeature.HEIGHT, tZ).state.getBlock()); // :198 sand meta 1
+		assertEquals(Blocks.RED_SAND, tMesa.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ).state.getBlock()); // :203
+		assertEquals(Blocks.TERRACOTTA, tMesa.lastAt(tX, GT6CenterFeature.HEIGHT - 6, tZ).state.getBlock()); // :204 hardened_clay
+		assertEquals(Blocks.TERRACOTTA, tMesa.lastAt(tX, 1, tZ).state.getBlock());
+		// the 3-high cacti (:206-210)
+		assertEquals(Blocks.CACTUS, tMesa.lastAt(tX + 4, GT6CenterFeature.HEIGHT + 3, tZ + 4).state.getBlock());
+		assertEquals(Blocks.CACTUS, tMesa.lastAt(tX + 12, GT6CenterFeature.HEIGHT + 1, tZ + 12).state.getBlock());
+		assertEquals(0, tRng.total); // :194-211 consumes no RNG
+
+		Recorder tDesert = runBiomes(2, -4, new CountingRandom(7L), new TestEnv());
+		assertEquals(Blocks.SAND, tDesert.lastAt(32, GT6CenterFeature.HEIGHT, -64).state.getBlock()); // :216 sand meta 0
+		assertEquals(Blocks.SAND, tDesert.lastAt(32, GT6CenterFeature.HEIGHT - 5, -64).state.getBlock()); // :221
+		assertEquals(Blocks.SANDSTONE, tDesert.lastAt(32, GT6CenterFeature.HEIGHT - 6, -64).state.getBlock()); // :222
+		assertEquals(Blocks.SANDSTONE, tDesert.lastAt(32, 1, -64).state.getBlock());
+	}
+
+	/** The plains zone (:160-190) — THE clay ground: the diggables band pinned by meta order 1/3/4/5/6 under grass+dirt, the pillar, the 60-draw column cadence, the surface-rock trio. */
+	@Test
+	void plainsClayGroundReplay() {
+		CountingRandom tRng = new CountingRandom(7L);
+		TestEnv tEnv = new TestEnv();
+		Recorder tRows = runBiomes(-2, 2, tRng, tEnv);
+		int tX = -32, tZ = 32;
+		assertEquals(Blocks.GRASS_BLOCK, tRows.lastAt(tX, GT6CenterFeature.HEIGHT, tZ).state.getBlock()); // :165
+		assertEquals(Blocks.DIRT, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 1, tZ).state.getBlock()); // :166
+		// the clay band :167-171 — brown/red/yellow/blue/white ride the gt6 names (the quartet
+		// is position-only on BOTH legs until the diggables branch lands; the red clay row
+		// resolves on the neo fixture and must carry its mapped name)
+		assertGt6NameOrOfflineNull("brown_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 2, tZ)); // :167 diggable 1
+		assertGt6NameOrOfflineNull("nether_red_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 3, tZ)); // :168 diggable 3
+		assertGt6NameOrOfflineNull("yellow_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 4, tZ)); // :169 diggable 4
+		assertGt6NameOrOfflineNull("blue_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ)); // :170 diggable 5
+		assertGt6NameOrOfflineNull("white_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 6, tZ)); // :171 diggable 6
+		// the pillar y=1..H-7 (:172) — 59 layers
+		assertEquals(59, tRows.countWhere(t -> t.x == tX && t.z == tZ && t.y >= 1 && t.y <= GT6CenterFeature.HEIGHT - 7));
+		// the per-column decoration attempt at H+1 (:173-188) — one of the 25 covered rolls
+		assertTrue(tRows.at(tX, GT6CenterFeature.HEIGHT + 1, tZ).size() > 0);
+		// the draw cadence — 59 pillar nextBoolean + 1 switch nextInt(60) = 60/column × 256
+		assertEquals(256 * 60, tRng.total);
+		// the biome fill rode first (:162)
+		assertEquals(List.of("plains"), tEnv.biomeFills);
+	}
+
+	/** The swamp zone (:225-242) — water over mud/turf, the glowtus lottery, the 4 lily pads. */
+	@Test
+	void swampZoneReplay() {
+		CountingRandom tRng = new CountingRandom(7L);
+		Recorder tRows = runBiomes(3, 3, tRng, new TestEnv());
+		int tX = 48, tZ = 48;
+		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT, tZ).state.getBlock()); // :230
+		assertEquals(Blocks.MUD, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 1, tZ).state.getBlock()); // :231 diggable 0 — the vanilla-MUD ruling resolves
+		assertGt6NameOrOfflineNull("turf", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 3, tZ)); // :233 diggable 2
+		assertEquals(Blocks.LILY_PAD, tRows.lastAt(tX + 4, GT6CenterFeature.HEIGHT + 1, tZ + 4).state.getBlock()); // :239
+		assertEquals(Blocks.LILY_PAD, tRows.lastAt(tX + 12, GT6CenterFeature.HEIGHT + 1, tZ + 12).state.getBlock()); // :242
+		// the glowtus lottery (:237) — nextInt(8) once per column, the meta nextInt(16) only on a hit;
+		// each hit is one H+1 attempt that is offline-null (forge) or the resolved gt6:glowtus (neo fixture)
+		assertEquals(256 + tRng.nextInt16Calls, tRng.nextIntCalls); // the per-column lottery + the hit metas
+		assertTrue(tRng.nextInt16Calls > 0); // seed 7 hits the 1-in-8 at least once across 256 columns
+		long tGlowtusHits = tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 1
+				&& t.x >= 48 && t.x < 64 && t.z >= 48 && t.z < 64
+				&& (t.state == null || "gt6:glowtus".equals(
+						net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(t.state.getBlock()).toString())));
+		assertEquals(tRng.nextInt16Calls, tGlowtusHits);
+	}
+
+	/** The ice and cold-taiga zones (:100-137) — the fixed ice column, the podzol/mossy taiga, the 4 spruce corners, the 260-draw cadence. */
+	@Test
+	void iceAndTaigaZonesReplay() {
+		Recorder tIce = runBiomes(-5, -5, new CountingRandom(7L), new TestEnv());
+		int tX = -80, tZ = -80;
+		assertEquals(Blocks.ICE, tIce.lastAt(tX, GT6CenterFeature.HEIGHT, tZ).state.getBlock()); // :106
+		assertEquals(Blocks.PACKED_ICE, tIce.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ).state.getBlock()); // :111
+		assertEquals(60, tIce.countWhere(t -> t.x == tX && t.z == tZ && t.y >= 1 && t.y <= GT6CenterFeature.HEIGHT - 6)); // :112
+
+		CountingRandom tRng = new CountingRandom(7L);
+		TestEnv tEnv = new TestEnv();
+		Recorder tTaiga = runBiomes(-3, -3, tRng, tEnv);
+		assertEquals(Blocks.SNOW, tTaiga.lastAt(tX + 32, GT6CenterFeature.HEIGHT + 1, tZ + 32).state.getBlock()); // :118
+		assertEquals(Blocks.PODZOL, tTaiga.lastAt(tX + 32, GT6CenterFeature.HEIGHT - 5, tZ + 32).state.getBlock()); // :124 dirt meta 2
+		assertEquals(Blocks.MOSSY_COBBLESTONE, tTaiga.lastAt(tX + 32, 1, tZ + 32).state.getBlock()); // :125
+		// the 4 spruce corners (:128-136) — positions and kinds, the corner NB draws kept
+		assertEquals(4, tEnv.trees.size());
+		assertTrue(tEnv.trees.contains("spruce@" + (tX + 32 + 4) + "," + (GT6CenterFeature.HEIGHT + 1) + "," + (tZ + 32 + 4)));
+		assertTrue(tEnv.trees.contains("spruce@" + (tX + 32 + 12) + "," + (GT6CenterFeature.HEIGHT + 1) + "," + (tZ + 32 + 12)));
+		// the draw cadence — 256 snow draws + 4 corner NB draws (:128-131); the tree heights ride the vanilla feature
+		assertEquals(260, tRng.total);
+	}
+
+	/** The forest and jungle zones (:138-190/:243-275) — the tree kinds per corner, the fixed produce, the coarse-dirt jungle floor (the EtFu conditional CUT → the dirt-meta-1 branch). */
+	@Test
+	void forestAndJungleZonesReplay() {
+		CountingRandom tForestRng = new CountingRandom(7L);
+		TestEnv tForestEnv = new TestEnv();
+		Recorder tForest = runBiomes(-5, 3, tForestRng, tForestEnv);
+		int tX = -80, tZ = 48;
+		assertEquals(Blocks.GRASS_BLOCK, tForest.lastAt(tX, GT6CenterFeature.HEIGHT, tZ).state.getBlock()); // :143
+		assertEquals(Blocks.DIRT, tForest.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ).state.getBlock()); // :148
+		assertEquals(Blocks.PUMPKIN, tForest.lastAt(tX + 6, GT6CenterFeature.HEIGHT + 1, tZ + 6).state.getBlock()); // :151
+		// the corner kinds :156-159 — oak(4,4) birch(12,4) birch(4,12) oak(12,12)
+		assertEquals(4, tForestEnv.trees.size());
+		assertTrue(tForestEnv.trees.contains("oak@" + (tX + 4) + "," + (GT6CenterFeature.HEIGHT + 1) + "," + (tZ + 4)));
+		assertTrue(tForestEnv.trees.contains("birch@" + (tX + 12) + "," + (GT6CenterFeature.HEIGHT + 1) + "," + (tZ + 4)));
+		assertTrue(tForestEnv.trees.contains("birch@" + (tX + 4) + "," + (GT6CenterFeature.HEIGHT + 1) + "," + (tZ + 12)));
+		assertTrue(tForestEnv.trees.contains("oak@" + (tX + 12) + "," + (GT6CenterFeature.HEIGHT + 1) + "," + (tZ + 12)));
+		assertEquals(256 * 60 + 4, tForestRng.total); // the pillar layers + the 4 height draws (:156-159)
+
+		CountingRandom tJungleRng = new CountingRandom(7L);
+		TestEnv tJungleEnv = new TestEnv();
+		Recorder tJungle = runBiomes(2, 2, tJungleRng, tJungleEnv);
+		int tJX = 32, tJZ = 32;
+		assertEquals(Blocks.GRASS_BLOCK, tJungle.lastAt(tJX, GT6CenterFeature.HEIGHT, tJZ).state.getBlock()); // :260
+		assertEquals(Blocks.COARSE_DIRT, tJungle.lastAt(tJX, GT6CenterFeature.HEIGHT - 5, tJZ).state.getBlock()); // :265 dirt meta 1
+		// the melon at (6+r, 6+r) (:269) — two draws, one melon
+		assertEquals(1, tJungle.countWhere(t -> t.state != null && t.state.is(Blocks.MELON) && t.y == GT6CenterFeature.HEIGHT + 1));
+		// the 4 big jungle trees with vines (:271-274)
+		assertEquals(4, tJungleEnv.trees.size());
+		assertTrue(tJungleEnv.trees.stream().allMatch(s -> s.startsWith("jungle@")));
+		assertEquals(256 * 60 + 2 + 4, tJungleRng.total); // the 60 pillar layers + the 2 melon draws + the 4 height draws
+	}
+
+	/**
+	 * The biome-only fills — the plaza river fill (:70-73), the nexus fill (:74-77), the
+	 * testing fill (:78-81) add NO blocks of their own. The companion branches keep
+	 * running (the upstream independent-WorldgenObject semantics — each object generates
+	 * on its own gate), so the pin is the WITH/WITHOUT-CENTER_BIOMES attempt-set equality
+	 * plus the fill record (the testing chunk is the exception: no Testing branch exists
+	 * yet, the follow-up card owns it — zero rows today).
+	 */
+	@Test
+	void biomeOnlyFillsWriteNoBlocks() {
+		TestEnv tEnv = new TestEnv();
+		GT6CenterFeature.STREETS = true;
+		Recorder tRows = runBiomes(-1, -1, new CountingRandom(7L), tEnv);
+		assertEquals(List.of("river"), tEnv.biomeFills); // :71 the plaza river fill rode
+		assertEquals(replayRows(-1, -1), attemptSet(tRows)); // the ring added zero attempts over the streets-only run
+		GT6CenterFeature.STREETS = false;
+
+		TestEnv tNexusEnv = new TestEnv();
+		GT6CenterFeature.NEXUS = true;
+		Recorder tNexusRows = runBiomes(1, -3, new CountingRandom(7L), tNexusEnv);
+		assertEquals(List.of("plains"), tNexusEnv.biomeFills); // :75
+		assertEquals(replayRows(1, -3), attemptSet(tNexusRows)); // the ring added zero attempts over the tower-only run
+		GT6CenterFeature.NEXUS = false;
+
+		TestEnv tTestingEnv = new TestEnv();
+		GT6CenterFeature.TESTING = true;
+		Recorder tTestingRows = runBiomes(2, -2, new CountingRandom(7L), tTestingEnv);
+		assertEquals(List.of("plains"), tTestingEnv.biomeFills); // :79
+		assertEquals(replayRows(2, -2), attemptSet(tTestingRows)); // the ring added zero attempts over the testing-shell run (the shell rode main since worldgen-center-testing)
+		GT6CenterFeature.TESTING = false;
+	}
+
+	/** The CENTER_BIOMES-off twin of runBiomes — the companion-branches-only baseline for the attempt-set equality pins. */
+	private static Set<String> replayRows(int aCx, int aCz) {
+		GT6CenterFeature.CENTER_BIOMES = false;
+		Recorder tRows = new Recorder();
+		GT6CenterFeature.dispatch(tRows, new TestEnv(), new CountingRandom(7L), aCx, aCz, (cx, cz, ax) -> RoadMode.RING);
+		return attemptSet(tRows);
+	}
+
+	private static Set<String> attemptSet(Recorder aRows) {
+		Set<String> rOut = new HashSet<>();
+		for (Attempt tAttempt : aRows.rows) {
+			rOut.add(tAttempt.x + "," + tAttempt.y + "," + tAttempt.z + ","
+					+ (tAttempt.state == null ? "null" : tAttempt.state.toString()));
+		}
+		return rOut;
+	}
+
+	/** The dispatch integration — CENTER_BIOMES claims exactly its region (true on all 144, false outside), zero behavior with the switch off. */
+	@Test
+	void dispatchClaimsExactlyTheBiomeRegion() {
+		GT6CenterFeature.CENTER_BIOMES = true;
+		for (int cx = -6; cx <= 5; cx++) for (int cz = -6; cz <= 5; cz++) {
+			assertTrue(GT6CenterFeature.dispatch(new Recorder(), new TestEnv(), new CountingRandom(1L), cx, cz,
+					(x, z, ax) -> RoadMode.RING), cx + "," + cz);
+		}
+		assertFalse(GT6CenterFeature.dispatch(new Recorder(), new TestEnv(), new CountingRandom(1L), 6, 6,
+				(x, z, ax) -> RoadMode.RING));
+		assertFalse(GT6CenterFeature.dispatch(new Recorder(), new TestEnv(), new CountingRandom(1L), -7, 0,
+				(x, z, ax) -> RoadMode.RING));
+		// the switch off → nothing (the default-F face, :646)
+		GT6CenterFeature.CENTER_BIOMES = false;
+		Recorder tRows = new Recorder();
+		assertFalse(GT6CenterFeature.dispatch(tRows, new TestEnv(), new CountingRandom(1L), 0, 0,
+				(x, z, ax) -> RoadMode.RING));
+		assertEquals(0, tRows.rows.size());
+	}
+
+	/** The ring replays deterministically — two runs of the same seeded chunk produce identical attempt sets. */
+	@Test
+	void biomeRingDeterminismTwoReplaysIdentical() {
+		assertEquals(biomeReplay(-3, -3), biomeReplay(-3, -3));
+		assertEquals(biomeReplay(2, 2), biomeReplay(2, 2));
+	}
+
+	private static Set<String> biomeReplay(int aCx, int aCz) {
+		Recorder tRows = runBiomes(aCx, aCz, new CountingRandom(7L), new TestEnv());
 		Set<String> rOut = new HashSet<>();
 		for (Attempt tAttempt : tRows.rows) {
 			rOut.add(tAttempt.x + "," + tAttempt.y + "," + tAttempt.z + ","
@@ -451,7 +844,7 @@ class GT6CenterWorldgenTest {
 		// chunk (2,-3) — the west+north edge chunk, blocks x 32..47, z -48..-33
 		Recorder tRows = new Recorder();
 		TestEnv tEnv = new TestEnv();
-		assertTrue(GT6CenterFeature.dispatch(tRows, tEnv, 2, -3, (cx, cz, ax) -> RoadMode.RING));
+		assertTrue(GT6CenterFeature.dispatch(tRows, tEnv, new CountingRandom(1L), 2, -3, (cx, cz, ax) -> RoadMode.RING));
 		// the solid pedestal k=1..HEIGHT (:70) — gray concrete, the offline-unresolvable GT block = null attempts
 		assertEquals(256, tRows.countWhere(t -> t.y == 1 && t.x >= 32 && t.x < 48 && t.z >= -48 && t.z < -32));
 		assertEquals(256, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT));
@@ -488,7 +881,7 @@ class GT6CenterWorldgenTest {
 		// the switch-off gate: the same chunk stays silent
 		GT6CenterFeature.TESTING = false;
 		Recorder tOff = new Recorder();
-		assertFalse(GT6CenterFeature.dispatch(tOff, new TestEnv(), 2, -3, (cx, cz, ax) -> RoadMode.RING));
+		assertFalse(GT6CenterFeature.dispatch(tOff, new TestEnv(), new CountingRandom(1L), 2, -3, (cx, cz, ax) -> RoadMode.RING));
 		assertEquals(0, tOff.rows.size());
 	}
 
@@ -498,7 +891,7 @@ class GT6CenterWorldgenTest {
 		// chunk (3,-2) — the east+south edge chunk (x 48..63, z -32..-17): the mirrored edges,
 		// same double-write shape (the :71 clear + the :75-88 wall pass)
 		Recorder tRows = new Recorder();
-		GT6CenterFeature.dispatch(tRows, new TestEnv(), 3, -2, (cx, cz, ax) -> RoadMode.RING);
+		GT6CenterFeature.dispatch(tRows, new TestEnv(), new CountingRandom(1L), 3, -2, (cx, cz, ax) -> RoadMode.RING);
 		assertEquals(31 * 14 * 2, tRows.countWhere(t -> t.y >= GT6CenterFeature.HEIGHT + 2 && t.y <= GT6CenterFeature.HEIGHT + 15
 				&& ((t.x == 63 && t.z >= -32 && t.z < -16) || (t.z == -17 && t.x >= 48 && t.x < 64))));
 		assertTrue(tRows.lastAt(63, GT6CenterFeature.HEIGHT + 2, -25).state == null
@@ -512,7 +905,7 @@ class GT6CenterWorldgenTest {
 		GT6CenterFeature.TESTING = true;
 		// :96-131 live in the (aMinX==32 && aMinZ==-32) chunk = (2,-2) — x 32..47, z -32..-17
 		Recorder tRows = new Recorder();
-		GT6CenterFeature.dispatch(tRows, new TestEnv(), 2, -2, (cx, cz, ax) -> RoadMode.RING);
+		GT6CenterFeature.dispatch(tRows, new TestEnv(), new CountingRandom(1L), 2, -2, (cx, cz, ax) -> RoadMode.RING);
 		// the 4-wide 3-high opening at x=32, j=6..9 (z -26..-23), H+2..H+4 — the door carve wins over the wall run
 		for (int z = -26; z <= -23; z++) for (int y = GT6CenterFeature.HEIGHT + 2; y <= GT6CenterFeature.HEIGHT + 4; y++) {
 			Attempt tLast = tRows.lastAt(32, y, z);

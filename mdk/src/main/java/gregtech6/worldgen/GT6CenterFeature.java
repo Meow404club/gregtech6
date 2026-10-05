@@ -90,7 +90,7 @@ import gregtech6.registry.GTStoneBlocks.StoneSpec;
  */
 public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
 
-    /** The five WorldgenObject switches, upstream defaults F (:646-650) — the testing shell rides TESTING since worldgen-center-testing; CenterBiomes stays on the follow-up card. */
+    /** The five WorldgenObject switches, upstream defaults F (:646-650) — the testing shell rides TESTING since worldgen-center-testing; CenterBiomes rides {@link GT6CenterBiomes} (task worldgen-center-biomes). */
     public static boolean CENTER_BIOMES = false;
     public static boolean STREETS = false;
     public static boolean NEXUS = false;
@@ -250,7 +250,8 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
         WorldGenLevel tLevel = aContext.level();
         ChunkPos tChunk = tLevel instanceof net.minecraft.server.level.WorldGenRegion tRegion
                 ? tRegion.getCenter() : new ChunkPos(aContext.origin());
-        return dispatch(liveSink(tLevel), liveEnv(tLevel), tChunk.x, tChunk.z,
+        return dispatch(liveSink(tLevel), liveEnv(tLevel, aContext.chunkGenerator(), aContext.random(), tChunk),
+                aContext.random(), tChunk.x, tChunk.z,
                 (aCx, aCz, aAxisX) -> farRoadMode(tLevel, aCx, aCz, aAxisX));
     }
 
@@ -261,11 +262,21 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
 
     /**
      * The chunk dispatch (the test seam): order = the upstream registration order
-     * (:646-650 biomes→streets→nexus→beacon→testing; the chunk sets are disjoint across
-     * the trio, so order carries no geometry).
+     * (:646-650 biomes→streets→nexus→beacon→testing — the biome ring claims its window
+     * FIRST, the companions still run their own branches after it, the upstream
+     * independent-WorldgenObject semantics). The chunk sets overlap only on the
+     * biome-only fills (the plaza river fill :70-73 vs the streets plaza blocks), which
+     * is the upstream geometry too.
      */
-    public static boolean dispatch(Sink aSink, Env aEnv, int aCx, int aCz, FarScanner aFar) {
+    public static boolean dispatch(Sink aSink, Env aEnv, net.minecraft.util.RandomSource aRng, int aCx, int aCz, FarScanner aFar) {
         boolean rPlaced = false;
+        if (CENTER_BIOMES) {
+            GT6CenterBiomes.Zone tZone = GT6CenterBiomes.zone(aCx, aCz);
+            if (tZone != GT6CenterBiomes.Zone.NONE) {
+                GT6CenterBiomes.build(aSink, aEnv, aRng, aCx, aCz, tZone);
+                rPlaced = true;
+            }
+        }
         if (NEXUS && isNexusChunk(aCx, aCz)) {
             nexus(aSink, aCx, aCz);
             aEnv.spawn(0, HEIGHT + 5, 0); // :336
@@ -341,6 +352,10 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
         void beacon(int aX, int aY, int aZ, int aPrimary, int aSecondary);
         /** The upstream setSpawnLocation face. */
         void spawn(int aX, int aY, int aZ);
+        /** The chunk-wide biome overwrite — the upstream Arrays.fill(aChunk.getBiomeArray(), biomeID) face (CenterBiomes :71/:75/:79/:83/:103/:115/:140/:162/:195/:213/:227/:244). The name is the vanilla key path; the live impl rides the ChunkAccess#fillBiomesFromNoise public face (the write-path ruling — GT6CenterBiomes javadoc). */
+        void fillBiome(String aBiomeName);
+        /** The vanilla tree placement — the upstream WorldGenTrees rows (CenterBiomes :133-136/:156-159/:271-274); kind oak/birch/spruce/jungle. */
+        void tree(String aKind, int aX, int aY, int aZ);
     }
 
     /** The block-write sink — records every ATTEMPT (null state = the un-resolvable offline GT block), the live impl skips nulls. */
@@ -348,7 +363,8 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
         void set(int aX, int aY, int aZ, @Nullable BlockState aState);
     }
 
-    static Env liveEnv(WorldGenLevel aLevel) {
+    static Env liveEnv(WorldGenLevel aLevel, net.minecraft.world.level.chunk.ChunkGenerator aGenerator,
+            net.minecraft.util.RandomSource aRandom, ChunkPos aChunk) {
         return new Env() {
             @Override public boolean opq(int aX, int aY, int aZ) {
                 return aLevel.getBlockState(new BlockPos(aX, aY, aZ)).canOcclude();
@@ -375,6 +391,12 @@ public class GT6CenterFeature extends Feature<NoneFeatureConfiguration> {
                 Level tLevel = aLevel instanceof net.minecraft.server.level.WorldGenRegion tRegion
                         ? tRegion.getLevel() : (aLevel instanceof Level tL ? tL : null);
                 if (tLevel instanceof ServerLevel tServer) tServer.setDefaultSpawnPos(new BlockPos(aX, aY, aZ), 0.0F);
+            }
+            @Override public void fillBiome(String aBiomeName) {
+                GT6CenterBiomes.liveFillBiome(aLevel, aChunk, aBiomeName);
+            }
+            @Override public void tree(String aKind, int aX, int aY, int aZ) {
+                GT6CenterBiomes.liveTree(aLevel, aGenerator, aRandom, aKind, aX, aY, aZ);
             }
             @Override public void beacon(int aX, int aY, int aZ, int aPrimary, int aSecondary) {
                 BlockPos tPos = new BlockPos(aX, aY, aZ);
