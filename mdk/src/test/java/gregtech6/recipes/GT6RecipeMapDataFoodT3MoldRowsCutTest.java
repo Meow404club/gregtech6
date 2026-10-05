@@ -30,7 +30,8 @@ import com.google.gson.JsonParser;
  *     (three members, all in the java band)</li>
  * </ul>
  * The shared reason is twofold: the JSON v1 row schema carries no per-row notConsumed
- * face (GT6RecipeMapJsonLoader.java:142-143) while the upstream rows keep the mold as a
+ * face (GT6RecipeMapJsonLoader.java:159-161, the line drifted from the card-era
+ * :142-143 when the v2 config face landed) while the upstream rows keep the mold as a
  * not-consumed shaping tool (the {@code Recipe.sNotConsumable} fifth arm,
  * {@code GT6RecipesBake.isFoodShapingTool}) — a JSON row would EAT the mold on every
  * press; and the loader's three-owner co-existence has no content-level dedup
@@ -81,5 +82,7 @@ public class GT6RecipeMapDataFoodT3MoldRowsCutTest {
 		assertTrue(tText.contains("GT6RecipesBake.java:274-291"), "the ownership pointer into the runtime band");
 		assertTrue(tText.contains("POURED-ELSEWHERE"), "the ledger verdict, not a pending POOL");
 		assertFalse(tText.contains("the food-mold event rows (Loader_Recipes_Food.java:146-152) and the remaining"), "the stale B1-era pool clause is retired");
+		assertFalse(tText.contains("the food-mold event rows ("), "the mid-era pool phrasing (the explosives-chain rewording) stays retired (seat-20)");
+		assertFalse(tText.contains("the Food 5 rows"), "the press-electrodes era pool phrasing stays retired (seat-20)");
 	}
 }
