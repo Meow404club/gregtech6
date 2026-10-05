@@ -46,6 +46,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.gui.GT6MaterialTreeScreen;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GT6RecipesAnvil;
 import gregtech6.recipes.GT6RecipesOreChain;
@@ -315,6 +316,9 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		assertTrue(bytesOf(GT6MaterialTreeSliderWidget.class).contains("dev/emi/emi/api/widget/Widget"));
 		assertTrue(bytesOf(GT6MaterialTreeNavWidget.class).contains("keyPressed"));
 		assertTrue(bytesOf(GT6MaterialTreeSliderWidget.class).contains("mouseClicked"));
+		// the S4 corner entry (task nav-s4-tree-screen): the recipe face references the screen seam
+		assertTrue(bytesOf(GT6MaterialTreeEmiRecipe.class).contains("gregtech6/gui/GT6MaterialTreeScreen"),
+				"the EMI page's corner entry opens the standalone screen");
 	}
 
 	private static String bytesOf(Class<?> aClass) throws Exception {
@@ -329,7 +333,7 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 	// ------------------------------------------------------------------
 
 	@Test
-	public void pageWiringLeadsWithWiresAndClosesWithControls() {
+	public void pageWiringLeadsWithWiresAndClosesWithControls() throws Exception {
 		GT6MaterialTreeEmiRecipe tRecipe = ironRecipe();
 		assertEquals(MaterialTreeDisplay.WIDTH, tRecipe.getDisplayWidth());
 		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight(),
@@ -361,12 +365,16 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 			else if (tWidget instanceof GT6MaterialTreeSliderWidget tSlider) tSliderAt = i;
 			else if (tWidget instanceof GT6MaterialTreeNavWidget tNav) tNavAt = i;
 		}
-		assertEquals(3, tButtons.size(), "zoom in, zoom out, reset");
+		assertEquals(4, tButtons.size(), "zoom in, zoom out, reset + the S4 corner entry (nav-s4-tree-screen)");
 		assertTrue(tSliderAt > tLastSlotAt && tNavAt > tLastSlotAt, "controls ride above the tree layer");
 		// the strip geometry: 12px buttons on the HEIGHT+4 row, the 8px track centred under them
 		assertEquals(new Bounds(4, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(0).getBounds());
 		assertEquals(new Bounds(20, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(1).getBounds());
 		assertEquals(new Bounds(36, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(2).getBounds());
+		// the S4 corner entry: the canvas's top-right 12px cell, always live
+		assertEquals(new Bounds(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12),
+				tButtons.get(3).getBounds());
+		assertTrue(activeOf(tButtons.get(3)), "the corner entry never sleeps");
 		assertEquals(new Bounds(GT6MaterialTreeEmiRecipe.SLIDER_X, GT6MaterialTreeEmiRecipe.SLIDER_Y,
 				GT6MaterialTreeEmiRecipe.SLIDER_W, GT6MaterialTreeEmiRecipe.SLIDER_H), tHolder.mSlider.getBounds());
 		// the key canvas covers the whole page (the RecipeScreen hover gate is bounds-based)
@@ -393,13 +401,9 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		// the zoom-in button's action (ButtonWidget.mouseClicked plays sounds through the
 		// client — unreachable offline; the injected ClickAction is the same consumer the
 		// real click routes to, RecipeScreen.java:429-436)
-		ButtonWidget tZoomIn = null, tZoomOut = null, tReset = null;
-		for (ButtonWidget tButton : tHolder.mButtons) {
-			// add order: in, out, reset — disambiguated by the action effect below
-			if (tZoomIn == null) tZoomIn = tButton;
-			else if (tZoomOut == null) tZoomOut = tButton;
-			else tReset = tButton;
-		}
+		// add order: in, out, reset (the S4 corner entry rides 4th — indexed picks, the loop
+		// form would swallow it into tReset's chair)
+		ButtonWidget tZoomIn = tHolder.mButtons.get(0), tZoomOut = tHolder.mButtons.get(1), tReset = tHolder.mButtons.get(2);
 		click(tZoomIn);
 		Bounds tZoomed = tFirst.getBounds();
 		assertTrue(tZoomed.width() > tHome.width() && tZoomed.height() > tHome.height(),

@@ -272,6 +272,21 @@ public class GT6EmiPlugin implements EmiPlugin {
 	}
 
 	/**
+	 * The item jump face (task nav-s4-tree-screen), the native EMI twin of
+	 * {@link gregtech6.jei.GT6JeiPlugin#openItemPage}: {@code EmiApi.displayRecipes} is the
+	 * R axis (recipes-for-stack — the {@link #displayEnergyCarrierInfo} precedent, EmiApi
+	 * :131). Never call unguarded: the class loads EMI API — only the preferredViewer
+	 * routing in {@link gregtech6.gui.GT6MaterialTreeScreen#openInViewer} may reach it.
+	 *
+	 * @return false (no-op) when the stack is null/empty — offline and pre-init safe.
+	 */
+	public static boolean openItemPage(net.minecraft.world.item.ItemStack aStack) {
+		if (aStack == null || aStack.isEmpty()) return false;
+		EmiApi.displayRecipes(EmiStack.of(aStack));
+		return true;
+	}
+
+	/**
 	 * Face 4 (task debt-material-tree-b) — the per-material processing-tree displays, the
 	 * native twin of GT6JeiPlugin's registerMaterialTreeRows (same builder sweep, same
 	 * shared {@link gregtech6.recipes.tree.MaterialTreeDisplay} model, same {@code SHOWN}

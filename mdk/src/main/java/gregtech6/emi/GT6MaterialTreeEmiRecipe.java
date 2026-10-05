@@ -13,6 +13,7 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 
+import gregtech6.gui.GT6MaterialTreeScreen;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
@@ -211,6 +212,17 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		aWidgets.addTooltipText(List.of(Component.literal("Zoom out (-)")), BUTTON_X0 + BUTTON_PITCH, BUTTON_Y, 12, 12);
 		aWidgets.addTooltipText(List.of(Component.literal("Reset view (R/0)")), BUTTON_X0 + 2 * BUTTON_PITCH, BUTTON_Y, 12, 12);
 		aWidgets.addTooltipText(List.of(Component.literal("Click to set zoom")), SLIDER_X, SLIDER_Y, SLIDER_W, SLIDER_H);
+		// the S4 escape hatch (task nav-s4-tree-screen) — tail-appended after the M2 nav face:
+		// the canvas's top-right corner cell opens the standalone full-screen tree
+		// (GT6MaterialTreeScreen), the r11 大树走独立屏 ruling's face. The blank native cell
+		// (u=72 v=0, the strip convention) carries a "T" glyph drawable above it; the click
+		// replaces the EMI page with the screen (setScreen has no barrier from a widget click).
+		aWidgets.addButton(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12, 72, 0,
+				() -> true, (aMx, aMy, aBtn) -> GT6MaterialTreeScreen.open(mDisplay));
+		aWidgets.addDrawable(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12,
+				(aGuiGraphics, aMx, aMy, aDelta) -> aGuiGraphics.drawString(Minecraft.getInstance().font, "T", 3, 2, 0xFFE0E0E0, false));
+		aWidgets.addTooltipText(List.of(Component.literal("Open full tree view")),
+				GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12);
 	}
 
 	/** One wire/arrow rect through the viewport as a corner pair, then filled (exclusive x2/y2). */

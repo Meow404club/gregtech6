@@ -93,14 +93,20 @@ public class GT6MaterialTreeJeiNavTest {
 		RecordingExtras tExtras = new RecordingExtras();
 		tCategory.createRecipeExtras(tExtras.self(), null, null);
 
-		assertEquals(1, tExtras.mWidgets.size(), "one draw widget");
-		assertEquals(1, tExtras.mListeners.size(), "one input listener");
+		// the S4 union (nav-s4-tree-screen, the review-seat seam): the extras mounts TWO
+		// faces — the nav strip first, then the full-screen corner entry — each wearing
+		// both hats over its own instance
+		assertEquals(2, tExtras.mWidgets.size(), "the nav face + the S4 corner cell");
+		assertEquals(2, tExtras.mListeners.size(), "both faces listen");
 		assertTrue(tExtras.mWidgets.get(0) instanceof GT6MaterialTreeJeiNavWidget, "the nav face is the port's widget");
 		assertSame(tExtras.mWidgets.get(0), tExtras.mListeners.get(0),
 				"draw and input are ONE instance = one shared viewport closure");
 		assertTrue(tExtras.mWidgets.get(0) instanceof IRecipeWidget
 				&& tExtras.mListeners.get(0) instanceof IJeiGuiEventListener,
 				"the face wears both hats");
+		assertTrue(tExtras.mWidgets.get(1) instanceof gregtech6.jei.GT6MaterialTreeJeiScreenButton,
+				"the corner entry rides the same seam (nav-s4-tree-screen)");
+		assertSame(tExtras.mWidgets.get(1), tExtras.mListeners.get(1), "the cell wears both hats too");
 
 		// the draw origin is the page origin, so draw/input coordinates are page coordinates
 		GT6MaterialTreeJeiNavWidget tNav = (GT6MaterialTreeJeiNavWidget)tExtras.mWidgets.get(0);
@@ -115,8 +121,11 @@ public class GT6MaterialTreeJeiNavTest {
 		assertEquals(MaterialTreeDisplay.WIDTH, tArea.width(), "area width");
 		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tArea.height(), "area height");
 
-		// three hover hints on the EMI-parity button cells (12px cells, 4px gaps)
-		assertEquals(3, tExtras.mTooltipAreas.size(), "zoom in, zoom out, reset");
+		// three hover hints on the EMI-parity button cells (12px cells, 4px gaps) + the
+		// S4 corner cell's hint (the union's fourth area)
+		assertEquals(4, tExtras.mTooltipAreas.size(), "zoom in, zoom out, reset + open full tree");
+		assertEquals(gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_X, tExtras.mTooltipAreas.get(3)[0], "corner cell x");
+		assertEquals(gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_Y, tExtras.mTooltipAreas.get(3)[1], "corner cell y");
 		for (int i = 0; i < 3; i++) {
 			int[] tRect = tExtras.mTooltipAreas.get(i);
 			assertEquals(GT6MaterialTreeEmiRecipe.BUTTON_X0 + i * GT6MaterialTreeEmiRecipe.BUTTON_PITCH, tRect[0],
