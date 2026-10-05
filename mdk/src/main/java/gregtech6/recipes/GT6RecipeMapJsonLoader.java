@@ -52,6 +52,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
+import gregtech6.item.GT6Circuits;
+
 /**
  * The tier-b datapack JSON seam of the runtime RecipeMaps (task
  * tier-b-rm-json-loader, design state research.p26-r-tier-b-rm-json): pack authors
@@ -100,7 +102,8 @@ import com.mojang.logging.LogUtils;
  * <p><b>Row semantics</b> (the 7-field schema → the 9-arg {@link Recipe}
  * constructor (Recipe.java:147-163) → {@link RecipeMap#addRecipe} (RecipeMap.java:120-125)):
  * <ul>
- * <li>{@code inputs}/{@code outputs}: {@code {"item": "<id>", "count": 1}}; outputs take
+ * <li>{@code inputs}/{@code outputs}: {@code {"item": "<id>", "count": 1}}; an INPUT slot
+ *     takes the optional v2 {@code "config": <0..255>} member (below); outputs take
  *     an optional per-slot {@code "chance"} (10000 base; the row without any chance key
  *     stays {@code null}-chanced = deterministic; {@code chance <= 0} is a LEGAL
  *     "never produces" slot with a WARN — the port's declared deviation from the
@@ -123,6 +126,22 @@ import com.mojang.logging.LogUtils;
  * (the vanilla {@code IllegalStateException} at :44-46). Every apply ends with an INFO
  * line carrying the per-file before/after row counts read from the live map (the audit
  * face, the GT6CokeOvenTagListener.java:94 log shape).
+ *
+ * <p><b>v2 — the selector config face</b> (task circuit-config-face, the A1 ruling of
+ * research.circuit-domain-census): an input slot may carry {@code "config": n} — the slot
+ * becomes the upstream {@code ST.tag(n)} selector circuit ({@link GT6Circuits#selector}:
+ * the {@code Damage=n} carrier, GT6Circuits.java:111-115). The runtime legs need zero new
+ * code: matching routes the configuration number through the exact-tag arm
+ * ({@code Recipe.isSameItemAndTag} → {@code ItemStack.isSameItemSameTags}, Recipe.java:391-399,
+ * the p25 ADR), and the never-consumed marker is the {@code Recipe.sNotConsumable} production
+ * default's circuit arm ({@code GT6Circuits::isSelector}, Recipe.java:108-109). <b>Versioning
+ * is the lenient read</b> — the file format has no version member (none ever has), so v2 =
+ * "consume {@code config} when present, keep the plain v1 stack when absent": a v1 slot is
+ * built tag-less, and {@code checkStacksEqual} only routes through the exact-tag arm for
+ * inputs that CARRY a tag ({@code tIgnoreNBT = mNoNBTChecks || !tInput.hasTag()},
+ * Recipe.java:363-365) — every v1 row keeps its ignore-NBT matching verbatim. The domain is
+ * the upstream damage axis 0..255 (ItemIntegratedCircuit's {@code meta & 255} face); the
+ * marker rides count 1 (the upstream size-0 form is not portable, GT6Circuits class doc).
  *
  * <p><b>v1 BOUNDARIES — the tag-input TRAP</b>: tag inputs are NOT supported, and that
  * is a TIMING ruling, not a parsing one. {@code TagManager.apply} only STORES the loaded
@@ -500,7 +519,23 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 			if (tItem == null) return null;
 			Long tCount = optBoundedLong(tSlot, "count", 1, aFileId, aIndex);
 			if (tCount == null) return null;
-			rSlots[i] = new ItemStack(tItem, tCount.intValue());
+			if (tSlot.has("config")) {
+				// the v2 selector face (class doc): "config": n → the ST.tag(n) circuit carrier.
+				// Absent = the plain tag-less v1 stack verbatim — the v1 zero-change pin.
+				Long tConfig = optLong(tSlot, "config", 0, aFileId, aIndex);
+				if (tConfig == null) return null;
+				if (tConfig.longValue() < 0 || tConfig.longValue() > 255) {
+					badRow(aFileId, aIndex, "\"config\" must be in [0, 255] (the upstream damage-axis domain), got " + tConfig);
+					return null;
+				}
+				if (tCount.longValue() != 1) {
+					badRow(aFileId, aIndex, "\"config\" marks the never-consumed selector at count 1, got \"count\": " + tCount);
+					return null;
+				}
+				rSlots[i] = GT6Circuits.selector(tItem, tConfig.intValue());
+			} else {
+				rSlots[i] = new ItemStack(tItem, tCount.intValue());
+			}
 		}
 		return rSlots;
 	}
