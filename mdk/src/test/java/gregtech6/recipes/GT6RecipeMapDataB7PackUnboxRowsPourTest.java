@@ -290,6 +290,15 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) tItemUniverse.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		Set<String> tMissing = new HashSet<>();
 		int tFluidSlots = 0;
+		// the seat14 rebase roll: boxinator now also carries main's seated robotics-chain rows
+			 // (task robotics-chain landed after this card's cut) — their tip-template/token ids are
+			 // IL items OUTSIDE the material universe, guarded by GT6RoboticsRowsPourTest; the walk
+			 // rows stay fully pinned against the material universe
+		java.util.Set<String> tSeatedIlIds = new HashSet<>();
+		for (String tKind : new String[] {"wrench", "screwdriver", "saw", "hammer", "cutter", "chisel", "rubber", "blade", "drill", "file"}) {
+			tSeatedIlIds.add("gt6:robot_arm_" + tKind + "_tip");
+			tSeatedIlIds.add("gt6:single_use_" + tKind);
+		}
 		for (JsonElement tElement : pourShipped().values()) {
 			for (String tLeg : new String[] {"inputs", "outputs"}) for (JsonElement tSlot : tElement.getAsJsonArray()) {
 				JsonObject tRow = tSlot.getAsJsonObject();
@@ -297,6 +306,7 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 				if (tRow.has("fluidOutputs")) tFluidSlots += tRow.getAsJsonArray("fluidOutputs").size();
 				for (JsonElement tSlot2 : tRow.getAsJsonArray(tLeg)) {
 					String tId = tSlot2.getAsJsonObject().get("item").getAsString();
+					if (tSeatedIlIds.contains(tId)) continue;
 					if (tId.startsWith("gt6:") && !tItemUniverse.contains(tId.substring(4))) tMissing.add(tId);
 				}
 			}
@@ -317,8 +327,12 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 		List<GTMaterialItems.PrefixMaterial> tOrder = new ArrayList<>(GTMaterialItems.registrationOrder());
 		tOrder.addAll(GTMaterialBlocks.registrationOrder());
 		Map<String, Integer> tLive = new HashMap<>();
-		for (String tName : new String[] {"plateSteamcraft", "sheetGt", "compressed", "crateGtRaw", "crateGt64Raw",
-				"pipeSmall", "pipeMedium", "pipeQuadruple", "pipeNonuple", "wireGt01", "wireGt02", "wireGt16"}) {
+		// the wireGt01/02/16 faces LEFT the zero-pin (the seat14 rebase roll): task wire-family's
+			// 4943f338e registered the OP.wireGt01-16 item path after this card's cut, so the :619-626
+			// wire pour is the wire-family card's pool-due face, not a zero face — the still-absent
+			// carriers (pipes, crates, the press RollingMill outputs) keep the zero-pin
+			for (String tName : new String[] {"plateSteamcraft", "sheetGt", "compressed", "crateGtRaw", "crateGt64Raw",
+					"pipeSmall", "pipeMedium", "pipeQuadruple", "pipeNonuple"}) {
 			OreDictPrefix tPrefix = prefix(tName);
 			int tCount = 0;
 			for (GTMaterialItems.PrefixMaterial tPair : tOrder) if (tPair.prefix() == tPrefix) tCount++;
