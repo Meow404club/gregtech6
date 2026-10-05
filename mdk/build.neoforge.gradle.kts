@@ -327,7 +327,8 @@ val neoforgeTagFaces = tasks.register("neoforgeTagFaces", Copy::class) {
 }
 
 // 嫁接产物挂进 main resources（以任务为 srcDir 自动接线任务依赖，generateModMetadata 同构）：
-// 死的复数带 v1 照挂不 exclude（zip64 已开，死重另卡声明，research.p28 build_change_list knob）。
+// 死的复数带 v1 照挂（zip64 已开；打包面排除由 forge-tags-deadweight 卡在 jar 任务级 exclude
+// 落地，runs/test 走 exploded classpath 不受影响——research.p28 build_change_list knob）。
 sourceSets["main"].resources.srcDir(neoforgeTagFaces)
 
 // FML junit 并发竞争根治（task r3-ci-fml-config-race）：maxParallelForks 并发下每个 executor 的
