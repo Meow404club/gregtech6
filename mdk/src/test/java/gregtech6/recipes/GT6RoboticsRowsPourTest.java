@@ -38,8 +38,8 @@ public class GT6RoboticsRowsPourTest extends GTRecipesOfflineTestBase {
 	private static final java.util.function.Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final java.util.function.Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
 
-	/** The upstream census: 29 seated rows (GT6_Main:350 map row + the landed cards' walks) + this card's 10 (:503-512). */
-	private static final int BOXINATOR_CENSUS = 39;
+	/** The upstream census: 29 seated rows (GT6_Main:350 map row + the landed cards' walks) + this card's 10 (:503-512) + the recipe-b7 pack walk 12319 (the seat14 rebase roll: the same-key ratchet takes the semantic union). */
+	private static final int BOXINATOR_CENSUS = 12358;
 
 	/**
 	 * The 10 rows in upstream order: tip kind, the output token count, the input leg
@@ -89,7 +89,7 @@ public class GT6RoboticsRowsPourTest extends GTRecipesOfflineTestBase {
 		return tDoc.getAsJsonArray("recipes");
 	}
 
-	/** The census: the whole file pours — 29 seated + this card's 10, zero WARN-skipped rows. */
+	/** The census: the whole file pours — 29 seated + this card's 10 + the recipe-b7 pack walk 12319, zero WARN-skipped rows. */
 	@Test
 	public void boxinatorPoursItsFullCensusWithZeroSkips() throws Exception {
 		pourShipped();

@@ -94,12 +94,15 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		// resolves; the other 15 dyed outputs WARN-skip, the b2/b1 35-row stock rides its own
 		// census pins in the *RowsPourTest family, not this seam-acceptance fixture)
 		assertEquals(2, GT6RecipeMapJsonLoader.pouredCount("loom"), "the loom smoke row + the fixture-resolvable b4 dyed row");
-		// 11 = the seated smoke row (the only row whose vanilla legs sit in the fixture
+		// 12330 = the seated smoke row (the only seated row whose vanilla legs sit in the fixture
 		// whitelist — every other seated row walks minecraft ids the stand-in answers null,
 		// the b2b1 posture) + task robotics-chain's 10 tip-packing rows (all-gt6 legs pour
 		// the stand-in; their registration universe is guarded by the B1 id-universe pin)
-		assertEquals(11, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "the boxinator smoke row + the robotics-chain ten");
-		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "one unboxinator smoke row");
+		// + the recipe-b7 pack walk 12319 (review-seat rebase roll: the 28 vanilla-bearing b1
+		// statics stay out of this narrow fixture's whitelist — the full file census lives in
+		// the B1/B7 pour tests)
+		assertEquals(12330, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "the boxinator smoke row + the robotics-chain ten + the recipe-b7 pack walk 12319");
+		assertEquals(11292, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "the unboxinator smoke row + the recipe-b7 unbox walk 11291 (the 20 vanilla-bearing seated statics stay out of this narrow fixture's whitelist — the full file census lives in the B2Residual/B7 pour tests)");
 		assertEquals(195, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — the landed b2b1 census (7 smoke + 188 pour; the seat-IX reconciliation bump)");
 
 		// the Ananas row content pin (review fix): the OFFLINE fixture collapses every
@@ -126,10 +129,10 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:winepineapple", tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("fluid").getAsString(), "the Ananas output id — Cider_Ananas (Loader_Recipes_Food.java:610)");
 		assertEquals(25, tAnanasRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("amount").getAsLong(), "the Ananas output amount");
 
-		// the rows are LIVE in the maps (the findRecipe stock grew by one each)
+		// the rows are LIVE in the maps (the findRecipe stock grew by the walk each)
 		assertEquals(2, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held the smoke row + the fixture-resolvable b4 dyed row (the card-A declared-empty era is long gone; the full stock is the *RowsPourTest census)");
-		assertEquals(11, GT6RecipeMaps.BOXINATOR.mRecipeList.size()); // + the robotics-chain ten (the all-gt6 legs pour the stand-in)
-		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size());
+		assertEquals(12330, GT6RecipeMaps.BOXINATOR.mRecipeList.size()); // the smoke row + the robotics-chain ten + the recipe-b7 pack walk 12319
+		assertEquals(11292, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size()); // the smoke row + the recipe-b7 unbox walk 11291
 		assertEquals(195, GT6RecipeMaps.FERMENTER.mRecipeList.size());
 	}
 
