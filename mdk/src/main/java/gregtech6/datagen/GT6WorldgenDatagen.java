@@ -1581,15 +1581,18 @@ public final class GT6WorldgenDatagen {
      * fuels (lignite/coal :886/:887; the 1.7.10 semantics keep carbon near the surface),
      * the evaporite/industrial rows (apatite :888, iodinesalt :891, rocksalt :892,
      * asbestos :893), the upper-half bands (bauxite 50-90, quartz 40-80, cassiterite 40-90,
-     * tetrahedrite 70-120), the dead molybdenum row (:905 — all four slots outside the
-     * registration axis, the twin never draws) and the offworld rows (:917-925). Every
+     * tetrahedrite 70-120), the then-dead molybdenum row (:905 — all four slots outside
+     * the registration axis at the c2 selection freeze, the twin never drew; the
+     * worldgen-edge-ores-b1 axis extension lit the SURFACE row later, the mirror
+     * selection stays frozen — no deep twin) and the offworld rows (:917-925). Every
      * mirrored row keeps its twin's weight/density/size/indicator/material slots VERBATIM
      * (only name + band differ — "ore.large.deep.&lt;tail&gt;"), so the deep draw
      * distribution = the surface distribution one band lower; the row-for-row shift
-     * correspondence is pinned by GT6LargeVeinTest. The rows that today fall to the
-     * registration-axis validity gate (sapphire/garnet/peridot/monazite/pitchblende/
-     * beryllium/titanium slots) stay mirrored STRUCTURALLY: they ride the same gate as
-     * their surface twins and light up together when the axis extends.
+     * correspondence is pinned by GT6LargeVeinTest. The rows that fell to the
+     * registration-axis validity gate at the freeze (sapphire/garnet/peridot/monazite/
+     * pitchblende/beryllium/titanium slots) stayed mirrored STRUCTURALLY: they ride the
+     * same gate as their surface twins and lit up together as the axis extended
+     * (r7-a/r7-b, then the B1 card lit the rest).
      */
     public static final List<GTVeinConfig> DEEP_VEIN_TABLE = List.of(
         vein("ore.large.deep.lapis"     , -44, -14,  40, 5, 16, MT.Lazurite                     , MT.Sodalite                     , MT.Lapis                        , MT.Azurite            ), // :889 lapis 20-50

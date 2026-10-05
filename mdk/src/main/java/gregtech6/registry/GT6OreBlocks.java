@@ -58,16 +58,18 @@ import gregtech6.item.GTMaterialPrefixBlockItem;
  * enumeration (tasks.p30-arch-ore-registration.enumeration.block_rows_per_material).
  *
  * <p><b>Material axis M</b> (the reviewer-corrected口径, 2026-09-16, extended 2026-09-28 by
- * task a-ore-axis-extension and task b-gem-pool-extension): the upstream always-on
+ * task a-ore-axis-extension and task b-gem-pool-extension, then 2026-10-05 by task
+ * worldgen-edge-ores-b1-vein-axis): the upstream always-on
  * worldgen small-ore materials
  * (Loader_Worldgen.java:800-852 + :875 — {@link #WORLDGEN_ORES}) UNION the stone-layer
  * companion materials ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION
- * the RANDOM_SMALL_GEM_ORE pool gap ({@link #GEM_POOL_ORES}, the r7-b second seam), each
+ * the RANDOM_SMALL_GEM_ORE pool gap ({@link #GEM_POOL_ORES}, the r7-b second seam) UNION
+ * the large-vein compensation materials ({@link #LARGE_VEIN_ORES}, the B1 third seam), each
  * passing the authoritative {@link OP#ore}
  * {@code isGeneratingItem} filter (OP.java:1098 setCondition(ORES); the same
  * per-material criterion as the GTMaterialItems.java:146 item walk), UNIFIED across
- * all 26 families and all three forms. M = 53 + 13 + 56 = 122 distinct materials; total
- * blocks = 74 x 122 = 9028, pinned by
+ * all 26 families and all three forms. M = 53 + 13 + 56 + 22 = 144 distinct materials; total
+ * blocks = 74 x 144 = 10656, pinned by
  * GT6OreBlocksRegistrationTest. (The bare isGeneratingItem walk over the whole
  * MATERIAL_ARRAY measures 618 — nine tenths of it materials no ore placement ever
  * references; that over-registration face was REJECTED in review and removed.)
@@ -450,30 +452,79 @@ public final class GT6OreBlocks {
     );
 
     /**
+     * The large-vein compensation materials (task worldgen-edge-ores-b1-vein-axis, the
+     * research.stonelayer-edge-ores route-B B1 card): the 22 distinct slot materials of
+     * the upstream compensation rows Loader_Worldgen.java:889-911 — ported VERBATIM into
+     * {@link gregtech6.datagen.GT6WorldgenDatagen#LARGE_VEIN_TABLE} (+ the deep mirrors)
+     * — that sit OUTSIDE the three lists above. Their rows failed ONLY the
+     * registration-axis validity gate (GT6VeinGenerator.valid), so extending the axis
+     * revives them with ZERO row edits (the a-ore-axis-extension B-plan declare,
+     * GT6WorldgenDatagen "these rows start generating with zero edits here"):
+     * Lazurite/Sodalite (:889 lapis top/bottom), Bauxite + Ilmenite spread (:890 — the
+     * whole-dead bauxite row), IodineSalt top (:891, MT.KIO3), Lepidolite between /
+     * Spodumene spread (:892), Talc bottom (:893), Bastnasite + Monazite between + Nd
+     * spread (:898 — the whole-dead monazite row), MilkyQuartz + Barite + CertusQuartz
+     * (:901 — the whole-dead quartz row), Kyanite top / Glauconite spread (:902),
+     * Wulfenite + Molybdenite + Mo + Powellite (:905 — the whole-dead ORE_END row),
+     * Rutile (MT.TiO2) + Zircon (:911 — the fifth whole-dead row, titanium).
+     * Gypsum (:893 between) stays OUTSIDE the axis by the B1 ruling — the asbestos row
+     * already drew via Chromite/Asbestos, and Gypsum's only revival face is the
+     * mod-gated small-ore pool (upstream :872 MD.IHL), another card's territory.
+     *
+     * <p>List order = upstream :889-911 first appearance (the axis tail order pinned by
+     * GT6VeinAxisExtensionTest). Union semantics: the 22 gain no small-ore rows (their
+     * compensation rows are {@code WorldgenOresLarge} only) and
+     * {@link #WORLDGEN_ORES} keeps its small-ore-row meaning pure — the same shape as
+     * {@link #STONE_LAYER_ORES}. mdh-5 interlink: the extension consciously reopens the
+     * atlas-PRIMARY static state for exactly TWO materials — Zircon (TROPIC,
+     * GT6ForeignMaterialAtlas :2526) and Nd (HBM, :2403) — the census faces re-pinned in
+     * GT6AxisTakeoverCensusTest.
+     *
+     * <p>Suppliers again (post-OP.init resolution — the {@link OreFamily} lesson).
+     */
+    public static final List<Supplier<OreDictMaterial>> LARGE_VEIN_ORES = List.of(
+        () -> MT.Lazurite,                  () -> MT.Sodalite,                                             // :889 lapis top/bottom
+        () -> MT.OREMATS.Bauxite,           () -> MT.OREMATS.Ilmenite,                                     // :890 bauxite top+spread
+        () -> MT.KIO3,                                                                                     // :891 iodinesalt top
+        () -> MT.OREMATS.Lepidolite,        () -> MT.OREMATS.Spodumene,                                    // :892 rocksalt between/spread
+        () -> MT.Talc,                                                                                     // :893 asbestos bottom
+        () -> MT.OREMATS.Bastnasite,        () -> MT.Monazite,             () -> MT.Nd,                    // :898 monazite top/between/spread
+        () -> MT.MilkyQuartz,               () -> MT.OREMATS.Barite,       () -> MT.CertusQuartz,          // :901 quartz top/bottom/between
+        () -> MT.OREMATS.Kyanite,           () -> MT.OREMATS.Glauconite,                                   // :902 peridot top/spread
+        () -> MT.OREMATS.Wulfenite,         () -> MT.OREMATS.Molybdenite,  () -> MT.Mo,                    // :905 molybdenum top/bottom/between
+        () -> MT.OREMATS.Powellite,                                                                        // :905 molybdenum spread
+        () -> MT.TiO2,                      () -> MT.Zircon                                                                // :911 titanium top+bottom/between
+    );
+
+    /**
      * The material axis M (the reviewer-corrected口径, 2026-09-16, extended by
-     * a-ore-axis-extension and b-gem-pool-extension): the upstream always-on
-     * worldgen small-ore materials ({@link #WORLDGEN_ORES}, Loader_Worldgen.java:800-852
-     * + :875) UNION the stone-layer companion materials ({@link #STONE_LAYER_ORES}, the
-     * r6-c3 lens preconditions) UNION the RANDOM_SMALL_GEM_ORE pool gap
-     * ({@link #GEM_POOL_ORES}, the r7-b second seam), each passing the authoritative
-     * oredict filter {@link OP#ore} {@code isGeneratingItem} (OP.java:1098
-     * setCondition(ORES) — the same per-material criterion as the GTMaterialItems.java:146
-     * item walk, whose resolve/dedup shape this walk mirrors), unified across all families
-     * and forms. M = 53 + 13 + 56 = 122, total 74 x 122 = 9028, pinned by
+     * a-ore-axis-extension, b-gem-pool-extension and worldgen-edge-ores-b1-vein-axis):
+     * the upstream always-on worldgen small-ore materials ({@link #WORLDGEN_ORES},
+     * Loader_Worldgen.java:800-852 + :875) UNION the stone-layer companion materials
+     * ({@link #STONE_LAYER_ORES}, the r6-c3 lens preconditions) UNION the
+     * RANDOM_SMALL_GEM_ORE pool gap ({@link #GEM_POOL_ORES}, the r7-b second seam)
+     * UNION the large-vein compensation materials ({@link #LARGE_VEIN_ORES}, the B1
+     * third seam), each passing the authoritative oredict filter {@link OP#ore}
+     * {@code isGeneratingItem} (OP.java:1098 setCondition(ORES) — the same
+     * per-material criterion as the GTMaterialItems.java:146 item walk, whose
+     * resolve/dedup shape this walk mirrors), unified across all families and forms.
+     * M = 53 + 13 + 56 + 22 = 144, total 74 x 144 = 10656, pinned by
      * GT6OreBlocksRegistrationTest.
      *
      * <p>mdh-5 axis-takeover census (task mdh-5-block-worldgen-axis, CLOSED — ruling (a),
-     * static terminal state): the atlas (GT6ForeignMaterialAtlas) cross-table finds exactly
-     * FIVE PRIMARY members on this axis — Azurite/Eudialyte (tropicraft), CaF2 "Fluorite"
-     * (rotarycraft), Jade (erebus), Dolamide (mo) — all riding ALWAYS-ON upstream rows
-     * (:800-852 + :875 + the :877-880 gem loop), never the mod-gated :854-874 pool. Under
-     * mdh-3 ABSENT seeds their item universe hides while these block faces stay
-     * self-consistent (the block items register HERE, not through the driver-gated
-     * GTMaterialItems.enumerate; consumers guard — GT6OreLootTables.java:236 loop-head
-     * null-drop, the batch2 sweep account), so no dead reference exists and the driver gate
-     * on {@link #addAxisMember} (the :486 isGeneratingItem filter stays the only criterion)
-     * is NOT taken. Cross-table + per-face rulings: GT6AxisTakeoverCensusTest,
-     * decisions.mdh-5-axis-rulings.
+     * static terminal state; the B1 axis extension reopened TWO faces, re-pinned):
+     * the atlas (GT6ForeignMaterialAtlas) cross-table finds SEVEN PRIMARY members on
+     * this axis — Azurite/Eudialyte (tropicraft), CaF2 "Fluorite" (rotarycraft), Jade
+     * (erebus), Dolamide (mo), Zircon (tropicraft :2526) and Nd (HBM :2403) since B1 —
+     * the first five riding ALWAYS-ON upstream rows (:800-852 + :875 + the :877-880 gem
+     * loop), the last two riding the B1-admitted :898/:911 vein rows, never the
+     * mod-gated :854-874 pool. Under mdh-3 ABSENT seeds their item universe hides while
+     * these block faces stay self-consistent (the block items register HERE, not
+     * through the driver-gated GTMaterialItems.enumerate; consumers guard —
+     * GT6OreLootTables.java:236 loop-head null-drop, the batch2 sweep account), so no
+     * dead reference exists and the driver gate on {@link #addAxisMember} (the :486
+     * isGeneratingItem filter stays the only criterion) is NOT taken. Cross-table +
+     * per-face rulings: GT6AxisTakeoverCensusTest, decisions.mdh-5-axis-rulings.
      */
     public static List<OreDictMaterial> materialAxis() {
         Set<OreDictMaterial> tSeen = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -485,6 +536,9 @@ public final class GT6OreBlocks {
             addAxisMember(tSupply, tSeen, rAxis);
         }
         for (Supplier<OreDictMaterial> tSupply : GEM_POOL_ORES) {
+            addAxisMember(tSupply, tSeen, rAxis);
+        }
+        for (Supplier<OreDictMaterial> tSupply : LARGE_VEIN_ORES) {
             addAxisMember(tSupply, tSeen, rAxis);
         }
         return rAxis;

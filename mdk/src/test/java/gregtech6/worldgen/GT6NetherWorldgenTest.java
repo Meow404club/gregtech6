@@ -126,9 +126,10 @@ public class GT6NetherWorldgenTest {
 
     @Test
     public void endDrawSumsOnlyTheFiveOreEndRows() {
-        // the drawable End set = the axis-valid subset: molybdenum carries all four slots
-        // outside the 53-material registration axis (the p30-t3 declared mapping), so the
-        // drawn set is platinum(5)/cassiterite(170)/naquadah(10)/trinium(100) = weight 285
+        // the drawable End set = the axis-valid subset: molybdenum carried all four slots
+        // outside the registration axis at the p30-t3 freeze (the declared mapping) until
+        // worldgen-edge-ores-b1 extended the axis — the drawn set is now
+        // platinum(5)/molybdenum(5)/cassiterite(170)/naquadah(10)/trinium(100) = weight 290
         Set<String> tEndNames = Set.of("ore.large.platinum", "ore.large.molybdenum",
                 "ore.large.cassiterite", "ore.large.naquadah", "ore.large.trinium");
         List<GTVeinConfig> tEndRows = GT6WorldgenDatagen.LARGE_VEIN_TABLE.stream()
@@ -145,12 +146,13 @@ public class GT6NetherWorldgenTest {
         Set<String> tDrawn = new HashSet<>();
         for (int i = 0; i < 5000; i++) {
             GTVeinConfig tVein = GT6VeinGenerator.drawVein(tTable, new Random(i), true);
-            assertNotNull(tVein, "the End draw always lands (weight 285 > 0)");
+            assertNotNull(tVein, "the End draw always lands (weight 290 > 0)");
             assertTrue(tVein.end(), "only ORE_END rows: " + tVein.name());
             tDrawn.add(tVein.name());
         }
-        assertEquals(Set.of("ore.large.platinum", "ore.large.cassiterite", "ore.large.naquadah", "ore.large.trinium"),
-                tDrawn, "four drawable rows; molybdenum rides the axis-posture exclusion");
+        assertEquals(Set.of("ore.large.platinum", "ore.large.molybdenum", "ore.large.cassiterite",
+                "ore.large.naquadah", "ore.large.trinium"),
+                tDrawn, "five drawable rows since worldgen-edge-ores-b1 (molybdenum joined the axis)");
         // the zero-salt overworld overload replay: the 2-arg and the false-overload agree
         GTVeinConfig tA = GT6VeinGenerator.drawVein(tTable, new Random(7));
         GTVeinConfig tB = GT6VeinGenerator.drawVein(tTable, new Random(7), false);

@@ -54,15 +54,16 @@ class GT6SurfaceBlocksTest {
         // +8 (task w6-t2-surface-blocks): the plant quartet + the 4 fallen-log woods.
         // the vein-indicator rocks, pickup-only like the first-batch rocks/sticks
         // (31 at w6-t3-large-veins; 40 since a-ore-axis-extension;
-        // 57 since b-gem-pool-extension, the gem-pool axis chain).
+        // 57 since b-gem-pool-extension, the gem-pool axis chain;
+        // 79 since worldgen-edge-ores-b1, the large-vein compensation axis chain).
         // +36 (task flower-blocks-indicator-family): the 18 indicator flowers + the 18
         // vanilla potted companions (GT6FlowerBlockTest pins the row set).
         // +7 (task worldgen-racks): the nether rack rocks.
-        // 4 + 8 + 57 + 36 + 7 = 112; the ITEMS register holds the 26
+        // 4 + 8 + 79 + 36 + 7 = 134; the ITEMS register holds the 26
         // obtainable block items (the rocks/sticks/indicator rocks/nether rocks/potted
         // stay zero-item).
-        assertEquals(112, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
-                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 57 indicator rocks"
+        assertEquals(134, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 79 indicator rocks"
                         + " + the 18 flowers + the 18 potted companions + the 7 nether rack rocks");
         assertEquals(26, GT6SurfaceBlocks.ITEMS.getEntries().size(),
                 "the obtainable band's block items (the rocks/sticks/indicator rocks/potted stay zero-item)");
@@ -103,7 +104,7 @@ class GT6SurfaceBlocksTest {
         Set<String> tItemIds = GTMaterialItems.registrationOrder().stream()
                 .map(tPair -> GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))
                 .collect(Collectors.toSet());
-        assertEquals(57, GT6SurfaceBlocks.INDICATOR_ROCKS.size(), "the spec \u2164 compensation set: 57 distinct valid vein slots");
+        assertEquals(79, GT6SurfaceBlocks.INDICATOR_ROCKS.size(), "the spec \u2164 compensation set: 79 distinct valid vein slots");
         for (int i = 0; i < GT6SurfaceBlocks.INDICATOR_ROCKS.size(); i++) {
             gregapi.oredict.OreDictMaterial tMaterial = GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get();
             assertEquals("surface_rock_" + GTMaterialItems.snakeCase(tMaterial.mNameInternal),

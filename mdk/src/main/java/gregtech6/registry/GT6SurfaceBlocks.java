@@ -90,14 +90,22 @@ public final class GT6SurfaceBlocks {
 	 */
 	private static final List<IndicatorSpec> INDICATOR_SPECS = List.of(
 			new IndicatorSpec("coal",         () -> MT.Coal),                 // ore.large.lignite/.coal (the coal-arm slots)
+			new IndicatorSpec("lazurite",     () -> MT.Lazurite),             // ore.large.lapis top (worldgen-edge-ores-b1)
+			new IndicatorSpec("sodalite",     () -> MT.Sodalite),             // ore.large.lapis bottom (worldgen-edge-ores-b1)
 			new IndicatorSpec("lapis",        () -> MT.Lapis),                // ore.large.lapis between
 			new IndicatorSpec("azurite",      () -> MT.Azurite),              // ore.large.lapis spread
+			new IndicatorSpec("bauxite",      () -> MT.OREMATS.Bauxite),      // ore.large.bauxite top/bottom/between (B1: the whole-dead row)
+			new IndicatorSpec("ilmenite",     () -> MT.OREMATS.Ilmenite),     // ore.large.bauxite spread / titanium spread (B1)
+			new IndicatorSpec("iodine_salt",  () -> MT.KIO3),                 // ore.large.iodinesalt top (B1)
 			new IndicatorSpec("salt",         () -> MT.NaCl),                 // ore.large.iodinesalt bottom
 			new IndicatorSpec("borax",        () -> MT.OREMATS.Borax),        // ore.large.iodinesalt between
 			new IndicatorSpec("zeolite",      () -> MT.OREMATS.Zeolite),      // ore.large.iodinesalt spread
 			new IndicatorSpec("sylvite",      () -> MT.KCl),                  // ore.large.rocksalt top
 			new IndicatorSpec("coltan",       () -> MT.OREMATS.Coltan),       // ore.large.rocksalt bottom / manganese spread
+			new IndicatorSpec("lepidolite",   () -> MT.OREMATS.Lepidolite),   // ore.large.rocksalt between (B1)
+			new IndicatorSpec("spodumene",    () -> MT.OREMATS.Spodumene),    // ore.large.rocksalt spread (B1)
 			new IndicatorSpec("chromite",     () -> MT.OREMATS.Chromite),             // ore.large.asbestos top (a-ore-axis-extension: the stone-layer axis member)
+			new IndicatorSpec("talc",         () -> MT.Talc),                 // ore.large.asbestos bottom (B1; the Gypsum between slot stays outside the axis by the B1 ruling)
 			new IndicatorSpec("asbestos",     () -> MT.Asbestos),             // ore.large.asbestos spread
 			new IndicatorSpec("blue_sapphire", () -> MT.BlueSapphire),        // ore.large.sapphire top (b-gem-pool-extension: the gem-pool axis members)
 			new IndicatorSpec("orange_sapphire", () -> MT.OrangeSapphire),    // ore.large.sapphire bottom (r7-b)
@@ -111,19 +119,31 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("uvarovite",    () -> MT.Uvarovite),            // ore.large.garnet spread (a-ore-axis-extension)
 			new IndicatorSpec("pitchblende",  () -> MT.OREMATS.Pitchblende),  // ore.large.pitchblende top/bottom (a-ore-axis-extension)
 			new IndicatorSpec("uraninite",    () -> MT.OREMATS.Uraninite),            // ore.large.pitchblende between/spread (a-ore-axis-extension)
+			new IndicatorSpec("bastnasite",   () -> MT.OREMATS.Bastnasite),   // ore.large.monazite top/bottom (B1: the whole-dead row)
+			new IndicatorSpec("monazite",     () -> MT.Monazite),             // ore.large.monazite between (B1)
+			new IndicatorSpec("neodymium",    () -> MT.Nd),                   // ore.large.monazite spread (B1; mdh-5 interlink: the HBM atlas :2403 row)
 			new IndicatorSpec("graphite",     () -> MT.Graphite),             // ore.large.diamond top/bottom/spread
 			new IndicatorSpec("diamond",      () -> MT.Diamond),              // ore.large.diamond between
 			new IndicatorSpec("galena",       () -> MT.OREMATS.Galena),       // ore.large.galena top/bottom
-			new IndicatorSpec("silver",      () -> MT.Ag),                   // ore.large.galena between
-			new IndicatorSpec("lead",        () -> MT.Pb),                   // ore.large.galena spread
+			new IndicatorSpec("silver",      () -> MT.Ag),                    // ore.large.galena between
+			new IndicatorSpec("lead",        () -> MT.Pb),                    // ore.large.galena spread
+			new IndicatorSpec("milky_quartz", () -> MT.MilkyQuartz),          // ore.large.quartz top (B1: the whole-dead row)
+			new IndicatorSpec("barite",       () -> MT.OREMATS.Barite),       // ore.large.quartz bottom (B1)
+			new IndicatorSpec("certus_quartz", () -> MT.CertusQuartz),        // ore.large.quartz between/spread (B1)
+			new IndicatorSpec("kyanite",      () -> MT.OREMATS.Kyanite),      // ore.large.peridot top (B1)
 			new IndicatorSpec("magnesium_carbonate", () -> MT.MgCO3),        // ore.large.peridot bottom (a-ore-axis-extension)
 			new IndicatorSpec("peridot",      () -> MT.Peridot),              // ore.large.peridot between (a-ore-axis-extension)
+			new IndicatorSpec("glauconite",   () -> MT.OREMATS.Glauconite),   // ore.large.peridot spread (B1)
 			new IndicatorSpec("pyrite",       () -> MT.Pyrite),               // ore.large.gold top / copper between
 			new IndicatorSpec("chalcopyrite", () -> MT.OREMATS.Chalcopyrite), // ore.large.gold bottom / copper top
-			new IndicatorSpec("gold",        () -> MT.Au),                   // ore.large.gold spread
+			new IndicatorSpec("gold",        () -> MT.Au),                    // ore.large.gold spread
 			new IndicatorSpec("cooperite",    () -> MT.OREMATS.Cooperite),    // ore.large.platinum top
 			new IndicatorSpec("sperrylite",   () -> MT.OREMATS.Sperrylite),   // ore.large.platinum between
-			new IndicatorSpec("iridium",     () -> MT.Ir),                   // ore.large.platinum spread
+			new IndicatorSpec("iridium",     () -> MT.Ir),                    // ore.large.platinum spread
+			new IndicatorSpec("wulfenite",    () -> MT.OREMATS.Wulfenite),    // ore.large.molybdenum top (B1: the whole-dead ORE_END row)
+			new IndicatorSpec("molybdenite",  () -> MT.OREMATS.Molybdenite),  // ore.large.molybdenum bottom (B1)
+			new IndicatorSpec("molybdenum",   () -> MT.Mo),                   // ore.large.molybdenum between (B1)
+			new IndicatorSpec("powellite",    () -> MT.OREMATS.Powellite),    // ore.large.molybdenum spread (B1)
 			new IndicatorSpec("stannite",     () -> MT.OREMATS.Stannite),     // ore.large.cassiterite top (a-ore-axis-extension)
 			new IndicatorSpec("kesterite",    () -> MT.OREMATS.Kesterite),    // ore.large.cassiterite bottom (a-ore-axis-extension)
 			new IndicatorSpec("cassiterite",  () -> MT.OREMATS.Cassiterite),  // ore.large.cassiterite spread
@@ -138,16 +158,18 @@ public final class GT6SurfaceBlocks {
 			new IndicatorSpec("goshenite",    () -> MT.Goshenite),            // ore.large.beryllium2 bottom (r7-b)
 			new IndicatorSpec("heliodor",     () -> MT.Heliodor),             // ore.large.beryllium2 between (r7-b)
 			new IndicatorSpec("morganite",    () -> MT.Morganite),            // ore.large.beryllium2 spread (r7-b)
+			new IndicatorSpec("rutile",       () -> MT.TiO2),                 // ore.large.titanium top/bottom (B1: the fifth whole-dead row)
+			new IndicatorSpec("zircon",       () -> MT.Zircon),               // ore.large.titanium between (B1; mdh-5 interlink: the TROPIC atlas :2526 row)
 			new IndicatorSpec("garnierite",   () -> MT.OREMATS.Garnierite),   // ore.large.nickel top
 			new IndicatorSpec("pentlandite",  () -> MT.OREMATS.Pentlandite),  // ore.large.nickel spread
 			new IndicatorSpec("redstone",     () -> MT.Redstone),             // ore.large.redstone top/bottom
 			new IndicatorSpec("cinnabar",     () -> MT.OREMATS.Cinnabar),     // ore.large.redstone spread
-			new IndicatorSpec("copper",      () -> MT.Cu),                   // ore.large.tetrahedrite between / copper spread
+			new IndicatorSpec("copper",      () -> MT.Cu),                    // ore.large.tetrahedrite between / copper spread
 			new IndicatorSpec("stibnite",     () -> MT.OREMATS.Stibnite),     // ore.large.tetrahedrite spread
 			new IndicatorSpec("hematite",     () -> MT.Fe2O3),                // ore.large.iron between / copper bottom
 			new IndicatorSpec("malachite",    () -> MT.OREMATS.Malachite));   // ore.large.iron spread
 
-	/** The 57 indicator rock handles, INDICATOR_SPECS order (31 + 9 since a-ore-axis-extension + 17 since b-gem-pool-extension lit the dormant slots). */
+	/** The 79 indicator rock handles, INDICATOR_SPECS order (31 + 9 since a-ore-axis-extension + 17 since b-gem-pool-extension + 22 since worldgen-edge-ores-b1 lit the dormant compensation rows). */
 	public static final List<RegistryObject<Block>> INDICATOR_ROCKS = INDICATOR_SPECS.stream()
 			.map(tRow -> BLOCKS.<Block>register("surface_rock_" + tRow.snake(),
 					() -> new GT6SurfaceRockBlock(surfaceProperties(MapColor.COLOR_GRAY, SoundType.STONE), tRow.material().get())))

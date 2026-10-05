@@ -146,7 +146,7 @@ public class GT6AxisTakeoverCensusTest {
     @Test
     public void faceCounts_pinTheCensusBasis() {
         assertEquals(441, GT6ForeignMaterialAtlas.rows().size(), "atlas universe: 164 batch-1 + 277 batch-2");
-        assertEquals(122, GT6OreBlocks.materialAxis().size(), "block axis: 53 + 13 + 56");
+        assertEquals(144, GT6OreBlocks.materialAxis().size(), "block axis: 53 + 13 + 56 + 22");
         assertEquals(45, GT6BedrockOreBlocks.materialAxis().size(), "bedrock axis: 46 table rows, gold.a/b share");
         assertEquals(115, GTOreWorldgen.ROWS.size(), "54 always-on rows + 61 gem-pool rows");
         assertEquals(152, GTOreWorldgen.placementPairs().size(), "overworld 99 + nether 20 + end 33, ancientdebris gated");
@@ -156,20 +156,24 @@ public class GT6AxisTakeoverCensusTest {
     }
 
     // ------------------------------------------------------------------
-    // Face 1 ruling: the five always-on PRIMARY block-axis members.
+    // Face 1 ruling: the seven always-on PRIMARY block-axis members (five
+    // pre-B1, + Zircon/Nd since worldgen-edge-ores-b1 admitted the :898/:911
+    // vein rows to the axis).
     // ------------------------------------------------------------------
 
     @Test
-    public void blockAxis_primaryHits_areExactlyTheFiveAlwaysOnMaterials() {
+    public void blockAxis_primaryHits_areExactlyTheAlwaysOnMaterials() {
         Set<String> tHits = primaryHitsByInternalName(blockAxis().keySet());
         Set<String> tExpected = Set.of(
                 "Azurite@" + MT.MD.TROPIC.mID,      // :2527, WORLDGEN_ORES :831 row
                 "Eudialyte@" + MT.MD.TROPIC.mID,    // :2528, WORLDGEN_ORES :830 row
                 "Fluorite@" + MT.MD.RoC.mID,        // :2420, CaF2's internal name, GEM_POOL :1109 factory head
                 "Jade@" + MT.MD.ERE.mID,            // :2301, GEM_POOL inline flag :1443
-                "Dolamide@" + MT.MD.MO.mID);        // :2608, WORLDGEN_ORES :843 row
+                "Dolamide@" + MT.MD.MO.mID,         // :2608, WORLDGEN_ORES :843 row
+                "Zircon@" + MT.MD.TROPIC.mID,       // :2526, LARGE_VEIN_ORES :911 titanium between (worldgen-edge-ores-b1)
+                "Neodymium@" + MT.MD.HBM.mID);      // :2403, LARGE_VEIN_ORES :898 monazite spread (worldgen-edge-ores-b1)
         assertEquals(tExpected, tHits,
-                "block-axis PRIMARY face is exactly the five always-on materials (census verdict; a drift here reopens mdh-5)");
+                "block-axis PRIMARY face is exactly the seven always-on materials (census verdict; the B1 reopen declared, a further drift reopens mdh-5)");
     }
 
     // ------------------------------------------------------------------
@@ -186,8 +190,10 @@ public class GT6AxisTakeoverCensusTest {
     }
 
     // ------------------------------------------------------------------
-    // Face 3 ruling: the worldgen-row face mirrors the block-axis five;
-    // dolamide's row carries no vanilla dim, so the live placements are 4.
+    // Face 3 ruling: the worldgen-ROW face mirrors the block-axis five of the
+    // small-ore universe — Zircon/Nd (B1) have no small-ore rows, so the row
+    // face stays five; dolamide's row carries no vanilla dim, so the live
+    // placements are 4.
     // ------------------------------------------------------------------
 
     @Test
@@ -260,8 +266,9 @@ public class GT6AxisTakeoverCensusTest {
                 }
             }
         }
-        assertEquals(List.of("ore.large.lapis/Azurite"), tLivePrimarySlots,
-                "the lapis vein's Azurite spread slot is the one live PRIMARY slot (consumer-guarded; dead slots skip per GTVeinConfig validity)");
+        assertEquals(List.of("ore.large.lapis/Azurite", "ore.large.monazite/Neodymium", "ore.large.titanium/Zircon"),
+                tLivePrimarySlots,
+                "three live PRIMARY slots since worldgen-edge-ores-b1 (Azurite pre-existing + the B1-admitted monazite/titanium rows; consumer-guarded; dead slots skip per GTVeinConfig validity)");
 
         Set<String> tPrimaryBedrockRows = GT6WorldgenDatagen.BEDROCK_ORE_TABLE.stream()
                 .filter(b -> tPrimaryNames.contains(b.material().mNameInternal))
