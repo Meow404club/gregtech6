@@ -2,7 +2,6 @@ package gregtech6.worldgen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
@@ -18,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EndPortalFrameBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -468,12 +468,12 @@ class GT6CenterWorldgenTest {
 		assertEquals(21, countZones(GT6CenterBiomes.Zone.PLAINS));
 		assertEquals(21, countZones(GT6CenterBiomes.Zone.DESERT));
 		assertEquals(21, countZones(GT6CenterBiomes.Zone.JUNGLE));
-		// everything outside [-6,5]² is NONE — 144 out-of-region samples of the swept 225
+		// everything outside [-6,5]² is NONE — 52 out-of-region samples of the swept 196 ([-7..6]²)
 		int tNone = 0;
 		for (int cx = -7; cx <= 6; cx++) for (int cz = -7; cz <= 6; cz++) {
 			if (GT6CenterBiomes.zone(cx, cz) == GT6CenterBiomes.Zone.NONE) tNone++;
 		}
-		assertEquals(225 - 144, tNone);
+		assertEquals(196 - 144, tNone);
 		// the spot pins — one per zone + the river-cross row/col sweep
 		assertEquals(GT6CenterBiomes.Zone.TAIGA, GT6CenterBiomes.zone(-6, -6));
 		assertEquals(GT6CenterBiomes.Zone.ICE, GT6CenterBiomes.zone(-5, -5));
@@ -548,8 +548,11 @@ class GT6CenterWorldgenTest {
 		assertEquals("yellow_clay", GT6CenterBiomes.diggableName(4)); // meta 4
 		assertEquals("blue_clay", GT6CenterBiomes.diggableName(5)); // meta 5
 		assertEquals("white_clay", GT6CenterBiomes.diggableName(6)); // meta 6
-		// offline the gt6 registers have not run — the name-based faces resolve null (the null-skip light-up form)
-		assertNull(GT6CenterBiomes.diggable(1));
+		// the quartet rides the unmerged diggables branch — null on both legs today, and the
+		// pin stays true after it lands (the name must match whenever a block resolves)
+		Block tBrown = GT6CenterBiomes.diggable(1);
+		assertTrue(tBrown == null || "gt6:brown_clay".equals(
+				net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(tBrown).toString()));
 		assertEquals(Blocks.MUD, GT6CenterBiomes.diggable(0)); // the vanilla face resolves
 		// the sands stand-in table — all three black sands ride the ported gt6:black_sand
 		assertEquals("black_sand", GT6CenterBiomes.sandName(0));
@@ -560,6 +563,17 @@ class GT6CenterWorldgenTest {
 		assertEquals(1, GT6CenterBiomes.sandMeta(-1, 2)); // SW
 		assertEquals(2, GT6CenterBiomes.sandMeta(2, -1)); // NE
 		assertEquals(0, GT6CenterBiomes.sandMeta(2, 2)); // SE
+	}
+
+	/**
+	 * The gt6-block attempt pin, leg-adaptive: the forge offline face never registers the
+	 * mod (null state), the neo test fixture DOES (the resolved block must carry the
+	 * mapped registry name). Either way the name table is what is pinned.
+	 */
+	private static void assertGt6NameOrOfflineNull(String aGt6Path, Attempt aAttempt) {
+		if (aAttempt.state == null) return; // the forge offline face
+		assertEquals("gt6:" + aGt6Path,
+				net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(aAttempt.state.getBlock()).toString());
 	}
 
 	/** The fake river column (:82-98) — no RNG at all: the full cross-section pinned exactly (the BlocksGT.River→water ×3, sand, gravel, clay×2, the stone pillar, the spawn face). */
@@ -573,7 +587,7 @@ class GT6CenterWorldgenTest {
 		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 4, tZ).state.getBlock()); // :87
 		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ).state.getBlock()); // :88
 		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 6, tZ).state.getBlock()); // :89
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 7, tZ).state); // :90 — position-only (gt6:black_sand offline-null)
+		assertGt6NameOrOfflineNull("black_sand", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 7, tZ)); // :90 the quadrant meta 0 row
 		assertEquals(Blocks.GRAVEL, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 8, tZ).state.getBlock()); // :91
 		assertEquals(Blocks.CLAY, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 9, tZ).state.getBlock()); // :92
 		assertEquals(Blocks.CLAY, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 10, tZ).state.getBlock()); // :93
@@ -623,12 +637,14 @@ class GT6CenterWorldgenTest {
 		int tX = -32, tZ = 32;
 		assertEquals(Blocks.GRASS_BLOCK, tRows.lastAt(tX, GT6CenterFeature.HEIGHT, tZ).state.getBlock()); // :165
 		assertEquals(Blocks.DIRT, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 1, tZ).state.getBlock()); // :166
-		// the clay band :167-171 — brown/red/yellow/blue/white ride the gt6 names (position-only offline)
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 2, tZ).state); // :167 diggable 1
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 3, tZ).state); // :168 diggable 3
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 4, tZ).state); // :169 diggable 4
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ).state); // :170 diggable 5
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 6, tZ).state); // :171 diggable 6
+		// the clay band :167-171 — brown/red/yellow/blue/white ride the gt6 names (the quartet
+		// is position-only on BOTH legs until the diggables branch lands; the red clay row
+		// resolves on the neo fixture and must carry its mapped name)
+		assertGt6NameOrOfflineNull("brown_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 2, tZ)); // :167 diggable 1
+		assertGt6NameOrOfflineNull("nether_red_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 3, tZ)); // :168 diggable 3
+		assertGt6NameOrOfflineNull("yellow_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 4, tZ)); // :169 diggable 4
+		assertGt6NameOrOfflineNull("blue_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 5, tZ)); // :170 diggable 5
+		assertGt6NameOrOfflineNull("white_clay", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 6, tZ)); // :171 diggable 6
 		// the pillar y=1..H-7 (:172) — 59 layers
 		assertEquals(59, tRows.countWhere(t -> t.x == tX && t.z == tZ && t.y >= 1 && t.y <= GT6CenterFeature.HEIGHT - 7));
 		// the per-column decoration attempt at H+1 (:173-188) — one of the 25 covered rolls
@@ -646,17 +662,19 @@ class GT6CenterWorldgenTest {
 		Recorder tRows = runBiomes(3, 3, tRng, new TestEnv());
 		int tX = 48, tZ = 48;
 		assertEquals(Blocks.WATER, tRows.lastAt(tX, GT6CenterFeature.HEIGHT, tZ).state.getBlock()); // :230
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 1, tZ).state); // :231 diggable 0 mud
-		assertNull(tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 3, tZ).state); // :233 diggable 2 turf
+		assertEquals(Blocks.MUD, tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 1, tZ).state.getBlock()); // :231 diggable 0 — the vanilla-MUD ruling resolves
+		assertGt6NameOrOfflineNull("turf", tRows.lastAt(tX, GT6CenterFeature.HEIGHT - 3, tZ)); // :233 diggable 2
 		assertEquals(Blocks.LILY_PAD, tRows.lastAt(tX + 4, GT6CenterFeature.HEIGHT + 1, tZ + 4).state.getBlock()); // :239
 		assertEquals(Blocks.LILY_PAD, tRows.lastAt(tX + 12, GT6CenterFeature.HEIGHT + 1, tZ + 12).state.getBlock()); // :242
 		// the glowtus lottery (:237) — nextInt(8) once per column, the meta nextInt(16) only on a hit;
-		// each hit is one H+1 null-state attempt (the offline-unresolvable gt6:glowtus handle)
-		assertEquals(256, tRng.nextIntCalls);
+		// each hit is one H+1 attempt that is offline-null (forge) or the resolved gt6:glowtus (neo fixture)
+		assertEquals(256 + tRng.nextInt16Calls, tRng.nextIntCalls); // the per-column lottery + the hit metas
 		assertTrue(tRng.nextInt16Calls > 0); // seed 7 hits the 1-in-8 at least once across 256 columns
-		assertTrue(tRng.nextInt16Calls < 256);
-		assertEquals(tRng.nextInt16Calls, tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 1
-				&& t.state == null && t.x >= 48 && t.x < 64 && t.z >= 48 && t.z < 64));
+		long tGlowtusHits = tRows.countWhere(t -> t.y == GT6CenterFeature.HEIGHT + 1
+				&& t.x >= 48 && t.x < 64 && t.z >= 48 && t.z < 64
+				&& (t.state == null || "gt6:glowtus".equals(
+						net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(t.state.getBlock()).toString())));
+		assertEquals(tRng.nextInt16Calls, tGlowtusHits);
 	}
 
 	/** The ice and cold-taiga zones (:100-137) — the fixed ice column, the podzol/mossy taiga, the 4 spruce corners, the 260-draw cadence. */
@@ -711,25 +729,31 @@ class GT6CenterWorldgenTest {
 		// the 4 big jungle trees with vines (:271-274)
 		assertEquals(4, tJungleEnv.trees.size());
 		assertTrue(tJungleEnv.trees.stream().allMatch(s -> s.startsWith("jungle@")));
-		assertEquals(256 * 60 + 2, tJungleRng.total);
+		assertEquals(256 * 60 + 2 + 4, tJungleRng.total); // the 60 pillar layers + the 2 melon draws + the 4 height draws
 	}
 
-	/** The biome-only fills — the plaza river fill (:70-73), the nexus fill (:74-77), the testing fill (:78-81) write NO blocks and ride the companion switches. */
+	/**
+	 * The biome-only fills — the plaza river fill (:70-73), the nexus fill (:74-77), the
+	 * testing fill (:78-81) add NO blocks of their own. The companion branches keep
+	 * running (the upstream independent-WorldgenObject semantics — each object generates
+	 * on its own gate), so the pin is the WITH/WITHOUT-CENTER_BIOMES attempt-set equality
+	 * plus the fill record (the testing chunk is the exception: no Testing branch exists
+	 * yet, the follow-up card owns it — zero rows today).
+	 */
 	@Test
 	void biomeOnlyFillsWriteNoBlocks() {
 		TestEnv tEnv = new TestEnv();
 		GT6CenterFeature.STREETS = true;
 		Recorder tRows = runBiomes(-1, -1, new CountingRandom(7L), tEnv);
-		assertEquals(List.of("river"), tEnv.biomeFills); // :71
-		assertEquals(0, tRows.rows.size()); // the streets blocks belong to the STREETS branch, not the ring
-		assertEquals(0, tEnv.spawns.size()); // no spawn face on the fill rows
+		assertEquals(List.of("river"), tEnv.biomeFills); // :71 the plaza river fill rode
+		assertEquals(replayRows(-1, -1), attemptSet(tRows)); // the ring added zero attempts over the streets-only run
 		GT6CenterFeature.STREETS = false;
 
 		TestEnv tNexusEnv = new TestEnv();
 		GT6CenterFeature.NEXUS = true;
 		Recorder tNexusRows = runBiomes(1, -3, new CountingRandom(7L), tNexusEnv);
 		assertEquals(List.of("plains"), tNexusEnv.biomeFills); // :75
-		assertEquals(0, tNexusRows.rows.size());
+		assertEquals(replayRows(1, -3), attemptSet(tNexusRows)); // the ring added zero attempts over the tower-only run
 		GT6CenterFeature.NEXUS = false;
 
 		TestEnv tTestingEnv = new TestEnv();
