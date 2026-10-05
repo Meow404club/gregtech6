@@ -6,10 +6,12 @@ import java.util.Random;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
@@ -17,6 +19,7 @@ import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.ore.GTBedrockOreBlock;
 import gregtech6.registry.GT6BedrockOreBlocks;
 import gregtech6.registry.GT6OreBlocks;
+import gregtech6.registry.GT6SurfaceBlocks;
 
 /**
  * The bedrock-ore Feature (task bedrock-ore-worldgen spec ②) — the per-chunk adapter
@@ -48,6 +51,12 @@ import gregtech6.registry.GT6OreBlocks;
  * (WorldgenOresBedrock.java:196 "Use Deepslate if available, except in the Nether"; the
  * netherrack host resolves its own ore family, GT6OreBlocks FAMILIES).
  *
+ * <p><b>The indicator flowers</b> (task worldgen-flower-arm): every hit row with a flower
+ * column runs {@link GT6BedrockOreGenerator#generateFlowers} right after its vein on the
+ * same stream (:141-178 order), and the {@code flower} sink callback below does the
+ * surface column scan (y 140..62) + place/canSurvive/retract — the findability arm of
+ * WorldgenOresBedrock.java:147-179. The rocks arm (MTE 32757) stays the declared OUT.
+ *
  * <p>KJS face (card declaration): the 46-row table is datapack JSON (the configured-feature
  * config); this class is the registry face, out of KJS scope (GT6Features javadoc clause).
  */
@@ -75,9 +84,13 @@ public class GT6BedrockOreFeature extends Feature<GTBedrockOreConfig.Table> {
         GT6BedrockOreGenerator.BedrockSink tSink = levelSink(tLevel, tHosts, tFloor, tShell);
         boolean rPlaced = false;
         for (GTBedrockOreConfig tRow : tHits) {
-            rPlaced |= GT6BedrockOreGenerator.generateVein(tRow, tRandom, tWork.getMinBlockX(), tWork.getMinBlockZ(),
+            boolean tVein = GT6BedrockOreGenerator.generateVein(tRow, tRandom, tWork.getMinBlockX(), tWork.getMinBlockZ(),
                     tLevel.getMinBuildHeight(),
                     tNether ? GT6BedrockOreGenerator.NETHER_TAIL_TOP_Y : GT6BedrockOreGenerator.TAIL_TOP_Y, tSink);
+            if (tVein) { // :143 — the indicator loop only runs after a placed vein (:141-178 order)
+                GT6BedrockOreGenerator.generateFlowers(tRow, tRandom, tWork.getMinBlockX(), tWork.getMinBlockZ(), tSink);
+            }
+            rPlaced |= tVein;
         }
         return rPlaced;
     }
@@ -112,7 +125,51 @@ public class GT6BedrockOreFeature extends Feature<GTBedrockOreConfig.Table> {
                 if (tHandle == null) return;
                 aLevel.setBlock(tPos, tHandle.get().defaultBlockState(), 2);
             }
+
+            /**
+             * The indicator-flower column scan (task worldgen-flower-arm; the live face of
+             * WorldgenOresBedrock.java:157-172). Walk y 140 down to 63 (:157, the
+             * {@link GT6BedrockOreGenerator#FLOWER_MIN_Y}/{@link #FLOWER_MAX_Y} window):
+             * liquid/farmland gives up (:159), non-opaque/wood/leaves scans lower (:160),
+             * a non-easyReplaceable block above gives up (:161), then the flower tries on
+             * any non-dirt contact (:162 — the rocks arm is the declared cut, so no
+             * nextInt(4) draw): place, keep it when {@code canSurvive} (:164, the
+             * canBlockStay face — A-group dirt/grass vs B-group sand soils via the
+             * GT6FlowerBlock split), retract to air otherwise (:165).
+             */
+            @Override
+            public void flower(int aX, int aZ, String aFlower) {
+                Block tFlower = flowerBlock(aFlower);
+                if (tFlower == null) return; // the unknown-id posture (the MT.NULL row face)
+                BlockState tFlowerState = tFlower.defaultBlockState();
+                for (int tY = GT6BedrockOreGenerator.FLOWER_MAX_Y; tY > GT6BedrockOreGenerator.FLOWER_MIN_Y; tY--) {
+                    BlockPos tPos = new BlockPos(aX, tY, aZ);
+                    BlockState tContact = aLevel.getBlockState(tPos);
+                    if (!tContact.getFluidState().isEmpty() || tContact.is(Blocks.FARMLAND)) break; // :159
+                    if (!tContact.isSolidRender(aLevel, tPos) || tContact.is(BlockTags.LOGS)
+                            || tContact.is(BlockTags.LEAVES)) continue; // :160
+                    BlockPos tAbove = tPos.above();
+                    BlockState tOver = aLevel.getBlockState(tAbove);
+                    // :161 WD.easyRep — air/replaceable (snow layer, plants) + the leaves face
+                    if (!tOver.isAir() && !tOver.canBeReplaced() && !tOver.is(BlockTags.LEAVES)
+                            && !tOver.is(BlockTags.FLOWERS)) break;
+                    if (!tContact.is(Blocks.DIRT)) { // :162 — flowers always try, the declared density deviation
+                        aLevel.setBlock(tAbove, tFlowerState, 2); // :163
+                        if (tFlowerState.canSurvive(aLevel, tAbove)) break; // :164
+                        aLevel.setBlock(tAbove, Blocks.AIR.defaultBlockState(), 2); // :165 the retract face
+                    }
+                    break; // :171
+                }
+            }
         };
+    }
+
+    /** The registered flower block of a GT6SurfaceBlocks.FLOWER_SPECS snake id, or null (the invalid-slot posture). */
+    private static Block flowerBlock(String aFlower) {
+        for (int i = 0; i < GT6SurfaceBlocks.FLOWER_SPECS.size(); i++) {
+            if (GT6SurfaceBlocks.FLOWER_SPECS.get(i).snake().equals(aFlower)) return GT6SurfaceBlocks.FLOWERS.get(i).get();
+        }
+        return null;
     }
 
     /** The registered bedrock block of a (material, form) pair, or null (the invalid-row posture). */

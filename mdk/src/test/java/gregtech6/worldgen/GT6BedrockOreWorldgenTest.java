@@ -83,54 +83,58 @@ class GT6BedrockOreWorldgenTest {
         List<GTBedrockOreConfig> tTable = GT6WorldgenDatagen.BEDROCK_ORE_TABLE;
         assertEquals(46, tTable.size(), "46 port rows (47 upstream minus the MD.HEX hexorium row)");
 
-        // (name, P, material, overworld) — the upstream ctor columns verbatim, in row order
+        // (name, P, material, overworld, flower) — the upstream ctor columns verbatim, in row
+        // order (task worldgen-flower-arm: the :725-757 flower columns — FlowersA meta m =
+        // GT6SurfaceBlocks.FLOWER_SPECS[m], FlowersB meta m = FLOWER_SPECS[10+m]; the
+        // offworld rows :758-770 carry no flower). The generic rows = the upstream
+        // "TODO X Flower" comments (:741-756), all riding meta 7 = the Orechid.
         Object[][] tExpected = {
-            {"ore.bedrock.diamond", 128000, MT.Diamond, true},
-            {"ore.bedrock.tungstate", 96000, MT.OREMATS.Tungstate, true},
-            {"ore.bedrock.ferberite", 96000, MT.OREMATS.Ferberite, true},
-            {"ore.bedrock.wolframite", 96000, MT.OREMATS.Wolframite, true},
-            {"ore.bedrock.stolzite", 96000, MT.OREMATS.Stolzite, true},
-            {"ore.bedrock.scheelite", 96000, MT.OREMATS.Scheelite, true},
-            {"ore.bedrock.huebnerite", 96000, MT.OREMATS.Huebnerite, true},
-            {"ore.bedrock.russellite", 96000, MT.OREMATS.Russellite, true},
-            {"ore.bedrock.pinalite", 96000, MT.OREMATS.Pinalite, true},
-            {"ore.bedrock.uraninite", 60000, MT.OREMATS.Uraninite, true},
-            {"ore.bedrock.pitchblende", 60000, MT.OREMATS.Pitchblende, true},
-            {"ore.bedrock.gold.a", 32000, MT.Au, true},
-            {"ore.bedrock.gold.b", 32000, MT.Au, true},
-            {"ore.bedrock.cooperite", 16000, MT.OREMATS.Cooperite, true},
-            {"ore.bedrock.copper", 16000, MT.Cu, true},
-            {"ore.bedrock.monazite", 16000, MT.Monazite, true},
-            {"ore.bedrock.powellite", 14000, MT.OREMATS.Powellite, true},
-            {"ore.bedrock.bastnasite", 8000, MT.OREMATS.Bastnasite, true},
-            {"ore.bedrock.stibnite", 8000, MT.OREMATS.Arsenopyrite, true},
-            {"ore.bedrock.redstone", 7000, MT.Redstone, true},
-            {"ore.bedrock.vanadium", 6000, MT.V2O5, true},
-            {"ore.bedrock.galena", 6000, MT.OREMATS.Galena, true},
-            {"ore.bedrock.coal", 5000, MT.Coal, true},
-            {"ore.bedrock.graphite", 5000, MT.Graphite, true},
-            {"ore.bedrock.stibnite", 4000, MT.OREMATS.Stibnite, true},
-            {"ore.bedrock.hematite", 4000, MT.Fe2O3, true},
-            {"ore.bedrock.sphalerite", 3000, MT.OREMATS.Sphalerite, true},
-            {"ore.bedrock.smithsonite", 3000, MT.OREMATS.Smithsonite, true},
-            {"ore.bedrock.pentlandite", 3000, MT.OREMATS.Pentlandite, true},
-            {"ore.bedrock.saltpeter", 3000, MT.Niter, true},
-            {"ore.bedrock.bauxite", 2000, MT.OREMATS.Bauxite, true},
-            {"ore.bedrock.cassiterite", 2000, MT.OREMATS.Cassiterite, true},
-            {"ore.bedrock.chalcopyrite", 2000, MT.OREMATS.Chalcopyrite, true},
-            {"ore.bedrock.voidquartz", 4000, MT.VoidQuartz, false},
-            {"ore.bedrock.glowstone", 4000, MT.Glowstone, false},
-            {"ore.bedrock.gloomstone", 4000, MT.Gloomstone, false},
-            {"ore.bedrock.efrine", 2000, MT.Efrine, false},
-            {"ore.bedrock.netherquartz", 2000, MT.NetherQuartz, false},
-            {"ore.bedrock.firestone", 8000, MT.Firestone, false},
-            {"ore.bedrock.ancientdebris", 4000, MT.AncientDebris, false},
-            {"ore.bedrock.naquadah", 10000, MT.Nq, false},
-            {"ore.bedrock.desh", 2000, MT.Desh, false},
-            {"ore.bedrock.dolamide", 5000, MT.Dolamide, false},
-            {"ore.bedrock.adamantine", 10000, MT.Adamantine, false},
-            {"ore.bedrock.octine", 5000, MT.Octine, false},
-            {"ore.bedrock.syrmorite", 2000, MT.Syrmorite, false}};
+            {"ore.bedrock.diamond", 128000, MT.Diamond, true, "flower_pandanus_candelabrum"},
+            {"ore.bedrock.tungstate", 96000, MT.OREMATS.Tungstate, true, "flower_tungstus"},
+            {"ore.bedrock.ferberite", 96000, MT.OREMATS.Ferberite, true, "flower_tungstus"},
+            {"ore.bedrock.wolframite", 96000, MT.OREMATS.Wolframite, true, "flower_tungstus"},
+            {"ore.bedrock.stolzite", 96000, MT.OREMATS.Stolzite, true, "flower_tungstus"},
+            {"ore.bedrock.scheelite", 96000, MT.OREMATS.Scheelite, true, "flower_tungstus"},
+            {"ore.bedrock.huebnerite", 96000, MT.OREMATS.Huebnerite, true, "flower_tungstus"},
+            {"ore.bedrock.russellite", 96000, MT.OREMATS.Russellite, true, "flower_tungstus"},
+            {"ore.bedrock.pinalite", 96000, MT.OREMATS.Pinalite, true, "flower_tungstus"},
+            {"ore.bedrock.uraninite", 60000, MT.OREMATS.Uraninite, true, "flower_tufted_evening_primrose"},
+            {"ore.bedrock.pitchblende", 60000, MT.OREMATS.Pitchblende, true, "flower_thompsons_locoweed"},
+            {"ore.bedrock.gold.a", 32000, MT.Au, true, "flower_altered_andesite_buckwheat"},
+            {"ore.bedrock.gold.b", 32000, MT.Au, true, "flower_desert_trumpet"},
+            {"ore.bedrock.cooperite", 16000, MT.OREMATS.Cooperite, true, "flower_narcissus_sheldonia"},
+            {"ore.bedrock.copper", 16000, MT.Cu, true, "flower_copper_plant"},
+            {"ore.bedrock.monazite", 16000, MT.Monazite, true, "flower_vindicator_flower"},
+            {"ore.bedrock.powellite", 14000, MT.OREMATS.Powellite, true, "flower_orechid"},
+            {"ore.bedrock.bastnasite", 8000, MT.OREMATS.Bastnasite, true, "flower_vindicator_flower"},
+            {"ore.bedrock.stibnite", 8000, MT.OREMATS.Arsenopyrite, true, "flower_sagebrush"},
+            {"ore.bedrock.redstone", 7000, MT.Redstone, true, "flower_princes_plume"},
+            {"ore.bedrock.vanadium", 6000, MT.V2O5, true, "flower_orechid"},
+            {"ore.bedrock.galena", 6000, MT.OREMATS.Galena, true, "flower_crosby_buckwheat"},
+            {"ore.bedrock.coal", 5000, MT.Coal, true, "flower_orechid"},
+            {"ore.bedrock.graphite", 5000, MT.Graphite, true, "flower_orechid"},
+            {"ore.bedrock.stibnite", 4000, MT.OREMATS.Stibnite, true, "flower_four_wing_saltbush"},
+            {"ore.bedrock.hematite", 4000, MT.Fe2O3, true, "flower_orechid"},
+            {"ore.bedrock.sphalerite", 3000, MT.OREMATS.Sphalerite, true, "flower_viola_calaminaria"},
+            {"ore.bedrock.smithsonite", 3000, MT.OREMATS.Smithsonite, true, "flower_viola_calaminaria"},
+            {"ore.bedrock.pentlandite", 3000, MT.OREMATS.Pentlandite, true, "flower_thlaspi_lereschianum"},
+            {"ore.bedrock.saltpeter", 3000, MT.Niter, true, "flower_orechid"},
+            {"ore.bedrock.bauxite", 2000, MT.OREMATS.Bauxite, true, "flower_orechid"},
+            {"ore.bedrock.cassiterite", 2000, MT.OREMATS.Cassiterite, true, "flower_orechid"},
+            {"ore.bedrock.chalcopyrite", 2000, MT.OREMATS.Chalcopyrite, true, "flower_alpine_catchfly"},
+            {"ore.bedrock.voidquartz", 4000, MT.VoidQuartz, false, ""},
+            {"ore.bedrock.glowstone", 4000, MT.Glowstone, false, ""},
+            {"ore.bedrock.gloomstone", 4000, MT.Gloomstone, false, ""},
+            {"ore.bedrock.efrine", 2000, MT.Efrine, false, ""},
+            {"ore.bedrock.netherquartz", 2000, MT.NetherQuartz, false, ""},
+            {"ore.bedrock.firestone", 8000, MT.Firestone, false, ""},
+            {"ore.bedrock.ancientdebris", 4000, MT.AncientDebris, false, ""},
+            {"ore.bedrock.naquadah", 10000, MT.Nq, false, ""},
+            {"ore.bedrock.desh", 2000, MT.Desh, false, ""},
+            {"ore.bedrock.dolamide", 5000, MT.Dolamide, false, ""},
+            {"ore.bedrock.adamantine", 10000, MT.Adamantine, false, ""},
+            {"ore.bedrock.octine", 5000, MT.Octine, false, ""},
+            {"ore.bedrock.syrmorite", 2000, MT.Syrmorite, false, ""}};
         assertEquals(tTable.size(), tExpected.length);
         for (int i = 0; i < tExpected.length; i++) {
             GTBedrockOreConfig tRow = tTable.get(i);
@@ -138,6 +142,7 @@ class GT6BedrockOreWorldgenTest {
             assertEquals(tExpected[i][1], tRow.probability(), "row " + i + " probability (the 1/P per-chunk roll)");
             assertEquals(tExpected[i][2], tRow.material(), "row " + i + " material identity");
             assertEquals(tExpected[i][3], tRow.overworld(), "row " + i + " dimension mask");
+            assertEquals(tExpected[i][4], tRow.flower(), "row " + i + " indicator-flower column (:725-757)");
         }
         // the overworld roll mass: sum of 1/P over the 33 GEN_FLOOR rows — the ~0.5%/chunk
         // face behind the RCON "~28 脉/4096 chunk" order of magnitude (20.5 expected)
@@ -250,6 +255,55 @@ class GT6BedrockOreWorldgenTest {
         assertEquals(tA.ores, tB.ores);
     }
 
+    // ---------------------------------------------------------------- the indicator-flower arm
+
+    /**
+     * The ring geometry + stream order (task worldgen-flower-arm): the window constants
+     * (:152-153), the 4/8/16 ring = 28 attempts (:154-155), the verbatim position formula
+     * (:156), and the arm continuing the SAME stream right after the row's vein (the
+     * upstream generate() call order :141-178). The formula replay also pins the density
+     * declaration face: exactly TWO draws per attempt (x + z) — the rocks-competition
+     * nextInt(4) (:162) is the declared cut, one extra draw would shift the replay.
+     */
+    @Test
+    void indicatorRingPinsGeometryAndStreamOrder() {
+        assertEquals(62, GT6BedrockOreGenerator.FLOWER_MIN_Y, "tMinHeight = min(getHeight()-2, waterLevel-1) (:152)");
+        assertEquals(140, GT6BedrockOreGenerator.FLOWER_MAX_Y, "tMaxHeight = min(getHeight()-1, tMin*2+16) (:153)");
+
+        GTBedrockOreConfig tRow = new GTBedrockOreConfig("ring", MT.Coal, 1, true, false, "flower_orechid");
+        RecordingSink tSink = new RecordingSink();
+        Random tRandom = new Random(SEED);
+        assertTrue(GT6BedrockOreGenerator.generateVein(tRow, tRandom, 100, 100, -64, tSink), "the vein places first");
+        GT6BedrockOreGenerator.generateFlowers(tRow, tRandom, 100, 100, tSink);
+        assertEquals(28, tSink.flowers.size(), "4+8+16 = 28 ring attempts (:154-155)");
+
+        // the replay: an equal stream runs the identical vein, then the verbatim ring formula
+        Random tReplay = new Random(SEED);
+        GT6BedrockOreGenerator.generateVein(tRow, tReplay, 100, 100, -64, new RecordingSink());
+        int tAttempt = 0;
+        for (int tD = 4; tD <= 16; tD *= 2) for (int i = 0; i < tD; i++) {
+            int tX = 100 + tReplay.nextInt(tD * 2) + 8 - tD, tZ = 100 + tReplay.nextInt(tD * 2) + 8 - tD; // :156
+            assertEquals(new FlowerPos(tX, tZ, "flower_orechid"), tSink.flowers.get(tAttempt),
+                    "ring attempt " + tAttempt + " must replay the :156 formula on the post-vein stream");
+            // the ring band: 4 in the 8x8 center, 8 over the chunk, 16 spilling +-8 out (:154)
+            int tLo = 8 - tD, tHi = 8 + tD;
+            assertTrue(tSink.flowers.get(tAttempt).x() - 100 >= tLo && tSink.flowers.get(tAttempt).x() - 100 < tHi);
+            assertTrue(tSink.flowers.get(tAttempt).z() - 100 >= tLo && tSink.flowers.get(tAttempt).z() - 100 < tHi);
+            tAttempt++;
+        }
+    }
+
+    /** A flowerless row (the offworld face) must not touch the stream nor the sink. */
+    @Test
+    void flowerlessRowsDrawNothing() {
+        RecordingSink tSink = new RecordingSink();
+        Random tRandom = new Random(SEED);
+        GT6BedrockOreGenerator.generateFlowers(new GTBedrockOreConfig("off", MT.Desh, 1, false), tRandom, 0, 0, tSink);
+        assertTrue(tSink.flowers.isEmpty(), "no flower column = no ring, no calls");
+        assertEquals(new Random(SEED).nextInt(1000), tRandom.nextInt(1000),
+                "a flowerless row must leave the stream position untouched");
+    }
+
     // ---------------------------------------------------------------- the fixed-seed projection
 
     /**
@@ -318,16 +372,16 @@ class GT6BedrockOreWorldgenTest {
     @Test
     void netherDrawWalksOnlyTheNetherRows() {
         GTBedrockOreConfig.Table tTable = new GTBedrockOreConfig.Table(List.of(
-                new GTBedrockOreConfig("n", MT.Coal, 1, false, true),   // the :758-764 posture
-                new GTBedrockOreConfig("ow", MT.Graphite, 1, true, false),
-                new GTBedrockOreConfig("off", MT.Desh, 1, false, false))); // the :765-770 census-only posture
+                new GTBedrockOreConfig("n", MT.Coal, 1, false, true, ""),   // the :758-764 posture
+                new GTBedrockOreConfig("ow", MT.Graphite, 1, true, false, ""),
+                new GTBedrockOreConfig("off", MT.Desh, 1, false, false, ""))); // the :765-770 census-only posture
         assertEquals(List.of("n"), GT6BedrockOreGenerator.drawRows(tTable, new Random(SEED), true).stream()
                 .map(GTBedrockOreConfig::name).toList(), "the nether roll walks the nether rows only");
         assertEquals(List.of("ow"), GT6BedrockOreGenerator.drawRows(tTable, new Random(SEED), false).stream()
                 .map(GTBedrockOreConfig::name).toList(), "the overworld roll walks the GEN_FLOOR rows only");
         // the dormant rows roll in NEITHER dimension
         assertTrue(GT6BedrockOreGenerator.drawRows(new GTBedrockOreConfig.Table(List.of(
-                new GTBedrockOreConfig("off", MT.Desh, 1, false, false))), new Random(SEED), true).isEmpty(),
+                new GTBedrockOreConfig("off", MT.Desh, 1, false, false, ""))), new Random(SEED), true).isEmpty(),
                 "the census-only mars/BL rows never roll");
     }
 
@@ -337,7 +391,7 @@ class GT6BedrockOreWorldgenTest {
      */
     @Test
     void netherVeinRidesTheNetherFloorAndWaterLine() {
-        GTBedrockOreConfig tRow = new GTBedrockOreConfig("nether.shape", MT.Coal, 1, false, true);
+        GTBedrockOreConfig tRow = new GTBedrockOreConfig("nether.shape", MT.Coal, 1, false, true, "");
         RecordingSink tSink = new RecordingSink();
         assertTrue(GT6BedrockOreGenerator.generateVein(tRow, new Random(SEED), 0, 0, 0,
                 GT6BedrockOreGenerator.NETHER_TAIL_TOP_Y, tSink), "an all-bedrock nether chunk passes the :185 gate");
@@ -359,12 +413,16 @@ class GT6BedrockOreWorldgenTest {
 
     private record Pos(int x, int y, int z, boolean small) {}
 
+    /** One indicator-flower attempt: the spot and the row's flower (the sink-call record). */
+    private record FlowerPos(int x, int z, String flower) {}
+
     /** The offline sink: records every placement (the pure-math calls, no level face). */
     private static final class RecordingSink implements BedrockSink {
         boolean bedrockFace = true;
         final List<Pos> bedrockOres = new ArrayList<>();
         final List<Pos> shells = new ArrayList<>();
         final List<Pos> ores = new ArrayList<>();
+        final List<FlowerPos> flowers = new ArrayList<>();
 
         @Override public boolean isBedrockFace(int aX, int aZ) { return bedrockFace; }
         @Override public void bedrockOre(int aX, int aY, int aZ, OreDictMaterial aM, boolean aSmall) {
@@ -374,5 +432,6 @@ class GT6BedrockOreWorldgenTest {
         @Override public void ore(int aX, int aY, int aZ, OreDictMaterial aM, boolean aSmall) {
             ores.add(new Pos(aX, aY, aZ, aSmall));
         }
+        @Override public void flower(int aX, int aZ, String aFlower) { flowers.add(new FlowerPos(aX, aZ, aFlower)); }
     }
 }

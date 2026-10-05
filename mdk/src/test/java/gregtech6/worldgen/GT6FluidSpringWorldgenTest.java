@@ -225,7 +225,7 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
                 "the :789-796 rows never roll");
         // the ore replay: a nether-active ore row claims in the nether only
         GTBedrockOreConfig.Table tOreTable = new GTBedrockOreConfig.Table(List.of(
-                new GTBedrockOreConfig("ore.bedrock.glowstone", gregapi.data.MT.Glowstone, 1, false, true)));
+                new GTBedrockOreConfig("ore.bedrock.glowstone", gregapi.data.MT.Glowstone, 1, false, true, "")));
         assertTrue(GT6FluidSpringGenerator.oreClaims(tOreTable, new Random(0), true),
                 "the nether-active ore row claims the nether chunk");
         assertFalse(GT6FluidSpringGenerator.oreClaims(tOreTable, new Random(0), false),

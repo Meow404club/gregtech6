@@ -31,20 +31,26 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * mNameInternal strings, an unknown name decodes to MT.NULL (mID <= 0) = upstream's own
  * invalid-slot semantics (WorldgenOresBedrock.java:111-113).
  *
- * <p>Declared deviation (the spec ①-④ scope): the indicator arm (rocks MTE 32757 +
- * BlocksGT.FlowersA/B, WorldgenOresBedrock.java:147-177) is NOT ported — every row is
- * mIndicatorRocks=T upstream so the column would be constant, the flowers universe is not
- * ported, and the surface-rock channel carries only the 31 vein materials (the fallback
- * face would mislabel the other 14). The findability face returns with the flowers/surface
- * cards; ponytail: the arm is ~25 lines reusing the GT6VeinGenerator.SliceSink probe shape
- * when it does.
+ * <p>The flower slot is the optional indicator-flower column (task worldgen-flower-arm;
+ * WorldgenOresBedrock.java:69 the {@code aFlower}/{@code aFlowerMeta} ctor pair): the JSON
+ * carries the GT6SurfaceBlocks.FLOWER_SPECS snake id (the port's one-id-per-meta flower
+ * form — FlowersA meta m = spec m, FlowersB meta m = spec 10+m), "" = the upstream NB
+ * slot (the offworld rows :758-770 and the hexorium row's absence). The arm itself:
+ * {@link GT6BedrockOreGenerator#generateFlowers} (the ring math) + the
+ * {@link GT6BedrockOreFeature} live scan (the block lookup + canSurvive). DECLARED
+ * DEVIATIONS: the indicator ROCKS arm (MTE 32757) stays out — the surface-rock channel
+ * carries only the 31 vein materials, the other 14 would mislabel (the prior javadoc's
+ * established deferral); the flowers therefore always try first (the upstream
+ * {@code !tRocks} branch, :162 — no nextInt(4) draw consumed), density marginally above
+ * upstream; the wasteland (:150, CS.java:293) and streets (:147) exclusions are dead
+ * clauses in the port (no GT biomes/streets) — CUT.
  */
 public record GTBedrockOreConfig(String name, OreDictMaterial material, int probability, boolean overworld,
-        boolean nether) implements FeatureConfiguration {
+        boolean nether, String flower) implements FeatureConfiguration {
 
-    /** The legacy 4-arg face (the pre-nether call sites) — nether=false, the :765-770 posture. */
+    /** The legacy 4-arg face (the pre-nether/pre-flower call sites) — nether=false, "" flower, the :765-770 posture. */
     public GTBedrockOreConfig(String aName, OreDictMaterial aMaterial, int aProbability, boolean aOverworld) {
-        this(aName, aMaterial, aProbability, aOverworld, false);
+        this(aName, aMaterial, aProbability, aOverworld, false, "");
     }
 
     /** The full-registry name codec — unknown names decode to MT.NULL (the upstream invalid slot). */
@@ -56,7 +62,8 @@ public record GTBedrockOreConfig(String name, OreDictMaterial material, int prob
             MATERIAL_CODEC.fieldOf("ore").forGetter(GTBedrockOreConfig::material),
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("probability").forGetter(GTBedrockOreConfig::probability),
             Codec.BOOL.fieldOf("overworld").forGetter(GTBedrockOreConfig::overworld),
-            Codec.BOOL.optionalFieldOf("nether", false).forGetter(GTBedrockOreConfig::nether))
+            Codec.BOOL.optionalFieldOf("nether", false).forGetter(GTBedrockOreConfig::nether),
+            Codec.STRING.optionalFieldOf("flower", "").forGetter(GTBedrockOreConfig::flower))
             .apply(aFields, GTBedrockOreConfig::new));
 
     /**

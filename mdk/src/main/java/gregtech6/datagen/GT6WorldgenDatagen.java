@@ -1868,56 +1868,68 @@ public final class GT6WorldgenDatagen {
     // (GT6ForeignMaterialAtlas) takeover candidate.
     // ------------------------------------------------------------------
 
-    /** The row helper: an overworld (GEN_FLOOR) row. */
-    private static GTBedrockOreConfig bedrock(String aName, int aProbability, OreDictMaterial aMaterial) {
-        return new GTBedrockOreConfig(aName, aMaterial, aProbability, true);
+    /**
+     * The row helper: an overworld (GEN_FLOOR) row with its indicator flower (task
+     * worldgen-flower-arm) — {@code aFlowerSpec} is the GT6SurfaceBlocks.FLOWER_SPECS index
+     * (upstream FlowersA meta m = spec m, FlowersB meta m = {@link #specB} m), resolved
+     * here so the JSON always carries a REGISTERED flower id (Loader_Worldgen :725-757).
+     */
+    private static GTBedrockOreConfig bedrock(String aName, int aProbability, OreDictMaterial aMaterial, int aFlowerSpec) {
+        return new GTBedrockOreConfig(aName, aMaterial, aProbability, true, false, GT6SurfaceBlocks.FLOWER_SPECS.get(aFlowerSpec).snake());
+    }
+
+    /** The FlowersB meta m = FLOWER_SPECS[10+m] (the A group is the identity, no helper). */
+    private static int specB(int aMeta) {
+        return 10 + aMeta;
     }
 
     /** The row helper for the offworld census rows (:765-770 mars/BL — no dim card hangs their modifiers yet). */
     private static GTBedrockOreConfig bedrockOffworld(String aName, int aProbability, OreDictMaterial aMaterial) {
-        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false, false);
+        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false, false, "");
     }
 
     /** The row helper for the GEN_NETHER rows (:758-764, task worldgen-nether-bedrock-lava). */
     private static GTBedrockOreConfig bedrockNether(String aName, int aProbability, OreDictMaterial aMaterial) {
-        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false, true);
+        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false, true, "");
     }
 
-    /** The ONE 46-row bedrock-ore table — the card spec ② "上游行表→Feature 形". */
+    /** The ONE 46-row bedrock-ore table — the card spec ② "上游行表→Feature 形", plus the
+     * indicator-flower columns (task worldgen-flower-arm, Loader_Worldgen.java:725-757:
+     * the last ctor pair, A meta direct / B meta via specB). */
     public static final List<GTBedrockOreConfig> BEDROCK_ORE_TABLE = List.of(
-        bedrock("ore.bedrock.diamond"     , 128000, MT.Diamond                    ), // :725
-        bedrock("ore.bedrock.tungstate"   ,  96000, MT.OREMATS.Tungstate          ), // :726
-        bedrock("ore.bedrock.ferberite"   ,  96000, MT.OREMATS.Ferberite          ), // :727
-        bedrock("ore.bedrock.wolframite"  ,  96000, MT.OREMATS.Wolframite         ), // :728
-        bedrock("ore.bedrock.stolzite"    ,  96000, MT.OREMATS.Stolzite           ), // :729
-        bedrock("ore.bedrock.scheelite"   ,  96000, MT.OREMATS.Scheelite          ), // :730
-        bedrock("ore.bedrock.huebnerite"  ,  96000, MT.OREMATS.Huebnerite         ), // :731
-        bedrock("ore.bedrock.russellite"  ,  96000, MT.OREMATS.Russellite         ), // :732
-        bedrock("ore.bedrock.pinalite"    ,  96000, MT.OREMATS.Pinalite           ), // :733
-        bedrock("ore.bedrock.uraninite"   ,  60000, MT.OREMATS.Uraninite          ), // :734
-        bedrock("ore.bedrock.pitchblende" ,  60000, MT.OREMATS.Pitchblende        ), // :735
-        bedrock("ore.bedrock.gold.a"      ,  32000, MT.Au                         ), // :736
-        bedrock("ore.bedrock.gold.b"      ,  32000, MT.Au                         ), // :737
-        bedrock("ore.bedrock.cooperite"   ,  16000, MT.OREMATS.Cooperite          ), // :738
-        bedrock("ore.bedrock.copper"      ,  16000, MT.Cu                         ), // :739
-        bedrock("ore.bedrock.monazite"    ,  16000, MT.Monazite                   ), // :740
-        bedrock("ore.bedrock.powellite"   ,  14000, MT.OREMATS.Powellite          ), // :741
-        bedrock("ore.bedrock.bastnasite"  ,   8000, MT.OREMATS.Bastnasite         ), // :742
-        bedrock("ore.bedrock.stibnite"    ,   8000, MT.OREMATS.Arsenopyrite       ), // :743 (the arsenopyrite-material row)
-        bedrock("ore.bedrock.redstone"    ,   7000, MT.Redstone                   ), // :744
-        bedrock("ore.bedrock.vanadium"    ,   6000, MT.V2O5                       ), // :745
-        bedrock("ore.bedrock.galena"      ,   6000, MT.OREMATS.Galena             ), // :746
-        bedrock("ore.bedrock.coal"        ,   5000, MT.Coal                       ), // :747
-        bedrock("ore.bedrock.graphite"    ,   5000, MT.Graphite                   ), // :748
-        bedrock("ore.bedrock.stibnite"    ,   4000, MT.OREMATS.Stibnite           ), // :749
-        bedrock("ore.bedrock.hematite"    ,   4000, MT.Fe2O3                      ), // :750
-        bedrock("ore.bedrock.sphalerite"  ,   3000, MT.OREMATS.Sphalerite         ), // :751
-        bedrock("ore.bedrock.smithsonite" ,   3000, MT.OREMATS.Smithsonite        ), // :752
-        bedrock("ore.bedrock.pentlandite" ,   3000, MT.OREMATS.Pentlandite        ), // :753
-        bedrock("ore.bedrock.saltpeter"   ,   3000, MT.Niter                      ), // :754
-        bedrock("ore.bedrock.bauxite"     ,   2000, MT.OREMATS.Bauxite            ), // :755
-        bedrock("ore.bedrock.cassiterite" ,   2000, MT.OREMATS.Cassiterite        ), // :756
-        bedrock("ore.bedrock.chalcopyrite",   2000, MT.OREMATS.Chalcopyrite       ), // :757
+        bedrock("ore.bedrock.diamond"     , 128000, MT.Diamond                    , specB(6)), // :725
+        bedrock("ore.bedrock.tungstate"   ,  96000, MT.OREMATS.Tungstate          , specB(7)), // :726
+        bedrock("ore.bedrock.ferberite"   ,  96000, MT.OREMATS.Ferberite          , specB(7)), // :727
+        bedrock("ore.bedrock.wolframite"  ,  96000, MT.OREMATS.Wolframite         , specB(7)), // :728
+        bedrock("ore.bedrock.stolzite"    ,  96000, MT.OREMATS.Stolzite           , specB(7)), // :729
+        bedrock("ore.bedrock.scheelite"   ,  96000, MT.OREMATS.Scheelite          , specB(7)), // :730
+        bedrock("ore.bedrock.huebnerite"  ,  96000, MT.OREMATS.Huebnerite         , specB(7)), // :731
+        bedrock("ore.bedrock.russellite"  ,  96000, MT.OREMATS.Russellite         , specB(7)), // :732
+        bedrock("ore.bedrock.pinalite"    ,  96000, MT.OREMATS.Pinalite           , specB(7)), // :733
+        bedrock("ore.bedrock.uraninite"   ,  60000, MT.OREMATS.Uraninite          ,         5), // :734
+        bedrock("ore.bedrock.pitchblende" ,  60000, MT.OREMATS.Pitchblende        , specB(5)), // :735
+        bedrock("ore.bedrock.gold.a"      ,  32000, MT.Au                         ,         0), // :736
+        bedrock("ore.bedrock.gold.b"      ,  32000, MT.Au                         , specB(2)), // :737
+        bedrock("ore.bedrock.cooperite"   ,  16000, MT.OREMATS.Cooperite          ,         6), // :738
+        bedrock("ore.bedrock.copper"      ,  16000, MT.Cu                         , specB(3)), // :739
+        bedrock("ore.bedrock.monazite"    ,  16000, MT.Monazite                   ,         9), // :740
+        bedrock("ore.bedrock.powellite"   ,  14000, MT.OREMATS.Powellite          ,         7), // :741 (Orechid — the TODO Molybdenum face)
+        bedrock("ore.bedrock.bastnasite"  ,   8000, MT.OREMATS.Bastnasite         ,         9), // :742
+        bedrock("ore.bedrock.stibnite"    ,   8000, MT.OREMATS.Arsenopyrite       , specB(0)), // :743 (the arsenopyrite-material row)
+        bedrock("ore.bedrock.redstone"    ,   7000, MT.Redstone                   , specB(4)), // :744
+        bedrock("ore.bedrock.vanadium"    ,   6000, MT.V2O5                       ,         7), // :745 (Orechid — the TODO Vanadium face)
+        bedrock("ore.bedrock.galena"      ,   6000, MT.OREMATS.Galena             ,         1), // :746
+        bedrock("ore.bedrock.coal"        ,   5000, MT.Coal                       ,         7), // :747 (Orechid — the TODO Carbon face)
+        bedrock("ore.bedrock.graphite"    ,   5000, MT.Graphite                   ,         7), // :748 (Orechid — the TODO Carbon face)
+        bedrock("ore.bedrock.stibnite"    ,   4000, MT.OREMATS.Stibnite           , specB(1)), // :749
+        bedrock("ore.bedrock.hematite"    ,   4000, MT.Fe2O3                      ,         7), // :750 (Orechid — the TODO Iron face)
+        bedrock("ore.bedrock.sphalerite"  ,   3000, MT.OREMATS.Sphalerite         ,         3), // :751
+        bedrock("ore.bedrock.smithsonite" ,   3000, MT.OREMATS.Smithsonite        ,         3), // :752
+        bedrock("ore.bedrock.pentlandite" ,   3000, MT.OREMATS.Pentlandite        ,         4), // :753
+        bedrock("ore.bedrock.saltpeter"   ,   3000, MT.Niter                      ,         7), // :754 (Orechid — the TODO Niter face)
+        bedrock("ore.bedrock.bauxite"     ,   2000, MT.OREMATS.Bauxite            ,         7), // :755 (Orechid — the TODO Aluminium face)
+        bedrock("ore.bedrock.cassiterite" ,   2000, MT.OREMATS.Cassiterite        ,         7), // :756 (Orechid — the TODO Tin face)
+        bedrock("ore.bedrock.chalcopyrite",   2000, MT.OREMATS.Chalcopyrite       ,         2), // :757
         bedrockNether("ore.bedrock.voidquartz", 4000, MT.VoidQuartz), // :758
         bedrockNether("ore.bedrock.glowstone", 4000, MT.Glowstone), // :759
         bedrockNether("ore.bedrock.gloomstone", 4000, MT.Gloomstone), // :760
