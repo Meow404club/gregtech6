@@ -3,7 +3,7 @@
  * {@code data/gt6/recipe_maps/bedrockorelist.json} pours into RM.BedrockOreList
  * (GT6RecipeMaps.BEDROCK_ORE_LIST, the upstream RM.java:153 NEI fake-recipe display face)
  * — the row count (46 material rows + 1 generic bedrock row), the pour, and the yield-id
- * mapping (broken stone ore for the 53-axis materials, dust for the out-of-axis ones —
+ * mapping (broken stone ore for the live-axis materials, dust for the out-of-axis ones —
  * the declared fallback face).
  *
  * <p>The GT6QuSmokeRowsPourTest posture: the gt6: ids resolve through the injected
@@ -133,7 +133,15 @@ public class GT6BedrockOreListPourTest extends GTRecipesOfflineTestBase {
             assertEquals(10000, tRow.getAsJsonArray("outputs").get(2).getAsJsonObject().get("chance").getAsInt());
         }
         assertTrue(tMismatch.length() == 0, "yield-mapping mismatches:" + tMismatch);
-        assertEquals(24, tBroken, "the axis rows ride the broken stone ore (gold.a/gold.b both carry MT.Au; uraninite/pitchblende joined with r7-a, re-poured by r7-b)");
-        assertEquals(22, tDust, "the out-of-axis rows ride the dust fallback");
+        // +4 task hotfix-latent-reds-phasegate-bedrock: monazite/powellite/bastnasite/bauxite joined the
+        // live axis with the B2/batch2 large-vein wave (merges 9d6f16a1a/b05af17a4) and the stale dust
+        // faces re-poured. Upstream archaeology (this test's ruling): the row universe is the FIXED
+        // bedrock worldgen list (Loader_Worldgen.java:725-770, the port GT6WorldgenDatagen.BEDROCK_ORE_TABLE
+        // :1915/:1916/:1917/:1930 verbatim) and the yield is UNCONDITIONALLY the broken ore for every
+        // listed material (WorldgenOresBedrock.java:116 — no dust face, no axis gate upstream); the port
+        // dust face is the item-existence fallback only, and existence = the live axis
+        // (GT6OreBlocks.registrationOrder, the 74 x M walk). Re-pour precedent 932d56964 (r7-b).
+        assertEquals(28, tBroken, "the axis rows ride the broken stone ore (gold.a/gold.b both carry MT.Au; uraninite/pitchblende joined with r7-a, re-poured by r7-b; monazite/powellite/bastnasite/bauxite joined with the B2/batch2 wave, re-poured by hotfix-latent-reds-phasegate-bedrock)");
+        assertEquals(18, tDust, "the out-of-axis rows ride the dust fallback");
     }
 }

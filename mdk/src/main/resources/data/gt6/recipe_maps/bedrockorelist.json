@@ -511,7 +511,7 @@
       "eut": 0
     },
     {
-      "comment": "ore.bedrock.monazite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "comment": "ore.bedrock.monazite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore (the material joined the ore axis with the B2/batch2 large-vein wave, merges 9d6f16a1a/b05af17a4; the stale dust face re-poured by hotfix-latent-reds-phasegate-bedrock)",
       "inputs": [
         {
           "item": "gt6:ore_bedrock_monazite",
@@ -520,7 +520,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:dust_monazite",
+          "item": "gt6:ore_broken_stone_monazite",
           "count": 1,
           "chance": 9687
         },
@@ -545,7 +545,7 @@
       "eut": 0
     },
     {
-      "comment": "ore.bedrock.powellite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "comment": "ore.bedrock.powellite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore (the material joined the ore axis with the B2/batch2 large-vein wave, merges 9d6f16a1a/b05af17a4; the stale dust face re-poured by hotfix-latent-reds-phasegate-bedrock)",
       "inputs": [
         {
           "item": "gt6:ore_bedrock_powellite",
@@ -554,7 +554,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:dust_powellite",
+          "item": "gt6:ore_broken_stone_powellite",
           "count": 1,
           "chance": 9687
         },
@@ -579,7 +579,7 @@
       "eut": 0
     },
     {
-      "comment": "ore.bedrock.bastnasite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "comment": "ore.bedrock.bastnasite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore (the material joined the ore axis with the B2/batch2 large-vein wave, merges 9d6f16a1a/b05af17a4; the stale dust face re-poured by hotfix-latent-reds-phasegate-bedrock)",
       "inputs": [
         {
           "item": "gt6:ore_bedrock_bastnasite",
@@ -588,7 +588,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:dust_bastnasite",
+          "item": "gt6:ore_broken_stone_bastnasite",
           "count": 1,
           "chance": 9687
         },
@@ -1021,7 +1021,7 @@
       "eut": 0
     },
     {
-      "comment": "ore.bedrock.bauxite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the dust (the material sits outside the 53-axis ore universe, the declared fallback face)",
+      "comment": "ore.bedrock.bauxite \u2014 the Bedrock Drill display row (WorldgenOresBedrock.java:115-131; 1/6 large + 2/6 small bedrock ore -> the yield + bedrock dust + cobblestone, lube 100). yield = the broken stone ore (the material joined the ore axis with the B2/batch2 large-vein wave, merges 9d6f16a1a/b05af17a4; the stale dust face re-poured by hotfix-latent-reds-phasegate-bedrock)",
       "inputs": [
         {
           "item": "gt6:ore_bedrock_bauxite",
@@ -1030,7 +1030,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:dust_bauxite",
+          "item": "gt6:ore_broken_stone_bauxite",
           "count": 1,
           "chance": 9687
         },
