@@ -30,6 +30,7 @@ import gregapi.util.CruciblePhysics;
 import gregtech6.datagen.GT6CrucibleDatagen;
 import gregtech6.fluid.FluidBridge;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController;
 import gregtech6.tileentity.multiblocks.TileEntityCrucible;
 import gregtech6.tileentity.tools.TileEntitySmeltery;
 
@@ -88,6 +89,10 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * 大型坩埚成形态已由 {@link GT6MachineProvider} 的 "Multiblock: formed/incomplete" 行覆盖
  * （TileEntityCrucible extends TileEntityBase10MultiBlockBase，GT6MachineProvider.java:137-140）
  * ——不重复加。③ 坩埚本体不在该补丁内，温度面无 TFRU 先例——温度计语义锚维持。
+ * ② 的墙件侧落点 = task mb-formed-crucible-wall ⑥（用户追加）：墙件 relay 臂出
+ * "Part of: &lt;控制器名&gt;" 归属行 + 坩埚核心信息同格式透传（上游墙件全部数据接口本就经
+ * getTarget(T) 透传控制器，MultiTileEntityMultiBlockPart.java:580-600—— Jade 指墙零信息
+ * 即缺这一臂，known_bugs.r11-mb-formed-skin.crucible_wall_jade）。
  */
 public final class GT6CrucibleProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
 
@@ -113,6 +118,13 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	public static final String OVERLAY_TINT = "tint";
 	public static final String KEY_CONTENT = "GT6CrucibleContent";
 	public static final String KEY_TRUNCATED = "GT6CrucibleTruncated";
+	/** 归属行（task mb-formed-crucible-wall ⑥）：控制器方块名的 translatable 键
+	 * （"block.gt6.&lt;path&gt;"，GTCrucibleControllerBlock.getName :88-89 同一推导）——
+	 * 墙件 relay 臂写，客户端 translatable 各 locale 自解（materialSlug 同契约）。 */
+	public static final String KEY_OWNER = "GT6CrucibleOwner";
+	/** 归属行 lang 键（en "Part of: %s" / zh "归属: %s"——TFRU 部件行 "Formed &lt;控制器名&gt;"
+	 * 约定的现代面，任务卡第 6 项用户追加）。 */
+	public static final String LANG_OWNER = "gt6.jade.crucible.owner";
 
 	/** 内容物条目内键：核销过的 {@code gt6.material.<snake>} 小单位 slug（存在即走 translatable）。 */
 	public static final String ENTRY_MAT = "mat";
@@ -157,6 +169,19 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 		} else if (aAccessor.getBlockEntity() instanceof TileEntityCrucible aCrucible) {
 			writeCrucibleData(aData, aCrucible.getTemperatureValue((byte) 0), aCrucible.getTemperatureMax((byte) 0),
 					aCrucible.mMeltDown, TileEntityCrucible.MAX_AMOUNT, aCrucible.mContent);
+		} else if (aAccessor.getBlockEntity() instanceof gregtech6.tileentity.multiblocks.CrucibleWallBlockEntity aWall) {
+			// 墙件 relay 臂（task mb-formed-crucible-wall ⑥）：上游墙件全部数据接口都经
+			// getTarget(T) 透传控制器（MultiTileEntityMultiBlockPart.java:580-600 温度/gibbl/
+			// 进度族，:689 有效性探针同形）—— Jade 指墙 = 该 relay 语义的现代面。getTarget(true)
+			// 门=结构成立才出数据（坏塔残留热不上屏，与上游 relay 非法答 0 同款）；归属行 =
+			// TFRU "Formed <控制器名>" 约定（GT6CrucibleProvider 类 doc ② 的墙件侧落点）。
+			ITileEntityMultiBlockController tTarget = aWall.getTarget(true);
+			if (tTarget instanceof TileEntityCrucible aCrucible) {
+				writeCrucibleData(aData, aCrucible.getTemperatureValue((byte) 0), aCrucible.getTemperatureMax((byte) 0),
+						aCrucible.mMeltDown, TileEntityCrucible.MAX_AMOUNT, aCrucible.mContent);
+				aData.putString(KEY_OWNER, "block.gt6." + BuiltInRegistries.BLOCK
+						.getKey(((net.minecraft.world.level.block.entity.BlockEntity) tTarget).getBlockState().getBlock()).getPath());
+			}
 		}
 	}
 
@@ -278,6 +303,11 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 		if (!aData.contains(KEY_TEMP_MAX)) {
 			return; // 非坩埚（本 provider 挂全 GT6 BE 面，键存在即坩埚族——GT6MachineProvider 同门）
 		}
+		// 行 0（task mb-formed-crucible-wall ⑥）：墙件归属行——控制器名嵌套 translatable
+		// （键来自 KEY_OWNER，各 locale 自解；vanilla %s 组件槽递归渲染，contentLine 同款）。
+		if (aData.contains(KEY_OWNER)) {
+			aTooltip.add(ownerLine(aData.getString(KEY_OWNER)));
+		}
 		// 行 1：温度条（task jade-converter-crucible-restyle，B 形收编）——temp/tempmax 钳位
 		// 比例（GT6JadeRows.ratio），两槽文本（单位词尾置一次），条面 = 钢铁加热色阶
 		// （r11c ③——{@link GT6JadeRows#heatColor} 六停靠连续插值，ratio 1.0 = 熔毁顶 =
@@ -312,6 +342,14 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	/** 温度条行（纯函数离线面，两槽）：design 'Temperature: %s / %s K'——单位词尾置一次。 */
 	public static Component temperatureBarLine(long aTemp, long aTempMax) {
 		return Component.translatable(LANG_TEMPERATURE_BAR, aTemp, aTempMax);
+	}
+
+	/**
+	 * 归属行（纯函数离线面，task mb-formed-crucible-wall ⑥）：两槽嵌套 translatable——
+	 * 外槽 {@link #LANG_OWNER}，内槽 = 控制器方块名键（"block.gt6.&lt;path&gt;"）。
+	 */
+	public static Component ownerLine(String aOwnerBlockKey) {
+		return Component.translatable(LANG_OWNER, Component.translatable(aOwnerBlockKey));
 	}
 
 	/**

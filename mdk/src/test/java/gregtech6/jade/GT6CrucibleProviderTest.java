@@ -107,6 +107,25 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void ownerLineNestsTheControllerNameKey() {
+		// task mb-formed-crucible-wall ⑥ — the wall relay arm's ownership row: the outer
+		// LANG_OWNER face over the NESTED controller-name translatable (the block.gt6.<path>
+		// key the live arm derives from the target block; vanilla renders the nested slot
+		// per locale, the contentLine material-name shape)
+		TranslatableContents tOwner = (TranslatableContents) GT6CrucibleProvider.ownerLine("block.gt6.crucible_steel").getContents();
+		assertEquals(GT6CrucibleProvider.LANG_OWNER, tOwner.getKey());
+		assertEquals(1, tOwner.getArgs().length);
+		TranslatableContents tName = (TranslatableContents) ((net.minecraft.network.chat.Component) tOwner.getArgs()[0]).getContents();
+		assertEquals("block.gt6.crucible_steel", tName.getKey(), "the controller display key rides the nested slot");
+		// the sync-face marker: the live arm writes KEY_OWNER only when the wall's target
+		// resolves to a crucible controller (the getTarget(true) validity probe) — the key
+		// round-trips through the Jade tag as a plain string
+		CompoundTag tTag = new CompoundTag();
+		tTag.putString(GT6CrucibleProvider.KEY_OWNER, "block.gt6.crucible_steel");
+		assertEquals("block.gt6.crucible_steel", tTag.getString(GT6CrucibleProvider.KEY_OWNER));
+	}
+
+	@Test
 	public void totalAndEntryLinesComposeTheTfruLabelShape() {
 		// the total row IS the TFRU LH.CONTENT label row (commit 33c22beb, first-row label form);
 		// the unit word rides the lang VALUE (en U, zh 份 — the crucible-jade-tankbar ③ move)

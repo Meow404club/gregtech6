@@ -2824,6 +2824,9 @@ public class GT6EnUs extends LanguageProvider {
         add("gt6.jade.crucible.entry", "  %s: %s U");
         add("gt6.jade.crucible.empty", "Empty");
         add("gt6.jade.crucible.more", "+%s more");
+        // task mb-formed-crucible-wall ⑥ — the wall relay arm's ownership row (the TFRU
+        // "Formed <controller name>" part-row convention, the wall-side landing)
+        add("gt6.jade.crucible.owner", "Part of: %s");
     }
 
     /**

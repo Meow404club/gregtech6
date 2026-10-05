@@ -293,13 +293,27 @@ class GT6PartPaintRenderDatagenTest {
         assertSame(gregapi.data.MT.Ad             , valveMaterial(tRows, "tank_large_dense_adamantium"));
     }
 
-    /** The 8 crucible wall models re-declare the tinted body over the metalwall design-0 borrow (the :1145 "Steel Wall" texture family). */
+    /**
+     * The 8 crucible walls ride the metalwall DESIGN ladder (task mb-formed-crucible-wall):
+     * the same partModel two-layer form as the machine_wall_* siblings over the per-design
+     * borrowed textures (the upstream metalwall NBT_DESIGNS 7 — Loader:1143-1153; the formed
+     * crucible repaints design 4, MultiTileEntityCrucible.java:124-128), one variant per
+     * design 0..7. A ctor revert to maxDesign 0 collapses the blockstate to the singleton
+     * form and goes red on the variant count (the niobiumTitaniumCoil revert shape).
+     */
     @Test
-    public void crucibleWallsCarryTintedBodyModels() throws Exception {
-        assertTintedCubeModel("crucible_steel_wall", "parts/metalwall/0/colored");
-        for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.values()) {
-            assertTintedCubeModel(tHandle.getId().getPath(), "parts/metalwall/0/colored");
+    public void crucibleWallsCarryTheDesignLadderModels() throws Exception {
+        for (String tPath : crucibleWallPaths()) {
+            for (int d = 0; d <= DESIGNS; d++) assertTintedPartModel(tPath, d);
+            assertDesignVariants(tPath, DESIGNS);
         }
+    }
+
+    /** The 8 dedicated crucible wall paths (the steel rung + the seven ladder rows). */
+    private static java.util.List<String> crucibleWallPaths() {
+        java.util.List<String> rPaths = new java.util.ArrayList<>(java.util.List.of("crucible_steel_wall"));
+        rPaths.addAll(gregtech6.registry.GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.keySet());
+        return rPaths;
     }
 
     /** The 8 crucible wall rows carry the upstream NBT_MATERIAL column (Loader :1145/:1270-1277 verbatim; ANY.W→MT.W). */
@@ -315,22 +329,6 @@ class GT6PartPaintRenderDatagenTest {
         assertSame(gregapi.data.MT.W              , gregtech6.registry.GT6Crucibles.TUNGSTEN_ROW.material());
         assertSame(gregapi.data.MT.Ta4HfC5        , gregtech6.registry.GT6Crucibles.TANTALUM_HAFNIUM_CARBIDE_ROW.material());
         assertSame(gregapi.data.MT.Ad             , gregtech6.registry.GT6Crucibles.ADAMANTIUM_ROW.material());
-    }
-
-    /** One tintedCube model: one body element, all six faces tintindex 0, the textures on the borrowed family. */
-    private static void assertTintedCubeModel(String aPath, String aTextureBase) throws Exception {
-        JsonObject tModel = json("assets/gt6/models/block/" + aPath + ".json");
-        assertEquals(1, tModel.getAsJsonArray("elements").size(), aPath + " keeps the single tinted body cube");
-        JsonObject tBody = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
-        assertEquals(FACE_KEYS.size(), tBody.getAsJsonObject("faces").entrySet().size(), aPath + " covers all six faces");
-        for (Map.Entry<String, JsonElement> tFace : tBody.getAsJsonObject("faces").entrySet()) {
-            assertTrue(FACE_KEYS.contains(tFace.getKey()), aPath + " body face key " + tFace.getKey());
-            assertEquals(0, tFace.getValue().getAsJsonObject().get("tintindex").getAsInt(),
-                    aPath + " body face " + tFace.getKey() + " carries tintindex 0 (the material tint)");
-        }
-        JsonObject tTextures = tModel.getAsJsonObject("textures");
-        assertEquals("gt6:block/" + aTextureBase + "/side", tTextures.get("north").getAsString(),
-                aPath + " rides the borrowed grayscale colored family " + aTextureBase);
     }
 
     /** One FACING×FORMED blockstate: every variant maps onto the family model. */

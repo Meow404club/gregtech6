@@ -44,15 +44,21 @@ import gregtech6.multiblock.GTMultiBlockPattern;
 public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestBase {
 
 	static BlockEntityType<TestCrucible> sCrucibleType;
+	/** The census wall block — built ONCE in the fixture (identity with the census part BET's valid set). */
+	static gregtech6.block.multiblock.GTCrucibleWallBlock sCensusWall;
+	/** The census part BET — the shared part BE over {BRICKS, the census wall} (the 21.1 leg validates BE states, see the census test). */
+	static BlockEntityType<MultiBlockPartBlockEntity> sWallPartType;
 
 	/** The concrete test BE — the crucible over a vanilla-block BET, wall and env bound. */
 	public static final class TestCrucible extends TileEntityCrucible {
+		/** The wall block binding (default BRICKS; the design4 census rides a real {@code GTCrucibleWallBlock}). */
+		Block mWall = Blocks.BRICKS;
 		public TestCrucible(BlockPos aPos, BlockState aState) {
 			super(sCrucibleType, aPos, aState);
 		}
 		@Override
 		protected Block getWallBlock() {
-			return Blocks.BRICKS;
+			return mWall;
 		}
 		@Override
 		protected net.minecraft.world.item.ItemStack suckCavityItem() {
@@ -80,6 +86,20 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 		BlockEntityType<TestCrucible>[] tHolder = (BlockEntityType<TestCrucible>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(TestCrucible::new, Blocks.BRICKS).build(null);
 		sCrucibleType = tHolder[0];
+		// task mb-formed-crucible-wall — the census fixtures: the wall block joins the part
+		// BET's valid set and the census part BEs are BORN carrying the wall state (the 21.1
+		// BlockEntity.setBlockState validateBlockState gate rejects a re-seat onto an
+		// unregistered block — the 1.20.1 leg has no such gate; construction-time state keeps
+		// one fixture shape for both legs)
+		unfreezeBlockRegistry();
+		sCensusWall = new gregtech6.block.multiblock.GTCrucibleWallBlock(
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
+		BlockEntityType<MultiBlockPartBlockEntity>[] tWallHolder = (BlockEntityType<MultiBlockPartBlockEntity>[]) new BlockEntityType<?>[1];
+		tWallHolder[0] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new MultiBlockPartBlockEntity(tWallHolder[0], aPos, aState),
+				Blocks.BRICKS, sCensusWall).build(null);
+		sWallPartType = tWallHolder[0];
 	}
 
 	// ------------------------------------------------------------------
@@ -116,6 +136,12 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 			}
 			assertTrue(tCell.forms(), "every wall cell carries the forming expectation");
 			assertSame(Blocks.BRICKS, tCell.partBlock, "the fixture wall block");
+			// task mb-formed-crucible-wall — the formed-wall skin: the pattern cell writes
+			// design 4 (the net effect of the upstream two-pass check :124-128 — pass 1
+			// (:119-121) checks/writes design 0, pass 2 (formed only) repaints every wall
+			// design 4; declarative-pattern port writes the formed value directly, the
+			// collapse reset rides the target-invalidation arm, MultiBlockPart :208-210)
+			assertEquals(4, tCell.design, "the formed-wall design write (upstream :124-128)");
 			switch (tCell.y) {
 				case 0 -> assertEquals(MultiBlockPartBlockEntity.ONLY_ENERGY_IN, tCell.usage, "the y+0 ring (:119)");
 				case 1 -> assertEquals(MultiBlockPartBlockEntity.ONLY_CRUCIBLE, tCell.usage, "the y+1 ring (:120)");
@@ -127,6 +153,97 @@ public class GTMultiBlockCrucibleStructureTest extends GTMultiBlocksOfflineTestB
 		assertEquals(8, tPattern.cells().stream().filter(t -> t.y == 0 && t.forms()).count(), "8 walls at y+0");
 		assertEquals(8, tPattern.cells().stream().filter(t -> t.y == 1 && t.forms()).count(), "8 walls at y+1");
 		assertEquals(8, tPattern.cells().stream().filter(t -> t.y == 2 && t.forms()).count(), "8 walls at y+2");
+	}
+
+	// ------------------------------------------------------------------
+	// task mb-formed-crucible-wall — the formed-wall skin: the wall block's
+	// DESIGN dimension (upstream metalwall NBT_DESIGNS 7, Loader:1143-1153) and
+	// the formed census (the :124-128 second pass repaints every wall design 4)
+	// ------------------------------------------------------------------
+
+	/**
+	 * The dedicated {@code GTCrucibleWallBlock} carries the metalwall DESIGN ladder on
+	 * ALL THREE ctors (the registration faces — the single-rung steel, the material
+	 * carrier, the composed-name ladder): maxDesign 7 = the upstream
+	 * {@code NBT_TEXTURE "metalwall" + NBT_DESIGNS 7} column (Loader:1143-1153), NOT 0
+	 * (a DESIGNS-0 block has no design property and can never repaint).
+	 */
+	@Test
+	public void crucibleWallBlocksCarryTheMetalwallDesignLadder() {
+		assertEquals(7, newCrucibleWall().maxDesign(), "the single-variant ctor rides the metalwall NBT_DESIGNS 7");
+		assertEquals(7, newCrucibleWallMaterialCarrier().maxDesign(), "the material-carrier ctor rides the metalwall NBT_DESIGNS 7");
+		assertEquals(7, newCrucibleWallComposed().maxDesign(), "the composed-name ctor rides the metalwall NBT_DESIGNS 7");
+		assertNotNull(newCrucibleWall().DESIGN, "the design property exists (the setDesign sync lands in the blockstate)");
+	}
+
+	/**
+	 * The formed census: after the structure forms, every wall cell's blockstate rides
+	 * design 4 — the checker's per-cell design write landing through
+	 * {@code setTarget → setDesign → syncDesignToState} (the Util :70-74 path, the
+	 * upstream :124-128 second-pass repaint).
+	 */
+	@Test
+	public void formedStructurePaintsTheWallsDesign4() {
+		gregtech6.block.multiblock.GTCrucibleWallBlock tWall = sCensusWall;
+		MultiBlockLevel tLevel = new MultiBlockLevel();
+		TileEntityCrucible tCrucible = placeController(tLevel, sCrucibleType, new BlockPos(100, 64, 100), (byte)0);
+		((TestCrucible) tCrucible).mWall = tWall;
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
+			if (tDX == 0 && tDZ == 0) continue;
+			for (int tY = 0; tY <= 2; tY++) {
+				BlockPos tPos = new BlockPos(100 + tDX, 64 + tY, 100 + tDZ);
+				// the wall cell: the part BE BORN on the wall block's design-0 state (the
+				// LevelChunk newBE shape — no setBlockState re-seat, the 21.1 validate gate)
+				MultiBlockPartBlockEntity tPart = sWallPartType.create(tPos, tWall.defaultBlockState());
+				tPart.setLevel(tLevel);
+				tLevel.mBlockEntities.put(tPos, tPart);
+				tLevel.mStates.put(tPos, tWall.defaultBlockState());
+			}
+		}
+		tCrucible.onStructureChange();
+		assertTrue(tCrucible.checkStructure(false), "the wall-block ring set forms");
+		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
+			if (tDX == 0 && tDZ == 0) continue;
+			for (int tY = 0; tY <= 2; tY++) {
+				BlockPos tPos = new BlockPos(100 + tDX, 64 + tY, 100 + tDZ);
+				assertEquals(4, tWall.designOf(tLevel.getBlockState(tPos)),
+						"the formed wall at " + tPos.toShortString() + " rides design 4 (upstream :124-128)");
+			}
+		}
+	}
+
+	/**
+	 * The offline block constructors — the registry write window (the
+	 * GTMachinePaintTintTest.kitchenBlock shape: Block's ctor creates its intrusive
+	 * holder past the bootstrap freeze, each caller carries its own write window, no
+	 * re-freeze — fork partitioning can't guarantee the window).
+	 */
+	private static gregtech6.block.multiblock.GTCrucibleWallBlock newCrucibleWall() {
+		unfreezeBlockRegistry();
+		return new gregtech6.block.multiblock.GTCrucibleWallBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+	}
+
+	private static gregtech6.block.multiblock.GTCrucibleWallBlock newCrucibleWallMaterialCarrier() {
+		unfreezeBlockRegistry();
+		return new gregtech6.block.multiblock.GTCrucibleWallBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(),
+				(java.util.function.Supplier<gregapi.oredict.OreDictMaterial>) null);
+	}
+
+	private static gregtech6.block.multiblock.GTCrucibleWallBlock newCrucibleWallComposed() {
+		unfreezeBlockRegistry();
+		return new gregtech6.block.multiblock.GTCrucibleWallBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of(), "k", "u", null);
+	}
+
+	/** The block registry write window for direct block construction (the kitchen helper shape). */
+	private static void unfreezeBlockRegistry() {
+		try {
+			java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+					.getClass().getMethod("unfreeze");
+			tUnfreeze.setAccessible(true);
+			tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+		} catch (Exception aE) {
+			throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+		}
 	}
 
 	// ------------------------------------------------------------------

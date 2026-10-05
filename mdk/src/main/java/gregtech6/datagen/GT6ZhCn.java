@@ -674,6 +674,8 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jade.crucible.entry");
 		addDirect("gt6.jade.crucible.empty");
 		addDirect("gt6.jade.crucible.more");
+		// task mb-formed-crucible-wall ⑥ — the wall relay ownership row (the tsv hand row)
+		addDirect("gt6.jade.crucible.owner");
 	}
 
 	/**

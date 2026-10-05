@@ -18,11 +18,22 @@ import gregtech6.registry.GT6Crucibles;
  * it without a GTMultiBlocks.java touch this card does not own (the GTHeatTransmitterBlock
  * precedent verbatim). Everything else (onPlace/playerWillDestroy propagation, the
  * no-onRemove red line, RenderShape.MODEL) is inherited untouched.
+ *
+ * <p>The DESIGN render dimension rides the metalwall group's {@code NBT_DESIGNS 7}
+ * (Loader:1143-1153, the eleven siblings share the column): maxDesign 7 = the design
+ * 0..7 property, so the checker's formed-wall write (the upstream :124-128 second
+ * pass — every crucible wall repaints design 4 when the structure forms, task
+ * mb-formed-crucible-wall) lands in the blockstate through the shared
+ * setDesign→syncDesignToState seam. The 1.20.1 faces are the per-design two-layer
+ * partModel walk (GT6BlockStates.addLargeCrucible).
  */
 public class GTCrucibleWallBlock extends GTMultiBlockPartBlock {
 
+	/** The metalwall group's {@code NBT_DESIGNS} (Loader:1143-1153 — the design 0..7 inclusive range). */
+	public static final int WALL_DESIGNS = 7;
+
 	public GTCrucibleWallBlock(Properties aProperties) {
-		super(aProperties);
+		super(aProperties, WALL_DESIGNS);
 	}
 
 	/**
@@ -30,21 +41,23 @@ public class GTCrucibleWallBlock extends GTMultiBlockPartBlock {
 	 * NBT_MATERIAL} (the Loader :1145 "Steel Wall" column) rides the parent's 4-arg
 	 * row-less tint ctor — the lazy Supplier is the GTBarrels form (MT.init runs after
 	 * class-load). Null = the material-less identity (the coke-bricks posture).
+	 * maxDesign = the metalwall NBT_DESIGNS 7 (task mb-formed-crucible-wall — was 0,
+	 * the formed-wall repaint had no property to land in).
 	 */
 	public GTCrucibleWallBlock(Properties aProperties, @Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
-		super(aProperties, 0, null, aMaterial);
+		super(aProperties, WALL_DESIGNS, null, aMaterial);
 	}
 
 	/**
 	 * The composed-name ctor (task w3-distill-crucible ③ — the 8-material ladder): the
 	 * "{@code <mat> Wall}" template over the EXISTING gt6.row.mat unit words (the card ①
-	 * metal-wall composition — zero new lang unit keys; the composed carrier is the
-	 * GTMultiBlockPartBlock :134 form, DESIGNS 0 → no DESIGN property). The ladder rung's
-	 * upstream NBT_MATERIAL rides the same tint ctor (task issue8-residual).
+	 * metal-wall composition — zero new lang unit keys). The ladder rung's
+	 * upstream NBT_MATERIAL rides the same tint ctor (task issue8-residual); maxDesign =
+	 * the metalwall NBT_DESIGNS 7 (task mb-formed-crucible-wall).
 	 */
 	public GTCrucibleWallBlock(Properties aProperties, String aTemplateKey, String aUnitKey,
 			@Nullable java.util.function.Supplier<gregapi.oredict.OreDictMaterial> aMaterial) {
-		super(aProperties, 0, net.minecraft.network.chat.Component.translatable(aTemplateKey,
+		super(aProperties, WALL_DESIGNS, net.minecraft.network.chat.Component.translatable(aTemplateKey,
 				net.minecraft.network.chat.Component.translatable(aUnitKey)), aMaterial);
 	}
 
