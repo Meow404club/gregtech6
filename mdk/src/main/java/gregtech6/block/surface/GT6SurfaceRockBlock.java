@@ -114,10 +114,33 @@ public class GT6SurfaceRockBlock extends Block {
 	//?} else {
 	/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
 	//21.1: BlockBehaviour.use folded into useWithoutItem — the InteractionHand param dropped
-	//(the GTExampleChestBlock fork precedent).
+	//(the GTExampleChestBlock fork precedent); the magnifier census arm reads the held stack,
+	//so the hand rides the Bumbliary MAIN_HAND stand-in (the declared deviation).
+	net.minecraft.world.InteractionHand aHand = net.minecraft.world.InteractionHand.MAIN_HAND;
 	 *///?}
 		if (aLevel.isClientSide()) return InteractionResult.SUCCESS;
+		// the magnifier census arm (task easter-s4-rock-lines, MultiTileEntityRock
+		// onToolClick :85-107): the non-sneak tool click SPEAKS (the aChatReturn face)
+		// instead of picking up; the sneak click falls through to the pickup (the
+		// upstream :87-92 give arm). A silent block (null line) keeps the pickup.
+		if (!aPlayer.isShiftKeyDown() && !aPlayer.getItemInHand(aHand).isEmpty()
+				&& aPlayer.getItemInHand(aHand).canPerformAction(gregtech6.items.tools.GTMagnifyingGlassItem.ACTION)) {
+			String tLine = magnifierLine(aLevel);
+			if (tLine != null) {
+				aPlayer.displayClientMessage(Component.literal(tLine), false);
+				return InteractionResult.SUCCESS;
+			}
+		}
 		return aLevel.destroyBlock(aPos, true, aPlayer) ? InteractionResult.SUCCESS : InteractionResult.PASS; // GTCEu :93-96
+	}
+
+	/**
+	 * The magnifier line (MultiTileEntityRock.java:95-105, {@link GT6RockLines}): the
+	 * dimension quip for this rock; null = silent. The stick subclass overrides to
+	 * null — upstream MultiTileEntityStick carries no onToolClick chat face.
+	 */
+	protected String magnifierLine(Level aLevel) {
+		return GT6RockLines.dimensionLine(aLevel.dimension());
 	}
 
 	/** GTCEu :126-131 — the attach face must be sturdy (upstream :153 isSideSolid check). */
