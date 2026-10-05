@@ -617,6 +617,21 @@ public final class GT6WorldgenDatagen {
         ctx.register(biomeModifierKeyOf("fluid_springs"), addFeatures(tOverworld,
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task worldgen-nether-bedrock-lava — the TWO is_nether legs over the SAME placed
+        // features (the END_YIELD / nether_bumble_hives same-placed-key convention): the
+        // seven GEN_NETHER bedrock rows (:758-764) and the :797 nether lava dome ride the
+        // nether's own modifier rows, textually after their overworld twins (the source
+        // order: the nether ore rows follow the GEN_FLOOR rows, the spring row is last,
+        // Loader_Worldgen.java:758-764/:797). The row-level nether columns (the configs)
+        // keep the roll mass per dimension — the feature walks only its own dimension's rows.
+        ctx.register(biomeModifierKeyOf("nether_bedrock_ores"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BEDROCK_ORES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        ctx.register(biomeModifierKeyOf("nether_fluid_springs"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
         // task nether-lens-end-yield — the nether-lens biome modifier: EVERY nether
         // biome (upstream GEN_NETHER, Loader_Worldgen.java:656 — the dim flag is the modern
         // biome-tag face, the small-ore band's IS_NETHER convention), at the
@@ -1593,9 +1608,14 @@ public final class GT6WorldgenDatagen {
         return new GTBedrockOreConfig(aName, aMaterial, aProbability, true);
     }
 
-    /** The row helper for the offworld rows (:758-770 — never drawn overworld, kept for the table census). */
+    /** The row helper for the offworld census rows (:765-770 mars/BL — no dim card hangs their modifiers yet). */
     private static GTBedrockOreConfig bedrockOffworld(String aName, int aProbability, OreDictMaterial aMaterial) {
-        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false);
+        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false, false);
+    }
+
+    /** The row helper for the GEN_NETHER rows (:758-764, task worldgen-nether-bedrock-lava). */
+    private static GTBedrockOreConfig bedrockNether(String aName, int aProbability, OreDictMaterial aMaterial) {
+        return new GTBedrockOreConfig(aName, aMaterial, aProbability, false, true);
     }
 
     /** The ONE 46-row bedrock-ore table — the card spec ② "上游行表→Feature 形". */
@@ -1633,13 +1653,13 @@ public final class GT6WorldgenDatagen {
         bedrock("ore.bedrock.bauxite"     ,   2000, MT.OREMATS.Bauxite            ), // :755
         bedrock("ore.bedrock.cassiterite" ,   2000, MT.OREMATS.Cassiterite        ), // :756
         bedrock("ore.bedrock.chalcopyrite",   2000, MT.OREMATS.Chalcopyrite       ), // :757
-        bedrockOffworld("ore.bedrock.voidquartz"   ,  4000, MT.VoidQuartz     ), // :758
-        bedrockOffworld("ore.bedrock.glowstone"    ,  4000, MT.Glowstone      ), // :759
-        bedrockOffworld("ore.bedrock.gloomstone"   ,  4000, MT.Gloomstone     ), // :760
-        bedrockOffworld("ore.bedrock.efrine"       ,  2000, MT.Efrine         ), // :761
-        bedrockOffworld("ore.bedrock.netherquartz" ,  2000, MT.NetherQuartz   ), // :762
-        bedrockOffworld("ore.bedrock.firestone"    ,  8000, MT.Firestone      ), // :763
-        bedrockOffworld("ore.bedrock.ancientdebris",  4000, MT.AncientDebris  ), // :764
+        bedrockNether("ore.bedrock.voidquartz", 4000, MT.VoidQuartz), // :758
+        bedrockNether("ore.bedrock.glowstone", 4000, MT.Glowstone), // :759
+        bedrockNether("ore.bedrock.gloomstone", 4000, MT.Gloomstone), // :760
+        bedrockNether("ore.bedrock.efrine", 2000, MT.Efrine), // :761
+        bedrockNether("ore.bedrock.netherquartz", 2000, MT.NetherQuartz), // :762
+        bedrockNether("ore.bedrock.firestone", 8000, MT.Firestone), // :763
+        bedrockNether("ore.bedrock.ancientdebris", 4000, MT.AncientDebris), // :764
         bedrockOffworld("ore.bedrock.naquadah"     , 10000, MT.Nq             ), // :765
         bedrockOffworld("ore.bedrock.desh"         ,  2000, MT.Desh           ), // :766
         bedrockOffworld("ore.bedrock.dolamide"     ,  5000, MT.Dolamide       ), // :767
@@ -1711,8 +1731,8 @@ public final class GT6WorldgenDatagen {
     }
 
     /** The lava-row helper (:788/:797 — the vanilla block face, no GT fluid id to single-source). */
-    private static GTFluidSpringConfig springLava(String aName, int aProbability, boolean aOverworld, int aSpringAmount) {
-        return new GTFluidSpringConfig(aName, "minecraft:lava", aProbability, aOverworld, aSpringAmount);
+    private static GTFluidSpringConfig springLava(String aName, int aProbability, boolean aOverworld, boolean aNether, int aSpringAmount) {
+        return new GTFluidSpringConfig(aName, "minecraft:lava", aProbability, aOverworld, aNether, aSpringAmount);
     }
 
     /** The ONE 16-row bedrock-spring table — the card spec ② "上游行表→Feature 形". */
@@ -1723,7 +1743,7 @@ public final class GT6WorldgenDatagen {
         spring       ("overworld.fluid.oil.light"     , "liquid_light_oil"     , 400, 6000), // :785
         spring       ("overworld.fluid.gas.natural"   , "natural_gas"          , 200, 3000), // :786
         spring       ("overworld.fluid.water"         , "water_geothermal"     , 100,  500), // :787
-        springLava   ("overworld.fluid.lava"          , 200, true,              1000), // :788 — the OW lava dome, the vanilla block face
+        springLava   ("overworld.fluid.lava"          , 200, true , false,     1000), // :788 — the OW lava dome, the vanilla block face
         springOffworld("atum.fluid.oil.extraheavy"    , "gt6:liquid_extra_heavy_oil_block", 200, 2000), // :789
         springOffworld("atum.fluid.oil.heavy"         , "gt6:liquid_heavy_oil_block"     , 200, 2000), // :790
         springOffworld("atum.fluid.oil.medium"        , "gt6:liquid_medium_oil_block"    , 200, 2000), // :791
@@ -1732,7 +1752,7 @@ public final class GT6WorldgenDatagen {
         springOffworld("betweenlands.fluid.gas.natural", "gt6:natural_gas_block"         , 200, 1000), // :794
         springOffworld("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200, 1000), // :795
         springOffworld("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100,  250), // :796
-        springLava   ("nether.fluid.lava"             , 100, false,               500)  // :797
+        springLava   ("nether.fluid.lava"             , 100, false, true ,      500)  // :797 — the GEN_NETHER dome (task worldgen-nether-bedrock-lava)
     );
 
     // ------------------------------------------------------------------

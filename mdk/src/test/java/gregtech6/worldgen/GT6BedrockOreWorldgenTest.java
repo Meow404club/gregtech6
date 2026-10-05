@@ -297,6 +297,64 @@ class GT6BedrockOreWorldgenTest {
         return rNames;
     }
 
+    // ---------------------------------------------------------------- the nether band (task worldgen-nether-bedrock-lava)
+
+    /**
+     * THE nether activation pin: the seven GEN_NETHER rows (Loader_Worldgen.java:758-764,
+     * verbatim material/probability verbatim) carry {@code nether=true}; the mars/BL rows
+     * :765-770 and the 33 GEN_FLOOR rows carry it false. RED while the band is census-only.
+     */
+    @Test
+    void netherRowsAreExactlyTheSevenGenNetherRows() {
+        List<GTBedrockOreConfig> tTable = GT6WorldgenDatagen.BEDROCK_ORE_TABLE;
+        List<String> tNether = new ArrayList<>();
+        for (GTBedrockOreConfig tRow : tTable) if (tRow.nether()) tNether.add(tRow.name());
+        assertEquals(List.of("ore.bedrock.voidquartz", "ore.bedrock.glowstone", "ore.bedrock.gloomstone",
+                "ore.bedrock.efrine", "ore.bedrock.netherquartz", "ore.bedrock.firestone", "ore.bedrock.ancientdebris"),
+                tNether, "the seven GEN_NETHER rows :758-764 activate (the :764 ancientdebris lists GEN_NETHER too)");
+    }
+
+    /** The nether draw walks ONLY the nether rows; the overworld draw only the GEN_FLOOR rows. */
+    @Test
+    void netherDrawWalksOnlyTheNetherRows() {
+        GTBedrockOreConfig.Table tTable = new GTBedrockOreConfig.Table(List.of(
+                new GTBedrockOreConfig("n", MT.Coal, 1, false, true),   // the :758-764 posture
+                new GTBedrockOreConfig("ow", MT.Graphite, 1, true, false),
+                new GTBedrockOreConfig("off", MT.Desh, 1, false, false))); // the :765-770 census-only posture
+        assertEquals(List.of("n"), GT6BedrockOreGenerator.drawRows(tTable, new Random(SEED), true).stream()
+                .map(GTBedrockOreConfig::name).toList(), "the nether roll walks the nether rows only");
+        assertEquals(List.of("ow"), GT6BedrockOreGenerator.drawRows(tTable, new Random(SEED), false).stream()
+                .map(GTBedrockOreConfig::name).toList(), "the overworld roll walks the GEN_FLOOR rows only");
+        // the dormant rows roll in NEITHER dimension
+        assertTrue(GT6BedrockOreGenerator.drawRows(new GTBedrockOreConfig.Table(List.of(
+                new GTBedrockOreConfig("off", MT.Desh, 1, false, false))), new Random(SEED), true).isEmpty(),
+                "the census-only mars/BL rows never roll");
+    }
+
+    /**
+     * The nether vein rides the nether's own floor and water line (WD.waterLevel hasNoSky=31,
+     * WD.java:430): floor = max(BEDROCK_Y, 0) = 0, tails stop at {@link GT6BedrockOreGenerator#NETHER_TAIL_TOP_Y}.
+     */
+    @Test
+    void netherVeinRidesTheNetherFloorAndWaterLine() {
+        GTBedrockOreConfig tRow = new GTBedrockOreConfig("nether.shape", MT.Coal, 1, false, true);
+        RecordingSink tSink = new RecordingSink();
+        assertTrue(GT6BedrockOreGenerator.generateVein(tRow, new Random(SEED), 0, 0, 0,
+                GT6BedrockOreGenerator.NETHER_TAIL_TOP_Y, tSink), "an all-bedrock nether chunk passes the :185 gate");
+        assertFalse(tSink.bedrockOres.isEmpty(), "the patch places at the nether floor");
+        for (Pos tPos : tSink.bedrockOres) assertEquals(0, tPos.y, "the patch rides the nether y=0 bedrock floor");
+        for (Pos tPos : tSink.shells) {
+            int tLayer = tPos.y;
+            assertTrue(tLayer >= 1 && tLayer <= GT6BedrockOreGenerator.MUFFIN_LAYERS, "muffin layers 1..6 above y=0");
+        }
+        for (Pos tPos : tSink.ores) {
+            assertTrue(tPos.y > 0 && tPos.y <= GT6BedrockOreGenerator.NETHER_TAIL_TOP_Y,
+                    "tails stay under the nether water line 31");
+        }
+        assertTrue(tSink.ores.stream().anyMatch(tPos -> tPos.y > GT6BedrockOreGenerator.MUFFIN_LAYERS),
+                "the tails climb above the muffin");
+    }
+
     // ---------------------------------------------------------------- the harness
 
     private record Pos(int x, int y, int z, boolean small) {}

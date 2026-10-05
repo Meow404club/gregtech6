@@ -192,6 +192,46 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
         }
     }
 
+    // ---------------------------------------------------------------- the nether band (task worldgen-nether-bedrock-lava)
+
+    /**
+     * THE nether activation pin: the :797 nether lava dome row carries {@code nether=true};
+     * the :789-796 rows stay dormant census rows. RED while the row is census-only.
+     */
+    @Test
+    void netherRowIsExactlyTheLavaDomeRow() {
+        List<String> tNether = new ArrayList<>();
+        for (GTFluidSpringConfig tRow : GT6WorldgenDatagen.FLUID_SPRING_TABLE) if (tRow.nether()) tNether.add(tRow.name());
+        assertEquals(List.of("nether.fluid.lava"), tNether, "the :797 GEN_NETHER row activates");
+    }
+
+    /**
+     * The nether draw/replay face: the nether roll walks the nether rows (the :797 dome vs
+     * the overworld band), the exclusion replay filters the ore rows the same way — the
+     * one-bedrock-event-per-chunk seam holds per dimension.
+     */
+    @Test
+    void netherDrawAndReplayWalkTheNetherRows() {
+        GTFluidSpringConfig.Table tTable = new GTFluidSpringConfig.Table(List.of(
+                new GTFluidSpringConfig("ow", "minecraft:lava", 1, true, 1000),
+                new GTFluidSpringConfig("nether", "minecraft:lava", 1, false, true, 500)));
+        assertEquals("nether", GT6FluidSpringGenerator.drawSpring(tTable, new Random(SEED), true).name(),
+                "the nether roll skips the overworld band");
+        assertEquals("ow", GT6FluidSpringGenerator.drawSpring(tTable, new Random(SEED), false).name(),
+                "the overworld roll skips the nether row");
+        // the dormant census rows roll in NEITHER dimension
+        assertNull(GT6FluidSpringGenerator.drawSpring(new GTFluidSpringConfig.Table(List.of(
+                new GTFluidSpringConfig("off", "minecraft:lava", 1, false, false, 1000))), new Random(0), true),
+                "the :789-796 rows never roll");
+        // the ore replay: a nether-active ore row claims in the nether only
+        GTBedrockOreConfig.Table tOreTable = new GTBedrockOreConfig.Table(List.of(
+                new GTBedrockOreConfig("ore.bedrock.glowstone", gregapi.data.MT.Glowstone, 1, false, true)));
+        assertTrue(GT6FluidSpringGenerator.oreClaims(tOreTable, new Random(0), true),
+                "the nether-active ore row claims the nether chunk");
+        assertFalse(GT6FluidSpringGenerator.oreClaims(tOreTable, new Random(0), false),
+                "the nether-active ore row never claims an overworld chunk");
+    }
+
     // ---------------------------------------------------------------- the dome shape
 
     /** The recording fake world: a set of carved (non-opaque) cells, everything else opaque. */

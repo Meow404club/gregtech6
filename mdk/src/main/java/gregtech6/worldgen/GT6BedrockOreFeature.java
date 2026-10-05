@@ -39,6 +39,15 @@ import gregtech6.registry.GT6OreBlocks;
  * no GT family) are skipped, upstream same. The bedrock-face patch replaces the floor
  * unconditionally within its 6x6 (the upstream placeBlock force, y=0 -> -64).
  *
+ * <p><b>The dimension face</b> (task worldgen-nether-bedrock-lava): the nether modifier row
+ * ({@code gt6:nether_bedrock_ores} over {@code #minecraft:is_nether}) hangs the SAME placed
+ * feature in the nether, and the feature routes itself — {@code dimensionType().hasCeiling()}
+ * (the upstream WD.waterLevel {@code hasNoSky} face, WD.java:430) picks the row mask (the
+ * seven GEN_NETHER rows :758-764), the NETHER stream salt, the nether's own bedrock floor
+ * (y=0, the flat layer) and water line (tails to 30), and the NETHERRACK muffin shell
+ * (WorldgenOresBedrock.java:196 "Use Deepslate if available, except in the Nether"; the
+ * netherrack host resolves its own ore family, GT6OreBlocks FAMILIES).
+ *
  * <p>KJS face (card declaration): the 46-row table is datapack JSON (the configured-feature
  * config); this class is the registry face, out of KJS scope (GT6Features javadoc clause).
  */
@@ -53,24 +62,32 @@ public class GT6BedrockOreFeature extends Feature<GTBedrockOreConfig.Table> {
         WorldGenLevel tLevel = aContext.level();
         ChunkPos tWork = tLevel instanceof WorldGenRegion ? ((WorldGenRegion) tLevel).getCenter()
                 : new ChunkPos(aContext.origin());
-        Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), GT6VeinGenerator.OVERWORLD_DIMENSION_SALT, tWork.x, tWork.z);
-        List<GTBedrockOreConfig> tHits = GT6BedrockOreGenerator.drawRows(aContext.config(), tRandom);
+        // the dimension face (see the class javadoc): hasCeiling = the nether, the WD.java:430 hasNoSky face
+        boolean tNether = tLevel.dimensionType().hasCeiling();
+        Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(),
+                tNether ? GT6VeinGenerator.NETHER_DIMENSION_SALT : GT6VeinGenerator.OVERWORLD_DIMENSION_SALT,
+                tWork.x, tWork.z);
+        List<GTBedrockOreConfig> tHits = GT6BedrockOreGenerator.drawRows(aContext.config(), tRandom, tNether);
         if (tHits.isEmpty()) return false;
         Map<Block, GT6OreBlocks.OreFamily> tHosts = GT6OreBlocks.stoneToOreFamilies();
-        GT6BedrockOreGenerator.BedrockSink tSink = levelSink(tLevel, tHosts);
+        int tFloor = Math.max(GT6BedrockOreGenerator.BEDROCK_Y, tLevel.getMinBuildHeight()); // the nether's own y=0 floor
+        Block tShell = tNether ? Blocks.NETHERRACK : Blocks.DEEPSLATE; // :196 "except in the Nether"
+        GT6BedrockOreGenerator.BedrockSink tSink = levelSink(tLevel, tHosts, tFloor, tShell);
         boolean rPlaced = false;
         for (GTBedrockOreConfig tRow : tHits) {
             rPlaced |= GT6BedrockOreGenerator.generateVein(tRow, tRandom, tWork.getMinBlockX(), tWork.getMinBlockZ(),
-                    tLevel.getMinBuildHeight(), tSink);
+                    tLevel.getMinBuildHeight(),
+                    tNether ? GT6BedrockOreGenerator.NETHER_TAIL_TOP_Y : GT6BedrockOreGenerator.TAIL_TOP_Y, tSink);
         }
         return rPlaced;
     }
 
-    private GT6BedrockOreGenerator.BedrockSink levelSink(WorldGenLevel aLevel, Map<Block, GT6OreBlocks.OreFamily> aHosts) {
+    private GT6BedrockOreGenerator.BedrockSink levelSink(WorldGenLevel aLevel, Map<Block, GT6OreBlocks.OreFamily> aHosts,
+            int aFloor, Block aShell) {
         return new GT6BedrockOreGenerator.BedrockSink() {
             @Override
             public boolean isBedrockFace(int aX, int aZ) {
-                Block tBlock = aLevel.getBlockState(new BlockPos(aX, GT6BedrockOreGenerator.BEDROCK_Y, aZ)).getBlock();
+                Block tBlock = aLevel.getBlockState(new BlockPos(aX, aFloor, aZ)).getBlock();
                 return tBlock == Blocks.BEDROCK || tBlock instanceof GTBedrockOreBlock; // :185 (the idempotent re-place face)
             }
 
@@ -82,7 +99,7 @@ public class GT6BedrockOreFeature extends Feature<GTBedrockOreConfig.Table> {
 
             @Override
             public void shell(int aX, int aY, int aZ) {
-                aLevel.setBlock(new BlockPos(aX, aY, aZ), Blocks.DEEPSLATE.defaultBlockState(), 2); // :203, the unconditional face
+                aLevel.setBlock(new BlockPos(aX, aY, aZ), aShell.defaultBlockState(), 2); // :203, the unconditional face (deepslate ow / netherrack nether :196)
             }
 
             @Override

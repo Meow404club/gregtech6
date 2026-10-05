@@ -54,9 +54,18 @@ public final class GT6FluidSpringGenerator {
     private GT6FluidSpringGenerator() {
     }
 
-    /** The row validity (the modern dimension-mask face: only overworld rows roll — the offworld rows :789-797 stay dormant). */
+    /** The row validity overworld face (the pre-nether callers). */
     public static boolean valid(GTFluidSpringConfig aRow) {
-        return aRow.overworld();
+        return valid(aRow, false);
+    }
+
+    /**
+     * The row validity (the modern dimension-mask face): the {@code overworld} rows roll in
+     * the overworld, the :797 nether lava row rolls in the nether ({@code nether=true}, task
+     * worldgen-nether-bedrock-lava); the :789-796 rows carry neither — dormant census rows.
+     */
+    public static boolean valid(GTFluidSpringConfig aRow, boolean aNether) {
+        return aNether ? aRow.nether() : aRow.overworld();
     }
 
     /**
@@ -68,7 +77,12 @@ public final class GT6FluidSpringGenerator {
      * (the Feature reads the live gt6:bedrock_ores config; the tests pass the constant).
      */
     public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom) {
-        return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom).isEmpty();
+        return oreClaims(aOreTable, aOreRandom, false);
+    }
+
+    /** The dimension-aware face — the replay filters the ore rows like the ore Feature does. */
+    public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom, boolean aNether) {
+        return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom, aNether).isEmpty();
     }
 
     /**
@@ -78,8 +92,13 @@ public final class GT6FluidSpringGenerator {
      * spring per chunk (null = no spring this chunk).
      */
     public static GTFluidSpringConfig drawSpring(GTFluidSpringConfig.Table aTable, Random aRandom) {
+        return drawSpring(aTable, aRandom, false);
+    }
+
+    /** The dimension-aware face — see {@link #valid(GTFluidSpringConfig, boolean)}. */
+    public static GTFluidSpringConfig drawSpring(GTFluidSpringConfig.Table aTable, Random aRandom, boolean aNether) {
         for (GTFluidSpringConfig tRow : aTable.rows()) {
-            if (!valid(tRow)) continue;
+            if (!valid(tRow, aNether)) continue;
             if (aRandom.nextInt(tRow.probability()) == 0) return tRow;
         }
         return null;

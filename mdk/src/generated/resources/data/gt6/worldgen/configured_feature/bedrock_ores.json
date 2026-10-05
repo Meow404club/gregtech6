@@ -202,42 +202,49 @@
       },
       {
         "name": "ore.bedrock.voidquartz",
+        "nether": true,
         "ore": "VoidQuartz",
         "overworld": false,
         "probability": 4000
       },
       {
         "name": "ore.bedrock.glowstone",
+        "nether": true,
         "ore": "Glowstone",
         "overworld": false,
         "probability": 4000
       },
       {
         "name": "ore.bedrock.gloomstone",
+        "nether": true,
         "ore": "Gloomstone",
         "overworld": false,
         "probability": 4000
       },
       {
         "name": "ore.bedrock.efrine",
+        "nether": true,
         "ore": "Efrine",
         "overworld": false,
         "probability": 2000
       },
       {
         "name": "ore.bedrock.netherquartz",
+        "nether": true,
         "ore": "NetherQuartz",
         "overworld": false,
         "probability": 2000
       },
       {
         "name": "ore.bedrock.firestone",
+        "nether": true,
         "ore": "Firestone",
         "overworld": false,
         "probability": 8000
       },
       {
         "name": "ore.bedrock.ancientdebris",
+        "nether": true,
         "ore": "AncientDebris",
         "overworld": false,
         "probability": 4000

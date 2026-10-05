@@ -110,6 +110,7 @@
       {
         "block": "minecraft:lava",
         "name": "nether.fluid.lava",
+        "nether": true,
         "overworld": false,
         "probability": 100,
         "springFluid": 500
