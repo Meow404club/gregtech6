@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -36,6 +38,7 @@ import gregapi.data.OP;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.block.tree.GT6TreeXmasItem;
 import gregtech6.block.wire.GTWireBlock;
 import gregtech6.items.tools.GTPistolItem;
 
@@ -260,6 +263,64 @@ public class GT6CalendarsTest {
 	}
 
 	// ---------------------------------------------------------------------------
+	// The month binding + the maple season table (GT_API_Proxy_Client.java:144-167)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void monthBindsOnceAtClassLoad() {
+		// the static init bound the wall clock beside the flags (the :144 new Date() face —
+		// computed once per launch, never refreshed; same declared semantics as flagsBindOnceAtClassLoad)
+		assertEquals(GT6Calendars.computeMonth(System.currentTimeMillis()), GT6Calendars.sMonth);
+		assertTrue(GT6Calendars.sMonth >= 1 && GT6Calendars.sMonth <= 12);
+	}
+
+	@Test
+	public void computeMonthReadsTheCalendarMonth() {
+		assertEquals(1, GT6Calendars.computeMonth(noon(2026, 1, 15)));
+		assertEquals(6, GT6Calendars.computeMonth(noon(2026, 6, 20)));
+		assertEquals(9, GT6Calendars.computeMonth(noon(2026, 9, 30)));
+		assertEquals(12, GT6Calendars.computeMonth(noon(2026, 12, 5)));
+	}
+
+	@Test
+	public void mapleSeasonTableIsTheUpstreamSwitch() {
+		// GT_API_Proxy_Client.java:146-167 verbatim: case 1/12 BROWN, 9 YELLOW, 10 ORANGE,
+		// 11 RED; every other month falls through the switch (the pre-coloured base art stays)
+		assertEquals(GT6Calendars.MapleSeason.BROWN, GT6Calendars.mapleSeasonOfMonth(1));
+		assertEquals(GT6Calendars.MapleSeason.NONE, GT6Calendars.mapleSeasonOfMonth(2));
+		assertEquals(GT6Calendars.MapleSeason.NONE, GT6Calendars.mapleSeasonOfMonth(8));
+		assertEquals(GT6Calendars.MapleSeason.YELLOW, GT6Calendars.mapleSeasonOfMonth(9));
+		assertEquals(GT6Calendars.MapleSeason.ORANGE, GT6Calendars.mapleSeasonOfMonth(10));
+		assertEquals(GT6Calendars.MapleSeason.RED, GT6Calendars.mapleSeasonOfMonth(11));
+		assertEquals(GT6Calendars.MapleSeason.BROWN, GT6Calendars.mapleSeasonOfMonth(12));
+	}
+
+	// ---------------------------------------------------------------------------
+	// The RAINBOW_SLOW tooltip cycle (GT_API_Proxy_Client.java:571-582)
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void rainbowSlowCyclesTheTenUpstreamColors() {
+		// CLIENT_TIME steps 25 ticks per color = 1.25 s (the 1.7.10 client tick), full cycle 12.5 s;
+		// the LH.Chat:687-701 constants map onto ChatFormatting GOLD/AQUA/DARK_AQUA/DARK_BLUE/
+		// DARK_PURPLE/LIGHT_PURPLE verbatim
+		long t0 = 1_700_000_000_000L;
+		assertEquals(ChatFormatting.RED, GT6Calendars.rainbowSlow(t0), ":572 case 0");
+		assertEquals(ChatFormatting.GOLD, GT6Calendars.rainbowSlow(t0 + 1250), ":573 ORANGE=GOLD");
+		assertEquals(ChatFormatting.YELLOW, GT6Calendars.rainbowSlow(t0 + 2500), ":574");
+		assertEquals(ChatFormatting.GREEN, GT6Calendars.rainbowSlow(t0 + 3750), ":575");
+		assertEquals(ChatFormatting.AQUA, GT6Calendars.rainbowSlow(t0 + 5000), ":576 CYAN=AQUA");
+		assertEquals(ChatFormatting.DARK_AQUA, GT6Calendars.rainbowSlow(t0 + 6250), ":577 DCYAN");
+		assertEquals(ChatFormatting.DARK_BLUE, GT6Calendars.rainbowSlow(t0 + 7500), ":578 DBLUE");
+		assertEquals(ChatFormatting.BLUE, GT6Calendars.rainbowSlow(t0 + 8750), ":579");
+		assertEquals(ChatFormatting.DARK_PURPLE, GT6Calendars.rainbowSlow(t0 + 10000), ":580 PURPLE");
+		assertEquals(ChatFormatting.LIGHT_PURPLE, GT6Calendars.rainbowSlow(t0 + 11250), ":581 PINK");
+		assertEquals(ChatFormatting.RED, GT6Calendars.rainbowSlow(t0 + 12500), "the cycle wraps at 250 ticks");
+		// mid-step holds the same color (a switch on the 25-tick slot, not a smooth lerp)
+		assertEquals(GT6Calendars.rainbowSlow(t0), GT6Calendars.rainbowSlow(t0 + 1249));
+	}
+
+	// ---------------------------------------------------------------------------
 	// The guns (Loader_Tools.java:198-200) and the login lines (GT_Client.java:117-122)
 	// ---------------------------------------------------------------------------
 
@@ -284,5 +345,53 @@ public class GT6CalendarsTest {
 		// the words ride literals — no lang keys behind the jokes
 		assertFalse(tBoth.get(0).getContents() instanceof TranslatableContents);
 		assertFalse(tBoth.get(1).getContents() instanceof TranslatableContents);
+	}
+
+	// ---------------------------------------------------------------------------
+	// The Christmas-in-July tooltip census (the 8-file grep of "Christmas in July")
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The 8-carrier census (research.easter-egg-census id1451 face 3): every upstream file
+	 * gates the SAME RAINBOW_SLOW line on XMAS_IN_JULY, differing only in the meta guard —
+	 * {upstream anchor, meta guard, port carrier (null = dormant, no port domain)}.
+	 */
+	private static final String[][] XMAS_TOOLTIP_CENSUS = {
+		{"BlockTreePlanks2.java:96-98",            "aMeta == 0",       "planks"},
+		{"BlockTreeLogC.java:105-106",             "(aMeta & 3) == 0", "log"},
+		{"BlockTreeLeavesCD.java:130-131",         "(aMeta & 7) == 0", "leaves"},
+		{"BlockTreeSaplingCD.java:110-111",        "(aMeta & 7) == 0", "sapling"},
+		{"BlockTreePlanks2FireProof.java:96-97",   "aMeta == 0",       null},
+		{"BlockTreeLogCFireProof.java:103-104",    "(aMeta & 3) == 0", null},
+		{"BlockTreeBeamC.java:61-62",              "(aMeta & 3) == 0", null},
+		{"BlockTreeBeamCFireProof.java:61-62",     "(aMeta & 3) == 0", null},
+	};
+
+	@Test
+	public void xmasTooltipCensusSharesTheOneRainbowLineWithAtLeastThreeCarriers() {
+		// the census shape: 8 rows, >= 3 sampled into port carriers (the fireproof twins +
+		// the Blue Spruce beams stay dormant — no port domain)
+		assertEquals(8, XMAS_TOOLTIP_CENSUS.length, "the full grep census");
+		int tCarried = 0;
+		for (String[] tRow : XMAS_TOOLTIP_CENSUS) if (tRow[2] != null) tCarried++;
+		assertTrue(tCarried >= 3, "acceptance: at least 3 of the 8 rows sampled into port carriers, got " + tCarried);
+		// the sampled rows' shared body, live: flag down no line; flag up exactly the one
+		// verbatim literal line in the pinned RAINBOW_SLOW colour (injected clock — no race)
+		assertFalse(GT6Calendars.XMAS_IN_JULY);
+		List<Component> tTooltip = new ArrayList<>();
+		GT6TreeXmasItem.addXmasLine(tTooltip, 0);
+		assertTrue(tTooltip.isEmpty(), "flag down, no line");
+		long t0 = 1_700_000_000_000L;
+		GT6Calendars.XMAS_IN_JULY = true;
+		GT6TreeXmasItem.addXmasLine(tTooltip, t0);
+		assertEquals(1, tTooltip.size(), "exactly the one line");
+		Component tLine = tTooltip.get(0);
+		assertEquals("Save on everything at Christmas in July!", tLine.getString(), "the verbatim census text");
+		assertFalse(tLine.getContents() instanceof TranslatableContents, "no lang key behind the joke line");
+		assertEquals(ChatFormatting.RED.getColor().intValue(), tLine.getStyle().getColor().getValue(),
+				"RAINBOW_SLOW slot 0 at t0 (:572) rides the style");
+		GT6TreeXmasItem.addXmasLine(tTooltip, t0 + 5000);
+		assertEquals(ChatFormatting.AQUA.getColor().intValue(), tTooltip.get(1).getStyle().getColor().getValue(),
+				"slot 4 CYAN=AQUA (:576) — the tooltip colour animates with the cycle");
 	}
 }

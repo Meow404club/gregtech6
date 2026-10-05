@@ -78,6 +78,14 @@ import gregapi.oredict.OreDictPrefix;
  * {@link #foolFill(OreDictPrefix, OreDictMaterial)} which switch to the live
  * {@code mNameLocal} word while {@link #APRIL_FOOLS} is up.
  *
+ * <p><b>The Christmas + seasonal faces</b> (task easter-s3-xmas-seasonal, the S3 card):
+ * {@link #sMonth} binds the calendar month beside the flags (GT_API_Proxy_Client.java:144,
+ * the same compute-once semantics), {@link #mapleSeasonOfMonth(int)} is the upstream
+ * maple month table (:146-167) the client bake swap consumes, and {@link #rainbowSlow(long)}
+ * is the RAINBOW_SLOW tooltip colour cycle (:571-582). The XMAS leaves texture swap itself
+ * is client machinery (GT6SeasonalLeafClientListener); the tooltip line rides
+ * GT6TreeXmasItem over the four Blue Spruce carriers.
+ *
  * <p><b>Dormant consumption points</b> (ported flags have no carrier in the port yet):
  * <ul>
  * <li>"Schrödingers Ore" (LanguageHandler.java:167) — the carrier face "Unidentified Ore"
@@ -100,6 +108,13 @@ public class GT6Calendars {
 	public static volatile boolean XMAS_IN_JULY = false;
 	/** 6th of December — the CODE window opens one day early, December 5 (CS.java:873). */
 	public static volatile boolean XMAS_IN_DECEMBER = false;
+
+	/**
+	 * The calendar month, bound ONCE at class load beside the flags (GT_API_Proxy_Client.java:144
+	 * {@code new Date()} — computed once per launch, never refreshed; the same declared
+	 * stale-forever semantics as the four flags above).
+	 */
+	public static volatile int sMonth = 0;
 
 	/** The explicit-table row count after {@link #ensureFoolsApplied()} (the census pin; the wood loop tail is dynamic). */
 	public static volatile int sFoolRenames = 0;
@@ -134,6 +149,89 @@ public class GT6Calendars {
 		WOODMANS_BDAY = tFlags[1];
 		XMAS_IN_JULY = tFlags[2];
 		XMAS_IN_DECEMBER = tFlags[3];
+		sMonth = computeMonth(aEpochMillis);
+	}
+
+	/**
+	 * The calendar month over an injected clock (1-12; the upstream {@code new
+	 * Date().getMonth()+1} face, GT_API_Proxy_Client.java:146 — default-zone day semantics,
+	 * the same {@link java.time} stand-in as {@link #computeFlags(long)}).
+	 */
+	public static int computeMonth(long aEpochMillis) {
+		return LocalDate.ofInstant(Instant.ofEpochMilli(aEpochMillis), ZoneId.systemDefault()).getMonthValue();
+	}
+
+	// -------------------------------------------------------------------------
+	// The seasonal maple faces (GT_API_Proxy_Client.java:144-167 + :571-582)
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The upstream maple icon rows of the month switch (GT_API_Proxy_Client.java:146-167):
+	 * the pre-coloured seasonal art variants the port borrowed byte-identical
+	 * ({@code leaves_maple_<suffix>.png}); {@code NONE} = the months the switch falls
+	 * through and the base art stays (the LEAVES_AB[1] default).
+	 */
+	public enum MapleSeason {
+		/** January + December — LEAVES_MAPLE_BROWN (:147-150, :163-166). */
+		BROWN("brown"),
+		/** September — LEAVES_MAPLE_YELLOW (:151-153). */
+		YELLOW("yellow"),
+		/** October — LEAVES_MAPLE_ORANGE (:155-157). */
+		ORANGE("orange"),
+		/** November — LEAVES_MAPLE_RED (:159-161). */
+		RED("red"),
+		/** February-August — no switch case fires, the pre-coloured base art stays. */
+		NONE(null);
+
+		/** The borrowed-art filename segment (null for NONE). */
+		private final String mSuffix;
+
+		MapleSeason(String aSuffix) {
+			mSuffix = aSuffix;
+		}
+
+		/** The {@code leaves_maple_<suffix>} art segment, or null for {@link #NONE}. */
+		public String suffix() {
+			return mSuffix;
+		}
+	}
+
+	/**
+	 * The maple season of a calendar month — the upstream switch table verbatim
+	 * (GT_API_Proxy_Client.java:146-167): 1/12 BROWN, 9 YELLOW, 10 ORANGE, 11 RED, the
+	 * rest NONE. Pure; the client bake swap (GT6SeasonalLeafClientListener) consumes it
+	 * with {@link #sMonth}.
+	 */
+	public static MapleSeason mapleSeasonOfMonth(int aMonth) {
+		return switch (aMonth) {
+			case 1, 12 -> MapleSeason.BROWN;
+			case 9 -> MapleSeason.YELLOW;
+			case 10 -> MapleSeason.ORANGE;
+			case 11 -> MapleSeason.RED;
+			default -> MapleSeason.NONE;
+		};
+	}
+
+	/**
+	 * The {@code LH.Chat.RAINBOW_SLOW} tooltip colour cycle over an injected clock
+	 * (GT_API_Proxy_Client.java:571-582 verbatim table): ten colours at 25-tick steps
+	 * (CLIENT_TIME = the 1.7.10 client tick, 50 ms — 1.25 s per colour, 12.5 s cycle). The
+	 * LH.Chat:687-701 constants are EnumChatFormatting words: ORANGE=GOLD, CYAN=AQUA,
+	 * DCYAN=DARK_AQUA, DBLUE=DARK_BLUE, PURPLE=DARK_PURPLE, PINK=LIGHT_PURPLE.
+	 */
+	public static ChatFormatting rainbowSlow(long aEpochMillis) {
+		return switch ((int) ((aEpochMillis / 1250) % 10)) {
+			case 0 -> ChatFormatting.RED;
+			case 1 -> ChatFormatting.GOLD;
+			case 2 -> ChatFormatting.YELLOW;
+			case 3 -> ChatFormatting.GREEN;
+			case 4 -> ChatFormatting.AQUA;
+			case 5 -> ChatFormatting.DARK_AQUA;
+			case 6 -> ChatFormatting.DARK_BLUE;
+			case 7 -> ChatFormatting.BLUE;
+			case 8 -> ChatFormatting.DARK_PURPLE;
+			default -> ChatFormatting.LIGHT_PURPLE;
+		};
 	}
 
 	// -------------------------------------------------------------------------
@@ -365,6 +463,7 @@ public class GT6Calendars {
 		XMAS_IN_DECEMBER = false;
 		sFoolRenames = 0;
 		sFoolsApplied = false;
+		sMonth = computeMonth(System.currentTimeMillis());
 	}
 
 	private GT6Calendars() {}

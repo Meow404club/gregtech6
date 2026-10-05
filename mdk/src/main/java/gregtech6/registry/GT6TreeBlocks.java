@@ -18,6 +18,7 @@ import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.block.tree.GT6TreeLeavesBlock;
 import gregtech6.block.tree.GT6TreeLogBlock;
 import gregtech6.block.tree.GT6TreeSaplingBlock;
+import gregtech6.block.tree.GT6TreeXmasItem;
 import gregtech6.worldgen.GT6Worldgen;
 
 /**
@@ -121,8 +122,15 @@ public final class GT6TreeBlocks {
             for (int i = 0; i < tFamily.size(); i++) {
                 int tIndex = i;
                 RegistryObject<Block> tBlock = tFamily.get(tIndex);
+                // task easter-s3-xmas-seasonal — the Blue Spruce rows carry the Christmas-in-July
+                // tooltip item (upstream BlockTreePlanks2.java:96-97 + its seven family twins;
+                // the meta==0 guard collapses: the per-pair item IS the Blue Spruce row). The
+                // other four upstream carriers (the fireproof twins + the Blue Spruce beams)
+                // have no port domain (GT6BeamKind = the vanilla-subset 8).
+                boolean tXmas = KINDS.get(tIndex) == GT6TreeKind.BLUE_SPRUCE;
                 rList.add(ITEMS_REG.register(tBlock.getId().getPath(),
-                        () -> new BlockItem(tBlock.get(), new Item.Properties())));
+                        tXmas ? () -> new GT6TreeXmasItem(tBlock.get(), new Item.Properties())
+                              : () -> new BlockItem(tBlock.get(), new Item.Properties())));
             }
         }
         return List.copyOf(rList);

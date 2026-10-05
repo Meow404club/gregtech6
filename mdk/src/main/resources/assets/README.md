@@ -13580,3 +13580,48 @@ the `item/generated` parent (the bottle band convention).
   - `circuit_magic.png` (`be6cdb3809242c0a6facb92a8052a69539622a29aebf83032c2ce5a4f8c7dbf4` — meta 30311, MIT:707)
   - `circuit_enderium.png` (`643d47f3db898ca77520256c7a04a5f764bb2a9258c2313c199db16b4c9d2430` — meta 30313, MIT:708)
   - `circuit_signalum.png` (`ee59f5f15cbaa40f6776fa81fc100ba140b179aedf74b6b6889453294f62cdd4` — meta 30315, MIT:709)
+
+## Christmas + seasonal leaves textures (task easter-s3-xmas-seasonal)
+
+The S3 easter-egg card (research.easter-egg-census id1451): the seasonal leaves
+art, borrowed byte-identical from upstream
+`src/main/resources/assets/gregtech/textures/blocks/iconsets/`, snapshot
+`v6.17.06-22-g3703e4030`:
+
+- `gt6/textures/block/tree/leaves_blue_spruce_xmas.png` — the XMAS Blue Spruce
+  leaves art (upstream `LEAVES_BLUESPRUCE_XMAS.png`, the 16x64 4-frame animated
+  strip; sha256 `9314eb232f6cfa14eb0bd370a05fd688497f6f40e251a374ee7ffa2879a3a36e`).
+  Upstream swaps the icon arrays at proxy init while XMAS_IN_JULY or
+  XMAS_IN_DECEMBER is up (GT_API_Proxy_Client.java:133-142).
+- `gt6/textures/block/tree/leaves_blue_spruce_xmas.png.mcmeta` — the animation
+  table (upstream `LEAVES_BLUESPRUCE_XMAS.png.mcmeta`, frametime 16; sha256
+  `6fa30d635125baf1212840c239add6b9e7f0d5be8e11094191f950c557881913`).
+- `gt6/textures/block/tree/leaves_maple_brown.png` — upstream
+  `LEAVES_MAPLE_BROWN.png` (sha256
+  `5e1f82deed20d1c7b785d2ca199bbeb2b2087e7cf45d2c96d9dc40edb3bdf9f0`), the
+  January/December art (GT_API_Proxy_Client.java:147-150, :163-166).
+- `gt6/textures/block/tree/leaves_maple_yellow.png` — upstream
+  `LEAVES_MAPLE_YELLOW.png` (sha256
+  `d7baac9ba09e7acb601f555013f6484ba6e7c48e7d51d304b047f8bc2fa41ec5`), September
+  (:151-153).
+- `gt6/textures/block/tree/leaves_maple_orange.png` — upstream
+  `LEAVES_MAPLE_ORANGE.png` (sha256
+  `a8d2d23566aa8ec8288f3430fcea56d6e106d708fa6819bfef9a11d6754c3d3b`), October
+  (:155-157).
+- `gt6/textures/block/tree/leaves_maple_red.png` — upstream
+  `LEAVES_MAPLE_RED.png` (sha256
+  `0a84a730f2fc37fb8a98edb5cc9292e0b5d05ad03a8f52259d4c8e3f41566432`), November
+  (:159-161).
+
+Mechanism declared: upstream repoints the icon arrays once at proxy init; the
+port substitutes the corresponding standalone variant model at client bake time
+(`GT6SeasonalLeafClientListener`, ModelEvent.ModifyBakingResult) — the
+flags/month bind once at class load, strictly before the first resource reload,
+so the swap is decided once per bake, the upstream compute-once shape. A tint
+was ruled out (coordinator ruling 2026-10-04): the seasonal art rows are
+independent pre-coloured PNGs with no shared grayscale base, so a BlockColors
+multiply can never reproduce them. The OPAQUE twin icons (LEAVES_OPAQUE_*)
+are NOT borrowed: the port has one cutout_mipped leaves carrier per species
+(the upstream opaque array faces LEAVES_CD[8] / LEAVES_AB[9] have no carrier
+here). Census pin: `GT6SeasonalAssetsTest` (byte-identical + ledger + variant
+models + plain blockstates).

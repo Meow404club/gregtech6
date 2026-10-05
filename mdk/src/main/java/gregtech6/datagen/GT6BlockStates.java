@@ -3893,6 +3893,22 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(tSnake + "_leaves", modLoc("block/" + tSnake + "_leaves"));
         }
         LOGGER.info("GT6 tree blocks: 27 per-pair blockstates over 9 cross + 9 column + 9 leaves models");
+
+        // task easter-s3-xmas-seasonal — the seasonal variant models (STANDALONE: no
+        // blockstate references them; GT6SeasonalLeafClientListener bakes them through
+        // ModelEvent.RegisterAdditional and repoints the blue_spruce/maple leaves keys at
+        // the seasonal one per the live flags/month — the upstream icon-pointer swap face,
+        // GT_API_Proxy_Client.java:133-167, at the modern bake anchor). Same cube_all +
+        // cutout_mipped grammar over the byte-borrowed seasonal PNGs (the XMAS art is the
+        // animated 4-frame strip — its .png.mcmeta ships beside it).
+        models().cubeAll("blue_spruce_leaves_xmas",
+                modLoc("block/tree/leaves_blue_spruce_xmas")).renderType("cutout_mipped");
+        for (gregtech6.easter.GT6Calendars.MapleSeason tSeason : gregtech6.easter.GT6Calendars.MapleSeason.values()) {
+            if (tSeason.suffix() == null) continue; // NONE — the plain maple model already covers it
+            models().cubeAll("maple_leaves_" + tSeason.suffix(),
+                    modLoc("block/tree/leaves_maple_" + tSeason.suffix())).renderType("cutout_mipped");
+        }
+        LOGGER.info("GT6 seasonal leaves: 5 standalone variant models (1 XMAS + 4 maple seasons)");
     }
 
     /**
