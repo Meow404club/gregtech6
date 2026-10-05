@@ -3,8 +3,13 @@
   "biomes": "#twilightforest:in_twilight_forest",
   "features": [
     "gt6:twilight_ore/anthracite",
+    "gt6:twilight_ore/lignite",
     "gt6:twilight_ore/salt",
-    "gt6:twilight_ore/rocksalt"
+    "gt6:twilight_ore/rocksalt",
+    "gt6:twilight_ore/bauxite",
+    "gt6:twilight_ore/oilshale",
+    "gt6:twilight_ore/gypsum",
+    "gt6:twilight_ore/milkyquartz"
   ],
   "neoforge:conditions": [
     {

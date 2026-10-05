@@ -91,21 +91,22 @@ public class GT6TwilightWorldgenTest {
     // ---------------------------------------------------------------- the axis gate
 
     /**
-     * The 3/5 split: Coal/NaCl/KCl are axis members (WORLDGEN_ORES :832/:820/:821) and
-     * EMIT; Lignite/Bauxite/Oilshale/Gypsum/MilkyQuartz sit outside the registration axis
-     * and stay TABLE DATA ONLY (the molybdenum large-vein precedent — the axis extension
-     * revives them without touching this band's JSON).
+     * The axis gate reads the LIVE material axis: at the card's base Coal/NaCl/KCl were
+     * axis members (WORLDGEN_ORES :832/:820/:821) and the other five sat off-axis as table
+     * data (the molybdenum large-vein precedent); the axis-extension batch 2 opened
+     * Lignite/Bauxite/Oilshale/Gypsum/MilkyQuartz (EDGE_ORES :481-571 call anchors), so
+     * the SAME gate now emits the FULL table, zero band edits (the designed revival —
+     * the review-seat re-measure, task worldgen-axis-batch2 union).
      */
     @Test
-    public void twilightAxisGateSplitsThreeAndFive() {
+    public void twilightAxisGateFollowsTheLiveAxis() {
         List<String> tOnAxis = GTOreWorldgen.twilightOnAxisRows().stream().map(GTOreWorldgen.TwilightOreRow::tail).toList();
-        assertEquals(List.of("anthracite", "salt", "rocksalt"), tOnAxis,
-                "exactly the three axis members, table order");
+        assertEquals(List.of("anthracite", "lignite", "salt", "rocksalt", "bauxite", "oilshale", "gypsum", "milkyquartz"),
+                tOnAxis, "the full table emits, table order (the batch2 axis opening)");
         List<String> tOffAxis = GTOreWorldgen.TWILIGHT_ORE_ROWS.stream()
                 .filter(tRow -> !GTOreWorldgen.twilightOnAxis(tRow))
                 .map(GTOreWorldgen.TwilightOreRow::tail).toList();
-        assertEquals(List.of("lignite", "bauxite", "oilshale", "gypsum", "milkyquartz"), tOffAxis,
-                "exactly the five off-axis rows, table order");
+        assertEquals(List.of(), tOffAxis, "no off-axis remainder");
     }
 
     // ---------------------------------------------------------------- the keys
@@ -158,9 +159,11 @@ public class GT6TwilightWorldgenTest {
             assertEquals("#twilightforest:in_twilight_forest", tRow.get("biomes").getAsString(),
                     "the TF tag gate (④: never resolved when TF is absent — the condition skips the entry first)");
             JsonArray tFeatures = tRow.getAsJsonArray("features");
-            assertNotNull(tFeatures, "the 3-row feature list");
-            assertEquals(3, tFeatures.size(), "the 3 axis-valid rows");
-            assertEquals(List.of("gt6:twilight_ore/anthracite", "gt6:twilight_ore/salt", "gt6:twilight_ore/rocksalt"),
+            assertNotNull(tFeatures, "the 8-row feature list");
+            assertEquals(8, tFeatures.size(), "the 8 axis-valid rows (the batch2 axis opening)");
+            assertEquals(List.of("gt6:twilight_ore/anthracite", "gt6:twilight_ore/lignite", "gt6:twilight_ore/salt",
+                            "gt6:twilight_ore/rocksalt", "gt6:twilight_ore/bauxite", "gt6:twilight_ore/oilshale",
+                            "gt6:twilight_ore/gypsum", "gt6:twilight_ore/milkyquartz"),
                     tFeatures.asList().stream().map(JsonElement::getAsString).toList(), "table order");
             assertEquals("underground_ores", tRow.get("step").getAsString(), "the ore step");
             JsonArray tConditions = tRow.getAsJsonArray(tBrand + ":conditions");
@@ -174,7 +177,7 @@ public class GT6TwilightWorldgenTest {
     }
 
     /**
-     * The 3 configured/placed pairs ship the upstream blob columns: size=50 over the
+     * The 8 configured/placed pairs ship the upstream blob columns: size=50 over the
      * verbatim stone host (WorldgenOresVanilla replaceBlock=null = the vanilla
      * {@code target == Blocks.stone} default), placed = 1/100 rarity + NO count modifier
      * (Amount=1 = the default count) + the 16..32 uniform band. The block = the material's
@@ -183,11 +186,13 @@ public class GT6TwilightWorldgenTest {
      */
     @Test
     public void twilightOreFeatureJsonsShipTheUpstreamColumns() throws Exception {
-        List<String> tTails = List.of("anthracite", "salt", "rocksalt");
+        List<String> tTails = List.of("anthracite", "lignite", "salt", "rocksalt", "bauxite", "oilshale", "gypsum", "milkyquartz");
         // the material snakes = GTMaterialItems.snakeCase(mNameInternal): Coal->coal,
         // NaCl->"Salt"->salt, KCl->"Sylvite"->sylvite (the upstream meta-3 display name,
-        // BlockRockOres.java:50 "Sylvite" — the ROW tail says rocksalt, the MATERIAL says sylvite)
-        List<String> tSnakes = List.of("coal", "salt", "sylvite");
+        // BlockRockOres.java:50 "Sylvite" — the ROW tail says rocksalt, the MATERIAL says sylvite);
+        // Lignite->lignite, Bauxite->bauxite, Gypsum->gypsum ride their own names; the
+        // camel-cased pairs split: Oilshale->oil_shale, MilkyQuartz->milky_quartz
+        List<String> tSnakes = List.of("coal", "lignite", "salt", "sylvite", "bauxite", "oil_shale", "gypsum", "milky_quartz");
         for (int i = 0; i < tTails.size(); i++) {
             String tTail = tTails.get(i);
             JsonObject tConfigured = resourceJson("data/gt6/worldgen/configured_feature/twilight_ore/" + tTail + ".json");
