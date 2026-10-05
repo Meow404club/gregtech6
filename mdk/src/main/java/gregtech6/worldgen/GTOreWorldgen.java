@@ -706,7 +706,15 @@ public final class GTOreWorldgen {
      * modifier: 3 + 12 + 1 = 16 today).
      */
     public static List<TwilightOreRow> twilightOnAxisRows() {
-        List<TwilightOreRow> rRows = new ArrayList<>(16);
+        // the datagen-JVM warm-up (review-seat fix, task twilight-vanilla-ores-deadrock):
+        // the alias walk in {@link #twilightOnAxis} (MaterialRegistry alias -> target) only
+        // resolves after the material flood — a cold datagen JVM (the provider order
+        // lottery, the id1467 class) returned the 8 RockOres rows and silently dropped the
+        // A-band/netherite rows from the emitted JSONs, breaking the runData idempotency.
+        // initMaterials is idempotent under the single-flush gate (the
+        // forge-order-pollution-hygiene face), so the call is a no-op on warm JVMs.
+        GTMaterialItems.initMaterials();
+        List<TwilightOreRow> rRows = new ArrayList<>(23);
         for (TwilightOreRow tRow : TWILIGHT_ORE_ROWS) {
             if (twilightOnAxis(tRow)) rRows.add(tRow);
         }

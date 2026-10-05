@@ -102,9 +102,15 @@ public class GT6TwilightWorldgenTest {
      */
     @Test
     public void twilightAxisGateFollowsTheLiveAxis() {
+        // twilightOnAxisRows() is the WHOLE twilight universe gate (RockOres table + the
+        // VanillaOresA band + netherite): 8 at the pilot card, 23 since the deadrock band
+        // joined (8 + 14 + 1 — the B1 axis carried rutile/bastnasite)
         List<String> tOnAxis = GTOreWorldgen.twilightOnAxisRows().stream().map(GTOreWorldgen.TwilightOreRow::tail).toList();
-        assertEquals(List.of("anthracite", "lignite", "salt", "rocksalt", "bauxite", "oilshale", "gypsum", "milkyquartz"),
-                tOnAxis, "the full table emits, table order (the batch2 axis opening)");
+        assertEquals(List.of(
+                "anthracite", "lignite", "salt", "rocksalt", "bauxite", "oilshale", "gypsum", "milkyquartz",
+                "sulfur", "ruby", "amber", "amethyst", "galena", "cassiterite", "cooperite", "pentlandite",
+                "scheelite", "rutile", "bastnasite", "graphite", "pitchblende", "borax", "netherite"),
+                tOnAxis, "the full twilight universe emits, band order (the live axis gate)");
         List<String> tOffAxis = GTOreWorldgen.TWILIGHT_ORE_ROWS.stream()
                 .filter(tRow -> !GTOreWorldgen.twilightOnAxis(tRow))
                 .map(GTOreWorldgen.TwilightOreRow::tail).toList();
@@ -149,16 +155,17 @@ public class GT6TwilightWorldgenTest {
     /**
      * The 3-row modifier in EACH leg's brand: the tag gate + the TF-absence conditions
      * (the acceptance's 3 行 JSON 双腿 + TF 缺席钉). Features order = the band order of the
-     * on-axis rows (RockOres band, then the VanillaOresA band, then netherite — 21 rows
-     * since the twilight-vanilla-ores-deadrock band + the batch2 axis opening); the conditions = exactly ONE positive
+     * on-axis rows (RockOres band, then the VanillaOresA band, then netherite — 23 rows
+     * since the twilight-vanilla-ores-deadrock band + the axis openings); the conditions = exactly ONE positive
      * {@code mod_loaded twilightforest} (the type-first member order the rebrand walk
      * treats identically, KNOWN_CONDITION_TYPES mod_loaded).
      */
     @Test
     public void twilightModifierShipsTheTfGateInBothBrands() throws Exception {
         // the band order = the 8 RockOres rows (table order — the batch2 axis opening) +
-        // the 12 on-axis VanillaOresA rows + netherite = 21 (the review-seat union over the
-        // card's 16-row base measurement: 3 RockOres then, 8 now)
+        // the 14 on-axis VanillaOresA rows (rutile/bastnasite rode the B1 large-vein axis,
+        // the review-seat re-measure) + netherite = 23 (the card's base measured 16:
+        // 3 RockOres + 12 A + netherite)
         List<String> tExpected = List.of(
                 "gt6:twilight_ore/anthracite", "gt6:twilight_ore/lignite", "gt6:twilight_ore/salt",
                 "gt6:twilight_ore/rocksalt", "gt6:twilight_ore/bauxite", "gt6:twilight_ore/oilshale",
@@ -166,17 +173,18 @@ public class GT6TwilightWorldgenTest {
                 "gt6:twilight_ore/sulfur", "gt6:twilight_ore/ruby", "gt6:twilight_ore/amber",
                 "gt6:twilight_ore/amethyst", "gt6:twilight_ore/galena", "gt6:twilight_ore/cassiterite",
                 "gt6:twilight_ore/cooperite", "gt6:twilight_ore/pentlandite", "gt6:twilight_ore/scheelite",
+                "gt6:twilight_ore/rutile", "gt6:twilight_ore/bastnasite",
                 "gt6:twilight_ore/graphite", "gt6:twilight_ore/pitchblende", "gt6:twilight_ore/borax",
                 "gt6:twilight_ore/netherite");
         for (String tBrand : new String[] {"forge", "neoforge"}) {
-            JsonObject tRow = resourceJson("data/gt6/" + tBrand + "            assertNotNull(tFeatures, "the 21-row feature list");
-            assertEquals(21, tFeatures.size(), "the 21 axis-valid rows (8 RockOres + 12 VanillaOresA + netherite)");
+            JsonObject tRow = resourceJson("data/gt6/" + tBrand + "/biome_modifier/twilight_ores.json");
+            assertEquals(tBrand + ":add_features", tRow.get("type").getAsString(), tBrand + " type brand");
+            assertEquals("#twilightforest:in_twilight_forest", tRow.get("biomes").getAsString(),
+                    "the TF tag gate (④: never resolved when TF is absent — the condition skips the entry first)");
+            JsonArray tFeatures = tRow.getAsJsonArray("features");
+            assertNotNull(tFeatures, "the 23-row feature list");
+            assertEquals(23, tFeatures.size(), "the 23 axis-valid rows (8 RockOres + 14 VanillaOresA + netherite)");
             assertEquals(tExpected, tFeatures.asList().stream().map(JsonElement::getAsString).toList(), "band order");
-=======
-            assertNotNull(tFeatures, "the 16-row feature list");
-            assertEquals(16, tFeatures.size(), "the 16 axis-valid rows (3 RockOres + 12 VanillaOresA + netherite)");
-            assertEquals(tExpected, tFeatures.asList().stream().map(JsonElement::getAsString).toList(), "band order");
->>>>>>> 597df9866 (test(worldgen): pin the twilight VanillaOresA census (16 rows) + the netherite deadrock row, red)
             assertEquals("underground_ores", tRow.get("step").getAsString(), "the ore step");
             JsonArray tConditions = tRow.getAsJsonArray(tBrand + ":conditions");
             assertNotNull(tConditions, "the conditions key in the " + tBrand + " brand");
@@ -338,26 +346,28 @@ public class GT6TwilightWorldgenTest {
     }
 
     /**
-     * The A-band axis split 12/4: sulfur/ruby/amber/amethyst/galena/cassiterite/cooperite/
-     * pentlandite/scheelite/graphite/pitchblende/borax are axis members and EMIT;
-     * apatite/tetrahedrite/rutile(TiO2)/bastnasite sit outside the registration axis and
-     * stay TABLE DATA ONLY. The netherite row rides the axis via its :852 slot — the
-     * combined emission set = 3 + 12 + 1 = 16.
+     * The A-band axis gate reads the LIVE axis: at the card's base the split was 12/4
+     * (apatite/tetrahedrite/rutile(TiO2)/bastnasite off-axis, table data); the B1
+     * large-vein axis (ce6acae9a) carried rutile(TiO2)/bastnasite onto the axis, so the
+     * SAME gate now emits 14 (the review-seat re-measure). The netherite row rides the
+     * axis via its :852 slot — the combined emission set = 8 + 14 + 1 = 23 over the
+     * batch2-opened RockOres table.
      */
     @Test
-    public void twilightVanillaOreAAxisGateSplitsTwelveAndFour() {
+    public void twilightVanillaOreAAxisGateFollowsTheLiveAxis() {
         List<String> tOnAxis = GTOreWorldgen.TWILIGHT_ORE_ROWS_A.stream()
                 .filter(GTOreWorldgen::twilightOnAxis).map(GTOreWorldgen.TwilightOreRow::tail).toList();
         assertEquals(List.of("sulfur", "ruby", "amber", "amethyst", "galena", "cassiterite",
-                "cooperite", "pentlandite", "scheelite", "graphite", "pitchblende", "borax"), tOnAxis,
-                "exactly the twelve axis members, :677-692 order");
+                "cooperite", "pentlandite", "scheelite", "rutile", "bastnasite", "graphite",
+                "pitchblende", "borax"), tOnAxis,
+                "the fourteen axis members, :677-692 order (rutile/bastnasite rode the B1 axis)");
         List<String> tOffAxis = GTOreWorldgen.TWILIGHT_ORE_ROWS_A.stream()
                 .filter(tRow -> !GTOreWorldgen.twilightOnAxis(tRow)).map(GTOreWorldgen.TwilightOreRow::tail).toList();
-        assertEquals(List.of("apatite", "tetrahedrite", "rutile", "bastnasite"), tOffAxis,
-                "exactly the four off-axis rows, :677-692 order");
+        assertEquals(List.of("apatite", "tetrahedrite"), tOffAxis,
+                "exactly the two off-axis rows, :677-692 order");
         assertTrue(GTOreWorldgen.twilightOnAxis(GTOreWorldgen.TWILIGHT_NETHERITE_ROW),
                 "the netherite row's axis slot = the :852 always-on ancientdebris row");
-        assertEquals(16, GTOreWorldgen.twilightOnAxisRows().size(), "3 RockOres + 12 A-band + 1 netherite");
+        assertEquals(23, GTOreWorldgen.twilightOnAxisRows().size(), "8 RockOres + 14 A-band + 1 netherite");
     }
 
     /** The A-band + netherite keys share the twilight_ore directory (the band rule). */
@@ -377,7 +387,7 @@ public class GT6TwilightWorldgenTest {
     }
 
     /**
-     * The 12 axis-valid A-band configured/placed pairs ship their verbatim columns:
+     * The 14 axis-valid A-band configured/placed pairs ship their verbatim columns:
      * stone host + the NORMAL ore-stone form; the placed chain = [rarity?][count?]
      * square + height + biome — rarity only when probability &gt; 1, count only when
      * amount &gt; 1 (amount=1 IS the default count, the pilot band convention).
@@ -395,6 +405,8 @@ public class GT6TwilightWorldgenTest {
                 {"cooperite"  ,  6, 0, 0, 40, 52, "cooperite"},
                 {"pentlandite", 16, 0, 4,  8, 24, "pentlandite"},
                 {"scheelite"  , 12, 0, 4,  8, 24, "scheelite"},
+                {"rutile"     ,  6, 0, 0,  8, 24, "rutile"},
+                {"bastnasite" , 16, 0, 0, 40, 52, "bastnasite"},
                 {"graphite"   ,  6, 0, 2,  0,  8, "graphite"},
                 {"pitchblende", 16, 0, 0,  8, 16, "pitchblende"},
                 {"borax"      ,  6, 2, 0,  0, 16, "borax"}};
