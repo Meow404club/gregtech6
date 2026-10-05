@@ -131,6 +131,7 @@ public class GT6EnUs extends LanguageProvider {
         addJug(); // task small-tank-jug — the Ceramic Jug pair (the 32740 row + the 996 raw)
         addAnvils(); // task c-anvil
         addMortars(); // task mortar-family — the five pestle rows (the dump-verbatim shared name)
+        addSiftingTables(); // task sifting-table-family — the manual chain tail (the :2227 name column)
         addEnergySource();
         addFeBattery(); // task eu-bridge-outbound — tail-append
         addFeConverter(); // task b-fe-converter-machine — tail-append
@@ -1516,6 +1517,16 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.mortar_sapphire", "Mortar");
         add("block.gt6.mortar_diamond", "Mortar");
         add("block.gt6.mortar_amethyst", "Mortar");
+    }
+
+    /**
+     * The Sifting Table key (task sifting-table-family): the display name VERBATIM from
+     * the upstream registration row ("Sifting Table", Loader_MultiTileEntities.java
+     * :2227, "Misc Tool Blocks"). The item rides the machines tab (the kitchen join
+     * form), no tab key here.
+     */
+    private void addSiftingTables() {
+        add("block.gt6.sifting_table", "Sifting Table");
     }
 
     private void addBarrels() {

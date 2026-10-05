@@ -61,17 +61,26 @@ class GT6KitchenRenderDatagenTest {
     /**
      * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
      * walks the whole directory, so every later band must be declared here): the two
+    /**
+     * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
+     * walks the whole directory, so every later band must be declared here): the two
      * DERIVED NEI glyph tiles (the kitchen-nei card, tools root) + the mortar 12-PNG
      * two-layer band (task mortar-family — colored+overlay x sides/insides/top/bottom/
-     * middleside/middletop). The grindstone/sifting-table siblings extend this list at
-     * their own cards — with the sifting band (+8) landed the walk is 18 + 14 + 8 = 40.
+     * middleside/middletop) + the sifting-table 8-PNG two-layer band (task
+     * sifting-table-family — colored+overlay x legs/grid/border/plate). The grindstone
+     * sibling extends this list at its own card — with the sifting band (+8) landed the
+     * walk is 18 + 14 + 8 = 40.
      */
     private static final List<String> OTHER_TOOL_TREE_RESIDENTS = List.of(
             "tools/kitchen_nei_jei.png", "tools/kitchen_nei_emi.png", // the walk keys parentDir/file
             "mortar/sides.png", "mortar/insides.png", "mortar/top.png",
             "mortar/bottom.png", "mortar/middleside.png", "mortar/middletop.png",
             "mortar_overlay/sides.png", "mortar_overlay/insides.png", "mortar_overlay/top.png",
-            "mortar_overlay/bottom.png", "mortar_overlay/middleside.png", "mortar_overlay/middletop.png");
+            "mortar_overlay/bottom.png", "mortar_overlay/middleside.png", "mortar_overlay/middletop.png",
+            "colored/legs.png", "colored/grid.png",
+            "colored/border.png", "colored/plate.png",
+            "overlay/legs.png", "overlay/grid.png",
+            "overlay/border.png", "overlay/plate.png");
 
     private static List<String> declaredFaces(String aBlockId) {
         return aBlockId.equals("juicer") ? JUICER_FACES : TUB_FACES;

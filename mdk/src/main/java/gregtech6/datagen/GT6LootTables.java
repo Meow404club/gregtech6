@@ -142,6 +142,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
@@ -207,6 +208,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 28 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
+                new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
                 new SubProviderEntry(GT6EuBridgeBlockLoot::new, LootContextParamSets.BLOCK), // task w4-eu-bridge — the three EU-bridge families + the Roasting ladder
                 new SubProviderEntry(GT6ElectricTransformerBlockLoot::new, LootContextParamSets.BLOCK), // task c-ulv-lv-transformer
                 new SubProviderEntry(GT6LongDistanceBlockLoot::new, LootContextParamSets.BLOCK), // task energy-tail-machines
@@ -1616,6 +1618,41 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : anvilLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The sifting-table block list (task sifting-table-family): the single table row —
+     * the anvil list shape over one block, self-drop (the MTE Drops default; the working
+     * content pop rides the block's onRemove face via the dropInventory bridge, not the
+     * loot table).
+     */
+    public static List<Block> siftingTableLootBlocks() {
+        return List.of(gregtech6.registry.GT6SiftingTables.SIFTING_TABLE.get());
+    }
+
+    /** The sifting-table self-drop provider (task sifting-table-family, the GT6AnvilBlockLoot form). */
+    public static final class GT6SiftingTableBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6SiftingTableBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6SiftingTableBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return siftingTableLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : siftingTableLootBlocks()) dropSelf(tBlock);
         }
     }
 

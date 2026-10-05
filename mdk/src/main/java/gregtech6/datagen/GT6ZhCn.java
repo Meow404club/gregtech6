@@ -123,6 +123,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addCupUnits();          // task small-tank-cup — the cup pair (the dump faces verbatim)
 		addMortarUnits();       // task mortar-family — the five pestle rows (the dump faces verbatim)
 		addJugUnits();          // task small-tank-jug — the jug pair (the dump faces verbatim)
+		addSiftingTableUnits(); // task sifting-table-family — the manual chain tail (the dump face verbatim)
 		addConcreteUnits();     // task concrete-blocks-register — the 16 dye units + 4 templates (the dump faces verbatim)
 		addCrucibleJadeUnits(); // task crucible-jade-face
 		addCommonJadeUnits();   // task jade-redesign-core — the common jade band (hand rows, the tsv direct band)
@@ -631,6 +632,16 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addJugUnits() {
 		addDirect("block.gt6.ceramic_jug");
 		addDirect("item.gt6.clay_jug");
+	}
+
+	/**
+	 * The Sifting Table (task sifting-table-family) — the dump face verbatim (the
+	 * addMeasuringPotUnits hardcoded-add form): the block rides the mte row id 32702
+	 * (筛选台, tmp/gregtech.lang:13523 — the mte census row, the provider-side port-key
+	 * join done by hand).
+	 */
+	private void addSiftingTableUnits() {
+		add("block.gt6.sifting_table", "筛选台");
 	}
 
 	/**

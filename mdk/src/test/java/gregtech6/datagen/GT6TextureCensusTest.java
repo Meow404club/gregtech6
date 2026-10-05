@@ -346,6 +346,7 @@ class GT6TextureCensusTest {
         // ae88a4965) carry the identical line, merge dedupes.
         "40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2",
         "40ac47fac76cd859703bde605b0095cb33f55ffa9da9323fe5299f4dec75aee9",
+        "40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2", // task sifting-table-family join: the kitchen NEI derivation source sheet (README :9500, "NOT borrowed" reference row the 47de92536 glyphs card forgot to declare)
         "4c787010041ea75483b4eedffb17e402c8763de27e2271a4eacccf960972ec71",
         "4d02bba819e7368ae9b8ef5441fca9d586ddc37f4a9b3b553af2802fa2e923c3",
         "4d8ee0b3a3b6d5979caeecb74e7044d79f3e4b9abf3f19e0dc36ffe0ea2d0be2",

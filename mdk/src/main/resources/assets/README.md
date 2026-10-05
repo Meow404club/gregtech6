@@ -13659,3 +13659,23 @@ are NOT borrowed: the port has one cutout_mipped leaves carrier per species
 (the upstream opaque array faces LEAVES_CD[8] / LEAVES_AB[9] have no carrier
 here). Census pin: `GT6SeasonalAssetsTest` (byte-identical + ledger + variant
 models + plain blockstates).
+- `gt6/textures/block/tools/sifting_table/{colored,overlay}/{legs,grid,border,plate}.png`
+  — the manual Sifting Table family (task sifting-table-family; upstream
+  `textures/blocks/machines/tools/sifting_table/{colored,overlay}/*`, byte-identical
+  borrows, cmp 8/8). Upstream tints the grayscale `colored` band with mRGBa
+  (ANY.Steel) and layers the `overlay` decal on top (BlockTextureMulti,
+  MultiTileEntitySiftingTable.java:406-424); the port models carry the same
+  two-layer grammar with the tintindex-0 seats — the tint dispatch row
+  (GTMachinePaintTint) is the render-pool defer, so the band ships un-tinted for
+  now (the measuring-pot precedent). sha256 ledger:
+  - `colored/legs.png` `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+  - `colored/grid.png` `661ce784771e08a6b3650a756b803ff4ebabd638190af176592b269ce3f96d8a`
+  - `colored/border.png` `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+  - `colored/plate.png` `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+  - `overlay/legs.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  - `overlay/grid.png` `503262b1e961df0fdf15950d68fe83d792b44b32d8a394c9005b17801e341f63`
+  - `overlay/border.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  - `overlay/plate.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (the three identical colored + three identical overlay hashes are the upstream
+  files' own shared art — the legs/plate/border tiles are the same gray square
+  upstream; NOT a copy mistake, cmp-verified against the source paths.)

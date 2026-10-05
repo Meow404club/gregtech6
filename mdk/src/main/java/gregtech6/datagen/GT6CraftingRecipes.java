@@ -136,6 +136,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	public static final ResourceLocation STONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "stone_anvil");
 	public static final ResourceLocation BLACKSTONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "blackstone_anvil");
+	/** The Sifting Table crafting row (task sifting-table-family, Loader_MultiTileEntities.java:2227) — the result-path convention. */
+	public static final ResourceLocation SIFTING_TABLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sifting_table");
 
 	/** The storage-hopper crafting ids — the result-path convention, one per row (Loader :145-146). */
 	public static final java.util.List<ResourceLocation> HOPPER_RECIPE_IDS = gregtech6.registry.GT6Hoppers.ROWS.stream()
@@ -319,6 +321,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
 			tMortarBuilder.save(aConsumer, mortarRecipeId(tRow));
 		}
+		siftingTableBuilder().save(aConsumer, SIFTING_TABLE_ID); // task sifting-table-family
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
@@ -580,6 +583,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
 			tMortarBuilder.save(aOutput, mortarRecipeId(tRow));
 		}
+		siftingTableBuilder().save(aOutput, SIFTING_TABLE_ID); // task sifting-table-family
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
@@ -2711,6 +2715,31 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static ResourceLocation mortarRecipeId(gregtech6.registry.GT6Mortars.MortarRow aRow) {
 		String tPath = aRow.path();
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/**
+	 * The Sifting Table crafting row (task sifting-table-family) — the upstream
+	 * registration pattern VERBATIM (Loader_MultiTileEntities.java:2227
+	 * {@code "TdT","WxW","SPS"}): 'P' = {@code OP.plateDouble.dat(ANY.Iron)} → the port
+	 * iron plate-double item, 'S' = {@code OP.stickLong.dat(ANY.Iron)}, 'T' =
+	 * {@code OP.screw.dat(ANY.Iron)}, 'W' = {@code OP.wireFine.dat(ANY.Iron)}, 'd' = the
+	 * screwdriver tool tag and 'x' = the wirecutter tool tag (the tool letters, not
+	 * consumed — the tools carry their own crafting-remaining face, the anvil 'h'
+	 * precedent). Result 1x the table block. The vanilla shaped auto-mirror carries
+	 * CR.DEF_MIR (the anvil note).
+	 */
+	private ShapedRecipeBuilder siftingTableBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, gregtech6.registry.GT6SiftingTables.SIFTING_TABLE.get())
+				.pattern("TdT")
+				.pattern("WxW")
+				.pattern("SPS")
+				.define('T', GTMaterialItems.get(gregapi.data.OP.screw, MT.Iron).get())
+				.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.define('W', GTMaterialItems.get(gregapi.data.OP.wireFine, MT.Iron).get())
+				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
+				.define('S', GTMaterialItems.get(gregapi.data.OP.stickLong, MT.Iron).get())
+				.define('P', GTMaterialItems.get(gregapi.data.OP.plateDouble, MT.Iron).get())
+				.unlockedBy("has_plate_double", has(GTMaterialItems.get(gregapi.data.OP.plateDouble, MT.Iron).get()));
 	}
 
 	/**

@@ -306,6 +306,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addJug(); // task small-tank-jug — the Ceramic Jug (the rim-over-body per-level model family)
         addBeams(); // task beam-blocks-register — the 8 wood-beam pillar blocks (the axle axis band form)
         addConcrete(); // task concrete-blocks-register — the 64 per-pair concrete blocks (the grayscale+tint band)
+        addSiftingTables(); // task sifting-table-family — the manual chain tail (the pass-box element form)
     }
 
     /**
@@ -5459,5 +5460,73 @@ public final class GT6BlockStates extends BlockStateProvider {
                     (tBlock.reinforced ? "concrete_reinforced_slab_bottom" : "concrete_slab_bottom")));
         }
         LOGGER.info("GT6 concrete: 64 blockstates (32 cubes + 32 slab triads) over 8 shared tinted models, 64 item models");
+    }
+
+    /**
+     * The manual Sifting Table (task sifting-table-family — Loader_MultiTileEntities
+     * .java:2227, the manual-devices chain tail): the upstream render-pass geometry
+     * (MultiTileEntitySiftingTable.setBlockBounds2 :393-401 verbatim) — the four 2x13x2
+     * corner legs (passes 0-3), the 12px rim slab (pass 4; pass 5 is the inverted
+     * re-draw of the SAME box for the 1.7.10 inside-face juggling, folded into the
+     * element's own up/down faces) and the mid plate (pass 6, y 2..5) — over the
+     * TWO-LAYER colored+overlay grammar (getTexture2 :406-424 = BlockTextureMulti
+     * (colored, overlay) per pass: the colored band tints with mRGBa, the overlay rides
+     * on top). Each element is duplicated by a 0.01-inflated overlay shell (the
+     * addMeasuringPot 0.01-plate form, cutout). Face mapping rides the upstream pass
+     * table: the legs tile legs, the plate tiles plate, the rim tiles grid on
+     * up/down + border on the horizontal ring (pass 4's {@code SIDES_VERTICAL ? grid :
+     * border}, :422). The colored band carries the tintindex-0 seat; the tint-consumer
+     * dispatch row (GTMachinePaintTint) is the render-pool defer — a dispatch row lands
+     * the ANY.Steel colour without model change (the measuring-pot precedent). The
+     * material-dependent content piles (passes 7-8, the displayed input/output dust) are
+     * the declared render cut (the anvil mShapeA/B precedent).
+     */
+    private void addSiftingTables() {
+        Block tBlock = gregtech6.registry.GT6SiftingTables.SIFTING_TABLE.get();
+        BlockModelBuilder tModel = models().getBuilder("sifting_table")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("legs", modLoc("block/tools/sifting_table/colored/legs"))
+                .texture("grid", modLoc("block/tools/sifting_table/colored/grid"))
+                .texture("border", modLoc("block/tools/sifting_table/colored/border"))
+                .texture("plate", modLoc("block/tools/sifting_table/colored/plate"))
+                .texture("overlay_legs", modLoc("block/tools/sifting_table/overlay/legs"))
+                .texture("overlay_grid", modLoc("block/tools/sifting_table/overlay/grid"))
+                .texture("overlay_border", modLoc("block/tools/sifting_table/overlay/border"))
+                .texture("overlay_plate", modLoc("block/tools/sifting_table/overlay/plate"))
+                .texture("particle", "#legs")
+                .renderType("cutout");
+        // the four corner legs — upstream passes 0-3 (:393-396), all faces legs
+        siftingBox(tModel,  0.0F, 0.0F,  0.0F,  2.0F, 13.0F,  2.0F, "legs", "legs", "legs");
+        siftingBox(tModel, 14.0F, 0.0F,  0.0F, 16.0F, 13.0F,  2.0F, "legs", "legs", "legs");
+        siftingBox(tModel,  0.0F, 0.0F, 14.0F,  2.0F, 13.0F, 16.0F, "legs", "legs", "legs");
+        siftingBox(tModel, 14.0F, 0.0F, 14.0F, 16.0F, 13.0F, 16.0F, "legs", "legs", "legs");
+        // the mid plate — upstream pass 6 (:399), all faces plate
+        siftingBox(tModel, 0.0F, 2.0F, 0.0F, 16.0F, 5.0F, 16.0F, "plate", "plate", "plate");
+        // the rim slab — upstream pass 4 (:397): up/down grid, the horizontal ring border
+        siftingBox(tModel, 0.0F, 10.0F, 0.0F, 16.0F, 12.0F, 16.0F, "grid", "grid", "border");
+        simpleBlock(tBlock, tModel);
+        itemModels().withExistingParent("sifting_table", tModel.getLocation());
+        LOGGER.info("GT6 sifting table: 1 blockstate over the 6-element pass-box model (the two-layer colored+overlay grammar)");
+    }
+
+    /** One sifting element (body box + the 0.01-inflated overlay shell): aV faces up/down, aH the horizontal ring. */
+    private void siftingBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, String aV, String aOverlayV, String aH) {
+        siftingPass(aModel, aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, aV, aH, true);
+        siftingPass(aModel, aMinX - 0.01F, aMinY - 0.01F, aMinZ - 0.01F,
+                aMaxX + 0.01F, aMaxY + 0.01F, aMaxZ + 0.01F, aOverlayV, aH, false);
+    }
+
+    /** One pass: all six faces, the colored band carries the tintindex-0 seat, the overlay band untinted. */
+    private void siftingPass(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, String aV, String aH, boolean aTinted) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            boolean tVertical = tDir == Direction.UP || tDir == Direction.DOWN;
+            var tFace = tElement.face(tDir).texture("#" + (tVertical ? aV : aH));
+            if (aTinted) tFace.tintindex(0);
+            tFace.end();
+        }
+        tElement.end();
     }
 }
