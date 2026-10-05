@@ -99,16 +99,18 @@ public class GT6CircuitChainRegistrationTest {
 	}
 
 	/**
-	 * The tier fallback chain (the card's UNKNOWN ④ — the three-state declaration):
-	 * (a) upstream INTENT = a full cascade (the re-reg chain
-	 * LoaderOreDictReRegistrations.java:375-383 re-registers every {@code gt:circuitN}
-	 * member onto {@code gt:circuitN-1}); (b) upstream ACTUAL = one rung down only — the
-	 * chain runs ascending and OreDictManager.java:204-216 batch-copies the CURRENT
-	 * members while {@code mReRegistrationMappings} is write-only (:73/:208-209, never
-	 * consulted on later registrations), so the +2-and-up substitution silently fails;
-	 * (c) the PORT = the full monotone cascade (the ruling: circuits are sNotConsumable
-	 * selectors, the slack has zero economy impact, the wider face is the sane reading of
-	 * the declared intent): each carrier joins its own tag AND every lower-tier tag, i.e.
+	 * The tier fallback chain (the card's UNKNOWN ④ — the three-state declaration, state
+	 * (b) amended at review 2026-10-05): (a) upstream INTENT = a full cascade (the re-reg
+	 * chain LoaderOreDictReRegistrations.java:375-383 re-registers every
+	 * {@code gt:circuitN} member onto {@code gt:circuitN-1}); (b) upstream ACTUAL = also
+	 * the full cascade — the earlier "write-only map" archaeology missed the event path:
+	 * 1.7.10 Forge OreDictionary.registerOre posts OreRegisterEvent on every
+	 * non-duplicate registration (forge-1.7.10 OreDictionary.java:561) and OreDictManager
+	 * .java:383-385 reads {@code mReRegistrationMappings} on each such event, so the
+	 * ascending chain-add makes every rung's immediate copy (addReRegistration:212)
+	 * transitively fall through the previously added mappings; (c) the PORT = the full
+	 * monotone cascade — faithful to BOTH the intent and the actual: each carrier joins
+	 * its own tag AND every lower-tier tag, i.e.
 	 * {@code #gt6:circuitN = all carriers of tier >= N} (GT6ItemTags.addBatteryTags).
 	 * Clipped at [0..6] — the [7..9] Quantum rungs are the p24 census CUT.
 	 */
