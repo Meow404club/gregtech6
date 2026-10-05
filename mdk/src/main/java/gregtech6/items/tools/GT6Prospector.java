@@ -31,6 +31,7 @@ import gregtech6.block.ore.GTOreBlock;
 import gregtech6.block.ore.GTOreFallingBlock;
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
+import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6SurfaceBlocks;
 
 /**
@@ -145,14 +146,21 @@ public final class GT6Prospector {
 		return (int)Code.bind(1, 20, BASE_QUALITY + 4);
 	}
 
-	/** The ore-arm answer, the upstream :385 {@code getLocalName(prefix, material)+"!"} row. */
+	/**
+	 * The ore-arm answer, the upstream :385 {@code getLocalName(prefix, material)+"!"} row.
+	 * The composition is the OreDictPrefix.getLocalizedName row verbatim (pre + word + post,
+	 * the null-concat face included) with the material word through the S2 flag seam
+	 * ({@link MaterialPrefixItem#materialWord}): upstream's live read rides the renames
+	 * landed at proxy construction (GT_API.java:364), here the consult is what lands them
+	 * (task easter-prospector-chat-line, the easter-tooltip-rename leftover chat face).
+	 */
 	public static String oreMessage(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
-		return aPrefix.getLocalizedName(aMaterial) + "!";
+		return aPrefix.mMaterialPre + MaterialPrefixItem.materialWord(aMaterial) + aPrefix.mMaterialPost + "!";
 	}
 
-	/** The trace answer, the upstream :430 {@code "Found traces of " + material.getLocal()} row. */
+	/** The trace answer, the upstream :430 {@code "Found traces of " + material.getLocal()} row — the word through the S2 flag seam. */
 	public static String traceMessage(OreDictMaterial aMaterial) {
-		return MSG_TRACES + aMaterial.getLocal();
+		return MSG_TRACES + MaterialPrefixItem.materialWord(aMaterial);
 	}
 
 	/** The click-gate ore half: the GT6 ore blocks answer the ore arm (upstream the ORE-prefix association face). */
