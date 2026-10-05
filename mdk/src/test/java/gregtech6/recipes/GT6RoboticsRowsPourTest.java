@@ -106,10 +106,18 @@ public class GT6RoboticsRowsPourTest extends GTRecipesOfflineTestBase {
 		JsonArray tRows = pourShipped();
 		assertEquals(BOXINATOR_CENSUS, tRows.size(), "the file holds the seated rows plus this card's ten");
 		for (int i = 0; i < ROWS.length; i++) {
-			JsonObject tRow = tRows.get(BOXINATOR_CENSUS - ROWS.length + i).getAsJsonObject();
+			// the seat14 rebase roll: the recipe-b7 pack walk appends AFTER this card's rows, so the
+			// old last-ten positional slice now lands in the walk — the row is picked by its upstream
+			// line anchor instead (the b7 card's own content-pin medicine, the duration-32 face form)
+			JsonObject tRow = null;
+			for (JsonElement tElement : tRows) {
+				JsonObject tCandidate = tElement.getAsJsonObject();
+				if (tCandidate.has("comment") && tCandidate.get("comment").getAsString().contains("MultiItemRandomTools.java:" + (503 + i))) { tRow = tCandidate; break; }
+			}
 			String tKind = ROWS[i][0];
 			int tCount = Integer.parseInt(ROWS[i][1]);
 			String tAnchor = "the :5" + String.format("%02d", 3 + i) + " row (Robot_Tip_" + tKind + ")";
+			assertNotNull(tRow, tAnchor + ": the row must exist in the shipped file");
 
 			JsonArray tInputs = tRow.getAsJsonArray("inputs");
 			assertEquals(2, tInputs.size(), tAnchor + ": the plateTiny/nugget leg + the tip template");
