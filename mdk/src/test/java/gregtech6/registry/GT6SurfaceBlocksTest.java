@@ -59,11 +59,11 @@ class GT6SurfaceBlocksTest {
         // +36 (task flower-blocks-indicator-family): the 18 indicator flowers + the 18
         // vanilla potted companions (GT6FlowerBlockTest pins the row set).
         // +7 (task worldgen-racks): the nether rack rocks.
-        // 4 + 8 + 79 + 36 + 7 = 134; the ITEMS register holds the 26
+        // 4 + 8 + 81 + 36 + 7 = 136; the ITEMS register holds the 26
         // obtainable block items (the rocks/sticks/indicator rocks/nether rocks/potted
         // stay zero-item).
-        assertEquals(134, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
-                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 79 indicator rocks"
+        assertEquals(136, GT6SurfaceBlocks.BLOCKS.getEntries().size(),
+                "the DeferredRegister holds the 4 rocks/sticks + the 8 obtainable rows + the 81 indicator rocks"
                         + " + the 18 flowers + the 18 potted companions + the 7 nether rack rocks");
         assertEquals(26, GT6SurfaceBlocks.ITEMS.getEntries().size(),
                 "the obtainable band's block items (the rocks/sticks/indicator rocks/potted stay zero-item)");
@@ -104,7 +104,7 @@ class GT6SurfaceBlocksTest {
         Set<String> tItemIds = GTMaterialItems.registrationOrder().stream()
                 .map(tPair -> GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()))
                 .collect(Collectors.toSet());
-        assertEquals(79, GT6SurfaceBlocks.INDICATOR_ROCKS.size(), "the spec \u2164 compensation set: 79 distinct valid vein slots");
+        assertEquals(81, GT6SurfaceBlocks.INDICATOR_ROCKS.size(), "the spec \u2164 compensation set: 81 distinct valid vein slots (79 + lignite/gypsum since worldgen-axis-batch2)");
         for (int i = 0; i < GT6SurfaceBlocks.INDICATOR_ROCKS.size(); i++) {
             gregapi.oredict.OreDictMaterial tMaterial = GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get();
             assertEquals("surface_rock_" + GTMaterialItems.snakeCase(tMaterial.mNameInternal),

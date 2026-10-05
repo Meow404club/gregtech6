@@ -1,7 +1,7 @@
 /**
  * The ore datagen render face pins (task ore-3-datagen acceptance "渲染面离线断言").
- * The composition strategy is the card's contract: 11396 blocks (74 form-rows x M=154, the
- * census pin) walk onto 11396 blockstates + 11396 item models + a SHARED placeholder model
+ * The composition strategy is the card's contract: 11618 blocks (74 form-rows x M=159, the
+ * census pin) walk onto 11618 blockstates + 11618 item models + a SHARED placeholder model
  * per distinct BASE texture (28), and the dual-sprite look is the {@code GTOreBakedModel}
  * bake face — per-pair models are the explicit red line, so the JSON total is pinned at
  * 7872, not ~137k. Offline-safe: the sprite derivations and the param table are
@@ -36,7 +36,7 @@ import net.minecraft.resources.ResourceLocation;
 class GT6OreRenderDatagenTest {
 
 	/** The pinned universe totals (the census constants, mirrored — production and test must agree). */
-	private static final int PINNED_BLOCKS = 74 * 154;
+	private static final int PINNED_BLOCKS = 74 * 157;
 	/** The pinned distinct base textures: 9 vanilla anchors + 2 cobble broken forms + 17 GT stones. */
 	private static final int PINNED_BASE_MODELS = 28;
 	/** The pinned generated JSON total: blockstates + item models + shared models. */
@@ -67,7 +67,7 @@ class GT6OreRenderDatagenTest {
 		GTOreClientListener.buildParams();
 		assertEquals(PINNED_BLOCKS, GTOreClientListener.paramsCount(), "one params entry per (family, form, material) pair");
 		List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
-		assertEquals(154, tAxis.size(), "the census-pinned material axis");
+		assertEquals(157, tAxis.size(), "the census-pinned material axis");
 		String tSpot = GT6OreBlocks.path(new OreKey(GT6OreBlocks.TAB_FAMILY, FormKind.NORMAL, tAxis.get(0)));
 		assertNotNull(GTOreClientListener.paramsFor(tSpot), "the first stone-normal pair is on the table: " + tSpot);
 		assertTrue(tSpot.startsWith("ore_stone_"), "the id scheme anchor");

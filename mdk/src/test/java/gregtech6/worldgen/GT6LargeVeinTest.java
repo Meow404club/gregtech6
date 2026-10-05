@@ -64,7 +64,7 @@ class GT6LargeVeinTest {
         "ore.large.titanium", "ore.large.nickel", "ore.large.redstone", "ore.large.tetrahedrite", "ore.large.iron",
         "ore.large.copper");
 
-    /** The valid slots' weights, DRAWABLE order — the draw mass the GT6WorldGenerator.java:93 sum produces (1110 + 60 garnet + 40 pitchblende + 60 peridot since r7-a, + 90 since r7-b: sapphire 30 + sapphire2 30 + beryllium 15 + beryllium2 15, + 215 since worldgen-edge-ores-b1: bauxite 80 + monazite 30 + quartz 60 + molybdenum 5 + titanium 40). */
+    /** The valid slots' weights, DRAWABLE order — the draw mass the GT6WorldGenerator.java:93 sum produces (1110 + 60 garnet + 40 pitchblende + 60 peridot since r7-a, + 90 since r7-b: sapphire 30 + sapphire2 30 + beryllium 15 + beryllium2 15, + 215 since worldgen-edge-ores-b1: bauxite 80 + monazite 30 + quartz 60 + molybdenum 5 + titanium 40; the batch2 lignite/gypsum slots ride rows already counted here — lignite via the pre-existing Coal slot, gypsum via the already-drawable asbestos row). */
     private static final int DRAWABLE_WEIGHT_SUM = 1575;
 
     @BeforeAll
@@ -114,7 +114,7 @@ class GT6LargeVeinTest {
         assertFalse(tOctine.overworld(), "octine is Betweenlands-only");
     }
 
-    /** The draw gate + the indicator universe: 30 drawable rows, 1575 total weight, the 79 distinct valid slots (r7-a lit chromite/uvarovite/pitchblende/uraninite/magnesium_carbonate/peridot/grossular/stannite/kesterite; r7-b lit the 17 gem slots — the sapphire/sapphire2/garnet/beryllium/beryllium2 rows' gems + manganese Spessartine; worldgen-edge-ores-b1 lit the 22 compensation slots — the lapis/bauxite/iodinesalt/rocksalt/asbestos/monazite/quartz/peridot/molybdenum/titanium rows' outside materials). */
+    /** The draw gate + the indicator universe: 30 drawable rows, 1575 total weight, the 81 distinct valid slots (r7-a lit chromite/uvarovite/pitchblende/uraninite/magnesium_carbonate/peridot/grossular/stannite/kesterite; r7-b lit the 17 gem slots — the sapphire/sapphire2/garnet/beryllium/beryllium2 rows' gems + manganese Spessartine; worldgen-edge-ores-b1 lit the 22 compensation slots — the lapis/bauxite/iodinesalt/rocksalt/asbestos/monazite/quartz/peridot/molybdenum/titanium rows' outside materials; worldgen-axis-batch2 lit lignite/gypsum — its bauxite/milky_quartz faces already rode the B1 slots). */
     @Test
     void drawableRowsAndIndicatorUniverseMatch() {
         List<GTVeinConfig> tTable = GT6WorldgenDatagen.LARGE_VEIN_TABLE;
@@ -139,7 +139,7 @@ class GT6LargeVeinTest {
         }
         assertEquals(DRAWABLE, tDrawableNames, "the draw list = overworld rows with >= 1 axis-valid slot (the mInvalid gate)");
         assertEquals(DRAWABLE_WEIGHT_SUM, tWeightSum, "the tMaxWeight mass of the drawable rows");
-        assertEquals(79, tValidSlotNames.size(), "79 distinct valid slots across the OVERWORLD rows (the indicator universe)");
+        assertEquals(81, tValidSlotNames.size(), "81 distinct valid slots across the OVERWORLD rows (the indicator universe)");
         assertEquals(tValidSlotNames, GT6SurfaceBlocks.INDICATOR_MATERIALS.stream().map(tSupply -> tSupply.get().mNameInternal).toList(),
                 "the spec ⑤ indicator rock set = the table's distinct valid slots, first-encounter order");
     }

@@ -22,12 +22,15 @@ import gregtech6.registry.GTMaterialItems;
  * {@link GT6OreBlocks#WORLDGEN_ORES} posture); the datagen band (GT6WorldgenDatagen ore
  * band) and the offline parity test both consume this class.
  *
- * <p><b>The 125-row table</b> is the upstream small-ore universe verbatim: the 53
+ * <p><b>The 130-row table</b> is the upstream small-ore universe verbatim: the 53
  * always-on {@code WorldgenOresSmall} rows (Loader_Worldgen.java:800-852) + the
  * {@code !mHidden} nikolite row (:875) + the RANDOM_SMALL_GEM_ORE pool loop (:877-878,
  * one row per flagged material — 61 rows, task b-gem-pool-extension) + the 10
  * StoneLayer boundary-blob translations (:481-571, task worldgen-edge-ores-b2-orphans —
- * the 10 EDGE orphans' only ungated natural source, Y bands verbatim). Per-row fields
+ * the 10 EDGE orphans' only ungated natural source, Y bands verbatim) + the 5
+ * stone-layer/lens anchor rows (:84/:486/:491/:532/:901, task worldgen-axis-batch2 —
+ * the TF-domain RockOres census's off-axis remainder, anchor bands verbatim).
+ * Per-row fields
  * = upstream ctor order
  * (name, minY, maxY, amount, material) plus the vanilla-dimension projection of the
  * row's GEN_* flag list ({@code dims} — GEN_OVERWORLD/GEN_NETHER/GEN_END; the
@@ -40,7 +43,7 @@ import gregtech6.registry.GTMaterialItems;
  * declared deviations on the rows below).
  *
  * <p><b>Placement = one (row, dim) pair each</b> (coordinator ruling 2026-09-17, the
- * verbatim-flag translation): overworld 109 + nether 20 + end 33 = 162. The one
+ * verbatim-flag translation): overworld 114 + nether 20 + end 33 = 167. The one
  * ancientdebris row (:852) stays in the table with its {@code NETHER} dim but is
  * placement-gated (GT6OreBlocks.java:328-332 口径: the upstream gate
  * {@code !IL.Ancient_Debris.exists()} is a PLACEMENT-time compat check and vanilla
@@ -273,7 +276,24 @@ public final class GTOreWorldgen {
         row("ore.small.vermiculite"     ,  48,  80,  1, () -> MT.OREMATS.Vermiculite    , Dim.OVERWORLD),         // :547-550
         row("ore.small.mica"            ,  16,  48,  1, () -> MT.OREMATS.Mica           , Dim.OVERWORLD),         // :551-554
         row("ore.small.biotite"         ,  16,  48,  1, () -> MT.Biotite                , Dim.OVERWORLD),         // :551-554
-        row("ore.small.pinkdiamond"     ,   0,  32,  1, () -> MT.DiamondPink            , Dim.OVERWORLD)          // :561-565 (BIOMES_JUNGLE)
+        row("ore.small.pinkdiamond"     ,   0,  32,  1, () -> MT.DiamondPink            , Dim.OVERWORLD),         // :561-565 (BIOMES_JUNGLE)
+        // -- :84/:371-486/:491/:532/:901, the stone-layer/lens anchors (task
+        // worldgen-axis-batch2): the TF-domain RockOres census's off-axis remainder.
+        // Each band cites ITS anchor call verbatim — Bauxite :84 (the EtFu
+        // deepslate-list StoneLayerOres row, own band; EtFu host + BIOMES_PLAINS
+        // gates not carried), Lignite :486 / Oilshale :491 / Gypsum :532 (the
+        // strata are depth-driven with no band of their own, so the layer's
+        // BOUNDARY call's band rides verbatim — the same lines that fed the b2
+        // amber/mirabilite/trona rows), MilkyQuartz :901 (the ore.large.quartz lens
+        // band; the lens face revives through the axis, this row is the scatter
+        // face). amount = 1 and never deep-mirrored, the b2 grammar; the Gypsum
+        // tail shares its name with the IHL-gated :872 row (compat pool, the b2
+        // mica/trona posture).
+        row("ore.small.bauxite"         ,  16,  32,  1, () -> MT.OREMATS.Bauxite        , Dim.OVERWORLD),         // :84
+        row("ore.small.lignite"         ,  30,  70,  1, () -> MT.Lignite                , Dim.OVERWORLD),         // :371 stratum, :486 boundary band
+        row("ore.small.oilshale"        ,  30,  70,  1, () -> MT.Oilshale               , Dim.OVERWORLD),         // stratum, :491 boundary band
+        row("ore.small.gypsum"          ,  16,  64,  1, () -> MT.Gypsum                 , Dim.OVERWORLD),         // stratum host, :532 boundary band
+        row("ore.small.milkyquartz"     ,  40,  80,  1, () -> MT.MilkyQuartz            , Dim.OVERWORLD)          // :901 lens band
     );
 
     /** The MT.* supplier behind the row literals (direct field refs, the WORLDGEN_ORES form). */
@@ -293,11 +313,11 @@ public final class GTOreWorldgen {
     public record Placement(SmallOreRow row, Dim dim) {}
 
     /**
-     * The 162 placement pairs, ROWS order × {@link Dim} order, minus the
-     * {@link #PLACEMENT_GATED} rows: overworld 109 + nether 20 + end 33.
+     * The 167 placement pairs, ROWS order × {@link Dim} order, minus the
+     * {@link #PLACEMENT_GATED} rows: overworld 114 + nether 20 + end 33.
      */
     public static List<Placement> placementPairs() {
-        List<Placement> rPairs = new ArrayList<>(162);
+        List<Placement> rPairs = new ArrayList<>(167);
         for (SmallOreRow tRow : ROWS) {
             if (PLACEMENT_GATED.contains(tRow.tail())) continue;
             for (Dim tDim : Dim.values()) {
@@ -330,11 +350,11 @@ public final class GTOreWorldgen {
         return ResourceLocation.fromNamespaceAndPath("gt6", "ore_small_" + aDim.segment + "/" + aRow.tail());
     }
 
-    /** The 152 configured keys, placementPairs() order. */
+    /** The 167 configured keys, placementPairs() order. */
     public static final List<ResourceKey<ConfiguredFeature<?, ?>>> CONFIGURED_KEYS =
             placementPairs().stream().map(tPair -> configuredKey(tPair.row(), tPair.dim())).toList();
 
-    /** The 152 placed keys, same order (placed[i] hangs off configured[i]). */
+    /** The 167 placed keys, same order (placed[i] hangs off configured[i]). */
     public static final List<ResourceKey<PlacedFeature>> PLACED_KEYS =
             placementPairs().stream().map(tPair -> placedKey(tPair.row(), tPair.dim())).toList();
 

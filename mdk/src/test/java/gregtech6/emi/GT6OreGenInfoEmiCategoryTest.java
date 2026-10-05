@@ -109,15 +109,18 @@ public class GT6OreGenInfoEmiCategoryTest {
 	 * walk in {@code GT6OreGenInfoLayoutTest}): 118 axes through r7-a, then r7-b's 61
 	 * GEN_GEMS small-ore rows joined the table — 20 of the 61 touched materials already
 	 * rode vein faces, so 41 arrived as brand-new entries (118+41=159); then b2's 10
-	 * boundary-blob EDGE orphans joined as small rows (159+10=169). This file was the
+	 * boundary-blob EDGE orphans joined as small rows (159+10=169); then batch2's 5
+	 * anchors joined as small rows — but ONLY Oilshale is a brand-new entry (the other
+	 * four already rode vein faces: lignite :886, bauxite :890, gypsum :893 slot,
+	 * milkyquartz :901), so 169+1=170. This file was the
 	 * one site the r7-b re-pin sweep missed —
 	 * the derivation lives in the message so the next table change greps here first.
 	 */
 	@Test
 	public void registrationWalkShapeIsOneRowPerEntry() {
 		List<OreDistributionInfo.Entry> tEntries = OreDistributionInfo.entries();
-		assertEquals(169, tEntries.size(),
-				"122 axes (post-r7-b) + 10 boundary-blob EDGE orphans as brand-new small-row entries (b2; 118+41 through r7-b) — census canonical in OreDistributionInfoTest.materialAxisIsPinned");
+		assertEquals(170, tEntries.size(),
+				"169 (post-b2) + Oilshale as the one brand-new small-row entry (batch2's other four already rode vein faces; 118+41 through r7-b, +10 through b2) — census canonical in OreDistributionInfoTest.materialAxisIsPinned");
 		for (int i = 0; i < tEntries.size(); i++) {
 			assertEquals("gt6:ore_gen_info/" + i,
 					new GT6OreGenInfoEmiRecipe(tEntries.get(i), i).getId().toString());

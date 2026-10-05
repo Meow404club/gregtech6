@@ -51,8 +51,8 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 class GT6OreLootParityTest {
 
-    /** The pinned per-kind table counts (26 three-or-two-form families x 154 materials). */
-    private static final int PINNED_M = 154;
+    /** The pinned per-kind table counts (26 three-or-two-form families x 157 materials). */
+    private static final int PINNED_M = 157;
 
     @BeforeAll
     static void initMaterialSystem() {
@@ -81,7 +81,7 @@ class GT6OreLootParityTest {
         assertEquals(26 * tM, tNormal, "every family's normal form tables");
         assertEquals(22 * tM, tBroken, "the 22 three-form families' broken tables");
         assertEquals(26 * tM, tSmall, "every family's small tables");
-        assertEquals(74 * tM, tNormal + tBroken + tSmall, "11396 = 74 x 154, one table per block");
+        assertEquals(74 * tM, tNormal + tBroken + tSmall, "11618 = 74 x 157, one table per block");
     }
 
     /**
