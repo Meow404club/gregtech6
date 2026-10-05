@@ -1,6 +1,5 @@
 package gregtech6.tileentity.misc;
 
-import java.time.LocalDate;
 
 import javax.annotation.Nullable;
 
@@ -186,9 +185,11 @@ public class GT6PlaceableBlock extends GTEntityBlock {
 		// stone pile keeps the give arm.
 		if (mKind == Kind.ROCK && !aPlayer.isShiftKeyDown() && !tHeld.isEmpty()
 				&& tHeld.canPerformAction(GTMagnifyingGlassItem.ACTION) && tContents.is(Items.FLINT)) {
-			LocalDate tNow = LocalDate.now();
+			// the GT6Calendars flags (the CS.java:870-872 compute-once rows — the landed S2
+			// seam; the review-seat alignment of the cut-time local date trio)
 			aPlayer.displayClientMessage(Component.literal(GT6RockLines.flintLine(aLevel.getRandom(),
-					GT6RockLines.aprilFools(tNow), GT6RockLines.woodmansBday(tNow), GT6RockLines.xmasInJuly(tNow))), false);
+					gregtech6.easter.GT6Calendars.APRIL_FOOLS, gregtech6.easter.GT6Calendars.WOODMANS_BDAY,
+					gregtech6.easter.GT6Calendars.XMAS_IN_JULY)), false);
 			return InteractionResult.SUCCESS;
 		}
 		// the give arm (base :98): one item back; the empty pile goes to air (:107 setToAir)

@@ -1,7 +1,5 @@
 package gregtech6.block.surface;
 
-import java.time.LocalDate;
-
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -69,20 +67,5 @@ public final class GT6RockLines {
 	/** The :107 divisor ternary verbatim: {@code WOODMANS_BDAY ? 10 : XMAS_IN_JULY ? 100 : 1000}. */
 	static int flintDivisor(boolean aWoodmansBday, boolean aXmasInJuly) {
 		return aWoodmansBday ? 10 : aXmasInJuly ? 100 : 1000;
-	}
-
-	/** CS.java:870 — April, first two days. */
-	public static boolean aprilFools(LocalDate aDate) {
-		return aDate.getMonthValue() == 4 && aDate.getDayOfMonth() <= 2;
-	}
-
-	/** CS.java:871 — June 21 to end of month ("one day early then til end of month"). */
-	public static boolean woodmansBday(LocalDate aDate) {
-		return aDate.getMonthValue() == 6 && aDate.getDayOfMonth() >= 20;
-	}
-
-	/** CS.java:872 — July 24 to end of month ("one day early then til end of month"). */
-	public static boolean xmasInJuly(LocalDate aDate) {
-		return aDate.getMonthValue() == 7 && aDate.getDayOfMonth() >= 23;
 	}
 }

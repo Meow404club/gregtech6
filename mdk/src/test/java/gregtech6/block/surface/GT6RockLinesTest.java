@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -124,22 +123,10 @@ class GT6RockLinesTest {
 	}
 
 	// ------------------------------------------------- the CS date rows (the S2 seam)
-
-	@Test
-	void theDateFlagsAreTheCsRows() {
-		assertTrue(GT6RockLines.aprilFools(LocalDate.of(2026, 4, 1)), "CS.java:870 — the 1st of April");
-		assertTrue(GT6RockLines.aprilFools(LocalDate.of(2026, 4, 2)), "CS.java:870 — the first TWO days");
-		assertFalse(GT6RockLines.aprilFools(LocalDate.of(2026, 4, 3)), "CS.java:870 — day three is out");
-		assertTrue(GT6RockLines.woodmansBday(LocalDate.of(2026, 6, 20)), "CS.java:871 — one day early");
-		assertFalse(GT6RockLines.woodmansBday(LocalDate.of(2026, 6, 19)), "CS.java:871 — the 19th stays out");
-		assertTrue(GT6RockLines.woodmansBday(LocalDate.of(2026, 6, 30)), "CS.java:871 — til end of month");
-		assertTrue(GT6RockLines.xmasInJuly(LocalDate.of(2026, 7, 23)), "CS.java:872 — one day early");
-		assertFalse(GT6RockLines.xmasInJuly(LocalDate.of(2026, 7, 22)), "CS.java:872 — the 22nd stays out");
-		assertTrue(GT6RockLines.xmasInJuly(LocalDate.of(2026, 7, 31)), "CS.java:872 — til end of month");
-		assertFalse(GT6RockLines.aprilFools(LocalDate.of(2026, 12, 25)) || GT6RockLines.woodmansBday(LocalDate.of(2026, 12, 25))
-				|| GT6RockLines.xmasInJuly(LocalDate.of(2026, 12, 25)),
-				"CS.java:873 — XMAS_IN_DECEMBER is the S2 row; the rock never consumes it (stays 1/1000 there)");
-	}
+	// The window truth (CS.java:870-873) is the GT6CalendarsTest pin (the landed S2 card);
+	// this suite pins the CONSUMPTION face only: flintLine/flintDivisor over the passed
+	// flags (the review-seat alignment folded the cut-time local date trio into
+	// gregtech6.easter.GT6Calendars — the caller in GT6PlaceableBlock reads the flags).
 
 	// ------------------------------------------------- the stick silence wire
 
