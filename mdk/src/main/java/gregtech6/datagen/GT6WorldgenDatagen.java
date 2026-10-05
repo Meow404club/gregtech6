@@ -744,7 +744,6 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_RACKS_PLACED)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
-                GenerationStep.Decoration.VEGETAL_DECORATION));
         // task worldgen-deepocean-corals — the deep-ocean pylon biome modifier
         // (GEN_OVERWORLD, Loader_Worldgen.java:580): the upstream chunk-biome-name
         // deepOcean probe rides the modern tag face #minecraft:is_deep_ocean (the

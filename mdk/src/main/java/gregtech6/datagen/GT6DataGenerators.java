@@ -106,6 +106,13 @@ public final class GT6DataGenerators {
         event.getGenerator().addProvider(true,
             new GT6BiomeTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
                 event.getExistingFileHelper()));
+        // review-seat seam fix (task worldgen-deepocean-corals): the fluid tag provider —
+        // the three water-replace bodies join minecraft:water (the WD.anywater equivalence,
+        // the deep-ocean pylon water gate's contract); the singular tags/fluid alias rides
+        // GT6DualDirectoryFaces (the RENAMES row this task adds).
+        event.getGenerator().addProvider(true,
+            new GT6FluidTags(event.getGenerator().getPackOutput(), event.getLookupProvider(),
+                event.getExistingFileHelper()));
         // task tool-system ③: the first recipe provider — the empty spray can crafting
         // (both legs construct through the two-arg form; the forge leg ignores the lookup)
         event.getGenerator().addProvider(true,

@@ -96,6 +96,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 	private static final String[][] RENAMES = {
 			{"tags/items", "tags/item"},
 			{"tags/blocks", "tags/block"},
+			{"tags/fluids", "tags/fluid"}, // review-seat seam fix (task worldgen-deepocean-corals): the minecraft:water extension band
 			{"recipes", "recipe"},
 			{"loot_tables", "loot_table"},
 	};

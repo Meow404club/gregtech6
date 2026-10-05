@@ -307,8 +307,11 @@ class GT6TagsDatagenTest {
         }
         assertEquals(1096, tDustPairs, "3777 storage pairs - 2681 pickaxe-band pairs");
         // +2 (task w6-t2-surface-blocks: turf + black_sand, the addSurfacePlantBand tail)
-        assertEquals(tDustPairs + 6 + 2, tValues.size(),
-                "the shovel band = the blockDust family + the 6 GT grass variants (grass-block merged first) + the 2 soil pair");
+        // +4 (task worldgen-diggables-pits: the 4 colored-clay blocks — the Diggables
+        // IS_CLAY quartet rides the mineable/shovel band, BlockDiggable.java:137; the clay
+        // merge ratchets this formula here, the review-seat re-measure)
+        assertEquals(tDustPairs + 6 + 2 + 4, tValues.size(),
+                "the shovel band = the blockDust family + the 6 GT grass variants (grass-block merged first) + the 2 soil pair + the 4 colored clays");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
