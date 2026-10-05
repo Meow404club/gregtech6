@@ -1315,6 +1315,7 @@ direct	gt6.jei.recipe_map.melter	熔融炉	hand
 direct	gt6.jei.recipe_map.microwave	微波炉	hand
 direct	gt6.jei.recipe_map.mixer	搅拌机	hand
 direct	gt6.jei.recipe_map.mortar	研钵	hand
+direct	gt6.jei.recipe_map.nanofab	纳米制造机	hand
 direct	gt6.jei.recipe_map.polarizer	电磁偏振器	hand
 direct	gt6.jei.recipe_map.press	压力成型机	hand
 direct	gt6.jei.recipe_map.pressurewasher	水压清洗机	hand
@@ -3609,70 +3610,38 @@ direct	item.gt6.sensor_puv1	传感器 (PUV1)	hand
 direct	item.gt6.sensor_ulv	传感器 (ULV)	hand
 direct	item.gt6.sensor_uv	传感器 (UV)	hand
 direct	item.gt6.sensor_zpm	传感器 (ZPM)	hand
-direct	item.gt6.shape_extruder_plate	模具 (板)	hand
-direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
-direct	item.gt6.shape_extruder_sword	模具 (剑身)	hand
-direct	item.gt6.shape_extruder_pickaxe	模具 (镐头)	hand
-direct	item.gt6.shape_extruder_shovel	模具 (锹头)	hand
 direct	item.gt6.shape_extruder_axe	模具 (斧头)	hand
-direct	item.gt6.shape_extruder_hoe	模具 (锄头)	hand
-direct	item.gt6.shape_extruder_hammer	模具 (锤头)	hand
-direct	item.gt6.shape_extruder_file	模具 (锉刀刀头)	hand
-direct	item.gt6.shape_extruder_saw	模具 (锯刃)	hand
-direct	item.gt6.shape_simple_ex_sword	低热容压模模具 (剑身)	hand
-direct	item.gt6.shape_simple_ex_pickaxe	低热容压模模具 (镐头)	hand
-direct	item.gt6.shape_simple_ex_shovel	低热容压模模具 (锹头)	hand
-direct	item.gt6.shape_simple_ex_axe	低热容压模模具 (斧头)	hand
-direct	item.gt6.shape_simple_ex_hoe	低热容压模模具 (锄头)	hand
-direct	item.gt6.shape_simple_ex_hammer	低热容压模模具 (锤头)	hand
-direct	item.gt6.shape_simple_ex_file	低热容压模模具 (锉刀刀头)	hand
-direct	item.gt6.shape_simple_ex_saw	低热容压模模具 (锯刃)	hand
-direct	item.gt6.shape_extruder_empty	空白模具	hand
-direct	item.gt6.shape_extruder_rod_long	模具 (长杆)	hand
-direct	item.gt6.shape_extruder_bolt	模具 (螺栓)	hand
-direct	item.gt6.shape_extruder_ring	模具 (环)	hand
-direct	item.gt6.shape_extruder_cell	模具 (槽)	hand
-direct	item.gt6.shape_extruder_ingot	模具 (锭)	hand
-direct	item.gt6.shape_extruder_wire	模具 (线缆)	hand
-direct	item.gt6.shape_extruder_casing	模具 (外壳)	hand
-direct	item.gt6.shape_extruder_pipe_tiny	模具 (微型管道)	hand
-direct	item.gt6.shape_extruder_pipe_small	模具 (小型管道)	hand
-direct	item.gt6.shape_extruder_pipe_medium	模具 (管道)	hand
-direct	item.gt6.shape_extruder_pipe_large	模具 (大型管道)	hand
-direct	item.gt6.shape_extruder_pipe_huge	模具 (巨型管道)	hand
 direct	item.gt6.shape_extruder_block	模具 (方块)	hand
-direct	item.gt6.shape_extruder_gear	模具 (齿轮)	hand
+direct	item.gt6.shape_extruder_bolt	模具 (螺栓)	hand
 direct	item.gt6.shape_extruder_bottle	模具 (瓶子)	hand
-direct	item.gt6.shape_extruder_plate_curved	模具 (弯曲板)	hand
-direct	item.gt6.shape_extruder_gear_small	模具 (小型齿轮)	hand
+direct	item.gt6.shape_extruder_casing	模具 (外壳)	hand
 direct	item.gt6.shape_extruder_ccc	模具 (单元式流体容器)	hand
+direct	item.gt6.shape_extruder_cell	模具 (槽)	hand
+direct	item.gt6.shape_extruder_empty	空白模具	hand
+direct	item.gt6.shape_extruder_file	模具 (锉刀刀头)	hand
 direct	item.gt6.shape_extruder_foil	模具 (箔)	hand
+direct	item.gt6.shape_extruder_gear	模具 (齿轮)	hand
+direct	item.gt6.shape_extruder_gear_small	模具 (小型齿轮)	hand
+direct	item.gt6.shape_extruder_hammer	模具 (锤头)	hand
+direct	item.gt6.shape_extruder_hoe	模具 (锄头)	hand
+direct	item.gt6.shape_extruder_ingot	模具 (锭)	hand
+direct	item.gt6.shape_extruder_pickaxe	模具 (镐头)	hand
+direct	item.gt6.shape_extruder_pipe_huge	模具 (巨型管道)	hand
+direct	item.gt6.shape_extruder_pipe_large	模具 (大型管道)	hand
+direct	item.gt6.shape_extruder_pipe_medium	模具 (管道)	hand
+direct	item.gt6.shape_extruder_pipe_small	模具 (小型管道)	hand
+direct	item.gt6.shape_extruder_pipe_tiny	模具 (微型管道)	hand
+direct	item.gt6.shape_extruder_plate	模具 (板)	hand
+direct	item.gt6.shape_extruder_plate_curved	模具 (弯曲板)	hand
 direct	item.gt6.shape_extruder_plate_tiny	模具 (小块板)	hand
+direct	item.gt6.shape_extruder_ring	模具 (环)	hand
+direct	item.gt6.shape_extruder_rod	模具 (杆)	hand
+direct	item.gt6.shape_extruder_rod_long	模具 (长杆)	hand
+direct	item.gt6.shape_extruder_saw	模具 (锯刃)	hand
+direct	item.gt6.shape_extruder_shovel	模具 (锹头)	hand
+direct	item.gt6.shape_extruder_sword	模具 (剑身)	hand
+direct	item.gt6.shape_extruder_wire	模具 (线缆)	hand
 direct	item.gt6.shape_extruder_wire_fine	模具 (精细线缆)	hand
-direct	item.gt6.shape_simple_ex_empty	空白压模模具	hand
-direct	item.gt6.shape_simple_ex_plate	低热容压模模具 (板)	hand
-direct	item.gt6.shape_simple_ex_rod_long	低热容压模模具 (长杆)	hand
-direct	item.gt6.shape_simple_ex_bolt	低热容压模模具 (螺栓)	hand
-direct	item.gt6.shape_simple_ex_ring	低热容压模模具 (环)	hand
-direct	item.gt6.shape_simple_ex_cell	低热容压模模具 (槽)	hand
-direct	item.gt6.shape_simple_ex_ingot	低热容压模模具 (锭)	hand
-direct	item.gt6.shape_simple_ex_wire	低热容压模模具 (线缆)	hand
-direct	item.gt6.shape_simple_ex_casing	低热容压模模具 (外壳)	hand
-direct	item.gt6.shape_simple_ex_pipe_tiny	低热容压模模具 (微型管道)	hand
-direct	item.gt6.shape_simple_ex_pipe_small	低热容压模模具 (小型管道)	hand
-direct	item.gt6.shape_simple_ex_pipe_medium	低热容压模模具 (管道)	hand
-direct	item.gt6.shape_simple_ex_pipe_large	低热容压模模具 (大型管道)	hand
-direct	item.gt6.shape_simple_ex_pipe_huge	低热容压模模具 (巨型管道)	hand
-direct	item.gt6.shape_simple_ex_block	低热容压模模具 (方块)	hand
-direct	item.gt6.shape_simple_ex_gear	低热容压模模具 (齿轮)	hand
-direct	item.gt6.shape_simple_ex_bottle	低热容压模模具 (瓶子)	hand
-direct	item.gt6.shape_simple_ex_plate_curved	低热容压模模具 (弯曲板)	hand
-direct	item.gt6.shape_simple_ex_gear_small	低热容压模模具 (小型齿轮)	hand
-direct	item.gt6.shape_simple_ex_rod	低热容压模模具 (杆)	hand
-direct	item.gt6.shape_simple_ex_ccc	低热容压模模具 (单元式流体容器)	hand
-direct	item.gt6.shape_simple_ex_foil	低热容压模模具 (箔)	hand
-direct	item.gt6.shape_simple_ex_plate_tiny	低热容压模模具 (小块板)	hand
-direct	item.gt6.shape_simple_ex_wire_fine	低热容压模模具 (精细线缆)	hand
 direct	item.gt6.shape_foodmold_baguette	食物模具 (法式长棍)	hand
 direct	item.gt6.shape_foodmold_bread	食物模具 (面包)	hand
 direct	item.gt6.shape_foodmold_bun	食物模具 (小面包)	hand
@@ -3682,6 +3651,38 @@ direct	item.gt6.shape_foodmold_toast	食物模具 (吐司)	hand
 direct	item.gt6.shape_press_bullet_casing_large	弹壳模具 (大型)	hand
 direct	item.gt6.shape_press_bullet_casing_medium	弹壳模具 (中型)	hand
 direct	item.gt6.shape_press_bullet_casing_small	弹壳模具 (小型)	hand
+direct	item.gt6.shape_simple_ex_axe	低热容压模模具 (斧头)	hand
+direct	item.gt6.shape_simple_ex_block	低热容压模模具 (方块)	hand
+direct	item.gt6.shape_simple_ex_bolt	低热容压模模具 (螺栓)	hand
+direct	item.gt6.shape_simple_ex_bottle	低热容压模模具 (瓶子)	hand
+direct	item.gt6.shape_simple_ex_casing	低热容压模模具 (外壳)	hand
+direct	item.gt6.shape_simple_ex_ccc	低热容压模模具 (单元式流体容器)	hand
+direct	item.gt6.shape_simple_ex_cell	低热容压模模具 (槽)	hand
+direct	item.gt6.shape_simple_ex_empty	空白压模模具	hand
+direct	item.gt6.shape_simple_ex_file	低热容压模模具 (锉刀刀头)	hand
+direct	item.gt6.shape_simple_ex_foil	低热容压模模具 (箔)	hand
+direct	item.gt6.shape_simple_ex_gear	低热容压模模具 (齿轮)	hand
+direct	item.gt6.shape_simple_ex_gear_small	低热容压模模具 (小型齿轮)	hand
+direct	item.gt6.shape_simple_ex_hammer	低热容压模模具 (锤头)	hand
+direct	item.gt6.shape_simple_ex_hoe	低热容压模模具 (锄头)	hand
+direct	item.gt6.shape_simple_ex_ingot	低热容压模模具 (锭)	hand
+direct	item.gt6.shape_simple_ex_pickaxe	低热容压模模具 (镐头)	hand
+direct	item.gt6.shape_simple_ex_pipe_huge	低热容压模模具 (巨型管道)	hand
+direct	item.gt6.shape_simple_ex_pipe_large	低热容压模模具 (大型管道)	hand
+direct	item.gt6.shape_simple_ex_pipe_medium	低热容压模模具 (管道)	hand
+direct	item.gt6.shape_simple_ex_pipe_small	低热容压模模具 (小型管道)	hand
+direct	item.gt6.shape_simple_ex_pipe_tiny	低热容压模模具 (微型管道)	hand
+direct	item.gt6.shape_simple_ex_plate	低热容压模模具 (板)	hand
+direct	item.gt6.shape_simple_ex_plate_curved	低热容压模模具 (弯曲板)	hand
+direct	item.gt6.shape_simple_ex_plate_tiny	低热容压模模具 (小块板)	hand
+direct	item.gt6.shape_simple_ex_ring	低热容压模模具 (环)	hand
+direct	item.gt6.shape_simple_ex_rod	低热容压模模具 (杆)	hand
+direct	item.gt6.shape_simple_ex_rod_long	低热容压模模具 (长杆)	hand
+direct	item.gt6.shape_simple_ex_saw	低热容压模模具 (锯刃)	hand
+direct	item.gt6.shape_simple_ex_shovel	低热容压模模具 (锹头)	hand
+direct	item.gt6.shape_simple_ex_sword	低热容压模模具 (剑身)	hand
+direct	item.gt6.shape_simple_ex_wire	低热容压模模具 (线缆)	hand
+direct	item.gt6.shape_simple_ex_wire_fine	低热容压模模具 (精细线缆)	hand
 direct	item.gt6.shape_slicer_eigths	切片器刀片 (八分之一)	hand
 direct	item.gt6.shape_slicer_eigths_hollow	切片器刀片 (中空八分之一)	hand
 direct	item.gt6.shape_slicer_empty	切片器刀片框架	hand

@@ -2811,6 +2811,9 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("gt6.jei.recipe_map.press");
 		addDirect("gt6.jei.recipe_map.canner");
 		addDirect("gt6.jei.recipe_map.replicator");
+		// task recipe-b6b — the nanofab map joined the visible census; the zh face rides
+		// the tsv direct band's hand row (the upstream MTE 20441-20445 纳米制造机 word)
+		addDirect("gt6.jei.recipe_map.nanofab");
 		addDirect("gt6.jei.cost.costs");
 		addDirect("gt6.jei.cost.usage");
 		addDirect("gt6.jei.cost.tier");

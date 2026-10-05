@@ -2,7 +2,7 @@
  * Offline guard tests for task issues #29/#34a (GitHub #29b): the generic RM viewer lang faces.
  * Both datagen providers are recorded through same-package recording subclasses (the
  * GT6LangParityTest posture) and the gt6.jei.recipe_map.* / gt6.jei.cost.* domain is pinned:
- * every one of the 74 visible map titles exists in BOTH locales, the en value is the live
+ * every one of the 75 visible map titles exists in BOTH locales, the en value is the live
  * map's own {@code mNameLocal} (transcription drift fails the gate structurally, not by
  * spot check), and the 16 cost-line keys carry the upstream NEI :680-717 literals verbatim
  * on the en face.
@@ -106,7 +106,7 @@ class GT6RecipeMapLangTest extends GTRecipesOfflineTestBase {
 	void zhTitleDomainCoversExactlyTheSameKeys() {
 		long tEnTitles = enEntries.keySet().stream().filter(k -> k.startsWith(TITLE_PREFIX)).count();
 		long tZhTitles = zhEntries.keySet().stream().filter(k -> k.startsWith(TITLE_PREFIX)).count();
-		assertEquals(74, tEnTitles, "the en title domain is the 74-map census (crucible-viewer-page lifted the crucible pair)");
+		assertEquals(75, tEnTitles, "the en title domain is the 75-map census (the nanofab joined in recipe-b6b)");
 		assertEquals(tEnTitles, tZhTitles, "zh carries exactly the en title domain (zero-debt contract)");
 		// the wording-reuse spot pins (the existing zh machine-name faces)
 		assertEquals("焦炉", zhEntries.get(TITLE_PREFIX + "cokeoven"));
