@@ -5209,6 +5209,15 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code BlockTextureDefault(colored, mRGBa)} passes, :42-44; the fluid box and the
      * overlay shells stay untinted, the P22 decal split) — the former measuring-pot
      * declared deviation retires. Cutout — the sides window is genuinely transparent.
+     * Levels 1..8 keep the shell parent (the texture map) but carry the FULL element set
+     * in the child itself — the filled-shell-family-2 fix, vanilla getElements never
+     * merges the parent chain once the child carries elements (the former "candle idiom"
+     * append dropped the shell at render); cutout stays explicit too: render_type does
+     * not ride the parent chain either and the transparent overlay texels need the
+     * alpha-tested layer. Fluid box: flat eighth-fractions of the 12 px interior
+     * (no upstream pixel formula exists — BlockTextureFluid was texture-space; the
+     * declared simplification), vertically inset 0.05 px so neither plane ever sits
+     * coplanar with the shell's bottom/top faces (z-fight).
      */
     private void addCells() {
         BlockModelBuilder tEmpty = models().getBuilder("cell_container_empty")
@@ -5223,24 +5232,15 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_insides", modLoc("block/cell/overlay_insides"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
-        // the shell — the upstream silhouette :70-72 (6x12x6 px) with the world-side band mapping
-        cellBox(tEmpty, 5.0F, 0.0F, 5.0F, 11.0F, 12.0F, 11.0F, "");
-        // the 0.01-inflated overlay shell (the blank upstream overlay set — grammar parity)
-        cellBox(tEmpty, 5.0F - 0.01F, 0.0F - 0.01F, 5.0F - 0.01F, 11.0F + 0.01F, 12.0F + 0.01F, 11.0F + 0.01F, "overlay_");
-        // the insides box — the pass-2 base layer, visible only through the sides window
-        cellInsides(tEmpty, 6.0F, 0.0F, 6.0F, 10.0F, 12.0F, 10.0F);
-        cellInsides(tEmpty, 6.0F - 0.01F, 0.0F - 0.01F, 6.0F - 0.01F, 10.0F + 0.01F, 12.0F + 0.01F, 10.0F + 0.01F, "overlay_");
+        cellShellElements(tEmpty);
         BlockModelBuilder[] tFilled = new BlockModelBuilder[9];
         for (int tLevel = 1; tLevel <= 8; tLevel++) {
-            // the child parents the shell — its elements APPEND (the vanilla candle idiom,
-            // the crucible bowl form); the fluid box rides flat eighth-fractions of the
-            // 12 px interior (no upstream pixel formula exists — BlockTextureFluid was
-            // texture-space; the declared simplification), vertically inset 0.05 px so
-            // neither plane ever sits coplanar with the shell's bottom/top faces (z-fight)
             float tTop = 0.05F + tLevel * 11.5F / 8.0F;
             BlockModelBuilder tModel = models().getBuilder("block/cell_container_filled_" + tLevel)
                     .parent(tEmpty)
-                    .texture("content", modLoc("block/smeltery_content"));
+                    .texture("content", modLoc("block/smeltery_content"))
+                    .renderType("cutout");
+            cellShellElements(tModel);
             BlockModelBuilder.ElementBuilder tElement = tModel.element()
                     .from(5.5F, 0.05F, 5.5F).to(10.5F, tTop, 10.5F);
             for (Direction tDir : Direction.values()) {
@@ -5257,6 +5257,22 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tRow.getId().getPath(), tEmpty.getLocation());
         }
+    }
+
+    /**
+     * The four cell shell boxes onto ANY builder — the {@code _empty} model and every
+     * {@code _filled_N} child (the filled-shell-family-2 fix: the child must carry the
+     * full element set itself, vanilla getElements never merges the parent). The shell —
+     * the upstream silhouette :70-72 (6x12x6 px) with the world-side band mapping — plus
+     * its 0.01-inflated overlay twin (the blank upstream overlay set — grammar parity),
+     * the insides box (the pass-2 base layer, visible only through the sides window) and
+     * its overlay twin.
+     */
+    private void cellShellElements(BlockModelBuilder aModel) {
+        cellBox(aModel, 5.0F, 0.0F, 5.0F, 11.0F, 12.0F, 11.0F, "");
+        cellBox(aModel, 5.0F - 0.01F, 0.0F - 0.01F, 5.0F - 0.01F, 11.0F + 0.01F, 12.0F + 0.01F, 11.0F + 0.01F, "overlay_");
+        cellInsides(aModel, 6.0F, 0.0F, 6.0F, 10.0F, 12.0F, 10.0F);
+        cellInsides(aModel, 6.0F - 0.01F, 0.0F - 0.01F, 6.0F - 0.01F, 10.0F + 0.01F, 12.0F + 0.01F, 10.0F + 0.01F, "overlay_");
     }
 
     /** One cell shell box: all six faces over the band prefix — the world-side mapping (up=top, down=bottom, horizontals=sides); the colored band carries the tintindex-0 seat, the overlay band untinted. */
@@ -5407,10 +5423,15 @@ public final class GT6BlockStates extends BlockStateProvider {
      * (3,0,3→13,10,13, the pass-4 box; down=bottom, up=top, horizontals=sides — the
      * :71-76 pass mapping), every element over the colored band each duplicated by a
      * 0.01-inflated overlay shell (overlay_top carries real art — the ledger), cutout.
-     * Levels 1..8 parent the shell and APPEND the fluid box (the cup idiom): flat
-     * eighth-fractions of the 3px interior ABOVE the body plane (10.05px off the body,
-     * 12.95px inset off the :53 fluid plane), riding the smeltery_content placeholder
-     * (the declared ceiling — the static model cannot know the BE's actual fluid).
+     * Levels 1..8 keep the shell parent (the texture map) but carry the FULL element set
+     * in the child itself — the filled-shell-family-2 fix, vanilla getElements never
+     * merges the parent chain once the child carries elements (the former "candle idiom"
+     * append dropped the shell at render); cutout stays explicit too: render_type does
+     * not ride the parent chain either and the transparent overlay texels need the
+     * alpha-tested layer. Fluid box: flat eighth-fractions of the 3px interior ABOVE the
+     * body plane (10.05px off the body, 12.95px inset off the :53 fluid plane), riding
+     * the smeltery_content placeholder (the declared ceiling — the static model cannot
+     * know the BE's actual fluid).
      */
     private void addJug() {
         BlockModelBuilder tEmpty = models().getBuilder("ceramic_jug_empty")
@@ -5425,25 +5446,15 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("overlay_insides", modLoc("block/jug/overlay_insides"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
-        // the pass 0-3 rim walls verbatim: west (5,10,6→6,14,10), east (10,10,6→11,14,10),
-        // north (6,10,5→10,14,6), south (6,10,10→10,14,11) — plus their 0.01 overlay twins
-        cupWallBox(tEmpty, 5.0F, 10.0F, 6.0F, 6.0F, 14.0F, 10.0F, "");
-        cupWallBox(tEmpty, 10.0F, 10.0F, 6.0F, 11.0F, 14.0F, 10.0F, "");
-        cupWallBox(tEmpty, 6.0F, 10.0F, 5.0F, 10.0F, 14.0F, 6.0F, "");
-        cupWallBox(tEmpty, 6.0F, 10.0F, 10.0F, 10.0F, 14.0F, 11.0F, "");
-        cupWallBox(tEmpty, 4.99F, 9.99F, 5.99F, 6.01F, 14.01F, 10.01F, "overlay_");
-        cupWallBox(tEmpty, 9.99F, 9.99F, 5.99F, 11.01F, 14.01F, 10.01F, "overlay_");
-        cupWallBox(tEmpty, 5.99F, 9.99F, 4.99F, 10.01F, 14.01F, 6.01F, "overlay_");
-        cupWallBox(tEmpty, 5.99F, 9.99F, 9.99F, 10.01F, 14.01F, 11.01F, "overlay_");
-        // the pass-4 body slab (3,0,3→13,10,13) — down=bottom, up=top (the :76 pass-4/SIDE_Y_POS form), horizontals=sides
-        cupSlab(tEmpty, 3.0F, 0.0F, 3.0F, 13.0F, 10.0F, 13.0F, "");
-        cupSlab(tEmpty, 2.99F, -0.01F, 2.99F, 13.01F, 10.01F, 13.01F, "overlay_");
+        jugShellElements(tEmpty);
         BlockModelBuilder[] tFilled = new BlockModelBuilder[9];
         for (int tLevel = 1; tLevel <= 8; tLevel++) {
             float tTop = 10.05F + tLevel * 2.9F / 8.0F;
             BlockModelBuilder tModel = models().getBuilder("block/ceramic_jug_filled_" + tLevel)
                     .parent(tEmpty)
-                    .texture("content", modLoc("block/smeltery_content"));
+                    .texture("content", modLoc("block/smeltery_content"))
+                    .renderType("cutout");
+            jugShellElements(tModel);
             BlockModelBuilder.ElementBuilder tElement = tModel.element()
                     .from(6.0F, 10.05F, 6.0F).to(10.0F, tTop, 10.0F);
             for (Direction tDir : Direction.values()) {
@@ -5461,6 +5472,36 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
+     * The ten jug shell boxes onto ANY builder — the {@code _empty} model and every
+     * {@code _filled_N} child (the filled-shell-family-2 fix: the child must carry the
+     * full element set itself, vanilla getElements never merges the parent). The cup
+     * shell grammar over the jug geometry — the pass 0-3 rim walls verbatim: west
+     * (5,10,6→6,14,10), east (10,10,6→11,14,10), north (6,10,5→10,14,6),
+     * south (6,10,10→10,14,11) — plus their 0.01 overlay twins, and the pass-4 body slab
+     * (3,0,3→13,10,13 — down=bottom, up=top, the :76 mapping) with its overlay twin.
+     */
+    private void jugShellElements(BlockModelBuilder aModel) {
+        cupWallBox(aModel, 5.0F, 10.0F, 6.0F, 6.0F, 14.0F, 10.0F, "");
+        cupWallBox(aModel, 10.0F, 10.0F, 6.0F, 11.0F, 14.0F, 10.0F, "");
+        cupWallBox(aModel, 6.0F, 10.0F, 5.0F, 10.0F, 14.0F, 6.0F, "");
+        cupWallBox(aModel, 6.0F, 10.0F, 10.0F, 10.0F, 14.0F, 11.0F, "");
+        cupWallBox(aModel, 4.99F, 9.99F, 5.99F, 6.01F, 14.01F, 10.01F, "overlay_");
+        cupWallBox(aModel, 9.99F, 9.99F, 5.99F, 11.01F, 14.01F, 10.01F, "overlay_");
+        cupWallBox(aModel, 5.99F, 9.99F, 4.99F, 10.01F, 14.01F, 6.01F, "overlay_");
+        cupWallBox(aModel, 5.99F, 9.99F, 9.99F, 10.01F, 14.01F, 11.01F, "overlay_");
+        cupSlab(aModel, 3.0F, 0.0F, 3.0F, 13.0F, 10.0F, 13.0F, "");
+        cupSlab(aModel, 2.99F, -0.01F, 2.99F, 13.01F, 10.01F, 13.01F, "overlay_");
+    }
+
+    /**
+     * The wood-beam family (task beam-blocks-register, 8 blocks): one {@code cube_column}
+     * model per kind over the two borrowed upstream PNGs (end = beam_top_&lt;kind&gt;, side =
+     * beam_side_&lt;kind&gt; — the BEAMS_1/BEAMS_2 icon pairs, Textures.java:260-277, indexed
+     * 2*(meta&amp;PILLAR_DATA)+(axis?0:1) at BlockBaseBeam.java:65), the axle axis band
+     * rotation map verbatim (X = x90+y90 / Y = none / Z = x90+y180 — the vanilla axisBlock
+     * idiom, the addAxles :2340-2344 form). Geometry is the full cube: upstream render id
+     * 31 (CS.java:764 PILLAR_RENDER) IS the vanilla log renderer — the beam has no reduced
+     * cross-section. The item form parents the block model (the axle band row).
      * The wood-beam family (task beam-blocks-register + beam-fireproof-closeout, 21 + 21
      * blocks): one {@code cube_column} model per kind over the two borrowed upstream PNGs
      * (end = beam_top_&lt;kind&gt;, side = beam_side_&lt;kind&gt; — the BEAMS_1/2/3/A/B/C icon

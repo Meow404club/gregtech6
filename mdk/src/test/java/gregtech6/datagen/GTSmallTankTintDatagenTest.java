@@ -85,40 +85,30 @@ class GTSmallTankTintDatagenTest {
 	/** The filled children's smeltery_content fluid boxes stay untinted (upstream BlockTextureFluid carries no mRGBa). */
 	@Test
 	void theFilledFluidBoxesStayUntinted() throws Exception {
-		// cell + jug keep the parent-append children (outside the r11a-crucible-filled-shell
-		// card — their shells still live in the parent alone)
-		Set<String> tAppendFilled = Set.of(
+		// every filled child carries the FULL shell+fluid set in itself now — the cup rides
+		// the r11a-crucible-filled-shell fix (in main), the cell + jug ride the
+		// filled-shell-family-2 fix (vanilla getElements never merges the parent once the
+		// child carries elements); the surviving invariant: the #content faces never tint,
+		// and the fluid box is the only #content consumer
+		Set<String> tFullFilled = Set.of(
 				"assets/gt6/models/block/cell_container_filled_3.json",
-				"assets/gt6/models/block/ceramic_jug_filled_3.json");
-		for (String tPath : tAppendFilled) {
+				"assets/gt6/models/block/ceramic_jug_filled_3.json",
+				"assets/gt6/models/block/porcelain_cup_filled_3.json");
+		for (String tPath : tFullFilled) {
 			JsonObject tModel = generatedJson(tPath);
 			assertTrue(tModel.get("parent").getAsString().endsWith("_empty"),
-					tPath + " parents the seated shell (the seats ride the parent chain)");
+					tPath + " parents the seated shell (the texture map)");
+			int tContentFaces = 0;
 			for (JsonElement tElement : tModel.getAsJsonArray("elements")) {
 				for (Map.Entry<String, JsonElement> tFace : tElement.getAsJsonObject().getAsJsonObject("faces").entrySet()) {
-					assertEquals("#content", tFace.getValue().getAsJsonObject().get("texture").getAsString(),
-							tPath + " appends only the fluid box");
-					assertFalse(tFace.getValue().getAsJsonObject().has("tintindex"),
-							tPath + " face " + tFace.getKey() + " — the fluid box never tints");
+					if ("#content".equals(tFace.getValue().getAsJsonObject().get("texture").getAsString())) {
+						tContentFaces++;
+						assertFalse(tFace.getValue().getAsJsonObject().has("tintindex"),
+								tPath + " face " + tFace.getKey() + " — the fluid box never tints");
+					}
 				}
 			}
+			assertEquals(6, tContentFaces, tPath + ": the fluid box (six faces) is the only #content consumer");
 		}
-		// the cup carries the FULL shell+fluid set in the child itself (the r11a fix — vanilla
-		// getElements never merges the parent); the invariant that survives both shapes:
-		// the #content faces never tint, and the fluid box is the only #content consumer
-		JsonObject tCup = generatedJson("assets/gt6/models/block/porcelain_cup_filled_3.json");
-		assertTrue(tCup.get("parent").getAsString().endsWith("_empty"),
-				"porcelain_cup_filled_3 parents the seated shell (the texture map)");
-		int tContentFaces = 0;
-		for (JsonElement tElement : tCup.getAsJsonArray("elements")) {
-			for (Map.Entry<String, JsonElement> tFace : tElement.getAsJsonObject().getAsJsonObject("faces").entrySet()) {
-				if ("#content".equals(tFace.getValue().getAsJsonObject().get("texture").getAsString())) {
-					tContentFaces++;
-					assertFalse(tFace.getValue().getAsJsonObject().has("tintindex"),
-							"porcelain_cup_filled_3 face " + tFace.getKey() + " — the fluid box never tints");
-				}
-			}
-		}
-		assertEquals(6, tContentFaces, "the fluid box (six faces) is the only #content consumer");
 	}
 }
