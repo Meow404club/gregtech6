@@ -441,10 +441,12 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 	}
 
 	@Test
-	public void cruciblePreviewPinsTheDesign0WallForm() {
+	public void cruciblePreviewPinsTheFormedWallForm() {
 		// the crucible binding IS the forming declaration (acceptance ②): 24 formingPart
 		// walls in three rings + the fail-not-clear hollow pair — zero re-stamp needed.
-		// design 0 on this base; the in-flight mb-formed-crucible-wall re-pins it to 4.
+		// the pattern declares the formed design 4 directly — mb-formed-crucible-wall
+		// (merge 39c107bf6) landed: TileEntityCrucible.FORMED_WALL_DESIGN, the net effect
+		// of the upstream two-pass check (:119-121 writes 0, :124-128 repaints 4).
 		GTMultiBlockPattern tPattern = new PreviewCrucible(BlockPos.ZERO, Blocks.BRICKS.defaultBlockState())
 				.getStructurePattern();
 		int tWalls = 0;
@@ -456,7 +458,7 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 			tWalls++;
 			assertSame(Blocks.BRICKS, tCell.partBlock, "the crucible-wall form: one uniform tier wall");
 			assertTrue(tCell.forms(), "every wall cell carries the forming expectation");
-			assertEquals(0, tCell.design, "design 0 on this base");
+			assertEquals(4, tCell.design, "the formed wall skin — mb-formed-crucible-wall (39c107bf6) declares TileEntityCrucible.FORMED_WALL_DESIGN");
 		}
 		assertEquals(24, tWalls, "three 8-cell rings (26 cells total with the hollow pair)");
 		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
