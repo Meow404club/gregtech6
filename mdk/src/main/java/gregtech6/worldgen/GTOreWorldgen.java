@@ -7,8 +7,10 @@ import java.util.Set;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.biome.Biome;
 
 import gregapi.data.MT;
 import gregapi.oredict.MaterialRegistry;
@@ -537,6 +539,102 @@ public final class GTOreWorldgen {
     /** The 15 deep placed keys, deepMirrorRows() order. */
     public static final List<ResourceKey<PlacedFeature>> DEEP_PLACED_KEYS =
             deepMirrorRows().stream().map(GTOreWorldgen::deepPlacedKey).toList();
+
+    // ---------------------------------------------------------------- twilight RockOres band (task twilight-adaptation-pilot)
+
+    /**
+     * One upstream twilight {@code WorldgenOresVanilla} row (Loader_Worldgen.java:666-673,
+     * the {@code BlocksGT.RockOres} block): the identifying triple only — all eight rows
+     * share the {@link WorldgenBlob} columns amount=1/size=50/probability=100/Y16-32 (the
+     * ctor bind, WorldgenBlob.java:53-57), pinned as the band constants below. The meta is
+     * the RockOres block meta; the material mapping is BlockRockOres.ORE_MATERIALS
+     * (BlockRockOres.java:36) — Coal/Lignite/NaCl/KCl/OREMATS.Bauxite/Oilshale/Gypsum/
+     * MilkyQuartz for metas 0-7.
+     */
+    public record TwilightOreRow(String name, int meta, java.util.function.Supplier<OreDictMaterial> material) {
+
+        /** The upstream config name's tail = the feature-key segment (the small-ore band rule). */
+        public String tail() {
+            return name.substring(name.lastIndexOf('.') + 1);
+        }
+    }
+
+    /**
+     * The 8 RockOres rows, Loader_Worldgen.java:666-673 order, verbatim (the census table —
+     * the axis gate below decides which rows EMIT; the whole table ships as data either way,
+     * the molybdenum large-vein precedent: an off-axis row waits for its axis extension and
+     * lights up then, the JSON never changes).
+     */
+    public static final List<TwilightOreRow> TWILIGHT_ORE_ROWS = List.of(
+        new TwilightOreRow("twilight.ore.anthracite" , 0, () -> MT.Coal               ),  // :666
+        new TwilightOreRow("twilight.ore.lignite"    , 1, () -> MT.Lignite            ),  // :667
+        new TwilightOreRow("twilight.ore.salt"       , 2, () -> MT.NaCl               ),  // :668
+        new TwilightOreRow("twilight.ore.rocksalt"   , 3, () -> MT.KCl                ),  // :669
+        new TwilightOreRow("twilight.ore.bauxite"    , 4, () -> MT.OREMATS.Bauxite    ),  // :670
+        new TwilightOreRow("twilight.ore.oilshale"   , 5, () -> MT.Oilshale           ),  // :671
+        new TwilightOreRow("twilight.ore.gypsum"     , 6, () -> MT.Gypsum             ),  // :672
+        new TwilightOreRow("twilight.ore.milkyquartz", 7, () -> MT.MilkyQuartz        )); // :673
+
+    /** The shared WorldgenOresVanilla columns (WorldgenBlob.java:53-57 config binds, all 8 rows identical). */
+    public static final int TWILIGHT_ORE_AMOUNT = 1, TWILIGHT_ORE_SIZE = 50,
+            TWILIGHT_ORE_PROBABILITY = 100, TWILIGHT_ORE_MIN_Y = 16, TWILIGHT_ORE_MAX_Y = 32;
+
+    /** The Twilight Forest modid — the conditions trigger AND the biome-tag namespace ({@link #twilightBiomeTag}). */
+    public static final String TWILIGHT_MODID = "twilightforest";
+
+    /**
+     * The tag the twilight modifier hangs off: {@code #twilightforest:in_twilight_forest} —
+     * TF's own tag, shipped by TF, never emitted here. The datagen lookup resolves to an
+     * EMPTY named holder (RegistrySetBuilder.EmptyTagLookup.get:174-183 — any tag key) that
+     * serializes as the {@code #...} string, the {@code #gt6:trees/*} precedent both legs
+     * pin; at RUNTIME the row's mod_loaded condition gates the entry BEFORE the tag resolves
+     * (forge ICondition.java:24-30 shouldRegisterEntry) — TF absent = zero mounts, zero
+     * errors, the TF-absence semantics.
+     */
+    public static TagKey<Biome> twilightBiomeTag() {
+        return TagKey.create(Registries.BIOME,
+                ResourceLocation.fromNamespaceAndPath(TWILIGHT_MODID, "in_twilight_forest"));
+    }
+
+    /**
+     * The axis gate (the GTVeinConfig validity face over a row): the row emits JSON only
+     * when its resolved material has registrable ore blocks — an identity scan over
+     * {@link GT6OreBlocks#materialAxis()} (the same canonical instances the resolve walk
+     * produces; OreDictMaterial has no equals override, identity IS the comparison).
+     */
+    public static boolean twilightOnAxis(TwilightOreRow aRow) {
+        OreDictMaterial tMaterial = aRow.material().get();
+        if (tMaterial == null || tMaterial.mID < 0) return false;
+        tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target
+        if (tMaterial == null || tMaterial.mID < 0) return false;
+        for (OreDictMaterial tAxis : GT6OreBlocks.materialAxis()) {
+            if (tAxis == tMaterial) return true;
+        }
+        return false;
+    }
+
+    /** The axis-valid rows in table order — the 3-row emission set (Coal/NaCl/KCl today). */
+    public static List<TwilightOreRow> twilightOnAxisRows() {
+        List<TwilightOreRow> rRows = new ArrayList<>(3);
+        for (TwilightOreRow tRow : TWILIGHT_ORE_ROWS) {
+            if (twilightOnAxis(tRow)) rRows.add(tRow);
+        }
+        return rRows;
+    }
+
+    /** The configured-feature key of a twilight row ({@code gt6:twilight_ore/<tail>}). */
+    public static ResourceKey<ConfiguredFeature<?, ?>> twilightConfiguredKey(TwilightOreRow aRow) {
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, twilightEntryLocation(aRow));
+    }
+
+    /** The placed-feature key of a twilight row (same path as its configured sibling). */
+    public static ResourceKey<PlacedFeature> twilightPlacedKey(TwilightOreRow aRow) {
+        return ResourceKey.create(Registries.PLACED_FEATURE, twilightEntryLocation(aRow));
+    }
+
+    private static ResourceLocation twilightEntryLocation(TwilightOreRow aRow) {
+        return ResourceLocation.fromNamespaceAndPath("gt6", "twilight_ore/" + aRow.tail());
+    }
 
     private GTOreWorldgen() {
     }
