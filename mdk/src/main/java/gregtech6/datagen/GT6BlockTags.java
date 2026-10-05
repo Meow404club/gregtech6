@@ -8,6 +8,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 //? if forge {
 import net.minecraftforge.common.data.BlockTagsProvider;
@@ -21,6 +22,8 @@ import net.minecraftforge.registries.RegistryObject;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.block.tank.GTBarrelBlock;
+import gregtech6.items.tools.GTWrenchItem;
+import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GTBarrels;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GTFluidPipes;
@@ -101,6 +104,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addBeamBand(); // task beam-blocks-register — the 8 wood beams join mineable/axe
 		addPlankBand(); // task gt-tree-planks — the 9 plank cubes (planks/axe)
 		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
+		addWrenchBand(); // task wrench-mining-face — the gt6:mineable/wrench face (ruling B)
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (tags-prefix-materials: rolling batches).
 	}
@@ -325,5 +329,29 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			tPlanks.add(tHandle.get());
 			tAxe.add(tHandle.get());
 		}
+	}
+
+	/**
+	 * The mineable/wrench band (task wrench-mining-face, ruling B): the whole
+	 * {@link GTMachines} register (keep-and-add — every machine stays in the pickaxe band
+	 * AND joins the wrench face, no yielding), the twelve battery boxes
+	 * ({@link GT6Batteries#BATTERY_BOX_BLOCKS} — the reported symptom family, upstream
+	 * aMachine TOOL_wrench, Loader_MultiTileEntities.java:894 hardness 4.0), and the nine
+	 * vanilla members unfolded from {@code GT_Tool_Wrench.isMinableBlock} (:72-81: the
+	 * piston material ×4, the redstoneLight lamp, the bars pane, hopper/dispenser/
+	 * dropper). The consumer is {@link GTWrenchItem} — the tag IS the mining face (ruling
+	 * A makes everything outside it dig at ZERO). Ruling C: requiresCorrectToolForDrops
+	 * stays OFF (the punitive no-drop is the defer pool). The dual-tree singular twin
+	 * (tags/block) is the automatic GT6DualDirectoryFaces mirror.
+	 */
+	private void addWrenchBand() {
+		var tWrench = tag(GTWrenchItem.MINEABLE_WITH_WRENCH);
+		GTMachines.BLOCKS.getEntries().forEach(tHandle -> tWrench.add(tHandle.get()));
+		for (RegistryObject<Block> tHandle : GT6Batteries.BATTERY_BOX_BLOCKS.values()) {
+			tWrench.add(tHandle.get());
+		}
+		tWrench.add(Blocks.PISTON, Blocks.STICKY_PISTON, Blocks.PISTON_HEAD, Blocks.MOVING_PISTON);
+		tWrench.add(Blocks.REDSTONE_LAMP, Blocks.IRON_BARS);
+		tWrench.add(Blocks.HOPPER, Blocks.DISPENSER, Blocks.DROPPER);
 	}
 }
