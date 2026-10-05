@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/rail_corner",
+  "render_type": "minecraft:cutout",
   "textures": {
     "rail": "gt6:block/rail_turned_tungstensteel"
   }

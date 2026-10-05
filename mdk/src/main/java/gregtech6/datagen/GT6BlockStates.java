@@ -401,9 +401,17 @@ public final class GT6BlockStates extends BlockStateProvider {
         LOGGER.info("GT6 rail family: {} material blockstates + the road stripe", GT6Rails.ROWS.size());
     }
 
-    /** One rail model: the vanilla template parent + the rail texture override (the texture id is block/-prefixed). */
+    /**
+     * One rail model: the vanilla template parent + the rail texture override (the texture id is block/-prefixed).
+     * The cutout layer is declared HERE, not inherited — {@code render_type} does not ride the parent
+     * chain (GT6ConverterPaintRenderDatagenTest), and without it the vanilla instance-keyed
+     * {@code ItemBlockRenderTypes.TYPE_BY_BLOCK} lookup misses the GT6 rail subclasses and falls back
+     * to the discard-less solid layer, where the rail textures' transparent texels paint as white
+     * (task r11c-rail-cutout; the vanilla rail JSON ships the same declaration).
+     */
     private ModelFile railModel(String aName, String aParent, String aTextureBand) {
-        return models().withExistingParent(aName, mcLoc(aParent)).texture("rail", modLoc("block/" + aTextureBand));
+        return models().withExistingParent(aName, mcLoc(aParent)).texture("rail", modLoc("block/" + aTextureBand))
+                .renderType("cutout");
     }
 
     /**
