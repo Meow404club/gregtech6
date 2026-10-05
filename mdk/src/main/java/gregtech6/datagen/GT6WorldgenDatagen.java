@@ -79,6 +79,7 @@ import gregtech6.registry.GTStoneBlocks;
 import gregtech6.registry.GT6SurfaceBlocks;
 import gregtech6.worldgen.GT6FallenLogFeature;
 import gregtech6.worldgen.GT6Features;
+import gregtech6.worldgen.GT6WaterReplaceConfig;
 import gregtech6.worldgen.GT6Worldgen;
 import gregtech6.worldgen.GTBedrockOreConfig;
 import gregtech6.worldgen.GTFluidSpringConfig;
@@ -430,6 +431,11 @@ public final class GT6WorldgenDatagen {
         // feature = the upstream "Has to be after Bedrock Ores" source order, :781).
         FeatureUtils.register(ctx, GT6Worldgen.FLUID_SPRINGS_CONFIGURED, GT6Features.FLUID_SPRINGS,
                 new GTFluidSpringConfig.Table(FLUID_SPRING_TABLE));
+        // task worldgen-water-replace — the ONE vanilla-water configured feature: the
+        // registered GT6WaterReplaceFeature instance over the 3-row table (the row order
+        // IS the Loader_Worldgen.java:575-578 OCEAN→RIVER→SWAMP hard constraint).
+        FeatureUtils.register(ctx, GT6Worldgen.WATER_REPLACE_CONFIGURED, GT6Features.WATER_REPLACE,
+                new GT6WaterReplaceConfig.Table(WATER_REPLACE_TABLE));
         bootstrapOreConfigured(ctx); // task w6-small-ore-datagen — tail-append
         bootstrapLensOreConfigured(ctx); // task c3-lens-ores — tail-append
     }
@@ -510,6 +516,13 @@ public final class GT6WorldgenDatagen {
         // — the rows carry their own bedrock-anchored bands).
         PlacementUtils.register(ctx, GT6Worldgen.FLUID_SPRINGS_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.FLUID_SPRINGS_CONFIGURED),
+                CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task worldgen-water-replace — the vanilla-water placed feature: Count 1 CONSTANT +
+        // InSquare + BiomeFilter (the bedrock-ore chain shape; the row gates + the ordered
+        // scan live in the Feature — the whole-chunk column walk, deterministic, no Y
+        // placement and no randomness, the WorldgenOcean.java:58-82 shape).
+        PlacementUtils.register(ctx, GT6Worldgen.WATER_REPLACE_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.WATER_REPLACE_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
         // task nether-lens-end-yield — the nether-lens placed feature: Count 1 CONSTANT +
         // InSquare + BiomeFilter (the strata-lens chain shape; the per-chunk 1/200 row rolls
@@ -657,6 +670,20 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+
+        // task worldgen-water-replace — the vanilla-water biome modifier: EVERY overworld
+        // biome (the row gates do the filtering in-feature — the chunk-granular
+        // aBiomeNames face), at the TOP_LAYER_MODIFICATION step, the LAST decoration pass:
+        // AFTER kelp/seagrass (strict Blocks.WATER gates, SeagrassFeature.java:30/
+        // KelpFeature.java:26 — replacing earlier would sterilize ocean vegetation) and
+        // AFTER freeze_top_layer (strict fluid==Fluids.WATER, Biome.java:141 — replacing
+        // earlier would end frozen-river ice; vanilla inline features precede
+        // modifier-appended ones in the same step's list). The row ORDER (the
+        // :575-578 hard constraint) rides the table inside ONE configured feature —
+        // immune to modifier application order.
+        ctx.register(biomeModifierKeyOf("water_replace"), addFeatures(tOverworld,
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.WATER_REPLACE_PLACED)),
+                GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
         // task nether-lens-end-yield — the nether-lens biome modifier: EVERY nether
         // biome (upstream GEN_NETHER, Loader_Worldgen.java:656 — the dim flag is the modern
         // biome-tag face, the small-ore band's IS_NETHER convention), at the
@@ -1793,6 +1820,30 @@ public final class GT6WorldgenDatagen {
         springOffworld("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200, 1000), // :795
         springOffworld("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100,  250), // :796
         springLava   ("nether.fluid.lava"             , 100, false, true ,      500)  // :797 — the GEN_NETHER dome (task worldgen-nether-bedrock-lava)
+    );
+
+    // ------------------------------------------------------------------
+    // The vanilla-water replacement band (task worldgen-water-replace) — the 3-row
+    // table, Loader_Worldgen.java:576-578 row-for-row (the row names are the upstream
+    // WorldgenObject names verbatim). Column order (GT6WaterReplaceConfig): name /
+    // block / gate / scanTop — scanTop rides the 62 default (the upstream "Height"
+    // config default, WorldgenOcean.java:48 over WD.waterLevel()=62), so the column
+    // is ABSENT from the JSON (optionalFieldOf). The block ids are single-sourced over
+    // GTFluids.springBlockId (the fluid id + _block; the task's WATER_REPLACE_BLOCK_IDS
+    // block face). The rows REPLACE in table order — the OCEAN→RIVER→SWAMP hard
+    // constraint (Loader_Worldgen.java:575-578 source comment) IS this table order.
+    // ------------------------------------------------------------------
+
+    /** The row helper: a vanilla-water row (the GT fluid id through {@code springBlockId} — the single-source face). */
+    private static GT6WaterReplaceConfig waterRow(String aName, String aFluidName, GT6WaterReplaceConfig.Gate aGate) {
+        return new GT6WaterReplaceConfig(aName, gregtech6.fluid.GTFluids.springBlockId(aFluidName), aGate, 62);
+    }
+
+    /** The ONE 3-row vanilla-water table — the card spec's "替换范围语义按上游三类 verbatim". */
+    public static final List<GT6WaterReplaceConfig> WATER_REPLACE_TABLE = List.of(
+        waterRow("ocean.seawater" , "seawater"  , GT6WaterReplaceConfig.Gate.OCEAN), // :576
+        waterRow("river.riverwater", "riverwater", GT6WaterReplaceConfig.Gate.RIVER), // :577
+        waterRow("swamp.dirtywater", "waterdirty", GT6WaterReplaceConfig.Gate.SWAMP)  // :578
     );
 
     // ------------------------------------------------------------------

@@ -137,6 +137,18 @@ public final class GT6Features {
     }
 
     /**
+     * The vanilla-water replacement feature (task worldgen-water-replace) — ONE
+     * registration row {@code gt6:water_replace}, the single Feature over the 3-row
+     * water table (the single-feature-over-a-row-table shape as FLUID_SPRINGS; the row
+     * ORDER is the OCEAN→RIVER→SWAMP hard constraint, Loader_Worldgen.java:575-578 —
+     * the swamp arm converts the ocean/river faces the earlier rows placed). The
+     * configured/placed/biome-modifier rows hang off it in GT6WorldgenDatagen, at the
+     * TOP_LAYER_MODIFICATION step (the last decoration pass — after kelp/seagrass and
+     * freeze_top_layer, see the feature javadoc selection report).
+     */
+    public static final GT6WaterReplaceFeature WATER_REPLACE = registerForm("water_replace", new GT6WaterReplaceFeature());
+
+    /**
      * The three nether surface forms (task nether-lens-end-yield spec ①) — quartz /
      * crystals / clay, one registration row each ({@code gt6:nether_quartz},
      * {@code gt6:nether_crystals}, {@code gt6:nether_clay}), all NoneFeatureConfiguration

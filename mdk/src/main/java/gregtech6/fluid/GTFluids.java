@@ -3185,6 +3185,27 @@ public final class GTFluids {
 			"liquid_extra_heavy_oil", "liquid_heavy_oil", "liquid_medium_oil", "liquid_light_oil",
 			"water_geothermal");
 
+	/**
+	 * The three natural water-body ids this card (task worldgen-water-replace) gives a
+	 * LiquidBlock to — {@code seawater}/{@code riverwater}/{@code waterdirty}, the vanilla
+	 * ocean/river/swamp replacement targets (Loader_Worldgen.java:576-578: the three
+	 * WorldgenObject rows, the OCEAN-before-RIVER-before-SWAMP order).
+	 *
+	 * <p><b>THE F1-RULING-REVISION FACE, EXPLICIT (the spring block's own precedent):</b>
+	 * the card FILES_SCOPE said "GTFluids read-only", but the replacement targets must be
+	 * placeable world BLOCKS — the three fluids are fluid-only rows (seawater/waterdirty on
+	 * {@link #SIMPLE_LIQUID_SPECS}, riverwater on the food-b2 table) with no block leg, and
+	 * a fluid with no block cannot enter the world (FlowingFluid.createLegacyBlock has no
+	 * block to build). This extends the fluid-spring card's block-face revision to the
+	 * water bodies, the same SPEC-declared-not-silent shape: block id = fluid id +
+	 * {@code _block}, the same liquid ramp, the same {@link #BLOCK_SEAM} attach through
+	 * {@link #withWorldgenBlock} (all three ride {@link #registerFluidFamily} →
+	 * {@link #aquaProperties}, so the attach is automatic). KJS surface: REGISTRATION face
+	 * only; the placement itself is the worldgen JSON domain of {@code gt6:water_replace}.
+	 */
+	public static final List<String> WATER_REPLACE_BLOCK_IDS = List.of(
+			"seawater", "riverwater", "waterdirty");
+
 	/** The gt6 BLOCK id of a worldgen spring fluid — the full {@code gt6:} id, the fluid id + {@code _block} (natural_gas included, its block the p5 face). */
 	public static String springBlockId(String aFluidName) {
 		return "gt6:" + ("natural_gas".equals(aFluidName) ? "natural_gas_block" : aFluidName + "_block");
@@ -3198,18 +3219,22 @@ public final class GTFluids {
 	}
 
 	static {
-		for (String tName : SPRING_BLOCK_IDS) {
-			//? if forge {
-			RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
-					() -> new LiquidBlock(SOURCE_SEAM.get(tName), BlockBehaviour.Properties.of()
-							.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
-			//?} else {
-			/*RegistryObject<LiquidBlock> tBlock = BLOCKS.register(tName + "_block",
-					() -> new LiquidBlock(SOURCE_SEAM.get(tName).get(), BlockBehaviour.Properties.of()
-							.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp (FLUID before BLOCK, the resolved .get() is live)
-			*///?}
-			BLOCK_SEAM.put(tName, tBlock);
-		}
+		for (String tName : SPRING_BLOCK_IDS) putWorldgenBlock(tName);
+		for (String tName : WATER_REPLACE_BLOCK_IDS) putWorldgenBlock(tName);
+	}
+
+	/** One worldgen LiquidBlock into {@link #BLOCK_SEAM} (the spring-card registration loop, now shared by both worldgen block faces). */
+	private static void putWorldgenBlock(String aName) {
+		//? if forge {
+		RegistryObject<LiquidBlock> tBlock = BLOCKS.register(aName + "_block",
+				() -> new LiquidBlock(SOURCE_SEAM.get(aName), BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp
+		//?} else {
+		/*RegistryObject<LiquidBlock> tBlock = BLOCKS.register(aName + "_block",
+				() -> new LiquidBlock(SOURCE_SEAM.get(aName).get(), BlockBehaviour.Properties.of()
+						.noCollission().strength(100.0F).noLootTable())); // a liquid: the iron_molten block ramp (FLUID before BLOCK, the resolved .get() is live)
+		*///?}
+		BLOCK_SEAM.put(aName, tBlock);
 	}
 
 	private GTFluids() {}
