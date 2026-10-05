@@ -2859,6 +2859,30 @@ public final class GT6LootTables extends LootTableProvider {
                                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
                                     .add(LootItem.lootTableItem(GTMaterialItems.get(OP.rockGt, MT.MeteoricIron).get()).setWeight(3))
                                     .add(LootItem.lootTableItem(GTMaterialItems.get(OP.oreRaw, MT.MeteoricIron).get()).setWeight(1)))));
+            // task worldgen-racks — the 7 nether rack rocks (WorldgenRacks.java:66-89):
+            // the gems to the gem faces, the stones to rockGt; the debris to the SAME :68
+            // nextInt(4)==0 ? oreRaw : rockGt 3:1 arm as the meteorite face above; the
+            // flint arm reuses the first-batch row above (one identity both bands).
+            add(GT6SurfaceBlocks.SURFACE_ROCK_NETHER_QUARTZ.get(),
+                    collectedTable(GTMaterialItems.get(OP.gem, MT.NetherQuartz).get()));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_GLOWSTONE.get(),
+                    collectedTable(GTMaterialItems.get(OP.gem, MT.Glowstone).get()));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_GLOOMSTONE.get(),
+                    collectedTable(GTMaterialItems.get(OP.gem, MT.Gloomstone).get()));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_OBSIDIAN.get(),
+                    collectedTable(GTMaterialItems.get(OP.rockGt, MT.Obsidian).get()));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_BASALT.get(),
+                    collectedTable(GTMaterialItems.get(OP.rockGt, MT.STONES.Basalt).get()));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_BLACKSTONE.get(),
+                    collectedTable(GTMaterialItems.get(OP.rockGt, MT.STONES.Blackstone).get()));
+            add(GT6SurfaceBlocks.SURFACE_ROCK_ANCIENT_DEBRIS.get(),
+                    // WorldgenRacks.java:68 nextInt(4)==0 ? oreRaw : rockGt — the 3:1 weights
+                    LootTable.lootTable().withPool(this.applyExplosionCondition(
+                            GT6SurfaceBlocks.SURFACE_ROCK_ANCIENT_DEBRIS.get(),
+                            LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))
+                                    .apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F)))
+                                    .add(LootItem.lootTableItem(GTMaterialItems.get(OP.rockGt, MT.AncientDebris).get()).setWeight(3))
+                                    .add(LootItem.lootTableItem(GTMaterialItems.get(OP.oreRaw, MT.AncientDebris).get()).setWeight(1)))));
             add(GT6SurfaceBlocks.SURFACE_STICK.get(), collectedTable(Items.STICK));
             // task w6-t2-surface-blocks — the obtainable band: self-drop
             for (Block tBlock : plantLootBlocks()) {

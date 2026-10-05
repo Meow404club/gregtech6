@@ -148,6 +148,16 @@ public final class GT6Features {
     public static final GT6NetherClayFeature NETHER_CLAY = registerForm("nether_clay", new GT6NetherClayFeature());
 
     /**
+     * The nether rack feature (task worldgen-racks) — ONE registration row
+     * {@code gt6:nether_racks}, NoneFeatureConfiguration (the nether-form shape): the
+     * WorldgenRacks port (Loader_Worldgen.java:619 "nether.rocks", the GEN_NETHER sister
+     * of the overworld rocks band), the 16 per-chunk column attempts + the 24-case loot
+     * lottery live in the class. The configured/placed/biome-modifier rows hang off it
+     * in GT6WorldgenDatagen.
+     */
+    public static final GT6RacksFeature NETHER_RACKS = registerForm("nether_racks", new GT6RacksFeature());
+
+    /**
      * The bumble-hive feature (task bees-lv2) — ONE registration row
      * {@code gt6:bumble_hives}, NoneFeatureConfiguration (the nether-form shape): the
      * upstream three WorldgenObject rows (Loader_Worldgen.java:635-637) collapse into

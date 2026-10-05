@@ -172,6 +172,18 @@ public final class GT6Worldgen {
     public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_CLAY_CONFIGURED = configKey("nether_clay");
     public static final ResourceKey<PlacedFeature> NETHER_CLAY_PLACED = placedKeyOf("nether_clay");
 
+    // ------------------------------------------------------------------
+    // The nether rack band (task worldgen-racks): the WorldgenRacks port
+    // (Loader_Worldgen.java:619 "nether.rocks", the GEN_NETHER sister of the
+    // overworld rocks band) — one NoneFeatureConfiguration feature whose 16
+    // per-chunk column attempts + the 24-case loot lottery live in the class
+    // (GT6RacksFeature), the :54 nextBoolean chunk gate riding the placed
+    // chain as the rarity-2 filter.
+    // ------------------------------------------------------------------
+
+    public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_RACKS_CONFIGURED = configKey("nether_racks");
+    public static final ResourceKey<PlacedFeature> NETHER_RACKS_PLACED = placedKeyOf("nether_racks");
+
     // ------------------------------------------------------------------ the tree band (task w6-t1-trees-nine)
 
     /**

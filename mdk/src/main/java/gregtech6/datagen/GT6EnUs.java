@@ -283,20 +283,23 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The 34 surface-rock descriptionId keys with their (alias-merged) materials,
+     * The surface-rock descriptionId keys with their (alias-merged) materials,
      * registration order — task surface-rock-lang, the seam GT6ZhCn shares for its
      * zh composition (the materialWalkEmittedKeys posture: one implementation, both
      * providers). The three first-batch rocks pair with their literal MT constants, the
-     * 31 vein-indicator rows ride {@link GT6SurfaceBlocks#INDICATOR_MATERIALS} — the
-     * parallel lists the registration itself keeps 1:1.
+     * 57 vein-indicator rows ride {@link GT6SurfaceBlocks#INDICATOR_MATERIALS}, and the
+     * 7 nether rack rows ride {@link GT6SurfaceBlocks#NETHER_MATERIALS} (task
+     * worldgen-racks) — the parallel lists the registration itself keeps 1:1.
      */
     static Map<String, OreDictMaterial> surfaceRockDescriptionIds() {
         List<RegistryObject<Block>> tRocks = new ArrayList<>(List.of(
                 GT6SurfaceBlocks.SURFACE_ROCK_STONE, GT6SurfaceBlocks.SURFACE_ROCK_FLINT, GT6SurfaceBlocks.SURFACE_ROCK_METEORITE));
         tRocks.addAll(GT6SurfaceBlocks.INDICATOR_ROCKS);
+        tRocks.addAll(GT6SurfaceBlocks.NETHER_ROCKS);
         List<Supplier<OreDictMaterial>> tMaterials = new ArrayList<>(List.of(
                 () -> MT.Stone, () -> MT.Flint, () -> MT.MeteoricIron)); // suppliers: the GT6OreBlocks.java:114-117 class-load lesson, mirrored
         tMaterials.addAll(GT6SurfaceBlocks.INDICATOR_MATERIALS);
+        tMaterials.addAll(GT6SurfaceBlocks.NETHER_MATERIALS);
         Map<String, OreDictMaterial> rPairs = new LinkedHashMap<>();
         for (int i = 0; i < tRocks.size(); i++) {
             OreDictMaterial tMaterial = MaterialRegistry.INSTANCE.get(tMaterials.get(i).get()); // alias merge, same as materialWalkEmittedKeys

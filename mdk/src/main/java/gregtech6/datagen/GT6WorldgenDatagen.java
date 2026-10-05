@@ -403,6 +403,11 @@ public final class GT6WorldgenDatagen {
                 NoneFeatureConfiguration.INSTANCE);
         FeatureUtils.register(ctx, GT6Worldgen.NETHER_CLAY_CONFIGURED, GT6Features.NETHER_CLAY,
                 NoneFeatureConfiguration.INSTANCE);
+        // task worldgen-racks — the nether rack feature: the registered GT6RacksFeature
+        // instance, NoneFeatureConfiguration (the nether-form shape — the gate/scan/
+        // lottery constants live in the class).
+        FeatureUtils.register(ctx, GT6Worldgen.NETHER_RACKS_CONFIGURED, GT6Features.NETHER_RACKS,
+                NoneFeatureConfiguration.INSTANCE);
         // task bees-lv2 — the ONE bumble-hive configured feature: the registered
         // GT6HiveFeature instance, NoneFeatureConfiguration (the nether-form shape — the
         // WorldgenHives constants live in the class, not a config surface). One Feature
@@ -527,6 +532,14 @@ public final class GT6WorldgenDatagen {
         PlacementUtils.register(ctx, GT6Worldgen.NETHER_CLAY_PLACED,
                 tFeatures.getOrThrow(GT6Worldgen.NETHER_CLAY_CONFIGURED),
                 CountPlacement.of(1), InSquarePlacement.spread(), BiomeFilter.biome());
+        // task worldgen-racks — the nether rack placed feature: RarityFilter(2) = the
+        // upstream :54 aRandom.nextBoolean() chunk gate (the same 50% draw, the tier-a
+        // datapack face) + Count 1 CONSTANT + InSquare + BiomeFilter (the nether-form
+        // chain shape; the 16 column attempts live in the Feature).
+        PlacementUtils.register(ctx, GT6Worldgen.NETHER_RACKS_PLACED,
+                tFeatures.getOrThrow(GT6Worldgen.NETHER_RACKS_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(2), CountPlacement.of(1), InSquarePlacement.spread(),
+                BiomeFilter.biome());
         bootstrapOrePlaced(ctx, tFeatures); // task w6-small-ore-datagen — tail-append
         bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
     }
@@ -657,6 +670,14 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_CLAY_PLACED)),
                 GenerationStep.Decoration.LOCAL_MODIFICATIONS));
+        // task worldgen-racks — the nether rack biome modifier: EVERY nether biome
+        // (GEN_NETHER, Loader_Worldgen.java:619), at the VEGETAL_DECORATION step (the
+        // surface-deco band convention — the racks are the nether sister of the
+        // overworld_surface_rocks band).
+        ctx.register(biomeModifierKeyOf("nether_racks"), addFeatures(
+                tBiomes.getOrThrow(BiomeTags.IS_NETHER),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.NETHER_RACKS_PLACED)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
         // task bees-lv2 — the THREE bumble-hive biome modifiers over the SAME placed
         // feature (upstream Loader_Worldgen.java:635-637: overworld.bumblehives /
         // nether.bumblehives / end.bumblehives; the END_YIELD same-placed-key modifier
