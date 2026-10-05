@@ -343,6 +343,26 @@ tasks.named<Jar>("jar") {
         "data/gt6/recipe", "data/gt6/recipe/**",          // 1.21.1 配方命名域（本腿读复数 recipes/）
         "data/gt6/loot_table", "data/gt6/loot_table/**",  // 1.21.1 loot 命名域（本腿读复数 loot_tables/）
         "data/gt6/neoforge", "data/gt6/neoforge/**",      // neoforge loader 域（biome_modifier 等）
+        // ---- 对称残余死带（task jar-sym-sweep，2026-10-03；每条 exclude 均活体验证为死带）----
+        // 1.21.1 单数 tag 面：1.20.1 只读复数（vanilla 1.20.1 TagManager.java:20-31
+        // CUSTOM_REGISTRY_DIRECTORIES 硬编码 "tags/items"/"tags/blocks"，本仓运行时零 raw-path
+        // 直读——全仓 grep "tags/item\"" 仅 datagen provider 与测试）。本腿活体 = 共享树内复数
+        // 正典带 data/gt6/tags/items 98 + data/minecraft/tags/{items 5,blocks 11}，下方
+        // jarRequiredKeys 钉非空；单数镜像（GT6DualDirectoryFaces 产物）归 neo 腿消费。
+        "data/gt6/tags/item", "data/gt6/tags/item/**",                 // 98
+        "data/minecraft/tags/item", "data/minecraft/tags/item/**",     // 5
+        "data/minecraft/tags/block", "data/minecraft/tags/block/**",   // 11
+        // 1.21.1 单数配方目录：1.20.1 RecipeManager 只读复数（vanilla 1.20.1 RecipeManager.java:44
+        // super(GSON, "recipes")）——铜桥 4 文件单数面死重；本腿活体 = data/minecraft/recipes 复数。
+        "data/minecraft/recipe", "data/minecraft/recipe/**",           // 4（铜桥单数面）
+        // neoforge GLM 注册表文件：1.20.1 forge 只读 forge 命名空间（forge-api 1.20.1
+        // LootModifierManager.java:53 new ResourceLocation("forge","loot_modifiers/
+        // global_loot_modifiers.json")）。本体 data/gt6/loot_modifiers/ 22 文件活体保留；
+        // 本腿注册表 = data/forge/loot_modifiers/（同证据：GT6ToolLootModifiersDatagen.java:27-33
+        // 双命名域 fork 注释）。data/c/tags/items 26 = 1.20.1 可加载活体（TagLoader.java:43
+        // FileToIdConverter 跨命名空间列资源）+ 跨 mod 兼容契约面（GT6ItemTags.java:322-334
+        // 前瞻孪生），活，不排。
+        "data/neoforge/loot_modifiers", "data/neoforge/loot_modifiers/**", // 1（注册表文件）
         "assets/README.md",
         ".cache", ".cache/**",
     )
@@ -361,14 +381,31 @@ tasks.named<Jar>("jar") {
 val jarCensusKeys = listOf(
     "data/gt6/recipes/", "data/gt6/recipe/", "data/gt6/advancements/",
     "data/gt6/loot_tables/", "data/gt6/loot_table/",
-    "data/gt6/forge/", "data/gt6/neoforge/", "data/forge/", "data/c/", "assets/", ".cache/",
+    "data/gt6/forge/", "data/gt6/neoforge/",
+    // jar-sym-sweep 面（专用键须排在 data/forge/ 泛键前，firstOrNull 先到先得）：
+    "data/gt6/tags/items/",                       // 本腿活体复数 gt6 tag 带（98）
+    "data/minecraft/tags/",                       // 本腿活体复数原版 tag 带（items 5 + blocks 11）
+    "data/minecraft/recipes/",                    // 本腿活体铜桥（4）
+    "data/gt6/loot_modifiers/",                   // GLM modifier 本体（22，两腿同构活体）
+    "data/forge/loot_modifiers/",                 // 本腿 GLM 注册表（1）
+    "data/neoforge/loot_modifiers/",              // 对面腿 GLM 注册表（禁入面，归零可见）
+    "data/forge/", "data/c/", "assets/", ".cache/",
 )
 val jarForbiddenPrefixes = listOf(
     "data/gt6/recipe/", "data/gt6/loot_table/", "data/gt6/neoforge/",
     "data/gt6/advancements/",
+    // jar-sym-sweep 对称死带（证据链见上方 jar exclude 块注释）：1.21.1 单数 tag/配方面
+    // + neoforge GLM 注册表。斜杠尾缀防误伤（tags/item/ 不匹配 tags/items/，recipe/ 不匹配 recipes/）。
+    "data/gt6/tags/item/", "data/minecraft/tags/item/", "data/minecraft/tags/block/",
+    "data/minecraft/recipe/", "data/neoforge/loot_modifiers/",
     "assets/README.md", ".cache",
 )
-val jarRequiredKeys = listOf("data/gt6/recipes/", "data/gt6/loot_tables/", "data/gt6/forge/", "assets/")
+val jarRequiredKeys = listOf(
+    "data/gt6/recipes/", "data/gt6/loot_tables/", "data/gt6/forge/", "assets/",
+    // jar-sym-sweep：本腿活体域非空钉——exclude 误伤即红（复数 tag 带 + 铜桥 + GLM + c 孪生）。
+    "data/gt6/tags/items/", "data/minecraft/tags/", "data/minecraft/recipes/",
+    "data/gt6/loot_modifiers/", "data/forge/loot_modifiers/", "data/c/",
+)
 tasks.register("jarCensus") {
     dependsOn(tasks.named("assemble"))
     doLast {
