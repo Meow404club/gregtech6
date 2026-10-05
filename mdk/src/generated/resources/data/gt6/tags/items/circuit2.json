@@ -1,5 +1,9 @@
 {
   "values": [
-    "gt6:circuit_good"
+    "gt6:circuit_good",
+    "gt6:circuit_advanced",
+    "gt6:circuit_elite",
+    "gt6:circuit_master",
+    "gt6:circuit_ultimate"
   ]
 }
