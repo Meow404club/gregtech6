@@ -58,8 +58,8 @@ class GT6VeinAxisExtensionTest {
         "Wulfenite", "Molybdenite", "Molybdenum", "Powellite",              // :905 molybdenum top/bottom/between/spread
         "Rutile", "Zircon");                                                // :911 titanium top+bottom/between (MT.TiO2)
 
-    /** The axis M after the extension: 122 (53 worldgen + 13 stone-layer + 56 gem-pool) + 22 large-vein. */
-    private static final int PINNED_M = 144;
+    /** The axis M after the extension: 154 = 122 (53 worldgen + 13 stone-layer + 56 gem-pool) + 22 large-vein, with the 10 worldgen-edge-ores-b2 EDGE orphans riding between STONE_LAYER and GEM_POOL (review-seat union rebase). */
+    private static final int PINNED_M = 154;
 
     @BeforeAll
     static void boot() {
@@ -225,13 +225,13 @@ class GT6VeinAxisExtensionTest {
                 "the END draw list after the extension (the :904-919 ORE_END rows, 4 -> 5)");
     }
 
-    /** The axis census: M = 144 = 122 + 22, the 22 appended in upstream :889-911 first-appearance order after the 122. */
+    /** The axis census: M = 154 = 132 + 22 (the 122 base grew to 132 with the b2 EDGE orphans), the 22 appended in upstream :889-911 first-appearance order at the axis tail. */
     @Test
     void axisGrowsByThe22LargeVeinMembers() {
         List<OreDictMaterial> tAxis = GT6OreBlocks.materialAxis();
-        assertEquals(PINNED_M, tAxis.size(), "M = 122 (53+13+56) + 22 large-vein members");
+        assertEquals(PINNED_M, tAxis.size(), "M = 154 = 122 (53+13+56) + 22 large-vein members, +10 EDGE orphans inside the 122 base (worldgen-edge-ores-b2)");
         List<String> tNames = tAxis.stream().map(m -> m.mNameInternal).toList();
-        List<String> tTail = tNames.subList(122, tNames.size());
+        List<String> tTail = tNames.subList(132, tNames.size());
         assertEquals(NEW_AXIS_MEMBERS, tTail,
                 "the 22 new members appended in LARGE_VEIN_ORES order = upstream :889-911 first appearance");
         for (String tName : NEW_AXIS_MEMBERS) {

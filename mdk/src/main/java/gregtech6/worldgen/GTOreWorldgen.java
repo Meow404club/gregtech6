@@ -22,10 +22,12 @@ import gregtech6.registry.GTMaterialItems;
  * {@link GT6OreBlocks#WORLDGEN_ORES} posture); the datagen band (GT6WorldgenDatagen ore
  * band) and the offline parity test both consume this class.
  *
- * <p><b>The 115-row table</b> is the upstream small-ore universe verbatim: the 53
+ * <p><b>The 125-row table</b> is the upstream small-ore universe verbatim: the 53
  * always-on {@code WorldgenOresSmall} rows (Loader_Worldgen.java:800-852) + the
  * {@code !mHidden} nikolite row (:875) + the RANDOM_SMALL_GEM_ORE pool loop (:877-878,
- * one row per flagged material — 61 rows, task b-gem-pool-extension). Per-row fields
+ * one row per flagged material — 61 rows, task b-gem-pool-extension) + the 10
+ * StoneLayer boundary-blob translations (:481-571, task worldgen-edge-ores-b2-orphans —
+ * the 10 EDGE orphans' only ungated natural source, Y bands verbatim). Per-row fields
  * = upstream ctor order
  * (name, minY, maxY, amount, material) plus the vanilla-dimension projection of the
  * row's GEN_* flag list ({@code dims} — GEN_OVERWORLD/GEN_NETHER/GEN_END; the
@@ -34,10 +36,11 @@ import gregtech6.registry.GTMaterialItems;
  * large-vein table (:886-925, the t3 card) stay out — the ore-1 registration axis
  * rulings (the pool loop joined in r7-b: the loop carries no axis filter, so all 61
  * flagged members get rows; its GEN_GEMS domain projects to overworld only,
- * CS.java:965).
+ * CS.java:965; the boundary blobs joined in worldgen-edge-ores-b2-orphans, the
+ * declared deviations on the rows below).
  *
  * <p><b>Placement = one (row, dim) pair each</b> (coordinator ruling 2026-09-17, the
- * verbatim-flag translation): overworld 99 + nether 20 + end 33 = 152. The one
+ * verbatim-flag translation): overworld 109 + nether 20 + end 33 = 162. The one
  * ancientdebris row (:852) stays in the table with its {@code NETHER} dim but is
  * placement-gated (GT6OreBlocks.java:328-332 口径: the upstream gate
  * {@code !IL.Ancient_Debris.exists()} is a PLACEMENT-time compat check and vanilla
@@ -250,7 +253,27 @@ public final class GTOreWorldgen {
         row("ore.small.peridot"         ,   5, 250,  1, () -> MT.Peridot                , Dim.OVERWORLD),
         row("ore.small.amethyst"        ,   5, 250,  1, () -> MT.Amethyst               , Dim.OVERWORLD),
         row("ore.small.dioptase"        ,   5, 250,  1, () -> MT.Dioptase               , Dim.OVERWORLD),
-        row("ore.small.jade"            ,   5, 250,  1, () -> MT.Jade                   , Dim.OVERWORLD)
+        row("ore.small.jade"            ,   5, 250,  1, () -> MT.Jade                   , Dim.OVERWORLD),
+        // -- :481-571, the StoneLayer boundary blobs (task worldgen-edge-ores-b2-orphans,
+        // research.stonelayer-edge-ores route B): the 10 EDGE orphans' only ungated
+        // natural source, translated as small-ore rows with the VERBATIM Y bands. amount
+        // = 1 (the gem-pool precedent — the blob chance column StoneLayerOres.java:76 is
+        // a per-boundary-position 1-in-N roll, the seam enrichment is strata-mode
+        // deferred); the biome gates (:484 SHROOM / :563 JUNGLE) are not carried
+        // (SmallOreRow has no biome face, the distribution deferral covers them); never
+        // deep-mirrored (a strata-band phenomenon, not the c2 lower-column rule). The
+        // mica/trona namesakes of the IHL-gated :871/:874 rows stay out of the compat
+        // pool — the boundary IS their ungated source.
+        row("ore.small.dominicanamber"  ,  30,  70,  1, () -> MT.AmberDominican         , Dim.OVERWORLD),         // :481-495 (BIOMES_SHROOM)
+        row("ore.small.perlite"         ,   0,  16,  1, () -> MT.OREMATS.Perlite        , Dim.OVERWORLD),         // :496-501
+        row("ore.small.diatomite"       ,  16,  64,  1, () -> MT.OREMATS.Diatomite      , Dim.OVERWORLD),         // :506-509
+        row("ore.small.alunite"         ,  32,  80,  1, () -> MT.OREMATS.Alunite        , Dim.OVERWORLD),         // :529-531
+        row("ore.small.mirabilite"      ,  16,  64,  1, () -> MT.OREMATS.Mirabilite     , Dim.OVERWORLD),         // :532-535
+        row("ore.small.trona"           ,  16,  64,  1, () -> MT.OREMATS.Trona          , Dim.OVERWORLD),         // :532-535
+        row("ore.small.vermiculite"     ,  48,  80,  1, () -> MT.OREMATS.Vermiculite    , Dim.OVERWORLD),         // :547-550
+        row("ore.small.mica"            ,  16,  48,  1, () -> MT.OREMATS.Mica           , Dim.OVERWORLD),         // :551-554
+        row("ore.small.biotite"         ,  16,  48,  1, () -> MT.Biotite                , Dim.OVERWORLD),         // :551-554
+        row("ore.small.pinkdiamond"     ,   0,  32,  1, () -> MT.DiamondPink            , Dim.OVERWORLD)          // :561-565 (BIOMES_JUNGLE)
     );
 
     /** The MT.* supplier behind the row literals (direct field refs, the WORLDGEN_ORES form). */
@@ -270,11 +293,11 @@ public final class GTOreWorldgen {
     public record Placement(SmallOreRow row, Dim dim) {}
 
     /**
-     * The 152 placement pairs, ROWS order × {@link Dim} order, minus the
-     * {@link #PLACEMENT_GATED} rows: overworld 99 + nether 20 + end 33.
+     * The 162 placement pairs, ROWS order × {@link Dim} order, minus the
+     * {@link #PLACEMENT_GATED} rows: overworld 109 + nether 20 + end 33.
      */
     public static List<Placement> placementPairs() {
-        List<Placement> rPairs = new ArrayList<>(152);
+        List<Placement> rPairs = new ArrayList<>(162);
         for (SmallOreRow tRow : ROWS) {
             if (PLACEMENT_GATED.contains(tRow.tail())) continue;
             for (Dim tDim : Dim.values()) {

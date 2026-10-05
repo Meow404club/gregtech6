@@ -1,6 +1,6 @@
 /**
  * Offline tests for task debt-ore-gen-display: the shared layout seam of the ore-generation
- * distribution page — the census through the DISPLAY walk (acceptance 1: the 159-axis pin
+ * distribution page — the census through the DISPLAY walk (acceptance 1: the 169-axis pin
  * re-derived here + the two named materials full-field), the line formats, and the
  * invisible-mounting walk.
  *
@@ -12,7 +12,7 @@
  *     block universe = 74 small-ore-axis paths + 2 bedrock forms;</li>
  * <li>Ferberite — bedrock-ONLY (:727, 1/96000): one face line, one dim, and the 2
  *     bedrock paths are its ENTIRE mounting (no small-ore axis membership);</li>
- * <li>the mounting totals: 110 small-ore-axis entries carry 74 paths each, the 45-material
+ * <li>the mounting totals: 120 small-ore-axis entries carry 74 paths each, the 45-material
  *     bedrock axis members carry +2, the union walk yields 76 for the axis-intersection
  *     materials (74+2).</li>
  * </ul>
@@ -56,12 +56,12 @@ class GT6OreGenInfoLayoutTest {
 
     /** The data card's axis pin, re-derived through the layout walk — the display row list IS entries(). */
     @Test
-    void displayRowsAreThe159MaterialAggregates() {
-        assertEquals(159, OreDistributionInfo.entries().size(), "110 small + 12 bedrock-only + 37 vein-only (r7-b pool rows joined)");
+    void displayRowsAreThe169MaterialAggregates() {
+        assertEquals(169, OreDistributionInfo.entries().size(), "120 small + 12 bedrock-only + 37 vein-only (r7-b pool + b2 boundary rows joined)");
         long tWithSmall = OreDistributionInfo.entries().stream().filter(e -> !e.smallOres().isEmpty()).count();
         long tWithVein = OreDistributionInfo.entries().stream().filter(e -> !e.veins().isEmpty()).count();
         long tWithBedrock = OreDistributionInfo.entries().stream().filter(e -> !e.bedrockOres().isEmpty()).count();
-        assertEquals(110, tWithSmall, "small-ore materials");
+        assertEquals(120, tWithSmall, "small-ore materials");
         assertEquals(98, tWithVein, "large-vein materials");
         assertEquals(32, tWithBedrock, "overworld bedrock-ore materials");
         // every row renders at least one face line — no blank pages in the category

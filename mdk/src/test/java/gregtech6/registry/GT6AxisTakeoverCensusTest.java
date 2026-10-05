@@ -7,10 +7,10 @@
  *
  * <p>The four faces and their census basis:
  * <ol>
- * <li>block axis — {@link GT6OreBlocks#materialAxis()} (122, the :486 isGeneratingItem
+ * <li>block axis — {@link GT6OreBlocks#materialAxis()} (154, the :486 isGeneratingItem
  * filter is its only gate);</li>
  * <li>bedrock axis — {@link GT6BedrockOreBlocks#materialAxis()} (45, no driver gate);</li>
- * <li>worldgen rows — {@link GTOreWorldgen#ROWS} (115 rows / 152 placement pairs, the
+ * <li>worldgen rows — {@link GTOreWorldgen#ROWS} (125 rows / 162 placement pairs, the
  * mod-gated Loader_Worldgen.java:854-874 rows stay out as the compat pool);</li>
  * <li>lens/large-vein/bedrock tables — GT6WorldgenDatagen LENS_ORE_TABLE (22) +
  * LARGE_VEIN_TABLE (40) + BEDROCK_ORE_TABLE (46).</li>
@@ -146,10 +146,10 @@ public class GT6AxisTakeoverCensusTest {
     @Test
     public void faceCounts_pinTheCensusBasis() {
         assertEquals(441, GT6ForeignMaterialAtlas.rows().size(), "atlas universe: 164 batch-1 + 277 batch-2");
-        assertEquals(144, GT6OreBlocks.materialAxis().size(), "block axis: 53 + 13 + 56 + 22");
+        assertEquals(154, GT6OreBlocks.materialAxis().size(), "block axis: 53 + 13 + 10 + 56 + 22");
         assertEquals(45, GT6BedrockOreBlocks.materialAxis().size(), "bedrock axis: 46 table rows, gold.a/b share");
-        assertEquals(115, GTOreWorldgen.ROWS.size(), "54 always-on rows + 61 gem-pool rows");
-        assertEquals(152, GTOreWorldgen.placementPairs().size(), "overworld 99 + nether 20 + end 33, ancientdebris gated");
+        assertEquals(125, GTOreWorldgen.ROWS.size(), "54 always-on rows + 61 gem-pool rows + the 10 boundary-blob rows (b2)");
+        assertEquals(162, GTOreWorldgen.placementPairs().size(), "overworld 109 + nether 20 + end 33, ancientdebris gated (b2 boundary rows joined)");
         assertEquals(22, GT6WorldgenDatagen.LENS_ORE_TABLE.size(), "5-lens companion table");
         assertEquals(40, GT6WorldgenDatagen.LARGE_VEIN_TABLE.size(), "large-vein table :886-925");
         assertEquals(46, GT6WorldgenDatagen.BEDROCK_ORE_TABLE.size(), "bedrock table :725-770, HEX row cut");
