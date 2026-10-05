@@ -115,7 +115,11 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("BURN", 7);
 		SNAPSHOT.put("GAS_FUELS", 0);
 		SNAPSHOT.put("DISTILLERY", 8);
+		//? if forge {
 		SNAPSHOT.put("DRYING", 48); // +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs
+		//?} else {
+		/*SNAPSHOT.put("DRYING", 52); // +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs; +4 task hotfix-latent-reds-phasegate-bedrock — the :74/:76-:78 colored-clay band rows (landed 55c989f01, worldgen-diggables-pits) resolve their clayBandItemOrNull band items on this live-registry leg while the forge leg null-skips them (the GT6SurfaceBlocks band lookup) — latent on this leg since 55c989f01 (the clean-main probe at 9bc741b4b reproduced DRYING=52)
+		*///?}
 		//? if forge {
 		SNAPSHOT.put("CANNER", 84); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip +25: task debt-reactor-c-rods — the 24 reactor-rod fills (:742-744/:746-762/:782-785) + the :789 Tritium unpack pour
 		//?} else {
@@ -126,7 +130,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		//?} else {
 		/*SNAPSHOT.put("MIXER", 56080); // task pool-drain-food-machine-tail — +57: the raisin :156 walk x5 + the two-name :255/:259 x6 + the :322 ANY.Flour egg-dough walk x7 + the :720-:723 ANY.FlourGrains meat-ingot walk x32 + the :519 mushroom soup + the :552 ambrosia + the :555 spoiledmilk + the :725 abyssal dough + the :733/:735/:737 chocolate trio (the :734/:736 gemChipped pair DROPPED); the :394-:397 chum quartet skips on its two declared-null faces (the pooled scrapmeat input + the FL.Sludge output, GTFluids untouched)
 		*///?}
-		SNAPSHOT.put("SIFTING", 577); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the material axis, every row resolving under the brick fixture; +52 task a-ore-axis-extension — the axis grew 53 -> 66 (4 x 13); +224 task b-gem-pool-extension — the axis grew 66 -> 122 (4 x 56, + 1: the 489th row is the grass row0); +88 task worldgen-edge-ores-b1 — the axis grew 122 -> 144 (4 x 22, the large-vein compensation materials)
+		SNAPSHOT.put("SIFTING", 629); // +212 task debt-ore-purified-edge — the Loader_OreProcessing.java:351 DUST_ORE arm lands: 4 port families (gravel/sand/redsand/mud, the DUST_ORE-tagged prefixes of GT6OreBlocks.FAMILIES) x the material axis, every row resolving under the brick fixture; +52 task a-ore-axis-extension — the axis grew 53 -> 66 (4 x 13); +224 task b-gem-pool-extension — the axis grew 66 -> 122 (4 x 56, + 1: the 489th row is the grass row0); +88 task worldgen-edge-ores-b1 — the axis grew 122 -> 144 (4 x 22, the large-vein compensation materials); +52 task hotfix-latent-reds-phasegate-bedrock — the axis grew 144 -> 157 (4 x 13, the B2/batch2 large-vein wave, merges 9d6f16a1a/b05af17a4 — the axis-consumer SIFTING walk rides the sifter 4 x M + 1 grass formula, the b4cfe54e8 precedent pinned M=144 at 577)
 		// the ONE version-sensitive census: the Compressor walk rides the vanilla item
 		// universe, which differs 1.20.1 vs 1.21.1 by 109 compressibles — the per-leg pin
 		// (the stonecutter swap-table convention, GTRecipesOfflineTestBase shape)
