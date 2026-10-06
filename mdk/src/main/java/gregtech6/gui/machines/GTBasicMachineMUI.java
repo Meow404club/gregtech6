@@ -61,12 +61,21 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * <p>Progress rides the MUI sync-value face: a {@link DoubleSyncValue} fed by
  * {@link #progressRatio} (the normalization wrapper over the three-state
  * {@link GTBasicMachineMenu#progressValue} — the RCON-shared function stays untouched),
- * consumed by a {@link ProgressWidget}; the bar visual is the amazawa forward-arrow part
- * ({@link GT6GuiParts#ARROW_FORWARD}, fill-only — the empty-arrow outline is the deferred
- * F1-03 semantic decor, the clean base shows a blank cell until W3), and the fill direction
+ * consumed by a {@link ProgressWidget}; the bar visual is the amazawa arrow PAIR — the
+ * empty cell ({@link GT6GuiParts#ARROW_OUTLINE}, the machine skins' print at (78,24),
+ * always drawn) under the clipped fill ({@link GT6GuiParts#ARROW_FORWARD}) — and the
+ * fill direction
  * is the served map's upstream {@code mProgressBarDirection} case mapped through
  * {@link #progressDirection} (F1-02: cases 0-3 grow, 4-7 drain — the drain face feeds
  * {@code 1 - ratio}).
+ *
+ * <p>Composed furniture (composed-ui-energy-slot-and-parts, the five-missing field
+ * report): the special-slot gear cell ({@link GT6GuiParts#SLOT_SPECIAL} at (77,60) —
+ * the print every machine skin carries and the theme base erased) rides as pure decor,
+ * the title prints TRANSLATED (the shared viewer title key — zh rows ship for every
+ * visible map) and CENTERED across the panel width, and the player-inventory label
+ * (vanilla {@code container.inventory}) rides at the vanilla offset above the (7,84)
+ * block.
  *
  * <p>Fluid seats (settled, task gui-basicmachine-fluids — the Option B ruling that
  * redeemed the batch-A boundary declared here before): the two {@link Host} fluid banks
@@ -123,11 +132,25 @@ public final class GTBasicMachineMUI {
 	 */
 	private static final int PROGRESS_X = 78, PROGRESS_Y = 24, PROGRESS_W = 20, PROGRESS_H = 18;
 
-	/** The title print position — the upstream foreground draw at (8, 4), ContainerClientBasicMachine.java:44. */
-	private static final int TITLE_X = 8, TITLE_Y = 4;
+	/** The title print row — upstream drew at (8, 4), ContainerClientBasicMachine.java:44; the composed panel keeps the row, centered. */
+	private static final int TITLE_Y = 4;
 
-	/** The title ink — the upstream drawString color 4210752 (0x404040). */
+	/** The title ink — the upstream drawString color 4210752 (0x404040), the vanilla inventory-label ink too. */
 	private static final int TITLE_COLOR = 0x404040;
+
+	/**
+	 * The special-slot (gear) cell — the 22x22 print EVERY machine skin carries at
+	 * (77,60) (upstream 1.7.10 Default.png and the amazawa redraw agree; the crop is
+	 * {@link GT6GuiParts#SLOT_SPECIAL}). Composed back onto the clean base
+	 * (composed-ui-energy-slot-and-parts, the user ruling slot_special_22x22 未拼): the
+	 * theme base flattened the panel interior, erasing the print the skins show. Pure
+	 * decor — no slot is seated (GT6MachineGuiLayout.SPECIAL_SLOT stays a declared
+	 * functional coordinate no map serves on this leg).
+	 */
+	private static final int GEAR_SLOT_X = 77, GEAR_SLOT_Y = 60, GEAR_SLOT_SIZE = 22;
+
+	/** The player-inventory label row — vanilla's {@code imageHeight - 94} = 72 on the 166 panel, above the (7,84) block. */
+	private static final int INV_LABEL_X = 8, INV_LABEL_Y = 72;
 
 	private GTBasicMachineMUI() {
 	}
@@ -171,9 +194,18 @@ public final class GTBasicMachineMUI {
 			// offline test JVM's minecraft artifact carries no AT, so a String-built title
 			// would IllegalAccessError every map-bearing panel at build (all six pin tests
 			// hit it). Plain text draws identically through the same TextWidget face.
-			tPanel.child(new TextWidget<>(Component.literal(tMap.mNameLocal))
-					.pos(TITLE_X, TITLE_Y)
-					.textAlign(Alignment.TopLeft)
+			//
+			// Title face (composed-ui-energy-slot-and-parts, the user rulings 标题没汉化 +
+			// 标题没居中): TRANSLATABLE through the shared viewer title-key formula
+			// (GT6RecipeMapViewerMeta.titleKey — the same key the JEI/EMI categories print;
+			// en = the map's mNameLocal verbatim, zh rows ship in both datagen locales for
+			// every visible map, so the in-game title localizes with zero new keys — a
+			// non-visible map would fall back to printing the key, and no MUI-leg host
+			// serves one today), and CENTERED across the 176 panel width (upstream printed
+			// top-left at (8,4); the composed panel owns the full-width row).
+			tPanel.child(new TextWidget<>(Component.translatable(gregtech6.jei.GT6RecipeMapViewerMeta.titleKey(tMap)))
+					.pos(0, TITLE_Y).size(176, 9)
+					.textAlign(Alignment.TopCenter)
 					.color(() -> TITLE_COLOR)
 					.name("title"));
 		}
@@ -214,15 +246,31 @@ public final class GTBasicMachineMUI {
 					.pos(tPos[0], tPos[1])
 					.name("fluid_out_" + i));
 		}
-		// the progress bar — the amazawa arrow part, fill-only (F1-03 outline is deferred W3),
-		// clipped in the map's upstream direction case
+		// the special-slot gear cell — the skins' universal print, composed back onto the
+		// clean base (the theme base flattened the interior and erased it)
+		tPanel.child(GT6GuiParts.asUITexture(GT6GuiParts.SLOT_SPECIAL).asWidget()
+				.pos(GEAR_SLOT_X, GEAR_SLOT_Y).size(GEAR_SLOT_SIZE, GEAR_SLOT_SIZE)
+				.name("special_slot"));
+		// the progress bar — the amazawa arrow pair, the EMPTY cell (the skins' print at
+		// (78,24), part 13 arrow_outline) always drawn under the clipped fill: the
+		// fill-only form read as "进度箭头缺失" on an idle/blank cell
 		tPanel.child(new ProgressWidget()
 				.value(tProgress)
 				.progress(new ProgressDrawable()
+						.emptyTexture(GT6GuiParts.asUITexture(GT6GuiParts.ARROW_OUTLINE))
 						.filledTexture(GT6GuiParts.asUITexture(GT6GuiParts.ARROW_FORWARD))
 						.direction(tDirection.direction()))
 				.pos(PROGRESS_X, PROGRESS_Y)
 				.size(PROGRESS_W, PROGRESS_H));
+
+		// the player-inventory label — vanilla's "container.inventory" (物品栏 in zh_cn;
+		// the vanilla key, zero new lang rows) at the vanilla offset (imageHeight-94 = 72),
+		// the same ink as the title. The printed band kept the slots but no label — the
+		// missing "物品栏" report
+		tPanel.child(new TextWidget<>(Component.translatable("container.inventory"))
+				.pos(INV_LABEL_X, INV_LABEL_Y)
+				.color(() -> TITLE_COLOR)
+				.name("inventory_label"));
 
 		// the player inventory at the standard 176x166 machine-panel offset 84
 		// (bindPlayerInventory(84) semantics: the 3x9 block at (7,84), the hotbar at (7,142));
