@@ -325,6 +325,7 @@ public class GT6AssetCoverageGuardTest {
 			gregtech6.registry.GT6Mortars.class, // task mortar-family — the manual-chain mortar family (5 rows, block + item + shared BET)
 			GT6Cells.class, // task small-tank-cell — the 40 Capsule-Cell-Container rows
 			GT6ConcreteBlocks.class, // task concrete-blocks-register — the 64 per-pair concrete blocks
+			gregtech6.registry.GT6Panels.class, // task material-mc-g1-panels-dyed — the 48 dyed Cover Panel rows
 			GT6Cups.class, // task small-tank-cup — the Porcelain Cup row (block + raw item)
 			GT6Jugs.class, // task small-tank-jug — the Ceramic Jug row (block + raw item)
 			GT6MeasuringPot.class, // task issue45-c3 — the measuring pot family (block + raw item)
