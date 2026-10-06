@@ -30,6 +30,7 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.datagen.GT6ItemTags;
+import gregtech6.block.panels.GT6PanelBlock;
 import gregtech6.items.armor.GT6ArmorMaterials;
 import gregtech6.item.GT6Circuits;
 import gregtech6.items.GT6CircuitProgramRecipe;
@@ -378,6 +379,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		grindstoneBuilder().save(aConsumer, GRINDSTONE_ID); // task grindstone-family — the :2226 row
 		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
 			woodenPanelRecipeBuilder(tRow).save(aConsumer, woodenPanelRecipeId(tRow));
+		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed
+			ShapedRecipeBuilder tBuilder = panelRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the asphalt input family is unported — the declared G2 cut
+			tBuilder.save(aConsumer, panelRecipeId(tRow));
 		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
@@ -680,6 +685,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		grindstoneBuilder().save(aOutput, GRINDSTONE_ID); // task grindstone-family — the :2226 row
 		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
 			woodenPanelRecipeBuilder(tRow).save(aOutput, woodenPanelRecipeId(tRow));
+		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed
+			ShapedRecipeBuilder tBuilder = panelRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the asphalt input family is unported — the declared G2 cut
+			tBuilder.save(aOutput, panelRecipeId(tRow));
 		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
@@ -3054,6 +3063,49 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('P', tDoublePlates)
 				.define('w', GT6ItemTags.TOOLS_WRENCH)
 				.unlockedBy("has_stick_long_iron", has(GTMaterialItems.get(gregapi.data.OP.stickLong, MT.Iron).get()));
+	}
+
+	/**
+	 * The dyed Cover Panel crafting rows (task material-mc-g1-panels-dyed — the upstream
+	 * loop Loader_MultiTileEntities.java:2044-2055, {@code "TsT","TPT","TdT"} x 3
+	 * families, result 6x): 'P' = the colour-matched source block item — Concrete takes
+	 * the 16 per-pair port concrete blocks (faithful 1:1); C-Foam takes the UNCOLOURED
+	 * dried cfoam item (the foam family's collapsed item ladder — the input colour face
+	 * folds, the declared deviation; the 16 output colours still walk); Asphalt returns
+	 * null — the upstream input is the BlocksGT.Asphalt 16-colour band (Loader_Blocks
+	 * .java:59) and the port has no asphalt block family yet (residual_sweep G2 pool),
+	 * the declared recipe cut, the band lands with G2. 'T' =
+	 * {@code OP.screw.dat(ANY.Iron)} → the iron screw item (the sifting-table
+	 * ANY.Iron→MT.Iron fold), 's' = the saw tag, 'd' = the screwdriver tag (the upstream
+	 * CR.java:211/:229 tool letters, not consumed — the tools carry their own
+	 * crafting-remaining face). The vanilla shaped auto-mirror carries CR.DEF_MIR (the
+	 * anvil note).
+	 */
+	private ShapedRecipeBuilder panelRecipeBuilder(gregtech6.registry.GT6Panels.PanelRow aRow) {
+		Item tSource;
+		if (aRow.family() == GT6PanelBlock.Family.CONCRETE) {
+			tSource = gregtech6.registry.GT6ConcreteBlocks.FULL_BLOCKS.get(aRow.dyeIndex() & 15).get().asItem();
+		} else if (aRow.family() == GT6PanelBlock.Family.CFOAM) {
+			tSource = gregtech6.registry.GT6FoamBlocks.CFOAM_ITEM.get();
+		} else {
+			return null; // the asphalt input family is unported — the declared G2 cut
+		}
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+						gregtech6.registry.GT6Panels.ITEMS.get(aRow.family().ordinal() * 16 + (aRow.dyeIndex() & 15)).get(), 6)
+				.pattern("TsT")
+				.pattern("TPT")
+				.pattern("TdT")
+				.define('T', GTMaterialItems.get(gregapi.data.OP.screw, MT.Iron).get())
+				.define('P', tSource)
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.unlockedBy("has_screw_iron", has(GTMaterialItems.get(gregapi.data.OP.screw, MT.Iron).get()));
+	}
+
+	/** The id of one panel row's recipe (the result-path convention, the hopperRecipeId form). */
+	public static ResourceLocation panelRecipeId(gregtech6.registry.GT6Panels.PanelRow aRow) {
+		String tPath = gregtech6.registry.GT6Panels.path(aRow.family(), aRow.dyeIndex()); // a local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
