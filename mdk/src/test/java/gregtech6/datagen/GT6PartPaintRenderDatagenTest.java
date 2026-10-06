@@ -316,6 +316,38 @@ class GT6PartPaintRenderDatagenTest {
         return rPaths;
     }
 
+    /**
+     * The FORMED design write resolves END TO END (task crucible-render-followup, the
+     * symptom-A nail): the pattern's {@code FORMED_WALL_DESIGN} value has a blockstate
+     * variant whose model file exists and whose every texture resolves to a PNG on disk.
+     * The structure test pins the runtime write (design 4 lands in the state); this pin
+     * closes the static half — a variant pointing at a missing model/texture is the exact
+     * "formed wall renders bare" surface (the vanilla missing-variant fallback,
+     * ModelBakery.java:346-348, bakes the purple MISSING_MODEL there).
+     */
+    @Test
+    public void formedWallDesignResolvesToAModelWithTextures() throws Exception {
+        int tFormed = gregtech6.tileentity.multiblocks.TileEntityCrucible.formedWallDesign();
+        assertTrue(tFormed >= 0 && tFormed <= DESIGNS, "the formed design lands inside the wall ladder 0.." + DESIGNS);
+        for (String tPath : crucibleWallPaths()) {
+            JsonObject tVariants = json("assets/gt6/blockstates/" + tPath + ".json").getAsJsonObject("variants");
+            JsonObject tVariant = tVariants.getAsJsonObject("design=" + tFormed);
+            assertNotNull(tVariant, tPath + " blockstate carries the design=" + tFormed + " (FORMED_WALL_DESIGN) variant");
+            String tModelRef = tVariant.get("model").getAsString();
+            int tColon = tModelRef.indexOf(':');
+            JsonObject tModel = json("assets/" + tModelRef.substring(0, tColon) + "/models/"
+                    + tModelRef.substring(tColon + 1) + ".json");
+            for (Map.Entry<String, JsonElement> tTexture : tModel.getAsJsonObject("textures").entrySet()) {
+                String tTexRef = tTexture.getValue().getAsString();
+                int tTexColon = tTexRef.indexOf(':');
+                String tTexPath = "assets/" + tTexRef.substring(0, tTexColon) + "/textures/"
+                        + tTexRef.substring(tTexColon + 1) + ".png";
+                assertNotNull(getClass().getClassLoader().getResourceAsStream(tTexPath),
+                        tPath + " design=" + tFormed + " texture " + tTexture.getKey() + " -> " + tTexRef + " exists on disk");
+            }
+        }
+    }
+
     /** The 8 crucible wall rows carry the upstream NBT_MATERIAL column (Loader :1145/:1270-1277 verbatim; ANY.W→MT.W). */
     @Test
     public void crucibleWallRowsCarryTheUpstreamMaterials() {

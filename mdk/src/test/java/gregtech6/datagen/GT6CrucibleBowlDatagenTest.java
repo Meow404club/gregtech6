@@ -173,27 +173,72 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
         }
     }
 
-    /** The 9 LIQUID_LEVEL variants map to nine DISTINCT models — the collapse retired. */
+    /**
+     * The 9 LIQUID_LEVEL buckets × the 2 MOLTEN phases map to distinct models (task
+     * crucible-render-followup, the symptom-B nail): level 0 the empty bowl in BOTH
+     * phases, level L molten=true the molten-art model, level L molten=false the solid-art
+     * model — the cooled-charge face (the upstream pass-5 gate renders whenever the fill
+     * census is non-zero, MultiTileEntitySmeltery.java:616, and the cooled texture choice
+     * rides the mDisplayedFluid validity :587-591).
+     */
     @Test
-    void nineLiquidLevelsAreNineDistinctModels() throws Exception {
+    void liquidLevelTimesMoltenAreTheVariantCensus() throws Exception {
         for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) {
             JsonObject tVariants = generatedJson("assets/gt6/blockstates/" + tRow.path() + ".json")
                     .getAsJsonObject("variants");
-            assertEquals(9, tVariants.size(), tRow.path() + ": the 9-bucket census");
+            assertEquals(18, tVariants.size(), tRow.path() + ": the 9 buckets x 2 phases census");
             Set<String> tRefs = new HashSet<>();
             for (int tLevel = 0; tLevel <= 8; tLevel++) {
-                JsonObject tVariant = tVariants.getAsJsonObject("gt_liquid_level=" + tLevel);
-                assertNotNull(tVariant, tRow.path() + ": the level " + tLevel + " variant");
-                String tRef = tVariant.get("model").getAsString();
-                tRefs.add(tRef);
-                if (tLevel == 0) {
-                    assertEquals("gt6:block/" + tRow.path() + "_empty", tRef, tRow.path() + ": level 0 is the empty bowl");
-                } else {
-                    assertEquals("gt6:block/" + tRow.path() + "_filled_" + tLevel, tRef,
-                            tRow.path() + ": level " + tLevel + " carries its own model");
+                for (boolean tMolten : new boolean[] {false, true}) {
+                    JsonObject tVariant = tVariants.getAsJsonObject("gt_liquid_level=" + tLevel + ",molten=" + tMolten);
+                    assertNotNull(tVariant, tRow.path() + ": the level " + tLevel + " molten=" + tMolten + " variant");
+                    String tRef = tVariant.get("model").getAsString();
+                    tRefs.add(tRef);
+                    if (tLevel == 0) {
+                        assertEquals("gt6:block/" + tRow.path() + "_empty", tRef,
+                                tRow.path() + ": level 0 is the empty bowl in both phases");
+                    } else if (tMolten) {
+                        assertEquals("gt6:block/" + tRow.path() + "_filled_" + tLevel, tRef,
+                                tRow.path() + ": level " + tLevel + " molten rides the molten-art model");
+                    } else {
+                        assertEquals("gt6:block/" + tRow.path() + "_filled_" + tLevel + "_solid", tRef,
+                                tRow.path() + ": level " + tLevel + " cooled rides the solid-art model");
+                    }
                 }
             }
-            assertEquals(9, tRefs.size(), tRow.path() + ": nine DISTINCT models, no visual collapse");
+            assertEquals(17, tRefs.size(), tRow.path() + ": 8 molten + 8 solid + the shared empty = 17 DISTINCT models");
+        }
+    }
+
+    /**
+     * The solid-phase filled model (task crucible-render-followup — the symptom-B face):
+     * the FULL shell+content element set (the r11a rule — vanilla getElements never merges
+     * the parent), the content seat riding the BODY art (#all) at tintindex 1 — the cooled
+     * charge renders the blockSolid grain recoloured by the lightest content's mRGBaSolid,
+     * the upstream cooled semantics minus the gray-NULL placeholder (the declared port
+     * face, the user ruling "solid = the material's own colour").
+     */
+    @Test
+    void solidFilledModelsCarryTheBodyArtContentSeat() throws Exception {
+        for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) {
+            int tShellCount = generatedJson("assets/gt6/models/block/" + tRow.path() + "_empty.json")
+                    .getAsJsonArray("elements").size();
+            for (int tLevel = 1; tLevel <= 8; tLevel++) {
+                JsonObject tModel = generatedJson("assets/gt6/models/block/" + tRow.path() + "_filled_" + tLevel + "_solid.json");
+                assertEquals(tShellCount + 1, tModel.getAsJsonArray("elements").size(),
+                        tRow.path() + " solid level " + tLevel + ": the FULL shell + the one content element");
+                BlockModel tVanilla = BlockModel.fromString(tModel.toString());
+                assertEquals(tShellCount + 1, tVanilla.getElements().size(),
+                        tRow.path() + " solid level " + tLevel + ": vanilla BlockModel.getElements sees the full set");
+                float tExpectedTop = 2.0F + (tLevel * 255.0F / 8.0F) / 292.571428F * 16.0F;
+                JsonObject tBox = elementAt(tModel, new float[] {0, 2, 0}, new float[] {16, tExpectedTop, 16});
+                assertNotNull(tBox, tRow.path() + " solid level " + tLevel + ": the content box element");
+                JsonObject tUp = tBox.getAsJsonObject("faces").getAsJsonObject("up");
+                assertEquals("#all", tUp.get("texture").getAsString(),
+                        tRow.path() + " solid level " + tLevel + ": the content seat rides the BODY art");
+                assertEquals(1, tUp.get("tintindex").getAsInt(),
+                        tRow.path() + " solid level " + tLevel + ": the content seat stays tintindex 1");
+            }
         }
     }
 

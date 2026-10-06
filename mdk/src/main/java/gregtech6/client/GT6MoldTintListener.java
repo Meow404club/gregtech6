@@ -8,6 +8,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 
 import net.minecraftforge.api.distmarker.Dist;
@@ -75,25 +76,35 @@ public final class GT6MoldTintListener {
 	/** The shared BlockColor over the whole family (the stone rows answer -1, inert). */
 	public static BlockColor familyBlockColor() {
 		return (aState, aLevel, aPos, aTintIndex) -> {
-			if (aTintIndex == 1) return crucibleContentTintARGB(aLevel, aPos); // the bowl content seat (task crucible-large-ber)
+			if (aTintIndex == 1) return crucibleContentTintARGB(aState, aLevel, aPos); // the bowl content seat (task crucible-large-ber)
 			return blockTintARGB(aState.getBlock(), aTintIndex);
 		};
 	}
 
 	/**
 	 * The bowl content-face tint (tint index 1, task crucible-large-ber): the small
-	 * crucible's synced displayed-molten material through the ContentFace MOLTEN arm — the
-	 * same colour source the large-crucible BER renders (the one dispatch, three consumers:
-	 * Jade rides crucible-jade-tankbar). Anything else (no BE, nothing molten) answers -1 =
-	 * the sprite renders as-is. The level/pos signature is the BlockColor seam (no BE on
-	 * the item half — {@link #familyItemColor} routes index 1 through
-	 * {@link #blockTintARGB}, which answers -1 there).
+	 * crucible's synced lightest-content material through the ContentFace dispatch — the
+	 * MOLTEN arm (mRGBaLiquid over the molten art) while the blockstate says molten, the
+	 * SOLID arm (mRGBaSolid over the body art) once the charge cools (task
+	 * crucible-render-followup — the symptom-B fix: the former always-molten arm answered
+	 * -1 on a cooled charge and left the static molten art raw gray-white). The phase
+	 * voice is the BLOCKSTATE (the server's MOLTEN flip and the baked texture ride the
+	 * same state, so art and colour can never disagree); on a non-crucible state (the
+	 * offline fixtures) the BE's molten census stands in. Anything else (no BE, empty
+	 * pile) answers -1 = the sprite renders as-is. The level/pos signature is the
+	 * BlockColor seam (no BE on the item half — {@link #familyItemColor} routes index 1
+	 * through {@link #blockTintARGB}, which answers -1 there).
 	 */
-	public static int crucibleContentTintARGB(@Nullable BlockAndTintGetter aLevel, @Nullable BlockPos aPos) {
+	public static int crucibleContentTintARGB(@Nullable BlockState aState, @Nullable BlockAndTintGetter aLevel, @Nullable BlockPos aPos) {
 		if (aLevel == null || aPos == null) return -1;
 		if (aLevel.getBlockEntity(aPos) instanceof TileEntitySmeltery tSmeltery) {
-			OreDictMaterial tDisplayed = tSmeltery.displayedMaterial();
-			if (tDisplayed != null) return gregtech6.datagen.GT6CrucibleDatagen.contentFace(tDisplayed, true).tintARGB();
+			OreDictMaterial tLightest = tSmeltery.displayedLightestMaterial();
+			if (tLightest != null) {
+				boolean tMolten = aState != null && aState.getBlock() instanceof GT6Crucibles.CrucibleBlock
+						? aState.getValue(GT6Crucibles.CrucibleBlock.MOLTEN)
+						: tSmeltery.mDisplayedFluid != -1; // the offline-fixture stand-in (non-crucible state)
+				return gregtech6.datagen.GT6CrucibleDatagen.contentFace(tLightest, tMolten).tintARGB();
+			}
 		}
 		return -1;
 	}

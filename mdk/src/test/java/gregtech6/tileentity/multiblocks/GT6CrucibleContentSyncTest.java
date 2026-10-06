@@ -98,15 +98,18 @@ public class GT6CrucibleContentSyncTest extends GTMultiBlocksOfflineTestBase {
 		DisplayProbeCrucible tCrucible = new DisplayProbeCrucible(POS, Blocks.BRICKS.defaultBlockState());
 		tCrucible.mDisplayedHeight = 200;
 		tCrucible.mDisplayedFluid = MT.Steel.mID;
+		tCrucible.mDisplayedLightest = MT.Cu.mID; // the cooled-charge identity (task crucible-render-followup)
 		CompoundTag tNBT = new CompoundTag();
 		tCrucible.saveAdditional(tNBT);
 		assertEquals(200, tNBT.getInt(TileEntityCrucible.NBT_DISPLAYED_HEIGHT), "the height rides the sync tag");
 		assertEquals(MT.Steel.mID, tNBT.getInt(TileEntityCrucible.NBT_DISPLAYED_FLUID), "the molten material id rides the sync tag");
+		assertEquals(MT.Cu.mID, tNBT.getInt(TileEntityCrucible.NBT_DISPLAYED_LIGHTEST), "the lightest id rides the sync tag");
 
 		DisplayProbeCrucible tRestored = new DisplayProbeCrucible(POS, Blocks.BRICKS.defaultBlockState());
 		tRestored.load(tNBT);
 		assertEquals(200, tRestored.mDisplayedHeight, "the client BE rehydrates the height (onDataPacket = load(tag))");
 		assertEquals(MT.Steel.mID, tRestored.mDisplayedFluid, "the client BE rehydrates the fluid id");
+		assertSame(MT.Cu, tRestored.displayedLightestMaterial(), "the client BE rehydrates the lightest identity");
 	}
 
 	/** The small crucible displayed-fluid rides the same channel, and materialById resolves the id. */
@@ -127,6 +130,28 @@ public class GT6CrucibleContentSyncTest extends GTMultiBlocksOfflineTestBase {
 		assertEquals(MT.Steel, GT6Crucibles.materialById(MT.Steel.mID), "materialById is the identity on a live id");
 		assertNull(GT6Crucibles.materialById(-1), "the out-of-range guard: -1");
 		assertNull(GT6Crucibles.materialById(Integer.MAX_VALUE), "the out-of-range guard: past the array");
+	}
+
+	/**
+	 * The lightest-content id rides the sync channel too (task crucible-render-followup —
+	 * the symptom-B data face): upstream drops the displayed id to -1 the moment the
+	 * charge cools (MultiTileEntitySmeltery.java:299), so the client would lose the
+	 * material identity exactly when the solid face needs it — the port syncs the
+	 * phase-independent lightest id beside the upstream molten id.
+	 */
+	@Test
+	public void smelteryDisplayedLightestRidesTheSyncChannels() {
+		DisplayProbeSmeltery tSmeltery = new DisplayProbeSmeltery(sSmelteryType, POS, Blocks.BRICKS.defaultBlockState());
+		tSmeltery.mDisplayedFluid = -1; // cooled — the upstream census drops to -1
+		tSmeltery.mDisplayedLightest = MT.Cu.mID; // the phase-independent identity stays
+		CompoundTag tNBT = new CompoundTag();
+		tSmeltery.saveNBT(tNBT);
+		assertEquals(-1, tNBT.getInt(TileEntitySmeltery.NBT_DISPLAYED_FLUID), "the molten census keeps the upstream -1 semantics");
+		assertEquals(MT.Cu.mID, tNBT.getInt(TileEntitySmeltery.NBT_DISPLAYED_LIGHTEST), "the lightest id rides the sync tag");
+		TileEntitySmeltery tRestored = new DisplayProbeSmeltery(sSmelteryType, POS, Blocks.BRICKS.defaultBlockState());
+		tRestored.load(tNBT);
+		assertEquals(-1, tRestored.mDisplayedFluid, "the client BE rehydrates the molten census");
+		assertSame(MT.Cu, tRestored.displayedLightestMaterial(), "the client BE rehydrates the lightest identity");
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -189,17 +214,27 @@ public class GT6CrucibleContentSyncTest extends GTMultiBlocksOfflineTestBase {
 			assertNotNull(tUp, "the child carries the content box (the r11a full-shell element set)");
 			assertEquals(1, tUp.get("tintindex").getAsInt(), "the content seat is tintindex 1 (the listener arm)");
 		}
-		// the listener arm: the smeltery's synced display resolves the molten tint; no level = no tint
+		// the listener arm: the smeltery's synced display resolves the tint through the
+		// MOLTEN gate (task crucible-render-followup); no level = no tint
 		MultiBlockLevel tLevel = new MultiBlockLevel();
 		DisplayProbeSmeltery tSmeltery = new DisplayProbeSmeltery(sSmelteryType, POS, Blocks.BRICKS.defaultBlockState());
 		tSmeltery.setLevel(tLevel);
 		tLevel.mBlockEntities.put(POS, tSmeltery);
+		// molten: the lightest content id synced, the census molten — the mRGBaLiquid arm
 		tSmeltery.mDisplayedFluid = MT.Fe.mID;
+		tSmeltery.mDisplayedLightest = MT.Fe.mID;
 		assertEquals(GT6CrucibleDatagen.contentFace(MT.Fe, true).tintARGB(),
-				GT6MoldTintListener.crucibleContentTintARGB(tLevel, POS), "the index-1 arm is the ContentFace molten tint");
-		assertEquals(-1, GT6MoldTintListener.crucibleContentTintARGB(null, null), "no level answers no-tint");
+				GT6MoldTintListener.crucibleContentTintARGB(null, tLevel, POS), "the index-1 arm is the ContentFace molten tint");
+		// cooled (the symptom-B fix): the lightest id stays synced while the molten census
+		// drops -1 — the SOLID arm answers the lightest content's mRGBaSolid, no more raw
+		// gray-white molten art
 		tSmeltery.mDisplayedFluid = -1;
-		assertEquals(-1, GT6MoldTintListener.crucibleContentTintARGB(tLevel, POS), "nothing molten answers no-tint");
+		assertEquals(GT6CrucibleDatagen.contentFace(MT.Fe, false).tintARGB(),
+				GT6MoldTintListener.crucibleContentTintARGB(null, tLevel, POS), "the cooled charge answers the SOLID arm of the lightest content");
+		// empty: nothing synced anywhere — no tint
+		tSmeltery.mDisplayedLightest = -1;
+		assertEquals(-1, GT6MoldTintListener.crucibleContentTintARGB(null, tLevel, POS), "an empty crucible answers no-tint");
+		assertEquals(-1, GT6MoldTintListener.crucibleContentTintARGB(null, null, null), "no level answers no-tint");
 		// the item half routes index 1 through blockTintARGB — no BE there, stays inert
 		// (the family member face is pinned by GT6MoldTintDatagenTest materialTintARGB(-1) —
 		// the RegistryObject instances stay frozen offline)
