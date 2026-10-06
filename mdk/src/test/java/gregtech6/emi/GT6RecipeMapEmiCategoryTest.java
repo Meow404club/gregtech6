@@ -148,8 +148,8 @@ public class GT6RecipeMapEmiCategoryTest {
 		assertEquals(2, tHolder.mTextures.size(), "the two backdrop textures lead the stack (z order pinned below)");
 		assertTrue(tHolder.mAll.get(2) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
 				"the gear-port jump widget rides third, right after the two backdrops");
-		assertEquals(new Bounds(147, 76, 18, 18), tHolder.mAll.get(2).getBounds(),
-				"the port covers the folded gear art (152,83)-(5,7)=(147,76), 18px form");
+		assertEquals(new Bounds(72, 53, 22, 22), tHolder.mAll.get(2).getBounds(),
+				"the port covers the folded gear-slot art (77,60)-(5,7)=(72,53), 22x22 form");
 	}
 
 	/**

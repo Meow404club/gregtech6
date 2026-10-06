@@ -632,23 +632,35 @@ public final class GT6RecipeMapViewerMeta {
 	
 	// -----------------------------------------------------------------------
 	// The gear-spot jump port (task viewer-energy-jump-gear, the user ruling:
-	// "跳转对应能量怎么产的页面也应该做，跳转口可以做在之间的齿轮图标") — the baked gear
-	// decoration on the NEI plate becomes the clickable entrance onto the map's accepted
+	// "跳转对应能量怎么产的页面也应该做，跳转口可以做在之间的齿轮图标") — the gear slot
+	// in the middle of the layout is the clickable entrance onto the map's accepted
 	// energy carrier's info page. Both viewer legs consume the same fold and the same
 	// carrier query; a GU map (energyOf null) draws no port — the gear stays decoration.
+	//
+	// Re-anchored (task composed-ui-energy-slot-and-parts, the user ruling 复用齿轮):
+	// the first cut hung the port on the NEI plate's corner gear decoration
+	// (152,83 — upstream NEI_RecipeMap.java:278's rare machine-icon pixel), a spot no
+	// machine GUI ever seats a slot in = a self-invented slot. The gear the user named
+	// is the machine skins' printed special slot — the 22x22 dark-stroke gear cell every
+	// sheet prints at (77,60) (upstream 1.7.10 Default.png and the amazawa redraw agree;
+	// its crop IS gui/parts/slot_special_22x22.png). The corner gear returns to being
+	// pure plate decoration.
 	// -----------------------------------------------------------------------
-	
+
 	/**
-	 * The baked gear-art spot in machine-GUI coordinates — upstream NEI_RecipeMap.java:278
-	 * drew its rare machine icon at (152,83), the same pixel the plate's gear decoration
-	 * bakes into (the debt-viewer-polish icon rode exactly here pre-retirement).
+	 * The printed special-slot (gear) spot in machine-GUI coordinates — the 22x22 gear
+	 * cell every machine skin prints at (77,60), between the input and output grids,
+	 * under the progress arrow. Upstream's only functional special-slot seat
+	 * (ContainerCommonBasicMachine.java:49, the AUTOCRAFTING blueprint) rides (80,43) on
+	 * its own skin; on every OTHER sheet the (77,60) print is the universal decor this
+	 * port hangs the jump on.
 	 */
-	public static final int[] GEAR_POS_GUI = {152, 83};
-	
-	/** The port's hit box — the 18px slot pitch, the art's gear face. */
-	public static final int GEAR_SIZE = 18;
-	
-	/** {@link #GEAR_POS_GUI} folded into panel/viewer coordinates — (147,76) under the re-anchored -(5,7). */
+	public static final int[] GEAR_POS_GUI = {77, 60};
+
+	/** The port's hit box — the art's full 22x22 gear-slot cell. */
+	public static final int GEAR_SIZE = 22;
+
+	/** {@link #GEAR_POS_GUI} folded into panel/viewer coordinates — (72,53) under the re-anchored -(5,7). */
 	public static int[] viewerGearPos() {
 		return fold(GEAR_POS_GUI);
 	}
