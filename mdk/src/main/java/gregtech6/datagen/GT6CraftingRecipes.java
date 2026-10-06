@@ -1619,23 +1619,28 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/**
-	 * The pincers self-craft row (task w5-t3-machine-face-four spec ④) — the upstream
-	 * {"XhX"," T ","SdS"} row (Loader_Tools.java:316, plateCurved prefix) with the
-	 * material scale {@code U*2 + screw + 2*stick} (the :150 registration amount):
-	 * 'X' = {@code OP.plateCurved.dat(MT.Steel)} (the GTMaterialItems curved plate, the
-	 * hopper builder precedent), 'h' = {@code #gt6:tools/hard_hammer}, 'd' =
-	 * {@code OP.screw.dat(MT.Steel)}, 'S' = the vanilla stick. Result 1x
+	 * The pincers self-craft row (task w5-t3-machine-face-four spec ④, shape re-pinned by
+	 * task pincers-bottom-row-shape) — the upstream {"XhX"," T ","SdS"} row VERBATIM
+	 * (Loader_Tools.java:316, plateCurved prefix, the explicit :455-473 alphabet + the CR
+	 * tool letters) with the material scale {@code U*2 + screw + 2*stick}: 'X' =
+	 * {@code OP.plateCurved.dat(MT.Steel)} (the GTMaterialItems curved plate, the hopper
+	 * builder precedent), 'h' = {@code #gt6:tools/hard_hammer} (CR.java:346), 'T' =
+	 * {@code OP.screw.dat(MT.Steel)} (Loader_Tools.java:463), 'S' = the vanilla stick,
+	 * 'd' = {@code #gt6:tools/screwdriver} (CR.java:342 — the bottom-row tool the
+	 * w5-era landing had dropped; the machine-ladder pincers rows
+	 * {@link #MACHINE_LADDER_FORMS} :5359 carry the same shape with this tag). Result 1x
 	 * {@code gt6:pincers}.
 	 */
 	private ShapedRecipeBuilder pincersBuilder() {
 		return ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, GT6Tools.PINCERS.get())
 				.pattern("XhX")
-				.pattern(" d ")
-				.pattern("S S")
+				.pattern(" T ")
+				.pattern("SdS")
 				.define('X', GTMaterialItems.get(gregapi.data.OP.plateCurved, MT.Steel).get())
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
-				.define('d', GTMaterialItems.get(gregapi.data.OP.screw, MT.Steel).get())
+				.define('T', GTMaterialItems.get(gregapi.data.OP.screw, MT.Steel).get())
 				.define('S', Items.STICK)
+				.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
 				.unlockedBy("has_steel_plate_curved", has(GTMaterialItems.get(gregapi.data.OP.plateCurved, MT.Steel).get()));
 	}
 
