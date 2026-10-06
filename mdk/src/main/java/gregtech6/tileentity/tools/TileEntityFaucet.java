@@ -276,7 +276,7 @@ public class TileEntityFaucet extends GTAttachmentSmallBlockEntity implements IT
 			// a synthetic TAP-family row: same mount algebra, faucet identity kept on this class
 			super(new gregtech6.registry.GT6Attachments.AttachmentRow(
 					aRow.path(), aRow.matDisplay(), GTAttachmentSmallBlock.Family.TAP,
-					aRow.acidProof(), 1.0F, aRow.acidProof() ? 6.0F : 5.0F, aRow.sound()),
+					aRow.acidProof(), 1.0F, aRow.resistance(), net.minecraft.world.level.block.SoundType.STONE),
 					aRow.acidProof(), aTickerType, aProperties);
 			mRow = aRow;
 			mTickerType = aTickerType;

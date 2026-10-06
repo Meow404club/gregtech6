@@ -25,6 +25,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import gregapi.data.ANY;
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.block.GTComposedNameItem;
@@ -174,25 +175,99 @@ public final class GT6Molds {
 	}
 
 	/**
-	 * One faucet registration row (the Loader aRegistry.add projection :300/:305 — the
-	 * material drives the {@code getMoldMaxTemperature} heat verdict, the acid-proof
-	 * column rides the block carrier like every attachment).
-	 */
-	/**
-	 * One faucet registration row (the Loader aRegistry.add projection :300/:305 — the
+	 * One faucet registration row (the Loader aRegistry.add projection :300-341 — the
 	 * material drives the {@code getMoldMaxTemperature} heat verdict, the acid-proof
 	 * column rides the block carrier like every attachment). The material rides the same
 	 * {@link java.util.function.Supplier} as {@link MoldRow}: the class-load-time static
 	 * rows initialize before MT.init() (the P2 two-phase reset) — a direct MT.Ceramic
 	 * captured null and the faucet stat NPE'd at {@code material().mMeltingPoint}
 	 * (live-probed: "An unexpected error occurred trying to execute that command").
+	 *
+	 * @param meta       the upstream MTE id (the zh dump rows mte 1700-1749 key) — the
+	 *                   reconciliation anchor, unique per row
+	 * @param matDisplay the upstream en local word ({@code aMat.getLocal()}), the
+	 *                   {@code gt6.row.faucet.mat.*} en face verbatim
+	 * @param acidProof  the upstream NBT_ACIDPROOF (8 rows: SS/Netherite/Thaumium/Cr/Ir/W/VoidMetal/Ad)
+	 * @param resistance the upstream NBT_RESISTANCE (5.0 stone/quartz family, 6.0 carbon+metals —
+	 *                   NOT derivable from acidProof: carbon is F/6.0)
+	 * @param hidden     the upstream NBT_HIDDEN (Loader:301-304 unconditional T; :306-309 the
+	 *                   ERE/Botania/Aether/Betweenlands gates — the port's single-mod universe
+	 *                   resolves every gate to hidden): registered but no creative-tab join
+	 * @param craft      the upstream craft face, see {@link FaucetCraft}
 	 */
-	public record FaucetRow(String path, java.util.function.Supplier<OreDictMaterial> material, String matDisplay, boolean acidProof, SoundType sound) {}
+	public record FaucetRow(String path, int meta, java.util.function.Supplier<OreDictMaterial> material,
+			String matDisplay, boolean acidProof, float resistance, boolean hidden, FaucetCraft craft) {}
 
-	/** The two card-B faucet rungs: Stone (:300, the row0 craft) and Ceramic (:305, the raw→furnace pair). */
+	/**
+	 * The upstream craft face of a faucet row (Loader:300-341), and what the port's recipe
+	 * provider does with it:
+	 * <ul>
+	 * <li>{@link #NONE} — no separate craft row: stone keeps its handcraft (the :300
+	 *     "B B"/" B " row, already in {@code GT6MoldDatagen.Recipes}), ceramic keeps the
+	 *     raw→furnace pair (:305);</li>
+	 * <li>{@link #PLATE_SELF} / {@link #PLATE_GRAPHENE} — the metals' "P P"/" P " plate
+	 *     crafts (:314-341) and the carbon row's graphene-plate craft (:312 "C C"/" C "):
+	 *     the datagen resolves the {@code gt6:plate_<mat>} item via
+	 *     {@code GTMaterialItems.get(OP.plate, ...)}, unresolvable pairs skip with a log;</li>
+	 * <li>{@link #CUT_STONE_BLOCK} — the stone-family rows craft from
+	 *     {@code OP.stone.dat(aMat)} upstream (:301-309): the port has NO stone-block item
+	 *     path yet (GTMaterialItems javadoc: "Block/MTE families are later cards") — the
+	 *     craft face is the declared cut, the rows stay obtainable via commands. All 8 rows
+	 *     are NBT_HIDDEN upstream, so nothing craft-visible is lost;</li>
+	 * <li>{@link #CUT_ANY_GEM} — the ANY.Quartz row's {@code OP.gem.dat(ANY.Quartz)} (:311):
+	 *     ANY materials carry UNUSED/INVALID_MATERIAL (ANY.java:40) and generate no port
+	 *     item, the ANY-ingredient face has no port item pool — the declared cut.</li>
+	 * </ul>
+	 */
+	public enum FaucetCraft { NONE, PLATE_SELF, PLATE_GRAPHENE, CUT_STONE_BLOCK, CUT_ANY_GEM }
+
+	/**
+	 * The full 39-row family (task faucet-material-rows): the Loader_MultiTileEntities
+	 * .java:300-341 projection row-for-row in upstream order — 10 stone/ceramic rungs,
+	 * quartz + carbon, 27 metal rungs. Every row carries its upstream meta, en local word,
+	 * acid/resistance pair, hidden flag and craft face (the FaucetCraft javadoc grounds
+	 * each column). 31 rows are creative-visible, 8 NBT_HIDDEN.
+	 */
 	public static final List<FaucetRow> FAUCET_ROWS = List.of(
-			new FaucetRow("faucet_stone"  , () -> MT.Stone  , "Stone"  , false, SoundType.STONE),
-			new FaucetRow("faucet_ceramic", () -> MT.Ceramic, "Ceramic", false, SoundType.STONE));
+			new FaucetRow("faucet_stone"                  , 1700, () -> MT.Stone               , "Stone"                      , false, 5.0F, false, FaucetCraft.NONE),
+			new FaucetRow("faucet_basalt"                 , 1701, () -> MT.STONES.Basalt       , "Basalt"                     , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_black_granite"          , 1702, () -> MT.STONES.GraniteBlack , "Black Granite"              , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_red_granite"            , 1703, () -> MT.STONES.GraniteRed   , "Red Granite"                , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_nether_brick"           , 1704, () -> MT.NetherBrick         , "Nether Brick"               , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_ceramic"                , 1705, () -> MT.Ceramic             , "Ceramic"                    , false, 5.0F, false, FaucetCraft.NONE),
+			new FaucetRow("faucet_umber"                  , 1706, () -> MT.STONES.Umber        , "Umberstone"                 , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_livingrock"             , 1707, () -> MT.STONES.Livingrock   , "Livingrock"                 , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_holystone"              , 1708, () -> MT.STONES.Holystone    , "Holystone"                  , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_betweenstone"           , 1709, () -> MT.STONES.Betweenstone , "Betweenstone"               , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
+			new FaucetRow("faucet_quartz"                 , 1718, () -> ANY.Quartz             , "Quartz"                     , false, 5.0F, false, FaucetCraft.CUT_ANY_GEM),
+			new FaucetRow("faucet_carbon"                 , 1719, () -> MT.C                   , "Carbon"                     , false, 6.0F, false, FaucetCraft.PLATE_GRAPHENE),
+			new FaucetRow("faucet_bronze"                 , 1720, () -> MT.Bronze              , "Bronze"                     , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_invar"                  , 1721, () -> MT.Invar               , "Invar"                      , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_steel"                  , 1722, () -> MT.Steel               , "Steel"                      , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_hsla"                   , 1741, () -> MT.HSLA                , "HSLA-Steel"                 , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_stainless_steel"        , 1725, () -> MT.StainlessSteel      , "Stainless Steel"            , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_dark_iron"              , 1726, () -> MT.DarkIron            , "Dark Iron"                  , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_meteoric_iron"          , 1731, () -> MT.MeteoricIron        , "Meteoric Iron"              , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_meteoric_steel"         , 1732, () -> MT.MeteoricSteel       , "Meteoric Steel"             , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_netherite"              , 1744, () -> MT.Netherite           , "Netherite"                  , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_knightmetal"            , 1727, () -> MT.Knightmetal         , "Knightmetal"                , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_fiery_steel"            , 1728, () -> MT.FierySteel          , "Fiery Steel"                , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_octine"                 , 1742, () -> MT.Octine              , "Octine"                     , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_thaumium"               , 1729, () -> MT.Thaumium            , "Thaumium"                   , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_titanium"               , 1723, () -> MT.Ti                  , "Titanium"                   , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_chromium"               , 1733, () -> MT.Cr                  , "Chromium"                   , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_molybdenum"             , 1734, () -> MT.Mo                  , "Molybdenum"                 , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_niobium"                , 1735, () -> MT.Nb                  , "Niobium"                    , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_tantalum"               , 1736, () -> MT.Ta                  , "Tantalum"                   , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_osmium"                 , 1737, () -> MT.Os                  , "Osmium"                     , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_iridium"                , 1739, () -> MT.Ir                  , "Iridium"                    , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_niobium_titanium"       , 1740, () -> MT.NiobiumTitanium     , "Niobium Titanium"           , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_vanadium"               , 1738, () -> MT.V                   , "Vanadium"                   , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_tungsten"               , 1724, () -> ANY.W                  , "Tungsten"                   , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_tantalum_hafnium_carbide", 1743, () -> MT.Ta4HfC5            , "Tantalum Hafnium Carbide"   , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_void_metal"             , 1730, () -> MT.VoidMetal           , "Void Metal"                 , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_bedrock_hsla_alloy"     , 1748, () -> MT.Bedrock_HSLA_Alloy  , "Bedrock-HSLA-Alloy"         , false, 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_adamantium"             , 1749, () -> MT.Ad                  , "Adamantium"                 , true , 6.0F, false, FaucetCraft.PLATE_SELF));
 
 	/**
 	 * The registered faucet blocks by path. The value type is the {@link java.util.function.Supplier}
@@ -264,8 +339,8 @@ public final class GT6Molds {
 			FAUCET_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new TileEntityFaucet.FaucetBlock(fRow, () -> GT6Molds.FAUCET_BE.get(),
 							BlockBehaviour.Properties.of()
-									.strength(1.0F, tRow.acidProof() ? 6.0F : 5.0F) // the :300/:305 NBT pair
-									.sound(tRow.sound())))); // collision shape: the attachment base answers empty (TileEntityBase10Attachment:35)
+								.strength(1.0F, fRow.resistance()) // the :300-341 NBT_HARDNESS 1.0 / NBT_RESISTANCE pair (5.0 stone family, 6.0 carbon+metals)
+								.sound(SoundType.STONE)))); // collision shape: the attachment base answers empty (TileEntityBase10Attachment:35)
 			FAUCET_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new GTComposedNameItem(GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
@@ -428,21 +503,25 @@ public final class GT6Molds {
 	 * <p><b>Pool cut (the census ruling, task tab-census)</b>: upstream the molds ride
 	 * the per-family MTE tab "Molds" (1072, Loader_MultiTileEntities.java:347-352/:391-420)
 	 * and the faucets the "Crucibles Faucets" tab (1722, :300/:305) — this port pools both
-	 * finished families into MACHINES_TAB. The RAW clay items stay OUT ({@link
-	 * #RAW_ITEMS_BY_PATH} 31 + {@link #FAUCET_CERAMIC_RAW} 1 = 32): upstream they are the
-	 * craft-only furnace-hardening intermediates (MultiItemRandomTools.java:127+), never a
-	 * tab member — so the census's "34 finished / 32 raw" spans BOTH maps of this file
-	 * (32 molds + 2 faucets vs 31 mold raws + 1 faucet raw), the raw split riding the
-	 * finished/raw axis, not a family axis.
-	 */
+ * finished families into MACHINES_TAB. The RAW clay items stay OUT ({@link
+ * #RAW_ITEMS_BY_PATH} 31 + {@link #FAUCET_CERAMIC_RAW} 1 = 32): upstream they are the
+ * craft-only furnace-hardening intermediates (MultiItemRandomTools.java:127+), never a
+ * tab member. The faucet rows ride the upstream NBT_HIDDEN split (task
+ * faucet-material-rows): the 31 visible rows join, the 8 hidden stone-family rows
+ * (Loader:301-304/:306-309) stay out — the raw split rides the finished/raw axis, not a
+ * family axis.
+ */
 	@SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
 		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
 			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
 				aEvent.accept(new ItemStack(tItem.get()));
 			}
-			for (RegistryObject<Item> tItem : FAUCET_ITEMS_BY_PATH.values()) {
-				aEvent.accept(new ItemStack(tItem.get()));
+			// the NBT_HIDDEN rows (Loader:301-304/:306-309) stay out of the tab — the
+			// upstream hidden semantics (no NEI/creative face, the block itself registered)
+			for (FaucetRow tRow : FAUCET_ROWS) {
+				if (tRow.hidden()) continue;
+				aEvent.accept(new ItemStack(FAUCET_ITEMS_BY_PATH.get(tRow.path()).get()));
 			}
 		}
 	}
