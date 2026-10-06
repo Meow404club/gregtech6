@@ -130,6 +130,37 @@ public class GTWrenchGridTablesTest {
 		}
 	}
 
+	/**
+	 * The item pipe's own table (task pipe-render-closeout): non-shift reads the
+	 * connection bits exactly like the fluid pipe; shift reads the monkeywrench
+	 * four-state cycle (mDisabledInputs/mDisabledOutputs, MultiTileEntityPipeItem
+	 * :128-153) — (0,0) normal green, (0,1) emit-off the io arrow, (1,0) accept-off
+	 * and (1,1) both-off red, and neighbour bits never leak into the side's icon.
+	 */
+	@Test
+	public void itemPipeIconTableBothModesAllBitSideCombinations() {
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			int tBit = 1 << tSide;
+			assertEquals(GTWrenchGridIcon.PIPE_CONNECT,
+					GTWrenchGridTables.itemPipeCellIcon(false, tSide, (byte)tBit, (byte)0, (byte)0), "normal connected " + tSide);
+			assertEquals(GTWrenchGridIcon.PIPE_BLOCK,
+					GTWrenchGridTables.itemPipeCellIcon(false, tSide, (byte)0, (byte)0, (byte)0), "normal disconnected " + tSide);
+			assertEquals(GTWrenchGridIcon.PIPE_CONNECT,
+					GTWrenchGridTables.itemPipeCellIcon(true, tSide, (byte)0, (byte)0, (byte)0), "shift normal " + tSide);
+			assertEquals(GTWrenchGridIcon.IO_FACING_ROTATION,
+					GTWrenchGridTables.itemPipeCellIcon(true, tSide, (byte)0, (byte)0, (byte)tBit), "shift emit-off " + tSide);
+			assertEquals(GTWrenchGridIcon.PIPE_BLOCK,
+					GTWrenchGridTables.itemPipeCellIcon(true, tSide, (byte)0, (byte)tBit, (byte)0), "shift accept-off " + tSide);
+			assertEquals(GTWrenchGridIcon.PIPE_BLOCK,
+					GTWrenchGridTables.itemPipeCellIcon(true, tSide, (byte)0, (byte)tBit, (byte)tBit), "shift both-off " + tSide);
+			byte tOthers = (byte)(tBit ^ 63);
+			assertEquals(GTWrenchGridIcon.PIPE_BLOCK,
+					GTWrenchGridTables.itemPipeCellIcon(false, tSide, tOthers, (byte)0, (byte)0), "normal others-connected " + tSide);
+			assertEquals(GTWrenchGridIcon.PIPE_CONNECT,
+					GTWrenchGridTables.itemPipeCellIcon(true, tSide, (byte)0, tOthers, tOthers), "shift others-disabled " + tSide);
+		}
+	}
+
 	@Test
 	public void iconTexturePaths() {
 		assertEquals("textures/gui/overlay/tool_pipe_connect.png", GTWrenchGridIcon.PIPE_CONNECT.texturePath);

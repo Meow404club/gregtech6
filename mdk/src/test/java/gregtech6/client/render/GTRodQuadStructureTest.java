@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import gregtech6.registry.GTMaterialItems;
+import gregtech6.tileentity.GTOfflineTestBase;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -25,7 +27,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import gregtech6.client.render.GTRodBakedModel.Shape;
 import gregtech6.client.render.GTRodBakedModel.SpriteKind;
 
-public class GTRodQuadStructureTest {
+public class GTRodQuadStructureTest extends GTOfflineTestBase {
 
     /** The core box at diameter d/16 (upstream :115). */
     private static double[] core(int aDiameterPx) {
@@ -124,5 +126,49 @@ public class GTRodQuadStructureTest {
         assertEquals(48, GTRodBakedModel.maskOf(tX), "X rod = WEST|EAST");
         assertEquals(3, GTRodBakedModel.maskOf(tY), "Y rod = DOWN|UP");
         assertEquals(12, GTRodBakedModel.maskOf(tZ), "Z rod = NORTH|SOUTH");
+    }
+
+    /**
+     * The item pipe connection render pin (task pipe-render-closeout acceptance): all 64
+     * CONNECTIONS states of a real {@link gregtech6.block.pipe.GTItemPipeBlock} resolve
+     * through {@link GTRodBakedModel#maskOf} into state-varying arm geometry — the
+     * core+arms plan, never one shared full-cube model (the pre-rod placeholder shape:
+     * every state the same 6 faces). The row identity (the brass medium row, PX_P[8])
+     * rides the registration table, exactly what the bake dispatch consumes.
+     */
+    @Test
+    public void itemPipeAll64ConnectionStatesProduceStateVaryingArmGeometry() {
+        GTMaterialItems.initMaterials();
+        gregtech6.registry.GTItemPipes.ItemPipeRow tRow = gregtech6.registry.GTItemPipes.rowByPath("brass_item_pipe_medium");
+        // the registry write window for direct block construction (GTPipeTintGateTest.itemPipe shape)
+        try {
+            java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                    .getClass().getMethod("unfreeze");
+            tUnfreeze.setAccessible(true);
+            tUnfreeze.invoke(net.minecraft.core.registries.BuiltInRegistries.BLOCK);
+        } catch (Exception aE) {
+            throw new IllegalStateException("could not unfreeze the offline block registry", aE);
+        }
+        gregtech6.block.pipe.GTItemPipeBlock tPipe = new gregtech6.block.pipe.GTItemPipeBlock(tRow,
+                net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+        int tDiameter = tRow.variant().diameterPx;
+        assertEquals(8, tDiameter, "the brass medium row = PX_P[8] (MultiTileEntityPipeItem :76-82)");
+        for (int tMask = 0; tMask < 64; tMask++) {
+            BlockState tState = tPipe.defaultBlockState().setValue(gregtech6.block.pipe.GTItemPipeBlock.CONNECTIONS, tMask);
+            assertEquals(tMask, GTRodBakedModel.maskOf(tState), "the state's CONNECTIONS is the whole mask source");
+            List<Shape> tShapes = GTRodBakedModel.planShapes(tDiameter, tMask, 1);
+            int tArms = Integer.bitCount(tMask);
+            assertEquals((6 + 5 * tArms) * 2, tShapes.size(), "mask " + tMask + " lost the core+arms plan");
+            // the geometry IS the state: every connected bit has exactly one outward cap
+            // on the block boundary, every unconnected bit has none (the placeholder era
+            // rendered all 64 states as the same full cube)
+            for (Direction tDir : Direction.values()) {
+                long tCaps = tShapes.stream().filter(s -> s.face() == tDir && s.cull() == tDir).count();
+                assertEquals((tMask & (1 << tDir.get3DDataValue())) != 0 ? 2 : 0, tCaps,
+                        "mask " + tMask + " cap count on " + tDir + " (base + overlay twin)");
+            }
+        }
+        assertEquals(6 * 2, GTRodBakedModel.planShapes(tDiameter, 0, 1).size(), "mask 0 = the bare core stub");
+        assertEquals((6 + 30) * 2, GTRodBakedModel.planShapes(tDiameter, 63, 1).size(), "mask 63 = full junction");
     }
 }
