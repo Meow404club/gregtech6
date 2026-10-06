@@ -86,6 +86,11 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * died here; the replacement pins are the zoom-2x centring in {@code MaterialTreeLayoutTest}
  * and the rig screenshot).
  *
+ * <p><b>Wheel and double-click</b> (task mattree-zoom-anchor): the wheel takes the Nav
+ * table's fine 1.25x step anchored under the pointer (the 指针锚默认化 face — a >2x fit now
+ * reaches the 4x ceiling in graded notches instead of one frozen 2x jump). A clean single
+ * click stays the jump.
+ *
  * <p><b>Node clicks jump to the viewer</b> (所见即所跳): the release-within-slop click
  * resolves through the viewport's unapply inverse and routes by the shared
  * {@link GTViewerJump#preferredViewer()} predicate — the kitchen-NEI seam, EMI 双装优先 —
@@ -174,11 +179,15 @@ public class GT6MaterialTreeScreen extends Screen {
 	// input: wheel, drag pan, click-to-jump, keyboard — all through the M2 table
 	// ------------------------------------------------------------------
 
-	/** The wheel core (leg-neutral, the two {@code mouseScrolled} generations fork onto it): one notch = the 2x 档位 about the pointer. */
+	/**
+	 * The wheel core (leg-neutral, the two {@code mouseScrolled} generations fork onto it):
+	 * one notch = the {@link GT6MaterialTreeNav#WHEEL_STEP} small step about the pointer
+	 * (the Nav table's {@link GT6MaterialTreeNav#wheelZoom} — task mattree-zoom-anchor's
+	 * 指针锚默认化/wheel 小步进; the former inline 2x-quantum choice died with it).
+	 */
 	boolean scroll(double aMouseX, double aMouseY, double aDelta) {
 		if (mView == null) return false;
-		double tFactor = aDelta > 0 ? GT6MaterialTreeNav.ZOOM_FACTOR : 1.0 / GT6MaterialTreeNav.ZOOM_FACTOR;
-		mView.zoomAt(aMouseX, aMouseY, tFactor);
+		GT6MaterialTreeNav.wheelZoom(mView, aDelta, aMouseX, aMouseY);
 		return true;
 	}
 

@@ -41,6 +41,17 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * HEAD injections are the only delivery path, gated to {@code EmiInteractionSink}).
  * Drag pan needs no table entry of its own: it is the raw screen-space delta straight
  * into {@link MaterialTreeViewport#pan}.
+ *
+ * <p><b>The anchor policy (task mattree-zoom-anchor, the 指针锚默认化 clause)</b>: a zoom
+ * gesture that carries the pointer anchors at the pointer — {@link #wheelZoom} is that
+ * face, the wheel being the one zoom gesture the standalone screen receives directly.
+ * The EMI page keeps the centre-anchored degraded face BY DESIGN: its buttons/keys/slider
+ * declare the canvas centre because the page leg cannot see the pointer for zoom; the
+ * standalone screen's wheel is the pointer face.
+ * <b>旧钉迁移声明</b>: the screen leg's inline wheel-factor choice
+ * ({@code delta > 0 ? ZOOM_FACTOR : 1/ZOOM_FACTOR} — the 2x quantum that jumped any fit
+ * past 2x straight onto the 4x ceiling, frozen there) died in task mattree-zoom-anchor;
+ * the wheel now takes the fine {@link #WHEEL_STEP}.
  */
 public final class GT6MaterialTreeNav {
 
@@ -49,7 +60,10 @@ public final class GT6MaterialTreeNav {
 	/**
 	 * One wheel notch's zoom step (the JEI canvas wheel face, task mattree-jei-panzoom):
 	 * gentler than the 2x button 档位 because a wheel is continuous — the zoom-anchor card's
-	 * 1.25 档 (small steps are the wheel's job; the big jumps stay with the buttons).
+	 * 1.25 档 (small steps are the wheel's job; the big jumps stay with the buttons). A fit
+	 * past 2x reaches the 4x ceiling in graded notches instead of one 2x jump (the
+	 * mattree-viewport-fit handoff's 「从 >2x 的 fit 一档直达 4x 天花板」 complaint, cured by
+	 * task mattree-zoom-anchor's screen routing).
 	 */
 	public static final double WHEEL_STEP = 1.25;
 	/** One arrow-key pan = one lane pitch of the shared layout (MaterialTreeLayout.LANE_PITCH). */
