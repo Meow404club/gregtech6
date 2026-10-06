@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -189,12 +190,24 @@ public final class GT6Crucibles {
 		 */
 		public static final IntegerProperty LIQUID_LEVEL = IntegerProperty.create("gt_liquid_level", 0, 8);
 
+		/**
+		 * The content-phase property (task crucible-render-followup — the symptom-B face):
+		 * true while the lightest content is MOLTEN (the census gate
+		 * {@code mMeltingPoint <= mTemperature}, MultiTileEntitySmeltery.java:299), false
+		 * once the charge cools. The blockstate doubles over it (the molten-art vs solid-art
+		 * content seat), the tint listener reads the SAME state so texture and colour can
+		 * never disagree — the upstream pass-5 renders whenever the fill census is non-zero
+		 * (:616) and picks the art by the mDisplayedFluid validity (:587-591); the port's
+		 * model texture is static per state, so the phase needs the blockstate voice.
+		 */
+		public static final BooleanProperty MOLTEN = BooleanProperty.create("molten");
+
 		private final SmelteryRow mRow;
 
 		public CrucibleBlock(SmelteryRow aRow, Properties aProperties) {
 			super(aProperties);
 			mRow = aRow;
-			registerDefaultState(this.stateDefinition.any().setValue(LIQUID_LEVEL, 0));
+			registerDefaultState(this.stateDefinition.any().setValue(LIQUID_LEVEL, 0).setValue(MOLTEN, false));
 		}
 		//? if neoforge {
 		/*
@@ -221,7 +234,7 @@ public final class GT6Crucibles {
 
 		@Override
 		protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> aBuilder) {
-			aBuilder.add(LIQUID_LEVEL);
+			aBuilder.add(LIQUID_LEVEL, MOLTEN);
 		}
 
 		@Override

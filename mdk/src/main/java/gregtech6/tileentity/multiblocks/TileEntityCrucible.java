@@ -162,6 +162,8 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	 */
 	public static final String NBT_DISPLAYED_HEIGHT = "gt.displayed_height";
 	public static final String NBT_DISPLAYED_FLUID = "gt.displayed_fluid";
+	/** The phase-independent lightest content id (task crucible-render-followup — the TileEntitySmeltery mirror). */
+	public static final String NBT_DISPLAYED_LIGHTEST = "gt.displayed_lightest";
 
 	// ---------------------------------------------------------------------------
 	// the state (upstream :82-86)
@@ -196,6 +198,22 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	 * census; a change flags {@link #updateClientData()} (:351).
 	 */
 	public int mDisplayedHeight = 0, mDisplayedFluid = -1;
+
+	/**
+	 * The phase-independent lightest content id (task crucible-render-followup — the
+	 * symptom-B data face, the TileEntitySmeltery mirror): upstream :350 drops the molten
+	 * id to -1 on cooling; this keeps the identity so the BER's cooled solid arm recolours
+	 * with the CONTENT material's mRGBaSolid (the shell-material face it replaced was the
+	 * declared deviation this task retires — the small form's user ruling, "solid = the
+	 * material's own colour"). {@code -1} = the cavity is empty.
+	 */
+	public int mDisplayedLightest = -1;
+
+	/** The phase-independent resolution behind {@link #mDisplayedLightest} — the cooled-charge face's colour source. */
+	@Nullable
+	public OreDictMaterial displayedLightestMaterial() {
+		return gregtech6.registry.GT6Crucibles.materialById(mDisplayedLightest);
+	}
 
 	/** The registry-path constructor (the BlockEntityType.Builder.of factory form, the oven precedent). */
 	public TileEntityCrucible(BlockPos aPos, BlockState aState) {
@@ -260,6 +278,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		// form; absent keys keep the zero/none display default)
 		if (aNBT.contains(NBT_DISPLAYED_HEIGHT, Tag.TAG_ANY_NUMERIC)) mDisplayedHeight = aNBT.getInt(NBT_DISPLAYED_HEIGHT);
 		if (aNBT.contains(NBT_DISPLAYED_FLUID, Tag.TAG_ANY_NUMERIC)) mDisplayedFluid = aNBT.getInt(NBT_DISPLAYED_FLUID);
+		if (aNBT.contains(NBT_DISPLAYED_LIGHTEST, Tag.TAG_ANY_NUMERIC)) mDisplayedLightest = aNBT.getInt(NBT_DISPLAYED_LIGHTEST);
 	}
 
 	@Override
@@ -273,6 +292,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		// sync channels ride getUpdateTag = saveWithoutMetadata)
 		aNBT.putInt(NBT_DISPLAYED_HEIGHT, mDisplayedHeight);
 		aNBT.putInt(NBT_DISPLAYED_FLUID, mDisplayedFluid);
+		aNBT.putInt(NBT_DISPLAYED_LIGHTEST, mDisplayedLightest); // task crucible-render-followup — the cooled-charge identity
 		//? if forge {
 		aNBT.put(NBT_INVENTORY, mInventory.serializeNBT());
 		//?} else {
@@ -576,10 +596,16 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 
 		// :348-351 — the client display census: the fill height 0..255 + the lightest MOLTEN
 		// material id; a change flags the vanilla block-update sync (the paint-key channel).
+		// The phase-independent lightest id rides beside it (task crucible-render-followup —
+		// upstream :350 drops the id on cooling, the port keeps the cooled-charge identity)
 		int tDisplayedHeight = mDisplayedHeight, tDisplayedFluid = mDisplayedFluid;
 		mDisplayedHeight = (int)CruciblePhysics.scale(tTotal, MAX_AMOUNT, 255, false);
 		mDisplayedFluid = (tLightest == null || tLightest.mMaterial.mMeltingPoint > mTemperature ? -1 : tLightest.mMaterial.mID);
-		if (mDisplayedHeight != tDisplayedHeight || mDisplayedFluid != tDisplayedFluid) updateClientData();
+		int tLightestId = (tLightest == null ? -1 : tLightest.mMaterial.mID);
+		if (mDisplayedHeight != tDisplayedHeight || mDisplayedFluid != tDisplayedFluid || mDisplayedLightest != tLightestId) {
+			mDisplayedLightest = tLightestId;
+			updateClientData();
+		}
 
 		// the destruction arms (:309-320) — content already cleared by the physics
 		if (tOutcome.explosionStrength() > 0) {

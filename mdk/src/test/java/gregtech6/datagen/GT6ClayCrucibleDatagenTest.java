@@ -82,8 +82,8 @@ public class GT6ClayCrucibleDatagenTest extends GTOfflineTestBase {
         assertEquals("gt6:block/materialicons/rough/block_solid", tModel.getAsJsonObject("textures").get("all").getAsString(),
                 "the generated empty cube rides the Ceramic branch (the rough blockSolid borrow)");
         JsonObject tBlockstate = generatedJson("assets/gt6/blockstates/smeltery_ceramic.json");
-        assertEquals(9, tBlockstate.getAsJsonObject("variants").size(),
-                "the 9 LIQUID_LEVEL variants like every rung");
+        assertEquals(18, tBlockstate.getAsJsonObject("variants").size(),
+                "the 9 LIQUID_LEVEL x 2 MOLTEN variants like every rung (task crucible-render-followup)");
     }
 
     /** The recipe chain closes: 7 clay → raw → (furnace) → the ceramic smeltery item, + the reverse. */

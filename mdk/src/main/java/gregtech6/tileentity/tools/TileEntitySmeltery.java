@@ -114,7 +114,21 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	 */
 	public static final String NBT_DISPLAYED_FLUID = "gt.displayed_fluid";
 
+	/**
+	 * The phase-independent lightest content id (task crucible-render-followup — the
+	 * symptom-B data face): upstream drops {@link #mDisplayedFluid} to {@code -1} the
+	 * moment the charge cools (:299), so the client would lose the material identity
+	 * exactly when the cooled solid face needs it (the upstream cooled texture falls back
+	 * to the gray-NULL placeholder :590 — the port renders the material's own solid face
+	 * instead, which requires the id). {@code -1} = the pile is empty. Rides the same
+	 * paint-key channel (saveAdditional → getUpdateTag).
+	 */
+	public static final String NBT_DISPLAYED_LIGHTEST = "gt.displayed_lightest";
+
 	public int mDisplayedFluid = -1;
+
+	/** The lightest content's material id regardless of phase, {@code -1} = the pile is empty. */
+	public int mDisplayedLightest = -1;
 
 	/**
 	 * The client display resolution — the material behind {@link #mDisplayedFluid} (the
@@ -124,6 +138,12 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	@Nullable
 	public OreDictMaterial displayedMaterial() {
 		return GT6Crucibles.materialById(mDisplayedFluid);
+	}
+
+	/** The phase-independent resolution behind {@link #mDisplayedLightest} — the cooled-charge face's colour source. */
+	@Nullable
+	public OreDictMaterial displayedLightestMaterial() {
+		return GT6Crucibles.materialById(mDisplayedLightest);
 	}
 
 	/**
@@ -295,11 +315,16 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 		oTemperature = mTemperature;
 
 		// :299/:547-554 — the displayed-molten census (the bowl content-face tint seat); a
-		// change flags the vanilla block-update sync (the upstream onTickCheck latch form)
+		// change flags the vanilla block-update sync (the upstream onTickCheck latch form).
+		// The lightest id rides BESIDE the molten census (task crucible-render-followup):
+		// upstream :299 drops the id to -1 on cooling, the port keeps the phase-independent
+		// identity so the cooled solid face can recolour
 		OreDictMaterialStack tLightest = lightest();
 		int tDisplayed = (tLightest == null || tLightest.mMaterial.mMeltingPoint > mTemperature ? -1 : tLightest.mMaterial.mID);
-		if (mDisplayedFluid != tDisplayed) {
+		int tLightestId = (tLightest == null ? -1 : tLightest.mMaterial.mID);
+		if (mDisplayedFluid != tDisplayed || mDisplayedLightest != tLightestId) {
 			mDisplayedFluid = tDisplayed;
+			mDisplayedLightest = tLightestId;
 			updateClientData();
 		}
 
@@ -325,10 +350,23 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 			updateClientData();
 		}
 
-		// the LIQUID_LEVEL bucket (the mDisplayedHeight :298 counterpart over the blockstate property)
-		if (getBlockState().hasProperty(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL)
-				&& getBlockState().getValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL) != tLevelBucket && hasLevel()) {
-			getLevel().setBlock(getBlockPos(), getBlockState().setValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL, tLevelBucket), Block.UPDATE_CLIENTS);
+		// the LIQUID_LEVEL bucket + the MOLTEN phase (the mDisplayedHeight :298 counterpart
+		// over the blockstate property; the phase voice task crucible-render-followup added —
+		// the blockstate texture and the tint listener read the SAME state so they can never
+		// disagree). mDisplayedFluid != -1 IS the molten gate (:299, the identical predicate)
+		if (hasLevel()) {
+			BlockState tState = getBlockState();
+			boolean tMolten = mDisplayedFluid != -1;
+			BlockState tTarget = tState;
+			if (tState.hasProperty(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL)
+					&& tState.getValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL) != tLevelBucket) {
+				tTarget = tTarget.setValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL, tLevelBucket);
+			}
+			if (tState.hasProperty(GT6Crucibles.CrucibleBlock.MOLTEN)
+					&& tState.getValue(GT6Crucibles.CrucibleBlock.MOLTEN) != tMolten) {
+				tTarget = tTarget.setValue(GT6Crucibles.CrucibleBlock.MOLTEN, tMolten);
+			}
+			if (tTarget != tState) getLevel().setBlock(getBlockPos(), tTarget, Block.UPDATE_CLIENTS);
 		}
 	}
 
@@ -697,6 +735,7 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 		 *///?}
 		MaterialStackNBT.saveList(mContent, "gt.materials", aNBT); // :103 NBT_MATERIALS
 		aNBT.putInt(NBT_DISPLAYED_FLUID, mDisplayedFluid); // task crucible-large-ber — the client tint census (the paint-key channel)
+		aNBT.putInt(NBT_DISPLAYED_LIGHTEST, mDisplayedLightest); // task crucible-render-followup — the cooled-charge identity
 	}
 
 	@Override
@@ -717,5 +756,6 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 		mContent.addAll(MaterialStackNBT.loadList("gt.materials", aNBT));
 		mMeltDown = mTemperature + 100 > temperatureMax(); // :94 — recomputed on load
 		if (aNBT.contains(NBT_DISPLAYED_FLUID, Tag.TAG_ANY_NUMERIC)) mDisplayedFluid = aNBT.getInt(NBT_DISPLAYED_FLUID); // the display census rehydration
+		if (aNBT.contains(NBT_DISPLAYED_LIGHTEST, Tag.TAG_ANY_NUMERIC)) mDisplayedLightest = aNBT.getInt(NBT_DISPLAYED_LIGHTEST); // the cooled-charge identity
 	}
 }

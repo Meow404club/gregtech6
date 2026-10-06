@@ -240,18 +240,22 @@ public final class GT6CrucibleDatagen {
 
 		/**
 		 * One crucible: the upstream open-top BOWL (MultiTileEntitySmeltery.java:596-619) over
-		 * the 9 LIQUID_LEVEL variants + the BlockItem parent. Level 0 = the bowl shell (the
-		 * {@link #bodyTexture} faces, tintindex 0 on the grayscale-borrow rows — task
-		 * debt-material-tint); levels 1..8 = the shell + the content box, its TOP face the
-		 * molten art at the upstream height (:603
-		 * {@code 0.125F + h/292.571428F} block units, the bucket L carrying the census floor
-		 * {@code h = L*255/8}; the :616 top-face-only gate).
+		 * the 9 LIQUID_LEVEL × 2 MOLTEN variants + the BlockItem parent. Level 0 = the bowl
+		 * shell (the {@link #bodyTexture} faces, tintindex 0 on the grayscale-borrow rows —
+		 * task debt-material-tint); levels 1..8 = the shell + the content box, its TOP face
+		 * the phase art at the upstream height (:603 {@code 0.125F + h/292.571428F} block
+		 * units, the bucket L carrying the census floor {@code h = L*255/8}; the :616
+		 * top-face-only gate): molten=true the molten art, molten=false the body art (task
+		 * crucible-render-followup — the cooled-charge face, the upstream art choice by the
+		 * mDisplayedFluid validity :587-591, the gray-NULL placeholder retired per the user
+		 * ruling "solid = the material's own colour").
 		 */
 		private void addCrucible(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
 			String tEmpty = "block/" + aRow.path() + "_empty";
 			gregapi.oredict.OreDictMaterial tMaterial = aRow.material().get();
 			ModelFile tEmptyModel = bowlModel(tEmpty, bodyTexture(tMaterial), bodyTinted(tMaterial));
 			ModelFile[] tFilledModels = new ModelFile[9];
+			ModelFile[] tSolidModels = new ModelFile[9];
 			boolean tTinted = bodyTinted(tMaterial);
 			for (int tLevel = 1; tLevel <= 8; tLevel++) {
 				// the r11a-crucible-filled-shell fix: vanilla BlockModel.getElements (1.20.1
@@ -276,10 +280,22 @@ public final class GT6CrucibleDatagen {
 						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
 				tElement.face(Direction.UP).texture("#content").tintindex(1).end();
 				tFilledModels[tLevel] = tElement.end();
+				// the cooled twin (task crucible-render-followup): the same geometry, the
+				// content seat on the BODY art — recoloured live by the synced lightest
+				// content's mRGBaSolid (the tint listener's solid arm)
+				BlockModelBuilder tSolidBuilder = models().getBuilder("block/" + aRow.path() + "_filled_" + tLevel + "_solid")
+						.parent(tEmptyModel);
+				addShellElements(tSolidBuilder, tTinted);
+				var tSolidElement = tSolidBuilder.element()
+						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
+				tSolidElement.face(Direction.UP).texture("#all").tintindex(1).end();
+				tSolidModels[tLevel] = tSolidElement.end();
 			}
 			getVariantBuilder(aBlock).forAllStates(aState -> {
 				int tLevel = aState.getValue(GT6Crucibles.CrucibleBlock.LIQUID_LEVEL);
-				return ConfiguredModel.builder().modelFile(tLevel == 0 ? tEmptyModel : tFilledModels[tLevel]).build();
+				ModelFile tModel = tLevel == 0 ? tEmptyModel
+						: aState.getValue(GT6Crucibles.CrucibleBlock.MOLTEN) ? tFilledModels[tLevel] : tSolidModels[tLevel];
+				return ConfiguredModel.builder().modelFile(tModel).build();
 			});
 			itemModels().withExistingParent(aRow.path(), modLoc(tEmpty));
 		}

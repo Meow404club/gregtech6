@@ -54,9 +54,11 @@ import gregtech6.tileentity.multiblocks.TileEntityCrucible;
  *     mRGBaLiquid, rendered fullbright — the upstream {@code getTextureMolten} shape,
  *     OreDictMaterial.java:996-999; task r11b-crucible-molten-art retired the flat
  *     smeltery_content placeholder here too) when the synced displayed fluid exists,
- *     the SOLID arm (bodyTexture + mRGBaSolid — the declared port face over upstream's
- *     gray-NULL placeholder :622) otherwise. The floor quad (pass 4) stays the machine
- *     body seat — upstream's :647 machine-texture arm, NOT molten.</li>
+ *     the SOLID arm (the lightest content's bodyTexture + mRGBaSolid — the declared port
+ *     face over upstream's gray-NULL placeholder :622; task crucible-render-followup
+ *     moved the solid material from the shell to the CONTENT itself, the small form's
+ *     user ruling "solid = the material's own colour") otherwise. The floor quad (pass
+ *     4) stays the machine body seat — upstream's :647 machine-texture arm, NOT molten.</li>
  * </ol>
  *
  * <p><b>Melt-down red-shift</b> (upstream :611-616 {@code getRenderPasses2}): with
@@ -146,10 +148,14 @@ public final class GTCrucibleContentRenderer implements BlockEntityRenderer<Tile
 		boolean tMolten = false;
 		if (aCrucible.mDisplayedHeight != 0) { // the :648 SIDES_TOP + non-zero gate
 			OreDictMaterial tDisplayed = GT6Crucibles.materialById(aCrucible.mDisplayedFluid);
-			// the MOLTEN arm when the synced displayed fluid exists, the SOLID arm (the shell's
-			// bodyTexture) over the solid charge — upstream rendered the gray-NULL :622 there
+			// the MOLTEN arm when the synced displayed fluid exists, the SOLID arm over the
+			// lightest content's own bodyTexture when cooled (task crucible-render-followup —
+			// the former shell-material face retired with the small form's user ruling; the
+			// upstream :622 gray-NULL placeholder stays retired per the same declaration)
 			tMolten = tDisplayed != null;
-			ContentFace tFace = GT6CrucibleDatagen.contentFace(tMolten ? tDisplayed : GTMachinePaintTint.tintMaterialOf(tBlock), tMolten);
+			OreDictMaterial tFaceMaterial = tMolten ? tDisplayed : aCrucible.displayedLightestMaterial();
+			if (tFaceMaterial == null) tFaceMaterial = GTMachinePaintTint.tintMaterialOf(tBlock); // the census not yet synced — the shell stand-in
+			ContentFace tFace = GT6CrucibleDatagen.contentFace(tFaceMaterial, tMolten);
 			tContentSprite = spriteOf(tFace.texture());
 			tContentTint = aCrucible.mMeltDown ? meltDownShift(tFace.tintARGB()) : tFace.tintARGB();
 		}
