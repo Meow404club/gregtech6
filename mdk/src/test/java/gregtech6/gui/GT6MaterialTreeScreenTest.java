@@ -92,6 +92,9 @@ import net.minecraft.world.item.ItemStack;
  *     one notch lands ON the 4x ceiling from a 2.4x fit」 pin died with it, the 2x-quantum
  *     wheel was the jump the small step cures; three graded notches now bridge the gap and
  *     the fourth freezes on the ceiling). The inverse notch re-lands the exact centred fit;</li>
+ * <li><b>double-click fit</b>: a second clean click inside the Nav table's 250 ms window and
+ *     4 px radius re-lands the fit pose, no jump rides its release, a far-apart pair and a
+ *     dragged release stay single clicks (mattree-zoom-anchor);</li>
  * <li><b>pan range = the real window</b> (acceptance ②): zoomed in, the pan floor is
  *     {@code pane - content*scale} of the REAL pane;</li>
  * <li><b>drag pan + click slop</b>: a press-drag pans the viewport, a release within the
@@ -193,7 +196,7 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		// is pane-independent and the anchor pose stays unclamped (x slack [0, 57] holds 28.5).
 		assertEquals(FIT * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.scale(), EPSILON);
 		// the S1 screen-anchor formula: offset = focus - (focus - offset) * (new/old)
-		assertEquals(250.0 - (250.0 - FIT_X) * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.offsetX(), EPSILON
+		assertEquals(250.0 - (250.0 - FIT_X) * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.offsetX(), EPSILON,
 				"the x anchor holds the tree point under the pointer");
 		assertEquals(210.0 * (1.0 - GT6MaterialTreeNav.WHEEL_STEP), tScreen.mView.offsetY(), EPSILON,
 				"the y anchor holds the tree point under the pointer");
@@ -217,7 +220,7 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
 		// the gradation the small step buys: three notches ride the >2x fit onto the 4x
 		// ceiling (2.43 -> 3.03 -> 3.79 -> clamp), the fourth freezes there
-		GT6MaterialTreeScreen tGraded = screenAt(600, 500);
+		GT6MaterialTreeScreen tGraded = screenAt(500, 500);
 		tGraded.scroll(250, 250, 1);
 		tGraded.scroll(250, 250, 1);
 		tGraded.scroll(250, 250, 1);
@@ -304,6 +307,47 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		// outside the cells the press starts a drag (and jumping on release stays the slop's business)
 		assertTrue(tScreen.mouseClicked(300, 300, 0));
 		assertTrue(tScreen.mouseReleased(300, 300, 0));
+	}
+
+	// ------------------------------------------------------------------
+	// double-click fit (mattree-zoom-anchor: the image-viewer re-fit gesture)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void doubleClickRecentersOnTheFitPose() {
+		// the positive: zoomed, two clean clicks at one spot — the fit pose returns and no
+		// jump rides the double's release
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
+		List<ItemStack> tJumped = new ArrayList<>();
+		tScreen.mJump = tJumped::add;
+		scrollOntoTheCeiling(tScreen, "zoom in");
+		int tJumpsBefore = tJumped.size();
+		assertTrue(tScreen.mouseClicked(550, 250, 0), "the first press arms");
+		assertTrue(tScreen.mouseReleased(550, 250, 0), "the first clean click");
+		assertTrue(tScreen.mView.scale() > FIT, "one clean click is no reset");
+		assertTrue(tScreen.mouseClicked(552, 248, 0), "the second press arms");
+		assertTrue(tScreen.mouseReleased(552, 248, 0), "the second clean click");
+		assertEquals(FIT, tScreen.mView.scale(), EPSILON, "the double-click re-lands the fit pose");
+		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
+		assertEquals(0.0, tScreen.mView.offsetY(), EPSILON);
+		assertEquals(tJumpsBefore, tJumped.size(), "no jump rides the double-click's release");
+
+		// the spatial bound: a second click 5 px away is just another single click
+		GT6MaterialTreeScreen tFar = screenAt(500, 500);
+		scrollOntoTheCeiling(tFar, "zoom in");
+		assertTrue(tFar.mouseClicked(550, 250, 0) && tFar.mouseReleased(550, 250, 0));
+		assertTrue(tFar.mouseClicked(557, 250, 0) && tFar.mouseReleased(557, 250, 0));
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tFar.mView.scale(), EPSILON, "a far-apart pair is two single clicks");
+
+		// the chain breaker: a dragged release between the clicks kills the double
+		GT6MaterialTreeScreen tDrag = screenAt(500, 500);
+		scrollOntoTheCeiling(tDrag, "zoom in");
+		assertTrue(tDrag.mouseClicked(550, 250, 0) && tDrag.mouseReleased(550, 250, 0));
+		assertTrue(tDrag.mouseClicked(552, 248, 0), "the press arms the drag");
+		assertTrue(tDrag.mouseDragged(582, 248, 0, 30, 0), "the drag pans");
+		assertTrue(tDrag.mouseReleased(582, 248, 0), "the dragged release");
+		assertTrue(tDrag.mouseClicked(552, 248, 0) && tDrag.mouseReleased(552, 248, 0));
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tDrag.mView.scale(), EPSILON, "the drag broke the double-click chain");
 	}
 
 	// ------------------------------------------------------------------

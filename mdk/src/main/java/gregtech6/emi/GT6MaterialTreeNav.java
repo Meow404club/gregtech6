@@ -51,7 +51,8 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * <b>旧钉迁移声明</b>: the screen leg's inline wheel-factor choice
  * ({@code delta > 0 ? ZOOM_FACTOR : 1/ZOOM_FACTOR} — the 2x quantum that jumped any fit
  * past 2x straight onto the 4x ceiling, frozen there) died in task mattree-zoom-anchor;
- * the wheel now takes the fine {@link #WHEEL_STEP}.
+ * the wheel now takes the fine {@link #WHEEL_STEP}, and the double-click re-fit rides
+ * {@link #isDoubleClick}.
  */
 public final class GT6MaterialTreeNav {
 
@@ -66,6 +67,10 @@ public final class GT6MaterialTreeNav {
 	 * task mattree-zoom-anchor's screen routing).
 	 */
 	public static final double WHEEL_STEP = 1.25;
+	/** The double-click window — the vanilla list idiom's 250 ms (ServerSelectionList.mouseClicked). */
+	public static final long DOUBLE_CLICK_MS = 250;
+	/** The double-click radius: the second click lands within this many px of the first on both axes (vanilla bounds the idiom by entry identity; a bare canvas needs the spatial bound). */
+	public static final double DOUBLE_CLICK_RADIUS = 4.0;
 	/** One arrow-key pan = one lane pitch of the shared layout (MaterialTreeLayout.LANE_PITCH). */
 	public static final double PAN_STEP = 28.0;
 	// (the EMI leg's own WHEEL_STEP seat folded into the declaration above — the rebase
@@ -99,6 +104,18 @@ public final class GT6MaterialTreeNav {
 	}
 
 	/**
+	 * The double-click idiom (the vanilla list shape — ServerSelectionList.mouseClicked's
+	 * 250 ms window) made spatial: this click is a double when the previous CLEAN click is
+	 * under {@link #DOUBLE_CLICK_MS} old and within {@link #DOUBLE_CLICK_RADIUS} px on both
+	 * axes. {@code aLastMs == 0} is the no-previous-click fresh state.
+	 */
+	public static boolean isDoubleClick(long aNowMs, long aLastMs, double aX, double aLastX, double aY, double aLastY) {
+		return aLastMs > 0 && aNowMs - aLastMs < DOUBLE_CLICK_MS
+				&& Math.abs(aX - aLastX) <= DOUBLE_CLICK_RADIUS && Math.abs(aY - aLastY) <= DOUBLE_CLICK_RADIUS;
+	}
+
+	/**
+
 	 * GLFW key code to action (the canvas keyboard face); unknown keys return null so they
 	 * fall through to EMI (search, page flip, ...). The literals are the GLFW constants
 	 * (verified javap lwjgl-glfw 3.3.1) inlined by javac — no GLFW class load at runtime.
