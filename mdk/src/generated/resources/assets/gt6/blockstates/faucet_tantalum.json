@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_tantalum"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_tantalum",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_tantalum"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_tantalum",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_tantalum"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_tantalum",
+      "y": 270
+    }
+  }
+}

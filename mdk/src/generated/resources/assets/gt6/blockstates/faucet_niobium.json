@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_niobium"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_niobium",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_niobium"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_niobium",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_niobium"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_niobium",
+      "y": 270
+    }
+  }
+}

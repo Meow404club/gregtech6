@@ -214,12 +214,14 @@ public final class GT6Molds {
 	 *     path yet (GTMaterialItems javadoc: "Block/MTE families are later cards") — the
 	 *     craft face is the declared cut, the rows stay obtainable via commands. All 8 rows
 	 *     are NBT_HIDDEN upstream, so nothing craft-visible is lost;</li>
-	 * <li>{@link #CUT_ANY_GEM} — the ANY.Quartz row's {@code OP.gem.dat(ANY.Quartz)} (:311):
-	 *     ANY materials carry UNUSED/INVALID_MATERIAL (ANY.java:40) and generate no port
-	 *     item, the ANY-ingredient face has no port item pool — the declared cut.</li>
+	 * <li>{@link #CUT_ANY_MATERIAL} — the ANY-material rows craft from ANY-pool items
+	 *     upstream (quartz {@code OP.gem.dat(ANY.Quartz)} :311, tungsten
+	 *     {@code OP.plate.dat(ANY.W)} :336): ANY materials carry UNUSED/INVALID_MATERIAL
+	 *     (ANY.java:40) and generate NO port item — the ANY-ingredient face has no port
+	 *     item pool, the declared cut.</li>
 	 * </ul>
 	 */
-	public enum FaucetCraft { NONE, PLATE_SELF, PLATE_GRAPHENE, CUT_STONE_BLOCK, CUT_ANY_GEM }
+	public enum FaucetCraft { NONE, PLATE_SELF, PLATE_GRAPHENE, CUT_STONE_BLOCK, CUT_ANY_MATERIAL }
 
 	/**
 	 * The full 39-row family (task faucet-material-rows): the Loader_MultiTileEntities
@@ -239,7 +241,7 @@ public final class GT6Molds {
 			new FaucetRow("faucet_livingrock"             , 1707, () -> MT.STONES.Livingrock   , "Livingrock"                 , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
 			new FaucetRow("faucet_holystone"              , 1708, () -> MT.STONES.Holystone    , "Holystone"                  , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
 			new FaucetRow("faucet_betweenstone"           , 1709, () -> MT.STONES.Betweenstone , "Betweenstone"               , false, 5.0F, true , FaucetCraft.CUT_STONE_BLOCK),
-			new FaucetRow("faucet_quartz"                 , 1718, () -> ANY.Quartz             , "Quartz"                     , false, 5.0F, false, FaucetCraft.CUT_ANY_GEM),
+			new FaucetRow("faucet_quartz"                 , 1718, () -> ANY.Quartz             , "Quartz"                     , false, 5.0F, false, FaucetCraft.CUT_ANY_MATERIAL),
 			new FaucetRow("faucet_carbon"                 , 1719, () -> MT.C                   , "Carbon"                     , false, 6.0F, false, FaucetCraft.PLATE_GRAPHENE),
 			new FaucetRow("faucet_bronze"                 , 1720, () -> MT.Bronze              , "Bronze"                     , false, 6.0F, false, FaucetCraft.PLATE_SELF),
 			new FaucetRow("faucet_invar"                  , 1721, () -> MT.Invar               , "Invar"                      , false, 6.0F, false, FaucetCraft.PLATE_SELF),
@@ -263,7 +265,7 @@ public final class GT6Molds {
 			new FaucetRow("faucet_iridium"                , 1739, () -> MT.Ir                  , "Iridium"                    , true , 6.0F, false, FaucetCraft.PLATE_SELF),
 			new FaucetRow("faucet_niobium_titanium"       , 1740, () -> MT.NiobiumTitanium     , "Niobium Titanium"           , false, 6.0F, false, FaucetCraft.PLATE_SELF),
 			new FaucetRow("faucet_vanadium"               , 1738, () -> MT.V                   , "Vanadium"                   , false, 6.0F, false, FaucetCraft.PLATE_SELF),
-			new FaucetRow("faucet_tungsten"               , 1724, () -> ANY.W                  , "Tungsten"                   , true , 6.0F, false, FaucetCraft.PLATE_SELF),
+			new FaucetRow("faucet_tungsten"               , 1724, () -> ANY.W                  , "Tungsten"                   , true , 6.0F, false, FaucetCraft.CUT_ANY_MATERIAL),
 			new FaucetRow("faucet_tantalum_hafnium_carbide", 1743, () -> MT.Ta4HfC5            , "Tantalum Hafnium Carbide"   , false, 6.0F, false, FaucetCraft.PLATE_SELF),
 			new FaucetRow("faucet_void_metal"             , 1730, () -> MT.VoidMetal           , "Void Metal"                 , true , 6.0F, false, FaucetCraft.PLATE_SELF),
 			new FaucetRow("faucet_bedrock_hsla_alloy"     , 1748, () -> MT.Bedrock_HSLA_Alloy  , "Bedrock-HSLA-Alloy"         , false, 6.0F, false, FaucetCraft.PLATE_SELF),

@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_octine"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_octine",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_octine"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_octine",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_octine"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_octine",
+      "y": 270
+    }
+  }
+}

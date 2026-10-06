@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_osmium"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_osmium",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_osmium"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_osmium",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_osmium"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_osmium",
+      "y": 270
+    }
+  }
+}

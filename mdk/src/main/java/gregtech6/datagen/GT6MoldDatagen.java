@@ -339,8 +339,12 @@ public final class GT6MoldDatagen {
 				add("item.gt6." + tRow.path() + "_raw", "Ceramic " + tName + " Mold (Raw)");
 			}
 			add("gt6.row.faucet.display", "%s Crucible Faucet");
-			add("gt6.row.faucet.mat.stone", "Stone");
-			add("gt6.row.faucet.mat.ceramic", "Ceramic");
+			// the material words: the row's matDisplay = the upstream aMat.getLocal() face
+			// (task faucet-material-rows spec 4 — no invented wording; the two former
+			// hardcode lines folded into the walk)
+			for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+				add(GT6Molds.faucetMatUnitKeyOf(tRow), tRow.matDisplay());
+			}
 			add("item.gt6.faucet_ceramic_raw", "Ceramic Crucible Faucet (Raw)");
 		}
 
@@ -523,6 +527,30 @@ public final class GT6MoldDatagen {
 					.pattern(" B ")
 					.define('B', Items.STONE)
 					.unlockedBy("has_stone", has(Items.STONE))));
+
+			// the :312/:314-341 plate crafts (task faucet-material-rows spec 3) — the same
+			// three-point diagonal ("P P"," P "; carbon's :312 "C C"," C " is the same shape),
+			// tool marks cut like the stone row above. The ingredient resolves through
+			// GTMaterialItems.get(OP.plate, ...) (the GT6GunRecipes:112 resolvable-gate
+			// form); a pair with no item-path plate skips — CUT rows carry no craft at all
+			// (the FaucetCraft javadoc: the OP.stone/ANY-gem ingredient items have no port
+			// item path yet).
+			for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+				gregapi.oredict.OreDictMaterial tPlateMat = switch (tRow.craft()) {
+					case PLATE_SELF -> tRow.material().get();
+					case PLATE_GRAPHENE -> gregapi.data.MT.Graphene;
+					default -> null;
+				};
+				if (tPlateMat == null) continue; // NONE + the two CUT kinds
+				var tPlate = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, tPlateMat);
+				if (tPlate == null) continue; // the unresolvable plate pair — logged by the walker's absence in the JSON tree
+				Item tFaucet = GT6Molds.FAUCET_ITEMS_BY_PATH.get(tRow.path()).get();
+				rRows.add(shaped(id(tRow.path()), ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tFaucet)
+						.pattern("P P")
+						.pattern(" P ")
+						.define('P', net.minecraft.world.item.crafting.Ingredient.of(tPlate.get()))
+						.unlockedBy("has_plate", has(tPlate.get()))));
+			}
 
 			// the ceramic faucet raw (Loader:305 craft, "C C","kCR" — the tool marks
 			// re-expanded issue #45 C1, same tag-define face as the blank mold row)

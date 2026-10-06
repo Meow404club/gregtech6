@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_adamantium"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_adamantium",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_adamantium"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_adamantium",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_adamantium"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_adamantium",
+      "y": 270
+    }
+  }
+}

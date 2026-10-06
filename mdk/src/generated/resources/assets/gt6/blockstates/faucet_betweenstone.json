@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_betweenstone"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_betweenstone",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_betweenstone"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_betweenstone",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_betweenstone"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_betweenstone",
+      "y": 270
+    }
+  }
+}

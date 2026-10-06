@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_livingrock"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_livingrock",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_livingrock"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_livingrock",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_livingrock"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_livingrock",
+      "y": 270
+    }
+  }
+}

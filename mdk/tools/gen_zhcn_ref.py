@@ -2739,6 +2739,25 @@ MOLD_SHAPE_WORDS = {
     "nugget": "粒",
 }
 
+# task faucet-material-rows rescue: the 12 TSV hand rows main carried with NO py backfill
+# (the --check ratchet was red on main: "tsv row with no hand row" — cards landed the TSV
+# row without the py layer). Values verbatim from the main TSV so the regen keeps every
+# committed zh face; key order mirrors the TSV sort.
+ORPHAN_TSV_RESCUE = {
+    "gt6.jade.crucible.owner": "归属: %s",
+    "block.gt6.blue_clay": "蓝色粘土块",
+    "block.gt6.brown_clay": "棕色粘土块",
+    "block.gt6.grindstone": "打磨石",
+    "block.gt6.white_clay": "白色粘土块",
+    "block.gt6.yellow_clay": "黄色粘土块",
+    "item.gt6.circuit_enderium": "末影电子电路",
+    "item.gt6.circuit_enderium.tooltip": "在另一个维度处理您的数据",
+    "item.gt6.circuit_magic": "魔法电子电路",
+    "item.gt6.circuit_magic.tooltip": "像魔法师那样处理事务!",
+    "item.gt6.circuit_signalum": "信素电子电路",
+    "item.gt6.circuit_signalum.tooltip": "逻辑电路板",
+}
+
 MOLD_CRUCIBLE_GAP_BACKFILL = {
     "gt6.row.crucible.display.smeltery_stone": "熔炼坩埚 (石头)",     # dump :10772 verbatim (MTE 1000)
     "gt6.row.crucible.display.smeltery_ceramic": "熔炼坩埚 (陶瓷)",   # dump :10806 verbatim (MTE 1005, issue #45 C2)
@@ -2750,6 +2769,45 @@ MOLD_CRUCIBLE_GAP_BACKFILL = {
     "gt6.row.faucet.display": "坩埚浇铸口 (%s)",                      # dump :11199 word order (坩埚浇铸口 (石头))
     "gt6.row.faucet.mat.stone": "石头",                               # renders dump :11199 坩埚浇铸口 (石头)
     "gt6.row.faucet.mat.ceramic": "陶瓷",                             # renders dump :11224 坩埚浇铸口 (陶瓷)
+    # task faucet-material-rows: the 37 material words of the Loader:300-341 expansion —
+    # each the dump face (mte <meta> 坩埚浇铸口 (材料)) minus the wrapper, verbatim
+    "gt6.row.faucet.mat.basalt": "玄武岩",                             # dump mte 1701
+    "gt6.row.faucet.mat.black_granite": "黑色花岗岩",                  # dump mte 1702
+    "gt6.row.faucet.mat.red_granite": "红色花岗岩",                    # dump mte 1703
+    "gt6.row.faucet.mat.nether_brick": "地狱砖",                       # dump mte 1704
+    "gt6.row.faucet.mat.umber": "棕石",                                # dump mte 1706
+    "gt6.row.faucet.mat.livingrock": "活石",                           # dump mte 1707
+    "gt6.row.faucet.mat.holystone": "圣石",                            # dump mte 1708
+    "gt6.row.faucet.mat.betweenstone": "交错石",                       # dump mte 1709
+    "gt6.row.faucet.mat.quartz": "石英",                               # dump mte 1718
+    "gt6.row.faucet.mat.carbon": "碳",                                 # dump mte 1719
+    "gt6.row.faucet.mat.bronze": "青铜",                               # dump mte 1720
+    "gt6.row.faucet.mat.invar": "殷钢",                                # dump mte 1721
+    "gt6.row.faucet.mat.steel": "钢",                                  # dump mte 1722
+    "gt6.row.faucet.mat.hsla": "HSLA钢",                               # dump mte 1741
+    "gt6.row.faucet.mat.stainless_steel": "不锈钢",                    # dump mte 1725
+    "gt6.row.faucet.mat.dark_iron": "玄铁",                            # dump mte 1726
+    "gt6.row.faucet.mat.meteoric_iron": "陨铁",                        # dump mte 1731
+    "gt6.row.faucet.mat.meteoric_steel": "陨钢",                       # dump mte 1732
+    "gt6.row.faucet.mat.netherite": "下界合金",                        # dump mte 1744
+    "gt6.row.faucet.mat.knightmetal": "骑士金属",                      # dump mte 1727
+    "gt6.row.faucet.mat.fiery_steel": "炙热钢",                        # dump mte 1728
+    "gt6.row.faucet.mat.octine": "炽炎铁",                             # dump mte 1742
+    "gt6.row.faucet.mat.thaumium": "神秘锭",                           # dump mte 1729
+    "gt6.row.faucet.mat.titanium": "钛",                               # dump mte 1723
+    "gt6.row.faucet.mat.chromium": "铬",                               # dump mte 1733
+    "gt6.row.faucet.mat.molybdenum": "钼",                             # dump mte 1734
+    "gt6.row.faucet.mat.niobium": "铌",                                # dump mte 1735
+    "gt6.row.faucet.mat.tantalum": "钽",                               # dump mte 1736
+    "gt6.row.faucet.mat.osmium": "锇",                                 # dump mte 1737
+    "gt6.row.faucet.mat.iridium": "铱",                                # dump mte 1739
+    "gt6.row.faucet.mat.niobium_titanium": "铌钛合金",                 # dump mte 1740
+    "gt6.row.faucet.mat.vanadium": "钒",                               # dump mte 1738
+    "gt6.row.faucet.mat.tungsten": "钨",                               # dump mte 1724
+    "gt6.row.faucet.mat.tantalum_hafnium_carbide": "碳化钽铪",         # dump mte 1743
+    "gt6.row.faucet.mat.void_metal": "虚空金属",                       # dump mte 1730
+    "gt6.row.faucet.mat.bedrock_hsla_alloy": "基岩合金",               # dump mte 1748
+    "gt6.row.faucet.mat.adamantium": "艾德曼合金",                     # dump mte 1749
     "item.gt6.faucet_ceramic_raw": "粘土浇铸口",                      # dump :10104 verbatim (Clay Faucet, 992)
     "item.gt6.clay_crucible_raw": "粘土坩埚",                         # dump :10098 verbatim (Clay Crucible, 989, issue #45 C2)
 }
@@ -4677,7 +4735,7 @@ MOLD_FOOD_DIRECT_BACKFILL = {
 };
 
 
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL, BOTTLES_FAMILIES_A_BACKFILL, BOTTLES_FAMILIES_B_BACKFILL, BOTTLES_DYE_BACKFILL, ROBOTICS_BACKFILL, CIRCUIT_CHAIN_BACKFILL, ELECTRODE_BACKFILL, EXPLOSIVES_BACKFILL, MOLD_FOOD_DIRECT_BACKFILL):
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL, BOTTLES_FAMILIES_A_BACKFILL, BOTTLES_FAMILIES_B_BACKFILL, BOTTLES_DYE_BACKFILL, ROBOTICS_BACKFILL, CIRCUIT_CHAIN_BACKFILL, ELECTRODE_BACKFILL, EXPLOSIVES_BACKFILL, MOLD_FOOD_DIRECT_BACKFILL, ORPHAN_TSV_RESCUE):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")
