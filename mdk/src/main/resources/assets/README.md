@@ -9585,12 +9585,12 @@ Byte copies:
 The kitchen family's hollow-tub element models (`GT6BlockStates.addKitchen`) borrow the
 upstream grayscale `colored/` tile sets — the mRGBa tint-me variants of
 `textures/blocks/machines/tools/<family>/colored/*`, byte-identical copies, filenames
-unchanged (the `overlay/` detail passes and the pot/bowl Table faces `tablebottom`/
-`tableside` stay unborrowed — the overlay layer and the Table rows are the pool cuts).
-Upstream tints these tiles at runtime with the row material's colour (mRGBa:
-WoodTreated / StainlessSteel / Ceramic); the port shows the grayscale tiles un-tinted
-(tintindex 0 reserved on every model face, no BlockColor registered) — declared
-deviation, the family runtime-tint pool. Three of the four families ship byte-identical
+unchanged. Upstream tints these tiles at runtime with the row material's colour (mRGBa:
+WoodTreated / StainlessSteel / Ceramic) — since task c3-kitchen-tint-shape the port does
+too (tintindex 0 on every model face, the baked GTMachineTintModel world half + the
+GTItemPaintTint inventory half; the older "un-tinted deviation" note here predates that
+wiring). The pot/bowl Table faces `tablebottom`/`tableside` stay unborrowed (the Table
+rows remain the pool cut). Three of the four families ship byte-identical
 tiles upstream (only `bathing_pot_wood` differs), which is why the digests repeat:
 
 - `block/tools/bathing_pot_wood/sides.png` — `0fb1440b5a5ebce82ea7cb15dd9d6a6b7a1c184bf92b1aa0aa0c9fed74201607` (upstream `blocks/machines/tools/bathing_pot_wood/colored/sides.png`)
@@ -9611,6 +9611,27 @@ tiles upstream (only `bathing_pot_wood` differs), which is why the digests repea
 - `block/tools/juicer/bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/bottom.png`; byte-identical to the bathing_pot bottom tile)
 - `block/tools/juicer/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middleside.png`; the same uniform tile as the bottom — upstream ships it un-detailed, the mRGBa tint carries the face)
 - `block/tools/juicer/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middletop.png`; the same uniform tile as the bottom)
+
+Borrowed (the kitchen overlay decor layer, task mixingbowl-bathingpot-fidelity):
+
+The second getTexture2 layer — upstream composites
+`BlockTextureMulti(colored×mRGBa, overlay)` on EVERY body face
+(MultiTileEntityBathingPot.java:375-379 / MixingBowl :396-400); the first port shipped
+the colored band alone and the decor (the wood pot's metal hoops, the bowl's red waves +
+cavity lines + floor ring) was invisible — the user-visible 「单色平涂」 half of the
+fidelity card. Byte-identical copies, the mortar `*_overlay/` directory grammar. Only
+the tiles WITH art ship: the wood pot's `overlay/insides,top,bottom` and the steel
+pot's + juicer's whole `overlay/` set are FULLY TRANSPARENT upstream (alpha-census
+0/256 opaque px each) — transparent shells would be dead assets, so those families ride
+colored-only and stay off the cutout seat. The shells carry no tintindex (the upstream
+overlay is UNCOLOURED) and the walls' rim strips sample only the empty top rows, so the
+NEI corner glyph seat (8px+0.001) stays unobstructed:
+
+- `block/tools/bathing_pot_wood_overlay/sides.png` — `684c27c752c969193cc148e615d342270058786cbcfe103aafa44e51f3eec5ff` (upstream `blocks/machines/tools/bathing_pot_wood/overlay/sides.png`; the metal hoops)
+- `block/tools/mixing_bowl_overlay/sides.png` — `4e1270a751a6b9781feb5f35ef11e7d84156931c40515267109be270f8c17c01` (upstream `blocks/machines/tools/mixing_bowl/overlay/sides.png`; the red waves)
+- `block/tools/mixing_bowl_overlay/insides.png` — `ce13d1d0404de7c69dc437607bd8a06c9c561d983546ec3f62015d6f9ab9803c` (upstream `blocks/machines/tools/mixing_bowl/overlay/insides.png`)
+- `block/tools/mixing_bowl_overlay/top.png` — `c5f5158442792f68fba493ade64a4ccc15058796535808dc785e8a858b05a4bd` (upstream `blocks/machines/tools/mixing_bowl/overlay/top.png`; the floor ring)
+- `block/tools/mixing_bowl_overlay/bottom.png` — `320a556c986ad0b461bb25c416c929eccb132d338f9b0acb4dc5cf5fa4737b81` (upstream `blocks/machines/tools/mixing_bowl/overlay/bottom.png`)
 
 Borrowed (the kitchen NEI corner glyph sheet, task mixingbowl-bathingpot-fidelity):
 

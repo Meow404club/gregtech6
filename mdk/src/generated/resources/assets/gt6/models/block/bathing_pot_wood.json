@@ -190,11 +190,131 @@
         8,
         14
       ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        -0.01,
+        -0.01,
+        -0.01
+      ],
+      "to": [
+        16.01,
+        2.01,
+        16.01
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        -0.01,
+        2,
+        -0.01
+      ],
+      "to": [
+        16.01,
+        8,
+        2.01
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        -0.01,
+        2,
+        13.99
+      ],
+      "to": [
+        16.01,
+        8,
+        16.01
+      ]
+    },
+    {
+      "faces": {
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        },
+        "west": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        -0.01,
+        2,
+        1.99
+      ],
+      "to": [
+        2.01,
+        8,
+        14.01
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#overlay_sides"
+        },
+        "north": {
+          "texture": "#overlay_sides"
+        },
+        "south": {
+          "texture": "#overlay_sides"
+        }
+      },
+      "from": [
+        13.99,
+        2,
+        1.99
+      ],
+      "to": [
+        16.01,
+        8,
+        14.01
+      ]
     }
   ],
+  "render_type": "minecraft:cutout",
   "textures": {
     "bottom": "gt6:block/tools/bathing_pot_wood/bottom",
     "insides": "gt6:block/tools/bathing_pot_wood/insides",
+    "overlay_sides": "gt6:block/tools/bathing_pot_wood_overlay/sides",
     "particle": "#sides",
     "sides": "gt6:block/tools/bathing_pot_wood/sides",
     "top": "gt6:block/tools/bathing_pot_wood/top"

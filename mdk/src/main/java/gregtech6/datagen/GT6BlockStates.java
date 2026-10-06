@@ -4869,17 +4869,31 @@ public final class GT6BlockStates extends BlockStateProvider {
      * material's mRGBa (WoodTreated/StainlessSteel/Ceramic, the GT6Kitchen
      * .paintableBlockArray census) over these faces, the upstream getTexture2 multiply
      * (MultiTileEntityBathingPot.java:375-379).
+     *
+     * <p>Since task mixingbowl-bathingpot-fidelity the second getTexture2 layer rides
+     * too: the upstream composites {@code BlockTextureMulti(colored×mRGBa, overlay)} on
+     * EVERY body face (:375-379 pot / :396-400 bowl) — the borrow formerly declared a
+     * pool cut. Only the tiles WITH art get shells: the bowl carries the full decor set
+     * (the red waves down the sides + the cavity lines + the floor ring + the bottom
+     * plate) and the wood pot its metal hoops (sides only — its
+     * {@code overlay/insides,top,bottom} are fully transparent, and the steel pot's and
+     * juicer's WHOLE overlay set is transparent, so those two ship no shells at all and
+     * stay off the cutout seat).
      */
     private void addKitchen() {
-        addKitchenBlock(GT6Kitchen.BATHING_POT_WOOD.get(), "bathing_pot_wood", "bathing_pot_wood", false);
-        addKitchenBlock(GT6Kitchen.BATHING_POT_STEEL.get(), "bathing_pot_steel", "bathing_pot", false);
-        addKitchenBlock(GT6Kitchen.MIXING_BOWL.get(), "mixing_bowl", "mixing_bowl", false);
-        addKitchenBlock(GT6Kitchen.JUICER.get(), "juicer", "juicer", true);
+        addKitchenBlock(GT6Kitchen.BATHING_POT_WOOD.get(), "bathing_pot_wood", "bathing_pot_wood", false, true);
+        addKitchenBlock(GT6Kitchen.BATHING_POT_STEEL.get(), "bathing_pot_steel", "bathing_pot", false, false);
+        addKitchenBlock(GT6Kitchen.MIXING_BOWL.get(), "mixing_bowl", "mixing_bowl", false, true);
+        addKitchenBlock(GT6Kitchen.JUICER.get(), "juicer", "juicer", true, false);
     }
 
-    /** One kitchen block: its element model + the property-free single-state blockstate + the BlockItem parent (the addAnvils form). */
-    private void addKitchenBlock(Block aBlock, String aName, String aFamily, boolean aJuicer) {
-        ModelFile tModel = aJuicer ? kitchenJuicerModel(aName, aFamily) : kitchenTubModel(aName, aFamily);
+    /**
+     * One kitchen block: its element model + the property-free single-state blockstate +
+     * the BlockItem parent (the addAnvils form); {@code aOverlay} = the family carries
+     * overlay art (the shell grammar, {@link #kitchenTubModel}).
+     */
+    private void addKitchenBlock(Block aBlock, String aName, String aFamily, boolean aJuicer, boolean aOverlay) {
+        ModelFile tModel = aJuicer ? kitchenJuicerModel(aName, aFamily) : kitchenTubModel(aName, aFamily, aOverlay);
         simpleBlock(aBlock, tModel);
         itemModels().withExistingParent(aName, tModel.getLocation());
     }
@@ -4896,6 +4910,21 @@ public final class GT6BlockStates extends BlockStateProvider {
         return aModel;
     }
 
+    /** The decor families' overlay band (block/tools/&lt;family&gt;_overlay/&lt;face&gt;.png, the borrowed upstream overlay tiles); only tiles with art are declared. */
+    private void kitchenOverlayTextures(BlockModelBuilder aModel, String aFamily) {
+        aModel.texture("overlay_sides", modLoc("block/tools/" + aFamily + "_overlay/sides"));
+        if (kitchenDecorFamily(aFamily)) {
+            aModel.texture("overlay_insides", modLoc("block/tools/" + aFamily + "_overlay/insides"))
+                    .texture("overlay_top", modLoc("block/tools/" + aFamily + "_overlay/top"))
+                    .texture("overlay_bottom", modLoc("block/tools/" + aFamily + "_overlay/bottom"));
+        }
+    }
+
+    /** The bowl is the full-decor family (its overlay set carries all four tiles with art); the wood pot rides the sides-only hoop band. */
+    private boolean kitchenDecorFamily(String aFamily) {
+        return "mixing_bowl".equals(aFamily);
+    }
+
     /** The panel face texture: up "top", down "bottom", the cavity side "insides", everything else (outer + end-caps) "sides". */
     private String kitchenPanelTexture(Direction aDir, Direction aOutward) {
         if (aDir == Direction.UP) return "#top";
@@ -4903,10 +4932,14 @@ public final class GT6BlockStates extends BlockStateProvider {
         return aDir.getOpposite() == aOutward ? "#insides" : "#sides";
     }
 
-    /** The hollow-tub model (pot pair + bowl): 2px walls y 2..8 + the 2px base slab (its up face is the cavity floor). */
-    private ModelFile kitchenTubModel(String aName, String aFamily) {
+    /** The hollow-tub model (pot pair + bowl): 2px walls y 2..8 + the 2px base slab (its up face is the cavity floor); the overlay decor families add the shell layer. */
+    private ModelFile kitchenTubModel(String aName, String aFamily, boolean aOverlay) {
         BlockModelBuilder tModel = kitchenTextures(models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block"))), aFamily, false);
+        if (aOverlay) {
+            kitchenOverlayTextures(tModel, aFamily);
+            tModel.renderType("cutout"); // the shells' transparent texels must discard (the mortar two-layer form)
+        }
         tModel.element().from(0.0F, 0.0F, 0.0F).to(16.0F, 2.0F, 16.0F)
                 .allFaces((aDir, aFace) -> {
                     aFace.texture(aDir == Direction.UP ? "#top"
@@ -4917,6 +4950,13 @@ public final class GT6BlockStates extends BlockStateProvider {
         kitchenTubWall(tModel, 0.0F, 14.0F, 16.0F, 16.0F, Direction.SOUTH);
         kitchenTubWall(tModel, 0.0F, 2.0F, 2.0F, 14.0F, Direction.WEST);
         kitchenTubWall(tModel, 14.0F, 2.0F, 16.0F, 14.0F, Direction.EAST);
+        if (aOverlay) {
+            kitchenTubSlabShell(tModel, kitchenDecorFamily(aFamily));
+            kitchenTubWallShell(tModel, 0.0F, 0.0F, 16.0F, 2.0F, Direction.NORTH, kitchenDecorFamily(aFamily));
+            kitchenTubWallShell(tModel, 0.0F, 14.0F, 16.0F, 16.0F, Direction.SOUTH, kitchenDecorFamily(aFamily));
+            kitchenTubWallShell(tModel, 0.0F, 2.0F, 2.0F, 14.0F, Direction.WEST, kitchenDecorFamily(aFamily));
+            kitchenTubWallShell(tModel, 14.0F, 2.0F, 16.0F, 14.0F, Direction.EAST, kitchenDecorFamily(aFamily));
+        }
         return tModel;
     }
 
@@ -4927,6 +4967,46 @@ public final class GT6BlockStates extends BlockStateProvider {
                     aFace.texture(kitchenPanelTexture(aDir, aOutward));
                     aFace.tintindex(0);
                 }).end();
+    }
+
+    /**
+     * The base slab's overlay shell — the 0.01-inflated mortar grammar, y-inflated too
+     * (the bowl's floor ring rides the up face at +0.01, well under the NEI corner
+     * glyph's rim seat). The bowl decorates up+down+sides; the wood pot's hoops wrap the
+     * outer sides only (its top/bottom overlay tiles are fully transparent upstream).
+     */
+    private void kitchenTubSlabShell(BlockModelBuilder aModel, boolean aDecor) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element()
+                .from(-0.01F, -0.01F, -0.01F).to(16.01F, 2.01F, 16.01F);
+        if (aDecor) {
+            tElement.face(Direction.UP).texture("#overlay_top").end();
+            tElement.face(Direction.DOWN).texture("#overlay_bottom").end();
+        }
+        for (Direction tDir : new Direction[] {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST}) {
+            tElement.face(tDir).texture("#overlay_sides").end();
+        }
+        tElement.end();
+    }
+
+    /**
+     * One tub wall panel's overlay shell — x/z-inflated 0.01 over the body panel, NO rim
+     * up face (the rim strips sample the overlay_top rows 0..2, which are empty — the
+     * floor ring lives on the slab shell) and NO down face (enclosed by the base slab).
+     * Faces: outward + end caps ride {@code overlay_sides} for every decor family; the
+     * cavity face rides {@code overlay_insides} for the bowl alone (the wood hoops ship
+     * sides art only). No tintindex — the upstream overlay is UNCOLOURED (the P22 decal
+     * contract, BlockTextureDefault.get(sOverlaySides) carries no mRGBa).
+     */
+    private void kitchenTubWallShell(BlockModelBuilder aModel, float aMinX, float aMinZ, float aMaxX, float aMaxZ,
+            Direction aOutward, boolean aDecor) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element()
+                .from(aMinX - 0.01F, 2.0F, aMinZ - 0.01F).to(aMaxX + 0.01F, 8.0F, aMaxZ + 0.01F);
+        for (Direction tDir : new Direction[] {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST}) {
+            if (tDir.getOpposite() == aOutward && !aDecor) continue; // the cavity face: bowl-only art
+            String tPanel = kitchenPanelTexture(tDir, aOutward); // "#sides" / "#insides" — strip the marker for the overlay band
+            tElement.face(tDir).texture("#overlay_" + tPanel.substring(1)).end();
+        }
+        tElement.end();
     }
 
     /**
