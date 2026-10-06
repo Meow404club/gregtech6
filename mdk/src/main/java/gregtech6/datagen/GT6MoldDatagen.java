@@ -150,15 +150,17 @@ public final class GT6MoldDatagen {
 			 * OP.blockSolid, ...)} :162 — no overlay pass), tintindex 0 on every face
 			 * (the GT6MoldTintListener seat; the finished-texture rows answer -1, inert),
 			 * cullface only where a face lies on the block boundary (the mount face
-			 * against the host culls — the attachment idiom).
+			 * against the host culls — the attachment idiom). The element table is the
+			 * SHARED {@link gregtech6.tileentity.tools.TileEntityFaucet#MODEL_BOXES}
+			 * (task faucet-material-rows spec 2): the shape constants and the three-way
+			 * geometry pin derive from the same floats — one derivation, no drift.
 			 */
 			private ModelFile faucetStackModel(String aName, ResourceLocation aBody) {
 				BlockModelBuilder tModel = models().getBuilder("block/" + aName)
 						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
 						.texture("all", aBody)
 						.texture("particle", "#all");
-				float[][] tBoxes = {{6, 1, 0, 10, 2, 4}, {5, 2, 0, 6, 6, 4}, {10, 2, 0, 11, 6, 4}};
-				for (float[] tBox : tBoxes) {
+				for (float[] tBox : gregtech6.tileentity.tools.TileEntityFaucet.MODEL_BOXES) {
 					var tElement = tModel.element()
 							.from(tBox[0], tBox[1], tBox[2]).to(tBox[3], tBox[4], tBox[5]);
 					for (net.minecraft.core.Direction tDir : net.minecraft.core.Direction.values()) {
