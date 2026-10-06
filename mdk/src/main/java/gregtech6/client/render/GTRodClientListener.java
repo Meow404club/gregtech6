@@ -14,6 +14,7 @@ import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import gregtech6.client.wire.GTWireTextures;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Logistics;
 import gregtech6.registry.GTFluidPipes;
@@ -75,11 +76,11 @@ public final class GTRodClientListener {
 	private GTRodClientListener() {
 	}
 
-	/** The borrowed pipe art families (the tex-pipe-textures pairs, the datagen shared models). */
-	private static final ResourceLocation WOOD_PIPE = new ResourceLocation("gt6", "block/materialicons/wood/pipe_side");
-	private static final ResourceLocation WOOD_PIPE_OVERLAY = new ResourceLocation("gt6", "block/materialicons/wood/pipe_side_overlay");
-	private static final ResourceLocation COPPER_PIPE = new ResourceLocation("gt6", "block/materialicons/copper/pipe_side");
-	private static final ResourceLocation COPPER_PIPE_OVERLAY = new ResourceLocation("gt6", "block/materialicons/copper/pipe_side_overlay");
+	/**
+	 * The remaining dedicated rod art ids (the per-material SET pipe pairs live on
+	 * {@link gregtech6.client.wire.GTWireTextures} since pipe-render-closeout — the
+	 * shared dispatch seam with the datagen walk).
+	 */
 	private static final ResourceLocation PIPE_RESTRICTOR = new ResourceLocation("gt6", "block/iconsets/pipe_restrictor");
 	private static final ResourceLocation LOGISTICS_WIRE = new ResourceLocation("gt6", "block/iconsets/logistics_wire");
 	private static final ResourceLocation LOGISTICS_WIRE_OVERLAY = new ResourceLocation("gt6", "block/iconsets/logistics_wire_overlay");
@@ -139,26 +140,40 @@ public final class GTRodClientListener {
 	/**
 	 * The param table (idempotent, test-callable). Registry dereference is safe: mod
 	 * loading finished long before client setup / the first bake.
+	 *
+	 * <p>Task pipe-render-closeout — the pipe rows ride the zero-parallel-table SET
+	 * derivation ({@link GTWireTextures#pipeSideSprite}): the borrowed pipeSide art is
+	 * byte-identical across every upstream texture set except WOOD and RUBBER, so the
+	 * dispatch resolves wood rows to the wood art, the rubber row to the rubber art and
+	 * everything else to the shared copper copy (the datagen pipeBlockstate walk over
+	 * the same seam — the single dispatch source). The former wood-family/copper binary
+	 * (the tex-pipe-textures declared transition) is retired. The connected arms ride
+	 * the per-diameter arts ({@link GTWireTextures#pipeArmSprite}, the upstream selector
+	 * TileEntityBase10ConnectorRendered :265 verbatim — tiny/small/medium/large/huge over
+	 * the PX_P diameter); the logistics wire and the axles stay single-art (arm = base).
 	 */
 	public static synchronized void buildParams() {
 		if (sBuilt) return;
-		// the fluid pipe matrix — wood family rows ride the wood pair, everything else
-		// the copper pair (the datagen pipeBlockstate dispatch verbatim)
+		// the fluid pipe matrix (280 rows) — per-material SET art
 		for (GTFluidPipes.FluidPipeRow tRow : GTFluidPipes.ROWS) {
-			boolean tWood = tRow.material().blockFamily() == GTFluidPipes.PipeBlockFamily.WOODEN;
-		PARAMS.put(tRow.path(), new Entry(new GTRodBakedModel.Params(
-					tWood ? WOOD_PIPE : COPPER_PIPE,
-					List.of(tWood ? WOOD_PIPE_OVERLAY : COPPER_PIPE_OVERLAY),
+			PARAMS.put(tRow.path(), new Entry(new GTRodBakedModel.Params(
+					GTWireTextures.pipeSideSprite(tRow.material().oreDictMaterial()),
+					GTWireTextures.pipeArmSprite(tRow.material().oreDictMaterial(), tRow.variant().diameterPx),
+					List.of(GTWireTextures.PIPE_SIDE_OVERLAY_SPRITE),
 					tRow.variant().diameterPx),
 					GTFluidPipes.BLOCKS_BY_PATH.get(tRow.path()).get()));
 		}
-		// the item pipe rows — the copper pair; the restrictive variants stack the
+		// the item pipe rows — per-material SET art; the restrictive variants stack the
 		// upstream third pass (the PIPE_RESTRICTOR decal, PipeItem :280)
 		for (GTItemPipes.ItemPipeRow tRow : GTItemPipes.ROWS) {
 			List<ResourceLocation> tOverlays = tRow.variant().suffix.startsWith("restrictive")
-					? List.of(COPPER_PIPE_OVERLAY, PIPE_RESTRICTOR) : List.of(COPPER_PIPE_OVERLAY);
+					? List.of(GTWireTextures.PIPE_SIDE_OVERLAY_SPRITE, PIPE_RESTRICTOR)
+					: List.of(GTWireTextures.PIPE_SIDE_OVERLAY_SPRITE);
 			PARAMS.put(tRow.path(), new Entry(new GTRodBakedModel.Params(
-					COPPER_PIPE, tOverlays, tRow.variant().diameterPx),
+					GTWireTextures.pipeSideSprite(tRow.material().oreDictMaterial()),
+					GTWireTextures.pipeArmSprite(tRow.material().oreDictMaterial(), tRow.variant().diameterPx),
+					tOverlays,
+					tRow.variant().diameterPx),
 					GTItemPipes.BLOCKS_BY_PATH.get(tRow.path()).get()));
 		}
 		// the logistics wire — the dedicated pair, upstream NBT_DIAMETER PX_P[6] (Loader :1819)

@@ -124,5 +124,14 @@ public final class GT6Atlases extends SpriteSourceProvider {
         // gt6 folder lands as gt6:block/barometer/{base,00..31} — the model's sprite ids.
         atlas(BLOCKS_ATLAS).addSource(new net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister(
                 "block/barometer", "block/barometer"));
+        // task pipe-render-closeout — the borrowed materialicons pipe arts: the rod baked
+        // model (GTRodBakedModel.spriteOf) resolves the pipeSide core AND the per-diameter
+        // arm arts at bake time with NO model JSON (the barometer DirectoryLister
+        // precedent — the atlas source IS the consumer-side stitching). One directory
+        // source covers the whole folder: every borrowed art under gt6
+        // textures/block/materialicons lands as gt6:block/materialicons/<set>/<art> —
+        // the exact sprite ids GTWireTextures.pipeSideSprite/pipeArmSprite emit.
+        atlas(BLOCKS_ATLAS).addSource(new net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister(
+                "block/materialicons", "block/materialicons/"));
     }
 }
