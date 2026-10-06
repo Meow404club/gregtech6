@@ -9612,25 +9612,41 @@ tiles upstream (only `bathing_pot_wood` differs), which is why the digests repea
 - `block/tools/juicer/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middleside.png`; the same uniform tile as the bottom — upstream ships it un-detailed, the mRGBa tint carries the face)
 - `block/tools/juicer/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middletop.png`; the same uniform tile as the bottom)
 
-Derived (the kitchen NEI corner glyphs, task kitchen-nei-corner-jump):
+Borrowed (the kitchen NEI corner glyph sheet, task mixingbowl-bathingpot-fidelity):
 
-The kitchen family's rim-corner recipe-viewer glyph does NOT borrow the upstream
-`overlays/characters/nei.png` verbatim — the corner glyph is viewer-dynamic now (装 JEI 显
+The kitchen family's rim-corner recipe-viewer glyph ships the upstream
+`overlays/characters/nei.png` VERBATIM since the mixingbowl-bathingpot-fidelity
+correction (BI.CHAR_NEI, BI.java:120 — the user ruling: 上游形态是唯一基准; the earlier
+viewer-lettered derivation below is RETIRED for this family). Upstream renders the white
+sheet tinted yellow at render time (`BI.nei()` x `CA_YELLOW_255 {255,255,0,255}`,
+CS.java:389); the port keeps the PNG byte-identical and rides the yellow in the baked
+quad's vertex colours (`GTMachineTintModel.retintVertices`, tintIndex -1 — the P22
+uncoloured-decal contract). The glyph quad's UV is its own 2x2px footprint (the upstream
+render-bounds interpolation, `IIcon.getInterpolatedU(renderMinX*16)`, ITexture.java
+:295-298), so the corner samples ONE 16px word cell of the 8x8 grid — the full-sheet UV
+this family shipped before squeezed all 64 words onto the corner (the user-visible
+「一堆特别小的字样」bug). The viewer gate (presence only, `GTViewerJump.preferredViewer()`)
+is unchanged; the jump target stays EMI-first (viewer_priority_emi).
+
+- `block/tools/kitchen_nei.png` — `40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2` (upstream `blocks/overlays/characters/nei.png`, byte-identical; the sha is the former "upstream reference, NOT borrowed" traceability row — it grounds now)
+
+Derived (the SIBLING families' NEI corner glyphs, task kitchen-nei-corner-jump):
+
+The anvil/mortar/sifting-table/grindstone siblings keep the viewer-dynamic pair (装 JEI 显
 「JEI」/仅装 EMI 显「EMI」, the r11-nei-corner-jump + viewer_priority_emi rulings; the
 bake-time gate rides `GTViewerJump.preferredViewer()`). The two tiles are DERIVED from the
-upstream NEI sheet instead: same 128x128 canvas with the 8x8 16px-cell tiling, the text
+upstream NEI sheet: same 128x128 canvas with the 8x8 16px-cell tiling, the text
 band y3..12 and the x2 left margin verbatim, the `E`/`I` glyphs pixel-extracted from the
 upstream sheet (the E 4px + I 1px columns at the cell's x8..13), the `J`/`M` glyphs
 hand-drawn in the same 1px-stroke block style (5x10 each — upstream ships no J/M), one
 inter-letter pixel gap. Upstream renders the sheet white and tints it yellow at render
-time (`BI.nei()` x `CA_YELLOW_255 {255,255,0,255}`, CS.java:389); the port's decal is
+time (`BI.nei()` x `CA_YELLOW_255 {255,255,0,255}`, CS.java:389); the sibling decals are
 untinted (tintIndex -1), so the yellow is BAKED IN: every opaque pixel maps gray
 luminance (g,g,g) → (g,g,0) — the exact product of the upstream white art x yellow tint,
 anti-aliasing grays included.
 
 - `block/tools/kitchen_nei_jei.png` — `7a74e7a8e7e901d20024a417eef56c111afcb216d9eda46b3a43198000157ef0` (derived: J hand-drawn + E/I extracted from upstream `blocks/overlays/characters/nei.png`, yellow baked)
 - `block/tools/kitchen_nei_emi.png` — `2c812935abf7245e00771d0457cb2684a2ecbd3c748e0a53c9a99dea3a0d09aa` (derived: M hand-drawn + E/I extracted from the same sheet, yellow baked)
-- upstream reference (NOT borrowed): `blocks/overlays/characters/nei.png` — `40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2` (the derivation source sheet, sha256 recorded for traceability)
 
 ## Mortar tool block textures (task mortar-family)
 

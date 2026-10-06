@@ -38,19 +38,34 @@ import gregtech6.gui.GTViewerJump;
 import gregtech6.registry.GT6Kitchen;
 
 /**
- * The kitchen NEI corner glyph (task kitchen-nei-corner-jump): the rim-corner quad the
- * upstream pot/bowl/juicer drew as render pass 6/7 ({@code BI.nei()} on the walls' corner
- * column top, MixingBowl.java:375 case 6 / Juicer :239 case 7). The patch is a BAKE-TIME
- * append over the family's static models, gated by the ONE viewer predicate the jump
- * route uses — {@link GTViewerJump#preferredViewer()} — so the glyph is viewer-dynamic:
- * EMI present → the 「EMI」 tile, JEI only → 「JEI」, neither → NO patch at all (the
- * known_bugs.r11-nei ruling: two missing viewers must not show a dead button; the
- * viewer_priority_emi ruling: a dual install renders and jumps to EMI — what you see is
- * what you jump to).
+ * The kitchen NEI corner glyph (task kitchen-nei-corner-jump, corrected by task
+ * mixingbowl-bathingpot-fidelity): the rim-corner quad the upstream pot/bowl/juicer drew
+ * as render pass 6/7 ({@code BI.nei()} on the walls' corner column top, MixingBowl.java
+ * :374 case 6 box / :409 texture, Juicer :237/:239 case 7). The patch is a BAKE-TIME
+ * append over the family's static models, gated by viewer PRESENCE — the one predicate
+ * the jump route consumes, {@link GTViewerJump#preferredViewer()} — a viewer-less install
+ * shows no patch at all (the known_bugs.r11-nei ruling: no dead button).
+ *
+ * <p>UPSTREAM FIDELITY (the mixingbowl-bathingpot-fidelity correction): the glyph is the
+ * byte-identical upstream sheet {@code overlays/characters/nei.png} (BI.CHAR_NEI,
+ * BI.java:120) — NOT the viewer-lettered tiles this model shipped before (the derived
+ * 「JEI」/「EMI」 tiles remain only for the anvil/mortar/sifting/grindstone siblings, their
+ * own cards). Upstream tints the white sheet yellow at render
+ * ({@code CA_YELLOW_255}, CS.java:389 — the {255,255,0,255} multiply); here that rides
+ * {@link GTMachineTintModel#retintVertices} over the baked quad's vertex colours, so the
+ * shipped PNG stays byte-identical and the colour still never reaches a tint index (the
+ * P22 uncoloured-decal contract, tintIndex -1).
+ *
+ * <p>UV CROP (the actual small-letter-pile bug): upstream maps a box face by RENDER
+ * BOUNDS — {@code IIcon.getInterpolatedU(renderMinX*16)} (ITexture.java:295-298) — so the
+ * 2x2px corner quad samples only the 2/16-wide sheet crop: ONE {@code NEI} word cell of
+ * the 8x8 grid. The first port baked the full-sheet {@code [0,0,16,16]} UV instead,
+ * squeezing all 64 words onto the corner (the user-visible 「一堆特别小的字」). The quad's
+ * BlockFaceUV is now its own footprint {@code [x0,z0,x0+2,z0+2]} — the interpolated crop.
  *
  * <p>WHY an appended quad and not a datagen element: the visibility gate is per-user
  * (the client's ModList at resource load), and the shipped blockstate JSON is fixed — a
- * static element cannot un-render for the viewer-less install. The glyph textures are
+ * static element cannot un-render for the viewer-less install. The glyph texture is
  * stitched by vanilla's directory-source block atlas (any {@code textures/block/**} PNG),
  * so the append needs zero JSON on either side.
  *
@@ -66,12 +81,10 @@ import gregtech6.registry.GT6Kitchen;
  * family ({@code instanceof GTDynamicBakedModel} guard) and the tint rides HERE (the
  * {@link GTOvenOverlayModel} shape — the oven ladder self-tints for the same reason).
  *
- * <p>Upstream geometry verbatim: a 2x2px UP quad on the walls' corner column top, the
- * whole 128x128 sheet squeezed onto it (the 1.7.10 IIcon full-texture mapping), lifted
+ * <p>Upstream geometry verbatim: a 2x2px UP quad on the walls' corner column top, lifted
  * +0.001 off the wall rim — {@code PX_N[8]+0.001F} on the tub pair (walls y 2..8, corner
  * (0..2)x(0..2)), {@code PX_N[12]+0.001F} on the Juicer (walls y 0..4, corner (2..4)x(2..4)
- * — the 4px family variant's rim). TintIndex -1: the yellow is baked into the PNG, never
- * retinted (the P22 uncoloured-decal contract).
+ * — the 4px family variant's rim).
  *
  * <p>CLIENT-only by registration ({@code Dist.CLIENT} listener — the dedicated server
  * never loads this class; the offline pins drive the test ctor directly, the
@@ -80,9 +93,26 @@ import gregtech6.registry.GT6Kitchen;
 @Mod.EventBusSubscriber(modid = GTRenderModelListener.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class GT6KitchenNeiModel extends GTDynamicBakedModel {
 
-	/** The derived glyph sprites (the README "Derived" ledger — the viewer-dynamic corner tiles). */
+	/**
+	 * The derived glyph sprites — the SIBLING families' viewer-dynamic corner tiles
+	 * (GT6AnvilNeiModel/GT6MortarNeiModel/GT6SiftingTableNeiModel/GT6GrindstoneNeiModel,
+	 * the README "Derived" ledger). The kitchen family itself rode the upstream
+	 * verbatim sheet since the mixingbowl-bathingpot-fidelity correction.
+	 */
 	public static final String SPRITE_JEI = "block/tools/kitchen_nei_jei";
 	public static final String SPRITE_EMI = "block/tools/kitchen_nei_emi";
+
+	/**
+	 * The upstream NEI sheet verbatim (BI.CHAR_NEI, BI.java:120 — the sha-ledgered
+	 * byte-identical borrow, the README kitchen section).
+	 */
+	public static final String SPRITE_NEI = "block/tools/kitchen_nei";
+
+	/**
+	 * The upstream render tint — {@code CA_YELLOW_255} (CS.java:389, {@code {255,255,0,255}}),
+	 * ARGB for {@link GTMachineTintModel#retintVertices}.
+	 */
+	public static final int NEI_TINT_YELLOW = 0xFFFFFF00;
 
 	/** The rim lift — upstream {@code PX_N[8]+0.001F} / {@code PX_N[12]+0.001F}. */
 	public static final float NEI_LIFT = 0.001F;
@@ -176,10 +206,9 @@ public class GT6KitchenNeiModel extends GTDynamicBakedModel {
 	@Nullable
 	private BakedQuad neiQuad() {
 		if (mNeiQuad == null) {
-			String tViewer = mViewerProbe.get();
-			if (tViewer == null) return null;
+			if (mViewerProbe.get() == null) return null; // no viewer → no patch (the nei ruling); the sheet is NOT viewer-lettered
 			ResourceLocation tSpriteId = ResourceLocation.fromNamespaceAndPath(
-					GTRenderModelListener.MOD_ID, "emi".equals(tViewer) ? SPRITE_EMI : SPRITE_JEI);
+					GTRenderModelListener.MOD_ID, SPRITE_NEI);
 			TextureAtlasSprite tSprite = mSpriteLookup.apply(tSpriteId);
 			if (tSprite == null) return null; // atlas gap: skip the quad instead of rendering garbage
 			mNeiQuad = bakeNeiQuad(new NeiPlan(tSprite, tSpriteId));
@@ -202,13 +231,20 @@ public class GT6KitchenNeiModel extends GTDynamicBakedModel {
 		net.minecraft.world.phys.AABB tBox = mShape.toAabbs().get(0);
 		double tX0 = tBox.minX * 16, tZ0 = tBox.minZ * 16;
 		double tRim = tBox.maxY * 16;
-		// the bakeQuad call is the GTOvenOverlayModel.bakeOverlayQuad form: canonical
-		// full-face UV [0,0,16,16] (the #27 ruling), tintIndex -1 (the P22 decal contract),
-		// cullface up (the glyph hides under a block placed on the rim — vanilla semantics)
-		return BAKERY.bakeQuad(new Vector3f((float) tX0, (float) tRim, (float) tZ0),
+		// the UV is the QUAD'S OWN FOOTPRINT — the upstream render-bounds interpolation
+		// (IIcon.getInterpolatedU(renderMinX*16), ITexture.java:295-298): the 2x2px corner
+		// samples exactly one 16px NEI word cell of the 128px sheet, never the whole grid
+		// (the full-sheet UV was the small-letter-pile bug the fidelity card fixed).
+		// tintIndex -1 (the P22 decal contract), cullface up (the glyph hides under a block
+		// placed on the rim — vanilla semantics); the CA_YELLOW_255 render tint rides the
+		// vertex colours (retintVertices), keeping the shipped PNG byte-identical.
+		BakedQuad tQuad = BAKERY.bakeQuad(new Vector3f((float) tX0, (float) tRim, (float) tZ0),
 				new Vector3f((float) (tX0 + PATCH_PX), (float) (tRim + NEI_LIFT), (float) (tZ0 + PATCH_PX)),
-				new BlockElementFace(Direction.UP, -1, aPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
+				new BlockElementFace(Direction.UP, -1, aPlan.sprite().toString(),
+						new BlockFaceUV(new float[] {(float) tX0, (float) tZ0, (float) (tX0 + PATCH_PX), (float) (tZ0 + PATCH_PX)}, 0)),
 				aPlan.baked(), Direction.UP, BlockModelRotation.X0_Y0, null, true, aPlan.sprite());
+		return new BakedQuad(GTMachineTintModel.retintVertices(tQuad.getVertices(), NEI_TINT_YELLOW),
+				tQuad.getTintIndex(), tQuad.getDirection(), tQuad.getSprite(), tQuad.isShade());
 	}
 
 	// ---------------------------------------------------------------------------
