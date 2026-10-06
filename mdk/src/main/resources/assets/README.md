@@ -11161,7 +11161,7 @@ as historical digests. The fusion/implosion/massfab colored flats STAY (the new
 body cubes still bind them).
 ## GUI part crops, amazawa gregtech + minecraft domains (task gui-part-crops)
 
-New small-caps texture domain `gt6:textures/gui/parts/` (12 sprites): composable GUI
+New small-caps texture domain `gt6:textures/gui/parts/` (21 sprites): composable GUI
 parts cropped out of the amazawa resource-pack's gregtech domain (machine skins) and
 its minecraft domain (reskinned vanilla widgets — the sanctioned generic-part
 fallback for the flat buttons). **TFC domain is NOT used** (2026-09-29 ruling:
@@ -11172,7 +11172,7 @@ paths/dimensions/9-slice borders = `GT6GuiParts` (gui/machines); the machine-pin
 provenance chain is `mdk/tools/crop_gui_parts.py` (canonical cropper, rect table)
 -> `mdk/tools/parts_manifest.json` (per-part source + rect + sha256)
 -> `GT6GuiPartsDatagenTest` (dims + sha + constants mirror + TFC-exclusion guard +
-pixel-exact rect replay from the six committed test fixtures).
+pixel-exact rect replay from the eight committed test fixtures).
 
 Source pack: tfc-amazawa-light-gui v1.0.5g — https://modrinth.com/resourcepack/tfc-amazawa-light-gui
 License: Apache-2.0 (Modrinth license field) + author verbal attribution; author 天沢香
@@ -11211,6 +11211,24 @@ source (stroke columns/rows aligned, no neighbor bleed).
 | slot_fluid_18x19.png | 18x19 | Distillery.png | 106,24,18,19 | `5f3e1ff1472f37f1` |
 | button_flat_200x20.png | 200x20 | widgets.png | 0,66,200,20 | `483a8aaa9c88642a` |
 | button_flat_hover_200x20.png | 200x20 | widgets.png | 0,86,200,20 | `3815d194e4a8b19e` |
+| act_cell_blueprint_18x18.png | 18x18 | advancedcraftingtable.png | 134,26,18,18 | (see manifest) |
+| act_cell_drop_arrow_18x18.png | 18x18 | advancedcraftingtable.png | 152,26,18,18 | (see manifest) |
+| act_cell_sort_18x18.png | 18x18 | advancedcraftingtable.png | 134,44,18,18 | (see manifest) |
+| act_cell_flush_18x18.png | 18x18 | advancedcraftingtable.png | 152,44,18,18 | (see manifest) |
+| act_cell_craft_18x18.png | 18x18 | advancedcraftingtable.png | 134,62,18,18 | (see manifest) |
+| act_cell_neutral_18x18.png | 18x18 | advancedcraftingtable.png | 152,62,18,18 | (see manifest) |
+| act_cell_tools_18x18.png | 18x18 | advancedcraftingtable.png | 79,7,18,18 | (see manifest) |
+| act_cell_tools_charging_18x18.png | 18x18 | advancedcraftingtablecharging.png | 79,7,18,18 | (see manifest) |
+
+The `act_cell_*` row (parts 14-21, task act-gui-overlay-overhaul) crops from the two
+COMMITTED ACT sheets (`gt6/textures/gui/machines/advancedcraftingtable{,charging}.png`
+— themselves byte-identical upstream borrows, sha-ledgered in the act-dual-gui rows
+above; both sheets are also committed as test fixtures so the rect replay covers
+them). They are the cell prints the composed ACT panel would otherwise lose when the
+whole-sheet background retired: the blueprint/drop-arrow/P/tool-holder slot hints and
+the sort/flush button faces plus the craft-hammer output cell. Each crop includes the
+sheet's own frame, so the seat's `background(...)` replaces the theme slot frame (the
+double-slot elimination is the same stroke).
 
 (sha256(16) = first 16 hex of the full digest; the manifest and the test pin the
 full hex for every part — this table is the human-replay view, the manifest is the

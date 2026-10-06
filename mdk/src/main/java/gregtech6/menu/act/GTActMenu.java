@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import brachy.modularui.api.IUIHolder;
 import brachy.modularui.api.drawable.Text;
-import brachy.modularui.drawable.UITexture;
 import brachy.modularui.factory.AbstractUIFactory;
 import brachy.modularui.factory.GuiManager;
 import brachy.modularui.factory.PosGuiData;
@@ -47,15 +46,20 @@ import gregtech6.tileentity.machines.TileEntityChargingCraftingTable;
  * 34 = flush, 35 = sort) become the two action buttons. The 9x4 belt (35-70) is
  * automation-only upstream and shows nowhere in the GUI either.
  *
- * <p><b>Layout (task act-dual-gui):</b> the panel is the upstream 176x166 machine sheet
- * (the borrowed advancedcraftingtable{,charging}.png canvases, the top-left 176x166
- * sub-area — the 256x256 whole-canvas stretch is the gui-bg-uv-fix disease) and the
- * player inventory 36 seats ride the tree at the upstream bind offset
- * (ContainerCommon.bindPlayerInventory :327-334 — rows at y=84/102/120, hotbar y=142;
- * the x follows the fork's own playerInventory widget precedent, GT6StorageMUI.safePanel).
- * The sheet follows the VARIANT, not the GUI id — upstream `mGUITexture` defaults to the
- * plain sheet (:74) and the charging registration column swaps it via NBT_GUI
- * (Loader_MultiTileEntities.java:137), so {@link #guiSheet} reads the BE kind the same way.
+	 * <p><b>Layout (task act-dual-gui, composed in act-gui-overlay-overhaul):</b> the
+	 * panel is the standard 176x166 machine GUI on the composed-parts base — the gt6
+	 * theme's 9-slice plate draws the background, the theme {@code itemSlot} frame draws
+	 * under every seat, and the borrowed sheet's semantic prints (the hints and the
+	 * button/cell faces) ride the {@link gregtech6.gui.machines.GT6GuiParts} ACT cell
+	 * crops ({@code background(...)} per seat — the sheet-baked-frame double-stack is
+	 * gone with the whole-sheet background). The player inventory 36 seats ride the tree
+	 * at the upstream bind offset (ContainerCommon.bindPlayerInventory :327-334 — rows at
+	 * y=84/102/120, hotbar y=142; the x follows the fork's own playerInventory widget
+	 * precedent, GT6StorageMUI.safePanel). The sheet-follows-VARIANT rule collapsed with
+	 * the sheet: the two upstream canvases differed ONLY in the five tool-cell prints
+	 * (bbox (81,9)-(166,23)), so the variant now picks the tool-hint crop the same way
+	 * (upstream {@code mGUITexture} default :74, the charging registration column's
+	 * NBT_GUI swap Loader_MultiTileEntities.java:137).
  *
  * <p><b>The two-GUI channel (the upstream :115-116 split)</b>: the crafting GUI (0) and
  * the belt GUI (1 — the upstream `ContainerCommonDefault(…, 35, 36)` charging GUI, the
@@ -110,37 +114,34 @@ public final class GTActMenu {
 	}
 
 	/**
-	 * The panel sheet — per VARIANT, upstream-verbatim: the charging BE swaps the sheet
-	 * exactly like the registration column's {@code NBT_GUI} swap
-	 * (Loader_MultiTileEntities.java:137 over the :74 plain default), both GUIs of one
-	 * table share it (upstream :585/:750 read the same {@code mGUITexture}).
+	 * The machine-sheet pair (the act-dual-gui borrows) is RETIRED from panel duty —
+	 * task act-gui-overlay-overhaul switched both panels to the composed-parts base
+	 * (the theme 9-slice plate + the theme slot frames), the whole-sheet stretch was
+	 * the double-slot root cause (sheet-baked frames under the theme frames). The two
+	 * PNGs stay shipped as the {@code GT6GuiParts} ACT cell-crop SOURCES (the
+	 * crop_gui_parts.py provenance chain, assets/README.md both sections).
 	 */
-	public static ResourceLocation guiSheet(TileEntityAdvancedCraftingTable aTable) {
-		return ResourceLocation.fromNamespaceAndPath("gt6", aTable instanceof TileEntityChargingCraftingTable
-				? "textures/gui/machines/advancedcraftingtablecharging.png"
-				: "textures/gui/machines/advancedcraftingtable.png");
-	}
-
-	/**
-	 * The machine-sheet background — the borrowed canvases are 256x256 with the art in
-	 * the top-left 176x166 (the vanilla blit's implicit sampling), so the sub-area is
-	 * declared explicitly; fullImage would stretch the whole canvas into the panel (the
-	 * gui-bg-uv-fix disease — the corrected builder form, GTBasicMachineMUI shape).
-	 */
-	public static UITexture panelBackground(TileEntityAdvancedCraftingTable aTable) {
-		return UITexture.builder()
-				.location(guiSheet(aTable))
-				.imageSize(256, 256)
-				.subAreaXYWH(0, 0, 176, 166)
-				.build();
-	}
 
 	/** Client face of {@code IUIHolder} (the TestBlockEntity :100 pattern). */
 	public static ModularScreen createScreen(PosGuiData aData, ModularPanel<?> aMainPanel) {
 		return new ModularScreen(brachy.modularui.ModularUI.MOD_ID, aMainPanel);
 	}
 
-	/** The crafting panel body (GUI 0) — runs on SERVER and CLIENT (the sync handlers must exist on both). */
+	/**
+	 * The panel body (GUI 0) — runs on SERVER and CLIENT (the sync handlers must exist on both).
+	 *
+	 * <p><b>Composed base (task act-gui-overlay-overhaul, the user's "GUI 底是原版的+硬贴
+	 * 格子"):</b> the borrowed whole-sheet background is RETIRED — the panel rides the
+	 * machine-same composed-parts regime (the {@link gregtech6.gui.machines.GTBasicMachineMUI}
+	 * shape): the gt6 theme's 9-slice panel base draws under the panel (fork
+	 * Widget.drawBackground :255-264 theme arm) and the theme's {@code itemSlot} frame
+	 * ({@code modern.json} → {@code slot_frame_18x18}) draws under every seat — so the
+	 * old sheet-baked frames + code slots double-stack is gone by construction (no code
+	 * background, frames drawn once). The sheet's semantic prints (the hints and button
+	 * faces) ride the {@link gregtech6.gui.machines.GT6GuiParts} ACT cell crops instead:
+	 * the {@code background(...)} setter disables the theme frame for its seat and draws
+	 * the upstream print (frame+icon in one crop — no double frame again).
+	 */
 	public static ModularPanel<?> buildPanel(TileEntityAdvancedCraftingTable aTable, PanelSyncManager aSyncManager) {
 		GTItemStackHandler tInv = aTable.getInventory();
 		aSyncManager.registerSlotGroup("act_belt16", 4); // the STORAGE_SLOT_PRIO shift-transfer face
@@ -152,31 +153,56 @@ public final class GTActMenu {
 		// the display half of the output seat — the stack syncs server→client
 		aSyncManager.syncValue("act_output", GenericSyncValue.forItem(() -> tInv.getStackInSlot(31), null));
 
+		// the tool-slot hint print follows the VARIANT (the sheet swap was the only
+		// canvas difference — bbox (81,9)-(166,23), the five tool cells; Loader:137 NBT_GUI)
+		gregtech6.gui.machines.GT6GuiParts.GuiPart tToolHint = aTable instanceof TileEntityChargingCraftingTable
+				? gregtech6.gui.machines.GT6GuiParts.ACT_CELL_TOOLS_CHARGING
+				: gregtech6.gui.machines.GT6GuiParts.ACT_CELL_TOOLS;
+
 		return ModularPanel.defaultPanel(PANEL_NAME, 176, 166)
-				.background(panelBackground(aTable))
+				// NO code background: the theme's 9-slice panel base draws here (the
+				// GTBasicMachineMUI shape) — the retired .background(panelBackground(...))
+				// was the double-slot half (sheet-baked frames under the theme frames)
 				// the 4x4 input belt (upstream :693-708)
 				.child(SlotGroupWidget.builder()
 						.row("IIII").row("IIII").row("IIII").row("IIII")
 						.key('I', i -> new ItemSlot().slot(new ModularSlot(tInv, i)))
 						.slotGroup("act_belt16").build().pos(7, 8))
-				// the five tool slots (upstream :710-714)
+				// the five tool slots (upstream :710-714) over the variant's holder print
 				.child(SlotGroupWidget.builder()
 						.row("TTTTT")
-						.key('T', i -> new ItemSlot().slot(new ModularSlot(tInv, 16 + i)))
+						.key('T', i -> new ItemSlot().slot(new ModularSlot(tInv, 16 + i))
+								.background(gregtech6.gui.machines.GT6GuiParts.asUITexture(tToolHint)))
 						.slotGroup("act_tools").build().pos(80, 8))
 				// the 3x3 PHANTOM PATTERN GRID (the hybrid ghost face — see the class doc)
 				.child(patternGrid(aTable).pos(80, 28))
-				// the selector seat (upstream :691) — the handler isItemValid face carries the [2, 9] whitelist
-				.child(new ItemSlot().slot(new ModularSlot(tInv, 30)).pos(135, 28))
-				// the drop + neutral slots (upstream :726-727)
-				.child(new ItemSlot().slot(new ModularSlot(tInv, 33)).pos(153, 28))
-				.child(new ItemSlot().slot(new ModularSlot(tInv, 34)).pos(153, 64))
-				// the output preview (holo 31) + the four-mode craft button (upstream :599-656)
-				.child(new ItemDisplayWidget().syncHandler("act_output").displayAmount(true).pos(135, 64))
+				// the selector seat (upstream :691) over the blueprint print — the handler
+				// isItemValid face carries the [2, 9] whitelist
+				.child(new ItemSlot().slot(new ModularSlot(tInv, 30))
+						.background(gregtech6.gui.machines.GT6GuiParts.asUITexture(gregtech6.gui.machines.GT6GuiParts.ACT_CELL_BLUEPRINT))
+						.pos(135, 28))
+				// the drop + neutral slots (upstream :726-727) over their prints
+				.child(new ItemSlot().slot(new ModularSlot(tInv, 33))
+						.background(gregtech6.gui.machines.GT6GuiParts.asUITexture(gregtech6.gui.machines.GT6GuiParts.ACT_CELL_DROP_ARROW))
+						.pos(153, 28))
+				.child(new ItemSlot().slot(new ModularSlot(tInv, 34))
+						.background(gregtech6.gui.machines.GT6GuiParts.asUITexture(gregtech6.gui.machines.GT6GuiParts.ACT_CELL_NEUTRAL))
+						.pos(153, 64))
+				// the output preview (holo 31) over the craft-hammer print + the four-mode
+				// craft button as the invisible hit area (upstream :599-656 — the holo cell
+				// renders the item OVER the print, the click arm sits on top)
+				.child(new ItemDisplayWidget().syncHandler("act_output").displayAmount(true)
+						.background(gregtech6.gui.machines.GT6GuiParts.asUITexture(gregtech6.gui.machines.GT6GuiParts.ACT_CELL_CRAFT))
+						.pos(135, 64))
 				.child(craftButton(aTable, aSyncManager).pos(135, 64))
-				// the two holo-32 positions (:650-653): slotIndex 34 = flush, 35 = sort
-				.child(actionButton("Flush automation bands", () -> aTable.mFlushMode = true).pos(153, 46))
-				.child(actionButton("Sort grid into slots", () -> aTable.sortIntoTheInputSlots()).pos(135, 46))
+				// the two holo-32 positions (:650-653): slotIndex 34 = flush, 35 = sort —
+				// the button faces ARE the sheet's prints (symptom ③: the empty buttons)
+				.child(actionButton("Flush automation bands", () -> aTable.mFlushMode = true)
+						.background(gregtech6.gui.machines.GT6GuiParts.asUITexture(gregtech6.gui.machines.GT6GuiParts.ACT_CELL_FLUSH))
+						.pos(153, 46))
+				.child(actionButton("Sort grid into slots", () -> aTable.sortIntoTheInputSlots())
+						.background(gregtech6.gui.machines.GT6GuiParts.asUITexture(gregtech6.gui.machines.GT6GuiParts.ACT_CELL_SORT))
+						.pos(135, 46))
 				// the player inventory at the upstream bind offset 84 (ContainerCommon
 				// :327-334; the x follows the fork playerInventory widget precedent,
 				// GT6StorageMUI.safePanel) — UNCONDITIONAL (the sync handlers resolve by
@@ -190,12 +216,14 @@ public final class GTActMenu {
 	 * GUI (:585-586): the case-36 default slots 35-70 as the 9x4 grid stepping from
 	 * (8,8) (gregapi/gui/ContainerCommon.java:250-287) over the same player-inventory
 	 * bind as GUI 0. No interaction widgets — the upstream GUI 1 is pure Slot_Normal.
+	 * Composed base like GUI 0 (task act-gui-overlay-overhaul): the theme plate + the
+	 * theme slot frames, no code background — the sheet's only canvas difference lived
+	 * in the crafting GUI's tool-cell prints, so both variants share this panel as-is.
 	 */
 	public static ModularPanel<?> buildBeltPanel(TileEntityAdvancedCraftingTable aTable, PanelSyncManager aSyncManager) {
 		GTItemStackHandler tInv = aTable.getInventory();
 		aSyncManager.registerSlotGroup(GROUP_BELT36, 9);
-		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME_BELT, 176, 166)
-				.background(panelBackground(aTable));
+		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME_BELT, 176, 166);
 		tPanel.child(SlotGroupWidget.builder()
 				.row("IIIIIIIII").row("IIIIIIIII").row("IIIIIIIII").row("IIIIIIIII")
 				.key('I', i -> new ItemSlot().slot(new ModularSlot(tInv, 35 + i)))
@@ -291,10 +319,17 @@ public final class GTActMenu {
 				.build();
 	}
 
-	/** The four-mode craft button — the MouseData axis maps the upstream slotClick modes. */
+	/**
+	 * The four-mode craft button — the MouseData axis maps the upstream slotClick modes.
+	 * Pure HIT AREA (task act-gui-overlay-overhaul): the upstream holo cell renders the
+	 * crafted preview OVER the hammer print, so the click arm rides
+	 * {@link ButtonWidget#invisible} — the theme button background would paint a vanilla
+	 * bevel box over the print + preview (the old "empty button over the output" stack).
+	 */
 	private static ButtonWidget<?> craftButton(TileEntityAdvancedCraftingTable aTable, PanelSyncManager aSyncManager) {
 		return new ButtonWidget<>()
 				.size(18)
+				.invisible()
 				.syncHandler(new InteractionSyncHandler()
 						.setOnMousePressed(aMouseData -> {
 							if (aMouseData.shift()) {
@@ -310,13 +345,15 @@ public final class GTActMenu {
 
 	/**
 	 * One holo-32 action button — the server action runs the upstream arm verbatim. The
-	 * tooltip rides the DYNAMIC form: the fork's every text constructor funnels through
+	 * face IS the sheet's cell print (task act-gui-overlay-overhaul, the "按钮图标全空"
+	 * fix: the caller attaches the {@code ACT_CELL_*} crop via {@code background(...)},
+	 * which also disables the theme button background — no vanilla bevel over the print).
+	 * The tooltip rides the DYNAMIC form: the fork's every text constructor funnels through
 	 * the package-private vanilla MutableComponent ctor (the fork accesstransformer.cfg
 	 * line, applied by FML at mod-load only), so an EAGER tooltip/overlay text would
 	 * throw IllegalAccessError on any headless panel build (the offline tests); the
 	 * dynamic builder defers construction to the client hover render, identical output
-	 * for constant text. The F/S letter overlays are dropped with the same rationale —
-	 * the tooltip names the action.
+	 * for constant text.
 	 */
 	private static ButtonWidget<?> actionButton(String aTooltip, Runnable aAction) {
 		return new ButtonWidget<>()

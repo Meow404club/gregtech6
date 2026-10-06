@@ -80,11 +80,40 @@ public final class GT6GuiParts {
     /** Player inventory block: 3x9 rows + hotbar (4 px row gap included, gap pixels are plain panel color). */
     public static final GuiPart PLAYER_INVENTORY = new GuiPart("player_inventory_162x76.png", 162, 76, 0, 0, 0, 0);
 
+    /**
+     * The ACT sheet cell prints (task act-gui-overlay-overhaul): the 18x18 frame+icon
+     * cells cropped out of the COMMITTED ACT GUI sheets (both byte-identical to the
+     * upstream 1.7.10 canvases, the act-dual-gui sha ledger rows) — the semantic prints
+     * the composed-parts base erased when the whole-sheet background was retired. Each
+     * crop carries the sheet's own slot frame, so it replaces the theme slot frame on
+     * its seat ({@code background(...)} disables the theme arm — no double frame, the
+     * double-slot elimination). Rects = the upstream slot frames (slot (x,y) prints at
+     * (x-1, y-1), MultiTileEntityAdvancedCraftingTable.java:691-731 seat table).
+     */
+    /** The blueprint print under the selector slot 30 (135,28). */
+    public static final GuiPart ACT_CELL_BLUEPRINT = new GuiPart("act_cell_blueprint_18x18.png", 18, 18, 0, 0, 0, 0);
+    /** The output-arrow print under the drop slot 33 (153,28). */
+    public static final GuiPart ACT_CELL_DROP_ARROW = new GuiPart("act_cell_drop_arrow_18x18.png", 18, 18, 0, 0, 0, 0);
+    /** The sort-into-storage button face (the holo 32 print at (135,46)). */
+    public static final GuiPart ACT_CELL_SORT = new GuiPart("act_cell_sort_18x18.png", 18, 18, 0, 0, 0, 0);
+    /** The flush-to-automation button face (the holo 32 print at (153,46)). */
+    public static final GuiPart ACT_CELL_FLUSH = new GuiPart("act_cell_flush_18x18.png", 18, 18, 0, 0, 0, 0);
+    /** The craft-hammer output cell face (the holo 31 print at (135,64) — rides under the crafted preview). */
+    public static final GuiPart ACT_CELL_CRAFT = new GuiPart("act_cell_craft_18x18.png", 18, 18, 0, 0, 0, 0);
+    /** The P print under the neutral slot 34 (153,64). */
+    public static final GuiPart ACT_CELL_NEUTRAL = new GuiPart("act_cell_neutral_18x18.png", 18, 18, 0, 0, 0, 0);
+    /** The tool-holder print under the tool slots 16-20 (the plain line's sheet). */
+    public static final GuiPart ACT_CELL_TOOLS = new GuiPart("act_cell_tools_18x18.png", 18, 18, 0, 0, 0, 0);
+    /** The charging line's tool print (the NBT_GUI sheet swap, Loader_MultiTileEntities.java:137). */
+    public static final GuiPart ACT_CELL_TOOLS_CHARGING = new GuiPart("act_cell_tools_charging_18x18.png", 18, 18, 0, 0, 0, 0);
+
     /** Every part, in ledger order — the test walks this against the manifest. */
     public static final List<GuiPart> ALL = List.of(
         PANEL_BACKGROUND, SLOT_FRAME, SLOT_FRAME_GROUP_3X2, SLOT_FRAME_GROUP_2X2,
         SLOT_SPECIAL, SLOT_FLUID, BUTTON_FLAT, BUTTON_FLAT_HOVER,
-        ARROW_FORWARD, ARROW_FORWARD_RED, ARROW_FORWARD_CYAN, ARROW_OUTLINE, PLAYER_INVENTORY);
+        ARROW_FORWARD, ARROW_FORWARD_RED, ARROW_FORWARD_CYAN, ARROW_OUTLINE, PLAYER_INVENTORY,
+        ACT_CELL_BLUEPRINT, ACT_CELL_DROP_ARROW, ACT_CELL_SORT, ACT_CELL_FLUSH,
+        ACT_CELL_CRAFT, ACT_CELL_NEUTRAL, ACT_CELL_TOOLS, ACT_CELL_TOOLS_CHARGING);
 
     /**
      * The theme panel base (task r11-gui-clean-base-theme): a SELF-DERIVED sheet —
