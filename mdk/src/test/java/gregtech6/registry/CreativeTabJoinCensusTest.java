@@ -154,6 +154,13 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(120, GT6Hoppers.ITEMS_BY_PATH.size());
 	}
 
+	/** The 120 metal chests (the metalset pair :132-133 over the same 60-material loop — task material-mc-a-storage-chests). */
+	@Test
+	public void chestsJoinTheMetalsetLoop() {
+		assertEquals(120, gregtech6.registry.GT6Chests.ROWS.size());
+		assertEquals(120, gregtech6.registry.GT6Chests.ITEMS_BY_PATH.size());
+	}
+
 	// ---------------------------------------------------------------------------
 	// the single-RO families — field count = join coverage
 	// ---------------------------------------------------------------------------
@@ -216,13 +223,14 @@ public class CreativeTabJoinCensusTest {
 				+ GT6Attachments.ITEMS_BY_PATH.size()
 				+ GT6StaticStorages.ITEMS_BY_PATH.size()
 				+ GT6Hoppers.ITEMS_BY_PATH.size()
+				+ gregtech6.registry.GT6Chests.ITEMS_BY_PATH.size()
 				+ itemFields(GT6ElectricDynamos.class).size()
 				+ itemFields(GT6FluxDynamos.class).size()
 				+ itemFields(GT6Kinetics.class).size()
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size()
 				+ GT6Emitters.ITEMS_BY_PATH.size();
-		assertEquals(323, tTotal, "207 (the p38 batch 177 + the 30 technological components) + 116 (task hopper-matrix: the hopper join grew 4 to 120 over the 60-material metalset loop)");
+		assertEquals(443, tTotal, "323 (the p38 batch total) + 120 (task material-mc-a-storage-chests: the metalset chest pair 132-133 over the 60-material loop)");
 	}
 
 	/**
@@ -237,8 +245,8 @@ public class CreativeTabJoinCensusTest {
 				GT6LongDistPipes.class, GT6Lasers.class, GT6ElectricDynamos.class, GT6FluxDynamos.class,
 				GT6QuantumEnergizers.class, GT6CrystalChargers.class, GT6ZpmDechargers.class,
 				GT6MagicAbsorbers.class, GT6Sensors.class, GT6Attachments.class, GT6StaticStorages.class,
-					GT6Hoppers.class, GT6Kinetics.class, GT6FeBatteries.class, GT6LaserGas.class,
-					GT6Emitters.class);
+					GT6Hoppers.class, gregtech6.registry.GT6Chests.class, GT6Kinetics.class,
+					GT6FeBatteries.class, GT6LaserGas.class, GT6Emitters.class);
 		for (Class<?> tFamily : tFamilies) {
 			Method tWalk = tFamily.getDeclaredMethod("onBuildTabContents", BuildCreativeModeTabContentsEvent.class);
 			assertTrue(java.lang.reflect.Modifier.isStatic(tWalk.getModifiers()), tFamily.getSimpleName() + " walk");
