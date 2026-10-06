@@ -20,6 +20,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Block;
@@ -337,11 +338,22 @@ public final class GT6Hoppers {
 	 * @param queue    the :146 queue kind flag (NBT_INV_SIZE floor 2, the FIFO compaction)
 	 */
 	public record HopperRow(String path, int metaId, HopperMaterial material, int slots, boolean queue) {
-		/** The block properties (hardness == resistance on every row; the METAL sound). */
+		/**
+		 * The block properties (hardness == resistance on every row; the METAL sound).
+		 * symptom27: the family renders the shared sub-cube funnel models (gt6_hopper.json —
+		 * the top-rim elements from y=10) over the DEFAULT full-cube getShape, so a true
+		 * canOcclude makes getOcclusionShape (=getShape, vanilla BlockBehaviour.java:240-242/911)
+		 * cull the neighbor faces against the open funnel mouth = the underground X-ray — the
+		 * issue #9 wire/pipe family face whose full-scan verdict reserved this fix ("hopper
+		 * 漏斗 … 落地时须带 noOcclusion", the GTNoOcclusionCensusTest javadoc; the funnel
+		 * model landed since). {@code isViewBlocking(never)} is the fog-only rider (the
+		 * GTWires.wireProperties seam form verbatim).
+		 */
 		public BlockBehaviour.Properties properties() {
 			return BlockBehaviour.Properties.of()
 					.strength(material.hardness(), material.hardness())
-					.sound(SoundType.METAL);
+					.sound(SoundType.METAL)
+					.noOcclusion().isViewBlocking(GT6Hoppers::never);
 		}
 	}
 
@@ -577,6 +589,11 @@ public final class GT6Hoppers {
 	}
 
 	private GT6Hoppers() {}
+
+	/** symptom27: the hopper family never blocks the view (fog) — the GTWires::never rider form. */
+	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		return false;
+	}
 
 	/** FMLConstructModEvent = the first mod-bus lifecycle stage (GT6Boilers.onModConstruct doc). */
 	@SubscribeEvent
