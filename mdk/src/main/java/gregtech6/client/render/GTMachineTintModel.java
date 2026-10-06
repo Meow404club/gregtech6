@@ -320,6 +320,17 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// "transitional, tint rides the ⑩B card" reservation retires for the TINT half
 		// (the charging texture-family swap stays the ⑩B card).
 		for (var tTableBlock : GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.values()) wrapStates(tTableBlock.get(), aEvent);
+		// task tint-chain-hopper-grindstone-sifting — the 120 storage-hopper rows join the
+		// baked-tint domain (the census L1 closure): the shared funnel models' colored body
+		// band is the tintindex-0 seat (the addHoppers datagen change), the 0.01 overlay
+		// twins untinted (the P22 contract); the colour resolves through the
+		// GT6HopperBlock row carrier (the upstream NBT_MATERIAL walk Loader:145-146 × the
+		// MultiTileEntityHopper.java:281 BlockTextureMulti colored×mRGBa pass). The
+		// Grindstone and Sifting Table stay OUT of this walk — their model seats are owned
+		// by their NEI dynamic models (the GTDynamicBakedModel guard below skips them
+		// anyway); those consume through their own self-tint arms over the
+		// GTMachinePaintTint block-class rows, the GT6GrindstoneNeiModel.bodyQuads shape.
+		for (var tHopper : gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.values()) wrapStates(tHopper.get(), aEvent);
 	}
 
 	/**
@@ -337,6 +348,27 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (var tCell : gregtech6.registry.GT6Cells.BLOCKS_IN_ORDER) tItems.add(tCell.get().asItem());
 		tItems.add(gregtech6.registry.GT6Cups.PORCELAIN_CUP.get().asItem());
 		tItems.add(gregtech6.registry.GT6Jugs.CERAMIC_JUG.get().asItem());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(Item[]::new));
+	}
+
+	/**
+	 * The hopper/grindstone/sifting paint tint, the INVENTORY half (task
+	 * tint-chain-hopper-grindstone-sifting — the census L1/L2/L3 closures): the 120
+	 * storage-hopper BlockItems plus the two manual-tool BlockItems ride the shared
+	 * {@link GTItemPaintTint} lambda through the combined
+	 * {@code GTMachinePaintTint.tintMaterialOf} dispatch — the creative-tab face (a
+	 * BlockItem is NOT coloured by any baked world tint, ItemColors.java:25-93). The
+	 * registration mirrors {@link #onRegisterSmallTankPaintItemColors} (this class is the
+	 * shared client tint seam); the unpainted stacks resolve the row materials (the
+	 * {@code GT6HopperBlock} carrier / the ANY.Steel carriers), a painted stack still wins
+	 * through the NBT pair.
+	 */
+	@SubscribeEvent
+	public static void onRegisterHopperToolPaintItemColors(RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<Item> tItems = new ArrayList<>();
+		for (var tHopper : gregtech6.registry.GT6Hoppers.ITEMS_BY_PATH.values()) tItems.add(tHopper.get());
+		tItems.add(gregtech6.registry.GT6Grindstones.GRINDSTONE_ITEM.get());
+		tItems.add(gregtech6.registry.GT6SiftingTables.SIFTING_TABLE_ITEM.get());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(Item[]::new));
 	}
 

@@ -58,9 +58,11 @@ import gregtech6.registry.GT6Grindstones;
  * <p>Layer seat: cutout joins the fallback exactly when the glyph exists (the transparent
  * glyph margins must discard, the r11-oven-solid-layer-fix lesson). Tint interplay is the
  * kitchen order-safe pair documented there (the body carries tintindex-0 faces — the
- * tint-wrap-inside / self-tint-outside arms); today the dispatch resolves WHITE for the
- * grindstone (no tint dispatch row yet — the README declared deviation), so the self-tint
- * arm is a visual no-op until the family runtime-tint pool card lands.
+ * tint-wrap-inside / self-tint-outside arms); since task
+ * tint-chain-hopper-grindstone-sifting the dispatch resolves the ANY.Steel row colour
+ * through {@link GTMachinePaintTint#tintMaterialOf} (the census L2 closure — the former
+ * "no dispatch row, white no-op" README deviation retires), the glyph quad itself stays
+ * untinted (the P22 decal contract).
  *
  * <p>Geometry per FACING axis (the post-top face verbatim): the Z-axis facings ride the
  * (6..8, 2..4) corner, the X-axis facings the (2..4, 6..8) corner — both lifted
