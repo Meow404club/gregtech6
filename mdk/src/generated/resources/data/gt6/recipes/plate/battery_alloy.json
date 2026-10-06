@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:ingot_double_battery_alloy"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "A",
+    "h"
+  ],
+  "result": {
+    "item": "gt6:plate_battery_alloy"
+  },
+  "show_notification": true
+}

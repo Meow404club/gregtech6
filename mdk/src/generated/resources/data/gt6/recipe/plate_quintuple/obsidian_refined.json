@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_obsidian_refined"
+    },
+    "B": {
+      "item": "gt6:plate_triple_obsidian_refined"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:plate_quintuple_obsidian_refined"
+  }
+}

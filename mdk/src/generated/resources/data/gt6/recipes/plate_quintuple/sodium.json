@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_sodium"
+    },
+    "B": {
+      "item": "gt6:plate_triple_sodium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "item": "gt6:plate_quintuple_sodium"
+  },
+  "show_notification": true
+}

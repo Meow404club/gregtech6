@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_iron_compressed"
+    },
+    "B": {
+      "item": "gt6:plate_triple_iron_compressed"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:plate_quintuple_iron_compressed"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "gt6:spring_fiery_steel"
+    },
+    "P": {
+      "item": "gt6:plate_dense_fiery_steel"
+    },
+    "S": {
+      "item": "gt6:stick_fiery_steel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "PhP",
+    "SIS",
+    "PwP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:strong_steam_engine_fiery_steel"
+  }
+}

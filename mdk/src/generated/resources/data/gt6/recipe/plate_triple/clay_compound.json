@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_clay_compound"
+    },
+    "B": {
+      "item": "gt6:plate_double_clay_compound"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:plate_triple_clay_compound"
+  }
+}

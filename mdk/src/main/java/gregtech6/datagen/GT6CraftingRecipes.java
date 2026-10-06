@@ -562,6 +562,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		vanillaCopperBlockBuilder().save(aConsumer, VANILLA_COPPER_BLOCK_ID);
 		vanillaLightningRodBuilder().save(aConsumer, VANILLA_LIGHTNING_ROD_ID);
 		vanillaSpyglassBuilder().save(aConsumer, VANILLA_SPYGLASS_ID);
+		// task crafting-machines-steam-band — the steam-age bootstrap band: the
+		// machine grids + the anvil forging ladder (the band javadocs at the tail)
+		for (PartFamilyRecipeRow tRow : steamEngineRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : burningBoxRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : electricDynamoRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : sifterRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : compressorRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : rollBenderRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : forgeLadderBuilders()) tRow.builder().save(aConsumer, tRow.id());
 	}
 	//?} else {
 	/*@Override
@@ -830,6 +839,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		vanillaCopperBlockBuilder().save(aOutput, VANILLA_COPPER_BLOCK_ID);
 		vanillaLightningRodBuilder().save(aOutput, VANILLA_LIGHTNING_ROD_ID);
 		vanillaSpyglassBuilder().save(aOutput, VANILLA_SPYGLASS_ID);
+		// task crafting-machines-steam-band — the steam-age bootstrap band (the forge-leg mirror)
+		for (PartFamilyRecipeRow tRow : steamEngineRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : burningBoxRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : electricDynamoRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : sifterRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : compressorRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : rollBenderRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : forgeLadderBuilders()) tRow.builder().save(aOutput, tRow.id());
 	}
 	*///?}
 
@@ -7641,6 +7658,337 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('#', Items.AMETHYST_SHARD)
 				.define('X', copperIngotTag())
 				.unlockedBy("has_copper_ingot", has(copperIngotTag()));
+	}
+
+	// -----------------------------------------------------------------------
+	// task crafting-machines-steam-band — the steam-age bootstrap crafting band
+	// (the recipe-bidirectional-census P1 master gate: the GTMachines machine
+	// family carried ZERO vanilla-crafting rows, the "cannot be made" root of
+	// the whole production chain). The machine grids are the upstream
+	// registration recipe strings VERBATIM (Loader_MultiTileEntities.java);
+	// the lowercase letters ride the CR tool mapping the tank-valve/circuit
+	// bands pinned (h = hard hammer, w = wrench, d = screwdriver, x = wire
+	// cutter). Declared folds and segment cuts:
+	//   - ANY.Cu plate-double column → Copper (the cracker 'C' fold, :1600);
+	//   - the dynamo wire columns → the fine_wires material tags (the count
+	//     differential folded, the transformer/EU-bridge fold precedent);
+	//   - the ULV dynamo row (upstream ships no VN[0] line) rides the LV
+	//     column set over Electric_T[0] TinAlloy (the transformer T0 lock
+	//     precedent);
+	//   - burning boxes: the Brick row (:519) + the 13 Solid rows (:522-534) —
+	//     the steam-age segment only; the Dense/Liquid/Gas/FluidBed ladders
+	//     and the sifter/compressor ULV rungs ride the P1' follow-up band;
+	//   - rollbender t1-t4 (:1355-1358): the machine channel behind the metal
+	//     ring spectrum (rollbender.json stick→ring), the chain bottom.
+	// A missing input item skips the row silently (the itemOrNull guard, the
+	// tank-valve band semantics).
+	// -----------------------------------------------------------------------
+
+	/** The result-path recipe id of one machine row (the hopper result-path convention). */
+	private ResourceLocation steamBandId(String aPath) {
+		String tPath = aPath; // the local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/** The steam-engine/burning-box material slug → the loader material (the dieselMaterial switch shape). */
+	private static gregapi.oredict.OreDictMaterial steamBandMaterial(String aSlug) {
+		return switch (aSlug) {
+			case "lead" -> MT.Pb;
+			case "tin_alloy" -> MT.TinAlloy;
+			case "bronze" -> MT.Bronze;
+			case "arsenic_copper" -> MT.ArsenicCopper;
+			case "arsenic_bronze" -> MT.ArsenicBronze;
+			case "brass" -> MT.Brass;
+			case "invar" -> MT.Invar;
+			case "iron_wood" -> MT.IronWood;
+			case "steel" -> MT.Steel;
+			case "fiery_steel" -> MT.FierySteel;
+			case "chromium" -> MT.Cr;
+			case "titanium" -> MT.Ti;
+			case "tungsten" -> MT.W;
+			case "tungstensteel" -> MT.TungstenSteel;
+			default -> throw new IllegalStateException("no loader material for steam-band slug " + aSlug);
+		};
+	}
+
+	/**
+	 * The 28 Steam Engine rows — the :584-597 grid "PhP"/"SIS"/"PwP" VERBATIM. The Steam
+	 * ladder 'P' = plateDouble + 'I' = springSmall (the :584 keys); the Strong ladder
+	 * (:599-612) keeps the same grid over 'P' = plateDense + 'I' = spring (the :599 keys).
+	 * plateDense itself carries no crafting row (the rollingmill blockSolid channel stays
+	 * its route — the upstream machine-channel face, faithful).
+	 */
+	private java.util.List<PartFamilyRecipeRow> steamEngineRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.registry.GT6Kinetics.SteamEngineRow tRow : gregtech6.registry.GT6Kinetics.STEAM_ENGINES) {
+			gregapi.oredict.OreDictMaterial tMat = steamBandMaterial(tRow.matSlug());
+			Item tPlate = itemOrNull(tRow.strong() ? gregapi.data.OP.plateDense : gregapi.data.OP.plateDouble, tMat);
+			Item tSpring = itemOrNull(tRow.strong() ? gregapi.data.OP.spring : gregapi.data.OP.springSmall, tMat);
+			Item tStick = itemOrNull(gregapi.data.OP.stick, tMat);
+			if (tPlate == null || tSpring == null || tStick == null) continue; // the absent-input skip
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					gregtech6.registry.GT6Kinetics.STEAM_ENGINE_ITEMS.get(tRow.path()).get())
+					.pattern("PhP").pattern("SIS").pattern("PwP")
+					.define('P', tPlate).define('S', tStick).define('I', tSpring)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_plate", has(tPlate)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/**
+	 * The Burning Box steam-age segment — the Brick row (:519, "BBB"/"BBB"/"BFB" over
+	 * brick ingots + the firestarter tag) plus the 13 Solid rows (:522-534, "PCP"/"PwP"/
+	 * "BBB" over the row plates, 'C' = plateDouble(ANY.Cu) → Copper, 'B' = the vanilla
+	 * bricks block). The Dense ladder skips (the plateQuintuple/plateDense columns ride
+	 * the P1' band). The brick row's 'B' rides the VANILLA brick item — upstream
+	 * OP.ingot.dat(MT.Brick) resolves through the oredict ingotBrick face to
+	 * minecraft:brick (the mold_ingot_raw_from_brick bridge precedent); the port
+	 * registers no gt6 brick ingot.
+	 */
+	private java.util.List<PartFamilyRecipeRow> burningBoxRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		gregtech6.registry.GT6BurningBoxes.BurningBoxRow tBrick = gregtech6.registry.GT6BurningBoxes.BRICK_ROW;
+		{
+			Item tBrickIngot = net.minecraft.world.item.Items.BRICK;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					gregtech6.registry.GT6BurningBoxes.ITEMS_BY_PATH.get(tBrick.path()).get())
+					.pattern("BBB").pattern("BBB").pattern("BFB")
+					.define('B', tBrickIngot)
+					.define('F', GT6ItemTags.TOOLS_FLINT_AND_TINDER)
+					.unlockedBy("has_brick", has(tBrickIngot)), steamBandId(tBrick.path())));
+		}
+		Item tCuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu); // the ANY.Cu fold
+		if (tCuDouble == null) return rRows;
+		for (gregtech6.registry.GT6BurningBoxes.BurningBoxRow tRow : gregtech6.registry.GT6BurningBoxes.SOLID_ROWS) {
+			if (tRow.path().startsWith("dense_")) continue; // the Dense ladder → the P1' band
+			Item tPlate = itemOrNull(gregapi.data.OP.plate, tRow.material().mat().get());
+			if (tPlate == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					gregtech6.registry.GT6BurningBoxes.ITEMS_BY_PATH.get(tRow.path()).get())
+					.pattern("PCP").pattern("PwP").pattern("BBB")
+					.define('P', tPlate).define('C', tCuDouble)
+					.define('B', net.minecraft.world.level.block.Blocks.BRICKS)
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_plate", has(tPlate)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/**
+	 * The 6 Electric Dynamo rows — the :946-950 grid "TGT"/"CMC"/"TId" VERBATIM
+	 * (T = screw, G = gearGt, M = casingMachineDouble, all Electric_T[tier]; I = the
+	 * magnetic stickLong column IronMagnetic/SteelMagnetic/NeodymiumMagnetic per tier;
+	 * C = the wire column folded to the fine_wires tags). The ULV row (tier 0, the
+	 * declared port extension) rides the LV column set over TinAlloy.
+	 */
+	private java.util.List<PartFamilyRecipeRow> electricDynamoRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		TagKey<Item> tCuWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.Copper);
+		TagKey<Item> tAcWires = GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, MT.AnnealedCopper);
+		for (gregtech6.registry.GT6ElectricDynamos.ElectricRow tRow : gregtech6.registry.GT6ElectricDynamos.ROWS) {
+			gregapi.oredict.OreDictMaterial tMat = gregtech6.registry.GT6ElectricDynamos.ELECTRIC_T_LADDER.get(tRow.tier()).get();
+			gregapi.oredict.OreDictMaterial tMagnetic = tRow.tier() <= 1 ? gregapi.data.MT.IronMagnetic
+					: tRow.tier() <= 3 ? gregapi.data.MT.SteelMagnetic : gregapi.data.MT.NeodymiumMagnetic;
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, tMat);
+			Item tScrew = itemOrNull(gregapi.data.OP.screw, tMat);
+			Item tGear = itemOrNull(gregapi.data.OP.gearGt, tMat);
+			Item tStickLong = itemOrNull(gregapi.data.OP.stickLong, tMagnetic);
+			if (tCasing == null || tScrew == null || tGear == null || tStickLong == null) continue; // the absent-input skip
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, electricDynamoItem(tRow.tier()))
+					.pattern("TGT").pattern("CMC").pattern("TId")
+					.define('T', tScrew).define('G', tGear).define('M', tCasing)
+					.define('C', tRow.tier() <= 2 ? tCuWires : tAcWires)
+					.define('I', tStickLong)
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/** The dynamo tier → the row item (the constants are flat RegistryObjects, no BY_PATH map). */
+	private static Item electricDynamoItem(int aTier) {
+		return switch (aTier) {
+			case 0 -> gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_ULV_ITEM.get();
+			case 1 -> gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_ITEM.get();
+			case 2 -> gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_T2_ITEM.get();
+			case 3 -> gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_T3_ITEM.get();
+			case 4 -> gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_T4_ITEM.get();
+			default -> gregtech6.registry.GT6ElectricDynamos.ELECTRIC_DYNAMO_T5_ITEM.get();
+		};
+	}
+
+	/** The 4 Sifter rows — the :1313-1315 grid "WxW"/"RMR"/"SwS" VERBATIM (M = casingMachineDouble, S = spring, W = wireFine, R = stick, x = wire cutter, w = wrench — the SwS row's lowercase letter). */
+	private java.util.List<PartFamilyRecipeRow> sifterRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.SIFTER_ROWS) {
+			gregapi.oredict.OreDictMaterial tMat = tRow.material().get();
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, tMat);
+			Item tSpring = itemOrNull(gregapi.data.OP.spring, tMat);
+			Item tWire = itemOrNull(gregapi.data.OP.wireFine, tMat);
+			Item tStick = itemOrNull(gregapi.data.OP.stick, tMat);
+			if (tCasing == null || tSpring == null || tWire == null || tStick == null) continue; // the absent-input skip
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					gregtech6.registry.GTMachines.SIFTER_ITEMS_BY_PATH.get(tRow.path()).get())
+					.pattern("WxW").pattern("RMR").pattern("SwS")
+					.define('M', tCasing).define('S', tSpring).define('W', tWire).define('R', tStick)
+					.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER).define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/** The 4 Compressor rows — the :1343-1346 grid "PPR"/"wMS" VERBATIM (P = plateQuintuple, S = spring, R = stick, M = casingMachineDouble, w = wrench). */
+	private java.util.List<PartFamilyRecipeRow> compressorRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.COMPRESSOR_ROWS) {
+			gregapi.oredict.OreDictMaterial tMat = tRow.material().get();
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, tMat);
+			Item tQuintuple = itemOrNull(gregapi.data.OP.plateQuintuple, tMat);
+			Item tSpring = itemOrNull(gregapi.data.OP.spring, tMat);
+			Item tStick = itemOrNull(gregapi.data.OP.stick, tMat);
+			if (tCasing == null || tQuintuple == null || tSpring == null || tStick == null) continue; // the absent-input skip
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					gregtech6.registry.GTMachines.COMPRESSOR_ITEMS_BY_PATH.get(tRow.path()).get())
+					.pattern("PPR").pattern("wMS")
+					.define('P', tQuintuple).define('S', tSpring).define('R', tStick).define('M', tCasing)
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/** The 4 Roll Bender rows — the :1355-1358 grid "wS "/"GMG"/" Sh" VERBATIM (G = gearGt, S = gearGtSmall, M = casingMachineDouble). The machine channel behind the metal ring spectrum. */
+	private java.util.List<PartFamilyRecipeRow> rollBenderRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.ROLL_BENDER_ROWS) {
+			gregapi.oredict.OreDictMaterial tMat = tRow.material().get();
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, tMat);
+			Item tGear = itemOrNull(gregapi.data.OP.gearGt, tMat);
+			Item tGearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, tMat);
+			if (tCasing == null || tGear == null || tGearSmall == null) continue; // the absent-input skip
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					gregtech6.registry.GTMachines.ROLLBENDER_ITEMS_BY_PATH.get(tRow.path()).get())
+					.pattern("wS ").pattern("GMG").pattern(" Sh")
+					.define('G', tGear).define('S', tGearSmall).define('M', tCasing)
+					.define('w', GT6ItemTags.TOOLS_WRENCH).define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	// -----------------------------------------------------------------------
+	// task crafting-machines-steam-band spec ② — the anvil forging ladder, the
+	// chain bottom. Upstream gives the metal plate family NO vanilla-crafting
+	// row — plate/plateDouble/.. live on the Anvil machine channel (Loader_
+	// Recipes_Handlers.java:175-193) and the RollingMill channel (:264-269);
+	// the census pinned the double break (boilers/steam engines consume
+	// plate_double, the welder/rollingmill channels sit behind electric/RU
+	// machines that were themselves uncraftable). This band translates the six
+	// Anvil prefix rows onto the crafting grid — the input slots + the hard
+	// hammer (the file-belt {"X ", " f"} frame shape):
+	//   :175 ingot + ingot → ingotDouble      :193 ingotDouble ×1 → plate (the single slot)
+	//   :181 plate + plate → plateDouble      :182 plate + plateDouble → plateTriple
+	//   :185 plateDouble + plateDouble → plateQuadruple
+	//   :186 plateDouble + plateTriple → plateQuintuple (the compressor 'P' column)
+	// The condition fold = the :181 row condition verbatim minus the forge-
+	// location gates (selfforge()/fullforge() — the hand grid IS the self-forge
+	// face): SMITHABLE + FLAMMABLE.NOT + COATED.NOT + ANTIMATTER.NOT. Declared
+	// translation of machine rows onto crafting (the FE_CONVERTER
+	// declared-deviation face); ids ride the output prefix dirs (the
+	// craftfrom-row-id convention).
+	// -----------------------------------------------------------------------
+
+	/** One forging-ladder row form: the id key (= the output prefix dir) + the output prefix + the two input prefixes (B == A = the doubled same-prefix pair :175/:181/:185; B null = the single-slot row :193). Package-private for the pin test. */
+	record ForgeLadderForm(String aKey, gregapi.oredict.OreDictPrefix aOutput,
+			gregapi.oredict.OreDictPrefix aInputA, gregapi.oredict.OreDictPrefix aInputB) {}
+
+	/**
+	 * The six Anvil-row forms (:175/:193/:181/:182/:185/:186, the amounts all 1→1). The
+	 * doubled same-prefix rows encode BOTH slots (the upstream (ingot,1)+(ingot,1) shape);
+	 * the :193 plate row is the single-slot one (ingotDouble×1 → plate×1). A method, not a
+	 * field — the OP fields live only after OP.init (the stickCraftFromForms ruling).
+	 */
+	static java.util.List<ForgeLadderForm> forgeLadderForms() {
+		return java.util.List.of(
+				new ForgeLadderForm("ingot_double", gregapi.data.OP.ingotDouble, gregapi.data.OP.ingot, gregapi.data.OP.ingot),
+				new ForgeLadderForm("plate", gregapi.data.OP.plate, gregapi.data.OP.ingotDouble, null),
+				new ForgeLadderForm("plate_double", gregapi.data.OP.plateDouble, gregapi.data.OP.plate, gregapi.data.OP.plate),
+				new ForgeLadderForm("plate_triple", gregapi.data.OP.plateTriple, gregapi.data.OP.plate, gregapi.data.OP.plateDouble),
+				new ForgeLadderForm("plate_quadruple", gregapi.data.OP.plateQuadruple, gregapi.data.OP.plateDouble, gregapi.data.OP.plateDouble),
+				new ForgeLadderForm("plate_quintuple", gregapi.data.OP.plateQuintuple, gregapi.data.OP.plateDouble, gregapi.data.OP.plateTriple));
+	}
+
+	/** The material face of one forging-ladder row (the test-visible walk unit, the StickCraftFromMaterialRow shape). */
+	record ForgeLadderMaterialRow(ForgeLadderForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
+
+	/**
+	 * The material face of the forging ladder: per form, the materials whose INPUT and
+	 * OUTPUT items all exist (the registrationOrder intersection, in registration order)
+	 * under the :181 condition fold (SMITHABLE + FLAMMABLE.NOT + COATED.NOT +
+	 * ANTIMATTER.NOT).
+	 */
+	static java.util.List<ForgeLadderMaterialRow> forgeLadderMaterialRows() {
+		java.util.List<ForgeLadderMaterialRow> rRows = new ArrayList<>();
+		for (ForgeLadderForm tForm : forgeLadderForms()) {
+			java.util.Set<OreDictMaterial> tFaceA = new java.util.HashSet<>();
+			java.util.Set<OreDictMaterial> tFaceB = new java.util.HashSet<>();
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				if (tPair.prefix() == tForm.aInputA()) tFaceA.add(tPair.material());
+				if (tForm.aInputB() != null && tPair.prefix() == tForm.aInputB()) tFaceB.add(tPair.material());
+			}
+			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+				OreDictMaterial tMaterial = tPair.material();
+				if (tPair.prefix() != tForm.aOutput() || !tFaceA.contains(tMaterial)) continue; // the item-truth intersection
+				if (tForm.aInputB() != null && !tFaceB.contains(tMaterial)) continue;
+				if (!tMaterial.contains(gregapi.data.TD.Processing.SMITHABLE)) continue; // SMITHABLE
+				if (tMaterial.contains(gregapi.data.TD.Properties.FLAMMABLE)) continue; // FLAMMABLE.NOT
+				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
+				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
+				rRows.add(new ForgeLadderMaterialRow(tForm, tMaterial));
+			}
+		}
+		return rRows;
+	}
+
+	/** One forging-ladder datagen row: the id + the builder parts (the StickCraftFromRow shape). */
+	private record ForgeLadderRow(ResourceLocation aId, net.minecraft.world.item.Item aResult,
+			net.minecraft.world.item.Item aInputA, net.minecraft.world.item.Item aInputB) {}
+
+	/** The datagen face: the material walk resolved onto the live items (the silent-skip guard rides itemOrNull). */
+	private java.util.List<PartFamilyRecipeRow> forgeLadderBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (ForgeLadderMaterialRow tMaterialRow : forgeLadderMaterialRows()) {
+			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
+			Item tResult = itemOrNull(tMaterialRow.aForm().aOutput(), tMaterialRow.aMaterial());
+			Item tInputA = itemOrNull(tMaterialRow.aForm().aInputA(), tMaterialRow.aMaterial());
+			Item tInputB = tMaterialRow.aForm().aInputB() == null ? null
+					: itemOrNull(tMaterialRow.aForm().aInputB(), tMaterialRow.aMaterial());
+			if (tResult == null || tInputA == null) continue; // the item-truth guard (belt and braces over the walk)
+			String tKey = tMaterialRow.aForm().aKey() + "/" + tSnake;
+			rRows.add(new PartFamilyRecipeRow(forgeLadderBuilder(tResult, tInputA, tInputB), forgeLadderId(tKey)));
+		}
+		return rRows;
+	}
+
+	/** The forging-ladder row id: &lt;output&gt;/&lt;material&gt; (the craftfrom-row-id convention). */
+	private ResourceLocation forgeLadderId(String aKey) {
+		String tKey = aKey; // the bare-identifier ctor-arg discipline (the swap-table regex note)
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tKey);
+	}
+
+	/** One row's builder — the inputs top (the doubled pair "AA" / the mixed pair "AB" / the single slot "A"), the hard hammer below-left (the anvil slots + hammer semantics). */
+	private ShapedRecipeBuilder forgeLadderBuilder(Item aResult, Item aInputA, Item aInputB) {
+		boolean tSingle = aInputB == null;
+		boolean tDoubled = !tSingle && aInputB == aInputA;
+		ShapedRecipeBuilder rBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, aResult)
+				.pattern(tSingle ? "A" : tDoubled ? "AA" : "AB")
+				.pattern(tSingle ? "h" : "h ")
+				.define('A', aInputA)
+				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+				.unlockedBy("has_input", has(aInputA));
+		if (!tSingle && !tDoubled) rBuilder.define('B', aInputB);
+		return rBuilder;
 	}
 
 }

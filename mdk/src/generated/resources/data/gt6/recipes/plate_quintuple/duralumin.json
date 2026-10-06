@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_duralumin"
+    },
+    "B": {
+      "item": "gt6:plate_triple_duralumin"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "item": "gt6:plate_quintuple_duralumin"
+  },
+  "show_notification": true
+}

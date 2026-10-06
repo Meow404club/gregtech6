@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_niobium_nitride"
+    },
+    "B": {
+      "item": "gt6:plate_triple_niobium_nitride"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:plate_quintuple_niobium_nitride"
+  }
+}

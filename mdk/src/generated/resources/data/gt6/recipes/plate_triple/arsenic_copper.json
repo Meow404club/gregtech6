@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_arsenic_copper"
+    },
+    "B": {
+      "item": "gt6:plate_double_arsenic_copper"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "item": "gt6:plate_triple_arsenic_copper"
+  },
+  "show_notification": true
+}

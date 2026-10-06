@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_hslatungsten_alloy"
+    },
+    "B": {
+      "item": "gt6:plate_double_hslatungsten_alloy"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "item": "gt6:plate_triple_hslatungsten_alloy"
+  },
+  "show_notification": true
+}

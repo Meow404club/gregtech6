@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:fine_wires/annealed_copper"
+    },
+    "G": {
+      "item": "gt6:gear_gt_chromium"
+    },
+    "I": {
+      "item": "gt6:stick_long_neodymium_magnetic"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_chromium"
+    },
+    "T": {
+      "item": "gt6:screw_chromium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TGT",
+    "CMC",
+    "TId"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:electric_dynamo_t4"
+  }
+}

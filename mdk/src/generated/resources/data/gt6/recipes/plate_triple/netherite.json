@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_netherite"
+    },
+    "B": {
+      "item": "gt6:plate_double_netherite"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "item": "gt6:plate_triple_netherite"
+  },
+  "show_notification": true
+}
