@@ -537,19 +537,67 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/shape_press/bullet_casing_medium"));
         withExistingParent("shape_press_bullet_casing_large", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/shape_press/bullet_casing_large"));
-        // the dynamite family (task explosives-chain, Loader_MultiTileEntities.java:2236-2238
-        // metas 32104/32713/32712) — one shared 2-layer model form per item over the borrowed
-        // greyscale block sprites: layer 0 = the "colored" body (the ItemColor material tint,
-        // GT6ExplosivesTintListener), layer 1 = the overlay (as-is)
-        withExistingParent("boomstick", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/explosives/dynamite"))
-            .texture("layer1", modLoc("item/explosives/dynamite_overlay"));
-        withExistingParent("dynamite", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/explosives/dynamite"))
-            .texture("layer1", modLoc("item/explosives/dynamite_overlay"));
-        withExistingParent("dynamite_strong", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/explosives/dynamite"))
-            .texture("layer1", modLoc("item/explosives/dynamite_overlay"));
+        // the dynamite family (task explosives-3d-item-models; registration
+        // Loader_MultiTileEntities.java:2236-2238 metas 32104/32713/32712) — the upstream
+        // ITEM is the 3D block form (MultiTileEntityDynamite MTE; the 1.7.10 inventory icon
+        // renders the default-state block, the tap-funnel icon3d precedent), so the flat
+        // item/generated sprite pair was the user symptom13 anti-form. The model mirrors the
+        // upstream block element-by-element: default facing = getDefaultSide() = SIDE_UP
+        // (TileEntityBase09FacingSingle.java:91), the stick bounds (5,0,5)-(11,16,11)
+        // (MultiTileEntityDynamite.java:157-160) — a 6x16x6 rod along Y, front on UP /
+        // back on DOWN (OPOS) / side on the four laterals (:177-181 getTexture2 face roles).
+        // The grayscale "colored" pass rides tintindex 0 (the GT6ExplosivesTintListener
+        // ItemColor serves the row material, element faces tint like the generated layer0 —
+        // the casingCubeModel lesson), the "overlay" pass renders as-is un-tinted (the
+        // partModel 0.01-offset decal form, cutout for the alpha texels); particle = the
+        // body sprite (the r11-machine-particle-key lesson). One shared shape per item, the
+        // colour identity riding the tint, not the file.
+        for (gregtech6.registry.GT6Explosives.DynamiteRow tRow : gregtech6.registry.GT6Explosives.ROWS) {
+            ItemModelBuilder tDynamite = getBuilder(tRow.path())
+                    .parent(getExistingFile(mcLoc("block/block")))
+                    .texture("particle", modLoc("block/dynamite_colored_side"))
+                    .texture("front", modLoc("block/dynamite_colored_front"))
+                    .texture("back", modLoc("block/dynamite_colored_back"))
+                    .texture("side", modLoc("block/dynamite_colored_side"))
+                    .texture("overlay_front", modLoc("block/dynamite_overlay_front"))
+                    .texture("overlay_back", modLoc("block/dynamite_overlay_back"))
+                    .texture("overlay_side", modLoc("block/dynamite_overlay_side"))
+                    .renderType("cutout");
+            // element 0 — the body stick, tintindex 0 = the material tint (the :157-160 bounds);
+            // allFaces = the casingCubeModel:1083 form (FaceBuilder has no face() — one
+            // allFaces lambda covers the six face roles in a single element)
+            tDynamite.element()
+                    .from(5.0F, 0.0F, 5.0F).to(11.0F, 16.0F, 11.0F)
+                    .allFaces((aDir, aFace) -> aFace.texture(
+                            aDir == net.minecraft.core.Direction.UP ? "#front"
+                                : aDir == net.minecraft.core.Direction.DOWN ? "#back" : "#side").tintindex(0))
+                    .end();
+            // elements 1-6 — the overlay decals (the partModel 0.01-offset form, un-tinted = -1)
+            tDynamite.element() // up
+                    .from(5.0F, 16.0F, 5.0F).to(11.0F, 16.01F, 11.0F)
+                    .face(net.minecraft.core.Direction.UP).texture("#overlay_front")
+                    .end();
+            tDynamite.element() // down
+                    .from(5.0F, -0.01F, 5.0F).to(11.0F, 0.0F, 11.0F)
+                    .face(net.minecraft.core.Direction.DOWN).texture("#overlay_back")
+                    .end();
+            tDynamite.element() // north
+                    .from(5.0F, 0.0F, -0.01F).to(11.0F, 16.0F, 0.0F)
+                    .face(net.minecraft.core.Direction.NORTH).texture("#overlay_side")
+                    .end();
+            tDynamite.element() // south
+                    .from(5.0F, 0.0F, 16.0F).to(11.0F, 16.0F, 16.01F)
+                    .face(net.minecraft.core.Direction.SOUTH).texture("#overlay_side")
+                    .end();
+            tDynamite.element() // west
+                    .from(-0.01F, 0.0F, 5.0F).to(0.0F, 16.0F, 11.0F)
+                    .face(net.minecraft.core.Direction.WEST).texture("#overlay_side")
+                    .end();
+            tDynamite.element() // east
+                    .from(16.0F, 0.0F, 5.0F).to(16.01F, 16.0F, 11.0F)
+                    .face(net.minecraft.core.Direction.EAST).texture("#overlay_side")
+                    .end();
+        }
         // the electrode thirteen (task press-electrodes, MultiItemTechnological.java:488-500
         // metas 29987-29999) — walked over the GT6Electrodes registry rows so the model face
         // cannot drift from the registered ids; single-layer models over the borrowed

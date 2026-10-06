@@ -13573,19 +13573,29 @@ the `item/generated` parent (the bottle band convention).
   - `bullet_casing_large.png` `textures/items/gt.multiitem.technological/10898.png`
     (`32b9b6cde83110d7971ec12bdaf4dffd705cf634d25863c56965e3e08c97951d` — meta 10898,
     MultiItemTechnological.java:354)
-- `gt6/textures/item/explosives/dynamite.png` — the dynamite body sprite
-  (upstream `textures/blocks/machines/tools/dynamite/colored/side.png`, task
-  explosives-chain; sha256
-  `96f4e2814ebe7dc8ce455fb249476f0ce15c18cdc0b2142408e50e80faab5044`).
-  Upstream tints this grayscale block face with the MTE material colour
+- `gt6/textures/block/dynamite_{colored,overlay}_{front,back,side}.png` — the six
+  dynamite block-face sprites, byte-identical upstream borrows (snapshot
+  `v6.17.06-22-g3703e4030`, task explosives-3d-item-models — retired the flat
+  `item/explosives/{dynamite,dynamite_overlay}.png` pair from explosives-chain,
+  the 2D item/generated anti-form of the user symptom13; the 3D item model
+  mirrors the upstream MultiTileEntityDynamite block geometry):
+  - `dynamite_colored_front.png` `textures/blocks/machines/tools/dynamite/colored/front.png`
+    (`96f4e2814ebe7dc8ce455fb249476f0ce15c18cdc0b2142408e50e80faab5044` — the
+    grayscale body is one shared art across all three faces, MultiTileEntityDynamite.java:162-165)
+  - `dynamite_colored_back.png` / `dynamite_colored_side.png` — same bytes as the
+    front (upstream `colored/back.png`/`colored/side.png` are byte-identical copies)
+  - `dynamite_overlay_front.png` `textures/blocks/machines/tools/dynamite/overlay/front.png`
+    (`be553e3515b590d662454c1be44b648894b4acb22736297347adae14a518ef66` — MultiTileEntityDynamite.java:166)
+  - `dynamite_overlay_back.png` `textures/blocks/machines/tools/dynamite/overlay/back.png`
+    (`9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` — MultiTileEntityDynamite.java:167)
+  - `dynamite_overlay_side.png` `textures/blocks/machines/tools/dynamite/overlay/side.png`
+    (`58907ffe4a297a960d3c2ea05990f307e7212eaf0065be088d4b22fd0040693f` — MultiTileEntityDynamite.java:168)
+  Upstream tints the grayscale `colored` pass with the MTE material colour
   (Loader_MultiTileEntities.java:2236-2238, MT.Orange/Red/Purple); the port keeps
-  the same grey body + overlay pair on the flat item and answers the tint through
-  the per-item ItemColor seam (GT6ExplosivesTintListener) — one shared sprite for
-  all three variants, the colour identity riding the tint, not the file.
-- `gt6/textures/item/explosives/dynamite_overlay.png` — the dynamite overlay sprite
-  (upstream `textures/blocks/machines/tools/dynamite/overlay/side.png`, task
-  explosives-chain; sha256
-  `58907ffe4a297a960d3c2ea05990f307e7212eaf0065be088d4b22fd0040693f`).
+  the same grey body + overlay pair on the 3D item model and answers the tint
+  through the per-item ItemColor seam (GT6ExplosivesTintListener, tintindex 0 on
+  the body element faces) — one shared model for all three variants, the colour
+  identity riding the tint, not the file.
 ## task press-electrodes — the Forestry electrode thirteen
 
 - `gt6/textures/item/electrode/electrode_fr_{copper,tin,bronze,iron,gold,diamond,obsidian,

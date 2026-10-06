@@ -1,7 +1,155 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#back",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#front",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#side",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        16,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "up": {
+          "texture": "#overlay_front"
+        }
+      },
+      "from": [
+        5,
+        16,
+        5
+      ],
+      "to": [
+        11,
+        16.01,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#overlay_back"
+        }
+      },
+      "from": [
+        5,
+        -0.01,
+        5
+      ],
+      "to": [
+        11,
+        0,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "north": {
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        5,
+        0,
+        -0.01
+      ],
+      "to": [
+        11,
+        16,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "south": {
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        5,
+        0,
+        16
+      ],
+      "to": [
+        11,
+        16,
+        16.01
+      ]
+    },
+    {
+      "faces": {
+        "west": {
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        -0.01,
+        0,
+        5
+      ],
+      "to": [
+        0,
+        16,
+        11
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        16,
+        0,
+        5
+      ],
+      "to": [
+        16.01,
+        16,
+        11
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
   "textures": {
-    "layer0": "gt6:item/explosives/dynamite",
-    "layer1": "gt6:item/explosives/dynamite_overlay"
+    "back": "gt6:block/dynamite_colored_back",
+    "front": "gt6:block/dynamite_colored_front",
+    "overlay_back": "gt6:block/dynamite_overlay_back",
+    "overlay_front": "gt6:block/dynamite_overlay_front",
+    "overlay_side": "gt6:block/dynamite_overlay_side",
+    "particle": "gt6:block/dynamite_colored_side",
+    "side": "gt6:block/dynamite_colored_side"
   }
 }

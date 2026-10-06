@@ -12,6 +12,7 @@
  */
 package gregtech6.registry;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -23,6 +24,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -140,8 +142,53 @@ public class GT6ExplosivesRegistrationTest {
 		}
 		for (String tDynamite : new String[] {"boomstick", "dynamite", "dynamite_strong"}) {
 			JsonObject tModel = readJson("assets/gt6/models/item/" + tDynamite + ".json");
-			assertTrue(tModel.getAsJsonObject("textures").has("layer0") && tModel.getAsJsonObject("textures").has("layer1"),
-					"the dynamite model carries the body + overlay layers (" + tDynamite + ")");
+			// task explosives-3d-item-models — the upstream item is the 3D block form (the
+			// MultiTileEntityDynamite MTE; the 1.7.10 icon renders the default-state block),
+			// never a flat layer0 sprite: the model parents block/block and carries the
+			// 6x16x6 body stick + six 0.01-offset overlay decals.
+			assertEquals("minecraft:block/block", tModel.get("parent").getAsString(),
+					"the 3D block display form (" + tDynamite + ")");
+			assertTrue(tModel.has("elements"),
+					"the dynamite model is the 3D elements form, not a layer0 flat sprite (" + tDynamite + ")");
+			JsonObject tTextures = tModel.getAsJsonObject("textures");
+			assertTrue(!tTextures.has("layer0") && !tTextures.has("layer1"),
+					"the 2D layer pair is retired (" + tDynamite + ")");
+			assertEquals(7, tModel.getAsJsonArray("elements").size(),
+					"the body stick + six overlay decals (" + tDynamite + ")");
+			// the body stick = the :157-160 bounds over the default facing SIDE_UP
+			// (TileEntityBase09FacingSingle.java:91): (5,0,5)-(11,16,11), front on UP /
+			// back on DOWN / side on the four laterals (MultiTileEntityDynamite.java:177-181).
+			JsonObject tBody = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
+			JsonArray tFrom = tBody.getAsJsonArray("from");
+			assertArrayEquals(new double[] {5.0, 0.0, 5.0}, new double[] {tFrom.get(0).getAsDouble(),
+					tFrom.get(1).getAsDouble(), tFrom.get(2).getAsDouble()},
+					"the :157-160 stick bounds min (default facing SIDE_UP, TileEntityBase09FacingSingle.java:91)");
+			JsonArray tTo = tBody.getAsJsonArray("to");
+			assertArrayEquals(new double[] {11.0, 16.0, 11.0}, new double[] {tTo.get(0).getAsDouble(),
+					tTo.get(1).getAsDouble(), tTo.get(2).getAsDouble()},
+					"the :157-160 stick bounds max");
+			JsonObject tFaces = tBody.getAsJsonObject("faces");
+			assertEquals(6, tFaces.size(), "the closed stick body (" + tDynamite + ")");
+			assertEquals("#front", tFaces.getAsJsonObject("up").get("texture").getAsString(),
+					"mFacing = SIDE_UP carries the front (MultiTileEntityDynamite.java:178)");
+			assertEquals("#back", tFaces.getAsJsonObject("down").get("texture").getAsString(),
+					"OPOS[mFacing] carries the back (MultiTileEntityDynamite.java:179)");
+			for (String tLateral : new String[] {"north", "south", "west", "east"}) {
+				JsonObject tFace = tFaces.getAsJsonObject(tLateral);
+				assertEquals("#side", tFace.get("texture").getAsString(),
+						"the laterals carry the side (MultiTileEntityDynamite.java:180)");
+				assertEquals(0, tFace.get("tintindex").getAsInt(),
+						"the grayscale colored pass rides the material tint (" + tDynamite + ")");
+			}
+			// the six overlay decals render as-is (no tintindex = the ItemColor -1 arm)
+			JsonArray tElements = tModel.getAsJsonArray("elements");
+			for (int i = 1; i < 7; i++) {
+				JsonObject tDecalFaces = tElements.get(i).getAsJsonObject().getAsJsonObject("faces");
+				for (String tDecalFace : tDecalFaces.keySet()) {
+					assertTrue(!tDecalFaces.getAsJsonObject(tDecalFace).has("tintindex"),
+							"the overlay decals stay un-tinted (" + tDynamite + " element " + i + ")");
+				}
+			}
 		}
 
 		JsonObject tEn = readJson("assets/gt6/lang/en_us.json");
