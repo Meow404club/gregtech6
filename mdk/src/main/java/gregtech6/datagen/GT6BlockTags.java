@@ -257,9 +257,11 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			}
 			tPickaxe.add(tEntry.getValue().get());
 		}
-		// The barrel family still closes the batch on the census material mapping
-		// (axe/pickaxe/pickaxe over wood/plastic/metal, the BlockTagLoader:69-71 precedent).
-		tPickaxe.add(GTBarrels.BARREL_PLASTIC.get());
+		// The barrel family closes the batch on the census material mapping — REVISITED by
+		// task harvest-bands-card2-nonwrench: the "plastic=pickaxe" column was the GTCEu
+		// BlockTagLoader:69-71 precedent, but the upstream GT6 row rides aUtilWood = axe
+		// (Loader :2150, MultiTileEntityBarrelPlastic), so the plastic canister moved to the
+		// axe band below; the metal drums stay aUtilMetal = pickaxe (:2151-2171).
 		tPickaxe.add(GTBarrels.BARREL_METAL.get());
 		tPickaxe.add(GTBarrels.BARREL_LOGISTICS.get());
 		for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values()) {
@@ -308,6 +310,71 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		// (the :2221 aUtilWool column — 1.20.1 has no mineable/shears tag, the shears defer,
 		// the harvest-bands-card2 declaration for the resin-bag row).
 		tPickaxe.add(gregtech6.registry.GT6MiscToolBlocks.PLANT_POT_BLOCK.get());
+		// --- the harvest-bands-card2-nonwrench extension (the non-wrench pickaxe domains,
+		// census state research.harvest-tool-census; EVERY family re-read row-by-row in
+		// tmp/gt6-1.7.10 Loader_MultiTileEntities.java before landing — the mc-A
+		// chest=pickaxe+axe double-band precedent forbids metal=pickaxe extrapolation):
+		//
+		// · GT6Molds — 32 stone/ceramic molds + 2 faucets, aUtilStone (:347-359 molds,
+		//   :300/:305 faucets; the upstream metal rungs :361-388 are not ported).
+		// · GT6Crucibles — 4 rungs: stone/ceramic aStone (:251/:256), bronze/steel aMetal
+		//   (:265/:267). ALL pickaxe — upstream has ZERO wrench crucible (the card-1
+		//   census-split erratum, ruled onto THIS card).
+		// · GT6Sensors — 21, aUtilMetal (:1979-1999).
+		// · Grindstone (:2226) + Sifting Table (:2227) singles, aUtilMetal;
+		// · Mortars — 5, aUtilStone (:2179-2183).
+		// · Kitchen stone/metal rows — steel bath pot aUtilMetal (:2175), mixing bowl
+		//   aUtilStone (:2177), juicer aUtilStone (:2184); the wood pot → axe below.
+		// · Coke oven + bricks — aStone (:1138/:1193), the multiblock OUT pair card 1 named.
+		// · GT6Cells metal rows — aUtilMetal (:1779-1809); the wood hosts → axe below.
+		// · Porcelain cup (:2094) / ceramic jug (:2095) / measuring pot (:2096), aUtilStone;
+		//   gas cylinders — 4, aUtilMetal (:2101-2104).
+		// · Taps/funnels ceramic+4-metal rows — aUtilStone/aUtilMetal (:2108-2113/:2115-2120);
+		//   the plastic pair is aUtilWood (:2109/:2116) → axe below.
+		// · Placed piles — rock/gem plate aUtilStone (:2034/:2039), ingot/plate/scrap
+		//   aUtilMetal (:2037/:2038/:2040); stick/lantern → axe, sandwich stays out (shears).
+		// · Mini portals — nether/end aStone (:2003/:2004).
+		// · Hand crank — aUtilMetal (:2106), the one kinetics row outside the aMachine family.
+		// · Stone slabs — 272, the mSlabs[0] face of the BlockMetaType stone family:
+		//   getHarvestTool = TOOL_pickaxe over the WHOLE family incl. slabs
+		//   (BlockMetaType.java:166 — the same anchor the concrete walk cites above).
+		for (Block tBlock : gregtech6.registry.GT6Molds.blockArray()) {
+			tPickaxe.add(tBlock);
+		}
+		gregtech6.registry.GT6Molds.FAUCET_BLOCKS_BY_PATH.values().forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		gregtech6.registry.GT6Crucibles.BLOCKS_BY_PATH.values().forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		gregtech6.registry.GT6Sensors.BLOCKS_BY_PATH.values().forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		tPickaxe.add(gregtech6.registry.GT6Grindstones.GRINDSTONE.get());
+		tPickaxe.add(gregtech6.registry.GT6SiftingTables.SIFTING_TABLE.get());
+		gregtech6.registry.GT6Mortars.BLOCKS_BY_PATH.values().forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		tPickaxe.add(gregtech6.registry.GT6Kitchen.BATHING_POT_STEEL.get());
+		tPickaxe.add(gregtech6.registry.GT6Kitchen.MIXING_BOWL.get());
+		tPickaxe.add(gregtech6.registry.GT6Kitchen.JUICER.get());
+		tPickaxe.add(gregtech6.registry.GTMultiBlocks.COKE_OVEN.get());
+		tPickaxe.add(gregtech6.registry.GTMultiBlocks.COKE_OVEN_BRICKS.get());
+		for (gregtech6.registry.GT6Cells.CellRow tRow : gregtech6.registry.GT6Cells.ROWS) {
+			if (tRow.woodHost() || !tRow.registers()) continue; // wood hosts → axe (the :1770-1778 column)
+			tPickaxe.add(gregtech6.registry.GT6Cells.BLOCKS_BY_PATH.get(tRow.path()).get());
+		}
+		tPickaxe.add(gregtech6.registry.GT6Cups.PORCELAIN_CUP.get());
+		tPickaxe.add(gregtech6.registry.GT6Jugs.CERAMIC_JUG.get());
+		tPickaxe.add(gregtech6.registry.GT6MeasuringPot.MEASURING_POT.get());
+		gregtech6.registry.GT6GasCylinders.BLOCKS_IN_ORDER.forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		for (gregtech6.registry.GT6Attachments.AttachmentRow tRow : gregtech6.registry.GT6Attachments.ROWS) {
+			if (tRow.path().endsWith("_plastic")) continue; // the aUtilWood plastic pair → axe
+			tPickaxe.add(gregtech6.registry.GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get());
+		}
+		tPickaxe.add(gregtech6.registry.GT6Placeables.PLACED_ROCK.get());
+		tPickaxe.add(gregtech6.registry.GT6Placeables.PLACED_GEM_PLATE.get());
+		tPickaxe.add(gregtech6.registry.GT6Placeables.PLACED_INGOT.get());
+		tPickaxe.add(gregtech6.registry.GT6Placeables.PLACED_PLATE.get());
+		tPickaxe.add(gregtech6.registry.GT6Placeables.PLACED_SCRAP.get());
+		tPickaxe.add(gregtech6.registry.GT6Portals.PORTAL_NETHER.get());
+		tPickaxe.add(gregtech6.registry.GT6Portals.PORTAL_END.get());
+		tPickaxe.add(gregtech6.registry.GT6Kinetics.CRANK.get());
+		for (Block tBlock : gregtech6.registry.GTStoneSlabBlocks.blockArray()) {
+			tPickaxe.add(tBlock);
+		}
 	}
 
 	/**
@@ -316,6 +383,34 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * materials wood/wood_treated/iron_wood/plastic ride the upstream aWooden column,
 	 * Loader :1846-1849 — they used to sit in the pickaxe band, the whole-register
 	 * expedient this card retires).
+	 *
+	 * <p><b>Band extension</b> (task harvest-bands-card2-nonwrench — the aWooden/aUtilWood
+	 * columns of the census, EVERY row re-read in Loader_MultiTileEntities.java):
+	 *
+	 * <ul>
+	 * <li>the multiblock wood wall (:1139 aWooden — the row card 1's wrench walk skips).</li>
+	 * <li>the wood tank valve (:1195 aWooden, the only {@code flammable()} GT6Tanks row).</li>
+	 * <li>the wooden static storages — bookshelves aWooden (:181-183) + bottlecrates
+	 * aUtilWood (:184), the plank ladders card 1 left out.</li>
+	 * <li>the capsule-cell wood hosts — 8 waxes + plastic, aUtilWood (:1770-1778).</li>
+	 * <li>the plastic tap/funnel pair (:2109/:2116 aUtilWood — the PLASTIC fluid
+	 * accessories sit on the wood column upstream, their WOOD sound is the tell).</li>
+	 * <li>the greg o'lantern (:2031) + placed stick (:2035-2036), aUtilWood.</li>
+	 * <li>the wooden bathing pot (:2173-2174 aUtilWood).</li>
+	 * <li>the bumbliary pair (:2222-2223 aWooden). The Bumble Hive itself is
+	 * aHive = TOOL_scoop (:2041) — 1.20.1 has no mineable/scoop, the card-4 ruling pool
+	 * keeps it OUT of every band.</li>
+	 * <li>the wooden kinetics — 4 wood_treated axles (:1663-1666), the wooden gearbox +
+	 * rotation transformer (:1668-1669), the 2 ironwood steam engines (:591/:606
+	 * aWooden among the otherwise-aMachine Engines family).</li>
+	 * <li>the plastic canister MISLABEL FIX — upstream :2150 rides aUtilWood = axe; the
+	 * old pickaxe seat was the GTCEu BlockTagLoader precedent, not the GT6 row.</li>
+	 * </ul>
+	 *
+	 * <p>STILL OUT: the sandwich (:2032 aUtilWool = shears — no 1.20.1 face, the card-4
+	 * defer) and the resin/sap bag (:2221, same column), the crop sticks (instant-break,
+	 * no upstream harvest face) and the wooden Item Barrels / Plastic Storage Boxes
+	 * (:155-172 — the massstorage family is not ported yet, lands with its own card).
 	 */
 	private void addAxeBand() {
 		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
@@ -336,6 +431,45 @@ public final class GT6BlockTags extends BlockTagsProvider {
 				tAxe.add(tBlock);
 			}
 		}
+		// --- the harvest-bands-card2-nonwrench extension (see the javadoc table) ---
+		tAxe.add(gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH
+				.get(gregtech6.registry.GTMultiBlocks.WOOD_WALL_ROW.path()).get());
+		for (var tRow : GT6Tanks.ROWS) {
+			if (tRow.flammable()) tAxe.add(GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get()); // the :1195 wood valve
+		}
+		// the :181-184 plank ladders — the WOOD bookshelf/bottlecrate rows only (material
+		// == null, the plank carrier): the METAL rows of the same kinds are mc-B's seats
+		// (bottlecrate_metal = pickaxe, bookshelf_metal = the :143 aMachine wrench face)
+		// and would double-band here — the rebase union refinement.
+		for (var tRow : GT6StaticStorages.ROWS) {
+			if (tRow.material() == null && (tRow.kind() == GT6StaticStorages.Kind.BOOKSHELF || tRow.kind() == GT6StaticStorages.Kind.BOTTLECRATE)) {
+				tAxe.add(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get()); // the :181-184 plank ladders
+			}
+		}
+		for (gregtech6.registry.GT6Cells.CellRow tRow : gregtech6.registry.GT6Cells.ROWS) {
+			if (!tRow.woodHost() || !tRow.registers()) continue; // metals → pickaxe above
+			tAxe.add(gregtech6.registry.GT6Cells.BLOCKS_BY_PATH.get(tRow.path()).get());
+		}
+		tAxe.add(gregtech6.registry.GT6Attachments.BLOCKS_BY_PATH.get("tap_plastic").get());
+		tAxe.add(gregtech6.registry.GT6Attachments.BLOCKS_BY_PATH.get("funnel_plastic").get());
+		tAxe.add(gregtech6.registry.GT6Placeables.GREG_O_LANTERN.get());
+		tAxe.add(gregtech6.registry.GT6Placeables.PLACED_STICK.get());
+		tAxe.add(gregtech6.registry.GT6Kitchen.BATHING_POT_WOOD.get());
+		tAxe.add(gregtech6.registry.GT6BeeHives.BUMBLIARY.get());
+		tAxe.add(gregtech6.registry.GT6BeeHives.BUMBLIARY_ADVANCED.get());
+		for (gregtech6.registry.GT6Kinetics.AxleSpec tSpec : gregtech6.registry.GT6Kinetics.AXLE_SPECS) {
+			if (!"wood_treated".equals(tSpec.material())) continue; // metal axles = aMachine, the tail card
+			for (int tSize = 0; tSize < gregtech6.registry.GT6Kinetics.AXLE_DIAMETERS.length; tSize++) {
+				tAxe.add(gregtech6.registry.GT6Kinetics.AXLE_BLOCKS
+						.get(gregtech6.registry.GT6Kinetics.axleName(tSpec.material(), tSize)).get());
+			}
+		}
+		tAxe.add(gregtech6.registry.GT6Kinetics.GEARBOX.get());
+		tAxe.add(gregtech6.registry.GT6Kinetics.TRANSFORMER_ROTATION.get());
+		for (gregtech6.registry.GT6Kinetics.SteamEngineRow tRow : gregtech6.registry.GT6Kinetics.STEAM_ENGINES) {
+			if (tRow.wooden()) tAxe.add(gregtech6.registry.GT6Kinetics.STEAM_ENGINE_BLOCKS.get(tRow.path()).get()); // :591/:606
+		}
+		tAxe.add(GTBarrels.BARREL_PLASTIC.get()); // the :2150 aUtilWood mislabel fix, out of pickaxe
 	}
 
 	/**
