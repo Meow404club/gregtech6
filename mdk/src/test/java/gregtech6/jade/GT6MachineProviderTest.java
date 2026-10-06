@@ -26,6 +26,7 @@ import gregapi.data.TD;
 import gregtech6.recipes.RecipeMap;
 import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
+import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
@@ -50,6 +51,7 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 
 	static BlockEntityTypeHolder sHolder;
 	static MultiBlockTypeHolder sMultiHolder;
+	static PartTypeHolder sPartHolder;
 
 	/** Mutable BET holder (the GT6FluidProviderTest.machineType shape — the factory needs the type it is creating). */
 	static final class BlockEntityTypeHolder {
@@ -59,6 +61,11 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 	/** The multiblock twin of the same holder trick. */
 	static final class MultiBlockTypeHolder {
 		BlockEntityType<TestMultiMachine> type;
+	}
+
+	/** The part twin — the wall-coverage relay fixture (task machine-provider-wall-coverage). */
+	static final class PartTypeHolder {
+		BlockEntityType<MultiBlockPartBlockEntity> type;
 	}
 
 	/** The minimal concrete multiblock machine — the r8 fixture arm (the abstract seams stubbed). */
@@ -107,6 +114,10 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 		sMultiHolder.type = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TestMultiMachine(sMultiHolder.type, aPos, aState),
 				Blocks.BRICKS).build(null);
+		sPartHolder = new PartTypeHolder();
+		sPartHolder.type = BlockEntityType.Builder.of(
+				(aPos, aState) -> new MultiBlockPartBlockEntity(sPartHolder.type, aPos, aState),
+				Blocks.BRICKS).build(null);
 	}
 
 	/**
@@ -126,6 +137,10 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 
 	private static TestMultiMachine makeMultiMachine() {
 		return sMultiHolder.type.create(POS, Blocks.BRICKS.defaultBlockState());
+	}
+
+	private static MultiBlockPartBlockEntity makePart() {
+		return sPartHolder.type.create(POS, Blocks.BRICKS.defaultBlockState());
 	}
 
 	private static CompoundTag syncOf(TileEntityBasicMachine aMachine) {
@@ -311,5 +326,71 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 		assertEquals(1.0F, GT6JadeRows.ratio(999999999, 640000), 1e-6F, "overhead clamps at full");
 		assertEquals(0.0F, GT6JadeRows.ratio(-5, 640000), 1e-6F, "negative never paints progress");
 		assertEquals(0.0F, GT6JadeRows.ratio(100, 0), 1e-6F, "a zero ceiling answers 0, never NaN");
+	}
+
+	// ------------------------------------------------------------------------------------
+	// group ⑦ the part-family coverage (task machine-provider-wall-coverage — the
+	// crucible-jade-follower legacy ②: the part family had zero machine tooltip rows)
+	// ------------------------------------------------------------------------------------
+
+	@Test
+	public void thePartFamilyRidesItsOwnClassAnchor() {
+		// the follower's lesson at family scale: Jade's client dispatch walks ONLY the
+		// superclass chain (jade-1201 impl HierarchyLookup.java:70-75), so the part tree
+		// GTMultiBlockPartBlock extends BaseEntityBlock (GTMultiBlockPartBlock.java:62) can
+		// never answer the GTEntityBlock anchor — GT6JadePlugin registers the machine
+		// provider on GTMultiBlockPartBlock itself. RED if a family member migrates onto
+		// the GTEntityBlock tree (then the dedicated line is redundant — remove it then).
+		assertFalse(gregtech6.block.GTEntityBlock.class.isAssignableFrom(gregtech6.block.multiblock.GTMultiBlockPartBlock.class),
+				"the part family joined the GTEntityBlock tree — the dedicated Jade anchor line in GT6JadePlugin is now redundant");
+		// the anchor must KEEP answering every block family member (one anchor covers all).
+		assertTrue(gregtech6.block.multiblock.GTMultiBlockPartBlock.class.isAssignableFrom(gregtech6.block.multiblock.GTCrucibleWallBlock.class),
+				"the crucible wall must stay under the family anchor");
+		assertTrue(gregtech6.block.multiblock.GTMultiBlockPartBlock.class.isAssignableFrom(gregtech6.block.multiblock.GTHeatTransmitterBlock.class),
+				"the heat transmitter must stay under the family anchor");
+		assertTrue(gregtech6.block.multiblock.GTMultiBlockPartBlock.class.isAssignableFrom(gregtech6.registry.GTMultiBlocks.WoodWallPartBlock.class),
+				"the wood wall must stay under the family anchor");
+	}
+
+	@Test
+	public void thePartRelayArmSpeaksTheControllerTagShape() {
+		// point at a part owned by a multiblock machine controller: the machine keys ride
+		// the relay verbatim (the upstream getTarget(T) forwarding face —
+		// MultiTileEntityMultiBlockPart.java:480-489 the progress family, :607-624 the
+		// energy family) AND the formed bit of the owner (MultiBlockMachine extends
+		// MultiBlockBase, both key faces coexist — the controller arm's exact shape).
+		// getTarget(true) resolves offline through the cached mTarget + the cheap-path
+		// checkStructure (mStructureChanged false → the mStructureOkay answer, no recheck).
+		TestMultiMachine tController = makeMultiMachine();
+		tController.mProgress = 700;
+		tController.mMaxProgress = 2800;
+		tController.mActive = true;
+		tController.mRunning = true;
+		tController.mEnergy = 512;
+		tController.mEnergyTypeAccepted = TD.Energy.EU;
+		tController.mStructureOkay = true;
+		MultiBlockPartBlockEntity tPart = makePart();
+		tPart.mTarget = tController;
+		tPart.mTargetPos = POS;
+		CompoundTag tTag = new CompoundTag();
+		GT6MachineProvider.appendPartData(tTag, tPart);
+		assertEquals(700L, tTag.getLong(GT6MachineProvider.KEY_PROGRESS));
+		assertEquals(2800L, tTag.getLong(GT6MachineProvider.KEY_MAX_PROGRESS));
+		assertTrue(tTag.getBoolean(GT6MachineProvider.KEY_ACTIVE));
+		assertTrue(tTag.getBoolean(GT6MachineProvider.KEY_RUNNING));
+		assertEquals(512L, tTag.getLong(GT6MachineProvider.KEY_ENERGY));
+		assertEquals("EU", tTag.getString(GT6MachineProvider.KEY_ENERGY_TYPE));
+		assertTrue(tTag.getBoolean(GT6MachineProvider.KEY_STRUCTURE_OKAY));
+	}
+
+	@Test
+	public void aLoosePartWritesNoKeys() {
+		// the getTarget gate: an unlinked part (no owner, the formation-gate posture the
+		// crucible wall arm shares) answers an EMPTY tag — zero tooltip rows, never a
+		// stale-formed lie from an orphaned wall.
+		CompoundTag tTag = new CompoundTag();
+		GT6MachineProvider.appendPartData(tTag, makePart());
+		assertFalse(tTag.contains(GT6MachineProvider.KEY_STRUCTURE_OKAY));
+		assertFalse(tTag.contains(GT6MachineProvider.KEY_MAX_PROGRESS));
 	}
 }

@@ -1702,6 +1702,10 @@ HAND_TRANSLATIONS = {
     "gt6.jade.crucible.entry": ("  %s: %s 份", "hand"),
     "gt6.jade.crucible.empty": ("空", "hand"),
     "gt6.jade.crucible.more": ("+%s 种", "hand"),
+    # task mb-formed-crucible-wall ⑥ / machine-provider-wall-coverage: the ownership row
+    # ("Part of: %s" / 归属) — the tsv hand row shipped with the follower merge but this
+    # HAND table row was missed (the --check drift it leaves); landed here to close it.
+    "gt6.jade.crucible.owner": ("归属: %s", "hand"),
     # task p34-hygiene-lang: the machine/fluid Jade tooltip faces keyed (the v1 literal band
     # retired) — the zh faces mirror the crucible family shape above (ASCII colon+space, the
     # numbers ride the %s slots). 双落 discipline: py row + provider/datagen walk in the SAME
