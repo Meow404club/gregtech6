@@ -8,11 +8,14 @@
  *     {@code PX_N[9]} reads 7px, both rows are 6px bands), the back face mirrors the columns
  *     (the :105/:211 picker faces ride the same table, getFacingCoordsClicked
  *     UT.java:1738 = the screen-style u/v pair);</li>
- * <li>the elements-to-shape consistency (the card headline): the crate frame envelope
- *     tops at 8px and the 10px collision box (:212, PX_N[6]) covers it — entities never
- *     clip visible static geometry; the bookshelf frame envelope IS the full cube (the
- *     :349-350 full-height form) so the 2px-inset selection (:349-350) stays inside the
- *     visible mass;</li>
+ * <li>the three-way alignment (task shelf-crate-2px-realign, the user ruling 2026-10-06
+ *     "我想要让渲染、碰撞箱、描边对齐，看起来不奇怪"): the rendered model envelope, the
+ *     collision box and the selection outline coincide per family — the crate on the 8px
+ *     body box, the shelf on the full cube. The upstream-faithful 6px-selection/10px-
+ *     collision split (:212-214) read as a 6/8/10 staircase against the 8px walls and the
+ *     2px-inset shelf outline (:349-350) outlined a hole 2px inside the visible mass —
+ *     the reported "outline vs model ~2px" mismatch; both stay deliberate deviations
+ *     from upstream, looks first;</li>
  * <li>the blockstate/item wiring: all four facings ride the yaw table and every item
  *     model parents its plank leaf (the three-faces-same-change rule).</li>
  * </ul>
@@ -137,37 +140,60 @@ class GT6ShelfCrateGeometryTest {
     // ------------------------------------------------------------------
 
     @Test
-    public void crateFrameEnvelopeStaysUnderTheCollisionBox() throws IOException {
+    public void crateModelCollisionAndOutlineAreOneEnvelope() throws IOException {
+        // the three-way ruling (shelf-crate-2px-realign): the rendered model, the
+        // collision and the selection outline coincide on the (0,0,0)-(16,8,16) body
+        // box — the upstream-faithful 6px selection / 10px collision (:212-214) read
+        // as a 6/8/10 staircase against the 8px walls (the reported ~2px mismatch)
         AABB tEnvelope = envelope("gt6_bottlecrate_frame");
         assertEquals(8.0 / 16.0, tEnvelope.maxY, 1e-9,
                 "the crate frame tops at 8px (the wall boxes :165-166)");
         AABB tCollision = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.CRATE_COLLISION_SHAPE.bounds();
         AABB tSelection = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.CRATE_SELECTION_SHAPE.bounds();
-        assertTrue(tEnvelope.maxY <= tCollision.maxY + 1e-9,
-                "the 10px collision box (:212, PX_N[6]) covers the whole visible frame — entities never clip geometry");
-        assertTrue(tSelection.maxY < tCollision.maxY,
-                "the 6px selection (:213-214, PX_P[6]) stays the shallower box of the upstream split");
-        assertTrue(tEnvelope.minX >= 0.0 && tEnvelope.maxX <= 1.0 && tEnvelope.minZ >= 0.0 && tEnvelope.maxZ <= 1.0,
-                "the frame stays inside the block footprint");
+        assertEquals(tEnvelope.minX, tSelection.minX, 1e-9, "outline west = model west");
+        assertEquals(tEnvelope.maxX, tSelection.maxX, 1e-9, "outline east = model east");
+        assertEquals(tEnvelope.minY, tSelection.minY, 1e-9, "outline bottom = model bottom");
+        assertEquals(tEnvelope.maxY, tSelection.maxY, 1e-9, "outline top = the 8px wall tops");
+        assertEquals(tEnvelope.minZ, tSelection.minZ, 1e-9, "outline north = model north");
+        assertEquals(tEnvelope.maxZ, tSelection.maxZ, 1e-9, "outline south = model south");
+        assertEquals(tSelection.minX, tCollision.minX, 1e-9, "collision west = outline west");
+        assertEquals(tSelection.maxX, tCollision.maxX, 1e-9, "collision east = outline east");
+        assertEquals(tSelection.minY, tCollision.minY, 1e-9, "collision bottom = outline bottom");
+        assertEquals(tSelection.maxY, tCollision.maxY, 1e-9, "collision top = outline top");
+        assertEquals(tSelection.minZ, tCollision.minZ, 1e-9, "collision north = outline north");
+        assertEquals(tSelection.maxZ, tCollision.maxZ, 1e-9, "collision south = outline south");
     }
 
     @Test
-    public void shelfFrameCoversTheFullCubeTheSelectionRides() throws IOException {
+    public void shelfModelCollisionAndOutlineAreOneFullCube() throws IOException {
         AABB tEnvelope = envelope("gt6_bookshelf_frame");
-        assertEquals(0.0, tEnvelope.minX, 1e-9, "the shelf frame spans the full cube (the :349-350 form)");
+        assertEquals(0.0, tEnvelope.minX, 1e-9, "the shelf frame spans the full cube (the :296-297 walls)");
         assertEquals(1.0, tEnvelope.maxX, 1e-9, "the shelf frame spans the full cube");
         assertEquals(0.0, tEnvelope.minY, 1e-9, "the bottom slab grounds the cube (:294)");
         assertEquals(1.0, tEnvelope.maxY, 1e-9, "the top slab roofs the cube (:295)");
         assertEquals(0.0, tEnvelope.minZ, 1e-9, "the walls reach both open faces");
         assertEquals(1.0, tEnvelope.maxZ, 1e-9, "the walls reach both open faces");
-        AABB tNs = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.SHELF_SELECTION_NS.bounds();
-        AABB tEw = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.SHELF_SELECTION_EW.bounds();
-        assertTrue(tNs.minX >= tEnvelope.minX && tNs.maxX <= tEnvelope.maxX
-                && tNs.minZ >= tEnvelope.minZ && tNs.maxZ <= tEnvelope.maxZ,
-                "the NS selection slab (:349-350) stays inside the visible mass");
-        assertTrue(tEw.minX >= tEnvelope.minX && tEw.maxX <= tEnvelope.maxX
-                && tEw.minZ >= tEnvelope.minZ && tEw.maxZ <= tEnvelope.maxZ,
-                "the EW selection slab stays inside the visible mass");
+        // the three-way ruling: the outline and the collision ride the full cube — the
+        // constructed block pins the live getShape/getCollisionShape (super = the cube;
+        // the 2px-inset slab override, upstream :349-350, is gone)
+        gregtech6.registry.GT6StaticStorages.GT6StorageBlock tShelf = new gregtech6.registry.GT6StaticStorages.GT6StorageBlock(
+                gregtech6.registry.GT6StaticStorages.ROWS.stream()
+                        .filter(aRow -> aRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF)
+                        .findFirst().orElseThrow(),
+                net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+        AABB tOutline = tShelf.getShape(tShelf.defaultBlockState(), null, null,
+                net.minecraft.world.phys.shapes.CollisionContext.empty()).bounds();
+        AABB tCollision = tShelf.getCollisionShape(tShelf.defaultBlockState(), null, null,
+                net.minecraft.world.phys.shapes.CollisionContext.empty()).bounds();
+        assertEquals(0.0, tOutline.minX, 1e-9, "the outline hugs the west wall");
+        assertEquals(1.0, tOutline.maxX, 1e-9, "the outline hugs the east wall");
+        assertEquals(0.0, tOutline.minY, 1e-9, "the outline hugs the bottom");
+        assertEquals(1.0, tOutline.maxY, 1e-9, "the outline hugs the top");
+        assertEquals(0.0, tOutline.minZ, 1e-9, "the outline hugs the north wall");
+        assertEquals(1.0, tOutline.maxZ, 1e-9, "the outline hugs the south wall");
+        assertEquals(tOutline.minX, tCollision.minX, 1e-9, "collision west = outline west");
+        assertEquals(tOutline.maxX, tCollision.maxX, 1e-9, "collision east = outline east");
+        assertEquals(tOutline.maxY, tCollision.maxY, 1e-9, "collision top = outline top");
         // the books (the BER display) live in the open niches: the frame must NOT close
         // the front/back — the mid-band z 7..9 spine is the only z-wall between them
         assertEquals(6, boxes("gt6_bookshelf_frame").size(), "the frame stays the six-box shelf");
