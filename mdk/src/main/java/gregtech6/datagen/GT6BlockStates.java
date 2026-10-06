@@ -2177,58 +2177,16 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addLaserFamilies() {
         addBridgeFamily(GT6Lasers.CO2_LASER_BLOCKS_BY_PATH, "co2_laser", "laser_electric", true);
         addBridgeFamily(GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH, "laser_absorber", "laser_absorber", true);
-        // task qu-energizer — the third laser-converter family keeps the plain
-        // single-layer orientable (the tex-bridge-kinetic probe: the upstream
-        // quantum_laser overlay groups are alpha-0 EMPTY layers and the colored layer is
-        // mRGBa-dependent gray noise — nothing to borrow, the committed derived amber
-        // faces stay the rung identity, the assets/README.md probe verdict)
-        addBridgeFamily(gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH, "quantum_energizer", "quantum_energizer");
-    }
-
-    /**
-     * One bridge family: the orientable cube + the five rung blockstates + the item parents
-     * (the transformer form). Task c2-controller-tint: the re-declared body element
-     * carries {@code tintindex 0} on every face (the machineModel grammar — the child's
-     * elements replace the parent's, the partModel precedent) — the grayscale colored
-     * front/side pairs multiply the row's NBT_MATERIAL (the upstream
-     * {@code BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay)} form:
-     * heater :56-59 / engine :244-249 / motor :39-42 / laser :46-49 / absorber :41-44 —
-     * the census ruling: the gray plate IS the tint seat, not a colour declaration); the
-     * bake/ItemColor consumers ride GTMachineTintModel/GTItemPaintTint. The quantum
-     * energizer rides this same builder with NO material column and NO registration —
-     * the tintindex stays the white identity there (its amber art is pre-tinted, the
-     * card exemption).
-     */
-    private void addBridgeFamily(java.util.Map<String, RegistryObject<Block>> aBlocks, String aFamily, String aTexture) {
-        BlockModelBuilder tModel = models().orientable(aTexture,
-                modLoc("block/" + aTexture + "_side"), modLoc("block/" + aTexture + "_front"), modLoc("block/" + aTexture + "_side"))
-                // issue #8 (task world-tint-render-type): uniform cutout over the paintable
-                // family (the census convention — an opaque-texture body renders identically on
-                // cutout, and the family stays shell-safe if decals join later)
-                .renderType("cutout");
-        tModel.element()
-                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-                .allFaces((aDir, aFace) -> aFace.texture(aDir == Direction.NORTH ? "#front" : "#side").tintindex(0).cullface(aDir))
-                .end();
-        for (RegistryObject<Block> tHandle : aBlocks.values()) {
-            getVariantBuilder(tHandle.get()).forAllStates(aState -> {
-                // the vanilla horizontal-facing rotation map + the six-way x band (issue
-                // #18: the shared GT6DynamoBlock carrier went six-way + ACTIVE — the
-                // single-layer families carry no decal shell, so both ACTIVE values ride
-                // this model)
-                Direction tFacing = aState.getValue(gregtech6.block.energy.GT6DynamoBlock.FACING);
-                int tX = tFacing == Direction.DOWN ? 90 : tFacing == Direction.UP ? 270 : 0;
-                return ConfiguredModel.builder()
-                        .modelFile(tModel)
-                        .rotationX(tX)
-                        .rotationY((int) (tFacing.toYRot() + 180) % 360)
-                        .build();
-            });
-        }
-        itemModels().withExistingParent(aFamily, modLoc("block/" + aTexture));
-        for (String tPath : aBlocks.keySet()) {
-            if (!tPath.equals(aFamily)) itemModels().withExistingParent(tPath, modLoc("item/" + aFamily));
-        }
+        // task quantum-energizer-tint-overlay — the third laser-converter family moves to
+        // the two-layer aActive arm over the byte-verbatim upstream borrows (the
+        // quantum_laser colored/overlay/overlay_active trios, MultiTileEntityQuantum
+        // EnergizerLaser.java:45-61: the grayscale colored body × the row's Osmiridium
+        // mRGBa, the overlay untinted, overlay_active on the ACTIVE channel — the BE
+        // syncActiveToState arm). The former three-arg single-layer arm and its derived
+        // amber faces retired: the tex-bridge-kinetic probe's "alpha-0 empty overlay
+        // layers" verdict was WRONG (the overlays carry 108/88/144 opaque texels of real
+        // art each — the user-reported all-one-colour/no-overlay symptom was this seat).
+        addBridgeFamily(gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH, "quantum_energizer", "quantum_energizer", true);
     }
 
     /**

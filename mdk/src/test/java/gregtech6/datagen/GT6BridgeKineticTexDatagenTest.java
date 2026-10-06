@@ -26,9 +26,9 @@
  *     verbatim bytes);</li>
  * <li>the retired single-layer flat names are dead: no file, and no generated model
  *     references the old sprite paths;</li>
- * <li>the probe-miss family stays declared: quantum_energizer keeps the plain
- *     single-layer orientable (upstream quantum_laser overlay groups are alpha-0 empty
- *     layers — the assets/README.md probe verdict).</li>
+ * <li>the former probe-miss declaration retired: since task quantum-energizer-tint-overlay
+ *     the quantum energizer rides the two-layer aActive arm (the "alpha-0 empty overlay
+ *     layers" verdict was wrong — the pins live in GT6QuantumEnergizerTexDatagenTest).</li>
  * </ul>
  */
 package gregtech6.datagen;
@@ -378,31 +378,10 @@ class GT6BridgeKineticTexDatagenTest {
     }
 
     // ------------------------------------------------------------------
-    // the probe-miss family stays declared (quantum_energizer)
+    // the probe-miss family (quantum_energizer): the single-layer pin retired by task
+    // quantum-energizer-tint-overlay — the family rides the two-layer aActive arm now,
+    // its model pair + sha ledger pinned by GT6QuantumEnergizerTexDatagenTest (the
+    // "alpha-0 empty overlay layers" probe verdict was wrong: the overlays carry
+    // 108/88/144 opaque texels of real art each)
     // ------------------------------------------------------------------
-
-    @Test
-    public void quantumEnergizerKeepsTheDeclaredSingleLayer() throws Exception {
-        JsonObject tModel = json("assets/gt6/models/block/quantum_energizer.json");
-        assertEquals("minecraft:block/orientable", tModel.get("parent").getAsString(),
-                "quantum_energizer: the plain orientable parent");
-        assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(), "quantum_energizer: cutout");
-        JsonObject tTextures = tModel.getAsJsonObject("textures");
-        assertEquals("gt6:block/quantum_energizer_front", tTextures.get("front").getAsString(),
-                "quantum_energizer: the derived amber front (the rung identity)");
-        assertEquals("gt6:block/quantum_energizer_side", tTextures.get("side").getAsString(),
-                "quantum_energizer: the derived amber side");
-        for (String tKey : List.of("overlay_front", "overlay_back", "overlay_side")) {
-            assertFalse(tTextures.has(tKey),
-                    "quantum_energizer declares " + tKey + " — the alpha-0-empty probe verdict rotted");
-        }
-        var tElements = tModel.getAsJsonArray("elements");
-        assertEquals(1, tElements.size(), "quantum_energizer: the single-layer body");
-        var tBodyFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");
-        for (String tFace : FACE_KEYS) {
-            JsonElement tTint = tBodyFaces.getAsJsonObject(tFace).get("tintindex");
-            assertTrue(tTint == null || tTint.getAsInt() == 0,
-                    "quantum_energizer face " + tFace + ": the tint seat stays identity-or-zero");
-        }
-    }
 }

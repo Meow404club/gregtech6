@@ -83,6 +83,9 @@ class GT6PaintableRenderTypeCensusTest {
      * the P22 overlay shells (transparent texels → SOLID-layer plating, this census's
      * exact root cause) and declare cutout — folded into the universe below. The steel
      * pot and the juicer remain fully-opaque shell-free tubs, the declared deviation.
+     * (The review-seat rebase seam kept THIS named-set form as the single source of
+     * truth — the task quantum-energizer-tint-overlay sweep folded the same pair out
+     * with the same direction, the duplicate literals ride the set below.)
      */
     private static final Set<String> KITCHEN_MODELS = Set.of("bathing_pot_steel", "juicer");
 
@@ -140,6 +143,9 @@ class GT6PaintableRenderTypeCensusTest {
                 "turbine_main_steam", "turbine_main_gas", "turbine_main_dynamo", // addTurbineFamily
                 "bridge_heater", "bridge_engine", "bridge_motor", // addBridgeFamily (model = the texture token)
                 "laser_electric", "laser_absorber", "quantum_energizer",
+                // the shelled kitchen pair rides KITCHEN_SHELLED_MODELS (the universe
+                // addAll below) — the review-seat rebase seam removed the duplicate
+                // literals the task quantum-energizer-tint-overlay sweep added here
                 "magic_absorber", // addMagicAbsorber
                 "tank_wood", "tank_metal", // addTanks (tintedCube)
                 "steam_boiler_tank")); // addBoilers (the C5 wiring, the two-layer boilerModel form)
@@ -169,6 +175,9 @@ class GT6PaintableRenderTypeCensusTest {
         rModels.add("bridge_heater_active");
         rModels.add("laser_electric_active");
         rModels.add("laser_absorber_active");
+        // task quantum-energizer-tint-overlay — the quantum ACTIVE shell joins the
+        // two-layer arm (the former single-layer family)
+        rModels.add("quantum_energizer_active");
         rModels.add("steam_engine");
         rModels.add("diesel_engine");
         rModels.add("transformer_rotation");
