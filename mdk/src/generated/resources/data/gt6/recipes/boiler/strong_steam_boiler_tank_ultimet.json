@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_dense_ultimet"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PwP",
+    "PhP"
+  ],
+  "result": {
+    "item": "gt6:strong_steam_boiler_tank_ultimet"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:slime_ball"
+    },
+    "P": {
+      "item": "gt6:plate_wood_treated"
+    },
+    "S": {
+      "item": "gt6:stick_long_iron"
+    },
+    "r": {
+      "tag": "gt6:tools/soft_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "rGs",
+    "PSP",
+    "PSP"
+  ],
+  "result": {
+    "item": "gt6:barrel_wood"
+  },
+  "show_notification": true
+}
