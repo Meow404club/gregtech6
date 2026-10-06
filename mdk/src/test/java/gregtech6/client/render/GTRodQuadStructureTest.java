@@ -56,7 +56,10 @@ public class GTRodQuadStructureTest extends GTOfflineTestBase {
     public void fullyConnectedPipeHasCorePlusFiveSidedArms() {
         List<Shape> tShapes = GTRodBakedModel.planShapes(8, 63, 0);
         assertEquals(6 + 6 * 5, tShapes.size(), "core + one 5-face arm per side (the buried face is skipped, :139)");
-        assertEquals(36, countKind(tShapes, SpriteKind.BASE));
+        // task pipe-render-closeout — the core rides BASE (pipeSide art, :264), the arms
+        // ARM (the per-diameter connected art, :265)
+        assertEquals(6, countKind(tShapes, SpriteKind.BASE));
+        assertEquals(30, countKind(tShapes, SpriteKind.ARM));
         // every side has an outward cap whose face plane sits exactly on the block boundary
         for (Direction tDir : Direction.values()) {
             Shape tCap = tShapes.stream().filter(s -> s.face() == tDir && s.cull() == tDir).findFirst().orElse(null);
@@ -105,7 +108,8 @@ public class GTRodQuadStructureTest extends GTOfflineTestBase {
         // the restrictive rows: two bands (pipe_side_overlay + pipe_restrictor), full mask
         List<Shape> tTwo = GTRodBakedModel.planShapes(8, 63, 2);
         assertEquals((6 + 30) * 3, tTwo.size(), "every base quad twins twice");
-        assertEquals(36, countKind(tTwo, SpriteKind.BASE));
+        assertEquals(6, countKind(tTwo, SpriteKind.BASE));
+        assertEquals(30, countKind(tTwo, SpriteKind.ARM));
         assertEquals(72, countKind(tTwo, SpriteKind.OVERLAY));
         double tBand1 = tTwo.stream().filter(s -> s.kind() == SpriteKind.OVERLAY && s.band() == 1).findFirst().orElseThrow().box()[0];
         assertEquals(core(8)[0] - 2 * GTRodBakedModel.OVERLAY_EPSILON, tBand1, 1e-9,
