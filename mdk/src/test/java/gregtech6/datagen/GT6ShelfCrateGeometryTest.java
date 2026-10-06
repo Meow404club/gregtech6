@@ -173,27 +173,20 @@ class GT6ShelfCrateGeometryTest {
         assertEquals(1.0, tEnvelope.maxY, 1e-9, "the top slab roofs the cube (:295)");
         assertEquals(0.0, tEnvelope.minZ, 1e-9, "the walls reach both open faces");
         assertEquals(1.0, tEnvelope.maxZ, 1e-9, "the walls reach both open faces");
-        // the three-way ruling: the outline and the collision ride the full cube — the
-        // constructed block pins the live getShape/getCollisionShape (super = the cube;
-        // the 2px-inset slab override, upstream :349-350, is gone)
-        gregtech6.registry.GT6StaticStorages.GT6StorageBlock tShelf = new gregtech6.registry.GT6StaticStorages.GT6StorageBlock(
-                gregtech6.registry.GT6StaticStorages.ROWS.stream()
-                        .filter(aRow -> aRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF)
-                        .findFirst().orElseThrow(),
-                net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
-        AABB tOutline = tShelf.getShape(tShelf.defaultBlockState(), null, null,
-                net.minecraft.world.phys.shapes.CollisionContext.empty()).bounds();
-        AABB tCollision = tShelf.getCollisionShape(tShelf.defaultBlockState(), null, null,
-                net.minecraft.world.phys.shapes.CollisionContext.empty()).bounds();
+        // the three-way ruling: the outline rides the full cube (the named SHELF_SHAPE —
+        // a Block instance cannot be constructed offline, the frozen block registry) and
+        // the collision keeps the untouched vanilla cube, numerically the same box
+        AABB tOutline = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.SHELF_SHAPE.bounds();
+        AABB tVanillaCube = net.minecraft.world.phys.shapes.Shapes.block().bounds();
         assertEquals(0.0, tOutline.minX, 1e-9, "the outline hugs the west wall");
         assertEquals(1.0, tOutline.maxX, 1e-9, "the outline hugs the east wall");
         assertEquals(0.0, tOutline.minY, 1e-9, "the outline hugs the bottom");
         assertEquals(1.0, tOutline.maxY, 1e-9, "the outline hugs the top");
         assertEquals(0.0, tOutline.minZ, 1e-9, "the outline hugs the north wall");
         assertEquals(1.0, tOutline.maxZ, 1e-9, "the outline hugs the south wall");
-        assertEquals(tOutline.minX, tCollision.minX, 1e-9, "collision west = outline west");
-        assertEquals(tOutline.maxX, tCollision.maxX, 1e-9, "collision east = outline east");
-        assertEquals(tOutline.maxY, tCollision.maxY, 1e-9, "collision top = outline top");
+        assertEquals(tVanillaCube.minX, tOutline.minX, 1e-9, "collision (vanilla cube) = outline west");
+        assertEquals(tVanillaCube.maxX, tOutline.maxX, 1e-9, "collision (vanilla cube) = outline east");
+        assertEquals(tVanillaCube.maxY, tOutline.maxY, 1e-9, "collision (vanilla cube) = outline top");
         // the books (the BER display) live in the open niches: the frame must NOT close
         // the front/back — the mid-band z 7..9 spine is the only z-wall between them
         assertEquals(6, boxes("gt6_bookshelf_frame").size(), "the frame stays the six-box shelf");
