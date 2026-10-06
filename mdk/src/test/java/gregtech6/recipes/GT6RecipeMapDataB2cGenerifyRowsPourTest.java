@@ -67,12 +67,12 @@ public class GT6RecipeMapDataB2cGenerifyRowsPourTest extends GTRecipesOfflineTes
 
 	/** The per-map census of this card: file key -> expected total rows (zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"generifier", 9187, // 8882 walk + 238 stone family + 39 static items + 15 fluids + 7 beam + 6 qol stripped (+128: the weld-casing-increment re-increment, +7: the beam-consume-increment beam face, +6: the stripped-log-qol stripped-beam rows, +64: task wire-gt-registration — the sixteen wireGt multipliers x the 4 polymer generifying faces bakelite/hardPlastic/pvc/teflon -> plastic, the live-walk re-pour)
+			"generifier", 9123, // 8818 walk + 238 stone family + 39 static items + 15 fluids + 7 beam + 6 qol stripped (+128: the weld-casing-increment re-increment, +7: the beam-consume-increment beam face, +6: the stripped-log-qol stripped-beam rows; −64: task wiregt-prefix-item-retirement — the sixteen wireGt multipliers x the 4 polymer generifying faces left with the retired wire items, the live-walk re-pour)
 			"polarizer", 887);  // 76 Nd + 583 Fe-walk + 228 Steel-walk (+44: the weld-casing-increment re-increment)
 
 	/** The uncommented walk rows per map — the frozen walk snapshot sizes. */
 	private static final Map<String, Integer> WALK_CENSUS = Map.of(
-			"generifier", 8882,
+			"generifier", 8818,
 			"polarizer", 887);
 
 	/** The static direct-call rows keep their per-row upstream citation; these are their counts. */

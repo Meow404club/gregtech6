@@ -195,10 +195,11 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 			+ "\"inputs\":[{\"item\":\"gt6:ingot_iron\",\"count\":9},{\"item\":\"gt6:shape_extruder_block\"}],"
 			+ "\"outputs\":[{\"item\":\"gt6:block_solid_iron\"}],\"duration\":1661,\"eut\":96}",
 			// Handlers:748 — the backfill wire row (the WIRES-face AnnealedCopper representative;
-			// getCosts dT = 2800-293 over 1 ingot = 347t; the declared identity mapping)
-			"{\"comment\":\"Loader_Recipes_Handlers.java:748 — Shape_Extruder_Wire forging row, Annealed Copper representative (96 EUt, getCosts melting-point column 347t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.wireGt01 x material — the WIRES gate has no Iron member, the representative rides the wire-gt-registration item path)\","
+			// getCosts dT = 2800-293 over 1 ingot = 347t; the declared identity mapping rides the
+			// GTWires block items since task wiregt-prefix-item-retirement)
+			"{\"comment\":\"Loader_Recipes_Handlers.java:748 — Shape_Extruder_Wire forging row, Annealed Copper representative (96 EUt, getCosts melting-point column 347t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.wireGt01 x material — the WIRES gate has no Iron member, the representative rides the GTWires block item wire_annealed_copper_gt01, the upstream OreDictManager.setTarget_ oredient isomorph (task wiregt-prefix-item-retirement retired the wire-gt-registration item-path lift))\","
 			+ "\"inputs\":[{\"item\":\"gt6:ingot_annealed_copper\"},{\"item\":\"gt6:shape_extruder_wire\"}],"
-			+ "\"outputs\":[{\"item\":\"gt6:wire_gt01_annealed_copper\",\"count\":2}],\"duration\":347,\"eut\":96}",
+			+ "\"outputs\":[{\"item\":\"gt6:wire_annealed_copper_gt01\",\"count\":2}],\"duration\":347,\"eut\":96}",
 			// Handlers:766 — the backfill ccc row (the GT6Cells Tin representative; 9 cells per
 			// ingot, the U9 ratio; 24t = the low melting-point column)
 			"{\"comment\":\"Loader_Recipes_Handlers.java:766 — Shape_Extruder_CCC forging row, Tin representative (96 EUt, getCosts melting-point column 24t at 1 ingot in) (DECLARED IDENTITY MAPPING: upstream output OP.capcellcon x material — the U9 capsule-cell-container ratio lands on the GT6Cells block items)\","
@@ -231,7 +232,7 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 				"DISCARDED-ROWS LEDGER", ":210/:211", "Pill_Empty", "FR_*", "PlasticCan", "Cell_Empty",
 				"IC2_Food_Can_Empty",
 				"BACKFILLED-BY recipe-b5-backfill-wire-unlocks", ":748/:781-wire", "pipeTiny/Small/Medium/Large/Huge",
-				":766/:799 capcellcon", "wire_gt01_annealed_copper", "copper_fluid_pipe_", "cell_tin",
+				":766/:799 capcellcon", "wire_annealed_copper_gt01", "copper_fluid_pipe_", "cell_tin",
 				"THE 64-MOLD LEDGER", "62 + 0 + 2 = 64", "W-meta domains"}) {
 			assertTrue(tHead.contains(tMarker), "the file head declares: " + tMarker);
 		}
@@ -267,6 +268,10 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 		// the pipe + cell block-item families (the recipe-b5-backfill-wire-unlocks output faces)
 		for (gregtech6.registry.GTFluidPipes.FluidPipeRow tPipe : gregtech6.registry.GTFluidPipes.ROWS)
 			tUniverse.add("gt6:" + tPipe.path());
+		// the GTWires block-item family (the retired wireGtXX oredient face — task
+		// wiregt-prefix-item-retirement moved the :748/:781 representative output onto it)
+		for (String tWireName : gregtech6.registry.GTWires.FAMILY_BY_NAME.keySet())
+			tUniverse.add("gt6:" + tWireName);
 		for (gregtech6.registry.GT6Cells.CellRow tCell : gregtech6.registry.GT6Cells.ROWS)
 			tUniverse.add("gt6:" + tCell.path());
 		for (String tFixed : new String[] {"gt6:bottle_empty", "gt6:food_can_empty", "gt6:empty_reactor_rod"})

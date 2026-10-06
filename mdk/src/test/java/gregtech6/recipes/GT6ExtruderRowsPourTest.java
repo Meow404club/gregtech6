@@ -223,7 +223,7 @@ public class GT6ExtruderRowsPourTest extends GTRecipesOfflineTestBase {
 				"gt6:tool_head_hammer_blackstone"}) {
 			assertTrue(mRequestedItems.contains(tStone), "the stone representative face: " + tStone);
 		}
-		for (String tBackfill : new String[] {"gt6:ingot_annealed_copper", "gt6:wire_gt01_annealed_copper",
+		for (String tBackfill : new String[] {"gt6:ingot_annealed_copper", "gt6:wire_annealed_copper_gt01",
 				"gt6:ingot_copper", "gt6:copper_fluid_pipe_tiny", "gt6:copper_fluid_pipe_small", "gt6:copper_fluid_pipe_medium",
 				"gt6:copper_fluid_pipe_large", "gt6:copper_fluid_pipe_huge", "gt6:ingot_tin", "gt6:cell_tin"}) {
 			assertTrue(mRequestedItems.contains(tBackfill), "the backfill representative face: " + tBackfill);

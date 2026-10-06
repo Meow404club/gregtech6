@@ -6,10 +6,10 @@
  * <p>The kept ledger (the card report's 对账表, probe-measured 2026-10-02, forge offline
  * leg — the mdh-3 probe-first discipline): per-domain registration-order drops reconciled
  * against the atlas PRIMARY row counts (45 ledger domains, live 7285 — the WOOD-gate OP.plank wave 2ef11c4dc scattered plank items into the wood-carrying domains), the batch-1 + batch-2
- * joint pin (15521 = 8237 + 7285 exactly — no cross-domain bleed), and the universe/tab
- * before-after (57468 → 41946; 50188 → 36278 creative-visible pairs (+1 closeout head), 117 prefix families,
- * +224 task wire-gt-registration: the sixteen wireGt multipliers x the 14 WIRES-condition
- * materials, +16 creative-visible wireGt families — the ratchet rides the re-measure),
+ * joint pin (15522 = 8237 + 7285 exactly — no cross-domain bleed), and the universe/tab
+ * before-after (57244 → 41722; 49965 → 36166 creative-visible pairs (+1 closeout head), 102 prefix families,
+ * −224 task wiregt-prefix-item-retirement: the sixteen wireGt multipliers x the 14 WIRES-condition
+ * materials left with the retirement, −16 creative-visible wireGt families — the ratchet rides the re-measure),
  * none empties out).
  *
  * <p>The five census faces re-sign here over a batch-2 domain arm (all five walk the ONE
@@ -54,7 +54,7 @@ public class GT6ModDriverClearOutBatch2Test {
     /** The default registration universe (the mdh-3 post-casing census 57113 + 130 GT6-core
      * pairs the post-probe main merges registered — wood-planks/concrete/beam/small-tank —
      * seat-IX re-baseline; unchanged by this card's default mode — the zero-change proof). */
-    private static final int BASELINE = 57468; // +224 task wire-gt-registration (16 wireGt prefixes x 14 WIRES materials)
+    private static final int BASELINE = 57244; // −224 task wiregt-prefix-item-retirement (the wire-gt-registration lift reverted: 16 wireGt prefixes x 14 WIRES materials off the item path)
     /** The batch-2 per-domain kept ledger, probe-measured (the card report quotes these).
      * 44 PRIMARY domains; sum = 7234. The GT5U "gregtech" rows are not seedable (our own
      * modid) and carry no ledger line. */
@@ -100,21 +100,21 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.ExU.mID, 96),
             Map.entry(MT.MD.BTL.mID, 303), // +1 post-probe main registration (same batch as the CANDY +1)
             Map.entry(MT.MD.AETHER.mID, 53), // +1 the Skyroot plank (the WOOD-gate wave)
-            Map.entry(MT.MD.PR.mID, 54), // +16 task wire-gt-registration: ElectrotineAlloy is a PR PRIMARY, the 16 wireGt pairs join the drop
-            Map.entry(MT.MD.BP.mID, 54), // +16 task wire-gt-registration: PurpleAlloy is a BP PRIMARY, the 16 wireGt pairs join the drop
+            Map.entry(MT.MD.PR.mID, 38), // −16 task wiregt-prefix-item-retirement: ElectrotineAlloy is a PR PRIMARY, the 16 wireGt pairs left with the retirement
+            Map.entry(MT.MD.BP.mID, 38), // −16 task wiregt-prefix-item-retirement: PurpleAlloy is a BP PRIMARY, the 16 wireGt pairs left with the retirement
             Map.entry(MT.MD.FZ.mID, 108),
             Map.entry(MT.MD.PFAA.mID, 104));
-    /** The batch-1 ledger (GT6ModDriverClearOutWaveTest) — the joint pin's other half (8234 + 3 the BOTA planks, seat XVII, +80 task wire-gt-registration the HBM-primary wireGt pairs). */
-    private static final int BATCH1_TOTAL = 8317;
-    /** 8237 + 7285 = 15521; 57468 − 15522 = 41946 (the batch-2 total includes the RP 40 from the NikolineAlloy row and the post-probe CANDY +1; the universe rode the +224 task wire-gt-registration re-measure). */
+    /** The batch-1 ledger (GT6ModDriverClearOutWaveTest) — the joint pin's other half (8234 + 3 the BOTA planks, seat XVII, −80 task wiregt-prefix-item-retirement the HBM-primary wireGt pairs). */
+    private static final int BATCH1_TOTAL = 8237;
+    /** 8237 + 7285 = 15522; 57244 − 15522 = 41722 (the batch-2 total includes the RP 38 from the NikolineAlloy row and the post-probe CANDY +1; the universe rode the −224 task wiregt-prefix-item-retirement re-measure — the ledger returns to its pre-wire-gt-registration values). */
     private static final int BATCH2_TOTAL = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
     private static final int JOINT_DROP = BATCH1_TOTAL + BATCH2_TOTAL;
     /** The batch-1 eight, the seed prefix (the wave test's ledger keys). */
     private static final List<String> BATCH1 = List.of(MT.MD.HaC.mID, MT.MD.IC2.mID, MT.MD.TE.mID,
             MT.MD.EIO.mID, MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID);
     /** Creative-visible pairs before/after the joint pin (the tab face's before/after numbers). */
-    private static final int TAB_DEFAULT = 50189; // +224 task wire-gt-registration (the 16 wireGt tabs x their visible pairs ride the default face) +1 review-seat re-measure: the closeout pickaxeGem Empty head pair
-    private static final int TAB_AFTER = 36278; // +112 (the tab-eligible share of the wire pairs crosses no dropped domain... measured: 112 of the 224 wire pairs sit outside the HIDDEN families)
+    private static final int TAB_DEFAULT = 49965; // −224 task wiregt-prefix-item-retirement (the 16 wireGt tabs x their visible pairs left with the retirement)
+    private static final int TAB_AFTER = 36166; // −112 (the tab-eligible share of the retired wire pairs crossed no dropped domain... measured: 112 of the 224 wire pairs sat outside the HIDDEN families)
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -140,7 +140,7 @@ public class GT6ModDriverClearOutBatch2Test {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (the zero-change proof)");
-        assertEquals(7317, BATCH2_TOTAL, "the batch-2 drop total (incl. the NikolineAlloy RP 40, +32 task wire-gt-registration: the BP PurpleAlloy + PR ElectrotineAlloy wireGt pairs)");
+        assertEquals(7285, BATCH2_TOTAL, "the batch-2 drop total (incl. the NikolineAlloy RP 40, −32 task wiregt-prefix-item-retirement: the BP PurpleAlloy + PR ElectrotineAlloy wireGt pairs left with the retirement)");
 
         Set<String> allDroppedNames = new java.util.HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {
@@ -237,7 +237,7 @@ public class GT6ModDriverClearOutBatch2Test {
         int tAbsentTabItems = registrationOrderTabItems();
         GT6ModDrivers.reset();
         assertEquals(tDefaultTabs, tAbsentTabs, "no prefix family empties out — the tab set is unchanged (101 families)");
-        assertEquals(TAB_AFTER, tAbsentTabItems, "the creative-visible tab pairs land at 36278 after the joint pin (+112 task wire-gt-registration, +1 review-seat re-measure: the closeout pickaxeGem Empty head joins the tab)");
+        assertEquals(TAB_AFTER, tAbsentTabItems, "the creative-visible tab pairs land at 36166 after the joint pin (−112 task wiregt-prefix-item-retirement, the retired wire tab-eligible share)");
         assertEquals(TAB_DEFAULT - TAB_AFTER, tJointEligible, "the tab drop is exactly the tab-eligible share of the 15522 dropped pairs");
     }
 
