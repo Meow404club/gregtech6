@@ -378,13 +378,13 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         return rNames;
     }
 
-    /** Row-count pin (the measured item truth, the ruling-A caliber): 219 foil cuts + 14 plate2wire rows (the :169 unlock, task wire-gt-registration) = 233. */
+    /** Row-count pin (the measured item truth, the ruling-A caliber): 219 foil cuts + 0 plate2wire rows (the :169 output face is the retired wireGt01 item face, task wiregt-prefix-item-retirement — upstream :169 resolves onto the wire MTE block items via the setTarget_ oredient face; the port block-domain machine/craft face stays pooled) = 219. */
     @Test
     public void theFineWireRowCountIsTheMeasuredItemTruth() {
-        assertEquals(233, GT6CraftingRecipes.fineWireCraftFromMaterialRows().size(), "219 foil cuts + 14 plate2wire rows");
+        assertEquals(219, GT6CraftingRecipes.fineWireCraftFromMaterialRows().size(), "219 foil cuts + 0 plate2wire rows");
         assertEquals(219, fineWireMaterialsOf("foil2wire_fine").size(), "the :168 foil cut (the wireFine ∩ foil faces)");
-        assertEquals(14, fineWireMaterialsOf("plate2wire").size(),
-                "the :169 rows pour since task wire-gt-registration lifted OP.wireGt01 onto the item path — the face is the whole WIRES item face (all 14 materials carry plate items: the G_INGOT_MACHINE/G_MACHINE group-array expansion stamps the PLATES tag on every member, the OP.plate condition leg)");
+        assertEquals(0, fineWireMaterialsOf("plate2wire").size(),
+                "the :169 rows pour zero — the wireGt01 output face is retired (task wiregt-prefix-item-retirement reverted the wire-gt-registration item-path lift; the wireGtXX oredient face rides the GTWires block items, wire_<mat>_gtNN)");
     }
 
     /** Universe SET pin: every form's rows == the live CONDITIONED output face ∩ the input face. */
@@ -794,7 +794,7 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertEquals(539, shapelessMaterialsOf("arrows_wooden").size(), "the :181 wooden arrow face");
         assertEquals(539, shapelessMaterialsOf("arrows_plastic").size(), "the :182 light arrow face");
         assertEquals(0, shapelessMaterialsOf("cable_gt01/from_wire_gt01").size(),
-                "the :183 rows pour zero — the wireGt01 INPUT face exists since task wire-gt-registration, but cableGt01 has no MaterialPrefixItems (still the block domain; the output face is the missing half, rows unlock with that item family)");
+                "the :183 rows pour zero — BOTH faces are the block domain: the wireGt01 input face retired with the prefix items (task wiregt-prefix-item-retirement) and cableGt01 was never itemized; upstream resolves both via the MTE setTarget_ oredient face");
         assertEquals(0, shapelessMaterialsOf("cable_gt02/from_wire_gt02").size(),
                 "the :184 rows pour zero — the same seam (the cableGt02 output face is the missing half)");
         assertEquals(1096, shapelessMaterialsOf("chemtube/from_dust_tiny").size(), "the :185 glass-tube face (unconditional)");

@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "gt6:item/material_sets/dull/wire",
-    "layer1": "gt6:item/material_sets/dull/wire_overlay"
-  }
-}

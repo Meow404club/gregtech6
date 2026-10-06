@@ -7,8 +7,9 @@
  * spec independent of the production list, recomputes the registration set with an independent
  * walk (acceptance: independent recount), pins the phase-2 per-prefix counts as regression
  * anchors, and exercises the first-wins id collision rule on the compressed/Compressed pair.
- * The sixteen wire multipliers (task wire-gt-registration, upstream MTE block path
- * MultiTileEntityWireElectric.java:72-109) and the dedicated wire pins live on
+ * The sixteen wire multipliers are OFF the spec (task wiregt-prefix-item-retirement — the
+ * wire-gt-registration item-path lift reverted; upstream MTE block path
+ * MultiTileEntityWireElectric.java:72-87); the dedicated wire retirement pins live on
  * {@link GT6WireGtRegistrationTest}; this file carries only the universe-size nail.
  */
 package gregtech6.registry;
@@ -61,8 +62,6 @@ public class GTMaterialItemsRegistrationTest {
         "casingMachine", "casingMachineDouble", "casingMachineQuadruple", "casingMachineDense",
         "plank",
         "wireFine",
-        "wireGt01", "wireGt02", "wireGt03", "wireGt04", "wireGt05", "wireGt06", "wireGt07", "wireGt08",
-        "wireGt09", "wireGt10", "wireGt11", "wireGt12", "wireGt13", "wireGt14", "wireGt15", "wireGt16",
         "minecartWheels", "railGt",
         "plantGtBerry", "plantGtBlossom", "plantGtFiber", "plantGtTwig", "plantGtWart", "chemtube",
         "toolHeadRawSword", "toolHeadSword", "toolHeadRawPickaxe", "toolHeadPickaxe", "toolHeadPickaxeGem",
@@ -85,8 +84,8 @@ public class GTMaterialItemsRegistrationTest {
         List<OreDictPrefix> tProduction = GTMaterialItems.itemPathPrefixes();
         Set<String> tProductionNames = new TreeSet<>();
         for (OreDictPrefix tPrefix : tProduction) tProductionNames.add(tPrefix.mNameInternal);
-        assertEquals(new TreeSet<>(UPSTREAM_ITEM_PATH), tProductionNames, "production item path must equal the upstream Loader_Items.java:57-171 spec + the casingMachine quartet + plank + the sixteen wire multipliers (task wire-gt-registration)");
-        assertEquals(126, tProduction.size(), "105 upstream PrefixItems + the four casingMachine* additions + plank + the sixteen wire multipliers (task wire-gt-registration)");
+        assertEquals(new TreeSet<>(UPSTREAM_ITEM_PATH), tProductionNames, "production item path must equal the upstream Loader_Items.java:57-171 spec + the casingMachine quartet + plank (the wire lift reverted, task wiregt-prefix-item-retirement)");
+        assertEquals(110, tProduction.size(), "105 upstream PrefixItems + the four casingMachine* additions + plank (the sixteen wire multipliers retired, task wiregt-prefix-item-retirement)");
     }
 
     @Test

@@ -53,11 +53,15 @@ import gregtech6.item.MaterialPrefixItem;
  * ores/blocks/stones/crates go through PrefixBlock, pipes/wires through MultiTileEntities, and
  * identical-name aliases exist purely for oredict parsing) — plus the four casingMachine* block-family
  * prefixes the port deliberately registers as items (task casing-machine-register, the deviation
- * declared on {@link #itemPathPrefixes}), the plank prefix (task wood-planks-register, the second
- * block-path item adaptation, same declaration face) and the sixteen wire multipliers (task
- * wire-gt-registration, the third deviation — upstream MTE block path
- * MultiTileEntityWireElectric.java:72-109, same declaration face). This card owns the item path, so the universe is
- * that 126-prefix list — referenced via OP fields for compile-checked existence — while
+ * declared on {@link #itemPathPrefixes}) and the plank prefix (task wood-planks-register, the second
+ * block-path item adaptation, same declaration face). The sixteen wire multipliers RODE this list as
+ * the third declared deviation (task wire-gt-registration) and were RETIRED from it (task
+ * wiregt-prefix-item-retirement, the user-ruled upstream-fidelity regression 2026-10-06: the lift
+ * flooded the creative screen with sixteen per-multiplier tabs of model-less wire items plus the
+ * rubber wire rows — upstream ships wireGt01-16 ONLY on the MTE block path,
+ * MultiTileEntityWireElectric.java:72-87, one OreDictManager.setTarget_ oredient row per multiplier;
+ * upstream Loader_Items.java:57-171 carries ZERO wireGt rows). This card owns the item path, so the
+ * universe is that 110-prefix list — referenced via OP fields for compile-checked existence — while
  * the walk below iterates ALL of {@link OreDictPrefix#VALUES} and explicitly skips the non-item paths
  * (aggregate counter in the registration log) so the deferral stays visible and auditable.
  * Block/MTE families are later cards; PREFIX_UNUSED aliases never generate.
@@ -292,10 +296,9 @@ public final class GTMaterialItems {
      * The upstream item-path prefixes: the 105 prefixes upstream constructs a PrefixItem for
      * (Loader_Items.java:57-171, verbatim membership in upstream file order; OP field references
      * keep it compile-checked) plus the four machine-casing block-family prefixes (task
-     * casing-machine-register), the plank prefix (task wood-planks-register) and the sixteen
-     * wire multipliers (task wire-gt-registration) — the declared item-path deviations. NOT a
-     * port-authority invention for the 105 — that face is upstream's own item-path gate, see
-     * class javadoc.
+     * casing-machine-register) and the plank prefix (task wood-planks-register) — the declared
+     * item-path deviations. NOT a port-authority invention for the 105 — that face is upstream's
+     * own item-path gate, see class javadoc.
      *
      * <p>The four {@code casingMachine*} additions are the declared item-path deviation (task
      * casing-machine-register): upstream registers them as PrefixBlock_ BLOCKS
@@ -307,22 +310,28 @@ public final class GTMaterialItems {
      * are flat sprite adaptations of the block art (the PLANKS_WOOD block-iconset borrow,
      * assets/README.md).
      *
-     * <p>The sixteen {@code wireGt01-16} additions are the third deviation (task
-     * wire-gt-registration): upstream ships them ONLY on the MTE block path —
-     * MultiTileEntityWireElectric.addElectricWires (MultiTileEntityWireElectric.java:72-109)
+     * <p>The sixteen {@code wireGt01-16} multipliers are OFF this list (task
+     * wiregt-prefix-item-retirement, the user-ruled upstream-fidelity regression 2026-10-06).
+     * They rode here as the third declared deviation (task wire-gt-registration) and the lift is
+     * reverted: upstream ships them ONLY on the MTE block path —
+     * MultiTileEntityWireElectric.addElectricWires (MultiTileEntityWireElectric.java:72-87)
      * lifts every multiplier onto the wire MTE via one OreDictManager.setTarget_ row per
-     * material, and the upstream item loader carries zero wireGt rows — so the port items are
-     * the oredict face lifted onto flat prefix items, the sprite face = the upstream
-     * grayscale block wire.png borrow (assets/README.md, the GT6ItemModels wireGt sprite
-     * alias). Per-material gate: the upstream WIRES condition (the OP.java:309-324 create
-     * rows, TD.java ITEMGENERATOR.WIRES) evaluates unchanged in isGeneratingItem — the
-     * 13 WIRES-tagged materials, upstream MT.java:1301-1306/:1656/:1744-1763 byte-for-byte
-     * the same rows in the port MT.java. Single identity: the wireGt prefixes carry NO
-     * GT6ItemTags.itemTagFamily entry (the fine_wires/%s family stays wireFine-only, the
-     * GT6ElectricTransformers.WIRE_TAG_PATH fold carrier untouched — the transformer card's
-     * wireGt01/wireGt04 Cu fold stays the tag's only face).
+     * material (:89-93 the same face for cableGt01/02/04/08/12), and the upstream item loader
+     * carries ZERO wireGt rows (loaders/a/Loader_Items.java census, the grep face). The lift
+     * materialized 16 x 14 WIRES-material flat prefix items whose only art was the grayscale
+     * block wire.png borrow, plus sixteen per-multiplier creative tabs and the rubber wire
+     * rows — all retired with the list rows. The wireGtXX oredient face now rides the GTWires
+     * block items alone (the upstream {@code setTarget_} isomorph over the 620-spectrum
+     * family, GTWireSpecs.registryName = wire_&lt;mat&gt;_gtNN). The PREFIX DEFINITIONS stay
+     * (OP.java:1364-1382 verbatim): the OreDictPrefix rows are the tag face the wire family
+     * and the GT6ElectricTransformers wireGt01/wireGt04 Cu fold (GT6ElectricTransformers
+     * .WIRE_TAG_PATH, the fine_wires/%s carrier) read, and the vanilla tag family stays
+     * EMPTY for wireGt (the single-identity pin). {@code cableGt01-16} were NEVER on the
+     * item path — upstream :89-93 puts them on the same MTE block path, and no port card
+     * lifted them (the cable_*_gt01 registration gap is the wire-family pool's declared
+     * block-domain face).
      *
-     * <p>Per-material gates need zero port code for 125 of the 126 prefixes: the OP conditions are
+     * <p>Per-material gates need zero port code for 109 of the 110 prefixes: the OP conditions are
      * already verbatim in the port (e.g. OP.java:1274-1277 — casingMachine = And(PARTS, SMITHABLE),
      * the other casing three chain casingMachine via setCondition = OreDictPrefix.isTrue →
      * canGenerateItem, OreDictPrefix.java:349) and {@link OreDictPrefix#isGeneratingItem} evaluates
@@ -376,16 +385,12 @@ public final class GTMaterialItems {
             OP.lens, OP.round, OP.bolt, OP.screw, OP.ring, OP.chain, OP.foil, OP.casingSmall,
             OP.casingMachine, OP.casingMachineDouble, OP.casingMachineQuadruple, OP.casingMachineDense,
             OP.plank, OP.wireFine, OP.minecartWheels, OP.railGt,
-            // the sixteen wire multipliers — the third declared item-path deviation (task
-            // wire-gt-registration): upstream ships them ONLY on the MTE block path
-            // (MultiTileEntityWireElectric.addElectricWires :72-109, one
-            // OreDictManager.setTarget_ row per multiplier), so upstream Loader_Items has
-            // no wireGt rows; the port lifts the oredict face onto flat prefix items.
-            // Per-material gate = the upstream WIRES condition verbatim (OP.java:309-324
-            // create rows, TD ITEMGENERATOR.WIRES) evaluated unchanged by
-            // isGeneratingItem — zero new gate code, the casingMachine precedent.
-            OP.wireGt01, OP.wireGt02, OP.wireGt03, OP.wireGt04, OP.wireGt05, OP.wireGt06, OP.wireGt07, OP.wireGt08,
-            OP.wireGt09, OP.wireGt10, OP.wireGt11, OP.wireGt12, OP.wireGt13, OP.wireGt14, OP.wireGt15, OP.wireGt16,
+            // NOTE the wireGt01-16 absence (task wiregt-prefix-item-retirement): upstream ships
+            // them ONLY on the MTE block path (MultiTileEntityWireElectric.java:72-87, one
+            // OreDictManager.setTarget_ row per multiplier; :89-93 the cableGt face), so upstream
+            // Loader_Items has no wireGt rows — the oredient face rides the GTWires block items
+            // (wire_<mat>_gtNN), the prefix definitions stay (OP.java:1364-1382). See the
+            // method javadoc for the retired wire-gt-registration lift.
             // :121-127 — plant drops and chemtube
             OP.plantGtBerry, OP.plantGtBlossom, OP.plantGtFiber, OP.plantGtTwig, OP.plantGtWart, OP.chemtube,
             // :131-166 — tool heads (raw + finished)

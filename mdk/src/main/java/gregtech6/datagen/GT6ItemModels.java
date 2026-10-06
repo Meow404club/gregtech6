@@ -3,7 +3,6 @@ package gregtech6.datagen;
 import java.util.List;
 
 import gregapi.oredict.OreDictMaterial;
-import gregapi.oredict.OreDictPrefix;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6BookText;
 import net.minecraft.data.PackOutput;
@@ -52,7 +51,7 @@ public final class GT6ItemModels extends ItemModelProvider {
     protected void registerModels() {
         for (GT6DatagenItems.Entry tEntry : GT6DatagenItems.collect()) {
             String tSet = iconsetOf(tEntry.material());
-            String tPrefix = spriteNameOf(tEntry.prefix()); // the wireGt fold — identical to snakeCase for the casing quartet
+            String tPrefix = MaterialPrefixItem.snakeCase(tEntry.prefix().mNameInternal);
             // task casing-family-3d — the four machine-casing families ride the 3D
             // cube (the casingCubeModel javadoc); every other prefix keeps the flat
             // item/generated sprite below.
@@ -1116,20 +1115,5 @@ public final class GT6ItemModels extends ItemModelProvider {
         return tSets == null || tSets.isEmpty() || tSets.get(0) == null || tSets.get(0).isBlank()
             ? "none"
             : MaterialPrefixItem.snakeCase(tSets.get(0));
-    }
-
-    /**
-     * The item sprite basename for a prefix: the snake name, except the sixteen wire
-     * multipliers (task wire-gt-registration) which all ride the ONE {@code wire} sprite —
-     * upstream has no per-multiplier item art at all (the items domain carries zero wireGt
-     * icons; the wires are MTE blocks over the single grayscale block-domain wire.png,
-     * MultiTileEntityWireElectric.java:72-109), so all sixteen multipliers share the
-     * borrowed {@code wire}/{@code wire_overlay} pair per texture set (assets/README.md,
-     * the 3 reachable sets copper/dull/rubber) and the material colour still differentiates
-     * them at runtime via the tintIndex-0 ItemColor (the grayscale + mRGBa modulation
-     * semantics, MaterialPrefixItem.tintColor).
-     */
-    static String spriteNameOf(OreDictPrefix prefix) {
-        return prefix.mNameInternal.startsWith("wireGt") ? "wire" : MaterialPrefixItem.snakeCase(prefix.mNameInternal);
     }
 }

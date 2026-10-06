@@ -4560,22 +4560,6 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return aTier <= 5 ? componentWirePath(true, COMPONENT_WIRE_TOKENS[aTier], 1) : componentWirePath(false, "graphene", 1);
 	}
 
-	/** The motors 'W' column prefix: the wireGt multiplier faces (rows 1-3 ANY.Cu fold, rows 4-9 AnnealedCopper — the same item either way). */
-	private static gregapi.oredict.OreDictPrefix roboticsMotorWirePrefix(int aTier) {
-		return switch (aTier) {
-			case 1 -> gregapi.data.OP.wireGt01;
-			case 2 -> gregapi.data.OP.wireGt02;
-			case 3 -> gregapi.data.OP.wireGt03;
-			case 4 -> gregapi.data.OP.wireGt04;
-			case 5 -> gregapi.data.OP.wireGt05;
-			case 6 -> gregapi.data.OP.wireGt06;
-			case 7 -> gregapi.data.OP.wireGt07;
-			case 8 -> gregapi.data.OP.wireGt08;
-			case 9 -> gregapi.data.OP.wireGt09;
-			default -> throw new IllegalArgumentException("no motor wire rung: " + aTier);
-		};
-	}
-
 	/** The wire item path of (form, token, gauge) — the GTWireSpecs.registryName composition, zero-padded. */
 	private static String componentWirePath(boolean aInsulated, String aToken, int aGauge) {
 		return (aInsulated ? "cable_" : "wire_") + aToken + "_gt" + (aGauge < 10 ? "0" : "") + aGauge;
@@ -4703,7 +4687,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// MOTORS :404-415 — row 0's pair is CUT (wireFine), the live rungs 1-9 + the :407 SteelMagnetic twin
 		for (int i = 1; i <= 9; i++) {
 			String tTier = gregtech6.items.GT6Emitters.TIER_TOKENS[i];
-			Item tWire = itemOrNull(roboticsMotorWirePrefix(i), gregapi.data.MT.AnnealedCopper); // the wireGt multiplier face (rows 1-3 ANY.Cu fold → the refined twin, the WIRES-condition carrier)
+			Item tWire = wireItemByPath(componentWirePath(false, "annealed_copper", i)); // the wireGt multiplier face rides the GTWires block items (the upstream setTarget_ oredient isomorph, wire_<mat>_gtNN — task wiregt-prefix-item-retirement retired the prefix-item face; rows 1-3 ANY.Cu fold → the refined twin)
 			Item tCable = wireItemByPath(roboticsCablePath(i));
 			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
 			Item tStick = itemOrNull(gregapi.data.OP.stick, tElectricT[i]);
@@ -4798,7 +4782,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		gregapi.oredict.OreDictMaterial[] tElectricT = componentElectricT();
 		for (int i = 1; i <= 9; i++) {
 			String tTier = gregtech6.items.GT6Emitters.TIER_TOKENS[i];
-			Item tWire = itemOrNull(roboticsMotorWirePrefix(i), gregapi.data.MT.AnnealedCopper); // the wireGt multiplier face (rows 1-3 ANY.Cu fold → the refined twin, the WIRES-condition carrier)
+			Item tWire = wireItemByPath(componentWirePath(false, "annealed_copper", i)); // the wireGt multiplier face rides the GTWires block items (the upstream setTarget_ oredient isomorph, wire_<mat>_gtNN — task wiregt-prefix-item-retirement retired the prefix-item face; rows 1-3 ANY.Cu fold → the refined twin)
 			Item tCable = wireItemByPath(roboticsCablePath(i));
 			Item tPlate = itemOrNull(gregapi.data.OP.plateCurved, tElectricT[i]);
 			Item tStick = itemOrNull(gregapi.data.OP.stick, tElectricT[i]);
@@ -6367,13 +6351,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// The same digLadder band translation as the plateGem/stick families above
 	// (the listener walk, the And(ANTIMATTER.NOT, COATED.NOT) fold, the
 	// config-gate drop, the item-truth intersection). Tool letter 'x' = the
-	// wire-cutter tag (upstream CR.java:359). THE :169 ROWS POURED ZERO until
-	// task wire-gt-registration — the wireGt01 output face lived in the GTWires
-	// block domain (one BlockItem per band block, the material rides the
-	// blockstate — no per-material MaterialPrefixItems), the GT6RecipesWiremill
-	// seam verbatim; that card lifted OP.wireGt01-16 onto the item path (the 13
-	// WIRES materials), so the rows now pour over the item-truth face
-	// (wireGt01 ∩ plate, minus COATED/ANTIMATTER) — the form's declared unlock.
+	// wire-cutter tag (upstream CR.java:359). THE :169 ROWS POUR ZERO AGAIN — the
+	// wireGt01 output face is the retired prefix-item face (task wiregt-prefix-item-retirement
+	// reverted the wire-gt-registration item-path lift: upstream ships the multipliers ONLY
+	// on the MTE block path, MultiTileEntityWireElectric.java:72-87, and the wireGtXX
+	// oredient face rides the GTWires block items wire_<mat>_gtNN — the row is upstream's
+	// own item-domain template and resolves to nothing port-side; the block-domain machine
+	// face stays pooled, the GT6RecipesWiremill seam verbatim).
 	// -----------------------------------------------------------------------
 
 	/** One upstream row form: the id key + the output prefix + count + the input prefix + the single pattern row (Loader_OreProcessing.java:168-169, the grid and amount verbatim). Package-private for the pin test. */
