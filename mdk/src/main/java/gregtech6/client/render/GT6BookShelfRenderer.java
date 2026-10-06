@@ -34,9 +34,11 @@ import gregtech6.tileentity.inventories.GT6BookShelfBlockEntity;
  * is {@code OPOS[mFacing]}), the top row while {@code s%14 < 7} (the :314/:317 bands
  * y 9..15), column {@code s%7}. Front columns centre at x {@code 2+2c}px (the :314 box
  * x 1+2c..3+2c), back columns mirror to {@code 14-2c}px (:316 x 13-2c..15-2c); depths
- * z 4.5px front (band 2..7) / 11.5px back (band 9..14). The spine scale re-expresses the
- * upstream book boxes on the square item sprite: 2px wide (the column width), the
- * row-height fill (6px top / 8px bottom — the exact band heights).
+ * z 4.5px front (band 2..7) / 11.5px back (band 9..14); both rows fill a 6px band (the
+ * top y 9..15, the bottom y 1..7 — {@code PX_P[1]..PX_N[9]} where {@code PX_N[9]} reads
+ * 7px, the seat-25 correction). The spine scale re-expresses the upstream book boxes on
+ * the square item sprite: 2px wide (the column width), the row-height fill (6px both
+ * rows — the exact band heights).
  *
  * <p><b>Facing</b>: the blockstate yaw table (north 0 / east 90 / south 180 / west 270,
  * the {@code addStaticStorages} rotations) is CLOCKWISE from above, so the pose-stack
@@ -78,9 +80,9 @@ public final class GT6BookShelfRenderer implements BlockEntityRenderer<GT6BookSh
 		return isBackFace(aSlot) ? 14.0F - 2.0F * tCol : 2.0F + 2.0F * tCol;
 	}
 
-	/** The row centre y in px: top 12 (the 9..15 band), bottom 5 (the 1..9 band). */
+	/** The row centre y in px: top 12 (the 9..15 band), bottom 4 (the 1..7 band, :315). */
 	public static float rowCenterPx(int aSlot) {
-		return isTopRow(aSlot) ? 12.0F : 5.0F;
+		return isTopRow(aSlot) ? 12.0F : 4.0F;
 	}
 
 	/** The niche depth centre z in px: front 4.5 (band 2..7), back 11.5 (band 9..14). */
@@ -93,9 +95,9 @@ public final class GT6BookShelfRenderer implements BlockEntityRenderer<GT6BookSh
 		return 6.0F / 16.0F;
 	}
 
-	/** The bottom-row spine height: the 8px band fill (:315). */
+	/** The bottom-row spine height: the 6px band fill (the :315 band 1..7). */
 	public static float bottomRowHeight() {
-		return 8.0F / 16.0F;
+		return 6.0F / 16.0F;
 	}
 
 	// ------------------------------------------------------------------------------------

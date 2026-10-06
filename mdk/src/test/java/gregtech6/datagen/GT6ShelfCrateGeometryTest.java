@@ -4,7 +4,8 @@
  * <li>the book-display mapping (the new GT6BookShelfRenderer statics): the 28 niches
  *     verbatim from the upstream render-pass boxes (MultiTileEntityBookShelf
  *     .setBlockBounds2 :314-322, the north-default form) — front top row = slots 0..6
- *     at y 9..15, front bottom = 7..13 at y 1..9, the back face mirrors the columns
+ *     at y 9..15, front bottom = 7..13 at y 1..7 (the seat-25 correction —
+ *     {@code PX_N[9]} reads 7px, both rows are 6px bands), the back face mirrors the columns
  *     (the :105/:211 picker faces ride the same table, getFacingCoordsClicked
  *     UT.java:1738 = the screen-style u/v pair);</li>
  * <li>the elements-to-shape consistency (the card headline): the crate frame envelope
@@ -94,7 +95,7 @@ class GT6ShelfCrateGeometryTest {
         assertFalse(gregtech6.client.render.GT6BookShelfRenderer.isBackFace(13), "slot 13 rides the front face");
         assertTrue(gregtech6.client.render.GT6BookShelfRenderer.isBackFace(14), "slot 14 rides the back face");
         assertTrue(gregtech6.client.render.GT6BookShelfRenderer.isBackFace(27), "slot 27 rides the back face");
-        // rows: top 0..6 / 14..20 at y 12px (the 9..15 band), bottom 7..13 / 21..27 at y 5px (1..9)
+        // rows: top 0..6 / 14..20 at y 12px (the 9..15 band), bottom 7..13 / 21..27 at y 4px (1..7)
         assertTrue(gregtech6.client.render.GT6BookShelfRenderer.isTopRow(0), "slot 0 rides the top row");
         assertTrue(gregtech6.client.render.GT6BookShelfRenderer.isTopRow(6), "slot 6 rides the top row");
         assertFalse(gregtech6.client.render.GT6BookShelfRenderer.isTopRow(7), "slot 7 rides the bottom row");
@@ -102,8 +103,8 @@ class GT6ShelfCrateGeometryTest {
         assertFalse(gregtech6.client.render.GT6BookShelfRenderer.isTopRow(21), "slot 21 rides the bottom row");
         assertEquals(12.0F, gregtech6.client.render.GT6BookShelfRenderer.rowCenterPx(0), 1e-6F,
                 "the top row centres at y 12px (the :314 band 9..15)");
-        assertEquals(5.0F, gregtech6.client.render.GT6BookShelfRenderer.rowCenterPx(7), 1e-6F,
-                "the bottom row centres at y 5px (the :315 band 1..9)");
+        assertEquals(4.0F, gregtech6.client.render.GT6BookShelfRenderer.rowCenterPx(7), 1e-6F,
+                "the bottom row centres at y 4px (the :315 band 1..7, PX_N[9]=7px)");
         assertEquals(12.0F, gregtech6.client.render.GT6BookShelfRenderer.rowCenterPx(14), 1e-6F,
                 "the back top row shares the height");
         // columns: front x band [1+2c, 3+2c] (:314), back mirrored [13-2c, 15-2c] (:316)
@@ -127,8 +128,8 @@ class GT6ShelfCrateGeometryTest {
                 "the spine is 2px wide (the upstream book box width, :314)");
         assertEquals(0.375F, gregtech6.client.render.GT6BookShelfRenderer.topRowHeight(), 1e-9F,
                 "the top-row book fills its 6px band (:314)");
-        assertEquals(0.5F, gregtech6.client.render.GT6BookShelfRenderer.bottomRowHeight(), 1e-9F,
-                "the bottom-row book fills its 8px band (:315)");
+        assertEquals(0.375F, gregtech6.client.render.GT6BookShelfRenderer.bottomRowHeight(), 1e-9F,
+                "the bottom-row book fills its 6px band (the :315 band 1..7)");
     }
 
     // ------------------------------------------------------------------
