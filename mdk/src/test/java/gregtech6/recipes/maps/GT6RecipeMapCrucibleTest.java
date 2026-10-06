@@ -51,6 +51,11 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	private static OreDictMaterial HIDDEN_COMP;
 	private static MaterialPrefixItem DUST_HID, INGOT_HID;
 	private static MaterialPrefixItem DUST_SS, INGOT_SS;
+	// the crucible-smelting-page-fuller fixtures: the Fe :63-67 self-family probes and the
+	// private-registry cross-source material (smelts INTO Iron) with its full :58-67 family
+	private static OreDictMaterial SMELT_SOURCE;
+	private static MaterialPrefixItem BLOCKDUST_IRON, CRUSHED_IRON, CRUSHEDP_IRON, CRUSHEDC_IRON;
+	private static MaterialPrefixItem INGOT_SRC, BLOCKINGOT_SRC, GEM_SRC, BLOCKGEM_SRC, DUST_SRC, BLOCKDUST_SRC, CRUSHED_SRC, CRUSHEDP_SRC, CRUSHEDC_SRC;
 	private static final java.util.function.Function<GT6RecipeMapCrucible.MatRequest, ItemStack> sProbeMatResolver =
 			r -> {
 				MaterialPrefixItem tItem = lookup(r);
@@ -58,6 +63,18 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 			};
 
 	private static MaterialPrefixItem lookup(GT6RecipeMapCrucible.MatRequest r) {
+		if (r.material() == SMELT_SOURCE) { // the cross-source fixture answers its whole :58-67 family
+			if (r.prefix() == gregapi.data.OP.ingot) return INGOT_SRC;
+			if (r.prefix() == gregapi.data.OP.blockIngot) return BLOCKINGOT_SRC;
+			if (r.prefix() == gregapi.data.OP.gem) return GEM_SRC;
+			if (r.prefix() == gregapi.data.OP.blockGem) return BLOCKGEM_SRC;
+			if (r.prefix() == gregapi.data.OP.dust) return DUST_SRC;
+			if (r.prefix() == gregapi.data.OP.blockDust) return BLOCKDUST_SRC;
+			if (r.prefix() == gregapi.data.OP.crushed) return CRUSHED_SRC;
+			if (r.prefix() == gregapi.data.OP.crushedPurified) return CRUSHEDP_SRC;
+			if (r.prefix() == gregapi.data.OP.crushedCentrifuged) return CRUSHEDC_SRC;
+			return null;
+		}
 		if (r.prefix() == gregapi.data.OP.dust) {
 			if (r.material() == MT.Au) return DUST_AU;
 			if (r.material() == MT.Ag) return DUST_AG;
@@ -69,6 +86,12 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 			if (r.material() == MT.Mn) return DUST_MN;
 			if (r.material() == MT.StainlessSteel) return DUST_SS;
 			if (r.material() == HIDDEN_COMP) return DUST_HID;
+		}
+		if (r.material() == MT.Iron) { // the :63-67 self-family probes beyond plain dust
+			if (r.prefix() == gregapi.data.OP.blockDust) return BLOCKDUST_IRON;
+			if (r.prefix() == gregapi.data.OP.crushed) return CRUSHED_IRON;
+			if (r.prefix() == gregapi.data.OP.crushedPurified) return CRUSHEDP_IRON;
+			if (r.prefix() == gregapi.data.OP.crushedCentrifuged) return CRUSHEDC_IRON;
 		}
 		if (r.prefix() == gregapi.data.OP.ingot) {
 			if (r.material() == MT.Au) return INGOT_AU;
@@ -114,6 +137,26 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 		INGOT_HID = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_hidden", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, HIDDEN_COMP));
 		DUST_SS = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_stainless_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.StainlessSteel));
 		INGOT_SS = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_stainless_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.StainlessSteel));
+		// the crucible-smelting-page-fuller cross-source fixture: a private-registry material
+		// that smelts INTO Iron (mTargetedSmelting drives MaterialGraph.targeting regardless
+		// of registry), MELTING-tagged so the :87 gate passes, heated away from 1000 so the
+		// SpecialValue pin is non-trivial
+		MaterialRegistry tSourceRegistry = new MaterialRegistry();
+		SMELT_SOURCE = tSourceRegistry.createMaterial(-1, "CrucibleSmeltSource", "Crucible Smelt Source")
+				.put(gregapi.data.TD.Processing.MELTING).setSmelting(MT.Iron, gregapi.data.CS.U).heat(1234);
+		BLOCKDUST_IRON = GTMaterialItemsBoot.probePrefix("crucible_probe_blockdust_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.blockDust, MT.Iron));
+		CRUSHED_IRON = GTMaterialItemsBoot.probePrefix("crucible_probe_crushed_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushed, MT.Iron));
+		CRUSHEDP_IRON = GTMaterialItemsBoot.probePrefix("crucible_probe_crushedp_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushedPurified, MT.Iron));
+		CRUSHEDC_IRON = GTMaterialItemsBoot.probePrefix("crucible_probe_crushedc_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushedCentrifuged, MT.Iron));
+		INGOT_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_ingot", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, SMELT_SOURCE));
+		BLOCKINGOT_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_blockingot", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.blockIngot, SMELT_SOURCE));
+		GEM_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_gem", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.gem, SMELT_SOURCE));
+		BLOCKGEM_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_blockgem", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.blockGem, SMELT_SOURCE));
+		DUST_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_dust", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, SMELT_SOURCE));
+		BLOCKDUST_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_blockdust", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.blockDust, SMELT_SOURCE));
+		CRUSHED_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_crushed", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushed, SMELT_SOURCE));
+		CRUSHEDP_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_crushedp", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushedPurified, SMELT_SOURCE));
+		CRUSHEDC_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_crushedc", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushedCentrifuged, SMELT_SOURCE));
 		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		// the mat() seam rides the probe items (the intrusive-holder lesson: the live
@@ -312,6 +355,71 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 		assertTrue(tIronRow.mSpecialValue > 0, "SpecialValue is a melting point, never 0 (acceptance ⑥)");
 		assertEquals(0, tIronRow.mDuration, "the display row carries no duration (the :96 pair)");
 		assertTrue(tIronRow.mFakeRecipe, "display rows never enter the findable list");
+	}
+
+	/**
+	 * The crucible-smelting-page-fuller cross-source parity pin: ONE source material yields
+	 * the FULL upstream RecipeMapCrucible.java:58-67 family — nine rows, one per prefix, in
+	 * the verbatim upstream order — each row a fake display row smelting into the output's
+	 * ingot with the SOURCE material's melting point as the temperature special (:96).
+	 * Negative pin in the same walk: the eight no-item upstream prefixes (:68-75 chunk …
+	 * reduced, no items upstream either per Loader_Items.java:57-171) render NOWHERE.
+	 */
+	@Test
+	public void crossSourceRowsCarryTheFullUpstreamPrefixFamily() {
+		assertTrue(SMELT_SOURCE.contains(gregapi.data.TD.Processing.MELTING), "precondition: the fixture passes the :87 MELTING gate");
+		List<Recipe> tRows = GT6RecipeMapCrucible.smeltingDisplayRows(MT.Iron);
+		gregapi.oredict.OreDictPrefix[] tExpected = {gregapi.data.OP.ingot, gregapi.data.OP.blockIngot, gregapi.data.OP.gem, gregapi.data.OP.blockGem,
+				gregapi.data.OP.dust, gregapi.data.OP.blockDust, gregapi.data.OP.crushed, gregapi.data.OP.crushedPurified, gregapi.data.OP.crushedCentrifuged};
+		assertEquals(9, tRows.size(), "one row per :58-67 prefix, no others resolve");
+		for (int i = 0; i < tExpected.length; i++) {
+			MaterialPrefixItem tItem = (MaterialPrefixItem) tRows.get(i).mInputs[0].getItem();
+			assertSame(tExpected[i], tItem.prefix, "row " + i + " rides the verbatim :58-67 prefix order");
+			assertSame(SMELT_SOURCE, tItem.material, "row " + i + " inputs the source material");
+			assertSame(INGOT_IRON, tRows.get(i).mOutputs[0].getItem(), "row " + i + " smelts into the Fe ingot");
+			assertEquals(SMELT_SOURCE.mMeltingPoint, tRows.get(i).mSpecialValue, "row " + i + " temperature = the SOURCE's melting point (:96)");
+			assertEquals(0, tRows.get(i).mDuration, "row " + i + " is a display-row re-pin (duration 0)");
+			assertTrue(tRows.get(i).mFakeRecipe, "row " + i + " never enters the findable list");
+		}
+		for (Recipe tRow : tRows) {
+			gregapi.oredict.OreDictPrefix tPrefix = ((MaterialPrefixItem) tRow.mInputs[0].getItem()).prefix;
+			assertFalse(tPrefix == gregapi.data.OP.chunk || tPrefix == gregapi.data.OP.rubble || tPrefix == gregapi.data.OP.pebbles
+					|| tPrefix == gregapi.data.OP.cluster || tPrefix == gregapi.data.OP.cleanGravel || tPrefix == gregapi.data.OP.dirtyGravel
+					|| tPrefix == gregapi.data.OP.crystalline || tPrefix == gregapi.data.OP.reduced,
+					"the :68-75 no-item prefixes stay unrendered (upstream null-drops them too)");
+		}
+	}
+
+	/**
+	 * The self-arm half of the fuller card: Iron's own rows carry the FULL :63-67 dust
+	 * family — five forms, verbatim upstream order — not just plain dust.
+	 */
+	@Test
+	public void selfRowsCarryTheFullDustFamily() {
+		List<Recipe> tRows = GT6RecipeMapCrucible.allSmeltingDisplayRows().stream()
+				.filter(r -> r.mInputs.length > 0 && ((MaterialPrefixItem) r.mInputs[0].getItem()).material == MT.Iron).toList();
+		gregapi.oredict.OreDictPrefix[] tExpected = {gregapi.data.OP.dust, gregapi.data.OP.blockDust, gregapi.data.OP.crushed, gregapi.data.OP.crushedPurified, gregapi.data.OP.crushedCentrifuged};
+		assertEquals(5, tRows.size(), "the Fe self family: dust + the four :64-67 forms");
+		for (int i = 0; i < tExpected.length; i++) {
+			MaterialPrefixItem tItem = (MaterialPrefixItem) tRows.get(i).mInputs[0].getItem();
+			assertSame(tExpected[i], tItem.prefix, "self row " + i + " rides the verbatim :63-67 prefix order");
+			assertSame(INGOT_IRON, tRows.get(i).mOutputs[0].getItem(), "self row " + i + " smelts into the Fe ingot");
+			assertEquals(MT.Iron.mMeltingPoint, tRows.get(i).mSpecialValue);
+		}
+	}
+
+	/**
+	 * The page-size multiplier pin (census acceptance): with this class's probe set the
+	 * offline smelting page is EXACTLY 22 rows — 5 Fe full-family self forms + 8 dust-only
+	 * self materials (Au Ag WI Ni Invar Cr Mn SS, one form each; the hidden fixture stays
+	 * gated, the cross-source fixture lives in a private registry so it contributes no self
+	 * rows) + 9 cross-source rows (the fixture family into Fe, reached through Iron's
+	 * mTargetedSmelting regardless of the fixture's registry). Any walk change that
+	 * silently adds or drops rows breaks this number.
+	 */
+	@Test
+	public void smeltingPageSizeMultiplierPinned() {
+		assertEquals(22, GT6RecipeMapCrucible.allSmeltingDisplayRows().size(), "5 Fe self + 8 dust-only self + 9 cross-source");
 	}
 
 	/**
