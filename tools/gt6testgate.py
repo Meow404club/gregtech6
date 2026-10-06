@@ -83,6 +83,13 @@ v3.2-v3.5 semantics (envelope-only predicate, retired outside guard,
 budgets, slots, watchdog, reaping) are untouched. Earlier paragraphs keep
 their historical figures as of their own dates.
 
+Cap revision (test-gating-v3.9, 2026-10-06 user ruling after another WSL
+crash): ``SLICE_CAP_GIB`` 22 → 20. User authorized a direct no-review edit
+(ops-level change): one more WSL crash with the 22 G envelope in force, so
+the cap yields another ~2 G of system headroom. Value-only change — same
+semantics as v3.6 (envelope-only predicate, budgets, slots, watchdog
+untouched).
+
 Filtered budget 12G (test-gating-v3.7, 2026-09-29): the filtered-test
 per-task budget 8G → 12G after six independent multi-class FML junit-boot
 domain runs peaked at 8733 / 9329 / 9521 / 9900 / 10800 / 12600 MiB —
@@ -124,19 +131,19 @@ read, no /proc walk) and, past the per-task budget (TASK_CAP_MIB: full 12G
 2 s → KILLs the task's own cgroup and exits BUDGET_EXIT (97) so callers can
 distinguish "over budget" (watchdog) from an ordinary failure — a kernel
 OOM kill surfaces as the usual negative signal code instead. The tick also
-sums every sub-cgroup under gt6gate.slice; past the 22G project cap it
+sums every sub-cgroup under gt6gate.slice; past the 20G project cap it
 kills the LARGEST sub-cgroups first (max reclaim per kill → fewest victims,
 fastest return under cap; fresh runs are naturally spared — they are still
 small) until back under cap. Kills are per-task cgroups: siblings keep
 running.
 
-Hard cap (test-gating-v3c, 2026-09-29 third ruling; 22G since v3.6): the
+Hard cap (test-gating-v3c, 2026-09-29 third ruling; 20G since v3.9): the
 runner wraps the child in ``systemd-run --user --scope
 -p Slice=gt6gate.slice`` so every gated gradle shares one memory envelope —
-``systemctl --user set-property gt6gate.slice MemoryMax=22G
-MemorySwapMax=4G --runtime`` (22G + the ~15G ungated baseline ≈ 37G on
-this 40099 MiB host, ~2.5G headroom; ``--cap``/``--swap`` retune,
-defaults 22/4).
+``systemctl --user set-property gt6gate.slice MemoryMax=20G
+MemorySwapMax=4G --runtime`` (20G + the ~15G ungated baseline = 35G on
+this 40099 MiB host, ~4.5G headroom; ``--cap``/``--swap`` retune,
+defaults 20/4).
 The aggregate is naturally bounded; on exhaustion the kernel OOM-kills
 inside the slice, never the WSL host. Bootstrap is idempotent and
 re-asserted per run; if systemctl/systemd-run are unavailable the gate
@@ -214,8 +221,8 @@ CLASSES = tuple(COLD_ESTIMATE_MIB)
 
 # --- v3c shared-slice hard cap (test-gating-v3c, 2026-09-29) ---------------
 SLICE_NAME = "gt6gate.slice"
-SLICE_CAP_GIB = 22              # MemTotal 40099MiB: ~15G ungated baseline
-                                # + 22G ≈ 37G, ~2.5G headroom (v3.6, was 25)
+SLICE_CAP_GIB = 20              # MemTotal 40099MiB: ~15G ungated baseline
+                                # + 20G = 35G, ~4.5G headroom (v3.9, was 22)
 SLICE_SWAP_GIB = 4
 SLICE_ENV = "GT6_GATE_SLICE"    # "0" disables the wrap entirely
 

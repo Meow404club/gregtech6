@@ -158,10 +158,11 @@ BRANCH: work/<slug>（worktree ../MGT6GA-trees/<slug> 由 coder 自建）
    WSL 一日三崩裁定；用法恒等式 `python3 tools/gt6testgate.py --role <role> -- <cmd>`，
    一切 gradle 必经门禁——PreToolUse 钩子拦裸 gradle 进门禁；并发槽默认 4。
    语义=test-gating v3.x（2026-09-29 三次 WSL 崩溃裁定链：v3 预测准入→v3.1
-   残留清剿→v3.2 信封内准入→v3.4 剔缓存→v3.5 外压护栏退役→v3.6 帽 22G））：
-   - **信封帽 22G 单源**（源码 `SLICE_CAP_GIB`）：准入信封（slice memory.current+
-     估算≤cap）、slice MemoryMax（systemd-run 包裹进 gt6gate.slice，MemoryMax=22G/
-     Swap 4G）、看门狗聚合帽三者同源跟随；裁定链 25G→外压护栏退役→22G。
+   残留清剿→v3.2 信封内准入→v3.4 剔缓存→v3.5 外压护栏退役→v3.6 帽 22G；
+   2026-10-06 再崩→v3.9 帽 20G，用户授权直改不经审查）：
+   - **信封帽 20G 单源**（源码 `SLICE_CAP_GIB`）：准入信封（slice memory.current+
+     估算≤cap）、slice MemoryMax（systemd-run 包裹进 gt6gate.slice，MemoryMax=20G/
+     Swap 4G）、看门狗聚合帽三者同源跟随；裁定链 25G→外压护栏退役→22G→20G。
    - **外压护栏已退役（v3.5）**：旧 `MemTotal−cap−2G` 公式在本机结构性死锁（上限
      ~12451MiB vs 非门禁基线 ~15G，谓词永假、五 wrapper 卡死）；裁定锚=用户
      "cgroup 内部算好 25g（现 22g）就行，系统的不用管了"；`GT6_GATE_MEM_LIMIT_MIB`
