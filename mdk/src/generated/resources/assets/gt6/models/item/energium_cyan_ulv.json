@@ -1,6 +1,82 @@
 {
-  "parent": "minecraft:item/generated",
+  "parent": "minecraft:block/cube",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#down",
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "east": {
+          "texture": "#east",
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "north": {
+          "texture": "#north",
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "south": {
+          "texture": "#south",
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#up",
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#west",
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        6,
+        0,
+        6
+      ],
+      "to": [
+        10,
+        4,
+        10
+      ]
+    }
+  ],
   "textures": {
-    "layer0": "gt6:item/battery/energium_cyan"
+    "down": "gt6:item/battery/energium_cyan",
+    "east": "gt6:item/battery/energium_cyan",
+    "north": "gt6:item/battery/energium_cyan",
+    "particle": "gt6:item/battery/energium_cyan",
+    "south": "gt6:item/battery/energium_cyan",
+    "up": "gt6:item/battery/energium_cyan",
+    "west": "gt6:item/battery/energium_cyan"
   }
 }

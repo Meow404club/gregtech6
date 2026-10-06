@@ -500,8 +500,12 @@ public final class GT6ItemModels extends ItemModelProvider {
         // gt:circuit0 ground, so primitive rides the same 30301 art, the declared share);
         // the 12 box items parent their block models (the dynamo band convention)
         for (gregtech6.registry.GT6Batteries.BatteryRow tRow : gregtech6.registry.GT6Batteries.ROWS) {
-            withExistingParent(tRow.path(), mcLoc("item/generated"))
-                .texture("layer0", modLoc("item/battery/" + tRow.family()));
+            if (tRow.family().startsWith("energium_")) {
+                energiumCrystalModel(tRow.path(), tRow.family());
+            } else {
+                withExistingParent(tRow.path(), mcLoc("item/generated"))
+                    .texture("layer0", modLoc("item/battery/" + tRow.family()));
+            }
         }
         for (String tPath : gregtech6.registry.GT6Batteries.CELL_ITEMS.keySet()) {
             withExistingParent(tPath, mcLoc("item/generated"))
@@ -1107,6 +1111,42 @@ public final class GT6ItemModels extends ItemModelProvider {
                     .face(net.minecraft.core.Direction.DOWN).texture("#overlay_bottom").cullface(net.minecraft.core.Direction.DOWN)
                     .end();
         }
+    }
+
+    /**
+     * Task energium-crystal-appearance-2 — the twelve LU energium crystals (red/cyan
+     * x T0-T5, upstream Loader_MultiTileEntities.java:1078-1092) ride the 3D box item
+     * model, NOT a flat {@code item/generated} sprite. The upstream ITEM form is a 3D
+     * render, not an icon sprite: the MTE registry registers RendererBlockTextured as the
+     * FORGE IItemRenderer for every MTE block (MultiTileEntityRegistry.java:105), and its
+     * renderInventoryBlock (RendererBlockTextured.java:50-98) draws the MTE's own box
+     * through RenderBlocks with per-face shading (y- faces 0.5F, y+ faces 1.0F,
+     * :173/:187). For the batteries that box is the 4x4x4-pixel cube — setBlockBounds2
+     * box(PX_P[6], PX_P[0], PX_P[6], PX_N[6], PX_N[12], PX_N[6]) (MultiTileEntityBatteryLU8.java:50;
+     * PX_P[6]=0.375/PX_N[6]=0.625/PX_N[12]=0.25, CS.java:492-513) — each face carrying the
+     * FULL 16x16 family icon (RenderBlocks renders the whole sprite per face), tinted by
+     * the row mRGBa (getTexture2 :42). The flat full-cell sprite was the user-reported
+     * anti-pattern ("纯色块填满格子" — the second known_bugs.r11-casing-item-model form:
+     * upstream item = 3D block, port sprite = flat). The family colour stays the BAKED
+     * mRGBa multiply (the r11-energium-tint seat, the bake_battery_textures.py products):
+     * upstream top/bottom/sides decode pixel-identical, so one sprite per family serves
+     * all six faces. cullface-less full-uv element, particle = the same sprite.
+     */
+    private void energiumCrystalModel(String aItemId, String aFamily) {
+        String tBase = "item/battery/" + aFamily;
+        ItemModelBuilder tModel = getBuilder(aItemId)
+                .parent(getExistingFile(mcLoc("block/cube")))
+                .texture("particle", modLoc(tBase))
+                .texture("down", modLoc(tBase))
+                .texture("up", modLoc(tBase))
+                .texture("north", modLoc(tBase))
+                .texture("south", modLoc(tBase))
+                .texture("west", modLoc(tBase))
+                .texture("east", modLoc(tBase));
+        tModel.element()
+                .from(6.0F, 0.0F, 6.0F).to(10.0F, 4.0F, 10.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).uvs(0.0F, 0.0F, 16.0F, 16.0F))
+                .end();
     }
 
     /** The material's item texture-set name, lower-snaked; empty falls back to upstream SET_NONE. */
