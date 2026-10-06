@@ -370,6 +370,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
+		// task crafting-barrels-boilers — the barrel pair + the 26 boiler rows
+		for (PartFamilyRecipeRow tRow : barrelRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
+		for (PartFamilyRecipeRow tRow : boilerRecipeBuilders()) {
+			tRow.builder().save(aConsumer, tRow.id());
+		}
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -636,6 +643,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (PartFamilyRecipeRow tRow : tankValveRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		// task crafting-barrels-boilers — the barrel pair + the 26 boiler rows
+		for (PartFamilyRecipeRow tRow : barrelRecipeBuilders()) {
+			tRow.builder().save(aOutput, tRow.id());
+		}
+		for (PartFamilyRecipeRow tRow : boilerRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (CrucibleLadderRecipeRow tRow : crucibleLadderRecipeBuilders()) {
@@ -3976,6 +3990,110 @@ public class GT6CraftingRecipes extends RecipeProvider {
     private Item itemOrNull(gregapi.oredict.OreDictPrefix aPrefix, gregapi.oredict.OreDictMaterial aMaterial) {
         var tHandle = gregtech6.registry.GTMaterialItems.get(aPrefix, aMaterial); // the bare-local form (the swap note above)
         return tHandle == null ? null : tHandle.get();
+    }
+
+    // -------------------------------------------------------------------------
+    // task crafting-barrels-boilers — the Fluid Containers barrel pair + the 26 Steam
+    // Boiler rows (the recipe-bidirectional-census P1 card; the upstream registration
+    // tails VERBATIM, Loader_MultiTileEntities.java):
+    // <ul>
+    // <li>:2140 Wooden Barrel — "rGs","PSP","PSP": 'r' = the softhammer tool letter
+    //     (CR.java:355 auto-bind), 'G' = OD.itemGlue (no glue item in the port universe
+    //     → the slime-ball fold, the static-storage bottlecrate precedent), 's' = the saw
+    //     tool letter, 'P' = OP.plate.dat(MT.WoodTreated), 'S' = OP.stickLong.dat(ANY.Iron);</li>
+    // <li>:2151 Bronze Drum — " h ","PSP","PSP": 'P' = OP.plateCurved.dat(MT.Bronze),
+    //     'S' = OP.stickLong.dat(MT.Bronze), 'h' = the hard-hammer tool letter;</li>
+    // <li>:553-565 Steam Boiler Tank (13) — " P ","PwP","PhP", 'P' = OP.plateDouble.dat(aMat),
+    //     'w' = the wrench letter, 'h' = the hard-hammer letter (both CR auto-binds);</li>
+    // <li>:567-579 Strong Steam Boiler Tank (13) — the same grid, 'P' =
+    //     OP.plateDense.dat(aMat) (the :567 HBM-conditional .mat(1) is the same item, the
+    //     GT6Boilers javadoc note).</li>
+    // </ul>
+    // DECLARED CUT: :2150 Plastic Canister — the upstream row carries NO recipe tail
+    // (the IL.PlasticCan oredict bind is its whole tail) → the port ships no recipe by
+    // upstream fidelity, NOT a census gap (the negative pin lives in the crafting-json
+    // test).
+    //
+    // Dependency note (the census double-break): the plate_double/plate_dense CRAFTING
+    // band is the parallel crafting-machines-steam-band card's deliverable (merge order:
+    // steam-band first, then this card) — these rows reference the ITEM ids, which all
+    // 26 boiler materials carry (the machine-channel welder rows are the other face of
+    // the same inputs).
+    // -------------------------------------------------------------------------
+    private static final String BARREL_RECIPE_PREFIX = "barrel/";
+    private static final String BOILER_RECIPE_PREFIX = "boiler/";
+
+    /** One barrel row's recipe id: barrel/&lt;path&gt; (the tank_valve/&lt;path&gt; convention). */
+    private ResourceLocation barrelRecipeId(String aPath) {
+        return new ResourceLocation(GT6DataGenerators.MOD_ID, BARREL_RECIPE_PREFIX + aPath);
+    }
+
+    /** One boiler row's recipe id: boiler/&lt;path&gt; (the same convention). */
+    private ResourceLocation boilerRecipeId(String aPath) {
+        return new ResourceLocation(GT6DataGenerators.MOD_ID, BOILER_RECIPE_PREFIX + aPath);
+    }
+
+    /**
+     * The two barrel crafting rows (:2140 wood + :2151 bronze drum). The plastic
+     * canister (:2150) is the declared upstream CUT — no row here.
+     */
+    private java.util.List<PartFamilyRecipeRow> barrelRecipeBuilders() {
+        java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+        // :2140 Wooden Barrel — 'G' = OD.itemGlue folds to the slime ball (no glue item
+        // in the port universe, the bottlecrate builder's declared deviation).
+        Item tPlate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.WoodTreated);
+        // the ANY.Iron iron-member fold (the :2767 stick_long_iron house precedent —
+        // the GTMaterialItems INDEX keys concrete members, never the ANY group object).
+        Item tStick = itemOrNull(gregapi.data.OP.stickLong, gregapi.data.MT.Fe);
+        if (tPlate != null && tStick != null) {
+            rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTBarrels.BARREL_ITEM.get())
+                    .pattern("rGs").pattern("PSP").pattern("PSP")
+                    .define('r', GT6ItemTags.TOOLS_SOFT_HAMMER)
+                    .define('G', Items.SLIME_BALL)
+                    .define('s', GT6ItemTags.TOOLS_SAW)
+                    .define('P', tPlate)
+                    .define('S', tStick)
+                    .unlockedBy("has_plate", has(tPlate)), barrelRecipeId("barrel_wood")));
+        }
+        // :2151 Bronze Drum
+        Item tCurved = itemOrNull(gregapi.data.OP.plateCurved, gregapi.data.MT.Bronze);
+        Item tStickB = itemOrNull(gregapi.data.OP.stickLong, gregapi.data.MT.Bronze);
+        if (tCurved != null && tStickB != null) {
+            rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTBarrels.BARREL_METAL_ITEM.get())
+                    .pattern(" h ").pattern("PSP").pattern("PSP")
+                    .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                    .define('P', tCurved)
+                    .define('S', tStickB)
+                    .unlockedBy("has_plate", has(tCurved)), barrelRecipeId("barrel_metal")));
+        }
+        return rRows;
+    }
+
+    /**
+     * The 26 Steam Boiler rows (:553-565 standard plateDouble + :567-579 Strong
+     * plateDense over the same " P ","PwP","PhP" grid, the upstream verbatim pair).
+     */
+    private java.util.List<PartFamilyRecipeRow> boilerRecipeBuilders() {
+        java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+        for (gregtech6.registry.GT6Boilers.BoilerRow tRow : gregtech6.registry.GT6Boilers.allRows()) {
+            // the ANY-group primary-member folds (the :4662 robot-tip house precedent): the
+            // :559/:573 rows ride ANY.Steel → MT.Steel, the :563/:577 rows ANY.W → MT.W —
+            // the port INDEX keys concrete members, never the ANY group object.
+            gregapi.oredict.OreDictMaterial tMat = tRow.material().mat().get();
+            if (tMat == gregapi.data.ANY.Steel) tMat = gregapi.data.MT.Steel;
+            if (tMat == gregapi.data.ANY.W) tMat = gregapi.data.MT.W;
+            var tPlate = gregtech6.registry.GTMaterialItems.get(
+                    tRow.strong() ? gregapi.data.OP.plateDense : gregapi.data.OP.plateDouble,
+                    tMat); // the bare-local form (the swap note above)
+            if (tPlate == null) continue;
+            rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Boilers.ITEMS_BY_PATH.get(tRow.path()).get())
+                    .pattern(" P ").pattern("PwP").pattern("PhP")
+                    .define('P', tPlate.get())
+                    .define('w', GT6ItemTags.TOOLS_WRENCH)
+                    .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                    .unlockedBy("has_plate", has(tPlate.get())), boilerRecipeId(tRow.path())));
+        }
+        return rRows;
     }
 
     /** One coil row builder — empty when the material's fine-wire tag has no members (the silent skip). */
