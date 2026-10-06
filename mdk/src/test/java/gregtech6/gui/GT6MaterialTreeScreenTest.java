@@ -40,6 +40,7 @@ import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.emi.GT6EmiPlugin;
+import gregtech6.emi.GT6MaterialTreeEmiRecipe;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.recipes.GT6RecipeMaps;
@@ -307,6 +308,26 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		assertTrue(tScreen.contains("setScreen"), "the open seam replaces the current screen");
 		assertTrue(bytesOf(GT6EmiPlugin.class).contains("openItemPage"), "the EMI item face exists");
 		assertTrue(bytesOf(GT6JeiPlugin.class).contains("openItemPage"), "the JEI item face exists");
+	}
+
+	/**
+	 * The pose-scale render wiring (task mattree-item-zoom-pose): the screen mounts the pose
+	 * stack for its icons/labels through the unified {@code MaterialTreeLayout.Pose} primitive,
+	 * and the EMI page's labels drawable rides the same mount. The pure zoom-2x centring math
+	 * the primitive serves is pinned in {@code MaterialTreeLayoutTest}; the pixels themselves
+	 * stay the rig screenshot's business (the ADR §6 观感硬闸).
+	 */
+	@Test
+	public void bytecodePinsThePoseScaleWiring() throws Exception {
+		String tScreen = bytesOf(GT6MaterialTreeScreen.class);
+		assertTrue(tScreen.contains("pushPose"), "the icons/labels mount the pose stack");
+		assertTrue(tScreen.contains("popPose"), "the pose mount pops (no stack leak)");
+		assertTrue(tScreen.contains("gregtech6/recipes/tree/MaterialTreeLayout$Pose"), "the unified pose primitive");
+		assertTrue(tScreen.contains("scale"), "the pose factor applies as a scale");
+		// the mount opcodes live in runAtPose alone — the EMI leg pins the CALL, not a copy
+		String tEmi = bytesOf(GT6MaterialTreeEmiRecipe.class);
+		assertTrue(tEmi.contains("runAtPose"), "the EMI labels ride the same pose mount");
+		assertTrue(tEmi.contains("gregtech6/recipes/tree/MaterialTreeLayout$Pose"), "the EMI labels through the unified primitive");
 	}
 
 	// ------------------------------------------------------------------
