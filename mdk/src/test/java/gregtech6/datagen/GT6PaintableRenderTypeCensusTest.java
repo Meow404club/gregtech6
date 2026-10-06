@@ -33,10 +33,14 @@
  *     last card's families).</li>
  * </ul>
  *
- * <p>EXEMPT (the declared deviation): the kitchen quartet — the #7 models carry
- * tintindex 0 and ARE wrapped, but their 18 borrowed PNGs are fully opaque (the PIL
- * census: zero texels below alpha 255) and the hollow-tub shapes ship no overlay shell,
- * so the SOLID layer renders them byte-identically (the card's census exemption).
+ * <p>EXEMPT (the declared deviation): the kitchen shell-less pair (bathing_pot_steel +
+ * juicer) — the #7 models carry tintindex 0 and ARE wrapped, their borrowed PNGs are
+ * fully opaque (the PIL census: zero texels below alpha 255) and the hollow-tub shapes
+ * ship no overlay shell, so the SOLID layer renders them byte-identically (the card's
+ * census exemption). The other half of the quartet left the exemption with the
+ * mixingbowl-bathingpot-fidelity merge (27372d1bf): bathing_pot_wood and mixing_bowl
+ * grew the P22 overlay shells (the transparent-texel case this census exists for) and
+ * declare cutout — pinned in the universe walk below.
  */
 package gregtech6.datagen;
 
@@ -72,9 +76,18 @@ class GT6PaintableRenderTypeCensusTest {
         }
     }
 
-    /** The kitchen exemption (the card's census ruling — opaque, shell-free). */
-    private static final Set<String> KITCHEN_MODELS = Set.of(
-            "bathing_pot_wood", "bathing_pot_steel", "mixing_bowl", "juicer");
+    /**
+     * The kitchen exemption (the card's census ruling — opaque, shell-free). Since the
+     * mixingbowl-bathingpot-fidelity merge (27372d1bf — the user 2026-10-06 six-symptom
+     * ruling) it covers ONLY the shell-less pair: the wood pot and the mixing bowl grew
+     * the P22 overlay shells (transparent texels → SOLID-layer plating, this census's
+     * exact root cause) and declare cutout — folded into the universe below. The steel
+     * pot and the juicer remain fully-opaque shell-free tubs, the declared deviation.
+     */
+    private static final Set<String> KITCHEN_MODELS = Set.of("bathing_pot_steel", "juicer");
+
+    /** The shelled kitchen pair (merge 27372d1bf) — now under the cutout regime, not the exemption. */
+    private static final Set<String> KITCHEN_SHELLED_MODELS = Set.of("bathing_pot_wood", "mixing_bowl");
 
     /** The addMachine three-model split. */
     private static final List<String> MODEL_SUFFIXES = List.of("", "_active", "_running");
@@ -222,6 +235,11 @@ class GT6PaintableRenderTypeCensusTest {
         tUniverse.addAll(burningBoxModels());
         tUniverse.addAll(partModels());
         tUniverse.addAll(controllerModels());
+        // the shelled kitchen pair (mixingbowl-bathingpot-fidelity, merge 27372d1bf): the
+        // overlay shells are the transparent-texel case this census exists for — the
+        // universe must mirror the walk (the beehive-tint lesson), not the last card's
+        // families
+        tUniverse.addAll(KITCHEN_SHELLED_MODELS);
         assertTrue(tUniverse.size() > 700, "model universe implausibly small: " + tUniverse.size()
                 + " — the census walk broke, this must never pass vacuously");
 
@@ -238,16 +256,30 @@ class GT6PaintableRenderTypeCensusTest {
                 + tOffenders);
     }
 
-    /** The kitchen exemption is exact: the quartet stays undeclared (the deviation stays visible). */
+    /**
+     * The kitchen exemption is exact: the shell-less pair (steel pot + juicer) stays
+     * undeclared (the deviation stays visible) while the shelled pair (wood pot + mixing
+     * bowl, the overlay shells since the mixingbowl-bathingpot-fidelity merge 27372d1bf)
+     * sits under the cutout regime (pinned in the universe walk above) — the exemption
+     * narrowed with the shells, it did not silently widen.
+     */
     @Test
     public void kitchenExemptionIsExact() throws Exception {
         for (String tModel : KITCHEN_MODELS) {
             JsonObject tJson = blockModelJson(tModel);
-            // the quartet is wrapped and tintindex-0 but ships no shell — the declared
+            // the pair is wrapped and tintindex-0 but ships no shell — the declared
             // deviation; it must NOT declare a render type (a declaration would silently
             // narrow the exemption back to zero)
             assertTrue(tJson.get("render_type") == null,
                     tModel + " declares a render_type — fold it into the cutout census and retire the exemption");
+        }
+        for (String tModel : KITCHEN_SHELLED_MODELS) {
+            JsonObject tJson = blockModelJson(tModel);
+            // the shelled pair: the P22 overlay shells need alpha discard — the opposite
+            // arm of the same exactness (a lost .renderType("cutout") call re-plates the
+            // shells on the SOLID layer)
+            assertTrue(tJson.has("render_type") && "minecraft:cutout".equals(tJson.get("render_type").getAsString()),
+                    tModel + " lost its cutout declaration — the overlay shells would plate SOLID (merge 27372d1bf state)");
         }
     }
 

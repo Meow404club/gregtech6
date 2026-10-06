@@ -30,8 +30,8 @@ import gregtech6.registry.GT6Tools;
  *
  * <p>Surfaces pinned here (the card ACCEPTANCE rows):
  * <ul>
- * <li>the TAB_TABLE 22-row parity (16 prior + the six blade rows, ids in display
- *     order);</li>
+ * <li>the TAB_TABLE parity (the six blade rows 16-21, ids in display order; the table
+ *     itself has grown by later tail-appends and is pinned at its current size);</li>
  * <li>the attack-attribute literals (the card 字面值 face — the upstream getBaseDamage
  *     verbatim: sword 4.0F, knife 2.0F, butchery 1.0F, club 5.0F (the INHERITED
  *     HardHammer value, GT_Tool_HardHammer.java:73 — the club has no override), axe
@@ -67,10 +67,19 @@ public class BladeSixTest {
 
 	// ------------------------------------------------------------------ TAB_TABLE parity
 
-	/** The table holds exactly 37 rows — rows 16..21 are the six blade tools in display order (22..25 the machine-face four, 26..30 the field five, 31..36 the w5-t5-scene-six tail append). */
+	/**
+	 * The table holds exactly 101 rows — rows 16..21 are the six blade tools in display
+	 * order. The walk grew by tail-append only: the later w5 bands, the gun trio 64-66,
+	 * the armor tail 67-90 (the append-only discipline keeps the blade indices frozen),
+	 * rows 91..100 the ten Single Use tool rows — task
+	 * disposable-tools-tab-rehome (merge 86d4fad60, the user ruling 2026-10-06: only the
+	 * one-shot family rehomes; the upstream Equipment tab face,
+	 * MultiItemRandomTools.java:59/:492-501; the mirror of
+	 * {@code GT6Robotics.MACHINE_TAB_ITEMS} 60→50, the GT6GunFamilyTest 91→101 ratchet).
+	 */
 	@Test
-	public void tabTableIsExactlyTheTwentyTwoToolRows() {
-		assertEquals(91, GT6Tools.TAB_TABLE.size(), "the Tools tab = the prior rows + the later task bands (the gun family 91-row census)");
+	public void tabTableIsExactlyTheHundredOneToolRows() {
+		assertEquals(101, GT6Tools.TAB_TABLE.size(), "the Tools tab = the prior rows + the later task bands + the ten rehomed Single Use tools (the gun-family 101-row census)");
 		assertSame(GT6Tools.SWORD, GT6Tools.TAB_TABLE.get(16), "row 16 is the sword");
 		assertSame(GT6Tools.KNIFE, GT6Tools.TAB_TABLE.get(17), "row 17 is the knife");
 		assertSame(GT6Tools.BUTCHERY_KNIFE, GT6Tools.TAB_TABLE.get(18), "row 18 is the butchery knife");

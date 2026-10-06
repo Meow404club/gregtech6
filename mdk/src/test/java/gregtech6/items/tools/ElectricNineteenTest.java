@@ -162,7 +162,10 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 					"row " + (37 + i) + " of the tab is the registered " + tExpected[i]);
 			assertEquals(rl(tExpected[i]), GT6Tools.electricTool(tExpected[i]).getId());
 		}
-		assertEquals(91, GT6Tools.TAB_TABLE.size(), "the 37 prior rows + the nineteen electric rows + the later task bands (the gun family 91-row census)");
+		// 101 = the 91-row census + the ten Single Use tool rows (task
+		// disposable-tools-tab-rehome, merge 86d4fad60, the user ruling 2026-10-06 — the
+		// token tail append; the rows 37..55 absolute pins stay frozen)
+		assertEquals(101, GT6Tools.TAB_TABLE.size(), "the 37 prior rows + the nineteen electric rows + the later bands + the ten rehomed Single Use tools (the 101-row census)");
 	}
 
 	/** The 19 snake tags (the p24 band shape — the constants pinned at their paths). */

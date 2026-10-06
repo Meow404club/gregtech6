@@ -4,7 +4,9 @@
  * missing-model checkerboard: zero blockstates/models/item-models in the generated tree.
  * This census pins the fix end to end (the {@link GT6StoneBlocksRenderDatagenTest} split):
  * <ul>
- * <li>the 18-PNG kitchen borrow tree (block/tools/, the upstream colored/ tile sets)
+ * <li>the kitchen borrow tree (block/tools/, the upstream colored/ tile sets — 18 PNG
+ *     since issue7-kitchen-models, grown by the mixingbowl overlay shells and the
+ *     verbatim kitchen_nei tile since mixingbowl-bathingpot-fidelity, merge 27372d1bf)
  *     plus the declared non-kitchen tool-tree residents ({@link #OTHER_TOOL_TREE_RESIDENTS})
  *     is 1:1 with the declared face sets — zero strays, zero gaps;</li>
  * <li>every borrowed PNG is grounded in assets/README.md by basename AND by the actual
@@ -12,9 +14,11 @@
  *     pass while the prose describes a different file);</li>
  * <li>the four generated blockstates are property-free single-state rows;</li>
  * <li>the four generated block models pin the upstream tub geometry (the 2px walls at
- *     8px tall + the 2px base slab; the juicer's low 4px tub + the 4x7x4 pestle column)
- *     and carry tintindex 0 on EVERY face (the reserved mRGBa seam — no BlockColor is
- *     registered, the family runtime-tint pool);</li>
+ *     8px tall + the 2px base slab; the juicer's low 4px tub + the 4x7x4 pestle column);
+ *     since the mixingbowl-bathingpot-fidelity merge the wood pot and the mixing bowl
+ *     carry a second overlay pass (the 0.01-inflated shells, no tintindex — the P22
+ *     decal contract, cutout); the remaining faces carry tintindex 0 (the reserved
+ *     mRGBa seam — no BlockColor is registered, the family runtime-tint pool);</li>
  * <li>the four BlockItem models parent their own block model.</li>
  * </ul>
  */
@@ -67,15 +71,30 @@ class GT6KitchenRenderDatagenTest {
     private static final List<String> TUB_FACES = List.of("sides", "insides", "top", "bottom");
     private static final List<String> JUICER_FACES = List.of("sides", "insides", "top", "bottom", "middletop", "middleside");
 
-    /** 4 + 4 + 4 + 6 + 2 + 8 — the walk upstream found exactly these per family; the kitchen_nei pair is the manual-nei derived art at the tools root (the Table faces stay unborrowed). */
-    private static final int PINNED_PNG_TOTAL = 28;
+    /**
+     * 4 + 4 + 4 + 6 + 3 + 8 + 5 — the walk upstream found exactly these per family; the
+     * three root tiles are the manual-nei derived art (the kitchen_nei pair) plus the
+     * verbatim upstream nei.png (mixingbowl-bathingpot-fidelity, merge 27372d1bf) and the
+     * last 5 the mixingbowl overlay band ({@link #OVERLAY_TILES}). Was 28 before that
+     * merge (the Table faces stay unborrowed).
+     */
+    private static final int PINNED_PNG_TOTAL = 34;
 
-    /** The manual-nei viewer-dynamic pair — port-GENERATED art sitting directly at the tools root (no family subdir). */
-    private static final List<String> ROOT_DERIVED_TILES = List.of("kitchen_nei_jei.png", "kitchen_nei_emi.png");
+    /** The manual-nei viewer-dynamic pair + the verbatim nei tile — port art at the tools root (no family subdir). */
+    private static final List<String> ROOT_DERIVED_TILES = List.of(
+            "kitchen_nei_jei.png", "kitchen_nei_emi.png", "kitchen_nei.png");
 
     /**
-     * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
-     * walks the whole directory, so every later band must be declared here): the two
+     * The mixingbowl overlay band (task mixingbowl-bathingpot-fidelity, merge 27372d1bf —
+     * the user 2026-10-06 six-symptom ruling: the wood pot's hoop shell + the bowl's
+     * four-face overlay shells are upstream-faithful second passes). The steel pot's
+     * overlay is the declared dead asset (all-transparent upstream) and was NOT moved.
+     */
+    private static final List<String> OVERLAY_TILES = List.of(
+            "bathing_pot_wood_overlay/sides.png",
+            "mixing_bowl_overlay/bottom.png", "mixing_bowl_overlay/insides.png",
+            "mixing_bowl_overlay/sides.png", "mixing_bowl_overlay/top.png");
+
     /**
      * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
      * walks the whole directory, so every later band must be declared here): the mortar
@@ -83,10 +102,11 @@ class GT6KitchenRenderDatagenTest {
      * bottom/middleside/middletop) + the sifting-table 8-PNG two-layer band (task
      * sifting-table-family — colored+overlay x legs/grid/border/plate). The grindstone
      * sibling extends this list at its own card — with the sifting band (+8) landed the
-     * walk is 28 + 20 = 48 (the grindstone sibling's union: the kitchen_nei pair rides the
-     * ROOT_DERIVED_TILES pin inside the 28, the sifting band rides the 3-shape keys —
+     * walk is 34 + 20 = 54 (the grindstone sibling's union: the three root tiles ride the
+     * ROOT_DERIVED_TILES pin inside the 34, the sifting band rides the 3-shape keys —
      * family dir leads — because the two-level colored/overlay subdirs collide in the old
-     * two-shape key space).
+     * two-shape key space; the +6 over the old 28+20=48 is the mixingbowl overlay band,
+     * merge 27372d1bf).
      */
     private static final List<String> OTHER_TOOL_TREE_RESIDENTS = List.of(
             "mortar/sides.png", "mortar/insides.png", "mortar/top.png",
@@ -141,9 +161,10 @@ class GT6KitchenRenderDatagenTest {
     }
 
     /**
-     * PNG census, NEGATIVE side: the borrow tree hosts exactly the 28 pinned files (the
-     * 18 kitchen + the kitchen_nei root pair + the grindstone subdir band) + the declared
-     * non-kitchen tool-tree residents — no strays. The walk roots at the
+     * PNG census, NEGATIVE side: the borrow tree hosts exactly the 34 pinned files (the
+     * 18 kitchen + the three root NEI tiles + the grindstone subdir band + the mixingbowl
+     * overlay band, merge 27372d1bf) + the declared non-kitchen tool-tree residents — no
+     * strays. The walk roots at the
      * mdk SOURCE tree (the mdkRoot() walk, the GT6GrindstoneNeiModelTest form): the neo
      * test classpath overlays a resources root whose getResource URL does not resolve to
      * the tools dir, so the classpath-URI root is leg-dependent — the source tree is not.
@@ -167,7 +188,8 @@ class GT6KitchenRenderDatagenTest {
             });
         }
         assertEquals(PINNED_PNG_TOTAL + OTHER_TOOL_TREE_RESIDENTS.size(), tFound.size(),
-                "28 pinned PNGs (kitchen + root NEI pair + grindstone) + the declared non-kitchen residents, walked");
+                "34 pinned PNGs (kitchen + the three root NEI tiles + grindstone + the mixingbowl overlay band) "
+                        + "+ the declared non-kitchen residents, walked");
         Set<String> tDeclared = new HashSet<>(ROOT_DERIVED_TILES);
         for (Map.Entry<String, String> tRow : BLOCK_FAMILIES.entrySet()) {
             for (String tFace : declaredFaces(tRow.getKey())) {
@@ -175,6 +197,7 @@ class GT6KitchenRenderDatagenTest {
             }
         }
         tDeclared.addAll(OTHER_TOOL_TREE_RESIDENTS);
+        tDeclared.addAll(OVERLAY_TILES);
         for (String tFace : GRINDSTONE_FACES) {
             tDeclared.add(GRINDSTONE_FAMILY + "/" + tFace + ".png");
         }
@@ -216,10 +239,24 @@ class GT6KitchenRenderDatagenTest {
         }
     }
 
-    /** Every face of every element carries tintindex 0 — the reserved mRGBa seam (no BlockColor registered yet). */
+    /** The overlay-shell shape test: any element inflating past the 0..16 cube (the 0.01 plates). */
+    private static boolean isOverlayShell(JsonObject aElement) {
+        JsonArray tFrom = aElement.getAsJsonArray("from");
+        JsonArray tTo = aElement.getAsJsonArray("to");
+        return tFrom.get(0).getAsFloat() < 0 || tFrom.get(1).getAsFloat() < 0 || tFrom.get(2).getAsFloat() < 0
+                || tTo.get(0).getAsFloat() > 16 || tTo.get(1).getAsFloat() > 16 || tTo.get(2).getAsFloat() > 16;
+    }
+
+    /**
+     * Every face of every BODY element carries tintindex 0 — the reserved mRGBa seam (no
+     * BlockColor registered yet). The overlay shells are skipped: they carry no tintindex
+     * by the P22 decal contract (mixingbowl-bathingpot-fidelity, merge 27372d1bf).
+     */
     private static void assertAllFacesTinted(JsonObject aModel, String aLabel) {
         for (var tElement : aModel.getAsJsonArray("elements")) {
-            JsonObject tFaces = tElement.getAsJsonObject().getAsJsonObject("faces");
+            JsonObject tEl = tElement.getAsJsonObject();
+            if (isOverlayShell(tEl)) continue;
+            JsonObject tFaces = tEl.getAsJsonObject("faces");
             for (String tDir : tFaces.keySet()) {
                 JsonObject tFace = tFaces.getAsJsonObject(tDir);
                 assertTrue(tFace.has("tintindex") && tFace.get("tintindex").getAsInt() == 0,
@@ -228,19 +265,43 @@ class GT6KitchenRenderDatagenTest {
         }
     }
 
-    /** The tub geometry pin: the 2px base slab + four 8px-tall wall panels (the upstream pot boxes :345-356). */
+    /**
+     * The tub geometry pin: the 2px base slab + four 8px-tall wall panels (the upstream pot
+     * boxes :345-356). Since the mixingbowl-bathingpot-fidelity merge (27372d1bf — the user
+     * 2026-10-06 six-symptom ruling: "浸洗盆有箍（贴图自带）", the upstream MixingBowl
+     * :380-382 BlockTextureMulti second pass) the wood pot and the mixing bowl each mirror
+     * their five body elements with 0.01-inflated overlay shells (the addMeasuringPot
+     * 0.01-plate form): shell faces texture #overlay_* and carry NO tintindex (the P22
+     * decal contract; the cutout render_type is pinned by the paintable census). The steel
+     * pot ships no shell (its overlay band is the declared dead asset) and stays the pure
+     * five-element tub.
+     */
     @Test
     void tubModelsPinTheHollowTubGeometry() throws Exception {
         for (String tBlockId : List.of("bathing_pot_wood", "bathing_pot_steel", "mixing_bowl")) {
             JsonObject tModel = generatedJson("assets/gt6/models/block/" + tBlockId + ".json");
             JsonArray tElements = tModel.getAsJsonArray("elements");
-            assertEquals(5, tElements.size(), tBlockId + ": base slab + four wall panels");
+            boolean tShelled = !tBlockId.equals("bathing_pot_steel");
+            assertEquals(tShelled ? 10 : 5, tElements.size(), tBlockId + ": base slab + four wall panels"
+                    + (tShelled ? " (+ their five overlay shells, merge 27372d1bf)" : " (the shell-less tub)"));
             int tWalls = 0;
+            int tShells = 0;
             boolean tBase = false;
             for (var tElement : tElements) {
-                JsonArray tFrom = tElement.getAsJsonObject().getAsJsonArray("from");
-                JsonArray tTo = tElement.getAsJsonObject().getAsJsonArray("to");
-                if (tFrom.get(1).getAsFloat() == 2.0F && tTo.get(1).getAsFloat() == 8.0F) {
+                JsonObject tEl = tElement.getAsJsonObject();
+                JsonArray tFrom = tEl.getAsJsonArray("from");
+                JsonArray tTo = tEl.getAsJsonArray("to");
+                if (isOverlayShell(tEl)) {
+                    tShells++;
+                    JsonObject tFaces = tEl.getAsJsonObject("faces");
+                    for (String tDir : tFaces.keySet()) {
+                        JsonObject tFace = tFaces.getAsJsonObject(tDir);
+                        assertTrue(!tFace.has("tintindex"),
+                                tBlockId + ": shell face " + tDir + " carries no tintindex (the P22 decal contract)");
+                        assertTrue(tFace.get("texture").getAsString().startsWith("#overlay_"),
+                                tBlockId + ": shell face " + tDir + " textures the overlay band");
+                    }
+                } else if (tFrom.get(1).getAsFloat() == 2.0F && tTo.get(1).getAsFloat() == 8.0F) {
                     tWalls++;
                     float tThicknessX = tTo.get(0).getAsFloat() - tFrom.get(0).getAsFloat();
                     float tThicknessZ = tTo.get(2).getAsFloat() - tFrom.get(2).getAsFloat();
@@ -251,6 +312,7 @@ class GT6KitchenRenderDatagenTest {
                 }
             }
             assertEquals(4, tWalls, tBlockId + ": four wall panels, 2px thick x 8px tall");
+            assertEquals(tShelled ? 5 : 0, tShells, tBlockId + ": the overlay shells mirror the five body elements");
             assertTrue(tBase, tBlockId + ": the 2px base slab (its up face is the cavity floor)");
             assertAllFacesTinted(tModel, tBlockId);
         }
