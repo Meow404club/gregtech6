@@ -393,6 +393,11 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	 */
 	private static final int FORMED_WALL_DESIGN = 4;
 
+	/** The formed-design read seam (task crucible-render-followup — the datagen pin reads the constant without widening it). */
+	public static int formedWallDesign() {
+		return FORMED_WALL_DESIGN;
+	}
+
 	private static void ring(GTMultiBlockPattern.Builder aBuilder, Block aWall, int aY, int aUsage) {
 		for (int tDZ = -1; tDZ <= 1; tDZ++) for (int tDX = -1; tDX <= 1; tDX++) {
 			if (tDX == 0 && tDZ == 0) continue; // the centre column is not a wall cell
@@ -570,7 +575,7 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 		oTemperature = mTemperature;
 
 		// :348-351 — the client display census: the fill height 0..255 + the lightest MOLTEN
-		// material id; a change flags the vanilla block-update sync (the paint-key channel)
+		// material id; a change flags the vanilla block-update sync (the paint-key channel).
 		int tDisplayedHeight = mDisplayedHeight, tDisplayedFluid = mDisplayedFluid;
 		mDisplayedHeight = (int)CruciblePhysics.scale(tTotal, MAX_AMOUNT, 255, false);
 		mDisplayedFluid = (tLightest == null || tLightest.mMaterial.mMeltingPoint > mTemperature ? -1 : tLightest.mMaterial.mID);
