@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -127,6 +128,12 @@ public class GT6ToolsCreativeTabTest {
 	 * ITEMS entry (a table row referencing an unregistered item would crash the
 	 * displayItems generator at runtime), and every registered ITEMS entry must appear
 	 * in the table (no invisible tools — the crowbar was /give-only once, never again).
+	 *
+	 * <p>Since task disposable-tools-tab-rehome the tail rows register OUT of
+	 * {@link GT6Tools#ITEMS}: the ten Single Use tools stay in their registration home
+	 * {@link GT6Robotics#ITEMS} (one DR per family, the multiitem flattening) while their
+	 * DISPLAY home is this table (the upstream Equipment tab, MultiItemRandomTools.java:59).
+	 * The forward check therefore unions the two DRs.
 	 */
 	@Test
 	public void tableAndItemsRegistryAreInParity() {
@@ -139,8 +146,39 @@ public class GT6ToolsCreativeTabTest {
 			tTableIds.add(tRow.getId());
 		}
 		Set<ResourceLocation> tRegisteredIds = itemIds(GT6Tools.ITEMS.getEntries());
+		tRegisteredIds.addAll(itemIds(GT6Robotics.ITEMS.getEntries()));
 		assertTrue(tRegisteredIds.containsAll(tTableIds), "every table row must be a registered item");
-		assertTrue(tTableIds.containsAll(tRegisteredIds), "every registered tool item must be displayed (no orphans)");
+		assertTrue(tTableIds.containsAll(itemIds(GT6Tools.ITEMS.getEntries())), "every registered tool item must be displayed (no orphans)");
+	}
+
+	/**
+	 * The rehome pin (task disposable-tools-tab-rehome): the ten Single Use tools are the
+	 * TAB_TABLE tail rows 91-100, in the upstream registration order (the metas 8500-8509,
+	 * MultiItemRandomTools.java:492-501), and none of them registers in GT6Tools.ITEMS (the
+	 * registration home stays GT6Robotics).
+	 */
+	@Test
+	public void theSingleUseTokenTailRidesTheToolsTab() {
+		List<String> tExpected = List.of("wrench", "screwdriver", "saw", "hammer", "cutter", "chisel", "rubber", "blade", "drill", "file");
+		assertEquals(101, GT6Tools.TAB_TABLE.size(), "the 88 prior rows + the three gun rows + the ten token rows");
+		for (int i = 0; i < 10; i++) {
+			ResourceLocation tId = GT6Tools.TAB_TABLE.get(91 + i).getId();
+			assertEquals(rl("single_use_" + tExpected.get(i)), tId, "tail row " + (91 + i) + " in upstream meta order (8500+" + i + ")");
+		}
+		for (RegistryObject<Item> tToken : GT6Robotics.TOOL_TOKENS) {
+			assertTrue(tTableContains(tToken.getId()), "every single-use tool is displayed in the tools tab");
+			assertTrue(GT6Robotics.MACHINE_TAB_ITEMS.stream().noneMatch(tRow -> tRow.getId().equals(tToken.getId())),
+					"zero single-use rows left in the machines-tab walk (the rehome is total)");
+		}
+	}
+
+	private static boolean tTableContains(ResourceLocation aId) {
+		//? if forge {
+		for (RegistryObject<Item> tRow : GT6Tools.TAB_TABLE) if (tRow.getId().equals(aId)) return true;
+		//?} else {
+		/*for (net.neoforged.neoforge.registries.DeferredHolder<Item, ? extends Item> tRow : GT6Tools.TAB_TABLE) if (tRow.getId().equals(aId)) return true; // 21.1
+		*///?}
+		return false;
 	}
 
 	/** The tab DR holds exactly the one "tools" tab (per-family tab discipline). */

@@ -724,7 +724,11 @@ public final class GT6Tools {
 	 * 122/133/138/139/152); task w5-t5-scene-six appends rows 32-37 (the six scene
 	 * tools — scissors, scoop, plunger, flint_and_tinder, rolling_pin, bending_cylinder);
 	 * task w5-t6-electric-nineteen appends rows 38-56 (the nineteen electric tools —
-	 * the upstream Loader_Tools.java:156-174 registration-row order).
+	 * the upstream Loader_Tools.java:156-174 registration-row order); task
+	 * disposable-tools-tab-rehome appends the tail rows 91-100 (the ten Single Use
+	 * tools, {@link GT6Robotics#TOOL_TOKENS} — the upstream Equipment tab family,
+	 * MultiItemRandomTools.java:59/:492-501; the registration home stays
+	 * GT6Robotics.ITEMS, the display home is this table).
 	 */
 	public static final List<RegistryObject<Item>> TAB_TABLE = ImmutableList.<RegistryObject<Item>>builder()
 			.add(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
@@ -748,6 +752,13 @@ public final class GT6Tools {
 			// the wave-final tally 10 base tools + the 54 W5 tool-card rows + these 24 =
 			// the 88-row census the wave gate re-measures)
 			.addAll(ARMOR_ROWS)
+			// task disposable-tools-tab-rehome — the ten Single Use tool rows, tail-append
+			// (rows 91-100). The registration home stays GT6Robotics.ITEMS (the multiitem
+			// flattening keeps one DR per family); the DISPLAY home is this tool tab — the
+			// upstream Equipment creative tab (MultiItemRandomTools.java:59 "GregTech:
+			// Equipment", the registration rows :492-501), which the machine-tab pooling
+			// had folded away. The user ruling 2026-10-06 rehomes them.
+			.addAll(GT6Robotics.TOOL_TOKENS)
 			.build();
 
 	/**
