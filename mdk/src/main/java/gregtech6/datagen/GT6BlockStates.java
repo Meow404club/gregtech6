@@ -1821,20 +1821,31 @@ public final class GT6BlockStates extends BlockStateProvider {
     /**
      * Task act-machine → act-matrix — the Advanced/Charging Crafting Table matrix
      * (Loader_MultiTileEntities.java:136-137 over :186-245): FACING-ONLY blockstate (the
-     * upstream machine has no ACTIVE/RUNNING visual payload — the craftingtables/advanced
-     * texture group ships no overlay_active/overlay_running layers, the borrow-or-declare
-     * rule landed exactly the two borrowable fronts), 4 facing variants over ONE shared
-     * tinted machine model for ALL 120 rows, and the BlockItem parent per row. The
+     * upstream machine has no ACTIVE/RUNNING visual payload — the craftingtables groups
+     * ship no overlay_active/overlay_running layers), 4 facing variants over the row's
+     * FAMILY tinted model (plain rows → the advanced model, charging rows → the charging
+     * model — the upstream NBT_TEXTURE column is per-line, :136 "craftingtables/advanced"
+     * vs :137 "craftingtables/charging"), and the BlockItem parent per row. The
      * tintindex-0 body seat has a consumer since task act-charging-table-tint: the baked
      * GTMachineTintModel wrap + the GTAdvancedCraftingTableBlock.materialOf dispatch arm
      * multiply the upstream colored×mRGBa shell pass (MultiTileEntityAdvancedCraftingTable
      * .java:659-662, the charging twin :61-64) — the family-wide paint extension stays
-     * pooled (the class doc of the block); the charging texture-family swap rides the ⑩B
-     * render/GUI card.
+     * pooled (the class doc of the block).
+     *
+     * <p>Task act-gui-overlay-overhaul (the id1336 ③ closure): the former single shared
+     * model over the oven body placeholders + single front decal is retired — the census
+     * disproved its "the advanced group ships fronts only" premise (all twenty
+     * craftingtables/{advanced,charging} PNGs are in the upstream snapshot). Both models
+     * are now the full {@link #craftingTableModel} two-layer form over the family's OWN
+     * borrowed art, top overlay decal included (the user's "顶面 overlay 光秃秃").
      */
     private void addAdvancedCraftingTable() {
-        ModelFile tModel = machineModel("advanced_crafting_table", "advanced_colored_front", "advanced_overlay_front");
+        ModelFile tPlain = craftingTableModel("advanced_crafting_table", "advanced");
+        ModelFile tCharging = craftingTableModel("charging_crafting_table", "charging");
         for (var tEntry : GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.entrySet()) {
+            // the row-path prefix IS the family key (GTMachines.CraftingTableRow builds
+            // "advanced_crafting_table_<slug>" / "charging_crafting_table_<slug>")
+            ModelFile tModel = tEntry.getKey().startsWith("charging_crafting_table_") ? tCharging : tPlain;
             Block tBlock = tEntry.getValue().get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
                 int tY;
@@ -1848,6 +1859,76 @@ public final class GT6BlockStates extends BlockStateProvider {
             });
             itemModels().withExistingParent(tEntry.getKey(), tModel.getLocation());
         }
+    }
+
+    /**
+     * The ACT two-layer family model (task act-gui-overlay-overhaul, the {@link
+     * #familyMachineModel} grammar collapsed to the ACT texture shape): the upstream
+     * getTexture2 index (MultiTileEntityAdvancedCraftingTable.java:656-662) maps
+     * bottom/top/front/back verbatim and collapses BOTH remaining laterals onto the one
+     * shared {@code side} art (the array is [bottom, top, front, back, side] — no
+     * left/right split, so the FACING_ROTATIONS west→right/east→left dance degenerates),
+     * and the group ships no state trio (FACING-only, no ACTIVE/RUNNING payload).
+     *
+     * <p>Layers: the body cube carries {@code <base>_colored_*} with tintindex 0 on
+     * every face (the mRGBa seat, the act-charging-table-tint consumer unchanged) and
+     * the six 0.01 decals carry {@code <base>_overlay_*} with NO tintindex (the
+     * UNCOLOURED second layer, BlockTextureDefault.java:179-180) — the top decal is the
+     * user-visible fix ("顶面 overlay 光秃秃": the former model left the up face the
+     * bare oven_top placeholder). The particle seat = the front art (the
+     * r11-machine-particle-key precedent); cutout discards the decals' transparent
+     * texels (the issue #8 world-tint-render-type fix shape). All ten PNGs per family
+     * are byte-identical upstream borrows (assets/README.md, task act-gui-overlay-overhaul).
+     */
+    private ModelFile craftingTableModel(String aName, String aBase) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc("block/" + aBase + "_colored_bottom"))
+                .texture("up", modLoc("block/" + aBase + "_colored_top"))
+                .texture("north", modLoc("block/" + aBase + "_colored_front"))
+                .texture("south", modLoc("block/" + aBase + "_colored_back"))
+                .texture("west", modLoc("block/" + aBase + "_colored_side"))
+                .texture("east", modLoc("block/" + aBase + "_colored_side"))
+                .texture("particle", modLoc("block/" + aBase + "_colored_front"))
+                .texture("overlay_front", modLoc("block/" + aBase + "_overlay_front"))
+                .texture("overlay_back", modLoc("block/" + aBase + "_overlay_back"))
+                .texture("overlay_side", modLoc("block/" + aBase + "_overlay_side"))
+                .texture("overlay_top", modLoc("block/" + aBase + "_overlay_top"))
+                .texture("overlay_bottom", modLoc("block/" + aBase + "_overlay_bottom"))
+                .renderType("cutout");
+        // element 0 — the tinted body cube (the familyMachineModel shape).
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        // elements 1-6 — the six overlay decals: one thin plate per face, no tintindex,
+        // cullface synced with the body (the familyMachineModel geometry, side shared).
+        tModel.element() // front (north)
+                .from(0.0F, 0.0F, -0.01F).to(16.0F, 16.0F, 0.0F)
+                .face(Direction.NORTH).texture("#overlay_front").cullface(Direction.NORTH)
+                .end();
+        tModel.element() // back (south)
+                .from(0.0F, 0.0F, 16.0F).to(16.0F, 16.0F, 16.01F)
+                .face(Direction.SOUTH).texture("#overlay_back").cullface(Direction.SOUTH)
+                .end();
+        tModel.element() // side art, east face
+                .from(16.0F, 0.0F, 0.0F).to(16.01F, 16.0F, 16.0F)
+                .face(Direction.EAST).texture("#overlay_side").cullface(Direction.EAST)
+                .end();
+        tModel.element() // side art, west face
+                .from(-0.01F, 0.0F, 0.0F).to(0.0F, 16.0F, 16.0F)
+                .face(Direction.WEST).texture("#overlay_side").cullface(Direction.WEST)
+                .end();
+        tModel.element() // bottom (down)
+                .from(0.0F, -0.01F, 0.0F).to(16.0F, 0.0F, 16.0F)
+                .face(Direction.DOWN).texture("#overlay_bottom").cullface(Direction.DOWN)
+                .end();
+        tModel.element() // top (up) — the user's missing top overlay
+                .from(0.0F, 16.0F, 0.0F).to(16.0F, 16.01F, 16.0F)
+                .face(Direction.UP).texture("#overlay_top").cullface(Direction.UP)
+                .end();
+        mMachineTintModels++;
+        return tModel;
     }
 
     /**
@@ -2326,13 +2407,12 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /**
      * One cube model over the four-texture key set: down/up/north(front)/south+east+west(side).
-     * The p22 two-element form. ACT-only since task b-port-overlay-render (the
-     * Advanced Crafting Table is the one machine family with no borrowed side art — the
-     * craftingtables/advanced upstream group ships fronts only — so it keeps the shared
-     * oven body texture set and the single front decal; every addMachine family moved to
-     * {@link #familyMachineModel}). The body PNGs are the byte-identical upstream borrows
-     * (the assets README sha256 ledger; the oven-texture-borrow audit retired the former
-     * placeholder-body wording).
+     * The p22 two-element form. (Formerly ACT-only — the "craftingtables/advanced ships
+     * fronts only" premise was disproven by the id1336 census and ACT moved to
+     * {@link #craftingTableModel} in task act-gui-overlay-overhaul; every remaining
+     * addMachine family rides {@link #familyMachineModel}.) The body PNGs are the
+     * byte-identical upstream borrows (the assets README sha256 ledger; the
+     * oven-texture-borrow audit retired the former placeholder-body wording).
      *
      * <p>Task paintable-tint-render: the vanilla {@code block/cube} element is re-declared
      * in the child with {@code tintindex 0} on EVERY face — the machine cube is six-texture,

@@ -104,7 +104,8 @@ class GT6PaintableRenderTypeCensusTest {
         for (String tBase : GT6MachinePaintRenderDatagenTest.MACHINE_BASES) {
             for (String tSuffix : MODEL_SUFFIXES) rModels.add(tBase + tSuffix);
         }
-        rModels.add("advanced_crafting_table"); // machineModel (the front-decal form) — act-matrix: ONE shared model over all 120 rows (the declared transitional render)
+        rModels.add("advanced_crafting_table"); // craftingTableModel — act-gui-overlay-overhaul: the plain-line family model (60 rows)
+        rModels.add("charging_crafting_table"); // craftingTableModel — act-gui-overlay-overhaul: the charging-line family model (60 rows)
         return rModels;
     }
 

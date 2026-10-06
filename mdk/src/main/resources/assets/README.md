@@ -12830,6 +12830,44 @@ the port slot geometry align by construction (the dryer.png rationale).
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
+## task act-gui-overlay-overhaul (2026-10-06) — the craftingtables block-texture families
+
+18 PNGs under `gt6/textures/block/`, byte-identical borrows (16x16, sha256 verified)
+from upstream `src/main/resources/assets/gregtech/textures/blocks/machines/craftingtables/{advanced,charging}/{colored,overlay}/{back,bottom,front,side,top}.png`
+— the id1336 ③ closure (the former "the advanced group ships fronts only" census
+premise was wrong; the full five-direction two-layer sets were always there). The
+2 pre-existing rows ride the same shas (`advanced_colored_front` `0db2f485…`,
+`advanced_overlay_front` `f3747a61…` — shared plate art, see the dedup note).
+Naming: upstream `<family>/<layer>/<dir>.png` → flat `<family>_<layer>_<dir>.png`
+(the autoclave/large-family flat convention).
+
+sha ledger (per file; the families share the colored plate art and most overlay
+fills, so many shas repeat — every FILE below was verified byte-identical to its
+upstream counterpart individually):
+
+- `advanced_colored_{back,front}.png`, `charging_colored_{back,front}.png`
+  `0db2f485531d6cd6e12102406bf80167a5e5446ba83999cc39465309bef583ee`
+- `advanced_colored_{bottom,side}.png`, `charging_colored_{bottom,side}.png`
+  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `advanced_colored_top.png`, `charging_colored_top.png`
+  `f1a7d7e9b41c40b60ec3f78925c2097c8407d2d773ba9ecf10d358dc1d21f282`
+- `advanced_overlay_{back,front}.png`
+  `f3747a6148a20ca82d24f1bf913a6680cdbcc3a9a7bb8c29c6ab2af4c845bfd1`
+- `advanced_overlay_{bottom,side,top}.png`, `charging_overlay_{bottom,side,top}.png`
+  `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `charging_overlay_back.png`
+  `72de95cdd6122ababa7f0f19bc1836f1bc761d4eef91e6e2308e5a4167383a90`
+- `charging_overlay_front.png`
+  `134db525ed2000473a68b3488638293e6f911c764908f9efaa30a6aee2bfce94`
+
+Consumers: `GT6BlockStates.craftingTableModel` (the two family models' tinted body
+six-set + the five overlay decals, top decal included — the user's "顶面 overlay
+光秃秃" fix; charging rows swap the family the same way the upstream NBT_TEXTURE
+column does, Loader_MultiTileEntities.java:136/:137).
+
+Copied on 2026-10-06. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
 ## GT6 bottle items (task food-bottles-min, 2026-10-01)
 - `gt6/textures/item/bottle/*.png` — the bottles-domain minimum subset (3 textures,
   task food-bottles-min), byte-identical borrows renamed to the registered item ids:
