@@ -151,11 +151,22 @@ public class GT6RoboticsCensusTest {
 		assertEquals(10, GT6Robotics.ROBOT_TIPS.size(), "the identity walk = the tip family");
 	}
 
-	/** The creative-tab join (the GT6ExtruderMolds.onBuildTabContents form) exists and walks the full family. */
+	/**
+	 * The creative-tab join (the GT6ExtruderMolds.onBuildTabContents form) exists, and the
+	 * machines-tab walk covers exactly the 50 non-token rows — task disposable-tools-tab-rehome
+	 * moved the 10 single-use tools to the tools tab (the upstream Equipment tab,
+	 * MultiItemRandomTools.java:59), so the MACHINES_TAB pool shrank 60 to 50 with ZERO token
+	 * residue (the user ruling 2026-10-06).
+	 */
 	@Test
-	public void theTabJoinHandlerWalksTheWholeFamily() throws Exception {
+	public void theTabJoinHandlerWalksTheMachinesPoolWithoutTheTokens() throws Exception {
 		assertNotNull(GT6Robotics.class.getDeclaredMethod("onBuildTabContents", BuildCreativeModeTabContentsEvent.class),
 				"the MACHINES_TAB join handler (registered-but-tab-less is invisible in JEI)");
+		assertEquals(50, GT6Robotics.MACHINE_TAB_ITEMS.size(), "ALL minus the ten single-use tools");
+		for (RegistryObject<Item> tToken : GT6Robotics.TOOL_TOKENS) {
+			assertTrue(GT6Robotics.MACHINE_TAB_ITEMS.stream().noneMatch(tRow -> tRow.getId().equals(tToken.getId())),
+					"zero token residue in the machines-tab walk: " + tToken.getId());
+		}
 	}
 
 	/**

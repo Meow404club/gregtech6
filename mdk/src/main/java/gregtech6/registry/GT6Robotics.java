@@ -43,6 +43,16 @@ import gregtech6.covers.GT6Covers;
  * ("Single Use Wrench" .. "Single Use File", metas 8500-8509). All are PLAIN items — zero
  * shaping behaviour on the item itself (the GT6ExtruderMolds declared-behaviour ruling).
  *
+ * <p><b>Tab rehome (task disposable-tools-tab-rehome, the user ruling 2026-10-06)</b>: the
+ * 10 single-use tools ride the {@link GT6Tools#TOOLS_TAB} ({@code gt6:tools}, the TAB_TABLE
+ * tail), NOT the MACHINES_TAB pool. Upstream the tokens' multiitem already carries its own
+ * tool-domain creative tab — {@code setCreativeTab(new CreativeTab(..., "GregTech:
+ * Equipment", ...))} (MultiItemRandomTools.java:59, the registration rows :492-501) — so
+ * the machine-tab pooling was the deviation; the port's tools tab is that Equipment
+ * domain's home. The tips (Infinitely usable, :470-479) and the four compact ladders
+ * (MultiItemTechnological.java:43 "GregTech: Technology") keep the machines-tab pool —
+ * only the disposable family was ruled.
+ *
  * <p><b>The never-consumed tip face</b> (the id478 archaeology shape): the Boxinator rows
  * register their tip input at stack size 0 (MultiItemRandomTools.java:503-512,
  * {@code IL.Robot_Tip_*.get(0)}) — size-0 is not portable to 1.20.1, so the port carries
@@ -170,6 +180,23 @@ public final class GT6Robotics {
 	}
 
 	/**
+	 * The 50 MACHINES_TAB members — {@link #ALL} minus the 10 {@link #TOOL_TOKENS} (task
+	 * disposable-tools-tab-rehome: the single-use tools rehome to {@link GT6Tools#TOOLS_TAB},
+	 * the upstream Equipment tab face, MultiItemRandomTools.java:59/:492-501). The join
+	 * handler below walks THIS list — the data seam the offline census pins.
+	 */
+	public static final List<RegistryObject<Item>> MACHINE_TAB_ITEMS;
+	static {
+		List<RegistryObject<Item>> tMachines = new ArrayList<>(50);
+		tMachines.addAll(MOTORS);
+		tMachines.addAll(CONVEYERS);
+		tMachines.addAll(PISTONS);
+		tMachines.addAll(ROBOT_ARMS);
+		tMachines.addAll(ROBOT_TIPS);
+		MACHINE_TAB_ITEMS = List.copyOf(tMachines);
+	}
+
+	/**
 	 * The tip-identity seam (production default = item identity over {@link #ROBOT_TIPS}).
 	 * The offline JVM binds no registry (every holder unbound → the guard answers false),
 	 * so the offline consume-path e2e swaps this with a fixture predicate — the same
@@ -225,13 +252,15 @@ public final class GT6Robotics {
 	 * The MACHINES_TAB join (the GT6ExtruderMolds verbatim form, delivered by the
 	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head). Upstream the
 	 * components ride the GT technology tab as multiitem metas; the port pools them with
-	 * the machines tab. The walk covers the FULL {@link #ALL} census — registered-but-
-	 * tab-less is invisible in both the creative menu and JEI (the issue #10 lesson).
+	 * the machines tab — the ten single-use tools EXCEPTED (task disposable-tools-tab-rehome:
+	 * they rehome to the tools tab, the upstream Equipment tab, MultiItemRandomTools.java:59).
+	 * The walk covers {@link #MACHINE_TAB_ITEMS} — registered-but-tab-less is invisible in
+	 * both the creative menu and JEI (the issue #10 lesson).
 	 */
 	@SubscribeEvent
 	public static void onBuildTabContents(net.minecraftforge.event.BuildCreativeModeTabContentsEvent aEvent) {
 		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
-			for (RegistryObject<Item> tItem : ALL) {
+			for (RegistryObject<Item> tItem : MACHINE_TAB_ITEMS) {
 				aEvent.accept(new ItemStack(tItem.get()));
 			}
 		}

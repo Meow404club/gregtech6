@@ -4,8 +4,9 @@
  * (zero registration face, zero crafting rows). This test pins the repaired faces:
  *
  * <ul>
- * <li>the registration census (three GT6Tools rows, the TAB_TABLE 91-row band between
- *     the pocket forms and the armor tail);</li>
+ * <li>the registration census (three GT6Tools rows, the TAB_TABLE band between
+ *     the pocket forms and the armor tail; the total grew 91 to 101 when the
+ *     disposable-tools-tab-rehome card appended the token tail behind the armor);</li>
  * <li>the basic-attribute pins (durability 512, the bare getBaseDamage 1.0F, the vanilla
  *     sword attack-rate anchor, the :198-200 desc tooltips);</li>
  * <li>the no-behaviour census (isMiningTool=F/isWeapon=F → no useOn/mineBlock/
@@ -66,10 +67,10 @@ public class GT6GunFamilyTest extends GTOfflineTestBase {
 
 	// --------------------------------------------------------------- the registration census
 
-	/** The three GT6Tools rows ride between the pocket forms (63) and the armor tail (67..90) — 91 rows total. */
+	/** The three GT6Tools rows ride between the pocket forms (63) and the armor tail (67..90) — 91 rows at this task's baseline (the disposable-tools-tab-rehome card appends the token tail behind the armor, keeping every index here put). */
 	@Test
 	public void theGunRowsJoinTheTabBetweenPocketAndArmor() {
-		assertEquals(91, GT6Tools.TAB_TABLE.size(), "the 88 prior rows + the three gun rows");
+		assertEquals(101, GT6Tools.TAB_TABLE.size(), "the 88 prior rows + the three gun rows + the ten token tail rows (task disposable-tools-tab-rehome)");
 		assertSame(GT6Tools.PISTOL, GT6Tools.TAB_TABLE.get(64), "row 64 is the pistol");
 		assertSame(GT6Tools.CARBINE, GT6Tools.TAB_TABLE.get(65), "row 65 is the carbine");
 		assertSame(GT6Tools.RIFLE, GT6Tools.TAB_TABLE.get(66), "row 66 is the rifle");
