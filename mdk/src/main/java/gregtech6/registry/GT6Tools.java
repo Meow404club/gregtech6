@@ -677,7 +677,8 @@ public final class GT6Tools {
 	 * decisions.p30-w5-split-rulings): 24 FLAT items (6 suits x 4 slots, non-NBT, the
 	 * research ruling over the upstream per-piece rows Loader_Tools.java:68-96),
 	 * registered into THIS single DeferredRegister (the card boundary — no second DR)
-	 * and appended to the {@link #TAB_TABLE} tail below. Registration order = the
+	 * and appended to the {@link #TAB_TABLE} below (the block before the token tail).
+	 * Registration order = the
 	 * {@link GT6ArmorMaterials#SUITS} walk x the four {@link ArmorItem.Type} slots; the
 	 * datagen bands' row lookup rides {@link #armorRow}.
 	 */
@@ -745,12 +746,13 @@ public final class GT6Tools {
 			MONKEY_WRENCH_LV, MONKEY_WRENCH_MV, MONKEY_WRENCH_HV,
 			TRIMMER_LV,
 			POCKET_MULTITOOL, POCKET_MULTITOOL_KNIFE, POCKET_MULTITOOL_SAW, POCKET_MULTITOOL_FILE, POCKET_MULTITOOL_SCREWDRIVER, POCKET_MULTITOOL_WIRE_CUTTER, POCKET_MULTITOOL_SCISSORS, POCKET_MULTITOOL_CHISEL,
-			// task pistol-family-items — the gun rows ride BEFORE the armor tail (the
-			// ArmorSetTest tail-window form: the armor block stays the wave tail)
+			// task pistol-family-items — the gun rows ride BEFORE the armor block (the
+			// ArmorSetTest tail-window form: the armor block precedes the token tail)
 			PISTOL, CARBINE, RIFLE)
-			// task w5-t8-armor-24 — the 24 hazmat armor rows, tail-append (rows 65-88;
-			// the wave-final tally 10 base tools + the 54 W5 tool-card rows + these 24 =
-			// the 88-row census the wave gate re-measures)
+			// task w5-t8-armor-24 — the 24 hazmat armor rows, tail-append (rows 67-90
+			// since the token tail append; the wave-final tally 10 base tools + the 54
+			// W5 tool-card rows + the 3 gun rows + these 24 = the 91-row census before
+			// the rehomed token tail)
 			.addAll(ARMOR_ROWS)
 			// task disposable-tools-tab-rehome — the ten Single Use tool rows, tail-append
 			// (rows 91-100). The registration home stays GT6Robotics.ITEMS (the multiitem

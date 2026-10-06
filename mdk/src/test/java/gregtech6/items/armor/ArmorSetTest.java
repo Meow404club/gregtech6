@@ -22,11 +22,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.ArmorItem;
 
+import gregtech6.registry.GT6Robotics;
 import gregtech6.registry.GT6Tools;
 
 /**
- * The offline armor pin (task w5-t8-armor-24 acceptance): the TAB_TABLE tail parity
- * + the 24 id census + the {@link GT6HazardSets} judgment arms + the stat literals — all
+ * The offline armor pin (task w5-t8-armor-24 acceptance): the TAB_TABLE tail-window
+ * parity + the 24 id census + the {@link GT6HazardSets} judgment arms + the stat literals — all
  * PURE faces, because the mod-Item intrusive-holder wall makes the pieces themselves
  * unconstructible in this bootstrapped-and-frozen JVM (the GT6ToolsCreativeTabTest
  * posture). The committed generated tree is the second witness: the hazard TAG files
@@ -51,15 +52,21 @@ public class ArmorSetTest {
 
 	// ------------------------------------------------------------------ the table faces
 
-	/** The 24 armor rows are the TAB_TABLE tail, in the SUITS walk order. */
+	/**
+	 * The 24 armor rows are the TAB_TABLE block right before the Single Use token
+	 * tail, in the SUITS walk order (the append-only seam). Task
+	 * disposable-tools-tab-rehome (merge 86d4fad60, the user ruling 2026-10-06)
+	 * tail-appended the ten {@link GT6Robotics#TOOL_TOKENS} rows 91-100 after the
+	 * armor block (rows 67-90), so the window now offsets by both blocks.
+	 */
 	@Test
-	public void armorRowsAreTheTabTableTail() {
+	public void armorRowsPrecedeTheTokenTail() {
 		assertEquals(GT6ArmorMaterials.SUITS.size() * 4, GT6Tools.ARMOR_ROWS.size());
-		int tTail = GT6Tools.TAB_TABLE.size() - GT6Tools.ARMOR_ROWS.size();
-		assertTrue(tTail >= 10, "the ten base tool rows must precede the armor tail");
+		int tWindow = GT6Tools.TAB_TABLE.size() - GT6Robotics.TOOL_TOKENS.size() - GT6Tools.ARMOR_ROWS.size();
+		assertTrue(tWindow >= 10, "the ten base tool rows must precede the armor window");
 		for (int i = 0; i < 24; i++) {
-			assertEquals(GT6Tools.ARMOR_ROWS.get(i).getId(), GT6Tools.TAB_TABLE.get(tTail + i).getId(),
-					"TAB_TABLE tail row " + i + " must be the armor row (append-only seam)");
+			assertEquals(GT6Tools.ARMOR_ROWS.get(i).getId(), GT6Tools.TAB_TABLE.get(tWindow + i).getId(),
+					"TAB_TABLE tail-window row " + i + " must be the armor row (append-only seam)");
 		}
 	}
 
