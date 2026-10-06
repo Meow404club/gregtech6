@@ -8795,7 +8795,15 @@ SAME visible pixels, the lightningrod one-texture ruling).
   all twelve LU crystals the same grey-white — they now carry the upstream family mRGBa
   multiplied in (MT.java:1581-1582: red 255,0,0 / cyan 0,255,255; the
   MultiTileEntityBatteryLU8/32 getTexture2 tint), pinned by
-  `GT6EnergiumItemTexDatagenTest`.
+  `GT6EnergiumItemTexDatagenTest`. The sprites serve as the FACES of the energium item
+  models since task energium-crystal-appearance-2 (2026-10-06): the upstream ITEM form
+  is the RendererBlockTextured.renderInventoryBlock 3D render (the IItemRenderer
+  registered per MTE block, MultiTileEntityRegistry.java:105) of the 4x4x4-pixel battery
+  box (setBlockBounds2 box(PX_P[6],PX_P[0],PX_P[6],PX_N[6],PX_N[12],PX_N[6]),
+  MultiTileEntityBatteryLU8.java:50) with per-face shading — the twelve generated item
+  models carry that box as their one element (full-uv faces), so the crystals sit small
+  in the inventory cell like upstream instead of a flat full-cell colour fill (the
+  user's "纯色块填满格子" round-two report).
   Produced by `mdk/tools/bake_battery_textures.py` (pure stdlib; byte-copy mode plus the
   energium mRGBa multiply).
 - `gt6/textures/block/battery_box.png` and `battery_box_large.png` — the BatteryBox side
