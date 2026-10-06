@@ -29,6 +29,8 @@ import brachy.modularui.widgets.dynamic.DynamicHandler;
 import brachy.modularui.widgets.dynamic.DynamicWidget;
 import brachy.modularui.widgets.layout.Flow;
 
+import org.joml.Vector3f;
+
 import gregtech6.multiblock.GTMultiBlockPattern;
 
 /**
@@ -44,6 +46,40 @@ import gregtech6.multiblock.GTMultiBlockPattern;
  * (the GTCEu shared-widget shape, MultiblockInfoEmiCategory.java:68 /
  * MultiblockInfoJeiCategory.java:46).
  *
+ * <p><b>The positioning/centering algorithm — the GTCEu reference, verbatim anchors
+ * (task mbpreview-centering-gtceu-replica).</b> The reference seeds its camera right
+ * after the renderer exists and before the schema widget is built:
+ *
+ * <pre>{@code
+ * // MultiblockPreviewWidget.java:160-161 (GTCEu Modern, verbatim):
+ * this.multiblockSchemaInfo.getRenderer().camera().setPosAndLookAt(0, 0, -10,
+ *         this.multiblockSchemaInfo.getMapSchema().getCenter());
+ * }</pre>
+ *
+ * <p>That segment's three faces — <b>bounds → translate → scale</b>: (1) BOUNDS: the
+ * center is the fill's bounding-box midpoint, computed by the {@code MapSchema}
+ * constructor over the NON-AIR cells ({@code BlockPosUtil.setMin/setMax} then
+ * {@code this.center = BlockPosUtil.getCenterF(min, max)}, MapSchema.java:36-51; the
+ * midpoint arithmetic itself BlockPosUtil.java:59-62 — {@code dX / 2.0f + oX}). The
+ * port feeds the SAME constructor the SAME fill ({@code GT6MultiblockPreviews
+ * .structureBlocks}), so the computed center is the same quantity. (2) TRANSLATE:
+ * {@code Camera.setPosAndLookAt(xPos, yPos, zPos, lookAt)} stores the look point and
+ * derives yaw/pitch from the look direction and {@code dist = pos.distance(lookAt)}
+ * (Camera.java:45-53). API equivalence: GTCEu's snapshot MUI names the center
+ * accessor {@code getCenter()}; the vendored fork exposes the SAME {@code center}
+ * field as {@code getFocus()} (MapSchema.java:77-79 — upstream 1.20.1/1.21.1 at the
+ * fork's graft root both answer {@code ISchema.getFocus}). (3) SCALE: the projection
+ * turns the camera dist + lookAt into the picture — fovY 60°, aspect = widget w/h,
+ * the model-view built by {@code MatrixUtils.lookAt(pos, lookAt)}
+ * (BaseSchemaRenderer.java:490-527). The runtime draw then re-seeds the SAME
+ * invariant every frame — {@code setLookAtAndAngle(getFocus() + offset, scale, yaw,
+ * pitch)}, SchemaWidget.java:47-52 — so the camera stays anchored on the fill's
+ * center through drag/zoom; the construction seed pins the reference semantics WHERE
+ * THE REFERENCE HAS IT (the bytecode pin rides this segment,
+ * GT6MultiblockPreviewTest.previewWidgetPinsTheReplicatedShell; the functional
+ * seed/draw-invariant pin drives the vendored {@code Camera} itself:
+ * previewCenteringPinsTheGtceuCameraSeed).
+ *
  * <p><b>The GT6 degrades, declared</b> (the card's mapping table): no slice/size sliders
  * — GT6 patterns are fixed-size immutable cell lists ({@code ITileEntityMultiBlockController}
  * :57-59, no consumer for repeats); no per-predicate swap menu on selection — a GT6 cell
@@ -57,7 +93,11 @@ import gregtech6.multiblock.GTMultiBlockPattern;
  * three methods are mixin-invoked, NOT dead: they were once scoped as unreachable because
  * only upstream EMI's dispatch was read, missing the vendored fork's own injection; the
  * chain is pinned by GT6MultiblockPreviewEmiInputTest, and left-click select rides the
- * same forwarded release via its {@code IGuiAction.MouseReleased} listener).
+ * same forwarded release via its {@code IGuiAction.MouseReleased} listener). The schema
+ * view's sub-page budget (178x156 under the top strip, vs the reference's full-page
+ * 200x180 schema face at :175) is the mbpreview-shell-replicate layout ruling — the
+ * centering invariant above is layout-independent (the fill's center lands at the
+ * schema widget's viewport center either way).
  *
  * <p>Construction happens ONLY inside a live viewer page (the JEI category's
  * wrapperFunction and the EMI wrapper's supplier are lazy), where the vendored ModularUI
@@ -86,8 +126,16 @@ public class GT6MultiblockPreviewWidget extends ParentWidget<GT6MultiblockPrevie
 
 		// the ray-tracing renderer with the green frame — the GTCEu renderer face
 		// (MultiblockPreviewWidget.java:102-103, verbatim color/thickness)
-		SchemaRenderer tRenderer = new SchemaRenderer(new MapSchema(tBlocks))
+		MapSchema tSchema = new MapSchema(tBlocks);
+		SchemaRenderer tRenderer = new SchemaRenderer(tSchema)
 				.highlightRenderer(new BlockHighlight(Color.withAlpha(Color.GREEN.brighter(1), 0.9f), 1 / 32f));
+
+		// THE CENTERING SEED — the GTCEu reference positioning algorithm, the verbatim
+		// structure of MultiblockPreviewWidget.java:160-161: the camera anchors ON the
+		// schema's bounding-box center (bounds → translate → scale; the class doc carries
+		// the excerpt and the per-face anchors). getFocus() IS the reference's
+		// getCenter() — the same MapSchema center field under the vendored fork's name.
+		tRenderer.camera().setPosAndLookAt(0, 0, -10, new Vector3f(tSchema.getFocus()));
 
 		// the 3D view: the former 40px description strip's budget goes back to it
 		int tViewWidth = aWidth - PART_CELL - 4;
