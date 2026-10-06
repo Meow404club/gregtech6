@@ -60,7 +60,10 @@ import net.minecraftforge.client.model.data.ModelData;
  * small-tank-colored-tint the four small-tank families — the 40 cell rows, the four gas
  * cylinders, the Porcelain cup, the Ceramic jug —, and since task
  * act-charging-table-tint the Advanced/Charging Crafting Table matrix (the 120 rows'
- * NBT_MATERIAL column, Loader :136-137)). The barrel
+ * NBT_MATERIAL column, Loader :136-137); since task
+ * tint-chain-hopper-grindstone-sifting the 120 storage-hopper rows (the
+ * {@code GT6HopperBlock} row carrier), the Grindstone and the Sifting Table (the
+ * ANY.Steel block-class carriers — the census L1/L2/L3 closures). The barrel
  * join retires the
  * former P23 "unpainted barrel = zero visual change" white identity: the borrowed
  * grayscale {@code barrel_parts} art now multiplies
@@ -219,7 +222,26 @@ public final class GTMachinePaintTint {
 		// (MultiTileEntityAdvancedCraftingTable.java:659-662, the charging twin :61-64)
 		tMaterial = gregtech6.block.GTAdvancedCraftingTableBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		// task tint-chain-hopper-grindstone-sifting — the census L1/L2/L3 closures join:
+		// the 120 storage-hopper rows carry their loader NBT_MATERIAL through the
+		// GT6HopperBlock row carrier (MultiTileEntityHopper.java:281 colored×mRGBa over
+		// Loader:145-146 — the full 60-material walk), the Grindstone and the Sifting
+		// Table the single ANY.Steel rows through their block-class carriers (Loader
+		// :2226/:2227, the upstream BlockTextureMulti colored×mRGBa passes GrindStone
+		// :238-241 / SiftingTable :406-424)
+		tMaterial = hopperMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = gregtech6.block.tools.GT6GrindstoneBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		tMaterial = gregtech6.block.tools.GT6SiftingTableBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
+	}
+
+	/** The storage-hopper row material (the {@code HopperMaterial.mt} loader column), null off-carrier. */
+	@Nullable
+	private static OreDictMaterial hopperMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof gregtech6.registry.GT6Hoppers.GT6HopperBlock tHopper ? tHopper.row().material().mt() : null;
 	}
 
 	/** The steam-engine row material (the {@code SteamEngineRow.matSlug} column), null off-carrier. */

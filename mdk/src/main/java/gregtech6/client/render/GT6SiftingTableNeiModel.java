@@ -2,6 +2,8 @@ package gregtech6.client.render;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -49,9 +51,12 @@ import gregtech6.registry.GT6SiftingTables;
  * viewer-dynamic pair ({@code kitchen_nei_jei/emi.png}) — zero new assets.
  *
  * <p>Layer seat: cutout joins the fallback exactly when the glyph exists (the transparent
- * glyph margins must discard, the r11-oven-solid-layer-fix lesson). No tint interplay:
- * the tint dispatch is the render-pool defer (the model's tintindex-0 seats answer the
- * vanilla no-BlockColor identity), so the fallback quads pass through verbatim.
+ * glyph margins must discard, the r11-oven-solid-layer-fix lesson). Tint interplay is the
+ * grindstone/kitchen order-safe pair (the body carries the datagen tintindex-0 seats —
+ * the tint-wrap-inside / self-tint-outside arms): since task
+ * tint-chain-hopper-grindstone-sifting the body resolves the ANY.Steel row colour through
+ * {@link GTMachinePaintTint#tintMaterialOf} (the census L3 closure of the former
+ * "render-pool defer"; the glyph quad itself stays untinted, the P22 decal contract).
  *
  * <p>CLIENT-only by registration ({@code Dist.CLIENT} listener — the dedicated server
  * never loads this class).
@@ -72,6 +77,9 @@ public class GT6SiftingTableNeiModel extends GTDynamicBakedModel {
 
 	private static final FaceBakery BAKERY = new FaceBakery();
 
+	private final Block mBlock;
+	/** The per-wrapper retinted-copy table (the GTMachineTintModel cache form). */
+	private final Map<Integer, Map<BakedQuad, BakedQuad>> mTintedQuads = new ConcurrentHashMap<>();
 	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
 	private final Function<ResourceLocation, TextureAtlasSprite> mSpriteLookup;
 	/** The viewer probe — evaluated at bake time; the same predicate the jump route consumes. */
@@ -81,13 +89,14 @@ public class GT6SiftingTableNeiModel extends GTDynamicBakedModel {
 	private BakedQuad mGlyph;
 
 	public GT6SiftingTableNeiModel(BakedModel aFallbackModel, Block aBlock) {
-		this(aFallbackModel, defaultSpriteLookup(), GTViewerJump::preferredViewer);
+		this(aFallbackModel, aBlock, defaultSpriteLookup(), GTViewerJump::preferredViewer);
 	}
 
 	/** The offline-test arm (the anvil shape): inject the sprite lookup + viewer probe. */
-	GT6SiftingTableNeiModel(BakedModel aFallbackModel,
+	GT6SiftingTableNeiModel(BakedModel aFallbackModel, Block aBlock,
 			Function<ResourceLocation, TextureAtlasSprite> aSpriteLookup, Supplier<String> aViewerProbe) {
 		super(aFallbackModel);
+		mBlock = aBlock;
 		mSpriteLookup = aSpriteLookup;
 		mViewerProbe = aViewerProbe;
 	}
@@ -105,16 +114,31 @@ public class GT6SiftingTableNeiModel extends GTDynamicBakedModel {
 	@Override
 	protected List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
-		List<BakedQuad> rQuads = getFallbackModel().getQuads(aState, aSide, aRand);
+		List<BakedQuad> rQuads = bodyQuads(aState, aSide, aRand, aModelData);
 		if (aRenderType == RenderType.cutout()) { // the kitchen form: the glyph rides every cutout request
 			BakedQuad tGlyph = glyphQuad();
 			if (tGlyph != null) {
-				// the fallback may have handed back its input list — copy before appending
+				// the tint arms may have handed back their input list — copy before appending
 				rQuads = new ArrayList<>(rQuads);
 				rQuads.add(tGlyph);
 			}
 		}
 		return rQuads;
+	}
+
+	/**
+	 * The body pass (the {@link GT6GrindstoneNeiModel#bodyQuads} order-safe pair verbatim):
+	 * already tinted when the inner wrapper is the tint wrap, self-tinted off a raw
+	 * fallback (the ANY.Steel row through the combined dispatch).
+	 */
+	private List<BakedQuad> bodyQuads(@Nullable BlockState aState, @Nullable Direction aSide,
+			RandomSource aRand, ModelData aModelData) {
+		if (getFallbackModel() instanceof GTMachineTintModel) {
+			// the tint listener wrapped this block first — its quads ARE the tinted body
+			return getFallbackModel().getQuads(aState, aSide, aRand);
+		}
+		return GTMachineTintModel.tintQuads(getFallbackModel().getQuads(aState, aSide, aRand),
+				GTMachinePaintTint.tintARGB(aModelData, GTMachinePaintTint.tintMaterialOf(mBlock), 0), mTintedQuads);
 	}
 
 	/** Cutout joins the seat exactly when the glyph exists (no viewer → the model is unchanged). */
@@ -166,8 +190,8 @@ public class GT6SiftingTableNeiModel extends GTDynamicBakedModel {
 		for (BlockState tState : tBlock.getStateDefinition().getPossibleStates()) {
 			var tKey = BlockModelShaper.stateToModelLocation(tState);
 			BakedModel tBaked = aEvent.getModels().get(tKey);
-			// the idempotence guard (hot reload re-entry); no tint interplay — the dispatch
-			// defer keeps the fallback raw (the class doc)
+			// the idempotence guard (hot reload re-entry); the tint interplay is the
+			// order-safe pair documented on the class (the grindstone shape)
 			if (tBaked != null && !(tBaked instanceof GT6SiftingTableNeiModel)) {
 				aEvent.getModels().put(tKey, new GT6SiftingTableNeiModel(tBaked, tBlock));
 			}

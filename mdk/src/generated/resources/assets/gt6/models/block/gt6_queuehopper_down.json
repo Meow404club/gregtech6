@@ -4,22 +4,28 @@
     {
       "faces": {
         "down": {
-          "texture": "#bottom"
+          "texture": "#bottom",
+          "tintindex": 0
         },
         "east": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "north": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "south": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "up": {
-          "texture": "#top"
+          "texture": "#top",
+          "tintindex": 0
         },
         "west": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         }
       },
       "from": [
@@ -68,19 +74,24 @@
     {
       "faces": {
         "down": {
-          "texture": "#bottom"
+          "texture": "#bottom",
+          "tintindex": 0
         },
         "east": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "north": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "south": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "west": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         }
       },
       "from": [
@@ -126,19 +137,24 @@
     {
       "faces": {
         "east": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "north": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "south": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         },
         "up": {
-          "texture": "#top"
+          "texture": "#top",
+          "tintindex": 0
         },
         "west": {
-          "texture": "#side"
+          "texture": "#side",
+          "tintindex": 0
         }
       },
       "from": [

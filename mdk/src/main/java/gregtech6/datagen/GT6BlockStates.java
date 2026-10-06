@@ -794,8 +794,10 @@ public final class GT6BlockStates extends BlockStateProvider {
      * TWO models per axis, unrotated: {@code grindstone_z} for the Z-axis facings
      * (NORTH/SOUTH), {@code grindstone_x} for the X-axis facings (EAST/WEST = the exact
      * coordinate swap), each with an empty and a loaded ({@code _stone}) form off the STONE
-     * property. The body faces carry tintindex 0 (the #8 reservation — no dispatch row, the
-     * README declared deviation), the overlay shells none (the P22 decal contract).
+     * property. The body faces carry tintindex 0 (the tint seat — consumed since task
+     * tint-chain-hopper-grindstone-sifting through the GT6GrindstoneNeiModel self-tint
+     * arm + the GTMachinePaintTint GT6GrindstoneBlock.materialOf row, the census L2
+     * closure; the overlay shells none, the P22 decal contract).
      */
     private void addGrindstone() {
         Block tBlock = gregtech6.registry.GT6Grindstones.GRINDSTONE.get();
@@ -3377,8 +3379,16 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code _top} (no spout — the upstream pass-2 switch has NO SIDE_Y_POS arm
      * :268-274, the up-facing hopper draws rim+middle only, quirk declared). Every
      * face carries the FACES_TBS pair (up=top/down=bottom/else=side colored + the
-     * 0.01-inflated overlay twin, the boiler two-layer grammar), the tint seat OFF
-     * (the unpaint deviation, the static-storages ruling); the spout's MOUTH face is
+     * 0.01-inflated overlay twin, the boiler two-layer grammar). The colored body band
+     * carries {@code tintindex 0} (the p21 machine tint seat — task
+     * tint-chain-hopper-grindstone-sifting closing research.tint-translation-census L1:
+     * the upstream renders {@code BlockTextureMulti(BlockTextureDefault(colored, mRGBa),
+     * overlay)} on every hopper row, MultiTileEntityHopper.java:281 over the full
+     * 60-material NBT_MATERIAL walk Loader:145-146, so the former "tint seat OFF
+     * (the unpaint deviation, the static-storages ruling)" declaration here misquoted a
+     * ruling the tint-coverage-batch card had already retired — the seat rides the same
+     * bake route as every other machine domain, the overlay twins stay untinted per the
+     * P22 decal contract); the spout's MOUTH face is
      * skipped (upstream pass 2 draws {@code aSide != mFacing} only). The BlockItem
      * models parent the canonical north-spout model.
      */
@@ -3441,14 +3451,21 @@ public final class GT6BlockStates extends BlockStateProvider {
                 aMaxX + 0.01F, aMaxY + 0.01F, aMaxZ + 0.01F, aSkip, "overlay_");
     }
 
-    /** One funnel box layer: all faces but the skip, up=top/down=bottom/else=side over the given band prefix. */
+    /**
+     * One funnel box layer: all faces but the skip, up=top/down=bottom/else=side over the
+     * given band prefix — the colored body band (no {@code overlay_} prefix) carries the
+     * tintindex-0 seat, the overlay twin untinted (the P22 decal contract).
+     */
     private void hopperBoxLayer(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
             float aMaxX, float aMaxY, float aMaxZ, Direction aSkip, String aBand) {
         BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        boolean tTinted = aBand.isEmpty();
         for (Direction tDir : Direction.values()) {
             if (tDir == aSkip) continue;
-            tElement.face(tDir).texture("#" + aBand
-                    + (tDir == Direction.UP ? "top" : tDir == Direction.DOWN ? "bottom" : "side")).end();
+            var tFace = tElement.face(tDir).texture("#" + aBand
+                    + (tDir == Direction.UP ? "top" : tDir == Direction.DOWN ? "bottom" : "side"));
+            if (tTinted) tFace.tintindex(0);
+            tFace.end();
         }
         tElement.end();
     }
@@ -5722,9 +5739,11 @@ public final class GT6BlockStates extends BlockStateProvider {
      * addMeasuringPot 0.01-plate form, cutout). Face mapping rides the upstream pass
      * table: the legs tile legs, the plate tiles plate, the rim tiles grid on
      * up/down + border on the horizontal ring (pass 4's {@code SIDES_VERTICAL ? grid :
-     * border}, :422). The colored band carries the tintindex-0 seat; the tint-consumer
-     * dispatch row (GTMachinePaintTint) is the render-pool defer — a dispatch row lands
-     * the ANY.Steel colour without model change (the measuring-pot precedent). The
+     * border}, :422). The colored band carries the tintindex-0 seat; the tint consumer
+     * landed since task tint-chain-hopper-grindstone-sifting — the GT6SiftingTableNeiModel
+     * self-tint arm over the GTMachinePaintTint GT6SiftingTableBlock.materialOf row (the
+     * ANY.Steel colour, the census L3 closure of the former render-pool defer; the
+     * measuring-pot precedent shape). The
      * material-dependent content piles (passes 7-8, the displayed input/output dust) are
      * the declared render cut (the anvil mShapeA/B precedent).
      */
