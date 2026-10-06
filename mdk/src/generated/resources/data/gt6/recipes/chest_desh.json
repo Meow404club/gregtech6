@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/desh"
+    },
+    "R": {
+      "item": "gt6:ring_desh"
+    },
+    "S": {
+      "item": "gt6:stick_desh"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:chest_desh"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/draconium_awakened"
+    },
+    "R": {
+      "item": "gt6:ring_draconium_awakened"
+    },
+    "S": {
+      "item": "gt6:stick_draconium_awakened"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chest_awakened_draconium"
+  }
+}

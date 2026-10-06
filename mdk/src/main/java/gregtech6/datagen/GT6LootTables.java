@@ -105,6 +105,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
                 new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
+                new SubProviderEntry(GT6ChestBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-a-storage-chests — the 120 chest self-drops
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
@@ -171,6 +172,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
                 new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
+                new SubProviderEntry(GT6ChestBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-a-storage-chests — the 120 chest self-drops
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
@@ -689,6 +691,46 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : hopperLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The metal-chest family block list (task material-mc-a-storage-chests): the 120
+     * GT6Chests rows — the loader MTE default self-drop over the metalset chest pair
+     * (:132-133; canDrop == T on every slot, MultiTileEntityChest.java:250), the
+     * hopperLootBlocks shape verbatim. The chest CONTENTS ride the vanilla break pops
+     * (the GTEntityBlock fallback), the block itself self-drops.
+     */
+    public static List<Block> chestLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6Chests.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The metal-chest family self-drop provider (task material-mc-a-storage-chests). */
+    public static final class GT6ChestBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6ChestBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6ChestBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return chestLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : chestLootBlocks()) dropSelf(tBlock);
         }
     }
 

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/antimony"
+    },
+    "R": {
+      "item": "gt6:ring_antimony"
+    },
+    "S": {
+      "item": "gt6:stick_antimony"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chest_antimony"
+  }
+}

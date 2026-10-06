@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/tungsten"
+    },
+    "R": {
+      "item": "gt6:ring_tungsten"
+    },
+    "S": {
+      "item": "gt6:stick_tungsten"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:chest_tungsten"
+  },
+  "show_notification": true
+}

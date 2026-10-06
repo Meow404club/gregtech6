@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/gilded_iron"
+    },
+    "R": {
+      "item": "gt6:ring_gilded_iron"
+    },
+    "S": {
+      "item": "gt6:stick_gilded_iron"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:chest_gilded_iron"
+  },
+  "show_notification": true
+}

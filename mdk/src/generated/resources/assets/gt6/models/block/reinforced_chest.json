@@ -1,0 +1,194 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#side",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#front",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#front",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#top",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#side",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        10,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#lid_front",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#lid_side",
+          "tintindex": 0
+        },
+        "north": {
+          "texture": "#lid_front",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#lid_side",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#top",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#lid_side",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        1,
+        10,
+        1
+      ],
+      "to": [
+        15,
+        14,
+        15
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#knob"
+        },
+        "east": {
+          "texture": "#knob"
+        },
+        "north": {
+          "texture": "#knob"
+        },
+        "south": {
+          "texture": "#knob"
+        },
+        "up": {
+          "texture": "#knob"
+        },
+        "west": {
+          "texture": "#knob"
+        }
+      },
+      "from": [
+        7,
+        10,
+        0
+      ],
+      "to": [
+        9,
+        14,
+        1
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#plain_bottom"
+        },
+        "east": {
+          "texture": "#plain_side"
+        },
+        "north": {
+          "texture": "#plain_front"
+        },
+        "south": {
+          "texture": "#plain_side"
+        },
+        "up": {
+          "texture": "#plain_top"
+        },
+        "west": {
+          "texture": "#plain_side"
+        }
+      },
+      "from": [
+        0.99,
+        -0.01,
+        0.99
+      ],
+      "to": [
+        15.01,
+        10.01,
+        15.01
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#plain_top"
+        },
+        "east": {
+          "texture": "#plain_lid_side"
+        },
+        "north": {
+          "texture": "#plain_lid_front"
+        },
+        "south": {
+          "texture": "#plain_lid_side"
+        },
+        "up": {
+          "texture": "#plain_top"
+        },
+        "west": {
+          "texture": "#plain_lid_side"
+        }
+      },
+      "from": [
+        0.99,
+        9.99,
+        0.99
+      ],
+      "to": [
+        15.01,
+        14.01,
+        15.01
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "bottom": "gt6:block/woodchest/colored_bottom",
+    "front": "gt6:block/woodchest/colored_front",
+    "knob": "gt6:block/woodchest/colored_knob",
+    "lid_front": "gt6:block/woodchest/colored_lid_front",
+    "lid_side": "gt6:block/woodchest/colored_lid_side",
+    "particle": "gt6:block/woodchest/colored_side",
+    "plain_bottom": "gt6:block/woodchest/plain_bottom",
+    "plain_front": "gt6:block/woodchest/plain_front",
+    "plain_lid_front": "gt6:block/woodchest/plain_lid_front",
+    "plain_lid_side": "gt6:block/woodchest/plain_lid_side",
+    "plain_side": "gt6:block/woodchest/plain_side",
+    "plain_top": "gt6:block/woodchest/plain_top",
+    "side": "gt6:block/woodchest/colored_side",
+    "top": "gt6:block/woodchest/colored_top"
+  }
+}

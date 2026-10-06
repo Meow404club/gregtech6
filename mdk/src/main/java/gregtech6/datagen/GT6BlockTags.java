@@ -279,6 +279,19 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (RegistryObject<Block> tHandle : gregtech6.registry.GT6ConcreteBlocks.SLAB_BLOCKS) {
 			tPickaxe.add(tHandle.get());
 		}
+		// task material-mc-a-storage-chests — the 60 PLAIN CHEST rows join the band: the
+		// upstream block family aMetal = TOOL_pickaxe (Loader_MultiTileEntities.java:132 vs
+		// the :98 aMetal tool column; the brief's "金属=wrench" is corrected by the loader
+		// line — the wrench belongs to the aMachine massstorage pair, the mc-B card). The
+		// reinforced half is aWooden = axe and rides the addAxeBand tail below. Tail-append
+		// form — the pending harvest-bands cards (research.harvest-tool-census 卡1/卡2)
+		// union onto this seam.
+		for (Block tBlock : gregtech6.registry.GT6Chests.BLOCKS_BY_PATH.values().stream()
+				.map(RegistryObject::get).toList()) {
+			if (!((gregtech6.registry.GT6Chests.GT6ChestBlock) tBlock).row().reinforced()) {
+				tPickaxe.add(tBlock);
+			}
+		}
 	}
 
 	/**
@@ -296,6 +309,16 @@ public final class GT6BlockTags extends BlockTagsProvider {
 				continue; // rubber stays pickaxe (the shears defer), metal goes wrench
 			}
 			tAxe.add(tEntry.getValue().get());
+		}
+		// task material-mc-a-storage-chests — the 60 REINFORCED CHEST rows join the band:
+		// upstream block family aWooden = TOOL_axe (Loader_MultiTileEntities.java:133 vs the
+		// :102 aWooden tool column). Tail-append form — the pending harvest-bands cards
+		// (research.harvest-tool-census 卡3) union onto this seam.
+		for (Block tBlock : gregtech6.registry.GT6Chests.BLOCKS_BY_PATH.values().stream()
+				.map(RegistryObject::get).toList()) {
+			if (((gregtech6.registry.GT6Chests.GT6ChestBlock) tBlock).row().reinforced()) {
+				tAxe.add(tBlock);
+			}
 		}
 	}
 

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/efrine"
+    },
+    "R": {
+      "item": "gt6:ring_efrine"
+    },
+    "S": {
+      "item": "gt6:stick_efrine"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:chest_efrine"
+  },
+  "show_notification": true
+}

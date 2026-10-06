@@ -1286,6 +1286,7 @@ public class GT6EnUs extends LanguageProvider {
         addBurningBoxUnits();
         addBoilerUnits();
         addHopperUnits();
+        addChestUnits(); // task material-mc-a-storage-chests
         addStaticStorageUnits();
     }
 
@@ -1368,6 +1369,12 @@ public class GT6EnUs extends LanguageProvider {
         for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
             addRowMatUnit(gregtech6.registry.GT6Hoppers.matUnitKeyOf(tRow), tRow.material().display());
         }
+    }
+
+    /** The two chest templates (plain/reinforced) — the SHARED metalset unit table (the hopper walk emits the 60 words; Loader:132-133 over :186-245). */
+    private void addChestUnits() {
+        add(gregtech6.registry.GT6Chests.DISPLAY_KEY, "%s Chest");
+        add(gregtech6.registry.GT6Chests.DISPLAY_REINFORCED_KEY, "%s reinforced wooden Chest");
     }
 
     /** Dedup across the row-family walks (a word shared by several families is ONE unit key). */

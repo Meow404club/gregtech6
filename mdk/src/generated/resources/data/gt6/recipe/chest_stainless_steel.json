@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/stainless_steel"
+    },
+    "R": {
+      "item": "gt6:ring_stainless_steel"
+    },
+    "S": {
+      "item": "gt6:stick_stainless_steel"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chest_stainless_steel"
+  }
+}

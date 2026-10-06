@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/brass"
+    },
+    "R": {
+      "item": "gt6:ring_brass"
+    },
+    "S": {
+      "item": "gt6:stick_brass"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chest_brass"
+  }
+}

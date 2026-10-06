@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/thaumium"
+    },
+    "R": {
+      "item": "gt6:ring_thaumium"
+    },
+    "S": {
+      "item": "gt6:stick_thaumium"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chest_thaumium"
+  }
+}

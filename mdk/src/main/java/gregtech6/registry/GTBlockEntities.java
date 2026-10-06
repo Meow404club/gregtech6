@@ -514,6 +514,17 @@ public final class GTBlockEntities {
 					gregtech6.tileentity.inventories.GT6BottleCrateBlockEntity::new,
 					GT6StaticStorages.blockArray(gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)).build(null));
 
+	/**
+	 * The metal-chest BET (task material-mc-a-storage-chests — the multi-mount form over
+	 * the whole 120-row {@link GT6Chests} family: the metalset chest pair :132-133 over the
+	 * 60-material loop :186-245, the row config rides the block carrier). Registry path
+	 * "chest" mirrors GT6ChestBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6ChestBlockEntity>> CHEST_BE =
+			BLOCK_ENTITY_TYPES.register("chest", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6ChestBlockEntity::new,
+					GT6Chests.blockArray()).build(null));
+
 
 	/**
 	 * Item register (appended, the material bridge keeps its RegisterEvent stream): the chest

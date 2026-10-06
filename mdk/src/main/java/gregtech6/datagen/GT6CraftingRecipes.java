@@ -331,6 +331,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aConsumer, hopperRecipeId(tRow));
 		}
+		for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) { // task material-mc-a-storage-chests
+			ShapedRecipeBuilder tBuilder = chestRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON skip semantics (mdh-3 wave readiness)
+			tBuilder.save(aConsumer, chestRecipeId(tRow));
+		}
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
 		circuitWireCopperBuilder().save(aConsumer, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
 		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
@@ -593,6 +598,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aOutput, hopperRecipeId(tRow));
+		}
+		for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) { // task material-mc-a-storage-chests
+			ShapedRecipeBuilder tBuilder = chestRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON skip semantics (mdh-3 wave readiness)
+			tBuilder.save(aOutput, chestRecipeId(tRow));
 		}
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
 		circuitWireCopperBuilder().save(aOutput, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
@@ -1265,6 +1275,59 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('H', GTMaterialItems.get(gregapi.data.OP.toolHeadHammer, MT.Steel).get())
 				.define('S', Items.STICK)
 				.unlockedBy("has_tool_head_hammer", has(GTMaterialItems.get(gregapi.data.OP.toolHeadHammer, MT.Steel).get()));
+	}
+
+	/**
+	 * The metal-chest crafting row ids (task material-mc-a-storage-chests — the
+	 * result-path convention, one per row, the HOPPER_RECIPE_IDS shape).
+	 */
+	public static final java.util.List<ResourceLocation> CHEST_RECIPE_IDS = gregtech6.registry.GT6Chests.ROWS.stream()
+			.map(GT6CraftingRecipes::chestRecipeId)
+			.collect(java.util.stream.Collectors.toList());
+
+	/** The id of one chest row's recipe (the {@link #hopperRecipeId} join seam verbatim). */
+	public static ResourceLocation chestRecipeId(gregtech6.registry.GT6Chests.ChestRow aRow) {
+		String tPath = aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/**
+	 * The metal-chest crafting rows (task material-mc-a-storage-chests — the metalset
+	 * pair :132-133): the plain chest "sPw"/"RSR"/"PPP" over plate + ring + stick of the
+	 * material (the 'P'/'R'/'S' columns of :132), the reinforced wooden chest
+	 * "sSw"/"RCR"/"SSS" over stick + ring + any chest (the 'S'/'R'/'C' columns of :133 —
+	 * OD.craftingChest = {@code Tags.Items.CHESTS}, the hopper 'C' column face). The
+	 * lowercase 's'/'w' = the screwdriver/wrench in-grid tool letters. Null-drop guard:
+	 * a driver-hidden material has no registered ring/stick/plate pair (the hopper
+	 * mdh-3 guard verbatim, the walk must never dereference an unregistered item).
+	 */
+	private ShapedRecipeBuilder chestRecipeBuilder(gregtech6.registry.GT6Chests.ChestRow aRow) {
+		var tRing = GTMaterialItems.get(gregapi.data.OP.ring, aRow.material().mt());
+		var tStick = GTMaterialItems.get(gregapi.data.OP.stick, aRow.material().mt());
+		if (tRing == null || tStick == null) return null;
+		ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder
+				.shaped(RecipeCategory.DECORATIONS, gregtech6.registry.GT6Chests.ITEMS_BY_PATH.get(aRow.path()).get())
+				.unlockedBy("has_material_ring", has(tRing.get()));
+		if (aRow.reinforced()) {
+			return tBuilder
+					.pattern("sSw")
+					.pattern("RCR")
+					.pattern("SSS")
+					.define('S', tStick.get())
+					.define('R', tRing.get())
+					.define('C', Tags.Items.CHESTS)
+					.define('s', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.define('w', GT6ItemTags.TOOLS_WRENCH);
+		}
+		return tBuilder
+				.pattern("sPw")
+				.pattern("RSR")
+				.pattern("PPP")
+				.define('P', gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().mt()))
+				.define('R', tRing.get())
+				.define('S', tStick.get())
+				.define('s', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.define('w', GT6ItemTags.TOOLS_WRENCH);
 	}
 
 	/**

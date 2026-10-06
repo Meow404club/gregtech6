@@ -85,7 +85,7 @@ class GT6TagsDatagenTest {
     // the sixteen hu-tu rows joined at task w2-hu-tu-piggyback
     // the +9 burner/plantalyzer machine carriers join at task machines-burner-plantalyzer (the machines bucket 247 -> 256)
     // the +4 plate-gem block carriers join at task machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy) and the +9 p34 machine rows ride the whole-class machine band (bumblelyzer x5 + crystallisationcrucible x4)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2 + 278 + 119 + 64 - 273 + 16; // the +14 eu-special (task w2-eu-special), +30 exotic (task w2-exotic-energy), +25 eu-core (task w2-eu-core-5tier), +16 hu-tu (task w2-hu-tu-piggyback), +5 heat-smelter (task w3-heat-smelter) and +19 eu-bridge (task w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung) +278 the fluid-pipe-matrix tree landed on main (c97bdde79) without this pin moving — the main checkout was RED on this pin (the committed 4136 vs the 3858 pin; 280 pipe rows minus the 2 W1 wood rows already counted = +278 net) — this bump carries the reconciliation — and +119 act-matrix rows (the 120-block crafting table matrix minus the one counted single-variant row, 4136 -> 4255) and +64 concrete blocks (task concrete-blocks-register: the 2 families x 16 colours x full+slab — upstream TOOL_pickaxe over the whole BlockMetaType family incl. slabs, BlockMetaType.java:166; 4255 -> 4319) and −273 +16 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046 — while the 16 long-distance WIRES join the cutter expedient (upstream BlockLongDistWire.java:56-57 TOOL_cutter lvl3, the port cutter has no mining face) 4046 -> 4062) and −273 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2 + 278 + 119 + 64 - 273 + 16 + 60; // the +14 eu-special (task w2-eu-special), +30 exotic (task w2-exotic-energy), +25 eu-core (task w2-eu-core-5tier), +16 hu-tu (task w2-hu-tu-piggyback), +5 heat-smelter (task w3-heat-smelter) and +19 eu-bridge (task w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung) +278 the fluid-pipe-matrix tree landed on main (c97bdde79) without this pin moving — the main checkout was RED on this pin (the committed 4136 vs the 3858 pin; 280 pipe rows minus the 2 W1 wood rows already counted = +278 net) — this bump carries the reconciliation — and +119 act-matrix rows (the 120-block crafting table matrix minus the one counted single-variant row, 4136 -> 4255) and +64 concrete blocks (task concrete-blocks-register: the 2 families x 16 colours x full+slab — upstream TOOL_pickaxe over the whole BlockMetaType family incl. slabs, BlockMetaType.java:166; 4255 -> 4319) and −273 +16 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046 — while the 16 long-distance WIRES join the cutter expedient (upstream BlockLongDistWire.java:56-57 TOOL_cutter lvl3, the port cutter has no mining face) 4046 -> 4062) and −273 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046) and +60 (task material-mc-a-storage-chests, the review-seat rebase seam: the 60 PLAIN metal chests join the pickaxe band — upstream block family aMetal = TOOL_pickaxe, Loader_MultiTileEntities.java:132 vs the :98 aMetal tool column, the brief's 金属=wrench corrected by the loader line; 4062 -> 4122)
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
@@ -169,8 +169,8 @@ class GT6TagsDatagenTest {
         assertEquals(2681, tPrefixPairs, "3777 storage pairs (+4 task machines-bumblelyzer-crucible: the blockPlateGem cascade carriers over the quartet) - 1096 blockDust pairs");
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
-                "272 stones + 256 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils"
-                + " (the +14 eu-special machines of task w2-eu-special, the +30 exotic machines of task w2-exotic-energy, the +25 eu-core machines of task w2-eu-core-5tier the +16 hu-tu machines of task w2-hu-tu-piggyback and the +5 heat-smelter machines of task w3-heat-smelter and the +5 small Massfab machines of task massfab joined the machine walk)");
+                "272 stones + 256 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils + 60 plain chests"
+                + " (the +14 eu-special machines of task w2-eu-special, the +30 exotic machines of task w2-exotic-energy, the +25 eu-core machines of task w2-eu-core-5tier the +16 hu-tu machines of task w2-hu-tu-piggyback and the +5 heat-smelter machines of task w3-heat-smelter and the +5 small Massfab machines of task massfab joined the machine walk; the +60 chests of task material-mc-a-storage-chests ride the aMetal pickaxe family, Loader :132)");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
@@ -208,7 +208,10 @@ class GT6TagsDatagenTest {
      * + the 8 wood beams (task beam-blocks-register, the addBeamBand tail-append — the
      * upstream harvest-tool override BlockBaseBeam.java:54 {@code getHarvestTool =
      * TOOL_axe}, kind order) + the 9 plank cubes (task gt-tree-planks, the addPlankBand
-     * tail-append — the vanilla planks axe face).
+     * tail-append — the vanilla planks axe face) + the 60 reinforced chests (task
+     * material-mc-a-storage-chests — upstream block family aWooden = TOOL_axe,
+     * Loader_MultiTileEntities.java:133 vs the :102 aWooden tool column, the
+     * addAxeBand chest walk appended after the pipes walk).
      */
     @Test
     void axeBandIsExactlyTheWoodBarrelAndTheTreeLogs() throws Exception {
@@ -230,6 +233,18 @@ class GT6TagsDatagenTest {
             }
         }
         assertEquals(28, tWoodPipes, "the 4 wooden materials x 7 variants (Loader :1846-1849 aWooden)");
+        // task material-mc-a-storage-chests — the 60 REINFORCED CHEST rows walk-computed
+        // like the pipes (upstream aWooden = TOOL_axe, Loader_MultiTileEntities.java:133;
+        // the addAxeBand chest walk order = ROWS order = the GT6Hoppers.MATERIALS order;
+        // the ROW walk, not BLOCKS_BY_PATH .get() — the offline JVM has no registry)
+        int tReinforcedChests = 0;
+        for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) {
+            if (tRow.reinforced()) {
+                tBand.add("gt6:" + tRow.path());
+                tReinforcedChests++;
+            }
+        }
+        assertEquals(60, tReinforcedChests, "the 60 reinforced chests (Loader :133 aWooden)");
         tBand.addAll(List.of(
                 "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
                 "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",

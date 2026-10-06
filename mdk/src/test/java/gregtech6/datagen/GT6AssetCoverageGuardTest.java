@@ -318,6 +318,7 @@ public class GT6AssetCoverageGuardTest {
 			gregtech6.registry.GT6CropSticks.class, // task cbc-1-cropstick-base — the crop-stick block/BE/item container
 			gregtech6.registry.GT6Grindstones.class, // task grindstone-family — the 32703 Grindstone row (block + item + BET)
 			GTGrassBlocks.class, GT6HeatExchangers.class,
+			gregtech6.registry.GT6Chests.class, // task material-mc-a-storage-chests — the 120-row metal-chest family
 			GT6Hoppers.class, GT6Kinetics.class, GT6Kitchen.class, GT6LargeMachines.class,
 			GT6Lasers.class, GT6Logistics.class, GT6LongDistanceTransformers.class,
 			GT6LongDistPipes.class, GT6LongDistWires.class, GT6MagicAbsorbers.class, GT6Molds.class,

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/osmium_elemental"
+    },
+    "R": {
+      "item": "gt6:ring_osmium_elemental"
+    },
+    "S": {
+      "item": "gt6:stick_osmium_elemental"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:chest_osmium"
+  },
+  "show_notification": true
+}

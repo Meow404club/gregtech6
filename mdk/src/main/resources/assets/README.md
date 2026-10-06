@@ -13757,3 +13757,51 @@ form): an unpainted grindstone renders the untinted grayscale until that pool ca
 - `block/tools/grindstone/overlay/axle.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/axle.png`)
 - `block/tools/grindstone/overlay/bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/bottom.png`)
 - `block/tools/grindstone/overlay/stone.png` — `d706e3a18b45b7688e489fb362789c6ad5dc206378216905aa9919db6d159fc6` (upstream `blocks/machines/tools/grindstone/overlay/stone.png`)
+
+## Metal-chest family textures (task material-mc-a-storage-chests)
+
+The chest family's two-layer facade (`GT6BlockStates.addChests`) DERIVES from the
+upstream TESR model sheets `textures/model/gt.multitileentity/{metalchest,woodchest}
+.{colored,plain}.png` — the ModelChest UV regions cropped per face (lid top, lid
+front/side, body front/side, body bottom; the knob tile rides the sheet that carries
+the latch art — metalchest plain / woodchest colored — and is composited centered
+onto that layer's `lid_front`), NOT byte-identical copies: the upstream art renders
+through a 64x64 TESR sheet the JSON facade cannot reference directly. Layer roles
+follow the upstream renderer exactly (MultiTileEntityChest.java:349-385): the
+`colored` sheet binds FIRST under the mRGBa multiply (the tint seat, tintindex 0)
+and the `plain` sheet binds second untinted (the P22 decal contract). The role
+inversion between the families is upstream's own art (woodchest.colored carries the
+sparse band art, woodchest.plain the wood grain) — the port keeps each family's
+own pairing.
+
+### `metalchest`
+- `block/metalchest/colored_bottom.png` — `e05745548420314d3ceb03d76979b31886c4ae273cef6401ecbfd1afdfa50522` (derived from upstream `metalchest.colored.png`, the ModelChest region crop)
+- `block/metalchest/colored_front.png` — `4134139507b693b9cccc829fbecc17be77ae0398f6f1e2d483f670d0f87017cb` (derived from upstream `metalchest.colored.png`, the ModelChest region crop)
+- `block/metalchest/colored_knob.png` — `c5d92f61843c108f2c4f19bc25a9e92465b1f89b860d7b8aee5b1b9754473677` (derived from upstream `metalchest.colored.png`, the ModelChest region crop)
+- `block/metalchest/colored_lid_front.png` — `958fe4388c9d3862ad9489522bc18f77ffb5d344370e740ff2153a37b2bedf55` (derived from upstream `metalchest.colored.png`, the ModelChest region crop; + knob composite)
+- `block/metalchest/colored_lid_side.png` — `3beb1c822cd15f3583cca04a0424642e0b29558fee2837890cd301eaf802880b` (derived from upstream `metalchest.colored.png`, the ModelChest region crop)
+- `block/metalchest/colored_side.png` — `8a30a5e020cf58b0e9f1f41eb94b34f225a80995dd0db3e121786e7f42ae8460` (derived from upstream `metalchest.colored.png`, the ModelChest region crop)
+- `block/metalchest/colored_top.png` — `e05745548420314d3ceb03d76979b31886c4ae273cef6401ecbfd1afdfa50522` (derived from upstream `metalchest.colored.png`, the ModelChest region crop)
+- `block/metalchest/plain_bottom.png` — `3a6b4d4091d2da06be495b82417bcd5a6d4388818cf54f19ed2906f8d342b939` (derived from upstream `metalchest.plain.png`, the ModelChest region crop)
+- `block/metalchest/plain_front.png` — `3418f65bd0d7ee2e1ee27ababeb276eb396e17f7434ed5f2d6f1ca44b2577f36` (derived from upstream `metalchest.plain.png`, the ModelChest region crop)
+- `block/metalchest/plain_knob.png` — `87f381ff30606a59142a1747b4973801e6340fdcb7cfb7f5948d21ef4d28dcec` (derived from upstream `metalchest.plain.png`, the ModelChest region crop)
+- `block/metalchest/plain_lid_front.png` — `a3296a98fbaf5cec47efed133c86f7b706c9a971604e573de697cfa2a658e100` (derived from upstream `metalchest.plain.png`, the ModelChest region crop; + knob composite)
+- `block/metalchest/plain_lid_side.png` — `b575af3584e00ec6b5d361f3597c808bc11c1bd4113997812c16e6da8472baf1` (derived from upstream `metalchest.plain.png`, the ModelChest region crop)
+- `block/metalchest/plain_side.png` — `c930eb0da233ec79c5a19331a15d91d3f17c173a83ed14da674235dba5cb6c0c` (derived from upstream `metalchest.plain.png`, the ModelChest region crop)
+- `block/metalchest/plain_top.png` — `3a6b4d4091d2da06be495b82417bcd5a6d4388818cf54f19ed2906f8d342b939` (derived from upstream `metalchest.plain.png`, the ModelChest region crop)
+
+### `woodchest`
+- `block/woodchest/colored_bottom.png` — `d861593b296403c3870728167f3f38be5ebab9d0f1b99f3715501bd527ea0af5` (derived from upstream `woodchest.colored.png`, the ModelChest region crop)
+- `block/woodchest/colored_front.png` — `71ae1fdfe1bb9ddb0bfa3a733a20ad09a2cb8425aaed2fed2bef454a6c7cbb51` (derived from upstream `woodchest.colored.png`, the ModelChest region crop)
+- `block/woodchest/colored_knob.png` — `85cf5dce02a19867714c25292436dc127c0b1d49a2171db3323892f4634869dc` (derived from upstream `woodchest.colored.png`, the ModelChest region crop)
+- `block/woodchest/colored_lid_front.png` — `86c442010621d8c41c988123b5d1fa4092ef5dc8dffd541566e010a7df7ef967` (derived from upstream `woodchest.colored.png`, the ModelChest region crop; + knob composite)
+- `block/woodchest/colored_lid_side.png` — `6020d1c2db17e65aae16d3b32fc89220ee79583a372e4b5979bc945dda91789d` (derived from upstream `woodchest.colored.png`, the ModelChest region crop)
+- `block/woodchest/colored_side.png` — `cb495974cd54e97de09dc7b2ed48f85d3efd36368c987ca1955bee9a384c7340` (derived from upstream `woodchest.colored.png`, the ModelChest region crop)
+- `block/woodchest/colored_top.png` — `d861593b296403c3870728167f3f38be5ebab9d0f1b99f3715501bd527ea0af5` (derived from upstream `woodchest.colored.png`, the ModelChest region crop)
+- `block/woodchest/plain_bottom.png` — `cb49b818f6329312eca64dfc24a60797fef040db1b74ce0c2588257f8e886300` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
+- `block/woodchest/plain_front.png` — `9a5beaa4be48796fa2c2d054c27e1a51f941403f3a307ff7e977554dbd8b1327` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
+- `block/woodchest/plain_knob.png` — `c5d92f61843c108f2c4f19bc25a9e92465b1f89b860d7b8aee5b1b9754473677` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
+- `block/woodchest/plain_lid_front.png` — `1279060e40782e4ce65fc01b91fad4ce4859b5962295043f1fd7d1b48a59c7af` (derived from upstream `woodchest.plain.png`, the ModelChest region crop; + knob composite)
+- `block/woodchest/plain_lid_side.png` — `88125cedfbadbde02487082dbf5dd76e99b16c708f527c1f7a74beaaebe2664e` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
+- `block/woodchest/plain_side.png` — `964528f8e7356bb0a68e56c56d3e9930c72c273ca9c18ec82923ea941af6ca44` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
+- `block/woodchest/plain_top.png` — `cb49b818f6329312eca64dfc24a60797fef040db1b74ce0c2588257f8e886300` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)

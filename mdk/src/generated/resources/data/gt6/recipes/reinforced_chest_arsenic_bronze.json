@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "R": {
+      "item": "gt6:ring_arsenic_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_arsenic_bronze"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sSw",
+    "RCR",
+    "SSS"
+  ],
+  "result": {
+    "item": "gt6:reinforced_chest_arsenic_bronze"
+  },
+  "show_notification": true
+}
