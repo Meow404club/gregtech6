@@ -58,7 +58,9 @@ import net.minecraftforge.client.model.data.ModelData;
  * join —, since task tank-render-tint the barrel rows, since task
  * tint-coverage-batch the metal static-storage rows and the reactor core, and since task
  * small-tank-colored-tint the four small-tank families — the 40 cell rows, the four gas
- * cylinders, the Porcelain cup, the Ceramic jug). The barrel
+ * cylinders, the Porcelain cup, the Ceramic jug —, and since task
+ * act-charging-table-tint the Advanced/Charging Crafting Table matrix (the 120 rows'
+ * NBT_MATERIAL column, Loader :136-137)). The barrel
  * join retires the
  * former P23 "unpainted barrel = zero visual change" white identity: the borrowed
  * grayscale {@code barrel_parts} art now multiplies
@@ -208,6 +210,14 @@ public final class GTMachinePaintTint {
 		tMaterial = gregtech6.block.tank.GT6CupBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.tank.GT6JugBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		// task act-charging-table-tint — the Advanced/Charging Crafting Table matrix
+		// joins: the 120 rows carry their loader NBT_MATERIAL column (Loader
+		// :136-137, one material per plain/charging pair) through the
+		// GTAdvancedCraftingTableBlock carrier; the unpainted shell tints the tier
+		// material colour exactly like the upstream colored×mRGBa pass
+		// (MultiTileEntityAdvancedCraftingTable.java:659-662, the charging twin :61-64)
+		tMaterial = gregtech6.block.GTAdvancedCraftingTableBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
 	}

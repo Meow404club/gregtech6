@@ -1590,11 +1590,13 @@ public final class GT6BlockStates extends BlockStateProvider {
      * upstream machine has no ACTIVE/RUNNING visual payload — the craftingtables/advanced
      * texture group ships no overlay_active/overlay_running layers, the borrow-or-declare
      * rule landed exactly the two borrowable fronts), 4 facing variants over ONE shared
-     * tinted machine model for ALL 120 rows (the declared TRANSITIONAL render — the
-     * upstream per-material mRGBa tint and the charging texture family ride the ⑩B
-     * render/GUI card), and the BlockItem parent per row. The model joins the tint census
-     * count once but NOT the paintableBlockArray (the family-wide paint extension stays
-     * pooled, the class doc of the block).
+     * tinted machine model for ALL 120 rows, and the BlockItem parent per row. The
+     * tintindex-0 body seat has a consumer since task act-charging-table-tint: the baked
+     * GTMachineTintModel wrap + the GTAdvancedCraftingTableBlock.materialOf dispatch arm
+     * multiply the upstream colored×mRGBa shell pass (MultiTileEntityAdvancedCraftingTable
+     * .java:659-662, the charging twin :61-64) — the family-wide paint extension stays
+     * pooled (the class doc of the block); the charging texture-family swap rides the ⑩B
+     * render/GUI card.
      */
     private void addAdvancedCraftingTable() {
         ModelFile tModel = machineModel("advanced_crafting_table", "advanced_colored_front", "advanced_overlay_front");

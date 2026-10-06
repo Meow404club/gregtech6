@@ -35,10 +35,15 @@ import gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable;
  * The row (material + charging kind) rides the instance; the composed display name
  * resolves through {@link GTMachines#displayOf}.
  *
- * <p>Rendering stays the TRANSITIONAL shared model for all 120 rows (task act-matrix
- * declared state): the upstream per-material mRGBa tint and the charging texture family
- * (craftingtables/charging, MultiTileEntityChargingCraftingTable.java:61-80 getTexture2)
- * ride the ⑩B render/GUI card.
+ * <p>Rendering is the shared model for all 120 rows (task act-matrix declared state),
+ * TINTED since task act-charging-table-tint: the body cube is the tintindex-0 seat and
+ * the colour rides the baked {@code GTMachineTintModel} wrap through
+ * {@link #materialOf} — the upstream per-material mRGBa pass
+ * (MultiTileEntityAdvancedCraftingTable.java:659-662 {@code getTexture2} =
+ * {@code BlockTextureMulti(BlockTextureDefault(sColoreds[side], mRGBa), ...)}, the
+ * charging subclass :61-64 the same two-layer shell). The charging texture FAMILY swap
+ * (the craftingtables/charging PNG set, MultiTileEntityChargingCraftingTable.java:61-80)
+ * stays the ⑩B render/GUI card.
  *
 	 * <p>use() routes the upstream double-GUI split (task act-dual-gui,
 	 * MultiTileEntityAdvancedCraftingTable.java:115-117 verbatim semantics): top face =
@@ -71,6 +76,23 @@ public class GTAdvancedCraftingTableBlock extends GTEntityBlock {
 	/** The registration row (the block-carrier config read, the hopper row() seam). */
 	public CraftingTableRow row() {
 		return mRow;
+	}
+
+	/**
+	 * The row-material carrier gate (task act-charging-table-tint, the
+	 * {@code GTMachinePaintTint.tintMaterialOf} dispatch arm): the 120 rows' upstream
+	 * NBT_MATERIAL column — every crafting-table line registers
+	 * {@code UT.NBT.make(NBT_MATERIAL, aMat, ...)} (Loader_MultiTileEntities.java:136
+	 * plain / :137 charging), and the registration derives
+	 * {@code NBT_COLOR = getRGBInt(material.fRGBaSolid)} from it
+	 * (MultiTileEntityClassContainer.java:51), so the unpainted shell IS the tier
+	 * material colour: the grayscale {@code sColoreds} art multiplied by mRGBa with the
+	 * {@code sOverlays} layer untinted (MultiTileEntityAdvancedCraftingTable.java:659-662;
+	 * the charging twin MultiTileEntityChargingCraftingTable.java:61-64). Null
+	 * off-carrier (the dispatch-arm contract, the {@code GTBarrelBlock.materialOf} shape).
+	 */
+	public static gregapi.oredict.OreDictMaterial materialOf(net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof GTAdvancedCraftingTableBlock tTable ? tTable.mRow.material().mt() : null;
 	}
 
 	/** The composed row name (task i18n-compose-rows: the {@link GTMachines#displayOf} carrier). */

@@ -309,6 +309,17 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (var tCell : gregtech6.registry.GT6Cells.BLOCKS_IN_ORDER) wrapStates(tCell.get(), aEvent);
 		wrapStates(gregtech6.registry.GT6Cups.PORCELAIN_CUP.get(), aEvent);
 		wrapStates(gregtech6.registry.GT6Jugs.CERAMIC_JUG.get(), aEvent);
+		// task act-charging-table-tint — the Advanced/Charging Crafting Table matrix
+		// joins the baked-tint domain: the 120 rows carry their loader NBT_MATERIAL
+		// (Loader :136-137, one column per plain/charging pair; the registration derives
+		// NBT_COLOR = getRGBInt(fRGBaSolid), MultiTileEntityClassContainer.java:51), the
+		// shared machineModel body cube is the tintindex-0 seat (the grayscale
+		// advanced_colored_front × mRGBa, MultiTileEntityAdvancedCraftingTable.java
+		// :659-662 getTexture2; the charging twin :61-64 the same shell), the 0.01 front
+		// decal untinted (the P22 contract). The block class doc's former
+		// "transitional, tint rides the ⑩B card" reservation retires for the TINT half
+		// (the charging texture-family swap stays the ⑩B card).
+		for (var tTableBlock : GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.values()) wrapStates(tTableBlock.get(), aEvent);
 	}
 
 	/**
