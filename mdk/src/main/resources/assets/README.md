@@ -9585,12 +9585,12 @@ Byte copies:
 The kitchen family's hollow-tub element models (`GT6BlockStates.addKitchen`) borrow the
 upstream grayscale `colored/` tile sets — the mRGBa tint-me variants of
 `textures/blocks/machines/tools/<family>/colored/*`, byte-identical copies, filenames
-unchanged (the `overlay/` detail passes and the pot/bowl Table faces `tablebottom`/
-`tableside` stay unborrowed — the overlay layer and the Table rows are the pool cuts).
-Upstream tints these tiles at runtime with the row material's colour (mRGBa:
-WoodTreated / StainlessSteel / Ceramic); the port shows the grayscale tiles un-tinted
-(tintindex 0 reserved on every model face, no BlockColor registered) — declared
-deviation, the family runtime-tint pool. Three of the four families ship byte-identical
+unchanged. Upstream tints these tiles at runtime with the row material's colour (mRGBa:
+WoodTreated / StainlessSteel / Ceramic) — since task c3-kitchen-tint-shape the port does
+too (tintindex 0 on every model face, the baked GTMachineTintModel world half + the
+GTItemPaintTint inventory half; the older "un-tinted deviation" note here predates that
+wiring). The pot/bowl Table faces `tablebottom`/`tableside` stay unborrowed (the Table
+rows remain the pool cut). Three of the four families ship byte-identical
 tiles upstream (only `bathing_pot_wood` differs), which is why the digests repeat:
 
 - `block/tools/bathing_pot_wood/sides.png` — `0fb1440b5a5ebce82ea7cb15dd9d6a6b7a1c184bf92b1aa0aa0c9fed74201607` (upstream `blocks/machines/tools/bathing_pot_wood/colored/sides.png`)
@@ -9612,25 +9612,62 @@ tiles upstream (only `bathing_pot_wood` differs), which is why the digests repea
 - `block/tools/juicer/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middleside.png`; the same uniform tile as the bottom — upstream ships it un-detailed, the mRGBa tint carries the face)
 - `block/tools/juicer/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/juicer/colored/middletop.png`; the same uniform tile as the bottom)
 
-Derived (the kitchen NEI corner glyphs, task kitchen-nei-corner-jump):
+Borrowed (the kitchen overlay decor layer, task mixingbowl-bathingpot-fidelity):
 
-The kitchen family's rim-corner recipe-viewer glyph does NOT borrow the upstream
-`overlays/characters/nei.png` verbatim — the corner glyph is viewer-dynamic now (装 JEI 显
+The second getTexture2 layer — upstream composites
+`BlockTextureMulti(colored×mRGBa, overlay)` on EVERY body face
+(MultiTileEntityBathingPot.java:375-379 / MixingBowl :396-400); the first port shipped
+the colored band alone and the decor (the wood pot's metal hoops, the bowl's red waves +
+cavity lines + floor ring) was invisible — the user-visible 「单色平涂」 half of the
+fidelity card. Byte-identical copies, the mortar `*_overlay/` directory grammar. Only
+the tiles WITH art ship: the wood pot's `overlay/insides,top,bottom` and the steel
+pot's + juicer's whole `overlay/` set are FULLY TRANSPARENT upstream (alpha-census
+0/256 opaque px each) — transparent shells would be dead assets, so those families ride
+colored-only and stay off the cutout seat. The shells carry no tintindex (the upstream
+overlay is UNCOLOURED) and the walls' rim strips sample only the empty top rows, so the
+NEI corner glyph seat (8px+0.001) stays unobstructed:
+
+- `block/tools/bathing_pot_wood_overlay/sides.png` — `684c27c752c969193cc148e615d342270058786cbcfe103aafa44e51f3eec5ff` (upstream `blocks/machines/tools/bathing_pot_wood/overlay/sides.png`; the metal hoops)
+- `block/tools/mixing_bowl_overlay/sides.png` — `4e1270a751a6b9781feb5f35ef11e7d84156931c40515267109be270f8c17c01` (upstream `blocks/machines/tools/mixing_bowl/overlay/sides.png`; the red waves)
+- `block/tools/mixing_bowl_overlay/insides.png` — `ce13d1d0404de7c69dc437607bd8a06c9c561d983546ec3f62015d6f9ab9803c` (upstream `blocks/machines/tools/mixing_bowl/overlay/insides.png`)
+- `block/tools/mixing_bowl_overlay/top.png` — `c5f5158442792f68fba493ade64a4ccc15058796535808dc785e8a858b05a4bd` (upstream `blocks/machines/tools/mixing_bowl/overlay/top.png`; the floor ring)
+- `block/tools/mixing_bowl_overlay/bottom.png` — `320a556c986ad0b461bb25c416c929eccb132d338f9b0acb4dc5cf5fa4737b81` (upstream `blocks/machines/tools/mixing_bowl/overlay/bottom.png`)
+
+Borrowed (the kitchen NEI corner glyph sheet, task mixingbowl-bathingpot-fidelity):
+
+The kitchen family's rim-corner recipe-viewer glyph ships the upstream
+`overlays/characters/nei.png` VERBATIM since the mixingbowl-bathingpot-fidelity
+correction (BI.CHAR_NEI, BI.java:120 — the user ruling: 上游形态是唯一基准; the earlier
+viewer-lettered derivation below is RETIRED for this family). Upstream renders the white
+sheet tinted yellow at render time (`BI.nei()` x `CA_YELLOW_255 {255,255,0,255}`,
+CS.java:389); the port keeps the PNG byte-identical and rides the yellow in the baked
+quad's vertex colours (`GTMachineTintModel.retintVertices`, tintIndex -1 — the P22
+uncoloured-decal contract). The glyph quad's UV is its own 2x2px footprint (the upstream
+render-bounds interpolation, `IIcon.getInterpolatedU(renderMinX*16)`, ITexture.java
+:295-298), so the corner samples ONE 16px word cell of the 8x8 grid — the full-sheet UV
+this family shipped before squeezed all 64 words onto the corner (the user-visible
+「一堆特别小的字样」bug). The viewer gate (presence only, `GTViewerJump.preferredViewer()`)
+is unchanged; the jump target stays EMI-first (viewer_priority_emi).
+
+- `block/tools/kitchen_nei.png` — `40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2` (upstream `blocks/overlays/characters/nei.png`, byte-identical; the sha is the former "upstream reference, NOT borrowed" traceability row — it grounds now)
+
+Derived (the SIBLING families' NEI corner glyphs, task kitchen-nei-corner-jump):
+
+The anvil/mortar/sifting-table/grindstone siblings keep the viewer-dynamic pair (装 JEI 显
 「JEI」/仅装 EMI 显「EMI」, the r11-nei-corner-jump + viewer_priority_emi rulings; the
 bake-time gate rides `GTViewerJump.preferredViewer()`). The two tiles are DERIVED from the
-upstream NEI sheet instead: same 128x128 canvas with the 8x8 16px-cell tiling, the text
+upstream NEI sheet: same 128x128 canvas with the 8x8 16px-cell tiling, the text
 band y3..12 and the x2 left margin verbatim, the `E`/`I` glyphs pixel-extracted from the
 upstream sheet (the E 4px + I 1px columns at the cell's x8..13), the `J`/`M` glyphs
 hand-drawn in the same 1px-stroke block style (5x10 each — upstream ships no J/M), one
 inter-letter pixel gap. Upstream renders the sheet white and tints it yellow at render
-time (`BI.nei()` x `CA_YELLOW_255 {255,255,0,255}`, CS.java:389); the port's decal is
+time (`BI.nei()` x `CA_YELLOW_255 {255,255,0,255}`, CS.java:389); the sibling decals are
 untinted (tintIndex -1), so the yellow is BAKED IN: every opaque pixel maps gray
 luminance (g,g,g) → (g,g,0) — the exact product of the upstream white art x yellow tint,
 anti-aliasing grays included.
 
 - `block/tools/kitchen_nei_jei.png` — `7a74e7a8e7e901d20024a417eef56c111afcb216d9eda46b3a43198000157ef0` (derived: J hand-drawn + E/I extracted from upstream `blocks/overlays/characters/nei.png`, yellow baked)
 - `block/tools/kitchen_nei_emi.png` — `2c812935abf7245e00771d0457cb2684a2ecbd3c748e0a53c9a99dea3a0d09aa` (derived: M hand-drawn + E/I extracted from the same sheet, yellow baked)
-- upstream reference (NOT borrowed): `blocks/overlays/characters/nei.png` — `40ea340701c4eac78eb39adee3a3b30047c189fb31e735813feb7b7308b380b2` (the derivation source sheet, sha256 recorded for traceability)
 
 ## Mortar tool block textures (task mortar-family)
 

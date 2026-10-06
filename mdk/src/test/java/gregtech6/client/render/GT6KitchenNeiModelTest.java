@@ -1,12 +1,16 @@
 /**
- * The kitchen NEI corner glyph bake pins (task kitchen-nei-corner-jump, the
- * GTOvenOverlayModelTest shape): the patch exists only when a viewer is present (the
- * bake-time GTViewerJump.preferredViewer gate), picks ITS tile from the same predicate
- * (EMI first — what you see is what you jump to), rides the cutout layer (the transparent
- * glyph margins must discard, the r11-oven-solid-layer-fix lesson), carries the upstream
- * pass-6/7 rim-corner geometry derived from the family collision-pool shape, and never
- * perturbs the body quads. The LIVE wrap (listener + atlas stitching + JEI/EMI in a real
- * client) is the field_test.
+ * The kitchen NEI corner glyph bake pins (task kitchen-nei-corner-jump, corrected by task
+ * mixingbowl-bathingpot-fidelity, the GTOvenOverlayModelTest shape): the patch exists only
+ * when a viewer is present (the bake-time GTViewerJump.preferredViewer gate), rides the
+ * BYTE-IDENTICAL upstream nei.png sheet for ANY viewer (the fidelity correction — the
+ * glyph is upstream's NEI mark, not a viewer logo), samples exactly ONE word cell of the
+ * 8x8 sheet (the UV = the quad footprint — the upstream render-bounds interpolation,
+ * ITexture.java:295-298; the full-sheet UV was the small-letter-pile bug), carries the
+ * upstream CA_YELLOW_255 render tint in the vertex colours (the shipped PNG stays
+ * untouched), rides the cutout layer (the transparent glyph margins must discard, the
+ * r11-oven-solid-layer-fix lesson), carries the upstream pass-6/7 rim-corner geometry
+ * derived from the family collision-pool shape, and never perturbs the body quads. The
+ * LIVE wrap (listener + atlas stitching + JEI/EMI in a real client) is the field_test.
  */
 package gregtech6.client.render;
 
@@ -65,19 +69,28 @@ public class GT6KitchenNeiModelTest extends GTOfflineRenderTestBase {
 		sJuicer = new GTKitchenBlock(1000000, () -> gregapi.data.MT.Ceramic, GTKitchenBlock.SHAPE_JUICER, () -> null, tProps);
 	}
 
-	/** A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest form). */
+	/**
+	 * A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest
+	 * form). The geometry mirrors the REAL block atlas seat (a 128px sheet in a 1024 atlas)
+	 * because FaceBakery shrinks face UVs toward their centre by
+	 * {@code uvShrinkRatio() = 4/atlasSize} (FaceBakery.java:47-53) — a 1x1 stub would
+	 * ratio-4-mangle the glyph UV pins; at 128/1024 the shrink is the real ~0.4%.
+	 */
 	private static final class NamedSprite extends TextureAtlasSprite {
+		private static final int SHEET_PX = 128;
+		private static final int ATLAS_PX = 1024;
+
 		private NamedSprite(ResourceLocation aName) {
 			super(aName,
 					new net.minecraft.client.renderer.texture.SpriteContents(aName,
-							new FrameSize(1, 1),
-							new com.mojang.blaze3d.platform.NativeImage(1, 1, false),
+							new FrameSize(SHEET_PX, SHEET_PX),
+							new com.mojang.blaze3d.platform.NativeImage(SHEET_PX, SHEET_PX, false),
 							//? if forge {
 							net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.EMPTY),
 							//?} else {
 							/*net.minecraft.server.packs.resources.ResourceMetadata.EMPTY),*/
 							//?}
-					1, 1, 0, 0);
+					ATLAS_PX, ATLAS_PX, 0, 0);
 		}
 	}
 
@@ -142,6 +155,19 @@ public class GT6KitchenNeiModelTest extends GTOfflineRenderTestBase {
 		return new AABB(tMinX, tMinY, tMinZ, tMaxX, tMaxY, tMaxZ);
 	}
 
+	/** The quad's {u, v} extents in normalized sprite space (min/max over the 4 vertices) — {umin, umax}, {vmin, vmax}. */
+	private static double[][] uvOf(BakedQuad aQuad) {
+		int[] tV = aQuad.getVertices();
+		double tMinU = 99, tMinV = 99, tMaxU = -99, tMaxV = -99;
+		for (int v = 0; v * STRIDE < tV.length; v++) {
+			double tU = Float.intBitsToFloat(tV[v * STRIDE + 4]);
+			double tVv = Float.intBitsToFloat(tV[v * STRIDE + 5]);
+			tMinU = Math.min(tMinU, tU); tMaxU = Math.max(tMaxU, tU);
+			tMinV = Math.min(tMinV, tVv); tMaxV = Math.max(tMaxV, tVv);
+		}
+		return new double[][] {{tMinU, tMaxU}, {tMinV, tMaxV}};
+	}
+
 	// ---------------------------------------------------------------- the pins
 
 	/** The glyph exists ONLY with a viewer, on the cutout layer alone, and never disturbs the body pass. */
@@ -159,15 +185,57 @@ public class GT6KitchenNeiModelTest extends GTOfflineRenderTestBase {
 		assertEquals(1, quads(tNone, RenderType.solid()).size(), "no viewer → the plain body everywhere");
 	}
 
-	/** The tile follows the SAME predicate the jump route uses — EMI first (what you see is what you jump to). */
+	/** The glyph is the byte-identical upstream NEI sheet for ANY viewer (the fidelity correction — no viewer lettering). */
 	@Test
-	void theTileFollowsTheViewerPredicateEmiFirst() {
-		GT6KitchenNeiModel tJei = model(sTub, "jei");
-		assertEquals("gt6:block/tools/kitchen_nei_jei", spriteId(quads(tJei, RenderType.cutout()).get(1)).toString(),
-				"JEI-only → the JEI tile");
-		GT6KitchenNeiModel tEmi = model(sTub, "emi");
-		assertEquals("gt6:block/tools/kitchen_nei_emi", spriteId(quads(tEmi, RenderType.cutout()).get(1)).toString(),
-				"EMI present → the EMI tile (the dual-install ruling)");
+	void theGlyphIsTheUpstreamNeiSheetForAnyViewer() {
+		assertEquals("gt6:" + GT6KitchenNeiModel.SPRITE_NEI,
+				spriteId(quads(model(sTub, "jei"), RenderType.cutout()).get(1)).toString(),
+				"JEI-only → the upstream nei.png sheet");
+		assertEquals("gt6:" + GT6KitchenNeiModel.SPRITE_NEI,
+				spriteId(quads(model(sTub, "emi"), RenderType.cutout()).get(1)).toString(),
+				"EMI present → the SAME upstream sheet (the jump target is EMI, the mark is upstream's)");
+	}
+
+	/**
+	 * The UV is the quad's own footprint — ONE word cell of the 8x8 sheet (the upstream
+	 * render-bounds interpolation, ITexture.java:295-298); the full-sheet UV squeezed all
+	 * 64 words onto the corner (the small-letter-pile bug). The stored values carry the
+	 * vanilla face-UV shrink toward the centre (uvShrinkRatio = 4/1024 on the 128-in-1024
+	 * stub, FaceBakery.java:47-53) — ~0.4%, inside the pin tolerance; the OLD full-sheet
+	 * UV lands at u ≈ 0.125 (the whole 128px sheet) and fails this pin outright.
+	 */
+	@Test
+	void theGlyphUvIsTheQuadFootprintOneSheetCell() {
+		double tEps = 0.0005;
+		double tSheet = 128.0; // the stub sprite's native px — normalized u = sheet px / 128
+		// the tub pair: corner (0,0) 2x2px → the sheet's top-left cell
+		double[][] tTubUv = uvOf(quads(model(sTub, "jei"), RenderType.cutout()).get(1));
+		assertEquals(0.0, tTubUv[0][0], tEps, "the tub glyph u starts at the sheet edge");
+		assertEquals(0.0, tTubUv[1][0], tEps, "the tub glyph v starts at the sheet edge");
+		assertEquals(2.0 / tSheet, tTubUv[0][1], tEps, "the tub glyph u spans the 2px crop — one cell");
+		assertEquals(2.0 / tSheet, tTubUv[1][1], tEps, "the tub glyph v spans the 2px crop — one cell");
+		// the Juicer: corner (2,2) 2x2px → the SECOND cell (the same word, upstream's own crop)
+		double[][] tJuicerUv = uvOf(quads(model(sJuicer, "jei"), RenderType.cutout()).get(1));
+		assertEquals(2.0 / tSheet, tJuicerUv[0][0], tEps, "the Juicer glyph u rides the 2px inset");
+		assertEquals(2.0 / tSheet, tJuicerUv[1][0], tEps, "the Juicer glyph v rides the 2px inset");
+		assertEquals(4.0 / tSheet, tJuicerUv[0][1], tEps, "the Juicer glyph u ends at the 4px bound");
+		assertEquals(4.0 / tSheet, tJuicerUv[1][1], tEps, "the Juicer glyph v ends at the 4px bound");
+	}
+
+	/**
+	 * The upstream CA_YELLOW_255 render tint (CS.java:389, {255,255,0,255}) rides the
+	 * vertex colours: white sheet x yellow = ABGR {@code 0xFF00FFFF} on every vertex —
+	 * while the tint index stays -1 (the P22 decal contract, never re-tinted at runtime).
+	 */
+	@Test
+	void theGlyphCarriesTheUpstreamYellowInVertexColours() {
+		BakedQuad tGlyph = quads(model(sTub, "jei"), RenderType.cutout()).get(1);
+		assertEquals(-1, tGlyph.getTintIndex(), "the decal is untinted at runtime (the P22 contract)");
+		int[] tV = tGlyph.getVertices();
+		for (int v = 0; v * STRIDE < tV.length; v++) {
+			assertEquals(0xFF00FFFF, tV[v * STRIDE + 3],
+					"vertex " + v + " carries white-sheet-x-CA_YELLOW_255 (ABGR) in its colour slot");
+		}
 	}
 
 	/** The patch is the upstream pass-6/7 rim-corner box, derived from the collision-pool shape. */
