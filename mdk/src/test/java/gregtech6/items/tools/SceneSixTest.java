@@ -73,10 +73,15 @@ public class SceneSixTest {
 
 	// ------------------------------------------------------------------ TAB_TABLE parity
 
-	/** The table holds exactly 22 rows — rows 16..21 are the six scene tools in display order. */
+	/**
+	 * The table holds exactly 101 rows — rows 31..36 are the six scene tools in display
+	 * order. The walk grows by tail-append only (the earlier indices stay frozen): rows
+	 * 91..100 are the ten Single Use tool rows — task disposable-tools-tab-rehome (merge
+	 * 86d4fad60, the user ruling 2026-10-06), the stale-pin follow of the 91-row census.
+	 */
 	@Test
-	public void tabTableIsExactlyTheTwentyTwoToolRows() {
-		assertEquals(91, GT6Tools.TAB_TABLE.size(), "the Tools tab = the prior rows + the six scene tools + the later task bands (the gun family 91-row census)");
+	public void tabTableIsExactlyTheHundredOneToolRows() {
+		assertEquals(101, GT6Tools.TAB_TABLE.size(), "the Tools tab = the prior rows + the six scene tools + the later bands + the ten rehomed Single Use tools (the 101-row census)");
 		assertSame(GT6Tools.SCISSORS, GT6Tools.TAB_TABLE.get(31), "row 31 is the scissors");
 		assertSame(GT6Tools.SCOOP, GT6Tools.TAB_TABLE.get(32), "row 32 is the scoop");
 		assertSame(GT6Tools.PLUNGER, GT6Tools.TAB_TABLE.get(33), "row 33 is the plunger");

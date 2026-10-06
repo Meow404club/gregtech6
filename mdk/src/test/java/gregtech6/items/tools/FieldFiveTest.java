@@ -62,14 +62,24 @@ public class FieldFiveTest {
 
 	// ------------------------------------------------------------------ TAB_TABLE parity
 
-	/** The table holds exactly 37 rows — rows 26..30 are the five field tools in the upstream registration order (the t3 four ride rows 22..25, the t5 scene six rides 31..36). */
+	/**
+	 * The table holds exactly 101 rows — rows 26..30 are the five field tools in the
+	 * upstream registration order (the t3 four ride rows 22..25, the t5 scene six rides
+	 * 31..36). The walk grows by tail-append only (the earlier indices stay frozen):
+	 * rows 91..100 are the ten Single Use tool rows — task disposable-tools-tab-rehome
+	 * (merge 86d4fad60, the user ruling 2026-10-06), the stale-pin follow of the
+	 * 91-row census.
+	 */
 	@Test
-	public void tabTableIsExactlyTheTwentyOneToolRows() {
-		// 91 = 88 + 3 (task wood-planks-register scope append, the compensation bump: the small-tank
+	public void tabTableIsExactlyTheHundredOneToolRows() {
+		// 101 = 91 + 10 (task disposable-tools-tab-rehome, merge 86d4fad60: the ten Single Use
+		// tool rows tail-append after the armor tail — the upstream Equipment tab face,
+		// MultiItemRandomTools.java:59/:492-501). The prior bump: 91 = 88 + 3 (task wood-planks-register
+		// scope append, the compensation bump: the small-tank
 		// jug/cup/pot item rows merged to main without running the tools domain — the small-tank
 		// cards' gate debt; dual-source evidence = the cbc-4 and mdh-3 stash probes both red on the
 		// clean baseline, tasks.cbc-4-crop-tools.selftest + the mdh-3 delivery report)
-		assertEquals(91, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 26 prior rows + the five field tools + the scene six + the small-tank jug/cup/pot rows");
+		assertEquals(101, GT6Tools.TAB_TABLE.size(), "the Tools tab = the 26 prior rows + the five field tools + the later bands + the ten rehomed Single Use tools");
 		assertSame(GT6Tools.HOE, GT6Tools.TAB_TABLE.get(26), "row 26 is the hoe (Loader_Tools.java:122)");
 		assertSame(GT6Tools.BRANCH_CUTTER, GT6Tools.TAB_TABLE.get(27), "row 27 is the branch cutter (:133)");
 		assertSame(GT6Tools.SENSE, GT6Tools.TAB_TABLE.get(28), "row 28 is the sense (:138)");
