@@ -382,6 +382,11 @@ public final class GTClientHandlers {
         List<Item> tRowTintItems = new ArrayList<>();
         for (Block tBlock : GT6StaticStorages.metalBlockArray()) tRowTintItems.add(tBlock.asItem());
         tRowTintItems.add(GT6Reactors.REACTOR_CORE_2X2_ITEM.get());
+        // task material-mc-a-storage-chests — the 120 metal-chest BlockItems join the
+        // same row-material lambda (both kinds are NBT_MATERIAL rows; the item models
+        // parent the chest facade whose colored faces carry tintindex 0, so the
+        // creative-tab face needs the explicit registration — the class-doc clause)
+        for (Block tBlock : gregtech6.registry.GT6Chests.blockArray()) tRowTintItems.add(tBlock.asItem());
         event.getItemColors().register(GTItemPaintTint.itemColor(), tRowTintItems.toArray(Item[]::new));
     }
 

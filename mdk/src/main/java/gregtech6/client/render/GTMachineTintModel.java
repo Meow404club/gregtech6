@@ -331,6 +331,16 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// anyway); those consume through their own self-tint arms over the
 		// GTMachinePaintTint block-class rows, the GT6GrindstoneNeiModel.bodyQuads shape.
 		for (var tHopper : gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.values()) wrapStates(tHopper.get(), aEvent);
+		// task material-mc-a-storage-chests — the metal-chest family joins the baked-tint
+		// domain: the 120 rows carry their loader NBT_MATERIAL (the metalset chest pair
+		// :132-133 over the :186-245 loop; BOTH kinds — the plain chest's colored sheet is
+		// the metal body art, the reinforced chest's colored sheet the band art, each
+		// family's own sheet pairing). The chest facade's colored body+lid boxes are the
+		// tintindex-0 seats (the addChests datagen change), the plain decal shells and the
+		// metalchest knob untinted (the P22 contract; the woodchest knob rides the colored
+		// layer through its own tintindex-0 seat). The colour resolves through the
+		// GT6ChestBlock.materialOf carrier (the GT6StorageBlock dispatch shape).
+		for (Block tBlock : gregtech6.registry.GT6Chests.blockArray()) wrapStates(tBlock, aEvent);
 	}
 
 	/**

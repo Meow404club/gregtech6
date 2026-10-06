@@ -235,6 +235,12 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.tools.GT6SiftingTableBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		// task material-mc-a-storage-chests — the metal-chest family joins: both kinds
+		// carry the loader NBT_MATERIAL through the GT6ChestBlock carrier (the metalset
+		// chest pair :132-133; the upstream IItemColorableRGB face on the shared MTE
+		// class — the colored sheet × mRGBa multiply, MultiTileEntityChest :349-370)
+		tMaterial = gregtech6.registry.GT6Chests.GT6ChestBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
 	}
 
