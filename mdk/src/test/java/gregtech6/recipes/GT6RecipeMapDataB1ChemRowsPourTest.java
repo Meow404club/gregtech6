@@ -44,7 +44,8 @@ import net.minecraft.world.level.material.Fluids;
  * (:175-178) + the OXYGEN walk (:223-226) + the AIR walk x2 (:229-232) + :267/:268 +
  * :385-386 = 189. ROASTING SO2 face = 14 sulfide + 5 S/Blaze over OXYGEN x1 (:407-441)
  * and AIR x2 (:445-465) = 57. MELTER/SMELTER = 10 of the 13-row ice/snow faces each.
- * CRYO DT = 2 of 3 (:364-365; the plain-air row :363 has no fluid). INJECTOR = 5
+ * CRYO DT = 3 of 3 (:363-365; the plain-air row :363 rides the registered gt6:air,
+ * task cryo-distillery-air-rewire). INJECTOR = 5
  * (:389-394). AUTOCLAVE = 12 (:274-285).
  *
  * <p><b>Declared skips</b> (upstream rows with unregistered port carriers — the file
@@ -72,7 +73,7 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 			"roastingchem", 57,              // the SO2 face: 19 OXYGEN-leg + 19x2 AIR-leg
 			"melterchem", 10,                // Chem:480-492 minus the seated ice row and the 2 gem skips
 			"smelterchem", 10,               // Chem:495-507, the melter face mirrored
-			"cryodistillationtowerchem", 2,  // :364-365 (the :363 plain-air row = declared skip)
+			"cryodistillationtowerchem", 3,  // :363-365 (the plain-air row rides the registered gt6:air)
 			"injectorchem", 5,               // :389-394
 			"autoclave", 12);                // :274-285 — the kelp forgery REPLACED by the real Bayer face
 
@@ -265,6 +266,34 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 		assertEquals("gt6:dust_tiny_ashes", slotId(tRow.getAsJsonArray("outputs").get(0)), "OP.dustTiny.mat(MT.Ice/Ash, 1)");
 	}
 
+	/** Verbatim 10 — the plain-air cryo split (Chem:363, the flipped no-plain-air pin): FL.Air 200 in, the He/Ne/Ar ladder and the {9000} chance on the ash dust. */
+	@Test
+	public void thePlainAirCryoRowIsUpstreamVerbatim() throws Exception {
+		assertTrue(rowsText("cryodistillationtowerchem.json").contains("gt6:air\""),
+				":363 — the plain-air row ships on the registered gt6:air carrier (task cryo-distillery-air-rewire)");
+		JsonObject tRow = findRow(pourShipped("cryodistillationtowerchem"), "RM.CryoDT Chem:363 Plain Air");
+		assertEquals(64, tRow.get("duration").getAsLong());
+		assertEquals(64, tRow.get("eut").getAsLong());
+		assertEquals("gt6:air", slotId(tRow.getAsJsonArray("fluidInputs").get(0)));
+		assertEquals(200, slotAmount(tRow.getAsJsonArray("fluidInputs").get(0)), "FL.Air.make(200)");
+		JsonArray tFouts = tRow.getAsJsonArray("fluidOutputs");
+		assertEquals(6, tFouts.size(), "N + O + CO2 + He + Ne + Ar");
+		assertEquals("gt6:nitrogen", slotId(tFouts.get(0)));
+		assertEquals(142, slotAmount(tFouts.get(0)), "MT.N.gas(U7) — the long floor");
+		assertEquals("gt6:oxygen", slotId(tFouts.get(1)));
+		assertEquals(50, slotAmount(tFouts.get(1)), "MT.O.gas(U20)");
+		assertEquals("gt6:carbondioxide", slotId(tFouts.get(2)));
+		assertEquals(10, slotAmount(tFouts.get(2)), "MT.CO2.gas(U100)");
+		assertEquals("gt6:helium", slotId(tFouts.get(3)));
+		assertEquals(1, slotAmount(tFouts.get(3)), "MT.He.gas(U1000)");
+		assertEquals("gt6:neon", slotId(tFouts.get(4)));
+		assertEquals(1, slotAmount(tFouts.get(4)), "MT.Ne.gas(U1000)");
+		assertEquals("gt6:argon", slotId(tFouts.get(5)));
+		assertEquals(1, slotAmount(tFouts.get(5)), "MT.Ar.gas(U1000)");
+		assertEquals(9000, tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("chance").getAsLong(), "new long[] {9000}");
+		assertEquals("gt6:dust_tiny_ashes", slotId(tRow.getAsJsonArray("outputs").get(0)), "OP.dustTiny.mat(MT.Ice, 1) — the file's seated Ice/Ash dust leg");
+	}
+
 	/** The kelp census: the forgery is GONE from autoclave.json (the user bug-report anchor), the file is the 12-row Bayer face. */
 	@Test
 	public void theKelpForgeryRowIsDeletedAndTheBayerFaceShips() throws Exception {
@@ -291,7 +320,6 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 		assertFalse(rowsText("mixerchem.json").contains("nitrofuel"), ":266 — no NitroFuel carrier");
 		assertFalse(rowsText("mixerchem.json").contains("reikygen"), ":153 — the RotaryCraft oxygen alias is absent");
 		assertFalse(rowsText("mixerchem.json").contains("biodiesel"), ":380-381 — no biodiesel carrier");
-		assertFalse(rowsText("cryodistillationtowerchem.json").contains("gt6:air\""), ":363 — no plain-air fluid");
 	}
 
 	/**
