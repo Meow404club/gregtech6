@@ -1,6 +1,7 @@
 package gregtech6.jade;
 
 import gregtech6.block.GTEntityBlock;
+import gregtech6.block.multiblock.GTCrucibleWallBlock;
 import gregtech6.tileentity.TileEntityBase01Root;
 
 import snownee.jade.api.IWailaClientRegistration;
@@ -67,6 +68,14 @@ public class GT6JadePlugin implements IWailaPlugin {
 		// 坩埚族客户端腿（task crucible-jade-face）：GTEntityBlock 全覆盖两坩埚方块
 		// （CrucibleBlock extends GTEntityBlock；GTMultiBlockControllerBlock 同），体内键门分发。
 		aRegistration.registerBlockComponent(GT6CrucibleProvider.INSTANCE, GTEntityBlock.class);
+		// 坩埚墙客户端腿（task crucible-jade-follower，症状 A 实修）：墙方块在另一棵类树——
+		// GTCrucibleWallBlock extends GTMultiBlockPartBlock extends BaseEntityBlock（
+		// GTMultiBlockPartBlock.java:62），Jade 客户端分发只沿 getSuperclass() 链找注册锚
+		// （jade-1201 impl HierarchyLookup.java:70-75 / jade-1211 同构），GTEntityBlock 锚
+		// 永不命中 → 墙件 relay 臂（服务端写数据正常，BE 类在 TileEntityBase01Root 链上）
+		// 写了也没腿渲染——用户实机"墙无坩埚数据"的真断点。此行补齐墙方块类锚；体内
+		// KEY_TEMP_MAX 键门保证非坩埚族方块零输出（GT6CrucibleProvider.appendTooltip 门）。
+		aRegistration.registerBlockComponent(GT6CrucibleProvider.INSTANCE, GTCrucibleWallBlock.class);
 		// 锅炉族客户端腿（task jade-boiler）：GTEntityBlock 全覆盖两锅炉方块
 		// （GT6Boilers.BoilerTankBlock / GTLargeBoilerBlock 同基类），体内键门分发。
 		aRegistration.registerBlockComponent(GT6BoilerProvider.INSTANCE, GTEntityBlock.class);
