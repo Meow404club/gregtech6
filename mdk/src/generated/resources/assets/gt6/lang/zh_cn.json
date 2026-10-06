@@ -1315,7 +1315,7 @@
   "gt6.jade.crucible.more": "+%s 种",
   "gt6.jade.crucible.owner": "归属: %s",
   "gt6.jade.crucible.temperature.bar": "温度: %s / %s K",
-  "gt6.jade.crucible.total": "内容物: %s 份",
+  "gt6.jade.crucible.total": "%s 份",
   "gt6.jade.fluid.group.in": "流体输入",
   "gt6.jade.fluid.group.out": "流体输出",
   "gt6.jade.machine.energy": "存量: %s %s",

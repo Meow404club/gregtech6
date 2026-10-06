@@ -2,6 +2,7 @@ package gregtech6.jade;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -126,21 +127,30 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	}
 
 	@Test
-	public void totalAndEntryLinesComposeTheTfruLabelShape() {
-		// the total row IS the TFRU LH.CONTENT label row (commit 33c22beb, first-row label form);
-		// the unit word rides the lang VALUE (en U, zh 份 — the crucible-jade-tankbar ③ move)
-		TranslatableContents tTotal = (TranslatableContents) GT6CrucibleProvider.totalLine(4 * CS.U).getContents();
+	public void totalAndEntryLinesCarryTheShareAmountForm() {
+		// task crucible-jade-follower (the 2026-10-06 user ruling): the total row loses the
+		// "Content:" label and the amounts ride the n/capacity share string — en "4/16",
+		// zh "4/16 份" (the unit word stays in the lang VALUE, the share string is ONE slot).
+		// The old " U" hardcode (the :255 domain) and the TFRU label row both retire.
+		TranslatableContents tTotal = (TranslatableContents) GT6CrucibleProvider.totalLine(4 * CS.U, 16 * CS.U).getContents();
 		assertEquals(GT6CrucibleProvider.LANG_TOTAL, tTotal.getKey());
-		assertEquals("4.000", tTotal.getArgs()[0]);
-		// the entry row: ONE translatable now (the old literal composition retired) — the name
-		// component rides the first slot, the displayUnits string the second
+		assertEquals(1, tTotal.getArgs().length);
+		assertEquals("4/16", tTotal.getArgs()[0], "the bare share form — 4 units of the 16-unit small capacity");
+		// the LARGE crucible answers its own denominator (432, the TileEntityCrucible.MAX_AMOUNT face)
+		assertEquals("4/432", GT6CrucibleProvider.shareAmount(4 * CS.U, CruciblePhysics.Params.LARGE.maxAmount()));
+		// fractional amounts keep the displayUnits precision in the numerator slot
+		assertEquals("0.500/16", GT6CrucibleProvider.shareAmount(CS.U / 2, 16 * CS.U));
+		// zero and negative ride the displayUnits faces (the empty/odd guards)
+		assertEquals("0.000/16", GT6CrucibleProvider.shareAmount(0, 16 * CS.U));
+		assertEquals("?.???/16", GT6CrucibleProvider.shareAmount(-1, 16 * CS.U));
+		// the entry row: ONE translatable — the name component + the share string
 		CompoundTag tEntry = GT6CrucibleProvider.entryTag(new OreDictMaterialStack(MT.Fe, 4 * CS.U));
 		assertEquals("iron", tEntry.getString(GT6CrucibleProvider.ENTRY_MAT), "snakeCase(Iron) — the single derivation");
-		TranslatableContents tLine = (TranslatableContents) GT6CrucibleProvider.contentLine(tEntry).getContents();
+		TranslatableContents tLine = (TranslatableContents) GT6CrucibleProvider.contentLine(tEntry, 16 * CS.U).getContents();
 		assertEquals(GT6CrucibleProvider.LANG_ENTRY, tLine.getKey());
 		assertEquals(2, tLine.getArgs().length);
 		assertEquals("gt6.material.iron", ((Component)tLine.getArgs()[0]).getString(), "the slot keeps the component face");
-		assertEquals("4.000", tLine.getArgs()[1]);
+		assertEquals("4/16", tLine.getArgs()[1], "the entry amount rides the same share form");
 		// the truncation tail
 		TranslatableContents tMore = (TranslatableContents) GT6CrucibleProvider.moreLine(2).getContents();
 		assertEquals(GT6CrucibleProvider.LANG_MORE, tMore.getKey());
@@ -157,7 +167,7 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 		CompoundTag tEntry = GT6CrucibleProvider.entryTag(tExotic);
 		assertFalse(tEntry.contains(GT6CrucibleProvider.ENTRY_MAT));
 		assertEquals("Superconductor", tEntry.getString(GT6CrucibleProvider.ENTRY_NAME));
-		TranslatableContents tLine = (TranslatableContents) GT6CrucibleProvider.contentLine(tEntry).getContents();
+		TranslatableContents tLine = (TranslatableContents) GT6CrucibleProvider.contentLine(tEntry, 16 * CS.U).getContents();
 		assertEquals("Superconductor", ((Component)tLine.getArgs()[0]).getString(), "the literal fallback name in the slot");
 	}
 
@@ -477,5 +487,61 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 		// the ramp feeds off the shared clamp: temp == tempMax pins ratio at 1.0 — exactly
 		// where the melt-down warning gate lives (temp+100>max, CruciblePhysics :212-214)
 		assertEquals(1.0F, GT6JadeRows.ratio(5000, 5000), 1e-6F);
+	}
+
+	// ------------------------------------------------------------------------------------
+	// group ⑥ the wall anchor + the asset census (task crucible-jade-follower)
+	// ------------------------------------------------------------------------------------
+
+	@Test
+	public void theWallBlockClassNeedsItsOwnClientAnchor() {
+		// symptom A: Jade's client dispatch walks ONLY the superclass chain (jade-1201 impl
+		// HierarchyLookup.java:70-75), so an anchor covers a block IFF anchor.isAssignableFrom
+		// (block). The wall tree GTCrucibleWallBlock → GTMultiBlockPartBlock extends
+		// BaseEntityBlock (GTMultiBlockPartBlock.java:62) — the GTEntityBlock anchor can never
+		// answer it, which is why GT6JadePlugin carries the dedicated GTCrucibleWallBlock
+		// registration line next to the original GTEntityBlock one. This pin goes RED if the
+		// wall ever moves under GTEntityBlock — remove that line consciously then.
+		assertFalse(gregtech6.block.GTEntityBlock.class.isAssignableFrom(gregtech6.block.multiblock.GTCrucibleWallBlock.class),
+				"the wall joined the GTEntityBlock tree — the dedicated Jade anchor line in GT6JadePlugin is now redundant");
+		assertTrue(gregtech6.block.GTEntityBlock.class.isAssignableFrom(gregtech6.block.multiblock.GTMultiBlockControllerBlock.class),
+				"the controller stays on the GTEntityBlock tree (the original client leg)");
+	}
+
+	/**
+	 * The B1 non-blank bar face, full census: the tank-bar overlay rides the contentFace
+	 * texture ids through GT6ContentFaceElement → the BLOCK ATLAS sprite, and vanilla
+	 * 1.20.1 stitches every {@code assets/<ns>/textures/block/**.png} (the atlases/blocks.json
+	 * directory source — the only atlas face, no model reference needed). So the bar fill is
+	 * non-blank IFF the asset file ships in the pack: this walk asserts the PNG for BOTH
+	 * contentFace arms over the whole registered material universe, plus the animated
+	 * molten strip's .mcmeta (the atlas loader refuses an unframed strip). The minecraft
+	 * namespace row (the smooth-stone Stone borrow) rides the vanilla jar, not this pack.
+	 */
+	@Test
+	public void everyContentFaceSpriteShipsInThePack() {
+		int tChecked = 0;
+		for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
+			tChecked += assertFaceAsset(tMaterial, false);
+			tChecked += assertFaceAsset(tMaterial, true);
+		}
+		assertTrue(tChecked >= 1000, "the census walked the real universe, got " + tChecked);
+	}
+
+	/** One arm of the census: the texture id → the pack asset path, PNG (+ mcmeta for molten). */
+	private static int assertFaceAsset(OreDictMaterial aMaterial, boolean aMolten) {
+		GT6CrucibleDatagen.ContentFace tFace = GT6CrucibleDatagen.contentFace(aMaterial, aMolten);
+		int tColon = tFace.texture().indexOf(':');
+		String tNamespace = tFace.texture().substring(0, tColon);
+		String tPath = tFace.texture().substring(tColon + 1);
+		if (tNamespace.equals("minecraft")) return 0; // the smooth-stone borrow rides the vanilla jar
+		String tAsset = "assets/" + tNamespace + "/textures/" + tPath + ".png";
+		assertNotNull(GT6CrucibleProviderTest.class.getClassLoader().getResource(tAsset),
+				aMaterial.mNameInternal + " (" + (aMolten ? "molten" : "solid") + ") → " + tAsset + " missing — the Jade bar fill would draw the missing sprite");
+		if (aMolten) {
+			assertNotNull(GT6CrucibleProviderTest.class.getClassLoader().getResource(tAsset + ".mcmeta"),
+					tAsset + ".mcmeta missing — the animated molten strip would fail the atlas stitch");
+		}
+		return 1;
 	}
 }

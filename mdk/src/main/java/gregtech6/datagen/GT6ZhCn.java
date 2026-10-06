@@ -660,13 +660,15 @@ public class GT6ZhCn extends LanguageProvider {
 	 * The crucible Jade face zh units (task crucible-jade-face, +1 bar face in task
 	 * jade-converter-crucible-restyle — the B-case two-slot temperature bar 温度: %s / %s K;
 	 * task crucible-jade-tankbar retires the standalone alarm face (the v3 user ruling folds
-	 * the red into the tank-bar text) and adds the whole-row entry template, the content
-	 * unit word now 份 in both the total and the entry faces): no dump face exists (upstream
+	 * the red into the tank-bar text) and adds the whole-row entry template; task
+	 * crucible-jade-follower, the 2026-10-06 user ruling, cuts the total line's 内容物 label —
+	 * the zh total is now "%s 份" over the provider's n/capacity share string "4/16", the
+	 * entry face keeps its 份 tail after the share slot): no dump face exists (upstream
 	 * 1.7.10 has zero WAILA integration), so these ride the reference table's hand layer via
 	 * {@link #addDirect} — the addDirect absent-row skip is why the TSV regen and this walk
 	 * land in the SAME commit (the noHandRowIsOrphaned pin otherwise surfaces the gap). The
-	 * total line's 内容物 label IS the TFRU LH.CONTENT prefix form; the K unit stays bare (the
-	 * thermometer anchor MultiTileEntitySmeltery.java:512 carries it untranslated).
+	 * K unit stays bare (the thermometer anchor MultiTileEntitySmeltery.java:512 carries it
+	 * untranslated).
 	 */
 	private void addCrucibleJadeUnits() {
 		addDirect("gt6.jade.crucible.temperature.bar");

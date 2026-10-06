@@ -93,6 +93,27 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * "Part of: &lt;控制器名&gt;" 归属行 + 坩埚核心信息同格式透传（上游墙件全部数据接口本就经
  * getTarget(T) 透传控制器，MultiTileEntityMultiBlockPart.java:580-600—— Jade 指墙零信息
  * 即缺这一臂，known_bugs.r11-mb-formed-skin.crucible_wall_jade）。
+ *
+ * <p>task crucible-jade-follower 透传考古（症状 A 结论）：上游 1.7.10 对 WAILA 零 API 集成
+ * ——(?i)waila 全树 5 文件全是注释/常量（BlockBaseFluid.java:92、CS.java:1948 工具名常量、
+ * BlockWaterlike.java:74、MultiTileEntityRock.java:170、MultiTileEntityStick.java:102），
+ * 零 IWaila* 实现，坩埚墙在上游也从不在 WAILA 显坩埚数据——透传面纯属现代等效增强，其
+ * 语义锚 = 墙件数据面转发：MultiTileEntityMultiBlockPart.java:75 一类实现
+ * ITileEntityTemperature/ITileEntityGibbl/ITileEntityCrucible 全族，:658-663
+ * getTemperatureValue→getTarget(T) 转发、:665-670 getTemperatureMax 同形、:644-656
+ * getGibblValue/Max（内容量）同形、:686-691 fillMoldAtSide 先 NO_CRUCIBLE 门再转发。
+ * 本 provider 的墙臂（appendServerData → writeCrucibleData + KEY_OWNER）即该数据面的
+ * 显示侧；⑥ 落地后实机仍不通的真断点在客户端腿注册：墙方块类树 GTCrucibleWallBlock →
+ * GTMultiBlockPartBlock → BaseEntityBlock（GTMultiBlockPartBlock.java:62）不含
+ * GTEntityBlock，而 Jade 客户端分发只沿 getSuperclass() 链找注册锚（jade-1201 impl
+ * HierarchyLookup.java:70-75）→ 服务端写了数据、客户端没有 provider 肯渲染。修复 =
+ * {@link GT6JadePlugin} 为 GTCrucibleWallBlock 追加一条 registerBlockComponent（体内
+ * KEY_TEMP_MAX 键门保证非坩埚族部件零输出）。
+ *
+ * <p>task crucible-jade-follower 文案裁定（用户 2026-10-06）：内容物面砍 "内容物:"/"Content:"
+ * 前缀（LANG_TOTAL 值去标签），量改 n/容量 份额直显（{@link #shareAmount}——分母 = 坩埚
+ * 自家容量 SMALL 16 / LARGE 432，随 KEY_TOTAL_MAX 已同步下发）；en "n/16"、zh "n/16 份"
+ * （单位词仍骑 lang 值）。total 与 entry 两行同裁定（旧 :255 域 " U" 硬编码即 entry 行）。
  */
 public final class GT6CrucibleProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
 
@@ -137,9 +158,11 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	/** 条行键（task jade-converter-crucible-restyle，B 形两槽）：现值/上限 K——单位词尾置
 	 * 一次（design 'Temperature: %s / %s K'）。 */
 	public static final String LANG_TEMPERATURE_BAR = "gt6.jade.crucible.temperature.bar";
+	/** 总量行键（task crucible-jade-follower 文案裁定）：无前缀份额串单槽——en "%s"、
+	 * zh "%s 份"（份额串 "4/16" 由 {@link #shareAmount} 产出）。 */
 	public static final String LANG_TOTAL = "gt6.jade.crucible.total";
-	/** 条目明细行键（task crucible-jade-tankbar ③）：缩进+名+量全行 translatable——原
-	 * contentLine 的裸 literal 组合退役（KeyPin 棘轮收编），量纲词 U/份进 lang。 */
+	/** 条目明细行键（task crucible-jade-tankbar ③ + follower 文案裁定）：缩进+名+份额
+	 * 全行 translatable——en "  %s: %s" / zh "  %s: %s 份"（份额串单槽，" U" 硬编码退役）。 */
 	public static final String LANG_ENTRY = "gt6.jade.crucible.entry";
 	public static final String LANG_EMPTY = "gt6.jade.crucible.empty";
 	public static final String LANG_MORE = "gt6.jade.crucible.more";
@@ -239,6 +262,11 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	 * 已是全铺 SET 分派（task crucible-solid-face-matrix，上游 :983-990 全材质语义），固体臂
 	 * 恒可用；{@link GT6CrucibleDatagen#contentFace} 的 {@code IllegalStateException} 契约若
 	 * 日后再收窄，此 catch 兜底回落 null = 纯色条，服务器写数据面永不 crash。
+	 *
+	 * <p>TODO(crucible-render-followup)：贴图源升级缝已在 {@code contentFace} 单点——并行
+	 * 渲染卡搬运的专属 molten/固体资产合入后，此处零改动自动吃新贴图 id（消费面三方同源：
+	 * 碗 tint / 大坩埚 BER / 本 Jade 条）。资产在仓性已由 GT6CrucibleProviderTest 的
+	 * contentFace 资产 census 钉死（条非空白面）。
 	 */
 	@Nullable
 	public static CompoundTag overlayTag(OreDictMaterialStack aLightest, boolean aMolten, long aTotal) {
@@ -326,12 +354,13 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 			return;
 		}
 		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tTotal, aData.getLong(KEY_TOTAL_MAX)),
-				totalLine(tTotal), GT6JadeRows.COLOR_NEUTRAL, barTextColor(aData.getBoolean(KEY_MELTDOWN)),
+				totalLine(tTotal, aData.getLong(KEY_TOTAL_MAX)), GT6JadeRows.COLOR_NEUTRAL, barTextColor(aData.getBoolean(KEY_MELTDOWN)),
 				overlayElement(aData));
 		// 行 3+：前 5 条目 + 截断尾行。
 		ListTag tList = aData.getList(KEY_CONTENT, Tag.TAG_COMPOUND);
+		long tTotalMax = aData.getLong(KEY_TOTAL_MAX);
 		for (int tIndex = 0; tIndex < tList.size(); tIndex++) {
-			aTooltip.add(contentLine(tList.getCompound(tIndex)));
+			aTooltip.add(contentLine(tList.getCompound(tIndex), tTotalMax));
 		}
 		int tTruncated = aData.getInt(KEY_TRUNCATED);
 		if (tTruncated > 0) {
@@ -378,9 +407,10 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 				tOverlay.getInt(OVERLAY_TINT));
 	}
 
-	/** 总量行："Content: 4.000 U" 形（displayUnits 形移植，量串纯文本客户端算）。 */
-	public static Component totalLine(long aTotal) {
-		return Component.translatable(LANG_TOTAL, displayUnits(aTotal));
+	/** 总量行（条文本，task crucible-jade-follower 文案裁定）：无前缀、n/容量 份额形
+	 * （en "4/16"、zh "4/16 份"——单位词骑 lang 值，份额串单槽）。 */
+	public static Component totalLine(long aTotal, long aTotalMax) {
+		return Component.translatable(LANG_TOTAL, shareAmount(aTotal, aTotalMax));
 	}
 
 	/** 空坩埚行。 */
@@ -394,16 +424,29 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	}
 
 	/**
-	 * 内容物行（整行 translatable，③）：两格缩进 + 显示名 + 量 + 量纲词全在
-	 * {@link #LANG_ENTRY} 值里（en "  %s: %s U" / zh "  %s: %s 份"）——slug 核销条目的名字槽
-	 * 走 {@code gt6.material.<snake>} translatable（各 locale 自解），否则纯文本回退名；
-	 * vanilla 的 %s 组件槽递归渲染嵌套 translatable（MaterialPrefixItem 小单位链同款）。
+	 * 内容物行（整行 translatable，③ + task crucible-jade-follower 文案裁定）：两格缩进 +
+	 * 显示名 + n/容量 份额全在 {@link #LANG_ENTRY} 值里（en "  %s: %s" / zh "  %s: %s 份"）
+	 * ——slug 核销条目的名字槽走 {@code gt6.material.<snake>} translatable（各 locale 自解），
+	 * 否则纯文本回退名；vanilla 的 %s 组件槽递归渲染嵌套 translatable（MaterialPrefixItem
+	 * 小单位链同款）。份额分母 = 坩埚自家容量（appendTooltip 传 KEY_TOTAL_MAX）。
 	 */
-	public static Component contentLine(CompoundTag aEntry) {
+	public static Component contentLine(CompoundTag aEntry, long aTotalMax) {
 		Component tName = aEntry.contains(ENTRY_MAT)
 				? Component.translatable("gt6.material." + aEntry.getString(ENTRY_MAT))
 				: Component.literal(aEntry.getString(ENTRY_NAME));
-		return Component.translatable(LANG_ENTRY, tName, displayUnits(aEntry.getLong(ENTRY_AMOUNT)));
+		return Component.translatable(LANG_ENTRY, tName, shareAmount(aEntry.getLong(ENTRY_AMOUNT), aTotalMax));
+	}
+
+	/**
+	 * 份额串（task crucible-jade-follower 文案裁定，纯函数离线面）："n/容量" 形——分子 = 量
+	 * （整 U 时裸整数 "4"，否则 {@link #displayUnits} 三位小数 "2.500"；≤0 走 displayUnits
+	 * 的 "0.000"/"?.???" 面），分母 = 坩埚容量（SMALL 16 / LARGE 432，均整 U；非整 U 防御臂
+	 * 走 displayUnits）。直显份数的语义 = 条填充比（ratio = total/max）的文字同款。
+	 */
+	public static String shareAmount(long aAmount, long aTotalMax) {
+		String tNumerator = aAmount > 0 && aAmount % CS_U == 0 ? String.valueOf(aAmount / CS_U) : displayUnits(aAmount);
+		String tDenominator = aTotalMax % CS_U == 0 && aTotalMax > 0 ? String.valueOf(aTotalMax / CS_U) : displayUnits(aTotalMax);
+		return tNumerator + "/" + tDenominator;
 	}
 
 	/**
