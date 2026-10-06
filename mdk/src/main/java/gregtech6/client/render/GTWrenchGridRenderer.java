@@ -130,6 +130,48 @@ public final class GTWrenchGridRenderer {
 		aPoseStack.popPose();
 	}
 
+	/**
+	 * The facing-machine grid entry (task wrench-interaction-chain, symptom19): the
+	 * same 3x3 grid for the transformer/dynamo/battery-box family — the upstream bare
+	 * wrench overlay ({@code RenderHelper.drawWrenchOverlay} via
+	 * {@code TileEntityBase01Root.onDrawBlockHighlight} :995-1005, triggered by
+	 * {@code TileEntityBase08Directional.isUsingWrenchingOverlay} :58) plus the one
+	 * front-mark icon from {@link GTWrenchGridTables#machineFrontIcon}. The front
+	 * arrives from the BlockState — the client display authority, exactly the oven
+	 * entry's rule: the family's {@code wrenchRotate} writes the state with flag 3,
+	 * which syncs without re-sending the BE NBT.
+	 */
+	public static void renderMachineGrid(PoseStack aPoseStack, MultiBufferSource aBuffers, Camera aCamera,
+			BlockHitResult aTarget, byte aFrontFacing) {
+		BlockPos tPos = aTarget.getBlockPos();
+		byte tFace = (byte)aTarget.getDirection().get3DDataValue();
+		// the same 0..1 hit offsets the click path feeds UT6 (the wrenchRotate pick)
+		byte tHover = GTWrenchGridTables.hoverSide(tFace,
+				(float)(aTarget.getLocation().x - tPos.getX()),
+				(float)(aTarget.getLocation().y - tPos.getY()),
+				(float)(aTarget.getLocation().z - tPos.getZ()));
+
+		float[] tOrigin = faceOrigin(tPos, tFace);
+		float[] tU = axisVector(GTWrenchGridTables.cellUAxis(tFace));
+		float[] tV = axisVector(GTWrenchGridTables.cellVAxis(tFace));
+
+		Vec3 tCamPos = aCamera.getPosition();
+		aPoseStack.pushPose();
+		aPoseStack.translate(-tCamPos.x, -tCamPos.y, -tCamPos.z);
+
+		drawGridLines(aPoseStack, aBuffers, tOrigin, tU, tV);
+		for (int tRow = 0; tRow < 3; tRow++) {
+			for (int tCol = 0; tCol < 3; tCol++) {
+				byte tCellSide = GTWrenchGridTables.cellSide(tFace, tCol, tRow);
+				GTWrenchGridIcon tIcon = GTWrenchGridTables.machineFrontIcon(tCellSide, aFrontFacing);
+				if (tIcon == null) continue; // only the current front cell draws a mark
+				drawCellIcon(aPoseStack, aBuffers, tFace, tOrigin, tU, tV, tHover, tCol, tRow, tCellSide, tIcon);
+			}
+		}
+
+		aPoseStack.popPose();
+	}
+
 	// ---------------------------------------------------------------------------
 	// grid lines — the 0.25/0.75 pick-threshold cross (GTCEu :225-229 shape)
 	// ---------------------------------------------------------------------------

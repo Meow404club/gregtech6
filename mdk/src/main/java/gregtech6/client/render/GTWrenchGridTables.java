@@ -147,6 +147,31 @@ public final class GTWrenchGridTables {
 				? GTWrenchGridIcon.FRONT_FACING_ROTATION : null;
 	}
 
+	/**
+	 * The facing-machine front-mark table (task wrench-interaction-chain, symptom19
+	 * "扳手指向变压器无九宫格"): the transformer/dynamo/battery-box family grid — the
+	 * CURRENT front cell carries the rotation mark, every other cell stays null (the
+	 * grid lines carry the pick regions; the hover tint rides the per-cell draw).
+	 *
+	 * <p>Upstream shape: a facing machine shows the wrench overlay whenever its facing
+	 * tool is held ({@code TileEntityBase08Directional.isUsingWrenchingOverlay},
+	 * gregapi/tileentity/base/TileEntityBase08Directional.java:58
+	 * {@code getFacingTool() != null && ToolsGT.contains(getFacingTool(), aStack)},
+	 * rendered through {@code TileEntityBase01Root.onDrawBlockHighlight} :995-1005 →
+	 * {@code RenderHelper.drawWrenchOverlay}) — a bare 3x3 grid with no per-cell icons.
+	 * The mark here is the port's one addition over that bare grid: the family's
+	 * {@code wrenchRotate} click ({@code GT6ElectricTransformerBlock.wrenchRotate}, the
+	 * upstream Base09 onToolClick2 :67-79 sub-face pick, all six sides valid) sets the
+	 * front to the clicked cell, so marking today's front answers "where is my input
+	 * face now" — the read-out half of the interaction, same table-is-the-spec ruling.
+	 * Rotation is shift-independent upstream (onToolClick2 ignores aSneaking), so the
+	 * mark shows in both shift states — the {@code aShift} parameter is deliberately
+	 * absent from the signature for that reason.
+	 */
+	public static GTWrenchGridIcon machineFrontIcon(byte aCellSide, byte aFrontFacing) {
+		return aCellSide == aFrontFacing ? GTWrenchGridIcon.FRONT_FACING_ROTATION : null;
+	}
+
 	/** Assemble a UT6 hit vector from in-face (u,v): the normal axis stays 0.5. */
 	private static float[] assembleHit(byte aFace, float aU, float aV) {
 		float[] tHit = { 0.5F, 0.5F, 0.5F };
