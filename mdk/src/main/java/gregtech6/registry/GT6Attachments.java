@@ -118,6 +118,27 @@ public final class GT6Attachments {
 			new AttachmentRow("funnel_tantalum_hafnium_carbide" , "Tantalum Hafnium Carbide" , GTAttachmentSmallBlock.Family.FUNNEL, false, 0.5F,  10.0F, SoundType.METAL ),
 			new AttachmentRow("funnel_adamantium"               , "Adamantium"               , GTAttachmentSmallBlock.Family.FUNNEL, true , 0.5F, 100.0F, SoundType.METAL ));
 
+	/**
+	 * The row material (task tap-funnel-model-audit — the tint lane's pure seam): the
+	 * upstream NBT_MATERIAL column verbatim (Loader_MultiTileEntities.java:2108-2113
+	 * taps — MT.Ceramic/MT.Plastic/MT.StainlessSteel/ANY.W/MT.Ta4HfC5/MT.Ad — mirrored
+	 * :2115-2120 funnels). Unknown slugs (the faucet's synthetic TAP-family rows)
+	 * answer {@code null} = untinted (the GT6MoldTintListener -1 doctrine — the faucet
+	 * rows dispatch through that listener instead).
+	 */
+	public static gregapi.oredict.OreDictMaterial materialOf(AttachmentRow aRow) {
+		String tPath = aRow.path();
+		return switch (tPath.substring(tPath.indexOf('_') + 1)) {
+			case "ceramic" -> gregapi.data.MT.Ceramic;
+			case "plastic" -> gregapi.data.MT.Plastic;
+			case "stainless_steel" -> gregapi.data.MT.StainlessSteel;
+			case "tungsten" -> gregapi.data.ANY.W;
+			case "tantalum_hafnium_carbide" -> gregapi.data.MT.Ta4HfC5;
+			case "adamantium" -> gregapi.data.MT.Ad;
+			default -> null;
+		};
+	}
+
 	/** The blocks/BlockItems, one pair per row. The {@code GT6Attachments.}-qualified reference is the legal forward-reference form (the P6 lambda lesson). */
 	public static final Map<String, RegistryObject<GTAttachmentSmallBlock>> BLOCKS_BY_PATH = new java.util.LinkedHashMap<>();
 	public static final Map<String, RegistryObject<Item>> ITEMS_BY_PATH = new java.util.LinkedHashMap<>();

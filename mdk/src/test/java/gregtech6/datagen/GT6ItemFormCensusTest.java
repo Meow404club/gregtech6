@@ -16,7 +16,8 @@
  * r11-mains-tint-wrap retires the two remaining mains-controller rows of that band
  * (the lightning-rod controller + the large heat exchanger — the user-facing flat-white
  * inventory reports) AND the rod pillar part row into the same 3D form, the coke-oven
- * item precedent.
+ * item precedent; task tap-funnel-model-audit retires the 12 tap/funnel attachment
+ * rows the same way (the upstream item form is the 3D stack itself).
  */
 package gregtech6.datagen;
 
@@ -33,7 +34,6 @@ import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6LongDistWires;
@@ -124,27 +124,26 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
 
     /**
      * The tier-B front-view families (tex-itemform-b, the 28 rows less the diesel
-     * eight, the two mains controllers and the rod pillar): 2D icons over the family's
-     * own front/side/composite sprite — the single
-     * kinematics rows (crank, the water wheel, the gearbox), the
-     * 12 tap/funnel attachments over their family side sprite and the twin
+     * eight, the two mains controllers, the rod pillar and the 12 attachments): 2D
+     * icons over the family's own front/side/composite sprite — the single
+     * kinematics rows (crank, the water wheel, the gearbox) and the twin
      * distillation tower controllers over the borrowed parts side sprite. The 8 diesel
      * tiers LEFT this form in task diesel-item-3d — their block model is genuinely
      * faceted (front/back/side, the steam-family form), so the flat sprite was the
      * anti-pattern; they are pinned 3D below — the lightning-rod CONTROLLER and
      * the heat exchanger left in task r11-mains-tint-wrap (the same shape), and the
-     * rod PILLAR left with them (the parts-walk item rides its block model now).
+     * rod PILLAR left with them (the parts-walk item rides its block model now). The
+     * 12 tap/funnel attachments left in task tap-funnel-model-audit (the same
+     * retirement shape): upstream has no dedicated item PNG — the 1.7.10 item renders
+     * the 3D stack — and the block models are the genuinely faceted overlay-pass
+     * spouts now, pinned 3D in {@code GT6AttachmentStackDatagenTest
+     * .attachmentItemModelsRideThe3DBlockIcons}.
      */
     @Test
     void frontViewFamiliesAre2DIcons() throws Exception {
         assert2DForm("crank", "gt6:block/crank");
         assert2DForm("water_wheel", "gt6:block/water_wheel");
         assert2DForm("gearbox", "gt6:block/gearbox");
-        assertEquals(12, GT6Attachments.ROWS.size(), "the 12-attachment walk");
-        for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
-            assert2DForm(tRow.path(), "gt6:block/" + (tRow.family()
-                    == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? "tap" : "funnel"));
-        }
         assertEquals(2, gregtech6.registry.GT6Distillation.ROWS.size(), "the twin-tower walk");
         for (gregtech6.registry.GT6Distillation.TowerRow tRow : gregtech6.registry.GT6Distillation.ROWS) {
             assert2DForm(tRow.path(), "gt6:block/parts/distillationtowerparts/0/colored/side");
@@ -217,13 +216,11 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 {"crank", "gt6:block/crank"},
                 // ("diesel_engine" left in task tex-bridge-kinetic — the world face is the
                 // two-layer borrow now, pinned by GT6BridgeKineticTexDatagenTest; the ITEM
-                // ("diesel_engine" left in task tex-bridge-kinetic — the world face is the
-                // two-layer borrow now, pinned by GT6BridgeKineticTexDatagenTest; the ITEM
                 // row left the 2D sprite in task diesel-item-3d, pinned 3D below)
                 // ("tap_ceramic"/"funnel_ceramic" left in task rod-render-pool — the world
-                // face is the upstream three-pass element stack now, pinned by
-                // GT6AttachmentStackDatagenTest; the ITEM rows above stay 2D over the
-                // family side sprites, which stay on disk for them)
+                // face is the upstream three-pass element stack now; the ITEM rows left the
+                // 2D family sprites in task tap-funnel-model-audit, pinned 3D in
+                // GT6AttachmentStackDatagenTest.attachmentItemModelsRideThe3DBlockIcons)
                 {"water_wheel", "gt6:block/water_wheel"},
                 {"gearbox", "gt6:block/gearbox"},
                 {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"}};
