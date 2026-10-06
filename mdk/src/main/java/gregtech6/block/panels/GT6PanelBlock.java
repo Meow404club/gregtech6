@@ -53,11 +53,11 @@ public class GT6PanelBlock extends Block {
 	/** The three panel families in upstream registration order (Loader_MultiTileEntities.java:2045/:2049/:2053). */
 	public enum Family {
 		/** Concrete Panel — metas 32452+i, source block gt6 concrete, icon CONCRETE. */
-		CONCRETE("concrete_panel", "gt6.panel.concrete", "block/concrete"),
+		CONCRETE("concrete_panel", "gt6.panel.concrete", "block/concrete", "Concrete Panel"),
 		/** C-Foam Panel — metas 32468+i, source block gt6:cfoam, icon CFOAM_HARDENED. */
-		CFOAM("cfoam_panel", "gt6.panel.cfoam", "block/cfoam_hardened"),
+		CFOAM("cfoam_panel", "gt6.panel.cfoam", "block/cfoam_hardened", "C-Foam Panel"),
 		/** Asphalt Panel — metas 32484+i, source block (unported) asphalt, icon ASPHALT. */
-		ASPHALT("asphalt_panel", "gt6.panel.asphalt", "block/asphalt");
+		ASPHALT("asphalt_panel", "gt6.panel.asphalt", "block/asphalt", "Asphalt Panel");
 
 		/** The registry snake root ({@code concrete_panel_black} form). */
 		public final String snake;
@@ -65,11 +65,14 @@ public class GT6PanelBlock extends Block {
 		public final String nameKey;
 		/** The shared grayscale texture the family's tinted cube rides. */
 		public final String texture;
+		/** The upstream registration name (Loader_MultiTileEntities.java:2045/:2049/:2053) — the en lang value. */
+		public final String enName;
 
-		Family(String aSnake, String aNameKey, String aTexture) {
+		Family(String aSnake, String aNameKey, String aTexture, String aEnName) {
 			this.snake = aSnake;
 			this.nameKey = aNameKey;
 			this.texture = aTexture;
+			this.enName = aEnName;
 		}
 	}
 
