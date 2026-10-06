@@ -2,7 +2,6 @@ package gregtech6.emi;
 
 import java.util.List;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -93,12 +92,10 @@ public class GT6OreGenInfoEmiRecipe implements EmiRecipe {
 			aWidgets.add(new dev.emi.emi.api.widget.SlotWidget(EmiStack.of(tRep),
 					GT6OreGenInfoLayout.SLOT_X, GT6OreGenInfoLayout.SLOT_Y)).large(true);
 		}
-		aWidgets.addText(Component.literal(GT6OreGenInfoLayout.dimsLine(mEntry)),
+		aWidgets.addText(GT6OreGenInfoLayout.dimsRow(mEntry),
 				GT6OreGenInfoLayout.DIMS_X, GT6OreGenInfoLayout.DIMS_Y, 0xFF000000, false);
-		int tY = GT6OreGenInfoLayout.FACE_BASE_Y;
-		for (String tLine : GT6OreGenInfoLayout.faceLines(mEntry)) {
-			aWidgets.addText(Component.literal(tLine), GT6OreGenInfoLayout.TEXT_X, tY, 0xFF000000, false);
-			tY += GT6OreGenInfoLayout.LINE_HEIGHT;
+		for (GT6OreGenInfoLayout.Row tRow : GT6OreGenInfoLayout.rows(mEntry)) {
+			aWidgets.addText(tRow.component(), tRow.x(), tRow.y(), 0xFF000000, false);
 		}
 	}
 }

@@ -2874,6 +2874,21 @@ public class GT6ZhCn extends LanguageProvider {
 		// GT6OreGenInfoLayout.TITLE_KEY consumer): hand row 矿石生成分布, no dump face —
 		// the page is a modern enhancement, upstream 1.7.10 has no NEI distribution face
 		addDirect(GT6OreGenInfoLayout.TITLE_KEY);
+		// task oregen-info-relayout — the page body (the sectioned layout's headers /
+		// face-line formats / dim names, the GT6OreGenInfoLayout.* consumers on both viewer
+		// legs): zh faces over the dump where one exists (小矿石 :116979 / 基岩矿石 :17690 /
+		// 主世界 :17613 / 下界 :5100 / 末地 :4651 / 区块 :976), 权重 the GTCEu zh face of the
+		// same UI concept, 规模 the one coined face (no dump/GTCEu precedent for vein size)
+		addDirect(GT6OreGenInfoLayout.SECTION_SMALL_KEY);
+		addDirect(GT6OreGenInfoLayout.SECTION_VEIN_KEY);
+		addDirect(GT6OreGenInfoLayout.SECTION_BEDROCK_KEY);
+		addDirect(GT6OreGenInfoLayout.LINE_SMALL_KEY);
+		addDirect(GT6OreGenInfoLayout.LINE_VEIN_KEY);
+		addDirect(GT6OreGenInfoLayout.LINE_BEDROCK_KEY);
+		addDirect(GT6OreGenInfoLayout.DIM_OVERWORLD_KEY);
+		addDirect(GT6OreGenInfoLayout.DIM_NETHER_KEY);
+		addDirect(GT6OreGenInfoLayout.DIM_END_KEY);
+		addDirect(GT6OreGenInfoLayout.DIM_ATUM_KEY); // the atum dim joins the translatable seam (review-seat rebase union, task atum-dim-adaptation)
 		// task multiblock-preview-infra — the 3D structure preview category title (the
 		// GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs); hand row
 		// 多方块结构预览, the same modern-enhancement band as the ore-gen title above

@@ -3907,6 +3907,27 @@ LEGACY_ITEM_BACKFILL = {
     # no dump face exists (the page is a modern enhancement, upstream 1.7.10 has no NEI
     # distribution face); the GT6ZhCn addMiscUnits walk emits the key
     'gt6.jei.info.ore_gen_info': '矿石生成分布',
+    # ---- the ore-gen distribution page body (task oregen-info-relayout): the section
+    # headers / face-line formats / dim names the sectioned layout renders (the
+    # GT6OreGenInfoLayout.* key consumers on both viewer legs). zh faces over the dump
+    # where one exists — 小矿石 tmp/gregtech.lang:116979, 基岩矿石 :17690, 主世界 :17613,
+    # 下界 :5100, 末地 :4651, 区块 :976 — the GTCEu zh face 权重 for the vein weight (the
+    # layout reference's own word, tmp/refs/gtceu-modern zh_cn.json ore_vein_diagram.weight),
+    # 规模 the one coined face (vein size, no dump/GTCEu precedent). The en dim names are
+    # proper nouns; the Y band and numbers stay in the arg slots.
+    'gt6.jei.info.ore_gen_info.section.small_ores': '小矿石',
+    'gt6.jei.info.ore_gen_info.section.large_veins': '大型矿脉',
+    'gt6.jei.info.ore_gen_info.section.bedrock_ores': '基岩矿石',
+    'gt6.jei.info.ore_gen_info.line.small_ore': '%s Y %s-%s · 每区块 %s',
+    'gt6.jei.info.ore_gen_info.line.large_vein': '%s Y %s-%s · 权重 %s · 规模 %s',
+    'gt6.jei.info.ore_gen_info.line.bedrock_ore': '%s · 每区块 1/%s',
+    # the atum dim joins the page body on the rebase (review-seat union, task atum-dim-adaptation's
+    # unlocalized-proper-noun ruling): the zh face stays the proper noun "Atum" — the same rendered
+    # face main's dimName switch answers today, zero visual drift
+    'gt6.jei.info.ore_gen_info.dim.atum': 'Atum',
+    'gt6.jei.info.ore_gen_info.dim.overworld': '主世界',
+    'gt6.jei.info.ore_gen_info.dim.nether': '下界',
+    'gt6.jei.info.ore_gen_info.dim.end': '末地',
 
     # ---- the 59 crop-card names + the seed item (task cbc-3-crop-data-assets): hand rows —
     # the 1.7.10 zh dump carries ZERO gt.crop.* faces (grep 0; GT_BaseCrop.java:62 registered the

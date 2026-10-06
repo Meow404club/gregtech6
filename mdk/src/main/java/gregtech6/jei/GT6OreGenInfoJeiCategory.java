@@ -86,19 +86,17 @@ public class GT6OreGenInfoJeiCategory implements IRecipeCategory<OreDistribution
 				.addItemStacks(GT6OreGenInfoLayout.variantStacks(aEntry));
 	}
 
-	/** The draw leg: the dims row beside the slot, then one line per face — all strings from the shared seam. */
+	/** The draw leg: the dims row beside the slot, then the sectioned rows — all from the shared seam, zero local layout. */
 	@Override
 	public void draw(OreDistributionInfo.Entry aEntry, IRecipeSlotsView aRecipeSlotsView,
 			GuiGraphics aGuiGraphics, double aMouseX, double aMouseY) {
 		var tFont = Minecraft.getInstance().font;
 		aGuiGraphics.drawString(tFont, GT6OreGenInfoLayout.name(aEntry), GT6OreGenInfoLayout.TEXT_X,
 				GT6OreGenInfoLayout.NAME_Y, 0xFF000000);
-		aGuiGraphics.drawString(tFont, GT6OreGenInfoLayout.dimsLine(aEntry), GT6OreGenInfoLayout.DIMS_X,
+		aGuiGraphics.drawString(tFont, GT6OreGenInfoLayout.dimsRow(aEntry), GT6OreGenInfoLayout.DIMS_X,
 				GT6OreGenInfoLayout.DIMS_Y, 0xFF000000);
-		int tY = GT6OreGenInfoLayout.FACE_BASE_Y;
-		for (String tLine : GT6OreGenInfoLayout.faceLines(aEntry)) {
-			aGuiGraphics.drawString(tFont, tLine, GT6OreGenInfoLayout.TEXT_X, tY, 0xFF000000);
-			tY += GT6OreGenInfoLayout.LINE_HEIGHT;
+		for (GT6OreGenInfoLayout.Row tRow : GT6OreGenInfoLayout.rows(aEntry)) {
+			aGuiGraphics.drawString(tFont, tRow.component(), tRow.x(), tRow.y(), 0xFF000000);
 		}
 	}
 }

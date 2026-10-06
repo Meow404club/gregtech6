@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,16 +26,26 @@ import gregtech6.registry.GT6OreBlocks;
  * install through the EMI wrapper, neither may class-link a missing viewer.
  *
  * <p>The page unit is the {@link OreDistributionInfo.Entry} — the material aggregate of the
- * data card (debt-ore-gen-data, merged 69c45ad66). Layout (GTCEu OreVeinRecipeWidget's
- * rows, flattened to per-face text lines because one material here covers MANY vein
+ * data card (debt-ore-gen-data, merged 69c45ad66). Layout (task oregen-info-relayout — the
+ * GTCEu OreVeinRecipeWidget.drawUI skeleton: labeled attribute rows + a gap between logical
+ * blocks, adapted to per-face lines because one material here covers MANY vein
  * definitions):
  * <pre>
  *   Cassiterite                        <- name line (gt6.material.&lt;snake&gt;, both locales live)
  *   [NORMAL-form ore block slot]  Overworld, Nether, End   <- representative + the dims row
- *   Small Overworld Y 60-120 16/chunk                     <- one line per small-ore face
- *   Vein Overworld Y 40-90 w170 s24                       <- one line per vein face (own kind)
- *   Bedrock cassiterite 1/2000/chunk                      <- one line per bedrock row
+ *   Small Ores                                             <- section header (gap before)
+ *     Overworld Y 60-120 · 16/chunk                        <- indented line per small-ore face
+ *   Large Veins                                            <- section header (gap before)
+ *     Overworld Y 40-90 · Weight 170 · Size 24             <- indented line per vein face
+ *   Bedrock Ores                                           <- section header (gap before)
+ *     cassiterite · 1/2000 per chunk                       <- indented line per bedrock row
  * </pre>
+ *
+ * <p>Every visible word is a lang key ({@code gt6.jei.info.ore_gen_info.*} domain, en+zh
+ * faces — the zh 译名 follow the dump faces where one exists 主世界/下界/末地/基岩矿石/
+ * 小矿石/区块, else the GTCEu zh faces of the same UI concepts 权重/生成, never machine
+ * translation). The dims are proper nouns in en, translated in zh. The row-suffix of a
+ * bedrock line (gold.a) is DATA (the row id), not display copy.
  *
  * <p><b>DISPLAY SEMANTICS (the data layer's 口径, see OreDistributionInfo's javadoc):
  * the numbers shown are the UPSTREAM table values</b> — a small-ore amount is the upstream
@@ -53,7 +64,7 @@ public final class GT6OreGenInfoLayout {
 
     // ------------------------------------------------------------ geometry (both wrappers render from these)
     /** Wide enough for the longest pinned face line at the vanilla font's ~6px/char — the wrappers share it. */
-    public static final int WIDTH = 200;
+    public static final int WIDTH = 250;
     /** The name line, above everything. */
     public static final int NAME_Y = 3;
     /** The representative ore-block slot (the material's NORMAL stone-family block). */
@@ -62,24 +73,43 @@ public final class GT6OreGenInfoLayout {
     /** The dims row rides beside the slot (GTCEu's dimension-marker row, text form). */
     public static final int DIMS_X = 26;
     public static final int DIMS_Y = 21;
-    /** The per-face text band: one line per face, top to bottom (base = slot bottom 33 + 5 gap). */
+    /** The sectioned text band (base = slot bottom 33 + 5 gap); section headers sit at {@link #TEXT_X}. */
     public static final int TEXT_X = 4;
     public static final int FACE_BASE_Y = 38;
     public static final int LINE_HEIGHT = 10;
+    /** The extra air before a section header — the GTCEu drawUI marginBottom-3 block separation (OreVeinRecipeWidget.java:105-114). */
+    public static final int SECTION_GAP = 4;
+    /** Member lines indent under their section header (the GTCEu column flow, text form). */
+    public static final int INDENT = 10;
     /** face band + 4px bottom padding. */
-    private static final int FACE_BAND_OFFSET = FACE_BASE_Y + 4;
+    private static final int BOTTOM_PAD = 4;
 
     /** The page title lang key — the {@code gt6.jei.info.*} viewer-neutral domain (GT6RecipeViewerText precedent), key mirrors the category uid one-to-one; the values live on both lang faces (task debt-oregen-title-i18n). */
     public static final String TITLE_KEY = "gt6.jei.info.ore_gen_info";
+    /** The section-header keys (en "Small Ores"/"Large Veins"/"Bedrock Ores"; zh 小矿石 — the dump face tmp/gregtech.lang:116979, 大型矿脉 — the GTCEu 矿脉 word, 基岩矿石 — the dump face tmp/gregtech.lang:17690). */
+    public static final String SECTION_SMALL_KEY = TITLE_KEY + ".section.small_ores";
+    public static final String SECTION_VEIN_KEY = TITLE_KEY + ".section.large_veins";
+    public static final String SECTION_BEDROCK_KEY = TITLE_KEY + ".section.bedrock_ores";
+    /** The per-face line format keys — "%s Y %s-%s ..." with the dim component + numbers as args. */
+    public static final String LINE_SMALL_KEY = TITLE_KEY + ".line.small_ore";
+    public static final String LINE_VEIN_KEY = TITLE_KEY + ".line.large_vein";
+    public static final String LINE_BEDROCK_KEY = TITLE_KEY + ".line.bedrock_ore";
+    /** The dim names (en proper nouns Overworld/Nether/End; zh the dump faces 主世界 tmp/gregtech.lang:17613 / 下界 :5100 (S:gt.material.Nether=下界) / 末地 :4651 (S:gt.material.Endstone=末地)). */
+    public static final String DIM_OVERWORLD_KEY = TITLE_KEY + ".dim.overworld";
+    public static final String DIM_NETHER_KEY = TITLE_KEY + ".dim.nether";
+    public static final String DIM_END_KEY = TITLE_KEY + ".dim.end";
+    public static final String DIM_ATUM_KEY = TITLE_KEY + ".dim.atum";
 
-    /** The dim names in {@link GTOreWorldgen.Dim} declaration order — proper nouns, unlocalized (GTCEu used icons; text is the B-lite face). Atum is the one mod dim with a carrier (task atum-dim-adaptation): the ores only generate there with the mod in, the name row is the honest face. */
-    public static String dimName(GTOreWorldgen.Dim aDim) {
-        return switch (aDim) {
-            case OVERWORLD -> "Overworld";
-            case NETHER -> "Nether";
-            case END -> "End";
-            case ATUM -> "Atum";
-        };
+    /** The dim name as a translatable component — proper nouns in en, dump faces in zh; Atum
+     * keeps the atum card's unlocalized-proper-noun face (the zh key value is "Atum", the same
+     * rendered text this page answered before the translatable seam, task atum-dim-adaptation). */
+    public static Component dim(GTOreWorldgen.Dim aDim) {
+        return Component.translatable(switch (aDim) {
+            case OVERWORLD -> DIM_OVERWORLD_KEY;
+            case NETHER -> DIM_NETHER_KEY;
+            case END -> DIM_END_KEY;
+            case ATUM -> DIM_ATUM_KEY;
+        });
     }
 
     // ------------------------------------------------------------ text rows
@@ -100,15 +130,18 @@ public final class GT6OreGenInfoLayout {
      * overworld-only by construction (the data layer keeps only the overworld rows), so
      * a bedrock face contributes Overworld.
      */
-    public static String dimsLine(OreDistributionInfo.Entry aEntry) {
+    public static Component dimsRow(OreDistributionInfo.Entry aEntry) {
         boolean tHasBedrock = !aEntry.bedrockOres().isEmpty();
-        List<String> tDims = new ArrayList<>(3);
+        MutableComponent rRow = Component.empty();
+        boolean tFirst = true;
         for (GTOreWorldgen.Dim tDim : GTOreWorldgen.Dim.values()) {
             if (hasDim(aEntry, tDim) || (tHasBedrock && tDim == GTOreWorldgen.Dim.OVERWORLD)) {
-                tDims.add(dimName(tDim));
+                if (!tFirst) rRow.append(", ");
+                rRow.append(dim(tDim));
+                tFirst = false;
             }
         }
-        return String.join(", ", tDims);
+        return rRow;
     }
 
     private static boolean hasDim(OreDistributionInfo.Entry aEntry, GTOreWorldgen.Dim aDim) {
@@ -118,24 +151,57 @@ public final class GT6OreGenInfoLayout {
     }
 
     /**
-     * One line per face, column order = the data layer's (small, vein, bedrock), row order
-     * preserved. w/s = the GTCEu vein page's weight/size terms; every format stays within
-     * ~33 chars so the longest line clears {@link #WIDTH} at the vanilla font.
+     * One render row: a translatable format key + its args + the absolute x/y both
+     * wrappers draw at — the wrappers carry ZERO layout logic, they walk this list.
      */
-    public static List<String> faceLines(OreDistributionInfo.Entry aEntry) {
-        List<String> rLines = new ArrayList<>();
-        for (OreDistributionInfo.SmallOre tSmall : aEntry.smallOres()) {
-            rLines.add("Small " + dimName(tSmall.dim()) + " Y " + tSmall.minY() + "-" + tSmall.maxY()
-                    + " " + tSmall.amount() + "/chunk");
+    public record Row(String key, List<Object> args, int x, int y) {
+        /** The translatable component the wrappers render. */
+        public Component component() {
+            return Component.translatable(key, args.toArray());
         }
-        for (OreDistributionInfo.Vein tVein : aEntry.veins()) {
-            rLines.add("Vein " + dimName(tVein.dim()) + " Y " + tVein.minY() + "-" + tVein.maxY()
-                    + " w" + tVein.weight() + " s" + tVein.size());
+    }
+
+    /**
+     * The sectioned page rows, column order = the data layer's (small, vein, bedrock):
+     * a header per non-empty section (GTCEu drawUI's childIf form, OreVeinRecipeWidget.java:107),
+     * member lines indented under it, {@link #SECTION_GAP} air before each following
+     * header. Args carry the UPSTREAM table numbers verbatim (the display-semantics rule).
+     */
+    public static List<Row> rows(OreDistributionInfo.Entry aEntry) {
+        List<Row> rRows = new ArrayList<>();
+        int tY = FACE_BASE_Y;
+        if (!aEntry.smallOres().isEmpty()) {
+            rRows.add(new Row(SECTION_SMALL_KEY, List.of(), TEXT_X, tY));
+            tY += LINE_HEIGHT;
+            for (OreDistributionInfo.SmallOre tSmall : aEntry.smallOres()) {
+                rRows.add(new Row(LINE_SMALL_KEY,
+                        List.of(dim(tSmall.dim()), tSmall.minY(), tSmall.maxY(), tSmall.amount()),
+                        TEXT_X + INDENT, tY));
+                tY += LINE_HEIGHT;
+            }
         }
-        for (OreDistributionInfo.BedrockOre tBedrock : aEntry.bedrockOres()) {
-            rLines.add("Bedrock " + shortName(tBedrock.name()) + " 1/" + tBedrock.probability() + "/chunk");
+        if (!aEntry.veins().isEmpty()) {
+            tY += SECTION_GAP;
+            rRows.add(new Row(SECTION_VEIN_KEY, List.of(), TEXT_X, tY));
+            tY += LINE_HEIGHT;
+            for (OreDistributionInfo.Vein tVein : aEntry.veins()) {
+                rRows.add(new Row(LINE_VEIN_KEY,
+                        List.of(dim(tVein.dim()), tVein.minY(), tVein.maxY(), tVein.weight(), tVein.size()),
+                        TEXT_X + INDENT, tY));
+                tY += LINE_HEIGHT;
+            }
         }
-        return rLines;
+        if (!aEntry.bedrockOres().isEmpty()) {
+            tY += SECTION_GAP;
+            rRows.add(new Row(SECTION_BEDROCK_KEY, List.of(), TEXT_X, tY));
+            tY += LINE_HEIGHT;
+            for (OreDistributionInfo.BedrockOre tBedrock : aEntry.bedrockOres()) {
+                rRows.add(new Row(LINE_BEDROCK_KEY, List.of(shortName(tBedrock.name()), tBedrock.probability()),
+                        TEXT_X + INDENT, tY));
+                tY += LINE_HEIGHT;
+            }
+        }
+        return rRows;
     }
 
     /** {@code ore.bedrock.gold.a} -> {@code gold.a} — the row-suffix disambiguator (the gold.a/gold.b pair). */
@@ -143,9 +209,11 @@ public final class GT6OreGenInfoLayout {
         return aRowName.startsWith("ore.bedrock.") ? aRowName.substring("ore.bedrock.".length()) : aRowName;
     }
 
-    /** The per-entry total height the wrappers report — face band + bottom padding. */
+    /** The per-entry total height the wrappers report — sectioned band + bottom padding. */
     public static int height(OreDistributionInfo.Entry aEntry) {
-        return FACE_BAND_OFFSET + faceLines(aEntry).size() * LINE_HEIGHT;
+        List<Row> tRows = rows(aEntry);
+        int tLast = tRows.isEmpty() ? FACE_BASE_Y : tRows.get(tRows.size() - 1).y();
+        return tLast + LINE_HEIGHT + BOTTOM_PAD;
     }
 
     /** The category height: the WORST entry (JEI fixes one height per category; EMI matches for shared geometry). */

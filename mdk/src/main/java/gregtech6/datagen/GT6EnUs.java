@@ -704,6 +704,22 @@ public class GT6EnUs extends LanguageProvider {
         // GT6OreGenInfoLayout.TITLE_KEY consumer): hand row, no dump face — the page is
         // a modern enhancement, upstream 1.7.10 has no NEI distribution face
         add(GT6OreGenInfoLayout.TITLE_KEY, "Ore Generation Distribution");
+        // task oregen-info-relayout — the page's section headers / face-line formats / dim
+        // names (the GT6OreGenInfoLayout.* key consumers on both viewer legs). Hand rows:
+        // the page body is a modern enhancement with no dump face; the zh mirrors ride the
+        // dump faces where one exists (小矿石/基岩矿石/主世界/下界/末地/区块) and the
+        // GTCEu zh faces of the same UI concepts (权重/生成) otherwise. The en dim names
+        // are the proper nouns the flat page already showed.
+        add(GT6OreGenInfoLayout.SECTION_SMALL_KEY, "Small Ores");
+        add(GT6OreGenInfoLayout.SECTION_VEIN_KEY, "Large Veins");
+        add(GT6OreGenInfoLayout.SECTION_BEDROCK_KEY, "Bedrock Ores");
+        add(GT6OreGenInfoLayout.LINE_SMALL_KEY, "%s Y %s-%s · %s/chunk");
+        add(GT6OreGenInfoLayout.LINE_VEIN_KEY, "%s Y %s-%s · Weight %s · Size %s");
+        add(GT6OreGenInfoLayout.LINE_BEDROCK_KEY, "%s · 1/%s per chunk");
+        add(GT6OreGenInfoLayout.DIM_OVERWORLD_KEY, "Overworld");
+        add(GT6OreGenInfoLayout.DIM_NETHER_KEY, "Nether");
+        add(GT6OreGenInfoLayout.DIM_END_KEY, "End");
+        add(GT6OreGenInfoLayout.DIM_ATUM_KEY, "Atum"); // the atum dim joins the translatable seam (review-seat rebase union, task atum-dim-adaptation)
         // task multiblock-preview-infra — the 3D structure preview category title (the
         // GT6MultiblockPreviews.TITLE_KEY consumer on both viewer legs); modern
         // enhancement, upstream has no structure page (P20 negative)

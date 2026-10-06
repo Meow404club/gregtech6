@@ -239,7 +239,7 @@ class GT6OreGenInfoLayoutTest {
         List<GT6OreGenInfoLayout.Row> tRows = GT6OreGenInfoLayout.rows(OreDistributionInfo.of(MT.OREMATS.Cassiterite));
         assertEquals(tRows.get(tRows.size() - 1).y() + GT6OreGenInfoLayout.LINE_HEIGHT + 4,
                 GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)));
-        assertEquals(146, GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)),
+        assertEquals(150, GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)),
                 "38 base + 10 rows x 10 + 2 section gaps x 4 + 4 pad");
         // wide enough for the widest pinned en face line: "Overworld Y 40-90 · Weight 170 · Size 24" = 40 chars x ~6px/char
         assertTrue(GT6OreGenInfoLayout.WIDTH >= 250, "wide enough for the longest pinned line");
