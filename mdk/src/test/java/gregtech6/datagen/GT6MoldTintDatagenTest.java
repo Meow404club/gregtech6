@@ -5,8 +5,11 @@
  * and {@code GT6MoldTintListener} multiplies the row material's {@code mRGBaSolid} over
  * them (the upstream getTextureSmooth(mRGBaSolid, F) colour semantics,
  * OreDictMaterial.java:980-987). The vanilla smooth-stone rows (mold_stone,
- * smeltery_stone_empty, faucet_stone) are FINISHED textures — a second multiply would
- * dirty them, so they stay un-tinted (the recorded declaration shortcut). Since task
+ * smeltery_stone_empty) are FINISHED textures — a second multiply would
+ * dirty them, so they stay un-tinted (the recorded declaration shortcut); the
+ * faucet_stone row rides the same three-element tint seat as its ceramic sibling since
+ * task tap-funnel-model-audit — its inertness is the listener dispatch (the finished-
+ * texture branch answers -1), not the model. Since task
  * crucible-large-ber the filled content boxes carry tintindex 1 — the per-BE seat the
  * GT6MoldTintListener index-1 arm answers at runtime; the raw clay items stay un-tinted.
  *
@@ -168,16 +171,26 @@ public class GT6MoldTintDatagenTest extends GTOfflineTestBase {
 		}
 	}
 
-	/** The ceramic faucet tints; the stone faucet keeps the plain cube_all. */
+	/**
+	 * The faucet stack (task tap-funnel-model-audit re-formed it from the cube_all
+	 * placeholder): BOTH rows ride the one three-element builder with tintindex 0 on
+	 * every face — the stone row's inertness is the LISTENER's property (its dispatch
+	 * answers -1, pinned at materialTintPinsMatchTheUpstreamRGBa), not the model's.
+	 */
 	@Test
-	void theCeramicFaucetIsTintedTheStoneFaucetIsNot() throws Exception {
+	void theFaucetStacksSeatTheTintAndStoneDispatchesInert() throws Exception {
 		JsonObject tCeramic = generatedJson("assets/gt6/models/block/faucet_ceramic.json");
-		assertEquals(1, tCeramic.getAsJsonArray("elements").size(), "faucet_ceramic: the tinted cube body");
-		assertEveryFaceTinted(tCeramic.getAsJsonArray("elements").get(0).getAsJsonObject(), "faucet_ceramic");
+		assertEquals(3, tCeramic.getAsJsonArray("elements").size(), "faucet_ceramic: the three-pass stack");
+		for (JsonElement tElement : tCeramic.getAsJsonArray("elements")) {
+			assertEveryFaceTinted(tElement.getAsJsonObject(), "faucet_ceramic");
+		}
 		JsonObject tStone = generatedJson("assets/gt6/models/block/faucet_stone.json");
-		assertNoTintAnywhere("assets/gt6/models/block/faucet_stone.json", tStone, "faucet_stone");
-		assertEquals("minecraft:block/cube_all", tStone.get("parent").getAsString(),
-				"faucet_stone: the plain cube_all form");
+		assertEquals(3, tStone.getAsJsonArray("elements").size(), "faucet_stone: the same three-pass stack");
+		for (JsonElement tElement : tStone.getAsJsonArray("elements")) {
+			assertEveryFaceTinted(tElement.getAsJsonObject(), "faucet_stone");
+		}
+		// the stone row's inertness lives in the dispatch (the finished-texture branch),
+		// already pinned in materialTintPinsMatchTheUpstreamRGBa — not in the model
 	}
 
 	/** The tint rule mirrors bodyTexture's own vanilla branch (the single mapping source). */

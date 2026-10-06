@@ -2635,24 +2635,31 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task tap-funnel-attachment spec ⑤; the visual re-formed by task rod-render-pool —
+     * Task tap-funnel-attachment spec ⑤; the visual re-formed by task rod-render-pool;
+     * the overlay pass + tint + 3D item icons closed by task tap-funnel-model-audit —
      * the 12 wall attachments: ONE element model per family over the TWO family
-     * textures, {@code tap.png} (borrowed from upstream
-     * {@code machines/tools/tap/colored/side.png}) and {@code funnel.png} (upstream
-     * {@code machines/tools/funnel/colored/side.png}), the barrel_metal shared-PNG
-     * precedent. The model is the upstream three-pass render stack verbatim
+     * texture pairs, {@code tap.png}/{@code tap_overlay.png} (borrowed from upstream
+     * {@code machines/tools/tap/colored|overlay/side.png}) and the funnel pair (upstream
+     * {@code machines/tools/funnel/colored|overlay/side.png}), the barrel_metal
+     * shared-PNG precedent. The model is the upstream three-pass render stack verbatim
      * (MultiTileEntityFluidTap.java:186-208, MultiTileEntityFluidFunnel.java:99-123,
      * PX_N[i] = 16-i — px: tap (6,6,2)-(10,7,4) + (7,4,0)-(9,6,4) + (7,3,4)-(9,6,6)
      * [the :200 PX_N[10]=6 spout tip, not 10]; funnel north (5,9,0)-(11,10,6) +
      * (6,8,0)-(10,9,4) + (7,7,0)-(9,8,2) [the :103/:111/:119 PX_N[10/12/14]=6/4/2
      * taper]; the funnel's under-host DOWN mount (the :107 default case) gets its own
-     * nested-plate model),
-     * rotated per FACING with the addSensors band (FACING points AT the host). The
+     * nested-plate model), each colored box twinned by an overlay-pass element (the
+     * :204/:124 getTexture2 BlockTextureMulti(colored×mRGBa, overlay) second layer, the
+     * addConverterModel 0.01 decal grammar) over the cutout layer — the overlay PNGs
+     * carry alpha texels, the solid layer would matte them (the r11-oven lesson).
+     * Rotated per FACING with the addSensors band (FACING points AT the host). The
      * per-face colored top/bottom art stays unborrowed — the side icon textures every
-     * face (the declared texture deviation, the borrow is the p12 card's). The elements
-     * carry tintindex 0 as the future tint seat (the material dye has landed nowhere
-     * since — the tint-coverage-batch card merged without the attachments, so the seat
-     * is inert today).
+     * face (the declared texture deviation, the borrow is the p12 card's). The colored
+     * elements carry tintindex 0 and {@code GT6AttachmentTintListener} answers the row
+     * material's mRGBaSolid (the upstream {@code mRGBa} multiply — Ceramic/Plastic/
+     * Stainless/Tungsten/Ta4HfC5/Adamantium now visually distinct); the overlay twin
+     * stays untinted (upstream tints the colored pass only). The BlockItems parent the
+     * block models (the diesel-item-3d band form) — upstream has NO dedicated item PNG
+     * (the 1.7.10 item renders the 3D stack), so the 3D icon IS the faithful form.
      */
     private void addAttachments() {
         ModelFile tTap = attachmentModel("block/attachment_tap", "tap", new float[][] {
@@ -2673,28 +2680,38 @@ public final class GT6BlockStates extends BlockStateProvider {
                 case DOWN  -> new ConfiguredModel[] {new ConfiguredModel(tDownModel)};
                 case UP    -> new ConfiguredModel[] {new ConfiguredModel(tModel)}; // family-invalid, never placed
             });
-            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/" + (tModel == tTap ? "tap" : "funnel")));
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + (tModel == tTap ? "attachment_tap" : "attachment_funnel")));
         }
     }
 
     /**
-     * One attachment stack model: three box elements over the family texture (the
-     * upstream three render passes verbatim), every face untinted-but-seated (tintindex
-     * 0), cullface only where a face lies on the block boundary (the interior coplanar
-     * faces must survive).
+     * One attachment stack model: three colored box elements over the family texture
+     * (the upstream three render passes verbatim, tintindex 0 = the material-dye seat
+     * {@code GT6AttachmentTintListener} answers), each twinned by an overlay-pass
+     * element inflated 0.01 outward (the addConverterModel decal grammar — the
+     * :204/:124 getTexture2 second layer) over the cutout layer, cullface only where
+     * the UNDERLYING box face lies on the block boundary (the interior coplanar faces
+     * must survive).
      */
     private ModelFile attachmentModel(String aName, String aTexture, float[][] aBoxes) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("all", modLoc("block/" + aTexture))
-                .texture("particle", "#all");
-        for (int i = 0; i < aBoxes.length; i++) {
-            float[] tBox = aBoxes[i];
+                .texture("overlay", modLoc("block/" + aTexture + "_overlay"))
+                .texture("particle", "#all")
+                .renderType("cutout");
+        for (float[] tBox : aBoxes) {
             var tElement = tModel.element()
                     .from(tBox[0], tBox[1], tBox[2]).to(tBox[3], tBox[4], tBox[5]);
             for (Direction tDir : Direction.values()) tElement.face(tDir).texture("#all").tintindex(0)
                     .cullface(isBoundaryFace(tBox, tDir) ? tDir : null).end();
             tElement.end();
+            var tOver = tModel.element()
+                    .from(tBox[0] - 0.01F, tBox[1] - 0.01F, tBox[2] - 0.01F)
+                    .to(tBox[3] + 0.01F, tBox[4] + 0.01F, tBox[5] + 0.01F);
+            for (Direction tDir : Direction.values()) tOver.face(tDir).texture("#overlay")
+                    .cullface(isBoundaryFace(tBox, tDir) ? tDir : null).end();
+            tOver.end();
         }
         return tModel;
     }

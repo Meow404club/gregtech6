@@ -814,7 +814,8 @@ joined the barrel_parts two-layer borrow (the full `colored/` + `overlay/`
 tex-tank-family section; the digest above now grounds through
 `barrel_parts/logistics/colored_side.png` (byte-identical).
 
-Fluid Tap + Fluid Funnel block textures, task tap-funnel-attachment: the 2 PNGs
+Fluid Tap + Fluid Funnel block textures, task tap-funnel-attachment (the overlay
+pair + tint closed by task tap-funnel-model-audit): the 4 PNGs
 under `gt6/textures/block/` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/tools/` (the
 `MultiTileEntityFluidTap.java:130-133` / `MultiTileEntityFluidFunnel.java:130-132`
@@ -825,17 +826,25 @@ sha256 verified:
   (upstream `machines/tools/tap/colored/side.png`)
 - `funnel.png`  `df1d3c727e965deeee4ce13a6670fdfb3f77aaff80e735f2a1ed489f38114412`
   (upstream `machines/tools/funnel/colored/side.png` — the SAME grayscale icon bytes
-  as the tap side; the two families were visually separated upstream by the OVERLAY
-  pass and the mRGBa material tint, which the port does not carry)
+  as the tap side; the two families are separated by the overlay pass below and the
+  material tint)
+- `tap_overlay.png`     `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `machines/tools/tap/overlay/side.png`)
+- `funnel_overlay.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `machines/tools/funnel/overlay/side.png` — byte-identical to the tap
+  overlay; both carry alpha texels)
 
-Shared per family: all 6 tap rows' model JSONs reference the one `tap.png`, all 6
-funnel rows the one `funnel.png` (the barrel_metal shared-PNG precedent). Path
-mapping (declared, the crank precedent): upstream `machines/tools/<family>/colored/side`
-is flat-mapped to `textures/block/<family>.png`; the grayscale icon renders UN-TINTED
-over the whole cube — the mRGBa material tint (MT.Ceramic/Plastic/StainlessSteel/...)
-and the multi-pass overlay/faucet stack (MultiTileEntityFluidTap getRenderPasses2
-:178-208) ride the render pool card, the single-model deviation the crank card
-declared first.
+Shared per family: all 6 tap rows' model JSONs reference the one `tap.png` +
+`tap_overlay.png`, all 6 funnel rows the `funnel.png` + `funnel_overlay.png` pair
+(the barrel_metal shared-PNG precedent). Path mapping (declared, the crank
+precedent): upstream `machines/tools/<family>/colored|overlay/side` is flat-mapped
+to `textures/block/<family>[_overlay].png`. Since tap-funnel-model-audit the
+grayscale colored layer is tinted with the row material's mRGBaSolid
+(`GT6AttachmentTintListener`, the upstream `BlockTextureDefault.get(sColoreds,
+mRGBa)` multiply — MultiTileEntityFluidTap.java:204) and each colored element is
+twinned by an overlay-pass element over the cutout layer (the addConverterModel
+0.01 decal grammar), which retires this entry's old "renders UN-TINTED ... rides
+the render pool card" deviation.
 Steam Engine family textures, task engine-steam: the 3 PNGs under
 `gt6/textures/block/steam_engine_{front,back,side}.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/engines/kinetic_steam/colored/`
@@ -10525,8 +10534,15 @@ inventory form tiled that one flat view over all six faces:
   form), so this entry's 28-row census is 20 rows + the 8 diesel pins of
   `dieselItemsRideTheBlockModels`. (History: layer0 = the shared `block/diesel_engine`
   front icon, the motor_liquid borrow.)
-- tap + funnel attachments 12 — layer0 = the row's family side sprite
-  (`block/tap` / `block/funnel`, the upstream machines/tools borrows).
+- tap + funnel attachments 12 — RETIRED from this band by task tap-funnel-model-audit:
+  the BlockItems now parent `block/attachment_tap` / `block/attachment_funnel` (the
+  diesel-item-3d form — upstream has NO dedicated item PNG, the 1.7.10 item renders
+  the 3D stack, so the faceted spout IS the faithful icon). (History: layer0 = the
+  row's family side sprite `block/tap` / `block/funnel`, the upstream machines/tools
+  borrows.)
+- crucible faucets 2 (`faucet_stone`, `faucet_ceramic`) — ride their block models
+  (`block/faucet_*`, the mold-card form); since tap-funnel-model-audit those are the
+  upstream three-pass spout stacks, so the 3D icon follows for free.
 - water wheel 1 — layer0 = `block/water_wheel` (the port-original wheel sprite,
   the kTFRUAddon license ruling).
 - gearbox 1 — layer0 = `block/gearbox` (the upstream iconsets GEARBOX borrow).

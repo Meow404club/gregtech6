@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "gt6:block/tap"
-  }
+  "parent": "gt6:block/attachment_tap"
 }

@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.data.event.GatherDataEvent;
@@ -40,9 +41,10 @@ import gregtech6.registry.GT6Molds;
  *     element per UNLIT bit, the lit bit = chiseled out,
  *     MultiTileEntityMold.java:328-335/:537) riding the MATERIAL SMOOTH body texture
  *     ({@link GT6CrucibleDatagen#bodyTexture}, task 40-41-mold-assets — the former
- *     flat andesite/cobble placeholder is gone), and the 2 faucet rows as material smooth
- *     body cubes (the p12 addAttachments single-model-over-all-facings form, the oriented
- *     thin plate is the render pool).</li>
+     *     flat andesite/cobble placeholder is gone), and the 2 faucet rows as the
+     *     upstream three-pass faucet stack over the material smooth body (task
+     *     tap-funnel-model-audit — the former full-cube placeholder is gone; the
+     *     FACING-rotated blockstate replaces the single-model-over-all-facings form).</li>
  * <li><b>item models</b>: the formed molds and faucets parent their block models; the
  *     31 raw clay items ride {@code item/generated} over their OWN borrowed upstream
  *     icon ({@code item/<path>_raw}, the gt.multiitem.randomtools 900-929/991 borrows,
@@ -118,36 +120,61 @@ public final class GT6MoldDatagen {
 				for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) {
 					registerMoldModels(tRow);
 				}
-				// the faucets: cube_all over every FACING (the p12 addAttachments form), the
-				// material smooth body (task 40-41-mold-assets — the former flat cobble
-				// placeholder is gone); the grayscale-borrow rows carry tintindex 0 (task
-				// debt-material-tint), the vanilla smooth-stone row stays the finished
-				// texture (a second multiply would dirty it — the recorded declaration shortcut)
+				// the faucets: the upstream three-pass faucet stack (MultiTileEntityFaucet
+				// .java:168-200 verbatim px, PX_P[i]=i / PX_N[i]=16-i — north (6,1,0)-(10,2,4)
+				// + (5,2,0)-(6,6,4) + (10,2,0)-(11,6,4)), rotated per FACING with the
+				// addAttachments band — the former full-cube placeholder retires (task
+				// tap-funnel-model-audit; rod-render-pool re-formed only the GT6Attachments
+				// rows and never walked this section). The material smooth body texture +
+				// tintindex 0 ride on (the GT6MoldTintListener FaucetBlock arm answers; the
+				// stone row's dispatch is -1, inert — the recorded doctrine)
 				for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
 					Block tBlock = GT6Molds.FAUCET_BLOCKS_BY_PATH.get(tRow.path()).get();
 					ResourceLocation tBody = GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(tRow.material().get()));
-					simpleBlock(tBlock, GT6CrucibleDatagen.bodyTinted(tRow.material().get())
-							? tintedCubeAll(tRow.path(), tBody)
-							: models().cubeAll(tRow.path(), tBody));
+					ModelFile tModel = faucetStackModel(tRow.path(), tBody);
+					getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(gregtech6.block.attachment.GTAttachmentSmallBlock.FACING)) {
+						case NORTH -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
+						case SOUTH -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 180, false)};
+						case WEST  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 270, false)};
+						case EAST  -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 90, false)};
+						default    -> new ConfiguredModel[] {new ConfiguredModel(tModel)}; // the family-invalid verticals
+					});
 					itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path()));
 				}
 			}
 
 			/**
-			 * The one-element tinted cube (the GT6OreBlockStates.tintedCubeAll:161-171 idiom,
-			 * local copy — FILES_SCOPE keeps the shared providers untouched): every face
-			 * tintindex 0 so {@code GT6MoldTintListener} multiplies the material mRGBaSolid
-			 * over the grayscale borrow.
+			 * The faucet three-pass stack (task tap-funnel-model-audit): three box
+			 * elements over the material smooth body (the upstream getTexture2 = the
+			 * material blockSolid × mRGBa, {@code BlockTextureDefault.get(mMaterial,
+			 * OP.blockSolid, ...)} :162 — no overlay pass), tintindex 0 on every face
+			 * (the GT6MoldTintListener seat; the finished-texture rows answer -1, inert),
+			 * cullface only where a face lies on the block boundary (the mount face
+			 * against the host culls — the attachment idiom).
 			 */
-			private ModelFile tintedCubeAll(String aName, ResourceLocation aTexture) {
+			private ModelFile faucetStackModel(String aName, ResourceLocation aBody) {
 				BlockModelBuilder tModel = models().getBuilder("block/" + aName)
 						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
-						.texture("all", aTexture)
+						.texture("all", aBody)
 						.texture("particle", "#all");
-				tModel.element()
-						.from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-						.allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir))
-						.end();
+				float[][] tBoxes = {{6, 1, 0, 10, 2, 4}, {5, 2, 0, 6, 6, 4}, {10, 2, 0, 11, 6, 4}};
+				for (float[] tBox : tBoxes) {
+					var tElement = tModel.element()
+							.from(tBox[0], tBox[1], tBox[2]).to(tBox[3], tBox[4], tBox[5]);
+					for (net.minecraft.core.Direction tDir : net.minecraft.core.Direction.values()) {
+						boolean tBoundary = switch (tDir) {
+							case DOWN -> tBox[1] <= 0.0F;
+							case UP -> tBox[4] >= 16.0F;
+							case NORTH -> tBox[2] <= 0.0F;
+							case SOUTH -> tBox[5] >= 16.0F;
+							case WEST -> tBox[0] <= 0.0F;
+							case EAST -> tBox[3] >= 16.0F;
+						};
+						tElement.face(tDir).texture("#all").tintindex(0)
+								.cullface(tBoundary ? tDir : null).end();
+					}
+					tElement.end();
+				}
 				return tModel;
 			}
 
