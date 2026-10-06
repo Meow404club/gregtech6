@@ -215,6 +215,12 @@ public final class GTClientHandlers {
     private static void onRegisterMachinePaintItemColors(RegisterColorHandlersEvent.Item event) {
         List<Item> tPaintItems = new ArrayList<>();
         for (Block tBlock : GTMachines.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+        // task act-charging-table-tint — the 120 Advanced/Charging Crafting Table rows'
+        // BlockItems join the same lambda: the unpainted creative-tab face resolves the
+        // row NBT_MATERIAL (Loader_MultiTileEntities.java:136-137) through the combined
+        // dispatch (the GTAdvancedCraftingTableBlock carrier), the inventory half the
+        // painted-item domain never covered for this family
+        for (var tTableItem : GTMachines.CRAFTING_TABLE_ITEMS_BY_PATH.values()) tPaintItems.add(tTableItem.get());
         event.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
     }
 

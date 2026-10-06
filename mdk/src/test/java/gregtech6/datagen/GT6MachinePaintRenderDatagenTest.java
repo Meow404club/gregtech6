@@ -352,6 +352,42 @@ class GT6MachinePaintRenderDatagenTest {
     }
 
     /**
+     * Task act-charging-table-tint — the ACT shared model's TINT SEATS (the user's
+     * "还是没上色" census gap: the seat was already right, the consumers weren't): the
+     * body cube carries tintindex 0 on ALL six faces (the mRGBa multiplication seat) and
+     * the 0.01 front decal carries NO tintindex (the upstream UNCOLOURED overlay layer,
+     * MultiTileEntityAdvancedCraftingTable.java:659-662 = BlockTextureMulti(
+     * BlockTextureDefault(sColoreds[side], mRGBa), BlockTextureDefault(sOverlays[side]))).
+     * One shared model serves BOTH block kinds (the plain :136 and the charging :137),
+     * so this pin covers the 120-row matrix. The consumer half rides the
+     * GTMachinePaintTint dispatch (the tint test's craftingTableRowsRideTheCombinedDispatch).
+     */
+    @Test
+    void actMachineModelPinsTheTintSeats() throws Exception {
+        JsonObject tModel = json("assets/gt6/models/block/advanced_crafting_table.json");
+        var tElements = tModel.getAsJsonArray("elements");
+        assertEquals(2, tElements.size(),
+                "advanced_crafting_table: body cube + the single front decal (the p22 form)");
+        JsonObject tBody = tElements.get(0).getAsJsonObject();
+        var tFaces = tBody.getAsJsonObject("faces");
+        assertEquals(6, tFaces.size(), "advanced_crafting_table: six body faces");
+        for (String tFaceKey : FACE_KEYS) {
+            JsonObject tFace = tFaces.getAsJsonObject(tFaceKey);
+            assertEquals(0, tFace.get("tintindex").getAsInt(),
+                    "advanced_crafting_table face " + tFaceKey + ": tintindex 0 — the mRGBa seat"
+                            + " (the colored×mRGBa shell pass, ACT:659-662)");
+        }
+        JsonObject tDecal = tElements.get(1).getAsJsonObject();
+        var tDecalFaces = tDecal.getAsJsonObject("faces");
+        assertEquals(1, tDecalFaces.size(), "advanced_crafting_table: the decal is a single quad");
+        for (var tEntry : tDecalFaces.entrySet()) {
+            assertTrue(!tEntry.getValue().getAsJsonObject().has("tintindex"),
+                    "advanced_crafting_table decal face " + tEntry.getKey()
+                            + ": NO tintindex — the untinted overlay layer (ACT:662 sOverlays)");
+        }
+    }
+
+    /**
      * Every machine blockstate: 16 variants (4 facings x 2 active x 2 running), each wired
      * to exactly the state model the upstream :1014 pick demands and the y rotation the
      * FACING property demands (north 0 = omitted, east 90, south 180, west 270).

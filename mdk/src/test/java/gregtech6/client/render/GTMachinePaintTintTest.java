@@ -16,6 +16,7 @@
 package gregtech6.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -499,6 +500,59 @@ class GTMachinePaintTintTest extends GTOfflineRenderTestBase {
 		gregtech6.registry.GT6StaticStorages.StaticRow tRow = gregtech6.registry.GT6StaticStorages.ROWS.stream()
 				.filter(r -> r.path().equals(aPath)).findFirst().orElseThrow();
 		return new gregtech6.registry.GT6StaticStorages.GT6StorageBlock(tRow,
+				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
+	}
+
+	/**
+	 * Task act-charging-table-tint: the Advanced/Charging Crafting Table matrix rides the
+	 * combined dispatch — the 120 rows carry their loader NBT_MATERIAL column
+	 * (Loader_MultiTileEntities.java:136 plain / :137 charging, one material per
+	 * plain/charging pair) through the {@code GTAdvancedCraftingTableBlock} carrier, the
+	 * unpainted shell tints the tier material colour exactly like the upstream
+	 * colored×mRGBa pass (MultiTileEntityAdvancedCraftingTable.java:659-662, the charging
+	 * twin :61-64; the registration derives NBT_COLOR = getRGBInt(fRGBaSolid),
+	 * ClassContainer:51). The user's "还是没上色" faces: BOTH kinds one block class, so
+	 * one carrier gate covers the matrix — pinned on the plain and the charging arm
+	 * alike, the values byte-exact over fRGBaSolid, the spray override still winning,
+	 * and every loader slug resolving loud (the mt() drift guard over both kinds).
+	 */
+	@Test
+	void craftingTableRowsRideTheCombinedDispatch() {
+		unfreezeBlockRegistry();
+		gregtech6.block.GTAdvancedCraftingTableBlock tSteelPlain = craftingTableBlock("advanced_crafting_table_steel");
+		gregtech6.block.GTAdvancedCraftingTableBlock tBronzeCharging = craftingTableBlock("charging_crafting_table_bronze");
+		gregtech6.block.GTAdvancedCraftingTableBlock tStainlessPlain = craftingTableBlock("advanced_crafting_table_stainless_steel");
+		// the representative pair of kinds — :136 plain and :137 charging the same gate
+		assertSame(gregapi.data.MT.Steel, GTMachinePaintTint.tintMaterialOf(tSteelPlain),
+				"the :136 steel ACT row rides the carrier");
+		assertSame(gregapi.data.MT.Bronze, GTMachinePaintTint.tintMaterialOf(tBronzeCharging),
+				"the :137 charging bronze row rides the same carrier gate");
+		assertSame(gregapi.data.MT.StainlessSteel, GTMachinePaintTint.tintMaterialOf(tStainlessPlain),
+				"the stainless_steel row (the dungeon-workshop tier) rides the carrier");
+		// all 120 rows' slugs resolve loud — the mt() switch drift guard, both kinds
+		for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) {
+			assertNotNull(tRow.material().mt(), "the loader slug resolves: " + tRow.path());
+		}
+		// the pinned values — the fRGBaSolid derivation byte-exact through the dispatch
+		assertEquals(0xFF828282, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tSteelPlain), 0),
+				"the steel ACT shell tints gray-white 130,130,130 (the upstream ClassContainer:51 derivation)");
+		// the pairwise-distinct regression killer (the all-gray lesson): steel vs bronze
+		int tSteel = GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tSteelPlain), 0) & 0xFFFFFF;
+		int tBronze = GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tBronzeCharging), 0) & 0xFFFFFF;
+		assertTrue(tSteel != tBronze, "the steel and bronze crafting-table rows stay visually distinct");
+		// the spray-paint override wins over the row colour (upstream Paintable:85)
+		assertEquals(0xFFFF0000, GTMachinePaintTint.tintARGB(paintedData(PAINT_RED),
+				GTMachinePaintTint.tintMaterialOf(tSteelPlain), 0), "painted wins over the ACT row colour");
+		// and an off-carrier block keeps the null gate (the white identity)
+		assertNull(GTMachinePaintTint.tintMaterialOf(net.minecraft.world.level.block.Blocks.BRICKS),
+				"a vanilla block stays the material-less white identity");
+	}
+
+	/** A bare crafting-table carrier for the dispatch pin (the row lookup by path, the valve-test shape). */
+	private static gregtech6.block.GTAdvancedCraftingTableBlock craftingTableBlock(String aPath) {
+		gregtech6.registry.GTMachines.CraftingTableRow tRow = gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS.stream()
+				.filter(r -> r.path().equals(aPath)).findFirst().orElseThrow();
+		return new gregtech6.block.GTAdvancedCraftingTableBlock(tRow,
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
 	}
 }
