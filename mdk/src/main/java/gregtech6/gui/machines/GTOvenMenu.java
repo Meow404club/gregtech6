@@ -23,12 +23,18 @@ import gregtech6.tileentity.machines.TileEntityOven;
  * the client half (getGUIClient2 :1007 / ContainerClientBasicMachine) is replaced by the
  * statically registered {@link GTOvenScreen}.
  *
- * <p>Slot geometry (RM.Furnace = 1/1/1f/1f, container order verbatim :49/:55/:162/:267-268):
- * the special slot first — content index 2 at (80,43) —, then the input (content 0 at
- * (53,25)), the output (content 1 at (107,25), setCanPut(F) → {@link OutputSlot}), then the
- * two fluid display slots (contents 3/4 at (53,63)/(107,63), Slot_Render →
- * {@link RenderSlot}; the upstream "Extract using a Tap or Nozzle" tooltip is meaningless
- * with no fluid tanks and stays out). The player inventory binds at the standard 176x166
+ * <p>Slot geometry (RM.Furnace = 1/1/1f/1f, container order verbatim :55/:162/:267-268):
+ * the input (content 0 at (53,25)), the output (content 1 at (107,25), setCanPut(F) →
+ * {@link OutputSlot}), then the two fluid display slots (contents 3/4 at (53,63)/(107,63),
+ * Slot_Render → {@link RenderSlot}; the upstream "Extract using a Tap or Nozzle" tooltip is
+ * meaningless with no fluid tanks and stays out). The upstream :49 special seat is NOT bound:
+ * Recipe.RecipeMap.getSpecialSlot (:400-402) is null for RM.Furnace — only RecipeMapAutocrafting
+ * (:166) overrides it — so addSlots adds nothing there, and the 22x22 gear print at (77,60) on
+ * the machine skin is decoration (the print every machine skin carries). The reserved inventory
+ * index {@link TileEntityOven#SLOT_SPECIAL} stays in the BE (upstream getDefaultInventory :530
+ * keeps the +1) and rides findRecipe unbound, reachable through automation only — task
+ * oven-gui-slot-audit retired the earlier (80,43) binding that floated over the bare panel
+ * between the two slot rows. The player inventory binds at the standard 176x166
  * machine-panel offset 84 (ContainerCommon bindPlayerInventory default shape).
  *
  * <p>The single progress {@link ContainerData} is the :273-297 verbatim three-state
@@ -42,8 +48,8 @@ public class GTOvenMenu extends GTGuiMenu {
 	/** Success flag value (upstream :281, Short.MAX_VALUE). */
 	public static final int PROGRESS_DONE = Short.MAX_VALUE;
 
-	/** Content slot count: special + input + output + 2 fluid displays. */
-	public static final int CONTENT_SLOT_COUNT = 5;
+	/** Content slot count: input + output + 2 fluid displays (the upstream :49 special seat adds nothing on this map). */
+	public static final int CONTENT_SLOT_COUNT = 4;
 
 	/** The BE bound as the menu's backing container (upstream mTileEntity, ContainerCommon.java:42). */
 	public final TileEntityOven tileEntity;
@@ -56,8 +62,8 @@ public class GTOvenMenu extends GTGuiMenu {
 		this.tileEntity = aTileEntity;
 
 		GTItemStackHandler tInventory = aTileEntity.getInventory();
-		// upstream ContainerCommonBasicMachine.addSlots :45-270 — Furnace shape, container order verbatim
-		addSlot(new SlotItemHandler(tInventory, TileEntityOven.SLOT_SPECIAL, 80, 43));  // :49 special slot
+		// upstream ContainerCommonBasicMachine.addSlots :45-270 — Furnace shape, container order
+		// verbatim; the :49 special seat contributes no slot (getSpecialSlot is null for RM.Furnace)
 		addSlot(new SlotItemHandler(tInventory, TileEntityOven.SLOT_INPUT, 53, 25));    // :55 input (mInputItemsCount == 1)
 		addSlot(new OutputSlot(tInventory, TileEntityOven.SLOT_OUTPUT, 107, 25));       // :162 output setCanPut(F)
 		addSlot(new RenderSlot(tInventory, TileEntityOven.SLOT_FLUID_IN_DISPLAY, 53, 63));  // :267 fluid display in
