@@ -89,13 +89,15 @@ class GT6EnergyJumpTest {
 
 	@Test
 	void gearPortPinsTheBakedArtSpotFoldedToPanelCoordinates() {
-		// the machine-GUI constant: upstream NEI_RecipeMap.java:278's (152,83) — the same
-		// pixel the plate's gear decoration bakes (debt-viewer-polish rode it pre-retirement)
-		assertArrayEquals(new int[] {152, 83}, GT6RecipeMapViewerMeta.GEAR_POS_GUI);
-		// the panel fold: (152,83) - (5,7) = (147,76) — the research card's "(147,72)" was
-		// the PRE-reanchor fold (S_OFFSET_Y was 11); the art-true spot rides +4 today
-		assertArrayEquals(new int[] {147, 76}, GT6RecipeMapViewerMeta.viewerGearPos());
-		assertEquals(18, GT6RecipeMapViewerMeta.GEAR_SIZE, "the port hit box is the 18px slot pitch");
+		// the machine-GUI constant: the machine skins' printed special slot — the 22x22
+		// gear cell every sheet draws at (77,60) (upstream 1.7.10 Default.png and the
+		// amazawa redraw agree; its crop IS gui/parts/slot_special_22x22.png). The first
+		// cut's plate-corner decoration spot (152,83) was a self-invented slot — rolled
+		// back (composed-ui-energy-slot-and-parts, the user ruling 复用齿轮).
+		assertArrayEquals(new int[] {77, 60}, GT6RecipeMapViewerMeta.GEAR_POS_GUI);
+		// the panel fold: (77,60) - (5,7) = (72,53)
+		assertArrayEquals(new int[] {72, 53}, GT6RecipeMapViewerMeta.viewerGearPos());
+		assertEquals(22, GT6RecipeMapViewerMeta.GEAR_SIZE, "the port hit box is the full 22x22 gear-slot cell");
 	}
 
 	/** The jitter-free array assertion (JUnit's array equals has no import-free shorthand here). */
@@ -111,17 +113,15 @@ class GT6EnergyJumpTest {
 				&& tPos[0] + GT6RecipeMapViewerMeta.GEAR_SIZE <= GT6RecipeMapViewerMeta.CATEGORY_WIDTH
 				&& tPos[1] + GT6RecipeMapViewerMeta.GEAR_SIZE <= GT6RecipeMapViewerMeta.CATEGORY_HEIGHT,
 				"the port rect stays inside the category rect");
-		// the item slots: the deepest drawn row is the fourth 61-row → panel y54..72 — the
-		// port starts at y76, strictly below every slot row on BOTH grids
-		assertTrue(tPos[1] >= 54 + 18, "the port clears the fourth slot row's bottom edge");
-		// the fluid rows: fluid outputs span panel x102..156 (GUI 107..143) at y56..74 —
-		// the port's x-range DOES overlap the third fluid column's, but the port starts
-		// at y76, strictly below the fluid row band (2D disjointness is the real contract)
-		int[] tFluidOut = GT6RecipeMapViewerMeta.viewerFluidOutputPos(2);
-		assertTrue(tPos[1] >= tFluidOut[1] + 18, "the port clears the fluid-output row's bottom edge");
-		// the text band starts at y77, x10 — the port rides the band's vertical range but
-		// its x147 outruns the longest first cost line's tail (the research card's check)
-		assertTrue(tPos[0] > GT6RecipeMapViewerMeta.TEXT_X, "the port is right of the text origin");
+		// the item slots: the input grid ends at GUI x71 (panel 66) and the output grid
+		// starts at GUI x107 (panel 102); the gear slot lives in the middle column
+		// (panel x72..94), 2D-disjoint from BOTH grids at every case row — the deepest
+		// rows (fourth 61-row inputs panel x48..66, fluid outputs x102..156) all clear it
+		assertTrue(tPos[0] >= 66 && tPos[0] + GT6RecipeMapViewerMeta.GEAR_SIZE <= 102,
+				"the port's x-range rides the empty middle column between the two grids");
+		// the text band starts at y77, x10 — the port ends at y75, strictly above it
+		assertTrue(tPos[1] + GT6RecipeMapViewerMeta.GEAR_SIZE <= GT6RecipeMapViewerMeta.TEXT_BASE_Y,
+				"the port clears the text band's top edge");
 	}
 
 	@Test
@@ -224,7 +224,7 @@ class GT6EnergyJumpTest {
 				assertSame(tBuilder.mWidgets.get(0), tBuilder.mInputHandlers.get(0),
 						tMap.mNameInternal + " registers ONE GearJumpFace as both widget and handler");
 				GT6RecipeMapJeiCategory.GearJumpFace tFace = (GT6RecipeMapJeiCategory.GearJumpFace) tBuilder.mInputHandlers.get(0);
-				assertEquals(new ScreenRectangle(147, 76, 18, 18), tFace.getArea(),
+				assertEquals(new ScreenRectangle(72, 53, 22, 22), tFace.getArea(),
 						tMap.mNameInternal + "'s port rides the folded gear rect");
 			} else {
 				tGuMaps++;
@@ -401,15 +401,15 @@ class GT6EnergyJumpTest {
 		List<TagData> tJumps = new ArrayList<>();
 		GT6RecipeMapEmiRecipe.GearJumpWidget tWidget = new GT6RecipeMapEmiRecipe.GearJumpWidget(TD.Energy.EU, tJumps::add);
 		// the same folded gear rect the JEI twin's getArea returns
-		assertEquals(new Bounds(147, 76, 18, 18), tWidget.getBounds());
+		assertEquals(new Bounds(72, 53, 22, 22), tWidget.getBounds());
 		// outside: refused, no jump
 		assertFalse(tWidget.mouseClicked(0, 0, 0), "a click off the gear rect is refused");
 		assertTrue(tJumps.isEmpty(), "no jump fired off-rect");
 		// inside: the injected consumer receives exactly the widget's carrier
-		assertTrue(tWidget.mouseClicked(147 + 9, 76 + 9, 0), "the click inside executes");
+		assertTrue(tWidget.mouseClicked(72 + 11, 53 + 11, 0), "the click inside executes");
 		assertEquals(List.of(TD.Energy.EU), tJumps, "the click target IS the carrier");
 		// the affordance: one tooltip line over the rect
-		assertEquals(1, tWidget.getTooltip(147, 76).size());
+		assertEquals(1, tWidget.getTooltip(72, 53).size());
 	}
 
 	@Test
@@ -426,13 +426,13 @@ class GT6EnergyJumpTest {
 	@Test
 	void emiRowWiringAddsTheGearWidgetOnlyOnCarrierMaps() {
 		GT6RecipeMaps.init();
-		// LATHE (RU): the widget rides third — right after the two backdrop textures
+		// LATHE (RU): the widget rides fourth — right after the plate + the two furniture crops
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6RecipeMapEmiRecipe(GT6RecipeMaps.LATHE, row(), GT6RecipeMapEmiCategoryForTest(GT6RecipeMaps.LATHE), 0).addWidgets(tHolder);
-		assertEquals(2, tHolder.mTextures.size(), "the two backdrop textures lead");
-		assertTrue(tHolder.mAll.get(2) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
-				"the gear port rides third on a carrier map (the art's z face)");
-		assertEquals(new Bounds(147, 76, 18, 18), tHolder.mAll.get(2).getBounds());
+		assertEquals(3, tHolder.mTextures.size(), "the plate + the two furniture crops lead");
+		assertTrue(tHolder.mAll.get(3) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
+				"the gear port rides fourth on a carrier map (the art's z face)");
+		assertEquals(new Bounds(72, 53, 22, 22), tHolder.mAll.get(3).getBounds());
 		// MORTAR (hand tool, no carrier): no port — the gear stays decoration
 		RecordingHolder tMortarHolder = new RecordingHolder();
 		new GT6RecipeMapEmiRecipe(GT6RecipeMaps.MORTAR, row(), GT6RecipeMapEmiCategoryForTest(GT6RecipeMaps.MORTAR), 0).addWidgets(tMortarHolder);

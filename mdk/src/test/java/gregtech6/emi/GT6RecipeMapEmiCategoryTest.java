@@ -143,21 +143,24 @@ public class GT6RecipeMapEmiCategoryTest {
 		// the line CONTENT is pinned by the JEI-side test's costLines asserts, the shared
 		// seam; TextWidget.getBounds is client-bound so only the count is assertable here)
 		// PLUS the gear-port jump widget — LATHE is a RU carrier map, so the no-draw
-		// GearJumpWidget rides third, right after the two backdrop textures (the art's z face).
+		// GearJumpWidget rides fourth, right after the plate + the two furniture crops (the art's z face).
 		assertEquals(6, tHolder.mOtherWidgets, "the Lathe row's five drawExtras lines + the gear-port widget");
-		assertEquals(2, tHolder.mTextures.size(), "the two backdrop textures lead the stack (z order pinned below)");
-		assertTrue(tHolder.mAll.get(2) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
-				"the gear-port jump widget rides third, right after the two backdrops");
-		assertEquals(new Bounds(147, 76, 18, 18), tHolder.mAll.get(2).getBounds(),
-				"the port covers the folded gear art (152,83)-(5,7)=(147,76), 18px form");
+		assertEquals(3, tHolder.mTextures.size(), "the plate + the two furniture crops lead the stack (z order pinned below)");
+		assertTrue(tHolder.mAll.get(3) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
+				"the gear-port jump widget rides fourth, right after the plate + furniture");
+		assertEquals(new Bounds(72, 53, 22, 22), tHolder.mAll.get(3).getBounds(),
+				"the port covers the folded gear-slot art (77,60)-(5,7)=(72,53), 22x22 form");
 	}
 
 	/**
-	 * The backdrop composite (task 34-viewer-gui-bg, GitHub #34): the FIRST two widgets
-	 * added are the grey NEI plate and the per-map machine band (render order = add
-	 * order, so these must lead the z stack), cropped at exactly the upstream
-	 * drawBackground quadruples (NEI_RecipeMap.java:632/:634 folded to the panel system)
-	 * and anchored at (0,0). TextureWidget's ctor is pure field assignment — fully
+	 * The composed-page lead (task 34-viewer-gui-bg, GitHub #34; composed per
+	 * composed-ui-energy-slot-and-parts): the FIRST widgets added are the grey NEI plate
+	 * and the two machine-skin furniture part crops — the arrow cell and the special-slot
+	 * gear cell (render order = add order, so these must lead the z stack). The per-map
+	 * machine band is RETIRED (its baked slot frames doubled the code slots'). The plate
+	 * keeps the upstream drawBackground quadruple (NEI_RecipeMap.java:632 folded to the
+	 * panel system) anchored at (0,0); the parts are standalone small PNGs at u/v 0 with
+	 * their own dims declared. TextureWidget's ctor is pure field assignment — fully
 	 * assertable offline; its u/v fields are protected, so the pin reads them by
 	 * reflection (the bounds face is public).
 	 */
@@ -172,22 +175,26 @@ public class GT6RecipeMapEmiCategoryTest {
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6RecipeMapEmiRecipe(tLathe, tRow, GT6RecipeMapEmiCategory.CATEGORIES.apply(tLathe), 0).addWidgets(tHolder);
 
-		assertEquals(2, tHolder.mTextures.size(), "exactly two backdrop texture widgets");
+		assertEquals(3, tHolder.mTextures.size(), "the plate + the two furniture part crops lead");
 		var tPlate = tHolder.mTextures.get(0);
-		var tBand = tHolder.mTextures.get(1);
+		var tArrow = tHolder.mTextures.get(1);
+		var tGear = tHolder.mTextures.get(2);
 		// plate: NEI.png crop (5,12,166,140) at (0,0) — the layer under everything (the
 		// re-anchored v; pre-fix (5,16,166,140), the +4 task viewer-row-headroom shift)
 		assertEquals(new Bounds(0, 0, 166, 140), tPlate.getBounds(), "the plate fills the 166x140 category");
 		assertEquals("gt6:textures/gui/machines/nei.png", textureOf(tPlate).toString());
 		assertEquals(5, uOf(tPlate));
 		assertEquals(12, vOf(tPlate));
-		// band: the per-map machine GUI (mGUIPath → lathe.png) crop (5,7,166,75) at (0,0)
-		// — the re-anchored v with h extended to keep the same texture-row-81 bottom edge
-		// (pre-fix (5,11,166,71))
-		assertEquals(new Bounds(0, 0, 166, 75), tBand.getBounds(), "the machine band rides the plate's top");
-		assertEquals("gt6:textures/gui/machines/lathe.png", textureOf(tBand).toString());
-		assertEquals(5, uOf(tBand));
-		assertEquals(7, vOf(tBand));
+		// arrow cell: the skin print at GUI (78,24) → panel (73,17), the standalone part
+		assertEquals(new Bounds(73, 17, 20, 18), tArrow.getBounds(), "the arrow cell rides its folded exit");
+		assertEquals("gt6:textures/gui/parts/arrow_outline_20x18.png", textureOf(tArrow).toString());
+		assertEquals(0, uOf(tArrow));
+		assertEquals(0, vOf(tArrow));
+		// gear slot: the skin print at GUI (77,60) → panel (72,53), the jump's art
+		assertEquals(new Bounds(72, 53, 22, 22), tGear.getBounds(), "the gear slot rides its folded exit");
+		assertEquals("gt6:textures/gui/parts/slot_special_22x22.png", textureOf(tGear).toString());
+		assertEquals(0, uOf(tGear));
+		assertEquals(0, vOf(tGear));
 	}
 
 	// The two gear-spot machine-icon tests (the bare-item z pin, the furnace-fallback

@@ -68,12 +68,14 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  *     multiblock/fake shape) renders zero fluid seats — the pre-p34 panel byte-identical;</li>
  * <li><b>the clean-base face</b> (r11-gui-basicmachine-clean-sample) — the panel carries NO
  *     code background (the gt6 theme 9-slice base draws at runtime, so headless
- *     {@code getBackground()} is null); the title TextWidget prints the served map's local
- *     name at the upstream (8, 4) in the 0x404040 ink (map-less Hosts render none); the
- *     progress bar fills with the amazawa arrow part clipped in the mapped direction (the
- *     full upstream 0-7 case table pinned, drain cases twin their grow case); the drain
- *     value face inverts with the idle gate; the fluid seats wear the amazawa droplet
- *     frame.</li>
+ *     {@code getBackground()} is null); the title TextWidget prints the served map's
+ *     translatable title (the shared viewer key) centered at the upstream row y4 in the
+ *     0x404040 ink (map-less Hosts render none); the progress bar draws the amazawa
+ *     arrow PAIR — the empty cell (the skins' (78,24) print) under the fill clipped in
+ *     the mapped direction (the full upstream 0-7 case table pinned, drain cases twin
+ *     their grow case); the drain value face inverts with the idle gate; the fluid seats
+ *     wear the amazawa droplet frame; the special-slot gear cell (77,60) and the
+ *     vanilla-key inventory label (8,72) are composed back (the five-missing face).</li>
  * </ul>
  */
 class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
@@ -449,7 +451,8 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		ModularPanel<?> tPanel = GTBasicMachineMUI.buildPanel(tHost, tSync);
 
 		// the tree: the panel itself + 13 content item seats + the progress widget + the
-		// player-inventory group (1 group widget + its 36 seats, issue #3 unconditional).
+		// gear-slot decor + the inventory label + the player-inventory group (1 group
+		// widget + its 36 seats, issue #3 unconditional).
 		// The p34 face: the Host banks are the interface DEFAULT (empty) here, so zero fluid
 		// seats render — the pre-p34 panel byte-identical (the zero-bank regression).
 		List<IWidget> tAll = allWidgets(tPanel);
@@ -457,7 +460,7 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		long tProgress = tAll.stream().filter(w -> w instanceof brachy.modularui.widgets.ProgressWidget).count();
 		assertEquals(13, tItemSeats, "exactly the content seats");
 		assertEquals(1, tProgress, "exactly the progress bar");
-		assertEquals(52, tAll.size(), "panel + seats + progress + the player group (1+36, issue #3)");
+		assertEquals(54, tAll.size(), "panel + seats + progress + gear slot + inv label + the player group (1+36, issue #3)");
 
 		// the slot groups are exactly the two content groups — the player GROUP only
 		// registers at construct (the fork auto-bind), not at build
@@ -498,13 +501,21 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		assertEquals(new ResourceLocation("gt6", "textures/gui/parts/arrow_forward_20x18.png"), tFill.location(),
 				aWhat + ": the fill is the amazawa arrow part");
 		assertEquals(aDirection, aDrawable.getDirection(), aWhat + ": the mapped direction");
-		assertNull(aDrawable.getEmptyBackground(), aWhat + ": fill-only — the F1-03 empty-arrow outline is deferred W3");
+		// the empty face: the arrow CELL part (composed-ui-energy-slot-and-parts — the
+		// fill-only form read as 进度箭头缺失 on an idle cell; the outline is the skins'
+		// (78,24) print, part 13)
+		UITexture tEmpty = assertInstanceOf(UITexture.class, aDrawable.getEmptyBackground(), aWhat + ": the empty cell is a texture");
+		assertEquals(new ResourceLocation("gt6", "textures/gui/parts/arrow_outline_20x18.png"), tEmpty.location(),
+				aWhat + ": the empty cell is the amazawa arrow outline");
 	}
 
 	/**
-	 * The title (F1-01): the served map's local name as a TextWidget at the upstream
-	 * foreground print (8, 4) in the 0x404040 ink (ContainerClientBasicMachine.java:44); a
-	 * map-less Host renders no title.
+	 * The title (F1-01, re-faced by composed-ui-energy-slot-and-parts): the served map's
+	 * title as a TRANSLATABLE TextWidget (the shared viewer title key — zh rows ship for
+	 * every visible map; the plain-string face would bake the en literal) CENTERED
+	 * across the 176 panel width at the upstream print row y4 (ContainerClientBasicMachine
+	 * .java:44 drew left-aligned at (8,4); the composed panel owns the full-width row), in
+	 * the 0x404040 ink; a map-less Host renders no title.
 	 */
 	@Test
 	void theMapTitlePrintsAtTheUpstreamPositionAndTheMapLessHostSkipsIt() throws Exception {
@@ -515,10 +526,15 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		IWidget tTitle = named(tPanel, "title");
 		assertInstanceOf(TextWidget.class, tTitle, "the title is a TextWidget");
 		TextWidget<?> tText = (TextWidget<?>) tTitle;
-		assertEquals("Sifter", tText.getKey().getString(), "the title is the map's local name");
-		assertEquals(8, posOf(tTitle, true), "title x (upstream :44)");
+		assertInstanceOf(net.minecraft.network.chat.contents.TranslatableContents.class, tText.getKey().getContents(),
+				"the title is translatable (the localization face, not a baked literal)");
+		assertEquals(gregtech6.jei.GT6RecipeMapViewerMeta.titleKey(GT6RecipeMaps.SIFTING),
+				((net.minecraft.network.chat.contents.TranslatableContents) tText.getKey().getContents()).getKey(),
+				"the title rides the shared viewer title-key formula");
+		assertEquals(0, posOf(tTitle, true), "title x (the centered full-width row)");
 		assertEquals(4, posOf(tTitle, false), "title y (upstream :44)");
 		assertEquals(0x404040, tText.getColor().getAsInt(), "the upstream ink");
+		assertEquals(brachy.modularui.utils.Alignment.TopCenter, tText.getAlignment(), "the title is centered");
 	}
 
 	/**
@@ -601,5 +617,49 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 					tName + ": the amazawa droplet frame");
 			assertTrue(tSeat.isDisableThemeBackground(), tName + ": the theme fluidSlot frame is disabled (no double frame)");
 		}
+	}
+
+	/**
+	 * The composed furniture (composed-ui-energy-slot-and-parts, the five-missing field
+	 * report): the special-slot gear cell rides at the skins' print (77,60) 22x22 as pure
+	 * decor (no slot is seated — the content-seat count above stays the topology truth),
+	 * and the player-inventory label rides the vanilla key at the vanilla offset (8,72)
+	 * in the title ink — the theme base kept the printed band but no label.
+	 */
+	@Test
+	void theGearSlotCellAndTheInventoryLabelAreComposed() throws Exception {
+		ModularPanel<?> tPanel = GTBasicMachineMUI.buildPanel(shredderHost(), headlessSyncManager());
+
+		IWidget tGear = named(tPanel, "special_slot");
+		assertNotNull(tGear, "the gear-slot cell is composed");
+		assertEquals(77, posOf(tGear, true), "the gear-slot print x (the skins' (77,60))");
+		assertEquals(60, posOf(tGear, false), "the gear-slot print y");
+		// the drawable face: the widget wraps the SLOT_SPECIAL part (the jump entrance's art)
+		brachy.modularui.api.drawable.IDrawable.DrawableWidget tGearWidget =
+				(brachy.modularui.api.drawable.IDrawable.DrawableWidget) tGear;
+		java.lang.reflect.Field tDrawableField = brachy.modularui.api.drawable.IDrawable.DrawableWidget.class.getDeclaredField("drawable");
+		tDrawableField.setAccessible(true);
+		UITexture tGearArt = assertInstanceOf(UITexture.class, tDrawableField.get(tGearWidget),
+				"the gear-slot cell draws a texture");
+		assertEquals(new ResourceLocation("gt6", "textures/gui/parts/slot_special_22x22.png"), tGearArt.location(),
+				"the amazawa special-slot (gear) part");
+		// decor only: no ItemSlot anywhere near the print — the content topology is pinned
+		// by the 13/3-seat tests, this is the no-double-seat guard
+		for (ItemSlot tSeat : itemSeats(tPanel)) {
+			assertFalse(tSeat.getName() != null && tSeat.getName().contains("special"),
+					"no functional special slot is seated (the print is decor)");
+		}
+
+		IWidget tLabel = named(tPanel, "inventory_label");
+		assertNotNull(tLabel, "the inventory label is composed");
+		assertEquals(8, posOf(tLabel, true), "the label x (vanilla titleLabelX)");
+		assertEquals(72, posOf(tLabel, false), "the label y (vanilla imageHeight-94 = 72)");
+		TextWidget<?> tLabelText = (TextWidget<?>) tLabel;
+		assertInstanceOf(net.minecraft.network.chat.contents.TranslatableContents.class, tLabelText.getKey().getContents(),
+				"the label is translatable");
+		assertEquals("container.inventory",
+				((net.minecraft.network.chat.contents.TranslatableContents) tLabelText.getKey().getContents()).getKey(),
+				"the vanilla key (物品栏 in zh_cn — zero new lang rows)");
+		assertEquals(0x404040, tLabelText.getColor().getAsInt(), "the vanilla ink");
 	}
 }

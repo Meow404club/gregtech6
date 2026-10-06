@@ -4,7 +4,7 @@
  * <p>Pins asserted here:</p>
  * <ul>
  *   <li>the manifest ({@code mdk/tools/parts_manifest.json}, product of the canonical
- *       cropper {@code mdk/tools/crop_gui_parts.py}) holds exactly the 12 ledger parts
+ *       cropper {@code mdk/tools/crop_gui_parts.py}) holds exactly the 13 ledger parts
  *       over 6 sha-pinned sources (amazawa pack gregtech domain + its reskinned
  *       minecraft domain only — TFC domain is NOT a permitted source, see
  *       assets/README.md "GUI part crops");</li>
@@ -60,8 +60,8 @@ class GT6GuiPartsDatagenTest {
     private static final Path GENERATED_TREE = Path.of("src", "generated", "resources");
     private static final String PARTS_PREFIX = "assets/gt6/textures/gui/parts";
 
-    /** The task-card pin: 12 ledger parts over 6 sources. */
-    private static final int PINNED_PART_TOTAL = 12;
+    /** The task-card pin: 13 ledger parts over 6 sources (13th = arrow_outline, composed-ui-energy-slot-and-parts). */
+    private static final int PINNED_PART_TOTAL = 13;
     private static final int PINNED_SOURCE_TOTAL = 6;
 
     /** Committed source fixtures (also present, untracked, under tmp/amazawa-census/v105g). */

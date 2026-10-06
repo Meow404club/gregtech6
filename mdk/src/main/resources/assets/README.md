@@ -11049,6 +11049,7 @@ source (stroke columns/rows aligned, no neighbor bleed).
 | arrow_forward_20x18.png | 20x18 | Default.png | 176,0,20,18 | `b13c90cc53b25f6d` |
 | arrow_forward_red_20x18.png | 20x18 | Melter.png | 176,0,20,18 | `e3c357bc0c900485` |
 | arrow_forward_cyan_20x18.png | 20x18 | Freezer.png | 176,0,20,18 | `2ffbca64b99b22e6` |
+| arrow_outline_20x18.png | 20x18 | Default.png | 78,24,20,18 | `181dfcf433a1e0a3` |
 | player_inventory_162x76.png | 162x76 | Default.png | 7,83,162,76 | `5aa68a1be7cec429` |
 | slot_special_22x22.png | 22x22 | Default.png | 77,60,22,22 | `865636acf1c7f6cc` |
 | slot_fluid_18x19.png | 18x19 | Distillery.png | 106,24,18,19 | `5f3e1ff1472f37f1` |
@@ -11062,7 +11063,12 @@ machine truth.)
 Notes: `arrow_forward` is the strip at UV (176,0) — the same geometry the vanilla-Menu
 leg blits (ContainerClientBasicMachine case 0..7, draw pos (78,24), 20x18); the red/
 cyan variants are the same strip in the Melter/Freezer skins (per-machine accent
-colors, opaque panel background). `player_inventory` includes the 4 px inter-block
+colors, opaque panel background). `arrow_outline` (13th part,
+composed-ui-energy-slot-and-parts) is the arrow CELL the skins print at (78,24) —
+the empty-arrow face for the composed surfaces (the machine-band sheets no longer
+carry it once the viewer band retired and the theme base flattened the panel
+interior); its flat (203,204,212) backing composites seamlessly over the plate and
+the panel base. `player_inventory` includes the 4 px inter-block
 gap (plain panel color, composites seamlessly). `slot_special` is amazawa's
 dark-stroke GT special-slot look with the gear icon baked in. `slot_fluid` is the
 distillation fluid-grid cell (droplet baked; 1 px white top/left stroke + 2 px light

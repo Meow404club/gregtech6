@@ -210,20 +210,24 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	}
 
 	/**
-	 * The backdrop first (task 34-viewer-gui-bg, GitHub #34): the two-layer composite
-	 * of upstream NEI_RecipeMap.drawBackground (:629-635) — the grey {@code machines/NEI.png}
-	 * plate, then the per-map machine GUI band OVER it, both anchored so the panel origin
-	 * lands at (0,0); the slots (already folded by the meta's {@code viewer*Pos} exits)
-	 * and the cost text land on the baked-in art. The 6-int blit assumes a 256x256
-	 * texture — both the amazawa redraws and the upstream panels are 256x256 canvases
-	 * (assets/README.md reskin section).
+	 * The composed page (task composed-ui-energy-slot-and-parts, the user ruling 配方页
+	 * 渲染切拼接 UI+删除独立机器 GUI 贴图): the grey {@code machines/NEI.png} plate, then
+	 * the two machine-skin furniture cells as part crops — the progress-arrow cell and
+	 * the special-slot gear cell (the energy jump's art, drawn whether or not THIS map
+	 * carries a port: the gear slot is the skins' universal decor). The per-map machine
+	 * GUI band is RETIRED here — its baked slot frames doubled the code slots'
+	 * (贴图槽+代码槽叠加), so the frames now come only from JEI's own RecipeSlots. The
+	 * part blits use the full {@code blit(location, x, y, w, h, u, v, uW, vH, tW, tH)}
+	 * form — the parts are standalone small PNGs, not 256x256 canvases. The plate is
+	 * drawn at (0,0) via the 6-int form: it IS a 256x256 canvas.
 	 */
 	@Override
 	public void draw(Recipe aRecipe, mezz.jei.api.gui.ingredient.IRecipeSlotsView aRecipeSlotsView,
 			net.minecraft.client.gui.GuiGraphics aGuiGraphics, double aMouseX, double aMouseY) {
-		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
+		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP;
 		aGuiGraphics.blit(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[0], tPlate[1], tPlate[2], tPlate[3]);
-		aGuiGraphics.blit(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[0], tBand[1], tBand[2], tBand[3]);
+		blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.ARROW_OUTLINE, GT6RecipeMapViewerMeta.viewerArrowPos());
+		blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.SLOT_SPECIAL, GT6RecipeMapViewerMeta.viewerGearPos());
 		// NO hand-drawn machine item on the plate's gear spot (task viewer-icon-retire-gu-pin,
 		// the user ruling): EMI renders the workstation list itself (RecipeScreen.java:203-217)
 		// and JEI renders the catalyst column itself (RecipesGui.java:635-636 → RecipeCatalysts,
@@ -238,6 +242,13 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 			aGuiGraphics.drawString(Minecraft.getInstance().font, tLine, GT6RecipeMapViewerMeta.TEXT_X, tY, 0xFF000000);
 			tY += GT6RecipeMapViewerMeta.TEXT_LINE_HEIGHT;
 		}
+	}
+
+	/** One furniture part at its folded viewer position — the standalone-PNG blit (own texture dims declared). */
+	private static void blitPart(net.minecraft.client.gui.GuiGraphics aGuiGraphics,
+			gregtech6.gui.machines.GT6GuiParts.GuiPart aPart, int[] aPos) {
+		aGuiGraphics.blit(aPart.texture(), aPos[0], aPos[1], aPart.width(), aPart.height(),
+				0.0F, 0.0F, aPart.width(), aPart.height(), aPart.width(), aPart.height());
 	}
 
 	private static IRecipeSlotRichTooltipCallback staticTooltip(net.minecraft.network.chat.Component aLine) {

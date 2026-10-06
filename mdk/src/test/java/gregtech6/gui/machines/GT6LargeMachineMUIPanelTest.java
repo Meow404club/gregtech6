@@ -158,11 +158,19 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 			String tGuiPath = tMap.mGUIPath;
 			assertTrue(tGuiPath.indexOf(':') > 0, tRow.path() + ": namespaced mGUIPath");
 
-			// the title — the row map's local name (the upstream :44 foreground arm)
+			// the title — the row map's TRANSLATABLE title (the shared viewer key formula,
+			// composed-ui-energy-slot-and-parts: zh rows ship for every visible map; the
+			// centered full-width row rides the same builder, position pinned in the
+			// basic-machine panel test)
 			IWidget tTitle = named(tPanel, "title");
 			assertNotNull(tTitle, tRow.path() + ": the title widget");
-			assertEquals(tMap.mNameLocal, ((brachy.modularui.widgets.TextWidget<?>) tTitle).getKey().getString(),
-					tRow.path() + ": the title is the row map's local name");
+			assertInstanceOf(net.minecraft.network.chat.contents.TranslatableContents.class,
+					((brachy.modularui.widgets.TextWidget<?>) tTitle).getKey().getContents(),
+					tRow.path() + ": the title is translatable (the localization face)");
+			assertEquals(gregtech6.jei.GT6RecipeMapViewerMeta.titleKey(tMap),
+					((net.minecraft.network.chat.contents.TranslatableContents) ((brachy.modularui.widgets.TextWidget<?>) tTitle)
+							.getKey().getContents()).getKey(),
+					tRow.path() + ": the title rides the shared viewer title-key formula");
 
 			// the seat topology — the map's input truth + the map's outputs + the 36 player seats
 			List<IWidget> tAll = allWidgets(tPanel);

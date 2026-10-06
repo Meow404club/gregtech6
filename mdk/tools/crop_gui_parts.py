@@ -59,6 +59,7 @@ CROPS = [
     ("arrow_forward_20x18.png",      "Default.png",     176,   0,  20,  18),  # progress arrow strip (upstream UV 176,0)
     ("arrow_forward_red_20x18.png",  "Melter.png",      176,   0,  20,  18),  # progress arrow, red machine accent
     ("arrow_forward_cyan_20x18.png", "Freezer.png",     176,   0,  20,  18),  # progress arrow, cyan machine accent
+    ("arrow_outline_20x18.png",      "Default.png",      78,  24,  20,  18),  # progress arrow cell (the empty-arrow face, flat panel bg)
     ("player_inventory_162x76.png",  "Default.png",       7,  83, 162,  76),  # 3x9 + hotbar block (4px gap included)
     ("slot_special_22x22.png",       "Default.png",      77,  60,  22,  22),  # dark-stroke special slot (gear baked)
     ("slot_fluid_18x19.png",         "Distillery.png",  106,  24,  18,  19),  # fluid display cell (droplet baked)

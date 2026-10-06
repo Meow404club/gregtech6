@@ -67,6 +67,16 @@ public final class GT6GuiParts {
     /** Forward progress arrow, cyan machine accent (Freezer skin strip). */
     public static final GuiPart ARROW_FORWARD_CYAN = new GuiPart("arrow_forward_cyan_20x18.png", 20, 18, 0, 0, 0, 0);
 
+    /**
+     * The progress-arrow CELL — the empty-arrow face the machine skins print at (78,24)
+     * on flat panel background (composed-ui-energy-slot-and-parts: with the machine-band
+     * sheets retired from the composed surfaces, the cell rides the {@link
+     * brachy.modularui.drawable.progress.ProgressDrawable} emptyTexture face in-game and
+     * is blit verbatim on the composed viewer pages; the flat (203,204,212) backing
+     * composites seamlessly over both the plate and the theme panel base).
+     */
+    public static final GuiPart ARROW_OUTLINE = new GuiPart("arrow_outline_20x18.png", 20, 18, 0, 0, 0, 0);
+
     /** Player inventory block: 3x9 rows + hotbar (4 px row gap included, gap pixels are plain panel color). */
     public static final GuiPart PLAYER_INVENTORY = new GuiPart("player_inventory_162x76.png", 162, 76, 0, 0, 0, 0);
 
@@ -74,7 +84,7 @@ public final class GT6GuiParts {
     public static final List<GuiPart> ALL = List.of(
         PANEL_BACKGROUND, SLOT_FRAME, SLOT_FRAME_GROUP_3X2, SLOT_FRAME_GROUP_2X2,
         SLOT_SPECIAL, SLOT_FLUID, BUTTON_FLAT, BUTTON_FLAT_HOVER,
-        ARROW_FORWARD, ARROW_FORWARD_RED, ARROW_FORWARD_CYAN, PLAYER_INVENTORY);
+        ARROW_FORWARD, ARROW_FORWARD_RED, ARROW_FORWARD_CYAN, ARROW_OUTLINE, PLAYER_INVENTORY);
 
     /**
      * The theme panel base (task r11-gui-clean-base-theme): a SELF-DERIVED sheet —
