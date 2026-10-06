@@ -144,6 +144,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
                 new SubProviderEntry(GT6WoodenPanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g3-plank-panels — the 28 wooden panel self-drops
                 new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
+                new SubProviderEntry(GT6PanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g1-panels-dyed — the 48 panel self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -213,6 +214,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
                 new SubProviderEntry(GT6WoodenPanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g3-plank-panels — the 28 wooden panel self-drops
                 new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
+                new SubProviderEntry(GT6PanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g1-panels-dyed — the 48 panel self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -2110,6 +2112,48 @@ public final class GT6LootTables extends LootTableProvider {
         for (var tHandle : gregtech6.registry.GT6ConcreteBlocks.FULL_BLOCKS) rBlocks.add(tHandle.get());
         for (var tHandle : gregtech6.registry.GT6ConcreteBlocks.SLAB_BLOCKS) rBlocks.add(tHandle.get());
         return rBlocks;
+    }
+
+    /**
+     * The panel-family block list (task material-mc-g1-panels-dyed): the 48 dyed Cover
+     * Panel blocks, registration order.
+     */
+    public static List<Block> panelLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>(48);
+        for (var tHandle : gregtech6.registry.GT6Panels.BLOCKS) rBlocks.add(tHandle.get());
+        return rBlocks;
+    }
+
+    /**
+     * The panel-family loot provider (task material-mc-g1-panels-dyed) — all three
+     * families are plain full blocks: self-drop (the GT6ConcreteBlockLoot full-block arm;
+     * the stone family's same reading). No slab arm, no silk/fortune arms (no override
+     * upstream), {@code requires_correct_tool_for_drops} NOT set (the card red line).
+     */
+    public static final class GT6PanelBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6PanelBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6PanelBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return panelLootBlocks(); // narrowed to exactly the 48 blocks this provider owns
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : panelLootBlocks()) {
+                dropSelf(tBlock);
+            }
+        }
     }
 
     /**
