@@ -243,26 +243,12 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 6553;
-	// +185 task books-text-family (measured 6195 = 6010 + 200 + 1 − 16): +200 the translated
-	// book-page faces (the tsv book band auto rows, written.book.<Mapping>.page.<i> — the
-	// UT.java:610 langfile mechanism re-hosted; the CUT-book auto rows stay inert), +1 the
-	// item.gt6.manual_portal_tf title hand row, −16 the wire_gt01-16 tab rows retired with
-	// the wire-gt prefix items (they were never in the committed face — the walk was removed
-	// by wiregt-prefix-item-retirement while the py hand layer kept them; the regen surfaced
-	// them as parity orphans and they left the hand layer).
-	// +530 task books-text-family (measured 6540 = 6010 + 529 + 1): +529 the book-page faces
-	// (written.book.<Mapping>.page.<i>, the UT.java:610 langfile mechanism re-hosted — every
-	// kept page of the 16 books rides both locales, the 200 dump translations + the 329
-	// untranslated pages as the en original, the addBackfillUnits zero-debt form), +1 the
-	// item.gt6.manual_portal_tf title hand row. (The regen also retired the 16 wire_gt01-16
-	// tab hand rows — never in the committed face, the walk was removed by
-	// wiregt-prefix-item-retirement; and backfilled the 10 panel/viewer TSV-only rows,
-	// zh-count neutral.)
-	// (decisions.2026-10-04-ratchet-comment-bounded): keep the latest note only, the note
-	// history lives in `git log -L` on this line.
-	// (prior note: +13 task material-mc-b-storage-mass-shelf — the metal shelf/crate
-	// compose templates, measured 5859; history in `git log -L`.)
+	private static final int ZH_KEY_FLOOR = 6554;
+	// +1 task air-fluid-registration — the fluid.gt6.air display-name pair (en "Air" the
+	// createGas mNameLocal face, zh 空气 the dump face tmp/gregtech.lang:39), measured 6554
+	// = the 6553 union + 1 on the rebase.
+	// (prior note: +185/+530 task books-text-family — the book-page faces and the title hand
+	// row, measured 6195/6540; history in `git log -L`.)
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
 	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;

@@ -197,9 +197,10 @@ public final class GT6RecipesCanner {
 	/**
 	 * The air-fluid seam: the upstream FL id → the port source fluid (the
 	 * {@code FL.make(tAir, 16000)} legs of :114-116 and the FL.Air.*.make(16000) legs of
-	 * :118-120; the live default is the {@link #liveAirFluid} walk — plain {@code air} is
-	 * port-ABSENT so its two rows stay pour-face-forever dormant, netherair/enderair
-	 * resolve), fixtures injected offline.
+	 * :118-120; the live default is the {@link #liveAirFluid} walk — plain {@code air}
+	 * resolves since task air-fluid-registration landed the gt6:air CHEMICAL_SPECS row,
+	 * so all three fill/release pairs pour on the live registry; netherair/enderair
+	 * resolved from the start), fixtures injected offline.
 	 */
 	public static Function<String, Fluid> sAirFluidResolver = GT6RecipesCanner::liveAirFluid;
 

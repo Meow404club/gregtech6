@@ -154,6 +154,23 @@ import gregtech6.registry.GT6ModDrivers;
  * fluid leg (MultiItemTechnological.java:396-403 now pours its full eight-row walk in
  * vivo). KJS surface: REGISTRATION face (the one Spec row); NO KubeJS-specific seam.
  *
+ * <p>The plain-air row (task air-fluid-registration) joins {@link #CHEMICAL_SPECS} as the
+ * next gas-closure walk row: MT.Air is a {@code gas} factory material carrying the GASES
+ * tag (MT.java:1027, RGB 169,208,245), so the upstream Loader_Fluids.java:660 tag loop
+ * created its {@code FL.createGas} fluid (FL.java:1080 — the bare
+ * {@code mNameInternal.toLowerCase()} id "air", the zh dump face {@code S:fluid.air=空气},
+ * tmp/gregtech.lang:39). The port row rides the same walk semantics: 300 K (the :1080 rule
+ * over {@code heat(100, 200)} — OreDictMaterial.java:927 plasma = boiling × 100 = 20000,
+ * {@code min(300, plasma − 1)}), density 0 (the :1128-1136 g/cm³ EQUALS-air branch —
+ * MT.Air rides {@code WEIGHT_AIR_G_PER_CUBIC_CENTIMETER} 0.0012, CS.java:859 — plus the
+ * explicit {@code FL.Air.fluid().setDensity(0)} literal, Loader_Fluids.java:666), the
+ * :1105 gas carrier, the material RGBa tint. It wakes the Canner plain-air fill/release
+ * pair (GT6RecipesCanner AIR_FILL_WALK/AIR_RELEASE — dormant since the port, the
+ * sAirFluidResolver javadoc) and the crucible alloying walk's Air fluid face
+ * (GT6RecipeMapCrucible sAirDisplayFluid, task crucible-alloying-flux-rows — post-merge
+ * the live arm answers {@code gt6:air} and the Air component renders its fluid slot).
+ * KJS surface: REGISTRATION face (the one Spec row); NO KubeJS-specific seam.
+ *
  * <p><b>The HOT family, the closure carriers and the lubricant</b> (task w4-hot-lube)
  * ride the SAME {@link ChemicalFluidSpec} record and the SAME registration body — the
  * FIFTH-SPEC-SECTION append AFTER the chemical table (the merge-order seam: card ① is the
@@ -2396,6 +2413,7 @@ public final class GTFluids {
 		new ChemicalFluidSpec("xenon"           , "Xenon"            ,   300,      5,  200, 0xFF00FFFF, true ,  0), // MT.Xe 0,255,255 (MT.java:443); 1000×0.005887
 		new ChemicalFluidSpec("radon"           , "Radon"            ,   300,      9,  200, 0xFFFF00FF, true ,  0), // MT.Rn 255,0,255 (MT.java:476); 1000×0.00973
 		new ChemicalFluidSpec("heliumneon"      , "Helium-Neon"      ,   300,    -92,  200, 0xFF8000FF, true ,  0), // MT.HeNe (MT.java:1024, task debt-hene-fluid); molecule g 0.0001785+0.0008999 = 0.0010784 → −0.1/g = −92.73 → −92
+		new ChemicalFluidSpec("air"             , "Air"              ,   300,      0,  200, 0xFFA9D0F5, true ,  0), // MT.Air 169,208,245 (MT.java:1027, task air-fluid-registration); the :1080 rule over heat(100,200) → plasma 20000; density 0 = the g==WEIGHT_AIR branch (:1134) + the Loader_Fluids.java:666 literal
 		// liquid oxygen (:68)
 		new ChemicalFluidSpec("liquidoxygen"    , "Liquid Oxygen"    ,    85,      1, 1000, 0xFF0064C8, false,  0), // the :1130 formula over O's 0.001429 g/cm³; tint = the O RGBa
 		// the isotope batch (task qu-b-materials) — the Loader_Fluids.java:658-662
@@ -2670,6 +2688,7 @@ public final class GTFluids {
 			chemicalFluid("helium"), chemicalFluid("neon"), chemicalFluid("argon"),
 			chemicalFluid("krypton"), chemicalFluid("xenon"), chemicalFluid("radon"),
 			chemicalFluid("heliumneon"), // task debt-hene-fluid — the :660 createGas walk row the p29 batch left pooled
+			chemicalFluid("air"), // task air-fluid-registration — the MT.Air GASES-flag walk row, wakes the Canner plain-air pair + the crucible Air display face
 			chemicalFluid("liquidoxygen"),
 			chemicalFluid("deuterium"), chemicalFluid("tritium"), chemicalFluid("helium3"),
 			chemicalFluid("lithium6_molten"), chemicalFluid("beryllium7_molten"), chemicalFluid("beryllium8_molten"),
