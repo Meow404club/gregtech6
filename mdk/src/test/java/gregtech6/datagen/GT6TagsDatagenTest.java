@@ -85,7 +85,7 @@ class GT6TagsDatagenTest {
     // the sixteen hu-tu rows joined at task w2-hu-tu-piggyback
     // the +9 burner/plantalyzer machine carriers join at task machines-burner-plantalyzer (the machines bucket 247 -> 256)
     // the +4 plate-gem block carriers join at task machines-bumblelyzer-crucible (the bouleGt force-table cascade: blockPlateGem over Si/Ge/RedstoneAlloy/NikolineAlloy) and the +9 p34 machine rows ride the whole-class machine band (bumblelyzer x5 + crystallisationcrucible x4)
-    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2 + 278 + 119 + 64 - 273 + 16 + 60 + 60 + 1; // +1 the Universal Plant Pot (task block-family-32xxx-port, the :2229 aUtilStone column — the pickaxe-band join) // the +14 eu-special (task w2-eu-special), +30 exotic (task w2-exotic-energy), +25 eu-core (task w2-eu-core-5tier), +16 hu-tu (task w2-hu-tu-piggyback), +5 heat-smelter (task w3-heat-smelter) and +19 eu-bridge (task w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung) +278 the fluid-pipe-matrix tree landed on main (c97bdde79) without this pin moving — the main checkout was RED on this pin (the committed 4136 vs the 3858 pin; 280 pipe rows minus the 2 W1 wood rows already counted = +278 net) — this bump carries the reconciliation — and +119 act-matrix rows (the 120-block crafting table matrix minus the one counted single-variant row, 4136 -> 4255) and +64 concrete blocks (task concrete-blocks-register: the 2 families x 16 colours x full+slab — upstream TOOL_pickaxe over the whole BlockMetaType family incl. slabs, BlockMetaType.java:166; 4255 -> 4319) and −273 +16 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046 — while the 16 long-distance WIRES join the cutter expedient (upstream BlockLongDistWire.java:56-57 TOOL_cutter lvl3, the port cutter has no mining face) 4046 -> 4062) and −273 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046) and +60 (task material-mc-a-storage-chests, the review-seat rebase seam: the 60 PLAIN metal chests join the pickaxe band — upstream block family aMetal = TOOL_pickaxe, Loader_MultiTileEntities.java:132 vs the :98 aMetal tool column, the brief's 金属=wrench corrected by the loader line; 4062 -> 4122) and +60 (task material-mc-b-storage-mass-shelf, the review-seat band-split seam: the 60 METAL BOTTLECRATE rows join the pickaxe band — the upstream row rides aUtilMetal = TOOL_pickaxe, Loader :144 vs the :107 aUtilMetal carrier column, NOT the aMachine wrench face its metal bookshelf sibling :143 rides; the merged walk had put all 128 metal storage rows on wrench behind a stale committed tag product; 4122 -> 4182)
+    private static final int PINNED_PICKAXE_TOTAL = 272 + 256 + 1 + 2681 + 629 + 2 + 15 + 2 + 278 + 119 + 64 - 273 + 16 + 60 + 60 + 1 + 37 - 1 + 399; // +1 the Universal Plant Pot (task block-family-32xxx-port, the :2229 aUtilStone column — the pickaxe-band join) // the +14 eu-special (task w2-eu-special), +30 exotic (task w2-exotic-energy), +25 eu-core (task w2-eu-core-5tier), +16 hu-tu (task w2-hu-tu-piggyback), +5 heat-smelter (task w3-heat-smelter) and +19 eu-bridge (task w4-eu-bridge: the 15 converter rows + the 4 Roasting rows) and +5 small Massfab (task massfab) machine blocks auto-ride the whole-class band (120 + 14 + 30 + 25 + 16 + 5 + 19 + 5) and +4 QU machines (task qu-scanner-replicator: the molecular_scanner_t3 single + the replicator three-rung) +278 the fluid-pipe-matrix tree landed on main (c97bdde79) without this pin moving — the main checkout was RED on this pin (the committed 4136 vs the 3858 pin; 280 pipe rows minus the 2 W1 wood rows already counted = +278 net) — this bump carries the reconciliation — and +119 act-matrix rows (the 120-block crafting table matrix minus the one counted single-variant row, 4136 -> 4255) and +64 concrete blocks (task concrete-blocks-register: the 2 families x 16 colours x full+slab — upstream TOOL_pickaxe over the whole BlockMetaType family incl. slabs, BlockMetaType.java:166; 4255 -> 4319) and −273 +16 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046 — while the 16 long-distance WIRES join the cutter expedient (upstream BlockLongDistWire.java:56-57 TOOL_cutter lvl3, the port cutter has no mining face) 4046 -> 4062) and −273 (task harvest-bands-wrench-machines, the mislabel fix: the 245 metal fluid pipes join gt6:mineable/wrench and the 28 wood ones join mineable/axe — upstream splits the family by material, wood aWooden axe Loader :1846-1849 / rubber aUtilWool shears :1850 / metals aMachine wrench :1851-1860; only the 7 rubber rows keep the pickaxe seat, the shears defer 4319 -> 4046) and +60 (task material-mc-a-storage-chests, the review-seat rebase seam: the 60 PLAIN metal chests join the pickaxe band — upstream block family aMetal = TOOL_pickaxe, Loader_MultiTileEntities.java:132 vs the :98 aMetal tool column, the brief's 金属=wrench corrected by the loader line; 4062 -> 4122) and +60 (task material-mc-b-storage-mass-shelf, the review-seat band-split seam: the 60 METAL BOTTLECRATE rows join the pickaxe band — the upstream row rides aUtilMetal = TOOL_pickaxe, Loader :144 vs the :107 aUtilMetal carrier column, NOT the aMachine wrench face its metal bookshelf sibling :143 rides; the merged walk had put all 128 metal storage rows on wrench behind a stale committed tag product; 4122 -> 4182) and +37 (task faucet-material-rows: the 37 metal faucet rungs Loader :361-388 landed after this card base ride the same FAUCET_BLOCKS_BY_PATH walk, the rebase union seam; 4581 -> 4618) and −1 +399 (task harvest-bands-card2-nonwrench: the non-wrench pickaxe domains land — 32 molds + 2 faucets (aUtilStone :347-359/:300/:305), 4 crucibles (aStone :251/:256 + aMetal :265/:267, the card-1 census erratum: upstream has NO wrench crucible), 21 sensors (aUtilMetal :1979-1999), grindstone+sifting table (:2226-2227), 5 mortars (aUtilStone :2179-2183), 3 kitchen rows (steel pot :2175/mixing bowl :2177/juicer :2184), coke oven+bricks (aStone :1138/:1193), 31 metal cells (aUtilMetal :1779-1809), cup+jug+measuring pot (aUtilStone :2094-2096), 4 gas cylinders (aUtilMetal :2101-2104), 10 taps/funnels (ceramic+4-metal, :2108-2120), 5 placed piles (:2034-2040), 2 mini portals (aStone :2003-2004), hand crank (:2106 aUtilMetal) and the 272 stone slabs (BlockMetaType.java:166); while the plastic canister LEAVES the band — upstream :2150 rides aUtilWood = axe, the old seat was the GTCEu BlockTagLoader precedent at this card own base 4062 -> 4460; the rebase recarries the delta onto 4182)
 
     /** The 16 tier-ladder machine ids of the first machines card + the oven ladder + the ACT single-variant row (the dryer/distillery/canner rows ride the total pin). */
     private static final List<String> PINNED_LADDER_MACHINES = List.of(
@@ -170,7 +170,8 @@ class GT6TagsDatagenTest {
         // exact product shape: no member outside the census families
         assertEquals(PINNED_PICKAXE_TOTAL, tValues.size(),
                 "272 stones + 256 machines + 1 rod + 2681 prefix blocks + 629 wires + 2 pipes + 15 barrels + 2 anvils + 60 plain chests"
-                + " (the +14 eu-special machines of task w2-eu-special, the +30 exotic machines of task w2-exotic-energy, the +25 eu-core machines of task w2-eu-core-5tier the +16 hu-tu machines of task w2-hu-tu-piggyback and the +5 heat-smelter machines of task w3-heat-smelter and the +5 small Massfab machines of task massfab joined the machine walk; the +60 chests of task material-mc-a-storage-chests ride the aMetal pickaxe family, Loader :132)");
+                + " (the +14 eu-special machines of task w2-eu-special, the +30 exotic machines of task w2-exotic-energy, the +25 eu-core machines of task w2-eu-core-5tier the +16 hu-tu machines of task w2-hu-tu-piggyback and the +5 heat-smelter machines of task w3-heat-smelter and the +5 small Massfab machines of task massfab joined the machine walk; the +60 chests of task material-mc-a-storage-chests ride the aMetal pickaxe family, Loader :132)"
+                + " + 399 non-wrench extension rows (task harvest-bands-card2-nonwrench, the pin comment carries the family table) - the 1 plastic canister that moved to the axe band + the 37 post-base faucet rungs (task faucet-material-rows, the same FAUCET_BLOCKS_BY_PATH walk)");
         assertTrue(tValues.stream().allMatch(v -> v.startsWith("gt6:")), "mod-face-only members");
     }
 
@@ -187,7 +188,8 @@ class GT6TagsDatagenTest {
 
     /**
      * The exclusions: blockDust belongs to the shovel band (rolling batch 1), the wood
-     * barrel rides axe — while the plastic/metal barrel closure joins pickaxe.
+     * barrel AND (since task harvest-bands-card2-nonwrench) the plastic canister ride
+     * axe — the upstream :2150 aUtilWood column — while the metal barrels join pickaxe.
      */
     @Test
     void pickaxeBandExcludesTheDustPrefixAndTheWoodBarrel() throws Exception {
@@ -195,15 +197,23 @@ class GT6TagsDatagenTest {
         assertTrue(tValues.stream().noneMatch(v -> v.startsWith("gt6:block_dust_")),
                 "blockDust is the shovel band, not the pickaxe band");
         assertTrue(!tValues.contains("gt6:barrel_wood"), "the wood barrel belongs to the axe band");
+        assertTrue(!tValues.contains("gt6:barrel_plastic"), "the plastic canister belongs to the axe band (:2150 aUtilWood)");
     }
 
     /**
      * The axe band: the wood fluid barrel + the WOOD fluid-pipe subdomain (task
      * harvest-bands-wrench-machines, the mislabel fix — the four wooden materials
      * wood/wood_treated/iron_wood/plastic ride the upstream aWooden column, Loader
-     * :1846-1849; walk-computed from the same family filter the provider uses) + the 9
-     * GT6 tree logs (task w6-t1-trees-nine — the addTreeBand walk order appended after
-     * the barrel; the census material mapping keeps wood out of pickaxe) + the 4
+     * :1846-1849; walk-computed from the same family filter the provider uses) + the 47
+     * aWooden/aUtilWood rows of task harvest-bands-card2-nonwrench (the wood wall :1139,
+     * the wood tank valve :1195, the 10+10 bookshelf/bottlecrate plank ladders :181-184,
+     * the 9 capsule-cell wood hosts :1770-1778, the plastic tap/funnel pair :2109/:2116,
+     * lantern+stick :2031/:2035-2036, the wooden bathing pot :2173-2174, the bumbliary
+     * pair :2222-2223, the 4 wood_treated axles :1663-1666 + gearbox/rotation
+     * transformer :1668-1669 + the 2 ironwood steam engines :591/:606, and the plastic
+     * canister :2150 aUtilWood — the mislabel fix out of pickaxe; walk order preserved)
+     * + the 9 GT6 tree logs (task w6-t1-trees-nine — the addTreeBand walk order appended
+     * after the barrel; the census material mapping keeps wood out of pickaxe) + the 4
      * fallen-log woods (task w6-t2-surface-blocks, the addSurfacePlantBand tail-append)
      * + the 8 wood beams (task beam-blocks-register, the addBeamBand tail-append — the
      * upstream harvest-tool override BlockBaseBeam.java:54 {@code getHarvestTool =
@@ -246,6 +256,37 @@ class GT6TagsDatagenTest {
             }
         }
         assertEquals(60, tReinforcedChests, "the 60 reinforced chests (Loader :133 aWooden)");
+        // task harvest-bands-card2-nonwrench — the 47 aWooden/aUtilWood rows, walk order
+        tBand.add("gt6:wood_wall"); // :1139 aWooden — the row the wrench walk skips
+        tBand.add("gt6:tank_wood"); // :1195 aWooden, the only flammable() tanks row
+        // the :181-184 plank ladders — WOOD rows only (material == null): the METAL rows
+        // of the same kinds are mc-B's seats (bottlecrate_metal pickaxe / bookshelf_metal
+        // wrench) and would double-band here — the rebase union refinement
+        for (var tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+            if (tRow.material() == null && (tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+                    || tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)) {
+                tBand.add("gt6:" + tRow.path()); // the :181-184 plank ladders (the PLANKS walk order)
+            }
+        }
+        for (var tRow : gregtech6.registry.GT6Cells.ROWS) {
+            if (tRow.woodHost() && tRow.registers()) tBand.add("gt6:" + tRow.path()); // the :1770-1778 column
+        }
+        tBand.add("gt6:tap_plastic"); // :2109 aUtilWood
+        tBand.add("gt6:funnel_plastic"); // :2116 aUtilWood
+        tBand.add("gt6:greg_o_lantern"); // :2031
+        tBand.add("gt6:placed_stick"); // :2035-2036
+        tBand.add("gt6:bathing_pot_wood"); // :2173-2174
+        tBand.add("gt6:bumbliary"); // :2222 aWooden
+        tBand.add("gt6:bumbliary_advanced"); // :2223 aWooden
+        tBand.add("gt6:axle_wood_treated_small"); // :1663-1666, the 4 wood_treated axles
+        tBand.add("gt6:axle_wood_treated_medium");
+        tBand.add("gt6:axle_wood_treated_large");
+        tBand.add("gt6:axle_wood_treated_huge");
+        tBand.add("gt6:gearbox"); // :1669 aWooden
+        tBand.add("gt6:transformer_rotation"); // :1668 aWooden
+        tBand.add("gt6:steam_engine_iron_wood"); // :591 aWooden
+        tBand.add("gt6:strong_steam_engine_iron_wood"); // :606 aWooden
+        tBand.add("gt6:barrel_plastic"); // :2150 aUtilWood — the mislabel fix out of pickaxe
         tBand.addAll(List.of(
                 "gt6:rubber_log", "gt6:maple_log", "gt6:willow_log", "gt6:blue_mahoe_log",
                 "gt6:hazel_log", "gt6:cinnamon_log", "gt6:coconut_log", "gt6:rainbowood_log",
@@ -371,21 +412,24 @@ class GT6TagsDatagenTest {
     }
 
     /**
-     * The barrel closure + the pipes, rolling batch 1: the plastic/metal/logistics barrels
-     * and the twelve high-tier drums ride pickaxe (the census axe/pickaxe/pickaxe material
-     * mapping). The pipe seat is the harvest-bands-wrench-machines MISLABEL FIX: upstream
-     * only the rubber subdomain is aUtilWool=shears (:1850 — 1.20.1 has no mineable/shears,
-     * the card-4 ruling pool keeps it here), the wood rows are aWooden=axe (:1846-1849,
-     * moved to the axe band) and the metals aMachine=wrench (:1851-1860, moved to
-     * gt6:mineable/wrench — the old whole-register pickaxe expedient is retired).
+     * The barrel closure + the pipes, rolling batch 1: the metal/logistics barrels
+     * and the twelve high-tier drums ride pickaxe — REVISITED by task
+     * harvest-bands-card2-nonwrench: the plastic canister LEFT the band (upstream :2150
+     * rides aUtilWood = axe, the old seat was the GTCEu BlockTagLoader precedent), so the
+     * standalone rows are 2, not 3. The pipe seat is the harvest-bands-wrench-machines
+     * MISLABEL FIX: upstream only the rubber subdomain is aUtilWool=shears (:1850 — 1.20.1
+     * has no mineable/shears, the card-4 ruling pool keeps it here), the wood rows are
+     * aWooden=axe (:1846-1849, moved to the axe band) and the metals aMachine=wrench
+     * (:1851-1860, moved to gt6:mineable/wrench — the old whole-register pickaxe
+     * expedient is retired).
      */
     @Test
     void pickaxeBandCoversTheBarrelClosureAndThePipes() throws Exception {
         List<String> tValues = tagValues("minecraft/tags/blocks/mineable/pickaxe.json");
         Set<String> tMembers = Set.copyOf(tValues);
-        List<String> tBarrels = new ArrayList<>(List.of("barrel_plastic", "barrel_metal", "barrel_logistics"));
+        List<String> tBarrels = new ArrayList<>(List.of("barrel_metal", "barrel_logistics"));
         for (GTBarrels.MetalDrumRow tRow : GTBarrels.HIGH_TIER_METAL_DRUMS) tBarrels.add(tRow.path());
-        assertEquals(15, tBarrels.size(), "3 standalone rows + 12 high-tier drums");
+        assertEquals(14, tBarrels.size(), "2 standalone rows + 12 high-tier drums (the plastic canister moved to axe, :2150 aUtilWood)");
         for (String tPath : tBarrels) {
             assertTrue(tMembers.contains("gt6:" + tPath), "barrel must ride the pickaxe band: " + tPath);
         }
@@ -399,6 +443,108 @@ class GT6TagsDatagenTest {
         // deviation until the cutter-face card)
         assertTrue(tMembers.contains("gt6:long_dist_wire_0"), "the long-distance wires keep the cutter expedient");
         assertTrue(!tMembers.contains("gt6:long_dist_pipe_0"), "the long-distance pipes are aMachine — the wrench face, not pickaxe");
+    }
+
+    /**
+     * The non-wrench band extension, family-by-family (task harvest-bands-card2-nonwrench —
+     * the census state research.harvest-tool-census landed; every count is a live row-table
+     * walk, every javadoc anchor the upstream Loader line). Pickaxe families:
+     * molds 32 + faucets 2 (aUtilStone :347-359/:300/:305), crucibles 4 (aStone
+     * :251/:256 + aMetal :265/:267 — the card-1 erratum: ZERO wrench crucibles upstream),
+     * sensors 21 (aUtilMetal :1979-1999), grindstone + sifting table (:2226-2227), mortars
+     * 5 (aUtilStone :2179-2183), kitchen stone/metal trio (:2175/:2177/:2184), coke oven +
+     * bricks (aStone :1138/:1193), metal cells 31 (aUtilMetal :1779-1809), cup/jug/
+     * measuring pot (:2094-2096 aUtilStone), gas cylinders 4 (:2101-2104 aUtilMetal),
+     * taps/funnels 10 (ceramic+metal :2108-2120), placed piles 5 (:2034-2040), mini
+     * portals 2 (:2003-2004 aStone), hand crank (:2106 aUtilMetal), stone slabs 272
+     * (BlockMetaType.java:166). Axe families are pinned walk-exact in
+     * {@link #axeBandIsExactlyTheWoodBarrelAndTheTreeLogs}. STILL OUT (the declared
+     * non-faces): the sandwich + resin bag (aUtilWool shears — no 1.20.1 tag), the bumble
+     * hive (aHive scoop :2041), the crop sticks (instant-break) and the metal kinetics
+     * (aMachine — the wrench-tail card's domain, still zero-banded here).
+     */
+    @Test
+    void nonWrenchBandExtensionFamiliesRideTheirBands() throws Exception {
+        Set<String> tPickaxe = Set.copyOf(tagValues("minecraft/tags/blocks/mineable/pickaxe.json"));
+        Set<String> tAxe = Set.copyOf(tagValues("minecraft/tags/blocks/mineable/axe.json"));
+
+        int tMolds = 0;
+        for (String tPath : gregtech6.registry.GT6Molds.BLOCKS_BY_PATH.keySet()) {
+            assertTrue(tPickaxe.contains("gt6:" + tPath), "mold must ride the pickaxe band: " + tPath);
+            tMolds++;
+        }
+        assertEquals(32, tMolds, "the stone + ceramic blank + 30 pre-carved ceramic molds (Loader :347-359 + :391-420)");
+        // the rebase union seam: the map grew 2 -> 39 after this card base — the 37 metal
+        // faucet rungs (:361-388) landed with task faucet-material-rows ride the same walk
+        assertEquals(39, gregtech6.registry.GT6Molds.FAUCET_BLOCKS_BY_PATH.size(), "the stone + ceramic faucets (:300/:305 aUtilStone) + the 37 metal rungs (:361-388, task faucet-material-rows)");
+        for (String tPath : gregtech6.registry.GT6Molds.FAUCET_BLOCKS_BY_PATH.keySet()) {
+            assertTrue(tPickaxe.contains("gt6:" + tPath), "faucet must ride the pickaxe band: " + tPath);
+        }
+        assertEquals(4, gregtech6.registry.GT6Crucibles.BLOCKS_BY_PATH.size(), "the 4 smeltery rungs (stone/ceramic aStone, bronze/steel aMetal — ALL pickaxe)");
+        for (String tPath : gregtech6.registry.GT6Crucibles.BLOCKS_BY_PATH.keySet()) {
+            assertTrue(tPickaxe.contains("gt6:" + tPath) && !tAxe.contains("gt6:" + tPath),
+                    "crucible must ride pickaxe and NEVER the axe band: " + tPath);
+        }
+        assertEquals(21, gregtech6.registry.GT6Sensors.BLOCKS_BY_PATH.size(), "the 21 sensors (:1979-1999 aUtilMetal)");
+        for (String tPath : gregtech6.registry.GT6Sensors.BLOCKS_BY_PATH.keySet()) {
+            assertTrue(tPickaxe.contains("gt6:" + tPath), "sensor must ride the pickaxe band: " + tPath);
+        }
+        assertTrue(tPickaxe.contains("gt6:grindstone") && tPickaxe.contains("gt6:sifting_table"),
+                "the grindstone (:2226) + sifting table (:2227) singles ride pickaxe");
+        assertEquals(5, gregtech6.registry.GT6Mortars.BLOCKS_BY_PATH.size(), "the 5 mortars (:2179-2183 aUtilStone)");
+        for (String tPath : gregtech6.registry.GT6Mortars.BLOCKS_BY_PATH.keySet()) {
+            assertTrue(tPickaxe.contains("gt6:" + tPath), "mortar must ride the pickaxe band: " + tPath);
+        }
+        assertTrue(tPickaxe.contains("gt6:bathing_pot_steel") && tPickaxe.contains("gt6:mixing_bowl") && tPickaxe.contains("gt6:juicer"),
+                "the kitchen stone/metal trio (:2175/:2177/:2184) rides pickaxe");
+        assertTrue(tPickaxe.contains("gt6:multiblock_coke_oven") && tPickaxe.contains("gt6:multiblock_coke_oven_bricks"),
+                "the coke oven + bricks (:1138/:1193 aStone) ride pickaxe");
+        int tMetalCells = 0, tWoodCells = 0;
+        for (var tRow : gregtech6.registry.GT6Cells.ROWS) {
+            if (!tRow.registers()) continue; // the mdh-6 driver gate mirrors the registration walk
+            if (tRow.woodHost()) {
+                assertTrue(tAxe.contains("gt6:" + tRow.path()), "wood-host cell must ride the axe band: " + tRow.path());
+                tWoodCells++;
+            } else {
+                assertTrue(tPickaxe.contains("gt6:" + tRow.path()), "metal cell must ride the pickaxe band: " + tRow.path());
+                tMetalCells++;
+            }
+        }
+        assertEquals(31, tMetalCells, "the metal capsule-cell containers (:1779-1809 aUtilMetal)");
+        assertEquals(9, tWoodCells, "the 8 waxes + plastic wood hosts (:1770-1778 aUtilWood)");
+        assertTrue(tPickaxe.contains("gt6:porcelain_cup") && tPickaxe.contains("gt6:ceramic_jug") && tPickaxe.contains("gt6:measuring_pot"),
+                "the cup (:2094) + jug (:2095) + measuring pot (:2096) ride pickaxe (aUtilStone)");
+        assertEquals(4, gregtech6.registry.GT6GasCylinders.BLOCKS_IN_ORDER.size(), "the 4 gas cylinders (:2101-2104 aUtilMetal)");
+        for (var tHandle : gregtech6.registry.GT6GasCylinders.BLOCKS_IN_ORDER) {
+            assertTrue(tPickaxe.contains("gt6:" + tHandle.getId().getPath()), "gas cylinder must ride the pickaxe band: " + tHandle.getId());
+        }
+        int tUtilAttachments = 0, tWoodAttachments = 0;
+        for (var tRow : gregtech6.registry.GT6Attachments.ROWS) {
+            if (tRow.path().endsWith("_plastic")) {
+                assertTrue(tAxe.contains("gt6:" + tRow.path()), "plastic attachment must ride the axe band (:2109/:2116 aUtilWood): " + tRow.path());
+                tWoodAttachments++;
+            } else {
+                assertTrue(tPickaxe.contains("gt6:" + tRow.path()), "attachment must ride the pickaxe band: " + tRow.path());
+                tUtilAttachments++;
+            }
+        }
+        assertEquals(10, tUtilAttachments, "the ceramic + 4-metal tap/funnel rows (:2108-2113/:2115-2120)");
+        assertEquals(2, tWoodAttachments, "the plastic tap/funnel pair (:2109/:2116 aUtilWood)");
+        assertTrue(tPickaxe.contains("gt6:placed_rock") && tPickaxe.contains("gt6:placed_gem_plate")
+                && tPickaxe.contains("gt6:placed_ingot") && tPickaxe.contains("gt6:placed_plate") && tPickaxe.contains("gt6:placed_scrap"),
+                "the 5 placed piles ride pickaxe (:2034/:2039 aUtilStone, :2037/:2038/:2040 aUtilMetal)");
+        assertTrue(tPickaxe.contains("gt6:mini_portal_nether") && tPickaxe.contains("gt6:mini_portal_end"),
+                "the mini portals (:2003/:2004 aStone) ride pickaxe");
+        assertTrue(tPickaxe.contains("gt6:crank"), "the hand crank (:2106 aUtilMetal) rides pickaxe");
+        int tSlabMembers = 0;
+        for (String tValue : tPickaxe) if (tValue.endsWith("_slab")) tSlabMembers++;
+        assertEquals(304, tSlabMembers, "272 stone slabs (BlockMetaType.java:166 TOOL_pickaxe over the whole family) + 32 concrete slabs");
+        // the declared NON-faces: shears/scoop/instant domains and the aMachine kinetics stay zero-banded
+        for (String tOrphan : new String[] {"gt6:sandwich", "gt6:bumble_hive", "gt6:crop_sticks",
+                "gt6:axle_bronze_small", "gt6:axle_steel_small"}) {
+            assertTrue(!tPickaxe.contains(tOrphan) && !tAxe.contains(tOrphan),
+                    "the shears/scoop/instant/aMachine-tail domains stay out of both bands: " + tOrphan);
+        }
     }
 
     // ------------------------------------------------------------------ the item face
