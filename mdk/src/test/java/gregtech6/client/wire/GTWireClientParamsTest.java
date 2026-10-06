@@ -32,8 +32,9 @@ public class GTWireClientParamsTest {
 
     @Test
     public void tableCoversTheFullSpectrum() {
-        assertEquals(629, GTWireClientListener.paramsCount(),
-                "620 electric rows + 6 redstone rows + 1 laser row + 2 legacy anchors");
+        assertEquals(627, GTWireClientListener.paramsCount(),
+                "620 electric rows + 6 redstone rows + 1 laser row"
+                + " (−2 task wiregt-legacy-anchor-removal: the legacy anchors left the table with their registrations)");
         assertNotNull(GTWireClientListener.paramsFor("wire_tin_gt01"));
         assertNotNull(GTWireClientListener.paramsFor("cable_tungsten_gt08"));
         assertNotNull(GTWireClientListener.paramsFor("wire_superconductor_gt16"));
@@ -93,12 +94,11 @@ public class GTWireClientParamsTest {
     }
 
     @Test
-    public void legacyPairStaysOnThePlaceholderTexture() {
-        GTWireBakedModel.Params tLegacy = GTWireClientListener.paramsFor("wire_electric_1x");
-        assertEquals(new ResourceLocation(GTRenderModelListener.MOD_ID, "block/wire_electric"), tLegacy.wireSprite());
-        assertEquals(false, tLegacy.insulated());
-        assertEquals(0, tLegacy.diameterPx(), "diameter 0 = the model floors at PX_P[2] (readFromNBT2 :64 clamp)");
-        assertEquals(tLegacy, GTWireClientListener.paramsFor("wire_electric_2x"), "both anchors share the form");
+    public void legacyAnchorPathsAreGoneFromTheParamTable() {
+        // wiregt-legacy-anchor-removal — the material-less p7 pair retired with its
+        // registrations: the param table must not resurrect them
+        assertNull(GTWireClientListener.paramsFor("wire_electric_1x"));
+        assertNull(GTWireClientListener.paramsFor("wire_electric_2x"));
     }
 
     @Test
@@ -120,6 +120,5 @@ public class GTWireClientParamsTest {
         // branch separation: null overlaySprite = the pre-p11 electric/redstone planner form
         assertNull(GTWireClientListener.paramsFor("wire_tin_gt01").overlaySprite());
         assertNull(GTWireClientListener.paramsFor("cable_tin_gt12").overlaySprite());
-        assertNull(GTWireClientListener.paramsFor("wire_electric_1x").overlaySprite());
     }
 }

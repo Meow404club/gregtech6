@@ -33,9 +33,11 @@ import gregtech6.util.UT6;
  * per ADR-P3-4, the GTFluidPipeCommand template.
  *
  * <ul>
- * <li>{@code place <1x|2x> <pos>} — the p7 legacy tier driver (the P8 RCON chain and the
- *     gen→wire→oven e2e regression keep driving it), and since task wire-family-w1 also
- *     the full registry-path form {@code place wire_sn_gt04 <pos>} / {@code place cable_w_gt08 <pos>};</li>
+ * <li>{@code place <registry-path> <pos>} — the full registry-path form
+ *     {@code place wire_sn_gt04 <pos>} / {@code place cable_w_gt08 <pos>} (since task
+ *     wire-family-w1; the P8 RCON chain and the gen→wire→oven e2e regression drive the
+ *     {@code place <material> <size> <pos>} family form below — the p7 "1x"/"2x" tier
+ *     aliases retired with their registrations, wiregt-legacy-anchor-removal);</li>
  * <li>{@code place <material> <size> <pos>} and {@code place <material> <size> cable <pos>}
  *     — the 620-block selector (spec ③): material token = the snake-cased row token from
  *     {@link GTWireSpecs} ({@code sn}, {@code annealed_copper}, {@code carborundum}, ...), size 1..16
@@ -154,24 +156,21 @@ public final class GTWireCommand {
 
 	/**
 	 * The headless placement driver (spec ⑦): setBlock, then the automatic neighbour-scan
-	 * connect. The spec is the p7 legacy tier ("1x"/"2x") or a family registry path
-	 * ("wire_sn_gt04" / "cable_w_gt08", the wire-family-w1 selector).
+	 * connect. The spec is a family registry path ("wire_sn_gt04" / "cable_w_gt08", the
+	 * wire-family-w1 selector) — the p7 "1x"/"2x" tier aliases retired with the pair
+	 * (wiregt-legacy-anchor-removal; the RCON idiom drives on {@code copper 1} etc).
 	 */
 	private static int place(CommandSourceStack aSource, String aSpec, BlockPos aPos) {
-		var tBlock = switch (aSpec) {
-			case "1x" -> GTWires.WIRE_ELECTRIC_1X.get();
-			case "2x" -> GTWires.WIRE_ELECTRIC_2X.get();
-			// task p10 — the redstone registry paths (wire_red_alloy / cable_signalum / ...)
-			// resolve through their own index; the name spaces never collide (no _gt tail).
-			default -> GTWires.REDSTONE_BY_NAME.containsKey(aSpec) ? GTWires.REDSTONE_BY_NAME.get(aSpec).get()
-					: GTWires.FAMILY_BY_NAME.containsKey(aSpec) ? GTWires.FAMILY_BY_NAME.get(aSpec).get() : null;
-		};
-		if (tBlock == null) {
+		// task p10 — the redstone registry paths (wire_red_alloy / cable_signalum / ...)
+		// resolve through their own index; the name spaces never collide (no _gt tail).
+		var tHandle = GTWires.REDSTONE_BY_NAME.containsKey(aSpec) ? GTWires.REDSTONE_BY_NAME.get(aSpec)
+				: GTWires.FAMILY_BY_NAME.containsKey(aSpec) ? GTWires.FAMILY_BY_NAME.get(aSpec) : null;
+		if (tHandle == null) {
 			aSource.sendFailure(Component.literal("PLACE FAILED: unknown wire spec '" + aSpec
-					+ "' (use 1x, 2x, a registry path like wire_sn_gt04 / wire_red_alloy, or <material> <size> [cable] <pos>)"));
+					+ "' (use a registry path like wire_sn_gt04 / wire_red_alloy, or <material> <size> [cable] <pos>)"));
 			return 0;
 		}
-		return placeWire(aSource, tBlock, aSpec, aPos);
+		return placeWire(aSource, tHandle.get(), aSpec, aPos);
 	}
 
 	/**

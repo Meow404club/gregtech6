@@ -233,7 +233,7 @@ R "gt6oven input 8 30 64 30"   --expect 1:"8 cobblestone"        # 圆石入料
 R "gt6oven check 30 64 30"     --expect 1:"energy=0"             # 无假电源体制钉子
 R "gt6energy place 32 64 30"   --expect 1:"GT6 energy source placed"
 R "gt6energy volt 32 64 30 32" --expect 1:"voltage 32"
-R "gt6wire place 2x 31 64 30"  --expect 1:"GT6 wire placed"      # 最后放，双侧已存在
+R "gt6wire place copper 1 31 64 30" --expect 1:"GT6 wire placed"  # 最后放，双侧已存在（铜线1x=32EU/1A，p7 的 2x 占位锚已退役）
 R "gt6wire neighbors 31 64 30" \
   --expect 1:"west=TileEntityOven(connected) east=GTEnergySourceBlockEntity(connected)"
 R "gt6energy mode 32 64 30 on" --expect 1:"emitting true"

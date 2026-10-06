@@ -272,8 +272,8 @@ public final class GT6LootTables extends LootTableProvider {
      * gregapi Drops machinery, MultiTileEntityWireLaser.java:48 extends
      * TileEntityBase10ConnectorRendered). There is NO separate laser loot path: until this
      * card the single {@code wire_laser} block shipped table-less and broke into nothing.
-     * The two material-less p7 legacy anchors keep shipping without a table (pre-existing
-     * state, not this card's delta).
+     * The two material-less p7 legacy anchors left the register with their registrations
+     * (wiregt-legacy-anchor-removal) — nothing table-less ships on the electric side now.
      */
     public static List<Block> wireLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();

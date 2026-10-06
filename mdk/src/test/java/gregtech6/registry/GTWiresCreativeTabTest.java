@@ -106,16 +106,17 @@ public class GTWiresCreativeTabTest {
 	}
 
 	/**
-	 * The Electric Wires tab remainder: EXACTLY the legacy pair + the 620 family (622 rows) —
-	 * the 7 migrated members (6 redstone + 1 laser) are gone from it.
+	 * The Electric Wires tab: EXACTLY the 620 family (620 rows) — the 7 migrated members
+	 * (6 redstone + 1 laser) are gone from it, and so are the p7 legacy 1x/2x placeholder
+	 * rows (wiregt-legacy-anchor-removal — upstream registers no material-less electric
+	 * wire, the pair was a port-built P8 RCON anchor).
 	 */
 	@Test
-	public void electricTabHoldsExactlyTheLegacyPairPlusThe620Family() {
+	public void electricTabHoldsExactlyThe620Family() {
 		List<ResourceLocation> tIds = ids(GTWires.ELECTRIC_WIRES_TAB_TABLE);
-		assertEquals(2 + GTWires.FAMILY_ITEMS.size(), tIds.size(), "legacy pair + the 620 electric family");
-		assertEquals(622, tIds.size(), "620 family rows are census-pinned (GTWireSpecsCensusTest)");
-		assertEquals(rl("wire_electric_1x"), tIds.get(0), "row 0 is the legacy 1x pair item");
-		assertEquals(rl("wire_electric_2x"), tIds.get(1), "row 1 is the legacy 2x pair item");
+		assertEquals(GTWires.FAMILY_ITEMS.size(), tIds.size(), "the tab IS the family list");
+		assertEquals(620, tIds.size(), "620 family rows are census-pinned (GTWireSpecsCensusTest)");
+		assertEquals(rl("wire_tin_gt01"), tIds.get(0), "row 0 is the first upstream electric row (Loader:1914 tin)");
 		for (RegistryObject<net.minecraft.world.item.Item> tMigrated : GTWires.REDSTONE_WIRES_TAB_TABLE) {
 			assertFalse(tIds.contains(tMigrated.getId()), "redstone row " + tMigrated.getId() + " must not ride the electric tab");
 		}
@@ -124,7 +125,7 @@ public class GTWiresCreativeTabTest {
 		}
 	}
 
-	/** No item is a member of two wire tabs (the 622 + 6 + 1 split is disjoint, union 629). */
+	/** No item is a member of two wire tabs (the 620 + 6 + 1 split is disjoint, union 627). */
 	@Test
 	public void theThreeTabTablesArePairwiseDisjoint() {
 		Set<ResourceLocation> tSeen = new LinkedHashSet<>();
@@ -135,7 +136,18 @@ public class GTWiresCreativeTabTest {
 				assertTrue(tSeen.add(tRow.getId()), "duplicate tab member across wire tabs: " + tRow.getId());
 			}
 		}
-		assertEquals(629, tSeen.size(), "622 electric + 6 redstone + 1 laser, no overlaps");
+		assertEquals(627, tSeen.size(), "620 electric + 6 redstone + 1 laser, no overlaps");
+	}
+
+	/**
+	 * The Electric Wires tab icon slot: upstream the icon is the MTE block item at meta =
+	 * the tab id 28366 (MultiTileEntityRegistry.java:191 icon rule) = the FIRST registered
+	 * electric row (Loader:1914 tin). Ported: index 0 of the family list — the p7 2x
+	 * placeholder icon retired with the pair (wiregt-legacy-anchor-removal).
+	 */
+	@Test
+	public void electricTabIconSlotIsTheFirstUpstreamRow() {
+		assertEquals(rl("wire_tin_gt01"), GTWires.ELECTRIC_WIRES_TAB_TABLE.get(0).getId());
 	}
 
 	/**

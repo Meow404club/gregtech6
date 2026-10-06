@@ -193,8 +193,8 @@ public final class GT6BlockStates extends BlockStateProvider {
                             : pipeModelOf(tPipeShared, tItemRow.material().oreDictMaterial()));
         }
         pipeBlockstate(GT6Logistics.LOGISTICS_WIRE.get(), tLogisticsWire); // task logistics-lv2 — the single logistics connector row
-        addWire(GTWires.WIRE_ELECTRIC_1X.get());
-        addWire(GTWires.WIRE_ELECTRIC_2X.get());
+        // the p7 legacy 1x/2x placeholder cubes retired with their registrations
+        // (wiregt-legacy-anchor-removal) — addWire died with its last two callers.
         // task p10: the two wire loops SHARE one (set -> model) map — models().getBuilder
         // APPENDS to a same-named builder, so a second local map would stack a duplicate
         // element onto the shared copper/wire model JSON (caught by the runData diff).
@@ -2609,22 +2609,6 @@ public final class GT6BlockStates extends BlockStateProvider {
         String tName = aPipe.getDescriptionId().replace("block.gt6.", "");
         getVariantBuilder(aPipe).forAllStates(aState -> ConfiguredModel.builder().modelFile(aModel).build());
         itemModels().withExistingParent(tName, aModel.getLocation());
-    }
-
-    /**
-     * Task d2-cable spec ⑥ — the electric wires, the pipe section shape: one shared
-     * cube_all model over {@code gt6:textures/block/wire_electric.png} (both variants
-     * reference the same PNG, the p7 shared-PNG drum family form) with a variant per
-     * {@link gregtech6.block.wire.GTWireBlock} CONNECTIONS mask value (0..63, the 6-bit
-     * connection state — the 64-variant exhaustive listing comes out of forAllStates, no
-     * hand-written JSON) plus the BlockItem model parenting the block model. The texture
-     * is an inline-script generated placeholder PNG, not JSON.
-     */
-    private void addWire(Block aWire) {
-        String tName = aWire.getDescriptionId().replace("block.gt6.", "");
-        var tModel = models().cubeAll(tName, modLoc("block/wire_electric"));
-        getVariantBuilder(aWire).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-        itemModels().withExistingParent(tName, modLoc("block/" + tName));
     }
 
     /**

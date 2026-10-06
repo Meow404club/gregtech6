@@ -233,9 +233,10 @@ public class GTWireBlock extends GTEntityBlock {
 	 * the {@code gt6.material.<snake>} small-unit key (single
 	 * {@link MaterialPrefixItem#snakeCase} derivation, the A-wave zh face covers it — a
 	 * composed zh wire name costs zero new material translations). Returns NULL on the
-	 * NAMELESS forms — the two material-less p7 legacy blocks and the material-less laser
-	 * family — which stay ATOMIC descriptionId keys ({@code block.gt6.wire_electric_1x/2x},
-	 * {@code block.gt6.wire_laser}; the arch card's atomic-form ruling).
+	 * NAMELESS form — the material-less laser family — which stays the ATOMIC
+	 * descriptionId key ({@code block.gt6.wire_laser}; the arch card's atomic-form ruling;
+	 * the two material-less p7 legacy blocks retired with their registrations,
+	 * wiregt-legacy-anchor-removal).
 	 */
 	@Nullable
 	public static MutableComponent displayNameOf(@Nullable OreDictMaterial aMaterial, Family aFamily,

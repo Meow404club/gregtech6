@@ -69,8 +69,9 @@ public class GTWireTintCensusTest {
                 "the redstone 6 ride the wire ItemColor registration: " + tPaths);
         assertTrue(tPaths.contains(LASER_ID),
                 "the laser fiber rides the wire ItemColor registration: " + tPaths);
-        assertEquals(2 + GTWireSpecs.EXPECTED_VARIANTS + REDSTONE_CENSUS.size() + 1, tPaths.size(),
-                "the full census: the legacy pair + the 620 electric family + the redstone 6 + the laser");
+        assertEquals(GTWireSpecs.EXPECTED_VARIANTS + REDSTONE_CENSUS.size() + 1, tPaths.size(),
+                "the full census: the 620 electric family + the redstone 6 + the laser"
+                + " (the p7 legacy pair retired with its registrations, wiregt-legacy-anchor-removal)");
     }
 
     //? if neoforge {
@@ -79,9 +80,10 @@ public class GTWireTintCensusTest {
     @Test
     public void blockCensusCoversTheRedstoneAndLaserFamilies() {
         Block[] tTinted = GTClientHandlers.wireTintBlocks();
-        assertEquals(2 + GTWireSpecs.EXPECTED_VARIANTS + GTWires.REDSTONE_BLOCKS.size()
+        assertEquals(GTWireSpecs.EXPECTED_VARIANTS + GTWires.REDSTONE_BLOCKS.size()
                 + GTWires.LASER_BLOCKS.size(), tTinted.length,
-                "the world-half census: the electric list + the redstone 6 + the laser fiber, one array");
+                "the world-half census: the electric list + the redstone 6 + the laser fiber, one array"
+                + " (the p7 legacy pair retired with its registrations, wiregt-legacy-anchor-removal)");
         for (Block tBlock : GTWires.redstoneBlockArray()) {
             assertTrue(contains(tTinted, tBlock), tBlock + " rides the wire BlockColor registration");
         }

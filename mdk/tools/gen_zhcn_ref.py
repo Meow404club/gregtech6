@@ -2312,7 +2312,8 @@ for _table in (VOTED_TAGPREFIXES, HAND_TAGPREFIXES):
 # own word (单晶觉醒龙 -> 龙, direct rows :13042/:13087). The machine words reuse the
 # committed TSV rows units (粉碎机/破碎机/车床) verbatim; the atomic block.gt6.oven row
 # retired with the composed face (task oven-heat-t-ladder — the composed machine word is
-# 熔炉 per lang-batch2-fixes). wire_electric = the × convention on the atomic legacy keys.
+# 熔炉 per lang-batch2-fixes). The wire_electric ×-convention rows retired with the legacy
+# pair (wiregt-legacy-anchor-removal).
 BLOCK_BACKFILL = {
     # task mortar-family — the five pestle rows (Loader :2179-2183, ids 32735/32094/
     # 32075/32076/32089), the dump MTE faces verbatim: all five rows share the one
@@ -2485,8 +2486,8 @@ BLOCK_BACKFILL = {
     "block.gt6.multiblock_coke_oven": "焦炉",        # = the JEI info page word (gt6.jei.info row)
     "block.gt6.multiblock_coke_oven_bricks": "焦炉砖",
     "block.gt6.shredder": "粉碎机",                  # = the TSV gt6.row.machine.shredder unit verbatim
-    "block.gt6.wire_electric_1x": "1×导线",  # task p27-lang-fix-batch2 P2 (ledger §3): wire=导线 unified
-    "block.gt6.wire_electric_2x": "2×导线",  # (en "1x/2x Electric Wire"; the × convention kept)
+    # (block.gt6.wire_electric_1x/2x retired by wiregt-legacy-anchor-removal — the p7
+    # placeholder registrations are gone, the ×-convention rows retired with them)
     # (block.gt6.wood_fluid_pipe_small/medium retired by task fluid-pipe-matrix — the
     # compose faces ride gt6.row.fluid_pipe.* below, the dump-verbatim word set)
 

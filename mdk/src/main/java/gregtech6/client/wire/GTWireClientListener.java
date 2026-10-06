@@ -53,10 +53,6 @@ public final class GTWireClientListener {
 	private GTWireClientListener() {
 	}
 
-	/** The two legacy p7 anchors (material-less, the p7 placeholder texture, upstream-default thin form). */
-	public static final String LEGACY_1X = "wire_electric_1x";
-	public static final String LEGACY_2X = "wire_electric_2x";
-
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent aEvent) {
 		buildParams();
@@ -101,8 +97,6 @@ public final class GTWireClientListener {
 	 */
 	public static synchronized void buildParams() {
 		if (sBuilt) return;
-		PARAMS.put(LEGACY_1X, new GTWireBakedModel.Params(GTWireTextures.legacySprite(), false, 0));
-		PARAMS.put(LEGACY_2X, new GTWireBakedModel.Params(GTWireTextures.legacySprite(), false, 0));
 		for (GTWireSpecs.Variant tVariant : GTWireSpecs.variants()) {
 			PARAMS.put(GTWireSpecs.registryName(tVariant), new GTWireBakedModel.Params(
 					GTWireTextures.wireSprite(GTWireTextures.blockSetOf(tVariant.row().material().get())),
@@ -133,7 +127,7 @@ public final class GTWireClientListener {
 		return PARAMS.get(aRegistryPath);
 	}
 
-	/** The table size — 620 electric rows + 6 redstone rows + 1 laser row + 2 legacy anchors (smoke assertion). */
+	/** The table size — 620 electric rows + 6 redstone rows + 1 laser row (smoke assertion; the 2 legacy anchors retired, wiregt-legacy-anchor-removal). */
 	public static int paramsCount() {
 		return PARAMS.size();
 	}
