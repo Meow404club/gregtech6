@@ -239,7 +239,7 @@ public final class GT6StaticStorages {
 	 * The static storage block — the front-face cube over the shared BET: the FACING is the
 	 * front (toward the placer, the vanilla furnace convention = the upstream
 	 * getSideForPlayerPlacing arm), the kind arms dispatch off the row. The half-height
-	 * crate shape rides the BOTTLECRATE kind (upstream the 6/16 box).
+	 * crate shape rides the BOTTLECRATE kind (the 8/16 body box, the three-way ruling).
 	 */
 	public static final class GT6StorageBlock extends gregtech6.block.GTEntityBlock {
 
@@ -247,23 +247,29 @@ public final class GT6StaticStorages {
 		public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
 		/**
-		 * The crate shapes (task r11-geometry-batch, the upstream split verbatim): the
-		 * SELECTION box is 0..6px (getSelectedBoundingBoxFromPool / setBlockBoundsBasedOnState
-		 * = PX_P[6], MultiTileEntityBottleCrate:213-214) while the COLLISION box is 0..10px
-		 * (getCollisionBoundingBoxFromPool = PX_N[6], :212) — the former single 6/16 shape
-		 * conflated the two columns.
+		 * The crate body box — the rendered frame envelope (0,0,0)-(16,8,16): the outline
+		 * (getShape) AND the collision ride the same box (task shelf-crate-2px-realign,
+		 * the user ruling 2026-10-06: "我想要让渲染、碰撞箱、描边对齐，看起来不奇怪" —
+		 * looks first, upstream values second). The upstream split stays a deliberate
+		 * deviation: selection PX_P[6] = 6px (:213-214) vs collision PX_N[6] = 10px
+		 * (:212) against the 8px walls (:165-166) read as a 6/8/10 staircase — the
+		 * reported "outline vs model ~2px" mismatch. The bottles (the BER display) rise
+		 * above the box as pure display — the vanilla flower-pot precedent (the pot
+		 * shapes the boxes, the flower does not extend them).
 		 */
-		public static final VoxelShape CRATE_SELECTION_SHAPE = Block.box(0, 0, 0, 16, 6, 16);
-		public static final VoxelShape CRATE_COLLISION_SHAPE = Block.box(0, 0, 0, 16, 10, 16);
+		public static final VoxelShape CRATE_SELECTION_SHAPE = Block.box(0, 0, 0, 16, 8, 16);
+		public static final VoxelShape CRATE_COLLISION_SHAPE = Block.box(0, 0, 0, 16, 8, 16);
 
 		/**
-		 * The bookshelf selection shapes (task r11-geometry-batch, upstream :349-350): the
-		 * 2px inset on each OPEN face (north/south = z 2..14, east/west = x 2..14 — the slab
-		 * where the 28 book niches live), full height; the collision stays the full cube
-		 * (the shelf overrides no collision face upstream — the MTE default).
+		 * The bookshelf body box — the rendered frame envelope IS the full cube (task
+		 * shelf-crate-2px-realign, the three-way ruling): the outline rides it and the
+		 * collision stays the untouched vanilla full cube (no override — the 28 books
+		 * live inside the niches). The former 2px-inset slab (upstream :349-350)
+		 * outlined a hole 2px inside the visible mass — the deliberate deviation.
+		 * Named constant so the offline pins can ride it (a Block instance cannot be
+		 * constructed offline — the frozen block registry, NamespacedWrapper:271).
 		 */
-		public static final VoxelShape SHELF_SELECTION_NS = Block.box(0, 0, 2, 16, 16, 14);
-		public static final VoxelShape SHELF_SELECTION_EW = Block.box(2, 0, 0, 14, 16, 16);
+		public static final VoxelShape SHELF_SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
 		private final StaticRow mRow;
 
@@ -331,16 +337,16 @@ public final class GT6StaticStorages {
 		}
 
 		/**
-		 * The wooden-kind geometry (task r11-geometry-batch): the crate rides the 6px
-		 * selection / 10px collision split, the bookshelf the open-face 2px inset slab;
-		 * the metal kinds stay the full cube.
+		 * The wooden-kind geometry (task shelf-crate-2px-realign, the three-way ruling):
+		 * the crate outline IS the 8px body box, the bookshelf the full cube (SHELF_SHAPE
+		 * — the collision keeps the untouched vanilla cube); the metal kinds stay the
+		 * full cube.
 		 */
 		@Override
 		public VoxelShape getShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
 			return switch (mRow.kind()) {
 				case BOTTLECRATE -> CRATE_SELECTION_SHAPE;
-				case BOOKSHELF -> aState.getValue(FACING).getAxis() == Direction.Axis.Z
-						? SHELF_SELECTION_NS : SHELF_SELECTION_EW;
+				case BOOKSHELF -> SHELF_SHAPE;
 				default -> super.getShape(aState, aLevel, aPos, aContext);
 			};
 		}

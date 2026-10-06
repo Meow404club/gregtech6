@@ -10,7 +10,9 @@
  *     GT_API_Proxy_Client.java:188);</li>
  * <li>the bottlecrate frame (MultiTileEntityBottleCrate.setBlockBounds2 :160-168):
  *     nine plank boxes, half height (walls y 0..8), the 3x3 divider grid, front/back
- *     rails y 5..7 — plus the selection 6px / collision 10px split (:212-214);</li>
+ *     rails y 5..7 — outline AND collision ride the same 8px envelope (task
+ *     shelf-crate-2px-realign, the three-way user ruling; the upstream 6px/10px
+ *     split :212-214 stays the deliberate deviation);</li>
  * <li>the hopper funnel (MultiTileEntityHopper.setBlockBounds2 :263-277): rim y
  *     10..16 + middle 4..10 with its top face hidden, the per-direction spout models
  *     (down 0..4 / north 0..4 z / up SPOULESS — the :268-274 no-UP-arm quirk), the
@@ -138,23 +140,39 @@ class GT6GeometryBatchDatagenTest {
     }
 
     @Test
-    public void crateShapesSplitSelectionFromCollision() {
+    public void crateOutlineAndCollisionRideTheModelEnvelope() {
+        // task shelf-crate-2px-realign — the three-way user ruling: outline = collision =
+        // the (0,0,0)-(16,8,16) model body; the upstream 6px selection (:213-214,
+        // PX_P[6]) / 10px collision (:212, PX_N[6]) split is the deliberate deviation
         AABB tSelection = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.CRATE_SELECTION_SHAPE.bounds();
-        assertEquals(6.0 / 16.0, tSelection.maxY, 1e-9, "the crate selection tops at 6px (PX_P[6], :213-214)");
         AABB tCollision = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.CRATE_COLLISION_SHAPE.bounds();
-        assertEquals(10.0 / 16.0, tCollision.maxY, 1e-9, "the crate collision tops at 10px (PX_N[6], :212)");
+        assertEquals(8.0 / 16.0, tSelection.maxY, 1e-9, "the crate outline tops at the 8px walls");
+        assertEquals(8.0 / 16.0, tCollision.maxY, 1e-9, "the crate collision tops at the 8px walls");
+        assertEquals(tSelection.minX, tCollision.minX, 1e-9, "collision west = outline west");
+        assertEquals(tSelection.maxX, tCollision.maxX, 1e-9, "collision east = outline east");
+        assertEquals(tSelection.minZ, tCollision.minZ, 1e-9, "collision north = outline north");
+        assertEquals(tSelection.maxZ, tCollision.maxZ, 1e-9, "collision south = outline south");
     }
 
     @Test
-    public void bookshelfSelectionIsTheOpenFaceInsetSlab() {
-        // upstream :349-350 — 2px inset on each OPEN face (north default: z 2..14), full height
-        AABB tNs = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.SHELF_SELECTION_NS.bounds();
-        assertEquals(2.0 / 16.0, tNs.minZ, 1e-9, "the NS slab insets 2px from the open front");
-        assertEquals(14.0 / 16.0, tNs.maxZ, 1e-9, "the NS slab insets 2px from the open back");
-        assertEquals(1.0, tNs.maxY, 1e-9, "the slab keeps the full height");
-        AABB tEw = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.SHELF_SELECTION_EW.bounds();
-        assertEquals(2.0 / 16.0, tEw.minX, 1e-9, "the EW slab insets 2px on x");
-        assertEquals(14.0 / 16.0, tEw.maxX, 1e-9, "the EW slab insets 2px on x");
+    public void bookshelfOutlineIsTheFullCubeEnvelope() {
+        // task shelf-crate-2px-realign — the three-way user ruling: the shelf outline is
+        // the full cube (the model envelope; the named SHELF_SHAPE — a Block instance
+        // cannot be constructed offline, the frozen block registry); the upstream
+        // 2px-inset slab (:349-350) outlined a hole 2px inside the visible mass and is
+        // the deliberate deviation; the collision keeps the untouched vanilla cube,
+        // numerically the same box
+        AABB tOutline = gregtech6.registry.GT6StaticStorages.GT6StorageBlock.SHELF_SHAPE.bounds();
+        AABB tVanillaCube = net.minecraft.world.phys.shapes.Shapes.block().bounds();
+        assertEquals(0.0, tOutline.minX, 1e-9, "the outline hugs the west wall");
+        assertEquals(1.0, tOutline.maxX, 1e-9, "the outline hugs the east wall");
+        assertEquals(0.0, tOutline.minY, 1e-9, "the outline hugs the bottom");
+        assertEquals(1.0, tOutline.maxY, 1e-9, "the outline hugs the top");
+        assertEquals(0.0, tOutline.minZ, 1e-9, "the outline hugs the north wall");
+        assertEquals(1.0, tOutline.maxZ, 1e-9, "the outline hugs the south wall");
+        assertEquals(tVanillaCube.minX, tOutline.minX, 1e-9, "collision (vanilla cube) = outline west");
+        assertEquals(tVanillaCube.maxX, tOutline.maxX, 1e-9, "collision (vanilla cube) = outline east");
+        assertEquals(tVanillaCube.maxY, tOutline.maxY, 1e-9, "collision (vanilla cube) = outline top");
     }
 
     @Test
