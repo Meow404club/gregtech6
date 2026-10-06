@@ -1329,7 +1329,7 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task storage-static-batch — the 28 static storage rows (GT6StaticStorages.ROWS).
+     * Task storage-static-batch + material-mc-b-storage-mass-shelf — the 148 static storage rows (GT6StaticStorages.ROWS).
      * Task tex-placeholder-audit UPGRADED four of the six kinds (the former "no upstream
      * borrowable iconset in this repo" claim here was proven false — the probe found the
      * dedicated groups): LOCKER over {@code machines/lockers/normal}, DRAWER over

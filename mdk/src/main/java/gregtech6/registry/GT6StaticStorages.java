@@ -268,10 +268,12 @@ public final class GT6StaticStorages {
 	}
 
 	/**
-	 * The eight METAL-row blocks (task tint-coverage-batch — the locker/drawer/safe pair
-	 * kinds over the Bronze/Steel anchors): the tint-walk registration payload, since only
-	 * these carry a grayscale {@code colored_*} body (the bookshelf/bottlecrate rows are
-	 * the vanilla-finished plank art, the stone precedent — never wrapped).
+	 * The METAL-row blocks (task tint-coverage-batch — the locker/drawer/safe pair kinds
+	 * over the Bronze/Steel anchors; task material-mc-b-storage-mass-shelf — the metal
+	 * shelf/crate ladders join over the full 60-material metalset, 8 → 128): the tint-walk
+	 * registration payload, since every material row carries a grayscale tintindex-0 body
+	 * (the wooden bookshelf/bottlecrate rows stay out — the vanilla-finished plank art, the
+	 * stone precedent — never wrapped).
 	 */
 	public static Block[] metalBlockArray() {
 		List<Block> rBlocks = new ArrayList<>();

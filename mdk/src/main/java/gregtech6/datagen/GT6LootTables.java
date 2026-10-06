@@ -140,7 +140,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
-                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -207,7 +207,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
-                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 28 self-drops
+                new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -2359,7 +2359,7 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The static storage batch block list (task storage-static-batch): the 28
+     * The static storage batch block list (task storage-static-batch + material-mc-b-storage-mass-shelf): the 148
      * GT6StaticStorages rows — the loader MTE default self-drop (Drops==null,
      * PrefixBlock.java:227) over the locker/drawer/safe/bookshelf/bottlecrate ladders,
      * the cannerLootBlocks shape verbatim.
