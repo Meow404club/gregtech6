@@ -426,13 +426,13 @@ class GT6EnergyJumpTest {
 	@Test
 	void emiRowWiringAddsTheGearWidgetOnlyOnCarrierMaps() {
 		GT6RecipeMaps.init();
-		// LATHE (RU): the widget rides third — right after the two backdrop textures
+		// LATHE (RU): the widget rides fourth — right after the plate + the two furniture crops
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6RecipeMapEmiRecipe(GT6RecipeMaps.LATHE, row(), GT6RecipeMapEmiCategoryForTest(GT6RecipeMaps.LATHE), 0).addWidgets(tHolder);
-		assertEquals(2, tHolder.mTextures.size(), "the two backdrop textures lead");
-		assertTrue(tHolder.mAll.get(2) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
-				"the gear port rides third on a carrier map (the art's z face)");
-		assertEquals(new Bounds(72, 53, 22, 22), tHolder.mAll.get(2).getBounds());
+		assertEquals(3, tHolder.mTextures.size(), "the plate + the two furniture crops lead");
+		assertTrue(tHolder.mAll.get(3) instanceof GT6RecipeMapEmiRecipe.GearJumpWidget,
+				"the gear port rides fourth on a carrier map (the art's z face)");
+		assertEquals(new Bounds(72, 53, 22, 22), tHolder.mAll.get(3).getBounds());
 		// MORTAR (hand tool, no carrier): no port — the gear stays decoration
 		RecordingHolder tMortarHolder = new RecordingHolder();
 		new GT6RecipeMapEmiRecipe(GT6RecipeMaps.MORTAR, row(), GT6RecipeMapEmiCategoryForTest(GT6RecipeMaps.MORTAR), 0).addWidgets(tMortarHolder);

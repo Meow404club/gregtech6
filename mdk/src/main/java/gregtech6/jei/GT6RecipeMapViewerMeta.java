@@ -45,21 +45,22 @@ import gregtech6.recipes.maps.GT6RecipeMapCrucible;
  * viewers render FluidStack natively, decisions.2026-09-26-debt-jei-emi-coverage ⑤),
  * aConfigAllowed/aNeedsOutputs (NEI-config faces with no port counterpart).
  *
- * <p><b>The viewer backdrop (task 34-viewer-gui-bg, GitHub #34):</b> upstream
- * drawBackground (:629-635) composited TWO layers under the slots — the grey
- * {@code machines/NEI.png} backdrop plate, then the per-map machine GUI texture as a
- * band — and folded the panel origin (5,11) into every slot coordinate on the way out
- * (:66/:112). The viewers restore exactly that composition, RE-ANCHORED 4px up the
- * texture for the modern viewers' zero-headroom category rects (task
- * viewer-row-headroom — the {@link #S_OFFSET_Y} doc): the crop quadruples
- * {@link #PLATE_CROP}/{@link #BAND_CROP} plus {@link #PLATE_TEXTURE} feed both legs'
- * background draws, and the {@code viewer*Pos} exits below do the
- * sOffset fold ONCE here (the layout switches above stay in machine-GUI coordinates,
- * faithful to the upstream switch). The per-map→PNG mapping needs no table of its own:
- * {@link #guiTexture} reads the live mGUIPath each GT6RecipeMaps row declares (the
- * research card's 72-visible-map transcription lives in state
- * research.r9-34-nei-gui-bg.q2_mapping; anvilbend folds AnvilBendingBig, the five fuel
- * maps share default.png — all already in the rows).
+	 * <p><b>The viewer backdrop (task 34-viewer-gui-bg, GitHub #34; composed since
+	 * composed-ui-energy-slot-and-parts):</b> upstream drawBackground (:629-635)
+	 * composited TWO whole-image layers under the slots — the grey
+	 * {@code machines/NEI.png} backdrop plate, then the per-map machine GUI texture as a
+	 * band — and folded the panel origin (5,11) into every slot coordinate on the way
+	 * out (:66/:112). The port restored that composition RE-ANCHORED 4px up the texture
+	 * for the modern viewers' zero-headroom category rects (task viewer-row-headroom —
+	 * the {@link #S_OFFSET_Y} doc), and has since RETIRED the whole-image machine band
+	 * (the user ruling 配方页渲染切拼接 UI+删除独立机器 GUI 贴图): the band's baked slot
+	 * frames doubled the code slots', and it was the last viewer consumption of the
+	 * standalone machine GUI textures. The page is now composed — plate + the
+	 * arrow-cell/special-slot part crops at the folded furniture exits ({@link
+	 * #ARROW_POS_GUI}/{@link #GEAR_POS_GUI}) — while the {@code viewer*Pos} exits below
+	 * still do the sOffset fold ONCE here (the layout switches above stay in
+	 * machine-GUI coordinates, faithful to the upstream switch; {@code mGUIPath} stays a
+	 * data field whose remaining consumers are the in-game screens).
  *
  * <p><b>The exclusion table</b> (r-jei-emi-coverage id927, the research-card pin): the
  * true-zero / special-surface maps never enter a category even though their upstream
@@ -114,10 +115,12 @@ public final class GT6RecipeMapViewerMeta {
 	public static final int TEXT_LINE_HEIGHT = 10;
 	/**
 	 * The text-band first Y, panel system (task 34-viewer-gui-bg): upstream drew the
-	 * cost lines at FIXED y73..123 in panel coordinates (:680-717) — 3px under the band
-	 * bottom edge. Re-anchored (task viewer-row-headroom): 73 + the 4px
-	 * {@link #S_OFFSET_Y} shift = 77, still exactly 3px under the band bottom edge
-	 * (BAND_CROP v7 + h75 = 82 → category y74), so the text-to-art gap is untouched.
+	 * cost lines at FIXED y73..123 in panel coordinates (:680-717) — 3px under the
+	 * (now-retired) machine band's bottom edge. Re-anchored (task viewer-row-headroom):
+	 * 73 + the 4px {@link #S_OFFSET_Y} shift = 77, still exactly 3px under that band
+	 * bottom edge (old BAND_CROP v7 + h75 = 82 → category y74), so the text-to-art gap
+	 * is untouched by the band's retirement (composed-ui-energy-slot-and-parts) — the
+	 * gear-slot furniture cell above it ends at category y75, still clear of y77.
 	 * The batch-1 "+10 shift on fluid maps" deviation stayed dead: the fixed band rides
 	 * every map, and the FUSION 6-line face (77..127, +9 font = 136) still clears the
 	 * 140-high category.
@@ -550,18 +553,25 @@ public final class GT6RecipeMapViewerMeta {
 	}
 
 	// -----------------------------------------------------------------------
-	// The viewer backdrop geometry (task 34-viewer-gui-bg, GitHub #34) — the
-	// two-layer composite upstream NEI_RecipeMap.drawBackground(:629-635) drew and the
-	// port's viewers shipped without (items floated on the raw category grey, read as
-	// "misaligned" though every coordinate was faithful). Layer 1: the grey backdrop
-	// plate gt6:textures/gui/machines/nei.png. Layer 2: the per-map machine GUI texture
-	// (mGUIPath — upstream getGuiTexture :653, drawn as the (-5,-8, 0,3,176,79) band).
-	// Both layers anchor the PANEL origin at texture pixel (5,7) of the machine band /
-	// (5,12) of the plate — the offset upstream folded into every PositionedStack (the
-	// ctor super call at :112 over :66 sOffsetX/Y=5/11), re-anchored 4px for the modern
-	// viewers' zero-headroom category rects (task viewer-row-headroom, the S_OFFSET_Y
-	// doc) — the layout switches above stay in machine-GUI coordinates and the viewer*
-	// exits below do the fold ONCE here, so neither viewer leg ever folds twice.
+	// The viewer backdrop geometry (task 34-viewer-gui-bg, GitHub #34). UPSTREAM
+	// (NEI_RecipeMap.drawBackground :629-635) composited TWO whole-image layers — the
+	// grey machines/NEI.png plate, then the per-map machine GUI texture as a band.
+	// The band is RETIRED from the viewer (task composed-ui-energy-slot-and-parts, the
+	// user ruling 配方页渲染切拼接 UI+删除独立机器 GUI 贴图): the whole-sheet machine
+	// band baked the slot frames the code slots then doubled (贴图槽+代码槽叠加), and
+	// it was the last viewer consumption of the standalone machine GUI textures. The
+	// composed page = plate + the part crops (arrow cell, special-slot gear cell) the
+	// legs blit at the folded furniture exits below; the slot frames come ONLY from the
+	// viewers' own slot widgets (JEI RecipeSlot / EMI SlotWidget draw their own back).
+	// The per-map→PNG mapping (mGUIPath) stays a data field — its remaining consumers
+	// are the in-game screens (GTBasicMachineScreen.backgroundOf parse twin), the
+	// viewer retirement is documented here. Both layers anchored the PANEL origin at
+	// texture pixel (5,7) band / (5,12) plate — the offset upstream folded into every
+	// PositionedStack (the ctor super call at :112 over :66 sOffsetX/Y=5/11),
+	// re-anchored 4px for the modern viewers' zero-headroom category rects (task
+	// viewer-row-headroom, the S_OFFSET_Y doc) — the layout switches above stay in
+	// machine-GUI coordinates and the viewer* exits below do the fold ONCE here, so
+	// neither viewer leg ever folds twice.
 	// -----------------------------------------------------------------------
 
 	/**
@@ -594,35 +604,29 @@ public final class GT6RecipeMapViewerMeta {
 	 * gains at its top sit under the band, which covers the full 166-wide strip.
 	 */
 	public static final int[] PLATE_CROP = {5, 12, 166, 140};
-	/**
-	 * The machine-band crop, {u,v,w,h} panel system. Upstream drew
-	 * {@code (-5,-8, 0,3,176,79)} = texture rows 3..81 with panel y = row − 11
-	 * (NEI_RecipeMap.java:634); the re-anchored origin maps panel y = row − 7
-	 * ({@link #S_OFFSET_Y}), so v slides to 7 and h extends 71 → 75 to keep the SAME
-	 * bottom edge (v+h = 82: the band still ends on texture row 81 — the SHREDDER
-	 * fourth-row slot holes at rows 61..78 stay fully covered). The art the shifted
-	 * window newly shows at its top is exactly the strip upstream drew at panel
-	 * −4..−1; the 4px above it (rows 3..6, upstream panel −8..−5) stays cropped — the
-	 * one sliver of the upstream composition no fixed-origin viewer can show. Drawn at
-	 * (0,0) OVER the plate.
-	 */
-	public static final int[] BAND_CROP = {5, 7, 166, 75};
 	/** The backdrop plate texture (NEI_RecipeMap.java:632; port assets/README.md #34 section, amazawa redraw). */
 	public static final ResourceLocation PLATE_TEXTURE = ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/nei.png");
 
+	// -----------------------------------------------------------------------
+	// The composed-page furniture exits (task composed-ui-energy-slot-and-parts, the
+	// user ruling 配方页切拼接): with the machine band gone the page draws the two
+	// machine-skin furniture cells as part crops — the progress-arrow cell and the
+	// special-slot gear cell (the jump entrance, GEAR_POS_GUI below). Both folds feed
+	// BOTH legs, so the JEI blit and the EMI TextureWidget land pixel-identically.
+	// -----------------------------------------------------------------------
+
 	/**
-	 * The per-map machine GUI texture (upstream getGuiTexture :653 = mGUIPath, the
-	 * Recipe.java:124 ".png"-suffixed string — the live per-map→PNG mapping table, no
-	 * second table needed) as a texture {@link ResourceLocation}. The five fuel maps and
-	 * the like ride the shared default.png exactly as their GT6RecipeMaps rows declare.
-	 * Same parse as GTBasicMachineScreen.backgroundOf (the machine-Screen consumer of the
-	 * very same string).
+	 * The progress-arrow cell in machine-GUI coordinates — the 20x18 cell the machine
+	 * skins print at (78,24), the exact spot the upstream in-GUI fill
+	 * (ContainerClientBasicMachine.java:57 case 0) overlays; the viewer page is a static
+	 * display, so only the cell art shows. The part is {@code gui/parts/
+	 * arrow_outline_20x18.png} (the skin print cropped, assets/README.md GUI-parts).
 	 */
-	public static ResourceLocation guiTexture(RecipeMap aMap) {
-		String tPath = aMap.mGUIPath;
-		int tColon = tPath.indexOf(':');
-		if (tColon < 0) throw new IllegalArgumentException("RecipeMap mGUIPath is not a namespaced path: " + tPath);
-		return ResourceLocation.fromNamespaceAndPath(tPath.substring(0, tColon), tPath.substring(tColon + 1));
+	public static final int[] ARROW_POS_GUI = {78, 24};
+
+	/** {@link #ARROW_POS_GUI} folded into panel/viewer coordinates — (73,17). */
+	public static int[] viewerArrowPos() {
+		return fold(ARROW_POS_GUI);
 	}
 
 	/** The fold: machine-GUI coordinates → panel/viewer coordinates ({@code null} passes through) — the re-anchored -(5,7). */

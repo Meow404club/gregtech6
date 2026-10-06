@@ -91,6 +91,15 @@
       "sha256": "2ffbca64b99b22e697c0604477c098364edaf7eeff97bbc72224341de8210899"
     },
     {
+      "name": "arrow_outline_20x18.png",
+      "source": "Default.png",
+      "x": 78,
+      "y": 24,
+      "w": 20,
+      "h": 18,
+      "sha256": "181dfcf433a1e0a3efd828f518f39059fb8012d73f37d5b71094ea3e76d9fb48"
+    },
+    {
       "name": "player_inventory_162x76.png",
       "source": "Default.png",
       "x": 7,

@@ -110,20 +110,24 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 
 	@Override
 	public void addWidgets(WidgetHolder aWidgets) {
-		// the two-layer backdrop FIRST (task 34-viewer-gui-bg, GitHub #34) — render
-		// order = add order, so these two TextureWidgets are the bottom of the z stack:
-		// the grey machines/NEI.png plate, then the per-map machine GUI band over it
-		// (upstream NEI_RecipeMap.drawBackground :629-635). The ctor
-		// (texture, x, y, width, height, u, v) defaults to a 256x256 canvas — both the
-		// amazawa redraws and the upstream panels are 256x256 (assets/README.md reskin
-	// section). The slots below land on the baked-in art via the meta's VIEWER exits
-	// (the re-anchored -(5,7) panel fold happened once inside GT6RecipeMapViewerMeta).
-		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP, tBand = GT6RecipeMapViewerMeta.BAND_CROP;
+		// the composed page (task composed-ui-energy-slot-and-parts, the user ruling 配方页
+		// 渲染切拼接 UI+删除独立机器 GUI 贴图) — render order = add order: the grey
+		// machines/NEI.png plate (a 256x256 canvas, the 7-arg TextureWidget form), then the
+		// two machine-skin furniture cells as part crops (the arrow cell, the special-slot
+		// gear cell) via the 11-arg form — the parts are standalone small PNGs, the texture
+		// dims are declared explicitly (emi-1.20.1 TextureWidget 11-arg ctor, xplat source).
+		// The per-map machine GUI band is RETIRED: its baked slot frames doubled the code
+		// slots' (贴图槽+代码槽叠加), so the frames now come only from the SlotWidgets
+		// below (each draws its own back). The furniture positions are the meta's folded
+		// exits — the same pixels the JEI twin blits.
+		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP;
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[2], tPlate[3], tPlate[0], tPlate[1]));
-		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.guiTexture(mMap), 0, 0, tBand[2], tBand[3], tBand[0], tBand[1]));
+		addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.ARROW_OUTLINE, GT6RecipeMapViewerMeta.viewerArrowPos());
+		addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.SLOT_SPECIAL, GT6RecipeMapViewerMeta.viewerGearPos());
 		// The gear-spot jump port (task viewer-energy-jump-gear, the user ruling): carrier
-		// maps get the click widget third — right after the two backdrop textures (render
-		// order = add order, the art's z face), riding the baked gear decoration. GU maps
+		// maps get the click widget fourth — right after the plate + the two furniture
+		// parts (render order = add order, the art's z face), riding the special-slot
+		// gear cell drawn above. GU maps
 		// (mEnergyCarrier null) add nothing — the gear stays decoration (无载体图不画).
 		// The jump consumer is injected so the offline tests can pin the click target
 		// without touching EmiApi's static runtime.
@@ -173,10 +177,17 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		}
 	}
 
+	/** One furniture part at its folded viewer position — the standalone-PNG TextureWidget (own texture dims declared). */
+	private static void addPart(WidgetHolder aWidgets, gregtech6.gui.machines.GT6GuiParts.GuiPart aPart, int[] aPos) {
+		aWidgets.add(new TextureWidget(aPart.texture(), aPos[0], aPos[1],
+				aPart.width(), aPart.height(), 0, 0, aPart.width(), aPart.height(), aPart.width(), aPart.height()));
+	}
+
 	/**
 	 * The gear-spot jump port of the EMI leg (task viewer-energy-jump-gear): a no-draw
-	 * {@link dev.emi.emi.api.widget.Widget} over the folded gear rect — the decoration is
-	 * already baked into the plate, the widget only carries the hit box, the hint tooltip
+	 * {@link dev.emi.emi.api.widget.Widget} over the folded gear rect — the art is the
+	 * special-slot part drawn just above in {@link #addWidgets}, the widget only carries
+	 * the hit box, the hint tooltip
 	 * and the click. EMI's RecipeScreen routes mouse clicks to every non-{@code SlotWidget}
 	 * widget whose bounds contain the cursor (RecipeScreen.java:429-436, the emi 1.1.24
 	 * source) — pressed on mouse-down, no simulate/up split. The jump consumer is
@@ -201,7 +212,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 					GT6RecipeMapViewerMeta.GEAR_SIZE, GT6RecipeMapViewerMeta.GEAR_SIZE);
 		}
 
-		/** No draw — the gear art is baked into the backdrop plate. */
+		/** No draw — the gear art is the special-slot part added ahead of this widget. */
 		@Override
 		public void render(net.minecraft.client.gui.GuiGraphics aDraw, int aMouseX, int aMouseY, float aDelta) {
 		}

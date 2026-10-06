@@ -344,15 +344,6 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	@Test
 	void headroomReAnchorIsAPurePlusFourTranslation() {
 		GT6RecipeMaps.init();
-		// the band still ends on texture row 81 (v+h = 82) — the SHREDDER fourth-row
-		// holes at rows 61..78 stay fully covered, exactly as the pre-fix v11+h71 crop did
-		assertEquals(82, GT6RecipeMapViewerMeta.BAND_CROP[1] + GT6RecipeMapViewerMeta.BAND_CROP[3]);
-		// the plate origin rides 5px below the band origin in texture space (16−11 = 12−7)
-		assertEquals(GT6RecipeMapViewerMeta.BAND_CROP[1] + 5, GT6RecipeMapViewerMeta.PLATE_CROP[1]);
-		// the text band still opens 3px under the band bottom edge (bottom edge = last
-		// band row 81 at category row − S_OFFSET_Y: 73−70 pre, 77−74 post)
-		assertEquals(3, GT6RecipeMapViewerMeta.TEXT_BASE_Y
-				- (GT6RecipeMapViewerMeta.BAND_CROP[1] + GT6RecipeMapViewerMeta.BAND_CROP[3] - 1 - GT6RecipeMapViewerMeta.S_OFFSET_Y));
 		// the 18px row pitch is fold-independent (the raw switch geometry)
 		assertEquals(18, GT6RecipeMapViewerMeta.viewerInputPos(5, GT6RecipeMaps.MIXER)[1]
 				- GT6RecipeMapViewerMeta.viewerInputPos(0, GT6RecipeMaps.MIXER)[1]);
@@ -362,32 +353,27 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 	}
 
 	@Test
-	void backdropCropsAndTextBandPinnedToTheUpstreamDraw() {
-		// the two crop quadruples: the NEI_RecipeMap.drawBackground numbers carried to the
-		// re-anchored panel system (task viewer-row-headroom) — plate (-5,-16,0,0,176,166)
-		// → v 16−4 = 12, h 140 (the full category; the dropped bottom rows are transparent
-		// margin, the gained top rows sit under the full-width band) :632; band
-		// (-5,-8,0,3,176,79) → v 11−4 = 7, h 71+4 = 75 (the SAME bottom edge, texture row
-		// 81: v+h = 82) :634. Pre-fix pins: {5,16,166,140} / {5,11,166,71}.
+	void backdropCropsTextBandAndFurniturePinnedToTheUpstreamDraw() {
+		// the plate crop: the NEI_RecipeMap.drawBackground :632 number carried to the
+		// re-anchored panel system (task viewer-row-headroom) — (-5,-16,0,0,176,166)
+		// → v 16−4 = 12, h 140 (the full category). Pre-fix pin: {5,16,166,140}.
+		// The per-map machine-band crop is RETIRED (composed-ui-energy-slot-and-parts:
+		// the whole-image band baked slot frames the code slots doubled) — the composed
+		// page furniture (arrow cell, gear slot) rides the folded exits instead.
 		assertArrayEquals(new int[] {5, 12, 166, 140}, GT6RecipeMapViewerMeta.PLATE_CROP);
-		assertArrayEquals(new int[] {5, 7, 166, 75}, GT6RecipeMapViewerMeta.BAND_CROP);
 		assertEquals("gt6:textures/gui/machines/nei.png", GT6RecipeMapViewerMeta.PLATE_TEXTURE.toString());
+		// the furniture cells: the arrow cell at the skin print (78,24) → panel (73,17),
+		// the gear slot at (77,60) → (72,53) — the machine-GUI constants fold -(5,7)
+		assertArrayEquals(new int[] {73, 17}, GT6RecipeMapViewerMeta.viewerArrowPos());
+		assertArrayEquals(new int[] {72, 53}, GT6RecipeMapViewerMeta.viewerGearPos());
 		// the retired text band: the drawExtras lines sit at the FIXED panel y77 for every
-		// map (the pre-fix 73 + the re-anchor's 4 — still 3px under the band bottom edge
+		// map (the pre-fix 73 + the re-anchor's 4 — still 3px under the old band bottom edge
 		// 74; the +10 fluid deviation stays dead; FUSION's 2 lines since the
 		// r11-tu-costlines-slim slim-down end at 81 < 140)
 		GT6RecipeMaps.init();
 		for (RecipeMap tMap : List.of(GT6RecipeMaps.BATH, GT6RecipeMaps.MIXER, GT6RecipeMaps.FUSION,
 				GT6RecipeMaps.LATHE, GT6RecipeMaps.STEAM_CRACKING))
 			assertEquals(77, GT6RecipeMapViewerMeta.TEXT_BASE_Y, tMap.mNameInternal + " rides the fixed panel band");
-		// the per-map machine texture is the live mGUIPath (the mapping table needs no
-		// second copy): anvilbend folds AnvilBendingBig, the five fuel maps share default
-		assertEquals("gt6:textures/gui/machines/anvilbend.png",
-				GT6RecipeMapViewerMeta.guiTexture(GT6RecipeMaps.ANVIL_BEND).toString());
-		assertEquals("gt6:textures/gui/machines/default.png",
-				GT6RecipeMapViewerMeta.guiTexture(GT6RecipeMaps.ENGINE_FUELS).toString());
-		assertEquals("gt6:textures/gui/machines/steamcracking.png",
-				GT6RecipeMapViewerMeta.guiTexture(GT6RecipeMaps.STEAM_CRACKING).toString());
 	}
 
 	// -------------------------------------------------------------------
