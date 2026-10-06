@@ -59,7 +59,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * form). The former "no activity layer upstream" doc claim was a misreading — every
  * energystorages family borrows its overlay_active trio.
  */
-public class GT6BatteryBoxBlock extends GTEntityBlock {
+public class GT6BatteryBoxBlock extends GTEntityBlock implements gregtech6.block.GTWrenchUsable {
 
 	/** Facing property (six-way, issue #18 — FRONT is the output face, ALL-BUT-FRONT the input; upstream SIDES_VALID = all six). */
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;

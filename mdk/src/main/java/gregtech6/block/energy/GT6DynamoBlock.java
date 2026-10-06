@@ -57,7 +57,7 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * the upstream trinary stays collapsed to the {@code mActive} flag, the blinking state
  * remains the defer).
  */
-public class GT6DynamoBlock extends GTEntityBlock {
+public class GT6DynamoBlock extends GTEntityBlock implements gregtech6.block.GTWrenchUsable {
 
 	/** Facing property (six-way, issue #18 — FRONT is the output face, BACK the input; upstream SIDES_VALID = all six). */
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;

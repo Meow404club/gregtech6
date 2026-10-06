@@ -56,7 +56,7 @@ import gregtech6.util.UT6;
  *     monkey-wrench / card soft-hammer RCON stand-in ruling).</li>
  * </ul>
  */
-public class GTSensorBlock extends GTEntityBlock {
+public class GTSensorBlock extends GTEntityBlock implements gregtech6.block.GTWrenchUsable {
 
 	/** The display-face property — full 6-directional (upstream SIDES_VALID wrenching). */
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;

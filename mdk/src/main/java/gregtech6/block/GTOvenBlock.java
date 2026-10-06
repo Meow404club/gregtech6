@@ -52,7 +52,7 @@ import net.minecraft.world.entity.Entity;
  * else opens the GUI unchanged. setPlacedBy mirrors onPlaced (:128-131): the BE's facing
  * becomes the player's horizontal look direction, double-written NBT + BlockState.
  */
-public class GTOvenBlock extends GTEntityBlock {
+public class GTOvenBlock extends GTEntityBlock implements gregtech6.block.GTWrenchUsable {
 
 	/** Facing property (horizontal — the upstream SIDES_HORIZONTAL valid sides). */
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
