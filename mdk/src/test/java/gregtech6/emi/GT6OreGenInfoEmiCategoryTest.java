@@ -70,12 +70,14 @@ public class GT6OreGenInfoEmiCategoryTest {
 	}
 
 	/**
-	 * The text band: Cassiterite's dims row + 6 face lines = 7 text widgets; the
-	 * representative slot rides the leg's registry state (forge offline draws none — EMPTY
-	 * stack; neoforge draws one at the shared SLOT_X/SLOT_Y, the JEI twin's geometry).
+	 * The text band (task oregen-info-relayout): Cassiterite's dims row + 10 sectioned rows
+	 * (3 headers + 7 face lines — the atum small face rides the sectioned band, review-seat
+	 * rebase union of task atum-dim-adaptation) = 11 text widgets; the representative slot rides the leg's
+	 * registry state (forge offline draws none — EMPTY stack; neoforge draws one at the
+	 * shared SLOT_X/SLOT_Y, the JEI twin's geometry).
 	 */
 	@Test
-	public void addWidgetsLaysDimsRowPlusFaceLines() {
+	public void addWidgetsLaysDimsRowPlusSectionedRows() {
 		OreDistributionInfo.Entry tCassiterite = OreDistributionInfo.of(MT.OREMATS.Cassiterite);
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6OreGenInfoEmiRecipe(tCassiterite, 0).addWidgets(tHolder);
@@ -84,13 +86,13 @@ public class GT6OreGenInfoEmiCategoryTest {
 		//?} else {
 		/*assertEquals(1, tHolder.mSlots, "the representative slot draws when the registries are live");
 		 *///?}
-		assertEquals(7, tHolder.mTexts, "dims row + 6 face lines (3 small + 2 vein + 1 bedrock)");
-		// the dims row sits above the face band (21 vs 38) — the constants keep their roles
+		assertEquals(11, tHolder.mTexts, "dims row + 3 section headers + 7 face lines (4 small incl Atum + 2 vein + 1 bedrock)");
+		// the dims row sits above the section band (21 vs 38) — the constants keep their roles
 		assertTrue(GT6OreGenInfoLayout.DIMS_Y < GT6OreGenInfoLayout.FACE_BASE_Y);
 	}
 
 	@Test
-	public void ferberiteRowIsDimsPlusOneBedrockLine() {
+	public void ferberiteRowIsDimsPlusOneBedrockSection() {
 		OreDistributionInfo.Entry tFerberite = OreDistributionInfo.of(MT.OREMATS.Ferberite);
 		RecordingHolder tHolder = new RecordingHolder();
 		new GT6OreGenInfoEmiRecipe(tFerberite, 117).addWidgets(tHolder);
@@ -99,7 +101,7 @@ public class GT6OreGenInfoEmiCategoryTest {
 		//?} else {
 		/*assertEquals(1, tHolder.mSlots, "the bedrock LARGE representative resolves on the live leg");
 		 *///?}
-		assertEquals(2, tHolder.mTexts, "dims row + the one bedrock line");
+		assertEquals(3, tHolder.mTexts, "dims row + the bedrock header + the one bedrock line");
 	}
 
 	/**

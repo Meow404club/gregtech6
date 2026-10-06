@@ -243,7 +243,12 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 5917;
+	private static final int ZH_KEY_FLOOR = 5926;
+	// +9 task oregen-info-relayout (review-seat rebase union): the 9 ore-gen page body keys
+	// gt6.jei.info.ore_gen_info.{section.small_ores,section.large_veins,section.bedrock_ores,
+	// line.small_ore,line.large_vein,line.bedrock_ore,dim.overworld,dim.nether,dim.end} — zh
+	// faces over the dump (小矿石/基岩矿石/主世界/下界/末地), the coined 规模 the one
+	// self-authored face (javadoc 记档). 5917 + 9 = 5926.
 	// +3 task material-mc-f-attachment-rows (review-seat rebase union): the nozzle pair
 	// compose templates gt6.row.{nozzle,capnozzle}.display + the gt6.row.attachment.mat.steel
 	// small-unit word, both locales — dump-verbatim zh %s喷嘴/%s有盖喷嘴/钢 (the 12 new rows
