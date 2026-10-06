@@ -1358,6 +1358,12 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 					"the 3D view rides the ray-tracing SchemaRenderer (the GTCEu renderer face)");
 			assertTrue(tWidgetBytes.contains("brachy/modularui/drawable/schema/BlockHighlight"),
 					"the green selection frame is wired (the GTCEu highlightRenderer face)");
+			// the centering seed (task mbpreview-centering-gtceu-replica): the GTCEu
+			// reference algorithm's positioning segment carries into the compiled artifact —
+			// camera().setPosAndLookAt(0, 0, -10, schema center) — the MultiblockPreviewWidget
+			// .java:160-161 face (the seed + the getFocus center source, the bytecode layer)
+			assertTrue(tWidgetBytes.contains("setPosAndLookAt") && tWidgetBytes.contains("getFocus"),
+					"the GTCEu centering seed (camera.setPosAndLookAt over the schema focus) is wired");
 			assertTrue(tWidgetBytes.contains("listenGuiAction") && tWidgetBytes.contains("lastRayTrace"),
 					"left-click selection reads the traced hit (the GTCEu setBlockOnClick face)");
 			assertTrue(tWidgetBytes.contains("brachy/modularui/widgets/SchemaWidget$LayerButton"),
@@ -1371,6 +1377,102 @@ public class GT6MultiblockPreviewTest extends GTRecipesOfflineTestBase {
 			assertFalse(tTableBytes.contains("description"),
 					"the table row carries NO text face (name+item+pattern only)");
 		}
+	}
+
+	/**
+	 * The centering nail (task mbpreview-centering-gtceu-replica): the GTCEu reference
+	 * positioning algorithm, driven END TO END over the port's real schema fills with the
+	 * VENDORED {@code Camera} (the class that actually runs — pure math, no client stack:
+	 * Camera.java imports only {@code Mth} + joml, so it loads offline through the
+	 * {@code gt6.modularui.classes} seam, the GT6MultiblockPreviewEmiInputTest mechanism
+	 * upgraded from byte-reading to a child-first URLClassLoader).
+	 *
+	 * <p>The reference chain, verbatim anchors: the seed
+	 * {@code camera().setPosAndLookAt(0, 0, -10, getCenter())}
+	 * (MultiblockPreviewWidget.java:160-161); the bounds — non-air min/max, center =
+	 * {@code BlockPosUtil.getCenterF(min, max)} (MapSchema.java:36-51, BlockPosUtil.java
+	 * :59-62); the derived yaw/pitch/dist (Camera.java:45-53); the projection that turns
+	 * dist+lookAt into the centered picture (BaseSchemaRenderer.java:490-527); the
+	 * runtime draw re-seeding lookAt = focus + offset EVERY frame (SchemaWidget.java
+	 * :47-52) — the invariant the seed and the draw SHARE: the camera always anchors the
+	 * structure's bounding-box center, which is what puts the structure in the panel's
+	 * middle instead of hugging a corner.
+	 */
+	@Test
+	public void previewCenteringPinsTheGtceuCameraSeed() throws Exception {
+		String tClasses = System.getProperty("gt6.modularui.classes");
+		assertNotNull(tClasses, "gt6.modularui.classes system property (the build scripts feed it)");
+		java.net.URLClassLoader tMui = new java.net.URLClassLoader(
+				new java.net.URL[] { java.nio.file.Paths.get(tClasses).toUri().toURL() },
+				getClass().getClassLoader());
+		Class<?> tCamera = Class.forName("brachy.modularui.drawable.schema.Camera", true, tMui);
+		Class<?> tVec = Class.forName("org.joml.Vector3f", true, tMui);
+		Object tSeed = tCamera.getConstructor().newInstance();
+		java.lang.reflect.Method tSetPosAndLookAt = tCamera.getMethod("setPosAndLookAt",
+				float.class, float.class, float.class, tVec);
+		java.lang.reflect.Method tLookAt = tCamera.getMethod("lookAt");
+		java.lang.reflect.Method tDist = tCamera.getMethod("dist");
+
+		// the center the way MapSchema computes it (MapSchema.java:36-51): the non-air
+		// fill's bounding-box midpoint (the port's structureBlocks IS the MapSchema input)
+		Map<BlockPos, BlockState> tFill = GT6MultiblockPreviews.structureBlocks(
+				cokeOvenShape(), CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING);
+		float[] tCenter = bboxCenter(tFill);
+		assertArrayEquals(new float[] {0f, 0f, 0f}, tCenter, 1e-6f,
+				"the anchor-symmetric coke oven centers ON the anchor — the bounds center is the origin");
+
+		// the seed (MultiblockPreviewWidget.java:160-161): look at the center from
+		// (0, 0, -10) — the camera derives yaw/pitch and dist = 10 from it
+		Object tCenterVec = tVec.getConstructor(float.class, float.class, float.class)
+				.newInstance(tCenter[0], tCenter[1], tCenter[2]);
+		tSetPosAndLookAt.invoke(tSeed, 0f, 0f, -10f, tCenterVec);
+		Object tAnchored = tLookAt.invoke(tSeed);
+		for (int i = 0; i < 3; i++) {
+			assertEquals(tCenter[i], (float) tVec.getMethod(vecGetter(i)).invoke(tAnchored), 1e-6f,
+					"the seed anchors the camera ON the fill's bounds center (axis " + i + ")");
+		}
+		assertEquals(10f, (float) tDist.invoke(tSeed), 1e-6f, "the seed distance is 10 (the :160 literal)");
+
+		// the runtime draw invariant (SchemaWidget.java:47-52): every frame re-seeds
+		// lookAt = getFocus() + offset with the widget's own scale/yaw/pitch — the SAME
+		// center, so drag state can never leave the structure off the panel's middle
+		java.lang.reflect.Method tSetLookAtAndAngle = tCamera.getMethod("setLookAtAndAngle",
+				float.class, float.class, float.class, float.class, float.class, float.class);
+		tSetLookAtAndAngle.invoke(tSeed, tCenter[0], tCenter[1], tCenter[2], 10f, 0f,
+				(float) (Math.PI / 4));
+		Object tRedrawn = tLookAt.invoke(tSeed);
+		for (int i = 0; i < 3; i++) {
+			assertEquals(tCenter[i], (float) tVec.getMethod(vecGetter(i)).invoke(tRedrawn), 1e-6f,
+					"the per-frame draw re-seed keeps the camera ON the center (axis " + i + ")");
+		}
+
+		// the authored-shape spot check (the massfab): the upstream walk is x/z symmetric
+		// but y-offset (layers y0..y5) — the bounds center follows the FILL, exactly the
+		// reference semantics (MapSchema.java:36-51), NOT an assumed (0,0,0)
+		GTMultiBlockPattern tMassfab = GT6MultiblockPreviews.massfabShape(Blocks.IRON_BLOCK, Blocks.GLOWSTONE,
+				Blocks.OBSIDIAN, Blocks.GOLD_BLOCK, List.of(Blocks.REDSTONE_BLOCK, Blocks.LAPIS_BLOCK));
+		float[] tMassCenter = bboxCenter(GT6MultiblockPreviews.structureBlocks(
+				tMassfab, CONTROLLER, GT6MultiblockPreviews.DISPLAY_FACING, new BlockPos(0, 0, -2)));
+		assertArrayEquals(new float[] {0f, 2.5f, 0f}, tMassCenter, 1e-6f,
+				"the massfab bounds center rides the fill (y0..y5 → 2.5), the reference arithmetic");
+	}
+
+	/** The bounding-box midpoint of a schema fill — the MapSchema.java:36-51 center arithmetic. */
+	private static float[] bboxCenter(Map<BlockPos, BlockState> aFill) {
+		int tMinX = Integer.MAX_VALUE, tMinY = Integer.MAX_VALUE, tMinZ = Integer.MAX_VALUE;
+		int tMaxX = Integer.MIN_VALUE, tMaxY = Integer.MIN_VALUE, tMaxZ = Integer.MIN_VALUE;
+		for (BlockPos tPos : aFill.keySet()) {
+			tMinX = Math.min(tMinX, tPos.getX()); tMaxX = Math.max(tMaxX, tPos.getX());
+			tMinY = Math.min(tMinY, tPos.getY()); tMaxY = Math.max(tMaxY, tPos.getY());
+			tMinZ = Math.min(tMinZ, tPos.getZ()); tMaxZ = Math.max(tMaxZ, tPos.getZ());
+		}
+		return new float[] {(tMaxX - tMinX) / 2.0f + tMinX, (tMaxY - tMinY) / 2.0f + tMinY,
+				(tMaxZ - tMinZ) / 2.0f + tMinZ};
+	}
+
+	/** joml Vector3f's component accessor per axis (x()/y()/z() — the 1.10-line names). */
+	private static String vecGetter(int aAxis) {
+		return new String[] {"x", "y", "z"}[aAxis];
 	}
 
 	@Test
