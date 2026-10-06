@@ -6,15 +6,17 @@
  * shows no glyph), picks ITS tile from the same predicate (EMI first), rides the cutout
  * layer, carries the upstream pass-0 post-top geometry per FACING AXIS (:211 — the 2x2px
  * corner at (6..8, 2..4) Z-form / (2..4, 6..8) X-form, on the 15px plate shoulder), and
- * never perturbs the body quads (the dispatch-less grindstone resolves the -1 no-tint
- * sentinel — the body list passes through verbatim). The LIVE wrap (listener + atlas
- * stitching + JEI/EMI in a real client) is the field_test.
+ * never perturbs the body seats beyond the row tint (the ANY.Steel product rides the
+ * self-tint arm since tint-chain-hopper-grindstone-sifting — the census L2 closure; the
+ * -1 decals pass through verbatim). The LIVE wrap
+ * (listener + atlas stitching + JEI/EMI in a real client) is the field_test.
  */
 package gregtech6.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -224,13 +226,39 @@ public class GT6GrindstoneNeiModelTest extends GTOfflineRenderTestBase {
 		assertFalse(tWithout.contains(RenderType.cutout()), "no viewer → no cutout seat added");
 	}
 
-	/** The body pass passes through verbatim today (the dispatch-less grindstone resolves the -1 sentinel). */
+	/**
+	 * The body seats retint through the self-tint arm (task
+	 * tint-chain-hopper-grindstone-sifting, the census L2 closure): a tintindex-0 seat
+	 * quad comes back as the retinted copy carrying the ANY.Steel product (the row steals
+	 * the MT.Steel looks — upstream ANY.java:120 — so 130,130,130 gray-white), the
+	 * untinted decal quad passes through as the shared instance (the P22 contract).
+	 */
 	@Test
-	void theBodyPassIsUntouchedVerbatim() {
-		List<BakedQuad> tBody = List.of(bodyQuad());
-		GT6GrindstoneNeiModel tModel = new GT6GrindstoneNeiModel(fallback(tBody), sGrindstone, stubLookup(), () -> "jei");
-		assertSame(tBody, tModel.getQuads(state(Direction.NORTH, 16), null, RandomSource.create(), ModelData.EMPTY, RenderType.solid()),
-				"the solid pass IS the fallback's list — the white identity is the vanilla -1 no-tint sentinel");
+	void theBodySeatTintsAndTheDecalPassesThrough() {
+		BakedQuad tSeatQuad = new BakedQuad(seatVertices(), 0, Direction.UP, new NamedSprite(
+				ResourceLocation.fromNamespaceAndPath("minecraft", "block/smooth_stone")), true);
+		BakedQuad tDecalQuad = new BakedQuad(seatVertices(), -1, Direction.UP, new NamedSprite(
+				ResourceLocation.fromNamespaceAndPath("minecraft", "block/smooth_stone")), true);
+		GT6GrindstoneNeiModel tModel = new GT6GrindstoneNeiModel(fallback(List.of(tSeatQuad, tDecalQuad)),
+				sGrindstone, stubLookup(), () -> "jei");
+		List<BakedQuad> tOut = tModel.getQuads(state(Direction.NORTH, 16), null, RandomSource.create(), ModelData.EMPTY, RenderType.solid());
+		assertEquals(2, tOut.size());
+		assertNotSame(tSeatQuad, tOut.get(0), "the seat quad is the retinted copy");
+		assertSame(tDecalQuad, tOut.get(1), "the decal quad passes through as the shared instance");
+		assertEquals(abgrOf(GTMachinePaintTint.tintARGB(ModelData.EMPTY, gregapi.data.ANY.Steel, 0)),
+				tOut.get(0).getVertices()[3], "the body colour IS the ANY.Steel row product");
+	}
+
+	/** A fresh 32-int white vertex block (the fixture vertex source). */
+	private static int[] seatVertices() {
+		int[] tVertices = new int[4 * STRIDE];
+		java.util.Arrays.fill(tVertices, 0xFFFFFFFF);
+		return tVertices;
+	}
+
+	/** ARGB → the baked COLOR slot's ABGR byte order (the GTAxleTintArmTest form). */
+	private static int abgrOf(int aArgb) {
+		return (aArgb & 0xFF00FF00) | ((aArgb & 0xFF) << 16) | ((aArgb >> 16) & 0xFF);
 	}
 
 	/**
