@@ -172,6 +172,48 @@ public final class GTWrenchGridRenderer {
 		aPoseStack.popPose();
 	}
 
+	/**
+	 * The item-pipe grid entry (task pipe-render-closeout): the same 3x3 grid over the
+	 * same in-face axis tables, the icon layer is the monkeywrench four-state table —
+	 * {@link GTWrenchGridTables#itemPipeCellIcon} decides per cell (non-shift = the
+	 * connection bits, shift = the disable cycle). The data face is
+	 * {@link gregtech6.tileentity.connectors.GTItemPipeBlockEntity} — the public
+	 * mDisabledInputs/mDisabledOutputs bytes (MultiTileEntityPipeItem :128-153 cycle).
+	 */
+	public static void renderItemPipeGrid(PoseStack aPoseStack, MultiBufferSource aBuffers, Camera aCamera,
+			BlockHitResult aTarget, boolean aShift, gregtech6.tileentity.connectors.GTItemPipeBlockEntity aPipe) {
+		BlockPos tPos = aTarget.getBlockPos();
+		byte tFace = (byte)aTarget.getDirection().get3DDataValue();
+		// the same 0..1 hit offsets the click path feeds UT6 (GTItemPipeBlock.use:160-164)
+		byte tHover = GTWrenchGridTables.hoverSide(tFace,
+				(float)(aTarget.getLocation().x - tPos.getX()),
+				(float)(aTarget.getLocation().y - tPos.getY()),
+				(float)(aTarget.getLocation().z - tPos.getZ()));
+		byte tConnections = aPipe.getConnections();
+		byte tDisabledInputs = aPipe.mDisabledInputs;
+		byte tDisabledOutputs = aPipe.mDisabledOutputs;
+
+		float[] tOrigin = faceOrigin(tPos, tFace);
+		float[] tU = axisVector(GTWrenchGridTables.cellUAxis(tFace));
+		float[] tV = axisVector(GTWrenchGridTables.cellVAxis(tFace));
+
+		Vec3 tCamPos = aCamera.getPosition();
+		aPoseStack.pushPose();
+		aPoseStack.translate(-tCamPos.x, -tCamPos.y, -tCamPos.z);
+
+		drawGridLines(aPoseStack, aBuffers, tOrigin, tU, tV);
+		for (int tRow = 0; tRow < 3; tRow++) {
+			for (int tCol = 0; tCol < 3; tCol++) {
+				byte tCellSide = GTWrenchGridTables.cellSide(tFace, tCol, tRow);
+				GTWrenchGridIcon tIcon = GTWrenchGridTables.itemPipeCellIcon(aShift, tCellSide, tConnections,
+						tDisabledInputs, tDisabledOutputs);
+				drawCellIcon(aPoseStack, aBuffers, tFace, tOrigin, tU, tV, tHover, tCol, tRow, tCellSide, tIcon);
+			}
+		}
+
+		aPoseStack.popPose();
+	}
+
 	// ---------------------------------------------------------------------------
 	// grid lines — the 0.25/0.75 pick-threshold cross (GTCEu :225-229 shape)
 	// ---------------------------------------------------------------------------

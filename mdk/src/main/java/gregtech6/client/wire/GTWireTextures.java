@@ -40,6 +40,61 @@ public final class GTWireTextures {
 	}
 
 	/**
+	 * The pipeSide art folder of one material (task pipe-render-closeout) — the zero
+	 * parallel-table SET derivation ({@link #blockSetOf}) collapsed by the upstream
+	 * byte-identity census: {@code pipeSide.png} is the SAME grayscale art in every
+	 * texture set except WOOD and RUBBER (upstream snapshot sha256: {@code 93307398…}
+	 * shared, {@code eb13d1a4…} WOOD, {@code f7dc337a…} RUBBER — the set folders were
+	 * populated by the {@code copy_into_all.bat}-style scripts), so the art folder
+	 * resolves to {@code wood} / {@code rubber} / the shared {@code copper} copy — the
+	 * STONE→brick bodyTexture byte-identity remap precedent
+	 * ({@code GT6CrucibleDatagen.bodyTexture}). The material colour rides the tint
+	 * chain (tintindex 0), the same mRGBa seat as every materialicons domain.
+	 */
+	public static String pipeArtSetOf(@Nullable OreDictMaterial aMaterial) {
+		String tSet = blockSetOf(aMaterial);
+		if (tSet.equals("wood")) return "wood";
+		if (tSet.equals("rubber")) return "rubber";
+		return "copper";
+	}
+
+	/** The borrowed pipe-side base id of one material: {@code gt6:block/materialicons/<art set>/pipe_side}. */
+	public static net.minecraft.resources.ResourceLocation pipeSideSprite(@Nullable OreDictMaterial aMaterial) {
+		String tPath = "block/materialicons/" + pipeArtSetOf(aMaterial) + "/pipe_side";
+		return new net.minecraft.resources.ResourceLocation("gt6", tPath);
+	}
+
+	/**
+	 * The borrowed connected-arm art id of one pipe row (task pipe-render-closeout):
+	 * {@code gt6:block/materialicons/<art set>/pipe_<size>} — the upstream arm selector
+	 * verbatim ({@code getIconIndexConnected}, TileEntityBase10ConnectorRendered.java:265:
+	 * {@code <0.37 pipeTiny, <0.49 pipeSmall, <0.74 pipeMedium, <0.99 pipeLarge, else
+	 * pipeHuge} over the diameter in blocks = px/16 — so the PX_P diameters 4/6/8/12/16
+	 * map tiny/small/medium/large/huge and the quadruple/nonuple rows (PX_P[16]) ride
+	 * huge like upstream). The per-diameter arts collapse by the same byte-identity
+	 * census as {@link #pipeSideSprite} (each {@code pipe<Size>.png} hashes one art in
+	 * every set except WOOD/LEAF and RUBBER — assets/README.md), so the art set is the
+	 * shared {@link #pipeArtSetOf} dispatch.
+	 */
+	public static net.minecraft.resources.ResourceLocation pipeArmSprite(@Nullable OreDictMaterial aMaterial, int aDiameterPx) {
+		String tSize = aDiameterPx < 5 ? "tiny" : aDiameterPx < 7 ? "small" : aDiameterPx < 9 ? "medium"
+				: aDiameterPx < 13 ? "large" : "huge";
+		String tPath = "block/materialicons/" + pipeArtSetOf(aMaterial) + "/pipe_" + tSize;
+		return new net.minecraft.resources.ResourceLocation("gt6", tPath);
+	}
+
+	/**
+	 * The untinted pipe outline band ({@code pipeSide_OVERLAY}): byte-identical
+	 * (in fact empty — all 256 px alpha 0) across EVERY upstream set — and the
+	 * per-diameter {@code pipe<Size>_OVERLAY.png} arts hash that SAME empty PNG
+	 * (all 41 sets × all 8 sizes, assets/README.md) — so one id serves every base and
+	 * arm quad; the rod model's inflated twins and the JSON decal bands ride it
+	 * unchanged (the tex-pipe-textures two-pass form).
+	 */
+	public static final net.minecraft.resources.ResourceLocation PIPE_SIDE_OVERLAY_SPRITE =
+			new net.minecraft.resources.ResourceLocation("gt6", "block/materialicons/copper/pipe_side_overlay");
+
+	/**
 	 * The laser family's fixed texture pair (task wire-fiber-texture) — the borrowed
 	 * FIBER_WIRE icons (MultiTileEntityWireLaser.java:121-122; upstream
 	 * {@code textures/blocks/iconsets/FIBER_WIRE[_OVERLAY].png}, lowercased on borrow,

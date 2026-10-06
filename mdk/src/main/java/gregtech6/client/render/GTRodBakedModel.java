@@ -104,8 +104,9 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 	/** The upstream diameter clamp floor PX_P[2] (the wire model's readFromNBT2 :64 form). */
 	public static final float MIN_DIAMETER_PX = 2.0F;
 
-	/** Which sprite a planned face carries: the tinted base art or the j-th untinted overlay band. */
-	public enum SpriteKind { BASE, OVERLAY }
+	/** Which sprite a planned face carries: the tinted core art, the tinted per-diameter
+	 * arm art, or the j-th untinted overlay band. */
+	public enum SpriteKind { BASE, ARM, OVERLAY }
 
 	/**
 	 * One planned face quad: the facing (also the per-side chunk dispatch key), the box
@@ -120,8 +121,19 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 		}
 	}
 
-	/** The immutable per-row render identity: sprite ids + the PX_P diameter of the row. */
-	public record Params(ResourceLocation base, List<ResourceLocation> overlays, int diameterPx) {}
+	/**
+	 * The immutable per-row render identity: sprite ids + the PX_P diameter of the row.
+	 * Task pipe-render-closeout — the connected arms ride the per-diameter art
+	 * ({@code arm}; upstream {@code getIconIndexConnected}, TileEntityBase10ConnectorRendered
+	 * :265), the core the pipeSide art ({@code base}; :264). The 3-arg form keeps the
+	 * single-art families (axles, the logistics wire, the flow-arrow model) on the old
+	 * shape — arm = base.
+	 */
+	public record Params(ResourceLocation base, ResourceLocation arm, List<ResourceLocation> overlays, int diameterPx) {
+		public Params(ResourceLocation aBase, List<ResourceLocation> aOverlays, int aDiameterPx) {
+			this(aBase, aBase, aOverlays, aDiameterPx);
+		}
+	}
 
 	private static final FaceBakery BAKERY = new FaceBakery();
 
@@ -280,6 +292,7 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 
 	/** The sprite id for a kind/band — the borrowed grayscale PNGs (lowercased paths). */
 	public ResourceLocation spriteOf(SpriteKind aKind, int aBand) {
+		if (aKind == SpriteKind.ARM) return mParams.arm();
 		if (aKind == SpriteKind.BASE || aBand >= mParams.overlays().size()) {
 			return mParams.base();
 		}
@@ -320,7 +333,9 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 	 * :113-116); passes 1-6 = one arm per connected side (each arm spans from the core
 	 * plane flush to the block boundary with the same cross-section — the port arm length
 	 * 0, the wire model's armBox form); every base quad then gets one inflated untinted
-	 * twin per overlay band (the two-pass texture stack, TextureSet.java:145-181).
+	 * twin per overlay band (the two-pass texture stack, TextureSet.java:145-181). Task
+	 * pipe-render-closeout — the arm quads carry {@link SpriteKind#ARM} (the per-diameter
+	 * connected art, :265), the core {@link SpriteKind#BASE} (:264).
 	 */
 	public static List<Shape> planShapes(int aDiameterPx, int aMask, int aBands) {
 		long tKey = ((long) (aBands & 0x1F) << 11) | ((long) (aDiameterPx & 0x1F) << 6) | (aMask & 0x3FL);
@@ -361,7 +376,7 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 			double[] tArm = armBox(tDir, tHalf);
 			for (Direction tFace : Direction.values()) {
 				if (tFace == tDir.getOpposite()) continue; // :139 — the buried face renders null
-				rShapes.add(new Shape(tFace, tArm, 0, SpriteKind.BASE, 0, tFace == tDir ? tDir : null));
+				rShapes.add(new Shape(tFace, tArm, 0, SpriteKind.ARM, 0, tFace == tDir ? tDir : null));
 			}
 		}
 		return rShapes;

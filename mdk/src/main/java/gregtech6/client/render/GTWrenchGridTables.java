@@ -172,6 +172,26 @@ public final class GTWrenchGridTables {
 		return aCellSide == aFrontFacing ? GTWrenchGridIcon.FRONT_FACING_ROTATION : null;
 	}
 
+	/**
+	 * The item-pipe icon table (task pipe-render-closeout — the declared GTWrenchHighlight
+	 * Listener defer retired): the third table of the grid. Non-shift = the connection
+	 * bits, identical to the fluid pipe. Shift = the monkeywrench four-state cycle
+	 * (MultiTileEntityPipeItem :128-153 via GTItemPipeBlockEntity.monkeyWrench — the
+	 * upstream feedback was chat text :149-152, the grid is the port-side visual, same
+	 * ruling as the fluid io arrows): {@code (0,0)} normal → green, {@code (0,1)}
+	 * emit-off → the io arrow (this grid's io-face mark, the fluid shift language),
+	 * {@code (1,0)} accept-off and {@code (1,1)} both-off → red (blocked is blocked —
+	 * the in/out split reads off the cycle order, one click apart).
+	 */
+	public static GTWrenchGridIcon itemPipeCellIcon(boolean aShift, byte aCellSide, byte aConnections,
+			byte aDisabledInputs, byte aDisabledOutputs) {
+		int tBit = 1 << aCellSide;
+		if (!aShift) return (aConnections & tBit) != 0 ? GTWrenchGridIcon.PIPE_CONNECT : GTWrenchGridIcon.PIPE_BLOCK;
+		if ((aDisabledInputs & tBit) != 0) return GTWrenchGridIcon.PIPE_BLOCK;
+		if ((aDisabledOutputs & tBit) != 0) return GTWrenchGridIcon.IO_FACING_ROTATION;
+		return GTWrenchGridIcon.PIPE_CONNECT;
+	}
+
 	/** Assemble a UT6 hit vector from in-face (u,v): the normal axis stays 0.5. */
 	private static float[] assembleHit(byte aFace, float aU, float aV) {
 		float[] tHit = { 0.5F, 0.5F, 0.5F };

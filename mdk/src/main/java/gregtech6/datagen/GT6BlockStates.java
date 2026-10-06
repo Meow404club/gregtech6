@@ -150,30 +150,46 @@ public final class GT6BlockStates extends BlockStateProvider {
         // TileEntityBase10ConnectorRendered :264-265) is the L-level render-pool card,
         // NOT this one — the fallback shows the pipeSide art on every face of the
         // placeholder cube (assets/README.md declaration).
-        ModelFile tWoodPipe = tintedPipeModel("block/materialicons/wood/pipe_side",
-                modLoc("block/materialicons/wood/pipe_side"), modLoc("block/materialicons/wood/pipe_side_overlay"));
-        ModelFile tCopperPipe = tintedPipeModel("block/materialicons/copper/pipe_side",
-                modLoc("block/materialicons/copper/pipe_side"), modLoc("block/materialicons/copper/pipe_side_overlay"));
-        ModelFile tCopperPipeRestrictive = tintedPipeModel("block/materialicons/copper/pipe_side_restrictive",
-                modLoc("block/materialicons/copper/pipe_side"), modLoc("block/materialicons/copper/pipe_side_overlay"),
-                modLoc("block/iconsets/pipe_restrictor"));
+        // task tex-pipe-textures — the three pipe connector families leave the
+        // cube_all placeholder era for the upstream material-set DUAL-LAYER tinted form.
+        // Upstream every material-icon render is two passes: pass 0 = the set art
+        // multiplied by mRGBa, pass 1 = the untinted <SET>_OVERLAY black outline
+        // (TextureSet.java:145-181 getIcon/getIconPasses). The connector side segment
+        // picks INDEX_BLOCK_PIPE_SIDE = the 'pipeSide' art added to every set
+        // (GT_API.java:158 addToAll).
+        // Task pipe-render-closeout — the per-row art pick is the ZERO-PARALLEL-TABLE
+        // SET derivation ({@link gregtech6.client.wire.GTWireTextures#pipeSideSprite},
+        // the wire blockSetOf seam): the upstream pipeSide art is byte-identical across
+        // every texture set except WOOD and RUBBER (the copy_into_*.bat generation —
+        // sha256 census in assets/README.md), so the shared-model map collapses to the
+        // wood / rubber / copper art folders. The logistics wire renders its own
+        // dedicated pair instead of the set art (MultiTileEntityWireLogistics :48-49 =
+        // iconsets/LOGISTICS_WIRE x mRGBa + LOGISTICS_WIRE_OVERLAY; the NBT_MATERIAL
+        // column is MT.NULL, Loader :1819, so the base art stays white). The restrictive
+        // item rows add the upstream third pass — the PIPE_RESTRICTOR plate
+        // (MultiTileEntityPipeItem.java:280-281 mRenderType 1; the :76-82 registration
+        // rows carry NBT_PIPERENDER 1) — as the second decal band. The runtime tint is
+        // the row material's fRGBaSolid (the NBT_COLOR getRGBInt(fRGBaSolid)
+        // registration column) through the GTMachinePaintTint chain (the
+        // GTMachineTintModel bake walk, like every other NBT_MATERIAL domain).
+        // Connection-aware geometry (the core + per-diameter arms,
+        // TileEntityBase10ConnectorRendered :264-265) is installed at BAKE time by
+        // {@link gregtech6.client.render.GTRodClientListener} (the rod-render-pool
+        // card) — this JSON stays as the fallback carrier and the item parent.
         ModelFile tLogisticsWire = tintedPipeModel("block/iconsets/logistics_wire",
                 modLoc("block/iconsets/logistics_wire"), modLoc("block/iconsets/logistics_wire_overlay"));
-        // task fluid-pipe-matrix — the fluid pipe matrix (280 rows): the declared
-        // RENDER TRANSITION keeps the shared cube placeholder and its two texture
-        // families (the only borrowed pipe art in the repo): WOODEN-block rows ride the
-        // wood family, everything else the copper family; the per-material colour rides
-        // the tint chain (GTMachinePaintTint over the row material). Connection-aware
-        // geometry = the rod-render-pool card (NOT this one).
+        // the per-SET shared pipe models (the addWireFamily shared-map form — one
+        // (art set) model built on first use)
+        Map<String, ModelFile> tPipeShared = new HashMap<>();
         for (GTFluidPipes.FluidPipeRow tFluidRow : GTFluidPipes.ROWS) {
             pipeBlockstate(GTFluidPipes.BLOCKS_BY_PATH.get(tFluidRow.path()).get(),
-                    tFluidRow.material().blockFamily() == GTFluidPipes.PipeBlockFamily.WOODEN ? tWoodPipe : tCopperPipe);
+                    pipeModelOf(tPipeShared, tFluidRow.material().oreDictMaterial()));
         }
-        // task pipe-item — the item pipe family: one shared model per form, the six
-        // restrictive variants over the restrictor-band twin (the upstream mRenderType 1)
         for (GTItemPipes.ItemPipeRow tItemRow : GTItemPipes.ROWS) {
             pipeBlockstate(GTItemPipes.BLOCKS_BY_PATH.get(tItemRow.path()).get(),
-                    tItemRow.variant().suffix.startsWith("restrictive") ? tCopperPipeRestrictive : tCopperPipe);
+                    tItemRow.variant().suffix.startsWith("restrictive")
+                            ? pipeRestrictiveModelOf(tPipeShared, tItemRow.material().oreDictMaterial())
+                            : pipeModelOf(tPipeShared, tItemRow.material().oreDictMaterial()));
         }
         pipeBlockstate(GT6Logistics.LOGISTICS_WIRE.get(), tLogisticsWire); // task logistics-lv2 — the single logistics connector row
         addWire(GTWires.WIRE_ELECTRIC_1X.get());
@@ -2470,6 +2486,36 @@ public final class GT6BlockStates extends BlockStateProvider {
                     .end();
         }
         return tModel;
+    }
+
+    /**
+     * Task pipe-render-closeout — the per-material pipe model ({@code aShared} keyed by
+     * the art set, the addWireFamily map form): the SET derivation is
+     * {@link gregtech6.client.wire.GTWireTextures#pipeSideSprite} (the byte-identity
+     * collapse wood / rubber / shared copper), the overlay the byte-identical shared
+     * band. Both pipe walks (fluid + item) consume this one expression — the runtime
+     * bake dispatch ({@code GTRodClientListener.buildParams}) rides the same seam, so
+     * the fallback JSON and the baked model can never drift apart.
+     */
+    private ModelFile pipeModelOf(Map<String, ModelFile> aShared, gregapi.oredict.OreDictMaterial aMaterial) {
+        return aShared.computeIfAbsent(gregtech6.client.wire.GTWireTextures.pipeArtSetOf(aMaterial),
+                tSet -> tintedPipeModel("block/materialicons/" + tSet + "/pipe_side",
+                        modLoc("block/materialicons/" + tSet + "/pipe_side"),
+                        gregtech6.client.wire.GTWireTextures.PIPE_SIDE_OVERLAY_SPRITE));
+    }
+
+    /**
+     * The restrictive twin of {@link #pipeModelOf}: the same art plus the restrictor band.
+     * The map key carries the {@code _restrictive} suffix, the art set is captured
+     * separately — computeIfAbsent hands the lambda the KEY, not the art set.
+     */
+    private ModelFile pipeRestrictiveModelOf(Map<String, ModelFile> aShared, gregapi.oredict.OreDictMaterial aMaterial) {
+        String tArtSet = gregtech6.client.wire.GTWireTextures.pipeArtSetOf(aMaterial);
+        return aShared.computeIfAbsent(tArtSet + "_restrictive",
+                tKey -> tintedPipeModel("block/materialicons/" + tArtSet + "/pipe_side_restrictive",
+                        modLoc("block/materialicons/" + tArtSet + "/pipe_side"),
+                        gregtech6.client.wire.GTWireTextures.PIPE_SIDE_OVERLAY_SPRITE,
+                        modLoc("block/iconsets/pipe_restrictor")));
     }
 
     /**

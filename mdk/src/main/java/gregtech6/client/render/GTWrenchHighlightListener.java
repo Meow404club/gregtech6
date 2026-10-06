@@ -46,7 +46,10 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  * predicate {@link GTFluidPipeBlock#use}, {@code GTItemPipeBlock#use} and
  * {@link GTOvenBlock#use} gate on — the "shown means clickable" invariant.
  * Hovering a {@link GTFluidPipeBlockEntity} (the connection/ioMask modes, task
- * wrench-ui-gtceu), a {@link TileEntityOven} (the front-rotation mode, task
+ * wrench-ui-gtceu), a {@link gregtech6.tileentity.connectors.GTItemPipeBlockEntity}
+ * (the connection/monkeywrench modes, task pipe-render-closeout — shift marks the
+ * four-state disable cycle, the same predicate {@link gregtech6.block.pipe.GTItemPipeBlock#use}
+ * cycles through), a {@link TileEntityOven} (the front-rotation mode, task
  * oven-rotation — shift marks the rotatable cells, the same predicate
  * {@link GTOvenBlock#use} rotates through), a facing-machine block (the
  * transformer/dynamo/battery-box family, task wrench-interaction-chain symptom19 —
@@ -86,12 +89,13 @@ public final class GTWrenchHighlightListener {
 		Camera tCamera = aEvent.getCamera();
 		MultiBufferSource tBuffers = aEvent.getMultiBufferSource();
 		if (tTile instanceof GTFluidPipeBlockEntity tPipe) {
-			// task wrench-interaction-key gap (declared defer): the item-pipe family is
-			// clickable through the same key (GTItemPipeBlock.use) but shows no grid here —
-			// its shift layer is the monkeyWrench four-state disable cycle
-			// (mDisabledInputs/mDisabledOutputs), a different data face from the fluid
-			// pipe's ioMask arrows, so the renderer arm is a renderer-domain card.
 			GTWrenchGridRenderer.renderGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tPipe);
+		} else if (tTile instanceof gregtech6.tileentity.connectors.GTItemPipeBlockEntity tItemPipe) {
+			// task pipe-render-closeout — the declared defer retired: the item pipe is
+			// clickable through the same key (GTItemPipeBlock.use), so the grid shows
+			// ("shown means clickable"); shift = the monkeywrench four-state cycle
+			// (mDisabledInputs/mDisabledOutputs, the itemPipeCellIcon table).
+			GTWrenchGridRenderer.renderItemPipeGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tItemPipe);
 		} else if (tTile instanceof TileEntityOven tOven) {
 			// task oven-rotation — the front facing reads the BlockState, the client
 			// display authority: setBlock(state, 3) syncs the state without re-sending

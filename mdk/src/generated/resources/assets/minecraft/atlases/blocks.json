@@ -568,6 +568,11 @@
       "type": "minecraft:directory",
       "prefix": "block/barometer",
       "source": "block/barometer"
+    },
+    {
+      "type": "minecraft:directory",
+      "prefix": "block/materialicons/",
+      "source": "block/materialicons"
     }
   ]
 }

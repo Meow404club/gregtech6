@@ -1,6 +1,7 @@
 /*
- * Offline pinned-census tests for task tex-pipe-textures: the three pipe connector
- * families (2 wood fluid rows, the item pipe matrix — 126 rows since item-pipe-matrix,
+ * Offline pinned-census tests for task tex-pipe-textures (+ the pipe-render-closeout
+ * SET-derivation upgrade): the three pipe connector
+ * families (280 fluid rows / the item pipe matrix — 126 rows since item-pipe-matrix /
  * the logistics wire) leave the
  * cube_all single-placeholder era for the upstream material-set DUAL-LAYER tinted form
  * — every material-icon render is two passes (pass 0 = the set art multiplied by mRGBa,
@@ -12,23 +13,27 @@
  *
  * <p>Coverage (asserted against the committed generated + static trees):
  * <ul>
- * <li>the four shared models keep the two-layer shape — tintindex-0 body over the set
+ * <li>the shared models keep the two-layer shape — tintindex-0 body over the set
  *     art, UNTINTED overlay bands (no tintindex key — FaceBuilder default -1), the
  *     cutout render_type, the restrictive twin stacking the restrictor band;</li>
- * <li>the set picks ride the row materials: the fluid rows resolve WOOD (the MT wood
- *     factory = SET_WOOD), the item rows the shared COPPER pair (clloymachine = SET_COPPER;
- *     MT.java:716/788), the logistics wire the dedicated pair (NBT_MATERIAL = MT.NULL,
- *     Loader :1819) — the tint-value/dispatch face of that seam is
- *     {@code gregtech6.client.render.GTMachinePaintTintTest#pipeCarriersRideTheCombinedDispatch};</li>
- * <li>all 129 pipe blockstates (2 fluid + 126 item + the logistics wire) map every
+ * <li>the per-row art pick is the ZERO-PARALLEL-TABLE SET derivation
+ *     ({@code GTWireTextures.pipeSideSprite}, task pipe-render-closeout): the 61 pipe
+ *     materials' SET census is pinned slug by slug, and the art dispatch collapses to
+ *     wood / rubber / the shared copper copy by the upstream byte-identity census
+ *     (pipeSide.png hashes one art everywhere except WOOD and RUBBER); the connected
+ *     arms ride the per-diameter arts over the upstream :265 diameter selector
+ *     ({@code GTWireTextures.pipeArmSprite});</li>
+ * <li>the visual census: the three live side arts are NOT flat plates (distinct-color
+ *     counts pinned at the sha-anchored bytes: wood 59 / rubber 148 / copper 42) and
+ *     every borrowed PNG carries its sha256 README ledger row;</li>
+ * <li>all 407 pipe blockstates (280 fluid + 126 item + the logistics wire) map every
  *     CONNECTIONS variant (0..63) onto the right shared model, and the BlockItem models
- *     parent those shared models — the 18 new materials ride the copper pair too, the
- *     per-set art face (shiny/dull/metallic) is the render-pool card's domain;</li>
+ *     parent those shared models;</li>
  * <li>the retired placeholders are DEAD — no generated or static JSON references
  *     fluid_pipe_wood / item_pipe_restrictive / the block-root logistics_wire art any
  *     more, and the three PNGs are gone from the static tree (item_pipe.png STAYS: the
  *     16 LD wire placeholder rows still consume it, a separate card's domain);</li>
- * <li>the seven borrowed PNGs exist on the static tree (byte identity is the README
+ * <li>the borrowed pipe PNGs exist on the static tree (byte identity is the README
  *     sha256 ledger's face — the upstream snapshot is absent from coder worktrees).</li>
  * </ul>
  */
@@ -58,33 +63,47 @@ import com.google.gson.JsonParser;
 
 class GT6PipeTextureDatagenTest {
 
-    /** The four shared models (the tintedPipeModel outputs, texture paths as model names). */
+    /** The shared models (the tintedPipeModel outputs, texture paths as model names). */
     private static final String WOOD_MODEL = "materialicons/wood/pipe_side";
+    private static final String RUBBER_MODEL = "materialicons/rubber/pipe_side";
     private static final String COPPER_MODEL = "materialicons/copper/pipe_side";
     private static final String COPPER_RESTRICTIVE_MODEL = "materialicons/copper/pipe_side_restrictive";
     private static final String LOGISTICS_MODEL = "iconsets/logistics_wire";
 
     /**
-     * The pipe blockstate registry paths (task item-pipe-matrix: the item material slugs
-     * walk the GTItemPipes table — 21 loader lines × 6 variants — so the datagen shape
-     * stays pinned over the whole matrix, not a slug snapshot) and the 280 fluid row
-     * paths (task fluid-pipe-matrix) with the declared RENDER TRANSITION picks: WOODEN-
-     * block rows ride the wood family, everything else the copper family (the only
-     * borrowed pipe art in the repo — the per-material colour rides the tint chain;
-     * connection-aware geometry is the rod-render-pool card).
+     * The pipe blockstate registry paths (task item-pipe-matrix + fluid-pipe-matrix),
+     * walking the SAME seam the datagen consumes — the per-material SET art dispatch
+     * ({@code GTWireTextures.pipeSideSprite}, task pipe-render-closeout): wood-set rows
+     * the wood art, the rubber row the rubber art, everything else the shared copper
+     * copy (the upstream pipeSide byte-identity census, assets/README.md).
      */
     private static Map<String, String> fluidModelPicks() {
         Map<String, String> rPicks = new LinkedHashMap<>();
         for (gregtech6.registry.GTFluidPipes.FluidPipeRow tRow : gregtech6.registry.GTFluidPipes.ROWS) {
-            rPicks.put(tRow.path(),
-                    tRow.material().blockFamily() == gregtech6.registry.GTFluidPipes.PipeBlockFamily.WOODEN ? WOOD_MODEL : COPPER_MODEL);
+            rPicks.put(tRow.path(), artModelOf(tRow.material().oreDictMaterial()));
         }
         return rPicks;
     }
 
+    /** The model path of one material's pipe art (the dispatch under test, mirrored). */
+    private static String artModelOf(gregapi.oredict.OreDictMaterial aMaterial) {
+        return "materialicons/" + gregtech6.client.wire.GTWireTextures.pipeArtSetOf(aMaterial) + "/pipe_side";
+    }
+
     private static final List<String> RESTRICTIVE_TAILS = List.of("restrictive_medium", "restrictive_large", "restrictive_huge");
-    private static final List<String> ITEM_MATERIALS = gregtech6.registry.GTItemPipes.MATERIALS.stream()
-            .map(gregtech6.registry.GTItemPipes.ItemPipeMaterial::slug).toList();
+
+    /**
+     * The item pipe slugs (the live registry walk) — LAZY accessor per the
+     * GTOfflineTestBase class-init rule: a static-final init here class-inits
+     * {@code GTItemPipes} (ForgeRegistries → BuiltInRegistries) at class-load, BEFORE the
+     * {@code @BeforeAll} bootstrap — when this class executes first in the shared test JVM
+     * (the run-order lottery), that poisons every later registry consumer with
+     * NoClassDefFoundError. Every call site runs after the boot, inside test methods.
+     */
+    private static List<String> itemMaterials() {
+        return gregtech6.registry.GTItemPipes.MATERIALS.stream()
+                .map(gregtech6.registry.GTItemPipes.ItemPipeMaterial::slug).toList();
+    }
 
     @BeforeAll
     static void bootMaterials() {
@@ -134,7 +153,7 @@ class GT6PipeTextureDatagenTest {
 
     @Test
     public void sharedModelsKeepTheTwoLayerShape() throws Exception {
-        for (String tModel : List.of(WOOD_MODEL, COPPER_MODEL, COPPER_RESTRICTIVE_MODEL, LOGISTICS_MODEL)) {
+        for (String tModel : List.of(WOOD_MODEL, RUBBER_MODEL, COPPER_MODEL, COPPER_RESTRICTIVE_MODEL, LOGISTICS_MODEL)) {
             JsonObject tJson = treeJson(modelRelPath(tModel));
             assertEquals("minecraft:cutout", tJson.get("render_type").getAsString(),
                     tModel + " must declare the alpha-discarding chunk layer (the #8 fix shape)");
@@ -177,10 +196,19 @@ class GT6PipeTextureDatagenTest {
     public void texturePicksRideTheRowMaterialSets() throws Exception {
         assertEquals("gt6:block/materialicons/wood/pipe_side",
                 treeJson(modelRelPath(WOOD_MODEL)).getAsJsonObject("textures").get("all").getAsString(),
-                "the fluid rows ride the WOOD set (the MT wood factory = SET_WOOD)");
+                "the wood rows ride the WOOD art (the MT wood factory = SET_WOOD)");
+        assertEquals("gt6:block/materialicons/rubber/pipe_side",
+                treeJson(modelRelPath(RUBBER_MODEL)).getAsJsonObject("textures").get("all").getAsString(),
+                "the rubber row rides the RUBBER art (SET_RUBBER — the only byte-distinct pipeSide besides wood)");
         assertEquals("gt6:block/materialicons/copper/pipe_side",
                 treeJson(modelRelPath(COPPER_MODEL)).getAsJsonObject("textures").get("all").getAsString(),
-                "the item rows ride the COPPER set (clloymachine = SET_COPPER)");
+                "every other SET rides the shared copper copy (the byte-identity census)");
+        // the overlay band: one shared id on every pipe model (byte-identical upstream)
+        for (String tModel : List.of(WOOD_MODEL, RUBBER_MODEL, COPPER_MODEL, COPPER_RESTRICTIVE_MODEL)) {
+            assertEquals("gt6:block/materialicons/copper/pipe_side_overlay",
+                    treeJson(modelRelPath(tModel)).getAsJsonObject("textures").get("overlay0").getAsString(),
+                    tModel + " rides the shared overlay band");
+        }
         assertEquals("gt6:block/iconsets/logistics_wire",
                 treeJson(modelRelPath(LOGISTICS_MODEL)).getAsJsonObject("textures").get("all").getAsString(),
                 "the logistics wire rides its dedicated iconsets pair, NOT the pipeSide set art");
@@ -193,7 +221,7 @@ class GT6PipeTextureDatagenTest {
         record Expect(List<String> paths, String model) {}
         List<String> tItemPaths = new ArrayList<>();
         List<String> tRestrictivePaths = new ArrayList<>();
-        for (String tMat : ITEM_MATERIALS) {
+        for (String tMat : itemMaterials()) {
             for (String tTail : RESTRICTIVE_TAILS) tRestrictivePaths.add(tMat + "_item_pipe_" + tTail);
             tItemPaths.add(tMat + "_item_pipe_medium");
             tItemPaths.add(tMat + "_item_pipe_large");
@@ -241,7 +269,7 @@ class GT6PipeTextureDatagenTest {
         }
         assertEquals("gt6:block/" + LOGISTICS_MODEL,
                 treeJson("assets/gt6/models/item/logistics_wire.json").get("parent").getAsString());
-        for (String tMat : ITEM_MATERIALS) {
+        for (String tMat : itemMaterials()) {
             for (String tTail : RESTRICTIVE_TAILS) {
                 assertEquals("gt6:block/" + COPPER_RESTRICTIVE_MODEL,
                         treeJson("assets/gt6/models/item/" + tMat + "_item_pipe_" + tTail + ".json").get("parent").getAsString());
@@ -251,6 +279,151 @@ class GT6PipeTextureDatagenTest {
                         treeJson("assets/gt6/models/item/" + tMat + "_item_pipe_" + tTail + ".json").get("parent").getAsString());
             }
         }
+    }
+
+    // ------------------------------------------------------------------
+    // the SET census (task pipe-render-closeout) — 61 slugs pinned + the art collapse
+    // ------------------------------------------------------------------
+
+    /** The slug → block-SET census over the whole pipe material axis (61 rows), probed
+     * live via the ported gregapi ({@code mTextureSetsBlock} first entry — the upstream
+     * MT.java factory/SET_ seeding) and pinned here. */
+    private static final Map<String, String> SET_CENSUS = Map.ofEntries(
+            // the 40 fluid loader lines (Loader_MultiTileEntities :1846-1885)
+            Map.entry("wood", "wood"), Map.entry("wood_treated", "wood"), Map.entry("iron_wood", "wood"),
+            Map.entry("plastic", "dull"), Map.entry("rubber", "rubber"), Map.entry("copper", "copper"),
+            Map.entry("gold", "shiny"), Map.entry("aluminium", "copper"), Map.entry("tin_alloy", "copper"),
+            Map.entry("bronze", "copper"), Map.entry("invar", "metallic"), Map.entry("steel", "metallic"),
+            Map.entry("desh", "dull"), Map.entry("chromium", "shiny"), Map.entry("hsla", "metallic"),
+            Map.entry("efrine", "metallic"), Map.entry("galvanized_steel", "copper"),
+            Map.entry("stainless_steel", "shiny"), Map.entry("tungsten_alloy", "metallic"),
+            Map.entry("titanium", "metallic"), Map.entry("netherite", "metallic"),
+            Map.entry("workers_alloy", "metallic"), Map.entry("tungsten", "metallic"),
+            Map.entry("palladium", "shiny"), Map.entry("vanadium_steel", "metallic"),
+            Map.entry("tungstensteel", "metallic"), Map.entry("tungsten_carbide", "metallic"),
+            Map.entry("iridium", "dull"), Map.entry("gaia_spirit", "shiny"), Map.entry("draconium", "metallic"),
+            Map.entry("awakened_draconium", "metallic"), Map.entry("infinity", "shiny"),
+            Map.entry("adamantium", "shiny"), Map.entry("bedrock_hsla_alloy", "brick"),
+            Map.entry("thaumium", "metallic"), Map.entry("manasteel", "shiny"), Map.entry("void_metal", "metallic"),
+            Map.entry("terrasteel", "shiny"), Map.entry("carbon", "fine"),
+            Map.entry("tantalum_hafnium_carbide", "metallic"),
+            // the 21 item loader lines (Loader_MultiTileEntities :1823-1843)
+            Map.entry("brass", "copper"), Map.entry("constantan", "copper"), Map.entry("cobalt_brass", "copper"),
+            Map.entry("germanium", "copper"), Map.entry("arsenic_copper", "copper"),
+            Map.entry("arsenic_bronze", "copper"), Map.entry("electrum", "shiny"),
+            Map.entry("sterling_silver", "shiny"), Map.entry("rose_gold", "shiny"), Map.entry("angmallen", "shiny"),
+            Map.entry("black_bronze", "copper"), Map.entry("aluminium_brass", "copper"),
+            Map.entry("manyullyn", "copper"), Map.entry("magnalium", "dull"), Map.entry("platinum", "shiny"),
+            Map.entry("osmium", "metallic"), Map.entry("enderium", "copper"), Map.entry("ultimet", "shiny"),
+            Map.entry("elementium", "shiny"), Map.entry("osmiridium", "metallic"),
+            Map.entry("vibranium_silver", "shiny"));
+
+    @Test
+    public void pipeSetCensusPinnedOverAll61Materials() {
+        // the census table itself covers the whole axis, no slug missing
+        java.util.Set<String> tLive = new java.util.HashSet<>();
+        for (gregtech6.registry.GTFluidPipes.FluidPipeRow tRow : gregtech6.registry.GTFluidPipes.ROWS) {
+            if (tRow.variant() != gregtech6.registry.GTFluidPipes.FluidPipeVariant.TINY) continue;
+            tLive.add(tRow.material().slug());
+        }
+        for (gregtech6.registry.GTItemPipes.ItemPipeRow tRow : gregtech6.registry.GTItemPipes.ROWS) {
+            if (tRow.variant() != gregtech6.registry.GTItemPipes.ItemPipeVariant.MEDIUM) continue;
+            tLive.add(tRow.material().slug());
+        }
+        assertEquals(SET_CENSUS.keySet(), tLive, "the SET census table = the live pipe material axis");
+        // every row's material resolves to its pinned SET through the zero-parallel-table seam
+        for (gregtech6.registry.GTFluidPipes.FluidPipeRow tRow : gregtech6.registry.GTFluidPipes.ROWS) {
+            if (tRow.variant() != gregtech6.registry.GTFluidPipes.FluidPipeVariant.TINY) continue;
+            assertEquals(SET_CENSUS.get(tRow.material().slug()),
+                    gregtech6.client.wire.GTWireTextures.blockSetOf(tRow.material().oreDictMaterial()),
+                    "fluid slug " + tRow.material().slug() + " drifted off the pinned SET");
+        }
+        for (gregtech6.registry.GTItemPipes.ItemPipeRow tRow : gregtech6.registry.GTItemPipes.ROWS) {
+            if (tRow.variant() != gregtech6.registry.GTItemPipes.ItemPipeVariant.MEDIUM) continue;
+            assertEquals(SET_CENSUS.get(tRow.material().slug()),
+                    gregtech6.client.wire.GTWireTextures.blockSetOf(tRow.material().oreDictMaterial()),
+                    "item slug " + tRow.material().slug() + " drifted off the pinned SET");
+        }
+    }
+
+    @Test
+    public void pipeArtDispatchCollapsesByTheByteIdentityCensus() {
+        // only wood/rubber SETs carry distinct pipeSide art; every other SET maps to the
+        // shared copper copy — the sprite id IS the dispatch face
+        assertEquals("gt6:block/materialicons/wood/pipe_side",
+                gregtech6.client.wire.GTWireTextures.pipeSideSprite(gregtech6.registry.GTFluidPipes.MAT_WOOD.oreDictMaterial()).toString());
+        assertEquals("gt6:block/materialicons/rubber/pipe_side",
+                gregtech6.client.wire.GTWireTextures.pipeSideSprite(gregtech6.registry.GTFluidPipes.MAT_RUBBER.oreDictMaterial()).toString());
+        for (String tSlug : new String[] {"gold", "steel", "plastic", "iridium", "magnalium",
+                "bedrock_hsla_alloy", "carbon", "brass", "electrum", "osmium"}) {
+            assertEquals("gt6:block/materialicons/copper/pipe_side",
+                    gregtech6.client.wire.GTWireTextures.pipeSideSprite(materialBySlug(tSlug)).toString(),
+                    tSlug + " (SET " + SET_CENSUS.get(tSlug) + ") must ride the shared copper copy");
+        }
+        assertEquals("gt6:block/materialicons/copper/pipe_side_overlay",
+                gregtech6.client.wire.GTWireTextures.PIPE_SIDE_OVERLAY_SPRITE.toString(),
+                "one shared overlay band id (byte-identical across every set)");
+    }
+
+    /** The census slug → the live row material (the registry walk, both families). */
+    private static gregapi.oredict.OreDictMaterial materialBySlug(String aSlug) {
+        for (gregtech6.registry.GTFluidPipes.FluidPipeRow tRow : gregtech6.registry.GTFluidPipes.ROWS) {
+            if (tRow.material().slug().equals(aSlug)) return tRow.material().oreDictMaterial();
+        }
+        for (gregtech6.registry.GTItemPipes.ItemPipeRow tRow : gregtech6.registry.GTItemPipes.ROWS) {
+            if (tRow.material().slug().equals(aSlug)) return tRow.material().oreDictMaterial();
+        }
+        throw new AssertionError("no live pipe material for slug " + aSlug);
+    }
+
+    /**
+     * The visual census (task pipe-render-closeout): the three live side arts are NOT
+     * flat plates — the distinct-color counts pinned at the sha-anchored bytes (wood 59
+     * / rubber 148 / copper 42, 16x16 RGBA opaque) — and every borrowed pipe PNG carries
+     * its sha256 README ledger row. The overlay band is byte-faithfully EMPTY upstream
+     * (all 256 px alpha 0), so its face is the ledger row alone, not a color count.
+     */
+    @Test
+    public void pipeArtVisualCensusNotFlatPlates() throws Exception {
+        Map<String, Integer> tExpected = Map.of(WOOD_MODEL, 59, RUBBER_MODEL, 148, COPPER_MODEL, 42);
+        String tReadme = Files.readString(mdkRoot().resolve("src/main/resources/assets/README.md"),
+                StandardCharsets.UTF_8);
+        for (Map.Entry<String, Integer> tArt : tExpected.entrySet()) {
+            Path tPath = mdkRoot().resolve("src/main/resources/assets/gt6/textures/block").resolve(tArt.getKey() + ".png");
+            byte[] tBytes = Files.readAllBytes(tPath);
+            assertEquals(tArt.getValue().intValue(), distinctColors(tBytes),
+                    tArt.getKey() + " drifted off the pinned visual census");
+            String tSha = sha256(tBytes);
+            assertTrue(tReadme.contains("`" + tSha + "`"), tArt.getKey() + " must carry its sha256 ledger row");
+        }
+        for (String tOverlay : new String[] {WOOD_MODEL, COPPER_MODEL}) {
+            Path tPath = mdkRoot().resolve("src/main/resources/assets/gt6/textures/block")
+                    .resolve(tOverlay + "_overlay.png");
+            byte[] tBytes = Files.readAllBytes(tPath);
+            assertTrue(tReadme.contains("`" + sha256(tBytes) + "`"),
+                    tOverlay + "_overlay must carry its sha256 ledger row");
+        }
+    }
+
+    /** sha256 hex of the bytes (the kitchen census form). */
+    private static String sha256(byte[] aBytes) throws Exception {
+        byte[] tDigest = java.security.MessageDigest.getInstance("SHA-256").digest(aBytes);
+        StringBuilder r = new StringBuilder();
+        for (byte tB : tDigest) r.append(String.format("%02x", tB));
+        return r.toString();
+    }
+
+    /** Distinct RGBA colors of a PNG (ImageIO decode, the offline census face). */
+    private static int distinctColors(byte[] aBytes) throws IOException {
+        java.awt.image.BufferedImage tImage = javax.imageio.ImageIO.read(new java.io.ByteArrayInputStream(aBytes));
+        assertNotNull(tImage, "the PNG must decode");
+        java.util.Set<Integer> tColors = new java.util.HashSet<>();
+        for (int y = 0, h = tImage.getHeight(); y < h; y++) {
+            for (int x = 0, w = tImage.getWidth(); x < w; x++) {
+                tColors.add(tImage.getRGB(x, y));
+            }
+        }
+        return tColors.size();
     }
 
     // ------------------------------------------------------------------
@@ -297,14 +470,23 @@ class GT6PipeTextureDatagenTest {
 
     @Test
     public void borrowedPngsExistOnTheStaticTree() {
-        String[] tBorrows = {
+        List<String> tBorrows = new ArrayList<>(List.of(
                 "materialicons/wood/pipe_side.png",
                 "materialicons/wood/pipe_side_overlay.png",
                 "materialicons/copper/pipe_side.png",
                 "materialicons/copper/pipe_side_overlay.png",
+                "materialicons/rubber/pipe_side.png",
                 "iconsets/logistics_wire.png",
                 "iconsets/logistics_wire_overlay.png",
-                "iconsets/pipe_restrictor.png"};
+                "iconsets/pipe_restrictor.png"));
+        // task pipe-render-closeout — the per-diameter connected-arm arts (the upstream
+        // getIconIndexConnected selector, TileEntityBase10ConnectorRendered :265), the
+        // wood / rubber / shared-copper folders by the byte-identity census
+        for (String tSet : new String[] {"wood", "rubber", "copper"}) {
+            for (String tSize : new String[] {"tiny", "small", "medium", "large", "huge"}) {
+                tBorrows.add("materialicons/" + tSet + "/pipe_" + tSize + ".png");
+            }
+        }
         for (String tBorrow : tBorrows) {
             Path tPath = mdkRoot().resolve("src/main/resources/assets/gt6/textures/block").resolve(tBorrow);
             try {
@@ -313,6 +495,57 @@ class GT6PipeTextureDatagenTest {
             } catch (IOException tErr) {
                 throw new AssertionError(tBorrow, tErr);
             }
+        }
+        // every diameter borrow carries its sha256 README ledger row (the id1502 face —
+        // the upstream snapshot is absent from coder worktrees, the ledger is the witness)
+        try {
+            String tReadme = Files.readString(
+                    mdkRoot().resolve("src/main/resources/assets/README.md"), StandardCharsets.UTF_8);
+            for (String tSet : new String[] {"wood", "rubber", "copper"}) {
+                for (String tSize : new String[] {"tiny", "small", "medium", "large", "huge"}) {
+                    byte[] tBytes = Files.readAllBytes(mdkRoot()
+                            .resolve("src/main/resources/assets/gt6/textures/block/materialicons/" + tSet + "/pipe_" + tSize + ".png"));
+                    assertTrue(tReadme.contains("`" + sha256(tBytes) + "`"),
+                            "materialicons/" + tSet + "/pipe_" + tSize + ".png must carry its sha256 ledger row");
+                }
+            }
+        } catch (Exception tErr) {
+            throw new AssertionError(tErr);
+        }
+    }
+
+    /**
+     * The per-diameter arm selector pin (task pipe-render-closeout): the upstream
+     * {@code getIconIndexConnected} thresholds (TileEntityBase10ConnectorRendered :265,
+     * blocks = px/16 — 4→tiny, 6→small, 8→medium, 12→large, 16→huge and the
+     * quadruple/nonuple rows ride huge) over the shared art-set dispatch (wood rows the
+     * wood folder, the rubber row the rubber folder, the rest the shared copper copy).
+     */
+    @Test
+    public void pipeArmArtRidesTheUpstreamDiameterSelector() {
+        gregapi.oredict.OreDictMaterial tWood = gregtech6.registry.GTFluidPipes.MAT_WOOD.oreDictMaterial();
+        gregapi.oredict.OreDictMaterial tRubber = gregtech6.registry.GTFluidPipes.MAT_RUBBER.oreDictMaterial();
+        assertEquals("gt6:block/materialicons/wood/pipe_tiny",
+                gregtech6.client.wire.GTWireTextures.pipeArmSprite(tWood, 4).toString());
+        assertEquals("gt6:block/materialicons/wood/pipe_small",
+                gregtech6.client.wire.GTWireTextures.pipeArmSprite(tWood, 6).toString());
+        assertEquals("gt6:block/materialicons/rubber/pipe_medium",
+                gregtech6.client.wire.GTWireTextures.pipeArmSprite(tRubber, 8).toString());
+        assertEquals("gt6:block/materialicons/rubber/pipe_large",
+                gregtech6.client.wire.GTWireTextures.pipeArmSprite(tRubber, 12).toString());
+        assertEquals("gt6:block/materialicons/copper/pipe_huge",
+                gregtech6.client.wire.GTWireTextures.pipeArmSprite(materialBySlug("steel"), 16).toString());
+        assertEquals("gt6:block/materialicons/copper/pipe_huge",
+                gregtech6.client.wire.GTWireTextures.pipeArmSprite(materialBySlug("brass"), 16).toString(),
+                "the quadruple/nonuple rows (PX_P[16]) ride huge like upstream");
+        // every live pipe row's arm art resolves (no registry-path drift)
+        for (gregtech6.registry.GTFluidPipes.FluidPipeRow tRow : gregtech6.registry.GTFluidPipes.ROWS) {
+            assertNotNull(gregtech6.client.wire.GTWireTextures.pipeArmSprite(
+                    tRow.material().oreDictMaterial(), tRow.variant().diameterPx));
+        }
+        for (gregtech6.registry.GTItemPipes.ItemPipeRow tRow : gregtech6.registry.GTItemPipes.ROWS) {
+            assertNotNull(gregtech6.client.wire.GTWireTextures.pipeArmSprite(
+                    tRow.material().oreDictMaterial(), tRow.variant().diameterPx));
         }
     }
 }

@@ -10131,22 +10131,69 @@ byte-identical borrow (sha256 ours == upstream, verified at copy time):
 - `gt6/textures/block/materialicons/wood/pipe_side_overlay.png` (upstream `materialicons/WOOD/pipeSide_OVERLAY.png`) `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
 - `gt6/textures/block/materialicons/copper/pipe_side.png` (upstream `materialicons/COPPER/pipeSide.png`) `93307398f8105dcf985714999867029e39d2f108db35d59290d56fb61ccef8ee`
 - `gt6/textures/block/materialicons/copper/pipe_side_overlay.png` (upstream `materialicons/COPPER/pipeSide_OVERLAY.png`) `0940268eecf5efbfa5d2ead4e701af85aad1c77849d06850003add66e433b5d4`
+- `gt6/textures/block/materialicons/rubber/pipe_side.png` (upstream `materialicons/RUBBER/pipeSide.png`) `f7dc337a857395cd05db3bf1ca020f60e0cf5ca759acab28b9f53e432ce75aa5` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/wood/pipe_tiny.png` (upstream `materialicons/WOOD/pipeTiny.png`) `6a3e752f4573b7bb658ec0599a1b1d88829df857107381a2762580312ae86d67` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/wood/pipe_small.png` (upstream `materialicons/WOOD/pipeSmall.png`) `0c52009da355142663aaffa252ed7a76e7e537f8729f43075b583dd2fab21ed9` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/wood/pipe_medium.png` (upstream `materialicons/WOOD/pipeMedium.png`) `6334e2183bc63502661f142e9f2e286fa7ccbff3c703abbbafe4a818e24cb853` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/wood/pipe_large.png` (upstream `materialicons/WOOD/pipeLarge.png`) `8519f045973c16048148e3d81e0cf81ec3dcc6234029d56d3c0a2e30455603d0` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/wood/pipe_huge.png` (upstream `materialicons/WOOD/pipeHuge.png`) `d142ee292b51a07d8019d724ca592ef6e37409bc3adcc3eb607df0a734d8899d` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/rubber/pipe_tiny.png` (upstream `materialicons/RUBBER/pipeTiny.png`) `588f03391f8e57816b00c871598c5716b00685e3f51553b5bd5985b8736dcc14` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/rubber/pipe_small.png` (upstream `materialicons/RUBBER/pipeSmall.png`) `351238e1766720cfc30ca69068791f4115160c578d0e78303729133ec744e8b5` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/rubber/pipe_medium.png` (upstream `materialicons/RUBBER/pipeMedium.png`) `81995bd1a4349e0ee76145c45ae1860ae525a0b073450f3ef672a554608f31c5` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/rubber/pipe_large.png` (upstream `materialicons/RUBBER/pipeLarge.png`) `c8ba1dd4297e7df28482f19fc3c4077439dc024d03e62a87ee2d85d47c95daec` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/rubber/pipe_huge.png` (upstream `materialicons/RUBBER/pipeHuge.png`) `c1ef7366d3cb054c197feb4180aea69dd730ffb59b12155756539713b63147df` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/copper/pipe_tiny.png` (upstream `materialicons/COPPER/pipeTiny.png`) `eb9136b5d7959d162125378c87c7044864dbc5d42982b78fe0ad0d5ade97ffc5` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/copper/pipe_small.png` (upstream `materialicons/COPPER/pipeSmall.png`) `e9fe74166db46bbb1144f8122edd2cb6fc06058fb626fe3bcd55bfc050f14e93` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/copper/pipe_medium.png` (upstream `materialicons/COPPER/pipeMedium.png`) `7fec3da0c971cc6c0aaa732111a8fba640c1e11a361388f0589d7c09cc3c37fc` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/copper/pipe_large.png` (upstream `materialicons/COPPER/pipeLarge.png`) `49a2a50437bae92289c6e3606f86698e6a6c9389489093e21d6ed2ebcfb1c75d` — task pipe-render-closeout
+- `gt6/textures/block/materialicons/copper/pipe_huge.png` (upstream `materialicons/COPPER/pipeHuge.png`) `0d68c9cb4e02877ab952d3c32e1d91623fab96845010a5840b77a7c6677b9fba` — task pipe-render-closeout
+
+Task pipe-render-closeout — the pipeSide BYTE-IDENTITY CENSUS (the zero-parallel-table
+SET derivation): the upstream `pipeSide.png` is the SAME grayscale art in every texture
+set except WOOD (`eb13d1a4…`) and RUBBER (`f7dc337a…`) — COPPER/DULL/SHINY/METALLIC/
+BRICK/FINE/NONE/STONE/GEM_HORIZONTAL all hash `93307398…` (the set folders were
+populated by the `copy_into_all.bat`-style scripts sitting next to them in the upstream
+snapshot), and `pipeSide_OVERLAY.png` is one shared, in fact fully transparent, art
+(`0940268e…`) across EVERY set — as are the per-diameter `pipe<Size>_OVERLAY.png` arts
+(all 41 sets × all 8 sizes hash `0940268e…`). The per-diameter `pipe<Size>.png` arts
+(the upstream connected-arm selector, TileEntityBase10ConnectorRendered.java:265 —
+`<0.37 pipeTiny, <0.49 pipeSmall, <0.74 pipeMedium, <0.99 pipeLarge, else pipeHuge`)
+collapse by the SAME census: every set hashes one art per size (`pipeTiny eb9136b5…`,
+`pipeSmall e9fe7416…`, `pipeMedium 7fec3da0…`, `pipeLarge 49a2a504…`, `pipeHuge
+0d68c9cb…`) except WOOD/LEAF and RUBBER, so the arm dispatch rides the same
+wood / rubber / shared-copper folders. Consequence: the per-material pipe dispatch resolves
+wood rows → the wood art, the rubber row (SET_RUBBER) → the rubber art, and every other
+SET → the shared copper copy (the STONE→brick bodyTexture byte-identity remap
+precedent) — one seam, `GTWireTextures.pipeSideSprite`, consumed by both the datagen
+walk and the runtime bake dispatch (`GTWireTextures.pipeArmSprite` for the arms). The
+diameter arts are stitched into the block atlas by the datagen atlas source
+(`GT6Atlases`, the DirectoryLister over `block/materialicons` riding the generated
+`assets/minecraft/atlases/blocks.json` — they appear in no model JSON, so the
+JSON-reference stitch never picked them up; the barometer DirectoryLister precedent).
+Visual census of the three live side arts (the
+non-flat-plate assertion): wood 59 distinct colors, rubber 148, copper 42 (16x16 RGBA,
+fully opaque).
 - `gt6/textures/block/iconsets/logistics_wire.png` (upstream `iconsets/LOGISTICS_WIRE.png`) `1b383e640e9882b2cf927dde24cc0a1563c23e025224bb2846946f6a958e731e`
 - `gt6/textures/block/iconsets/logistics_wire_overlay.png` (upstream `iconsets/LOGISTICS_WIRE_OVERLAY.png`) `6a67c828c68a9fc9be55ff7ef53dc837d66413432d5c5a1cc129ffcd3c1ad046`
 - `gt6/textures/block/iconsets/pipe_restrictor.png` (upstream `iconsets/PIPE_RESTRICTOR.png`) `a4475239dde4c56f32edd83170659de295b39a9b7f01fcabf9800e86767ebbdf`
 
-Semantics per family:
+Semantics per family (task tex-pipe-textures; the per-material art pick UPGRADED to the
+SET derivation by pipe-render-closeout — see the byte-identity census above):
 
-- **fluid pipes** — the two wood rows share `materialicons/wood/pipe_side` (+ its
-  overlay); the row material MT.Wood tints the base through the GTMachinePaintTint chain
-  (the addFluidPipes 26000 NBT_MATERIAL column, Loader :1846; upstream registers
-  NBT_COLOR = getRGBInt(fRGBaSolid), so the unpainted look is the wood colour, not white).
-- **item pipes** — the 12 plain rows share `materialicons/copper/pipe_side`; the six
-  restrictive rows render the SAME set art plus the dedicated third upstream pass — the
-  PIPE_RESTRICTOR plate (MultiTileEntityPipeItem.java:280-281 `mRenderType` 1; the
-  :76-82 registration rows carry NBT_PIPERENDER 1). Probe record: there is NO iconIndex
-  override for the restrictive variants — the base art and tint are identical to the
-  plain rows, only the restrictor band differs.
+- **fluid pipes** — 280 rows over 40 materials; each row rides its material's SET art
+  (`GTWireTextures.pipeSideSprite`: wood → wood art, rubber → rubber art, the other 37
+  materials' SETs → the shared copper copy) + the shared overlay band; the row material
+  tints the base through the GTMachinePaintTint chain (the addFluidPipes NBT_MATERIAL
+  column, Loader :1846; upstream registers NBT_COLOR = getRGBInt(fRGBaSolid), so the
+  unpainted look is the material colour, not white). The former WOODEN-family binary
+  dispatch (plastic rode the wood art despite SET_DULL) is retired.
+- **item pipes** — 126 rows over 21 materials, all four SETs (copper/shiny/dull/
+  metallic) → the shared copper copy + the shared overlay; the six restrictive rows
+  render the SAME set art plus the dedicated third upstream pass — the PIPE_RESTRICTOR
+  plate (MultiTileEntityPipeItem.java:280-281 `mRenderType` 1; the :76-82 registration
+  rows carry NBT_PIPERENDER 1). Probe record: there is NO iconIndex override for the
+  restrictive variants — the base art and tint are identical to the plain rows, only
+  the restrictor band differs.
 - **logistics wire** — its own dedicated pair (`iconsets/logistics_wire` + overlay),
   NOT the pipeSide set art: MultiTileEntityWireLogistics.java:48-49 renders
   BlockTextureMulti(LOGISTICS_WIRE x mRGBa, LOGISTICS_WIRE_OVERLAY). The registration

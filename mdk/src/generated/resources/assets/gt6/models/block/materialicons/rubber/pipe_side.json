@@ -156,7 +156,7 @@
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "all": "gt6:block/materialicons/wood/pipe_side",
+    "all": "gt6:block/materialicons/rubber/pipe_side",
     "overlay0": "gt6:block/materialicons/copper/pipe_side_overlay",
     "particle": "#all"
   }
