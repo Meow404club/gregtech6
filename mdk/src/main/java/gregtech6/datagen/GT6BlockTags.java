@@ -27,9 +27,23 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.items.tools.GTWrenchItem;
 import gregtech6.registry.GT6Batteries;
+import gregtech6.registry.GT6Hoppers;
+import gregtech6.registry.GT6LongDistanceTransformers;
+import gregtech6.registry.GT6LongDistPipes;
+import gregtech6.registry.GT6LongDistWires;
+import gregtech6.registry.GT6MagicAbsorbers;
+import gregtech6.registry.GT6QuantumEnergizers;
+import gregtech6.registry.GT6Reactors;
+import gregtech6.registry.GT6StaticStorages;
+import gregtech6.registry.GT6Tanks;
+import gregtech6.registry.GT6Turbines;
+import gregtech6.registry.GT6ZpmDechargers;
 import gregtech6.registry.GTBarrels;
+import gregtech6.registry.GTBlockEntities;
+import gregtech6.registry.GTEnergySources;
 import gregtech6.registry.GTGrassBlocks;
 import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GT6TreeBlocks;
@@ -220,14 +234,30 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		// Rolling batch 1 (task tags-prefix-materials, census matrix P1 rows): the wire
 		// universe (GTWires.BLOCKS whole-class enumeration — the legacy 1x/2x pair + the 620
 		// electric family + 6 redstone + 1 laser, all GTWireBlock metal rows; a future wire row
-		// auto-joins the band) and the fluid-pipe universe (GTFluidPipes.BLOCKS whole-class —
-		// the task card names GTFluidPipeBlock explicitly into pickaxe, the functional-connector
-		// ruling; the wood sound of the two pipe rows is the vanilla stand-in, NOT a material
-		// ruling, so the GTCEu wood-to-axe mapping does NOT apply here). The barrel family
-		// closes the same batch on the census material mapping (axe/pickaxe/pickaxe over
-		// wood/plastic/metal, the BlockTagLoader:69-71 precedent).
+		// auto-joins the band). GTWires stays pickaxe as the DECLARED EXPEDIENT (task
+		// harvest-bands-wrench-machines): upstream the whole aMetalWires family is TOOL_cutter
+		// (Loader :1898-1950), but the port GTCutterItem has NO mining surface, so cutter
+		// members land on pickaxe until the cutter-face ruling card. The Long Distance wires
+		// join the same expedient (upstream BlockLongDistWire.java:56-57 cutter level 3).
 		GTWires.BLOCKS.getEntries().forEach(tHandle -> tPickaxe.add(tHandle.get()));
-		GTFluidPipes.BLOCKS.getEntries().forEach(tHandle -> tPickaxe.add(tHandle.get()));
+		for (var tEntry : GT6LongDistWires.BLOCKS_BY_META.entrySet()) {
+			tPickaxe.add(tEntry.getValue().get()); // the cutter expedient, see above — NOT the wrench face
+		}
+		// The fluid-pipe universe, MISLABEL CORRECTED (task harvest-bands-wrench-machines):
+		// this band used to take the WHOLE GTFluidPipes register, but upstream splits the
+		// family by material — wood aWooden = axe (:1846-1849), rubber aUtilWool = shears
+		// (:1850), metals aMachine = wrench (:1851-1860). The pickaxe face keeps ONLY the
+		// rubber subdomain (the shears defer: 1.20.1 has no mineable/shears tag, card-4
+		// ruling pool); the wood rows move to the axe band and the metal rows to the wrench
+		// band in their own walks below.
+		for (var tEntry : GTFluidPipes.BLOCKS_BY_PATH.entrySet()) {
+			if (GTFluidPipes.rowByPath(tEntry.getKey()).material().blockFamily() != GTFluidPipes.PipeBlockFamily.UTIL_WOOL) {
+				continue; // wood → axe, metal → wrench (the :1846-1860 material split)
+			}
+			tPickaxe.add(tEntry.getValue().get());
+		}
+		// The barrel family still closes the batch on the census material mapping
+		// (axe/pickaxe/pickaxe over wood/plastic/metal, the BlockTagLoader:69-71 precedent).
 		tPickaxe.add(GTBarrels.BARREL_PLASTIC.get());
 		tPickaxe.add(GTBarrels.BARREL_METAL.get());
 		tPickaxe.add(GTBarrels.BARREL_LOGISTICS.get());
@@ -251,9 +281,22 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		}
 	}
 
-	/** The mineable/axe band — the wood fluid barrel (first batch: no plastic/metal rows, P2). */
+	/**
+	 * The mineable/axe band — the wood fluid barrel (first batch), plus the WOOD fluid-pipe
+	 * subdomain (task harvest-bands-wrench-machines, the mislabel fix: the four wooden
+	 * materials wood/wood_treated/iron_wood/plastic ride the upstream aWooden column,
+	 * Loader :1846-1849 — they used to sit in the pickaxe band, the whole-register
+	 * expedient this card retires).
+	 */
 	private void addAxeBand() {
-		tag(BlockTags.MINEABLE_WITH_AXE).add(GTBarrels.BARREL.get());
+		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		tAxe.add(GTBarrels.BARREL.get());
+		for (var tEntry : GTFluidPipes.BLOCKS_BY_PATH.entrySet()) {
+			if (GTFluidPipes.rowByPath(tEntry.getKey()).material().blockFamily() != GTFluidPipes.PipeBlockFamily.WOODEN) {
+				continue; // rubber stays pickaxe (the shears defer), metal goes wrench
+			}
+			tAxe.add(tEntry.getValue().get());
+		}
 	}
 
 	/**
@@ -378,12 +421,65 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * AND joins the wrench face, no yielding), the twelve battery boxes
 	 * ({@link GT6Batteries#BATTERY_BOX_BLOCKS} — the reported symptom family, upstream
 	 * aMachine TOOL_wrench, Loader_MultiTileEntities.java:894 hardness 4.0), and the nine
-	 * vanilla members unfolded from {@code GT_Tool_Wrench.isMinableBlock} (:72-81: the
-	 * piston material ×4, the redstoneLight lamp, the bars pane, hopper/dispenser/
+	 * vanilla members unfolded from {@code GT_Tool_Wrench.isMinableBlock} (:72-81: the piston
+	 * material ×4, the redstoneLight lamp, the bars pane, hopper/dispenser/
 	 * dropper). The consumer is {@link GTWrenchItem} — the tag IS the mining face (ruling
 	 * A makes everything outside it dig at ZERO). Ruling C: requiresCorrectToolForDrops
 	 * stays OFF (the punitive no-drop is the defer pool). The dual-tree singular twin
 	 * (tags/block) is the automatic GT6DualDirectoryFaces mirror.
+	 *
+	 * <p><b>Band extension</b> (task harvest-bands-wrench-machines — the whole upstream
+	 * aMachine=wrench domain, the harvest-tool census state
+	 * research.harvest-tool-census; EVERY family re-verified line-by-line in
+	 * tmp/gt6-1.7.10 Loader_MultiTileEntities.java before landing, the table IS the
+	 * acceptance evidence):
+	 *
+	 * <ul>
+	 * <li>{@link gregtech6.registry.GTMultiBlocks} — metal walls 11 (:1143-1153), dense
+	 * walls 11 (:1155-1165), coils 6 (:1167-1172), parts 7 (:1174-1182) + the Heat
+	 * Transmitter (:1176, the census "8 parts"), the rod pillar (:1179), the ventilation
+	 * unit (:1184) + five processor units (:1185-1189), the five Large Boilers
+	 * (:1248-1252), six wrench controllers — lightning rod output 17998, implosion
+	 * compressor :1228, massfab :1241, fusion reactor :1242, von da Graagg :1280, bedrock
+	 * drill :1283. OUT: coke oven + bricks (:1138/:1193 aStone, the pickaxe-stone card),
+	 * the wood wall (:1139 aWooden, the axe-wood card).</li>
+	 * <li>{@link GT6Hoppers} — 120 (60 plain :145 + 60 queue :146, both aMachine).</li>
+	 * <li>{@link GTItemPipes} — 126 (21 materials × 6 variants, :1823-1843 aMachine).</li>
+	 * <li>{@link GTFluidPipes} MACHINE subdomain — 245 (35 metal materials × 7 variants,
+	 * :1851-1860 aMachine; the wood 28 → axe, the rubber 7 stays pickaxe — the shears
+	 * defer, card 4).</li>
+	 * <li>{@link GT6Tanks} — 24 metal tank main valves (:1196-1222 aMachine; the wood
+	 * valve :1195 aWooden stays out, the axe-wood card).</li>
+	 * <li>{@link GT6Turbines} — 8 (steam :1254-1257, gas :1264-1267).</li>
+	 * <li>{@link GT6Reactors} — 1 (the 2x2 core, :738 aMachine).</li>
+	 * <li>{@link GT6QuantumEnergizers} — 5 (:962-966).</li>
+	 * <li>{@link GT6ZpmDechargers} — 2 (:1000-1001).</li>
+	 * <li>{@link GT6MagicAbsorbers} — 1 (:1005).</li>
+	 * <li>{@link GTEnergySources} + {@link GTBlockEntities} machine-BE domain — 3 (the
+	 * energy_source rig + the two test machines; port-native BE-domain blocks, the census
+	 * "BlockEntities 机器域" seat — no upstream row to check, declared as such).</li>
+	 * <li>{@link GT6LongDistPipes} — 18 (16 pipeline metas + the item/fluid endpoints,
+	 * BlockLongDistPipe.java:42 wrench + :906-907 aMachine).</li>
+	 * <li>{@link GT6LongDistanceTransformers} — 5 (:909-913 aMachine).</li>
+	 * <li>{@link GT6StaticStorages} — the 8 metal rows (safes :134-135, lockers :138,
+	 * drawers :140, all aMachine; the bookshelf/bottlecrate wooden ladders stay out,
+	 * the axe-wood card).</li>
+	 * </ul>
+	 *
+	 * <p>DECLARED EXPEDIENTS: {@link GTWires} keeps pickaxe (upstream cutter
+	 * :1898-1950, the port cutter has no mining face) and {@link GT6LongDistWires} joins
+	 * pickaxe for the same reason (BlockLongDistWire.java:56-57 cutter level 3) — both
+ * ride the card-4 ruling pool. NOT THIS CARD (the census card split): the moulds/
+ * crucibles/sensors/grindstones/sifting tables/mortars pickaxe family (card 2),
+ * the remaining aWooden/aUtilWood families (card 3), the shears/scoop domains
+ * (card 4), and the not-yet-enumerated aMachine registers (electric transformers
+ * :884-889, kinetics :1672-1694, laser/logistics lines :1815-1819, heat exchanger
+ * :1245, distillation towers :1226-1227, dynamo housings :1259-1262 — tail-card
+ * candidates, reported to the coordinator). CENSUS CARD-SPLIT TYPO CORRECTED: the
+ * split line put "Crucibles 金属" on THIS card, but the upstream metal crucibles
+ * (:264-270) ride aMetal = TOOL_pickaxe (the census families table) — upstream has NO
+ * wrench crucible, so the whole {@link gregtech6.registry.GT6Crucibles} family stays
+ * on the pickaxe card.
 	 */
 	private void addWrenchBand() {
 		var tWrench = tag(GTWrenchItem.MINEABLE_WITH_WRENCH);
@@ -394,5 +490,49 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		tWrench.add(Blocks.PISTON, Blocks.STICKY_PISTON, Blocks.PISTON_HEAD, Blocks.MOVING_PISTON);
 		tWrench.add(Blocks.REDSTONE_LAMP, Blocks.IRON_BARS);
 		tWrench.add(Blocks.HOPPER, Blocks.DISPENSER, Blocks.DROPPER);
+		// --- the harvest-bands-wrench-machines extension (the javadoc table is the pin) ---
+		gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.forEach((tPath, tHandle) -> {
+			if (!gregtech6.registry.GTMultiBlocks.WOOD_WALL_ROW.path().equals(tPath)) {
+				tWrench.add(tHandle.get()); // the :1139 wood wall is aWooden — the axe-wood card
+			}
+		});
+		gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH
+				.forEach((tPath, tHandle) -> tWrench.add(tHandle.get()));
+		gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		gregtech6.registry.GTMultiBlocks.LARGE_BOILER_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		tWrench.add(gregtech6.registry.GTMultiBlocks.HEAT_TRANSMITTER.get());
+		tWrench.add(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD.get()); // the 17998 output, :1179 is the pillar part above
+		tWrench.add(gregtech6.registry.GTMultiBlocks.IMPLOSION_COMPRESSOR.get());
+		tWrench.add(gregtech6.registry.GTMultiBlocks.VON_DA_GRAAGG.get());
+		tWrench.add(gregtech6.registry.GTMultiBlocks.MASSFAB.get());
+		tWrench.add(gregtech6.registry.GTMultiBlocks.FUSION_REACTOR.get());
+		tWrench.add(gregtech6.registry.GTMultiBlocks.BEDROCK_DRILL.get());
+		GT6Hoppers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		GTItemPipes.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		for (var tEntry : GTFluidPipes.BLOCKS_BY_PATH.entrySet()) {
+			if (GTFluidPipes.rowByPath(tEntry.getKey()).material().blockFamily() == GTFluidPipes.PipeBlockFamily.MACHINE) {
+				tWrench.add(tEntry.getValue().get());
+			}
+		}
+		for (var tRow : GT6Tanks.ROWS) {
+			if (!tRow.flammable()) { // the :1195 wood valve is aWooden — the axe-wood card
+				tWrench.add(GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get());
+			}
+		}
+		GT6Turbines.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		tWrench.add(GT6Reactors.REACTOR_CORE_2X2_BLOCK.get());
+		GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		GT6ZpmDechargers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		tWrench.add(GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH.get("magic_absorber").get());
+		tWrench.add(GTEnergySources.ENERGY_SOURCE.get());
+		tWrench.add(GTBlockEntities.TEST_MACHINE.get(), GTBlockEntities.TEST_MACHINE_IDLE.get());
+		GT6LongDistPipes.WIRE_BLOCKS_BY_META.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		tWrench.add(GT6LongDistPipes.ITEM_PIPE_BLOCK.get(), GT6LongDistPipes.FLUID_PIPE_BLOCK.get());
+		GT6LongDistanceTransformers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		for (var tRow : GT6StaticStorages.ROWS) {
+			if (tRow.material() != null) { // the metal ladder (safes/lockers/drawers); the wooden subset → axe card
+				tWrench.add(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get());
+			}
+		}
 	}
 }

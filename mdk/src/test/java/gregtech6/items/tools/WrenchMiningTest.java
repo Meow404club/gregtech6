@@ -58,7 +58,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.registry.GT6Batteries;
+import gregtech6.registry.GT6Hoppers;
+import gregtech6.registry.GT6LongDistanceTransformers;
+import gregtech6.registry.GT6LongDistPipes;
 import gregtech6.registry.GT6MaterialTestSupport;
+import gregtech6.registry.GT6QuantumEnergizers;
+import gregtech6.registry.GT6StaticStorages;
+import gregtech6.registry.GT6Tanks;
+import gregtech6.registry.GT6Turbines;
+import gregtech6.registry.GT6ZpmDechargers;
+import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GTItemPipes;
 import gregtech6.registry.GTMachines;
 
 public class WrenchMiningTest {
@@ -162,17 +172,7 @@ public class WrenchMiningTest {
 	 */
 	@Test
 	public void theTagShipsTheMachinesTheBatteryBoxesAndTheVanillaSet() throws Exception {
-		InputStream tStream = WrenchMiningTest.class.getClassLoader()
-				.getResourceAsStream("data/gt6/tags/blocks/mineable/wrench.json");
-		assertNotNull(tStream, "the gt6:mineable/wrench tag must be on the classpath (the runData product)");
-		var tArray = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8))
-				.getAsJsonObject().getAsJsonArray("values");
-		Set<String> tMembers = new java.util.HashSet<>();
-		for (var tEntry : tArray) {
-			assertTrue(tEntry.isJsonPrimitive(),
-					"zero optional members — a required:false TagEntry serializes as an object");
-			tMembers.add(tEntry.getAsString());
-		}
+		Set<String> tMembers = wrenchTagMembers();
 		for (String tPath : VANILLA_MEMBERS) {
 			assertTrue(tMembers.contains(tPath), "the vanilla band member must ride the tag: " + tPath);
 		}
@@ -183,6 +183,139 @@ public class WrenchMiningTest {
 		GTMachines.BLOCKS.getEntries().forEach(tEntry ->
 				assertTrue(tMembers.contains(tEntry.getId().toString()),
 						"the whole machine register rides the tag (ruling B): " + tEntry.getId()));
+	}
+
+	// ------------------------------------------------------- the band extension face
+
+	/** The gt6-namespaced paths of one family register (the walk mirror — key space, no live registry needed offline). */
+	private static Set<String> pathsOf(java.util.Map<String, ?> aMap) {
+		Set<String> rPaths = new java.util.HashSet<>();
+		for (String tPath : aMap.keySet()) rPaths.add("gt6:" + tPath);
+		return rPaths;
+	}
+
+	/**
+	 * The band-extension snapshot (task harvest-bands-wrench-machines — the whole upstream
+	 * aMachine domain, Loader_MultiTileEntities aMachine column re-verified line-by-line,
+	 * the provider javadoc table carries the per-family upstream rows). The family walk
+	 * counts are pinned next to the membership so a register growth is a conscious number
+	 * bump (the PINNED_PICKAXE_TOTAL discipline), and the file total ratchets the whole
+	 * face. NEGATIVE pins carry the declared exclusions: the wood wall + the wood tank
+	 * valve (aWooden, the axe-wood card), the wood fluid pipes (axe) + the rubber ones
+	 * (the shears defer), the bookshelf/bottlecrate wooden storage ladders, the crucibles
+	 * (aMetal pickaxe — the census card-split typo, no wrench crucible upstream).
+	 */
+	@Test
+	public void theTagShipsTheBandExtensionFamilies() throws Exception {
+		Set<String> tMembers = wrenchTagMembers();
+		// GTMultiBlocks — the aMachine atomic parts (the wood wall excluded), the dense
+		// walls, the Lightning Rod family trio, the five large boilers, the heat
+		// transmitter, and the six wrench controllers
+		Set<String> tRodFamily = pathsOf(gregtech6.registry.GTMultiBlocks.LIGHTNING_ROD_PART_BLOCKS_BY_PATH);
+		for (String tPath : gregtech6.registry.GTMultiBlocks.NEW_PART_BLOCKS_BY_PATH.keySet()) {
+			if (!tPath.equals("wood_wall")) tRodFamily.add("gt6:" + tPath); // the :1139 wood wall is aWooden
+		}
+		tRodFamily.addAll(pathsOf(gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH));
+		tRodFamily.addAll(pathsOf(gregtech6.registry.GTMultiBlocks.LARGE_BOILER_BLOCKS_BY_PATH));
+		for (String tController : List.of("gt6:heat_transmitter", "gt6:multiblock_lightning_rod",
+				"gt6:implosion_compressor", "gt6:large_massfab", "gt6:fusion_reactor",
+				"gt6:von_da_graagg", "gt6:bedrock_drill")) {
+			tRodFamily.add(tController);
+		}
+		assertEquals(54, tRodFamily.size(), "28 atomic parts + 3 rod family + 11 dense walls + 5 boilers + 7 singletons/controllers");
+		assertTrue(tMembers.containsAll(tRodFamily), "the GTMultiBlocks aMachine domain rides the face");
+		assertTrue(!tMembers.contains("gt6:wood_wall"), "the wood wall is aWooden — the axe-wood card");
+		// the hoppers (60 materials x plain/queue, Loader :145-146) and the item pipes
+		// (21 x 6, Loader :1823-1843)
+		assertEquals(120, GT6Hoppers.BLOCKS_BY_PATH.size(), "60 plain + 60 queue hoppers");
+		assertTrue(tMembers.containsAll(pathsOf(GT6Hoppers.BLOCKS_BY_PATH)), "the hopper family rides the face");
+		assertEquals(126, GTItemPipes.BLOCKS_BY_PATH.size(), "21 materials x 6 variants");
+		assertTrue(tMembers.containsAll(pathsOf(GTItemPipes.BLOCKS_BY_PATH)), "the item pipe family rides the face");
+		// the fluid-pipe MACHINE subdomain (35 metals x 7, Loader :1851-1860) — the wood
+		// 28 went axe, the rubber 7 stay pickaxe (the shears defer)
+		Set<String> tMetalPipes = new java.util.HashSet<>();
+		for (var tEntry : GTFluidPipes.BLOCKS_BY_PATH.entrySet()) {
+			if (GTFluidPipes.rowByPath(tEntry.getKey()).material().blockFamily() == GTFluidPipes.PipeBlockFamily.MACHINE) {
+				tMetalPipes.add("gt6:" + tEntry.getKey());
+			}
+		}
+		assertEquals(245, tMetalPipes.size(), "35 metal materials x 7 variants");
+		assertTrue(tMembers.containsAll(tMetalPipes), "the metal fluid pipes ride the face (the mislabel fix)");
+		assertTrue(!tMembers.contains("gt6:wood_fluid_pipe_small"), "the wood pipes went axe");
+		assertTrue(!tMembers.contains("gt6:rubber_fluid_pipe_tiny"), "the rubber pipes stay pickaxe (the shears defer)");
+		// the tank main valves (24 metal, Loader :1196-1222; the wood valve :1195 stays out)
+		Set<String> tMetalValves = new java.util.HashSet<>();
+		for (var tRow : GT6Tanks.ROWS) {
+			if (!tRow.flammable()) tMetalValves.add("gt6:" + tRow.path());
+		}
+		assertEquals(24, tMetalValves.size(), "small/dense/large/large-dense x 6 metals");
+		assertTrue(tMembers.containsAll(tMetalValves), "the metal tank valves ride the face");
+		assertTrue(!tMembers.contains("gt6:tank_wood"), "the wood tank valve is aWooden — the axe-wood card");
+		// the machine-BE domain: turbines 8 (steam :1254-1257 + gas :1264-1267), the 2x2
+		// reactor core (:738), the five quantum energizers (:962-966), the two ZPM
+		// dechargers (:1000-1001), the magic absorber (:1005), the energy source + the two
+		// test machines (the port-native BE-domain seat)
+		assertEquals(8, GT6Turbines.BLOCKS_BY_PATH.size(), "4 steam + 4 gas turbine housings");
+		assertTrue(tMembers.containsAll(pathsOf(GT6Turbines.BLOCKS_BY_PATH)), "the turbine housings ride the face");
+		assertTrue(tMembers.contains("gt6:nuclear_reactor_core_2x2"), "the 2x2 reactor core rides the face");
+		assertEquals(5, GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH.size(), "T1-T5");
+		assertTrue(tMembers.containsAll(pathsOf(GT6QuantumEnergizers.QUANTUM_ENERGIZER_BLOCKS_BY_PATH)),
+				"the quantum energizers ride the face");
+		assertEquals(2, GT6ZpmDechargers.BLOCKS_BY_PATH.size(), "quantum + electric");
+		assertTrue(tMembers.containsAll(pathsOf(GT6ZpmDechargers.BLOCKS_BY_PATH)), "the ZPM dechargers ride the face");
+		assertTrue(tMembers.contains("gt6:magic_absorber"), "the magic field absorber rides the face");
+		assertTrue(tMembers.contains("gt6:energy_source"), "the energy source rig rides the face");
+		assertTrue(tMembers.contains("gt6:test_machine") && tMembers.contains("gt6:test_machine_idle"),
+				"the machine-BE test pair rides the face");
+		// the long-distance trio: 16 pipeline metas + the two endpoints (BlockLongDistPipe
+		// .java:42 + Loader :906-907) and the five transformer endpoints (:909-913); the
+		// long-distance WIRES stay OUT (the cutter expedient — pickaxe, GT6TagsDatagenTest)
+		assertEquals(18, GT6LongDistPipes.WIRE_BLOCKS_BY_META.size() + 2, "16 pipeline metas + item/fluid endpoints");
+		Set<String> tPipeMetas = new java.util.HashSet<>();
+		for (Integer tMeta : GT6LongDistPipes.WIRE_BLOCKS_BY_META.keySet()) {
+			tPipeMetas.add("gt6:" + GT6LongDistPipes.pathOf(tMeta));
+		}
+		assertTrue(tMembers.containsAll(tPipeMetas),
+				"the long-distance pipeline metas ride the face");
+		assertTrue(tMembers.contains("gt6:longdist_item_pipe") && tMembers.contains("gt6:longdist_fluid_pipe"),
+				"the two pipeline endpoints ride the face");
+		assertEquals(5, GT6LongDistanceTransformers.BLOCKS_BY_PATH.size(), "V4-V8 endpoints");
+		assertTrue(tMembers.containsAll(pathsOf(GT6LongDistanceTransformers.BLOCKS_BY_PATH)),
+				"the long-distance transformer endpoints ride the face");
+		assertTrue(!tMembers.contains("gt6:long_dist_wire_0"), "the long-distance wires keep the cutter expedient (pickaxe)");
+		// the static-storage metal ladder (2 materials x locker/drawer/2 safes, Loader
+		// :134-140 aMachine; the wooden bookshelf/bottlecrate ladders stay out)
+		Set<String> tMetalStorage = new java.util.HashSet<>();
+		for (var tRow : GT6StaticStorages.ROWS) {
+			if (tRow.material() != null) tMetalStorage.add("gt6:" + tRow.path());
+		}
+		assertEquals(8, tMetalStorage.size(), "locker/drawer/safe x2 over bronze/steel");
+		assertTrue(tMembers.containsAll(tMetalStorage), "the metal storage ladder rides the face");
+		assertTrue(!tMembers.contains("gt6:bookshelf_oak") && !tMembers.contains("gt6:bottlecrate_oak"),
+				"the wooden storage ladders are the axe-wood card");
+		// the whole-face ratchet: machines + battery boxes + 9 vanilla + the 620 extension
+		// members, zero overlap (the tag dedups, so any overlap would silently shrink this)
+		Set<String> tExpected = new java.util.HashSet<>(tMembers);
+		assertEquals(VANILLA_MEMBERS.size() + GT6Batteries.BATTERY_BOX_BLOCKS.size() + 620
+				+ GTMachines.BLOCKS.getEntries().size(), tExpected.size(),
+				"the extension adds 620 members (54 multiblocks + 120 hoppers + 126 item pipes + 245 metal pipes "
+				+ "+ 24 valves + 8 turbines + 1 reactor + 5 energizers + 2 dechargers + 1 absorber + 3 BE + 18 pipes + 5 transformers + 8 storage)");
+	}
+
+	/** The wrench tag's committed values (the runData product) as a path set. */
+	private static Set<String> wrenchTagMembers() throws Exception {
+		InputStream tStream = WrenchMiningTest.class.getClassLoader()
+				.getResourceAsStream("data/gt6/tags/blocks/mineable/wrench.json");
+		assertNotNull(tStream, "the gt6:mineable/wrench tag must be on the classpath (the runData product)");
+		var tArray = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8))
+				.getAsJsonObject().getAsJsonArray("values");
+		Set<String> rMembers = new java.util.HashSet<>();
+		for (var tEntry : tArray) {
+			assertTrue(tEntry.isJsonPrimitive(),
+					"zero optional members — a required:false TagEntry serializes as an object");
+			rMembers.add(tEntry.getAsString());
+		}
+		return rMembers;
 	}
 
 	// ------------------------------------------------------- the leg fork + the probe
