@@ -310,7 +310,13 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void alloyingDisplayRowsSynthesizeFromTheGraph() {
 		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum);
-		assertEquals(2, tRows.size(), "the dust row and the ingot row");
+		// phase-neutral pair invariant: the upstream postInit pass (GT_API_Post.java:820)
+		// re-adds mComponents verbatim with no dedup, so RUNTIME walks every simple alloy's
+		// config twice (two identical pairs — the documented verbatim quirk,
+		// MaterialGraph.applyCrucibleAlloyReferences). The forge offline leg answers
+		// pre-postInit (2 rows), the neo mod-flood leg post-postInit (4) — the CONTENT pins
+		// below ride the FIRST pair, identical in both phases.
+		assertTrue(tRows.size() >= 2 && tRows.size() % 2 == 0, "whole dust/ingot pairs, at least one");
 		for (Recipe tRow : tRows) {
 			assertTrue(tRow.mFakeRecipe, "display rows never enter the findable list");
 			assertEquals(1, tRow.mOutputs.length);
@@ -345,7 +351,8 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	public void invarAlloyingRowsCarryTheUnevenComponentSplit() {
 		assertEquals(3, MT.Invar.mComponents.getCommonDivider(), "WroughtIron 2U + Ni 1U = 3U (MT.java:2498)");
 		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(MT.Invar);
-		assertEquals(2, tRows.size(), "the dust row and the ingot row");
+		// phase-neutral (the GT_API_Post.java:820 config re-add doubles the pair at runtime)
+		assertTrue(tRows.size() >= 2 && tRows.size() % 2 == 0, "whole pairs, at least one");
 
 		Recipe tDustRow = tRows.get(0);
 		assertEquals(2, tDustRow.mInputs.length);
@@ -374,7 +381,9 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	public void stainlessSteelAlloyingRowsBuildAllFourComponents() {
 		assertEquals(9, MT.StainlessSteel.mComponents.getCommonDivider(), "4U + 3U + 1U + 1U = 9U (MT.java:2504)");
 		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(MT.StainlessSteel);
-		assertEquals(2, tRows.size());
+		// phase-neutral (the GT_API_Post.java:820 config re-add doubles the mComponents pair
+		// at runtime; the :4123 Nichrome config has no offline item on either leg)
+		assertTrue(tRows.size() >= 2 && tRows.size() % 2 == 0, "whole pairs, at least one");
 		Recipe tDustRow = tRows.get(0);
 		assertEquals(4, tDustRow.mInputs.length, "every component gets its input slot");
 		java.util.Map<OreDictMaterial, Integer> tInputCounts = new java.util.HashMap<>();
@@ -401,7 +410,8 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 				"a hidden component skips the whole row pair (GT6_Main.java:460)");
 		// the open control rides the LIVE Electrum (probes resolve, no hidden comp): the
 		// empty result above comes from the GATE, not from row synthesis being broken
-		assertEquals(2, GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum).size(),
+		// (phase-neutral: the postInit config re-add changes the COUNT, never the non-emptiness)
+		assertFalse(GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum).isEmpty(),
 				"the same shape without a hidden component builds — the gate is the component's");
 	}
 
@@ -409,7 +419,7 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	 * Acceptance (crucible-alloying-flux-rows) — the GT6_Main.java:467/:480-481 flux third
 	 * row: a C component displays Coal at twice its amount on a THIRD fake row INSTEAD of
 	 * its own dust (the :474 else-arm skip), while the dust/ingot pair keeps the component
-	 * forms; a configuration without C still builds exactly the pair.
+	 * forms; a configuration without C carries no flux row on ANY of its pairs.
 	 */
 	@Test
 	public void alloyingFluxThirdRowForCarbonComponent() {
@@ -427,8 +437,11 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 		// the flux row shares the pair's output and temperature face (:481 = :478 verbatim)
 		assertSame(tRows.get(0).mOutputs[0].getItem(), tFluxRow.mOutputs[0].getItem());
 		assertEquals(tRows.get(0).mSpecialValue, tFluxRow.mSpecialValue);
-		// the no-C control still builds exactly two rows
-		assertEquals(2, GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum).size(), "no C → no flux row");
+		// the no-C control rides the LIVE Electrum: phase-neutral (the postInit config
+		// re-add, GT_API_Post.java:820, carries no C either) — NO row of ANY pair shows Coal
+		assertTrue(GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum).stream()
+				.noneMatch(r -> java.util.Arrays.stream(r.mInputs).anyMatch(s -> s.getItem() == DUST_COAL)),
+				"no C → no flux row on any pair");
 	}
 
 	/** The :468 twin: a CaCO3 component displays STONES.Limestone at twice its amount. */
