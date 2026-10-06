@@ -67,6 +67,14 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * apply/unapply pair alone. The tree layer renders inside a pane-sized scissor (the pane is
  * the visible region, the L2 contract the three legs share).
  *
+ * <p><b>Icons and labels ride the viewport's scale</b> (task mattree-item-zoom-pose, the
+ * L3 统一 pose 变换原语 clause): every icon and label mounts the GuiGraphics pose stack
+ * through {@code MaterialTreeLayout.pose} + {@link #runAtPose} — the ONE primitive the EMI
+ * page's labels consume too, so the ink scales with the boxes the corner-pair fills draw
+ * (<b>旧钉迁移声明</b>: the former translate-only 16 px icon — the symptom23 ③ zoom 错位 —
+ * died here; the replacement pins are the zoom-2x centring in {@code MaterialTreeLayoutTest}
+ * and the rig screenshot).
+ *
  * <p><b>Node clicks jump to the viewer</b> (所见即所跳): the release-within-slop click
  * resolves through the viewport's unapply inverse and routes by the shared
  * {@link GTViewerJump#preferredViewer()} predicate — the kitchen-NEI seam, EMI 双装优先 —
@@ -323,13 +331,12 @@ public class GT6MaterialTreeScreen extends Screen {
 				(int) Math.round(Math.max(tA.x(), tB.x())), (int) Math.round(Math.max(tA.y(), tB.y())), aInk);
 	}
 
-	/** One label through the viewport (render-time transform — a frozen coordinate would not follow the pan). */
+	/** One label through the viewport at the pose scale (render-time transform — a frozen coordinate would not follow the pan). */
 	private void drawLabel(GuiGraphics aGui, Font aFont, String aText, int aTreeX, int aTreeY, int aInk) {
-		MaterialTreeViewport.Point tPoint = mView.apply(aTreeX, aTreeY);
-		aGui.drawString(aFont, aText, (int) Math.round(tPoint.x()), (int) Math.round(tPoint.y()), aInk, false);
+		runAtPose(aGui, MaterialTreeLayout.pose(mView, aTreeX, aTreeY), () -> aGui.drawString(aFont, aText, 0, 0, aInk, false));
 	}
 
-	/** One 18x18 slot: the cell as a corner-pair rect, the item inset by the slot convention (+1). */
+	/** One 18x18 slot: the cell as a corner-pair rect (already box-scaled), the item at the pose scale. */
 	private void drawSlot(GuiGraphics aGui, ItemStack aStack, int aTreeX, int aTreeY) {
 		MaterialTreeViewport.Point tA = mView.apply(aTreeX, aTreeY);
 		MaterialTreeViewport.Point tB = mView.apply(aTreeX + MaterialTreeLayout.SLOT, aTreeY + MaterialTreeLayout.SLOT);
@@ -340,10 +347,32 @@ public class GT6MaterialTreeScreen extends Screen {
 		drawItem(aGui, aStack, aTreeX, aTreeY);
 	}
 
-	/** One bare item icon through the viewport (the +1 inset centres 16px in the 18px box). */
+	/**
+	 * One item icon through the viewport at the POSE scale (the unified
+	 * {@link MaterialTreeLayout#pose} primitive): the +1 inset centres the 16 px icon in the
+	 * 18 px box in TREE space, and the pose scale grows the icon with the box.
+	 * <b>旧钉迁移声明</b>: the former translate-only drawItem (16 px icon against the
+	 * 18×scale slot box — the symptom23 ③ zoom 错位) died here; the replacement pins are the
+	 * zoom-2x centring in {@code MaterialTreeLayoutTest} and the rig screenshot
+	 * (the ADR §6 观感硬闸).
+	 */
 	private void drawItem(GuiGraphics aGui, ItemStack aStack, int aTreeX, int aTreeY) {
-		MaterialTreeViewport.Point tPoint = mView.apply(aTreeX + 1, aTreeY + 1);
-		aGui.renderItem(aStack, (int) Math.round(tPoint.x()), (int) Math.round(tPoint.y()));
+		runAtPose(aGui, MaterialTreeLayout.pose(mView, aTreeX + 1, aTreeY + 1), () -> aGui.renderItem(aStack, 0, 0));
+	}
+
+	/**
+	 * The GuiGraphics mount of the unified pose (the 三腿统一变换原语 wiring, shared with the
+	 * EMI page's labels drawable): translate to the pose origin, scale by its factor, draw in
+	 * tree-local coordinates. The float casts are the common-denominator overload on both
+	 * pinned stacks (1.20.1 / 1.21.1 {@code PoseStack.translate(float..)/scale(float..)}).
+	 */
+	public static void runAtPose(GuiGraphics aGui, MaterialTreeLayout.Pose aPose, Runnable aDraw) {
+		aGui.pose().pushPose();
+		aGui.pose().translate((float) aPose.x(), (float) aPose.y(), 0.0F);
+		float tScale = (float) aPose.scale();
+		aGui.pose().scale(tScale, tScale, 1.0F);
+		aDraw.run();
+		aGui.pose().popPose();
 	}
 
 	/** The nav strip (the M3 cell language): +/−/R, the zoom cells sleeping at the live fit floor / ceiling. */
