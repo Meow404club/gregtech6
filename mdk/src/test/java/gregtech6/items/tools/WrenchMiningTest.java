@@ -303,17 +303,127 @@ public class WrenchMiningTest {
 				"the metal bottlecrate ladder moved to the pickaxe band (upstream aUtilMetal, Loader :144)");
 		assertTrue(!tMembers.contains("gt6:bookshelf_oak") && !tMembers.contains("gt6:bottlecrate_oak"),
 				"the wooden storage ladders are the axe-wood card");
-		// the whole-face ratchet: machines + battery boxes + 9 vanilla + the 740 extension
+		// the whole-face ratchet: machines + battery boxes + 9 vanilla + the 989 extension
 		// members, zero overlap (the tag dedups, so any overlap would silently shrink this).
 		// +60 task block-family-32xxx-port reconciliation (the pre-existing-red shape, the
 		// pickaxeBand seat-V precedent): the merged charging-locker ladder rode the canonical
 		// tree without this pin's bump, measured 1076 -> 1136 on the mc-D rebase — the
 		// storage family sum 68 -> 128 (the 60 charging lockers are aMachine, Loader :139).
+		// +257 the tail extension (task harvest-bands-wrench-tail, the rebase union onto the
+		// main 740: 740 -> 997 — 9 transformers + 82 kinetics metal (48 axles — the mc-D
+		// powertrain card closed the Trinaquadalloy/Ad gap on main after this card's base —
+		// + 26 steam engines + 8 diesel) + 10 lasers + 1 logistics core + 1 heat exchanger
+		// + 2 distillation + 4 dynamo housings + 26 boilers + 96 burning boxes + 20 chargers
+		// + 5 flux dynamos + 1 fe converter).
 		Set<String> tExpected = new java.util.HashSet<>(tMembers);
-		assertEquals(VANILLA_MEMBERS.size() + GT6Batteries.BATTERY_BOX_BLOCKS.size() + 740
+		assertEquals(VANILLA_MEMBERS.size() + GT6Batteries.BATTERY_BOX_BLOCKS.size() + 997
 				+ GTMachines.BLOCKS.getEntries().size(), tExpected.size(),
-				"the extension adds 740 members (54 multiblocks + 120 hoppers + 126 item pipes + 245 metal pipes "
-				+ "+ 24 valves + 8 turbines + 1 reactor + 5 energizers + 2 dechargers + 1 absorber + 3 BE + 18 pipes + 5 transformers + 128 storage)");
+				"the extension adds 997 members (card 1: 54 multiblocks + 120 hoppers + 126 item pipes + 245 metal pipes "
+				+ "+ 24 valves + 8 turbines + 1 reactor + 5 energizers + 2 dechargers + 1 absorber + 3 BE + 18 pipes + 5 transformers + 128 storage"
+				+ "; tail: 9 transformers + 82 kinetics metal + 10 lasers + 1 logistics core + 1 heat exchanger + 2 distillation "
+				+ "+ 4 dynamo housings + 26 boilers + 96 burning boxes + 20 chargers + 5 flux dynamos + 1 fe converter)");
+	}
+
+	/**
+	 * The tail-extension snapshot (task harvest-bands-wrench-tail — the nine families the
+	 * card-1 enumeration missed; every family re-verified line-by-line upstream BEFORE
+	 * landing, the mc-A metal-chest lesson). The counts sit next to the membership so a
+	 * register growth is a conscious bump. NEGATIVE pins carry the declared exclusions:
+	 * the wooden kinetics subset (the wood axles :1662-1666, the IronWood steam engines
+	 * :591/:606, the wooden gearbox :1669 / rotation transformer :1668 — aWooden, the
+	 * axe-wood card), the brick burning box (:519 aStone — the pickaxe-stone card,
+	 * census erratum) and the logistics wire (:1819 aMetalWires cutter — the pickaxe
+	 * expedient).
+	 */
+	@Test
+	public void theTagShipsTheTailExtensionFamilies() throws Exception {
+		Set<String> tMembers = wrenchTagMembers();
+		// electric transformers — 9 (:881-889 aMachine; the card's ":884-889" cite covers
+		// :881-883 too, same column)
+		assertEquals(9, gregtech6.registry.GT6ElectricTransformers.BLOCKS_BY_PATH.size(), "the :881-889 ladder");
+		assertTrue(tMembers.containsAll(pathsOf(gregtech6.registry.GT6ElectricTransformers.BLOCKS_BY_PATH)),
+				"the electric transformers ride the face");
+		// kinetics metal — 40 axles + 26 steam engines + 8 diesel. The axle/diesel registry
+		// maps fill on mod construct (the onModConstruct plain loop), so the offline mirror
+		// derives the paths from the static SPEC tables — the same columns the provider
+		// walk reads (the datagen JVM has the registry, the test JVM has the tables).
+		Set<String> tMetalAxles = new java.util.HashSet<>();
+		for (var tSpec : gregtech6.registry.GT6Kinetics.AXLE_SPECS) {
+			if ("wood_treated".equals(tSpec.material())) continue; // the :1662-1666 wooden ladder
+			for (int tSize = 0; tSize < gregtech6.registry.GT6Kinetics.AXLE_DIAMETERS.length; tSize++) {
+				tMetalAxles.add("gt6:" + gregtech6.registry.GT6Kinetics.axleName(tSpec.material(), tSize));
+			}
+		}
+		assertEquals(48, tMetalAxles.size(), "12 metal materials x 4 sizes (:1672-1766 aMachine; the Trinaquadalloy/Ad ladders landed on main after this card's base — the material-coverage gap closed, 40 -> 48 measured on the rebase)");
+		assertTrue(tMembers.containsAll(tMetalAxles), "the metal axles ride the face");
+		Set<String> tMetalEngines = new java.util.HashSet<>();
+		for (var tRow : gregtech6.registry.GT6Kinetics.STEAM_ENGINES) {
+			if (!tRow.wooden()) tMetalEngines.add("gt6:" + tRow.path());
+		}
+		assertEquals(26, tMetalEngines.size(), "the :584-612 aMachine steam engines (28 minus the IronWood pair)");
+		assertTrue(tMembers.containsAll(tMetalEngines), "the metal steam engines ride the face");
+		Set<String> tDiesel = new java.util.HashSet<>();
+		for (var tSpec : gregtech6.registry.GT6Kinetics.DIESEL_SPECS) {
+			tDiesel.add("gt6:" + gregtech6.registry.GT6Kinetics.dieselName(tSpec.material()));
+		}
+		assertEquals(8, tDiesel.size(), "the :721-729 diesel ladder");
+		assertTrue(tMembers.containsAll(tDiesel), "the diesel engines ride the face");
+		assertTrue(!tMembers.contains("gt6:axle_wood_treated_small") && !tMembers.contains("gt6:axle_wood_treated_huge"),
+				"the wood axles are aWooden — the axe-wood card");
+		assertTrue(!tMembers.contains("gt6:steam_engine_iron_wood") && !tMembers.contains("gt6:strong_steam_engine_iron_wood"),
+				"the IronWood engines are aWooden — the axe-wood card");
+		assertTrue(!tMembers.contains("gt6:gearbox") && !tMembers.contains("gt6:transformer_rotation"),
+				"the wooden gearbox/rotation transformer are aWooden (:1668-1669) — the axe-wood card");
+		// lasers — 5 CO2 (:930-934) + 5 absorbers (:976-980); the upstream laser FIBER wire
+		// :1815 is aMetalWires — its port block rides the GTWires whole-class pickaxe walk,
+		// so the wrench face takes only these ten machines
+		assertEquals(5, gregtech6.registry.GT6Lasers.CO2_LASER_BLOCKS_BY_PATH.size(), "LV-IV CO2 lasers");
+		assertEquals(5, gregtech6.registry.GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH.size(), "LV-IV laser absorbers");
+		assertTrue(tMembers.containsAll(pathsOf(gregtech6.registry.GT6Lasers.CO2_LASER_BLOCKS_BY_PATH))
+				&& tMembers.containsAll(pathsOf(gregtech6.registry.GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH)),
+				"the laser machines ride the face");
+		// logistics — the core (:1281) rides the face; the wire (:1819) is the cutter expedient
+		assertTrue(tMembers.contains("gt6:logistics_core"), "the logistics core rides the face");
+		assertTrue(!tMembers.contains("gt6:logistics_wire"),
+				"the logistics wire is aMetalWires cutter (:1819) — the pickaxe expedient");
+		// singletons and small ladders
+		assertTrue(tMembers.contains("gt6:large_heat_exchanger"), "the large heat exchanger (:1245) rides the face");
+		assertEquals(2, gregtech6.registry.GT6Distillation.TOWER_BLOCKS_BY_PATH.size(), "distillation + cryo (:1226-1227)");
+		assertTrue(tMembers.containsAll(pathsOf(gregtech6.registry.GT6Distillation.TOWER_BLOCKS_BY_PATH)),
+				"the distillation towers ride the face");
+		assertEquals(4, gregtech6.registry.GT6DynamoHousings.BLOCKS_BY_PATH.size(), "the :1259-1262 housings");
+		assertTrue(tMembers.containsAll(pathsOf(gregtech6.registry.GT6DynamoHousings.BLOCKS_BY_PATH)),
+				"the large dynamo housings ride the face");
+		// boilers — 26 steam boiler tanks (:553-565 + :567-579); the LARGE boiler mains
+		// :1248-1252 already rode card 1 via GTMultiBlocks
+		assertEquals(26, gregtech6.registry.GT6Boilers.BLOCKS_BY_PATH.size(), "13 standard + 13 strong");
+		assertTrue(tMembers.containsAll(pathsOf(gregtech6.registry.GT6Boilers.BLOCKS_BY_PATH)),
+				"the steam boiler tanks ride the face");
+		// burning boxes — 96 metal (all four families aMachine), the brick row :519 aStone
+		// OUT (the paths mirror the static allRows() — RegistryObject.get() resolves only
+		// past the mod-construct event)
+		Set<String> tMetalBoxes = new java.util.HashSet<>();
+		for (var tRow : gregtech6.registry.GT6BurningBoxes.allRows()) {
+			if (!tRow.stone()) tMetalBoxes.add("gt6:" + tRow.path());
+		}
+		assertEquals(96, tMetalBoxes.size(), "27 solid + 22 liquid + 22 gas + 26 fluidbed minus the brick row");
+		assertTrue(tMembers.containsAll(tMetalBoxes), "the metal burning boxes ride the face");
+		assertTrue(!tMembers.contains("gt6:brick_burning_box"),
+				"the brick burning box is aStone (:519) — the pickaxe-stone card, census erratum");
+		// crystal chargers — 20 (:969-972 loop)
+		assertEquals(20, gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH.size(), "10 small + 10 large");
+		assertTrue(tMembers.containsAll(pathsOf(gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH)),
+				"the crystal chargers ride the face");
+		// flux dynamos — 5, upstream-anchored :953-957 (the task card's "port-native" claim
+		// is the erratum; the port javadoc cites the rows verbatim). The paths mirror off
+		// the static ROWS (the registry handles resolve only past the mod-construct event)
+		assertEquals(5, gregtech6.registry.GT6FluxDynamos.ROWS.size(), "the :953-957 ladder");
+		for (var tRow : gregtech6.registry.GT6FluxDynamos.ROWS) {
+			assertTrue(tMembers.contains("gt6:" + tRow.path()), "the flux dynamo ladder rides the face: " + tRow.path());
+		}
+		// fe converter — the TRUE port-native case (decisions.p28-eu-inbound-converter);
+		// ruling per the card-1 port-native-machine precedent: it joins the machine face
+		assertTrue(tMembers.contains("gt6:fe_converter"), "the fe converter rides the face (the port-native ruling)");
 	}
 
 	/** The wrench tag's committed values (the runData product) as a path set — both member forms (the strict string and the tag-residual-convergence optional object). */

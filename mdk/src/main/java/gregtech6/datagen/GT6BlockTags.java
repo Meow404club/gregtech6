@@ -297,6 +297,9 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (var tEntry : GT6LongDistWires.BLOCKS_BY_META.entrySet()) {
 			tPickaxe.add(tEntry.getValue().get()); // the cutter expedient, see above — NOT the wrench face
 		}
+		// the logistics wire joins the SAME cutter expedient (task harvest-bands-wrench-tail:
+		// upstream aMetalWires, Loader :1819 — the wrench face takes only the logistics core)
+		tPickaxe.add(gregtech6.registry.GT6Logistics.LOGISTICS_WIRE.get());
 		// The fluid-pipe universe, MISLABEL CORRECTED (task harvest-bands-wrench-machines):
 		// this band used to take the WHOLE GTFluidPipes register, but upstream splits the
 		// family by material — wood aWooden = axe (:1846-1849), rubber aUtilWool = shears
@@ -785,21 +788,64 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * block-family-32xxx-port).</li>
 	 * </ul>
 	 *
+	 * <p><b>Tail extension</b> (task harvest-bands-wrench-tail — the nine families card 1's
+	 * enumeration missed, every family re-verified line-by-line upstream BEFORE landing,
+	 * the mc-A metal-chest lesson: no "metal = wrench" analogy):
+	 *
+	 * <ul>
+	 * <li>{@link gregtech6.registry.GT6ElectricTransformers} — 9 (:881-889, all aMachine;
+	 * the task card cited :884-889 but :881-883 carry the same aMachine column).</li>
+	 * <li>{@link gregtech6.registry.GT6Kinetics} metal domain — 82: the metal axles 48
+	 * (upstream :1671-1766 runs twelve aMachine material ladders × 4 sizes = 48; the card
+	 * base shipped ten ladders — 40 — and the Trinaquadalloy/Ad ladders :1751-1766 landed
+	 * on main after it, the mc-D powertrain card closing the material-coverage gap, 40 ->
+	 * 48 measured on the rebase; the wood_treated ladder :1662-1666 is aWooden — OUT, the
+	 * axe card), the non-wooden steam engines 26
+	 * (:584-612; the IronWood pair :591/:606 is aWooden — OUT), the diesel engines 8
+	 * (:721-729). OUT as well: the wooden gearbox :1669 and the wooden rotation
+	 * transformer :1668 (aWooden — the axe card).</li>
+	 * <li>{@link gregtech6.registry.GT6Lasers} — 10 (the CO2 lasers :930-934 + the laser
+	 * absorbers :976-980, all aMachine; the upstream Laser Fiber Wire :1815 is aMetalWires
+	 * cutter — the port block exists ({@link GTWires} LASER family, the wire-laser-placeholder
+	 * task) and rides the pickaxe band through the GTWires whole-class walk, no extra face).</li>
+	 * <li>{@link gregtech6.registry.GT6Logistics} — the core only (1, :1281 aMachine); the
+	 * logistics wire :1819 is aMetalWires cutter → the pickaxe expedient like
+	 * {@link GTWires} (see addPickaxeBand).</li>
+	 * <li>{@link gregtech6.registry.GT6HeatExchangers} — 1 (:1245 aMachine).</li>
+	 * <li>{@link gregtech6.registry.GT6Distillation} — 2 (:1226-1227 aMachine).</li>
+	 * <li>{@link gregtech6.registry.GT6DynamoHousings} — 4 (:1259-1262 aMachine).</li>
+	 * <li>{@link gregtech6.registry.GT6Boilers} — 26 (steam boiler tanks :553-565 + strong
+	 * :567-579, all aMachine; the LARGE boiler mains :1248-1252 already rode card 1).</li>
+	 * <li>{@link gregtech6.registry.GT6BurningBoxes} — 96 of 97 (the metal solid/dense
+	 * :522-534/:536-548 + liquid :619-629/:633-643 + gas :649-659/:663-673 + fluidbed
+	 * :678-690/:692-704, all aMachine; the BRICK burning box :519 is aStone — OUT, the
+	 * pickaxe-stone card, census erratum).</li>
+	 * <li>{@link gregtech6.registry.GT6CrystalChargers} — 20 (the :969-972 loop, all
+	 * aMachine).</li>
+	 * <li>{@link gregtech6.registry.GT6FluxDynamos} — 5. TASK-CARD ERRATUM: the card called
+	 * this family "port-native 无上游对应", but the upstream Flux Dynamo rows :953-957
+	 * (MultiTileEntityDynamoFlux, meta 11111-11115, aMachine) ARE the family's anchors
+	 * (the port javadoc cites them verbatim) — upstream-anchored, wrench.</li>
+	 * <li>{@link gregtech6.registry.GT6FeConverters} — 1. The TRUE port-native case (the
+	 * deviation ledger decisions.p28-eu-inbound-converter: upstream 1.7.10 deliberately
+	 * ships no RF→EU converter). Ruling per the card-1 precedent for port-native machine
+	 * blocks: it is an energy-machine BE block, so it joins the machine face (ruling B
+	 * keep-and-add).</li>
+	 * </ul>
+	 *
 	 * <p>DECLARED EXPEDIENTS: {@link GTWires} keeps pickaxe (upstream cutter
-	 * :1898-1950, the port cutter has no mining face) and {@link GT6LongDistWires} joins
-	 * pickaxe for the same reason (BlockLongDistWire.java:56-57 cutter level 3) — both
- * ride the card-4 ruling pool. NOT THIS CARD (the census card split): the moulds/
- * crucibles/sensors/grindstones/sifting tables/mortars pickaxe family (card 2),
- * the remaining aWooden/aUtilWood families (card 3), the shears/scoop domains
- * (card 4), and the not-yet-enumerated aMachine registers (electric transformers
- * :884-889, kinetics :1672-1694, laser/logistics lines :1815-1819, heat exchanger
- * :1245, distillation towers :1226-1227, dynamo housings :1259-1262 — tail-card
- * candidates, reported to the coordinator). CENSUS CARD-SPLIT TYPO CORRECTED: the
+	 * :1898-1950, the port cutter has no mining face), {@link GT6LongDistWires} joins
+	 * pickaxe for the same reason (BlockLongDistWire.java:56-57 cutter level 3), and the
+	 * {@link gregtech6.registry.GT6Logistics} LOGISTICS_WIRE joins the same cutter
+	 * expedient (upstream :1819 aMetalWires) — all ride the card-4 ruling pool. STILL NOT
+	 * HERE (the census card split): the moulds/crucibles/sensors/grindstones/sifting
+	 * tables/mortars pickaxe family (card 2), the remaining aWooden/aUtilWood families
+	 * (card 3), the shears/scoop domains (card 4). CENSUS CARD-SPLIT TYPO CORRECTED: the
  * split line put "Crucibles 金属" on THIS card, but the upstream metal crucibles
  * (:264-270) ride aMetal = TOOL_pickaxe (the census families table) — upstream has NO
  * wrench crucible, so the whole {@link gregtech6.registry.GT6Crucibles} family stays
  * on the pickaxe card.
-	 */
+ */
 	private void addWrenchBand() {
 		var tWrench = convergingTag(GTWrenchItem.MINEABLE_WITH_WRENCH);
 		GTMachines.BLOCKS.getEntries().forEach(tHandle -> tWrench.add(tHandle.get()));
@@ -862,5 +908,36 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		// task block-family-32xxx-port — the 60 charging-locker rows join: the :139 column
 		// is aMachine over the full metalset walk (the hopper-family posture).
 		GT6ChargingLockers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		// --- the harvest-bands-wrench-tail extension (the census tail card: every family
+		// re-verified line-by-line upstream, the javadoc tail table is the pin) ---
+		gregtech6.registry.GT6ElectricTransformers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		for (var tEntry : gregtech6.registry.GT6Kinetics.AXLE_BLOCKS.entrySet()) {
+			if (!"wood_treated".equals(tEntry.getValue().get().spec.material())) {
+				tWrench.add(tEntry.getValue().get()); // the :1662-1666 wood axles are aWooden — the axe card
+			}
+		}
+		for (var tEntry : gregtech6.registry.GT6Kinetics.STEAM_ENGINE_BLOCKS.entrySet()) {
+			if (!tEntry.getValue().get().row().wooden()) {
+				tWrench.add(tEntry.getValue().get()); // the :591/:606 IronWood pair is aWooden — the axe card
+			}
+		}
+		gregtech6.registry.GT6Kinetics.DIESEL_BLOCKS.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		gregtech6.registry.GT6Lasers.CO2_LASER_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		gregtech6.registry.GT6Lasers.LASER_ABSORBER_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		tWrench.add(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get());
+		tWrench.add(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get());
+		gregtech6.registry.GT6Distillation.TOWER_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		gregtech6.registry.GT6DynamoHousings.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		gregtech6.registry.GT6Boilers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		for (var tEntry : gregtech6.registry.GT6BurningBoxes.BLOCKS_BY_PATH.entrySet()) {
+			if (!tEntry.getValue().get().row().stone()) {
+				tWrench.add(tEntry.getValue().get()); // the brick burning box :519 is aStone — the pickaxe-stone card
+			}
+		}
+		gregtech6.registry.GT6CrystalChargers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
+		for (Block tFluxDynamo : gregtech6.registry.GT6FluxDynamos.paintableBlockArray()) {
+			tWrench.add(tFluxDynamo); // the :953-957 aMachine ladder (the task-card "port-native" claim is the erratum)
+		}
+		tWrench.add(gregtech6.registry.GT6FeConverters.FE_CONVERTER.get()); // the port-native ruling (decisions.p28-eu-inbound-converter), the machine face
 	}
 }
