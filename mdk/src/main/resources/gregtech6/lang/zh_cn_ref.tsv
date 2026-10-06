@@ -1712,6 +1712,8 @@ direct	gt6.row.mold.display.mold_stone	石头模具	hand
 direct	gt6.row.oven.display	熔炉 (%s)	hand
 direct	gt6.row.printer.display	打印机 (%s)	hand
 direct	gt6.row.queue_hopper.display	%s队列料斗	hand
+direct	gt6.row.chest.display	%s箱子	hand
+direct	gt6.row.reinforced_chest.display	%s强化木箱	hand
 direct	gt6.row.scannervisuals.display	扫描仪 (%s)	hand
 direct	gt6.row.size.huge	巨型	hand
 direct	gt6.row.size.large	大型	hand

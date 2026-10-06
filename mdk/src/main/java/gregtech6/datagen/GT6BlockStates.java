@@ -224,6 +224,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addLaserFamilies(); // task qu-laser-domain — the CO2 Laser + Laser Absorber families (the borrowed upstream colored front/side pairs)
         addMagicAbsorber(); // task magic-absorber — the Magic Field Absorber single (the six-way facing cube)
         addStaticStorages(); // task storage-static-batch
+        addChests(); // task material-mc-a-storage-chests
         addAdvancedCraftingTable(); // task act-machine
         // task paintable-tint-render: the datagen-JVM census half — 209 machine blocks x
         // 3 models (the six ULV rows joined at task c-ulv-machine-ladder; the roll ladders
@@ -1522,6 +1523,109 @@ public final class GT6BlockStates extends BlockStateProvider {
             case BOOKSHELF -> "bookshelf";
             case BOTTLECRATE -> "bottlecrate";
         };
+    }
+
+    /**
+     * Task material-mc-a-storage-chests — the 120 metal-chest rows (GT6Chests.ROWS, the
+     * metalset chest pair Loader_MultiTileEntities.java:132-133 over the 60-material loop
+     * :186-245). TWO family models (one per kind — the ladder folds to the kind model, the
+     * static-storage walk shape): the chest facade over the DERIVED upstream TESR-sheet
+     * crops (assets/README.md — the ModelChest UV regions of metalchest/woodchest
+     * .{colored,plain}.png), the vanilla chest box geometry (the body 1..15 x 0..10,
+     * the lid 1..15 x 10..14, the 1px knob proud of the front face — the upstream
+     * collision/selection columns, MultiTileEntityChest.java:308-311). The tint seat is
+     * the COLORED layer (tintindex 0 — the upstream renderer binds the colored sheet
+     * under the mRGBa multiply first, MultiTileEntityChest.java:349-370), the plain layer
+     * renders as the 0.01 inflated decal shell untinted (:374-384 the second bind, the
+     * P22 contract); the knob rides whichever layer carries the latch art (metalchest
+     * plain / woodchest colored — the sheets' own split). The FACING (horizontal) drives
+     * the 4-variant y-rotation (north default, south 180, west 270, east 90); the 120
+     * BlockItem models parent their kind model.
+     */
+    private void addChests() {
+        for (boolean tReinforced : new boolean[] {false, true}) {
+            ModelFile tModel = chestModel(tReinforced ? "woodchest" : "metalchest", tReinforced);
+            for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) {
+                if (tRow.reinforced() != tReinforced) continue;
+                Block tBlock = gregtech6.registry.GT6Chests.BLOCKS_BY_PATH.get(tRow.path()).get();
+                getVariantBuilder(tBlock).forAllStates(aState -> {
+                    int tY;
+                    switch (aState.getValue(gregtech6.registry.GT6Chests.GT6ChestBlock.FACING)) {
+                        case SOUTH -> tY = 180;
+                        case WEST -> tY = 270;
+                        case EAST -> tY = 90;
+                        default -> tY = 0; // NORTH
+                    }
+                    return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+                });
+                itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+            }
+        }
+    }
+
+    /**
+     * One chest facade model: the colored body + lid boxes (tintindex 0, cullface off —
+     * the box is inset from the block bounds, a cullface would read the NEIGHBOUR block),
+     * the plain 0.01 decal shells (untinted, cutout) and the knob element. The knob layer
+     * follows the latch-art sheet (metalchest plain / woodchest colored — the crop
+     * script's own probe).
+     */
+    private ModelFile chestModel(String aSheet, boolean aReinforced) {
+        BlockModelBuilder tModel = models().getBuilder("block/" + (aReinforced ? "reinforced_chest" : "chest"))
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("top", modLoc("block/" + aSheet + "/colored_top"))
+                .texture("front", modLoc("block/" + aSheet + "/colored_front"))
+                .texture("side", modLoc("block/" + aSheet + "/colored_side"))
+                .texture("bottom", modLoc("block/" + aSheet + "/colored_bottom"))
+                .texture("lid_front", modLoc("block/" + aSheet + "/colored_lid_front"))
+                .texture("lid_side", modLoc("block/" + aSheet + "/colored_lid_side"))
+                .texture("plain_top", modLoc("block/" + aSheet + "/plain_top"))
+                .texture("plain_front", modLoc("block/" + aSheet + "/plain_front"))
+                .texture("plain_side", modLoc("block/" + aSheet + "/plain_side"))
+                .texture("plain_bottom", modLoc("block/" + aSheet + "/plain_bottom"))
+                .texture("plain_lid_front", modLoc("block/" + aSheet + "/plain_lid_front"))
+                .texture("plain_lid_side", modLoc("block/" + aSheet + "/plain_lid_side"))
+                .texture("knob", modLoc("block/" + aSheet + (aReinforced ? "/colored_knob" : "/plain_knob")))
+                .texture("particle", modLoc("block/" + aSheet + "/colored_side"))
+                .renderType("cutout");
+        // the body box (1,0,1)-(15,10,15): front on north, sides on the flanks — tint seat
+        tModel.element()
+                .from(1.0F, 0.0F, 1.0F).to(15.0F, 10.0F, 15.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + switch (aDir) {
+                    case NORTH, SOUTH -> "front";
+                    case WEST, EAST -> "side";
+                    case DOWN -> "bottom";
+                    case UP -> "top";
+                }).tintindex(0))
+                .end();
+        // the lid box (1,10,1)-(15,14,15): the top face is the chest's visual top — tint seat
+        tModel.element()
+                .from(1.0F, 10.0F, 1.0F).to(15.0F, 14.0F, 15.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + switch (aDir) {
+                    case NORTH, DOWN -> "lid_front";
+                    case UP -> "top";
+                    default -> "lid_side";
+                }).tintindex(0))
+                .end();
+        // the knob (7,10,0)-(9,14,1), proud of the front face — the latch-art layer (untinted
+        // on metalchest, the colored layer on woodchest — the #knob binding carries the split)
+        tModel.element()
+                .from(7.0F, 10.0F, 0.0F).to(9.0F, 14.0F, 1.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#knob"))
+                .end();
+        // the plain decal shells — the 0.01 inflated boxes, untinted (the P22 contract;
+        // no cullface, the shells sit inside the block bounds)
+        tModel.element()
+                .from(0.99F, -0.01F, 0.99F).to(15.01F, 10.01F, 15.01F)
+                .allFaces((aDir, aFace) -> aFace.texture("#plain_" +
+                        (aDir.getAxis() == Direction.Axis.Y ? (aDir == Direction.UP ? "top" : "bottom") : (aDir == Direction.NORTH ? "front" : "side"))))
+                .end();
+        tModel.element()
+                .from(0.99F, 9.99F, 0.99F).to(15.01F, 14.01F, 15.01F)
+                .allFaces((aDir, aFace) -> aFace.texture("#plain_" +
+                        (aDir.getAxis() == Direction.Axis.Y ? "top" : (aDir == Direction.NORTH ? "lid_front" : "lid_side"))))
+                .end();
+        return tModel;
     }
 
     /**

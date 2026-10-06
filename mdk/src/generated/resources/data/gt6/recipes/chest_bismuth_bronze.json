@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/bismuth_bronze"
+    },
+    "R": {
+      "item": "gt6:ring_bismuth_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_bismuth_bronze"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:chest_bismuth_bronze"
+  },
+  "show_notification": true
+}

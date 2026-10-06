@@ -1816,6 +1816,11 @@ public class GT6ZhCn extends LanguageProvider {
 		// 料斗/队列料斗 wording since task lang-batch1-fix — funnel keeps 漏斗)
 		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_QUEUE_KEY);
+		// metal chests (task material-mc-a-storage-chests): the two kind templates over the
+		// shared metalset unit words (the dump composed rows gt.multitileentity.0-59 铅箱子 /
+		// 500-559 铅强化木箱 verbatim shape — the tsv hand rows carry both templates)
+		addDirect(gregtech6.registry.GT6Chests.DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Chests.DISPLAY_REINFORCED_KEY);
 		for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Hoppers.matUnitKeyOf(tRow));
 		}

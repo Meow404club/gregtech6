@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "c:plates/arsenic_bronze"
+    },
+    "R": {
+      "item": "gt6:ring_arsenic_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_arsenic_bronze"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:chest_arsenic_bronze"
+  }
+}

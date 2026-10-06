@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/tin_alloy"
+    },
+    "R": {
+      "item": "gt6:ring_tin_alloy"
+    },
+    "S": {
+      "item": "gt6:stick_tin_alloy"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sPw",
+    "RSR",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:chest_tin_alloy"
+  },
+  "show_notification": true
+}

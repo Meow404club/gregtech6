@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:chests"
+    },
+    "R": {
+      "item": "gt6:ring_tungsten"
+    },
+    "S": {
+      "item": "gt6:stick_tungsten"
+    },
+    "s": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "sSw",
+    "RCR",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:reinforced_chest_tungsten"
+  }
+}
