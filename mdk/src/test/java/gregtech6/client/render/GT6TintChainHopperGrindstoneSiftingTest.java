@@ -99,7 +99,7 @@ class GT6TintChainHopperGrindstoneSiftingTest extends GTOfflineRenderTestBase {
 		net.minecraft.world.level.block.Block tLead = hopperBlock("hopper_lead");
 		net.minecraft.world.level.block.Block tSteel = hopperBlock("hopper_steel");
 		net.minecraft.world.level.block.Block tGold = hopperBlock("queue_hopper_gold");
-		// MT.java:1127 Pb 60,40,110; MT.java:2459 Steel 130,130,130
+		// MT.java:472 Pb 60,40,110; MT.java:1713 Steel 130,130,130
 		assertEquals(0xFF3C286E, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tLead), 0),
 				"the lead hopper tints 60,40,110 — the dark lead row (the 不深灰 symptom killer)");
 		assertEquals(0xFF828282, GTMachinePaintTint.tintARGB(ModelData.EMPTY, GTMachinePaintTint.tintMaterialOf(tSteel), 0),

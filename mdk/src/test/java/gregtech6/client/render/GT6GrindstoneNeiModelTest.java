@@ -52,8 +52,10 @@ public class GT6GrindstoneNeiModelTest extends GTOfflineRenderTestBase {
 
 	@BeforeAll
 	static void buildOfflineFixtures() {
-		// the BLOCK registry write window (the GT6AnvilNeiModelTest recipe) — the Block
-		// ctor registers its intrusive holder
+		// the hermetic material boot first (the GT6HopperFamilyTest r11e house rule) — the
+		// self-tint arm's ANY.Steel supplier resolves live; then the BLOCK registry write
+		// window (the GT6AnvilNeiModelTest recipe) for the Block ctor's intrusive holder
+		gregtech6.registry.GT6MaterialTestSupport.materials();
 		try {
 			java.lang.reflect.Method tUnfreeze = net.minecraft.core.registries.BuiltInRegistries.BLOCK
 					.getClass().getMethod("unfreeze");
