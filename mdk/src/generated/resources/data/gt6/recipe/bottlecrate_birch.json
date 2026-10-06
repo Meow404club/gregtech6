@@ -15,10 +15,10 @@
       "tag": "gt6:tools/file"
     },
     "r": {
-      "tag": "gt6:tools/screwdriver"
+      "tag": "gt6:tools/soft_hammer"
     },
     "s": {
-      "tag": "gt6:tools/hard_hammer"
+      "tag": "gt6:tools/saw"
     }
   },
   "pattern": [

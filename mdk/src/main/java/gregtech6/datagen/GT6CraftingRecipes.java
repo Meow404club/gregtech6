@@ -1013,12 +1013,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * <li>Drawer (:140 "CTC","TdT","CTC"): 'd' = the screwdriver tool tag;</li>
 	 * <li>Safes (:134-135 "PGP","GOS"/"OGS","PGP"): 'P' = plateQuintuple, 'G' =
 	 *     gearGtSmall, 'O' = gearGt, 'S' = stick;</li>
-	 * <li>Wooden Bookshelf (:177-179 "PPP","sfr","PPP"): 'P' = THE ROW'S plank item, 's'
-	 *     = the hard hammer tag (the upstream soft-hammer letter folds — no soft-hammer
-	 *     tag in the port), 'f' = the file tag, 'r' = the screwdriver tag;</li>
-	 * <li>Wooden Bottlecrate (:180 "sfr","PGP","BPB"): 'B' = the wood bolt, 'G' = a slime
-	 *     ball (the upstream itemGlue column folds — no glue item in the port universe,
-	 *     the declared deviation).</li>
+	 * <li>Wooden Bookshelf (:181-183 "PPP","sfr","PPP"): 'P' = THE ROW'S plank item,
+	 *     's' = the saw tag, 'f' = the file tag, 'r' = the soft hammer tag — the CR.java
+	 *     letters verbatim ('s' = saw :356, 'f' = file :344, 'r' = softhammer :355; the
+	 *     storage-static-batch landing had swapped 's'/'r' to hard hammer/screwdriver,
+	 *     task storage-tool-char-decode);</li>
+	 * <li>Wooden Bottlecrate (:184 "sfr","PGP","BPB"): the same 's'/'f'/'r' tool
+	 *     letters, 'B' = the wood bolt, 'G' = a slime ball (the upstream itemGlue
+	 *     column folds — no glue item in the port universe, the declared
+	 *     deviation).</li>
 	 * </ul>
 	 * Tool letters key on the gt6 tool tags (the p24/p25 tag rulings), material items
 	 * resolve through GTMaterialItems (the hopper plateCurved shape).
@@ -1139,20 +1142,20 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('G', GTMaterialItems.get(gregapi.data.OP.gearGtSmall, aRow.material().mt()).get())
 					.define('O', GTMaterialItems.get(gregapi.data.OP.gearGt, aRow.material().mt()).get())
 					.define('S', GTMaterialItems.get(gregapi.data.OP.stick, aRow.material().mt()).get());
-			case BOOKSHELF -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
-					.pattern("PPP").pattern("sfr").pattern("PPP")
-					.define('P', aRow.plank().item())
-					.define('s', GT6ItemTags.TOOLS_HARD_HAMMER)
-					.define('f', GT6ItemTags.TOOLS_FILE)
-					.define('r', GT6ItemTags.TOOLS_SCREWDRIVER);
-			case BOTTLECRATE -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
-					.pattern("sfr").pattern("PGP").pattern("BPB")
-					.define('P', aRow.plank().item())
-					.define('B', GTMaterialItems.get(gregapi.data.OP.bolt, gregapi.data.MT.Wood).get())
-					.define('G', Items.SLIME_BALL)
-					.define('s', GT6ItemTags.TOOLS_HARD_HAMMER)
-					.define('f', GT6ItemTags.TOOLS_FILE)
-					.define('r', GT6ItemTags.TOOLS_SCREWDRIVER);
+		case BOOKSHELF -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+				.pattern("PPP").pattern("sfr").pattern("PPP")
+				.define('P', aRow.plank().item())
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('r', GT6ItemTags.TOOLS_SOFT_HAMMER);
+		case BOTTLECRATE -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+				.pattern("sfr").pattern("PGP").pattern("BPB")
+				.define('P', aRow.plank().item())
+				.define('B', GTMaterialItems.get(gregapi.data.OP.bolt, gregapi.data.MT.Wood).get())
+				.define('G', Items.SLIME_BALL)
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('f', GT6ItemTags.TOOLS_FILE)
+				.define('r', GT6ItemTags.TOOLS_SOFT_HAMMER);
 		};
 		// the unlock arms: the material plate column for the metal rows, the plank for the wooden
 		if (aRow.material() != null) {
