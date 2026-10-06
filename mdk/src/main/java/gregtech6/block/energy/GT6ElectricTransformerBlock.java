@@ -51,7 +51,7 @@ import gregtech6.util.UT6;
  * no GUI (upstream has none); the ACTIVE property carries the {@code mActive} activity
  * for the overlay_active texture layer (upstream getTexture2 sOverlays[mActivity.mState]).
  */
-public class GT6ElectricTransformerBlock extends GTEntityBlock {
+public class GT6ElectricTransformerBlock extends GTEntityBlock implements gregtech6.block.GTWrenchUsable {
 
 	/** Facing property (six-way, issue #18 — FRONT is the input face, ALL-BUT-FRONT the output; upstream SIDES_VALID = all six). */
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;

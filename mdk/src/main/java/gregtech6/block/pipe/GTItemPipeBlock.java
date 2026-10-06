@@ -49,7 +49,7 @@ import gregtech6.covers.ICoverableTE;
  * NBT_INV_SIZE, MultiTileEntityPipeItem.java:94 + Loader :1823-1825). NO onRemove
  * override (the id59 red line).
  */
-public class GTItemPipeBlock extends GTEntityBlock {
+public class GTItemPipeBlock extends GTEntityBlock implements gregtech6.block.GTWrenchUsable {
 
 	/** The 6-bit connection mask (0..63) — the GTBlockProperties single instance (ADR-P16-2). */
 	public static final IntegerProperty CONNECTIONS = GTBlockProperties.CONNECTIONS;

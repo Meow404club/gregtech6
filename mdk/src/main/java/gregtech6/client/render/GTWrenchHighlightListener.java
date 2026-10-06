@@ -48,7 +48,12 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  * Hovering a {@link GTFluidPipeBlockEntity} (the connection/ioMask modes, task
  * wrench-ui-gtceu), a {@link TileEntityOven} (the front-rotation mode, task
  * oven-rotation — shift marks the rotatable cells, the same predicate
- * {@link GTOvenBlock#use} rotates through) or a {@link TileEntityCokeOven} (the
+ * {@link GTOvenBlock#use} rotates through), a facing-machine block (the
+ * transformer/dynamo/battery-box family, task wrench-interaction-chain symptom19 —
+ * the upstream {@code TileEntityBase08Directional.isUsingWrenchingOverlay} :58 bare
+ * wrench overlay plus the current-front mark; the family's own
+ * {@code GT6ToolActions.WRENCH} key, not the substitute pool) or a
+ * {@link TileEntityCokeOven} (the
  * structure ghost preview, tasks ghost-preview-poc / ghost-pattern-api /
  * ghost-render-match — a formed shell shows only its outer frame, an unformed one
  * per-cell translucent faces in green/red match colouring, judged fresh per frame
@@ -93,6 +98,29 @@ public final class GTWrenchHighlightListener {
 			// the BE NBT, so the BE's own mFacing byte can be stale here
 			byte tFrontFacing = (byte) tOven.getBlockState().getValue(GTOvenBlock.FACING).get3DDataValue();
 			GTWrenchGridRenderer.renderOvenGrid(tPoseStack, tBuffers, tCamera, tTarget, tPlayer.isShiftKeyDown(), tFrontFacing);
+		} else if (isFacingMachineHeld(tPlayer)) {
+			// task wrench-interaction-chain, symptom19 "扳手指向变压器无九宫格" — the
+			// facing-machine family (transformer / dynamo / battery box incl. the ZPM
+			// decharger heir). Upstream trigger: a facing machine shows the wrench
+			// overlay while its facing tool is held
+			// (TileEntityBase08Directional.isUsingWrenchingOverlay :58
+			// getFacingTool()==TOOL_wrench → TileEntityBase01Root.onDrawBlockHighlight
+			// :995-1005 → RenderHelper.drawWrenchOverlay — the bare 3x3 grid). The
+			// predicate here mirrors the family's click arm
+			// (GT6ElectricTransformerBlock.wrenchRotate :171 keys
+			// GT6ToolActions.WRENCH — the upstream getFacingTool shape, NOT the
+			// substitute pool: the hoe never rotated a facing machine, so it must not
+			// show this grid either — shown means clickable per family, both
+			// hands compose like wrenchRotate's own hand read). The front mark rides
+			// GTWrenchGridTables.machineFrontIcon; the BlockState is the display
+			// authority (wrenchRotate writes flag 3, same rule as the oven arm above).
+			BlockState tState = tPlayer.level().getBlockState(tTarget.getBlockPos());
+			if (tState.getBlock() instanceof gregtech6.block.energy.GT6ElectricTransformerBlock
+					|| tState.getBlock() instanceof gregtech6.block.energy.GT6DynamoBlock
+					|| tState.getBlock() instanceof gregtech6.block.energy.GT6BatteryBoxBlock) {
+				byte tFrontFacing = (byte) tState.getValue(gregtech6.block.energy.GT6ElectricTransformerBlock.FACING).get3DDataValue();
+				GTWrenchGridRenderer.renderMachineGrid(tPoseStack, tBuffers, tCamera, tTarget, tFrontFacing);
+			}
 		} else if (tTile instanceof TileEntityCokeOven tOven) {
 			// tasks ghost-preview-poc + ghost-pattern-api + ghost-render-match — the
 			// structure ghost. Same BlockState rule: the FACING/FORMED pair of the state is the
@@ -117,5 +145,18 @@ public final class GTWrenchHighlightListener {
 	/** The use() predicate — the shared wrench-interaction key ({@link GT6ToolActions#isWrenchInteractionKey}). */
 	private static boolean isWrenchHeld(Player aPlayer, InteractionHand aHand) {
 		return GT6ToolActions.isWrenchInteractionKey(aPlayer.getItemInHand(aHand));
+	}
+
+	/**
+	 * The facing-machine grid predicate — the {@code wrenchRotate} family key
+	 * ({@code GT6ToolActions.WRENCH}, either hand), NOT the substitute-pool seam: the
+	 * upstream facing machine answers {@code getFacingTool()} only
+	 * (TileEntityBase08Directional :58 → Base09 onToolClick2 :72), so the vanilla-hoe
+	 * substitute stays out of this family's display exactly as it stays out of its
+	 * click arm (GT6ElectricTransformerBlock.wrenchRotate :171).
+	 */
+	private static boolean isFacingMachineHeld(Player aPlayer) {
+		return aPlayer.getItemInHand(InteractionHand.MAIN_HAND).canPerformAction(GT6ToolActions.WRENCH)
+				|| aPlayer.getItemInHand(InteractionHand.OFF_HAND).canPerformAction(GT6ToolActions.WRENCH);
 	}
 }
