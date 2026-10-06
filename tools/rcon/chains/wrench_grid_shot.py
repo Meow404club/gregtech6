@@ -8,10 +8,12 @@ Structure = the embeddium_tint precedent, minimally varied:
 
   server half (Chain, passes=1, NO teardown — the machines are the fixture):
     A the smooth_stone stage + pinned lighting (noon, daylight locked, clear);
-    B the family row at z=64 facing the spawn camera: electric_transformer at
-      x480, battery_box_ulv at x483 (both FACING-driven family members);
-    C the camera pin: setworldspawn 480 64 58 — fresh client player at the block
-      centre facing yaw=0 (+Z south), the row 6 blocks due south.
+    B the family at z=64 facing the camera: a 3x2 electric_transformer WALL at
+      x479..481 (the client crosshair drifts under Xvfb pointer capture; the wall
+      keeps the ray on the family) + battery_box_ulv at x483;
+    C the camera pin: setworldspawn 480 64 61 — the seeded player stands 3 blocks
+      south of the wall, INSIDE the 4.5 survival reach (the grid is a targeted-
+      block overlay; at the first run's 6-block rig the event never fired).
 
   client half (--client): the world copy -> dev client (quickPlaySingleplayer,
   the P26 smoke automation boundary) -> chat /give the formal wrench -> F2 shot
@@ -26,8 +28,11 @@ Run:
 """
 
 import argparse
+import gzip
+import io
 import os
 import shutil
+import struct
 import subprocess
 import sys
 import time
@@ -58,15 +63,18 @@ steps += [
 
 # ------------------------------------------- B: the family row (fronts south)
 steps += [
-    phase("B: the facing-machine family row — transformer + battery box, spawn-facing"),
-    Step("setblock 480 64 64 gt6:electric_transformer", expect="Changed the block"),
+    phase("B: the facing-machine family — a 3x2 transformer WALL + the battery box; "
+          "the wall absorbs the client's pointer-capture yaw drift (the grid is a "
+          "TARGETED-block overlay — the camera must ray-hit the family)"),
+    Step("fill 479 64 64 481 65 64 gt6:electric_transformer", expect="Successfully filled"),
     Step("setblock 483 64 64 gt6:battery_box_ulv", expect="Changed the block"),
 ]
 
 # ------------------------------------------- C: the camera pin (spawn = the rig)
 steps += [
-    phase("C: the camera pin — fresh players spawn facing +Z, the row 6 blocks south"),
-    Step("setworldspawn 480 64 58", expect="Set the world spawn"),
+    phase("C: the camera pin — the seeded player ignores worldspawn, this is the "
+          "unseeded-player backstop at the same 3-block rig"),
+    Step("setworldspawn 480 64 61", expect="Set the world spawn"),
     Step("gamerule spawnRadius 0", expect="spawnRadius"),
 ]
 
@@ -82,6 +90,11 @@ CHAIN = Chain(
 
 # ---------------------------------------------------------------------------
 # The client half: world copy -> dev-client two shots -> the pixel verdict.
+# The wrench reaches the hotbar through playerdata surgery, NOT chat: two live
+# runs proved XTEST-typed /give unreachable (burst `xdotool type` garbled the
+# command under llvmpipe stutter, and per-key delivery plus the pre-Escape only
+# bought a command-error chat line and a Game Menu shot). Single-key XTEST
+# (F2, digit hotbar) stays — the embeddium precedent's proven surface.
 # ---------------------------------------------------------------------------
 
 REPO = _HERE.parent.parent.parent            # tools/rcon/chains → repo root
@@ -114,14 +127,121 @@ def _server_world_dir():
     raise SystemExit(f"server world folder not found under {candidates} — run the chain first")
 
 
-def _chat(xenv: dict, line: str) -> None:
-    """One chat command through XTEST (t opens chat, type, Return sends)."""
-    subprocess.run(["xdotool", "key", "--clearmodifiers", "t"], env=xenv, check=False)
-    time.sleep(1.2)
-    subprocess.run(["xdotool", "type", "--delay", "70", "--", line], env=xenv, check=False)
-    time.sleep(0.6)
-    subprocess.run(["xdotool", "key", "--clearmodifiers", "Return"], env=xenv, check=False)
-    time.sleep(1.5)
+_DEV_UUID = "380df991-f603-344c-a090-369bad2a924a"   # md5("OfflinePlayer:Dev") v3, the dev env's fixed player
+
+
+def _nbt_string(b: bytes, o: int):
+    n, o = struct.unpack_from(">H", b, o)[0], o + 2
+    return b[o:o + n].decode("utf-8"), o + n
+
+
+def _nbt_payload(b: bytes, o: int, t: int):
+    """Payload of tag type t at b[o:] -> (python value, next offset).
+    Compound = dict (insertion-ordered), List = (elem_type, [values])."""
+    if t == 1: return b[o], o + 1
+    if t == 2: return struct.unpack_from(">h", b, o)[0], o + 2
+    if t == 3: return struct.unpack_from(">i", b, o)[0], o + 4
+    if t == 4: return struct.unpack_from(">q", b, o)[0], o + 8
+    if t == 5: return struct.unpack_from(">f", b, o)[0], o + 4
+    if t == 6: return struct.unpack_from(">d", b, o)[0], o + 8
+    if t == 7:
+        n, o = struct.unpack_from(">i", b, o)[0], o + 4
+        return b[o:o + n], o + n
+    if t == 8: return _nbt_string(b, o)
+    if t == 9:
+        et = b[o]; o += 1
+        n, o = struct.unpack_from(">i", b, o)[0], o + 4
+        vals = []
+        for _ in range(n):
+            v, o = _nbt_payload(b, o, et)
+            vals.append(v)
+        return (et, vals), o
+    if t == 10:
+        out = {}
+        while True:
+            ct = b[o]; o += 1
+            if ct == 0:
+                return out, o
+            name, o = _nbt_string(b, o)
+            val, o = _nbt_payload(b, o, ct)
+            out[name] = (ct, val)   # keep the child tag type — _s_payload needs it back
+    if t == 11:
+        n, o = struct.unpack_from(">i", b, o)[0], o + 4
+        return list(struct.unpack_from(f">{n}i", b, o)), o + 4 * n
+    if t == 12:
+        n, o = struct.unpack_from(">i", b, o)[0], o + 4
+        return list(struct.unpack_from(f">{n}q", b, o)), o + 8 * n
+    raise ValueError(f"nbt tag type {t} at {o}")
+
+
+def _s_string(out: bytearray, s: str) -> None:
+    raw = s.encode("utf-8")
+    out += struct.pack(">H", len(raw))
+    out += raw
+
+
+def _s_payload(out: bytearray, t: int, v) -> None:
+    if t == 1: out.append(v & 0xFF)
+    elif t == 2: out += struct.pack(">h", v)
+    elif t == 3: out += struct.pack(">i", v)
+    elif t == 4: out += struct.pack(">q", v)
+    elif t == 5: out += struct.pack(">f", v)
+    elif t == 6: out += struct.pack(">d", v)
+    elif t == 7:
+        out += struct.pack(">i", len(v)); out += v
+    elif t == 8: _s_string(out, v)
+    elif t == 9:
+        et, vals = v
+        out.append(et)
+        out += struct.pack(">i", len(vals))
+        for item in vals:
+            _s_payload(out, et, item)
+    elif t == 10:
+        for name, (ct, cv) in v.items():
+            out.append(ct)
+            _s_string(out, name)
+            _s_payload(out, ct, cv)
+        out.append(0)
+    elif t == 11:
+        out += struct.pack(">i", len(v)); out += struct.pack(f">{len(v)}i", *v)
+    elif t == 12:
+        out += struct.pack(">i", len(v)); out += struct.pack(f">{len(v)}q", *v)
+    else:
+        raise ValueError(f"nbt tag type {t}")
+
+
+def _patch_player(dest: Path) -> None:
+    """Hotbar-camera surgery on the copied Dev playerdata (stdlib struct only): the
+    formal wrench rides IN with the player — hotbar slot 0 with SelectedItemSlot
+    pinned to it — and the camera is pinned to the stage rig: spawn 480.5 64 61.5,
+    yaw 0 = +Z south, the transformer wall 3 blocks ahead, pitch 30 down onto the
+    faces (the post-join pointer lift eats ~10 of it). THREE blocks, not six: the
+    grid is a TARGETED-block overlay (RenderHighlightEvent.Block never fires past
+    the 4.5 survival reach — the first live run at 6 blocks drew nothing, not even
+    a vanilla selection box). The playerdata seed in the SERVER world's
+    playerdata/ is part of this chain's stage (a dev-client run once wrote it; the
+    copy picks it up)."""
+    path = dest / "playerdata" / f"{_DEV_UUID}.dat"
+    if not path.is_file():
+        raise SystemExit(f"player fixture missing: {path} — re-seed it from a dev-client "
+                         "run's saves/wrenchgrid/playerdata into the server world")
+    raw = gzip.open(path, "rb").read()
+    root_type = raw[0]                          # TAG_Compound
+    name, off = _nbt_string(raw, 1)             # the root's "" name
+    player, off = _nbt_payload(raw, off, root_type)   # a playerdata root IS the player
+    player["Inventory"] = (9, (10, [{"Slot": (1, 0), "id": (8, "gt6:wrench"), "Count": (1, 1)}]))
+    player["SelectedItemSlot"] = (3, 0)
+    player["Rotation"] = (9, (5, [0.0, 30.0]))
+    player["Pos"] = (9, (6, [480.5, 64.0, 61.5]))   # Pos is a DOUBLE list — a float list reads back empty
+    out = bytearray()
+    out.append(root_type)
+    _s_string(out, name)
+    _s_payload(out, root_type, player)
+    buf = io.BytesIO()
+    with gzip.GzipFile(fileobj=buf, mode="wb", mtime=0) as g:
+        g.write(bytes(out))
+    path.write_bytes(buf.getvalue())
+    print(f"[client] wrench seeded into hotbar slot 0 + camera pinned ({path.name})")
 
 
 def _blue_lines(png: Path) -> int:
@@ -141,7 +261,7 @@ def _blue_lines(png: Path) -> int:
 
 
 def cmd_client(wait_seconds: float = 60.0) -> int:
-    """One dev-client leg: join the copied world, give the wrench, two F2 shots."""
+    """One dev-client leg: join the copied world with the wrench pre-seeded, two F2 shots."""
     xvfb = os.environ.get("GT6_XVFB_DISPLAY", ":97")   # the resident Xvfb, never :0
     src = _server_world_dir()
     dest = NODE_RUN / "saves" / WORLD_NAME
@@ -149,6 +269,7 @@ def cmd_client(wait_seconds: float = 60.0) -> int:
         shutil.rmtree(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(src, dest)
+    _patch_player(dest)
     NODE_RUN.mkdir(parents=True, exist_ok=True)
     (NODE_RUN / "options.txt").write_text(OPTIONS)
     shot_dir = NODE_RUN / "screenshots"
@@ -192,15 +313,15 @@ def cmd_client(wait_seconds: float = 60.0) -> int:
         time.sleep(4.0)
 
         # shot 1: wrench held — the grid must draw on the transformer/battery row
-        _chat(xenv, "/give @s gt6:wrench")
-        time.sleep(2.0)
+        # (the wrench rode in via playerdata, hotbar slot 0 pre-selected)
         subprocess.run(["xdotool", "key", "--clearmodifiers", "F2"], env=xenv, check=False)
         shot_armed = _wait_new_shot(shot_dir, before, "armed")
         before |= {shot_armed.name}
 
-        # shot 2: empty hands — the grid must hide (the shown-means-clickable gate)
-        _chat(xenv, "/clear @s")
-        time.sleep(2.0)
+        # shot 2: empty hands — one digit key switches to the empty hotbar slot 2
+        # and the grid must hide (the shown-means-clickable gate)
+        subprocess.run(["xdotool", "key", "--clearmodifiers", "2"], env=xenv, check=False)
+        time.sleep(1.0)
         subprocess.run(["xdotool", "key", "--clearmodifiers", "F2"], env=xenv, check=False)
         shot_disarmed = _wait_new_shot(shot_dir, before, "disarmed")
 
