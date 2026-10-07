@@ -242,7 +242,17 @@ public final class MaterialTreeDisplay {
 	 */
 	public record Overflow(int column, int hidden) {}
 
-	/** x of a node's slot (the parallel lane: lanes grow RIGHT). */
+	/**
+	 * x of a node's slot (the parallel lane: lanes grow RIGHT).
+	 *
+	 * <p><b>The legacy fixed-grid view</b> (task mattree-r2-layout-engine): the layout
+	 * ENGINE face is {@link MaterialTreeLayout#plan} — its {@code Result} computes these
+	 * coordinates from a {@code Policy} and derives the canvas from the content. This
+	 * static table (and {@code WIDTH/HEIGHT}) survives as the VIEWER PAGES' published
+	 * geometry (the EMI/JEI page legs, the nav tables); under the default policy the two
+	 * are numerically identical — the equality is pinned by {@code MaterialTreeLayoutTest}.
+	 * The standalone screen consumes the engine face.
+	 */
 	public static int nodeX(Node aNode) { return LANE_X0 + aNode.row() * LANE_PITCH; }
 	/** y of a node's slot (the stage band: stages grow DOWN). */
 	public static int nodeY(Node aNode) { return STAGE_Y[aNode.column()]; }
