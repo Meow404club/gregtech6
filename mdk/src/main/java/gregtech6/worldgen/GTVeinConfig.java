@@ -33,9 +33,15 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * what has registrable ore blocks (GT6OreBlocksRegistrationTest pins 53), so slots outside
  * it ride the same per-layer skip and light up as the axis extends. Declared mapping, not
  * a downgrade: the JSON stays canonical either way.
+ *
+ * <p>The {@code atum} column (task atum-dim-adaptation, the spring mask's posture): the
+ * row listed ORE_ATUM — exactly the :886-916 block (lignite..copper, 31 rows; the three
+ * ORE_END rows :904-906 among them) while every :917-925 row stays false. The codec face
+ * is {@code optionalFieldOf("atum", false)}: pre-atum JSON decodes and re-emits with the
+ * same semantics (the default), the old trees stay loadable.
  */
 public record GTVeinConfig(String name, int minY, int maxY, int weight, int density, int size,
-        int spawnDistance, boolean indicator, boolean overworld, boolean end,
+        int spawnDistance, boolean indicator, boolean overworld, boolean end, boolean atum,
         OreDictMaterial oreTop, OreDictMaterial oreBottom, OreDictMaterial oreBetween, OreDictMaterial oreSpread)
         implements FeatureConfiguration {
 
@@ -54,6 +60,7 @@ public record GTVeinConfig(String name, int minY, int maxY, int weight, int dens
             Codec.BOOL.fieldOf("indicator").forGetter(GTVeinConfig::indicator),
             Codec.BOOL.fieldOf("overworld").forGetter(GTVeinConfig::overworld),
             Codec.BOOL.fieldOf("end").forGetter(GTVeinConfig::end),
+            Codec.BOOL.optionalFieldOf("atum", false).forGetter(GTVeinConfig::atum),
             MATERIAL_CODEC.fieldOf("ore_top").forGetter(GTVeinConfig::oreTop),
             MATERIAL_CODEC.fieldOf("ore_bottom").forGetter(GTVeinConfig::oreBottom),
             MATERIAL_CODEC.fieldOf("ore_between").forGetter(GTVeinConfig::oreBetween),

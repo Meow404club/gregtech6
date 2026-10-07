@@ -153,6 +153,13 @@ public class GT6BiomeModifierConditions implements DataProvider {
             // anyway, the condition is the twilight-form parity plus the explicit
             // dead-mod declaration.
             new ConditionRow(GT6WorldgenDatagen.ATUM_FLUID_SPRINGS_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)),
+            // task atum-dim-adaptation — the ore band tenants: the atum large-vein row
+            // (the SAME gt6:large_veins placed feature, the Feature's probe picks the
+            // ORE_ATUM rows) and the atum small-ore row (the 35 Dim.ATUM pairs).
+            new ConditionRow(GT6WorldgenDatagen.ATUM_LARGE_VEINS_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)),
+            new ConditionRow(GT6WorldgenDatagen.ATUM_ORES_MODIFIER_KEY.location().getPath(),
                     aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)));
 
     @Override

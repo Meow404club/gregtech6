@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import gregtech6.worldgen.GTOreWorldgen;
+import gregtech6.worldgen.GT6Worldgen;
 
 //? if forge {
 import net.minecraftforge.common.data.BlockTagsProvider;
@@ -128,6 +129,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
 		addWrenchBand(); // task wrench-mining-face — the gt6:mineable/wrench face (ruling B)
 		addTwilightDeadrockBand(); // task twilight-vanilla-ores-deadrock — the gt6:tf_deadrock host-indirection tag
+		addAtumBaseStoneBand(); // task atum-dim-adaptation — the gt6:atum_base_stone host-indirection tag
 		// the takeover seam: later cards tail-append their own add*Band() here
 		// (tags-prefix-materials: rolling batches).
 	}
@@ -160,6 +162,22 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	private void addTwilightDeadrockBand() {
 		tag(GTOreWorldgen.twilightDeadrockTag())
 				.addOptional(ResourceLocation.fromNamespaceAndPath("twilightforest", "deadrock"));
+	}
+
+	/**
+	 * The atum host-stone tag (task atum-dim-adaptation): the {@code gt6:atum_base_stone}
+	 * block tag with the {@code #atum:base_stone_atum} fill verbatim (atum2 master
+	 * base_stone_atum.json — {@code atum:limestone} + {@code atum:karst}; AtumAPI.java:46
+	 * is the tag constant) — the deadrock indirection face's second tenant. The atum ore
+	 * band targets this tag (the small-ore {@code TagMatchTest} arm + the large-vein
+	 * host-skin probe + the hive wall host), never the foreign ids directly; every member
+	 * is {@code required:false} (atum absent = empty tag = the features target nothing,
+	 * the modifiers are unmounted by their mod_loaded conditions anyway).
+	 */
+	private void addAtumBaseStoneBand() {
+		tag(GT6Worldgen.ATUM_BASE_STONE)
+				.addOptional(ResourceLocation.fromNamespaceAndPath(GT6Worldgen.ATUM_MODID, "limestone"))
+				.addOptional(ResourceLocation.fromNamespaceAndPath(GT6Worldgen.ATUM_MODID, "karst"));
 	}
 
 	/**
