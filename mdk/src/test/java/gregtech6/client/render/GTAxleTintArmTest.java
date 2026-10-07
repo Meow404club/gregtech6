@@ -255,10 +255,10 @@ public class GTAxleTintArmTest extends GTOfflineTestBase {
 
 	/** The walk arithmetic: 11 materials x 4 diameters, unique paths (both legs, offline-safe). */
 	@Test
-	public void theRowWalkCoversFortyFourUniquePaths() {
+	public void theRowWalkCoversFiftyTwoUniquePaths() {
 		List<String> tWalk = rowWalk();
-		assertEquals(44, tWalk.size(), "11 materials x 4 diameters (the AXLE_SPECS ruling, GT6KineticsTabCensusTest)");
-		assertEquals(44, new HashSet<>(tWalk).size(), "the row paths are unique");
+		assertEquals(52, tWalk.size(), "13 materials x 4 diameters (the AXLE_SPECS ruling + the Trinaquadalloy/Adamantium tail rows, task material-mc-d-powertrain-rows)");
+		assertEquals(52, new HashSet<>(tWalk).size(), "the row paths are unique");
 	}
 
 	/** THE census: the handler seam IS the full axle item map, 1:1 with the walk — a missed row renders gray. */

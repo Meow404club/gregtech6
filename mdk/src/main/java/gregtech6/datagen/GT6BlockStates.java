@@ -270,6 +270,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addAxles(); // task axle-family
         addAttachments(); // task tap-funnel-attachment
         addSteamEngines(); // task engine-steam
+        addPowertrain(); // task material-mc-d-powertrain-rows
         addDieselEngines(); // task engine-diesel
         addBurningBoxes(); // task burning-box-family
         addBoilers(); // task boiler-tank
@@ -2948,6 +2949,74 @@ public final class GT6BlockStates extends BlockStateProvider {
             converterBlockstate(tBlock, tModel, GT6Kinetics.SteamEngineBlock.FACING, null);
             itemModels().withExistingParent(tRow.path(), modLoc("block/steam_engine"));
         }
+    }
+
+    /**
+     * Task material-mc-d-powertrain-rows — the four powertrain ladders (52 rows): the
+     * rotation engines and small steam turbines ride the {@link #addConverterModel}
+     * two-layer shells over the borrowed upstream art (assets/README.md ledger — the
+     * kinetic_rotation / rotation_steam colored+overlay groups; the ACTIVE groups stay
+     * unborrowed, the data-layer blocks carry no active property); the metal
+     * transformer-gearbox rows ride the EXISTING transformer_rotation shell (the same
+     * upstream MTE class as the wooden singleton, the mc-B same-class-reuse ruling —
+     * {@code models().getBuilder} reuses the addGearBoxTransformer-built model, never
+     * rebuild it: a second addConverterModel call would double the elements); the metal
+     * custom-gearbox rows ride a tinted cube over the in-tree gearbox iconset art (the
+     * upstream wooden row's GEARBOX.png, the metal rows are the same MTE class keyed on
+     * NBT_MATERIAL — the tintindex-0 seat is the row-material face the wooden singleton
+     * never needed). The 26 variants are visually identical up to the y rotation; the
+     * grayscale colored body is the tintindex-0 seat and the row's loader NBT_MATERIAL
+     * is the tint — the GTMachinePaintTint powertrain arm resolves it off the
+     * {@code PowertrainRow.matSlug} column.
+     */
+    private void addPowertrain() {
+        ModelFile tRotationEngine = addConverterModel("rotation_engine");
+        for (GT6Kinetics.RotationEngineRow tRow : GT6Kinetics.ROTATION_ENGINES) {
+            Block tBlock = GT6Kinetics.ROTATION_ENGINE_BLOCKS.get(tRow.path()).get();
+            converterBlockstate(tBlock, tRotationEngine, GT6Kinetics.PowertrainBlock.FACING, null);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/rotation_engine"));
+        }
+        ModelFile tTransformer = models().getBuilder("transformer_rotation"); // the addGearBoxTransformer shell, reused
+        for (GT6Kinetics.TransformerGearboxRow tRow : GT6Kinetics.TRANSFORMER_GEARBOXES) {
+            Block tBlock = GT6Kinetics.TRANSFORMER_GEARBOX_BLOCKS.get(tRow.path()).get();
+            converterBlockstate(tBlock, tTransformer, GT6Kinetics.PowertrainBlock.FACING, null);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/transformer_rotation"));
+        }
+        ModelFile tGearbox = addTintedCubeModel("custom_gearbox_tinted", "block/gearbox");
+        for (GT6Kinetics.CustomGearboxRow tRow : GT6Kinetics.CUSTOM_GEARBOXES) {
+            Block tBlock = GT6Kinetics.CUSTOM_GEARBOX_BLOCKS.get(tRow.path()).get();
+            converterBlockstate(tBlock, tGearbox, GT6Kinetics.PowertrainBlock.FACING, null);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/custom_gearbox_tinted"));
+        }
+        ModelFile tSteamTurbine = addConverterModel("steam_turbine");
+        for (GT6Kinetics.SteamTurbineRow tRow : GT6Kinetics.STEAM_TURBINES) {
+            Block tBlock = GT6Kinetics.STEAM_TURBINE_BLOCKS.get(tRow.path()).get();
+            converterBlockstate(tBlock, tSteamTurbine, GT6Kinetics.PowertrainBlock.FACING, null);
+            itemModels().withExistingParent(tRow.path(), modLoc("block/steam_turbine"));
+        }
+    }
+
+    /**
+     * The tinted full cube over ONE grayscale texture (the gearbox iconset seat): the
+     * cube_all grammar plus the tintindex-0 face seat — the addConverterModel body
+     * element minus the overlay decals (the wooden gearbox singleton keeps the untinted
+     * cube_all, the metal ladder rows are the NBT_MATERIAL face).
+     */
+    private ModelFile addTintedCubeModel(String aName, String aTexture) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/cube")))
+                .texture("down", modLoc(aTexture))
+                .texture("up", modLoc(aTexture))
+                .texture("north", modLoc(aTexture))
+                .texture("south", modLoc(aTexture))
+                .texture("west", modLoc(aTexture))
+                .texture("east", modLoc(aTexture))
+                .texture("particle", modLoc(aTexture));
+        tModel.element()
+                .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).tintindex(0).cullface(aDir))
+                .end();
+        return tModel;
     }
 
     /**

@@ -229,6 +229,10 @@ public final class GTMachinePaintTint {
 		// Table the single ANY.Steel rows through their block-class carriers (Loader
 		// :2226/:2227, the upstream BlockTextureMulti colored×mRGBa passes GrindStone
 		// :238-241 / SiftingTable :406-424)
+		// task material-mc-d-powertrain-rows — the four powertrain ladders join (the
+		// colored×mRGBa multiply the wooden gearbox seat never carried)
+		tMaterial = powertrainMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		tMaterial = hopperMaterialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.tools.GT6GrindstoneBlock.materialOf(aBlock);
@@ -273,6 +277,18 @@ public final class GTMachinePaintTint {
 		return aBlock instanceof gregtech6.registry.GT6Kinetics.SteamEngineBlock tEngine ? bySlug(tEngine.row().matSlug()) : null;
 	}
 
+	/**
+	 * The powertrain row material (task material-mc-d-powertrain-rows — the four ladders'
+	 * shared {@code PowertrainRow.matSlug} column): the 13 rotation engines (Loader :1667-:1764),
+	 * the 12 metal transformer gearboxes (:1677-:1765), the 12 metal custom gearboxes
+	 * (:1678-:1766) and the 15 small steam turbines (:794-:811) — the upstream
+	 * BlockTextureDefault colored×mRGBa pass the wooden gearbox singleton never needed.
+	 */
+	@Nullable
+	private static OreDictMaterial powertrainMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof gregtech6.registry.GT6Kinetics.PowertrainBlock tRow ? bySlug(tRow.row().matSlug()) : null;
+	}
+
 	/** The diesel-engine row material (the {@code DieselSpec.material} column), null off-carrier. */
 	@Nullable
 	private static OreDictMaterial dieselEngineMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
@@ -313,6 +329,20 @@ public final class GTMachinePaintTint {
 			case "tungsten" -> gregapi.data.ANY.W;
 			case "tungstensteel" -> gregapi.data.MT.TungstenSteel;
 			case "iridium" -> gregapi.data.MT.Ir;
+			// task material-mc-d-powertrain-rows — the powertrain ladder slugs (the
+			// Trinaquadalloy/Adamantium axle tail rows + the SST material column; the
+			// wood/alloy rows the axle family's own arms carry stay there, same values)
+			case "wood_treated" -> gregapi.data.MT.WoodTreated;
+			case "titanium_iridium" -> gregapi.data.MT.Iritanium;
+			case "trinitanium" -> gregapi.data.MT.Trinitanium;
+			case "trinaquadalloy" -> gregapi.data.MT.Trinaquadalloy;
+			case "adamantium" -> gregapi.data.MT.Ad;
+			case "steeleaf" -> gregapi.data.MT.Steeleaf;
+			case "thaumium" -> gregapi.data.MT.Thaumium;
+			case "aluminium" -> gregapi.data.MT.Al;
+			case "magnalium" -> gregapi.data.MT.Magnalium;
+			case "void_metal" -> gregapi.data.MT.VoidMetal;
+			case "graphene" -> gregapi.data.MT.Graphene;
 			default -> null;
 		};
 	}

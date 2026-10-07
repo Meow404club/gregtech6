@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_titanium_iridium_medium"
+    },
+    "G": {
+      "item": "gt6:gear_gt_titanium_iridium"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "M": {
+      "item": "gt6:casing_machine_titanium_iridium"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_titanium_iridium"
+    }
+  },
+  "pattern": [
+    "ASL",
+    "SGS",
+    "MSA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:transformer_gearbox_titanium_iridium"
+  }
+}

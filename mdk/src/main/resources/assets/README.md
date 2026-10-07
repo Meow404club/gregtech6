@@ -13949,3 +13949,52 @@ group borrows; the census four-face clause):
 - `gt6/textures/block/sap_bag/overlay_full_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/tools/sapbag/overlay_full/bottom.png`)
 
+
+## task material-mc-d-powertrain-rows (2026-10-07) — the powertrain two-layer wave
+
+Borrowed from **GregTech 6** (https://github.com/GregTech6/gregtech6), snapshot
+`tmp/gt6-1.7.10` (the census tree), `src/main/resources/assets/gregtech/textures/blocks/machines/`:
+the 12 PNGs below (byte-identical, sha256 verified per file) join the
+`addConverterModel` two-layer grammar — grayscale `colored` body (tintindex 0, the
+mRGBa seat via the GTMachinePaintTint powertrain dispatch arm) + untinted `overlay`
+decal shell. The ACTIVE groups (the `engines/kinetic_rotation` colored_active quartet
++ overlay_active, the `turbines/rotation_steam` overlay_active_{lf,ls,rf,rs} quartet)
+stay UNBORROWED: the port powertrain blocks carry no ACTIVE property (the data-layer
+A-case card; the steam-engine "overlay trio only" borrow posture — the ACTIVE faces
+join when the kinetics-BE functional card wires the converter/motor behaviour).
+
+- `gt6/textures/block/rotation_engine_colored_front.png` `f6402c4dce401eed519221537874106eb3a302e5e70578ba0ad24974610d8895`
+  (upstream `engines/kinetic_rotation/colored/front.png`)
+- `gt6/textures/block/rotation_engine_colored_back.png` `f6402c4dce401eed519221537874106eb3a302e5e70578ba0ad24974610d8895`
+  (upstream `engines/kinetic_rotation/colored/back.png` — the same art as the front face)
+- `gt6/textures/block/rotation_engine_colored_side.png` `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
+  (upstream `engines/kinetic_rotation/colored/side.png`)
+- `gt6/textures/block/rotation_engine_overlay_front.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `engines/kinetic_rotation/overlay/front.png` — the universal overlay
+  front, the sap_bag borrow same digest)
+- `gt6/textures/block/rotation_engine_overlay_back.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `engines/kinetic_rotation/overlay/back.png`)
+- `gt6/textures/block/rotation_engine_overlay_side.png` `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`
+  (upstream `engines/kinetic_rotation/overlay/side.png`)
+- `gt6/textures/block/steam_turbine_colored_front.png` `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
+  (upstream `turbines/rotation_steam/colored/front.png` — the kinetic_rotation side
+  art, the upstream cross-family reuse verbatim)
+- `gt6/textures/block/steam_turbine_colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `turbines/rotation_steam/colored/back.png` — the universal machine gray,
+  the mc-B MACHINE.png borrow same digest)
+- `gt6/textures/block/steam_turbine_colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `turbines/rotation_steam/colored/side.png`)
+- `gt6/textures/block/steam_turbine_overlay_front.png` `3670c7f45fb371b957db44cb03c5614a9a473e76d67a582b2590b78d35f0ecb9`
+  (upstream `turbines/rotation_steam/overlay/front.png`)
+- `gt6/textures/block/steam_turbine_overlay_back.png` `8dd1d34cc36cd9ddccdc23f6f3be16be70d90337a290bc4a6da997f1f9c64236`
+  (upstream `turbines/rotation_steam/overlay/back.png`)
+- `gt6/textures/block/steam_turbine_overlay_side.png` `464acaaedfdb995ece3c60390b2e6c826101e564ecccc969cb63d85783250fe8`
+  (upstream `turbines/rotation_steam/overlay/side.png`)
+
+NOT borrowed (the metal gearbox/transformer-gearbox ladder rows reuse the in-tree
+seats): the transformer-gearbox metal rows ride the `transformer_rotation_colored_*`
+two-layer model already in-tree (the same upstream MTE class, MultiTileEntityTransformerRotation,
+the wooden singleton's art — the mc-B "same class reuse" ruling), and the metal
+custom-gearbox rows ride a tinted cube over the `block/gearbox` iconset borrow
+(`6f36d27836e0ee13fc54515e58fac44b75347d7b00d0ead792e24c846f4853f8`, the
+gearbox-transformer card's ledger row — the cube gains the tintindex-0 seat).

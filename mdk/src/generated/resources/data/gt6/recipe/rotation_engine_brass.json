@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_brass_medium"
+    },
+    "G": {
+      "item": "gt6:gear_gt_brass"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "M": {
+      "item": "gt6:casing_machine_brass"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_brass"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "wML",
+    "GAG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:rotation_engine_brass"
+  }
+}

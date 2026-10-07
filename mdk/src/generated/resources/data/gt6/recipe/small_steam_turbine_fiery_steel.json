@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_titanium"
+    },
+    "M": {
+      "item": "gt6:casing_machine_titanium"
+    },
+    "S": {
+      "item": "gt6:stick_long_titanium"
+    },
+    "T": {
+      "item": "gt6:rotor_fiery_steel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TwT",
+    "GSG",
+    "TMT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:small_steam_turbine_fiery_steel"
+  }
+}
