@@ -24,6 +24,7 @@
  */
 package gregtech6.block;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -112,5 +113,59 @@ public class GTBasicMachineBlockDispatchTest {
 			assertNotNull(tRow.menu(), tRow.path() + " keeps its bound gt6:canner menu");
 			assertFalse(GTBasicMachineBlock.opensModularUi(tRow), tRow.path() + " keeps the vanilla menu path");
 		}
+	}
+
+	/**
+	 * The whole-registry census (task mui-dispatch-seam): every {@code List<MachineRow>}
+	 * family GTMachines declares walks the SAME key use() consults — a menu-less row
+	 * dispatches the ModularUI chain, a menu-bound row keeps the vanilla path. The walk is
+	 * reflection over the public static fields, so a family added tomorrow is pinned the
+	 * day it lands (the family-count ratchet below forces the pin update consciously).
+	 *
+	 * <p>Erratum face (task mui-dispatch-seam archaeology): the pre-p26 registration
+	 * comments claimed the menu-null rows sat INERT ("stays inert until the seam-① micro
+	 * card") — the seam-① micro card IS task mui-row-menu-null-dispatch (merge f1b634d8,
+	 * landed one day after the Press family registered): NO family is inert, and this
+	 * census pins that exhaustively.
+	 */
+	@Test
+	public void everyMachineRowFamilyRidesTheDispatch() throws ReflectiveOperationException {
+		java.util.List<String> tMenuBoundFamilies = new java.util.ArrayList<>();
+		int tMenuNullRows = 0, tMenuBoundRows = 0, tFamilies = 0;
+		for (java.lang.reflect.Field tField : GTMachines.class.getFields()) {
+			if (!java.util.List.class.isAssignableFrom(tField.getType())) continue;
+			Object tValue = tField.get(null);
+			if (!(tValue instanceof java.util.List<?> tList) || tList.isEmpty()
+					|| !(tList.get(0) instanceof GTBasicMachineBlock.MachineRow)) continue;
+			tFamilies++;
+			boolean tMenuNull = true;
+			for (Object tEntry : tList) {
+				GTBasicMachineBlock.MachineRow tRow = (GTBasicMachineBlock.MachineRow) tEntry;
+				if (tRow.menu() == null) {
+					// arm 2 — the menu-less carrier: the MUI dispatch (the batch-A form)
+					assertTrue(GTBasicMachineBlock.opensModularUi(tRow),
+							tField.getName() + "/" + tRow.path() + " menu == null → the ModularUI chain");
+					tMenuNullRows++;
+				} else {
+					// arm 3 — a bound supplier: the vanilla menu path
+					assertFalse(GTBasicMachineBlock.opensModularUi(tRow),
+							tField.getName() + "/" + tRow.path() + " menu bound → the vanilla menu path");
+					tMenuBoundRows++;
+					tMenuNull = false;
+				}
+			}
+			if (!tMenuNull) tMenuBoundFamilies.add(tField.getName());
+		}
+		// the family-count ratchet — a family added or removed must update this pin
+		// consciously (62 families at task mui-dispatch-seam)
+		assertEquals(62, tFamilies, "the MachineRow family count — update this pin when a family lands");
+		// the bound-arm roster is CLOSED: only the five documented shared carriers ride a
+		// gt6:* MenuType (a new bound family must be named here on purpose)
+		assertEquals(java.util.List.of("DRYER_ROWS", "CANNER_ROWS", "CANNER_ULV_ROWS",
+				"BURNER_MIXER_ROWS", "PLANTALYZER_ROWS"), tMenuBoundFamilies,
+				"the menu-bound roster — a new gt6:* MenuType carrier is a conscious decision");
+		// the row-count ratchets (each ladder's length pinned by family sum)
+		assertEquals(206, tMenuNullRows, "the menu-null row count");
+		assertEquals(18, tMenuBoundRows, "the menu-bound row count (dryer 4 + canner 4 + canner_ulv 1 + burner_mixer 4 + plantalyzer 5)");
 	}
 }
