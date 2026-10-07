@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_titanium_iridium_medium"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "M": {
+      "item": "gt6:casing_machine_titanium_iridium"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "advancedRocketry"
+    }
+  ],
+  "pattern": [
+    "wAL",
+    "AMA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:custom_gearbox_titanium_iridium"
+  }
+}

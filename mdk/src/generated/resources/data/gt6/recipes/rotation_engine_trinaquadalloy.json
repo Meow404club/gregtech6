@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_trinaquadalloy_medium"
+    },
+    "G": {
+      "item": "gt6:gear_gt_trinaquadalloy"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "M": {
+      "item": "gt6:casing_machine_trinaquadalloy"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_trinaquadalloy"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "wML",
+    "GAG"
+  ],
+  "result": {
+    "item": "gt6:rotation_engine_trinaquadalloy"
+  },
+  "show_notification": true
+}

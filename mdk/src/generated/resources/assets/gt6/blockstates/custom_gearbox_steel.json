@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/custom_gearbox_tinted",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/custom_gearbox_tinted"
+    },
+    "facing=south": {
+      "model": "gt6:block/custom_gearbox_tinted",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/custom_gearbox_tinted",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_arsenic_copper_medium"
+    },
+    "G": {
+      "item": "gt6:gear_gt_arsenic_copper"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "M": {
+      "item": "gt6:casing_machine_arsenic_copper"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_arsenic_copper"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "wML",
+    "GAG"
+  ],
+  "result": {
+    "item": "gt6:rotation_engine_arsenic_copper"
+  },
+  "show_notification": true
+}

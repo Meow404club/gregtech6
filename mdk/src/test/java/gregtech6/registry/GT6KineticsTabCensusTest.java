@@ -17,7 +17,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * ladders into {@link GTMachines#MACHINES_TAB}, and this test pins the per-ladder
  * coverage counts so a future row lands only with a conscious census bump (the
  * GT6MultiblockTabCensusTest posture; the disk truth matches the card snapshot —
- * AXLE_SPECS 11 x 4 diameters, STEAM_ENGINES 28, DIESEL_SPECS 8 — no erratum).
+ * AXLE_SPECS 13 x 4 diameters (the Trinaquadalloy/Adamantium tail rows, mc-D), STEAM_ENGINES 28, DIESEL_SPECS 8, plus the four mc-D powertrain ladders — no erratum).
  *
  * <p>Offline surface: the axle and diesel item maps fill in {@code onModConstruct}, so
  * their coverage is pinned through the spec tables the registration loops enumerate 1:1
@@ -34,23 +34,29 @@ import gregtech6.tileentity.GTOfflineTestBase;
  */
 public class GT6KineticsTabCensusTest extends GTOfflineTestBase {
 
-	/** The three ladder walks, ladder by ladder — the coverage counts the card pinned. */
+	/** The seven ladder walks, ladder by ladder — the coverage counts the cards pinned. */
 	@Test
 	public void theThreeLadderWalksCoverTheirWholeRegistration() {
-		assertEquals(11, GT6Kinetics.AXLE_SPECS.size(), "the Loader kinetic material rows (:1662-1752)");
-		assertEquals(44, GT6Kinetics.AXLE_SPECS.size() * GT6Kinetics.AXLE_DIAMETERS.length,
-				"11 materials x 4 diameters — the axle walk coverage");
+		assertEquals(13, GT6Kinetics.AXLE_SPECS.size(), "the Loader kinetic material rows (:1662-1763, the Trinaquadalloy/Adamantium tail rows ride material-mc-d-powertrain-rows)");
+		assertEquals(52, GT6Kinetics.AXLE_SPECS.size() * GT6Kinetics.AXLE_DIAMETERS.length,
+				"13 materials x 4 diameters — the axle walk coverage");
 		assertEquals(28, GT6Kinetics.STEAM_ENGINES.size(), "the Steam + Strong ladders (:584-612), the 28-vs-26 erratum already declared");
 		assertEquals(28, GT6Kinetics.STEAM_ENGINE_ITEMS.size(), "the walked steam container (static-init filled)");
 		assertEquals(8, GT6Kinetics.DIESEL_SPECS.size(), "the diesel rows (:721-729)");
+		assertEquals(13, GT6Kinetics.ROTATION_ENGINES.size(), "the rotation-engine rows (:1667-:1764, mc-D)");
+		assertEquals(12, GT6Kinetics.TRANSFORMER_GEARBOXES.size(), "the metal transformer-gearbox rows (:1677-:1765; the wood row is the seated singleton, mc-D)");
+		assertEquals(12, GT6Kinetics.CUSTOM_GEARBOXES.size(), "the metal custom-gearbox rows (:1678-:1766; the wood row is the seated singleton, mc-D)");
+		assertEquals(15, GT6Kinetics.STEAM_TURBINES.size(), "the small steam turbine rows (:794-:811, mc-D)");
 	}
 
-	/** The grand total: 44 + 28 + 8 = 80 items the pooled machines tab gains. */
+	/** The grand total: 52 + 28 + 8 + 52 = 140 items the pooled machines tab gains. */
 	@Test
-	public void thePooledTabGainsEightyKineticItems() {
-		assertEquals(80, GT6Kinetics.AXLE_SPECS.size() * GT6Kinetics.AXLE_DIAMETERS.length
-				+ GT6Kinetics.STEAM_ENGINE_ITEMS.size() + GT6Kinetics.DIESEL_SPECS.size(),
-				"the three-ladder join coverage total");
+	public void thePooledTabGainsHundredFortyKineticItems() {
+		assertEquals(140, GT6Kinetics.AXLE_SPECS.size() * GT6Kinetics.AXLE_DIAMETERS.length
+				+ GT6Kinetics.STEAM_ENGINE_ITEMS.size() + GT6Kinetics.DIESEL_SPECS.size()
+				+ GT6Kinetics.ROTATION_ENGINE_ITEMS.size() + GT6Kinetics.TRANSFORMER_GEARBOX_ITEMS.size()
+				+ GT6Kinetics.CUSTOM_GEARBOX_ITEMS.size() + GT6Kinetics.STEAM_TURBINE_ITEMS.size(),
+				"the seven-ladder join coverage total");
 	}
 
 	/** The ladder walk exists (static) — the class-level MOD-bus subscriber delivers it. */

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_arsenic_copper_medium"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "M": {
+      "item": "gt6:casing_machine_arsenic_copper"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "wAL",
+    "AMA"
+  ],
+  "result": {
+    "item": "gt6:custom_gearbox_arsenic_copper"
+  },
+  "show_notification": true
+}

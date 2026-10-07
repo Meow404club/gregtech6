@@ -363,6 +363,19 @@ HAND_TRANSLATIONS = {
     # the dump's suffix form (燃油引擎 (砷青铜) :15048) becomes the prefix form and 燃油→柴油
     # (the material face diesel=柴油) — declared deviation from the dump column.
     "gt6.row.diesel.display": ("%s柴油引擎", "hand"),
+    # task material-mc-d-powertrain-rows — the four powertrain templates + the three
+    # new shared mat words, dump faces verbatim (gt.multitileentity 24807 旋转动能引擎
+    # (木制) / 24808 木制变速箱 / 24809 木制可调变速箱 / 1512 蒸汽涡轮机 (青铜); the
+    # gt.material.* faces 碳化特林-钍瑞铌合金/:5634, 钢叶 Steeleaf, 石墨烯 Graphene).
+    # The Brass trio 24777-24779 is the dump's own untranslated gap — 黄铜 composes per
+    # the 12-sibling pattern (交卡报告 erratum).
+    "gt6.row.rotation_engine.display": ("旋转动能引擎 (%s)", "hand"),
+    "gt6.row.transformer_gearbox.display": ("%s变速箱", "hand"),
+    "gt6.row.custom_gearbox.display": ("%s可调变速箱", "hand"),
+    "gt6.row.steam_turbine.display": ("蒸汽涡轮机 (%s)", "hand"),
+    "gt6.row.mat.trinaquadalloy": ("碳化特林-钍瑞铌合金", "hand"),
+    "gt6.row.mat.steeleaf": ("钢叶", "hand"),
+    "gt6.row.mat.graphene": ("石墨烯", "hand"),
     "gt6.row.burning_box.display": ("燃烧室 (%s, %s)", "hand"),
     "gt6.row.burning_box.display.dense": ("致密燃烧室 (%s, %s)", "hand"),
     "gt6.row.burning_box.display.fluidbed": ("流化床燃烧室 (%s)", "hand"),
@@ -551,8 +564,13 @@ HAND_TRANSLATIONS = {
     # (tmp/gregtech.lang :14096-14159 书架 (铅)/:14657-14716 瓶筐 (铅) — the parenthesized
     # compose form with the half-width parens + leading space, the gt6.row.mat.* words ride
     # the hopper walk's hand rows)
+    # task material-mc-d-powertrain-rows backfill — the mc-A chest pair templates were
+    # direct-written to the TSV without a hand row (the known_bugs.zhcn_ref_tsv_py_drift
+    # shape the mc-B card's 12-row backfill precedent covers); values verbatim.
     "gt6.row.metal_bookshelf.display": ("书架 (%s)", "hand"),
     "gt6.row.metal_bottlecrate.display": ("瓶筐 (%s)", "hand"),
+    "gt6.row.chest.display": ("%s箱子", "hand"),
+    "gt6.row.reinforced_chest.display": ("%s强化木箱", "hand"),
     # ---- generator-debt restoration (task material-mc-b-storage-mass-shelf): twelve hand
     # rows earlier cards committed straight to the TSV without HAND_TRANSLATIONS entries —
     # a faithful rerun washed them out (the exact failure mode the header warns about).

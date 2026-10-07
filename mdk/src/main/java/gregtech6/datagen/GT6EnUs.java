@@ -1296,6 +1296,7 @@ public class GT6EnUs extends LanguageProvider {
         addAxleUnits();
         addSteamEngineUnits();
         addDieselUnits();
+        addPowertrainUnits(); // task material-mc-d-powertrain-rows
         addBurningBoxUnits();
         addBoilerUnits();
         addHopperUnits();
@@ -1388,6 +1389,30 @@ public class GT6EnUs extends LanguageProvider {
         add(GT6Kinetics.DIESEL_DISPLAY_KEY, "%s Diesel Engine");
         for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
             addRowMatUnit(GT6Kinetics.dieselMatUnitKey(tSpec), tSpec.matDisplay());
+        }
+    }
+
+    /**
+     * The four powertrain templates + the row-material units (task material-mc-d-powertrain-rows,
+     * the mc-D walks — the en words are the upstream row display column verbatim, every zh
+     * word rides the shared gt6.row.mat namespace).
+     */
+    private void addPowertrainUnits() {
+        add(GT6Kinetics.ROTATION_ENGINE_DISPLAY_KEY, "%s Rotation Engine");
+        for (GT6Kinetics.RotationEngineRow tRow : GT6Kinetics.ROTATION_ENGINES) {
+            addRowMatUnit(tRow.matUnitKey(), tRow.matDisplay());
+        }
+        add(GT6Kinetics.TRANSFORMER_GEARBOX_DISPLAY_KEY, "%s Transformer Gearbox");
+        for (GT6Kinetics.TransformerGearboxRow tRow : GT6Kinetics.TRANSFORMER_GEARBOXES) {
+            addRowMatUnit(tRow.matUnitKey(), tRow.matDisplay());
+        }
+        add(GT6Kinetics.CUSTOM_GEARBOX_DISPLAY_KEY, "Custom %s Gearbox");
+        for (GT6Kinetics.CustomGearboxRow tRow : GT6Kinetics.CUSTOM_GEARBOXES) {
+            addRowMatUnit(tRow.matUnitKey(), tRow.matDisplay());
+        }
+        add(GT6Kinetics.STEAM_TURBINE_DISPLAY_KEY, "Steam Turbine (%s)");
+        for (GT6Kinetics.SteamTurbineRow tRow : GT6Kinetics.STEAM_TURBINES) {
+            addRowMatUnit(tRow.matUnitKey(), tRow.matDisplay());
         }
     }
 

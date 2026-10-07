@@ -456,11 +456,11 @@ public class GTAxleBlockEntityTest extends GTOfflineTestBase {
 
 	@Test
 	public void specTableMatchesLoader() {
-		// 11 materials x 4 diameters = 44 rows (the registration loop itself runs at MOD
+		// 13 materials x 4 diameters = 52 rows (the registration loop itself runs at MOD
 		// construct, which the offline JVM never fires — AXLE_BLOCKS stays empty here)
-		assertEquals(11, GT6Kinetics.AXLE_SPECS.size());
+		assertEquals(13, GT6Kinetics.AXLE_SPECS.size());
 		assertEquals(4, GT6Kinetics.AXLE_DIAMETERS.length);
-		assertEquals(44, GT6Kinetics.AXLE_SPECS.size() * GT6Kinetics.AXLE_DIAMETERS.length);
+		assertEquals(52, GT6Kinetics.AXLE_SPECS.size() * GT6Kinetics.AXLE_DIAMETERS.length);
 		// PX_P (CS.java:492): 6/9/12/16
 		assertEquals(6, GT6Kinetics.AXLE_DIAMETERS[0]);
 		assertEquals(9, GT6Kinetics.AXLE_DIAMETERS[1]);

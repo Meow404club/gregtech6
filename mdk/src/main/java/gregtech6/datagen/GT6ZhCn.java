@@ -1579,6 +1579,29 @@ public class GT6ZhCn extends LanguageProvider {
 		for (gregtech6.registry.GT6Kinetics.DieselSpec tSpec : gregtech6.registry.GT6Kinetics.DIESEL_SPECS) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Kinetics.dieselMatUnitKey(tSpec));
 		}
+		// powertrain (task material-mc-d-powertrain-rows): the four templates + the
+		// row-material units — dump mte faces verbatim (旋转动能引擎 (木制) :11780,
+		// 木制变速箱 :11781, 木制可调变速箱 :11782, 蒸汽涡轮机 (青铜) :11156; the
+		// Brass trio 24777-24779 is the dump's own untranslated gap, the family word
+		// 黄铜 composes per the 12-sibling pattern). Every word rides the shared
+		// gt6.row.mat namespace (the wooden rotation-engine row's 木制 = the wood_treated
+		// adjective, the fluid-pipe note).
+		addDirect(gregtech6.registry.GT6Kinetics.ROTATION_ENGINE_DISPLAY_KEY);
+		for (gregtech6.registry.GT6Kinetics.RotationEngineRow tRow : gregtech6.registry.GT6Kinetics.ROTATION_ENGINES) {
+			addRowUnit(tEmitted, tRow.matUnitKey());
+		}
+		addDirect(gregtech6.registry.GT6Kinetics.TRANSFORMER_GEARBOX_DISPLAY_KEY);
+		for (gregtech6.registry.GT6Kinetics.TransformerGearboxRow tRow : gregtech6.registry.GT6Kinetics.TRANSFORMER_GEARBOXES) {
+			addRowUnit(tEmitted, tRow.matUnitKey());
+		}
+		addDirect(gregtech6.registry.GT6Kinetics.CUSTOM_GEARBOX_DISPLAY_KEY);
+		for (gregtech6.registry.GT6Kinetics.CustomGearboxRow tRow : gregtech6.registry.GT6Kinetics.CUSTOM_GEARBOXES) {
+			addRowUnit(tEmitted, tRow.matUnitKey());
+		}
+		addDirect(gregtech6.registry.GT6Kinetics.STEAM_TURBINE_DISPLAY_KEY);
+		for (gregtech6.registry.GT6Kinetics.SteamTurbineRow tRow : gregtech6.registry.GT6Kinetics.STEAM_TURBINES) {
+			addRowUnit(tEmitted, tRow.matUnitKey());
+		}
 		// burning boxes: the four templates + three family words + the row-material units
 		addDirect(gregtech6.registry.GT6BurningBoxes.DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6BurningBoxes.DISPLAY_DENSE_KEY);

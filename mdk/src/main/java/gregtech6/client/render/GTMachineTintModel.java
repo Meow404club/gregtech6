@@ -291,6 +291,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6Kinetics.steamEngineBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Kinetics.dieselBlockArray()) wrapStates(tBlock, aEvent);
 		wrapStates(gregtech6.registry.GT6Kinetics.TRANSFORMER_ROTATION.get(), aEvent);
+		// task material-mc-d-powertrain-rows — the 52 powertrain ladder blocks join the
+		// baked-tint domain (the tintindex-0 gray colored bodies are the seat, the overlay
+		// decals untinted; the material resolves through the GTMachinePaintTint
+		// powertrain arm off the PowertrainRow.matSlug column)
+		for (Block tBlock : gregtech6.registry.GT6Kinetics.powertrainBlockArray()) wrapStates(tBlock, aEvent);
 		// task tint-coverage-batch — the four static-storage metal families (the
 		// locker/drawer/safe pair kinds over the Bronze/Steel anchors, 8 blocks) and the
 		// reactor core (the :738 Pb row) join the baked-tint domain: the borrowed grayscale
@@ -488,6 +493,10 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6Kinetics.steamEngineBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6Kinetics.dieselBlockArray()) tPaintItems.add(tBlock.asItem());
 		tPaintItems.add(gregtech6.registry.GT6Kinetics.TRANSFORMER_ROTATION.get().asItem());
+		// task material-mc-d-powertrain-rows — the 52 powertrain BlockItems join the same
+		// lambda (the creative-tab face of the row-material colour; an unregistered
+		// BlockItem would render the tab face untinted, the #18 converter-band note)
+		for (Block tBlock : gregtech6.registry.GT6Kinetics.powertrainBlockArray()) tPaintItems.add(tBlock.asItem());
 		// the entry handles compile against both legs' RegistryObject/DeferredHolder
 		// without a fork (the GT6BlockTags mineable-band lambda shape)
 		gregtech6.registry.GTItemPipes.ITEMS_BY_PATH.values().forEach(tPipeItem -> tPaintItems.add(tPipeItem.get()));

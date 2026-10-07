@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_steel"
+    },
+    "M": {
+      "item": "gt6:casing_machine_steel"
+    },
+    "S": {
+      "item": "gt6:stick_long_steel"
+    },
+    "T": {
+      "item": "gt6:rotor_ironwood"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
+  "pattern": [
+    "TwT",
+    "GSG",
+    "TMT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:small_steam_turbine_iron_wood"
+  }
+}

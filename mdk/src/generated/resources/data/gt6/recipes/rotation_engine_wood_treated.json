@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:axle_wood_treated_medium"
+    },
+    "G": {
+      "item": "gt6:gear_gt_wood_treated"
+    },
+    "L": {
+      "item": "gt6:lubricant_bucket"
+    },
+    "P": {
+      "item": "gt6:plate_wood_treated"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_wood_treated"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "PSP",
+    "wAL",
+    "GAG"
+  ],
+  "result": {
+    "item": "gt6:rotation_engine_wood_treated"
+  },
+  "show_notification": true
+}

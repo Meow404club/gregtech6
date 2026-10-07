@@ -595,6 +595,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task crafting-machines-steam-band — the steam-age bootstrap band: the
 		// machine grids + the anvil forging ladder (the band javadocs at the tail)
 		for (PartFamilyRecipeRow tRow : steamEngineRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : powertrainRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
 		for (PartFamilyRecipeRow tRow : burningBoxRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
 		for (PartFamilyRecipeRow tRow : electricDynamoRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
 		for (PartFamilyRecipeRow tRow : sifterRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
@@ -883,6 +884,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		vanillaSpyglassBuilder().save(aOutput, VANILLA_SPYGLASS_ID);
 		// task crafting-machines-steam-band — the steam-age bootstrap band (the forge-leg mirror)
 		for (PartFamilyRecipeRow tRow : steamEngineRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : powertrainRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
 		for (PartFamilyRecipeRow tRow : burningBoxRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
 		for (PartFamilyRecipeRow tRow : electricDynamoRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
 		for (PartFamilyRecipeRow tRow : sifterRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
@@ -7854,6 +7856,41 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
+	/**
+	 * The powertrain material slug → the loader material (task material-mc-d-powertrain-rows,
+	 * the steamBandMaterial switch shape over the four ladders' slug set — the SST body
+	 * column rides the same table, the Kinetic_T tier words bronze/steel/titanium/
+	 * tungstensteel included). Loud drift on an unknown slug.
+	 */
+	private static gregapi.oredict.OreDictMaterial powertrainMaterial(String aSlug) {
+		return switch (aSlug) {
+			case "wood_treated" -> MT.WoodTreated;
+			case "bronze" -> MT.Bronze;
+			case "brass" -> MT.Brass;
+			case "arsenic_copper" -> MT.ArsenicCopper;
+			case "arsenic_bronze" -> MT.ArsenicBronze;
+			case "steel" -> MT.Steel;
+			case "titanium" -> MT.Ti;
+			case "tungstensteel" -> MT.TungstenSteel;
+			case "iridium" -> MT.Ir;
+			case "titanium_iridium" -> MT.Iritanium;
+			case "trinitanium" -> MT.Trinitanium;
+			case "trinaquadalloy" -> MT.Trinaquadalloy;
+			case "adamantium" -> MT.Ad;
+			case "invar" -> MT.Invar;
+			case "iron_wood" -> MT.IronWood;
+			case "chromium" -> MT.Cr;
+			case "steeleaf" -> MT.Steeleaf;
+			case "thaumium" -> MT.Thaumium;
+			case "fiery_steel" -> MT.FierySteel;
+			case "aluminium" -> MT.Al;
+			case "magnalium" -> MT.Magnalium;
+			case "void_metal" -> MT.VoidMetal;
+			case "graphene" -> MT.Graphene;
+			default -> throw new IllegalStateException("no loader material for powertrain slug " + aSlug);
+		};
+	}
+
 	/** The steam-engine/burning-box material slug → the loader material (the dieselMaterial switch shape). */
 	private static gregapi.oredict.OreDictMaterial steamBandMaterial(String aSlug) {
 		return switch (aSlug) {
@@ -7898,6 +7935,112 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.unlockedBy("has_plate", has(tPlate)), steamBandId(tRow.path())));
 		}
 		return rRows;
+	}
+
+	/**
+	 * The 52 powertrain rows (task material-mc-d-powertrain-rows) — the Loader kinetic
+	 * section grids VERBATIM. The rotation engines: the wood row :1667 "PSP"/"wAL"/"GAG"
+	 * ('S' gearGtSmall + 'G' gearGt + 'P' plate, all WoodTreated) and the metal rows
+	 * :1676+ "SAS"/"wML"/"GAG" ('M' = casingMachine); the metal transformer gearboxes
+	 * :1677+ "ASL"/"SGS"/"MSA" ('M' = casingMachineDouble); the metal custom gearboxes
+	 * :1678+ "wAL"/"AMA" (the two-row grid, 'M' = casingMachine); the small steam
+	 * turbines :794-:811 "TwT"/"GSG"/"TMT" ('T' = the ROW-material rotor — Bronze/
+	 * Brass/Invar/Steel/Cr/IronWood/Steeleaf/Thaumium/Ti/FierySteel/Al/Magnalium/
+	 * VoidMetal/Trinitanium/Graphene — the body columns ride the Kinetic_T tiers via
+	 * {@code bodySlug}: stickLong + casingMachineDouble + gearGt). EVERY row's 'A' is the
+	 * same-material MEDIUM axle ({@code aRegistry.getItem(24801)} shape, :1667-:1766) and
+	 * every 'L' the lubricant — the itemLubricantEarly/itemLubricant split folds to the
+	 * single {@code gt6:lubricant_bucket} crafting carrier (the diesel 'L' face, the
+	 * declared crafting-only form). The casingMachine/casingMachineDouble prefixes fold
+	 * to casingSmall (the prefix has no port item row — the Locker 'M' fold precedent,
+	 * the diesel builder's step). The absent-input skip like the steam band (a material
+	 * without its gear/plate/rotor item row refuses the recipe, the GTMaterialItems.get
+	 * null gate).
+	 */
+	private java.util.List<PartFamilyRecipeRow> powertrainRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		Item tLube = gregtech6.item.GT6LubricantBucket.LUBRICANT_BUCKET.get();
+		for (GT6Kinetics.RotationEngineRow tRow : GT6Kinetics.ROTATION_ENGINES) {
+			gregapi.oredict.OreDictMaterial tMat = powertrainMaterial(tRow.matSlug());
+			Item tGearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, tMat);
+			Item tGear = itemOrNull(gregapi.data.OP.gearGt, tMat);
+			Item tAxle = GT6Kinetics.AXLE_ITEMS.get(GT6Kinetics.axleName(tRow.matSlug(), 1)).get();
+			if (tRow.wooden()) {
+				Item tPlate = itemOrNull(gregapi.data.OP.plate, tMat);
+				if (tPlate == null || tGearSmall == null || tGear == null) continue;
+				rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+						GT6Kinetics.ROTATION_ENGINE_ITEMS.get(tRow.path()).get())
+						.pattern("PSP").pattern("wAL").pattern("GAG")
+						.define('P', tPlate).define('S', tGearSmall).define('G', tGear)
+						.define('A', tAxle).define('L', tLube)
+						.define('w', GT6ItemTags.TOOLS_WRENCH)
+						.unlockedBy("has_axle", has(tAxle)), steamBandId(tRow.path())));
+			} else {
+				Item tCasing = casingOrSmall(tMat);
+				if (tGearSmall == null || tGear == null || tCasing == null) continue;
+				rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+						GT6Kinetics.ROTATION_ENGINE_ITEMS.get(tRow.path()).get())
+						.pattern("SAS").pattern("wML").pattern("GAG")
+						.define('S', tGearSmall).define('G', tGear)
+						.define('M', tCasing).define('A', tAxle).define('L', tLube)
+						.define('w', GT6ItemTags.TOOLS_WRENCH)
+						.unlockedBy("has_axle", has(tAxle)), steamBandId(tRow.path())));
+			}
+		}
+		for (GT6Kinetics.TransformerGearboxRow tRow : GT6Kinetics.TRANSFORMER_GEARBOXES) {
+			gregapi.oredict.OreDictMaterial tMat = powertrainMaterial(tRow.matSlug());
+			Item tGearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, tMat);
+			Item tGear = itemOrNull(gregapi.data.OP.gearGt, tMat);
+			Item tCasing = casingOrSmall(tMat);
+			Item tAxle = GT6Kinetics.AXLE_ITEMS.get(GT6Kinetics.axleName(tRow.matSlug(), 1)).get();
+			if (tGearSmall == null || tGear == null || tCasing == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					GT6Kinetics.TRANSFORMER_GEARBOX_ITEMS.get(tRow.path()).get())
+					.pattern("ASL").pattern("SGS").pattern("MSA")
+					.define('S', tGearSmall).define('G', tGear)
+					.define('M', tCasing).define('A', tAxle).define('L', tLube)
+					.unlockedBy("has_axle", has(tAxle)), steamBandId(tRow.path())));
+		}
+		for (GT6Kinetics.CustomGearboxRow tRow : GT6Kinetics.CUSTOM_GEARBOXES) {
+			gregapi.oredict.OreDictMaterial tMat = powertrainMaterial(tRow.matSlug());
+			Item tCasing = casingOrSmall(tMat);
+			Item tAxle = GT6Kinetics.AXLE_ITEMS.get(GT6Kinetics.axleName(tRow.matSlug(), 1)).get();
+			if (tCasing == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					GT6Kinetics.CUSTOM_GEARBOX_ITEMS.get(tRow.path()).get())
+					.pattern("wAL").pattern("AMA")
+					.define('M', tCasing).define('A', tAxle).define('L', tLube)
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_axle", has(tAxle)), steamBandId(tRow.path())));
+		}
+		for (GT6Kinetics.SteamTurbineRow tRow : GT6Kinetics.STEAM_TURBINES) {
+			gregapi.oredict.OreDictMaterial tMat = powertrainMaterial(tRow.matSlug());
+			gregapi.oredict.OreDictMaterial tBody = powertrainMaterial(tRow.bodySlug());
+			Item tRotor = itemOrNull(gregapi.data.OP.rotor, tMat);
+			Item tStickLong = itemOrNull(gregapi.data.OP.stickLong, tBody);
+			Item tGear = itemOrNull(gregapi.data.OP.gearGt, tBody);
+			Item tCasing = casingOrSmall(tBody);
+			if (tRotor == null || tStickLong == null || tGear == null || tCasing == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC,
+					GT6Kinetics.STEAM_TURBINE_ITEMS.get(tRow.path()).get())
+					.pattern("TwT").pattern("GSG").pattern("TMT")
+					.define('T', tRotor).define('S', tStickLong).define('G', tGear)
+					.define('M', tCasing)
+					// the GT6 implicit tool char (CR.java:342-365 char table, the 'w'
+					// grid slot) — the vanilla builder needs the explicit define, the
+					// steam-engine 'h'/'w' form
+					.define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_rotor", has(tRotor)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/** The casingMachine/casingMachineDouble fold (the diesel 'M' step): the prefix has no port item row, casingSmall carries it. */
+	private Item casingOrSmall(gregapi.oredict.OreDictMaterial aMat) {
+		Item tCasing = itemOrNull(gregapi.data.OP.casingMachine, aMat);
+		if (tCasing == null) tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, aMat);
+		if (tCasing == null) tCasing = itemOrNull(gregapi.data.OP.casingSmall, aMat);
+		return tCasing;
 	}
 
 	/**
