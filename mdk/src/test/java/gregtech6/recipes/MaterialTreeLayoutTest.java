@@ -71,6 +71,15 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
  *     carries a stack, every rect inside the canvas, the structural machine rule
  *     (y = from band slot + entry wire, x = midpoint ± stagger), and the overflow scan over
  *     buildAll (hidden counts positive, markers on-canvas — the no-silent-drop clause);</li>
+ * <li><b>the layout engine</b> (task mattree-r2-layout-engine, ADR L1): the
+ *     {@code plan(tree) -> Result} pure function — determinism (same input, same output),
+ *     the content-driven canvas (lanes x bands x margins; the fixed 202x206 is its worst
+ *     case), the no-overlap invariant over the whole pour, the spacing
+ *     {@link gregtech6.recipes.tree.MaterialTreeLayout.Policy} knob (间距改一处全树生效),
+ *     the degenerate trees (single node / empty / deep hop) through the list-trio seam,
+ *     the 副产挂边钉 (the hanging byproduct band never moves a chain node or a chain edge
+ *     plan), the 覆盖链合流钉 (multi-source arrows converge on the ONE shared target), and
+ *     the legacy-statics equality that keeps the EMI/JEI page legs on the same geometry;</li>
  * <li><b>both viewers land the SAME plans</b> (acceptance ③): the EMI leg's widgets are
  *     captured through a stub {@link WidgetHolder} and the JEI leg's slots through a
  *     {@link Proxy} {@code IRecipeLayoutBuilder} — machine slot bounds equal
@@ -540,6 +549,208 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 		MaterialTreeViewport.Point tCappedB = tView.apply(tSlotX + MaterialTreeLayout.SLOT, tSlotY + MaterialTreeLayout.SLOT);
 		assertEquals((tCappedA.x() + tCappedB.x()) / 2.0, tCapped.x() + 8 * tCapped.scale(), EPSILON);
 		assertEquals((tCappedA.y() + tCappedB.y()) / 2.0, tCapped.y() + 8 * tCapped.scale(), EPSILON);
+	}
+
+	// ------------------------------------------------------------------
+	// the layout engine (task mattree-r2-layout-engine, ADR L1):
+	// determinism, content bounds, invariants, degenerates, the legacy face
+	// ------------------------------------------------------------------
+
+	@Test
+	void enginePlanIsDeterministic() {
+		// same input, same output — the pure-function contract the fit/anchor consumers ride
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		MaterialTreeDisplay tDisplay = MaterialTreeDisplay.of(tTree, MT.Cu, MaterialTreeLayoutTest::prefixItem, MaterialTreeLayoutTest::machineStack);
+		assertNotNull(tDisplay);
+		MaterialTreeLayout.Result tFirst = MaterialTreeLayout.plan(tDisplay);
+		MaterialTreeLayout.Result tSecond = MaterialTreeLayout.plan(tDisplay);
+		assertEquals(tFirst.width(), tSecond.width());
+		assertEquals(tFirst.height(), tSecond.height());
+		assertEquals(tFirst.byproductBand(), tSecond.byproductBand());
+		for (int i = 0; i < tFirst.edges().size(); i++) {
+			assertEquals(tFirst.edges().get(i), tSecond.edges().get(i), "edge plan " + i + " identical");
+		}
+		for (MaterialTreeDisplay.Node tNode : tDisplay.nodes()) {
+			assertEquals(tFirst.nodeX(tNode), tSecond.nodeX(tNode));
+			assertEquals(tFirst.nodeY(tNode), tSecond.nodeY(tNode));
+		}
+	}
+
+	@Test
+	void engineCanvasFollowsContent() {
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		// the iron display: 3 chain lanes (crushed/crushedTiny; dust/dustTiny/dustDiv72) but
+		// 5 byproduct lanes -> the hanging band drives the width; the byproduct band is the
+		// deepest used band and drives the height to the full 206
+		MaterialTreeDisplay tFe = MaterialTreeDisplay.of(tTree, MT.Fe, MaterialTreeLayoutTest::prefixItem, MaterialTreeLayoutTest::machineStack);
+		assertNotNull(tFe);
+		MaterialTreeLayout.Result tFeLayout = MaterialTreeLayout.plan(tFe);
+		assertTrue(tFeLayout.byproductBand(), "iron carries byproducts");
+		assertEquals(4 + (5 - 1) * MaterialTreeDisplay.LANE_PITCH + 18 + 12, tFeLayout.width(),
+				"width = laneX0 + (max chain lane, byproduct slots - 1)*pitch + slot + margin = 146");
+		assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT) + 18 + 12, tFeLayout.height(),
+				"height = the byproduct band's slot row + slot + margin = 206");
+		// over the whole pour: every plan fits inside the viewer pages' fixed canvas (the
+		// fixed 202x206 is the model caps' worst case — MAX_ROWS lanes x 5 bands), and each
+		// width re-derives from the content formula
+		for (MaterialTreeDisplay tDisplay : MaterialTreeDisplay.buildAll(tTree, MaterialTreeLayoutTest::prefixItem, MaterialTreeLayoutTest::machineStack)) {
+			MaterialTreeLayout.Result tLayout = MaterialTreeLayout.plan(tDisplay);
+			assertTrue(tLayout.width() <= MaterialTreeDisplay.WIDTH, "width " + tLayout.width() + " within the page canvas");
+			assertTrue(tLayout.height() <= MaterialTreeDisplay.HEIGHT, "height " + tLayout.height() + " within the page canvas");
+			int tMaxRow = 0;
+			for (MaterialTreeDisplay.Node tNode : tDisplay.nodes()) tMaxRow = Math.max(tMaxRow, tNode.row());
+			int tLanes = Math.max(Math.max(tMaxRow + 1, tDisplay.byproducts().size()), 1);
+			assertEquals(MaterialTreeDisplay.LANE_X0 + (tLanes - 1) * MaterialTreeDisplay.LANE_PITCH + 18 + 12, tLayout.width(),
+					tDisplay.material.mNameInternal + " width = the content formula");
+		}
+	}
+
+	@Test
+	void engineDegenerateTrees() {
+		// the trio seam lays out hand-built trees with no registry pour
+		MaterialTreeDisplay.Node tSingle = new MaterialTreeDisplay.Node(OP.oreRaw, MaterialTreeDisplay.COL_ORE, 0, ItemStack.EMPTY);
+		// the single node: one lane, one band, no byproducts -> the minimal positive canvas
+		MaterialTreeLayout.Result tOne = MaterialTreeLayout.plan(List.of(tSingle), List.of(), List.of());
+		assertEquals(MaterialTreeDisplay.LANE_X0 + 18 + 12, tOne.width(), "one lane: 34");
+		assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_ORE) + 18 + 12, tOne.height(), "one band: 46");
+		assertFalse(tOne.byproductBand());
+		assertTrue(tOne.edges().isEmpty());
+		// the empty tree: the guard keeps the canvas positive
+		MaterialTreeLayout.Result tEmpty = MaterialTreeLayout.plan(List.of(), List.of(), List.of());
+		assertTrue(tEmpty.width() > 0 && tEmpty.height() > 0, "the empty plan stays positive: " + tEmpty.width() + "x" + tEmpty.height());
+		// a single node WITH byproducts: the hanging band is the deepest face
+		MaterialTreeLayout.Result tOneByproduct = MaterialTreeLayout.plan(List.of(tSingle), List.of(),
+				List.of(new MaterialTreeDisplay.Byproduct(ItemStack.EMPTY, false, MaterialTreeDisplay.DECLARED_TEXT)));
+		assertTrue(tOneByproduct.byproductBand());
+		assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT) + 30, tOneByproduct.height());
+		// a deep chain: a band-0 -> band-3 hop lays out and stays inside the plan's own bounds
+		MaterialTreeDisplay.Node tDust = new MaterialTreeDisplay.Node(OP.dust, MaterialTreeDisplay.COL_DUST, 0, ItemStack.EMPTY);
+		MaterialTreeDisplay.Edge tLong = new MaterialTreeDisplay.Edge(OP.oreRaw, OP.dust, List.of("gt.recipe.anvil"), ItemStack.EMPTY);
+		MaterialTreeLayout.Result tDeep = MaterialTreeLayout.plan(List.of(tSingle, tDust), List.of(tLong), List.of());
+		assertEquals(1, tDeep.edges().size());
+		for (MaterialTreeLayout.EdgeLayout tPlan : tDeep.edges()) {
+			for (MaterialTreeLayout.Rect tRect : tPlan.wire()) assertTrue(tRect.y() + tRect.h() <= tDeep.height(), "wire inside: " + tRect);
+			for (MaterialTreeLayout.Rect tRect : tPlan.arrow()) assertTrue(tRect.y() + tRect.h() <= tDeep.height(), "arrow inside: " + tRect);
+		}
+	}
+
+	@Test
+	void engineNoOverlapInvariant() {
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		for (MaterialTreeDisplay tDisplay : MaterialTreeDisplay.buildAll(tTree, MaterialTreeLayoutTest::prefixItem, MaterialTreeLayoutTest::machineStack)) {
+			MaterialTreeLayout.Result tLayout = MaterialTreeLayout.plan(tDisplay);
+			List<MaterialTreeDisplay.Node> tNodes = tDisplay.nodes();
+			// chain slots pairwise disjoint (distinct (band, lane) at pitch >= slot)
+			for (int i = 0; i < tNodes.size(); i++)
+				for (int j = i + 1; j < tNodes.size(); j++)
+					assertTrue(boxesDisjoint(tLayout.nodeX(tNodes.get(i)), tLayout.nodeY(tNodes.get(i)),
+							tLayout.nodeX(tNodes.get(j)), tLayout.nodeY(tNodes.get(j))), tDisplay.material.mNameInternal + " nodes " + i + "/" + j);
+			// byproduct slots pairwise disjoint
+			for (int i = 0; i < tDisplay.byproducts().size(); i++)
+				for (int j = i + 1; j < tDisplay.byproducts().size(); j++)
+					assertTrue(boxesDisjoint(tLayout.byproductX(i), tLayout.byproductY(), tLayout.byproductX(j), tLayout.byproductY()),
+							tDisplay.material.mNameInternal + " byproducts " + i + "/" + j);
+			// the hanging band sits below every chain band's slot row (outside the main axis)
+			for (MaterialTreeDisplay.Node tNode : tNodes)
+				if (tNode.column() != MaterialTreeDisplay.COL_BYPRODUCT)
+					assertTrue(tLayout.byproductY() >= tLayout.nodeY(tNode) + MaterialTreeLayout.SLOT,
+							tDisplay.material.mNameInternal + " byproduct band below " + tNode.prefix().mNameInternal);
+		}
+	}
+
+	@Test
+	void engineSpacingPolicyPin() {
+		// the DEFAULT policy is the shipped geometry
+		assertEquals(MaterialTreeDisplay.LANE_X0, MaterialTreeLayout.Policy.DEFAULT.laneX0());
+		assertEquals(MaterialTreeDisplay.LANE_PITCH, MaterialTreeLayout.Policy.DEFAULT.lanePitch());
+		assertEquals(12, MaterialTreeLayout.Policy.DEFAULT.rightMargin());
+		assertEquals(12, MaterialTreeLayout.Policy.DEFAULT.bottomMargin());
+		// 间距改一处全树生效: one policy field re-flows the lanes, the byproduct band and the canvas
+		MaterialTreeDisplay.Node tLane0 = new MaterialTreeDisplay.Node(OP.oreRaw, MaterialTreeDisplay.COL_ORE, 0, ItemStack.EMPTY);
+		MaterialTreeDisplay.Node tLane1 = new MaterialTreeDisplay.Node(OP.oreGravel, MaterialTreeDisplay.COL_ORE, 1, ItemStack.EMPTY);
+		MaterialTreeLayout.Policy tWide = new MaterialTreeLayout.Policy(4, 40, 20, 12);
+		MaterialTreeLayout.Result tResult = MaterialTreeLayout.plan(List.of(tLane0, tLane1), List.of(), List.of(), tWide);
+		assertEquals(40, tResult.nodeX(tLane1) - tResult.nodeX(tLane0), "the lane pitch follows the policy alone");
+		assertEquals(4 + 40 + 18 + 20, tResult.width(), "the canvas re-flows with the policy pitch + margin");
+		assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_ORE) + 18 + 12, tResult.height(),
+				"the vertical band table is the edge-budget contract, not a policy knob");
+	}
+
+	@Test
+	void engineMatchesTheLegacyStatics() {
+		// the viewer pages' static fixed-grid view == the engine under the default policy —
+		// the migration pin that keeps the EMI/JEI legs and the engine on ONE geometry
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		for (MaterialTreeDisplay tDisplay : MaterialTreeDisplay.buildAll(tTree, MaterialTreeLayoutTest::prefixItem, MaterialTreeLayoutTest::machineStack)) {
+			MaterialTreeLayout.Result tLayout = MaterialTreeLayout.plan(tDisplay);
+			for (MaterialTreeDisplay.Node tNode : tDisplay.nodes()) {
+				assertEquals(MaterialTreeDisplay.nodeX(tNode), tLayout.nodeX(tNode), "nodeX " + tNode.prefix().mNameInternal);
+				assertEquals(MaterialTreeDisplay.nodeY(tNode), tLayout.nodeY(tNode), "nodeY " + tNode.prefix().mNameInternal);
+			}
+			for (int b = 0; b < tDisplay.byproducts().size(); b++) {
+				assertEquals(MaterialTreeDisplay.byproductX(b), tLayout.byproductX(b), "byproductX " + b);
+			}
+			assertEquals(MaterialTreeDisplay.byproductY(), tLayout.byproductY());
+			for (int c = MaterialTreeDisplay.COL_ORE; c <= MaterialTreeDisplay.COL_BYPRODUCT; c++) {
+				assertEquals(MaterialTreeDisplay.stageY(c), tLayout.stageY(c), "stageY " + c);
+				assertEquals(MaterialTreeDisplay.overflowY(c), tLayout.overflowY(c), "overflowY " + c);
+			}
+			assertEquals(MaterialTreeDisplay.overflowX(), tLayout.overflowX());
+			// the edge plans: the static alias and the engine face land the same rects
+			List<MaterialTreeLayout.EdgeLayout> tStatic = MaterialTreeLayout.layout(tDisplay);
+			assertEquals(tStatic, tLayout.edges(), "the static alias is the default-policy engine");
+		}
+	}
+
+	@Test
+	void byproductBandNeverMovesTheMainAxis() {
+		// the 副产挂边钉: the hanging band's presence and size change ONLY its own extent and
+		// the canvas — no chain node coordinate and no chain edge plan moves
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		MaterialTreeDisplay tFe = MaterialTreeDisplay.of(tTree, MT.Fe, MaterialTreeLayoutTest::prefixItem, MaterialTreeLayoutTest::machineStack);
+		assertNotNull(tFe);
+		assertFalse(tFe.byproducts().isEmpty(), "the fixture actually carries a hanging band");
+		MaterialTreeLayout.Result tWith = MaterialTreeLayout.plan(tFe.nodes(), tFe.edges(), tFe.byproducts());
+		MaterialTreeLayout.Result tWithout = MaterialTreeLayout.plan(tFe.nodes(), tFe.edges(), List.of());
+		for (MaterialTreeDisplay.Node tNode : tFe.nodes()) {
+			assertEquals(tWithout.nodeX(tNode), tWith.nodeX(tNode), "chain lane unchanged: " + tNode.prefix().mNameInternal);
+			assertEquals(tWithout.nodeY(tNode), tWith.nodeY(tNode), "chain band unchanged: " + tNode.prefix().mNameInternal);
+		}
+		assertEquals(tWithout.edges(), tWith.edges(), "the chain edge plans are byte-identical");
+		assertFalse(tWithout.byproductBand());
+		assertTrue(tWith.height() >= tWithout.height(), "the hanging band can only grow the canvas downward");
+	}
+
+	@Test
+	void convergingSourcesShareOneTarget() {
+		// the 覆盖链合流钉 (EMI's merge face, minus the fold): N sources converge on the ONE
+		// shared node — every incoming arrow lands on the target's centre line, the target's
+		// position is independent of its source count
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		MaterialTreeDisplay tCu = MaterialTreeDisplay.of(tTree, MT.Cu, MaterialTreeLayoutTest::prefixItem, MaterialTreeLayoutTest::machineStack);
+		assertNotNull(tCu);
+		MaterialTreeLayout.Result tLayout = MaterialTreeLayout.plan(tCu);
+		Map<OreDictPrefix, MaterialTreeDisplay.Node> tNodes = new HashMap<>();
+		for (MaterialTreeDisplay.Node tNode : tCu.nodes()) tNodes.put(tNode.prefix(), tNode);
+		MaterialTreeDisplay.Node tTarget = tNodes.get(OP.crushedPurified);
+		assertNotNull(tTarget, "the landed sifter shape gives Cu a crushedPurified node");
+		int tSources = 0;
+		for (int i = 0; i < tCu.edges().size(); i++) {
+			MaterialTreeDisplay.Edge tEdge = tCu.edges().get(i);
+			if (tEdge.to() != OP.crushedPurified) continue;
+			tSources++;
+			MaterialTreeLayout.EdgeLayout tPlan = tLayout.edges().get(i);
+			int tCentreX = tLayout.nodeX(tTarget) + MaterialTreeLayout.SLOT / 2;
+			Rect tBase = tPlan.arrow().stream().filter(r -> r.h() == MaterialTreeLayout.ARROW_HEAD).findFirst().orElseThrow();
+			assertEquals(tCentreX, tBase.x(), "source " + tEdge.from().mNameInternal + " arrow centre on the target centre line");
+			assertEquals(tLayout.nodeY(tTarget), tBase.y() + tBase.h(), "the arrow tip lands on the target's top edge");
+		}
+		assertTrue(tSources >= 4, "the landed sifter rows converge >= 4 ore inputs on crushedPurified, got " + tSources);
+	}
+
+	private static boolean boxesDisjoint(int aX1, int aY1, int aX2, int aY2) {
+		return aX1 + MaterialTreeLayout.SLOT <= aX2 || aX2 + MaterialTreeLayout.SLOT <= aX1
+				|| aY1 + MaterialTreeLayout.SLOT <= aY2 || aY2 + MaterialTreeLayout.SLOT <= aY1;
 	}
 
 	// ------------------------------------------------------------------

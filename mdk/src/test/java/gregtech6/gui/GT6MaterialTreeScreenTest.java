@@ -67,12 +67,17 @@ import net.minecraft.world.item.ItemStack;
  *
  * <ul>
  * <li><b>construction + viewport wiring</b>: the screen rides the S1 four-arg
- *     {@link MaterialTreeViewport} with pane = the REAL window (600x500 synthetically) —
- *     the fit pose magnifies the 202x206 canvas into it, centred (the content centre rides
+ *     {@link MaterialTreeViewport} with pane = the REAL window (500x500 synthetically) and
+ *     content = the LAYOUT ENGINE's content box (task mattree-r2-layout-engine, ADR L1) —
+ *     for the iron display that box is 146x206 (5 byproduct lanes + the byproduct band), so
+ *     the fit pose magnifies the INK box into the pane, centred (the content centre rides
  *     the pane centre). <b>旧钉迁移声明</b>: the former pins 「pane clamped to
  *     min(window, content)」 + 「constant base translation (199, 147)」 died with
  *     mattree-viewport-fit — the base field no longer exists, the centring lives in the
- *     viewport's fit offsets;</li>
+ *     viewport's fit offsets; the further former pin 「content = the fixed 202x206
+ *     {@code MaterialTreeDisplay.WIDTH/HEIGHT} canvas」 died with mattree-r2-layout-engine —
+ *     the replacement face is {@code GT6MaterialTreeScreen.mLayout.width()/height()} (the
+ *     fixed canvas survives as the viewer PAGES' geometry, the EMI/JEI legs).</li>
  * <li><b>resize 保锚</b>: a re-init hands the live viewport to {@code resizeTo} — the pane
  *     centre's tree point and the zoom level survive; a fresh screen opens on the centred
  *     fit; a degenerate pane keeps the last pose;</li>
@@ -99,8 +104,19 @@ import net.minecraft.world.item.ItemStack;
 public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 
 	private static final double EPSILON = 1e-9;
-	/** The synthetic pane 600x500's fit numbers: fit = min(600/202, 500/206) = 250/103, x offset (600 - 202*fit)/2 = 5650/103, y offset 0. */
-	private static final double FIT = 250.0 / 103.0, FIT_X = 5650.0 / 103.0;
+	/**
+	 * The synthetic pane 500x500's fit numbers over the IRON display's content box
+	 * (task mattree-r2-layout-engine: 5 byproduct lanes + the byproduct band -> 146x206):
+	 * fit = min(500/146, 500/206) = 250/103, x offset (500 - 146*fit)/2 = 7500/103, y offset 0.
+	 * <b>旧钉迁移声明</b>: the former 600x500 synthetic pane died with mattree-r2-layout-engine —
+	 * over the iron content box its 4x zoom leaves an x slack of only [0,16] px (146*4 = 584
+	 * < 600), so the free-pan premise and the zoom-about-a-node anchor leg rode the offset
+	 * clamp; 500x500 keeps both axes clamp-able (584 > 500, 824 > 500) and the anchor leg
+	 * zooms about the content centre — the clamp-safe canonical anchor (the viewport's
+	 * documented semantic: a zoom past a limit slides the anchor so one content edge stays
+	 * reachable, MaterialTreeViewport.clampOffsets).
+	 */
+	private static final double FIT = 250.0 / 103.0, FIT_X = 7500.0 / 103.0;
 
 	// ------------------------------------------------------------------
 	// construction + the S1 four-arg viewport wiring (real pane, centred fit)
@@ -113,15 +129,18 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		assertTrue(tScreen.getTitle().getString().contains(MaterialTreeDisplay.CATEGORY_TITLE),
 				"the title carries the shared category title");
 		assertNull(tScreen.mView, "no viewport before init");
-		tScreen.navInit(600, 500);
+		tScreen.navInit(500, 500);
 		assertNotNull(tScreen.mView, "init wires the viewport");
 		assertEquals(FIT, tScreen.mView.scale(), EPSILON, "the fit magnifies into the real pane (250/103 > 1)");
 		assertEquals(FIT, tScreen.mView.minScale(), EPSILON, "the fit is the live zoom floor");
 		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
 		assertEquals(0.0, tScreen.mView.offsetY(), EPSILON, "the limiting axis pins to 0");
-		MaterialTreeViewport.Point tCentre = tScreen.mView.apply(MaterialTreeDisplay.WIDTH / 2.0, MaterialTreeDisplay.HEIGHT / 2.0);
-		assertEquals(300.0, tCentre.x(), EPSILON, "the content centre rides the pane centre");
+		MaterialTreeViewport.Point tCentre = tScreen.mView.apply(tScreen.mLayout.width() / 2.0, tScreen.mLayout.height() / 2.0);
+		assertEquals(250.0, tCentre.x(), EPSILON, "the content centre rides the pane centre");
 		assertEquals(250.0, tCentre.y(), EPSILON, "the content centre rides the pane centre");
+		// the content box is the engine's, not the fixed page canvas (the mattree-r2-layout-engine face)
+		assertEquals(146, tScreen.mLayout.width(), "the iron display: 5 byproduct lanes at pitch 28 + slot + margins");
+		assertEquals(206, tScreen.mLayout.height(), "the iron display: the byproduct band is the deepest used band");
 	}
 
 	// ------------------------------------------------------------------
@@ -130,7 +149,7 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	public void hitTestRoundtripsThroughTheViewport() {
-		GT6MaterialTreeScreen tScreen = screenAt(600, 500);
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
 		MaterialTreeDisplay tDisplay = tScreen.mDisplay;
 		MaterialTreeDisplay.Node tNode0 = tDisplay.nodes().get(0);
 		// the fit pose: screen = apply(tree) — the input inverse (unapply) roundtrips it
@@ -154,30 +173,32 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	public void wheelZoomAnchorsUnderTheMouse() {
-		GT6MaterialTreeScreen tScreen = screenAt(600, 500);
-		assertTrue(tScreen.scroll(300, 210, 1), "the wheel is consumed");
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
+		assertTrue(tScreen.scroll(250, 210, 1), "the wheel is consumed");
 		// from the 2.43x fit one notch rides the clamp onto the 4x ceiling (the 档位 freeze lands ON the limit)
 		assertEquals(MaterialTreeViewport.MAX_SCALE, tScreen.mView.scale(), EPSILON);
 		// the S1 screen-anchor formula: offset = focus - (focus - offset) * (new/old)
-		assertEquals(300.0 - (300.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT), tScreen.mView.offsetX(), EPSILON,
+		assertEquals(250.0 - (250.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT), tScreen.mView.offsetX(), EPSILON,
 				"the x anchor holds the tree point under the pointer");
 		assertEquals(210.0 * (1.0 - MaterialTreeViewport.MAX_SCALE / FIT), tScreen.mView.offsetY(), EPSILON,
 				"the y anchor holds the tree point under the pointer");
-		// the anchor invariant: zoom at a node's centre and the node stays under the pointer
-		MaterialTreeDisplay.Node tNode0 = tScreen.mDisplay.nodes().get(0);
-		GT6MaterialTreeScreen tAnchored = screenAt(600, 500);
-		double tNodeX = tAnchored.mView.apply(MaterialTreeDisplay.nodeX(tNode0) + 9, MaterialTreeDisplay.nodeY(tNode0) + 9).x();
-		double tNodeY = tAnchored.mView.apply(MaterialTreeDisplay.nodeX(tNode0) + 9, MaterialTreeDisplay.nodeY(tNode0) + 9).y();
-		tAnchored.scroll(tNodeX, tNodeY, 1);
-		assertEquals(tNode0.stack().getItem(), tAnchored.itemAt(tNodeX, tNodeY).getItem(),
-				"the zoomed pose keeps the anchored node under the pointer");
+		// the anchor invariant, clamp-safe form (the 旧钉迁移声明 in the FIT comment): zoom
+		// about the CONTENT CENTRE and the same tree point stays under the pointer
+		GT6MaterialTreeScreen tAnchored = screenAt(500, 500);
+		MaterialTreeViewport.Point tFocus = tAnchored.mView.apply(
+				tAnchored.mLayout.width() / 2.0, tAnchored.mLayout.height() / 2.0);
+		MaterialTreeViewport.Point tBefore = tAnchored.mView.unapply(tFocus.x(), tFocus.y());
+		tAnchored.scroll(tFocus.x(), tFocus.y(), 1);
+		MaterialTreeViewport.Point tAfter = tAnchored.mView.unapply(tFocus.x(), tFocus.y());
+		assertEquals(tBefore.x(), tAfter.x(), EPSILON, "the zoomed pose keeps the anchored tree point under the pointer");
+		assertEquals(tBefore.y(), tAfter.y(), EPSILON, "the zoomed pose keeps the anchored tree point under the pointer");
 		// and back: the binary round trip re-lands on the EXACT centred fit pose
-		assertTrue(tScreen.scroll(300, 210, -1));
+		assertTrue(tScreen.scroll(250, 210, -1));
 		assertEquals(FIT, tScreen.mView.scale(), EPSILON);
 		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
 		assertEquals(0.0, tScreen.mView.offsetY(), EPSILON);
 		// a zero delta zooms OUT, which freezes at the fit pose (the S1 档位幂等)
-		assertTrue(tScreen.scroll(300, 210, 0));
+		assertTrue(tScreen.scroll(250, 210, 0));
 		assertEquals(FIT, tScreen.mView.scale(), EPSILON);
 		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
 	}
@@ -188,19 +209,19 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	public void dragPansAndTheClickSlopGuardsTheJump() {
-		GT6MaterialTreeScreen tScreen = screenAt(600, 500);
-		assertTrue(tScreen.scroll(300, 250, 1), "zoom in so the pan has room");
-		double tZoomX = 300.0 - (300.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT);
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
+		assertTrue(tScreen.scroll(250, 250, 1), "zoom in so the pan has room");
+		double tZoomX = 250.0 - (250.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT);
 		double tZoomY = 250.0 * (1.0 - MaterialTreeViewport.MAX_SCALE / FIT);
 		List<ItemStack> tJumped = new ArrayList<>();
 		tScreen.mJump = tJumped::add;
 
 		// a press, dragged well past the slop: pans, never jumps
-		assertTrue(tScreen.mouseClicked(560, 460, 0), "the press starts the drag");
-		assertTrue(tScreen.mouseDragged(580, 470, 0, 20, 10), "the drag pans");
+		assertTrue(tScreen.mouseClicked(460, 460, 0), "the press starts the drag");
+		assertTrue(tScreen.mouseDragged(480, 470, 0, 20, 10), "the drag pans");
 		assertEquals(tZoomX + 20, tScreen.mView.offsetX(), EPSILON, "the zoom offset + 20, inside the real-pane clamp");
 		assertEquals(tZoomY + 10, tScreen.mView.offsetY(), EPSILON, "the zoom offset + 10, inside the real-pane clamp");
-		assertTrue(tScreen.mouseReleased(580, 470, 0));
+		assertTrue(tScreen.mouseReleased(480, 470, 0));
 		assertTrue(tJumped.isEmpty(), "a dragged release is no jump");
 
 		// a press on a node, released in place: the jump fires with the node's stack
@@ -225,17 +246,17 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	public void keyboardPansAndUnmappedKeysFallThrough() {
-		GT6MaterialTreeScreen tScreen = screenAt(600, 500);
-		assertTrue(tScreen.scroll(300, 250, 1));
-		double tZoomX = 300.0 - (300.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT);
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
+		assertTrue(tScreen.scroll(250, 250, 1));
+		double tZoomX = 250.0 - (250.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT);
 		assertTrue(tScreen.keyPressed(263, 0, 0), "LEFT is consumed");
 		assertEquals(tZoomX + 28.0, tScreen.mView.offsetX(), EPSILON, "PAN_LEFT = +28, the image-viewer semantics");
 		assertFalse(tScreen.keyPressed(65, 0, 0), "an unmapped key falls through");
 		// the pan range follows the REAL window (acceptance ②): drive to the corner
-		assertTrue(tScreen.mouseClicked(300, 250, 0), "the press arms the drag");
+		assertTrue(tScreen.mouseClicked(250, 250, 0), "the press arms the drag");
 		assertTrue(tScreen.mouseDragged(0, 0, 0, -4000, -4000), "a huge drag slams the corner");
-		assertEquals(600.0 - 202.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetX(), EPSILON,
-				"the x pan floor is the real pane 600 - 202*4");
+		assertEquals(500.0 - 146.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetX(), EPSILON,
+				"the x pan floor is the real pane 500 - 146*4 (the iron display's content width)");
 		assertEquals(500.0 - 206.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetY(), EPSILON,
 				"the y pan floor is the real pane 500 - 206*4");
 	}
@@ -246,7 +267,7 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	public void stripButtonsDriveTheNavTable() {
-		GT6MaterialTreeScreen tScreen = screenAt(600, 500);
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
 		assertTrue(tScreen.mouseClicked(8, 8, 0), "the + cell");
 		assertEquals(MaterialTreeViewport.MAX_SCALE, tScreen.mView.scale(), EPSILON, "one 档位 rides the clamp onto the ceiling");
 		assertTrue(tScreen.mouseClicked(24, 8, 0), "the - cell");
@@ -265,22 +286,22 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 
 	@Test
 	public void resizeKeepsTheAnchorOnTheLiveViewport() {
-		GT6MaterialTreeScreen tScreen = screenAt(600, 500);
-		assertTrue(tScreen.scroll(300, 250, 1), "zoom in first");
-		MaterialTreeViewport.Point tBefore = tScreen.mView.unapply(300, 250);
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
+		assertTrue(tScreen.scroll(250, 250, 1), "zoom in first");
+		MaterialTreeViewport.Point tBefore = tScreen.mView.unapply(250, 250);
 		tScreen.navInit(800, 600); // the window resize re-inits — the live viewport survives
 		assertEquals(MaterialTreeViewport.MAX_SCALE, tScreen.mView.scale(), EPSILON, "the zoom level survives the resize");
 		MaterialTreeViewport.Point tAfter = tScreen.mView.unapply(400, 300);
 		assertEquals(tBefore.x(), tAfter.x(), EPSILON, "the new pane centre shows the old pane centre's tree point");
 		assertEquals(tBefore.y(), tAfter.y(), EPSILON, "the new pane centre shows the old pane centre's tree point");
-		assertEquals(-4.0, tScreen.mView.offsetX(), EPSILON, "400 - 101*4");
+		assertEquals(108.0, tScreen.mView.offsetX(), EPSILON, "400 - 73*4 (the iron content half-width 73)");
 		assertEquals(-112.0, tScreen.mView.offsetY(), EPSILON, "300 - 103*4");
 		// a degenerate pane (a minimized window's 0) keeps the last pose untouched
 		tScreen.navInit(0, 0);
-		assertEquals(-4.0, tScreen.mView.offsetX(), EPSILON);
+		assertEquals(108.0, tScreen.mView.offsetX(), EPSILON);
 		// while a FRESH screen still opens on the centred fit of its real pane
 		GT6MaterialTreeScreen tFresh = screenAt(800, 600);
-		MaterialTreeViewport.Point tCentre = tFresh.mView.apply(MaterialTreeDisplay.WIDTH / 2.0, MaterialTreeDisplay.HEIGHT / 2.0);
+		MaterialTreeViewport.Point tCentre = tFresh.mView.apply(tFresh.mLayout.width() / 2.0, tFresh.mLayout.height() / 2.0);
 		assertEquals(400.0, tCentre.x(), EPSILON);
 		assertEquals(300.0, tCentre.y(), EPSILON);
 	}

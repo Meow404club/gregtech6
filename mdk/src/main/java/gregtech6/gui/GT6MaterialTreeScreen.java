@@ -49,14 +49,24 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * freeze both end here.
  *
  * <p><b>Zero math rewritten</b>: the tree geometry is the same
- * {@link MaterialTreeLayout#layout} plans the two viewer legs render, the pan/zoom state
+ * {@link MaterialTreeLayout} plans the two viewer legs render, the pan/zoom state
  * is the S1 {@link MaterialTreeViewport} driven through its four-arg constructor (content
- * = the shared 202x206 canvas, pane = the REAL window — task mattree-viewport-fit, the
- * former 「pane clamped into the content box」 pin died with the base-translation hack it
+ * = the layout engine's CONTENT BOUNDING BOX, pane = the REAL window — task mattree-viewport-fit,
+ * the former 「pane clamped into the content box」 pin died with the base-translation hack it
  * existed for), and every input gesture funnels into the M2 {@link GT6MaterialTreeNav}
  * action table verbatim, so all three consumers navigate identically by construction. Only
  * the shell is new: this class paints the layout's rects through {@link GuiGraphics} and
  * routes the window's events into the table.
+ *
+ * <p><b>The content box is the engine's, not a constant</b> (task mattree-r2-layout-engine,
+ * ADR L1): the screen plans its display once ({@link MaterialTreeLayout#plan}) and feeds
+ * the {@code Result} bounding box into the viewport's fit — a tree with few lanes opens on
+ * a tight, correctly centred INK box instead of the worst-case 202x206 canvas (the
+ * 「墨迹级居中」 leftover the mattree-viewport-fit handoff assigned here). <b>旧钉迁移声明</b>:
+ * the former 「content = the fixed {@code MaterialTreeDisplay.WIDTH/HEIGHT} canvas」 wiring
+ * died here — the replacement face is {@code Result.width()/height()}; the fixed canvas
+ * survives as the viewer PAGES' geometry (the EMI/JEI legs) and the fit/anchor/resize
+ * semantics below are the R1 viewport's, untouched.
  *
  * <p><b>The fit pose lives in the viewport now</b> (task mattree-viewport-fit): the
  * viewport's dynamic fit scale magnifies the 202x206 canvas into the real window, centred,
@@ -110,6 +120,8 @@ public class GT6MaterialTreeScreen extends Screen {
 	private static final int SLOT_BORDER_INK = 0xFF8B8B8B, SLOT_WELL_INK = 0xFF373737;
 
 	final MaterialTreeDisplay mDisplay;
+	/** The layout engine's plan of {@link #mDisplay}: the coordinates, the edge plans and the content box (task mattree-r2-layout-engine). */
+	final MaterialTreeLayout.Result mLayout;
 	MaterialTreeViewport mView;
 	private int mPaneWidth, mPaneHeight;
 	private boolean mPressed;
@@ -120,6 +132,7 @@ public class GT6MaterialTreeScreen extends Screen {
 	public GT6MaterialTreeScreen(MaterialTreeDisplay aDisplay) {
 		super(Component.literal(MaterialTreeDisplay.CATEGORY_TITLE + " - " + MaterialTreeDisplay.materialName(aDisplay.material)));
 		mDisplay = aDisplay;
+		mLayout = MaterialTreeLayout.plan(aDisplay);
 	}
 
 	@Override
@@ -131,16 +144,17 @@ public class GT6MaterialTreeScreen extends Screen {
 	/**
 	 * The viewport wiring (package-private: the offline test drives it with a synthetic
 	 * pane) — the S1 four-arg form with the pane being the REAL window: the viewport's
-	 * dynamic fit scale magnifies the 202x206 canvas to fill it, centred. The FIRST init
-	 * creates the viewport (fit pose); a re-init is a window resize and re-binds the live
-	 * viewport through {@link MaterialTreeViewport#resizeTo} — the anchor survives. A
-	 * degenerate pane (a minimized window's 0) keeps the last pane: one clamp, no NaN.
+	 * dynamic fit scale magnifies the ENGINE'S CONTENT BOX ({@code mLayout.width/height} —
+	 * task mattree-r2-layout-engine) to fill it, centred. The FIRST init creates the
+	 * viewport (fit pose); a re-init is a window resize and re-binds the live viewport
+	 * through {@link MaterialTreeViewport#resizeTo} — the anchor survives. A degenerate
+	 * pane (a minimized window's 0) keeps the last pane: one clamp, no NaN.
 	 */
 	void navInit(int aPaneWidth, int aPaneHeight) {
 		if (aPaneWidth <= 0 || aPaneHeight <= 0) return;
 		mPaneWidth = aPaneWidth;
 		mPaneHeight = aPaneHeight;
-		if (mView == null) mView = new MaterialTreeViewport(MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT, aPaneWidth, aPaneHeight);
+		if (mView == null) mView = new MaterialTreeViewport(mLayout.width(), mLayout.height(), aPaneWidth, aPaneHeight);
 		else mView.resizeTo(aPaneWidth, aPaneHeight);
 	}
 
@@ -235,12 +249,12 @@ public class GT6MaterialTreeScreen extends Screen {
 	ItemStack itemAt(double aMouseX, double aMouseY) {
 		MaterialTreeViewport.Point tTree = mView.unapply(aMouseX, aMouseY);
 		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes()) {
-			double tX = MaterialTreeDisplay.nodeX(tNode), tY = MaterialTreeDisplay.nodeY(tNode);
+			double tX = mLayout.nodeX(tNode), tY = mLayout.nodeY(tNode);
 			if (tTree.x() >= tX && tTree.x() < tX + MaterialTreeLayout.SLOT
 					&& tTree.y() >= tY && tTree.y() < tY + MaterialTreeLayout.SLOT) return tNode.stack();
 		}
 		for (int i = 0; i < mDisplay.byproducts().size(); i++) {
-			double tX = MaterialTreeDisplay.byproductX(i), tY = MaterialTreeDisplay.byproductY();
+			double tX = mLayout.byproductX(i), tY = mLayout.byproductY();
 			if (tTree.x() >= tX && tTree.x() < tX + MaterialTreeLayout.SLOT
 					&& tTree.y() >= tY && tTree.y() < tY + MaterialTreeLayout.SLOT) return mDisplay.byproducts().get(i).stack();
 		}
@@ -283,7 +297,7 @@ public class GT6MaterialTreeScreen extends Screen {
 		if (mView == null) return;
 		Font tFont = Minecraft.getInstance().font;
 		List<Edge> tEdges = mDisplay.edges();
-		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(mDisplay);
+		List<EdgeLayout> tLayouts = mLayout.edges();
 		// the tree layer renders inside the pane-sized scissor (the pane is the visible
 		// region — the L2 contract; the strip and the tooltip stay outside it)
 		aGui.enableScissor(0, 0, this.width, this.height);
@@ -294,8 +308,9 @@ public class GT6MaterialTreeScreen extends Screen {
 		}
 		// the labels (the EMI twin's render-time-transform form — the same label set)
 		drawLabel(aGui, tFont, MaterialTreeDisplay.materialName(mDisplay.material), 4, 4, 0xFF000000);
-		drawLabel(aGui, tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
-				MaterialTreeDisplay.LANE_X0, MaterialTreeDisplay.BYPRODUCT_HEADER_Y, 0xFF000000);
+		if (mLayout.byproductBand()) // the hanging band's header — only when the band exists (the content-driven canvas has no room for a floating label)
+			drawLabel(aGui, tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
+					mLayout.overflowX(), mLayout.byproductHeaderY(), 0xFF000000);
 		for (int i = 0; i < tEdges.size(); i++) {
 			EdgeLayout tLayout = tLayouts.get(i);
 			if (tLayout.machine() != null) continue; // the via-label lives on the machine tooltip
@@ -303,10 +318,10 @@ public class GT6MaterialTreeScreen extends Screen {
 		}
 		for (Overflow tOverflow : mDisplay.overflow())
 			drawLabel(aGui, tFont, "+" + tOverflow.hidden(),
-					MaterialTreeDisplay.overflowX(), MaterialTreeDisplay.overflowY(tOverflow.column()), 0xFF000000);
+					mLayout.overflowX(), mLayout.overflowY(tOverflow.column()), 0xFF000000);
 		// the slots: nodes and byproducts in cells, machine icons bare (the drawBack(false) face)
 		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes())
-			drawSlot(aGui, tNode.stack(), MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode));
+			drawSlot(aGui, tNode.stack(), mLayout.nodeX(tNode), mLayout.nodeY(tNode));
 		for (int i = 0; i < tEdges.size(); i++) {
 			EdgeLayout tLayout = tLayouts.get(i);
 			if (tLayout.machine() != null)
@@ -314,7 +329,7 @@ public class GT6MaterialTreeScreen extends Screen {
 		}
 		int i = 0;
 		for (Byproduct tByproduct : mDisplay.byproducts())
-			drawSlot(aGui, tByproduct.stack(), MaterialTreeDisplay.byproductX(i++), MaterialTreeDisplay.byproductY());
+			drawSlot(aGui, tByproduct.stack(), mLayout.byproductX(i++), mLayout.byproductY());
 		aGui.disableScissor();
 		drawStrip(aGui, tFont, aMouseX, aMouseY);
 		// the hovered slot's own tooltip (the native face)
