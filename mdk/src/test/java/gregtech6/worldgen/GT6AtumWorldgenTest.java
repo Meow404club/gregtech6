@@ -259,7 +259,12 @@ public class GT6AtumWorldgenTest {
                 JsonObject tJson = json("data/gt6/" + tBrand + "/biome_modifier/" + tRow + ".json");
                 assertEquals(tBrand + ":add_features", tJson.get("type").getAsString(), tRow + " add_features type");
                 assertEquals("#gt6:atum_biomes", tJson.get("biomes").getAsString(), tRow + " the mount tag");
-                assertTrue(tJson.get("features").getAsJsonArray().size() > 0, tRow + " carries features");
+                // the emitter's standing convention: a single-feature modifier serializes
+                // the scalar id (nether_fluid_springs/coltan precedent), multi-feature ships
+                // the array — count both shapes
+                int tFeatureCount = tJson.get("features").isJsonArray()
+                        ? tJson.get("features").getAsJsonArray().size() : 1;
+                assertTrue(tFeatureCount > 0, tRow + " carries features");
                 JsonArray tConditions = tJson.getAsJsonArray(tBrand + ":conditions");
                 assertEquals(1, tConditions.size(), tRow + " one condition");
                 JsonObject tCondition = tConditions.get(0).getAsJsonObject();
@@ -289,6 +294,7 @@ public class GT6AtumWorldgenTest {
         assertTrue(tCoconut.toString().contains("minecraft:beach"), "the vanilla member survives");
         boolean tOasis = false;
         for (JsonElement tEntry : tCoconut) {
+            if (!tEntry.isJsonObject()) continue; // vanilla members ride the plain-string form
             JsonObject tMember = tEntry.getAsJsonObject();
             if ("atum:oasis".equals(tMember.get("id").getAsString())) {
                 tOasis = true;
@@ -329,21 +335,33 @@ public class GT6AtumWorldgenTest {
                 .getAsJsonObject("config").getAsJsonArray("veins");
         assertEquals(40, tVeins.size(), "the 40-row table");
         assertEquals(31, countTrue(tVeins, "atum"), "the :886-916 block");
-        // the atum lens-stone placed chain: rarity 100 + uniform Y [0, 120] (the atum row numbers)
+        // the atum lens-stone placed chain: rarity 100 + uniform Y [0, 120] (the atum row
+        // numbers; the vanilla placed-feature "placement" array, the twilight pin shape)
         JsonObject tMarble = json("data/gt6/worldgen/placed_feature/atum_stone_marble.json");
-        assertEquals(100, tMarble.getAsJsonArray("modifiers").get(0).getAsJsonObject().get("chance").getAsInt(),
+        JsonArray tMarblePlacement = tMarble.getAsJsonArray("placement");
+        assertEquals("minecraft:rarity_filter", tMarblePlacement.get(0).getAsJsonObject().get("type").getAsString(),
+                "the lens chain leads with the rarity gate");
+        assertEquals(100, tMarblePlacement.get(0).getAsJsonObject().get("chance").getAsInt(),
                 "the 1/100 chunk gate");
+        JsonObject tMarbleHeight = tMarblePlacement.get(3).getAsJsonObject().getAsJsonObject("height");
+        assertEquals(0, tMarbleHeight.getAsJsonObject("min_inclusive").get("absolute").getAsInt(), "atum stone MinY 0");
+        assertEquals(120, tMarbleHeight.getAsJsonObject("max_inclusive").get("absolute").getAsInt(), "atum stone MaxY 120");
         // the atum rocks twin: rarity 3 + count 3
         JsonObject tRocks = json("data/gt6/worldgen/placed_feature/atum_surface_rocks.json");
-        JsonArray tRocksModifiers = tRocks.getAsJsonArray("modifiers");
-        assertEquals(3, tRocksModifiers.get(0).getAsJsonObject().get("chance").getAsInt(), "atum.rocks rarity 3");
-        assertEquals(3, tRocksModifiers.get(1).getAsJsonObject().get("count").getAsInt(), "atum.rocks count 3");
-        // the atum small-ore host: the single tag arm
+        JsonArray tRocksPlacement = tRocks.getAsJsonArray("placement");
+        assertEquals(3, tRocksPlacement.get(0).getAsJsonObject().get("chance").getAsInt(), "atum.rocks rarity 3");
+        assertEquals(3, tRocksPlacement.get(1).getAsJsonObject().get("count").getAsInt(), "atum.rocks count 3");
+        // the atum small-ore host: the single tag arm (the deadrock-posture red-line
+        // indirection — the tag rides the tag_match predicate, a foreign id never appears)
         JsonObject tCopper = json("data/gt6/worldgen/configured_feature/ore_small_atum/copper.json");
         JsonArray tTargets = tCopper.getAsJsonObject("config").getAsJsonArray("targets");
         assertEquals(1, tTargets.size(), "one atum host target");
-        assertEquals("#gt6:atum_base_stone", tTargets.get(0).getAsJsonObject().get("target").getAsString(),
+        JsonObject tTarget = tTargets.get(0).getAsJsonObject().getAsJsonObject("target");
+        assertEquals("minecraft:tag_match", tTarget.get("predicate_type").getAsString(), "the tag predicate");
+        assertEquals("gt6:atum_base_stone", tTarget.get("tag").getAsString(),
                 "the OUR-tag indirection — a foreign id never appears");
+        assertEquals("gt6:ore_small_stone_copper", tTargets.get(0).getAsJsonObject().getAsJsonObject("state")
+                .get("Name").getAsString(), "the stone-family small-ore state");
     }
 
     private static int countTrue(JsonArray aRows, String aKey) {
