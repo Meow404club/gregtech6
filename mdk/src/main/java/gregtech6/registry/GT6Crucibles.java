@@ -39,6 +39,8 @@ import gregtech6.block.multiblock.GTCrucibleWallBlock;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
 import gregtech6.tileentity.multiblocks.CrucibleWallBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityCrucible;
+import gregtech6.tileentity.tools.TileEntityBasin;
+import gregtech6.tileentity.tools.TileEntityCrossing;
 import gregtech6.tileentity.tools.TileEntitySmeltery;
 
 /**
@@ -74,12 +76,13 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  *     {@link TileEntityCrucibleRow}.</li>
  * </ul>
  *
-	 * <p>Creative tab (task tabfix-a-multiblock): all 20 items — the 4 Smeltery rungs, the
- * 8 crucible controllers, the Steel wall and the 7 ladder walls — join MULTIBLOCKS_TAB via
- * {@link #onBuildTabContents} (registered-but-tab-less is invisible in BOTH the creative
- * menu and JEI, the BurningBoxes issue-#10 form). Pool cut declared: upstream rode the
- * per-family "Multiblock Machines" creative tab (tab id 17101, Loader :1270-1277, the
- * walls the part rows); this port pools the family into the gt6:multiblocks tab.
+	 * <p>Creative tab (task tabfix-a-multiblock, split by material-mc-c-crucible-rows along
+	 * the small-crucible-boiler-tab-rehome ruling): the single-block families — the 39
+	 * Smeltery rungs, the 39 Basins, the 39 Crossings (hidden rows excluded) — join the
+	 * gt6:machines tab; the LARGE family (8 controllers + Steel wall + 7 ladder walls)
+	 * stays on gt6:multiblocks via {@link #onBuildTabContents}. Pool cut declared: upstream
+	 * rode the per-family MTE tabs ("Smelting Crucibles" :251-292 / "Molds" :425-513 /
+	 * the multiblock tab :1270-1277).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Crucibles {
@@ -104,19 +107,178 @@ public final class GT6Crucibles {
 	public record SmelteryRow(String path, java.util.function.Supplier<OreDictMaterial> material, String display, float hardness) {}
 
 	/**
-	 * The four rungs (issue #45 C2): the Loader_MultiTileEntities.java:250-292 projection —
-	 * Stone (the :251 opening row, 6.0 hardness; upstream says 5.0, the port's declared
-	 * deviation), Ceramic (:256 verbatim — ID 1005, hardness 5.0/5.0, the row is NOT hidden
-	 * and carries NO crafting pattern: the furnace-hardened {@link #CLAY_CRUCIBLE_RAW} is
-	 * its only acquisition), Bronze (7.0) and Steel (6.0). The Ceramic rung sits after the
-	 * stone family and before the metals — the upstream :251-:265 sequence restricted to
-	 * the ported rows.
+	 * One SHARED crucible-domain material row — the 39-entry table the three families
+	 * (Smeltery :251-292 / Basin :425-466 / Crossing :471-513) all walk in the SAME order
+	 * (task material-mc-c-crucible-rows — the census mc-C reconciliation ledger, one anchor
+	 * per material). The hardness column is the upstream NBT_HARDNESS==NBT_RESISTANCE pair
+	 * verbatim; {@code hidden} is the NBT_HIDDEN column (the four mod-stones hide forever —
+	 * their gating mods ERE/BOTA/AETHER/BTL have no 1.20.1 port); {@code craft} drives the
+	 * recipe ingredient resolution (the faucet-card resolvable gate: a pair without a port
+	 * item path emits NO recipe JSON).
+	 */
+	public record CrucibleMaterial(String slug, java.util.function.Supplier<OreDictMaterial> material, float hardness,
+			boolean hidden, CraftKind craft) {
+
+		/** The upstream craft 'X' column (Loader_MultiTileEntities :251-292 tail args). */
+		public enum CraftKind { NONE, STONE, GEM, PLATE_SELF, PLATE_GRAPHENE }
+
+		/** The material (the supplier dereference — the P2 two-phase reset lesson). */
+		public OreDictMaterial mt() {
+			return material.get();
+		}
+
+		/** The row path of a family ({@code "smeltery"}/{@code "basin"}/{@code "crossing"} prefix). */
+		public String pathOf(String aFamilyPrefix) {
+			return aFamilyPrefix + "_" + slug;
+		}
+	}
+
+	/** :251 — the opening row (the port 6.0 hardness is the recorded issue-#45-C2 deviation, upstream says 5.0). */
+	public static final CrucibleMaterial MAT_STONE = new CrucibleMaterial("stone", () -> MT.Stone, 6.0F, false, CrucibleMaterial.CraftKind.STONE);
+	/** :252 (hidden T). */
+	public static final CrucibleMaterial MAT_BASALT = new CrucibleMaterial("basalt", () -> MT.STONES.Basalt, 15.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :253 (hidden T). */
+	public static final CrucibleMaterial MAT_GRANITE_BLACK = new CrucibleMaterial("granite_black", () -> MT.STONES.GraniteBlack, 15.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :254 (hidden T). */
+	public static final CrucibleMaterial MAT_GRANITE_RED = new CrucibleMaterial("granite_red", () -> MT.STONES.GraniteRed, 15.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :255 (hidden T). */
+	public static final CrucibleMaterial MAT_NETHER_BRICK = new CrucibleMaterial("nether_brick", () -> MT.NetherBrick, 5.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :256 — the raw-clay chain row, the only craft-less kind. */
+	public static final CrucibleMaterial MAT_CERAMIC = new CrucibleMaterial("ceramic", () -> MT.Ceramic, 5.0F, false, CrucibleMaterial.CraftKind.NONE);
+	/** :257 — hidden forever (the ERE gate, no 1.20.1 port). */
+	public static final CrucibleMaterial MAT_UMBER = new CrucibleMaterial("umber", () -> MT.STONES.Umber, 5.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :258 — hidden forever (the BOTA gate). */
+	public static final CrucibleMaterial MAT_LIVINGROCK = new CrucibleMaterial("livingrock", () -> MT.STONES.Livingrock, 5.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :259 — hidden forever (the AETHER/AETHEL gate). */
+	public static final CrucibleMaterial MAT_HOLYSTONE = new CrucibleMaterial("holystone", () -> MT.STONES.Holystone, 5.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :260 — hidden forever (the BTL gate). */
+	public static final CrucibleMaterial MAT_BETWEENSTONE = new CrucibleMaterial("betweenstone", () -> MT.STONES.Betweenstone, 5.0F, true, CrucibleMaterial.CraftKind.STONE);
+	/** :262 ({@code ANY.Quartz}, the gem craft). */
+	public static final CrucibleMaterial MAT_QUARTZ = new CrucibleMaterial("quartz", () -> gregapi.data.ANY.Quartz, 5.0F, false, CrucibleMaterial.CraftKind.GEM);
+	/** :263 ({@code MT.C}, the graphene-plate craft). */
+	public static final CrucibleMaterial MAT_GRAPHITE = new CrucibleMaterial("graphite", () -> MT.C, 10.0F, false, CrucibleMaterial.CraftKind.PLATE_GRAPHENE);
+	/** :265. */
+	public static final CrucibleMaterial MAT_BRONZE = new CrucibleMaterial("bronze", () -> MT.Bronze, 7.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :266. */
+	public static final CrucibleMaterial MAT_INVAR = new CrucibleMaterial("invar", () -> MT.Invar, 4.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :267. */
+	public static final CrucibleMaterial MAT_STEEL = new CrucibleMaterial("steel", () -> MT.Steel, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :268. */
+	public static final CrucibleMaterial MAT_HSLA = new CrucibleMaterial("hsla", () -> MT.HSLA, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :269 (upstream NBT_ACIDPROOF T — the shell row, not the render). */
+	public static final CrucibleMaterial MAT_STAINLESS_STEEL = new CrucibleMaterial("stainless_steel", () -> MT.StainlessSteel, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :270. */
+	public static final CrucibleMaterial MAT_DARK_IRON = new CrucibleMaterial("dark_iron", () -> MT.DarkIron, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :271. */
+	public static final CrucibleMaterial MAT_METEORIC_IRON = new CrucibleMaterial("meteoric_iron", () -> MT.MeteoricIron, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :272. */
+	public static final CrucibleMaterial MAT_METEORIC_STEEL = new CrucibleMaterial("meteoric_steel", () -> MT.MeteoricSteel, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :273 (acidproof T). */
+	public static final CrucibleMaterial MAT_NETHERITE = new CrucibleMaterial("netherite", () -> MT.Netherite, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :274. */
+	public static final CrucibleMaterial MAT_KNIGHTMETAL = new CrucibleMaterial("knightmetal", () -> MT.Knightmetal, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :275. */
+	public static final CrucibleMaterial MAT_FIERY_STEEL = new CrucibleMaterial("fiery_steel", () -> MT.FierySteel, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :276. */
+	public static final CrucibleMaterial MAT_OCTINE = new CrucibleMaterial("octine", () -> MT.Octine, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :277 (acidproof T). */
+	public static final CrucibleMaterial MAT_THAUMIUM = new CrucibleMaterial("thaumium", () -> MT.Thaumium, 6.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :278. */
+	public static final CrucibleMaterial MAT_TITANIUM = new CrucibleMaterial("titanium", () -> MT.Ti, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :279 (acidproof T). */
+	public static final CrucibleMaterial MAT_CHROMIUM = new CrucibleMaterial("chromium", () -> MT.Cr, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :280. */
+	public static final CrucibleMaterial MAT_MOLYBDENUM = new CrucibleMaterial("molybdenum", () -> MT.Mo, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :281. */
+	public static final CrucibleMaterial MAT_NIOBIUM = new CrucibleMaterial("niobium", () -> MT.Nb, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :282. */
+	public static final CrucibleMaterial MAT_TANTALUM = new CrucibleMaterial("tantalum", () -> MT.Ta, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :283. */
+	public static final CrucibleMaterial MAT_OSMIUM = new CrucibleMaterial("osmium", () -> MT.Os, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :284 (acidproof T). */
+	public static final CrucibleMaterial MAT_IRIDIUM = new CrucibleMaterial("iridium", () -> MT.Ir, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :285. */
+	public static final CrucibleMaterial MAT_NIOBIUM_TITANIUM = new CrucibleMaterial("niobium_titanium", () -> MT.NiobiumTitanium, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :286. */
+	public static final CrucibleMaterial MAT_VANADIUM = new CrucibleMaterial("vanadium", () -> MT.V, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :287 ({@code ANY.W}, acidproof T). */
+	public static final CrucibleMaterial MAT_TUNGSTEN = new CrucibleMaterial("tungsten", () -> MT.W, 10.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :288. */
+	public static final CrucibleMaterial MAT_TANTALUM_HAFNIUM_CARBIDE = new CrucibleMaterial("tantalum_hafnium_carbide", () -> MT.Ta4HfC5, 9.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :289 (acidproof T). */
+	public static final CrucibleMaterial MAT_VOID_METAL = new CrucibleMaterial("void_metal", () -> MT.VoidMetal, 10.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :291. */
+	public static final CrucibleMaterial MAT_BEDROCK_HSLA_ALLOY = new CrucibleMaterial("bedrock_hsla_alloy", () -> MT.Bedrock_HSLA_Alloy, 100.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+	/** :292 (acidproof T). */
+	public static final CrucibleMaterial MAT_ADAMANTIUM = new CrucibleMaterial("adamantium", () -> MT.Ad, 100.0F, false, CrucibleMaterial.CraftKind.PLATE_SELF);
+
+	/** The 39 loader lines in registration order (:251-292 verbatim — the three families share it). */
+	public static final List<CrucibleMaterial> MATERIALS = List.of(
+			MAT_STONE, MAT_BASALT, MAT_GRANITE_BLACK, MAT_GRANITE_RED, MAT_NETHER_BRICK,
+			MAT_CERAMIC, MAT_UMBER, MAT_LIVINGROCK, MAT_HOLYSTONE, MAT_BETWEENSTONE,
+			MAT_QUARTZ, MAT_GRAPHITE,
+			MAT_BRONZE, MAT_INVAR, MAT_STEEL, MAT_HSLA, MAT_STAINLESS_STEEL, MAT_DARK_IRON,
+			MAT_METEORIC_IRON, MAT_METEORIC_STEEL, MAT_NETHERITE, MAT_KNIGHTMETAL, MAT_FIERY_STEEL,
+			MAT_OCTINE, MAT_THAUMIUM, MAT_TITANIUM, MAT_CHROMIUM, MAT_MOLYBDENUM, MAT_NIOBIUM,
+			MAT_TANTALUM, MAT_OSMIUM, MAT_IRIDIUM, MAT_NIOBIUM_TITANIUM, MAT_VANADIUM, MAT_TUNGSTEN,
+			MAT_TANTALUM_HAFNIUM_CARBIDE, MAT_VOID_METAL,
+			MAT_BEDROCK_HSLA_ALLOY, MAT_ADAMANTIUM);
+
+	/** The material lookup behind the shared table — loud on an unknown slug (the GT6Hoppers.mt() drift discipline). */
+	public static CrucibleMaterial materialBySlug(String aSlug) {
+		for (CrucibleMaterial tMat : MATERIALS) if (tMat.slug().equals(aSlug)) return tMat;
+		throw new IllegalArgumentException("unknown crucible-domain material slug: " + aSlug);
+	}
+
+	/**
+	 * The 39 rungs (task material-mc-c-crucible-rows — the Loader_MultiTileEntities
+	 * .java:250-292 FULL ladder; the census mc-C smeltery gap of 35 rows closed). The four
+	 * former rungs keep their rows at their upstream positions (the stone 6.0 hardness is
+	 * the recorded issue-#45-C2 deviation — upstream says 5.0); the new rungs carry the
+	 * upstream hardness column verbatim. The Ceramic rung (:256) keeps its raw-clay chain
+	 * and stays the only craft-less row. The {@code display} column is documentation — the
+	 * real names ride the per-path lang keys.
 	 */
 	public static final List<SmelteryRow> ROWS = List.of(
-			new SmelteryRow("smeltery_stone", () -> MT.Stone, "Smeltery (Stone)", 6.0F),
-			new SmelteryRow("smeltery_ceramic", () -> MT.Ceramic, "Smeltery (Ceramic)", 5.0F),
-			new SmelteryRow("smeltery_bronze", () -> MT.Bronze, "Smeltery (Bronze)", 7.0F),
-			new SmelteryRow("smeltery_steel", () -> MT.Steel, "Smeltery (Steel)", 6.0F));
+		new SmelteryRow("smeltery_stone"      , () -> MT.Stone               , "Stone Smeltery"      , 6.0F ), // :251
+		new SmelteryRow("smeltery_basalt"     , () -> MT.STONES.Basalt       , "Basalt Smeltery"     , 15.0F), // :252
+		new SmelteryRow("smeltery_granite_black", () -> MT.STONES.GraniteBlack, "Black Granite Smeltery", 15.0F), // :253
+		new SmelteryRow("smeltery_granite_red", () -> MT.STONES.GraniteRed   , "Red Granite Smeltery", 15.0F), // :254
+		new SmelteryRow("smeltery_nether_brick", () -> MT.NetherBrick        , "Nether Brick Smeltery", 5.0F), // :255
+		new SmelteryRow("smeltery_ceramic"    , () -> MT.Ceramic             , "Ceramic Smeltery"    , 5.0F ), // :256
+		new SmelteryRow("smeltery_umber"      , () -> MT.STONES.Umber        , "Umber Smeltery"      , 5.0F ), // :257
+		new SmelteryRow("smeltery_livingrock" , () -> MT.STONES.Livingrock   , "Livingrock Smeltery" , 5.0F ), // :258
+		new SmelteryRow("smeltery_holystone"  , () -> MT.STONES.Holystone    , "Holystone Smeltery"  , 5.0F ), // :259
+		new SmelteryRow("smeltery_betweenstone", () -> MT.STONES.Betweenstone, "Betweenstone Smeltery", 5.0F), // :260
+		new SmelteryRow("smeltery_quartz"     , () -> gregapi.data.ANY.Quartz, "Quartz Smeltery"     , 5.0F ), // :262
+		new SmelteryRow("smeltery_graphite"   , () -> MT.C                   , "Graphite Smeltery"   , 10.0F), // :263
+		new SmelteryRow("smeltery_bronze"     , () -> MT.Bronze              , "Bronze Smeltery"     , 7.0F ), // :265
+		new SmelteryRow("smeltery_invar"      , () -> MT.Invar               , "Invar Smeltery"      , 4.0F ), // :266
+		new SmelteryRow("smeltery_steel"      , () -> MT.Steel               , "Steel Smeltery"      , 6.0F ), // :267
+		new SmelteryRow("smeltery_hsla"       , () -> MT.HSLA                , "HSLA Smeltery"       , 6.0F ), // :268
+		new SmelteryRow("smeltery_stainless_steel", () -> MT.StainlessSteel  , "Stainless Steel Smeltery", 6.0F), // :269
+		new SmelteryRow("smeltery_dark_iron"  , () -> MT.DarkIron            , "Dark Iron Smeltery"  , 6.0F ), // :270
+		new SmelteryRow("smeltery_meteoric_iron", () -> MT.MeteoricIron      , "Meteoric Iron Smeltery", 6.0F), // :271
+		new SmelteryRow("smeltery_meteoric_steel", () -> MT.MeteoricSteel    , "Meteoric Steel Smeltery", 6.0F), // :272
+		new SmelteryRow("smeltery_netherite"  , () -> MT.Netherite           , "Netherite Smeltery"  , 6.0F ), // :273
+		new SmelteryRow("smeltery_knightmetal", () -> MT.Knightmetal         , "Knightmetal Smeltery", 6.0F ), // :274
+		new SmelteryRow("smeltery_fiery_steel", () -> MT.FierySteel          , "Fiery Steel Smeltery", 6.0F ), // :275
+		new SmelteryRow("smeltery_octine"     , () -> MT.Octine              , "Octine Smeltery"     , 6.0F ), // :276
+		new SmelteryRow("smeltery_thaumium"   , () -> MT.Thaumium            , "Thaumium Smeltery"   , 6.0F ), // :277
+		new SmelteryRow("smeltery_titanium"   , () -> MT.Ti                  , "Titanium Smeltery"   , 9.0F ), // :278
+		new SmelteryRow("smeltery_chromium"   , () -> MT.Cr                  , "Chromium Smeltery"   , 9.0F ), // :279
+		new SmelteryRow("smeltery_molybdenum" , () -> MT.Mo                  , "Molybdenum Smeltery" , 9.0F ), // :280
+		new SmelteryRow("smeltery_niobium"    , () -> MT.Nb                  , "Niobium Smeltery"    , 9.0F ), // :281
+		new SmelteryRow("smeltery_tantalum"   , () -> MT.Ta                  , "Tantalum Smeltery"   , 9.0F ), // :282
+		new SmelteryRow("smeltery_osmium"     , () -> MT.Os                  , "Osmium Smeltery"     , 9.0F ), // :283
+		new SmelteryRow("smeltery_iridium"    , () -> MT.Ir                  , "Iridium Smeltery"    , 9.0F ), // :284
+		new SmelteryRow("smeltery_niobium_titanium", () -> MT.NiobiumTitanium, "Niobium Titanium Smeltery", 9.0F), // :285
+		new SmelteryRow("smeltery_vanadium"   , () -> MT.V                   , "Vanadium Smeltery"   , 9.0F ), // :286
+		new SmelteryRow("smeltery_tungsten"   , () -> MT.W                   , "Tungsten Smeltery"   , 10.0F), // :287
+		new SmelteryRow("smeltery_tantalum_hafnium_carbide", () -> MT.Ta4HfC5, "Tantalum Hafnium Carbide Smeltery", 9.0F), // :288
+		new SmelteryRow("smeltery_void_metal" , () -> MT.VoidMetal           , "Void Metal Smeltery" , 10.0F), // :289
+		new SmelteryRow("smeltery_bedrock_hsla_alloy", () -> MT.Bedrock_HSLA_Alloy, "Bedrock-HSLA-Alloy Smeltery", 100.0F), // :291
+		new SmelteryRow("smeltery_adamantium" , () -> MT.Ad                  , "Adamantium Smeltery" , 100.0F)); // :292
 
 	/**
 	 * The raw clay crucible (issue #45 C2): upstream IL.Ceramic_Crucible_Raw, meta 989
@@ -270,6 +432,240 @@ public final class GT6Crucibles {
 	/** (unused today) the ItemStack display helper for the /give-facing items. */
 	public static Component displayOf(SmelteryRow aRow) {
 		return Component.translatable("gt6.row.crucible.display." + aRow.path());
+	}
+
+	// ------------------------------------------------------------------------------------
+	// the BASIN family (task material-mc-c-crucible-rows — Loader:424-466, design 1072,
+	// the upstream "Molds" group; the mold-that-casts-blocks rides TileEntityBasin)
+	// ------------------------------------------------------------------------------------
+
+	/** The composed basin display template "{@code Basin (%s)}" (the GT6Hoppers.DISPLAY_KEY form). */
+	public static final String BASIN_DISPLAY_KEY = "gt6.row.basin.display";
+
+	/**
+	 * The 39 basin rows — the {@link #MATERIALS} table projected 1:1 (same order, same
+	 * hardness; the {@code display} column carries the slug for the census walk — the real
+	 * name composes {@link #BASIN_DISPLAY_KEY} over {@code gt6.row.mat.<slug>}).
+	 */
+	public static final List<SmelteryRow> BASIN_ROWS = MATERIALS.stream()
+			.map(tMat -> new SmelteryRow(tMat.pathOf("basin"), tMat.material(), tMat.slug(), tMat.hardness()))
+			.toList();
+
+	/** The registered Basin blocks by path. */
+	public static final Map<String, RegistryObject<BasinBlock>> BASIN_BLOCKS_BY_PATH = new LinkedHashMap<>();
+
+	/** The registered Basin items, same keys. */
+	public static final Map<String, RegistryObject<Item>> BASIN_ITEMS_BY_PATH = new LinkedHashMap<>();
+
+	static {
+		for (SmelteryRow tRow : BASIN_ROWS) {
+			BASIN_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new BasinBlock(tRow, BlockBehaviour.Properties.of()
+							.strength(tRow.hardness(), tRow.hardness() * 2) // the upstream NBT_HARDNESS/NBT_RESISTANCE pair (the smeltery family form)
+							.sound(SoundType.STONE))));
+			BASIN_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new GTComposedNameItem(GT6Crucibles.BASIN_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The shared Basin BET over the 39 shell blocks; registry path mirrors {@link TileEntityBasin#getTileEntityName}. */
+	public static final RegistryObject<BlockEntityType<TileEntityBasin>> BASIN_BE =
+			BLOCK_ENTITY_TYPES.register("basin", () -> BlockEntityType.Builder.of(
+					TileEntityBasin::new, basinBlockArray()).build(null));
+
+	/** The Basin block list of the family in registration order. */
+	public static Block[] basinBlockArray() {
+		Block[] rBlocks = new Block[BASIN_ROWS.size()];
+		for (int i = 0; i < BASIN_ROWS.size(); i++) rBlocks[i] = BASIN_BLOCKS_BY_PATH.get(BASIN_ROWS.get(i).path()).get();
+		return rBlocks;
+	}
+
+	/** The lookup for the datagen/command walkers — null for an unknown path. */
+	@Nullable
+	public static BasinBlock basinBlockByPath(String aPath) {
+		RegistryObject<BasinBlock> tHandle = BASIN_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The basin block — the mold-family carrier over the shared Basin BET (the CrucibleBlock
+	 * shape: the row rides the instance, the top-face click is the NO_GUI interface).
+	 * Selection is the full footprint; collision is the four 1px walls (you can stand IN the
+	 * basin — the upstream full-height wall passes, MultiTileEntityBasin.java:100-104).
+	 */
+	public static final class BasinBlock extends GTEntityBlock {
+
+		private final SmelteryRow mRow;
+
+		public BasinBlock(SmelteryRow aRow, Properties aProperties) {
+			super(aProperties);
+			mRow = aRow;
+		}
+
+		/** The registration row. */
+		public SmelteryRow row() {
+			return mRow;
+		}
+
+		/** The composed display name (the BASIN_DISPLAY_KEY template over the material word). */
+		@Override
+		public net.minecraft.network.chat.MutableComponent getName() {
+			return Component.translatable(BASIN_DISPLAY_KEY,
+					Component.translatable("gt6.row.mat." + mRow.display()));
+		}
+
+		@Override
+		protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
+			return GT6Crucibles.BASIN_BE.get();
+		}
+
+		@Override
+		public net.minecraft.world.level.block.RenderShape getRenderShape(BlockState aState) {
+			return net.minecraft.world.level.block.RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+		}
+
+		/** The four 1px full-height walls (MultiTileEntityBasin.java:100-104 render passes 0-3). */
+		@Override
+		public net.minecraft.world.phys.shapes.VoxelShape getCollisionShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+			return net.minecraft.world.phys.shapes.Shapes.or(
+					net.minecraft.world.level.block.Block.box(0, 0, 0, 1, 16, 16),
+					net.minecraft.world.level.block.Block.box(15, 0, 0, 16, 16, 16),
+					net.minecraft.world.level.block.Block.box(0, 0, 0, 16, 16, 1),
+					net.minecraft.world.level.block.Block.box(0, 0, 15, 16, 16, 16));
+		}
+
+		@Override
+		//? if forge {
+		public net.minecraft.world.InteractionResult use(BlockState aState, net.minecraft.world.level.Level aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.entity.player.Player aPlayer, net.minecraft.world.InteractionHand aHand, net.minecraft.world.phys.BlockHitResult aHit) {
+		//?} else {
+		/*public net.minecraft.world.InteractionResult useWithoutItem(BlockState aState, net.minecraft.world.level.Level aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.entity.player.Player aPlayer, net.minecraft.world.phys.BlockHitResult aHit) {
+		//21.1: BlockBehaviour.use folded into useWithoutItem (javap 21.1.249) — the
+		//InteractionHand param dropped from the signature; the game loop drives the hands
+		//in order and MAIN_HAND is the canonical first entry.
+		net.minecraft.world.InteractionHand aHand = net.minecraft.world.InteractionHand.MAIN_HAND;
+		*///?}
+			// the SIDES_TOP gate (MultiTileEntityBasin.java:63-66 — the pick-up/pour top click)
+			if (aHit.getDirection() != net.minecraft.core.Direction.UP) return net.minecraft.world.InteractionResult.PASS;
+			if (aLevel.getBlockEntity(aPos) instanceof TileEntityBasin tBasin) {
+				if (!aLevel.isClientSide) tBasin.useTop(aPlayer, aHand);
+				return net.minecraft.world.InteractionResult.sidedSuccess(aLevel.isClientSide);
+			}
+			return net.minecraft.world.InteractionResult.PASS;
+		}
+	}
+
+	// ------------------------------------------------------------------------------------
+	// the CROSSING family (task material-mc-c-crucible-rows — Loader:471-513, design 1072,
+	// the upstream "Molds" group; the pour bridge rides TileEntityCrossing)
+	// ------------------------------------------------------------------------------------
+
+	/** The composed crossing display template "{@code Crucible Crossing (%s)}" (the Loader name column). */
+	public static final String CROSSING_DISPLAY_KEY = "gt6.row.crossing.display";
+
+	/** The 39 crossing rows — the {@link #MATERIALS} projection (the basin form). */
+	public static final List<SmelteryRow> CROSSING_ROWS = MATERIALS.stream()
+			.map(tMat -> new SmelteryRow(tMat.pathOf("crossing"), tMat.material(), tMat.slug(), tMat.hardness()))
+			.toList();
+
+	/** The registered Crossing blocks by path. */
+	public static final Map<String, RegistryObject<CrossingBlock>> CROSSING_BLOCKS_BY_PATH = new LinkedHashMap<>();
+
+	/** The registered Crossing items, same keys. */
+	public static final Map<String, RegistryObject<Item>> CROSSING_ITEMS_BY_PATH = new LinkedHashMap<>();
+
+	static {
+		for (SmelteryRow tRow : CROSSING_ROWS) {
+			CROSSING_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new CrossingBlock(tRow, BlockBehaviour.Properties.of()
+							.strength(tRow.hardness(), tRow.hardness() * 2) // the upstream NBT pair (the smeltery family form)
+							.sound(SoundType.STONE)
+							.noOcclusion()))); // the bridge is a non-full cross (upstream isSideSolid2 F / LIGHT_OPACITY_NONE)
+			CROSSING_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new GTComposedNameItem(GT6Crucibles.CROSSING_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The shared Crossing BET over the 39 shell blocks; registry path mirrors {@link TileEntityCrossing#getTileEntityName}. */
+	public static final RegistryObject<BlockEntityType<TileEntityCrossing>> CROSSING_BE =
+			BLOCK_ENTITY_TYPES.register("crossing", () -> BlockEntityType.Builder.of(
+					TileEntityCrossing::new, crossingBlockArray()).build(null));
+
+	/** The Crossing block list of the family in registration order. */
+	public static Block[] crossingBlockArray() {
+		Block[] rBlocks = new Block[CROSSING_ROWS.size()];
+		for (int i = 0; i < CROSSING_ROWS.size(); i++) rBlocks[i] = CROSSING_BLOCKS_BY_PATH.get(CROSSING_ROWS.get(i).path()).get();
+		return rBlocks;
+	}
+
+	/** The lookup for the datagen/command walkers — null for an unknown path. */
+	@Nullable
+	public static CrossingBlock crossingBlockByPath(String aPath) {
+		RegistryObject<CrossingBlock> tHandle = CROSSING_BLOCKS_BY_PATH.get(aPath);
+		return tHandle == null ? null : tHandle.get();
+	}
+
+	/**
+	 * The crossing block — the pour-bridge carrier (the upstream selection/collision box
+	 * verbatim, MultiTileEntityCrossing.java:127-129: the full footprint, y 1..6px). The
+	 * redstone half: signal on the TOP/BOTTOM faces lights the BE's {@code mRedstone} and
+	 * the block answers it as a horizontal weak-power source (upstream
+	 * isProvidingWeakPower2, SIDES_HORIZONTAL, value 1).
+	 */
+	public static final class CrossingBlock extends GTEntityBlock {
+
+		private final SmelteryRow mRow;
+
+		public CrossingBlock(SmelteryRow aRow, Properties aProperties) {
+			super(aProperties);
+			mRow = aRow;
+		}
+
+		/** The registration row. */
+		public SmelteryRow row() {
+			return mRow;
+		}
+
+		/** The composed display name (the CROSSING_DISPLAY_KEY template over the material word). */
+		@Override
+		public net.minecraft.network.chat.MutableComponent getName() {
+			return Component.translatable(CROSSING_DISPLAY_KEY,
+					Component.translatable("gt6.row.mat." + mRow.display()));
+		}
+
+		@Override
+		protected BlockEntityType<? extends TileEntityBase03TicksAndSync> tickerType() {
+			return GT6Crucibles.CROSSING_BE.get();
+		}
+
+		@Override
+		public net.minecraft.world.level.block.RenderShape getRenderShape(BlockState aState) {
+			return net.minecraft.world.level.block.RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+		}
+
+		/** The upstream getSelectedBoundingBoxFromPool box verbatim (MultiTileEntityCrossing.java:128). */
+		@Override
+		public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+			return net.minecraft.world.level.block.Block.box(0, 1, 0, 16, 6, 16);
+		}
+
+		@Override
+		public net.minecraft.world.phys.shapes.VoxelShape getCollisionShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+			return net.minecraft.world.level.block.Block.box(0, 1, 0, 16, 6, 16);
+		}
+
+		@Override
+		public boolean isSignalSource(BlockState aState) {
+			return true; // upstream isProvidingWeakPower2 gate exists
+		}
+
+		@Override
+		public int getSignal(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, net.minecraft.core.BlockPos aPos, net.minecraft.core.Direction aDirection) {
+			// upstream :131 — SIDES_HORIZONTAL only, value 1 (the vanilla query direction is
+			// the side the RECEIVER sees the machine from, the GTOvenBlock.getSignal note)
+			if (!aDirection.getAxis().isHorizontal()) return 0;
+			if (aLevel.getBlockEntity(aPos) instanceof TileEntityCrossing tCrossing && tCrossing.mRedstone) return 1;
+			return 0;
+		}
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -546,16 +942,26 @@ public final class GT6Crucibles {
 	}
 
 	/**
-	 * The tab walk (task tabfix-a-multiblock — the whole 19-item family joins the
-	 * multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the class-level
-	 * MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers this
-	 * handler). The three walk maps plus the single-rung wall item, all 19. JEI derives its
-	 * item list from the tab display items.
+	 * The tab walk (task tabfix-a-multiblock, SPLIT by task material-mc-c-crucible-rows
+	 * along the small-crucible-boiler-tab-rehome ruling): the single-block families (the 39
+	 * Smeltery rungs + the 39 Basins + the 39 Crossings — the upstream "Smelting Crucibles"
+	 * and "Molds" groups, this port pooling all three into the gt6:machines tab) ride the
+	 * MACHINES arm; the LARGE multiblock family (the Steel wall, the 7 ladder walls, the 8
+	 * controllers) stays on the multiblocks arm. The hidden rows (the NBT_HIDDEN column:
+	 * the granite/nether-brick stones and the four mod-stones) stay OUT of the creative
+	 * walk — registered, craftable where the resolvable gate answers, never tab members
+	 * (the upstream hidden semantics). JEI derives its item list from the tab display items.
 	 */
 	@SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
-		if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
-			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) aEvent.accept(new ItemStack(tItem.get()));
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
+			for (CrucibleMaterial tMat : MATERIALS) {
+				if (tMat.hidden()) continue;
+				aEvent.accept(new ItemStack(ITEMS_BY_PATH.get(tMat.pathOf("smeltery")).get()));
+				aEvent.accept(new ItemStack(BASIN_ITEMS_BY_PATH.get(tMat.pathOf("basin")).get()));
+				aEvent.accept(new ItemStack(CROSSING_ITEMS_BY_PATH.get(tMat.pathOf("crossing")).get()));
+			}
+		} else if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
 			aEvent.accept(new ItemStack(CRUCIBLE_STEEL_WALL_ITEM.get()));
 			for (RegistryObject<Item> tItem : CRUCIBLE_WALL_ITEMS_BY_PATH.values()) aEvent.accept(new ItemStack(tItem.get()));
 			for (RegistryObject<Item> tItem : CRUCIBLE_ITEMS_BY_PATH.values()) aEvent.accept(new ItemStack(tItem.get()));
