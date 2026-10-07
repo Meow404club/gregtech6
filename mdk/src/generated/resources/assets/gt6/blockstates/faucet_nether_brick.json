@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_nether_brick"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_nether_brick",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_nether_brick"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_nether_brick",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_nether_brick"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_nether_brick",
+      "y": 270
+    }
+  }
+}

@@ -111,12 +111,21 @@ public class GT6MoldAssetDatagenTest extends GTOfflineTestBase {
         assertBody("assets/gt6/models/block/mold_stone.json", STONE_BODY, "mold_stone");
     }
 
-    /** The faucet bodies ride their material (stone → vanilla smooth stone, ceramic → the rough borrow). */
+    /**
+     * The faucet bodies ride their material (task faucet-material-rows: the full 39-row
+     * walk — each model's body texture is exactly what {@code GT6CrucibleDatagen
+     * .bodyTexture} answers for the row's material, the shared crucible/mold dispatch;
+     * stone → vanilla smooth stone, the rest → the set borrow or the shared rough).
+     */
     @Test
     void faucetBodiesAreTheMaterialSmoothReferences() throws Exception {
-        assertEquals(2, GT6Molds.FAUCET_ROWS.size(), "the faucet walk broke — never pass vacuously");
-        assertBody("assets/gt6/models/block/faucet_stone.json", STONE_BODY, "faucet_stone");
-        assertBody("assets/gt6/models/block/faucet_ceramic.json", CERAMIC_BODY, "faucet_ceramic");
+        gregtech6.registry.GT6MaterialTestSupport.materials(); // the row materials resolve their texture sets
+        assertFalse(GT6Molds.FAUCET_ROWS.isEmpty(), "the faucet walk broke — never pass vacuously");
+        assertEquals(39, GT6Molds.FAUCET_ROWS.size(), "the full Loader:300-341 projection (task faucet-material-rows)");
+        for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+            String tExpected = gregtech6.datagen.GT6CrucibleDatagen.bodyTexture(tRow.material().get());
+            assertBody("assets/gt6/models/block/" + tRow.path() + ".json", tExpected, tRow.path());
+        }
     }
 
     /** The small crucible empty faces: stone/ceramic/bronze/steel each their material smooth body (#41, +C2). */

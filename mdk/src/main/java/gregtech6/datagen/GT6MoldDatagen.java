@@ -150,15 +150,17 @@ public final class GT6MoldDatagen {
 			 * OP.blockSolid, ...)} :162 — no overlay pass), tintindex 0 on every face
 			 * (the GT6MoldTintListener seat; the finished-texture rows answer -1, inert),
 			 * cullface only where a face lies on the block boundary (the mount face
-			 * against the host culls — the attachment idiom).
+			 * against the host culls — the attachment idiom). The element table is the
+			 * SHARED {@link gregtech6.tileentity.tools.TileEntityFaucet#MODEL_BOXES}
+			 * (task faucet-material-rows spec 2): the shape constants and the three-way
+			 * geometry pin derive from the same floats — one derivation, no drift.
 			 */
 			private ModelFile faucetStackModel(String aName, ResourceLocation aBody) {
 				BlockModelBuilder tModel = models().getBuilder("block/" + aName)
 						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
 						.texture("all", aBody)
 						.texture("particle", "#all");
-				float[][] tBoxes = {{6, 1, 0, 10, 2, 4}, {5, 2, 0, 6, 6, 4}, {10, 2, 0, 11, 6, 4}};
-				for (float[] tBox : tBoxes) {
+				for (float[] tBox : gregtech6.tileentity.tools.TileEntityFaucet.MODEL_BOXES) {
 					var tElement = tModel.element()
 							.from(tBox[0], tBox[1], tBox[2]).to(tBox[3], tBox[4], tBox[5]);
 					for (net.minecraft.core.Direction tDir : net.minecraft.core.Direction.values()) {
@@ -337,8 +339,12 @@ public final class GT6MoldDatagen {
 				add("item.gt6." + tRow.path() + "_raw", "Ceramic " + tName + " Mold (Raw)");
 			}
 			add("gt6.row.faucet.display", "%s Crucible Faucet");
-			add("gt6.row.faucet.mat.stone", "Stone");
-			add("gt6.row.faucet.mat.ceramic", "Ceramic");
+			// the material words: the row's matDisplay = the upstream aMat.getLocal() face
+			// (task faucet-material-rows spec 4 — no invented wording; the two former
+			// hardcode lines folded into the walk)
+			for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+				add(GT6Molds.faucetMatUnitKeyOf(tRow), tRow.matDisplay());
+			}
 			add("item.gt6.faucet_ceramic_raw", "Ceramic Crucible Faucet (Raw)");
 		}
 
@@ -521,6 +527,30 @@ public final class GT6MoldDatagen {
 					.pattern(" B ")
 					.define('B', Items.STONE)
 					.unlockedBy("has_stone", has(Items.STONE))));
+
+			// the :312/:314-341 plate crafts (task faucet-material-rows spec 3) — the same
+			// three-point diagonal ("P P"," P "; carbon's :312 "C C"," C " is the same shape),
+			// tool marks cut like the stone row above. The ingredient resolves through
+			// GTMaterialItems.get(OP.plate, ...) (the GT6GunRecipes:112 resolvable-gate
+			// form); a pair with no item-path plate skips — CUT rows carry no craft at all
+			// (the FaucetCraft javadoc: the OP.stone/ANY-gem ingredient items have no port
+			// item path yet).
+			for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+				gregapi.oredict.OreDictMaterial tPlateMat = switch (tRow.craft()) {
+					case PLATE_SELF -> tRow.material().get();
+					case PLATE_GRAPHENE -> gregapi.data.MT.Graphene;
+					default -> null;
+				};
+				if (tPlateMat == null) continue; // NONE + the two CUT kinds
+				var tPlate = gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, tPlateMat);
+				if (tPlate == null) continue; // the unresolvable plate pair — logged by the walker's absence in the JSON tree
+				Item tFaucet = GT6Molds.FAUCET_ITEMS_BY_PATH.get(tRow.path()).get();
+				rRows.add(shaped(id(tRow.path()), ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tFaucet)
+						.pattern("P P")
+						.pattern(" P ")
+						.define('P', net.minecraft.world.item.crafting.Ingredient.of(tPlate.get()))
+						.unlockedBy("has_plate", has(tPlate.get()))));
+			}
 
 			// the ceramic faucet raw (Loader:305 craft, "C C","kCR" — the tool marks
 			// re-expanded issue #45 C1, same tag-define face as the blank mold row)

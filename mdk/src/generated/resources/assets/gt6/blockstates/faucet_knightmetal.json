@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_knightmetal"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_knightmetal",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_knightmetal"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_knightmetal",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_knightmetal"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_knightmetal",
+      "y": 270
+    }
+  }
+}

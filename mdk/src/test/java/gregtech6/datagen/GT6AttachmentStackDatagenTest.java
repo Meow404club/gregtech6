@@ -63,13 +63,13 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
             new float[] {5, 2, 5, 11, 3, 11}, new float[] {6, 1, 6, 10, 2, 10}, new float[] {7, 0, 7, 9, 1, 9});
 
     /**
-     * The faucet stack, MultiTileEntityFaucet :168-200 verbatim (px, PX_P[i]=i /
-     * PX_N[i]=16-i, the north-mount branch): pass-0 (PX_P[6],PX_P[1],PX_P[0])-
-     * (PX_N[6],PX_N[14],PX_N[12]) = (6,1,0)-(10,2,4), pass-1 (5,2,0)-(6,6,4),
-     * pass-2 (10,2,0)-(11,6,4).
+     * The faucet stack, MultiTileEntityFaucet :168-200 verbatim — the SHARED
+     * {@link gregtech6.tileentity.tools.TileEntityFaucet#MODEL_BOXES} table
+     * (task faucet-material-rows: one derivation for the models, the shapes and
+     * the three-way geometry pin; this local copy retired).
      */
-    private static final List<float[]> FAUCET_BOXES = List.of(
-            new float[] {6, 1, 0, 10, 2, 4}, new float[] {5, 2, 0, 6, 6, 4}, new float[] {10, 2, 0, 11, 6, 4});
+    private static final List<float[]> FAUCET_BOXES =
+            java.util.Arrays.asList(gregtech6.tileentity.tools.TileEntityFaucet.MODEL_BOXES);
 
     /** The upstream overlay side borrow (tap == funnel, byte-identical — assets/README.md). */
     private static final String OVERLAY_SHA256 =
@@ -252,7 +252,7 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
      */
     @Test
     public void faucetModelsAreTheUpstreamThreePassStacks() throws Exception {
-        assertEquals(2, GT6Molds.FAUCET_ROWS.size(), "the faucet census stays 2 (the multi-material expansion is a separate card)");
+        assertEquals(39, GT6Molds.FAUCET_ROWS.size(), "the faucet census = the full Loader:300-341 projection (task faucet-material-rows)");
         for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
             JsonObject tModel = json("assets/gt6/models/block/" + tRow.path() + ".json");
             assertEquals("minecraft:block/block", tModel.get("parent").getAsString(),

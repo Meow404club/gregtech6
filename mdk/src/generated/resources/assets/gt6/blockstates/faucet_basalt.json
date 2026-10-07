@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_basalt"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_basalt",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_basalt"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_basalt",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_basalt"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_basalt",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_tungsten"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_tungsten",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_tungsten"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_tungsten",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_tungsten"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_tungsten",
+      "y": 270
+    }
+  }
+}

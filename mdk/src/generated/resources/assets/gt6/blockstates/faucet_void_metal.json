@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "gt6:block/faucet_void_metal"
+    },
+    "facing=east": {
+      "model": "gt6:block/faucet_void_metal",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/faucet_void_metal"
+    },
+    "facing=south": {
+      "model": "gt6:block/faucet_void_metal",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "gt6:block/faucet_void_metal"
+    },
+    "facing=west": {
+      "model": "gt6:block/faucet_void_metal",
+      "y": 270
+    }
+  }
+}

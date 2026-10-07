@@ -243,7 +243,11 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 5859;
+	private static final int ZH_KEY_FLOOR = 5907;
+	// +48 review-seat rebase seam, task faucet-material-rows: the 39-row faucet walk
+	// (gt6.row.faucet.mat.* over GT6Molds.FAUCET_ROWS + the mold/crucible band restructure)
+	// rides the zh face; measured 5907 on the rebased tree (main measured 5859). The
+	// history lives in `git log -L` on this line.
 	// +13 task material-mc-b-storage-mass-shelf: the metal shelf/crate compose templates
 	// gt6.row.metal_{bookshelf,bottlecrate}.display both locales, dump-verbatim zh
 	// 书架 (%s)/瓶筐 (%s) — the ONLY zh delta of the card (the 120 new metal rows compose at
@@ -356,10 +360,14 @@ public class GT6LangParityTest {
 						add("gt6.row.mold.display." + tRow.path(), "Ceramic " + tShape + " Mold");
 						add("item.gt6." + tRow.path() + "_raw", "Ceramic " + tShape + " Mold (Raw)");
 					}
-					add("gt6.row.faucet.display", "%s Crucible Faucet");
-					add("gt6.row.faucet.mat.stone", "Stone");
-					add("gt6.row.faucet.mat.ceramic", "Ceramic");
-					add("item.gt6.faucet_ceramic_raw", "Ceramic Crucible Faucet (Raw)");
+				add("gt6.row.faucet.display", "%s Crucible Faucet");
+				// the material words mirror the GT6MoldDatagen.Lang walk (task
+				// faucet-material-rows: the 39-row table replaced the two-hardcode pair;
+				// review-seat rebase seam — the replay follows the SAME registry rows)
+				for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+					add(GT6Molds.faucetMatUnitKeyOf(tRow), tRow.matDisplay());
+				}
+				add("item.gt6.faucet_ceramic_raw", "Ceramic Crucible Faucet (Raw)");
 				}
 			}.addTranslations();
 		}
@@ -1210,7 +1218,7 @@ public class GT6LangParityTest {
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1888, tExemptTotal, "the derived composed-name exemption census (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
+		assertEquals(1925, tExemptTotal, "the derived composed-name exemption census (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
 			+ " (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
 			+ " 280 <mat>_fluid_pipe_<size> carriers compose over the seven gt6.row.fluid_pipe.display.*"
 			+ " templates + the 40 family-scoped gt6.row.fluid_pipe.mat.* words; the two W1 wood rows"

@@ -255,15 +255,39 @@ public class TileEntityFaucet extends GTAttachmentSmallBlockEntity implements IT
 	}
 
 	// ---------------------------------------------------------------------------
+	// the shape geometry (MultiTileEntityFaucet.java:208-225 verbatim)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The three-pass stack element boxes, north-facing px verbatim (:174-195: pass 0 the
+	 * tip plate, passes 1/2 the channel walls; PX_P[i]=i / PX_N[i]=16-i). Shared table:
+	 * {@code GT6MoldDatagen.faucetStackModel} builds the model elements from it and the
+	 * geometry pin derives the render envelope from it — one derivation, no drift.
+	 */
+	public static final float[][] MODEL_BOXES = {{6, 1, 0, 10, 2, 4}, {5, 2, 0, 6, 6, 4}, {10, 2, 0, 11, 6, 4}};
+
+	/** The upstream selection box per facing (:208-215): north (5,1,0)-(11,6,4). */
+	public static final net.minecraft.world.phys.shapes.VoxelShape SHAPE_NORTH = net.minecraft.world.level.block.Block.box(5, 1, 0, 11, 6, 4);
+	/** The upstream south arm (:211 default). */
+	public static final net.minecraft.world.phys.shapes.VoxelShape SHAPE_SOUTH = net.minecraft.world.level.block.Block.box(5, 1, 12, 11, 6, 16);
+	/** The upstream west arm (:212). */
+	public static final net.minecraft.world.phys.shapes.VoxelShape SHAPE_WEST = net.minecraft.world.level.block.Block.box(0, 1, 5, 4, 6, 11);
+	/** The upstream east arm (:213). */
+	public static final net.minecraft.world.phys.shapes.VoxelShape SHAPE_EAST = net.minecraft.world.level.block.Block.box(12, 1, 5, 16, 6, 11);
+
+	// ---------------------------------------------------------------------------
 	// the block carrier — the attachment block over a TAP-family row (horizontal mounts)
 	// ---------------------------------------------------------------------------
 
 	/**
 	 * The faucet block: the p12 attachment carrier reused with a faucet BET (the ticker
 	 * comes from {@link GT6Molds#FAUCET_BE}) and the faucet name. The TAP family row gives
-	 * the four-horizontal mount validity, the sturdy-face check, the unmount-on-host-break
-	 * and the thin-plate shape — the upstream faucet has no valid-sides override either
-	 * (TileEntityBase10Attachment.java:51 default).
+	 * the four-horizontal mount validity, the sturdy-face check and the unmount-on-host-break
+	 * — the upstream faucet has no valid-sides override either
+	 * (TileEntityBase10Attachment.java:51 default). The SELECTION/COLLISION shapes are NOT
+	 * the shared TAP thin-plate: {@link #getShape} rides the faucet's own upstream envelope
+	 * (MultiTileEntityFaucet.java:208-215) and {@link #getCollisionShape} answers the same
+	 * box (the id1514 three-way ruling, the deviation declared on the override).
 	 */
 	public static class FaucetBlock extends GTAttachmentSmallBlock {
 
@@ -276,7 +300,7 @@ public class TileEntityFaucet extends GTAttachmentSmallBlockEntity implements IT
 			// a synthetic TAP-family row: same mount algebra, faucet identity kept on this class
 			super(new gregtech6.registry.GT6Attachments.AttachmentRow(
 					aRow.path(), aRow.matDisplay(), GTAttachmentSmallBlock.Family.TAP,
-					aRow.acidProof(), 1.0F, aRow.acidProof() ? 6.0F : 5.0F, aRow.sound()),
+					aRow.acidProof(), 1.0F, aRow.resistance(), net.minecraft.world.level.block.SoundType.STONE),
 					aRow.acidProof(), aTickerType, aProperties);
 			mRow = aRow;
 			mTickerType = aTickerType;
@@ -285,6 +309,40 @@ public class TileEntityFaucet extends GTAttachmentSmallBlockEntity implements IT
 		/** The faucet registration row (the material/acid-proof carrier; named apart from the base's AttachmentRow accessor). */
 		public GT6Molds.FaucetRow faucetRow() {
 			return mRow;
+		}
+
+		/**
+		 * The upstream selection box verbatim (getSelectedBoundingBoxFromPool :208-215 —
+		 * setBlockBoundsBasedOnState :218-225 rides the same numbers): the three-pass
+		 * stack's own envelope (5,1,0)-(11,6,4) on north. Replaces the inherited TAP-family
+		 * shape (6,3,0)-(10,7,6, the {@link GTAttachmentSmallBlock} TAP arm) that covered
+		 * neither the faucet model nor its envelope (the seat-26 cross-card debt; the
+		 * FaucetBlock javadoc declared the share, task faucet-material-rows spec 2 retires
+		 * it).
+		 */
+		@Override
+		public net.minecraft.world.phys.shapes.VoxelShape getShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+			return switch (aState.getValue(GTAttachmentSmallBlock.FACING)) {
+				case SOUTH -> SHAPE_SOUTH;
+				case WEST -> SHAPE_WEST;
+				case EAST -> SHAPE_EAST;
+				default -> SHAPE_NORTH; // NORTH + the family-invalid verticals
+			};
+		}
+
+		/**
+		 * The id1514 ruling (2026-10-06, the shelf-crate precedent form): render/collision/
+		 * outline three-way aligned outranks the upstream split — upstream rides the
+		 * attachment-empty collision (TileEntityBase10Attachment:35) while the visual is
+		 * the spout stack; this port answers the SAME envelope for all three, the deviation
+		 * declared. Side effect vs upstream: vanilla BlockItem.canPlace isUnobstructed
+		 * (BlockItem.java:144-147) now refuses a place into an entity-overlapped cell —
+		 * the empty-collision upstream allowed it; revert this override alone if field
+		 * test flags the placement.
+		 */
+		@Override
+		public net.minecraft.world.phys.shapes.VoxelShape getCollisionShape(BlockState aState, net.minecraft.world.level.BlockGetter aLevel, BlockPos aPos, net.minecraft.world.phys.shapes.CollisionContext aContext) {
+			return getShape(aState, aLevel, aPos, aContext);
 		}
 
 		@Override
