@@ -12,11 +12,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
+import gregapi.oredict.OreDictItemData;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.block.material.GTMaterialPrefixBlock;
 import gregtech6.block.ore.GTOreBlock;
 import gregtech6.block.ore.GTOreFallingBlock;
+import gregtech6.components.IOreDictItemDataOverrideItem;
 import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialItems;
 
@@ -46,7 +48,7 @@ import gregtech6.registry.GTMaterialItems;
  * card's surface (prefixblock-render, GTClientHandlers) — this class only supplies the
  * shared {@link #tintColor()} implementation.
  */
-public class GTMaterialPrefixBlockItem extends BlockItem {
+public class GTMaterialPrefixBlockItem extends BlockItem implements IOreDictItemDataOverrideItem {
 
     public final OreDictPrefix prefix;
     public final OreDictMaterial material;
@@ -62,6 +64,13 @@ public class GTMaterialPrefixBlockItem extends BlockItem {
         String prefixSnake = GTMaterialItems.snakeCase(prefix.mNameInternal);
         this.templateKey = "gt6.tagprefix." + prefixSnake;
         this.specialKey = "gt6." + prefixSnake + "_" + GTMaterialItems.snakeCase(material.mNameInternal);
+    }
+
+    /** The item is its own (prefix, material) data — arm 2 of the central component face's read
+     * chain (upstream OreDictManager.getItemData_ :694, {@link IOreDictItemDataOverrideItem});
+     * the MaterialPrefixItem javadoc carries the face note. */
+    @Override public OreDictItemData getOreDictItemData(ItemStack stack) {
+        return new OreDictItemData(prefix, material);
     }
 
     @Override
