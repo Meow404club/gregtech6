@@ -39,8 +39,10 @@ import gregtech6.registry.GTStoneBlocks;
  * card spec pins the 17-stone key set aligned with GTStoneBlocks.STONES (the acceptance
  * key-order audit). Of the dim rows the nether row landed with the nether-lens band
  * (above), the twilight row with task twilight-stone-rows (both carrying the same 17+7
- * declared deviation); erebus/atum/tropics (:658-660) stay deferred — those mods have no
- * high-version port target (the research.r12-worldgen-coverage-audit face).
+ * declared deviation), the atum row with task atum-dim-adaptation (below — the ONE mod
+ * dim with a 1.20.1 carrier, same 17-stone key set); erebus/tropics (:658/:660) stay
+ * deferred — those mods have no high-version port target (the
+ * research.r12-worldgen-coverage-audit face).
  */
 public final class GT6Worldgen {
 

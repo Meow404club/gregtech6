@@ -222,8 +222,10 @@ public class GT6AtumWorldgenTest {
     public void conditionsRegistryShipsTheAtumTenants() {
         List<String> tAtumPaths = List.of("atum_fluid_springs", "atum_large_veins", "atum_ores",
                 "atum_stones", "atum_surface_rocks", "atum_bumble_hives");
-        assertEquals(8, GT6BiomeModifierConditions.CONDITION_ROWS.size(),
-                "the End yield + twilight_ores predecessors + the SIX atum rows");
+        assertEquals(9, GT6BiomeModifierConditions.CONDITION_ROWS.size(),
+                "the End yield + twilight_ores + twilight_stones predecessors + the SIX atum rows"
+                        + " (the twilight_stones row joined at the rebase seam — main's task"
+                        + " twilight-stone-rows rides row 3, the atum tenants follow)");
         for (String tPath : tAtumPaths) {
             GT6BiomeModifierConditions.ConditionRow tRow = GT6BiomeModifierConditions.CONDITION_ROWS.stream()
                     .filter(tCandidate -> tCandidate.rowPath().equals(tPath)).findFirst().orElseThrow();
