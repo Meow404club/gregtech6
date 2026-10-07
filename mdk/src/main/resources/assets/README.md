@@ -188,6 +188,20 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   `f51bbdfd2df6518bb8481a8b7768fe79b2e2ab88d525a8430a47e4e112c5783c`.
   16x16 RGBA, CC0 1.0 per the upstream README block.
 
+- `gt6/textures/item/basin_ceramic_raw.png` — byte-identical borrow of upstream
+  `textures/items/gt.multiitem.randomtools/990.png` (meta 990 = the "Clay Basin" raw
+  item, MultiItemRandomTools.java:114; task material-mc-c-crucible-rows — the raw pair
+  of the new basin family):
+  `12ed340d3faa78510d023afe0e601b9a63edcf1670c00f79b5c5fa3ffbd1940f`.
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
+- `gt6/textures/item/crossing_ceramic_raw.png` — byte-identical borrow of upstream
+  `textures/items/gt.multiitem.randomtools/993.png` (meta 993 = the "Clay Crossing" raw
+  item, MultiItemRandomTools.java:117; task material-mc-c-crucible-rows — the raw pair
+  of the new crossing family):
+  `1c8aafcdf643ec89ee5ff6a2651bb2a0631bbc39b9711dac34bc2cbf9ed06fd4`.
+  16x16 RGBA, CC0 1.0 per the upstream README block.
+
 - the 31 raw clay mold icons `gt6/textures/item/mold_ceramic(<_shape>)_raw.png` —
   byte-identical borrows of upstream `textures/items/gt.multiitem.randomtools/<meta>.png`
   (the "Clay X Mold" raw item band, MultiItemRandomTools.java:80-121; task

@@ -985,6 +985,15 @@ public final class GT6ItemModels extends ItemModelProvider {
         // attribution).
         withExistingParent("clay_crucible_raw", mcLoc("item/generated"))
             .texture("layer0", modLoc("item/clay_crucible_raw"));
+        // the basin/crossing raw clay items (task material-mc-c-crucible-rows;
+        // GT6Crucibles.BASIN_CERAMIC_RAW / CROSSING_CERAMIC_RAW) — the clay_crucible_raw
+        // row shape; layer0 = the byte-identical gt.multiitem.randomtools/990.png and
+        // /993.png borrows (meta 990 = "Clay Basin" :114, meta 993 = "Clay Crossing" :117 —
+        // assets/README.md attribution).
+        withExistingParent("basin_ceramic_raw", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/basin_ceramic_raw"));
+        withExistingParent("crossing_ceramic_raw", mcLoc("item/generated"))
+            .texture("layer0", modLoc("item/crossing_ceramic_raw"));
         // the Clay Measuring Pot raw item (task issue45-c3, issue #45) — the clay_bowl
         // row shape; layer0 = the byte-identical gt.multiitem.randomtools/997.png borrow
         // (meta 997 = "Clay Measuring Pot", MultiItemRandomTools.java:121 — assets/README.md
