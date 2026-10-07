@@ -66,7 +66,7 @@ public class MaterialStackNBTTest extends GTOfflineTestBase {
 		MaterialStackNBT.save(tStack, tTag);
 
 		assertEquals(12345L, tTag.getLong("a"));
-		assertEquals((short) MT.Iron.mID, tTag.getShort("i"));
+		assertEquals(MT.Iron.mID, tTag.getShort("i"));
 		assertFalse(tTag.contains("m"), "registered materials must not carry the name fallback key");
 
 		OreDictMaterialStack tBack = MaterialStackNBT.load(tTag); // default resolver = MaterialRegistry.INSTANCE
@@ -115,7 +115,7 @@ public class MaterialStackNBTTest extends GTOfflineTestBase {
 		assertTrue(tList.contains("0", Tag.TAG_COMPOUND));
 		assertTrue(tList.contains("1", Tag.TAG_COMPOUND));
 		// the 'i' short save-compat contract holds per ENTRY
-		assertEquals((short) MT.Iron.mID, tList.getCompound("0").getShort("i"));
+		assertEquals(MT.Iron.mID, tList.getCompound("0").getShort("i"));
 		assertEquals(2 * 648648000L, tList.getCompound("0").getLong("a"));
 
 		List<OreDictMaterialStack> tBack = MaterialStackNBT.loadList("gt.materials", tNBT);

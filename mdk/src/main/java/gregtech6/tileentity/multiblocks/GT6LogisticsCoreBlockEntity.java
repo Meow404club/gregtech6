@@ -331,7 +331,8 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	}
 
 	/** The per-scan pair of routing lists: [0] = fluids, [1] = stacks. */
-	@SuppressWarnings("unchecked")
+	// the generic-array seam — List<LogisticsData>[][] is not creatable cleanly; erasure = zero bytecode
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private List<LogisticsData>[] pair(List<LogisticsData> aFluids, List<LogisticsData> aStacks) {
 		return new List[] {aFluids, aStacks};
 	}
@@ -340,6 +341,8 @@ public class GT6LogisticsCoreBlockEntity extends TileEntityBase10MultiBlockBase 
 	 * Upstream :217-500 — the scan, the tier registration and the routing loop. Package-private
 	 * so the tests drive it without the timer.
 	 */
+	// the List<LogisticsData>[][] routing-table literals are generic arrays by design; erasure = zero bytecode
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	void scanAndRoute() {
 		Level tLevel = getLevel();
 		if (tLevel == null) return;

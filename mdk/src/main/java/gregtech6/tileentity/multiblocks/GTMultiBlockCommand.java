@@ -568,7 +568,7 @@ public final class GTMultiBlockCommand {
 	/** The processing-state report (task p6 acceptance: progress/energy/ignited/tank/slots). */
 	private static String machineReport(TileEntityCokeOven aOven) {
 		StringBuilder rSlots = new StringBuilder();
-		for (int i = 0; i < aOven.INVENTORY_SIZE; i++) {
+		for (int i = 0; i < TileEntityBase10MultiBlockMachine.INVENTORY_SIZE; i++) {
 			ItemStack tStack = aOven.slot(i);
 			if (tStack.isEmpty()) continue;
 			if (rSlots.length() > 0) rSlots.append(", ");

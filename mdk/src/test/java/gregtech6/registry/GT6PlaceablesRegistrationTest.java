@@ -97,7 +97,7 @@ public class GT6PlaceablesRegistrationTest {
 		// The FML-boot leg freezes the BET registry — reopen it for the fixture
 		// (the helper no-ops when already open / on drift).
 		gregtech6.tileentity.GTOfflineTestBase.unfreezeBlockEntityTypeRegistry();
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		BlockEntityType<GT6SandwichBlockEntity>[] tHolder = new BlockEntityType[1];
 		tHolder[0] = BlockEntityType.Builder.of(
 				(BlockEntityType.BlockEntitySupplier<GT6SandwichBlockEntity>)

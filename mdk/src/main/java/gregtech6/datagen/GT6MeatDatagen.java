@@ -87,7 +87,7 @@ public final class GT6MeatDatagen {
 				// JEI/EMI ubiquitous, the vanilla recipe book is dead weight) — the builders keep their
 				// unlockedBy criteria (the builder API needs them); the JSON is simply never saved.
 			});
-			return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture[0]));
+			return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture<?>[0]));
 		}
 
 		/** The has() helper (the 1.20.1 unlockedBy criterion shape). */

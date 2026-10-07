@@ -151,6 +151,7 @@ public abstract class TileEntityBasicMachineOfflineTestBase extends GTMachinesOf
 
 	/** An offline BET carrying the machine config in its factory closure (Builder.of().build(null), oven precedent). */
 	static BlockEntityType<TileEntityBasicMachine> machineType(RecipeMap aMap, int aParallel, boolean aParallelDuration) {
+		@SuppressWarnings("unchecked")
 		BlockEntityType<TileEntityBasicMachine>[] tHolder = (BlockEntityType<TileEntityBasicMachine>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TileEntityBasicMachine(tHolder[0], aPos, aState, aMap, aParallel, aParallelDuration, null),

@@ -780,6 +780,8 @@ public class TileEntityAdvancedCraftingTable extends TileEntityBase03TicksAndSyn
 	// is the provider seam; the GT6CapabilityWiring registerBlockEntity row delegates to it.
 	// No @Override: the parent method does not exist on 21.1. The item-only face — the ACT
 	// has no tanks (the TileEntityBasicMachine :1413 shape, the oven row's second instance).
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			return (T) mInv;

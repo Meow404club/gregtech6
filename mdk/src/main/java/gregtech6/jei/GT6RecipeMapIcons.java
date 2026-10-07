@@ -157,6 +157,7 @@ public final class GT6RecipeMapIcons {
 	}
 
 	/** A row-less tier ladder (the BET hardwires the map; each tier is one explicit item). */
+	@SafeVarargs
 	private static void ladder(Map<String, List<Workstation>> aIndex, String aMap, RegistryObject<Item>... aTiers) {
 		for (RegistryObject<Item> tTier : aTiers) single(aIndex, aMap, tTier);
 	}

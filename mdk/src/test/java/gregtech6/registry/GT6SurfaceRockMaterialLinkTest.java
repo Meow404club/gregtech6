@@ -95,7 +95,7 @@ public class GT6SurfaceRockMaterialLinkTest extends GTOfflineTestBase {
 
 	/** A fresh pile BE over the GTOfflineTestBase synthetic-BET bracket (the sandwich test form). */
 	private static GT6PlaceableBlockEntity freshPile() {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		BlockEntityType<GT6PlaceableBlockEntity>[] tHolder = new BlockEntityType[1];
 		tHolder[0] = BlockEntityType.Builder.of(
 				(BlockEntityType.BlockEntitySupplier<GT6PlaceableBlockEntity>)

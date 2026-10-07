@@ -163,7 +163,7 @@ public final class GT6TreeBlocks {
 
     private static List<RegistryObject<Item>> registerItems() {
         List<RegistryObject<Item>> rList = new ArrayList<>(4 * KINDS.size() + GENERIC_PLANK_ROWS.size());
-        List<RegistryObject<Block>>[] tFamilies = new List[] {SAPLINGS, LOGS, LEAVES, PLANKS};
+        List<List<RegistryObject<Block>>> tFamilies = List.of(SAPLINGS, LOGS, LEAVES, PLANKS);
         for (List<RegistryObject<Block>> tFamily : tFamilies) {
             for (int i = 0; i < tFamily.size(); i++) {
                 int tIndex = i;

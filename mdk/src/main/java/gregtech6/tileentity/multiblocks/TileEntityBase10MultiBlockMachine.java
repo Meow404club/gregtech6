@@ -1008,6 +1008,8 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 	   // forge getCapability :704-715 mirrored): the gated item surface is rebuilt fresh per
 	   // query here (the forge mGatedCap LazyOptional memoizes, but the wrapper is a stateless
 	   // view over mInventory, so fresh-per-call is semantically identical).
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			return (T) new GatedItemHandler();

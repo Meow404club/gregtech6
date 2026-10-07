@@ -29,7 +29,7 @@ import gregtech6.registry.GTMachines;
 public class GTCannerFamilyRowTest extends TileEntityBasicMachineOfflineTestBase {
 
 	/** CS.java:612 — SBIT_B, the :151 NBT_ENERGY_ACCEPTED_SIDES read form (:1379 verbatim). */
-	static final byte ENERGY_IN_MASK = (byte)(GTBasicMachineBlock.SBIT_B);
+	static final byte ENERGY_IN_MASK = GTBasicMachineBlock.SBIT_B;
 	/** CS.java:612 — SBIT_U|SBIT_L, the :143/:137 NBT_TANK_SIDE_IN / NBT_INV_SIDE_IN read form. */
 	static final byte IN_MASK = (byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L);
 	/** CS.java:612 — SBIT_R|SBIT_D, the :144/:138 NBT_TANK_SIDE_OUT / NBT_INV_SIDE_OUT read form. */

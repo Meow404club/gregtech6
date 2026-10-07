@@ -236,7 +236,7 @@ class GT6PanelBaseThemeCensusTest extends GTRecipesOfflineTestBase {
         map.register(IThemeApi.PANEL, parsed, parsed);
         Theme gt6 = newTheme("gt6", map);
 
-        WidgetThemeEntry<?> entry = new ModularPanel("gt6_panel_base_chain_pin").getWidgetThemeInternal(gt6);
+        WidgetThemeEntry<?> entry = new ModularPanel<>("gt6_panel_base_chain_pin").getWidgetThemeInternal(gt6);
         assertEquals(IThemeApi.PANEL, entry.key(),
             "ModularPanel.getWidgetThemeInternal must resolve through the panel theme key "
                 + "(forge ModularPanel.java:207-208)");

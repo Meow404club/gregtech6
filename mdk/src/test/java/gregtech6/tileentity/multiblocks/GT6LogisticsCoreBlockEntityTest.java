@@ -133,7 +133,7 @@ public class GT6LogisticsCoreBlockEntityTest extends GTMultiBlocksOfflineTestBas
 
 		@Override public int getTanks() { return 1; }
 		@Override public FluidStack getFluidInTank(int aTank) { return mTank.fluid(); }
-		@Override public int getTankCapacity(int aTank) { return (int)Math.min(mTank.getCapacity(), Integer.MAX_VALUE); }
+		@Override public int getTankCapacity(int aTank) { return Math.min(mTank.getCapacity(), Integer.MAX_VALUE); }
 		@Override public boolean isFluidValid(int aTank, FluidStack aStack) { return true; }
 
 		@Override

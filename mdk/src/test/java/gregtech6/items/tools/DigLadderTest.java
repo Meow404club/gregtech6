@@ -162,7 +162,7 @@ public class DigLadderTest {
 		CompoundTag tRoot = tStack.getTag();
 		assertTrue(tRoot != null && tRoot.contains("GT.ToolStats"), "the upstream compound name");
 		CompoundTag tToolTag = tRoot.getCompound("GT.ToolStats");
-		assertEquals((short) MT.Bronze.mID, tToolTag.getShort("a"), "the short-typed primary (GT6ToolStats 'a' discipline)");
+		assertEquals(MT.Bronze.mID, tToolTag.getShort("a"), "the short-typed primary (GT6ToolStats 'a' discipline)");
 		assertTrue(tToolTag.contains("j", Tag.TAG_LONG), "the long-typed budget");
 		assertEquals(MT.Bronze.mToolDurability * 100L, tToolTag.getLong("j"), "j = mToolDurability * 100 * 1.0 (:182)");
 		//?} else {

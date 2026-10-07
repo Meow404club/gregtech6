@@ -72,7 +72,7 @@ public final class GTGrassCommand {
 		ServerLevel tLevel = aSource.getLevel();
 		ItemStack tStack = new ItemStack(GT6SprayCans.SPRAY_PAINTS.get(aDye).get());
 		GTSprayCanItem tCan = (GTSprayCanItem) tStack.getItem();
-		Block tTarget = tCan.colorTarget(tLevel.getBlockState(aPos).getBlock(), aDye);
+		Block tTarget = GTSprayCanItem.colorTarget(tLevel.getBlockState(aPos).getBlock(), aDye);
 		if (tTarget == null) {
 			String tLine = "GT6 grass spray NO-OP at " + aPos.toShortString() + ": dye " + aDye
 					+ " remaining=" + tCan.remainingOf(tStack) + " (unpaid)";
@@ -96,7 +96,7 @@ public final class GTGrassCommand {
 		ServerLevel tLevel = aSource.getLevel();
 		ItemStack tStack = new ItemStack(GT6SprayCans.SPRAY_PAINT_REMOVER.get());
 		GTSprayCanItem tRemover = (GTSprayCanItem) tStack.getItem();
-		Block tTarget = tRemover.decolorTarget(tLevel.getBlockState(aPos).getBlock());
+		Block tTarget = GTSprayCanItem.decolorTarget(tLevel.getBlockState(aPos).getBlock());
 		if (tTarget == null) {
 			String tLine = "GT6 grass unpaint NO-OP at " + aPos.toShortString() + ": not removable remaining="
 					+ tRemover.remainingOf(tStack) + " (unpaid)";

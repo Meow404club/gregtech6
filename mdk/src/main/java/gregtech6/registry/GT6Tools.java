@@ -731,6 +731,9 @@ public final class GT6Tools {
 	 * MultiItemRandomTools.java:59/:492-501; the registration home stays
 	 * GT6Robotics.ITEMS, the display home is this table).
 	 */
+	// the Guava varargs add(E...) makes one implicit generic array here — the array never
+	// escapes the builder; @SafeVarargs can't reach a third-party callee, so field-level it is
+	@SuppressWarnings("unchecked")
 	public static final List<RegistryObject<Item>> TAB_TABLE = ImmutableList.<RegistryObject<Item>>builder()
 			.add(CROWBAR, CUTTER, CHISEL, FILE, SAW, BUILDER_WAND, SCREWDRIVER, HAMMER, WRENCH, BENDING_CYLINDER_SMALL,
 			PICKAXE, PICKAXE_GEM, PICKAXE_CONSTRUCTION, SHOVEL, SPADE, UNIVERSAL_SPADE,

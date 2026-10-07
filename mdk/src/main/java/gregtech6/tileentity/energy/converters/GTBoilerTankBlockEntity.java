@@ -257,7 +257,7 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 		if (tConversions > 0) {
 			mTanks[0].remove(tConversions); // :118
 			if (rng(10) == 0 && mEfficiency > 5000 && mTanks[0].has() && !mDistwMatch.apply(mTanks[0].getFluid().getFluid())) { // :119
-				mEfficiency -= tConversions; // :120
+				mEfficiency = (short) (mEfficiency - tConversions); // :120 (JLS 15.26.2 compound-assign narrowing, now explicit)
 				if (mEfficiency < 5000) mEfficiency = 5000; // :121
 			}
 			// :123 — the steam goes IN; the add clamps at capacity (upstream setFluid could
@@ -509,6 +509,8 @@ public class GTBoilerTankBlockEntity extends TileEntityBase03TicksAndSync implem
 	// gate and the fluid-pipe canConnect handshake queries THIS face's handler to link; what
 	// the top face refuses is FILL only (the :262 half, inside the wrapper). A null side stays
 	// open (the BarrelFluidHandler convention).
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.FluidHandler.BLOCK) {
 			return (T) new BoilerFluidHandler(aSide);

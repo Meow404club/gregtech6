@@ -353,6 +353,8 @@ public class GT6LongDistanceFluidPipeBlockEntity extends TileEntityBase03TicksAn
 	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability — the W4
 	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.
 	// FQ names — the GT6HopperBaseBlockEntity seam form (no import management).
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {
 			return (T) mWindow;

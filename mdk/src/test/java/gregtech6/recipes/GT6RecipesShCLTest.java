@@ -1050,10 +1050,12 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	 * whole-stack branch without ever sampling).
 	 */
 	private static final class AlwaysYesRandom extends Random {
+		private static final long serialVersionUID = 1L;
 		@Override public int nextInt(int aBound) { return 0; }
 	}
 
 	private static final class AlwaysNoRandom extends Random {
+		private static final long serialVersionUID = 1L;
 		@Override public int nextInt(int aBound) { return aBound - 1; }
 	}
 }

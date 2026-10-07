@@ -111,8 +111,13 @@ public class WrenchMiningTest {
 	 * The offline stand-in for the datapack tag load — the registry-level bindTags (the
 	 * vanilla MappedRegistry.java:374 load face) over the nine vanilla band members.
 	 */
+	@SafeVarargs
 	private static void bindWrenchFace(Holder<Block>... aMembers) {
-		BuiltInRegistries.BLOCK.bindTags(java.util.Map.of(gWrenchMineable, List.of(aMembers)));
+		// the explicit copy — List.of(aMembers) would pass the non-reifiable array to another
+		// varargs callee, which [varargs] flags even under @SafeVarargs
+		java.util.List<Holder<Block>> tMembers = new java.util.ArrayList<>(aMembers.length);
+		for (Holder<Block> tMember : aMembers) tMembers.add(tMember);
+		BuiltInRegistries.BLOCK.bindTags(java.util.Map.of(gWrenchMineable, List.copyOf(tMembers)));
 	}
 
 	private static Holder<Block> holder(Block aBlock) {

@@ -404,7 +404,7 @@ public final class GT6MoldDatagen {
 				if (!tSeen.add(tFinished.getId())) throw new IllegalStateException("Duplicate recipe " + tFinished.getId());
 				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, GT6ForeignRowConvergence.converged(tFinished).serializeRecipe(), tRecipePaths.json(tFinished.getId())));
 			});
-			return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture[0]));
+			return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture<?>[0]));
 		}
 		//?} else {
 		/*@Override
@@ -431,7 +431,7 @@ public final class GT6MoldDatagen {
 								.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
 					}
 				});
-				return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture[0]));
+				return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture<?>[0]));
 			});
 		}
 		*///?}
@@ -589,6 +589,7 @@ public final class GT6MoldDatagen {
 		}
 
 		/** The tag-ingredient donation overload (the planks family). */
+		@SafeVarargs
 		private static void donationTag(java.util.List<StagedRecipe> aRows, String aFormedPath, String aIdTail, net.minecraft.tags.TagKey<Item>... aExemplars) {
 			ShapelessRecipeBuilder tBuilder = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, GT6Molds.rawItemByPath(aFormedPath))
 					.requires(GT6Molds.rawItemByPath("mold_ceramic"))

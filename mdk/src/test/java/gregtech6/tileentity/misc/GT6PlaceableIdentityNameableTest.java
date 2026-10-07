@@ -87,7 +87,7 @@ public class GT6PlaceableIdentityNameableTest extends GTOfflineTestBase {
 
 	/** A fresh pile BE over the synthetic-BET bracket (the material-link test form). */
 	private static GT6PlaceableBlockEntity freshPile() {
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({"unchecked", "rawtypes"})
 		BlockEntityType<GT6PlaceableBlockEntity>[] tHolder = new BlockEntityType[1];
 		tHolder[0] = BlockEntityType.Builder.of(
 				(BlockEntityType.BlockEntitySupplier<GT6PlaceableBlockEntity>)

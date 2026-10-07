@@ -533,6 +533,8 @@ public class GT6HeatExchangerBlockEntity extends TileEntityBase10MultiBlockBase 
 	}
 	//?} else {
 	/*// 21.1 seam: RegisterCapabilitiesEvent provider wiring delegates to this member; no @Override.
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.FluidHandler.BLOCK) {
 			return (T) new HeatExchangerFluidHandler();

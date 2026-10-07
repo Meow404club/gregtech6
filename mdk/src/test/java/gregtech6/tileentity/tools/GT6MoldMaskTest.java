@@ -101,6 +101,7 @@ public class GT6MoldMaskTest extends GTOfflineTestBase {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block-entity-type registry", aE);
 		}
+		@SuppressWarnings("unchecked")
 		BlockEntityType<TileEntityMold>[] tTypes = (BlockEntityType<TileEntityMold>[]) new BlockEntityType<?>[1];
 		tTypes[0] = BlockEntityType.Builder.of((aPos, aState) -> new TileEntityMold(tTypes[0], aPos, aState), Blocks.STONE).build(null);
 		sMoldType = tTypes[0];

@@ -360,7 +360,7 @@ class TileEntityBase10MultiBlockMachineTest extends GTMultiBlocksOfflineTestBase
 		assertEquals(16, tOven.mParallel);
 		assertTrue(tOven.mRequiresIgnition);
 		assertTrue(tOven.mNoConstantEnergy, "NO_CONSTANT_POWER = T (Loader_MultiTileEntities.java:1193)");
-		assertEquals(11, tOven.INVENTORY_SIZE);
+		assertEquals(11, TileEntityBase10MultiBlockMachine.INVENTORY_SIZE);
 		assertEquals(Long.MAX_VALUE, tOven.mTanksOutput[0].capacity(), "the upstream FluidTankGT default ctor capacity (FluidTankGT.java:49)");
 		assertNotNull(GT6RecipeMaps.COKE_OVEN, "the lazy recipes() resolution target");
 		assertNull(tOven.mRecipes, "resolved on first use");

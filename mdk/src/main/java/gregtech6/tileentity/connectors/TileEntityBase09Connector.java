@@ -130,7 +130,7 @@ public abstract class TileEntityBase09Connector extends TileEntityBase03TicksAnd
 		if (aSide < 0 || aSide >= 6) return false;
 		if (!connected(aSide)) return true;
 		byte oConnections = mConnections;
-		mConnections &= ~SBIT[aSide];
+		mConnections = (byte) (mConnections & ~SBIT[aSide]); // JLS 15.26.2 compound-assign narrowing, now explicit
 		updateClientData();
 		causeBlockUpdate();
 		onConnectionChange(oConnections);

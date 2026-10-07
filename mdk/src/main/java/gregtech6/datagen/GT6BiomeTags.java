@@ -261,8 +261,8 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
                 tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake())); // the empty activation switch
                 continue;
             }
-            tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake()))
-                    .add(tBiomes.toArray(new ResourceKey[0]));
+            TagsProvider.TagAppender<Biome> tAppend = tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake()));
+            for (ResourceKey<Biome> tBiome : tBiomes) tAppend.add(tBiome); // the singular add — the varargs toArray form was raw (JLS rawtypes)
         }
         // task w6-rocks-sticks — the surface deco bands (the tags are NOT
         // loader-branded, one band serves both legs; the rocks version's

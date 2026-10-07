@@ -315,7 +315,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow = GT6ForeignRowConvergence.converged(tRow);
 			tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tRow.serializeRecipe(), mRecipePaths.json(tRow.getId())));
 		});
-		return CompletableFuture.allOf(tFutures.toArray(new CompletableFuture[0]));
+		return CompletableFuture.allOf(tFutures.toArray(new CompletableFuture<?>[0]));
 	}
 	//?} else {
 	/*@Override
@@ -341,7 +341,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.parent(net.minecraft.data.recipes.RecipeBuilder.ROOT_RECIPE_ADVANCEMENT);
 			}
 		}, aRegistries);
-		return CompletableFuture.allOf(tFutures.toArray(new CompletableFuture[0]));
+		return CompletableFuture.allOf(tFutures.toArray(new CompletableFuture<?>[0]));
 	}
 	*///?}
 
@@ -4511,6 +4511,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
     // pair (the multi-tool face).
     private static final TagKey<Item> DIG_STEEL_PLATES = gregtech6.datagen.GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel");
 
+    /** The key/value Object... plumbing is the upstream style; the tag arm's cast is unchecked by construction. */
+    @SuppressWarnings("unchecked")
     private ShapedRecipeBuilder digToolBuilder(net.minecraft.world.item.Item aResult, String[] aPattern, Object... aKeyValues) {
         ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, aResult);
         tBuilder.pattern(aPattern[0]);
@@ -6136,6 +6138,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 //? if forge {
+	/** The criterion anchor is an Object (tag or item share the gate); the tag arm's cast is unchecked by construction. */
+	@SuppressWarnings("unchecked")
 	private void machineLadderRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
 		java.util.Set<String> tSeen = new java.util.HashSet<>();
 		for (gregapi.oredict.OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
@@ -6199,7 +6203,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 //?} else {
-/*	private void machineLadderRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
+/*	// the criterion anchor is an Object (tag or item share the gate); the tag arm's cast is unchecked by construction
+	@SuppressWarnings("unchecked")
+	private void machineLadderRows(net.minecraft.data.recipes.RecipeOutput aOutput) {
 		java.util.Set<String> tSeen = new java.util.HashSet<>();
 		for (gregapi.oredict.OreDictMaterial tMaterial : gregapi.oredict.MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
 			if (tMaterial == null || tMaterial.mID < 0) continue;
@@ -6464,6 +6470,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 	}
 
+	/** The criterion anchor is an Object (tag or item share the gate); the tag arm's cast is unchecked by construction. */
+	@SuppressWarnings("unchecked")
 	private void toolArg8Row(Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer, ToolArg8Form tForm,
 			OreDictMaterial tMaterial, @javax.annotation.Nullable Item tRubberPlate) {
 		java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();
@@ -6510,6 +6518,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 	}
 
+	// the criterion anchor is an Object (tag or item share the gate); the tag arm's cast is unchecked by construction
+	@SuppressWarnings("unchecked")
 	private void toolArg8Row(net.minecraft.data.recipes.RecipeOutput aOutput, ToolArg8Form tForm,
 			OreDictMaterial tMaterial, @javax.annotation.Nullable Item tRubberPlate) {
 		java.util.Map<Character, net.minecraft.world.item.crafting.Ingredient> tKey = new java.util.LinkedHashMap<>();

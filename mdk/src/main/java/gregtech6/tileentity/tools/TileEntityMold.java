@@ -633,7 +633,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 	public String toolMonkeyWrench(byte aSubSide) {
 		Direction tSub = Direction.from3DDataValue(aSubSide);
 		if (tSub.getAxis() != Direction.Axis.Y) { // SIDES_HORIZONTAL
-			mAutoPullDirections ^= (1 << aSubSide);
+			mAutoPullDirections = (byte) (mAutoPullDirections ^ (1 << aSubSide)); // JLS 15.26.2 compound-assign narrowing, now explicit
 			setChanged();
 			return (mAutoPullDirections & (1 << aSubSide)) != 0 ? "Crucible Auto-Input: ON" : "Crucible Auto-Input: OFF";
 		}

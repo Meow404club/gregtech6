@@ -925,7 +925,8 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	 * capability request that captures the {@link Direction}, invalidated with the BE.
 	 */
 	//? if forge {
-	@SuppressWarnings("unchecked")
+	// the raw 6-slot literal is the generic-array seam; erasure = zero bytecode
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private final LazyOptional<IItemHandler>[] mCoverGatedCaps = new LazyOptional[6];
 	//?} else {
 	/*private final IItemHandler[] mCoverGatedHandlers = new IItemHandler[6]; // (1.21.1) the per-face lazy cache kept — live cover state, cover removal still immediate; no invalidation surface
@@ -966,6 +967,8 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.
 	// The per-face lazy cache keeps the p10 semantics: the wrapper consults the LIVE cover
 	// state, so cover removal still takes effect immediately.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.ItemHandler.BLOCK && aSide != null) {
 			int tIndex = aSide.get3DDataValue();

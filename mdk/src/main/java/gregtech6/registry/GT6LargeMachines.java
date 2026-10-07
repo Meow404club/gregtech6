@@ -1067,6 +1067,8 @@ public final class GT6LargeMachines {
 		//?} else {
 		/*// 21.1 seam member (the kitchen-pot shape): the RegisterCapabilitiesEvent provider
 		// in GT6CapabilityWiring delegates here (registerLargeMachineFaces).
+		// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+		@SuppressWarnings("unchecked")
 		public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 			if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {
 				return (T) new LargeMachineFluidHandler(this, aSide);

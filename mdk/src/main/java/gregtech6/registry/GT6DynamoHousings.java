@@ -108,7 +108,7 @@ public final class GT6DynamoHousings {
 	 * inventory {@code ItemColor}. Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		return DYNAMO_ROWS.stream().map(r -> (Block) BLOCKS_BY_PATH.get(r.path()).get()).toArray(Block[]::new);
+		return DYNAMO_ROWS.stream().map(r -> BLOCKS_BY_PATH.get(r.path()).get()).toArray(Block[]::new);
 	}
 
 	/** The Large Dynamo BET: one controller class over the four variant blocks. */

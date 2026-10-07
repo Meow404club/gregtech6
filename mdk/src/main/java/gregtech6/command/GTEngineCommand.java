@@ -177,7 +177,7 @@ public final class GTEngineCommand {
 					+ ", RU packet size=" + tCrank.mPacketSize + " (negative=counterclockwise DC)"
 					+ ", amount=" + tCrank.mPacketAmount
 					+ ", band " + GTCrankBlockEntity.OUTPUT_SIZE + "/" + GTCrankBlockEntity.OUTPUT_SIZE + "/" + GTCrankBlockEntity.OUTPUT_SIZE
-					+ ", offered=" + tCrank.getEnergyOffered(TD.Energy.RU, (byte) tCrank.getFacing(), GTCrankBlockEntity.OUTPUT_SIZE);
+					+ ", offered=" + tCrank.getEnergyOffered(TD.Energy.RU, tCrank.getFacing(), GTCrankBlockEntity.OUTPUT_SIZE);
 			aSource.sendSuccess(() -> Component.literal(tLine), false);
 			LOGGER.info(tLine);
 			return Command.SINGLE_SUCCESS;

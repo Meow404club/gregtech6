@@ -346,7 +346,7 @@ public class GT6MultiBlockConverterTest extends GTMultiBlocksOfflineTestBase {
 			Direction tFront = Direction.from3DDataValue(tFacing);
 			GTMultiBlockPattern.Cell tFar = cellAt(tPattern, -2 * tFront.getStepX(), -2 * tFront.getStepY(), -2 * tFront.getStepZ());
 			// the far centre cell sits at (1-3)*front = -2*front; its world offset = cell - OFF = -3*front
-			int[] tOffset = tPattern.cellOffset(tFacing, tFar.x, tFar.y, tFar.z);
+			int[] tOffset = GTMultiBlockPattern.cellOffset(tFacing, tFar.x, tFar.y, tFar.z);
 			assertEquals(-3 * tFront.getStepX(), tOffset[0], "facing " + tFacing + " X");
 			assertEquals(-3 * tFront.getStepY(), tOffset[1], "facing " + tFacing + " Y");
 			assertEquals(-3 * tFront.getStepZ(), tOffset[2], "facing " + tFacing + " Z");
@@ -458,9 +458,9 @@ public class GT6MultiBlockConverterTest extends GTMultiBlocksOfflineTestBase {
 		tLevel.mBlockEntities.put(C1, tConverter);
 		GTMultiBlockPattern tPattern = tConverter.getStructurePattern();
 		for (GTMultiBlockPattern.Cell tCell : tPattern.cells()) {
-			BlockPos tPos = C1.offset(tPattern.cellOffset((byte) 2, tCell.x, tCell.y, tCell.z)[0],
-					tPattern.cellOffset((byte) 2, tCell.x, tCell.y, tCell.z)[1],
-					tPattern.cellOffset((byte) 2, tCell.x, tCell.y, tCell.z)[2]);
+			BlockPos tPos = C1.offset(GTMultiBlockPattern.cellOffset((byte) 2, tCell.x, tCell.y, tCell.z)[0],
+					GTMultiBlockPattern.cellOffset((byte) 2, tCell.x, tCell.y, tCell.z)[1],
+					GTMultiBlockPattern.cellOffset((byte) 2, tCell.x, tCell.y, tCell.z)[2]);
 			if (tPos.equals(C1)) continue; // the self-cell
 			placePart(tLevel, tPos);
 		}

@@ -393,7 +393,7 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 		if (tConversions > 0) {
 			mTanks[0].remove(tConversions); // :182
 			if (rng(10) == 0 && mEfficiency > 5000 && mTanks[0].has() && !mDistwMatch.apply(mTanks[0].getFluid().getFluid())) { // :183
-				mEfficiency -= tConversions; // :184
+				mEfficiency = (short) (mEfficiency - tConversions); // :184 (JLS 15.26.2 compound-assign narrowing, now explicit)
 				if (mEfficiency < 5000) mEfficiency = 5000; // :185
 			}
 			// :187 — the steam goes IN; the add clamps at capacity (the W3 ruling: the upstream
@@ -466,7 +466,7 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 				int tMoveable = tOfferAmount, tOriginalTargets = tTargets; // :232
 				for (int i = 0; i < 5; i++) if (tDelegators[i] != null) { // :233
 					if (tTargetAmounts[i] <= tOfferAmount / tOriginalTargets) { // :234 — the small-target sweep
-						tMoveable -= moveSteam(tDelegators[i], tOfferAmount / tOriginalTargets); // :235
+						tMoveable = (int) (tMoveable - moveSteam(tDelegators[i], tOfferAmount / tOriginalTargets)); // :235 (JLS 15.26.2, now explicit)
 						tDelegators[i] = null; // :236
 						if (--tTargets < 2) break; // :237
 					}
@@ -478,7 +478,7 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 					}
 				} else if (tTargets > 1 && tMoveable >= tTargets) { // :245 — the even split of the remainder
 					for (int i = 0; i < 5; i++) if (tDelegators[i] != null) {
-						tMoveable -= moveSteam(tDelegators[i], tMoveable / tTargets); // :247
+						tMoveable = (int) (tMoveable - moveSteam(tDelegators[i], tMoveable / tTargets)); // :247 (JLS 15.26.2, now explicit)
 						if (--tTargets < 1) break; // :248
 					}
 				}
@@ -792,6 +792,8 @@ public class TileEntityLargeBoiler extends TileEntityBase10MultiBlockBase implem
 	// The FRESH per-call side wrapper form is kept: the side is accepted unused — the :380
 	// fillable gate has NO face half on this machine, the intake gating lives on the part
 	// modes upstream and on the door's water-only half here.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.FluidHandler.BLOCK) {
 			return (T) new LargeBoilerFluidHandler();

@@ -177,7 +177,7 @@ public class BarrelSideRulesTest extends GTOfflineTestBase {
 		@Override
 		public FluidStack drain(int aMaxDrain, FluidAction aAction) {
 			if (mContent == null || aMaxDrain <= 0) return FluidStack.EMPTY;
-			int tDrained = (int) Math.min(aMaxDrain, mContent.getAmount());
+			int tDrained = Math.min(aMaxDrain, mContent.getAmount());
 			//? if forge {
 			FluidStack rStack = new FluidStack(mContent, tDrained);
 			//?} else {

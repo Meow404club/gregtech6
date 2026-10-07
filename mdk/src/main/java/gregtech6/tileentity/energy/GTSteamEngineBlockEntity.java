@@ -492,6 +492,8 @@ public class GTSteamEngineBlockEntity extends TileEntityBase03TicksAndSync imple
 	//?} else {
 	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
 	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.FluidHandler.BLOCK) {
 			// the :239 side gate lives HERE — only the back face exposes the fill door

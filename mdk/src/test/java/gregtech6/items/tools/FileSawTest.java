@@ -229,10 +229,10 @@ public class FileSawTest {
 	public void realCraftingChannelKeepsTheSawAndPaysOnePoint() {
 		GTSawItem tSaw = OMComponentFaceTest.probeItem("gt6", "crafting_probe_saw", p -> new GTSawItem(p.durability(512)));
 		ItemStack tInput = new ItemStack(tSaw);
-		tInput.setDamageValue(tSaw.DURABILITY_POINTS - 2);
+		tInput.setDamageValue(GTSawItem.DURABILITY_POINTS - 2);
 		ItemStack tRemaining = craftingChannel(tInput);
 		assertFalse(tRemaining.isEmpty(), "the saw gate must be open at one-below-max (strictly-greater consumes)");
-		assertEquals(tSaw.DURABILITY_POINTS - 2 + GT6FileItem.DAMAGE_PER_CRAFT, tRemaining.getDamageValue());
+		assertEquals(GTSawItem.DURABILITY_POINTS - 2 + GT6FileItem.DAMAGE_PER_CRAFT, tRemaining.getDamageValue());
 	}
 
 

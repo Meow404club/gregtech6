@@ -87,6 +87,7 @@ public class GT6LongDistanceItemPipeBlockEntityTest extends GTOfflineTestBase {
 
 	@BeforeAll
 	static void buildOfflineFixture() {
+		@SuppressWarnings("unchecked")
 		BlockEntityType<GT6LongDistanceItemPipeBlockEntity>[] tHolder = (BlockEntityType<GT6LongDistanceItemPipeBlockEntity>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GT6LongDistanceItemPipeBlockEntity(tHolder[0], aPos, aState), Blocks.STONE).build(null);

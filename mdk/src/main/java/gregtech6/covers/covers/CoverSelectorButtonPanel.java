@@ -66,7 +66,7 @@ public class CoverSelectorButtonPanel extends AbstractCoverAttachmentSelector {
 	public void onCoverLoaded(byte aSide, CoverData aData) {
 		super.onCoverLoaded(aSide, aData);
 		if (aData.mTileEntity instanceof ITileEntitySwitchableMode tSwitchable)
-			tSwitchable.setStateMode((byte) UT6.bind4(aData.mVisuals[aSide] & 15));
+			tSwitchable.setStateMode(UT6.bind4(aData.mVisuals[aSide] & 15));
 	}
 
 	/** Upstream :54-57 — a block update folds the host dial in (blocked hosts do not mirror). */
@@ -87,7 +87,7 @@ public class CoverSelectorButtonPanel extends AbstractCoverAttachmentSelector {
 	public boolean onCoverClickedRight(byte aSide, CoverData aData, Entity aPlayer, byte aSideClicked, float aHitX, float aHitY, float aHitZ) {
 		if (!aData.mStopped && aSide == aSideClicked && aData.mTileEntity instanceof ITileEntitySwitchableMode tSwitchable) {
 			float[] tCoords = facingCoordsClicked(aSideClicked, aHitX, aHitY, aHitZ);
-			byte tMode = (byte) UT6.bind4(((int) (tCoords[0] * 4) % 4) + ((int) (tCoords[1] * 4) % 4) * 4);
+			byte tMode = UT6.bind4(((int) (tCoords[0] * 4) % 4) + ((int) (tCoords[1] * 4) % 4) * 4);
 			if (aData.mTileEntity.isServerSideTE())
 				aData.visual(aSide, (short) ((aData.mVisuals[aSide] & ~15) | UT6.bind4(tSwitchable.setStateMode(tMode))));
 			if (aData.mValues[aSide] > 0) aData.value(aSide, MOMENTARY_TICKS);

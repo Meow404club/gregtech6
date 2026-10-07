@@ -80,7 +80,7 @@ public class GT6JuicerRegistrationTest {
 				(aPos, aState) -> new GT6JuicerBlockEntity(tHolder[0], aPos, aState), Blocks.STONE).build(null);
 		assertTrue(tHolder[0].isValid(Blocks.STONE.defaultBlockState()), "the offline BET mounts the fixture block");
 		assertInstanceOf(GT6JuicerBlockEntity.class, tHolder[0].create(POS, Blocks.STONE.defaultBlockState()));
-		assertEquals("juicer", ((GT6JuicerBlockEntity)tHolder[0].create(POS, Blocks.STONE.defaultBlockState())).getTileEntityName());
+		assertEquals("juicer", (tHolder[0].create(POS, Blocks.STONE.defaultBlockState())).getTileEntityName());
 
 		if (BuiltInRegistries.BLOCK.containsKey(JUICER_ID)) {
 			// THE id686 guard — this JVM's registries are the real mod runtime view

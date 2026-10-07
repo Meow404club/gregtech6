@@ -419,7 +419,11 @@ public class GTMultiBlockPreviewRendererTest extends GTOfflineRenderTestBase {
 		//?} else {
 		/*public VertexConsumer addVertex(float pX, float pY, float pZ) { // 21.1: the double variant is gone, the float triple is the abstract
 		*///?}
-			mX = (float)pX; mY = (float)pY; mZ = (float)pZ;
+			//? if forge {
+			mX = (float)pX; mY = (float)pY; mZ = (float)pZ; // the double leg narrows
+			//?} else {
+			/*mX = pX; mY = pY; mZ = pZ; // the 21.1 float triple needs no cast (redundant-cast lint)
+			*///?}
 			return this;
 		}
 
