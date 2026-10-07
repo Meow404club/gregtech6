@@ -44,7 +44,9 @@ import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
 import gregtech6.recipes.tree.MaterialTreeLayout;
 import gregtech6.recipes.tree.MaterialTreeLayout.EdgeLayout;
+import gregtech6.recipes.tree.MaterialTreeLayout.Pose;
 import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
+import gregtech6.recipes.tree.MaterialTreeViewport;
 import gregtech6.recipes.tree.MaterialTreeWorkstations;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
@@ -488,6 +490,56 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 			assertTrue(tSlots.stream().anyMatch(s -> s[0] == 1 && s[1] == tX && s[2] == tY),
 					"byproduct output slot " + b + " at (" + tX + "," + tY + "), got " + tSlots);
 		}
+	}
+
+	// ------------------------------------------------------------------
+	// the unified pose primitive (task mattree-item-zoom-pose, the zoom-2x acceptance)
+	// ------------------------------------------------------------------
+
+	private static final double EPSILON = 1e-9;
+
+	@Test
+	void posePrimitiveFollowsTheViewport() {
+		// the pose is the ONE translate+scale constructor both legs consume: origin = apply, factor = live scale
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		Pose tIdentity = MaterialTreeLayout.pose(tView, 4, 16);
+		assertEquals(4.0, tIdentity.x(), EPSILON);
+		assertEquals(16.0, tIdentity.y(), EPSILON);
+		assertEquals(1.0, tIdentity.scale(), EPSILON, "the fit pose's pose factor is 1");
+		tView.zoomAt(101, 103, 2); // the canvas-centre anchor → exactly 2x
+		Pose tZoomed = MaterialTreeLayout.pose(tView, 33.5, 77.25);
+		assertEquals(tView.apply(33.5, 77.25).x(), tZoomed.x(), EPSILON, "the origin is the applied point");
+		assertEquals(tView.apply(33.5, 77.25).y(), tZoomed.y(), EPSILON);
+		assertEquals(2.0, tZoomed.scale(), EPSILON, "the factor is the live scale, not a frozen constant");
+	}
+
+	@Test
+	void zoom2xIconCentresInTheScaledSlotBox() {
+		// the acceptance pin (zoom 2x 图标居中缩放槽盒无错位): the icon — the +1 inset, 16 px
+		// at the pose scale — sits EXACTLY on the centre of the 18x18 box the corner-pair fill
+		// draws, at every scale. 旧钉迁移声明: the former translate-only 16 px icon against the
+		// 18×scale box (the symptom23 ③ 错位) died with mattree-item-zoom-pose.
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		tView.zoomAt(101, 103, 2);
+		assertEquals(2.0, tView.scale(), EPSILON);
+		double tSlotX = 4, tSlotY = 16;
+		Pose tIcon = MaterialTreeLayout.pose(tView, tSlotX + 1, tSlotY + 1); // the screen drawItem inset
+		double tIconCentreX = tIcon.x() + MaterialTreeLayout.MACHINE / 2.0 * tIcon.scale();
+		double tIconCentreY = tIcon.y() + MaterialTreeLayout.MACHINE / 2.0 * tIcon.scale();
+		MaterialTreeViewport.Point tBoxA = tView.apply(tSlotX, tSlotY);
+		MaterialTreeViewport.Point tBoxB = tView.apply(tSlotX + MaterialTreeLayout.SLOT, tSlotY + MaterialTreeLayout.SLOT);
+		assertEquals((tBoxA.x() + tBoxB.x()) / 2.0, tIconCentreX, EPSILON, "the icon centre is the scaled box centre");
+		assertEquals((tBoxA.y() + tBoxB.y()) / 2.0, tIconCentreY, EPSILON, "the icon centre is the scaled box centre");
+		// the scaled icon's extent stays inside the drawn box (16*2 < 18*2) — grown WITH the box, not past it
+		assertTrue(tIcon.scale() * MaterialTreeLayout.MACHINE < tBoxB.x() - tBoxA.x());
+		// the same centring holds at the 4x ceiling (the strip + lands ON the limit)
+		tView.zoomAt(101, 103, 2);
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tView.scale(), EPSILON);
+		Pose tCapped = MaterialTreeLayout.pose(tView, tSlotX + 1, tSlotY + 1);
+		MaterialTreeViewport.Point tCappedA = tView.apply(tSlotX, tSlotY);
+		MaterialTreeViewport.Point tCappedB = tView.apply(tSlotX + MaterialTreeLayout.SLOT, tSlotY + MaterialTreeLayout.SLOT);
+		assertEquals((tCappedA.x() + tCappedB.x()) / 2.0, tCapped.x() + 8 * tCapped.scale(), EPSILON);
+		assertEquals((tCappedA.y() + tCappedB.y()) / 2.0, tCapped.y() + 8 * tCapped.scale(), EPSILON);
 	}
 
 	// ------------------------------------------------------------------

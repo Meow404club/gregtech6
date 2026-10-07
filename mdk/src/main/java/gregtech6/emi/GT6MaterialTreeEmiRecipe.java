@@ -55,6 +55,16 @@ import gregtech6.registry.GTMaterialItems;
  * rides a band BELOW the canvas ({@link #CONTROL_STRIP_H}) — the recipe height is the EMI
  * page-size source (RecipeDisplay.height = getDisplayHeight), and EMI stacks each recipe
  * at its own height, so the extra 20px cost nothing.
+ *
+ * <p><b>The icon-scale audit</b> (task mattree-item-zoom-pose): the page's labels ride the
+ * unified {@link MaterialTreeLayout#pose} primitive at render time and the
+ * {@link GT6MaterialTreeTransformSlot} bounds pan/zoom every slot face with the viewport —
+ * but EMI 1.1.24's {@code SlotWidget.drawStack} CENTRES a 16 px icon inside the transformed
+ * bounds without scaling it (javap emi-forge-1.1.24: {@code (width - 16) / 2} then
+ * {@code EmiIngredient.render}), so a zoomed slot box grows while its icon stays 16 px
+ * (centred, so no 错位 — a scale lag only). The sync fix (a {@code drawStack} pose override)
+ * rides the R3 nav-unify card; the bounds math stays pinned in
+ * {@code GT6MaterialTreeNavTest#transformSlotBoundsFollowTheViewport}.
  */
 public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 
@@ -163,9 +173,8 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 			for (Rect tRect : tWires) fillTransformed(aGuiGraphics, tView, tRect, MaterialTreeLayout.WIRE_INK);
 			for (Rect tRect : tArrows) fillTransformed(aGuiGraphics, tView, tRect, MaterialTreeLayout.ARROW_INK);
 			for (Label tLabel : tLabels) {
-				MaterialTreeViewport.Point tPoint = tView.apply(tLabel.x(), tLabel.y());
-				aGuiGraphics.drawString(Minecraft.getInstance().font, tLabel.text(),
-						(int)Math.round(tPoint.x()), (int)Math.round(tPoint.y()), tLabel.color(), false);
+				GT6MaterialTreeScreen.runAtPose(aGuiGraphics, MaterialTreeLayout.pose(tView, tLabel.x(), tLabel.y()),
+						() -> aGuiGraphics.drawString(Minecraft.getInstance().font, tLabel.text(), 0, 0, tLabel.color(), false));
 			}
 		});
 		for (Node tNode : mDisplay.nodes()) {

@@ -92,6 +92,28 @@ public final class MaterialTreeLayout {
 	public record Rect(int x, int y, int w, int h) {}
 
 	/**
+	 * The unified icon/label pose (task mattree-item-zoom-pose, the 三腿统一变换原语 clause):
+	 * the translate+scale pair a GuiGraphics pose stack consumes, so an icon or a label
+	 * renders at the SAME scale the rect fills do — the origin is the viewport's apply, the
+	 * factor its live scale. Pure ({@code java.lang} only, the tree package's viewer-neutrality
+	 * holds); the GuiGraphics mounting is the consumers' shared
+	 * {@code GT6MaterialTreeScreen.runAtPose} — 1.20.1 GuiGraphics renderItem rides the pose
+	 * stack itself (tmp/vanilla-1.20.1 GuiGraphics.java:480-485) and drawString hands it to
+	 * drawInBatch (:268).
+	 */
+	public record Pose(double x, double y, double scale) {}
+
+	/**
+	 * The pose of one tree point through the viewport — the ONE constructor of icon/label
+	 * transforms: callers never assemble a translate+scale pair by hand (the 禁腿内私有数学
+	 * redline), so a scaled icon cannot drift against the box fills that share its corners.
+	 */
+	public static Pose pose(MaterialTreeViewport aView, double aTreeX, double aTreeY) {
+		MaterialTreeViewport.Point tOrigin = aView.apply(aTreeX, aTreeY);
+		return new Pose(tOrigin.x(), tOrigin.y(), aView.scale());
+	}
+
+	/**
 	 * One edge's render plan, aligned by index with {@link MaterialTreeDisplay#edges()}:
 	 * {@code machine} is the 16x16 bare-icon box (null on the degraded face; both viewers
 	 * mount the stack background-free ON it — JEI a RENDER_ONLY slot with no background, EMI
