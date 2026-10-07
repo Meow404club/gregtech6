@@ -71,6 +71,25 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
     private static final List<float[]> FAUCET_BOXES =
             java.util.Arrays.asList(gregtech6.tileentity.tools.TileEntityFaucet.MODEL_BOXES);
 
+    /**
+     * The nozzle two-pass stack (task material-mc-f-attachment-rows), the north-mount
+     * projection of MultiTileEntityFluidNozzle setBlockBounds2 :165-183 verbatim (px,
+     * PX_N[i]=16-i): pass-0 (PX_P[6],PX_P[3],PX_P[1])-(PX_N[6],PX_N[9],PX_N[14]) =
+     * (6,3,1)-(10,7,2), pass-1 (PX_P[7],PX_P[4],PX_P[0])-(PX_N[7],PX_N[10],PX_N[10]) =
+     * (7,4,0)-(9,6,6).
+     */
+    private static final List<float[]> NOZZLE_BOXES = List.of(
+            new float[] {6, 3, 1, 10, 7, 2}, new float[] {7, 4, 0, 9, 6, 6});
+
+    /**
+     * The cap-nozzle two-pass stack, MultiTileEntityFluidCapNozzle setBlockBounds2
+     * :121-139 verbatim (px): pass-0 (PX_P[6],PX_P[3],PX_P[1])-(PX_N[6],PX_N[9],
+     * PX_N[10]) = (6,3,1)-(10,7,6), pass-1 (PX_P[7],PX_P[4],PX_P[0])-(PX_N[7],
+     * PX_N[10],PX_N[14]) = (7,4,0)-(9,6,2).
+     */
+    private static final List<float[]> CAP_NOZZLE_BOXES = List.of(
+            new float[] {6, 3, 1, 10, 7, 6}, new float[] {7, 4, 0, 9, 6, 2});
+
     /** The upstream overlay side borrow (tap == funnel, byte-identical — assets/README.md). */
     private static final String OVERLAY_SHA256 =
             "02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d";
@@ -174,6 +193,16 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
         };
     }
 
+    /** The generated model-name tail per family (mirrors GT6BlockStates.attachmentModelName). */
+    private static String modelTail(gregtech6.block.attachment.GTAttachmentSmallBlock.Family aFamily) {
+        return switch (aFamily) {
+            case TAP -> "tap";
+            case FUNNEL -> "funnel";
+            case NOZZLE -> "nozzle";
+            case CAP_NOZZLE -> "cap_nozzle";
+        };
+    }
+
     /** The colored+overlay pair plan: verbatim boxes, texture pair, cutout, tint seat. */
     private void assertStackModel(String aModelPath, String aTexture, List<float[]> aBoxes) throws Exception {
         JsonObject tModel = json("assets/gt6/models/" + aModelPath + ".json");
@@ -187,8 +216,10 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
         assertEquals("#all", tTex.get("particle").getAsString(), aModelPath + ": the particle rides the family texture");
 
         var tElements = tModel.getAsJsonArray("elements");
-        assertEquals(6, tElements.size(), aModelPath + ": the three-pass stack + the three overlay twins");
-        for (int i = 0; i < 3; i++) {
+        // one colored element + one overlay twin per family render pass (the tap/funnel
+        // three-pass stack, the nozzle pair's two-pass one — task material-mc-f-attachment-rows)
+        assertEquals(2 * aBoxes.size(), tElements.size(), aModelPath + ": the per-pass stack + the overlay twins");
+        for (int i = 0; i < aBoxes.size(); i++) {
             assertColoredElement(tModel, aModelPath, 2 * i, aBoxes.get(i));
             assertOverlayElement(tModel, aModelPath, 2 * i + 1, aBoxes.get(i));
         }
@@ -196,10 +227,12 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
 
     @Test
     public void attachmentModelsAreTheUpstreamThreePassStacks() throws Exception {
-        assertEquals(12, GT6Attachments.ROWS.size(), "the attachment census stays 12");
+        assertEquals(24, GT6Attachments.ROWS.size(), "the attachment census stays 24 (12 tap/funnel + 12 nozzle pair, task material-mc-f-attachment-rows)");
         assertStackModel("block/attachment_tap", "tap", TAP_BOXES);
         assertStackModel("block/attachment_funnel", "funnel", FUNNEL_BOXES);
         assertStackModel("block/attachment_funnel_down", "funnel", FUNNEL_DOWN_BOXES);
+        assertStackModel("block/attachment_nozzle", "nozzle", NOZZLE_BOXES);
+        assertStackModel("block/attachment_cap_nozzle", "cap_nozzle", CAP_NOZZLE_BOXES);
     }
 
     /** The borrowed overlay art is byte-identical upstream (the sha ledger, assets/README.md). */
@@ -207,25 +240,28 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
     public void overlayTexturesAreTheUpstreamBorrows() throws Exception {
         assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/tap_overlay.png"), "tap_overlay sha256");
         assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/funnel_overlay.png"), "funnel_overlay sha256");
+        assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/nozzle_overlay.png"), "nozzle_overlay sha256");
+        assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/cap_nozzle_overlay.png"), "cap_nozzle_overlay sha256");
     }
 
     @Test
     public void attachmentBlockstatesRotateTheStackPerFacing() throws Exception {
         // the addSensors horizontal band: N=0, S=180, W=270, E=90; the funnel's DOWN
-        // mount rides the dedicated under-host model, the tap's DOWN slot (family
-        // invalid, unreachable) and the UP slots reuse the horizontal model
+        // mount rides the dedicated under-host model, every OTHER family's DOWN slot
+        // (family invalid, unreachable — the tap arm, now shared by the horizontal-only
+        // nozzle pair) and the UP slots reuse the horizontal model
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             JsonObject tState = json("assets/gt6/blockstates/" + tRow.path() + ".json");
             JsonObject tVariants = tState.getAsJsonObject("variants");
             assertEquals(6, tVariants.size(), tRow.path() + ": exactly the six FACING variants");
-            boolean tTap = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP;
-            String tHorizontalModel = "gt6:block/attachment_" + (tTap ? "tap" : "funnel");
+            boolean tFunnel = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.FUNNEL;
+            String tHorizontalModel = "gt6:block/attachment_" + modelTail(tRow.family());
             for (var tEntry : tVariants.entrySet()) {
                 JsonElement tValue = tEntry.getValue();
                 JsonObject tVariant = tValue.isJsonArray() ? tValue.getAsJsonArray().get(0).getAsJsonObject()
                         : tValue.getAsJsonObject();
                 String tFacing = tEntry.getKey().substring("facing=".length());
-                if (tTap || !tFacing.equals("down")) {
+                if (!tFunnel || !tFacing.equals("down")) {
                     assertEquals(tHorizontalModel, tVariant.get("model").getAsString(),
                             tRow.path() + ": " + tFacing + " model");
                 } else {

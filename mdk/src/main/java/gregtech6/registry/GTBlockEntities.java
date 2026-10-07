@@ -176,6 +176,26 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("funnel", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.attachment.GTFunnelBlockEntity::new, GT6Attachments.funnelBlockArray()).build(null));
 
+	/**
+	 * The fluid-nozzle BET (task material-mc-f-attachment-rows — the Loader :2122-2127
+	 * rows, the TAP_BE shape over {@link GT6Attachments#nozzleBlockArray()}). Registry
+	 * path "nozzle" mirrors GTNozzleBlockEntity#getTileEntityName; the activation
+	 * chains are the declared nozzle-function pool cut (GTNozzleBlockEntity doc).
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.attachment.GTNozzleBlockEntity>> NOZZLE_BE =
+			BLOCK_ENTITY_TYPES.register("nozzle", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.attachment.GTNozzleBlockEntity::new, GT6Attachments.nozzleBlockArray()).build(null));
+
+	/**
+	 * The fluid cap-nozzle BET — the Loader :2129-2134 rows over the SAME
+	 * {@link gregtech6.tileentity.attachment.GTNozzleBlockEntity} class (the
+	 * ADR-P3-1 shared-class-multi-mount; the upstream pair differs only in the
+	 * declared-cut activation chain, not in the carrier).
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.attachment.GTNozzleBlockEntity>> CAP_NOZZLE_BE =
+			BLOCK_ENTITY_TYPES.register("cap_nozzle", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.attachment.GTNozzleBlockEntity::new, GT6Attachments.capNozzleBlockArray()).build(null));
+
 	// -------------------------------------------------------------------------
 	// steam engine (task engine-steam) — the kinetics family's second BET row
 	// -------------------------------------------------------------------------

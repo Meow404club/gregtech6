@@ -859,6 +859,30 @@ mRGBa)` multiply — MultiTileEntityFluidTap.java:204) and each colored element 
 twinned by an overlay-pass element over the cutout layer (the addConverterModel
 0.01 decal grammar), which retires this entry's old "renders UN-TINTED ... rides
 the render pool card" deviation.
+
+Fluid Nozzle + Fluid Cap Nozzle block textures, task material-mc-f-attachment-rows:
+the 4 PNGs under `gt6/textures/block/` come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/tools/` (the
+`MultiTileEntityFluidNozzle.java:156-164` / `MultiTileEntityFluidCapNozzle.java:125-133`
+`machines/tools/<nozzle|capnozzle>/colored|overlay` icon stack), byte-identical to
+upstream, sha256 verified:
+
+- `nozzle.png`             `66ca0f8a0a04c2ea099a2a48dc8487e898caf9eb5ac438bc628c27b8640b48d4`
+  (upstream `machines/tools/nozzle/colored/side.png`)
+- `cap_nozzle.png`         `b79bcddec1b0f4a289a0b1670ce880665b633d9f3abe2f16fd012229061c51ff`
+  (upstream `machines/tools/capnozzle/colored/side.png`)
+- `nozzle_overlay.png`     `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `machines/tools/nozzle/overlay/side.png` — byte-identical to the tap/funnel
+  overlay; all four attachment families share the one overlay art)
+- `cap_nozzle_overlay.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `machines/tools/capnozzle/overlay/side.png` — the same shared overlay bytes)
+
+Shared per family: all 6 nozzle rows' model JSONs reference the one `nozzle.png` +
+`nozzle_overlay.png` pair, all 6 cap-nozzle rows the `cap_nozzle.png` pair (the
+tap/funnel family form); the colored layer is tinted with the row material's
+mRGBaSolid (`GT6AttachmentTintListener` — the Steel rows fold ANY.Steel → MT.Steel,
+the boiler-fold convention).
+
 Steam Engine family textures, task engine-steam: the 3 PNGs under
 `gt6/textures/block/steam_engine_{front,back,side}.png` come from upstream
 `src/main/resources/assets/gregtech/textures/blocks/machines/engines/kinetic_steam/colored/`

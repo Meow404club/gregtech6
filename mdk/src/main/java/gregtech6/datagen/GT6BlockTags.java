@@ -451,8 +451,13 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			if (!tRow.woodHost() || !tRow.registers()) continue; // metals → pickaxe above
 			tAxe.add(gregtech6.registry.GT6Cells.BLOCKS_BY_PATH.get(tRow.path()).get());
 		}
-		tAxe.add(gregtech6.registry.GT6Attachments.BLOCKS_BY_PATH.get("tap_plastic").get());
-		tAxe.add(gregtech6.registry.GT6Attachments.BLOCKS_BY_PATH.get("funnel_plastic").get());
+		// (review-seat rebase union, task material-mc-f-attachment-rows): the literal plastic
+		// pair walks the ROWS' _plastic family — the nozzle pair's plastic twin
+		// (nozzle_plastic/cap_nozzle_plastic, the :2125/:2132 aUtilWood rows) joins the same
+		// axe seat the moment the family grew to 24 rows.
+		for (gregtech6.registry.GT6Attachments.AttachmentRow tRow : gregtech6.registry.GT6Attachments.ROWS) {
+			if (tRow.path().endsWith("_plastic")) tAxe.add(gregtech6.registry.GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get());
+		}
 		tAxe.add(gregtech6.registry.GT6Placeables.GREG_O_LANTERN.get());
 		tAxe.add(gregtech6.registry.GT6Placeables.PLACED_STICK.get());
 		tAxe.add(gregtech6.registry.GT6Kitchen.BATHING_POT_WOOD.get());

@@ -243,7 +243,11 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 5907;
+	private static final int ZH_KEY_FLOOR = 5910;
+	// +3 task material-mc-f-attachment-rows (review-seat rebase union): the nozzle pair
+	// compose templates gt6.row.{nozzle,capnozzle}.display + the gt6.row.attachment.mat.steel
+	// small-unit word, both locales — dump-verbatim zh %s喷嘴/%s有盖喷嘴/钢 (the 12 new rows
+	// compose at runtime over the EXISTING five attachment words). 5907 + 3.
 	// +48 review-seat rebase seam, task faucet-material-rows: the 39-row faucet walk
 	// (gt6.row.faucet.mat.* over GT6Molds.FAUCET_ROWS + the mold/crucible band restructure)
 	// rides the zh face; measured 5907 on the rebased tree (main measured 5859). The
@@ -258,6 +262,8 @@ public class GT6LangParityTest {
 	// append chain is BOUNDED per the 2026-10-04 ruling
 	// (decisions.2026-10-04-ratchet-comment-bounded): keep the latest note only, the note
 	// history lives in `git log -L` on this line.
+	// (prior note: +13 task material-mc-b-storage-mass-shelf — the metal shelf/crate
+	// compose templates, measured 5859; history in `git log -L`.)
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
 	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;
@@ -1259,7 +1265,7 @@ public class GT6LangParityTest {
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(2090, tExemptTotal, "the derived composed-name exemption census (+113 task material-mc-c-crucible-rows on the review-seat rebase union: the crucible domain joins the composed face — +35 smeltery carriers (Smeltery 4→39) + +78 basin/crossing carriers (the Basin/Crossing full-family ROWS walks) over the 39 shared gt6.row.mat.* words, 1925 + 113; the checked census stays put) (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
+		assertEquals(2102, tExemptTotal, "the derived composed-name exemption census (+12 task material-mc-f-attachment-rows (review-seat rebase union): the nozzle pair joins the GT6Attachments.ROWS exemption walk, 12 -> 24 rows — GTAttachmentSmallBlock.getName composes over the gt6.row.{nozzle,capnozzle}.display templates + the attachment-namespace small-unit words incl. the new .steel) (+113 task material-mc-c-crucible-rows on the review-seat rebase union: the crucible domain joins the composed face — +35 smeltery carriers (Smeltery 4→39) + +78 basin/crossing carriers (the Basin/Crossing full-family ROWS walks) over the 39 shared gt6.row.mat.* words, 1925 + 113; the checked census stays put) (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
 		+ " (+52 task material-mc-d-powertrain-rows: the four powertrain ladders join the tExempt walk — PowertrainBlock.getName composes over the four gt6.row.{rotation_engine,transformer_gearbox,custom_gearbox,steam_turbine}.display templates + the shared gt6.row.mat.* words, 2038 + 52)"
 			+ " (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
 			+ " 280 <mat>_fluid_pipe_<size> carriers compose over the seven gt6.row.fluid_pipe.display.*"

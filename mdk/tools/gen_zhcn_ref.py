@@ -477,6 +477,12 @@ HAND_TRANSLATIONS = {
     # Loader_MultiTileEntities.java:1294-1309, Kinetic_T[1..4] MT.java:3690)
     "gt6.row.tap.display": ("%s龙头", "hand"),
     "gt6.row.funnel.display": ("%s漏斗", "hand"),
+    # task material-mc-f-attachment-rows — the nozzle pair compose templates (dump
+    # :13567 钢喷嘴 / :13079 钢有盖喷嘴 — the 材质词+后缀 compose, no space) + the
+    # Steel small-unit word (the Loader :2123/:2130 "Steel Nozzle" row word)
+    "gt6.row.nozzle.display": ("%s喷嘴", "hand"),
+    "gt6.row.capnozzle.display": ("%s有盖喷嘴", "hand"),
+    "gt6.row.attachment.mat.steel": ("钢", "hand"),
     "gt6.row.mat.wood_treated": ("木制", "hand"),
     "gt6.row.mat.bronze": ("青铜", "hand"),
     "gt6.row.mat.brass": ("黄铜", "hand"),

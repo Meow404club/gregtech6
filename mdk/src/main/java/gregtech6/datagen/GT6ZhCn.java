@@ -1987,9 +1987,13 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_ENERGY);
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_CAPACITY);
-		// attachments: the two family templates + the attachment material words
+		// attachments: the four family templates + the attachment material words
 		addDirect(gregtech6.registry.GT6Attachments.TAP_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6Attachments.FUNNEL_DISPLAY_KEY);
+		// task material-mc-f-attachment-rows — the nozzle pair templates (the dump faces
+		// verbatim: 钢喷嘴 :13567 / 钢有盖喷嘴 :13079 — the compose is 材质词+后缀, no space)
+		addDirect(gregtech6.registry.GT6Attachments.NOZZLE_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Attachments.CAP_NOZZLE_DISPLAY_KEY);
 		for (gregtech6.registry.GT6Attachments.AttachmentRow tRow : gregtech6.registry.GT6Attachments.ROWS) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Attachments.matUnitKeyOf(tRow));
 		}
