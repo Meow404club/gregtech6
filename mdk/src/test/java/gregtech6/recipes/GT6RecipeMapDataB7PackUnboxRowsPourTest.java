@@ -288,6 +288,13 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 		Set<String> tItemUniverse = new HashSet<>();
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tItemUniverse.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) tItemUniverse.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
+		// task planks-blockification — the plank prefix items retired; the plank face is the
+		// GT6WoodDict BlockItem rows (the ONE plank authority, the GT6TreeBlocks cube family),
+		// so the 17 gt6 family ids join the universe (the unboxinator plank rows pour onto it;
+		// this universe carries BARE paths — the gt6: prefix is stripped at the check below)
+		for (gregtech6.registry.GT6WoodDict.PlankEntry tPlank : gregtech6.registry.GT6WoodDict.GT6_ROWS) {
+			tItemUniverse.add(tPlank.id());
+		}
 		Set<String> tMissing = new HashSet<>();
 		int tFluidSlots = 0;
 		// the seat14 rebase roll: boxinator now also carries main's seated robotics-chain rows

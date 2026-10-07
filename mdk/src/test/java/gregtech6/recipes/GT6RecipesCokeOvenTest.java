@@ -74,7 +74,13 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 		// VANILLA-NAMESPACE ITEMS ONLY — the wrap-around aliasing is sensitive to the pool
 		// SIZE, so a probe-registering test class (FileSawTest p24 / HammerWrenchTest p25)
 		// would silently re-alias the universe; the minecraft-namespace filter pins the
-		// pool to the frozen vanilla item set (the ShCL stabilization comment).
+		// pool to the frozen vanilla item set (the ShCL stabilization comment). The
+		// empty-stack skip runs on ALL THREE draws (planks-retired-tail-hygiene): the
+		// planks-blockification item retirement removed the 130 OP.plank pairs from the
+		// items walk and shifted the wraparound onto minecraft:air for the OAK beam draw —
+		// the un-guarded beam loop then fed an empty stack into the :200 oak_beam row, the
+		// Recipe ctor trimmed it, and the addRecipe ghost guard silently dropped the row
+		// (the 47→46/38→37 red pair). Same guard as the items walk, all draws.
 		java.util.List<Item> tPool = net.minecraft.core.registries.BuiltInRegistries.ITEM.stream()
 				.filter(t -> "minecraft".equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(t).getNamespace()))
 				.filter(t -> new ItemStack(t, 1).getMaxStackSize() == 64) // 64-stack only: new ItemStack(item, N>max) silently clamps and breaks the parallel/count math (the ItemStack no-arg form is leg-agnostic; Item.getMaxStackSize takes a stack on 21.1)
@@ -91,10 +97,14 @@ class GT6RecipesCokeOvenTest extends GTRecipesOfflineTestBase {
 			SYNTHETIC_ITEMS.put(tPair, tItem);
 		}
 		for (PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) { // the p8 block universe
-			SYNTHETIC_ITEMS.putIfAbsent(tPair, tPool.get(tNext++ % tPool.size()));
+			Item tItem;
+			do {tItem = tPool.get(tNext++ % tPool.size());} while (new ItemStack(tItem, 1).isEmpty());
+			SYNTHETIC_ITEMS.putIfAbsent(tPair, tItem);
 		}
 		for (GT6BeamKind tBeam : GT6BeamKind.values()) { // task beam-consume-increment: the beam universe
-			SYNTHETIC_BEAMS.put(tBeam, tPool.get(tNext++ % tPool.size()));
+			Item tItem;
+			do {tItem = tPool.get(tNext++ % tPool.size());} while (new ItemStack(tItem, 1).isEmpty());
+			SYNTHETIC_BEAMS.put(tBeam, tItem);
 		}
 		sDefaultOutputResolver = GT6RecipesCokeOven.sOutputItemResolver;
 		sDefaultInputResolver = GT6RecipesCokeOven.sInputItemResolver;

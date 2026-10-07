@@ -218,6 +218,12 @@ public class GT6RecipeMapDataB1RowsPourTest extends GTRecipesOfflineTestBase {
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialBlocks.registrationOrder()) {
 			tUniverse.add("gt6:" + gregtech6.registry.GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
+		// task planks-blockification — the plank prefix items retired; the plank face is the
+		// GT6WoodDict BlockItem rows (the ONE plank authority, the GT6TreeBlocks cube family),
+		// so the 17 gt6 family ids join the universe (the unboxinator plank rows pour onto it)
+		for (gregtech6.registry.GT6WoodDict.PlankEntry tPlank : gregtech6.registry.GT6WoodDict.GT6_ROWS) {
+			tUniverse.add("gt6:" + tPlank.id());
+		}
 		for (gregtech6.registry.GT6Robotics.RobotRow tRow : gregtech6.registry.GT6Robotics.ROWS) {
 			tUniverse.add("gt6:" + tRow.id()); // task robotics-chain — the 60 plain-item faces the tip rows walk (the vanilla-alias items convention: the universe = every registered carrier the shipped rows reference)
 		}

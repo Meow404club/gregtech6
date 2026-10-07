@@ -431,6 +431,12 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 		for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) {
 			tUniverse.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
+		// task planks-blockification — the plank prefix items retired; the plank face is the
+		// GT6WoodDict BlockItem rows (the ONE plank authority, the GT6TreeBlocks cube family),
+		// so the 17 gt6 family ids join the universe (the unboxinator plank rows pour onto it)
+		for (gregtech6.registry.GT6WoodDict.PlankEntry tPlank : gregtech6.registry.GT6WoodDict.GT6_ROWS) {
+			tUniverse.add("gt6:" + tPlank.id());
+		}
 		// the flower band items are plain BlockItems, not material-prefix ids (the b4 BlockFlowers rows)
 		for (var tFlower : gregtech6.registry.GT6SurfaceBlocks.FLOWER_ITEMS) {
 			tUniverse.add("gt6:" + tFlower.getId().getPath());
