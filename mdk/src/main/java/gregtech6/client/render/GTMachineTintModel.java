@@ -348,6 +348,16 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// layer through its own tintindex-0 seat). The colour resolves through the
 		// GT6ChestBlock.materialOf carrier (the GT6StorageBlock dispatch shape).
 		for (Block tBlock : gregtech6.registry.GT6Chests.blockArray()) wrapStates(tBlock, aEvent);
+		// task block-family-32xxx-port — the 32xxx domain joins the baked-tint domain: the
+		// 60 charging-locker rows (Loader :139 NBT_MATERIAL over the metalset walk, the
+		// tint through the GT6ChargingLockerBlock row carrier), the single sap bag (:2221
+		// MT.Leather) and the single plant pot (:2229 MT.Ceramic) — the borrowed grayscale
+		// colored bodies are the tintindex-0 seats (the storageModel/sapBag/plantPot
+		// datagen forms), the overlay/overlay_full decals untinted (the P22 contract; the
+		// upstream passes MultiTileEntityLockerCharging :65 / SapBag :133 / PlantPot :76)
+		for (Block tBlock : gregtech6.registry.GT6ChargingLockers.blockArray()) wrapStates(tBlock, aEvent);
+		wrapStates(gregtech6.registry.GT6MiscToolBlocks.SAP_BAG_BLOCK.get(), aEvent);
+		wrapStates(gregtech6.registry.GT6MiscToolBlocks.PLANT_POT_BLOCK.get(), aEvent);
 	}
 
 	/**
@@ -386,6 +396,25 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (var tHopper : gregtech6.registry.GT6Hoppers.ITEMS_BY_PATH.values()) tItems.add(tHopper.get());
 		tItems.add(gregtech6.registry.GT6Grindstones.GRINDSTONE_ITEM.get());
 		tItems.add(gregtech6.registry.GT6SiftingTables.SIFTING_TABLE_ITEM.get());
+		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(Item[]::new));
+	}
+
+	/**
+	 * The 32xxx-domain paint tint, the INVENTORY half (task block-family-32xxx-port): the
+	 * 60 charging-locker BlockItems plus the sap bag and plant pot ride the shared
+	 * {@link GTItemPaintTint} lambda through the combined
+	 * {@code GTMachinePaintTint.tintMaterialOf} dispatch — the creative-tab face (a
+	 * BlockItem is NOT coloured by any baked world tint, ItemColors.java:25-93). The
+	 * unpainted stacks resolve the row materials (the row/BE carriers, the
+	 * MultiTileEntityClassContainer.java:51 derived-NBT_COLOR chain), a painted stack
+	 * still wins through the NBT pair.
+	 */
+	@SubscribeEvent
+	public static void onRegister32xxxPaintItemColors(RegisterColorHandlersEvent.Item aEvent) {
+		java.util.List<Item> tItems = new ArrayList<>();
+		for (var tLocker : gregtech6.registry.GT6ChargingLockers.ITEMS_BY_PATH.values()) tItems.add(tLocker.get());
+		tItems.add(gregtech6.registry.GT6MiscToolBlocks.SAP_BAG_ITEM.get());
+		tItems.add(gregtech6.registry.GT6MiscToolBlocks.PLANT_POT_ITEM.get());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tItems.toArray(Item[]::new));
 	}
 

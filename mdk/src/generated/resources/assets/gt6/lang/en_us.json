@@ -393,6 +393,7 @@
   "block.gt6.placed_rock": "Rock",
   "block.gt6.placed_scrap": "Scrap",
   "block.gt6.placed_stick": "Stick",
+  "block.gt6.plant_pot": "Universal Plant Pot",
   "block.gt6.playercounter": "Player Counter Sensor",
   "block.gt6.porcelain_cup": "Porcelain Cup",
   "block.gt6.processor_unit_control": "Control Quadcore Processor Unit",
@@ -457,6 +458,7 @@
   "block.gt6.safe_mechanical_bronze": "Mechanical Bronze Safe",
   "block.gt6.safe_mechanical_steel": "Mechanical Steel Safe",
   "block.gt6.sandwich": "Sandwich",
+  "block.gt6.sap_bag": "Resin/Sap Bag",
   "block.gt6.shredder": "Shredder",
   "block.gt6.shredder_blades": "Shredder Blades",
   "block.gt6.sifting_table": "Sifting Table",
@@ -4243,6 +4245,7 @@
   "gt6.tooltip.multiblock.1": "Use Builder Wand to ease building",
   "gt6.tooltip.multiblock.2": "Use Magnifying Glass to see Details",
   "gt6.tooltip.multiblock.3": "Use Wrench to set Facing",
+  "gt6.tooltip.no_gui_click_inventory": "No GUI. Click to insert/extract Items!",
   "gt6.tooltip.pipe_fluid.1": "Bandwidth: %1$s L/t",
   "gt6.tooltip.pipe_fluid.10": "Use Magnifying Glass to see Details",
   "gt6.tooltip.pipe_fluid.2": "Capacity: %2$s L",
@@ -4250,6 +4253,7 @@
   "gt6.tooltip.pipe_item.2": "Bandwidth: %s/s",
   "gt6.tooltip.pipe_item.3": "Use Monkey Wrench to set Input Side",
   "gt6.tooltip.pipe_item.4": "Use Monkey Wrench to set Output Side",
+  "gt6.tooltip.plantpot": "Can grow any Plants ontop of it!",
   "gt6.tooltip.sensor.2": "No GUI. Click to interact!",
   "gt6.tooltip.sensor.3": "Use Screwdriver on Buttons to enable Averaging Mode.",
   "gt6.tooltip.sensor.4": "Use Screwdriver on Display toggle Hexadecimal Display.",
@@ -5857,5 +5861,6 @@
   "tooltip.gt6.pocket.saw": "Faster on Planks. Slower on Logs. Can harvest Ice.",
   "tooltip.gt6.pocket.scissors": "Don't run around while holding them!",
   "tooltip.gt6.pocket.switch": "Sneak Rightclick to switch Mode",
-  "tooltip.gt6.pocket.wire_cutter": "Harvests Cables and Wires faster"
+  "tooltip.gt6.pocket.wire_cutter": "Harvests Cables and Wires faster",
+  "gt6.row.charging_locker.display": "Charging Locker (%s)"
 }

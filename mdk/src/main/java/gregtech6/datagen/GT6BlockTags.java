@@ -27,6 +27,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.block.tank.GTBarrelBlock;
 import gregtech6.items.tools.GTWrenchItem;
 import gregtech6.registry.GT6Batteries;
+import gregtech6.registry.GT6ChargingLockers;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6LongDistanceTransformers;
 import gregtech6.registry.GT6LongDistPipes;
@@ -302,6 +303,11 @@ public final class GT6BlockTags extends BlockTagsProvider {
 				tPickaxe.add(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get());
 			}
 		}
+		// task block-family-32xxx-port — the Universal Plant Pot joins the band: the :2229
+		// aUtilStone column (the anvil/hopper util-stone convention). The sap bag stays OUT
+		// (the :2221 aUtilWool column — 1.20.1 has no mineable/shears tag, the shears defer,
+		// the harvest-bands-card2 declaration for the resin-bag row).
+		tPickaxe.add(gregtech6.registry.GT6MiscToolBlocks.PLANT_POT_BLOCK.get());
 	}
 
 	/**
@@ -497,6 +503,8 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * <li>{@link GT6StaticStorages} — the 8 metal rows (safes :134-135, lockers :138,
 	 * drawers :140, all aMachine; the bookshelf/bottlecrate wooden ladders stay out,
 	 * the axe-wood card).</li>
+	 * <li>{@link GT6ChargingLockers} — 60 (the :139 metalset ladder, aMachine; task
+	 * block-family-32xxx-port).</li>
 	 * </ul>
 	 *
 	 * <p>DECLARED EXPEDIENTS: {@link GTWires} keeps pickaxe (upstream cutter
@@ -573,5 +581,8 @@ public final class GT6BlockTags extends BlockTagsProvider {
 				tWrench.add(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get());
 			}
 		}
+		// task block-family-32xxx-port — the 60 charging-locker rows join: the :139 column
+		// is aMachine over the full metalset walk (the hopper-family posture).
+		GT6ChargingLockers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
 	}
 }

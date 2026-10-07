@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "gt6:circuit3"
+    },
+    "M": {
+      "item": "gt6:locker_steel"
+    },
+    "W": {
+      "item": "gt6:cable_gold_gt01"
+    }
+  },
+  "pattern": [
+    "WCW",
+    "WMW",
+    "WCW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:charging_locker_steel"
+  }
+}

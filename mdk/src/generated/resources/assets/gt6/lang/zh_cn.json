@@ -393,6 +393,7 @@
   "block.gt6.placed_rock": "石头",
   "block.gt6.placed_scrap": "废料",
   "block.gt6.placed_stick": "木棍",
+  "block.gt6.plant_pot": "万能花盆",
   "block.gt6.playercounter": "玩家数量传感器",
   "block.gt6.porcelain_cup": "瓷杯",
   "block.gt6.processor_unit_control": "控制四核处理器",
@@ -457,6 +458,7 @@
   "block.gt6.safe_mechanical_bronze": "机械青铜保险箱",
   "block.gt6.safe_mechanical_steel": "机械钢保险箱",
   "block.gt6.sandwich": "三明治",
+  "block.gt6.sap_bag": "树液/乳胶收集袋",
   "block.gt6.shredder": "粉碎机",
   "block.gt6.shredder_blades": "研磨机刀片",
   "block.gt6.sifting_table": "筛选台",
@@ -4243,6 +4245,7 @@
   "gt6.tooltip.multiblock.1": "使用建筑之杖快速搭建结构",
   "gt6.tooltip.multiblock.2": "使用放大镜观察细节",
   "gt6.tooltip.multiblock.3": "使用扳手设置朝向",
+  "gt6.tooltip.no_gui_click_inventory": "没有界面，右键以放入/取出物品!",
   "gt6.tooltip.pipe_fluid.1": "流量: %1$s L/t",
   "gt6.tooltip.pipe_fluid.10": "使用放大镜观察细节",
   "gt6.tooltip.pipe_fluid.2": "容量: %2$s L",
@@ -4250,6 +4253,7 @@
   "gt6.tooltip.pipe_item.2": "流量: %s/s",
   "gt6.tooltip.pipe_item.3": "使用活动扳手调整输入(探测)面",
   "gt6.tooltip.pipe_item.4": "使用活动扳手调整输出面",
+  "gt6.tooltip.plantpot": "能种任意植物在其上！",
   "gt6.tooltip.sensor.2": "没有界面，右键以放入/取出物品!",
   "gt6.tooltip.sensor.3": "在按钮上使用螺丝刀启用平均模式。",
   "gt6.tooltip.sensor.4": "在显示屏上使用螺丝刀开关十六进制显示。",
@@ -5857,5 +5861,6 @@
   "tooltip.gt6.pocket.saw": "采木板更快，采原木较慢，可以采集冰。",
   "tooltip.gt6.pocket.scissors": "拿着它的时候别到处乱跑！",
   "tooltip.gt6.pocket.switch": "潜行右键切换模式",
-  "tooltip.gt6.pocket.wire_cutter": "采集线缆和导线更快"
+  "tooltip.gt6.pocket.wire_cutter": "采集线缆和导线更快",
+  "gt6.row.charging_locker.display": "充能衣橱 (%s)"
 }
