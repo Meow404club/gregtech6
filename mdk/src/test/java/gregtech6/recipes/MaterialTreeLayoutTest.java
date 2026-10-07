@@ -549,6 +549,9 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 		MaterialTreeViewport.Point tCappedB = tView.apply(tSlotX + MaterialTreeLayout.SLOT, tSlotY + MaterialTreeLayout.SLOT);
 		assertEquals((tCappedA.x() + tCappedB.x()) / 2.0, tCapped.x() + 8 * tCapped.scale(), EPSILON);
 		assertEquals((tCappedA.y() + tCappedB.y()) / 2.0, tCapped.y() + 8 * tCapped.scale(), EPSILON);
+	}
+
+	// ------------------------------------------------------------------
 	// the layout engine (task mattree-r2-layout-engine, ADR L1):
 	// determinism, content bounds, invariants, degenerates, the legacy face
 	// ------------------------------------------------------------------
