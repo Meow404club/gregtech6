@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "key": {
     "M": {
       "item": "gt6:casing_machine_aluminium"

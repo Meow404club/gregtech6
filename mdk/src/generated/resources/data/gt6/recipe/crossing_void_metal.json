@@ -6,6 +6,12 @@
       "item": "gt6:plate_void_metal"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Thaumcraft"
+    }
+  ],
   "pattern": [
     " P ",
     "PPP",

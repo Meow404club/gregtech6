@@ -1,12 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "conditions": [
-    {
-      "type": "forge:mod_loaded",
-      "modid": "TwilightForest"
-    }
-  ],
   "key": {
     "C": {
       "item": "minecraft:clay_ball"

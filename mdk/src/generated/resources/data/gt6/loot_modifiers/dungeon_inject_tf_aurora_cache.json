@@ -21,12 +21,6 @@
       "weight": 12
     },
     {
-      "item": "gt6:ingot_damascus_steel",
-      "max": 6,
-      "min": 1,
-      "weight": 2
-    },
-    {
       "item": "gt6:plate_steel",
       "max": 6,
       "min": 1,
@@ -43,12 +37,6 @@
       "max": 6,
       "min": 1,
       "weight": 12
-    },
-    {
-      "item": "gt6:plate_damascus_steel",
-      "max": 6,
-      "min": 1,
-      "weight": 2
     },
     {
       "item": "gt6:stick_steel",
@@ -69,12 +57,6 @@
       "weight": 12
     },
     {
-      "item": "gt6:stick_damascus_steel",
-      "max": 12,
-      "min": 2,
-      "weight": 2
-    },
-    {
       "item": "gt6:tool_head_arrow_steel",
       "max": 24,
       "min": 4,
@@ -91,12 +73,6 @@
       "max": 24,
       "min": 4,
       "weight": 12
-    },
-    {
-      "item": "gt6:tool_head_arrow_damascus_steel",
-      "max": 24,
-      "min": 4,
-      "weight": 2
     },
     {
       "item": "gt6:book_loot_guide",

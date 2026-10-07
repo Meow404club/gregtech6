@@ -6,6 +6,12 @@
       "item": "gt6:plate_hslasteel"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "P P",
     "P P",

@@ -6,6 +6,12 @@
       "item": "gt6:plate_knightmetal"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "pattern": [
     "P P",
     "P P",
