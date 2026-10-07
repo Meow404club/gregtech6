@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_double_steel"
+    },
+    "R": {
+      "item": "gt6:stick_steel"
+    },
+    "S": {
+      "item": "gt6:spring_steel"
+    },
+    "W": {
+      "item": "gt6:wire_fine_steel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "WxW",
+    "RMR",
+    "SwS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sifter_t2"
+  }
+}

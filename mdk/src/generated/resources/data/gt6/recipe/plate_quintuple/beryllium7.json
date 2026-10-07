@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_beryllium7"
+    },
+    "B": {
+      "item": "gt6:plate_triple_beryllium7"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:plate_quintuple_beryllium7"
+  }
+}

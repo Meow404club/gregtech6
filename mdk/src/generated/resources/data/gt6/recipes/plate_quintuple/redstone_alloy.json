@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_redstone_alloy"
+    },
+    "B": {
+      "item": "gt6:plate_triple_redstone_alloy"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AB",
+    "h "
+  ],
+  "result": {
+    "item": "gt6:plate_quintuple_redstone_alloy"
+  },
+  "show_notification": true
+}

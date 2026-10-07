@@ -233,11 +233,22 @@ class GT6GeometryBatchDatagenTest {
                     tModel + ": the overlay twin inflates 0.01");
             assertEquals("#overlay_side", tRimOverlay.getAsJsonObject("faces").get("north")
                     .getAsJsonObject().get("texture").getAsString(), tModel + ": the overlay band");
-            // the tint seat stays OFF (the unpaint deviation — no face carries a tintindex)
-            for (var tElement : tElements) {
-                for (var tFace : tElement.getAsJsonObject().getAsJsonObject("faces").entrySet()) {
+            // the tint seats follow the L1 hopper chain closure (task
+            // tint-chain-hopper-grindstone-sifting, merge 0644c3ce3): the three BODY
+            // elements (0 rim / 2 middle / 4 spout) carry the tintindex-0 seats (the
+            // mRGBa multiply face), the three OVERLAY twins (1/3/5) stay untinted (the
+            // P22 contract — the review-seat seam retired the former blanket
+            // 「unpaint deviation」 reading, clean main was red on it since the closure)
+            for (int tBody : new int[] {0, 2, 4}) {
+                for (var tFace : tElements.get(tBody).getAsJsonObject().getAsJsonObject("faces").entrySet()) {
+                    assertEquals(0, tFace.getValue().getAsJsonObject().get("tintindex").getAsInt(),
+                            tModel + " body face " + tFace.getKey() + " rides the tintindex-0 seat");
+                }
+            }
+            for (int tOverlay : new int[] {1, 3, 5}) {
+                for (var tFace : tElements.get(tOverlay).getAsJsonObject().getAsJsonObject("faces").entrySet()) {
                     assertFalse(tFace.getValue().getAsJsonObject().has("tintindex"),
-                            tModel + " face " + tFace.getKey() + " stays untinted");
+                            tModel + " overlay face " + tFace.getKey() + " stays untinted");
                 }
             }
         }

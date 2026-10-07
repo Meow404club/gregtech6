@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "gt6:spring_small_bronze"
+    },
+    "P": {
+      "item": "gt6:plate_double_bronze"
+    },
+    "S": {
+      "item": "gt6:stick_bronze"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "PhP",
+    "SIS",
+    "PwP"
+  ],
+  "result": {
+    "item": "gt6:steam_engine_bronze"
+  },
+  "show_notification": true
+}

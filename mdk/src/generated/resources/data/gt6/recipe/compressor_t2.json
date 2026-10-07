@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_double_steel"
+    },
+    "P": {
+      "item": "gt6:plate_quintuple_steel"
+    },
+    "R": {
+      "item": "gt6:stick_steel"
+    },
+    "S": {
+      "item": "gt6:spring_steel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "PPR",
+    "wMS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:compressor_t2"
+  }
+}

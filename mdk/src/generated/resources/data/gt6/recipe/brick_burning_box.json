@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:brick"
+    },
+    "F": {
+      "tag": "gt6:tools/flint_and_tinder"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BBB",
+    "BFB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:brick_burning_box"
+  }
+}

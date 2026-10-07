@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:ingot_double_oureclase"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "A",
+    "h"
+  ],
+  "result": {
+    "item": "gt6:plate_oureclase"
+  },
+  "show_notification": true
+}

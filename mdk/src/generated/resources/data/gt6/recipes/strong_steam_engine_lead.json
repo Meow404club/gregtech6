@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "gt6:spring_lead"
+    },
+    "P": {
+      "item": "gt6:plate_dense_lead"
+    },
+    "S": {
+      "item": "gt6:stick_lead"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "PhP",
+    "SIS",
+    "PwP"
+  ],
+  "result": {
+    "item": "gt6:strong_steam_engine_lead"
+  },
+  "show_notification": true
+}

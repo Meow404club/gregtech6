@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "gt6:plate_double_protactinium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "AA",
+    "h "
+  ],
+  "result": {
+    "item": "gt6:plate_quadruple_protactinium"
+  },
+  "show_notification": true
+}
