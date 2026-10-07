@@ -32,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import gregtech6.emi.GT6EmiPlugin;
 import gregtech6.emi.GT6MaterialTreeNav;
 import gregtech6.jei.GT6JeiPlugin;
+import gregtech6.recipes.tree.MaterialTreeCoverage;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
@@ -118,10 +119,20 @@ public class GT6MaterialTreeScreen extends Screen {
 	private static final int FILL_INK = 0xFF181818, FILL_HOVER_INK = 0xFF2A2A2A, FILL_SLEEP_INK = 0xFF101010;
 	private static final int GLYPH_INK = 0xFFE0E0E0, GLYPH_SLEEP_INK = 0xFF555555;
 	private static final int SLOT_BORDER_INK = 0xFF8B8B8B, SLOT_WELL_INK = 0xFF373737;
+	/** The coverage badge (task mattree-r2-coverage-display): a 4x4 tree-space corner square in the state colour (the vanilla text conventions: green/amber/red). */
+	private static final int COVERAGE_BADGE = 4;
+	private static final int COVERED_INK = 0xFF55FF55, REACHABLE_INK = 0xFFFFAA00, UNREACHABLE_INK = 0xFFFF5555;
 
 	final MaterialTreeDisplay mDisplay;
 	/** The layout engine's plan of {@link #mDisplay}: the coordinates, the edge plans and the content box (task mattree-r2-layout-engine). */
 	final MaterialTreeLayout.Result mLayout;
+	/**
+	 * The coverage face of {@link #mDisplay} (task mattree-r2-coverage-display): the pure
+	 * per-node/per-band read — computed once beside the plan, rendered as the corner badge,
+	 * and the query seam ({@link MaterialTreeCoverage#node}/{@link MaterialTreeCoverage#bands()})
+	 * the R3 host legs filter on.
+	 */
+	final MaterialTreeCoverage mCoverage;
 	MaterialTreeViewport mView;
 	private int mPaneWidth, mPaneHeight;
 	private boolean mPressed;
@@ -133,6 +144,7 @@ public class GT6MaterialTreeScreen extends Screen {
 		super(Component.literal(MaterialTreeDisplay.CATEGORY_TITLE + " - " + MaterialTreeDisplay.materialName(aDisplay.material)));
 		mDisplay = aDisplay;
 		mLayout = MaterialTreeLayout.plan(aDisplay);
+		mCoverage = MaterialTreeCoverage.of(aDisplay); // the pure read AFTER the plan — the plan-independence face, both are one-shot reads
 	}
 
 	@Override
@@ -320,8 +332,10 @@ public class GT6MaterialTreeScreen extends Screen {
 			drawLabel(aGui, tFont, "+" + tOverflow.hidden(),
 					mLayout.overflowX(), mLayout.overflowY(tOverflow.column()), 0xFF000000);
 		// the slots: nodes and byproducts in cells, machine icons bare (the drawBack(false) face)
-		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes())
+		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes()) {
 			drawSlot(aGui, tNode.stack(), mLayout.nodeX(tNode), mLayout.nodeY(tNode));
+			drawBadge(aGui, mCoverage.node(tNode.prefix()), mLayout.nodeX(tNode), mLayout.nodeY(tNode));
+		}
 		for (int i = 0; i < tEdges.size(); i++) {
 			EdgeLayout tLayout = tLayouts.get(i);
 			if (tLayout.machine() != null)
@@ -388,6 +402,18 @@ public class GT6MaterialTreeScreen extends Screen {
 		aGui.pose().scale(tScale, tScale, 1.0F);
 		aDraw.run();
 		aGui.pose().popPose();
+	}
+
+	/**
+	 * The node's coverage corner badge (task mattree-r2-coverage-display, the 最小视觉标注): a
+	 * 4x4 tree-space square on the slot's top-left corner in the state colour — it rides the
+	 * viewport transform like every other tree-space fill. Interaction (filter/legend) is R3's.
+	 */
+	private void drawBadge(GuiGraphics aGui, MaterialTreeCoverage.State aState, int aTreeX, int aTreeY) {
+		if (aState == null) return; // no state, no badge (defensive; every displayed node has one)
+		int tInk = aState == MaterialTreeCoverage.State.COVERED ? COVERED_INK
+				: aState == MaterialTreeCoverage.State.REACHABLE ? REACHABLE_INK : UNREACHABLE_INK;
+		fillTransformed(aGui, new Rect(aTreeX, aTreeY, COVERAGE_BADGE, COVERAGE_BADGE), tInk);
 	}
 
 	/** The nav strip (the M3 cell language): +/−/R, the zoom cells sleeping at the live fit floor / ceiling. */
