@@ -140,11 +140,11 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(12, GT6Attachments.ITEMS_BY_PATH.size());
 	}
 
-	/** The 28 static storages (2 metals x 4 kinds + 10 planks x 2 wooden kinds). */
+	/** The 148 static storages (2 metals x 4 kinds + 10 planks x 2 wooden kinds + the 60-material metal shelf/crate ladders, task material-mc-b-storage-mass-shelf). */
 	@Test
-	public void staticStoragesJoinTwentyEight() {
-		assertEquals(28, GT6StaticStorages.ROWS.size());
-		assertEquals(28, GT6StaticStorages.ITEMS_BY_PATH.size());
+	public void staticStoragesJoinOneFortyEight() {
+		assertEquals(148, GT6StaticStorages.ROWS.size());
+		assertEquals(148, GT6StaticStorages.ITEMS_BY_PATH.size());
 	}
 
 	/** The 120 hoppers (the 60-material metalset loop :186-245 x the pair :145-146). */
@@ -230,7 +230,13 @@ public class CreativeTabJoinCensusTest {
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size()
 				+ GT6Emitters.ITEMS_BY_PATH.size();
-		assertEquals(443, tTotal, "323 (the p38 batch total) + 120 (task material-mc-a-storage-chests: the metalset chest pair 132-133 over the 60-material loop)");
+		// 563 = 323 (the p38 batch total, hoppers@120 and static-storages@28 inside)
+		// + 120 (mc-A chests) + 120 (mc-B: the static-storage join grew 28 to 148, the
+		// metal shelf/crate ladders). The review-seat rebase seam re-measured the
+		// union: mc-A and mc-B each grew the same pre-merge base by 120 on their own
+		// branch, so both self-reported 443 — the merged truth is the sum of both
+		// deltas (the count follows the live walk, only rises).
+		assertEquals(563, tTotal, "323 (the p38 batch total) + 120 (task material-mc-a-storage-chests: the metalset chest pair 132-133 over the 60-material loop) + 120 (task material-mc-b-storage-mass-shelf: the static-storage join grew 28 to 148, the metal shelf/crate ladders over the metalset)");
 	}
 
 	/**

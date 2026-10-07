@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/gt6_metal_bookshelf_iridium",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/gt6_metal_bookshelf_iridium"
+    },
+    "facing=south": {
+      "model": "gt6:block/gt6_metal_bookshelf_iridium",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/gt6_metal_bookshelf_iridium",
+      "y": 270
+    }
+  }
+}

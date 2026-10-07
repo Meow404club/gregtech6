@@ -547,6 +547,28 @@ HAND_TRANSLATIONS = {
     "block.gt6.fe_source": ("FE 测试源", "hand"),
     "gt6.row.hopper.display": ("%s料斗", "hand"),
     "gt6.row.queue_hopper.display": ("%s队列料斗", "hand"),
+    # task material-mc-b-storage-mass-shelf: the metal shelf/crate templates, dump-verbatim
+    # (tmp/gregtech.lang :14096-14159 书架 (铅)/:14657-14716 瓶筐 (铅) — the parenthesized
+    # compose form with the half-width parens + leading space, the gt6.row.mat.* words ride
+    # the hopper walk's hand rows)
+    "gt6.row.metal_bookshelf.display": ("书架 (%s)", "hand"),
+    "gt6.row.metal_bottlecrate.display": ("瓶筐 (%s)", "hand"),
+    # ---- generator-debt restoration (task material-mc-b-storage-mass-shelf): twelve hand
+    # rows earlier cards committed straight to the TSV without HAND_TRANSLATIONS entries —
+    # a faithful rerun washed them out (the exact failure mode the header warns about).
+    # Values are the committed faces verbatim.
+    "block.gt6.blue_clay": ("蓝色粘土块", "hand"),   # task worldgen-diggables-pits
+    "block.gt6.brown_clay": ("棕色粘土块", "hand"),  # task worldgen-diggables-pits
+    "block.gt6.white_clay": ("白色粘土块", "hand"),  # task worldgen-diggables-pits
+    "block.gt6.yellow_clay": ("黄色粘土块", "hand"),  # task worldgen-diggables-pits
+    "block.gt6.grindstone": ("打磨石", "hand"),       # task grindstone family
+    "gt6.jade.crucible.owner": ("归属: %s", "hand"),  # task crucible-jade-face
+    "item.gt6.circuit_enderium": ("末影电子电路", "hand"),  # task circuit-chain-items
+    "item.gt6.circuit_enderium.tooltip": ("在另一个维度处理您的数据", "hand"),
+    "item.gt6.circuit_magic": ("魔法电子电路", "hand"),
+    "item.gt6.circuit_magic.tooltip": ("像魔法师那样处理事务!", "hand"),
+    "item.gt6.circuit_signalum": ("信素电子电路", "hand"),
+    "item.gt6.circuit_signalum.tooltip": ("逻辑电路板", "hand"),
     "gt6.row.item_pipe.display.medium": ("%s物品管道", "hand"),
     "gt6.row.item_pipe.display.large": ("大型%s物品管道", "hand"),
     "gt6.row.item_pipe.display.huge": ("巨型%s物品管道", "hand"),

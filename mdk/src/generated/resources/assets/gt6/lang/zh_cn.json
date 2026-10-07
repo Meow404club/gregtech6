@@ -3544,6 +3544,8 @@
   "gt6.row.mat.wood_treated": "木制",
   "gt6.row.mat.workers_alloy": "工人合金",
   "gt6.row.melter.display": "熔化炉",
+  "gt6.row.metal_bookshelf.display": "书架 (%s)",
+  "gt6.row.metal_bottlecrate.display": "瓶筐 (%s)",
   "gt6.row.metal_wall.display": "%s壁板",
   "gt6.row.mold.display.mold_ceramic": "陶瓷模具",
   "gt6.row.mold.display.mold_ceramic_arrow": "陶瓷模具 (箭)",

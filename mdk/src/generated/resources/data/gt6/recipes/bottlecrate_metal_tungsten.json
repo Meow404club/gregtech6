@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:casing_small_tungsten"
+    },
+    "T": {
+      "item": "gt6:screw_tungsten"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "CdC",
+    "TCT"
+  ],
+  "result": {
+    "item": "gt6:bottlecrate_metal_tungsten"
+  },
+  "show_notification": true
+}

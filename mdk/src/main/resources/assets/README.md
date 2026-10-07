@@ -9302,6 +9302,21 @@ are CC0 (see the Public Domain Dedication block above).
 
 - `block/magic_absorber_base.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `magicenergyabsorber/colored/side.png`; side_facing/top/bottom byte-identical)
 
+## Metal shelf/crate machine-casing texture (task material-mc-b-storage-mass-shelf)
+
+The metal Bookshelf/Bottlecrate ladders' body tile under `gt6/textures/block/` comes
+from upstream `src/main/resources/assets/gregtech/textures/blocks/iconsets/MACHINE.png`
+— the casingMachine BLOCK iconset template (the TextureSet per-material grayscale the
+metalset :143-144 rows fall back to, MultiTileEntityBookShelf.java:74 / BottleCrate
+:66), byte-identical to upstream, sha256 verified. Byte-identical to the
+`magic_absorber_base.png` borrow above (upstream ships the one grayscale machine tile
+under both names); the port borrows it once per semantic seat — this row is the
+casingMachine iconset identity, the in-game look rides the machine tint seat (the
+row colour through the GT6StorageBlock.materialOf carrier). License: upstream GregTech 6
+assets are CC0 (see the Public Domain Dedication block above).
+
+- `block/machine_casing.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `iconsets/MACHINE.png`)
+
 ## Quantum Energizer textures (task qu-energizer)
 
 The two converter block faces under `gt6:textures/block/` are DERIVED, not borrowed:

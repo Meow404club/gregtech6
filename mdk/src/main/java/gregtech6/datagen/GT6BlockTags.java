@@ -292,6 +292,16 @@ public final class GT6BlockTags extends BlockTagsProvider {
 				tPickaxe.add(tBlock);
 			}
 		}
+		// task material-mc-b-storage-mass-shelf — the 60 METAL BOTTLECRATE rows join the
+		// band: the upstream row rides aUtilMetal = TOOL_pickaxe (Loader :144 vs the :107
+		// aUtilMetal carrier column) — NOT the aMachine wrench face its metal bookshelf
+		// sibling (:143) rides. Tail-append form, the mc-A chests seat above; the review-seat
+		// band-split seam (the merged walk had put all 128 metal storage rows on wrench).
+		for (var tRow : GT6StaticStorages.ROWS) {
+			if (tRow.material() != null && tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE) {
+				tPickaxe.add(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get());
+			}
+		}
 	}
 
 	/**
@@ -553,7 +563,13 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		tWrench.add(GT6LongDistPipes.ITEM_PIPE_BLOCK.get(), GT6LongDistPipes.FLUID_PIPE_BLOCK.get());
 		GT6LongDistanceTransformers.BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
 		for (var tRow : GT6StaticStorages.ROWS) {
-			if (tRow.material() != null) { // the metal ladder (safes/lockers/drawers); the wooden subset → axe card
+			// the aMachine static ladders (safes/lockers/drawers, Loader :134-140 + the METAL
+			// BOOKSHELF ladder :143); the wooden subset stays the axe card; the METAL
+			// BOTTLECRATE stays out — :144 rides aUtilMaterial = TOOL_pickaxe (the :107
+			// carrier column), the addPickaxeBand tail (task material-mc-b-storage-mass-shelf,
+			// the review-seat band-split seam: the merged walk had put all 128 metal rows on
+			// this face, the stale committed tag product hid it)
+			if (tRow.material() != null && tRow.kind() != gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE) {
 				tWrench.add(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get());
 			}
 		}

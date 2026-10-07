@@ -283,23 +283,32 @@ public class WrenchMiningTest {
 		assertTrue(tMembers.containsAll(pathsOf(GT6LongDistanceTransformers.BLOCKS_BY_PATH)),
 				"the long-distance transformer endpoints ride the face");
 		assertTrue(!tMembers.contains("gt6:long_dist_wire_0"), "the long-distance wires keep the cutter expedient (pickaxe)");
-		// the static-storage metal ladder (2 materials x locker/drawer/2 safes, Loader
-		// :134-140 aMachine; the wooden bookshelf/bottlecrate ladders stay out)
+		// the static-storage aMachine ladders (2 materials x locker/drawer/2 safes, Loader
+		// :134-140 + the 60-material METAL BOOKSHELF ladder :143; the wooden ladders stay
+		// the axe-wood card and the METAL BOTTLECRATE :144 rides aUtilMetal = TOOL_pickaxe
+		// (:107 carrier column) — the pickaxe band's tail, task
+		// material-mc-b-storage-mass-shelf, the review-seat band-split seam)
 		Set<String> tMetalStorage = new java.util.HashSet<>();
+		Set<String> tMetalCrates = new java.util.HashSet<>();
 		for (var tRow : GT6StaticStorages.ROWS) {
-			if (tRow.material() != null) tMetalStorage.add("gt6:" + tRow.path());
+			if (tRow.material() == null) continue;
+			(tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE ? tMetalCrates : tMetalStorage)
+					.add("gt6:" + tRow.path());
 		}
-		assertEquals(8, tMetalStorage.size(), "locker/drawer/safe x2 over bronze/steel");
-		assertTrue(tMembers.containsAll(tMetalStorage), "the metal storage ladder rides the face");
+		assertEquals(68, tMetalStorage.size(), "locker/drawer/safe x2 over bronze/steel + the 60 metal bookshelf rows (:143 aMachine)");
+		assertTrue(tMembers.containsAll(tMetalStorage), "the aMachine storage ladder rides the face");
+		assertEquals(60, tMetalCrates.size(), "the 60 metal bottlecrate rows (:144 aUtilMetal = pickaxe)");
+		assertTrue(!tMembers.contains("gt6:bottlecrate_metal_bronze") && !tMembers.contains("gt6:bottlecrate_metal_lead"),
+				"the metal bottlecrate ladder moved to the pickaxe band (upstream aUtilMetal, Loader :144)");
 		assertTrue(!tMembers.contains("gt6:bookshelf_oak") && !tMembers.contains("gt6:bottlecrate_oak"),
 				"the wooden storage ladders are the axe-wood card");
-		// the whole-face ratchet: machines + battery boxes + 9 vanilla + the 620 extension
+		// the whole-face ratchet: machines + battery boxes + 9 vanilla + the 680 extension
 		// members, zero overlap (the tag dedups, so any overlap would silently shrink this)
 		Set<String> tExpected = new java.util.HashSet<>(tMembers);
-		assertEquals(VANILLA_MEMBERS.size() + GT6Batteries.BATTERY_BOX_BLOCKS.size() + 620
+		assertEquals(VANILLA_MEMBERS.size() + GT6Batteries.BATTERY_BOX_BLOCKS.size() + 680
 				+ GTMachines.BLOCKS.getEntries().size(), tExpected.size(),
-				"the extension adds 620 members (54 multiblocks + 120 hoppers + 126 item pipes + 245 metal pipes "
-				+ "+ 24 valves + 8 turbines + 1 reactor + 5 energizers + 2 dechargers + 1 absorber + 3 BE + 18 pipes + 5 transformers + 8 storage)");
+				"the extension adds 680 members (54 multiblocks + 120 hoppers + 126 item pipes + 245 metal pipes "
+				+ "+ 24 valves + 8 turbines + 1 reactor + 5 energizers + 2 dechargers + 1 absorber + 3 BE + 18 pipes + 5 transformers + 68 storage)");
 	}
 
 	/** The wrench tag's committed values (the runData product) as a path set. */
