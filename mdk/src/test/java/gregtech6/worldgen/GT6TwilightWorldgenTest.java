@@ -214,6 +214,48 @@ public class GT6TwilightWorldgenTest {
                 "required:false — TF absent = empty tag = no crash, no hang");
     }
 
+    /**
+     * The twilight FLUID-SPRING mount (task twilight-hives-springs): the modifier key twin
+     * of the hive mount.
+     */
+    @Test
+    public void twilightSpringModifierKeyIsPinned() {
+        assertEquals("gt6:twilight_fluid_springs",
+                GT6WorldgenDatagen.TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY.location().toString(),
+                "the twilight_fluid_springs modifier id");
+        assertEquals(GT6WorldgenDatagen.biomeModifierRegistryKey().location(),
+                GT6WorldgenDatagen.TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY.registry(),
+                "the modifier lives in the leg's biome_modifier registry");
+    }
+
+    /**
+     * The spring-mount modifier in EACH leg's brand: the TF tag gate + the shared
+     * {@code gt6:fluid_springs} placed feature (the nether_fluid_springs same-placed-key
+     * convention) + the ore step + the TF-absence conditions = exactly ONE positive
+     * {@code mod_loaded twilightforest}. THE ROW MASKS do the band selection (the twilight
+     * column, the :795-796 rows) — the Feature's three-state routing never walks the OW
+     * oil/gas band in TF (the hasCeiling-binary trap).
+     */
+    @Test
+    public void twilightSpringModifierShipsTheTfGateInBothBrands() throws Exception {
+        for (String tBrand : new String[] {"forge", "neoforge"}) {
+            JsonObject tRow = resourceJson("data/gt6/" + tBrand + "/biome_modifier/twilight_fluid_springs.json");
+            assertEquals(tBrand + ":add_features", tRow.get("type").getAsString(), tBrand + " type brand");
+            assertEquals("#twilightforest:in_twilight_forest", tRow.get("biomes").getAsString(),
+                    "the TF tag gate (never resolved when TF is absent — the condition skips the entry first)");
+            assertEquals("gt6:fluid_springs", tRow.get("features").getAsString(),
+                    "the shared placed feature (the nether_fluid_springs same-placed-key convention)");
+            assertEquals("underground_ores", tRow.get("step").getAsString(), "the ore step");
+            JsonArray tConditions = tRow.getAsJsonArray(tBrand + ":conditions");
+            assertNotNull(tConditions, "the conditions key in the " + tBrand + " brand");
+            assertEquals(1, tConditions.size(), "exactly the positive mod_loaded");
+            JsonObject tModLoaded = tConditions.get(0).getAsJsonObject();
+            assertEquals(tBrand + ":mod_loaded", tModLoaded.get("type").getAsString());
+            assertEquals("twilightforest", tModLoaded.get("modid").getAsString(),
+                    "THE TF-ABSENCE PIN: without TF the entry never registers (zero mounts, zero errors)");
+        }
+    }
+
     // ---------------------------------------------------------------- the JSON snapshots
 
     private static JsonObject resourceJson(String aPath) throws Exception {

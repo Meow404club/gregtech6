@@ -138,6 +138,11 @@ public class GT6BiomeModifierConditions implements DataProvider {
             // mounts only WITH Twilight Forest present (the twilight_ores row's detection
             // face, the same modid — one registry entry per mod-dimension mount).
             new ConditionRow(GT6WorldgenDatagen.TWILIGHT_HIVES_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)),
+            // task twilight-hives-springs — the FOURTH row: the twilight_fluid_springs
+            // modifier, the same detection face (TF absent, the :795-796 rows stay dormant
+            // census and the tag never resolves).
+            new ConditionRow(GT6WorldgenDatagen.TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY.location().getPath(),
                     aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)));
 
     @Override

@@ -55,13 +55,19 @@ import gregtech6.registry.GTBlockEntities;
  * upstream OW row picks the Betweenlands deepslate-or-stone fallback, WorldgenFluidSpring
  * .java:69-70 — a compat block this port does not carry).
  *
- * <p><b>The dimension face</b> (task worldgen-nether-bedrock-lava): the {@code gt6:nether_
- * fluid_springs} modifier row ({@code #minecraft:is_nether}) hangs the SAME placed feature
- * in the nether, and the feature routes itself — {@code dimensionType().hasCeiling()} (the
- * upstream WD.waterLevel {@code hasNoSky} face, WD.java:430) picks the row mask (the :797
- * nether lava dome), the ore-replay stream salt (per dimension, the same salt the bedrock
- * feature draws with — the exclusion stays exact), the nether's own bedrock floor (y=0)
- * and the NETHERRACK dome shell (WorldgenFluidSpring.java:69 "DIM_NETHER ? netherrack").
+ * <p><b>The dimension face</b> (task worldgen-nether-bedrock-lava, grown three-state by task
+ * twilight-hives-springs): the {@code gt6:nether_fluid_springs} modifier row
+ * ({@code #minecraft:is_nether}) and the {@code gt6:twilight_fluid_springs} row
+ * ({@code #twilightforest:in_twilight_forest}) hang the SAME placed feature, and the feature
+ * routes itself three ways — {@code dimensionType().hasCeiling()} (the upstream WD.waterLevel
+ * {@code hasNoSky} face, WD.java:430) picks the nether ({@code nether=true} rows, the
+ * NETHER_DIMENSION_SALT replay stream, the nether's own y=0 bedrock floor and the NETHERRACK
+ * dome shell, WorldgenFluidSpring.java:69 "DIM_NETHER ? netherrack"); the work chunk's biome
+ * riding {@code #twilightforest:in_twilight_forest} picks the twilight band ({@code twilight
+ * =true} rows, the :795-796 gas/water domes — NO ore-replay counterpart, no GT bedrock ores
+ * in TF); everything else stays the overworld shape (the OW rows, the deepslate shell). The
+ * spring roll rides the ONE {@link GT6Worldgen#SPRING_DIMENSION_SALT} stream in all three
+ * dimensions (the salt declaration — the masks, not the stream, separate the bands).
  * KJS face (card declaration): the 16-row table is datapack JSON (the configured-feature
  * config); the Feature/codec registration is the registry face, out of KJS scope
  * (GT6Features javadoc clause).
@@ -77,20 +83,35 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
         WorldGenLevel tLevel = aContext.level();
         ChunkPos tWork = tLevel instanceof WorldGenRegion ? ((WorldGenRegion) tLevel).getCenter()
                 : new ChunkPos(aContext.origin());
-        // the dimension face (see the class javadoc): hasCeiling = the nether, the WD.java:430 hasNoSky face
-        boolean tNether = tLevel.dimensionType().hasCeiling();
+        // the dimension face (see the class javadoc): hasCeiling = the nether (the WD.java:430
+        // hasNoSky face); the twilight arm reads TF's own biome tag at the work chunk — the
+        // deadrock-tag face (TF absent, the tag resolves EMPTY, is()==false, no crash; OW
+        // biomes never carry it, so the binary's default arm stays the overworld). THE TRAP
+        // (task twilight-hives-springs): hasCeiling alone is BINARY — TF hangs no ceiling
+        // (TFDimensionData twilightDimType: false //ceiling), a bare mount would roll the OW
+        // oil/gas band there (upstream routed by the GEN_TWILIGHT dim-type list instead).
+        GT6FluidSpringGenerator.Dim tDim = tLevel.dimensionType().hasCeiling()
+                ? GT6FluidSpringGenerator.Dim.NETHER
+                : isTwilight(tLevel, tWork) ? GT6FluidSpringGenerator.Dim.TWILIGHT
+                : GT6FluidSpringGenerator.Dim.OVERWORLD;
+        boolean tNether = tDim == GT6FluidSpringGenerator.Dim.NETHER;
 
         // :62 — the GENERATED_NO_BEDROCK_ORE replay (the mutual-exclusion seam, see class javadoc);
-        // the replay rides the SAME per-dimension salt the bedrock feature draws with
+        // the replay rides the SAME per-dimension salt the bedrock feature draws with (a no-op
+        // arm in TF — the twilight rows roll with no ore counterpart, the generator's Dim face)
         Random tOreRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(),
                 tNether ? GT6VeinGenerator.NETHER_DIMENSION_SALT : GT6VeinGenerator.OVERWORLD_DIMENSION_SALT,
                 tWork.x, tWork.z);
-        if (GT6FluidSpringGenerator.oreClaims(oreTable(tLevel), tOreRandom, tNether)) return false;
+        if (GT6FluidSpringGenerator.oreClaims(oreTable(tLevel), tOreRandom, tDim)) return false;
 
-        // :62/:64 — the spring's own 1/P rolls, first hit claims the chunk
+        // :62/:64 — the spring's own 1/P rolls, first hit claims the chunk. SALT DECLARATION
+        // (task twilight-hives-springs): all three dimensions ride the ONE SPRING_DIMENSION_
+        // SALT stream — the nether precedent; the twilight roll decisions differ from the OW
+        // roll at the same coords only through the row masks (the :795-796 rows vs the OW band),
+        // never through the stream.
         Random tSpringRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(),
                 GT6Worldgen.SPRING_DIMENSION_SALT, tWork.x, tWork.z);
-        GTFluidSpringConfig tRow = GT6FluidSpringGenerator.drawSpring(aContext.config(), tSpringRandom, tNether);
+        GTFluidSpringConfig tRow = GT6FluidSpringGenerator.drawSpring(aContext.config(), tSpringRandom, tDim);
         if (tRow == null) return false;
 
         BlockState tFluid = fluidState(tRow.blockId());
@@ -100,6 +121,19 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
         Block tShell = tNether ? Blocks.NETHERRACK : Blocks.DEEPSLATE; // :69 "DIM_NETHER ? netherrack"
         return GT6FluidSpringGenerator.generateDome(tRow, tWork.getMinBlockX(), tWork.getMinBlockZ(),
                 tBedrockY, tSpringRandom, levelSink(tLevel, tFluid, tRow, tBedrockY, tShell));
+    }
+
+    /**
+     * The twilight detection (task twilight-hives-springs): the work chunk's biome rides
+     * {@code #twilightforest:in_twilight_forest} — TF's own tag, the SAME gate the
+     * {@code gt6:twilight_fluid_springs} modifier mounts through (GTOreWorldgen
+     * .twilightBiomeTag, TagKey.create is interned so the runtime check matches the mount
+     * data), the deadrock precedent: TF absent, the tag resolves EMPTY and {@code is} is
+     * simply false.
+     */
+    private static boolean isTwilight(WorldGenLevel aLevel, ChunkPos aWork) {
+        return aLevel.getBiome(new BlockPos(aWork.getMinBlockX() + 8, 0, aWork.getMinBlockZ() + 8))
+                .is(GTOreWorldgen.twilightBiomeTag());
     }
 
     /**
