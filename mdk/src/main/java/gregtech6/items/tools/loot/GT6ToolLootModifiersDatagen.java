@@ -84,7 +84,29 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"dungeon_inject_village_weaponsmith",
 			"dungeon_inject_stronghold_library",
 			"dungeon_inject_stronghold_corridor",
-			"dungeon_inject_gt6_dungeon_chest");
+			"dungeon_inject_gt6_dungeon_chest",
+			// task twilight-treasure-loot — the TF treasure injections tail-append (the
+			// twilightInjections() sequence = the upstream Loader_Loot.java:56-78 order, the
+			// three no-JSON ledger rows basement/stronghold_boss/aurora_boss skipped)
+			"dungeon_inject_tf_hill_1",
+			"dungeon_inject_tf_hill_2",
+			"dungeon_inject_tf_hill_3",
+			"dungeon_inject_tf_hedge_maze",
+			"dungeon_inject_tf_tree_cache",
+			"dungeon_inject_tf_labyrinth_room",
+			"dungeon_inject_tf_labyrinth_dead_end",
+			"dungeon_inject_tf_labyrinth_vault",
+			"dungeon_inject_tf_tower_room",
+			"dungeon_inject_tf_tower_library",
+			"dungeon_inject_tf_darktower_cache",
+			"dungeon_inject_tf_darktower_key",
+			"dungeon_inject_tf_darktower_boss",
+			"dungeon_inject_tf_stronghold_cache",
+			"dungeon_inject_tf_stronghold_room",
+			"dungeon_inject_tf_aurora_cache",
+			"dungeon_inject_tf_aurora_room",
+			"dungeon_inject_tf_troll_garden",
+			"dungeon_inject_tf_troll_vault");
 
 	/** The ctor face of the platform output (the base field is private — kept for the twin path). */
 	private final PackOutput mOutput;
