@@ -84,10 +84,13 @@ import static gregapi.data.CS.U9;
  * <ul>
  * <li>the NEI/JEI output face of the upstream getNEIRecipes override (:50-79) is the
  * display-consumer pool — the port's JEI integration reads {@link #smeltingDisplayRows}
- * instead (no live consumer this card);</li>
- * <li>the OM.ingot/OM.dust ladders (OM.java:460-475) port in their reduced form —
- * ingot/nugget and dust/dustSmall/dustTiny steps only, the 72x/9x block steps ride the
- * block-universe pool (no blockIngot/blockDust item resolution this card);</li>
+ * instead; the dynamic per-output NEI query vs the flat registered page is the
+ * id1353-accepted semantics gap;</li>
+ * <li>the OM.ingot/OM.dust OUTPUT ladders (OM.java:460-475) port in their reduced form —
+ * ingot/nugget and dust/dustSmall/dustTiny steps only; the 72x/9x block steps the upstream
+ * ladders lead with (:462/:471) are not ladder steps here — a direct prefix.mat ask
+ * resolves them through the GTMaterialBlocks fallback in {@link #matStackLive}, which is
+ * also what puts the :58-67 block forms on the display face;</li>
  * <li>the GT6_Main Air/C/CaCO3 display arms (:464-469) are CUT — FL.Air.display and the
  * coal/limestone special rows need display items no port card has landed (pool).</li>
  * </ul>
@@ -172,16 +175,43 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 	// ------------------------------------------------------------------------------------
 
 	/**
+	 * The upstream smelting-input prefixes (RecipeMapCrucible.java:58-67), verbatim order:
+	 * the four {@code :58-61} forms a CROSS-SOURCE material additionally shows, then the
+	 * five {@code :63-67} forms every source shows. A METHOD, not a static-final capture,
+	 * ON PURPOSE: {@code OP.init()} regenerates every prefix object (OP.java:737 nulls,
+	 * :1214 recreates), and the neoforge junit-fml leg boots the mod — and class-initializes
+	 * this class — BEFORE the test flood, so a static capture rides a dead OP generation
+	 * and every prefix-identity lookup nulls out. The remaining eight upstream prefixes
+	 * (:68-75, chunk … reduced) have no items upstream either (Loader_Items.java:57-171) —
+	 * getRecipeFor null-drops them there, the {@link #displayRow} null-gate does here.
+	 */
+	private static OreDictPrefix[] crossSourcePrefixes() {
+		return new OreDictPrefix[] {OP.ingot, OP.blockIngot, OP.gem, OP.blockGem, OP.dust, OP.blockDust, OP.crushed, OP.crushedPurified, OP.crushedCentrifuged};
+	}
+
+	/** The {@code :63-67} family — the forms the SELF arm shows too (upstream :62 keeps them outside the {@code tMat != self} branch); per-call for the OP-regeneration reason of {@link #crossSourcePrefixes()}. */
+	private static OreDictPrefix[] selfPrefixes() {
+		return new OreDictPrefix[] {OP.dust, OP.blockDust, OP.crushed, OP.crushedPurified, OP.crushedCentrifuged};
+	}
+
+	/**
 	 * The CRUCIBLE_SMELTING display rows of one output material (the upstream
 	 * getNEIRecipes :50-79 reduced to the material-graph query): every registered material
-	 * that smelts INTO aMaterial shows its dust/ore row. Display-consumer pool face.
+	 * that smelts INTO aMaterial shows its cross-source prefix family (RecipeMapCrucible.java:58-67 —
+	 * {@link MaterialGraph#targeting} excludes the output itself, so this walk IS the
+	 * upstream :57 {@code tMat != self} branch). Prefixes without a representable item
+	 * drop out per-row (the {@link #displayRow} null-gate — the upstream getRecipeFor
+	 * null shape). Upstream NEI dynamic per-output query vs this flat-page pool is the
+	 * id1353-accepted semantics gap. Display-consumer pool face.
 	 */
 	public static List<Recipe> smeltingDisplayRows(OreDictMaterial aOutput) {
 		if (aOutput == null) return Collections.emptyList();
 		List<Recipe> rList = new ArrayList<>();
 		for (OreDictMaterial tMat : MaterialGraph.targeting(aOutput, MaterialGraph.Process.SMELTING).keySet()) {
-			Recipe tRow = displayRow(OP.dust, tMat);
-			if (tRow != null) rList.add(tRow);
+			for (OreDictPrefix tPrefix : crossSourcePrefixes()) { // RecipeMapCrucible.java:58-67 verbatim order
+				Recipe tRow = displayRow(tPrefix, tMat);
+				if (tRow != null) rList.add(tRow);
+			}
 		}
 		return rList;
 	}
@@ -326,21 +356,24 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 
 	/**
 	 * The full CRUCIBLE_SMELTING display face — the enumeration the viewer page registers:
-	 * the SELF row of every registered material (dust → its own smelting target; the
-	 * upstream getNEIRecipes :66-67 self arm sits OUTSIDE its {@code tMat != self} skip,
-	 * so "dust iron → ingot iron" is the page's core row) plus every cross-source row of
-	 * {@link #smeltingDisplayRows}. The hidden gate rides the SELF arm: upstream self rows
-	 * only surfaced on the material's own NEI page — unreachable for a hidden material —
-	 * while this global walk would surface them on the public page. Materials without
-	 * representable items drop out through the {@link #displayRow} null-gates. Linear in
-	 * the registry size (the ViewerMeta registration-cost ruling's shape).
+	 * the SELF rows of every registered material over the RecipeMapCrucible.java:63-67 dust
+	 * family (the upstream getNEIRecipes self arm sits OUTSIDE its {@code tMat != self}
+	 * skip, so "dust iron → ingot iron" is the page's core row) plus every cross-source
+	 * row family of {@link #smeltingDisplayRows}. The hidden gate rides the SELF arm:
+	 * upstream self rows only surfaced on the material's own NEI page — unreachable for a
+	 * hidden material — while this global walk would surface them on the public page.
+	 * Materials without representable items drop out through the {@link #displayRow}
+	 * null-gates. Linear in the registry size (the ViewerMeta registration-cost ruling's
+	 * shape).
 	 */
 	public static List<Recipe> allSmeltingDisplayRows() {
 		List<Recipe> rList = new ArrayList<>();
 		for (OreDictMaterial tMat : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
 			if (tMat.mHidden) continue; // :460 spirit — hidden materials have no public page to mirror
-			Recipe tSelf = displayRow(OP.dust, tMat);
-			if (tSelf != null) rList.add(tSelf);
+			for (OreDictPrefix tPrefix : selfPrefixes()) { // RecipeMapCrucible.java:63-67 verbatim order
+				Recipe tSelf = displayRow(tPrefix, tMat);
+				if (tSelf != null) rList.add(tSelf);
+			}
 			rList.addAll(smeltingDisplayRows(tMat));
 		}
 		return rList;
