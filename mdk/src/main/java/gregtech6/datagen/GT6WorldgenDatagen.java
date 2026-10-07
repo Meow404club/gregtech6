@@ -451,6 +451,7 @@ public final class GT6WorldgenDatagen {
         bootstrapOreConfigured(ctx); // task w6-small-ore-datagen — tail-append
         bootstrapLensOreConfigured(ctx); // task c3-lens-ores — tail-append
         bootstrapTwilightOreConfigured(ctx); // task twilight-adaptation-pilot — tail-append
+        bootstrapTwilightStoneConfigured(ctx); // task twilight-stone-rows — tail-append
     }
 
     /**
@@ -596,6 +597,7 @@ public final class GT6WorldgenDatagen {
         bootstrapOrePlaced(ctx, tFeatures); // task w6-small-ore-datagen — tail-append
         bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
         bootstrapTwilightOrePlaced(ctx, tFeatures); // task twilight-adaptation-pilot — tail-append
+        bootstrapTwilightStonePlaced(ctx, tFeatures); // task twilight-stone-rows — tail-append
     }
 
     /**
@@ -818,6 +820,18 @@ public final class GT6WorldgenDatagen {
                 HolderSet.direct(GTOreWorldgen.twilightOnAxisRows().stream()
                         .map(tRow -> tPlaced.getOrThrow(GTOreWorldgen.twilightPlacedKey(tRow))).toList()),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task twilight-stone-rows — the SECOND mod-dimension biome modifier: the 17
+        // twilight stone rows (GTStoneBlocks.STONES order, the placed-variant band —
+        // Loader_Worldgen.java:657) over TF's own tag, at the ore step (the blob rows'
+        // pass). ONE modifier over the whole band (the twilight_ores row's shape — the
+        // per-stone upstream config categories become the per-placed JSONs + the ONE
+        // datapack-editable modifier row); the row's mod_loaded condition rides the
+        // emission registry (the twilight_ores division of labor).
+        ctx.register(TWILIGHT_STONES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GTOreWorldgen.twilightBiomeTag()),
+                HolderSet.direct(GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.stream()
+                        .map(tPlaced::getOrThrow).toList()),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
     }
 
     /**
@@ -1002,6 +1016,15 @@ public final class GT6WorldgenDatagen {
      * END_YIELD row's division of labor).
      */
     public static final ResourceKey<BiomeModifier> TWILIGHT_ORES_MODIFIER_KEY = biomeModifierKeyOf("twilight_ores");
+
+    /**
+     * The twilight stone-rows biome-modifier key (task twilight-stone-rows): the SECOND
+     * mod-dimension row, the twilight_ores shape — biomes {@code #twilightforest:
+     * in_twilight_forest}, features = the 17 twilight stone placed variants (GTStoneBlocks
+     * .STONES order), the conditions ride the emission registry (the positive
+     * {@code [mod_loaded twilightforest]}).
+     */
+    public static final ResourceKey<BiomeModifier> TWILIGHT_STONES_MODIFIER_KEY = biomeModifierKeyOf("twilight_stones");
 
     /**
      * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card
@@ -1433,6 +1456,66 @@ public final class GT6WorldgenDatagen {
         OreDictMaterial tMaterial = aRow.material().get();
         if (tMaterial == null || tMaterial.mID < 0) return null;
         return MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target (MaterialRegistry.java:182-185)
+    }
+
+    // ------------------------------------------------------------------
+    // The twilight stone-row band (task twilight-stone-rows) — the WorldgenStone
+    // loop's twilight row per stone (Loader_Worldgen.java:657; the constants +
+    // erratum javadoc live in {@link GT6Worldgen}). 17 placed variants hanging off
+    // the reuse-or-own configured face, ALL mounted by the ONE
+    // {@link #TWILIGHT_STONES_MODIFIER_KEY} row; the mod_loaded condition rides the
+    // emission registry (GT6BiomeModifierConditions.CONDITION_ROWS), never the
+    // bootstrap.
+    // ------------------------------------------------------------------
+
+    /**
+     * The 5 twilight-only blob configured features (the lens marker stones — their
+     * overworld blob rows are retired, so no configured to reuse): vanilla
+     * {@code Feature.ORE} byte-shape-identical to the 12-blob band (GT6WorldgenDatagen
+     * .bootstrapConfigured head loop) — the single {@code stone_ore_replaceables ->
+     * GTStoneBlocks.<snake>(STONE)} target at {@link GT6Worldgen#oreBlobSize()} (the
+     * upstream twilight size 100 clamps to the same 64 the overworld 200 clamps to).
+     */
+    private static void bootstrapTwilightStoneConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) {
+            FeatureUtils.register(ctx, GT6Worldgen.twilightStoneConfiguredKey(tSnake), Feature.ORE,
+                    new OreConfiguration(
+                            List.of(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
+                                    GTStoneBlocks.block(tSnake, StoneVariant.STONE).get().defaultBlockState())),
+                            GT6Worldgen.oreBlobSize()));
+        }
+    }
+
+    /**
+     * The 17 twilight placed variants (STONES order — the acceptance 17-row audit unit):
+     * RarityFilter 1/200 (Loader_Worldgen.java:657 probability 200 — the WorldgenBlob
+     * .java:55 {@code nextInt(mProbability) == 0} chunk gate) + InSquare + BiomeFilter +
+     * the verbatim uniform Y [0, 40] band (the overworld blob chain shape at the twilight
+     * numbers; NO count modifier — Amount=1 IS the default count).
+     */
+    private static void bootstrapTwilightStonePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        for (int i = 0; i < GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.size(); i++) {
+            String tSnake = GTStoneBlocks.STONES.get(i).snake();
+            PlacementUtils.register(ctx, GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.get(i),
+                    aFeatures.getOrThrow(GT6Worldgen.twilightStoneConfiguredKey(tSnake)),
+                    RarityFilter.onAverageOnceEvery(GT6Worldgen.TWILIGHT_STONE_PROBABILITY),
+                    InSquarePlacement.spread(),
+                    BiomeFilter.biome(),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(GT6Worldgen.TWILIGHT_STONE_MIN_Y),
+                            VerticalAnchor.absolute(GT6Worldgen.TWILIGHT_STONE_MAX_Y)));
+        }
     }
 
     private static void bootstrapSurfaceBiomeModifiers(
