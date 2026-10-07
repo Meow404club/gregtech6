@@ -67,6 +67,7 @@ CONTROL_IDS = [
 ]
 
 steps = [phase("A: the gated matrix — every seed-hidden id is absent live (Unknown item, strict)")]
+steps.append(Step(f"setblock {CHEST} minecraft:chest", expect="Changed the block"))
 for slot, (item_id, domain, source) in enumerate(GATED_IDS):
     steps.append(Step(f"item replace block {CHEST} container.{slot} with {item_id} 1",
                       expect=f"Unknown item '{item_id}'"))
