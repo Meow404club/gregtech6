@@ -373,7 +373,10 @@ class GT6RecipeTagFallbackTest extends GTRecipesOfflineTestBase {
 		}
 		*///?}
 		I rItem = aCreator.get();
-		net.minecraft.core.Registry.register(tRegistry, aProbeId, rItem);
+		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in the
+		// minecraft namespace, growing the frozen-vanilla pool that GT6RecipesCokeOvenTest's
+		// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
+		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
 		return rItem;
 	}
 

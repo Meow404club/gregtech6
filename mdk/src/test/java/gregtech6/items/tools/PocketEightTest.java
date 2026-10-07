@@ -271,7 +271,10 @@ public class PocketEightTest {
 			// the durability() properties face: the 21.1 damage is a data COMPONENT keyed on
 			// max_damage — a bare Item cannot carry the axis (the BendingCylinderSmallTest form)
 			Item rItem = new Item(new Item.Properties().durability(512));
-			net.minecraft.core.Registry.register(tRegistry, aProbeId, rItem);
+			// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in
+			// the minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
+			// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
+			net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
 			return rItem;
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not open the offline item registry", aE);
