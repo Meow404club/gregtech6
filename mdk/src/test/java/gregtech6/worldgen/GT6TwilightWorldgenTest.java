@@ -17,6 +17,7 @@ import com.google.gson.JsonParser;
 import gregapi.data.MT;
 import gregtech6.datagen.GT6WorldgenDatagen;
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.registry.GTStoneBlocks;
 
 /**
  * The twilight band pins (task twilight-adaptation-pilot — the mod-dimension adaptation
@@ -38,8 +39,20 @@ import gregtech6.registry.GTMaterialItems;
  * the game logs a debug-level skip instead of any error: zero mounts, zero errors, the
  * unconditioned rows untouched. Pinned here by the JSON shape itself (the conditions
  * array = exactly the positive mod_loaded twilightforest).
+ *
+ * <p>Extended by task twilight-stone-rows: the 17 WorldgenStone twilight rows
+ * (Loader_Worldgen.java:654 loop, :657 row) as placed variants over the 12-blob-reuse +
+ * 5-lens-own configured split, the ONE twilight_stones modifier row (CONDITION_ROWS row
+ * 3), and the erratum columns (amount=1, size=100, probability=200, Y0-40 — the card
+ * face's 200/100 were the overworld :655 numbers transposed).
  */
 public class GT6TwilightWorldgenTest {
+
+    /** The 17 stone snakes, GTStoneBlocks.STONES order (the acceptance 17-row audit unit). */
+    private static final List<String> TWILIGHT_STONE_SNAKES = List.of(
+            "granite_black", "granite_red", "basalt", "marble", "limestone", "granite", "diorite",
+            "andesite", "komatiite", "greenschist", "blueschist", "kimberlite", "quartzite",
+            "prismarine_light", "prismarine_dark", "slate", "shale");
 
     @org.junit.jupiter.api.BeforeAll
     static void bootstrap() {
@@ -452,6 +465,142 @@ public class GT6TwilightWorldgenTest {
             assertEquals(tMinY, tHeight.getAsJsonObject("min_inclusive").get("absolute").getAsInt(), tTail + " MinHeight");
             assertEquals(tMaxY, tHeight.getAsJsonObject("max_inclusive").get("absolute").getAsInt(), tTail + " MaxHeight");
             assertEquals("minecraft:biome", tPlacement.get(tIndex + 1).getAsJsonObject().get("type").getAsString(), tTail);
+        }
+    }
+
+    // ---------------------------------------------------------------- the 17 stone rows (task twilight-stone-rows)
+
+    /**
+     * The 17 stone-row placed keys, GTStoneBlocks.STONES order (the acceptance 17-row
+     * audit unit): the upstream WorldgenStone twilight row per stone (the :654 loop,
+     * :657 row) — INCLUDING the two prismarines upstream excludes at :654 (the declared
+     * 17+ deviation, the overworld band's "17 verbatim" face carried into the twilight
+     * dim). The configured split: the 12 blob stones REUSE their overworld configured
+     * (the same Feature.ORE blob — the effective size is the identical clamp), the 5
+     * strata-lens marker stones own a twilight-path blob configured (their overworld
+     * blob rows are retired with the lens band, the strata ruling is an overworld face).
+     */
+    @Test
+    public void twilightStoneBandCensusIsPinned() {
+        assertEquals(TWILIGHT_STONE_SNAKES, GTStoneBlocks.STONES.stream().map(GTStoneBlocks.StoneSpec::snake).toList(),
+                "STONES order is the audit order (GTStoneBlocksRegistrationTest.java:108 face)");
+        assertEquals(17, GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.size(),
+                "the 17 placed variants (the 15 upstream :654 rows + the 2 prismarines — the declared deviation)");
+        assertEquals(5, GT6Worldgen.LENS_STONE_SNAKES.size(), "12 blob + 5 lens = 17");
+        for (int i = 0; i < TWILIGHT_STONE_SNAKES.size(); i++) {
+            String tSnake = TWILIGHT_STONE_SNAKES.get(i);
+            assertEquals("gt6:twilight_stone_" + tSnake,
+                    GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.get(i).location().toString(),
+                    tSnake + " placed key (STONES order)");
+            assertEquals("minecraft:worldgen/placed_feature",
+                    GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.get(i).registry().toString(), tSnake + " registry");
+            if (GT6Worldgen.LENS_STONE_SNAKES.contains(tSnake)) {
+                assertEquals("gt6:twilight_stone_" + tSnake,
+                        GT6Worldgen.twilightStoneConfiguredKey(tSnake).location().toString(),
+                        tSnake + " the lens stone owns its twilight-path configured");
+            } else {
+                assertEquals("gt6:overworld_stone_" + tSnake,
+                        GT6Worldgen.twilightStoneConfiguredKey(tSnake).location().toString(),
+                        tSnake + " the blob stone reuses the overworld configured");
+            }
+        }
+    }
+
+    /**
+     * The shared twilight stone-row columns (Loader_Worldgen.java:657 verbatim — the
+     * ERRATUM numbers: the task-card face carried "size 200 / probability 100", the
+     * overworld row's :655 numbers transposed in the second-hand transcription;
+     * WorldgenBlob.java:48 ctor order + the :657 source text bind amount=1, size=100,
+     * probability=200, Y0-40 — the 按上游原文落 ruling, 2026-10-07).
+     */
+    @Test
+    public void twilightStoneColumnsArePinned() {
+        assertEquals(200, GT6Worldgen.TWILIGHT_STONE_PROBABILITY,
+                "Probability=200 -> the 1/200 chunk gate (NOT the transposed 100)");
+        assertEquals(0, GT6Worldgen.TWILIGHT_STONE_MIN_Y, "MinHeight 0");
+        assertEquals(40, GT6Worldgen.TWILIGHT_STONE_MAX_Y, "MaxHeight 40");
+    }
+
+    /**
+     * The 17 placed JSONs ship the upstream columns: the 4-step chain = rarity 1/200 +
+     * square + the uniform Y 0..40 band + biome — NO count modifier (Amount=1 IS the
+     * default count, the band convention). The 12 blob stones hang their placed variant
+     * off the REUSED overworld configured; the 5 lens stones off their own blob
+     * configured (Feature.ORE, the single stone_ore_replaceables target on the STONE
+     * block — byte-shape-identical to the 12-blob band, the upstream twilight size 100
+     * clamping to the same codec-cap 64 the overworld 200 clamps to).
+     */
+    @Test
+    public void twilightStoneFeatureJsonsShipTheUpstreamColumns() throws Exception {
+        for (String tSnake : TWILIGHT_STONE_SNAKES) {
+            JsonObject tPlaced = resourceJson("data/gt6/worldgen/placed_feature/twilight_stone_" + tSnake + ".json");
+            assertEquals("gt6:" + GT6Worldgen.twilightStoneConfiguredKey(tSnake).location().getPath(),
+                    tPlaced.get("feature").getAsString(), tSnake + " the reuse-or-own configured face");
+            JsonArray tPlacement = tPlaced.getAsJsonArray("placement");
+            assertEquals(4, tPlacement.size(), tSnake + " rarity + square + height + biome (NO count: Amount=1 default)");
+            JsonObject tRarity = tPlacement.get(0).getAsJsonObject();
+            assertEquals("minecraft:rarity_filter", tRarity.get("type").getAsString(), tSnake);
+            assertEquals(200, tRarity.get("chance").getAsInt(), tSnake + " the 1/200 chunk gate (the erratum number)");
+            assertEquals("minecraft:in_square", tPlacement.get(1).getAsJsonObject().get("type").getAsString(), tSnake);
+            assertEquals("minecraft:biome", tPlacement.get(2).getAsJsonObject().get("type").getAsString(),
+                    tSnake + " (the overworld stone-blob band chain shape: rarity + square + biome + height)");
+            JsonObject tHeight = tPlacement.get(3).getAsJsonObject().getAsJsonObject("height");
+            assertEquals("minecraft:height_range", tPlacement.get(3).getAsJsonObject().get("type").getAsString(), tSnake);
+            assertEquals("minecraft:uniform", tHeight.get("type").getAsString(), tSnake);
+            assertEquals(0, tHeight.getAsJsonObject("min_inclusive").get("absolute").getAsInt(), tSnake + " MinHeight 0");
+            assertEquals(40, tHeight.getAsJsonObject("max_inclusive").get("absolute").getAsInt(), tSnake + " MaxHeight 40");
+        }
+        // the 5 lens configured JSONs — the head-loop blob shape at the twilight stone
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) {
+            JsonObject tConfigured = resourceJson("data/gt6/worldgen/configured_feature/twilight_stone_" + tSnake + ".json");
+            assertEquals("minecraft:ore", tConfigured.get("type").getAsString(), tSnake);
+            JsonObject tConfig = tConfigured.getAsJsonObject("config");
+            assertEquals(64, tConfig.get("size").getAsInt(),
+                    tSnake + " size=64 (the upstream 100 under the 64 codec cap — the :56 clamp face)");
+            assertEquals(0.0, tConfig.get("discard_chance_on_air_exposure").getAsDouble(), tSnake + " no air discard");
+            JsonArray tTargets = tConfig.getAsJsonArray("targets");
+            assertEquals(1, tTargets.size(), tSnake + " the single stone host");
+            JsonObject tTarget = tTargets.get(0).getAsJsonObject();
+            assertEquals("minecraft:tag_match", tTarget.getAsJsonObject("target").get("predicate_type").getAsString(), tSnake);
+            assertEquals("minecraft:stone_ore_replaceables", tTarget.getAsJsonObject("target").get("tag").getAsString(),
+                    tSnake + " the stone_ore_replaceables host");
+            assertEquals("gt6:" + tSnake, tTarget.getAsJsonObject("state").get("Name").getAsString(),
+                    tSnake + " the STONE-variant block (GTStoneBlocks.path: the plain snake)");
+        }
+    }
+
+    /**
+     * The SECOND mod-dimension modifier row (the twilight_ores shape): the 17 stone
+     * placed variants over TF's own tag at the ore step, in EACH leg's brand — the SAME
+     * TF-absence semantics (exactly ONE positive mod_loaded twilightforest; the
+     * conditions ride the emission registry, CONDITION_ROWS row 3).
+     */
+    @Test
+    public void twilightStonesModifierShipsTheTfGateInBothBrands() throws Exception {
+        List<String> tExpected = TWILIGHT_STONE_SNAKES.stream().map(tSnake -> "gt6:twilight_stone_" + tSnake).toList();
+        assertEquals("gt6:twilight_stones", GT6WorldgenDatagen.TWILIGHT_STONES_MODIFIER_KEY.location().toString(),
+                "the twilight_stones modifier id");
+        assertEquals(GT6WorldgenDatagen.biomeModifierRegistryKey().location(),
+                GT6WorldgenDatagen.TWILIGHT_STONES_MODIFIER_KEY.registry(),
+                "the modifier lives in the leg's biome_modifier registry");
+        for (String tBrand : new String[] {"forge", "neoforge"}) {
+            JsonObject tRow = resourceJson("data/gt6/" + tBrand + "/biome_modifier/twilight_stones.json");
+            assertEquals(tBrand + ":add_features", tRow.get("type").getAsString(), tBrand + " type brand");
+            assertEquals("#twilightforest:in_twilight_forest", tRow.get("biomes").getAsString(),
+                    tBrand + " the TF tag gate (the ④ face: never resolved when TF is absent)");
+            JsonArray tFeatures = tRow.getAsJsonArray("features");
+            assertNotNull(tFeatures, tBrand + " the 17-row feature list");
+            assertEquals(17, tFeatures.size(), tBrand + " the 17 placed variants, ALL mounted by the ONE row");
+            assertEquals(tExpected, tFeatures.asList().stream().map(JsonElement::getAsString).toList(),
+                    tBrand + " STONES order");
+            assertEquals("underground_ores", tRow.get("step").getAsString(), tBrand + " the ore step (the blob rows' pass)");
+            JsonArray tConditions = tRow.getAsJsonArray(tBrand + ":conditions");
+            assertNotNull(tConditions, tBrand + " the conditions key");
+            assertEquals(1, tConditions.size(), tBrand + " exactly the positive mod_loaded");
+            JsonObject tModLoaded = tConditions.get(0).getAsJsonObject();
+            assertEquals(tBrand + ":mod_loaded", tModLoaded.get("type").getAsString(), tBrand);
+            assertEquals("twilightforest", tModLoaded.get("modid").getAsString(),
+                    tBrand + " THE TF-ABSENCE PIN: without TF the entry never registers");
         }
     }
 

@@ -119,6 +119,11 @@ public class GT6BiomeModifierConditions implements DataProvider {
             // tag resolves (forge ICondition.java:24-30 shouldRegisterEntry) — zero mounts,
             // zero errors, the unconditioned rows untouched.
             new ConditionRow(GT6WorldgenDatagen.TWILIGHT_ORES_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)),
+            // task twilight-stone-rows — the THIRD row, the twilight_stones modifier (the
+            // 17 WorldgenStone twilight rows, Loader_Worldgen.java:657) riding the SAME
+            // positive form and the SAME TF-absence semantics as the twilight_ores row.
+            new ConditionRow(GT6WorldgenDatagen.TWILIGHT_STONES_MODIFIER_KEY.location().getPath(),
                     aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)));
 
     @Override

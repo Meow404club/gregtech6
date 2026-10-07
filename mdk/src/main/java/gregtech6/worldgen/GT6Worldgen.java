@@ -37,9 +37,10 @@ import gregtech6.registry.GTStoneBlocks;
  * blob loop (Loader_Worldgen.java:654 {@code if (tStone != PrismarineDark && !=
  * PrismarineLight)}) — 15 blobs. This port generates all 17 STONES rows verbatim: the
  * card spec pins the 17-stone key set aligned with GTStoneBlocks.STONES (the acceptance
- * key-order audit), and the prismarine exclusion rides the deferred dim-coverage card
- * (nether/twilight/erebus/atum/tropics rows of Loader_Worldgen.java:656-661 are deferred
- * with it).
+ * key-order audit). Of the dim rows the nether row landed with the nether-lens band
+ * (above), the twilight row with task twilight-stone-rows (both carrying the same 17+7
+ * declared deviation); erebus/atum/tropics (:658-660) stay deferred — those mods have no
+ * high-version port target (the research.r12-worldgen-coverage-audit face).
  */
 public final class GT6Worldgen {
 
@@ -156,6 +157,75 @@ public final class GT6Worldgen {
     public static final ResourceKey<ConfiguredFeature<?, ?>> NETHER_LENSES_CONFIGURED = configKey("nether_lenses");
     /** The nether-lens placed feature (Count 1 constant + InSquare + BiomeFilter — one attempt per chunk; the per-chunk row rolls live in the Feature). */
     public static final ResourceKey<PlacedFeature> NETHER_LENSES_PLACED = placedKeyOf("nether_lenses");
+
+    // ------------------------------------------------------------------
+    // The twilight stone-row band (task twilight-stone-rows) — the WorldgenStone
+    // loop's twilight row per stone, Loader_Worldgen.java:657 verbatim:
+    // {@code new WorldgenStone("twilight.stone.<mat>", T, stone, 0, 1, 100, 200,
+    // 0, 40, null, F, GEN_TWILIGHT)}. The ctor order (WorldgenBlob.java:48)
+    // binds meta=0, amount=1, size=100, probability=200 (the 1/200 chunk gate),
+    // MinHeight 0, MaxHeight 40, default T (the TF-specific rows ship enabled),
+    // GEN_TWILIGHT only. PARAMETER ERRATUM (card-pinned): the task card face
+    // and the research.twilight-residual survey carried "size 200 / probability
+    // 100" — those are the OVERWORLD row's numbers (:655, BLOB_SIZE/
+    // BLOB_PROBABILITY above) transposed in the second-hand transcription; the
+    // first-hand source binds size=100/probability=200 and this port follows
+    // the source (the coordinator's 按上游原文落 ruling, 2026-10-07).
+    //
+    // The 17 stones ship as PLACED VARIANTS (the research.twilight-residual
+    // card-split face): the 12 blob stones reuse their overworld configured
+    // features (the same Feature.ORE blob — the effective size is the identical
+    // clamp min(size, 64)); the 5 strata-lens marker stones have NO overworld
+    // blob configured (their blob rows retired with the lens band), so the
+    // twilight face registers 5 own blob configured features. The lens
+    // reinterpretation is an OVERWORLD-face ruling only (decisions
+    // .2026-09-17-p30-strata-ruling) — upstream the twilight rows are plain
+    // sausage blobs like every other row, so the twilight face stays
+    // blob-shaped. Upstream EXCLUDES the two prismarines from the loop (:654) —
+    // this port ships all 17 rows, the declared 17+ deviation (the overworld
+    // band's "17 verbatim" face carried into the twilight dim).
+    // ------------------------------------------------------------------
+
+    /** Loader_Worldgen.java:657 twilight row probability 200 — the per-row 1/200 chunk gate (RarityFilter). */
+    public static final int TWILIGHT_STONE_PROBABILITY = 200;
+    /** Loader_Worldgen.java:657 twilight row MinHeight 0 (HeightRangePlacement uniform low anchor). */
+    public static final int TWILIGHT_STONE_MIN_Y = 0;
+    /** Loader_Worldgen.java:657 twilight row MaxHeight 40 (uniform high anchor; upstream picks Y in [min, max)). */
+    public static final int TWILIGHT_STONE_MAX_Y = 40;
+
+    /**
+     * The modern entry id of a twilight stone row: {@code twilight_stone_<snake>} — the
+     * upstream config name {@code twilight.stone.<material>} with the dots flattened (the
+     * {@link #entryPath} rule).
+     */
+    public static String twilightStonePath(String aStoneSnake) {
+        return "twilight_stone_" + aStoneSnake;
+    }
+
+    /** The placed-feature key of a twilight stone row (all 17 — the placed-variant face). */
+    public static ResourceKey<PlacedFeature> twilightStonePlacedKey(String aStoneSnake) {
+        return placedKeyOf(twilightStonePath(aStoneSnake));
+    }
+
+    /**
+     * The configured-feature key a twilight stone row hangs off: the 12 blob stones REUSE
+     * their overworld blob configured ({@code gt6:overworld_stone_<snake>}); the 5 lens
+     * marker stones get their OWN blob configured under the twilight path (their overworld
+     * blob rows are retired — {@link #LENS_STONE_SNAKES}).
+     */
+    public static ResourceKey<ConfiguredFeature<?, ?>> twilightStoneConfiguredKey(String aStoneSnake) {
+        return LENS_STONE_SNAKES.contains(aStoneSnake)
+                ? configKey(twilightStonePath(aStoneSnake))
+                : configuredKey(aStoneSnake);
+    }
+
+    /** The 5 twilight-only blob configured keys, {@link #LENS_STONE_SNAKES} order. */
+    public static final List<ResourceKey<ConfiguredFeature<?, ?>>> TWILIGHT_LENS_STONE_CONFIGURED_KEYS =
+            LENS_STONE_SNAKES.stream().map(GT6Worldgen::twilightStoneConfiguredKey).toList();
+
+    /** The 17 twilight placed keys, GTStoneBlocks.STONES order (the acceptance 17-row audit unit). */
+    public static final List<ResourceKey<PlacedFeature>> TWILIGHT_STONE_PLACED_KEYS = GTStoneBlocks.STONES.stream()
+            .map(GTStoneBlocks.StoneSpec::snake).map(GT6Worldgen::twilightStonePlacedKey).toList();
 
     // ------------------------------------------------------------------
     // The nether three-form band (task nether-lens-end-yield spec ①):
