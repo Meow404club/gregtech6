@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_titanium"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_titanium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "wG ",
+    "GMG",
+    " Gh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:rollformer_t3"
+  }
+}

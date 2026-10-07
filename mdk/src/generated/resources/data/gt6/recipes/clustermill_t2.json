@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_steel"
+    },
+    "M": {
+      "item": "gt6:casing_machine_quadruple_steel"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_steel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "wGh",
+    "SMS"
+  ],
+  "result": {
+    "item": "gt6:clustermill_t2"
+  },
+  "show_notification": true
+}

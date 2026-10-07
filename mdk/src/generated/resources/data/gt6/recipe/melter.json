@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "C": {
+      "item": "gt6:plate_double_copper"
+    },
+    "M": {
+      "item": "gt6:casing_machine_iron"
+    },
+    "P": {
+      "item": "gt6:wood_fluid_pipe_medium"
+    },
+    "U": {
+      "item": "gt6:smeltery_ceramic"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "wUh",
+    "PMP",
+    "BCB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:melter"
+  }
+}

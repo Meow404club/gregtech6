@@ -596,6 +596,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : sifterRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
 		for (PartFamilyRecipeRow tRow : compressorRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
 		for (PartFamilyRecipeRow tRow : rollBenderRecipeBuilders()) tRow.builder().save(aConsumer, tRow.id());
+		for (PartFamilyRecipeRow tRow : machinePourBand()) tRow.builder().save(aConsumer, tRow.id()); // task machines-crafting-pour — the non-steam machine bodies (the band javadoc at the tail)
 		for (PartFamilyRecipeRow tRow : forgeLadderBuilders()) tRow.builder().save(aConsumer, tRow.id());
 	}
 	//?} else {
@@ -883,6 +884,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (PartFamilyRecipeRow tRow : sifterRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
 		for (PartFamilyRecipeRow tRow : compressorRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
 		for (PartFamilyRecipeRow tRow : rollBenderRecipeBuilders()) tRow.builder().save(aOutput, tRow.id());
+		for (PartFamilyRecipeRow tRow : machinePourBand()) tRow.builder().save(aOutput, tRow.id()); // task machines-crafting-pour — the non-steam machine bodies (the forge-leg mirror)
 		for (PartFamilyRecipeRow tRow : forgeLadderBuilders()) tRow.builder().save(aOutput, tRow.id());
 	}
 	*///?}
@@ -3553,7 +3555,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** One EU-bridge crafting row — the builder + the result-path id its save face ids from (the PartFamilyRecipeRow shape). */
 	private record BridgeCraftRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
 
-	/** The rung path of a family ladder index (the GTMachines.bridgePath form mirrored locally). */
+	/** The rung path of a family ladder index (the gregtech6.registry.GTMachines.bridgePath form mirrored locally). */
 	private static String bridgePath(String aFamily, int aTier) {
 		return aTier == 0 ? aFamily : aFamily + "_t" + (aTier + 1);
 	}
@@ -3608,7 +3610,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return rRows;
 	}
 
-	/** The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members, the dynamo family's ladder face) — the single source lives in {@code GTMachines.electricTierMat} (task c2-controller-tint: the bridge/laser tint rows ride the same ladder). */
+	/** The Electric_T[1..5] rung material by ladder index (upstream MT.java:3691 members, the dynamo family's ladder face) — the single source lives in {@code gregtech6.registry.GTMachines.electricTierMat} (task c2-controller-tint: the bridge/laser tint rows ride the same ladder). */
 	private static gregapi.oredict.OreDictMaterial bridgeMat(int aTier) {
 		return gregtech6.registry.GTMachines.electricTierMat(aTier);
 	}
@@ -3740,7 +3742,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     //     "RRR" — the cover item has no port identity, its own recipe is the nearest
     //     semantic carrier);
     //   - 'E' IL.MOTORS[1] (LV Electric Motor) → gt6:electric_motor_t2 (the port bridge
-    //     ladder T2 = upstream 10022 LV, GTMachines.java:4711);
+    //     ladder T2 = upstream 10022 LV, gregtech6.registry.GTMachines.java:4711);
     //   - the four IL.Processor_Crystal_* colors → the matching GEM TAGS (ruby/emerald/
     //     sapphire/diamond — #forge:gems/<color>, the crystal circuits' material carriers;
     //     the versatile row's S/D/R/E columns map Sapphire/Diamond/Ruby/Emerald per
@@ -8030,6 +8032,559 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.unlockedBy("has_casing", has(tCasing)), steamBandId(tRow.path())));
 		}
 		return rRows;
+	}
+
+	// -----------------------------------------------------------------------
+	// task machines-crafting-pour — the non-steam machine-body crafting band
+	// (the machine-port-prereq-census P1' card: the P1 steam band poured the
+	// 60 steam-age machines + sifter/compressor/rollbender, and the cracker/
+	// burner-mixer/molecular-scanner bands shipped their slices; every OTHER
+	// GTMachines family's crafting-table housing frame stayed unpoured — the
+	// production chains behind them dead). The grids are the ACTIVE upstream
+	// registration rows VERBATIM (Loader_MultiTileEntities.java machines1
+	// :1288 - machines4 :1657; the Molecular Scanner T1/T2/T4/T5 rows are
+	// commented out upstream — only the T3 rung exists and it already shipped
+	// in the debt-scanner-t3 band). Lowercase letters ride the CR tool mapping
+	// (h/w/d/x), auto-defined off the pattern text. Declared folds and cuts:
+	//   - ANY.Cu plateDouble → Copper; ANY.Diamond gem/plateGem/plateGemTiny/
+	//     dust → Diamond (the ANY-material single-representative precedent);
+	//   - casing columns ride the REAL casing_machine*/casing_small items (the
+	//     task casing-machine-register deviation items — the cracker band's
+	//     casingSmall fold predates that registration, the faithful face wins
+	//     here, the P1 sifter casingMachineDouble precedent);
+	//   - Blocks.brick_block → vanilla bricks, OD.blockGlassColorless → glass,
+	//     OD.sandstone → sandstone, OD.craftingHardenedClay → terracotta (the
+	//     vanilla-bridge precedents);
+	//   - OD_CIRCUITS[t] → the #gt6:circuit<t> tags (the battery/usb 'C'
+	//     column convention); MT.DATA.CABLES_01[t] → the cable_* items over
+	//     the GT6Batteries.WIRE_TOKENS tier ladder (the usb-peripherals path
+	//     walk); the fixed wire columns ride their exact wire paths (the
+	//     wiregt-prefix-item-retirement face — the wire family items, not the
+	//     retired prefix items);
+	//   - IL.MOTORS/CONVEYERS/PISTONS/ROBOT_ARMS[t] → the GT6Robotics ladders;
+	//     IL.FIELD_GENERATORS/EMITTERS/SENSORS[t] → the GT6Emitters paths;
+	//     IL.Processor_Crystal_* → the gem tags (the molecularScannerRow fold);
+	//   - the pipe columns (Roasting/Fermenter/Autoclave/Melter) → the ONE wood
+	//     fluid pipe item (the cracker band's declared representative fold —
+	//     the pipe prefixes stay off the port item path);
+	//   - the Melter 'U' crucible → the port smeltery_ceramic item (the
+	//     ceramic rung the port registers). The Smelter/Crystallisation 'U'
+	//     crucibles (tungsten/graphite/tantalum-hafnium-carbide/quartz/
+	//     iridium small crucibles) have NO port items — those two families
+	//     stay CUT, the gap ledger, no item fabricated;
+	//   - the Canner rows (IL.PUMPS absent), the Laser Welder rows (the yellow
+	//     lens family pooled, GTMachines:2032 card ruling), the Lightning
+	//     Processor rows ('X' = wireGt01 over ANY.Iron — the wire family has
+	//     no iron rung, the GTWireSpecs 30-row verbatim list starts Sn/Pb, so
+	//     the upstream input itself resolves to nothing) and the Nanoscale
+	//     Fabricator (no port machine registration at all) stay CUT — the gap
+	//     ledger. The port-native ULV rows (*_ULV_ROWS / ROLLINGMILL_ROWS,
+	//     zero upstream grid) have no pour object either.
+	// A missing input item skips the row silently (the itemOrNull guard, the
+	// P1 band semantics). Result ids ride the block path (the steam-band id
+	// convention).
+	// -----------------------------------------------------------------------
+
+	/** The 'h'/'w'/'d'/'x' tool letters of one grid, auto-defined off the pattern text (the CR tool mapping, the P1 band's letter set). */
+	private static void defineToolLetters(ShapedRecipeBuilder aBuilder, String[] aPatterns) {
+		String tLetters = String.join("", aPatterns);
+		if (tLetters.indexOf('h') >= 0) aBuilder.define('h', GT6ItemTags.TOOLS_HARD_HAMMER);
+		if (tLetters.indexOf('w') >= 0) aBuilder.define('w', GT6ItemTags.TOOLS_WRENCH);
+		if (tLetters.indexOf('d') >= 0) aBuilder.define('d', GT6ItemTags.TOOLS_SCREWDRIVER);
+		if (tLetters.indexOf('x') >= 0) aBuilder.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER);
+	}
+
+	/** One family's key resolver: defines the row's columns, {@code false} = a column item is absent (the row skips). */
+	private interface PourKeys { boolean define(ShapedRecipeBuilder aBuilder, gregtech6.block.GTBasicMachineBlock.MachineRow aRow); }
+
+	/**
+	 * One poured machine family: the row list walked in order, the grid verbatim,
+	 * the id off the row path (the steam-band convention). The family items map is
+	 * the registration map the GTMachines static block filled from the same rows,
+	 * so a null handle is a datagen-order bug, not a data state — the guard stays.
+	 */
+	private java.util.List<PartFamilyRecipeRow> machinePour(java.util.Map<String, ? extends java.util.function.Supplier<Item>> aItems,
+			java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> aRows, String[] aPatterns, PourKeys aKeys) {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : aRows) {
+			java.util.function.Supplier<Item> tResult = aItems.get(tRow.path());
+			if (tResult == null) continue; // the unregistered-run guard
+			ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tResult.get());
+			for (String tPattern : aPatterns) tBuilder.pattern(tPattern);
+			defineToolLetters(tBuilder, aPatterns);
+			if (!aKeys.define(tBuilder, tRow)) continue; // the absent-column skip
+			rRows.add(new PartFamilyRecipeRow(tBuilder, steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/** The Kinetic_T ladder materials in rung order (the row-list material suppliers, lifted once). */
+	private static gregapi.oredict.OreDictMaterial[] kineticLadder() {
+		return gregtech6.registry.GTMachines.KINETIC_T_LADDER.stream().map(java.util.function.Supplier::get).toArray(gregapi.oredict.OreDictMaterial[]::new);
+	}
+
+	/** The Heat_T ladder materials in rung order (the OVEN_ROWS material suppliers, lifted once). */
+	private static gregapi.oredict.OreDictMaterial[] heatLadder() {
+		return gregtech6.registry.GTMachines.HEAT_T_LADDER.stream().map(java.util.function.Supplier::get).toArray(gregapi.oredict.OreDictMaterial[]::new);
+	}
+
+	/** The insulated 01-cable item of a 1-based tier rung (the CABLES_01 column, the WIRE_TOKENS ladder — [1] Sn .. [5] Pt, MT.java:3631-3637). */
+	private Item cable01(int aTier) {
+		return wireItemByPath("cable_" + GT6Batteries.WIRE_TOKENS[aTier] + "_gt01");
+	}
+
+	/** The component item of a 1-based tier rung (the GT6Emitters family paths — the molecularScannerRow F/X/Y face). */
+	private static Item component(String aFamily, int aTier) {
+		return gregtech6.items.GT6Emitters.ITEMS_BY_PATH.get(aFamily + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[aTier]).get();
+	}
+
+	/** The plate ladder prefix of a tier rung (T1 plate .. T5 plateQuintuple — the cracker plate-column shape, the freezer/cryo 'S' column). */
+	private static gregapi.oredict.OreDictPrefix plateLadder(int aTier) {
+		return switch (aTier) {
+			case 0 -> gregapi.data.OP.plate;
+			case 1 -> gregapi.data.OP.plateDouble;
+			case 2 -> gregapi.data.OP.plateTriple;
+			case 3 -> gregapi.data.OP.plateQuadruple;
+			default -> gregapi.data.OP.plateQuintuple;
+		};
+	}
+
+	/** The whole band: every poured family, in the upstream machines1→machines4 file order (the pin test's walk order). */
+	java.util.List<PartFamilyRecipeRow> machinePourBand() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		// -- machines1, the Kinetic_T housing frames (M = casingMachineDouble) ----
+		rRows.addAll(shredderRecipeBuilders()); // :1294-1297
+		rRows.addAll(crusherRecipeBuilders()); // :1300-1303
+		rRows.addAll(latheRecipeBuilders()); // :1306-1309
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.BUZZSAW_ITEMS_BY_PATH, gregtech6.registry.GTMachines.BUZZSAW_ROWS, new String[] {"DGS", "wMS"}, (b, row) -> { // :1318-1321
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m), dust = itemOrNull(gregapi.data.OP.dust, gregapi.data.MT.Diamond);
+			Item head = row.tier() == 0 ? itemOrNull(gregapi.data.OP.toolHeadBuzzSaw, gregapi.data.MT.Steel) : itemOrNull(gregapi.data.OP.toolHeadBuzzSaw, gregapi.data.MT.CobaltBrass);
+			if (casing == null || gearSmall == null || dust == null || head == null) return false;
+			b.define('M', casing).define('S', gearSmall).define('D', dust).define('G', head).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.SQUEEZER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.SQUEEZER_ROWS, new String[] {"RS", "PM", "Pw"}, (b, row) -> { // :1324-1327
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), plate = itemOrNull(gregapi.data.OP.plateTriple, m), spring = itemOrNull(gregapi.data.OP.spring, m), stick = itemOrNull(gregapi.data.OP.stick, m);
+			if (casing == null || plate == null || spring == null || stick == null) return false;
+			b.define('M', casing).define('P', plate).define('S', spring).define('R', stick).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.CENTRIFUGE_ITEMS_BY_PATH, gregtech6.registry.GTMachines.CENTRIFUGE_ROWS, new String[] {"Gw", "SM", "Gh"}, (b, row) -> { // :1330-1333
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), gear = itemOrNull(gregapi.data.OP.gearGt, m), stickLong = itemOrNull(gregapi.data.OP.stickLong, m);
+			if (casing == null || gear == null || stickLong == null) return false;
+			b.define('M', casing).define('G', gear).define('S', stickLong).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- machines1, the Electric rungs ---------------------------------------
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.ELECTROLYZER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.ELECTROLYZER_ROWS, new String[] {"SMS", "WwW"}, (b, row) -> { // :1336-1340
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), ptWire = wireItemByPath("wire_platinum_gt01");
+			if (casing == null) return false;
+			b.define('M', casing).define('S', ptWire).define('W', cable01(row.tier() + 1)).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- machines1, the Kinetic_M runs (M = casingMachineDouble / single) -----
+		rRows.addAll(rollingMillRecipeBuilders()); // :1349-1352 (the RU rows; the ULV rung is port-native, no upstream grid)
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.ROLLFORMER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.ROLL_FORMER_ROWS, new String[] {"wG ", "GMG", " Gh"}, (b, row) -> { // :1361-1364
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), gear = itemOrNull(gregapi.data.OP.gearGt, m);
+			if (casing == null || gear == null) return false;
+			b.define('M', casing).define('G', gear).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.CLUSTERMILL_ITEMS_BY_PATH, gregtech6.registry.GTMachines.CLUSTER_MILL_ROWS, new String[] {"SSS", "wGh", "SMS"}, (b, row) -> { // :1367-1370
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineQuadruple, m), gear = itemOrNull(gregapi.data.OP.gearGt, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m);
+			if (casing == null || gear == null || gearSmall == null) return false;
+			b.define('M', casing).define('G', gear).define('S', gearSmall).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.WIREMILL_ITEMS_BY_PATH, gregtech6.registry.GTMachines.WIREMILL_ROWS, new String[] {"SGS", "wMh"}, (b, row) -> { // :1373-1376 ('M' = casingMachine SINGLE)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), gear = itemOrNull(gregapi.data.OP.gearGt, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m);
+			if (casing == null || gear == null || gearSmall == null) return false;
+			b.define('M', casing).define('G', gear).define('S', gearSmall).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- machines1, the Canner CUT (IL.PUMPS absent) — the gap ledger --------
+		rRows.addAll(ovenRecipeBuilders()); // :1288-1291 (the OvenRow walk — the OVEN family is the flat-constant shape, no MachineRow list)
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.ROASTING_ITEMS_BY_PATH, gregtech6.registry.GTMachines.ROASTING_ROWS, new String[] {"wPh", "PMP", "BCB"}, (b, row) -> { // :1386-1389 ('P' = pipeMedium → the wood-pipe fold)
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), cuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu);
+			if (casing == null || cuDouble == null) return false;
+			b.define('M', casing).define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()).define('C', cuDouble)
+					.define('B', net.minecraft.world.level.block.Blocks.BRICKS).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.MIXER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.MIXER_ROWS, new String[] {"PMP", "PRP", "hSw"}, (b, row) -> { // :1392-1395 ('P' = the FIXED plate(StainlessSteel) column)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), stick = itemOrNull(gregapi.data.OP.stick, m), rotor = itemOrNull(gregapi.data.OP.rotor, gregapi.data.MT.StainlessSteel), plate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.StainlessSteel);
+			if (casing == null || stick == null || rotor == null || plate == null) return false;
+			b.define('P', plate).define('M', casing).define('R', rotor).define('S', stick).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(distilleryRecipeBuilders()); // :1398-1401 (the per-tier wire columns)
+		rRows.addAll(extruderRecipeBuilders()); // :1406-1409 (the T1 Low-Heat rung's steel head)
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.LOOM_ITEMS_BY_PATH, gregtech6.registry.GTMachines.LOOM_ROWS, new String[] {"ShS", "GMG", "SwS"}, (b, row) -> { // :1412-1415 ('S' = stickLong, the raw :1412 key)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), gear = itemOrNull(gregapi.data.OP.gearGt, m), stickLong = itemOrNull(gregapi.data.OP.stickLong, m);
+			if (casing == null || gear == null || stickLong == null) return false;
+			b.define('S', stickLong).define('G', gear).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- machines2 ------------------------------------------------------------
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.POLARIZER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.POLARIZER_ROWS, new String[] {"TwT", "PMP", "TdT"}, (b, row) -> { // :1418-1422
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), plate = itemOrNull(gregapi.data.OP.plate, m), screw = itemOrNull(gregapi.data.OP.screw, m);
+			if (casing == null || plate == null || screw == null) return false;
+			b.define('T', screw).define('P', plate).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.PRESS_ITEMS_BY_PATH, gregtech6.registry.GTMachines.PRESS_ROWS, new String[] {"RS", "PM", "Pw"}, (b, row) -> { // :1425-1428
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), plate = itemOrNull(gregapi.data.OP.plateDouble, m), spring = itemOrNull(gregapi.data.OP.spring, m), stick = itemOrNull(gregapi.data.OP.stick, m);
+			if (casing == null || plate == null || spring == null || stick == null) return false;
+			b.define('R', stick).define('S', spring).define('P', plate).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- the Smelter/Crystallisation CUT (the small crucible items absent) ----
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.INJECTOR_ITEMS_BY_PATH, gregtech6.registry.GTMachines.INJECTOR_ROWS, new String[] {"XPw", "CMW"}, (b, row) -> { // :1443-1447 ('P' = the pipeTiny→pipeHuge ladder → the wood-pipe fold)
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (tCasing == null) return false;
+			b.define('X', gregtech6.registry.GT6Robotics.PISTONS.get(row.tier() + 1).get()).define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1)))
+					.define('W', cable01(row.tier() + 1)).define('M', tCasing)
+					.define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()).unlockedBy("has_casing", has(tCasing));
+			return true;
+		}));
+		rRows.addAll(printerLikePour(gregtech6.registry.GTMachines.PRINTER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.PRINTER_ROWS,
+				gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get())); // :1450-1454 ('P' = the pipeTiny ladder → the wood-pipe fold)
+		rRows.addAll(printerLikePour(gregtech6.registry.GTMachines.SCANNER_VISUALS_ITEMS_BY_PATH, gregtech6.registry.GTMachines.SCANNER_VISUALS_ROWS,
+				itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Lumium))); // :1457-1461 ('P' = the FIXED plate(Lumium), the raw :1457 key)
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.SLUICE_ITEMS_BY_PATH, gregtech6.registry.GTMachines.SLUICE_ROWS, new String[] {"PPP", "RGR", "GMG"}, (b, row) -> { // :1464-1467 ('P' = plateDouble(aMat), the raw keys)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), gear = itemOrNull(gregapi.data.OP.gearGt, m), rotor = itemOrNull(gregapi.data.OP.rotor, m), plate = itemOrNull(gregapi.data.OP.plateDouble, m);
+			if (casing == null || gear == null || rotor == null || plate == null) return false;
+			b.define('P', plate).define('R', rotor).define('G', gear).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.MAGNETIC_SEPARATOR_ITEMS_BY_PATH, gregtech6.registry.GTMachines.MAGNETIC_SEPARATOR_ROWS, new String[] {"TwT", "TdT", "PMP"}, (b, row) -> { // :1470-1474
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), plate = itemOrNull(gregapi.data.OP.plate, m), screw = itemOrNull(gregapi.data.OP.screw, m);
+			if (casing == null || plate == null || screw == null) return false;
+			b.define('T', screw).define('P', plate).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.DRYER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.DRYER_ROWS, new String[] {"wPh", "BMB", "BCB"}, (b, row) -> { // :1477-1480 ('P' = the pipeMedium(aMat) ladder → the wood-pipe fold)
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), cuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu);
+			if (casing == null || cuDouble == null) return false;
+			b.define('B', net.minecraft.world.level.block.Blocks.BRICKS).define('M', casing).define('C', cuDouble)
+					.define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.LASER_ENGRAVER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.LASER_ENGRAVER_ROWS, new String[] {"TdT", "GPG", "CMC"}, (b, row) -> { // :1483-1487 ('P' = OD.craftingHardenedClay → terracotta, 'G' = gearGtSmall, the raw :1483 keys)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), screw = itemOrNull(gregapi.data.OP.screw, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m);
+			if (casing == null || screw == null || gearSmall == null) return false;
+			b.define('T', screw).define('G', gearSmall).define('P', net.minecraft.world.level.block.Blocks.TERRACOTTA)
+					.define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1))).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- the Laser Welder CUT (the yellow lens family pooled) — the gap ledger -
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.AUTOCRAFTER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.AUTOCRAFTER_ROWS, new String[] {"WRW", "RwR", "CMC"}, (b, row) -> { // :1497-1501
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, row.material().get()), arm = gregtech6.registry.GT6Robotics.ROBOT_ARMS.get(row.tier() + 1).get(), cable = cable01(row.tier() + 1);
+			b.define('W', cable).define('R', arm).define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1))).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.ELECTRIC_MIXER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.ELECTRIC_MIXER_ROWS, new String[] {"PMP", "PRP", "hSw"}, (b, row) -> { // :1504-1508 ('P' = the FIXED plate(StainlessSteel) column)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), rotor = itemOrNull(gregapi.data.OP.rotor, gregapi.data.MT.StainlessSteel), plate = itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.StainlessSteel);
+			if (casing == null || rotor == null || plate == null) return false;
+			b.define('P', plate).define('M', casing).define('R', rotor).define('S', gregtech6.registry.GT6Robotics.MOTORS.get(row.tier() + 1).get()).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.ELECTRIC_LOOM_ITEMS_BY_PATH, gregtech6.registry.GTMachines.ELECTRIC_LOOM_ROWS, new String[] {"ShS", "GMG", "SwS"}, (b, row) -> { // :1511-1515 ('G' = the motor column, 'S' = stickLong, the raw :1511 keys)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), stickLong = itemOrNull(gregapi.data.OP.stickLong, m);
+			if (casing == null || stickLong == null) return false;
+			b.define('S', stickLong).define('G', gregtech6.registry.GT6Robotics.MOTORS.get(row.tier() + 1).get()).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.ELECTRIC_SIFTER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.ELECTRIC_SIFTER_ROWS, new String[] {"WxW", "RMR", "SwS"}, (b, row) -> { // :1518-1522
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), wire = itemOrNull(gregapi.data.OP.wireFine, m), stick = itemOrNull(gregapi.data.OP.stick, m);
+			if (casing == null || wire == null || stick == null) return false;
+			b.define('W', wire).define('R', stick).define('M', casing).define('S', gregtech6.registry.GT6Robotics.PISTONS.get(row.tier() + 1).get()).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.SLICER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.SLICER_ROWS, new String[] {"PRw", "YMC"}, (b, row) -> { // :1525-1529 ('R' = stick, the raw :1525 key)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), stick = itemOrNull(gregapi.data.OP.stick, m);
+			if (casing == null || stick == null) return false;
+			b.define('P', gregtech6.registry.GT6Robotics.PISTONS.get(row.tier() + 1).get()).define('Y', gregtech6.registry.GT6Robotics.CONVEYERS.get(row.tier() + 1).get())
+					.define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1))).define('R', stick).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.LAMINATOR_ITEMS_BY_PATH, gregtech6.registry.GTMachines.LAMINATOR_ROWS, new String[] {"SwS", "GMG", "SCS"}, (b, row) -> { // :1532-1535
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m), stick = itemOrNull(gregapi.data.OP.stick, m), cuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu);
+			if (casing == null || gearSmall == null || stick == null || cuDouble == null) return false;
+			b.define('S', stick).define('G', gearSmall).define('M', casing).define('C', cuDouble).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- machines3, the exotic-energy/exotic rungs -----------------------------
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.MASSFAB_SMALL_ITEMS_BY_PATH, gregtech6.registry.GTMachines.MASSFAB_SMALL_ROWS, new String[] {"RFS", "FMF", "RFS"}, (b, row) -> { // :1542-1546
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (casing == null) return false;
+			b.define('R', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "ruby")).define('F', component("field_generator", 1))
+					.define('S', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "sapphire")).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- the Molecular Scanner family: only the T3 rung exists upstream and it shipped (debt-scanner-t3) --
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.REPLICATOR_ITEMS_BY_PATH, gregtech6.registry.GTMachines.REPLICATOR_ROWS, new String[] {"EXE", "FMF", "SXS"}, (b, row) -> { // :1556-1560
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (casing == null) return false;
+			b.define('E', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "emerald")).define('F', component("field_generator", 1))
+					.define('S', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "sapphire")).define('X', component("signal_emitter", row.tier() + 1))
+					.define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- the Nanoscale Fabricator CUT (no port machine registration) -----------
+		// -- the Lightning Processor CUT ('X' = wireGt01 over ANY.Iron, no iron wire rung) --
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.SANDING_ITEMS_BY_PATH, gregtech6.registry.GTMachines.SANDING_ROWS, new String[] {"SGS", "XXX", "wMh"}, (b, row) -> { // :1589-1592 ('X' = OD.sandstone → vanilla sandstone)
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), gear = itemOrNull(gregapi.data.OP.gearGt, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m);
+			if (casing == null || gear == null || gearSmall == null) return false;
+			b.define('S', gearSmall).define('G', gear).define('X', net.minecraft.world.level.block.Blocks.SANDSTONE).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- the Burner Mixer shipped (machines-burner-plantalyzer) ----------------
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.PLANTALYZER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.PLANTALYZER_ROWS, new String[] {"WXW", "ZMP", "CYC"}, (b, row) -> { // :1601-1605
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (casing == null) return false;
+			b.define('W', cable01(row.tier() + 1)).define('X', component("signal_emitter", row.tier() + 1)).define('Z', net.minecraft.tags.ItemTags.SAPLINGS)
+					.define('M', casing).define('P', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "diamond")).define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1)))
+					.define('Y', component("sensor", row.tier() + 1)).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.BUMBLELYZER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.BUMBLELYZER_ROWS, new String[] {"WXW", "ZMP", "CYC"}, (b, row) -> { // :1608-1612 (the plantalyzer grid; 'Z' = OD.container1000honey → the vanilla honey bottle, the bumbliary-band fold)
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (casing == null) return false;
+			b.define('W', cable01(row.tier() + 1)).define('X', component("signal_emitter", row.tier() + 1)).define('Z', net.minecraft.world.item.Items.HONEY_BOTTLE)
+					.define('M', casing).define('P', GT6ItemTags.materialTag(GT6ItemTags.GEMS_FAMILY, "diamond")).define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1)))
+					.define('Y', component("sensor", row.tier() + 1)).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.PRESSURE_WASHER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.PRESSURE_WASHER_ROWS, new String[] {"RPG", "wMG"}, (b, row) -> { // :1615-1618
+			gregapi.oredict.OreDictMaterial m = row.material().get();
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m), rotor = itemOrNull(gregapi.data.OP.rotor, gregapi.data.MT.StainlessSteel);
+			if (casing == null || gearSmall == null || rotor == null) return false;
+			b.define('R', rotor).define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()).define('G', gearSmall).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.FREEZER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.FREEZER_ROWS, new String[] {"hPw", "PMP", "PSP"}, (b, row) -> { // :1621-1625 ('S' = the Si plate ladder, 'P' = the FIXED plate(StainlessSteel) ladder capped at plateQuadruple — the raw :1625 T5 rung)
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), siPlate = itemOrNull(plateLadder(row.tier()), gregapi.data.MT.Si), ssPlate = itemOrNull(plateLadder(Math.min(row.tier(), 3)), gregapi.data.MT.StainlessSteel);
+			if (casing == null || siPlate == null || ssPlate == null) return false;
+			b.define('P', ssPlate).define('M', casing).define('S', siPlate).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.CRYO_MIXER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.CRYO_MIXER_ROWS, new String[] {"PMP", "PRP", "hSw"}, (b, row) -> { // :1628-1632 ('S' = the Si plate ladder, 'P' = the FIXED plate(StainlessSteel) ladder capped at plateQuadruple)
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), siPlate = itemOrNull(plateLadder(row.tier()), gregapi.data.MT.Si), rotor = itemOrNull(gregapi.data.OP.rotor, gregapi.data.MT.StainlessSteel), ssPlate = itemOrNull(plateLadder(Math.min(row.tier(), 3)), gregapi.data.MT.StainlessSteel);
+			if (casing == null || siPlate == null || rotor == null || ssPlate == null) return false;
+			b.define('P', ssPlate).define('M', casing).define('R', rotor).define('S', siPlate).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.BOXINATOR_ITEMS_BY_PATH, gregtech6.registry.GTMachines.BOXINATOR_ROWS, new String[] {"wP", "CY", "CM"}, (b, row) -> { // :1635-1639
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (casing == null) return false;
+			b.define('P', gregtech6.registry.GT6Robotics.PISTONS.get(row.tier() + 1).get()).define('Y', gregtech6.registry.GT6Robotics.CONVEYERS.get(row.tier() + 1).get())
+					.define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1))).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.UNBOXINATOR_ITEMS_BY_PATH, gregtech6.registry.GTMachines.UNBOXINATOR_ROWS, new String[] {"Pw", "YC", "MC"}, (b, row) -> { // :1642-1646
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (casing == null) return false;
+			b.define('P', gregtech6.registry.GT6Robotics.PISTONS.get(row.tier() + 1).get()).define('Y', gregtech6.registry.GT6Robotics.CONVEYERS.get(row.tier() + 1).get())
+					.define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1))).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		// -- machines4, the single-variant StainlessSteel rungs ---------------------
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.COAGULATOR_ITEMS_BY_PATH, gregtech6.registry.GTMachines.COAGULATOR_ROWS, new String[] {"T T", "hMw", "TdT"}, (b, row) -> { // :1651
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), screw = itemOrNull(gregapi.data.OP.screw, row.material().get());
+			if (casing == null || screw == null) return false;
+			b.define('T', screw).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.GENERIFIER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.GENERIFIER_ROWS, new String[] {"ChC", "CMC", "CwC"}, (b, row) -> { // :1652
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), casingSmall = itemOrNull(gregapi.data.OP.casingSmall, row.material().get());
+			if (casing == null || casingSmall == null) return false;
+			b.define('C', casingSmall).define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.BATH_ITEMS_BY_PATH, gregtech6.registry.GTMachines.BATH_ROWS, new String[] {"CwC", "PMP", "PPP"}, (b, row) -> { // :1653
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), casingSmall = itemOrNull(gregapi.data.OP.casingSmall, row.material().get()), plate = itemOrNull(gregapi.data.OP.plate, row.material().get());
+			if (casing == null || casingSmall == null || plate == null) return false;
+			b.define('C', casingSmall).define('M', casing).define('P', plate).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.FERMENTER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.FERMENTER_ROWS, new String[] {"wMh", "PPP", "BCB"}, (b, row) -> { // :1654 ('P' = pipeLarge → the wood-pipe fold)
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get()), cuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu);
+			if (casing == null || cuDouble == null) return false;
+			b.define('M', casing).define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()).define('C', cuDouble)
+					.define('B', net.minecraft.world.level.block.Blocks.BRICKS).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.AUTOCLAVE_ITEMS_BY_PATH, gregtech6.registry.GTMachines.AUTOCLAVE_ROWS, new String[] {"CwC", "PMP", "GPG"}, (b, row) -> { // :1655 ('M' = casingMachineQuadruple, 'P' = pipeSmall → the wood-pipe fold)
+			Item casingQuad = itemOrNull(gregapi.data.OP.casingMachineQuadruple, row.material().get()), casingSmall = itemOrNull(gregapi.data.OP.casingSmall, row.material().get()), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, row.material().get());
+			if (casingQuad == null || casingSmall == null || gearSmall == null) return false;
+			b.define('C', casingSmall).define('M', casingQuad).define('G', gearSmall).define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()).unlockedBy("has_casing", has(casingQuad));
+			return true;
+		}));
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.MELTER_ITEMS_BY_PATH, gregtech6.registry.GTMachines.MELTER_ROWS, new String[] {"wUh", "PMP", "BCB"}, (b, row) -> { // :1657 ('U' = the ID-1005 Ceramic small crucible → the port smeltery_ceramic item; the housing rides the ANY.Iron → Iron fold — the port INDEX keys concrete materials)
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, gregapi.data.MT.Iron), cuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu), crucible = gregtech6.registry.GT6Crucibles.ITEMS_BY_PATH.get("smeltery_ceramic").get();
+			if (casing == null || cuDouble == null) return false;
+			b.define('M', casing).define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()).define('U', crucible).define('C', cuDouble)
+					.define('B', net.minecraft.world.level.block.Blocks.BRICKS).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
+		return rRows;
+	}
+
+	/** The four Shredder rows — the :1294-1297 grid "GDG"/"hMw" VERBATIM ('D' = plateGem Diamond, the ANY.Diamond fold; the flat-constant walk, the steam-engine shape). */
+	private java.util.List<PartFamilyRecipeRow> shredderRecipeBuilders() {
+		gregapi.oredict.OreDictMaterial[] tMats = kineticLadder();
+		String[] tPaths = {"shredder", "shredder_t2", "shredder_t3", "shredder_t4"};
+		Item[] tItems = {gregtech6.registry.GTMachines.SHREDDER_ITEM.get(), gregtech6.registry.GTMachines.SHREDDER_T2_ITEM.get(), gregtech6.registry.GTMachines.SHREDDER_T3_ITEM.get(), gregtech6.registry.GTMachines.SHREDDER_T4_ITEM.get()};
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, tMats[i]), tGear = itemOrNull(gregapi.data.OP.gearGt, tMats[i]), tPlateGem = itemOrNull(gregapi.data.OP.plateGem, gregapi.data.MT.Diamond);
+			if (tCasing == null || tGear == null || tPlateGem == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tItems[i])
+					.pattern("GDG").pattern("hMw")
+					.define('G', tGear).define('D', tPlateGem).define('M', tCasing)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tPaths[i])));
+		}
+		return rRows;
+	}
+
+	/** The four Crusher rows — the :1300-1303 grid "DMD"/"hSw" VERBATIM ('D' = gem Diamond). */
+	private java.util.List<PartFamilyRecipeRow> crusherRecipeBuilders() {
+		gregapi.oredict.OreDictMaterial[] tMats = kineticLadder();
+		String[] tPaths = {"crusher", "crusher_t2", "crusher_t3", "crusher_t4"};
+		Item[] tItems = {gregtech6.registry.GTMachines.CRUSHER_ITEM.get(), gregtech6.registry.GTMachines.CRUSHER_T2_ITEM.get(), gregtech6.registry.GTMachines.CRUSHER_T3_ITEM.get(), gregtech6.registry.GTMachines.CRUSHER_T4_ITEM.get()};
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, tMats[i]), tSpring = itemOrNull(gregapi.data.OP.spring, tMats[i]), tGem = itemOrNull(gregapi.data.OP.gem, gregapi.data.MT.Diamond);
+			if (tCasing == null || tSpring == null || tGem == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tItems[i])
+					.pattern("DMD").pattern("hSw")
+					.define('D', tGem).define('M', tCasing).define('S', tSpring)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tPaths[i])));
+		}
+		return rRows;
+	}
+
+	/** The four Lathe rows — the :1306-1309 grid "TDS"/"dMG" VERBATIM ('D' = plateGemTiny Diamond, 'd' = the screwdriver). */
+	private java.util.List<PartFamilyRecipeRow> latheRecipeBuilders() {
+		gregapi.oredict.OreDictMaterial[] tMats = kineticLadder();
+		String[] tPaths = {"lathe", "lathe_t2", "lathe_t3", "lathe_t4"};
+		Item[] tItems = {gregtech6.registry.GTMachines.LATHE_ITEM.get(), gregtech6.registry.GTMachines.LATHE_T2_ITEM.get(), gregtech6.registry.GTMachines.LATHE_T3_ITEM.get(), gregtech6.registry.GTMachines.LATHE_T4_ITEM.get()};
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, tMats[i]), tScrew = itemOrNull(gregapi.data.OP.screw, tMats[i]), tGear = itemOrNull(gregapi.data.OP.gearGt, tMats[i]), tGearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, tMats[i]), tPlateGemTiny = itemOrNull(gregapi.data.OP.plateGemTiny, gregapi.data.MT.Diamond);
+			if (tCasing == null || tScrew == null || tGear == null || tGearSmall == null || tPlateGemTiny == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tItems[i])
+					.pattern("TDS").pattern("dMG")
+					.define('T', tScrew).define('D', tPlateGemTiny).define('S', tGearSmall).define('M', tCasing).define('G', tGear)
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tPaths[i])));
+		}
+		return rRows;
+	}
+
+	/** The four Oven rows — the :1288-1291 grid "wMh"/"BCB" VERBATIM (the flat OVEN_ITEMS walk over the OvenRow material suppliers). */
+	private java.util.List<PartFamilyRecipeRow> ovenRecipeBuilders() {
+		Item[] tItems = {gregtech6.registry.GTMachines.OVEN_ITEM.get(), gregtech6.registry.GTMachines.OVEN_T2_ITEM.get(), gregtech6.registry.GTMachines.OVEN_T3_ITEM.get(), gregtech6.registry.GTMachines.OVEN_T4_ITEM.get()};
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (int i = 0; i < gregtech6.registry.GTMachines.OVEN_ROWS.size(); i++) {
+			gregtech6.registry.GTMachines.OvenRow tOven = gregtech6.registry.GTMachines.OVEN_ROWS.get(i);
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachine, tOven.material().get()), tCuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu);
+			if (tCasing == null || tCuDouble == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tItems[i])
+					.pattern("wMh").pattern("BCB")
+					.define('M', tCasing).define('C', tCuDouble).define('B', net.minecraft.world.level.block.Blocks.BRICKS)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tOven.path())));
+		}
+		return rRows;
+	}
+
+	/** The four Rolling Mill (RU) rows — the :1349-1352 grid "Gh"/"M "/"Gw" VERBATIM (the RU rows; the ULV rung is port-native, no upstream grid). */
+	private java.util.List<PartFamilyRecipeRow> rollingMillRecipeBuilders() {
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.ROLLINGMILL_RU_ROWS) {
+			gregapi.oredict.OreDictMaterial m = tRow.material().get();
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), tGear = itemOrNull(gregapi.data.OP.gearGt, m);
+			if (tCasing == null || tGear == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.ROLLINGMILL_ITEMS_BY_PATH.get(tRow.path()).get())
+					.pattern("Gh").pattern("M ").pattern("Gw")
+					.define('G', tGear).define('M', tCasing)
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/** The four Distillery rows — the :1398-1401 grid "GPG"/"WMW"/"hCw" VERBATIM ('W' = wireGt02 Constantan / wireGt04 Kanthal / wireGt08 Nichrome / wireGt16 SiC, the per-tier wire paths; 'G' = OD.blockGlassColorless → vanilla glass). */
+	private java.util.List<PartFamilyRecipeRow> distilleryRecipeBuilders() {
+		String[] tPaths = {"distillery", "distillery_t2", "distillery_t3", "distillery_t4"};
+		String[] tWires = {"wire_constantan_gt02", "wire_kanthal_gt04", "wire_nichrome_gt08", "wire_carborundum_gt16"};
+		gregapi.oredict.OreDictMaterial[] tMats = heatLadder();
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachine, tMats[i]), tCuDouble = itemOrNull(gregapi.data.OP.plateDouble, gregapi.data.MT.Cu), tWire = wireItemByPath(tWires[i]);
+			if (tCasing == null || tCuDouble == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.DISTILLERY_ITEMS_BY_PATH.get(tPaths[i]).get())
+					.pattern("GPG").pattern("WMW").pattern("hCw")
+					.define('G', net.minecraft.world.item.Items.GLASS).define('W', tWire).define('C', tCuDouble).define('M', tCasing)
+					.define('P', gregtech6.registry.GTFluidPipes.WOOD_FLUID_PIPE_MEDIUM_ITEM.get()) // the pipeTiny→pipeLarge ladder → the wood-pipe fold
+					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tPaths[i])));
+		}
+		return rRows;
+	}
+
+	/** The four Extruder rows — the :1406-1409 grid "GPw"/"PMS"/"GPD" VERBATIM ('S' = toolHeadBuzzSaw over Steel on the T1 Low-Heat rung, TungstenCarbide beyond; 'P' = the plate ladder plate(Steel) / plateDouble..plateQuadruple(TungstenCarbide); 'D' = dust Diamond). */
+	private java.util.List<PartFamilyRecipeRow> extruderRecipeBuilders() {
+		gregapi.oredict.OreDictMaterial[] tMats = heatLadder();
+		java.util.List<PartFamilyRecipeRow> rRows = new ArrayList<>();
+		for (gregtech6.block.GTBasicMachineBlock.MachineRow tRow : gregtech6.registry.GTMachines.EXTRUDER_ROWS) {
+			gregapi.oredict.OreDictMaterial m = tRow.material().get();
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), tGear = itemOrNull(gregapi.data.OP.gearGt, m), tDust = itemOrNull(gregapi.data.OP.dust, gregapi.data.MT.Diamond);
+			Item tPlate = tRow.tier() == 0 ? itemOrNull(gregapi.data.OP.plate, gregapi.data.MT.Steel) : itemOrNull(plateLadder(tRow.tier()), gregapi.data.MT.TungstenCarbide);
+			Item tHead = tRow.tier() == 0 ? itemOrNull(gregapi.data.OP.toolHeadBuzzSaw, gregapi.data.MT.Steel) : itemOrNull(gregapi.data.OP.toolHeadBuzzSaw, gregapi.data.MT.TungstenCarbide);
+			if (tCasing == null || tGear == null || tDust == null || tHead == null || tPlate == null) continue;
+			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.EXTRUDER_ITEMS_BY_PATH.get(tRow.path()).get())
+					.pattern("GPw").pattern("PMS").pattern("GPD")
+					.define('G', tGear).define('P', tPlate).define('M', tCasing).define('S', tHead).define('D', tDust)
+					.define('w', GT6ItemTags.TOOLS_WRENCH) // the GPw letter (NO hard hammer on the raw :1406 keys)
+					.unlockedBy("has_casing", has(tCasing)), steamBandId(tRow.path())));
+		}
+		return rRows;
+	}
+
+	/** The Printer/Scanner(Visuals) shared pour — the :1450-1461 twin grids over the X/C/W column shape (X = conveyers, C = the circuit tag, W = the cable); the 'P' column rides the caller's item (the printer's pipeTiny ladder → the wood-pipe fold; the Scanner's FIXED plate(Lumium)). */
+	private java.util.List<PartFamilyRecipeRow> printerLikePour(java.util.Map<String, ? extends java.util.function.Supplier<Item>> aItems,
+			java.util.List<gregtech6.block.GTBasicMachineBlock.MachineRow> aRows, Item aPItem) {
+		return machinePour(aItems, aRows, new String[] {"CPC", "wXh", "WMW"}, (b, row) -> {
+			Item tCasing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (tCasing == null || aPItem == null) return false;
+			b.define('C', GT6ItemTags.gt6("circuit" + (row.tier() + 1))).define('X', gregtech6.registry.GT6Robotics.CONVEYERS.get(row.tier() + 1).get())
+					.define('W', cable01(row.tier() + 1)).define('M', tCasing).define('P', aPItem).unlockedBy("has_casing", has(tCasing));
+			return true;
+		});
 	}
 
 	// -----------------------------------------------------------------------

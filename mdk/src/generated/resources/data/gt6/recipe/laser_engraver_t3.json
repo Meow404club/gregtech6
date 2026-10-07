@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "gt6:circuit3"
+    },
+    "G": {
+      "item": "gt6:gear_gt_small_stainless_steel"
+    },
+    "M": {
+      "item": "gt6:casing_machine_stainless_steel"
+    },
+    "P": {
+      "item": "minecraft:terracotta"
+    },
+    "T": {
+      "item": "gt6:screw_stainless_steel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TdT",
+    "GPG",
+    "CMC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:laser_engraver_t3"
+  }
+}

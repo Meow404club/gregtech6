@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_chromium"
+    },
+    "P": {
+      "item": "gt6:plate_stainless_steel"
+    },
+    "R": {
+      "item": "gt6:rotor_stainless_steel"
+    },
+    "S": {
+      "item": "gt6:compact_electric_motor_ev"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "PMP",
+    "PRP",
+    "hSw"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:electricmixer_t4"
+  }
+}

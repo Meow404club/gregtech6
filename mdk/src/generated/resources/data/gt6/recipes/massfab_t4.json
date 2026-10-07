@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "gt6:field_generator_lv"
+    },
+    "M": {
+      "item": "gt6:casing_machine_osmiridium"
+    },
+    "R": {
+      "tag": "forge:gems/ruby"
+    },
+    "S": {
+      "tag": "forge:gems/sapphire"
+    }
+  },
+  "pattern": [
+    "RFS",
+    "FMF",
+    "RFS"
+  ],
+  "result": {
+    "item": "gt6:massfab_t4"
+  },
+  "show_notification": true
+}

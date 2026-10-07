@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_aluminium"
+    },
+    "S": {
+      "item": "gt6:wire_platinum_gt01"
+    },
+    "W": {
+      "item": "gt6:cable_copper_gt01"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SMS",
+    "WwW"
+  ],
+  "result": {
+    "item": "gt6:electrolyzer_t2"
+  },
+  "show_notification": true
+}

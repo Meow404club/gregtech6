@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_tungstensteel"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_tungstensteel"
+    },
+    "P": {
+      "item": "gt6:plate_double_tungstensteel"
+    },
+    "R": {
+      "item": "gt6:rotor_tungstensteel"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "RGR",
+    "GMG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:sluice_t4"
+  }
+}

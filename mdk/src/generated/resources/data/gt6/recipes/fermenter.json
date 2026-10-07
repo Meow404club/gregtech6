@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "C": {
+      "item": "gt6:plate_double_copper"
+    },
+    "M": {
+      "item": "gt6:casing_machine_stainless_steel"
+    },
+    "P": {
+      "item": "gt6:wood_fluid_pipe_medium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "wMh",
+    "PPP",
+    "BCB"
+  ],
+  "result": {
+    "item": "gt6:fermenter"
+  },
+  "show_notification": true
+}

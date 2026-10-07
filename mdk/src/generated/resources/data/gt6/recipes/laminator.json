@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:plate_double_copper"
+    },
+    "G": {
+      "item": "gt6:gear_gt_small_steel"
+    },
+    "M": {
+      "item": "gt6:casing_machine_steel"
+    },
+    "S": {
+      "item": "gt6:stick_steel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SwS",
+    "GMG",
+    "SCS"
+  ],
+  "result": {
+    "item": "gt6:laminator"
+  },
+  "show_notification": true
+}

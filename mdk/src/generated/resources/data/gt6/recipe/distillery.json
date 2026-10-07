@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:plate_double_copper"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "M": {
+      "item": "gt6:casing_machine_steel"
+    },
+    "P": {
+      "item": "gt6:wood_fluid_pipe_medium"
+    },
+    "W": {
+      "item": "gt6:wire_constantan_gt02"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "GPG",
+    "WMW",
+    "hCw"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:distillery"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_bronze"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_bronze"
+    },
+    "P": {
+      "item": "gt6:plate_double_bronze"
+    },
+    "R": {
+      "item": "gt6:rotor_bronze"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "RGR",
+    "GMG"
+  ],
+  "result": {
+    "item": "gt6:sluice"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_titanium"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_titanium"
+    },
+    "S": {
+      "item": "gt6:stick_long_titanium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "Gw",
+    "SM",
+    "Gh"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:centrifuge_t3"
+  }
+}

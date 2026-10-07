@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_tungstensteel"
+    },
+    "M": {
+      "item": "gt6:casing_machine_quadruple_tungstensteel"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_tungstensteel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "wGh",
+    "SMS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:clustermill_t4"
+  }
+}

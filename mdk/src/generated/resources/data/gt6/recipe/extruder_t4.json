@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "gt6:dust_diamond"
+    },
+    "G": {
+      "item": "gt6:gear_gt_tungsten_carbide"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_tungsten_carbide"
+    },
+    "P": {
+      "item": "gt6:plate_quadruple_tungsten_carbide"
+    },
+    "S": {
+      "item": "gt6:tool_head_buzz_saw_tungsten_carbide"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "GPw",
+    "PMS",
+    "GPD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:extruder_t4"
+  }
+}

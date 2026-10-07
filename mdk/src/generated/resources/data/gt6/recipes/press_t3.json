@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_titanium"
+    },
+    "P": {
+      "item": "gt6:plate_double_titanium"
+    },
+    "R": {
+      "item": "gt6:stick_titanium"
+    },
+    "S": {
+      "item": "gt6:spring_titanium"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "RS",
+    "PM",
+    "Pw"
+  ],
+  "result": {
+    "item": "gt6:press_t3"
+  },
+  "show_notification": true
+}

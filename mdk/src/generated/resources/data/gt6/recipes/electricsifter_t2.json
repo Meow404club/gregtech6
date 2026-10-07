@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_double_aluminium"
+    },
+    "R": {
+      "item": "gt6:stick_aluminium"
+    },
+    "S": {
+      "item": "gt6:compact_electric_piston_mv"
+    },
+    "W": {
+      "item": "gt6:wire_fine_aluminium"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "WxW",
+    "RMR",
+    "SwS"
+  ],
+  "result": {
+    "item": "gt6:electricsifter_t2"
+  },
+  "show_notification": true
+}
