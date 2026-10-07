@@ -243,7 +243,13 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 5846; // +1 (task sifting-table-family: the block.gt6.sifting_table display-name pair en+zh — the dump face 筛选台, tmp/gregtech.lang:13523; 5844 -> 5845 measured on the rebase union, the ratchet follows the measurement, only rises) — the per-card append chain is BOUNDED per the 2026-10-04 ruling (decisions.2026-10-04-ratchet-comment-bounded): keep the latest note only, the note history lives in `git log -L` on this line (re-grown to 6.2MB by 2026-10-06 and re-compressed by task wiregt-prefix-item-retirement; the value 5846 semantics unchanged)
+	private static final int ZH_KEY_FLOOR = 5873;
+	// +27 task material-mc-b-storage-mass-shelf: the metal shelf/crate compose templates
+	// gt6.row.metal_{bookshelf,bottlecrate}.display both locales, dump-verbatim zh
+	// 书架 (%s)/瓶筐 (%s); 5846 -> 5873 counted on the committed zh_cn.json after the runData
+	// regen. The ratchet follows the measurement, only rises. — the per-card append chain
+	// is BOUNDED per the 2026-10-04 ruling (decisions.2026-10-04-ratchet-comment-bounded):
+	// keep the latest note only, the note history lives in `git log -L` on this line.
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
 	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;
@@ -1011,6 +1017,13 @@ public class GT6LangParityTest {
 		// the Steel wall keeps its vanilla key — the p26 single-rung atomic pin)
 		for (var tWallEntry : GT6Crucibles.CRUCIBLE_WALL_BLOCKS_BY_PATH.entrySet()) tExempt.add(tWallEntry.getKey());
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) tExempt.add(tRow.path()); // GT6HopperBlock.getName -> displayOf (GT6Hoppers:235)
+		// task material-mc-b-storage-mass-shelf — the metal shelf/crate ladders compose at
+		// runtime (GT6StorageBlock.getName -> displayOf, the metalset :143-144 names), the
+		// wooden/locker/drawer/safe rows keep their description-id keys
+		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+			if (tRow.material() != null && (tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+					|| tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)) tExempt.add(tRow.path());
+		}
 		for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) tExempt.add(tRow.path()); // GTAdvancedCraftingTableBlock.getName -> displayOf (act-matrix, GTMachines.displayOf)
 		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tExempt.add(tRow.path()); // SteamEngineBlock.getName (GT6Kinetics:401)
 		for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) tExempt.add(tRow.path()); // MoldBlock.getName (GT6Molds:316)
@@ -1193,7 +1206,7 @@ public class GT6LangParityTest {
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1768, tExemptTotal, "the derived composed-name exemption census (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
+		assertEquals(1888, tExemptTotal, "the derived composed-name exemption census (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
 			+ " (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
 			+ " 280 <mat>_fluid_pipe_<size> carriers compose over the seven gt6.row.fluid_pipe.display.*"
 			+ " templates + the 40 family-scoped gt6.row.fluid_pipe.mat.* words; the two W1 wood rows"

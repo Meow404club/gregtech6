@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/gt6_metal_bookshelf_arsenic_copper",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/gt6_metal_bookshelf_arsenic_copper"
+    },
+    "facing=south": {
+      "model": "gt6:block/gt6_metal_bookshelf_arsenic_copper",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/gt6_metal_bookshelf_arsenic_copper",
+      "y": 270
+    }
+  }
+}

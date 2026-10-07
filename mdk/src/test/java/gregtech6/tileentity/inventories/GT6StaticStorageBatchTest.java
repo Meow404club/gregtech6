@@ -25,7 +25,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * DrawerQuad quadrant index math (the verbatim table over the FACING_ROTATIONS geometry),
  * the Locker armor gate (upstream :84), the Safe 15-slot + dungeon-loot seam + the
  * KeyLocked latch, the bookshelf/bottlecrate range arms and gates, the NBT round trips
- * and the 28-row meta-id census. The live container arms are the RCON chain's.
+ * and the 148-row meta-id census. The live container arms are the RCON chain's.
  */
 public class GT6StaticStorageBatchTest extends GTOfflineTestBase {
 
@@ -65,7 +65,7 @@ public class GT6StaticStorageBatchTest extends GTOfflineTestBase {
 
 	@Test
 	public void rowCensusReproducesTheLoaderColumns() {
-		assertEquals(28, GT6StaticStorages.ROWS.size());
+		assertEquals(148, GT6StaticStorages.ROWS.size());
 		StaticRow tLockerBronze = row("locker_bronze"), tLockerSteel = row("locker_steel");
 		assertEquals(7309, tLockerBronze.metaId()); // :138 7300+aID, Bronze :191 aID 9
 		assertEquals(7310, tLockerSteel.metaId()); // Steel :202 aID 10
@@ -88,6 +88,28 @@ public class GT6StaticStorageBatchTest extends GTOfflineTestBase {
 		assertEquals(2.0F, row("bookshelf_oak").hardness(), 1e-6F);
 		assertEquals(0.5F, row("bottlecrate_oak").hardness(), 1e-6F);
 		assertEquals(2.0F, row("bottlecrate_oak").resistance(), 1e-6F);
+		// task material-mc-b-storage-mass-shelf — the METAL shelf/crate ladders, 60 rows
+		// each over the full metalset (:143 7100+aID / :144 8600+aID, the :186-245 aID table)
+		assertEquals(60, GT6StaticStorages.ROWS.stream().filter(r -> r.path().startsWith("bookshelf_metal_")).count(),
+				"the metal bookshelf ladder covers the 60-line metalset");
+		assertEquals(60, GT6StaticStorages.ROWS.stream().filter(r -> r.path().startsWith("bottlecrate_metal_")).count(),
+				"the metal bottlecrate ladder covers the 60-line metalset");
+		assertEquals(7100, row("bookshelf_metal_lead").metaId()); // :143 7100+aID, Pb :186 aID 0
+		assertEquals(7109, row("bookshelf_metal_bronze").metaId()); // Bronze :191 aID 9
+		assertEquals(7159, row("bookshelf_metal_palladium").metaId()); // Pd :235 aID 59
+		assertEquals(8600, row("bottlecrate_metal_lead").metaId()); // :144 8600+aID
+		assertEquals(8609, row("bottlecrate_metal_bronze").metaId());
+		// the shelf row: hardness = resistance = aHardness; the crate row: hardness 0.5
+		// fixed, resistance = aResistance (:143-144 NBT columns verbatim)
+		assertEquals(7.0F, row("bookshelf_metal_bronze").hardness(), 1e-6F);
+		assertEquals(7.0F, row("bookshelf_metal_bronze").resistance(), 1e-6F);
+		assertEquals(4.0F, row("bookshelf_metal_lead").hardness(), 1e-6F);
+		assertEquals(0.5F, row("bottlecrate_metal_bronze").hardness(), 1e-6F);
+		assertEquals(7.0F, row("bottlecrate_metal_bronze").resistance(), 1e-6F);
+		assertEquals(4.0F, row("bottlecrate_metal_lead").resistance(), 1e-6F);
+		// the metal rows carry the material anchor (the tint/dispatch seat), the wooden rows null
+		assertTrue(row("bookshelf_metal_bronze").material() != null);
+		assertTrue(row("bookshelf_oak").material() == null);
 	}
 
 	private static StaticRow row(String aPath) {

@@ -112,6 +112,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addWireDomainUnits();
 		addStoneVariantUnits();
 		addStaticStorageUnits(); // task i18n-compose-rows
+		addMetalShelfCrateUnits(); // task material-mc-b-storage-mass-shelf
 		addRowDomainUnits();    // task i18n-compose-rows
 		addMoldCrucibleUnits(); // task lang-fix-batch2 — the ledger §6 zh gap
 		addGrassUnits();        // task grass-block
@@ -1520,8 +1521,25 @@ public class GT6ZhCn extends LanguageProvider {
 	 */
 	private void addStaticStorageUnits() {
 		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+			// the metal shelf/crate ladders compose at runtime (GT6StorageBlock.getName) —
+			// their template faces ride addMetalShelfCrateUnits below (task
+			// material-mc-b-storage-mass-shelf), no per-row keys
+			if (tRow.material() != null && (tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+					|| tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)) continue;
 			addDirect("block.gt6." + tRow.path());
 		}
+	}
+
+	/**
+	 * The metal shelf/crate template faces (task material-mc-b-storage-mass-shelf): the
+	 * dump values verbatim — 书架 (铅)/瓶筐 (铅) compose forms (tmp/gregtech.lang
+	 * :14096-14159 metal bookshelf ladder, :14657-14716 metal bottlecrate ladder), the
+	 * shared gt6.row.mat.* material words already carry the hopper walk's hand rows.
+	 */
+	private void addMetalShelfCrateUnits() {
+		addDirect(gregtech6.registry.GT6StaticStorages.DISPLAY_METAL_BOOKSHELF_KEY);
+		addDirect(gregtech6.registry.GT6StaticStorages.DISPLAY_METAL_BOTTLECRATE_KEY);
+		// the gt6.row.mat.* material words are hand rows already — the hopper walk covers them
 	}
 
 	/**

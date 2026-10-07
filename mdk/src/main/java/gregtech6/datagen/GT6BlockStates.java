@@ -1365,7 +1365,15 @@ public final class GT6BlockStates extends BlockStateProvider {
     private void addStaticStorages() {
         for (gregtech6.registry.GT6StaticStorages.Kind tKind : gregtech6.registry.GT6StaticStorages.Kind.values()) {
             Map<String, ModelFile> tPlankModels = null;
+            Map<String, ModelFile> tMetalModels = null;
             ModelFile tModel = null;
+            // task material-mc-b-storage-mass-shelf — the metal ladders share the SAME frame
+            // geometry (upstream the wooden and metal rows are the SAME MTE classes, the
+            // metalset :143-144 rows), the face texture/tint is the only delta
+            final ModelFile tMetalFrame = tKind == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+                    ? metalBookshelfFrameModel()
+                    : tKind == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE
+                            ? metalBottlecrateFrameModel() : null;
             if (tKind == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
                     || tKind == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE) {
                 ModelFile tFrame = tKind == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
@@ -1376,6 +1384,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                             "gt6_" + kindModelName(tKind) + "_" + tPlank.slug(), tFrame.getLocation())
                             .texture("plank", "minecraft:block/" + tPlank.slug() + "_planks"));
                 }
+                tMetalModels = new java.util.LinkedHashMap<>();
             } else {
                 tModel = storageModel("block/" + kindModelName(tKind),
                         tKind != gregtech6.registry.GT6StaticStorages.Kind.SAFE_MECHANICAL
@@ -1384,8 +1393,20 @@ public final class GT6BlockStates extends BlockStateProvider {
             for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
                 if (tRow.kind() != tKind) continue;
                 Block tBlock = gregtech6.registry.GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get();
-                ModelFile tRowModel = tPlankModels == null ? tModel
-                        : tPlankModels.get(tRow.plank().slug());
+                ModelFile tRowModel;
+                if (tPlankModels == null) {
+                    tRowModel = tModel;
+                } else if (tRow.material() != null) {
+                    // the metal ladder leaf: the tintindex-0 machine-casing face over the metal
+                    // frame parent (the tint resolves through the GT6StorageBlock.materialOf
+                    // carrier — the GTMachineTintModel/GTItemPaintTint metalBlockArray() walk)
+                    tRowModel = tMetalModels.computeIfAbsent(tRow.material().slug(), aSlug ->
+                            models().withExistingParent("gt6_metal_" + kindModelName(tKind) + "_" + aSlug,
+                                            tMetalFrame.getLocation())
+                                    .texture("metal", "gt6:block/machine_casing"));
+                } else {
+                    tRowModel = tPlankModels.get(tRow.plank().slug());
+                }
                 getVariantBuilder(tBlock).forAllStates(aState -> {
                     int tY;
                     switch (aState.getValue(gregtech6.registry.GT6StaticStorages.GT6StorageBlock.FACING)) {
@@ -1450,6 +1471,67 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("plank", "minecraft:block/oak_planks")
                 .texture("particle", "#plank");
+    }
+
+    /**
+     * The shared METAL frame-parent shell (task material-mc-b-storage-mass-shelf): the
+     * upstream metal rows carry no NBT_TEXTURE, so the class fallback binds the material's
+     * casingMachine block icon — the shared grayscale {@code iconsets/MACHINE.png} template
+     * (TextureSet per-material copies of one 16x16 tile) multiplied by mRGBa at render time
+     * (MultiTileEntityBookShelf.java:74 + getTexture2 :333-339, BottleCrate :66/:143). The
+     * port face: one borrowed {@code gt6:block/machine_casing} PNG on every face at
+     * tintindex 0, the row colour resolving through the GT6StorageBlock.materialOf carrier
+     * (the storageModel tint seat, tint-coverage-batch precedent).
+     */
+    private BlockModelBuilder metalFrameModel(String aName) {
+        return models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("metal", "gt6:block/machine_casing")
+                .texture("particle", "#metal");
+    }
+
+    /** One metal frame box: all six faces tile {@code #metal} at tintindex 0 (the upstream mShelfIcon/mIcon × mRGBa pass). */
+    private void metalBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ) {
+        aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ)
+                .allFaces((aDir, aFace) -> aFace.texture("#metal").tintindex(0)).end();
+    }
+
+    /**
+     * The METAL bookshelf frame parent — the wooden parent's boxes verbatim (the SAME
+     * upstream MTE class serves both ladders, MultiTileEntityBookShelf.setBlockBounds2
+     * :294-299): the 1px bottom/top slabs, the two 1px side walls, the centre spine and
+     * the middle shelf, front AND back open.
+     */
+    private ModelFile metalBookshelfFrameModel() {
+        BlockModelBuilder tModel = metalFrameModel("gt6_metal_bookshelf_frame");
+        metalBox(tModel,  0.0F,  0.0F,  0.0F, 16.0F,  1.0F, 16.0F); // the bottom slab (:294)
+        metalBox(tModel,  0.0F, 15.0F,  0.0F, 16.0F, 16.0F, 16.0F); // the top slab (:295)
+        metalBox(tModel,  0.0F,  1.0F,  0.0F,  1.0F, 15.0F, 16.0F); // the west wall (:296)
+        metalBox(tModel, 15.0F,  1.0F,  0.0F, 16.0F, 15.0F, 16.0F); // the east wall (:297)
+        metalBox(tModel,  1.0F,  1.0F,  7.0F, 15.0F, 15.0F,  9.0F); // the centre spine (:298)
+        metalBox(tModel,  1.0F,  7.0F,  1.0F, 15.0F,  9.0F, 15.0F); // the middle shelf (:299)
+        return tModel;
+    }
+
+    /**
+     * The METAL bottlecrate frame parent — the wooden parent's boxes verbatim (the SAME
+     * upstream MTE class, MultiTileEntityBottleCrate.setBlockBounds2 :160-168): the 1px
+     * bottom board, the 3x3 divider grid, the two full 8px side walls and the two 2px
+     * front/back rails at y 5..7 (the :165 inverted-box intent fold rides along).
+     */
+    private ModelFile metalBottlecrateFrameModel() {
+        BlockModelBuilder tModel = metalFrameModel("gt6_metal_bottlecrate_frame");
+        metalBox(tModel,  1.0F, 0.0F,  1.0F, 15.0F, 1.0F, 15.0F); // the bottom board (:160)
+        metalBox(tModel,  1.0F, 1.0F,  5.0F, 15.0F, 5.0F,  6.0F); // the divider rail z 5..6 (:161)
+        metalBox(tModel,  1.0F, 1.0F, 10.0F, 15.0F, 5.0F, 11.0F); // the divider rail z 10..11 (:162)
+        metalBox(tModel,  5.0F, 1.0F,  1.0F,  6.0F, 4.0F, 15.0F); // the divider rail x 5..6 (:163)
+        metalBox(tModel, 10.0F, 1.0F,  1.0F, 11.0F, 4.0F, 15.0F); // the divider rail x 10..11 (:164)
+        metalBox(tModel,  0.0F, 0.0F,  0.0F,  1.0F, 8.0F, 16.0F); // the west wall (the :165 intent)
+        metalBox(tModel, 15.0F, 0.0F,  0.0F, 16.0F, 8.0F, 16.0F); // the east wall (:166)
+        metalBox(tModel,  1.0F, 5.0F,  0.0F, 15.0F, 7.0F,  1.0F); // the front rail (:167)
+        metalBox(tModel,  1.0F, 5.0F, 15.0F, 15.0F, 7.0F, 16.0F); // the back rail (:168)
+        return tModel;
     }
 
     /** One frame box: all six faces tile {@code #plank} (the upstream mShelfIcon/mIcon everywhere). */

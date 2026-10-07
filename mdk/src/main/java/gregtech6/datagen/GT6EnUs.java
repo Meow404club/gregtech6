@@ -1288,16 +1288,21 @@ public class GT6EnUs extends LanguageProvider {
         addHopperUnits();
         addChestUnits(); // task material-mc-a-storage-chests
         addStaticStorageUnits();
+        addMetalShelfCrateUnits();
     }
 
     /**
      * The static storage batch display rows (task storage-static-batch): one full
      * display per row over the vanilla description id — the metal names carry the loader
      * display words verbatim ("Mechanical Bronze Safe", Loader :134-135), the wooden
-     * ladders the plank word (the 300-ladder fold, the wave-4 deviation).
+     * ladders the plank word (the 300-ladder fold, the wave-4 deviation). The METAL
+     * shelf/crate ladders (task material-mc-b-storage-mass-shelf) stay OUT — they
+     * compose at runtime ({@code GT6StorageBlock.getName}), the template face below.
      */
     private void addStaticStorageUnits() {
         for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+            if (tRow.material() != null && (tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+                    || tRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)) continue;
             String tName = switch (tRow.kind()) {
                 case LOCKER -> tRow.material().display() + " Locker";
                 case DRAWER -> tRow.material().display() + " Compartment Drawer";
@@ -1307,6 +1312,22 @@ public class GT6EnUs extends LanguageProvider {
                 case BOTTLECRATE -> tRow.plank().display() + " Wooden Bottlecrate";
             };
             add("block.gt6." + tRow.path(), tName);
+        }
+    }
+
+    /**
+     * The metal shelf/crate composed-display templates (task material-mc-b-storage-mass-shelf,
+     * the addHopperUnits shape): the upstream parenthesized registration names
+     * ("Bookshelf (Bronze)", Loader :143-144) + the row-material units walked from the SAME
+     * rows (the dedup set folds them into the hopper walk's shared words).
+     */
+    private void addMetalShelfCrateUnits() {
+        add(gregtech6.registry.GT6StaticStorages.DISPLAY_METAL_BOOKSHELF_KEY, "Bookshelf (%s)");
+        add(gregtech6.registry.GT6StaticStorages.DISPLAY_METAL_BOTTLECRATE_KEY, "Bottlecrate (%s)");
+        for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
+            if (tRow.material() == null || (tRow.kind() != gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+                    && tRow.kind() != gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)) continue;
+            addRowMatUnit(gregtech6.registry.GT6StaticStorages.matUnitKeyOf(tRow), tRow.material().display());
         }
     }
 

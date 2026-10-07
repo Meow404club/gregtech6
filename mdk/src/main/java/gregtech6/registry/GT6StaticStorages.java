@@ -60,7 +60,7 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
 
 /**
  * The static storage batch registration home (task storage-static-batch, the
- * GT6Hoppers/GT6Boilers self-contained-DR row form): 28 blocks/items over SIX shared
+ * GT6Hoppers/GT6Boilers self-contained-DR row form): 148 blocks/items over SIX shared
  * BETs — the five BE classes of the {@code gregtech6.tileentity.inventories} batch, the
  * row config riding the block carrier.
  *
@@ -69,14 +69,25 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * MultiTileEntityMassStorageBarrel family, storage-massstorage's card), and it shares
  * its NAME with this repo's already-ported FLUID barrels (GTBarrels, the
  * TileEntityBase08Barrel fluid carrier). The two are unrelated families — searches,
- * KG queries and reviews must not conflate them.
+ * KG queries and reviews must not conflate them. The same deferral covers the MASS
+ * STORAGE ladders themselves (Loader :141 {@code 6000+aID} MultiTileEntityMassStorageStandard /
+ * :142 {@code 6200+aID} Logistics, 2x60 rows): task material-mc-b-storage-mass-shelf ruled
+ * the material-row cards do not carry functionality, rows without a block entity are dead
+ * blocks, and the upstream MassStorage base is a 759-line machine (pixel-grid take/insert,
+ * six tool modes, overflow emission) — the whole family lands with the
+ * storage-massstorage function card, NOT here.
  *
  * <p><b>The rows</b> (Loader_MultiTileEntities.java metalset()/storages()): the metal
  * kinds anchor the Bronze (aID 9, :191 hardness 7.0) and Steel (aID 10, :202 hardness 6.0)
  * ladder rows — the same two-material ruling as the hopper family card — and the wooden
  * kinds port the 300-ladder (:177-180) onto the vanilla-planks subset, the declared
  * wave-4 deviation (PlankData has no 1.20.1 counterpart; the ladder folds to the subset
- * order). Upstream columns carried verbatim per row:
+ * order). Task material-mc-b-storage-mass-shelf added the METAL shelf/crate ladders over
+ * the FULL 60-line metalset (the {@link GT6Hoppers#MATERIALS} anchor table, :186-245) —
+ * the same MTE classes as the wooden rows (MultiTileEntityBookShelf/BottleCrate, the
+ * NBT_TEXTURE column absent → the material's casingMachine icon × mRGBa, the metalset
+ * :143-144 rows), so the same Kind/BET/geometry serves both, only the texture face and
+ * the name compose differ. Upstream columns carried verbatim per row:
  * <ul>
  * <li>Locker — id 7300+aID (:138), hardness = aHardness, the armor-swap front face;</li>
  * <li>Compartment Drawer — id 4000+aID (:140), hardness = aHardness, the 144-slot
@@ -84,7 +95,9 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * <li>Mechanical/Key Locked Safe — id 2000+aID (:134) / 3000+aID (:135), hardness =
  *     resistance = aHardness*2 (the blast-resistant column: Bronze 14, Steel 12);</li>
  * <li>Wooden Bookshelf — id 7000+i (:177-179), hardness 2.0;</li>
- * <li>Wooden Bottlecrate — id 8700+i (:180), hardness 0.5, resistance 2.0.</li>
+ * <li>Wooden Bottlecrate — id 8700+i (:180), hardness 0.5, resistance 2.0;</li>
+ * <li>Metal Bookshelf — id 7100+aID (:143), hardness = resistance = aHardness;</li>
+ * <li>Metal Bottlecrate — id 8600+aID (:144), hardness 0.5, resistance = aHardness.</li>
  * </ul>
  * Tool-quality columns fold (no hardness-harvest layer on the port block properties); the
  * SFX folds (click/collect/anvil place) defer with the cosmetic layer; the upstream
@@ -106,13 +119,14 @@ public final class GT6StaticStorages {
 
 	/** One loader material anchor — slug + display word (the HopperMaterial shape). */
 	public record StaticMaterial(String slug, String display, float hardness, int metaId) {
-		/** The loader material face (the recipe 'P'-family columns resolve off it). */
+		/**
+		 * The loader material face — the FULL 60-line metalset dispatch rides the shared
+		 * {@link GT6Hoppers#bySlug} table (task material-mc-b-storage-mass-shelf; the
+		 * former two-case bronze/steel switch folded into it when the metal bookshelf/
+		 * bottlecrate ladders joined, one loader table per slug, loud drift preserved).
+		 */
 		public OreDictMaterial mt() {
-			return switch (slug) {
-				case "bronze" -> MT.Bronze;
-				case "steel" -> MT.Steel;
-				default -> throw new IllegalStateException("no loader material for storage slug " + slug);
-			};
+			return GT6Hoppers.bySlug(slug).mt();
 		}
 	}
 
@@ -137,13 +151,38 @@ public final class GT6StaticStorages {
 			new Plank("crimson", "Crimson", Items.CRIMSON_PLANKS),
 			new Plank("warped", "Warped", Items.WARPED_PLANKS));
 
-	/** The meta id bases (Loader :138 locker / :140 drawer / :134-135 safes / :177-179 shelf ladder / :180 crate ladder). */
+	/** The meta id bases (Loader :138 locker / :140 drawer / :134-135 safes / :177-179 shelf ladder / :180 crate ladder / :143 metal shelf ladder / :144 metal crate ladder). */
 	public static final int META_ID_LOCKER = 7300;
 	public static final int META_ID_DRAWER = 4000;
 	public static final int META_ID_SAFE_MECHANICAL = 2000;
 	public static final int META_ID_SAFE_KEYLOCKED = 3000;
 	public static final int META_ID_BOOKSHELF = 7000;
 	public static final int META_ID_BOTTLECRATE = 8700;
+	/** The METAL shelf/crate ladder bases (task material-mc-b-storage-mass-shelf — Loader :143 {@code 7100+aID} / :144 {@code 8600+aID}). */
+	public static final int META_ID_METAL_BOOKSHELF = 7100;
+	public static final int META_ID_METAL_BOTTLECRATE = 8600;
+
+	/**
+	 * The metal shelf/crate composed display templates (the GT6Hoppers.DISPLAY_KEY shape):
+	 * the upstream registration names are the parenthesized forms —
+	 * {@code "Bookshelf ("+aMat.getLocal()+")"} (Loader :143) and
+	 * {@code "Bottlecrate ("+aMat.getLocal()+")"} (:144); zh faces
+	 * {@code 书架 (%s)} / {@code 瓶筐 (%s)} (tmp/gregtech.lang :14096-14159/:14657-14716 verbatim).
+	 */
+	public static final String DISPLAY_METAL_BOOKSHELF_KEY = "gt6.row.metal_bookshelf.display";
+	public static final String DISPLAY_METAL_BOTTLECRATE_KEY = "gt6.row.metal_bottlecrate.display";
+
+	/** The row's material small-unit key (the shared hopper/boiler/pipes mat key). */
+	public static String matUnitKeyOf(StaticRow aRow) {
+		return "gt6.row.mat." + aRow.material().slug();
+	}
+
+	/** The composed name of a METAL row (the pure compose seam, the GT6Hoppers.displayOf shape; plank rows keep the description id). */
+	public static net.minecraft.network.chat.MutableComponent displayOf(StaticRow aRow) {
+		return net.minecraft.network.chat.Component.translatable(
+				aRow.kind() == Kind.BOOKSHELF ? DISPLAY_METAL_BOOKSHELF_KEY : DISPLAY_METAL_BOTTLECRATE_KEY,
+				net.minecraft.network.chat.Component.translatable(matUnitKeyOf(aRow)));
+	}
 
 	/**
 	 * One registration row — the block-carrier projection of the metalset/plank-ladder line.
@@ -163,11 +202,14 @@ public final class GT6StaticStorages {
 		public BlockBehaviour.Properties properties() {
 			BlockBehaviour.Properties tProps = BlockBehaviour.Properties.of()
 					.strength(hardness, resistance);
-			return tProps.sound(kind == Kind.BOOKSHELF || kind == Kind.BOTTLECRATE ? SoundType.WOOD : SoundType.METAL);
+			// the wooden shelf/crate ladders carry the plank look (the WOOD carrier), the
+			// metal ladders ride the material machine/util blocks (the METAL carrier)
+			return tProps.sound(material() != null || (kind != Kind.BOOKSHELF && kind != Kind.BOTTLECRATE)
+					? SoundType.METAL : SoundType.WOOD);
 		}
 	}
 
-	/** The 28 rows in registration order (metal ladder, then the two wooden ladders). */
+	/** The 148 rows in registration order (metal ladder, the two wooden ladders, the metal shelf/crate ladders). */
 	public static final List<StaticRow> ROWS = buildRows();
 
 	private static List<StaticRow> buildRows() {
@@ -183,7 +225,22 @@ public final class GT6StaticStorages {
 			rRows.add(new StaticRow("bookshelf_" + tPlank.slug(), META_ID_BOOKSHELF + i, Kind.BOOKSHELF, null, tPlank, 2.0F, 2.0F));
 			rRows.add(new StaticRow("bottlecrate_" + tPlank.slug(), META_ID_BOTTLECRATE + i, Kind.BOTTLECRATE, null, tPlank, 0.5F, 2.0F));
 		}
+		// task material-mc-b-storage-mass-shelf — the METAL shelf/crate ladders over the full
+		// 60-line metalset (Loader :143/:144, the GT6Hoppers.MATERIALS anchor table verbatim).
+		// The bookshelf row: hardness = resistance = aHardness. The crate row: NBT_HARDNESS
+		// 0.5F fixed, NBT_RESISTANCE = aResistance (:144).
+		for (GT6Hoppers.HopperMaterial tMat : GT6Hoppers.MATERIALS) {
+			rRows.add(new StaticRow("bookshelf_metal_" + tMat.slug(), META_ID_METAL_BOOKSHELF + tMat.metaId(), Kind.BOOKSHELF,
+					materialOf(tMat), null, tMat.hardness(), tMat.hardness()));
+			rRows.add(new StaticRow("bottlecrate_metal_" + tMat.slug(), META_ID_METAL_BOTTLECRATE + tMat.metaId(), Kind.BOTTLECRATE,
+					materialOf(tMat), null, 0.5F, tMat.hardness()));
+		}
 		return rRows;
+	}
+
+	/** The loader-line anchor conversion (the slug/display/hardness/aID columns carry over one-to-one). */
+	private static StaticMaterial materialOf(GT6Hoppers.HopperMaterial aMat) {
+		return new StaticMaterial(aMat.slug(), aMat.display(), aMat.hardness(), aMat.metaId());
 	}
 
 	/** The registered blocks by path (the BET multi-mount arrays + the datagen walkers). */
@@ -291,6 +348,17 @@ public final class GT6StaticStorages {
 		/** The registration row (the block-carrier config read). */
 		public StaticRow row() {
 			return mRow;
+		}
+
+		/**
+		 * The METAL rows compose their name at runtime (task material-mc-b-storage-mass-shelf,
+		 * the GT6HopperBlock.getName shape): "Bookshelf (Bronze)" — the BlockItem inherits the
+		 * block name (the vanilla BlockItem.getName face), the plank rows keep the
+		 * description id.
+		 */
+		@Override
+		public net.minecraft.network.chat.MutableComponent getName() {
+			return mRow.material() != null ? displayOf(mRow) : super.getName();
 		}
 
 		/**

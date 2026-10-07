@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "gt6:casing_small_palladium"
+    },
+    "T": {
+      "item": "gt6:screw_palladium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "CdC",
+    "TCT"
+  ],
+  "result": {
+    "item": "gt6:bottlecrate_metal_palladium"
+  },
+  "show_notification": true
+}

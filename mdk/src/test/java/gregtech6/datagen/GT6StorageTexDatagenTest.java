@@ -160,7 +160,8 @@ class GT6StorageTexDatagenTest {
 
     @Test
     public void storageBlockstatesPinTheFacingVariantsPerKind() throws Exception {
-        assertEquals(28, gregtech6.registry.GT6StaticStorages.ROWS.size(), "the storage census stays 28");
+        assertEquals(148, gregtech6.registry.GT6StaticStorages.ROWS.size(),
+                "the storage census stays 148 (task material-mc-b-storage-mass-shelf: 28 + the 60-material metal shelf/crate ladders)");
         for (var tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
             JsonObject tVariants = json("assets/gt6/blockstates/" + tRow.path() + ".json").getAsJsonObject("variants");
             assertEquals(4, tVariants.size(), tRow.path() + ": exactly the 4 facing variants");
@@ -169,9 +170,15 @@ class GT6StorageTexDatagenTest {
                 case DRAWER -> "gt6:block/drawer";
                 case SAFE_MECHANICAL -> "gt6:block/safe_mechanical";
                 case SAFE_KEYLOCKED -> "gt6:block/safe_keylocked";
-                // task r11-geometry-batch: the wooden kinds ride the per-plank frame leaves
-                case BOOKSHELF -> "gt6:block/gt6_bookshelf_" + tRow.plank().slug();
-                case BOTTLECRATE -> "gt6:block/gt6_bottlecrate_" + tRow.plank().slug();
+                // task r11-geometry-batch: the wooden rows ride the per-plank frame leaves;
+                // task material-mc-b-storage-mass-shelf: the metal rows the per-material
+                // tinted frame leaves (the same frame geometry, the machine-casing face)
+                case BOOKSHELF -> tRow.plank() != null
+                        ? "gt6:block/gt6_bookshelf_" + tRow.plank().slug()
+                        : "gt6:block/gt6_metal_bookshelf_" + tRow.material().slug();
+                case BOTTLECRATE -> tRow.plank() != null
+                        ? "gt6:block/gt6_bottlecrate_" + tRow.plank().slug()
+                        : "gt6:block/gt6_metal_bottlecrate_" + tRow.material().slug();
             };
             for (String tFacing : ROT_Y.keySet()) {
                 JsonObject tVariant = tVariants.getAsJsonObject("facing=" + tFacing);

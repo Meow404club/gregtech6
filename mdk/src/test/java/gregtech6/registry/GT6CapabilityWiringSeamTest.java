@@ -96,17 +96,18 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 	 * block set as their GT6StaticStorages kind rows (the ADR-P3-1 one-type-many-blocks
 	 * invariant — a block registered into a row but not its kind array would mount a
 	 * mismatched BE). Pinned off the row table, not the blocks: the row census keeps the
-	 * 28-block universe visible on this leg.
+	 * 148-block universe visible on this leg.
 	 */
 	@Test
 	public void staticStorageRowsMatchTheKindCensus() {
 		long tMetal = GT6StaticStorages.ROWS.stream().filter(r -> r.material() != null).count();
-		assertEquals(8, tMetal, "the Bronze/Steel metal ladder: locker/drawer/safe pair x2");
-		assertEquals(10, GT6StaticStorages.ROWS.stream().filter(r -> r.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF).count(),
-				"the vanilla-planks bookshelf subset (the 300-ladder fold)");
-		assertEquals(10, GT6StaticStorages.ROWS.stream().filter(r -> r.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE).count(),
-				"the vanilla-planks bottlecrate subset");
-		assertEquals(28, GT6StaticStorages.ROWS.size(), "8 metal + 10 bookshelf + 10 bottlecrate");
+		assertEquals(128, tMetal, "8 locker/drawer/safe-pair rows + the 60-material metal shelf/crate ladders"
+				+ " (task material-mc-b-storage-mass-shelf)");
+		assertEquals(70, GT6StaticStorages.ROWS.stream().filter(r -> r.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF).count(),
+				"the vanilla-planks subset (the 300-ladder fold) + the metal ladder");
+		assertEquals(70, GT6StaticStorages.ROWS.stream().filter(r -> r.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE).count(),
+				"the vanilla-planks subset + the metal ladder");
+		assertEquals(148, GT6StaticStorages.ROWS.size(), "128 metal + 10 bookshelf + 10 bottlecrate wooden");
 	}
 
 	/**

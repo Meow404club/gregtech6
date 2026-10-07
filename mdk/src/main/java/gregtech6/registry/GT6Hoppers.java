@@ -305,6 +305,20 @@ public final class GT6Hoppers {
 		return "gt6.row.mat." + aRow.material().slug();
 	}
 
+	/**
+	 * The slug lookup over {@link #MATERIALS} (task material-mc-b-storage-mass-shelf) —
+	 * the shared loader-material dispatch for the sibling metalset families: the static
+	 * storage metal ladders resolve their anchors' {@code mt()} through the SAME 60-line
+	 * table instead of forking a second switch (the table only ever grows with a loader
+	 * line in hand, the loud-drift contract rides along).
+	 */
+	public static HopperMaterial bySlug(String aSlug) {
+		for (HopperMaterial tMat : MATERIALS) {
+			if (tMat.slug().equals(aSlug)) return tMat;
+		}
+		throw new IllegalStateException("no loader material for slug " + aSlug);
+	}
+
 	/** The composed name of a row (the pure compose seam, the GT6Boilers.displayOf shape). */
 	public static MutableComponent displayOf(HopperRow aRow) {
 		return Component.translatable(aRow.queue() ? DISPLAY_QUEUE_KEY : DISPLAY_KEY,

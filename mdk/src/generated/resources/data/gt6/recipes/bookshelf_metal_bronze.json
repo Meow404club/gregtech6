@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "tag": "forge:plates/bronze"
+    },
+    "T": {
+      "item": "gt6:screw_bronze"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "PTP",
+    "sdh",
+    "PTP"
+  ],
+  "result": {
+    "item": "gt6:bookshelf_metal_bronze"
+  },
+  "show_notification": true
+}

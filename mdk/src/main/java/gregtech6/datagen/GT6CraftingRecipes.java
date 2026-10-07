@@ -362,7 +362,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
 		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
-			staticStorageRecipeBuilder(tRow).save(aConsumer, staticStorageRecipeId(tRow));
+			ShapedRecipeBuilder tBuilder = staticStorageRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the row's material is driver-hidden — the hopper walk's skip semantics
+			tBuilder.save(aConsumer, staticStorageRecipeId(tRow));
 		}
 		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
@@ -646,7 +648,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			tRow.builder().save(aOutput, tRow.id());
 		}
 		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
-			staticStorageRecipeBuilder(tRow).save(aOutput, staticStorageRecipeId(tRow));
+			ShapedRecipeBuilder tBuilder = staticStorageRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the row's material is driver-hidden — the hopper walk's skip semantics
+			tBuilder.save(aOutput, staticStorageRecipeId(tRow));
 		}
 		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
@@ -1043,6 +1047,33 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	private ShapedRecipeBuilder staticStorageRecipeBuilder(gregtech6.registry.GT6StaticStorages.StaticRow aRow) {
+		// task material-mc-b-storage-mass-shelf — the metal shelf/crate ladders (Loader
+		// :143 "PTP","sdh","PTP" plate+screw / :144 "CdC","TCT" casingSmall+screw, the
+		// CR.java:342-365 tool chars s=saw d=screwdriver h=hammer), the null-drop guard
+		// rides the hopperRecipeBuilder shape (a driver-hidden material has no registered
+		// screw — the walk must never dereference an unregistered pair)
+		if (aRow.material() != null && (aRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
+				|| aRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)) {
+			if (GTMaterialItems.get(gregapi.data.OP.screw, aRow.material().mt()) == null) return null;
+			if (aRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF) {
+				if (GTMaterialItems.get(gregapi.data.OP.plate, aRow.material().mt()) == null) return null;
+				return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+						.pattern("PTP").pattern("sdh").pattern("PTP")
+						.define('P', GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().mt()))
+						.define('T', GTMaterialItems.get(gregapi.data.OP.screw, aRow.material().mt()).get())
+						.define('s', GT6ItemTags.TOOLS_SAW)
+						.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+						.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+						.unlockedBy("has_plate", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().slug())));
+			}
+			if (GTMaterialItems.get(gregapi.data.OP.casingSmall, aRow.material().mt()) == null) return null;
+			return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
+					.pattern("CdC").pattern("TCT")
+					.define('C', GTMaterialItems.get(gregapi.data.OP.casingSmall, aRow.material().mt()).get())
+					.define('T', GTMaterialItems.get(gregapi.data.OP.screw, aRow.material().mt()).get())
+					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+					.unlockedBy("has_casing_small", has(GTMaterialItems.get(gregapi.data.OP.casingSmall, aRow.material().mt()).get()));
+		}
 		ShapedRecipeBuilder rBuilder = switch (aRow.kind()) {
 			case LOCKER -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, resultOf(aRow))
 					.pattern("SdS").pattern("LCL").pattern("TMT")
