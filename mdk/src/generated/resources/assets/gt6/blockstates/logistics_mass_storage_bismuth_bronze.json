@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gt6:block/massstorage_logistics",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gt6:block/massstorage_logistics"
+    },
+    "facing=south": {
+      "model": "gt6:block/massstorage_logistics",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gt6:block/massstorage_logistics",
+      "y": 270
+    }
+  }
+}
