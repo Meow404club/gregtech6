@@ -1861,6 +1861,13 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.plant_pot");
 		addDirect(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_PLANT_POT);
 		addDirect(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_NO_GUI);
+		// the crucible-domain 39 shared material words (task material-mc-c-crucible-rows —
+		// the smeltery/basin/crossing compose slot; the dump verbatim heads of
+		// gt.multitileentity.1000-1049/:1750-1799/:1850-1899; the tsv hand rows carry the
+		// 18 words the metalset/wall walks above skip)
+		for (gregtech6.registry.GT6Crucibles.CrucibleMaterial tMat : gregtech6.registry.GT6Crucibles.MATERIALS) {
+			addRowUnit(tEmitted, "gt6.row.mat." + tMat.slug());
+		}
 		// advanced/charging crafting tables (task act-matrix): the two kind templates over
 		// the 60-material walk (the dump composed rows gt.multitileentity.5000-5059 高级工作台
 		// / 5500-5559 充能工作台 verbatim shape — the material word slot; the tsv hand rows
@@ -2023,10 +2030,9 @@ public class GT6ZhCn extends LanguageProvider {
 		// the two raw clay items (the dump 粘土浇铸盆 :10100 face, the crossing twin parallel)
 		addDirect(gregtech6.registry.GT6Crucibles.BASIN_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6Crucibles.CROSSING_DISPLAY_KEY);
-		java.util.Set<String> tCrucibleMats = new java.util.HashSet<>();
-		for (gregtech6.registry.GT6Crucibles.CrucibleMaterial tMat : gregtech6.registry.GT6Crucibles.MATERIALS) {
-			addRowUnit(tCrucibleMats, "gt6.row.mat." + tMat.slug());
-		}
+		// the 39 shared material words ride the addRowDomainUnits tEmitted walk below (the
+		// duplicate-add recording face is a hard failure — the local set here would re-add
+		// the hopper/kinetic words)
 		addDirect("item.gt6.basin_ceramic_raw");
 		addDirect("item.gt6.crossing_ceramic_raw");
 	}
