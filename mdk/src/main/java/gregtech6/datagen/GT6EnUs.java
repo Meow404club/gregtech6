@@ -1289,6 +1289,25 @@ public class GT6EnUs extends LanguageProvider {
         addChestUnits(); // task material-mc-a-storage-chests
         addStaticStorageUnits();
         addMetalShelfCrateUnits();
+        add32xxxUnits(); // task block-family-32xxx-port
+    }
+
+    /**
+     * The 32xxx-domain rows (task block-family-32xxx-port): the charging-locker template
+     * over the 60-material walk (the shared hopper mat-unit keys dedup through
+     * {@link #addRowMatUnit}) plus the two atomic singles — the upstream name column
+     * verbatim ("Charging Locker (Mat)" :139 / "Resin/Sap Bag" :2221 / "Universal Plant
+     * Pot" :2229).
+     */
+    private void add32xxxUnits() {
+        add(gregtech6.registry.GT6ChargingLockers.DISPLAY_KEY, "Charging Locker (%s)");
+        for (gregtech6.registry.GT6ChargingLockers.ChargingLockerRow tRow : gregtech6.registry.GT6ChargingLockers.ROWS) {
+            addRowMatUnit(gregtech6.registry.GT6ChargingLockers.matUnitKeyOf(tRow), tRow.material().display());
+        }
+        add("block.gt6.sap_bag", "Resin/Sap Bag");
+        add("block.gt6.plant_pot", "Universal Plant Pot");
+        add(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_PLANT_POT, "Can grow any Plants ontop of it!");
+        add(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_NO_GUI, "No GUI. Click to insert/extract Items!");
     }
 
     /**
