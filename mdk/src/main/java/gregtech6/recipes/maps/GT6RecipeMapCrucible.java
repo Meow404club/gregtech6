@@ -24,13 +24,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.data.TD;
 import gregapi.oredict.MaterialGraph;
@@ -38,7 +41,9 @@ import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.oredict.OreDictPrefix;
+import gregapi.oredict.configurations.IOreDictConfigurationComponent;
 import gregapi.util.CruciblePhysics;
+import gregtech6.fluid.GTFluids;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
@@ -75,10 +80,10 @@ import static gregapi.data.CS.U9;
  *
  * <p><b>CRUCIBLE_ALLOYING</b> (the second map this class serves with its static
  * helpers, RM.java:128): zero static rows like its sibling — the display rows are the
- * {@link #alloyingDisplayRows} synthesis off the material graph (the GT6_Main.java:453-481
- * NEI walk, hidden components skipping the pair per :460), built only when a display
- * consumer asks; {@link #allAlloyingDisplayRows} is the full-universe walk the viewer
- * pages register.
+ * {@link #alloyingDisplayRows} synthesis off the alloy-creation configurations (the
+ * GT6_Main.java:453-484 NEI walk, hidden components skipping their configuration per
+ * :460), built only when a display consumer asks; {@link #allAlloyingDisplayRows} is the
+ * full-universe walk the viewer pages register.
  *
  * <p><b>Declared deviations</b>:
  * <ul>
@@ -91,8 +96,15 @@ import static gregapi.data.CS.U9;
  * ladders lead with (:462/:471) are not ladder steps here — a direct prefix.mat ask
  * resolves them through the GTMaterialBlocks fallback in {@link #matStackLive}, which is
  * also what puts the :58-67 block forms on the display face;</li>
- * <li>the GT6_Main Air/C/CaCO3 display arms (:464-469) are CUT — FL.Air.display and the
- * coal/limestone special rows need display items no port card has landed (pool).</li>
+ * <li>the GT6_Main Air/C/CaCO3 display arms (:461-469) — RESTORED by task
+ * crucible-alloying-flux-rows: the C→Coal / CaCO3→Limestone flux third row (:467-468,
+ * gated :480-481) and the Air component's fluid-stack face (:461-466, the mB
+ * UT.Code.units form — the modern viewers render FluidStack natively per the
+ * ViewerMeta doc folded ruling), replacing the upstream FL.display container items.
+ * The air FLUID itself is not registered in the port yet (the census precheck miss) —
+ * {@link #sAirDisplayFluid} answers null until a fluids card lands gt6:air — and the
+ * alloying map still declares zero fluid slots (the RM.java:128 row verbatim,
+ * GT6RecipeMaps.init), so the slot face rides a later map-face decision.</li>
  * </ul>
  */
 public class GT6RecipeMapCrucible extends RecipeMap {
@@ -115,6 +127,26 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 
 	/** The live {@link #sMatResolver} (kept for the test restore). */
 	public static final Function<MatRequest, ItemStack> DEFAULT_MAT_RESOLVER = GT6RecipeMapCrucible::matStackLive;
+
+	/**
+	 * The GT6_Main.java:461-465 Air display fluid (the upstream {@code FL.Air} face) for
+	 * the alloying walk. The port has NO air fluid registered yet (the census precheck
+	 * expected one — only the netherair/enderair dimension airs exist, GTFluids
+	 * NAMING_FLUID_SPECS): the live walk answers null, the Air component then renders no
+	 * slot at all but never kills its pair, and the fluid slot materializes the moment a
+	 * fluids card registers the gt6:air fluid. Tests swap in a stand-in (the id224
+	 * static-seam discipline); {@link #DEFAULT_AIR_DISPLAY_FLUID} restores the live form.
+	 */
+	public static Supplier<Fluid> sAirDisplayFluid = GT6RecipeMapCrucible::airDisplayFluidLive;
+
+	/** The live {@link #sAirDisplayFluid} (kept for the test restore). */
+	public static final Supplier<Fluid> DEFAULT_AIR_DISPLAY_FLUID = GT6RecipeMapCrucible::airDisplayFluidLive;
+
+	/** The live air-fluid walk (the GT6RecipesCanner.liveAirFluid tolerance: unbound offline registries answer null, never throw). */
+	@Nullable
+	static Fluid airDisplayFluidLive() {
+		try {return GTFluids.liveFluidSource("air");} catch (RuntimeException tOffline) {return null;}
+	}
 
 	/** One {@code prefix.mat(material, count)} call, the seam key. */
 	public record MatRequest(OreDictPrefix prefix, OreDictMaterial material, long count) {}
@@ -217,48 +249,78 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 	}
 
 	/**
-	 * The CRUCIBLE_ALLOYING display rows of one alloy (GT6_Main.java:453-481): one fake
-	 * row over the DUST inputs and one over the INGOT inputs, output =
-	 * {@code commonDivider * U} of the alloy, SpecialValue = the temperature display
-	 * (the second-highest component melting point, at least the alloy's own — :478-481).
-	 * The Air/C/CaCO3 special arms (:464-469) are CUT (declared deviation, class doc).
+	 * The CRUCIBLE_ALLOYING display rows of one alloy (GT6_Main.java:453-484): per
+	 * alloy-creation configuration, one fake row over the DUST inputs and one over the
+	 * INGOT inputs, output = {@code commonDivider * U} of the alloy, SpecialValue = the
+	 * temperature display (the second-highest component melting point, at least the
+	 * alloy's own — :478-481), plus the flux third row when a C/CaCO3 component rides the
+	 * configuration (:467-468, gated :480-481). Alloys carry their simple composition AND
+	 * any explicit creation configurations (Fe's flux groups, the Steel Air pair) — each
+	 * configuration shows its own rows, exactly like the upstream client walk.
 	 */
 	public static List<Recipe> alloyingDisplayRows(OreDictMaterial aAlloy) {
-		if (aAlloy == null || aAlloy.mComponents == null || aAlloy.mAlloyCreationRecipes.isEmpty()) return Collections.emptyList();
-		List<OreDictMaterialStack> tComponents = aAlloy.mComponents.getUndividedComponents();
-		if (tComponents.isEmpty()) return Collections.emptyList();
+		if (aAlloy == null || aAlloy.mAlloyCreationRecipes.isEmpty()) return Collections.emptyList();
+		List<Recipe> rList = new ArrayList<>();
+		for (IOreDictConfigurationComponent tConfig : aAlloy.mAlloyCreationRecipes) rList.addAll(alloyConfigRows(aAlloy, tConfig));
+		return rList;
+	}
 
-		// :477 — the sorted melting points; the special value is the SECOND-highest at least
-		List<Long> tMeltingPoints = new ArrayList<>();
-		List<ItemStack> tDusts = new ArrayList<>(), tIngots = new ArrayList<>();
-		for (OreDictMaterialStack tComponent : tComponents) {
-			// GT6_Main.java:460 — a hidden component skips the WHOLE alloy row pair
+	/**
+	 * The display rows of ONE alloy-creation configuration — the GT6_Main.java:455-482
+	 * inner walk verbatim, translated off the upstream {@code ArrayListNoNulls}: the null
+	 * semantics ride explicit guards at the same anchors (a null dust kills THIS
+	 * configuration :472, a null ingot is silently skipped :473, a null flux fails the
+	 * {@code tAddedSpecial} flag :467-468), and the old port-wide kill arm (:211) is
+	 * narrowed accordingly.
+	 */
+	private static List<Recipe> alloyConfigRows(OreDictMaterial aAlloy, IOreDictConfigurationComponent aConfig) {
+		boolean tAddSpecial = false; // :455
+		List<Long> tMeltingPoints = new ArrayList<>(); // :457
+		List<ItemStack> tDusts = new ArrayList<>(), tIngots = new ArrayList<>(), tSpecial = new ArrayList<>(); // :456
+		List<FluidStack> tAirFluids = new ArrayList<>(); // the :461-465 Air displays, the modern FluidStack form
+		for (OreDictMaterialStack tComponent : aConfig.getUndividedComponents()) { // :458
+			boolean tAddedSpecial = false; // :459
+			// :460 — a hidden component skips THIS configuration's rows
 			// ({@code if (tMaterial.mMaterial.mHidden) {temp = F; break;}} verbatim)
 			if (tComponent.mMaterial.mHidden) return Collections.emptyList();
-			tMeltingPoints.add(tComponent.mMaterial.mMeltingPoint);
+			// :461-466 — an Air component rides the Air fluid stack (mB) on every row face,
+			// adds no item input and no melting point, and never kills the pair (the :211
+			// drop arm narrows to the non-Air components it can actually hit)
+			if (tComponent.mMaterial == MT.Air) {
+				Fluid tAir = sAirDisplayFluid.get();
+				if (tAir != null) tAirFluids.add(new FluidStack(tAir, (int)UT.Code.units(tComponent.mAmount, U, 1000, true)));
+				continue;
+			}
+			// :467-468 — C/CaCO3 display their flux at twice the amount on the special row
+			// INSTEAD of their own dust (the :474 else-arm skips)
+			if (tComponent.mMaterial == MT.C    ) {ItemStack tFlux = dustOrIngot(MT.Coal            , tComponent.mAmount * 2); tAddedSpecial = tFlux != null && tSpecial.add(tFlux);}
+			if (tComponent.mMaterial == MT.CaCO3) {ItemStack tFlux = dustOrIngot(MT.STONES.Limestone, tComponent.mAmount * 2); tAddedSpecial = tFlux != null && tSpecial.add(tFlux);}
+			tMeltingPoints.add(tComponent.mMaterial.mMeltingPoint); // :470
 			ItemStack tDust = dustOrIngot(tComponent.mMaterial, tComponent.mAmount);
-			ItemStack tIngot = ingotOrDust(tComponent.mMaterial, tComponent.mAmount);
-			if (tDust == null || tIngot == null) return Collections.emptyList(); // the :472 tDusts.add null-guard family
+			if (tDust == null) return Collections.emptyList(); // :472 — the NoNulls.add null-guard kills THIS configuration
 			tDusts.add(tDust);
-			tIngots.add(tIngot);
+			ItemStack tIngot = ingotOrDust(tComponent.mMaterial, tComponent.mAmount);
+			if (tIngot != null) tIngots.add(tIngot); // :473 — upstream NoNulls skips a null silently, no kill
+			if (tAddedSpecial) tAddSpecial = true; else tSpecial.add(tDust); // :474
 		}
-		Collections.sort(tMeltingPoints);
-		long tSpecial = tMeltingPoints.size() > 1
+		Collections.sort(tMeltingPoints); // :476
+		// :478-481 — the special value is the SECOND-highest component melting point at least
+		long tSpecialValue = tMeltingPoints.size() > 1
 				? Math.max(tMeltingPoints.get(tMeltingPoints.size() - 2), aAlloy.mMeltingPoint)
 				: aAlloy.mMeltingPoint;
-
-		ItemStack tOutput = ingotOrDust(aAlloy, aAlloy.mComponents.getCommonDivider() * U); // :478
+		ItemStack tOutput = ingotOrDust(aAlloy, aConfig.getCommonDivider() * U); // :478 — the CONFIGURATION's divider
 		if (tOutput == null) return Collections.emptyList();
-
 		List<Recipe> rList = new ArrayList<>();
-		rList.add(fakeRow(tDusts, tOutput, tSpecial)); // :478 the dust row
-		rList.add(fakeRow(tIngots, tOutput, tSpecial)); // :479 the ingot row
+		rList.add(fakeRow(tDusts, tAirFluids, tOutput, tSpecialValue)); // :478 the dust row
+		rList.add(fakeRow(tIngots, tAirFluids, tOutput, tSpecialValue)); // :479 the ingot row
+		if (tAddSpecial) rList.add(fakeRow(tSpecial, tAirFluids, tOutput, tSpecialValue)); // :480-481 the flux row
 		return rList;
 	}
 
 	/** One fake display row (the addFakeRecipe(F, ...) shape, :478-481): not findable, display only. */
-	private static Recipe fakeRow(List<ItemStack> aInputs, ItemStack aOutput, long aSpecialValue) {
-		Recipe rRecipe = new Recipe(false, aInputs.toArray(new ItemStack[0]), new ItemStack[] {aOutput}, null, null, 0, 0, aSpecialValue);
+	private static Recipe fakeRow(List<ItemStack> aInputs, List<FluidStack> aFluidInputs, ItemStack aOutput, long aSpecialValue) {
+		Recipe rRecipe = new Recipe(false, aInputs.toArray(new ItemStack[0]), new ItemStack[] {aOutput},
+				aFluidInputs.isEmpty() ? null : aFluidInputs.toArray(new FluidStack[0]), null, 0, 0, aSpecialValue);
 		rRecipe.mFakeRecipe = true;
 		return rRecipe;
 	}
@@ -381,8 +443,8 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 
 	/**
 	 * The full CRUCIBLE_ALLOYING display face — the GT6_Main.java:453-484 client walk
-	 * verbatim: every registered alloy × its creation recipes, hidden components skipping
-	 * the pair (the :460 gate inside {@link #alloyingDisplayRows}).
+	 * verbatim: every registered alloy × its creation configurations, hidden components
+	 * skipping their configuration (the :460 gate inside {@link #alloyingDisplayRows}).
 	 */
 	public static List<Recipe> allAlloyingDisplayRows() {
 		List<Recipe> rList = new ArrayList<>();

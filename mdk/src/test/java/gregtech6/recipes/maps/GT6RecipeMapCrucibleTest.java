@@ -22,14 +22,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregapi.data.CS;
 import gregapi.data.MT;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
+import gregapi.oredict.OreDictMaterialStack;
+import gregapi.oredict.configurations.OreDictConfigurationComponent;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 import gregtech6.registry.GT6MaterialTestSupport;
 
@@ -56,6 +60,14 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	private static OreDictMaterial SMELT_SOURCE;
 	private static MaterialPrefixItem BLOCKDUST_IRON, CRUSHED_IRON, CRUSHEDP_IRON, CRUSHEDC_IRON;
 	private static MaterialPrefixItem INGOT_SRC, BLOCKINGOT_SRC, GEM_SRC, BLOCKGEM_SRC, DUST_SRC, BLOCKDUST_SRC, CRUSHED_SRC, CRUSHEDP_SRC, CRUSHEDC_SRC;
+	// the flux/Air card probes (task crucible-alloying-flux-rows): the flux pair
+	// (Coal/Limestone), the C/CaCO3 component forms, and the Steel-family closure
+	// (Steel, MeteoricIron, MeteoricSteel) for the real Air-config alloys
+	private static MaterialPrefixItem DUST_C, INGOT_C, DUST_COAL, DUST_CACO3, INGOT_CACO3, DUST_LIME;
+	private static MaterialPrefixItem DUST_STEEL, INGOT_STEEL, DUST_MI, INGOT_MI, DUST_MSTEEL, INGOT_MSTEEL;
+	// the private-registry flux/Air fixtures: the output faces need their own probes
+	private static OreDictMaterial FLUX_ALLOY, LIME_ALLOY, AIR_ALLOY;
+	private static MaterialPrefixItem DUST_FLUX_ALLOY, INGOT_FLUX_ALLOY, DUST_LIME_ALLOY, INGOT_LIME_ALLOY, DUST_AIR_ALLOY, INGOT_AIR_ALLOY;
 	private static final java.util.function.Function<GT6RecipeMapCrucible.MatRequest, ItemStack> sProbeMatResolver =
 			r -> {
 				MaterialPrefixItem tItem = lookup(r);
@@ -86,6 +98,16 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 			if (r.material() == MT.Mn) return DUST_MN;
 			if (r.material() == MT.StainlessSteel) return DUST_SS;
 			if (r.material() == HIDDEN_COMP) return DUST_HID;
+			if (r.material() == MT.C) return DUST_C;
+			if (r.material() == MT.Coal) return DUST_COAL;
+			if (r.material() == MT.CaCO3) return DUST_CACO3;
+			if (r.material() == MT.STONES.Limestone) return DUST_LIME;
+			if (r.material() == MT.Steel) return DUST_STEEL;
+			if (r.material() == MT.MeteoricIron) return DUST_MI;
+			if (r.material() == MT.MeteoricSteel) return DUST_MSTEEL;
+			if (r.material() == FLUX_ALLOY) return DUST_FLUX_ALLOY;
+			if (r.material() == LIME_ALLOY) return DUST_LIME_ALLOY;
+			if (r.material() == AIR_ALLOY) return DUST_AIR_ALLOY;
 		}
 		if (r.material() == MT.Iron) { // the :63-67 self-family probes beyond plain dust
 			if (r.prefix() == gregapi.data.OP.blockDust) return BLOCKDUST_IRON;
@@ -105,6 +127,14 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 			if (r.material() == MT.Mn) return INGOT_MN;
 			if (r.material() == MT.StainlessSteel) return INGOT_SS;
 			if (r.material() == HIDDEN_COMP) return INGOT_HID;
+			if (r.material() == MT.C) return INGOT_C;
+			if (r.material() == MT.CaCO3) return INGOT_CACO3;
+			if (r.material() == MT.Steel) return INGOT_STEEL;
+			if (r.material() == MT.MeteoricIron) return INGOT_MI;
+			if (r.material() == MT.MeteoricSteel) return INGOT_MSTEEL;
+			if (r.material() == FLUX_ALLOY) return INGOT_FLUX_ALLOY;
+			if (r.material() == LIME_ALLOY) return INGOT_LIME_ALLOY;
+			if (r.material() == AIR_ALLOY) return INGOT_AIR_ALLOY;
 		}
 		return null;
 	}
@@ -157,16 +187,53 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 		CRUSHED_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_crushed", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushed, SMELT_SOURCE));
 		CRUSHEDP_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_crushedp", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushedPurified, SMELT_SOURCE));
 		CRUSHEDC_SRC = GTMaterialItemsBoot.probePrefix("crucible_probe_src_crushedc", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.crushedCentrifuged, SMELT_SOURCE));
+		// the flux/Air card probes (task crucible-alloying-flux-rows)
+		DUST_C = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_c", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.C));
+		INGOT_C = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_c", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.C));
+		DUST_COAL = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_coal", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Coal));
+		DUST_CACO3 = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_caco3", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.CaCO3));
+		INGOT_CACO3 = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_caco3", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.CaCO3));
+		DUST_LIME = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_limestone", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.STONES.Limestone));
+		DUST_STEEL = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.Steel));
+		INGOT_STEEL = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.Steel));
+		DUST_MI = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_meteoric_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.MeteoricIron));
+		INGOT_MI = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_meteoric_iron", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.MeteoricIron));
+		DUST_MSTEEL = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_meteoric_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, MT.MeteoricSteel));
+		INGOT_MSTEEL = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_meteoric_steel", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, MT.MeteoricSteel));
+		// the private-registry flux/Air fixtures (same posture as the hidden-comp fixture:
+		// zero touches on the shared MT singleton's MATERIAL_MAP) — the output faces need
+		// probes or the rows die at the output null-guard before the asserts run
+		MaterialRegistry tFixtures = new MaterialRegistry();
+		FLUX_ALLOY = tFixtures.createMaterial(-1, "CrucibleFluxAlloy", "Crucible Flux Alloy")
+				.setMcfg(0, MT.Iron, CS.U, MT.C, CS.U).alloyCentrifuge();
+		LIME_ALLOY = tFixtures.createMaterial(-1, "CrucibleLimeAlloy", "Crucible Lime Alloy")
+				.setMcfg(0, MT.Iron, CS.U, MT.CaCO3, CS.U).alloyCentrifuge();
+		AIR_ALLOY = tFixtures.createMaterial(-1, "CrucibleAirAlloy", "Crucible Air Alloy")
+				.setMcfg(0, MT.Iron, CS.U);
+		// the MT.java:4118 verbatim shape (port) / MT.java:3348 (upstream): WroughtIron +
+		// Air → Steel is the ONLY Air-config alloy family in both sources
+		AIR_ALLOY.addAlloyingRecipe(new OreDictConfigurationComponent(1, new OreDictMaterialStack(MT.Iron, CS.U), new OreDictMaterialStack(MT.Air, CS.U)));
+		DUST_FLUX_ALLOY = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_flux_alloy", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, FLUX_ALLOY));
+		INGOT_FLUX_ALLOY = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_flux_alloy", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, FLUX_ALLOY));
+		DUST_LIME_ALLOY = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_lime_alloy", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, LIME_ALLOY));
+		INGOT_LIME_ALLOY = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_lime_alloy", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, LIME_ALLOY));
+		DUST_AIR_ALLOY = GTMaterialItemsBoot.probePrefix("crucible_probe_dust_air_alloy", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.dust, AIR_ALLOY));
+		INGOT_AIR_ALLOY = GTMaterialItemsBoot.probePrefix("crucible_probe_ingot_air_alloy", () -> new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.ingot, AIR_ALLOY));
 		GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 		GT6RecipeMaps.init();
 		// the mat() seam rides the probe items (the intrusive-holder lesson: the live
 		// GTMaterialItems index is empty offline); restored in @AfterAll
 		GT6RecipeMapCrucible.sMatResolver = sProbeMatResolver;
+		// the Air display seam rides a stand-in fluid: the port has NO gt6:air fluid yet
+		// (the census precheck miss), so the live walk answers null and the fluid-face
+		// asserts below could not pin the mB math; restored in @AfterAll
+		GT6RecipeMapCrucible.sAirDisplayFluid = () -> Fluids.WATER;
 	}
 
 	@AfterAll
 	static void restoreMatResolver() {
 		GT6RecipeMapCrucible.sMatResolver = GT6RecipeMapCrucible.DEFAULT_MAT_RESOLVER;
+		GT6RecipeMapCrucible.sAirDisplayFluid = GT6RecipeMapCrucible.DEFAULT_AIR_DISPLAY_FLUID;
 	}
 
 	@AfterEach
@@ -243,7 +310,13 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void alloyingDisplayRowsSynthesizeFromTheGraph() {
 		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum);
-		assertEquals(2, tRows.size(), "the dust row and the ingot row");
+		// phase-neutral pair invariant: the upstream postInit pass (GT_API_Post.java:820)
+		// re-adds mComponents verbatim with no dedup, so RUNTIME walks every simple alloy's
+		// config twice (two identical pairs — the documented verbatim quirk,
+		// MaterialGraph.applyCrucibleAlloyReferences). The forge offline leg answers
+		// pre-postInit (2 rows), the neo mod-flood leg post-postInit (4) — the CONTENT pins
+		// below ride the FIRST pair, identical in both phases.
+		assertTrue(tRows.size() >= 2 && tRows.size() % 2 == 0, "whole dust/ingot pairs, at least one");
 		for (Recipe tRow : tRows) {
 			assertTrue(tRow.mFakeRecipe, "display rows never enter the findable list");
 			assertEquals(1, tRow.mOutputs.length);
@@ -278,7 +351,8 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	public void invarAlloyingRowsCarryTheUnevenComponentSplit() {
 		assertEquals(3, MT.Invar.mComponents.getCommonDivider(), "WroughtIron 2U + Ni 1U = 3U (MT.java:2498)");
 		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(MT.Invar);
-		assertEquals(2, tRows.size(), "the dust row and the ingot row");
+		// phase-neutral (the GT_API_Post.java:820 config re-add doubles the pair at runtime)
+		assertTrue(tRows.size() >= 2 && tRows.size() % 2 == 0, "whole pairs, at least one");
 
 		Recipe tDustRow = tRows.get(0);
 		assertEquals(2, tDustRow.mInputs.length);
@@ -307,7 +381,9 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 	public void stainlessSteelAlloyingRowsBuildAllFourComponents() {
 		assertEquals(9, MT.StainlessSteel.mComponents.getCommonDivider(), "4U + 3U + 1U + 1U = 9U (MT.java:2504)");
 		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(MT.StainlessSteel);
-		assertEquals(2, tRows.size());
+		// phase-neutral (the GT_API_Post.java:820 config re-add doubles the mComponents pair
+		// at runtime; the :4123 Nichrome config has no offline item on either leg)
+		assertTrue(tRows.size() >= 2 && tRows.size() % 2 == 0, "whole pairs, at least one");
 		Recipe tDustRow = tRows.get(0);
 		assertEquals(4, tDustRow.mInputs.length, "every component gets its input slot");
 		java.util.Map<OreDictMaterial, Integer> tInputCounts = new java.util.HashMap<>();
@@ -334,8 +410,98 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 				"a hidden component skips the whole row pair (GT6_Main.java:460)");
 		// the open control rides the LIVE Electrum (probes resolve, no hidden comp): the
 		// empty result above comes from the GATE, not from row synthesis being broken
-		assertEquals(2, GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum).size(),
+		// (phase-neutral: the postInit config re-add changes the COUNT, never the non-emptiness)
+		assertFalse(GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum).isEmpty(),
 				"the same shape without a hidden component builds — the gate is the component's");
+	}
+
+	/**
+	 * Acceptance (crucible-alloying-flux-rows) — the GT6_Main.java:467/:480-481 flux third
+	 * row: a C component displays Coal at twice its amount on a THIRD fake row INSTEAD of
+	 * its own dust (the :474 else-arm skip), while the dust/ingot pair keeps the component
+	 * forms; a configuration without C carries no flux row on ANY of its pairs.
+	 */
+	@Test
+	public void alloyingFluxThirdRowForCarbonComponent() {
+		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(FLUX_ALLOY);
+		assertEquals(3, tRows.size(), "the dust row, the ingot row and the Coal flux row");
+		Recipe tFluxRow = tRows.get(2);
+		assertTrue(tFluxRow.mFakeRecipe, "the flux row is display-only like its siblings");
+		assertEquals(2, tFluxRow.mInputs.length, "Iron's dust (the :474 else-arm) plus Coal (C's :467 flux)");
+		assertSame(DUST_IRON, tFluxRow.mInputs[0].getItem());
+		assertSame(DUST_COAL, tFluxRow.mInputs[1].getItem(), "the C component rides Coal on the flux row");
+		assertEquals(2, tFluxRow.mInputs[1].getCount(), "Coal rides mAmount*2 (the :467 literal)");
+		// the dust/ingot rows keep the component's own forms — the flux replaces it on row three only
+		assertEquals(2, tRows.get(0).mInputs.length);
+		assertSame(DUST_C, tRows.get(0).mInputs[1].getItem());
+		// the flux row shares the pair's output and temperature face (:481 = :478 verbatim)
+		assertSame(tRows.get(0).mOutputs[0].getItem(), tFluxRow.mOutputs[0].getItem());
+		assertEquals(tRows.get(0).mSpecialValue, tFluxRow.mSpecialValue);
+		// the no-C control rides the LIVE Electrum: phase-neutral (the postInit config
+		// re-add, GT_API_Post.java:820, carries no C either) — NO row of ANY pair shows Coal
+		assertTrue(GT6RecipeMapCrucible.alloyingDisplayRows(MT.Electrum).stream()
+				.noneMatch(r -> java.util.Arrays.stream(r.mInputs).anyMatch(s -> s.getItem() == DUST_COAL)),
+				"no C → no flux row on any pair");
+	}
+
+	/** The :468 twin: a CaCO3 component displays STONES.Limestone at twice its amount. */
+	@Test
+	public void alloyingFluxThirdRowForCalciumCarbonateComponent() {
+		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(LIME_ALLOY);
+		assertEquals(3, tRows.size(), "the dust row, the ingot row and the Limestone flux row");
+		Recipe tFluxRow = tRows.get(2);
+		assertEquals(2, tFluxRow.mInputs.length);
+		assertSame(DUST_LIME, tFluxRow.mInputs[1].getItem(), "the CaCO3 component rides STONES.Limestone (the :468 literal)");
+		assertEquals(2, tFluxRow.mInputs[1].getCount(), "Limestone rides mAmount*2");
+		assertSame(DUST_CACO3, tRows.get(0).mInputs[1].getItem(), "the dust row keeps the CaCO3 dust itself");
+	}
+
+	/**
+	 * Acceptance — the GT6_Main.java:461-466 Air component face: the pair SURVIVES (the
+	 * pre-fix :211 null-guard family killed whole pairs over unrepresentable components),
+	 * Air contributes NO item input and NO melting point, and the Air fluid stack (the
+	 * :462 mB form) rides every row's fluid face. The fluid itself is a stand-in — the
+	 * port has no gt6:air fluid yet (the census precheck miss); the live seam answers null
+	 * and the row renders the remaining component inputs alone until a fluids card lands.
+	 */
+	@Test
+	public void alloyingAirComponentRidesFluidFaceNotPairKill() {
+		List<Recipe> tRows = GT6RecipeMapCrucible.alloyingDisplayRows(AIR_ALLOY);
+		assertEquals(2, tRows.size(), "the Air component no longer kills the pair");
+		Recipe tDustRow = tRows.get(0), tIngotRow = tRows.get(1);
+		assertEquals(1, tDustRow.mInputs.length, "Air contributes no item input (the :466 continue)");
+		assertSame(DUST_IRON, tDustRow.mInputs[0].getItem(), "the only item input is Iron — Air rides the fluid face");
+		assertSame(INGOT_IRON, tIngotRow.mInputs[0].getItem());
+		assertSame(INGOT_AIR_ALLOY, tDustRow.mOutputs[0].getItem(), "the output is the alloy itself");
+		for (Recipe tRow : tRows) {
+			assertEquals(1, tRow.mFluidInputs.length, "the Air fluid stack rides the row's fluid face (:461-465)");
+			assertEquals(1000, tRow.mFluidInputs[0].getAmount(), "UT.Code.units(1U, U, 1000, round) = 1000 mB (the :462 literal)");
+			assertSame(Fluids.WATER, tRow.mFluidInputs[0].getFluid(), "the stand-in fluid of the sAirDisplayFluid seam");
+		}
+		// the :465 continue sits BEFORE the :470 melting-point add — Air contributes none,
+		// so the single-point face answers the alloy's own temperature (:478 else-arm)
+		assertEquals(AIR_ALLOY.mMeltingPoint, tDustRow.mSpecialValue);
+	}
+
+	/**
+	 * Acceptance — the real Air-config alloys, the ONLY two in either source (port
+	 * MT.java:4118-4119 = upstream MT.java:3348-3349, verified pair by pair): the
+	 * Steel/MeteoricSteel display rows surface WITH the Air fluid face. Pre-fix the walk
+	 * never saw the creation configuration (the mComponents walk) and the :211 family
+	 * killed unrepresentable components — neither the pair nor its fluid face existed.
+	 */
+	@Test
+	public void steelFamilyAirConfigPairsRestored() {
+		List<Recipe> tSteel = GT6RecipeMapCrucible.alloyingDisplayRows(MT.Steel);
+		assertFalse(tSteel.isEmpty(), "Steel builds rows");
+		assertTrue(tSteel.size() % 2 == 0, "whole dust/ingot pairs only");
+		assertTrue(tSteel.stream().anyMatch(r -> r.mFluidInputs != null && r.mFluidInputs.length > 0),
+				"the Steel WroughtIron+Air configuration pair renders its Air fluid face (MT.java:4118)");
+		List<Recipe> tMeteoric = GT6RecipeMapCrucible.alloyingDisplayRows(MT.MeteoricSteel);
+		assertFalse(tMeteoric.isEmpty(), "MeteoricSteel builds rows");
+		assertTrue(tMeteoric.size() % 2 == 0, "whole dust/ingot pairs only");
+		assertTrue(tMeteoric.stream().anyMatch(r -> r.mFluidInputs != null && r.mFluidInputs.length > 0),
+				"the MeteoricSteel MeteoricIron+Air configuration pair renders its Air fluid face (MT.java:4119)");
 	}
 
 	/**
@@ -410,16 +576,20 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 
 	/**
 	 * The page-size multiplier pin (census acceptance): with this class's probe set the
-	 * offline smelting page is EXACTLY 22 rows — 5 Fe full-family self forms + 8 dust-only
+	 * offline smelting page is EXACTLY 27 rows — 5 Fe full-family self forms + 8 dust-only
 	 * self materials (Au Ag WI Ni Invar Cr Mn SS, one form each; the hidden fixture stays
 	 * gated, the cross-source fixture lives in a private registry so it contributes no self
 	 * rows) + 9 cross-source rows (the fixture family into Fe, reached through Iron's
-	 * mTargetedSmelting regardless of the fixture's registry). Any walk change that
-	 * silently adds or drops rows breaks this number.
+	 * mTargetedSmelting regardless of the fixture's registry) + 5 self rows from the
+	 * flux/Air card's dust+ingot probe materials (C CaCO3 Steel MeteoricIron MeteoricSteel —
+	 * each carries the MELTING gate; the Coal/Limestone dust-only probes stay out, no ingot
+	 * face and no MELTING tag). Any walk change that silently adds or drops rows breaks
+	 * this number.
 	 */
 	@Test
 	public void smeltingPageSizeMultiplierPinned() {
-		assertEquals(22, GT6RecipeMapCrucible.allSmeltingDisplayRows().size(), "5 Fe self + 8 dust-only self + 9 cross-source");
+		assertEquals(27, GT6RecipeMapCrucible.allSmeltingDisplayRows().size(),
+				"5 Fe self + 8 dust-only self + 9 cross-source + 5 flux/Air-card probe materials");
 	}
 
 	/**
