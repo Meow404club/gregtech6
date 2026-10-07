@@ -37,6 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import gregapi.data.MT;
+import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.emi.GT6EmiPlugin;
@@ -50,6 +51,7 @@ import gregtech6.recipes.GT6RecipesSifter;
 import gregtech6.recipes.GT6RecipesShCL;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.tree.MaterialTreeBuilder;
+import gregtech6.recipes.tree.MaterialTreeCoverage;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 import gregtech6.registry.GTMaterialItems;
@@ -97,6 +99,9 @@ import net.minecraft.world.item.ItemStack;
  * <li><b>jump routing</b>: the pure arms refuse without a viewer answer (the
  *     {@link GTViewerJump#preferredViewer()} predicate is the live router, EMI 双装优先 —
  *     the kitchen-NEI seam, reused not re-implemented);</li>
+ * <li><b>the coverage face</b> (task mattree-r2-coverage-display): the query seam rides the
+ *     constructor beside the plan (entry COVERED, the band aggregate queryable) and the
+ *     corner-badge render hook is bytecode-pinned;</li>
  * <li><b>bytecode</b>: the jump legs and the setScreen open seam are wired, and the two
  *     plugin faces carry {@code openItemPage}.</li>
  * </ul>
@@ -349,6 +354,27 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		String tEmi = bytesOf(GT6MaterialTreeEmiRecipe.class);
 		assertTrue(tEmi.contains("runAtPose"), "the EMI labels ride the same pose mount");
 		assertTrue(tEmi.contains("gregtech6/recipes/tree/MaterialTreeLayout$Pose"), "the EMI labels through the unified primitive");
+	}
+
+	// ------------------------------------------------------------------
+	// the coverage face (task mattree-r2-coverage-display): the query seam beside the plan + the badge wiring
+	// ------------------------------------------------------------------
+
+	@Test
+	public void coverageFaceIsWiredBesideThePlan() {
+		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
+		assertNotNull(tScreen.mCoverage, "the coverage read rides the constructor beside the plan");
+		assertEquals(MaterialTreeCoverage.State.COVERED, tScreen.mCoverage.node(OP.oreRaw),
+				"the entry node's state is queryable off the screen");
+		assertNotNull(tScreen.mCoverage.band(MaterialTreeDisplay.COL_ORE), "the ore band aggregate is queryable");
+		assertEquals(MaterialTreeCoverage.State.COVERED, tScreen.mCoverage.band(MaterialTreeDisplay.COL_ORE).state());
+	}
+
+	@Test
+	public void bytecodePinsTheCoverageBadge() throws Exception {
+		String tScreen = bytesOf(GT6MaterialTreeScreen.class);
+		assertTrue(tScreen.contains("gregtech6/recipes/tree/MaterialTreeCoverage"), "the coverage face import");
+		assertTrue(tScreen.contains("drawBadge"), "the badge render hook");
 	}
 
 	// ------------------------------------------------------------------
