@@ -1,0 +1,48 @@
+{
+  "values": [
+    {
+      "id": "atum:dead_oasis",
+      "required": false
+    },
+    {
+      "id": "atum:dense_woods",
+      "required": false
+    },
+    {
+      "id": "atum:sparse_woods",
+      "required": false
+    },
+    {
+      "id": "atum:dried_river",
+      "required": false
+    },
+    {
+      "id": "atum:limestone_crags",
+      "required": false
+    },
+    {
+      "id": "atum:limestone_mountains",
+      "required": false
+    },
+    {
+      "id": "atum:oasis",
+      "required": false
+    },
+    {
+      "id": "atum:sand_dunes",
+      "required": false
+    },
+    {
+      "id": "atum:sand_hills",
+      "required": false
+    },
+    {
+      "id": "atum:sand_plains",
+      "required": false
+    },
+    {
+      "id": "atum:karst_caves",
+      "required": false
+    }
+  ]
+}

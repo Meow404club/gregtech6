@@ -1,0 +1,12 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#gt6:atum_biomes",
+  "features": "gt6:bumble_hives",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "atum"
+    }
+  ],
+  "step": "underground_ores"
+}

@@ -1,0 +1,48 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:atum_biomes",
+  "features": [
+    "gt6:ore_small_atum/copper",
+    "gt6:ore_small_atum/chalcopyrite",
+    "gt6:ore_small_atum/malachite",
+    "gt6:ore_small_atum/tin",
+    "gt6:ore_small_atum/cassiterite",
+    "gt6:ore_small_atum/zinc",
+    "gt6:ore_small_atum/sphalerite",
+    "gt6:ore_small_atum/smithsonite",
+    "gt6:ore_small_atum/stibnite",
+    "gt6:ore_small_atum/bismuth",
+    "gt6:ore_small_atum/lead",
+    "gt6:ore_small_atum/galena",
+    "gt6:ore_small_atum/silver",
+    "gt6:ore_small_atum/gold",
+    "gt6:ore_small_atum/pyrite",
+    "gt6:ore_small_atum/hematite",
+    "gt6:ore_small_atum/pyrolusite",
+    "gt6:ore_small_atum/garnierite",
+    "gt6:ore_small_atum/pentlandite",
+    "gt6:ore_small_atum/scheelite",
+    "gt6:ore_small_atum/salt",
+    "gt6:ore_small_atum/rocksalt",
+    "gt6:ore_small_atum/borax",
+    "gt6:ore_small_atum/asbestos",
+    "gt6:ore_small_atum/diamond",
+    "gt6:ore_small_atum/amber",
+    "gt6:ore_small_atum/craponite",
+    "gt6:ore_small_atum/redstone",
+    "gt6:ore_small_atum/redcinnabar",
+    "gt6:ore_small_atum/lapis",
+    "gt6:ore_small_atum/coal",
+    "gt6:ore_small_atum/graphite",
+    "gt6:ore_small_atum/pollucite",
+    "gt6:ore_small_atum/zeolite",
+    "gt6:ore_small_atum/sulfur"
+  ],
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "atum"
+    }
+  ],
+  "step": "underground_ores"
+}

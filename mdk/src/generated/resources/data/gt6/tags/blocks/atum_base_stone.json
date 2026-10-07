@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "atum:limestone",
+      "required": false
+    },
+    {
+      "id": "atum:karst",
+      "required": false
+    }
+  ]
+}
