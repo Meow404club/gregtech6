@@ -1027,6 +1027,12 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_leaves"));
 			addDirect("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_planks")); // task gt-tree-planks
 		}
+		// task planks-blockification — the 8 generic plank cubes (BlockTreePlanks metas 8-15);
+		// the zh words are the dump rows verbatim (gt.block.planks.8-15, tmp/gregtech.lang
+		// :2457-2458/:2444-2449 — the reference table's hand layer carries the values)
+		for (gregtech6.registry.GT6TreeBlocks.GenericPlank tRow : gregtech6.registry.GT6TreeBlocks.GENERIC_PLANK_ROWS) {
+			addDirect("block.gt6." + tRow.path());
+		}
 	}
 
 	/**
@@ -2062,9 +2068,11 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(GTWires.LASER_TAB_TITLE_KEY);
 		addDirect(GT6Tools.TAB_TITLE_KEY);
 		addDirect("itemGroup.gt6.food_cans"); // task food-can-row0 — dump itemgroup gt.multiitem.cans 格雷科技: 罐头 (MultiItemCans.java:41 category label)
-		addDirect("itemGroup.gt6.plank"); // task wood-planks-register — the plank prefix tab, the billet-row shape: NO dump
-			// itemGroup row exists (upstream OP.plank has no PrefixItem and hence no creative tab), so the tsv hand row
-			// 木板 (the %s木板 template's noun) joins via the direct band, not the dump itemgroup family
+		// task planks-blockification — the itemGroup.gt6.plank hand row RETIRED with the plank
+		// prefix tab: the wood-planks-register item face is gone (the plank BlockItems ride the
+		// vanilla BUILDING_BLOCKS tab, GT6TreeBlocks.onBuildTabContents), zero plank prefix items
+		// means tabPrefixes() drops the tab (PrefixItem.java:121 empties skipped) and the en walk
+		// stops emitting the key — the zh hand row would be a parity orphan.
 		// NOTE the wire_gt01-16 tab-row absence (task wiregt-prefix-item-retirement): the sixteen
 		// multiplier tabs rode here as the wire-gt-registration "1×线".."16×线" direct band and are
 		// retired with the prefix items — upstream OP.wireGt01-16 ride the MTE block path

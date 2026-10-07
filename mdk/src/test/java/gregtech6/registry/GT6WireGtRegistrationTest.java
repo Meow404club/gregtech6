@@ -72,14 +72,14 @@ public class GT6WireGtRegistrationTest {
         }).toList();
     }
 
-    /** Census ①: all sixteen prefixes are OFF the item path; the universe is the 110-prefix list (105 upstream + casing quartet + plank). */
+    /** Census ①: all sixteen prefixes are OFF the item path; the universe is the 109-prefix list (105 upstream + casing quartet — the plank deviation retired too, task planks-blockification). */
     @Test
     public void allSixteenWireGtPrefixesAreOffTheItemPath() {
         List<OreDictPrefix> tPath = GTMaterialItems.itemPathPrefixes();
         for (OreDictPrefix tPrefix : prefixesNamed(WIRE_GT_NAMES)) {
             assertFalse(tPath.contains(tPrefix), tPrefix.mNameInternal + " must be OFF the item path (retired, task wiregt-prefix-item-retirement)");
         }
-        assertEquals(110, tPath.size(), "105 upstream PrefixItems + the four casingMachine* additions + plank (the wire lift reverted)");
+        assertEquals(109, tPath.size(), "105 upstream PrefixItems + the four casingMachine* additions (the wire lift reverted; the plank deviation retired, task planks-blockification)");
     }
 
     /** Census ②: zero wireGt pairs in the live registration walk — 16 x 14 = 224 items gone; cableGt was never itemized. */

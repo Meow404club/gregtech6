@@ -60,7 +60,6 @@ public class GTMaterialItemsRegistrationTest {
         "gearGtSmall", "gearGt", "rotor", "stick", "stickLong", "springSmall", "spring",
         "lens", "round", "bolt", "screw", "ring", "chain", "foil", "casingSmall",
         "casingMachine", "casingMachineDouble", "casingMachineQuadruple", "casingMachineDense",
-        "plank",
         "wireFine",
         "minecartWheels", "railGt",
         "plantGtBerry", "plantGtBlossom", "plantGtFiber", "plantGtTwig", "plantGtWart", "chemtube",
@@ -85,7 +84,7 @@ public class GTMaterialItemsRegistrationTest {
         Set<String> tProductionNames = new TreeSet<>();
         for (OreDictPrefix tPrefix : tProduction) tProductionNames.add(tPrefix.mNameInternal);
         assertEquals(new TreeSet<>(UPSTREAM_ITEM_PATH), tProductionNames, "production item path must equal the upstream Loader_Items.java:57-171 spec + the casingMachine quartet + plank (the wire lift reverted, task wiregt-prefix-item-retirement)");
-        assertEquals(110, tProduction.size(), "105 upstream PrefixItems + the four casingMachine* additions + plank (the sixteen wire multipliers retired, task wiregt-prefix-item-retirement)");
+        assertEquals(109, tProduction.size(), "105 upstream PrefixItems + the four casingMachine* additions (the sixteen wire multipliers retired, task wiregt-prefix-item-retirement; the plank deviation retired, task planks-blockification)");
     }
 
     @Test
@@ -107,9 +106,7 @@ public class GTMaterialItemsRegistrationTest {
                 tMaterial = MaterialRegistry.INSTANCE.get(tMaterial);
                 if (tMaterial == null || tMaterial.mID < 0) continue;
                 if (!tSeenMaterials.add(tMaterial)) continue;
-                boolean tGenerates = tPrefix.mNameInternal.equals("plank")
-                    ? tMaterial.contains(TD.Properties.WOOD)
-                    : tPrefix.isGeneratingItem(tMaterial);
+                boolean tGenerates = tPrefix.isGeneratingItem(tMaterial); // the plank WOOD gate leg left with the retirement (task planks-blockification)
                 if (!tGenerates) continue;
                 String tId = GTMaterialItems.itemIdOf(tPrefix, tMaterial);
                 if (!tSeenIds.add(tId)) {tDrops++; continue;} // first-wins

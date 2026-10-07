@@ -59,8 +59,11 @@ class GT6RecipesBathTest extends GTRecipesOfflineTestBase {
 
 	@AfterEach
 	void restoreTheLiveSeams() {
-		// the live lambdas restored verbatim (the Canner restoreSeams convention)
-		GT6RecipesBath.sPlankItemResolver = GT6RecipesMixer::resolveItem;
+		// the live lambdas restored verbatim (the Canner restoreSeams convention) — the plank
+		// restore replays the LIVE default (task planks-blockification moved it off the retired
+		// GT6RecipesMixer::resolveItem index; restoring the method ref here would leave the
+		// live-universe test walking the dead retired face — the neo pour measured 0/1089)
+		GT6RecipesBath.sPlankItemResolver = GT6RecipesBath.LIVE_PLANK_RESOLVER;
 		GT6RecipesBath.sOilFluidResolver = GT6RecipesBath::resolveOil;
 		GT6RecipeMaps.reset();
 	}
@@ -90,9 +93,13 @@ class GT6RecipesBathTest extends GTRecipesOfflineTestBase {
 	 * <li>forge — the offline test JVM binds NEITHER leg (the plank item INDEX fills at
 	 *     RegisterEvent, the creosote RegistryObject at mod registration): ZERO rows pour and
 	 *     the dormant count is exactly {@code 9 × |untreated woods|} (the "首批行 pour 对账");</li>
-	 * <li>neo — the FML test JVM binds BOTH legs (the Supplier face): the creosote treated
-	 *     leg pours {@code |untreated woods|} rows (one per wood — every untreated wood passes
-	 *     the WOOD gate) and the other 8 templates stay dormant on the port-absent oils.</li>
+ * <li>neo — the FML test JVM binds BOTH legs (the Supplier face): the creosote treated
+ *     leg pours one row per untreated wood that carries a plank face — the wooddict rows
+ *     (task planks-blockification: 26 of the untreated woods, the measured wooddict∩family
+ *     intersection — the 17 GT6 rows over 16 materials minus the treated material the
+ *     group excludes (15 GT6) + the 11 vanilla identities; the family's other 95 members
+ *     are the third-party woods whose plank blocks no port mod ships, the upstream
+ *     no-mod shape); the other 8 templates stay dormant on the port-absent oils.</li>
 	 * </ul>
 	 * The live server face is the neo shape (both legs bound — the class doc's attribution).
 	 */
@@ -106,7 +113,7 @@ class GT6RecipesBathTest extends GTRecipesOfflineTestBase {
 		//? if forge {
 		int tPoured = 0;
 		//?} else {
-		/*int tPoured = tWoods; // the creosote treated leg pours for every untreated wood (both legs bound)
+		/*int tPoured = 26; // the wooddict plank faces (task planks-blockification): the measured wooddict∩untreated intersection — 15 GT6 materials (16 rows' materials minus WoodTreated, the group excludes it) + 11 vanilla
 		*///?}
 		assertEquals(tPoured, GT6RecipesBath.lastPoured(), "the live pour = the creosote treated leg x the untreated woods that resolve");
 		assertEquals(tPoured, GT6RecipeMaps.BATH.mRecipeList.size(), "RM.Bath holds exactly the live creosote rows");

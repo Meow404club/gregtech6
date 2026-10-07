@@ -155,6 +155,7 @@ direct	block.gt6.coconut_log	椰子树原木	hand
 direct	block.gt6.coconut_planks	椰子树木板	hand
 direct	block.gt6.coconut_sapling	椰子树树苗	hand
 direct	block.gt6.crank	手摇曲柄	hand
+direct	block.gt6.crate	板条箱木板	hand
 direct	block.gt6.crucible_adamantium	大型艾德曼合金坩埚	hand
 direct	block.gt6.crucible_invar	大型殷钢坩埚	hand
 direct	block.gt6.crucible_stainless_steel	大型不锈钢坩埚	hand
@@ -388,6 +389,13 @@ direct	block.gt6.placed_plate	板	hand
 direct	block.gt6.placed_rock	石头	hand
 direct	block.gt6.placed_scrap	废料	hand
 direct	block.gt6.placed_stick	木棍	hand
+direct	block.gt6.plank_wood	木木板	hand
+direct	block.gt6.plank_wood_compressed	压缩木木板	hand
+direct	block.gt6.plank_wood_dead	枯死的木木板	hand
+direct	block.gt6.plank_wood_frozen	结冰的木木板	hand
+direct	block.gt6.plank_wood_mossy	苔痕木木板	hand
+direct	block.gt6.plank_wood_rotten	腐败的木木板	hand
+direct	block.gt6.plank_wood_treated	防腐木木板	hand
 direct	block.gt6.plant_pot	万能花盆	hand
 direct	block.gt6.playercounter	玩家数量传感器	hand
 direct	block.gt6.porcelain_cup	瓷杯	hand
@@ -3887,7 +3895,6 @@ direct	itemGroup.gt6.item_pipes	物品管道	hand
 direct	itemGroup.gt6.laser_wires	激光导线	hand
 direct	itemGroup.gt6.machines	机器	hand
 direct	itemGroup.gt6.multiblocks	多方块	hand
-direct	itemGroup.gt6.plank	木板	hand
 direct	itemGroup.gt6.redstone_wires	红石导线	hand
 direct	itemGroup.gt6.spray_cans	喷漆罐	hand
 direct	itemGroup.gt6.tools	工具	hand

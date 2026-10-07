@@ -2677,17 +2677,15 @@ MATERIAL_BACKFILL = {
     "gt6.material.superconductor": "超导体",   # TeamNED double-source cross
 }
 
-# ---- itemGroup.gt6.* (3+16): the P22 spray-can tab + the billet prefix tab (the billet
-# word = the existing %s坯料 template's noun) + the plank prefix tab (task
-# wood-planks-register — NO dump itemGroup row: upstream OP.plank has no PrefixItem
-# and so no creative tab, dump census; the word = the %s木板 template's noun, the
-# billet-row shape) + the sixteen wire multiplier tabs (task wire-gt-registration —
-# the same NO-dump-row face: upstream wireGt01-16 have no PrefixItem and no tab; the
-# word = the gt6.tagprefix.wire_gtNN template minus its %s slot, the plank ruling
-# applied mechanically — "1×线".."16×线", the adjudicated wire=线/cable=线缆 split).
+# ---- itemGroup.gt6.* (2+16): the P22 spray-can tab + the billet prefix tab (the billet
+# word = the existing %s坯料 template's noun) + the sixteen wire multiplier tabs (task
+# wire-gt-registration — the same NO-dump-row face: upstream wireGt01-16 have no PrefixItem
+# and no tab; the word = the gt6.tagprefix.wire_gtNN template minus its %s slot, the billet
+# ruling applied mechanically — "1×线".."16×线", the adjudicated wire=线/cable=线缆 split).
+# The former itemGroup.gt6.plank row left with task planks-blockification (the tab dies with
+# the plank prefix-item retirement — zero plank prefix items, tabPrefixes() skips the tab).
 TAB_BACKFILL = {
     "itemGroup.gt6.billet": "坯料",
-    "itemGroup.gt6.plank": "木板",
     "itemGroup.gt6.spray_cans": "喷漆罐",
     "itemGroup.gt6.wire_gt01": "1×线",
     "itemGroup.gt6.wire_gt02": "2×线",
@@ -3922,6 +3920,16 @@ LEGACY_BLOCK_BACKFILL = {
     'block.gt6.coconut_planks': '椰子树木板',
     'block.gt6.rainbowood_planks': '彩虹木木板',
     'block.gt6.blue_spruce_planks': '蓝云杉木板',
+    # ---- the 8 generic planks (task planks-blockification, BlockTreePlanks metas 8-15) —
+    # hand rows, the dump zh rows verbatim (tmp/gregtech.lang gt.block.planks.8-15)
+    'block.gt6.plank_wood_compressed': '压缩木木板',
+    'block.gt6.plank_wood': '木木板',
+    'block.gt6.plank_wood_treated': '防腐木木板',
+    'block.gt6.crate': '板条箱木板',
+    'block.gt6.plank_wood_dead': '枯死的木木板',
+    'block.gt6.plank_wood_rotten': '腐败的木木板',
+    'block.gt6.plank_wood_mossy': '苔痕木木板',
+    'block.gt6.plank_wood_frozen': '结冰的木木板',
     # ---- the surface plants + fallen logs (task p30-w6-t2-surface-blocks)
     'block.gt6.glowtus': '荧光莲',
     'block.gt6.berry_bush': '浆果丛',

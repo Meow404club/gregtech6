@@ -3293,6 +3293,11 @@ public class GT6EnUs extends LanguageProvider {
             // BlockTreePlanks2.java:45): "Rubberwood Planks" vs the sapling "Rubber"
             add("block.gt6." + gregtech6.registry.GT6TreeBlocks.path(tKind, "_planks"), tKind.plankEnName() + " Planks");
         }
+        // task planks-blockification — the 8 generic plank rows, the upstream LH rows verbatim
+        // (BlockTreePlanks.java:48-55: the GenericPlank.enName column IS the LH word)
+        for (gregtech6.registry.GT6TreeBlocks.GenericPlank tRow : gregtech6.registry.GT6TreeBlocks.GENERIC_PLANK_ROWS) {
+            add("block.gt6." + tRow.path(), tRow.enName());
+        }
     }
 
     /**

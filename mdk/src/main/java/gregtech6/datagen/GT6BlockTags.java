@@ -452,6 +452,17 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			tPlanks.add(tHandle.get());
 			tAxe.add(tHandle.get());
 		}
+		// task planks-blockification — the 8 generic rows join the band; the TREATED row
+		// stays OFF #minecraft:planks per the upstream OD.plankWood walk verbatim
+		// (BlockTreePlanks.java:59-62 `if (i != 10)`, the creosote face), while the axe face
+		// (upstream aWooden, the Loader_MultiTileEntities harvest band) carries it.
+		for (int i = 0; i < GT6TreeBlocks.GENERIC_PLANK_ROWS.size(); i++) {
+			Block tPlank = GT6TreeBlocks.GENERIC_PLANKS.get(i).get();
+			tAxe.add(tPlank);
+			if (!"plank_wood_treated".equals(GT6TreeBlocks.GENERIC_PLANK_ROWS.get(i).path())) {
+				tPlanks.add(tPlank);
+			}
+		}
 	}
 
 	/**

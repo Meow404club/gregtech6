@@ -114,8 +114,20 @@ public final class GT6RecipesBath {
 		return rLegs;
 	}
 
-	/** The plank-item seam: (prefix, material) → the registered item (the Mixer resolver share). */
-	static BiFunction<OreDictPrefix, OreDictMaterial, Item> sPlankItemResolver = GT6RecipesMixer::resolveItem;
+	/**
+	 * The plank-item seam: (prefix, material) → the registered item. The live default is the
+	 * wooddict face (task planks-blockification — the retired prefix-item plank family folded
+	 * into the {@link GT6WoodDict} BlockItem rows: 17 GT6 cubes + the vanilla identities; a
+	 * material without a plank face resolves null and its row skips, the upstream no-mod
+	 * shape). The prefix leg stays in the signature (the tests inject prefix-blind fixtures).
+	 * The default is the named {@link #LIVE_PLANK_RESOLVER} constant so the tests' seam
+	 * restore replays the LIVE face, not a hardcoded copy of it (the cannerMixer seam drift
+	 * that masked the live neo pour at 0).
+	 */
+	static final BiFunction<OreDictPrefix, OreDictMaterial, Item> LIVE_PLANK_RESOLVER =
+			(aPrefix, aMaterial) -> gregtech6.registry.GT6WoodDict.plankOrNull(aMaterial);
+
+	static BiFunction<OreDictPrefix, OreDictMaterial, Item> sPlankItemResolver = LIVE_PLANK_RESOLVER;
 
 	/** The oil-fluid seam: the live default resolves ONLY creosote (gt6:creosote); the plant/fish family is port-absent. */
 	static Function<OilLeg, Fluid> sOilFluidResolver = GT6RecipesBath::resolveOil;

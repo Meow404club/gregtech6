@@ -7011,17 +7011,32 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The material face of one gear-face row (the test-visible walk unit). */
 	record GearGtCraftFromMaterialRow(GearGtCraftFromForm aForm, gregapi.oredict.OreDictMaterial aMaterial) {}
 
-	/** The material face of the gear band: the three-face intersection under the per-form condition tails (:149-151 verbatim); the stone face rides the family (OP.stone is block-path, outside the item walk — the rockGt seam). */
+	/**
+	 * The material face of the gear band: the three-face intersection under the per-form
+	 * condition tails (:149-151 verbatim); the stone face rides the family (OP.stone is
+	 * block-path, outside the item walk — the rockGt seam). The plank face (task
+	 * planks-blockification): OP.plank left the item path with the prefix-item retirement,
+	 * so its truth leg is the wooddict plank rows ({@link GT6WoodDict} — the upstream
+	 * walk is over the WoodDictionary planks, Loader_OreProcessing.java:151 rides the same
+	 * oredict population).
+	 */
 	static List<GearGtCraftFromMaterialRow> gearGtCraftFromMaterialRows() {
 		List<GearGtCraftFromMaterialRow> rRows = new ArrayList<>();
 		for (GearGtCraftFromForm tForm : gearGtCraftFromForms()) {
 			List<gregapi.oredict.OreDictPrefix> tFaces = new ArrayList<>();
-			tFaces.add(tForm.aInput());
-			if (tForm.aCompanion() != null && !tForm.aStoneFace()) tFaces.add(tForm.aCompanion()); // the plate third face; the stone face is block-path
+			boolean tPlankFace = tForm.aInput() == gregapi.data.OP.plank; // the wooddict truth leg (task planks-blockification)
+			if (!tPlankFace) {
+				tFaces.add(tForm.aInput());
+				if (tForm.aCompanion() != null && !tForm.aStoneFace()) tFaces.add(tForm.aCompanion()); // the plate third face; the stone face is block-path
+			}
 			java.util.Set<OreDictMaterial> tInputs = itemTruth(tFaces);
 			for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 				OreDictMaterial tMaterial = tPair.material();
-				if (tPair.prefix() != tForm.aOutput() || !tInputs.contains(tMaterial)) continue; // the item-truth intersection
+				if (tPair.prefix() != tForm.aOutput()) continue; // the output family
+				// the input-truth intersection: the plank form keys on the wooddict face (the
+				// mID-stable hasPlank — the test JVMs re-run MT.init across suites), the rest
+				// on the item-truth set
+				if (!(tPlankFace ? gregtech6.registry.GT6WoodDict.hasPlank(tMaterial) : tInputs.contains(tMaterial))) continue;
 				if (tMaterial.contains(gregapi.data.TD.Compounds.COATED)) continue; // COATED.NOT
 				if (tMaterial.contains(gregapi.data.TD.Atomic.ANTIMATTER)) continue; // ANTIMATTER.NOT
 				if (tForm.aStoneFace()) {
@@ -7048,7 +7063,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			GearGtCraftFromForm tForm = tMaterialRow.aForm();
 			String tSnake = GTMaterialItems.snakeCase(tMaterialRow.aMaterial().mNameInternal);
 			Item tResult = itemOrNull(tForm.aOutput(), tMaterialRow.aMaterial());
-			Item tInput = itemOrNull(tForm.aInput(), tMaterialRow.aMaterial());
+			// the plank input rides the wooddict face (task planks-blockification — OP.plank
+			// left the item path, the plank truth leg is the GT6WoodDict rows)
+			Item tInput = tForm.aInput() == gregapi.data.OP.plank
+					? gregtech6.registry.GT6WoodDict.plankOrNull(tMaterialRow.aMaterial())
+					: itemOrNull(tForm.aInput(), tMaterialRow.aMaterial());
 			Item tCompanion = null;
 			if (tForm.aStoneFace()) {
 				gregtech6.registry.GTStoneBlocks.StoneSpec tStoneFamily = stoneFamilyOrNull(tMaterialRow.aMaterial());

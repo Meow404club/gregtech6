@@ -539,19 +539,21 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         return rNames;
     }
 
-    /** Row-count pin (the measured item truth): the :149 twin == the :148 rockGt universe, :150 the smith face, :151 the plank cut (live since task wood-planks-register). */
+    /** Row-count pin (the measured item truth): the :149 twin == the :148 rockGt universe, :150 the smith face, :151 the plank cut (re-homed on the wooddict plank rows, task planks-blockification). */
     @Test
     public void theGearRowCountIsTheMeasuredItemTruth() throws Exception {
         Set<String> tRockGtMaterials = rockGtMaterials();
         assertEquals(tRockGtMaterials, gearMaterialsOf("gear_gt/from_stick_stone"),
                 "the :149 twin universe == the :148 rockGt universe (same gearGt/stone family faces + the verbatim five-condition tail)");
         assertEquals(206, gearMaterialsOf("gear_gt/from_stick_plate").size(), "the :150 smith face (gearGt ∩ stick ∩ plate + SMITHABLE)");
-        // the :151 plank cut pours over the plank WOOD domain (task wood-planks-register): gearGtSmall
-        // item truth ∩ the 130 plank pairs, minus MT.Wood.NOT / COATED.NOT / ANTIMATTER.NOT — the
-        // remainder is a re-pin on material-tree or gate drift, so the count is re-read, not assumed
+        // the :151 plank cut pours over the wooddict plank rows (task planks-blockification — the
+        // upstream walk is the WoodDictionary planks, Loader_OreProcessing.java:151 rides the same
+        // oredict population): the 28 ROWS materials (17 GT6 over 16 materials + 11 vanilla), minus
+        // MT.Wood.NOT / COATED.NOT (WoodTreated) / ANTIMATTER.NOT — a re-pin on material drift
         Set<String> tPlankCut = gearMaterialsOf("gear_gt_small/from_plank");
         assertFalse(tPlankCut.contains("Wood"), "the :151 MT.Wood.NOT cut holds (the identity wood rides the :149/:150 faces)");
-        assertTrue(tPlankCut.size() > 100, "the :151 plank cut pours over the registered plank domain (" + tPlankCut.size() + " rows)");
+        assertFalse(tPlankCut.contains("WoodTreated"), "the :151 COATED.NOT cut holds (the treated row is COATED, MT.java:2099)");
+        assertEquals(25, tPlankCut.size(), "the :151 plank cut = the 27 wooddict plank materials - Wood - WoodTreated (" + tPlankCut.size() + " rows)");
         // the generated face rides the same walk: the FIRST plank cut row verbatim (the
         // companion-less 2x2 grid used to be swallowed by the datagen item-truth guard —
         // this pin keeps the generated rows flush with the material face)
@@ -564,8 +566,17 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertEquals(" s", tPlankRow.getAsJsonArray("pattern").get(1).getAsString(), "the saw row");
         assertTrue(tPlankRow.getAsJsonObject("key").get("s").getAsJsonObject().get("tag").getAsString().endsWith("tools/saw"),
                 "'s' = the saw tool tag (the :151 verbatim tail)");
-        assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.plank, tFirstCut.aMaterial()), tPlankRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
-                "'X' = the plank item of the walked material");
+        // 'X' = the plank item of the walked material — the wooddict face (task
+        // planks-blockification): the GT6 rows ride the BlockItem ids, the vanilla rows the
+        // minecraft planks (the id map asserted against the wooddict row, not the retired prefix)
+        String tExpectedX = gregtech6.registry.GT6WoodDict.GT6_ROWS.stream()
+                .filter(tRow -> tRow.material() == tFirstCut.aMaterial()).findFirst()
+                .or(() -> gregtech6.registry.GT6WoodDict.VANILLA_ROWS.stream()
+                        .filter(tRow -> tRow.material() == tFirstCut.aMaterial()).findFirst())
+                .orElseThrow().id();
+        assertEquals(tExpectedX.contains(":") ? tExpectedX : "gt6:" + tExpectedX,
+                tPlankRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "'X' = the wooddict plank item of the walked material");
         assertEquals("gt6:" + GTMaterialItems.itemIdOf(OP.gearGtSmall, tFirstCut.aMaterial()), tPlankRow.getAsJsonObject("result").get("item").getAsString(), "the result item");
     }
 
