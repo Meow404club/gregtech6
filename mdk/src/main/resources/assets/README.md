@@ -1,4 +1,19 @@
 
+- `gt6/textures/block/decor/` — the decor-misc block families (task
+  material-mc-g2-decor-misc), byte-identical copies of the upstream
+  `assets/gregtech/textures/blocks/iconsets/` PNGs (filenames lowercased on borrow).
+  The dye families (asphalt/glass_clear) are the ONE grayscale icon each (the upstream
+  `UT.Code.fill` 16-slot arrays are the same PNG 16x) tinted at runtime by
+  `GT6DecorTintListener` over `GTSprayCanItem.DYES_INT`; the spike/bars tint band is the
+  upstream METALLIC materialicon `blockSolid.png` (byte-identical to the WOOD set's —
+  sha `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`) tinted by the
+  row material's `fRGBaSolid`:
+  - `asphalt.png` (upstream `ASPHALT.png`) sha `2b51ec88d0be3a57588a04d886e5902dcbc8b9de0afa70e2ea181bdcbb6925a0`
+  - `glass_clear.png` (upstream `GLASS_CLEAR.png`) sha `234304eb84268208f6c56404cd9ec60bb482cb363efebba6228306ae7ba21365` (alpha-48 translucent, the render-type face)
+  - `path_top.png` / `path_side.png` (upstream `PATH_TOP`/`PATH_SIDE`) shas `db48d6fe07134e346f1f776ea710bd8a01ad1cb95a0dbb31229bd2aa7bf27f5c` / `66a314d2ea28f87fb05f378e8f24f028b13cb661fd6f5359d01a0e144463f7fa` (the side art carries its own alpha strip — cutout)
+  - the 8 bale pairs (upstream `GRASS_TOP/_SIDE` x4 states + `RYE/OAT/BARLEY/RICE_TOP/_SIDE`): `grass_bale_top/side` `7c74b6f9e473401236ac8f6464886da692fcb3f2b3413dff52e0e51f751b1b1e`/`53d30d11ff79cb4ec65431913e28c748347084507a3642532c4a79794ec98efe`, `dry_grass_bale_top/side` `8de229b7d5bd29246fcf4680c846b47cd5bc990499619ce58005c6b49c651281`/`31dc712942fe1050de343f0b4d214804ee1eb1cc412cc9751605dcbba7fb1953`, `moldy_grass_bale_top/side` `db879a0ab4b24ad78685a84e08ef402a8b532f82b6b4b09bda6c112dedcf3fa4`/`67f7cd2f18c369dd33b375b231c25304318770ddf98594a3f0c68381b40a8123`, `rotten_grass_bale_top/side` `f54696a71887e950c2f2b755ee26a2afa03457fa57626b5345bfc64381efa81f`/`d39473f9aaf79bd277e3eaadb4686c28599660719e3a2c14f178663a55925b72`, `rye_bale_top/side` `4ff86bd8139d9b75f7af0e5e874da2f443584bccad46784abfaf2e577467aee2`/`9e57696e75bb3b8982083b34871184eeab753f3aa429ceb732528c99d7856ba9`, `oats_bale_top/side` `d5bdcba23b73703fac19fdcaf5f473d8d3fc2d7519212218c5f625fe25c4930b`/`358cc72a4dce9c6568186588c038ca58d209c5420aec25b5c311575b5eb75110`, `barley_bale_top/side` `a7104ba95cb5abeacb508c3278c0a70b84adbc7a031c37a1ce45899290454304`/`0178581e4573e1250469a087312011426f0e37911dbf5df643b3f285e83c6850`, `rice_bale_top/side` `c56b3148725b1b925db24b335449283c769dcf0cbb33c9e9f1bbc6a398f85eb5`/`7e9b8ddc4ae00540efc7e3b5df28f947af913c995e57f037630ae70c0d08806b`
+  - `metal_solid.png` (upstream `materialicons/METALLIC/blockSolid.png`) sha `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b`
+
 Machine GUI backgrounds borrowed from **GregTech 6**
 (https://github.com/GregTech6/gregtech6), snapshot
 `v6.17.06-22-g3703e4030`, files
