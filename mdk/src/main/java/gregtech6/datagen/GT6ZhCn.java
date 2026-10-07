@@ -169,6 +169,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addTechnologicalComponents(); // task debt-emitter-sensor-generators — the 30 component names (dump faces verbatim)
 		addRoboticsUnits(); // task robotics-chain — the 60 component names + the 20 tooltips (dump faces verbatim, the tsv direct band)
 		addRecipeMapViewerUnits(); // task issues #29/#34a — the 72 RM titles + the 16 cost-line keys (hand rows, the tsv direct band)
+		addEnergyViewerUnits(); // task energy-page-jei-leg — the energy-source page band (the frozen E5 key set, the tsv direct band)
 		addCropCardUnits(); // task cbc-3-crop-data-assets — the 59 crop names + the seed item (hand rows, the tsv direct band; the dump carries zero gt.crop.* faces)
 		addFoodsideUnits(); // task vanilla-alias-foodside — the 4 Remains names (the dump gt.multiitem.food.1210x faces verbatim) + the 2 new-native honey drops (hand rows)
 	}
@@ -2894,6 +2895,21 @@ public class GT6ZhCn extends LanguageProvider {
 			addDirect(gregtech6.jei.GT6RecipeMapViewerMeta.energyInfoKey(tCarrier));
 		}
 		addDirect(gregtech6.jei.GT6RecipeMapViewerMeta.ENERGY_JUMP_HINT_KEY);
+	}
+
+	/**
+	 * The energy-source page zh faces (task energy-page-jei-leg, the frozen E5 key set the
+	 * E4 EMI twin cites): the three bilingual group headers (产生 · Generators styling),
+	 * the transfer footer, the empty-state line and the produce hover line — the tsv
+	 * direct band (the hand rows appended in the same commit; the zh hand-row precedent).
+	 */
+	private void addEnergyViewerUnits() {
+		addDirect(gregtech6.jei.GT6EnergyInfoJeiCategory.GROUP_GENERATORS_KEY);
+		addDirect(gregtech6.jei.GT6EnergyInfoJeiCategory.GROUP_PROCESSORS_KEY);
+		addDirect(gregtech6.jei.GT6EnergyInfoJeiCategory.GROUP_CONVERTERS_KEY);
+		addDirect(gregtech6.jei.GT6EnergyInfoJeiCategory.TRANSFER_KEY);
+		addDirect(gregtech6.jei.GT6EnergyInfoJeiCategory.EMPTY_KEY);
+		addDirect(gregtech6.jei.GT6EnergyInfoJeiCategory.EMITS_KEY);
 	}
 
 	private void addDirect(String aKey) {

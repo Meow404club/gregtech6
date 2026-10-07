@@ -3,7 +3,6 @@ package gregtech6.jei;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -90,7 +89,7 @@ public class GT6JeiPlugin implements IModPlugin {
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
 		registerMultiblockPreviewRows(registration);
-		registerEnergyCarrierInfoPages(registration);
+		registerEnergyInfoPages(registration);
 		registerRecipeMapCategoriesRows(registration);
 		registerOreGenInfoRows(registration);
 		registerMaterialTreeRows(registration);
@@ -113,19 +112,23 @@ public class GT6JeiPlugin implements IModPlugin {
 	}
 
 	/**
-	 * The per-carrier info pages (task viewer-energy-jump-gear, the r6-30 phase-2 design):
-	 * one {@code addIngredientInfo(T, IIngredientType<T>, Component...)} page per accepted
-	 * energy carrier over the shared {@code gt6.jei.info.energy.*} keys — the page the gear
-	 * port ({@link GT6RecipeMapJeiCategory}, {@code createRecipeExtras}) jumps to. The
-	 * overload rides {@link IRecipeRegistration} (IRecipeRegistration.java:63, both pinned
-	 * generations identical); the TYPE registration itself happens in
-	 * {@link #registerIngredients} below.
+	 * The per-carrier energy-source pages (task energy-page-jei-leg, the approved 形态A —
+	 * this REPLACES the nine addIngredientInfo text pages the viewer-energy-jump-gear card
+	 * hung here, the same-commit retirement clause: a transition period with both
+	 * categories would double-hit the same focus). One {@link GT6EnergyInfoJeiCategory}
+	 * recipe per page over {@link GT6EnergyCensus#carriers()} — the nine pinned carriers
+	 * plus STEAM as the tenth; overflowing families continue on further page recipes of
+	 * the SAME carrier (the packer's cut, JEI's native page arrows). Every page mounts its
+	 * carrier as the INPUT slot, so {@link #openEnergyCarrierInfo}'s focus lands here
+	 * unconditionally (the E1 POC green light) — the gear-port arm below is untouched.
+	 * The EMI leg keeps its EmiInfoRecipe text pages until its own twin card (the JEMI red
+	 * line stays balanced per-leg).
 	 */
-	private static void registerEnergyCarrierInfoPages(IRecipeRegistration registration) {
-		for (TagData tCarrier : GT6RecipeMapViewerMeta.pinnedEnergyCarriers()) {
-			registration.addIngredientInfo(tCarrier, GT6EnergyCarrierJei.TYPE,
-					Component.translatable(GT6RecipeMapViewerMeta.energyInfoKey(tCarrier)));
-		}
+	private static void registerEnergyInfoPages(IRecipeRegistration registration) {
+		GT6EnergyInfoJeiCategory tCategory = new GT6EnergyInfoJeiCategory();
+		List<GT6EnergyInfoJeiCategory.Page> tPages = new ArrayList<>();
+		for (TagData tCarrier : GT6EnergyCensus.carriers()) tPages.addAll(GT6EnergyInfoJeiCategory.pagesOf(tCarrier));
+		registration.addRecipes(tCategory.getRecipeType(), tPages);
 	}
 
 	/**
@@ -188,6 +191,7 @@ public class GT6JeiPlugin implements IModPlugin {
 			registration.addRecipeCategories(new GT6RecipeMapJeiCategory(tMap, tIcon));
 		}
 		registration.addRecipeCategories(new GT6OreGenInfoJeiCategory());
+		registration.addRecipeCategories(new GT6EnergyInfoJeiCategory());
 		if (gregtech6.recipes.tree.MaterialTreeDisplay.SHOWN) {
 			registration.addRecipeCategories(new GT6MaterialTreeJeiCategory());
 		}
