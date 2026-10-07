@@ -51,17 +51,21 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * <p><b>Zero math rewritten</b>: the tree geometry is the same
  * {@link MaterialTreeLayout#layout} plans the two viewer legs render, the pan/zoom state
  * is the S1 {@link MaterialTreeViewport} driven through its four-arg constructor (content
- * = the shared 202x206 canvas, pane = the window clamped into the content box — bigger
- * windows ride the default fit-pinned semantics, smaller ones the escape hatch), and every
- * input gesture funnels into the M2 {@link GT6MaterialTreeNav} action
- * table verbatim, so all three consumers navigate identically by construction. Only the
- * shell is new: this class paints the layout's rects through {@link GuiGraphics} and
+ * = the shared 202x206 canvas, pane = the REAL window — task mattree-viewport-fit, the
+ * former 「pane clamped into the content box」 pin died with the base-translation hack it
+ * existed for), and every input gesture funnels into the M2 {@link GT6MaterialTreeNav}
+ * action table verbatim, so all three consumers navigate identically by construction. Only
+ * the shell is new: this class paints the layout's rects through {@link GuiGraphics} and
  * routes the window's events into the table.
  *
- * <p><b>The fit pose is centre-based</b>: the viewport's own clamps keep the offsets in
- * pane space; the screen adds one constant base translation so the fit pose sits centred
- * instead of top-left. Wheel zoom and the hit test translate the pointer by the base
- * before touching the viewport; drag deltas are translation-invariant.
+ * <p><b>The fit pose lives in the viewport now</b> (task mattree-viewport-fit): the
+ * viewport's dynamic fit scale magnifies the 202x206 canvas into the real window, centred,
+ * and the screen adds NO translation of its own — <b>旧钉迁移声明</b>: the former constant
+ * base translation outside the viewport ({@code mBaseX/mBaseY}, compensated separately in
+ * the wheel zoom, the hit test and nothing in the render pass — the render/input split that
+ * pinned the tree top-left) died here; every coordinate now passes through the viewport's
+ * apply/unapply pair alone. The tree layer renders inside a pane-sized scissor (the pane is
+ * the visible region, the L2 contract the three legs share).
  *
  * <p><b>Node clicks jump to the viewer</b> (所见即所跳): the release-within-slop click
  * resolves through the viewport's unapply inverse and routes by the shared
@@ -69,10 +73,11 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * to the R axis (recipes-for-item) of whichever viewer the user actually sees. A drag
  * that travelled past the slop is a pan, never a jump.
  *
- * <p>Lifecycle: a fresh viewport per {@code init} (every open and every window resize is
- * the apply-unapply 闭环 — no static state), and {@link #open} simply replaces the current
- * screen ({@code Minecraft.setScreen} has no barrier from a widget click, the r11 bridge
- * finding).
+ * <p>Lifecycle: the first {@code init} creates the viewport on the fit pose; a re-init
+ * (every window resize re-runs {@code init}) hands the live viewport to
+ * {@link MaterialTreeViewport#resizeTo} — the anchor survives the resize — and
+ * {@link #open} simply replaces the current screen ({@code Minecraft.setScreen} has no
+ * barrier from a widget click, the r11 bridge finding).
  *
  * <p>Consumed faces are the loader-neutral common core on both pinned stacks (1.20.1
  * forge / 1.21.1 neoforge): the two scroll generations differ and fork once (the 1.21.1
@@ -98,7 +103,6 @@ public class GT6MaterialTreeScreen extends Screen {
 
 	final MaterialTreeDisplay mDisplay;
 	MaterialTreeViewport mView;
-	double mBaseX, mBaseY;
 	private int mPaneWidth, mPaneHeight;
 	private boolean mPressed;
 	private double mDragDistance;
@@ -118,21 +122,18 @@ public class GT6MaterialTreeScreen extends Screen {
 
 	/**
 	 * The viewport wiring (package-private: the offline test drives it with a synthetic
-	 * pane) — the S1 four-arg form with the pane CLAMPED TO THE CONTENT BOX: the S1 clamp
-	 * pins the fit pose to (0,0) only when the pane is at most the content, so a window
-	 * larger than the 202x206 canvas rides the default-constructor semantics (fit pinned)
-	 * and the centring lives entirely in the base translation; a window SMALLER than the
-	 * canvas is the four-arg escape hatch's real case (the pane is the window, the fit
-	 * stays top-left, the clamp keeps every content edge reachable). Every init is a fresh
-	 * viewport: nothing leaks between opens or resizes.
+	 * pane) — the S1 four-arg form with the pane being the REAL window: the viewport's
+	 * dynamic fit scale magnifies the 202x206 canvas to fill it, centred. The FIRST init
+	 * creates the viewport (fit pose); a re-init is a window resize and re-binds the live
+	 * viewport through {@link MaterialTreeViewport#resizeTo} — the anchor survives. A
+	 * degenerate pane (a minimized window's 0) keeps the last pane: one clamp, no NaN.
 	 */
 	void navInit(int aPaneWidth, int aPaneHeight) {
+		if (aPaneWidth <= 0 || aPaneHeight <= 0) return;
 		mPaneWidth = aPaneWidth;
 		mPaneHeight = aPaneHeight;
-		mView = new MaterialTreeViewport(MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT,
-				Math.min(aPaneWidth, MaterialTreeDisplay.WIDTH), Math.min(aPaneHeight, MaterialTreeDisplay.HEIGHT));
-		mBaseX = Math.max(0, (aPaneWidth - MaterialTreeDisplay.WIDTH) / 2.0);
-		mBaseY = Math.max(0, (aPaneHeight - MaterialTreeDisplay.HEIGHT) / 2.0);
+		if (mView == null) mView = new MaterialTreeViewport(MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT, aPaneWidth, aPaneHeight);
+		else mView.resizeTo(aPaneWidth, aPaneHeight);
 	}
 
 	// ------------------------------------------------------------------
@@ -143,7 +144,7 @@ public class GT6MaterialTreeScreen extends Screen {
 	boolean scroll(double aMouseX, double aMouseY, double aDelta) {
 		if (mView == null) return false;
 		double tFactor = aDelta > 0 ? GT6MaterialTreeNav.ZOOM_FACTOR : 1.0 / GT6MaterialTreeNav.ZOOM_FACTOR;
-		mView.zoomAt(aMouseX - mBaseX, aMouseY - mBaseY, tFactor);
+		mView.zoomAt(aMouseX, aMouseY, tFactor);
 		return true;
 	}
 
@@ -224,7 +225,7 @@ public class GT6MaterialTreeScreen extends Screen {
 
 	/** The node/byproduct slot under the pointer through the unapply inverse ({@code EMPTY} = a miss). */
 	ItemStack itemAt(double aMouseX, double aMouseY) {
-		MaterialTreeViewport.Point tTree = mView.unapply(aMouseX - mBaseX, aMouseY - mBaseY);
+		MaterialTreeViewport.Point tTree = mView.unapply(aMouseX, aMouseY);
 		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes()) {
 			double tX = MaterialTreeDisplay.nodeX(tNode), tY = MaterialTreeDisplay.nodeY(tNode);
 			if (tTree.x() >= tX && tTree.x() < tX + MaterialTreeLayout.SLOT
@@ -275,6 +276,9 @@ public class GT6MaterialTreeScreen extends Screen {
 		Font tFont = Minecraft.getInstance().font;
 		List<Edge> tEdges = mDisplay.edges();
 		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(mDisplay);
+		// the tree layer renders inside the pane-sized scissor (the pane is the visible
+		// region — the L2 contract; the strip and the tooltip stay outside it)
+		aGui.enableScissor(0, 0, this.width, this.height);
 		// the wire layer leads (under the slots — the viewers' z-order contract)
 		for (EdgeLayout tLayout : tLayouts) {
 			for (Rect tRect : tLayout.wire()) fillTransformed(aGui, tRect, MaterialTreeLayout.WIRE_INK);
@@ -303,6 +307,7 @@ public class GT6MaterialTreeScreen extends Screen {
 		int i = 0;
 		for (Byproduct tByproduct : mDisplay.byproducts())
 			drawSlot(aGui, tByproduct.stack(), MaterialTreeDisplay.byproductX(i++), MaterialTreeDisplay.byproductY());
+		aGui.disableScissor();
 		drawStrip(aGui, tFont, aMouseX, aMouseY);
 		// the hovered slot's own tooltip (the native face)
 		ItemStack tHovered = itemAt(aMouseX, aMouseY);
@@ -341,10 +346,10 @@ public class GT6MaterialTreeScreen extends Screen {
 		aGui.renderItem(aStack, (int) Math.round(tPoint.x()), (int) Math.round(tPoint.y()));
 	}
 
-	/** The nav strip (the M3 cell language): +/−/R, the zoom cells sleeping at the S1 floor/ceiling. */
+	/** The nav strip (the M3 cell language): +/−/R, the zoom cells sleeping at the live fit floor / ceiling. */
 	private void drawStrip(GuiGraphics aGui, Font aFont, int aMouseX, int aMouseY) {
 		drawCell(aGui, aFont, "+", BUTTON_X0, aMouseX, aMouseY, mView.scale() < MaterialTreeViewport.MAX_SCALE);
-		drawCell(aGui, aFont, "-", BUTTON_X0 + BUTTON_PITCH, aMouseX, aMouseY, mView.scale() > MaterialTreeViewport.MIN_SCALE);
+		drawCell(aGui, aFont, "-", BUTTON_X0 + BUTTON_PITCH, aMouseX, aMouseY, mView.scale() > mView.minScale());
 		drawCell(aGui, aFont, "R", BUTTON_X0 + 2 * BUTTON_PITCH, aMouseX, aMouseY, true);
 	}
 
