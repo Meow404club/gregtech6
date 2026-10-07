@@ -3330,6 +3330,7 @@
   "gt6.row.burning_box.family.solid": "Solid",
   "gt6.row.canner.display": "Canning Machine (%s)",
   "gt6.row.charging_crafting_table.display": "Charging Crafting Table (%s)",
+  "gt6.row.charging_locker.display": "Charging Locker (%s)",
   "gt6.row.chest.display": "%s Chest",
   "gt6.row.coagulator.display": "Coagulator",
   "gt6.row.crucible.display.smeltery_bronze": "Bronze Smeltery",
@@ -5861,6 +5862,5 @@
   "tooltip.gt6.pocket.saw": "Faster on Planks. Slower on Logs. Can harvest Ice.",
   "tooltip.gt6.pocket.scissors": "Don't run around while holding them!",
   "tooltip.gt6.pocket.switch": "Sneak Rightclick to switch Mode",
-  "tooltip.gt6.pocket.wire_cutter": "Harvests Cables and Wires faster",
-  "gt6.row.charging_locker.display": "Charging Locker (%s)"
+  "tooltip.gt6.pocket.wire_cutter": "Harvests Cables and Wires faster"
 }

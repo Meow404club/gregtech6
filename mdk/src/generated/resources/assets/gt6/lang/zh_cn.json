@@ -3330,6 +3330,7 @@
   "gt6.row.burning_box.family.solid": "固体",
   "gt6.row.canner.display": "罐装机 (%s)",
   "gt6.row.charging_crafting_table.display": "充能工作台 (%s)",
+  "gt6.row.charging_locker.display": "充能衣橱 (%s)",
   "gt6.row.chest.display": "%s箱子",
   "gt6.row.coagulator.display": "凝结器",
   "gt6.row.crucible.display.smeltery_bronze": "熔炼坩埚 (青铜)",
@@ -5861,6 +5862,5 @@
   "tooltip.gt6.pocket.saw": "采木板更快，采原木较慢，可以采集冰。",
   "tooltip.gt6.pocket.scissors": "拿着它的时候别到处乱跑！",
   "tooltip.gt6.pocket.switch": "潜行右键切换模式",
-  "tooltip.gt6.pocket.wire_cutter": "采集线缆和导线更快",
-  "gt6.row.charging_locker.display": "充能衣橱 (%s)"
+  "tooltip.gt6.pocket.wire_cutter": "采集线缆和导线更快"
 }
