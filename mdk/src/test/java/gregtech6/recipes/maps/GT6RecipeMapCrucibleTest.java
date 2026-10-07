@@ -576,16 +576,20 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 
 	/**
 	 * The page-size multiplier pin (census acceptance): with this class's probe set the
-	 * offline smelting page is EXACTLY 22 rows — 5 Fe full-family self forms + 8 dust-only
+	 * offline smelting page is EXACTLY 27 rows — 5 Fe full-family self forms + 8 dust-only
 	 * self materials (Au Ag WI Ni Invar Cr Mn SS, one form each; the hidden fixture stays
 	 * gated, the cross-source fixture lives in a private registry so it contributes no self
 	 * rows) + 9 cross-source rows (the fixture family into Fe, reached through Iron's
-	 * mTargetedSmelting regardless of the fixture's registry). Any walk change that
-	 * silently adds or drops rows breaks this number.
+	 * mTargetedSmelting regardless of the fixture's registry) + 5 self rows from the
+	 * flux/Air card's dust+ingot probe materials (C CaCO3 Steel MeteoricIron MeteoricSteel —
+	 * each carries the MELTING gate; the Coal/Limestone dust-only probes stay out, no ingot
+	 * face and no MELTING tag). Any walk change that silently adds or drops rows breaks
+	 * this number.
 	 */
 	@Test
 	public void smeltingPageSizeMultiplierPinned() {
-		assertEquals(22, GT6RecipeMapCrucible.allSmeltingDisplayRows().size(), "5 Fe self + 8 dust-only self + 9 cross-source");
+		assertEquals(27, GT6RecipeMapCrucible.allSmeltingDisplayRows().size(),
+				"5 Fe self + 8 dust-only self + 9 cross-source + 5 flux/Air-card probe materials");
 	}
 
 	/**
