@@ -60,7 +60,7 @@ public class GT6ModDriverClearOutWaveTest {
      * wire-gt-registration item-path lift REVERTED: the sixteen wireGt multipliers x the 14
      * WIRES-condition materials — the 13 explicit WIRES rows plus the Graphene G_MACHINE
      * expansion leg — leave the universe; −16 creative-visible families). */
-    private static final int BASELINE = 57244; // −224 task wiregt-prefix-item-retirement (the wireGt01-16 items retired; the toolhead-family-closeout +1 rides inside the 56273 chain)
+    private static final int BASELINE = 57114; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired OP.plank WOOD-gated domain)
     /** The per-domain kept-drop ledger (the card report's 对账表, offline-measured 2026-10-01),
      * re-measured at review on the post-casing universe (probe run, forge offline leg): the
      * casingMachine 210-material axis overlaps five domains' PRIMARY materials, whose casing
@@ -76,7 +76,7 @@ public class GT6ModDriverClearOutWaveTest {
             MT.MD.TE.mID, 336,
             MT.MD.EIO.mID, 873,
             MT.MD.HBM.mID, 908, // −80 task wiregt-prefix-item-retirement: Bakelite/Mingrade/PVC/Polycarbonate/Teflon are HBM PRIMARY, the 16 wireGt pairs each left with the retirement
-            MT.MD.BOTA.mID, 1132,
+            MT.MD.BOTA.mID, 1129, // −3 task planks-blockification (the Livingwood/Dreamwood/Shimmerwood plank pairs left with the retired item face)
             MT.MD.GC_EXTRAPLANETS.mID, 1510,
             MT.MD.MET.mID, 3192);
     /** 57244 − 8237 = 49007: the eight-domain joint pin keeps the ledger arithmetic honest (the universe rode the −224 task wiregt-prefix-item-retirement re-measure; the HBM drop rode −80 — Bakelite/Mingrade/PVC/Polycarbonate/Teflon are HBM PRIMARY). */
@@ -85,7 +85,7 @@ public class GT6ModDriverClearOutWaveTest {
      * (97 + the 4 casingMachine families that landed post-freeze + plank, task
      * wood-planks-register, see BASELINE; −16 the wireGt01-16 families retired, task
      * wiregt-prefix-item-retirement). */
-    private static final int TAB_PREFIX_COUNT = 102; // −16 the wireGt01-16 families (task wiregt-prefix-item-retirement)
+    private static final int TAB_PREFIX_COUNT = 101; // −16 the wireGt01-16 families (task wiregt-prefix-item-retirement) −1 task planks-blockification (the plank family empties, tabPrefixes() skips it)
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -111,7 +111,7 @@ public class GT6ModDriverClearOutWaveTest {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (acceptance 2, zero-change proof)");
-        assertEquals(8237, TOTAL_DROP, "the eight-domain drop total (57244 → 49007; −80 task wiregt-prefix-item-retirement: the HBM-primary wireGt pairs left with the retirement)");
+        assertEquals(8234, TOTAL_DROP, "the eight-domain drop total (57114 → 48880; −80 task wiregt-prefix-item-retirement rides inside the HBM leg, −3 task planks-blockification the BOTA plank pairs left)");
 
         Set<String> allDroppedNames = new HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {

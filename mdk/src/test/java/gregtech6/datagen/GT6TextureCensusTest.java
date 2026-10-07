@@ -68,7 +68,7 @@ class GT6TextureCensusTest {
     private static final String TEXTURES_PREFIX = "assets/gt6/textures";
 
     /** The pinned (iconset, prefix) pair total — the task card's pin, from the script's COMBOS table. */
-    private static final int PINNED_COMBO_TOTAL = 2853; // +64 (task casing-machine-register: the 16 reachable sets x 4 machine-casing prefixes) +4 (task wood-planks-register: the plank prefix over its 4 reachable sets — wood/rough/leaf/fine, the WOOD-gated domain census)
+    private static final int PINNED_COMBO_TOTAL = 2849; // +64 (task casing-machine-register: the 16 reachable sets x 4 machine-casing prefixes) -4 (task planks-blockification: the wood-planks-register plank prefix over its 4 sets retired with the item face — wood/rough/leaf/fine sprites deleted)
 
     /**
      * The machine-wave borrowed families (task hygiene-lang-assets + task

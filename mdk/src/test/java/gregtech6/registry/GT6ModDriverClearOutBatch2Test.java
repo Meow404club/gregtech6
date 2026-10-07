@@ -6,7 +6,7 @@
  * <p>The kept ledger (the card report's 对账表, probe-measured 2026-10-02, forge offline
  * leg — the mdh-3 probe-first discipline): per-domain registration-order drops reconciled
  * against the atlas PRIMARY row counts (45 ledger domains, live 7285 — the WOOD-gate OP.plank wave 2ef11c4dc scattered plank items into the wood-carrying domains), the batch-1 + batch-2
- * joint pin (15522 = 8237 + 7285 exactly — no cross-domain bleed), and the universe/tab
+ * joint pin (15508 = 8234 + 7274 exactly — no cross-domain bleed; −11/−3 task planks-blockification ride the wood ledgers), and the universe/tab
  * before-after (57244 → 41722; 49965 → 36166 creative-visible pairs (+1 closeout head), 102 prefix families,
  * −224 task wiregt-prefix-item-retirement: the sixteen wireGt multipliers x the 14 WIRES-condition
  * materials left with the retirement, −16 creative-visible wireGt families — the ratchet rides the re-measure),
@@ -54,7 +54,7 @@ public class GT6ModDriverClearOutBatch2Test {
     /** The default registration universe (the mdh-3 post-casing census 57113 + 130 GT6-core
      * pairs the post-probe main merges registered — wood-planks/concrete/beam/small-tank —
      * seat-IX re-baseline; unchanged by this card's default mode — the zero-change proof). */
-    private static final int BASELINE = 57244; // −224 task wiregt-prefix-item-retirement (the wire-gt-registration lift reverted: 16 wireGt prefixes x 14 WIRES materials off the item path)
+    private static final int BASELINE = 57114; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired OP.plank WOOD-gated domain rides under the wire retirement) (the wire-gt-registration lift reverted: 16 wireGt prefixes x 14 WIRES materials off the item path)
     /** The batch-2 per-domain kept ledger, probe-measured (the card report quotes these).
      * 44 PRIMARY domains; sum = 7234. The GT5U "gregtech" rows are not seedable (our own
      * modid) and carry no ledger line. */
@@ -67,10 +67,10 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.EnLi.mID, 22),
             Map.entry(MT.MD.IHL.mID, 221),
             Map.entry(MT.MD.FR.mID, 136),
-            Map.entry(MT.MD.BINNIE.mID, 23), // +1 the binnie wood plank (the WOOD-gate wave)
+            Map.entry(MT.MD.BINNIE.mID, 22), // −1 task planks-blockification (the binnie wood plank left with the retired item face)
             Map.entry(MT.MD.TFC.mID, 528),
-            Map.entry(MT.MD.TF.mID, 895), // +4 the twilight woods' planks (the WOOD-gate wave)
-            Map.entry(MT.MD.ERE.mID, 135), // +1 the erebus wood plank (the WOOD-gate wave)
+            Map.entry(MT.MD.TF.mID, 891), // −4 task planks-blockification (the twilight woods' planks left with the retired item face)
+            Map.entry(MT.MD.ERE.mID, 134), // −1 task planks-blockification (the erebus wood plank left with the retired item face)
             Map.entry(MT.MD.RC.mID, 44),
             Map.entry(MT.MD.PnC.mID, 79),
             Map.entry(MT.MD.SC2.mID, 79),
@@ -80,10 +80,10 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.ReC.mID, 133),
             Map.entry(MT.MD.RoC.mID, 752),
             Map.entry(MT.MD.Mek.mID, 167),
-            Map.entry(MT.MD.TC.mID, 287), // +2 Greatwood/Silverwood planks (the WOOD-gate wave)
+            Map.entry(MT.MD.TC.mID, 285), // −2 task planks-blockification (the Greatwood/Silverwood planks left with the retired item face)
             Map.entry(MT.MD.TCTE.mID, 88),
             Map.entry(MT.MD.ALF.mID, 387),
-            Map.entry(MT.MD.CANDY.mID, 208), // +1 post-probe main registration (the live recompute's verdict, seat-IX re-baseline)
+            Map.entry(MT.MD.CANDY.mID, 207), // −1 task planks-blockification (the Marshmallow plank pair left; was 208 with the seat-IX post-probe registration)
             Map.entry(MT.MD.GC_ADV_ROCKETRY.mID, 176),
             Map.entry(MT.MD.MaCu.mID, 45),
             Map.entry(MT.MD.DE.mID, 88),
@@ -98,23 +98,23 @@ public class GT6ModDriverClearOutBatch2Test {
             Map.entry(MT.MD.RT.mID, 99),
             Map.entry(MT.MD.RP.mID, 40), // the NikolineAlloy row (mdh-clearout-batch2 segment 4) made RP a PRIMARY domain
             Map.entry(MT.MD.ExU.mID, 96),
-            Map.entry(MT.MD.BTL.mID, 303), // +1 post-probe main registration (same batch as the CANDY +1)
-            Map.entry(MT.MD.AETHER.mID, 53), // +1 the Skyroot plank (the WOOD-gate wave)
+            Map.entry(MT.MD.BTL.mID, 302), // −1 task planks-blockification (the Weedwood plank pair left; was 303 with the post-probe registration)
+            Map.entry(MT.MD.AETHER.mID, 52), // −1 task planks-blockification (the Skyroot plank left with the retired item face)
             Map.entry(MT.MD.PR.mID, 38), // −16 task wiregt-prefix-item-retirement: ElectrotineAlloy is a PR PRIMARY, the 16 wireGt pairs left with the retirement
             Map.entry(MT.MD.BP.mID, 38), // −16 task wiregt-prefix-item-retirement: PurpleAlloy is a BP PRIMARY, the 16 wireGt pairs left with the retirement
             Map.entry(MT.MD.FZ.mID, 108),
             Map.entry(MT.MD.PFAA.mID, 104));
-    /** The batch-1 ledger (GT6ModDriverClearOutWaveTest) — the joint pin's other half (8234 + 3 the BOTA planks, seat XVII, −80 task wiregt-prefix-item-retirement the HBM-primary wireGt pairs). */
-    private static final int BATCH1_TOTAL = 8237;
-    /** 8237 + 7285 = 15522; 57244 − 15522 = 41722 (the batch-2 total includes the RP 38 from the NikolineAlloy row and the post-probe CANDY +1; the universe rode the −224 task wiregt-prefix-item-retirement re-measure — the ledger returns to its pre-wire-gt-registration values). */
+    /** The batch-1 ledger (GT6ModDriverClearOutWaveTest) — the joint pin's other half (the BOTA planks left with task planks-blockification, −3; the wiregt −80 rides inside). */
+    private static final int BATCH1_TOTAL = 8234; // −3 task planks-blockification (the BOTA plank pairs left)
+    /** 8234 + 7274 = 15508; 57114 − 15508 = 41606 (the batch-2 total includes the RP 38 from the NikolineAlloy row; the universe rode the −224 wiregt + −130 plank retirements). */
     private static final int BATCH2_TOTAL = PER_DOMAIN_DROPS.values().stream().mapToInt(Integer::intValue).sum();
     private static final int JOINT_DROP = BATCH1_TOTAL + BATCH2_TOTAL;
     /** The batch-1 eight, the seed prefix (the wave test's ledger keys). */
     private static final List<String> BATCH1 = List.of(MT.MD.HaC.mID, MT.MD.IC2.mID, MT.MD.TE.mID,
             MT.MD.EIO.mID, MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID);
     /** Creative-visible pairs before/after the joint pin (the tab face's before/after numbers). */
-    private static final int TAB_DEFAULT = 49965; // −224 task wiregt-prefix-item-retirement (the 16 wireGt tabs x their visible pairs left with the retirement)
-    private static final int TAB_AFTER = 36166; // −112 (the tab-eligible share of the retired wire pairs crossed no dropped domain... measured: 112 of the 224 wire pairs sat outside the HIDDEN families)
+    private static final int TAB_DEFAULT = 49835; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired plank family was creative-visible)
+    private static final int TAB_AFTER = 36050; // −112 the wiregt retirement −116 task planks-blockification (the 130 retired plank pairs − the 14 that sat inside the dropped domains)
 
     @BeforeAll
     public static void initMaterialSystem() {
@@ -140,7 +140,7 @@ public class GT6ModDriverClearOutBatch2Test {
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (the zero-change proof)");
-        assertEquals(7285, BATCH2_TOTAL, "the batch-2 drop total (incl. the NikolineAlloy RP 40, −32 task wiregt-prefix-item-retirement: the BP PurpleAlloy + PR ElectrotineAlloy wireGt pairs left with the retirement)");
+        assertEquals(7274, BATCH2_TOTAL, "the batch-2 drop total (incl. the NikolineAlloy RP 40, −32 task wiregt-prefix-item-retirement, −11 task planks-blockification: the BINNIE/TF/ERE/TC/AETHER/BTL/CANDY plank pairs left with the retired item face)");
 
         Set<String> allDroppedNames = new java.util.HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {

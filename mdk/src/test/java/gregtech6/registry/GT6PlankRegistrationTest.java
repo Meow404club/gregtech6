@@ -1,43 +1,31 @@
 /**
- * Tests for task wood-planks-register: the OP.plank prefix registration (the second
- * block-path item-path adaptation, after the casingMachine quartet of task
- * casing-machine-register).
+ * Tests for task planks-blockification: the plank face convergence — the wood-planks-register
+ * prefix-item family (130 flat gt6:plank_* items) RETIRED, the plank face re-homed on the
+ * wooddict BlockItem rows ({@link GT6WoodDict}: the 17 BlockTreePlanks/2 cubes + the vanilla
+ * identities).
  *
- * <p>Upstream grounding (the itemPathPrefixes javadoc carries the full face): upstream
- * OP.plank has NO setCondition (OP.java:394 verbatim, default condition TRUE) and NO
- * PrefixItem — planks upstream are BLOCKS (Loader_Woods.java:62-65 BlockTreePlanks/2,
- * the IL.Plank generic face = BlocksGT.Planks meta 9 "Wood Planks", Loader_Woods.java:74
- * + BlockTreePlanks.java:49). The port registers flat plank items under the
- * port-authority {@link TD.Properties#WOOD} material gate (generatesItemPathItem) —
- * the domain the card declares because an unconditioned walk would flood every material.
+ * <p>Upstream grounding: planks upstream exist ONLY as blocks (Loader_Woods.java:62-65
+ * BlockTreePlanks/2; the item loader carries zero plank rows — loaders/a/Loader_Items.java
+ * census; OP.plank has no PrefixItem and no creative tab, PrefixItem.java:89-91 semantics).
+ * The oredict plank population is the WoodDictionary PLANKS face (LoaderWoodDictionary.java:45-172):
+ * the 6 vanilla rows, the 17 GT6 rows and one row per loaded mod wood — the mod woods being
+ * the rows the mod-less port world declares ABSENT (the compat-cut ruling).
  *
- * <p><b>The absorb seam (ABSORBED)</b>: the sawing increment card (task
- * sawing-plank-concrete-increment, the DECLARED IDENTITY MAPPING in its sawing.json
- * comment) rode IL.Plank -> minecraft:oak_planks until the plank registration card
- * landed; task plank-mapping-sweep (2026-10-01) then re-poured the 76 DECLARED rows
- * (sawing.json 75 + unboxinator.json 1) onto this card's MT.Wood item (gt6:plank_wood).
- *
- * <p>Texture face: the only upstream plank art is the BLOCK iconset
- * (blocks/iconsets/PLANKS_WOOD.png, the meta-9 block face) — the items materialicons
- * domain carries zero plank sprites (census, assets/README.md). The borrow is one
- * sprite per reachable material set, tinted at runtime (tintIndex 0, the
- * material_sets seat method), pinned here by digest.
+ * <p>The absorb seam history: the sawing increment card (task sawing-plank-concrete-increment)
+ * rode IL.Plank -> minecraft:oak_planks; task plank-mapping-sweep re-poured the 76 declared
+ * rows onto the then-registered gt6:plank_wood prefix item; THIS card lands the generic plank
+ * BLOCK under the same id (gt6:plank_wood = the BlockTreePlanks meta 9 cube), so those rows
+ * are already on the converged face.
  */
 package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.util.HexFormat;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -46,154 +34,182 @@ import org.junit.jupiter.api.Test;
 
 import gregapi.data.MT;
 import gregapi.data.OP;
-import gregapi.data.TD;
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
-import gregapi.oredict.OreDictPrefix;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public class GT6PlankRegistrationTest {
 
-    /** The upstream generic plank block face, the one plank art upstream ships (BLOCK iconset, PLANKS_WOOD.png, 16x16 RGBA8). */
-    private static final String UPSTREAM_PLANKS_WOOD_SHA256 =
-        "f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f";
-
     @BeforeAll
     public static void initMaterialSystem() {
+        // the vanilla bootstrap bracket (the GT6WireGtRegistrationTest shape): the wooddict
+        // suppliers touch GT6TreeBlocks/Registries statics (the placement pin), and an
+        // UN-bootstrapped first clinit poisons the registry classes for every later suite
+        // in the JVM — version detect must precede bootStrap
+        net.minecraft.SharedConstants.tryDetectVersion();
+        try {
+            net.minecraft.server.Bootstrap.bootStrap();
+        } catch (Throwable ignored) {
+            // offline-expected
+        }
         GTMaterialItems.initMaterials();
     }
 
-    /** Independent recount of the plank domain: alias-merged materials x the WOOD gate. */
-    private static List<OreDictMaterial> plankDomain() {
-        Set<OreDictMaterial> tSeen = new HashSet<>();
-        List<OreDictMaterial> rDomain = new java.util.ArrayList<>();
+    @Test
+    public void thePlankPrefixIsOffTheItemPath() {
+        // the retirement: no OP.plank pair survives in the registration universe
+        long tCount = GTMaterialItems.registrationOrder().stream().filter(tPair -> tPair.prefix() == OP.plank).count();
+        assertEquals(0, tCount, "zero plank prefix items (the wood-planks-register family retired, the upstream ship shape)");
+        assertFalse(GTMaterialItems.itemPathPrefixes().contains(OP.plank), "OP.plank is off the item-path list");
+        // and no surviving pair composes the retired id shape (the reference-zero face)
+        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
+            String tId = GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material());
+            assertFalse(tId.startsWith("plank_"), "no surviving item may compose the retired plank_ id shape: " + tId);
+        }
+    }
+
+    @Test
+    public void theGateCarriesNoPortAuthorityException() {
+        // the former WOOD gate leg is gone — every prefix evaluates the plain upstream criterion
+        assertEquals(OP.plate.isGeneratingItem(MT.Iron), GTMaterialItems.generatesItemPathItem(OP.plate, MT.Iron),
+                "the gate is transparent (the plank exception removed)");
+        assertEquals(OP.plate.isGeneratingItem(MT.Wood), GTMaterialItems.generatesItemPathItem(OP.plate, MT.Wood),
+                "the gate is transparent for the wood family too");
+    }
+
+    @Test
+    public void theWooddictFaceCarriesTheSeventeenGt6Rows() {
+        // the upstream meta order over the LoaderWoodDictionary materials (:66-172)
+        String[] tExpected = {
+                "rubber_planks", "maple_planks", "willow_planks", "blue_mahoe_planks", "hazel_planks",
+                "cinnamon_planks", "coconut_planks", "rainbowood_planks", "plank_wood_compressed", "plank_wood",
+                "plank_wood_treated", "crate", "plank_wood_dead", "plank_wood_rotten", "plank_wood_mossy",
+                "plank_wood_frozen", "blue_spruce_planks"};
+        assertEquals(tExpected.length, GT6WoodDict.GT6_ROWS.size(), "17 GT6 rows (BlockTreePlanks 16 metas + Planks2:0)");
+        for (int i = 0; i < tExpected.length; i++) {
+            assertEquals(tExpected[i], GT6WoodDict.GT6_ROWS.get(i).id(), "GT6 row " + i + " = the upstream meta order");
+        }
+        // the upstream material anchors (LoaderWoodDictionary.java:69/:71/:73/:75/:91/:93/:95/:97/:157/:66/:159/:161/:165/:167/:169/:171/:113)
+        assertEquals(MT.WoodRubber, GT6WoodDict.GT6_ROWS.get(0).material(), "the rubber row is WoodRubber (:69)");
+        assertEquals(MT.Wood, GT6WoodDict.GT6_ROWS.get(9).material(), "meta 9 is the MT.Wood identity face (:66 DEFAULT_PLANK)");
+        assertEquals(MT.WoodTreated, GT6WoodDict.GT6_ROWS.get(10).material(), "meta 10 is WoodTreated (:159)");
+        assertEquals(MT.Wood, GT6WoodDict.GT6_ROWS.get(11).material(), "meta 11 (Crate) is MT.Wood too (:161 — the upstream duality)");
+        assertEquals(MT.WOODS.BlueSpruce, GT6WoodDict.GT6_ROWS.get(16).material(), "Planks2:0 is BlueSpruce (:113)");
+    }
+
+    @Test
+    public void theVanillaIdentitiesAreTheWooddictVanillaFace() {
+        // the 1.7.10 six verbatim + the 1.20.1 tree set under the same identity rule
+        String[] tExpected = {
+                "minecraft:oak_planks", "minecraft:spruce_planks", "minecraft:birch_planks", "minecraft:jungle_planks",
+                "minecraft:acacia_planks", "minecraft:dark_oak_planks", "minecraft:mangrove_planks", "minecraft:cherry_planks",
+                "minecraft:bamboo_planks", "minecraft:crimson_planks", "minecraft:warped_planks"};
+        assertEquals(tExpected.length, GT6WoodDict.VANILLA_ROWS.size(), "11 vanilla identity rows");
+        for (int i = 0; i < tExpected.length; i++) {
+            assertEquals(tExpected[i], GT6WoodDict.VANILLA_ROWS.get(i).id(), "vanilla row " + i);
+        }
+        assertEquals(MT.WOODS.Oak, GT6WoodDict.VANILLA_ROWS.get(0).material(), "the oak identity (:51)");
+    }
+
+    @Test
+    public void everyGt6RowResolvesAPlaceableBlockItem() {
+        // THE placement pin: every GT6 row resolves an Item that IS a BlockItem — planks place.
+        // The id686 guard (the GT6JuicerRegistrationTest form): the RegistryObject handles are
+        // bound only in a live mod-runtime JVM, so the .get() half runs guarded; the offline
+        // leg pins the single-path identity (the BlockItem registration reuses the block id
+        // path, GT6TreeBlocks.registerItems) and the vanilla half resolves unguarded.
+        for (GT6WoodDict.PlankEntry tRow : GT6WoodDict.GT6_ROWS) {
+            //? if forge {
+            net.minecraft.resources.ResourceLocation tLoc = new net.minecraft.resources.ResourceLocation("gt6", tRow.id());
+            //?} else {
+            /*net.minecraft.resources.ResourceLocation tLoc = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tRow.id());
+             *///?}
+            if (net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(tLoc)) {
+                Item tItem = tRow.plank().get();
+                assertTrue(tItem instanceof BlockItem, tRow.id() + " resolves a BlockItem (placeable, the symptom32 face)");
+                assertTrue(((BlockItem) tItem).getBlock() instanceof gregtech6.block.tree.GT6PlankBlock,
+                        tRow.id() + " places a GT6PlankBlock cube");
+                assertSame(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(tLoc), tItem,
+                        tRow.id() + " is the registered item face");
+            } else {
+                assertTrue(isRegistrationPath(tRow.id()), tRow.id() + " is a GT6TreeBlocks registration path (the offline identity leg)");
+            }
+        }
+        for (GT6WoodDict.PlankEntry tRow : GT6WoodDict.VANILLA_ROWS) {
+            assertTrue(tRow.plank().get() instanceof BlockItem, tRow.id() + " resolves a placeable vanilla plank");
+        }
+    }
+
+    /** Whether a wooddict row id is one of the 17 GT6TreeBlocks plank registration paths (RegistryObject.getId() is unbind-safe). */
+    private static boolean isRegistrationPath(String aId) {
+        for (RegistryObject<Item> tHandle : GT6TreeBlocks.PLANK_ITEMS) {
+            if (tHandle.getId().getPath().equals(aId)) return true;
+        }
+        for (RegistryObject<Item> tHandle : GT6TreeBlocks.GENERIC_PLANK_ITEMS) {
+            if (tHandle.getId().getPath().equals(aId)) return true;
+        }
+        return false;
+    }
+
+    @Test
+    public void theResolverAnswersTheConvergedFaces() {
+        // the identity material face (the sawing/unboxinator output id — unchanged across the convergence)
+        assertEquals("plank_wood", GT6WoodDict.GT6_ROWS.get(9).id(), "gt6:plank_wood is the generic plank id");
+        // the bound-face asserts ride the id686 guard (the RegistryObject handles are live only
+        // in a mod-runtime JVM — the GT6JuicerRegistrationTest posture)
+        if (plankWoodBound()) {
+            assertTrue(GT6WoodDict.plankOrNull(MT.Wood) instanceof BlockItem, "the IL.Plank material resolves the placeable cube");
+            assertTrue(GT6WoodDict.plankOrNull(MT.WOODS.Rainbowood) instanceof BlockItem, "the species face (the BlockTreePlanks.java:57 carrier)");
+            assertTrue(GT6WoodDict.plankOrNull(MT.WoodTreated) instanceof BlockItem, "the bath treated-leg output (meta 10)");
+        }
+        assertEquals(Items.OAK_PLANKS, GT6WoodDict.plankOrNull(MT.WOODS.Oak), "the oak identity (the oak-twin ruling face)");
+        assertNull(GT6WoodDict.plankOrNull(MT.WoodPolished), "no WoodPolished plank face upstream — the bath polished leg skips");
+        assertNull(GT6WoodDict.plankOrNull(MT.Iron), "non-wood materials have no plank face");
+        assertFalse(GT6WoodDict.hasPlank(MT.WoodPolished), "hasPlank agrees with the resolver");
+    }
+
+    /** Whether the mod-runtime JVM bound the plank item face (the id686 guard probe). */
+    private static boolean plankWoodBound() {
+        //? if forge {
+        return net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(new net.minecraft.resources.ResourceLocation("gt6", "plank_wood"));
+        //?} else {
+        /*return net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "plank_wood"));
+         *///?}
+    }
+
+    @Test
+    public void theWooddictRowsAreDistinctIdsOverDistinctHandles() {
+        Set<String> tIds = new HashSet<>();
+        for (GT6WoodDict.PlankEntry tRow : GT6WoodDict.ROWS) {
+            assertTrue(tIds.add(tRow.id()), "distinct plank id: " + tRow.id());
+        }
+        assertEquals(GT6WoodDict.ROWS.size(), tIds.size(), "no id duality across the walk face");
+    }
+
+    @Test
+    public void theRetiredItemDomainIsTheWoodFamilyMinusTheConvergedRows() {
+        // audit: the WOOD-gated domain (the old 130) minus the materials that keep a plank face
+        // (the 17 GT6 rows over 16 materials + the 11 vanilla identities) is the compat cut
+        Set<OreDictMaterial> tWithFace = new HashSet<>();
+        for (GT6WoodDict.PlankEntry tRow : GT6WoodDict.ROWS) tWithFace.add(tRow.material());
+        Set<String> tCut = new TreeSet<>();
         for (OreDictMaterial tMaterial : MaterialRegistry.INSTANCE.MATERIAL_ARRAY) {
             if (tMaterial == null || tMaterial.mID < 0) continue;
             tMaterial = MaterialRegistry.INSTANCE.get(tMaterial);
             if (tMaterial == null || tMaterial.mID < 0) continue;
-            if (!tSeen.add(tMaterial)) continue;
-            if (!tMaterial.contains(TD.Properties.WOOD)) continue; // the declared gate, re-walked independently
-            rDomain.add(tMaterial);
-        }
-        return rDomain;
-    }
-
-    @Test
-    public void plankDomainIsTheWoodFamily() {
-        // the production walk and the independent walk must agree exactly
-        Set<String> tProduction = new TreeSet<>();
-        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
-            if (tPair.prefix() == OP.plank) tProduction.add(tPair.material().mNameInternal);
-        }
-        Set<String> tIndependent = new TreeSet<>();
-        for (OreDictMaterial tMaterial : plankDomain()) tIndependent.add(tMaterial.mNameInternal);
-        assertEquals(tIndependent, tProduction, "the registered plank set must equal the independent WOOD-gate walk");
-        assertFalse(tProduction.isEmpty(), "the plank domain is non-empty (Wood leads it)");
-    }
-
-    /**
-     * Plain-JVM iconset resolution (the {@link GT6ItemModels#iconsetOf} logic re-walked with
-     * {@link GTMaterialItems#snakeCase}: MaterialPrefixItem extends Item and drags vanilla
-     * registry statics into class init, so the datagen accessor itself is not plain-JVM
-     * callable — the GTMaterialItems snakeCase copy exists for exactly this reason).
-     */
-    private static String iconsetOfPlain(OreDictMaterial aMaterial) {
-        List<String> tSets = aMaterial.mTextureSetsItems;
-        return tSets == null || tSets.isEmpty() || tSets.get(0) == null || tSets.get(0).isBlank()
-            ? "none"
-            : GTMaterialItems.snakeCase(tSets.get(0));
-    }
-
-    @Test
-    public void plankCensusPinsTheDomainSize() {
-        long tCount = GTMaterialItems.registrationOrder().stream().filter(tPair -> tPair.prefix() == OP.plank).count();
-        Map<String, Long> tSets = new LinkedHashMap<>();
-        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
-            if (tPair.prefix() == OP.plank) tSets.merge(iconsetOfPlain(tPair.material()), 1L, Long::sum);
-        }
-        // measured 2026-10-01 (offline walk, the census dump run): 130 WOOD-tagged materials over
-        // 4 texture sets — the Wood-led family (Wood/its 10 grade woods/species/magical/mod woods),
-        // Bark (rough), Steeleaf+Fireleaf (leaf), Marshmallow (fine)
-        assertEquals(130, tCount, "the plank domain census — re-pin deliberately on material-tree drift");
-        assertEquals(Map.of("wood", 126L, "rough", 1L, "leaf", 2L, "fine", 1L), tSets,
-            "the per-texture-set distribution — the borrow face list (every set here must hold plank.png)");
-    }
-
-    @Test
-    public void thePortGateIsNotAnUpstreamCondition() {
-        // upstream verbatim: OP.plank's own condition is TRUE for every material (no setCondition,
-        // OP.java:394) — the restriction is the PORT gate, not the OP condition. Pinning both ways
-        // proves the deviation is where the javadoc says it is.
-        assertTrue(OP.plank.isGeneratingItem(MT.Iron), "upstream default condition passes iron (no setCondition, OP.java:394)");
-        assertFalse(GTMaterialItems.generatesItemPathItem(OP.plank, MT.Iron), "the port gate refuses iron (the declared port-authority ruling)");
-        assertTrue(GTMaterialItems.generatesItemPathItem(OP.plank, MT.Wood), "the gate admits Wood (the IL.Plank identity material)");
-        assertTrue(GTMaterialItems.generatesItemPathItem(OP.plank, MT.WOODS.Rainbowood), "the gate admits the species woods (the upstream OP.plank.dat carrier, BlockTreePlanks.java:57)");
-        // non-plank prefixes keep the plain isGeneratingItem face (the gate is plank-scoped)
-        assertEquals(OP.plate.isGeneratingItem(MT.Iron), GTMaterialItems.generatesItemPathItem(OP.plate, MT.Iron),
-            "the gate is transparent for every non-plank prefix");
-    }
-
-    @Test
-    public void plankIdsAreUniqueAndOutsideTheTreePlankFamily() {
-        Set<String> tIds = new HashSet<>();
-        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
-            assertTrue(tIds.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material())),
-                "duplicate id " + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
-        }
-        // the generic plank face exists under the prefix-item id scheme (the sawing absorb target)
-        assertTrue(tIds.contains("plank_wood"), "gt6:plank_wood must exist (the IL.Plank identity face, the sawing re-pour target)");
-        assertTrue(tIds.contains("plank_wood_treated"), "gt6:plank_wood_treated must exist (the Bath treated-leg output)");
-        assertTrue(tIds.contains("plank_wood_polished"), "gt6:plank_wood_polished must exist (the Bath polished-leg output)");
-        // and none of them collides with the gt-tree-planks BLOCK items (gt6:<snake>_planks,
-        // GT6TreeBlocks.PLANK_ITEMS — different objects, the task card's do-not-confuse face)
-        for (String tPlankId : tIds) {
-            if (tPlankId.startsWith("plank_")) assertFalse(tPlankId.endsWith("_planks"),
-                "prefix-item ids never share the tree-plank <snake>_planks shape");
-        }
-    }
-
-    @Test
-    public void everyPlankItemResolvesABorrowedSprite() throws IOException {
-        // the tint face: layer0 = gt6:item/material_sets/<iconset>/plank must exist for every
-        // registered plank pair (the GT6ItemModels walk emits exactly these refs)
-        Map<String, Long> tSets = new LinkedHashMap<>();
-        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
-            if (tPair.prefix() != OP.plank) continue;
-            tSets.merge(iconsetOfPlain(tPair.material()), 1L, Long::sum);
-        }
-        Path tMdk = mdkRoot();
-        for (String tSet : tSets.keySet()) {
-            Path tPng = tMdk.resolve("src/main/resources/assets/gt6/textures/item/material_sets/" + tSet + "/plank.png");
-            assertTrue(Files.isRegularFile(tPng), "missing borrowed sprite for set " + tSet + " (" + tSets.get(tSet) + " items)");
-        }
-        assertFalse(tSets.containsKey("none"), "no plank material may resolve to SET_NONE");
-    }
-
-    @Test
-    public void everyBorrowedSpriteIsTheUpstreamBlockFace() throws IOException {
-        // the borrow cmp: every material_sets/plank.png byte-matches the one upstream plank art
-        MessageDigest tSha256 = null;
-        try {
-            tSha256 = MessageDigest.getInstance("SHA-256");
-        } catch (Exception aE) {
-            throw new IllegalStateException(aE);
-        }
-        Path tMdk = mdkRoot();
-        int tChecked = 0;
-        try (var tWalk = Files.walk(tMdk.resolve("src/main/resources/assets/gt6/textures/item/material_sets"))) {
-            for (Path tPng : tWalk.filter(tPath -> tPath.getFileName().toString().equals("plank.png")).toList()) {
-                String tHex = HexFormat.of().formatHex(tSha256.digest(Files.readAllBytes(tPng)));
-                assertEquals(UPSTREAM_PLANKS_WOOD_SHA256, tHex, tPng + " must be the PLANKS_WOOD block-iconset borrow byte-identical");
-                tChecked++;
+            if (tMaterial.contains(gregapi.data.TD.Properties.WOOD) && !tWithFace.contains(tMaterial)) {
+                tCut.add(tMaterial.mNameInternal);
             }
         }
-        assertTrue(tChecked > 0, "the borrow cmp must never pass vacuously");
-    }
-
-    /** mdk root, walked up from the leg-dependent test working dir (the GT6TextureCensusTest shape). */
-    private static Path mdkRoot() {
-        for (Path tPath = Path.of("").toAbsolutePath(); tPath != null; tPath = tPath.getParent()) {
-            if (Files.isRegularFile(tPath.resolve("tools").resolve("gen_textures.py"))) return tPath;
-        }
-        throw new AssertionError("mdk root not found upward from " + Path.of("").toAbsolutePath());
+        // the mod woods (Greatwood/Silverwood/Steeleaf/... — upstream mod-loaded rows) plus the
+        // port-absent grades (WoodPolished/Varnished/Bleached/Tainted/Scorched — no plank block
+        // in the BlockTreePlanks face); Wood itself KEEPS its face (the meta 9 row)
+        assertTrue(tCut.contains("Greatwood") && tCut.contains("Silverwood"), "the mod woods are the compat cut");
+        assertTrue(tCut.contains("WoodPolished"), "the grade woods without a BlockTreePlanks row are cut");
+        assertFalse(tCut.contains("Wood"), "the identity wood keeps its face (the meta 9 row)");
+        assertEquals(130 - 27, tCut.size(), "130 WOOD materials - 27 faced materials = the cut census (re-pin on material drift)");
     }
 }

@@ -207,8 +207,9 @@ class GT6TagsDatagenTest {
      * fallen-log woods (task w6-t2-surface-blocks, the addSurfacePlantBand tail-append)
      * + the 8 wood beams (task beam-blocks-register, the addBeamBand tail-append — the
      * upstream harvest-tool override BlockBaseBeam.java:54 {@code getHarvestTool =
-     * TOOL_axe}, kind order) + the 9 plank cubes (task gt-tree-planks, the addPlankBand
-     * tail-append — the vanilla planks axe face) + the 60 reinforced chests (task
+     * TOOL_axe}, kind order) + the 17 plank cubes (task gt-tree-planks + planks-blockification,
+     * the addPlankBand tail-append — the vanilla planks axe face; the 8 generic rows ride the
+     * species tail in upstream meta order) + the 60 reinforced chests (task
      * material-mc-a-storage-chests — upstream block family aWooden = TOOL_axe,
      * Loader_MultiTileEntities.java:133 vs the :102 aWooden tool column, the
      * addAxeBand chest walk appended after the pipes walk).
@@ -255,7 +256,11 @@ class GT6TagsDatagenTest {
         tBand.addAll(List.of(
                 "gt6:rubber_planks", "gt6:maple_planks", "gt6:willow_planks", "gt6:blue_mahoe_planks",
                 "gt6:hazel_planks", "gt6:cinnamon_planks", "gt6:coconut_planks", "gt6:rainbowood_planks",
-                "gt6:blue_spruce_planks"));
+                "gt6:blue_spruce_planks",
+                // task planks-blockification — the 8 generic rows (the addPlankBand second loop,
+                // BlockTreePlanks metas 8-15 in meta order, tail-appended after the species walk)
+                "gt6:plank_wood_compressed", "gt6:plank_wood", "gt6:plank_wood_treated", "gt6:crate",
+                "gt6:plank_wood_dead", "gt6:plank_wood_rotten", "gt6:plank_wood_mossy", "gt6:plank_wood_frozen"));
         assertEquals(tBand, tagValues("minecraft/tags/blocks/mineable/axe.json"));
     }
 
