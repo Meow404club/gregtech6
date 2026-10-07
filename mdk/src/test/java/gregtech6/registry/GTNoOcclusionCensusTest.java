@@ -20,9 +20,13 @@
  * registry event fires, so the counts are assertable offline) — a census-size drift forces
  * a look, and a NEW registration point must reuse the seam to stay on the fixed chain.
  * The cfoam/leaves/axle/wheel families already carry noOcclusion and are pinned by their
- * own cards; the full-cube MODEL blocks (machines/multiblock parts/hoppers/boilers/...)
- * have full-cube shapes and are NOT in scope (issue #9 full-scan verdict: the four files
- * of this card are the complete hit set).
+ * own cards; the remaining full-cube MODEL blocks (machines/multiblock parts/boilers/...)
+ * have full-cube shapes and are NOT in scope. The hopper family left that club when its
+ * sub-cube funnel models landed (symptom27) — it rides .noOcclusion() now, pinned by
+ * {@code GT6HopperNoOcclusionTest}. The static-storage BOOKSHELF rows left it too (the
+ * review-seat stitch): their open-front frame model rides the FULL-CUBE SHELF_SHAPE, the
+ * same mechanism over the shelf family — pinned by {@code GT6StaticShelfNoOcclusionTest}
+ * (the crate rows stay innocent: the 8px body shape keeps the occlusion shape non-full).
  *
  * <p>Offline block construction needs the vanilla block registry unfrozen (the
  * GTWireContactDamageTest bracket); the material registry is booted as cheap insurance for

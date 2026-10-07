@@ -20,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.LevelReader;
@@ -198,10 +199,26 @@ public final class GT6StaticStorages {
 	public record StaticRow(String path, int metaId, Kind kind, @Nullable StaticMaterial material,
 			@Nullable Plank plank, float hardness, float resistance) {
 
-		/** The block properties (strength(hardness, resistance) — the two loader columns). */
+		/**
+		 * The block properties (strength(hardness, resistance) — the two loader columns).
+		 * symptom27 rider (task hopper-culling-xray, the review-seat stitch): the BOOKSHELF
+		 * rows ride {@code .noOcclusion()} — the family renders the open-front frame model
+		 * (the 28-book BER niches, the six-box frame) over the FULL-CUBE {@code SHELF_SHAPE}
+		 * (task shelf-crate-2px-realign), so the default {@code canOcclude=true} makes
+		 * {@code getOcclusionShape} (=getShape, vanilla BlockBehaviour.java:240-242/911) cull
+		 * the neighbor faces against the open front — the hopper family's exact X-ray
+		 * mechanism (GT6HopperNoOcclusionTest; vanilla's own hopper carries noOcclusion,
+		 * Blocks.java:3093). The BOTTLECRATE rows stay innocent: their 8px
+		 * {@code CRATE_SELECTION_SHAPE} keeps the occlusion shape non-full and no neighbor
+		 * face is culled. {@code isViewBlocking(never)} is the fog-only rider (the
+		 * GT6Hoppers seam form).
+		 */
 		public BlockBehaviour.Properties properties() {
 			BlockBehaviour.Properties tProps = BlockBehaviour.Properties.of()
 					.strength(hardness, resistance);
+			if (kind == Kind.BOOKSHELF) {
+				tProps = tProps.noOcclusion().isViewBlocking(GT6StaticStorages::never);
+			}
 			// the wooden shelf/crate ladders carry the plank look (the WOOD carrier), the
 			// metal ladders ride the material machine/util blocks (the METAL carrier)
 			return tProps.sound(material() != null || (kind != Kind.BOOKSHELF && kind != Kind.BOTTLECRATE)
@@ -245,6 +262,11 @@ public final class GT6StaticStorages {
 
 	/** The registered blocks by path (the BET multi-mount arrays + the datagen walkers). */
 	public static final Map<String, RegistryObject<GT6StorageBlock>> BLOCKS_BY_PATH = new LinkedHashMap<>();
+
+	/** symptom27 rider: the shelf family never blocks the view (fog) — the GT6Hoppers::never rider form. */
+	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		return false;
+	}
 
 	/** The registered items, same keys as {@link #BLOCKS_BY_PATH}. */
 	public static final Map<String, RegistryObject<Item>> ITEMS_BY_PATH = new LinkedHashMap<>();
