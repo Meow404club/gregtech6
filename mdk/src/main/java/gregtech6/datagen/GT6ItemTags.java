@@ -847,25 +847,38 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	 */
 	private void addFamilyFace(String aFamilyPath, GTMaterialItems.PrefixMaterial aPair) {
 		if (aFamilyPath == null) return;
-		ResourceKey<Item> tMember = item(gt6Rl(GTMaterialItems.itemIdOf(aPair.prefix(), aPair.material())));
+		String tMemberId = GTMaterialItems.itemIdOf(aPair.prefix(), aPair.material());
+		ResourceKey<Item> tMember = item(gt6Rl(tMemberId));
+		// the tag-residual-convergence member gate: a seed-hideable pair's id is absent on
+		// bare installs, so every face of the pair ships it optional (the vanilla
+		// required:false form — the tag loads clean bare, joins when the owning mod is
+		// installed). Ungated members keep the strict string form (a genuine walk gap
+		// still fails runData loudly — the strictness doctrine).
+		boolean tGated = GT6ForeignRowConvergence.gatedId(tMemberId);
 		String tSnake = GTMaterialItems.snakeCase(aPair.material().mNameInternal);
 		String tCanonical = canonicalMaterialName(aFamilyPath, tSnake);
-		tag(materialTag(aFamilyPath, tCanonical)).add(tMember);
+		addMember(tag(materialTag(aFamilyPath, tCanonical)), tMember, tGated);
 		if (!tCanonical.equals(tSnake)) {
 			// the GT-internal-name twin — the generated-tree face carried over verbatim
 			// (zero code references, the p27 grep; pure datapack compat for existing packs)
-			tag(materialTag(aFamilyPath, tSnake)).add(tMember);
+			addMember(tag(materialTag(aFamilyPath, tSnake)), tMember, tGated);
 		}
 		String tAlias = ECOSYSTEM_ALIASES.get(tSnake);
 		if (tAlias != null) {
-			tag(materialTag(aFamilyPath, tAlias)).add(tMember);
+			addMember(tag(materialTag(aFamilyPath, tAlias)), tMember, tGated);
 		}
 		//? if forge {
 		String tMainPath = aFamilyPath.formatted(tCanonical);
 		if (VANILLA_INTERSECTION.contains(tMainPath)) {
-			tag(commonTag(aFamilyPath, tCanonical)).add(tMember);
+			addMember(tag(commonTag(aFamilyPath, tCanonical)), tMember, tGated);
 		}
 		//?}
+	}
+
+	/** The one member-routing seam: gated pairs ride the optional object form, the rest the strict string form. */
+	private static void addMember(TagAppender<Item> aAppender, ResourceKey<Item> aMember, boolean aGated) {
+		if (aGated) aAppender.addOptional(aMember.location());
+		else aAppender.add(aMember);
 	}
 
 	/**

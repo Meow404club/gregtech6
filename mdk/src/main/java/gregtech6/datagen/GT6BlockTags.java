@@ -136,6 +136,39 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	}
 
 	/**
+	 * The converging appender for the four bands whose walks traverse the gated universe
+	 * (pickaxe/shovel/axe/wrench — the material-block + machine registers; task
+	 * tag-residual-convergence). A seed-hideable member ships {@code "required": false}
+	 * (the vanilla optional form — {@link #addTwilightDeadrockBand} addOptional shape): the
+	 * bare install loads the tag clean, the modded install joins the member. The other bands
+	 * add port-native blocks only and keep the raw strict appender — a genuine walk gap there
+	 * still fails runData loudly (the strictness doctrine, the class javadoc).
+	 */
+	private ConvergingAppender convergingTag(net.minecraft.tags.TagKey<Block> aKey) {
+		return new ConvergingAppender(tag(aKey));
+	}
+
+	/** The member-routing face over one block-tag appender: gated ids ride optional, the rest the strict string form. */
+	private static final class ConvergingAppender {
+		private final net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> aInner;
+
+		ConvergingAppender(net.minecraft.data.tags.IntrinsicHolderTagsProvider.IntrinsicTagAppender<Block> aInner) {
+			this.aInner = aInner;
+		}
+
+		void add(Block aBlock) {
+			ResourceLocation tKey = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(aBlock);
+			if (GT6ForeignRowConvergence.gatedId(tKey.getPath())) aInner.addOptional(tKey);
+			else aInner.add(aBlock);
+		}
+
+		void add(Block aFirst, Block... aRest) {
+			add(aFirst);
+			for (Block tBlock : aRest) add(tBlock);
+		}
+	}
+
+	/**
 	 * The twilight deadrock host tag (task twilight-vanilla-ores-deadrock): the ONE
 	 * {@code gt6:tf_deadrock} block tag with the single {@code twilightforest:deadrock}
 	 * entry — THE other-mod-block-id indirection face. The netherite worldgen row's
@@ -240,7 +273,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * outside the GTMachines whole-class walk). A family-wide multiblock tag sweep is pool.
 	 */
 	private void addPickaxeBand() {
-		var tPickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
+		var tPickaxe = convergingTag(BlockTags.MINEABLE_WITH_PICKAXE);
 		for (Block tBlock : GTStoneBlocks.blockArray()) {
 			tPickaxe.add(tBlock);
 		}
@@ -442,7 +475,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * (:155-172 — the massstorage family is not ported yet, lands with its own card).
 	 */
 	private void addAxeBand() {
-		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		var tAxe = convergingTag(BlockTags.MINEABLE_WITH_AXE);
 		tAxe.add(GTBarrels.BARREL.get());
 		for (var tEntry : GTFluidPipes.BLOCKS_BY_PATH.entrySet()) {
 			if (GTFluidPipes.rowByPath(tEntry.getKey()).material().blockFamily() != GTFluidPipes.PipeBlockFamily.WOODEN) {
@@ -548,7 +581,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 	 * the registration walk.
 	 */
 	private void addShovelBand() {
-		var tShovel = tag(BlockTags.MINEABLE_WITH_SHOVEL);
+		var tShovel = convergingTag(BlockTags.MINEABLE_WITH_SHOVEL);
 		for (var tEntry : GTMaterialBlocks.items().entrySet()) {
 			if (tEntry.getKey().prefix() != OP.blockDust) continue;
 			tShovel.add(((BlockItem) tEntry.getValue().get()).getBlock());
@@ -750,7 +783,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
  * on the pickaxe card.
 	 */
 	private void addWrenchBand() {
-		var tWrench = tag(GTWrenchItem.MINEABLE_WITH_WRENCH);
+		var tWrench = convergingTag(GTWrenchItem.MINEABLE_WITH_WRENCH);
 		GTMachines.BLOCKS.getEntries().forEach(tHandle -> tWrench.add(tHandle.get()));
 		for (RegistryObject<Block> tHandle : GT6Batteries.BATTERY_BOX_BLOCKS.values()) {
 			tWrench.add(tHandle.get());
