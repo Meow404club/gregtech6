@@ -342,6 +342,15 @@ public class TileEntityFusionReactorTest extends GTMultiBlocksOfflineTestBase {
 
 	@Test
 	void theGeneratorRowDrivesTheMachineFace() {
+		// the neo junit-fml leg BOOTS the mod at test-JVM start: onCommonSetup → enqueueWork
+		// → load() pours the live 18 rows and sets the one-shot sLoaded gate — afterwards
+		// init() is a no-op (maps exist) and load() is skipped (gate set), so the fixture
+		// resolvers below never ride a pour (fingerprint: expected 1 was 18, solo-class
+		// red, forge leg green). Drop the boot generation first (the @AfterEach pair,
+		// hoisted to the pour front; the diggables id1470 posture) so the fixture pour is
+		// the authority on BOTH legs.
+		GT6RecipeMaps.reset();
+		GT6RecipesFusion.resetForTest();
 		// a DETERMINISTIC single-row pour: only T and He resolve, so the map holds exactly
 		// the :950 T+T row (in [lava 2000] out [water 1000], the gas stand-in identities) —
 		// the full-18 parity rides GT6RecipesFusionTest

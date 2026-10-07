@@ -332,7 +332,7 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 	private static Item prefixItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
 		if (aPrefix == null || aMaterial == null) return null;
 		return PREFIX_ITEMS.computeIfAbsent(new PrefixMaterial(aPrefix, aMaterial), aPair ->
-			Registry.register(BuiltInRegistries.ITEM, "mtree_s4_probe_" + sNextProbeId++,
+			Registry.register(BuiltInRegistries.ITEM, new net.minecraft.resources.ResourceLocation("gt6", "mtree_s4_probe_" + sNextProbeId++),
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 

@@ -71,11 +71,13 @@ class MaterialTreeWorkstationsTest extends GTRecipesOfflineTestBase {
 		openOfflineItemRegistry();
 	}
 
-	/** The (prefix, material) -> probe-item resolver armed into the four ore-chain loaders. */
+	/** The (prefix, material) -> probe-item resolver armed into the four ore-chain loaders.
+	 * The gt6 namespace is load-bearing: a minecraft-namespaced probe would grow the
+	 * frozen-vanilla pool GT6RecipesCokeOvenTest's synthetic universe re-deals on. */
 	private static Item prefixItem(OreDictPrefix aPrefix, gregapi.oredict.OreDictMaterial aMaterial) {
 		if (aPrefix == null || aMaterial == null) return null;
 		return PREFIX_ITEMS.computeIfAbsent(new PrefixMaterial(aPrefix, aMaterial), aPair ->
-			Registry.register(BuiltInRegistries.ITEM, "mtree_ws_probe_" + sNextProbeId++,
+			Registry.register(BuiltInRegistries.ITEM, new net.minecraft.resources.ResourceLocation("gt6", "mtree_ws_probe_" + sNextProbeId++),
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 

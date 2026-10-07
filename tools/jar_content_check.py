@@ -64,6 +64,19 @@ def classes_of(build_classes_root):
     return {str(p.relative_to(root)) for p in root.rglob("*.class")}
 
 
+def modularui_version():
+    """The vendored fork's mod_version, read live from the subrepo
+    gradle.properties (the single source of truth — generateModMetadata and the
+    jarJar wiring consume the same key; the hardcoded 3.3.1 pins here went stale
+    on the 3.3.3 bump and produced the jar-sym-sweep baseline 4F)."""
+    for line in (REPO / "third-party" / "modularui" / "gradle.properties") \
+            .read_text().splitlines():
+        if line.startswith("mod_version="):
+            return line.split("=", 1)[1].strip()
+    raise AssertionError("mod_version key missing in"
+                         " third-party/modularui/gradle.properties")
+
+
 def open_nested(zf, name_prefix, dir_name="META-INF/jarjar"):
     """Return (filename, in-memory ZipFile) for the single .jar under dir_name
     whose basename starts with name_prefix."""
@@ -138,10 +151,11 @@ def guard_mod_jar(path):
         ok &= check(f"modularui: {toml_name} present, foreign toml absent",
                     toml_name in mui_names and foreign_toml not in mui_names)
         if toml_name in mui_names:
+            tVersion = modularui_version()
             toml = mui.read(toml_name).decode()
             ok &= check("modularui: toml identity (modId/version/license)",
                         'modId = "modularui"' in toml
-                        and 'version = "3.3.1"' in toml
+                        and f'version = "{tVersion}"' in toml
                         and "LGPL-3.0" in toml)
         ok &= check("modularui: pack.mcmeta + mixin config + AT present",
                     "pack.mcmeta" in mui_names
@@ -176,13 +190,15 @@ def guard_mod_jar(path):
                         "MixinConfigs: modularui.mixins.json" in manifest)
 
         # level-0 jarJar metadata (what the mod jar declares about modularui)
+        tVersion = modularui_version()
         meta0 = json.loads(zf.read("META-INF/jarjar/metadata.json"))
         mui_entries = [j for j in meta0["jars"]
                        if j["identifier"]["group"] == "brachy.modularui"]
-        ok &= check("mod jar: jarJar metadata declares modularui [3.3.1,) @3.3.1",
+        ok &= check(f"mod jar: jarJar metadata declares modularui"
+                    f" [{tVersion},) @{tVersion}",
                     len(mui_entries) == 1
-                    and mui_entries[0]["version"]["range"] == "[3.3.1,)"
-                    and mui_entries[0]["version"]["artifactVersion"] == "3.3.1")
+                    and mui_entries[0]["version"]["range"] == f"[{tVersion},)"
+                    and mui_entries[0]["version"]["artifactVersion"] == tVersion)
 
         # ---- face 3: level-2 nesting (EvalEx / mixinextras inside modularui) ----
         meta1 = json.loads(mui.read("META-INF/jarjar/metadata.json"))
