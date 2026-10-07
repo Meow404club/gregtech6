@@ -850,6 +850,13 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.BOTTLECRATE_BE.get(),
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+		// task block-family-32xxx-port — the charging locker joins the same item-only face
+		// (the inherited locker slot access; the energy face is GT-native ITileEntityEnergy,
+		// no capability row). The sap bag stays OUT — its slot/tank are automation-invisible
+		// upstream (getAccessibleSlotsFromSide2 = empty, the bare FluidTankGT), the plant pot
+		// carries no inventory.
+		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, GTBlockEntities.CHARGING_LOCKER_BE.get(),
+				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
 	}
 
 	// -- the gas turbine (w3-turbine-dynamo; TAIL-APPENDED ROW, the shared serial
