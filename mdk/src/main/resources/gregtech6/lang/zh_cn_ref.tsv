@@ -2380,6 +2380,12 @@ direct	gt6.tooltip.wire_contact.1	电压(V): %1$s EU (%2$s)	hand
 direct	gt6.tooltip.wire_contact.2	电流(A): %3$s	hand
 direct	gt6.tooltip.wire_contact.3	损耗: %4$s EU/m	hand
 direct	gt6.tooltip.wire_contact.4	当它在运作的时候接触会受伤!	hand
+direct	gt6.viewer.energy.empty	尚无已移植的产生机器	hand
+direct	gt6.viewer.energy.emits	发射 %s	hand
+direct	gt6.viewer.energy.group.converters	转换器 · Converters	hand
+direct	gt6.viewer.energy.group.generators	产生 · Generators	hand
+direct	gt6.viewer.energy.group.processors	消费·处理 · Processors	hand
+direct	gt6.viewer.energy.transfer	传输：EU→线缆 / RU·KU→轴系 / HU·CU·Steam→管	hand
 direct	gt6.wire.display	%s×%s%s	hand
 direct	gt6.wire.display.plain	%s%s	hand
 direct	gt6.wire.form.cable	线缆	hand

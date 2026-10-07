@@ -715,6 +715,19 @@ public class GT6EnUs extends LanguageProvider {
         for (gregapi.code.TagData tCarrier : GT6RecipeMapViewerMeta.pinnedEnergyCarriers()) {
             add(GT6RecipeMapViewerMeta.energyInfoKey(tCarrier), energyCarrierInfoLine(tCarrier));
         }
+        // task energy-page-jei-leg (the E5 scope) — the energy-source page's frozen key
+        // set (the task card's 键集预定义 — the E4 EMI twin cites the same names): the
+        // three group headers, the transfer footer, the empty-state line and the produce
+        // cells' hover line (the declared 6th key — the wireframe's 『发射 X』; not in the
+        // frozen five, an addition, reported to the coordinator). zh rides the tsv direct
+        // band (the GT6ZhCn addEnergyViewerUnits walk, same commit).
+        add(gregtech6.jei.GT6EnergyInfoJeiCategory.GROUP_GENERATORS_KEY, "Generators");
+        add(gregtech6.jei.GT6EnergyInfoJeiCategory.GROUP_PROCESSORS_KEY, "Processors");
+        add(gregtech6.jei.GT6EnergyInfoJeiCategory.GROUP_CONVERTERS_KEY, "Converters");
+        add(gregtech6.jei.GT6EnergyInfoJeiCategory.TRANSFER_KEY,
+                "Transfer: EU→cables / RU·KU→axles / HU·CU·Steam→pipes");
+        add(gregtech6.jei.GT6EnergyInfoJeiCategory.EMPTY_KEY, "No ported generator machines yet");
+        add(gregtech6.jei.GT6EnergyInfoJeiCategory.EMITS_KEY, "Emits %s");
     }
 
     /** The en body of one carrier's info page: the upstream long name + the units face (TU is "Ticks" per the upstream "Amount = Ticks" doc). */
