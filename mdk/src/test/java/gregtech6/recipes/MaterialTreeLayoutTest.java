@@ -620,7 +620,7 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 		assertTrue(tEmpty.width() > 0 && tEmpty.height() > 0, "the empty plan stays positive: " + tEmpty.width() + "x" + tEmpty.height());
 		// a single node WITH byproducts: the hanging band is the deepest face
 		MaterialTreeLayout.Result tOneByproduct = MaterialTreeLayout.plan(List.of(tSingle), List.of(),
-				List.of(new MaterialTreeDisplay.Byproduct(ItemStack.EMPTY, false, MaterialTreeDisplay.DECLARED_TEXT)));
+				List.of(new MaterialTreeDisplay.Byproduct(ItemStack.EMPTY, false, MaterialTreeDisplay.DECLARED_TEXT, MaterialTreeDisplay.COL_ORE)));
 		assertTrue(tOneByproduct.byproductBand());
 		assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT) + 30, tOneByproduct.height());
 		// a deep chain: a band-0 -> band-3 hop lays out and stays inside the plan's own bounds
