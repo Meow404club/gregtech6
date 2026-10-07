@@ -131,7 +131,7 @@ public class GT6MoldAssetDatagenTest extends GTOfflineTestBase {
     /** The small crucible empty faces: stone/ceramic/bronze/steel each their material smooth body (#41, +C2). */
     @Test
     void crucibleEmptyBodiesAreTheMaterialSmoothReferences() throws Exception {
-        assertEquals(4, GT6Crucibles.ROWS.size(), "the crucible walk broke — never pass vacuously");
+        assertEquals(39, GT6Crucibles.ROWS.size(), "the crucible walk broke — never pass vacuously (the FULL :251-292 ladder)");
         assertBody("assets/gt6/models/block/smeltery_stone_empty.json", STONE_BODY, "smeltery_stone_empty");
         assertBody("assets/gt6/models/block/smeltery_ceramic_empty.json", CERAMIC_BODY, "smeltery_ceramic_empty");
         assertBody("assets/gt6/models/block/smeltery_bronze_empty.json", BRONZE_BODY, "smeltery_bronze_empty");

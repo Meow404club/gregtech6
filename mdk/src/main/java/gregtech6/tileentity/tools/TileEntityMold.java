@@ -437,6 +437,19 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 		return rRecipe == null ? OP.nugget : rRecipe;
 	}
 
+	/**
+	 * The INSTANCE seam over the static lookup (task material-mc-c-crucible-rows): upstream
+	 * {@code getMoldRecipe} is an instance method (MultiTileEntityMold.java:75) that the
+	 * Basin family overrides to {@code OP.blockSolid} (MultiTileEntityBasin.java:21-24 —
+	 * shape-agnostic, the basin always casts a full block). The 1.7.10 static port form
+	 * cannot be overridden, so the three shape-consuming call sites route through HERE and
+	 * {@link gregtech6.tileentity.tools.TileEntityBasin} answers the override.
+	 */
+	@Nullable
+	protected OreDictPrefix moldRecipeFor(int aShape) {
+		return getMoldRecipe(aShape);
+	}
+
 	// public like the family BEs (the GTGeneratorSolidBlockEntity field face) — the
 	// command/stat readers and the offline tests consume them directly
 	public int mShape = 0;
@@ -528,7 +541,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 			if (mTemperature < mContent.mMaterial.mMeltingPoint) {
 				mContent.mMaterial = mContent.mMaterial.mTargetSolidifying.mMaterial;
 				if (mContent.mAmount > 0 && mInventory.isEmpty()) {
-					OreDictPrefix tPrefix = getMoldRecipe(mShape);
+					OreDictPrefix tPrefix = moldRecipeFor(mShape); // the instance seam (the Basin blockSolid override seat)
 					// :194-197 — the COOL2CRYSTAL crystalline swap
 					tPrefix = cool2CrystalSwap(tPrefix, mContent.mMaterial);
 					if (tPrefix != null) {
@@ -559,7 +572,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 
 	@Override
 	public long getMoldRequiredMaterialUnits() {
-		OreDictPrefix tPrefix = getMoldRecipe(mShape);
+		OreDictPrefix tPrefix = moldRecipeFor(mShape); // the instance seam
 		if (tPrefix == null) return 0;
 		if (tPrefix == OP.nugget) { // :237-241 — the per-bit nugget census
 			long rAmount = 0;
@@ -572,7 +585,7 @@ public class TileEntityMold extends TileEntityBase03TicksAndSync implements ITil
 	@Override
 	public long fillMold(OreDictMaterialStack aMaterial, long aTemperature, byte aSide) {
 		if (aMaterial == null || aMaterial.mMaterial == null || aMaterial.mMaterial.contains(gregapi.data.TD.Properties.ACID)) return 0; // :247
-		OreDictPrefix tPrefix = getMoldRecipe(mShape);
+		OreDictPrefix tPrefix = moldRecipeFor(mShape); // the instance seam
 		tPrefix = cool2CrystalSwap(tPrefix, aMaterial.mMaterial.mTargetSolidifying.mMaterial); // :250-253 — before the representable gate
 		if (tPrefix != null && mContent == null && mInventory.isEmpty() && isMoldInputSide(aSide) && aMaterial.mAmount > 0) { // :249
 			if (GT6RecipeMapCrucible.matStack(tPrefix, aMaterial.mMaterial.mTargetSolidifying.mMaterial, 1) == null) return 0; // :254 the representable-output gate

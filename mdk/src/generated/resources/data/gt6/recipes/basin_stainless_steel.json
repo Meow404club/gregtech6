@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_stainless_steel"
+    }
+  },
+  "pattern": [
+    "P P",
+    "P P",
+    " P "
+  ],
+  "result": {
+    "item": "gt6:basin_stainless_steel"
+  },
+  "show_notification": true
+}

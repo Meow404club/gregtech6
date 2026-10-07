@@ -1023,6 +1023,11 @@ public class GT6LangParityTest {
 			if (tRow != GT6BurningBoxes.BRICK_ROW) tExempt.add(tRow.path());
 		}
 		for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) tExempt.add(tRow.path()); // CrucibleBlock.getName (GT6Crucibles:182)
+		// task material-mc-c-crucible-rows — the basin/crossing row carriers joined the same
+		// composed-name face (BasinBlock/CrossingBlock getName over the
+		// gt6.row.{basin,crossing}.display templates + the shared gt6.row.mat.* words)
+		for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.BASIN_ROWS) tExempt.add(tRow.path());
+		for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.CROSSING_ROWS) tExempt.add(tRow.path());
 		for (GT6Crucibles.CrucibleRow tRow : GT6Crucibles.CRUCIBLE_ROWS) tExempt.add(tRow.path()); // GTCrucibleControllerBlock.getName
 		// task w3-distill-crucible — the seven ladder wall carriers (GTCrucibleWallBlock
 		// getName -> the mComposedName metal-wall template over the EXISTING gt6.row.mat words;
@@ -1218,7 +1223,7 @@ public class GT6LangParityTest {
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(1925, tExemptTotal, "the derived composed-name exemption census (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
+		assertEquals(2038, tExemptTotal, "the derived composed-name exemption census (+113 task material-mc-c-crucible-rows on the review-seat rebase union: the crucible domain joins the composed face — +35 smeltery carriers (Smeltery 4→39) + +78 basin/crossing carriers (the Basin/Crossing full-family ROWS walks) over the 39 shared gt6.row.mat.* words, 1925 + 113; the checked census stays put) (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
 			+ " (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
 			+ " 280 <mat>_fluid_pipe_<size> carriers compose over the seven gt6.row.fluid_pipe.display.*"
 			+ " templates + the 40 family-scoped gt6.row.fluid_pipe.mat.* words; the two W1 wood rows"
@@ -1252,7 +1257,12 @@ public class GT6LangParityTest {
 			+ " (+9 task machines-burner-plantalyzer: the Burner Mixer 4-ladder + the Plantalyzer 5-ladder row carriers, 1151 + 9 = 1160)"
 			+ " (+120 task act-matrix: the 120 crafting-table row carriers compose over the two"
 			+ " gt6.row.advanced_crafting_table/charging_crafting_table.display templates + the 60"
-			+ " gt6.row.mat.* words; the retired bare-path atomic key nets zero, 1514 + 120 = 1634)");
+			+ " gt6.row.mat.* words; the retired bare-path atomic key nets zero, 1514 + 120 = 1634)"
+			+ " (+113 task material-mc-c-crucible-rows: the crucible-domain families joined — the"
+			+ " Smeltery ROWS walk grew 4 -> 39 (35 new rung carriers over the"
+			+ " gt6.row.crucible.display.* template) and the basin/crossing families registered"
+			+ " (78 row carriers over the gt6.row.{basin,crossing}.display templates + the 18 new"
+			+ " gt6.row.mat.* words), 1768 + 35 + 78 = 1881)");
 		assertEquals(371, tChecked,  "the checked block census: every DeferredRegister block NOT"
 		+ " (+4 task worldgen-diggables-pits: the 4 colored-clay blocks joined the checked leg — 367 + 4 = 371 over main's racks-inclusive census, "
 		+ "the atomic block.gt6.{brown,yellow,blue,white}_clay keys both locales: the en BlockDiggable.java:52-57 names verbatim + the zh hand layer 粘土块 rows)"

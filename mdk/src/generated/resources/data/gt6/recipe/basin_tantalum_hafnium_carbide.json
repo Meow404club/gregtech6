@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_tantalum_hafnium_carbide"
+    }
+  },
+  "pattern": [
+    "P P",
+    "P P",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:basin_tantalum_hafnium_carbide"
+  }
+}

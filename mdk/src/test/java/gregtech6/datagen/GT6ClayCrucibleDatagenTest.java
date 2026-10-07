@@ -54,11 +54,11 @@ public class GT6ClayCrucibleDatagenTest extends GTOfflineTestBase {
     /** The Ceramic rung exists as data — the :256 verbatim row between stone and bronze. */
     @Test
     void ceramicRowSitsInTheLadder() {
-        assertEquals(4, GT6Crucibles.ROWS.size(), "stone/ceramic/bronze/steel — never pass vacuously");
+        assertEquals(39, GT6Crucibles.ROWS.size(), "the FULL :251-292 ladder (material-mc-c-crucible-rows) — never pass vacuously");
         GT6Crucibles.SmelteryRow tRow = rowByPath("smeltery_ceramic");
         assertNotNull(tRow, "the smeltery_ceramic row must be registered");
         assertEquals(CERAMIC_HARDNESS, tRow.hardness(), "the :256 NBT_HARDNESS/NBT_RESISTANCE pair verbatim");
-        assertEquals(1, GT6Crucibles.ROWS.indexOf(tRow), "after the stone family, before the metals (the upstream :251-:265 order)");
+        assertEquals(5, GT6Crucibles.ROWS.indexOf(tRow), "after the stone family (the :251-255 five rows), before the metals (the upstream :251-:265 order)");
         // the RegistryObject handle only (the registry is not booted in the bare JVM —
         // .get() would throw; the id pin is the offline face)
         assertEquals("clay_crucible_raw", GT6Crucibles.CLAY_CRUCIBLE_RAW.getId().getPath(),
