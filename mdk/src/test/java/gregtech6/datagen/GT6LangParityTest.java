@@ -243,13 +243,17 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 5873;
-	// +27 task material-mc-b-storage-mass-shelf: the metal shelf/crate compose templates
+	private static final int ZH_KEY_FLOOR = 5859;
+	// +13 task material-mc-b-storage-mass-shelf: the metal shelf/crate compose templates
 	// gt6.row.metal_{bookshelf,bottlecrate}.display both locales, dump-verbatim zh
-	// 书架 (%s)/瓶筐 (%s); 5846 -> 5873 counted on the committed zh_cn.json after the runData
-	// regen. The ratchet follows the measurement, only rises. — the per-card append chain
-	// is BOUNDED per the 2026-10-04 ruling (decisions.2026-10-04-ratchet-comment-bounded):
-	// keep the latest note only, the note history lives in `git log -L` on this line.
+	// 书架 (%s)/瓶筐 (%s) — the ONLY zh delta of the card (the 120 new metal rows compose at
+	// runtime, no description-id keys). Measured 5859 on the committed zh_cn.json: main's
+	// committed file already sat at 5857 against its 5846 floor (11 stale), +2 templates.
+	// The first-cut 5873 (+27) was a miscount — the review-seat gate rerun measured the
+	// committed truth. The ratchet follows the measurement, only rises. — the per-card
+	// append chain is BOUNDED per the 2026-10-04 ruling
+	// (decisions.2026-10-04-ratchet-comment-bounded): keep the latest note only, the note
+	// history lives in `git log -L` on this line.
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
 	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;
