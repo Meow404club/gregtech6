@@ -205,6 +205,7 @@ public class GT6EnUs extends LanguageProvider {
         addFoodItems(); // task food-items-core — table-tail append
         addBeams(); // task beam-blocks-register — table-tail append
         addConcrete(); // task concrete-blocks-register — table-tail append
+        addWoodenPanels(); // task material-mc-g3-plank-panels — table-tail append
         addBakeFoods(); // task food-bake-items — table-tail append
         addCropFoods(); // task food-crop-items — table-tail append
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
@@ -2277,6 +2278,21 @@ public class GT6EnUs extends LanguageProvider {
     /** Table b: one entry per registration-target material (alias slots merged like the bridge). */
     private void addMaterialNames() {
         materialWalkEmittedKeys().forEach((tKey, tMaterial) -> add(tKey, tMaterial.mNameLocal));
+    }
+
+    /**
+     * The wooden Cover Panel family face (task material-mc-g3-plank-panels): the ONE
+     * atomic family key — the upstream dump carries no wood word, ALL 300 rows share one
+     * name ({@code gt.multitileentity.32252} / {@code .32352} / {@code .32500} = "Wooden
+     * Panel", tmp/gregtech.lang:13133/:13233/:13381, the registration name
+     * Loader_MultiTileEntities.java:2058/:2067/:2076), so no per-row keys (the
+     * {@link #addStoneBlocks} template face does not apply). The wood identity is the
+     * TOOLTIP face (MultiTileEntityPanelWood.java:48-52, the plank display name — runtime,
+     * no lang key); the block class resolves the family key at runtime
+     * (GT6PlankPanelBlock.getName).
+     */
+    private void addWoodenPanels() {
+        add(gregtech6.block.panels.GT6PlankPanelBlock.NAME_KEY, "Wooden Panel");
     }
 
     /**

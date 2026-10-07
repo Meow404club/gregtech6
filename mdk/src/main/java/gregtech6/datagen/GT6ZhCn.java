@@ -126,6 +126,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addJugUnits();          // task small-tank-jug — the jug pair (the dump faces verbatim)
 		addSiftingTableUnits(); // task sifting-table-family — the manual chain tail (the dump face verbatim)
 		addConcreteUnits();     // task concrete-blocks-register — the 16 dye units + 4 templates (the dump faces verbatim)
+		addWoodenPanelUnits();  // task material-mc-g3-plank-panels — the 1 wooden panel family key (the dump face verbatim, the tsv direct band)
 		addCrucibleJadeUnits(); // task crucible-jade-face
 		addCommonJadeUnits();   // task jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
@@ -2965,6 +2966,18 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addDirect(String aKey) {
 		RefRow tRow = reference.get("direct") == null ? null : reference.get("direct").get(aKey);
 		if (tRow != null && !tRow.skipped()) add(aKey, tRow.value());
+	}
+
+	/**
+	 * The wooden Cover Panel family zh face (task material-mc-g3-plank-panels, the
+	 * addFoodsideUnits shape): the ONE atomic family key — the upstream dump carries no
+	 * wood word, all 300 rows share one name (tmp/gregtech.lang:13133
+	 * {@code gt.multitileentity.32252} / :13233 {@code .32352} / :13381 {@code .32500}
+	 * 木制覆盖板). The value rides the reference table's direct layer (the hand row
+	 * appended in the SAME commit — the addDirect contract).
+	 */
+	private void addWoodenPanelUnits() {
+		addDirect(gregtech6.block.panels.GT6PlankPanelBlock.NAME_KEY);
 	}
 
 	/**

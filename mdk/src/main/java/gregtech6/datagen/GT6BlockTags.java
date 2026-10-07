@@ -124,6 +124,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addSurfacePlantBand(); // task w6-t2-surface-blocks — the fallen logs (logs/axe) + the soil pair (shovel)
 		addBeamBand(); // task beam-blocks-register — the 8 wood beams join mineable/axe
 		addPlankBand(); // task gt-tree-planks — the 9 plank cubes (planks/axe)
+		addWoodenPanelBand(); // task material-mc-g3-plank-panels — the 28 wooden panels join mineable/axe
 		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
 		addWrenchBand(); // task wrench-mining-face — the gt6:mineable/wrench face (ruling B)
 		addTwilightDeadrockBand(); // task twilight-vanilla-ores-deadrock — the gt6:tf_deadrock host-indirection tag
@@ -596,6 +597,21 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			if (!"plank_wood_treated".equals(GT6TreeBlocks.GENERIC_PLANK_ROWS.get(i).path())) {
 				tPlanks.add(tPlank);
 			}
+		}
+	}
+
+	/**
+	 * The wooden panel band (task material-mc-g3-plank-panels): the 28 wooden Cover Panel
+	 * blocks join {@code mineable/axe} — the Loader rows carry harvest class aWooden
+	 * (Loader_MultiTileEntities.java:2058/:2067/:2076 {@code 0, 16, aWooden}). NOT
+	 * #minecraft:planks — a panel is a cover, not a crafting plank (no upstream OD.plankWood
+	 * walk for the panel rows). Negative face: no flammability tag route — the MTE rows
+	 * carry no NBT_FLAMMABILITY, the block class declares nothing.
+	 */
+	private void addWoodenPanelBand() {
+		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		for (RegistryObject<Block> tHandle : gregtech6.registry.GT6PlankPanels.BLOCKS) {
+			tAxe.add(tHandle.get());
 		}
 	}
 
