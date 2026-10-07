@@ -22,7 +22,11 @@
  * ({@code GT6Molds.MoldBlock}) both OVERRIDE getShape with non-full-cube boxes, so their
  * occlusion shape is already non-full and no neighbor face is culled — no fix owed there;
  * the remaining细-shape families (grindstone/kitchen/mortar/sifting/surface/kinetics)
- * already carry .noOcclusion() (the GTNoOcclusionCensusTest roster).
+ * already carry .noOcclusion() (the GTNoOcclusionCensusTest roster). The review-seat
+ * stitch (same task) extended the verdict to the static-storage BOOKSHELF rows: the open
+ * front of their frame model rides the FULL-CUBE SHELF_SHAPE — the same mechanism — so
+ * the family rides .noOcclusion() now (GT6StaticShelfNoOcclusionTest); the BOTTLECRATE
+ * rows stay innocent (the 8px body shape keeps the occlusion shape non-full).
  *
  * <p>Offline block construction needs the vanilla block registry unfrozen (the
  * GTNoOcclusionCensusTest bracket verbatim); the material registry is booted as cheap

@@ -23,7 +23,10 @@
  * own cards; the remaining full-cube MODEL blocks (machines/multiblock parts/boilers/...)
  * have full-cube shapes and are NOT in scope. The hopper family left that club when its
  * sub-cube funnel models landed (symptom27) — it rides .noOcclusion() now, pinned by
- * {@code GT6HopperNoOcclusionTest}.
+ * {@code GT6HopperNoOcclusionTest}. The static-storage BOOKSHELF rows left it too (the
+ * review-seat stitch): their open-front frame model rides the FULL-CUBE SHELF_SHAPE, the
+ * same mechanism over the shelf family — pinned by {@code GT6StaticShelfNoOcclusionTest}
+ * (the crate rows stay innocent: the 8px body shape keeps the occlusion shape non-full).
  *
  * <p>Offline block construction needs the vanilla block registry unfrozen (the
  * GTWireContactDamageTest bracket); the material registry is booted as cheap insurance for
