@@ -193,7 +193,7 @@ public final class GTCrucibleContentRenderer implements BlockEntityRenderer<Tile
 
 	/** The blocks-atlas sprite lookup (the GTFluidSpringBakedModel materialOf face, the ModelManager-backed form). */
 	private static TextureAtlasSprite spriteOf(String aQualified) {
-		return net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
+		return net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS)
 				.apply(GT6CrucibleDatagen.loc(aQualified));
 	}
 

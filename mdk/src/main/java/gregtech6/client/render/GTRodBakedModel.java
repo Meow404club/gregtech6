@@ -169,7 +169,7 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 
 	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
 		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(
-				net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+				net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(aSpriteId);
 	}
 
 	public Params params() {

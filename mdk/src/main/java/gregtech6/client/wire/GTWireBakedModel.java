@@ -168,7 +168,7 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 
 	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
 		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(
-				net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+				net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(aSpriteId);
 	}
 
 	public Params params() {
@@ -234,7 +234,7 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 		if (aKind == SpriteKind.FIBER_OVERLAY) {
 			// the p11 laser overlay layer (WireLaser :121-122, untinted)
 			return mParams.overlaySprite() != null ? mParams.overlaySprite()
-					: new ResourceLocation("gt6", "block/iconsets/fiber_wire_overlay");
+					: ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/fiber_wire_overlay");
 		}
 		// the two-arg ctor is private in 1.21.1 (Forge 1.20.1 backported fromNamespaceAndPath,
 	// both legs javap-proven) — the conservative swap regex skips the concatenated argument
