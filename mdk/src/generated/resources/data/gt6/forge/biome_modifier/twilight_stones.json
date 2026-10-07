@@ -1,0 +1,30 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#twilightforest:in_twilight_forest",
+  "features": [
+    "gt6:twilight_stone_granite_black",
+    "gt6:twilight_stone_granite_red",
+    "gt6:twilight_stone_basalt",
+    "gt6:twilight_stone_marble",
+    "gt6:twilight_stone_limestone",
+    "gt6:twilight_stone_granite",
+    "gt6:twilight_stone_diorite",
+    "gt6:twilight_stone_andesite",
+    "gt6:twilight_stone_komatiite",
+    "gt6:twilight_stone_greenschist",
+    "gt6:twilight_stone_blueschist",
+    "gt6:twilight_stone_kimberlite",
+    "gt6:twilight_stone_quartzite",
+    "gt6:twilight_stone_prismarine_light",
+    "gt6:twilight_stone_prismarine_dark",
+    "gt6:twilight_stone_slate",
+    "gt6:twilight_stone_shale"
+  ],
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "step": "underground_ores"
+}
