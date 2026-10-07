@@ -21,7 +21,26 @@
     "gt6:dungeon_inject_village_weaponsmith",
     "gt6:dungeon_inject_stronghold_library",
     "gt6:dungeon_inject_stronghold_corridor",
-    "gt6:dungeon_inject_gt6_dungeon_chest"
+    "gt6:dungeon_inject_gt6_dungeon_chest",
+    "gt6:dungeon_inject_tf_hill_1",
+    "gt6:dungeon_inject_tf_hill_2",
+    "gt6:dungeon_inject_tf_hill_3",
+    "gt6:dungeon_inject_tf_hedge_maze",
+    "gt6:dungeon_inject_tf_tree_cache",
+    "gt6:dungeon_inject_tf_labyrinth_room",
+    "gt6:dungeon_inject_tf_labyrinth_dead_end",
+    "gt6:dungeon_inject_tf_labyrinth_vault",
+    "gt6:dungeon_inject_tf_tower_room",
+    "gt6:dungeon_inject_tf_tower_library",
+    "gt6:dungeon_inject_tf_darktower_cache",
+    "gt6:dungeon_inject_tf_darktower_key",
+    "gt6:dungeon_inject_tf_darktower_boss",
+    "gt6:dungeon_inject_tf_stronghold_cache",
+    "gt6:dungeon_inject_tf_stronghold_room",
+    "gt6:dungeon_inject_tf_aurora_cache",
+    "gt6:dungeon_inject_tf_aurora_room",
+    "gt6:dungeon_inject_tf_troll_garden",
+    "gt6:dungeon_inject_tf_troll_vault"
   ],
   "replace": false
 }

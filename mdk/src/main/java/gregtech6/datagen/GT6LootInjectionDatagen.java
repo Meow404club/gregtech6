@@ -56,6 +56,26 @@ import gregtech6.registry.GTMaterialItems;
  *     {@code STRONGHOLD_CROSSING} (the crate rows are block-family, unported) keeps ZERO
  *     rows and gets no modifier JSON — {@code BONUS_CHEST} and {@code STRONGHOLD_LIBRARY}
  *     carried only book/paper rows before task p38 and now land their Guide rows.</li>
+ * <li><b>the Twilight Forest treasure injections</b> — task twilight-treasure-loot: the
+ *     {@code Loader_Loot.java:56-78} TFTreasure mapping re-armed as GLM injections over the
+ *     TF 1.20.x loot table ids (harvest {@code TFLootTables.java:34-63}, the 1:1 names).
+ *     <b>Ruling chain</b>: p34 ruled the treasure face 换箱面不移植 (KG 3037) — SUPERSEDED
+ *     2026-10-07 by the main session (the user's 2026-10-04 mod-adaptation ruling stands):
+ *     the ported face is loot INJECTION into the TF tables, never the GT-chest swap (the
+ *     {@code TwilightTreasureReplacer.generate(World..) :297-339} placeBlock face stays cut)
+ *     and never a TF-table override. The upstream semantic per table is the vanilla-category
+ *     EXTRA roll ({@code generate(IInventory) :355}, {@code ChestGenHooks.getOneItem(mVanillacategory)})
+ *     — re-armed as the SAME rows the mapped vanilla table already carries, plus the
+ *     per-index hand-tuned GT additions that survived the existence check. The TF-absent
+ *     guard is the table-id seam itself: {@code GT6DungeonLootModifier} fires only when the
+ *     queried table id matches, and without TF no roll ever queries a
+ *     {@code twilightforest:} table — the JSONs load inert (conditions stay empty, the
+ *     no-branded-keys contract). The dead-pool fact ({@code :346-357} rolls ONLY
+ *     rare/uncommon/common + the TC bag + the category — the {@code useless} and
+ *     {@code ultrarare} pools are never touched by the GT replacer) cuts every
+ *     {@code useless.add} hand row (the tower-room nether junk, the ender pearls, the ink
+ *     family) and the ultrarare Death Compass; {@link #twilightLedger()} carries the full
+ *     22-row reconciliation including the three no-JSON rows.</li>
  * </ul>
  */
 public final class GT6LootInjectionDatagen {
@@ -161,64 +181,39 @@ public final class GT6LootInjectionDatagen {
 		// the book face, so the bonus chest gets its modifier JSON (chests/spawn_bonus_chest,
 		// the mapping verified against both jars)
 		rRows.add(new InjectionRow("dungeon_inject_spawn_bonus_chest", "minecraft:chests/spawn_bonus_chest",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(guideRow(10, 8, 16)))));
+				ROLL_MIN, ROLL_MAX, bonusEntries()));
 		// DUNGEON_CHEST :418-443 — the metal ladder + coins(40/20/10)/bags/bottle POOLED + the
 		// Guide :442. The ZPM artifact row LEFT this vanilla face (task dungeon-library-zpm):
 		// the port HAS the GT6 dungeon now, so the artifact rides the dungeon loot face — the
 		// gt6:chests/dungeon_chest injection at the tail of this method.
 		// (the MatDict :443 stays pooled — the class javadoc ruling)
 		rRows.add(new InjectionRow("dungeon_inject_simple_dungeon", "minecraft:chests/simple_dungeon",
-				ROLL_MIN, ROLL_MAX, ladder(dungeonChestEntries().stream())));
+				ROLL_MIN, ROLL_MAX, dungeonChestEntries()));
 		// PYRAMID_DESERT_CHEST :445-450 — holy water/coins/bags POOLED, the Nq arrow head lands
 		rRows.add(new InjectionRow("dungeon_inject_desert_pyramid", "minecraft:chests/desert_pyramid",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(mat(OP.toolHeadArrow, MT.Nq, 1, 4, 16)))));
+				ROLL_MIN, ROLL_MAX, desertEntries()));
 		// PYRAMID_JUNGLE_CHEST :452-461 — AsCu ladder :452-454 + the Ke arrow :455; coins/bags POOLED
 		rRows.add(new InjectionRow("dungeon_inject_jungle_temple", "minecraft:chests/jungle_temple",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
-						mat(OP.ingot, MT.ArsenicCopper, 3, 4, 16), mat(OP.plate, MT.ArsenicCopper, 3, 4, 16),
-						mat(OP.toolHeadArrow, MT.ArsenicCopper, 3, 16, 64), mat(OP.toolHeadArrow, MT.Ke, 1, 4, 16)))));
+				ROLL_MIN, ROLL_MAX, jungleEntries()));
 		// PYRAMID_JUNGLE_DISPENSER :463-465 — the fire charges + the wood arrows
 		rRows.add(new InjectionRow("dungeon_inject_jungle_temple_dispenser", "minecraft:chests/jungle_temple_dispenser",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
-						van("fire_charge", 30, 2, 8),
-						mat(OP.arrowGtWood, MT.DamascusSteel, 20, 8, 16), mat(OP.arrowGtWood, MT.Ke, 1, 8, 16)))));
+				ROLL_MIN, ROLL_MAX, dispenserEntries()));
 		// MINESHAFT_CORRIDOR :468-487 — the ore-block rows :470-476 + the dig heads :477-482;
 		// bottles/matchbox/coins/bags POOLED, the MatDict :487 stays pooled (the class javadoc)
 		rRows.add(new InjectionRow("dungeon_inject_abandoned_mineshaft", "minecraft:chests/abandoned_mineshaft",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
-						van("coal_ore", 4, 16, 64), van("iron_ore", 4, 16, 64), van("gold_ore", 2, 8, 32),
-						van("lapis_ore", 2, 8, 32), van("redstone_ore", 2, 8, 32),
-						van("diamond_ore", 1, 4, 16), van("emerald_ore", 1, 4, 16),
-						mat(OP.toolHeadShovel, MT.ArsenicBronze, 5, 1, 4), mat(OP.toolHeadShovel, MT.Steel, 3, 1, 4),
-						mat(OP.toolHeadShovel, MT.DamascusSteel, 1, 1, 4),
-						mat(OP.toolHeadPickaxe, MT.ArsenicBronze, 5, 1, 4), mat(OP.toolHeadRawPickaxe, MT.Steel, 3, 1, 4),
-						mat(OP.toolHeadPickaxe, MT.DamascusSteel, 1, 1, 4)))));
+				ROLL_MIN, ROLL_MAX, mineshaftEntries()));
 		// VILLAGE_BLACKSMITH :489-513 — the smith ladder :491-506 + the Guide :512; bottles/
 		// coins/bags POOLED, the MatDict :513 stays pooled (the class javadoc)
 		rRows.add(new InjectionRow("dungeon_inject_village_weaponsmith", "minecraft:chests/village/village_weaponsmith",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
-						mat(OP.ingot, MT.Steel, 2, 4, 12), mat(OP.plate, MT.Steel, 2, 4, 12),
-						mat(OP.stick, MT.Steel, 2, 8, 24), mat(OP.gearGtSmall, MT.Steel, 2, 4, 12),
-						mat(OP.toolHeadArrow, MT.Steel, 2, 16, 48),
-						mat(OP.ingot, MT.Bronze, 2, 4, 12), mat(OP.plate, MT.Bronze, 2, 4, 12),
-						mat(OP.stick, MT.Bronze, 2, 8, 24), mat(OP.gearGtSmall, MT.Bronze, 2, 4, 12),
-						mat(OP.toolHeadArrow, MT.Bronze, 2, 16, 48),
-						mat(OP.ingot, MT.Brass, 2, 4, 12), mat(OP.plate, MT.Brass, 2, 4, 12),
-						mat(OP.stick, MT.Brass, 2, 8, 24), mat(OP.gearGtSmall, MT.Brass, 2, 4, 12),
-						mat(OP.toolHeadArrow, MT.Brass, 2, 16, 48),
-						mat(OP.ingot, MT.DamascusSteel, 1, 4, 12),
-						guideRow(40, 4, 8)))));
+				ROLL_MIN, ROLL_MAX, smithEntries()));
 		// STRONGHOLD_LIBRARY :515-525 — the Guide :524; the research papers :515-523 stay
 		// pooled, the MatDict :525 stays pooled (the class javadoc) — task p38 gives the
 		// library its modifier JSON (chests/stronghold_library, both jars verified)
 		rRows.add(new InjectionRow("dungeon_inject_stronghold_library", "minecraft:chests/stronghold_library",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(guideRow(40, 4, 8)))));
+				ROLL_MIN, ROLL_MAX, libraryEntries()));
 		// STRONGHOLD_CORRIDOR :546-552 — the weapon heads + the arrows; coins POOLED
 		rRows.add(new InjectionRow("dungeon_inject_stronghold_corridor", "minecraft:chests/stronghold_corridor",
-				ROLL_MIN, ROLL_MAX, ladder(Stream.of(
-						mat(OP.toolHeadSword, MT.Steel, 12, 1, 4), mat(OP.toolHeadSword, MT.DamascusSteel, 6, 1, 4),
-						mat(OP.toolHeadAxeDouble, MT.Steel, 12, 1, 4), mat(OP.toolHeadAxeDouble, MT.DamascusSteel, 6, 1, 4),
-						mat(OP.arrowGtWood, MT.DamascusSteel, 6, 16, 48), mat(OP.arrowGtWood, MT.SterlingSilver, 6, 8, 24)))));
+				ROLL_MIN, ROLL_MAX, corridorEntries()));
 		// the GT6 dungeon loot face (task dungeon-library-zpm) — the ZPM artifact row's NEW
 		// carrier: the upstream obtainment IS the GT6 dungeon Library room
 		// (DungeonChunkRoomLibraryNormal.java:57/59/71/:85/:87/:99/:101 — 1/16 per trophy
@@ -233,7 +228,75 @@ public final class GT6LootInjectionDatagen {
 		rRows.add(new InjectionRow("dungeon_inject_gt6_dungeon_chest", "gt6:chests/dungeon_chest",
 				ROLL_MIN, ROLL_MAX, ladder(java.util.stream.Stream.concat(dungeonChestEntries().stream(),
 						java.util.stream.Stream.of(zpmArtifactRow())))));
+		// the Twilight Forest treasure face (task twilight-treasure-loot) — the :56-78
+		// TFTreasure → category mapping, tail-append order
+		rRows.addAll(twilightInjections());
 		return rRows;
+	}
+
+	/** The BONUS_CHEST category rows ({@code :413}) — the vanilla bonus chest + the TF hedge maze/tree cache. */
+	public static List<EntryRow> bonusEntries() {
+		return ladder(Stream.of(guideRow(10, 8, 16)));
+	}
+
+	/** The PYRAMID_DESERT_CHEST category rows ({@code :445-450}) — the vanilla desert pyramid + the TF tower room. */
+	public static List<EntryRow> desertEntries() {
+		return ladder(Stream.of(mat(OP.toolHeadArrow, MT.Nq, 1, 4, 16)));
+	}
+
+	/** The PYRAMID_JUNGLE_CHEST category rows ({@code :452-461}) — the vanilla jungle temple + the TF labyrinth rooms. */
+	public static List<EntryRow> jungleEntries() {
+		return ladder(Stream.of(
+				mat(OP.ingot, MT.ArsenicCopper, 3, 4, 16), mat(OP.plate, MT.ArsenicCopper, 3, 4, 16),
+				mat(OP.toolHeadArrow, MT.ArsenicCopper, 3, 16, 64), mat(OP.toolHeadArrow, MT.Ke, 1, 4, 16)));
+	}
+
+	/** The PYRAMID_JUNGLE_DISPENSER category rows ({@code :463-465}) — the vanilla dispenser + the TF darktower boss. */
+	public static List<EntryRow> dispenserEntries() {
+		return ladder(Stream.of(
+				van("fire_charge", 30, 2, 8),
+				mat(OP.arrowGtWood, MT.DamascusSteel, 20, 8, 16), mat(OP.arrowGtWood, MT.Ke, 1, 8, 16)));
+	}
+
+	/** The MINESHAFT_CORRIDOR category rows ({@code :468-487}) — the vanilla mineshaft + the TF hollow hills. */
+	public static List<EntryRow> mineshaftEntries() {
+		return ladder(Stream.of(
+				van("coal_ore", 4, 16, 64), van("iron_ore", 4, 16, 64), van("gold_ore", 2, 8, 32),
+				van("lapis_ore", 2, 8, 32), van("redstone_ore", 2, 8, 32),
+				van("diamond_ore", 1, 4, 16), van("emerald_ore", 1, 4, 16),
+				mat(OP.toolHeadShovel, MT.ArsenicBronze, 5, 1, 4), mat(OP.toolHeadShovel, MT.Steel, 3, 1, 4),
+				mat(OP.toolHeadShovel, MT.DamascusSteel, 1, 1, 4),
+				mat(OP.toolHeadPickaxe, MT.ArsenicBronze, 5, 1, 4), mat(OP.toolHeadRawPickaxe, MT.Steel, 3, 1, 4),
+				mat(OP.toolHeadPickaxe, MT.DamascusSteel, 1, 1, 4)));
+	}
+
+	/** The VILLAGE_BLACKSMITH category rows ({@code :489-513}) — the vanilla weaponsmith + the TF smith-class vaults. */
+	public static List<EntryRow> smithEntries() {
+		return ladder(Stream.of(
+				mat(OP.ingot, MT.Steel, 2, 4, 12), mat(OP.plate, MT.Steel, 2, 4, 12),
+				mat(OP.stick, MT.Steel, 2, 8, 24), mat(OP.gearGtSmall, MT.Steel, 2, 4, 12),
+				mat(OP.toolHeadArrow, MT.Steel, 2, 16, 48),
+				mat(OP.ingot, MT.Bronze, 2, 4, 12), mat(OP.plate, MT.Bronze, 2, 4, 12),
+				mat(OP.stick, MT.Bronze, 2, 8, 24), mat(OP.gearGtSmall, MT.Bronze, 2, 4, 12),
+				mat(OP.toolHeadArrow, MT.Bronze, 2, 16, 48),
+				mat(OP.ingot, MT.Brass, 2, 4, 12), mat(OP.plate, MT.Brass, 2, 4, 12),
+				mat(OP.stick, MT.Brass, 2, 8, 24), mat(OP.gearGtSmall, MT.Brass, 2, 4, 12),
+				mat(OP.toolHeadArrow, MT.Brass, 2, 16, 48),
+				mat(OP.ingot, MT.DamascusSteel, 1, 4, 12),
+				guideRow(40, 4, 8)));
+	}
+
+	/** The STRONGHOLD_LIBRARY category rows ({@code :515-525}) — the vanilla library + the TF lich tower library. */
+	public static List<EntryRow> libraryEntries() {
+		return ladder(Stream.of(guideRow(40, 4, 8)));
+	}
+
+	/** The STRONGHOLD_CORRIDOR category rows ({@code :546-552}) — the vanilla corridor + the TF darktower/stronghold caches. */
+	public static List<EntryRow> corridorEntries() {
+		return ladder(Stream.of(
+				mat(OP.toolHeadSword, MT.Steel, 12, 1, 4), mat(OP.toolHeadSword, MT.DamascusSteel, 6, 1, 4),
+				mat(OP.toolHeadAxeDouble, MT.Steel, 12, 1, 4), mat(OP.toolHeadAxeDouble, MT.DamascusSteel, 6, 1, 4),
+				mat(OP.arrowGtWood, MT.DamascusSteel, 6, 16, 48), mat(OP.arrowGtWood, MT.SterlingSilver, 6, 8, 24)));
 	}
 
 	/**
@@ -248,6 +311,139 @@ public final class GT6LootInjectionDatagen {
 	public static List<EntryRow> dungeonChestEntries() {
 		return ladder(java.util.stream.Stream.concat(dungeonMetalLadder(12, 2),
 				java.util.stream.Stream.of(guideRow(50, 2, 8))));
+	}
+
+	/**
+	 * One row of the 22-class {@code Loader_Loot.java:56-78} TFTreasure ledger — the
+	 * twilight-treasure-loot ACCEPTANCE reconciliation. {@code table} is the TF 1.20.x loot
+	 * table id (harvest {@code TFLootTables.java:34-63}) or {@code null} for a no-JSON row
+	 * (the {@code note} carries the disposition).
+	 */
+	public record TwilightRow(int index, String upstream, String category, String table, String note) {
+	}
+
+	/**
+	 * The FULL 22-row reconciliation, upstream {@code :56-78} order — 19 injections + the
+	 * three no-JSON rows. The category column is the upstream vanilla-ChestGenHooks mapping;
+	 * the table ids verified against the TF 1.20.x harvest tree
+	 * ({@code data/twilightforest/loot_tables/<name>.json} — {@code TFLootTables.register}
+	 * prefixes with {@code twilightforest:} directly, no {@code structures/} segment).
+	 * Non-mapped modern-only TF tables (the jackpot/with-lamp variants, hedge_cloth, wells,
+	 * graveyard, ...) have no 1.7.10 counterpart and stay out by construction (SPEC: 不
+	 * override TF 原表 — additions only, verbatim mapping).
+	 */
+	public static List<TwilightRow> twilightLedger() {
+		return List.of(
+				new TwilightRow(1, "hill1", "MINESHAFT_CORRIDOR", "twilightforest:hill_1", ""),
+				new TwilightRow(2, "hill2", "MINESHAFT_CORRIDOR", "twilightforest:hill_2", ""),
+				new TwilightRow(3, "hill3", "MINESHAFT_CORRIDOR", "twilightforest:hill_3", ""),
+				new TwilightRow(4, "hedgemaze", "BONUS_CHEST", "twilightforest:hedge_maze", ""),
+				new TwilightRow(14, "tree_cache", "BONUS_CHEST", "twilightforest:tree_cache", ""),
+				// the mapped category kept zero rows (:528-544 the crates are the declared
+				// pool) AND the hand rows are all cut (:176 the Guide book is the GT6Books cut,
+				// :177 the loot bags are the declared pool) — no rows, no JSON
+				new TwilightRow(9, "basement", "STRONGHOLD_CROSSING", null,
+						"zero surviving rows: the crossing crates + the coins/bags are the declared pool, the Manual_Portal_TF + Bag_Loot_Misc hand rows cut"),
+				new TwilightRow(5, "labyrinth_room", "PYRAMID_JUNGLE_CHEST", "twilightforest:labyrinth_room", ""),
+				new TwilightRow(6, "labyrinth_deadend", "PYRAMID_JUNGLE_CHEST", "twilightforest:labyrinth_dead_end", ""),
+				new TwilightRow(10, "labyrinth_vault", "VILLAGE_BLACKSMITH", "twilightforest:labyrinth_vault", ""),
+				new TwilightRow(7, "tower_room", "PYRAMID_DESERT_CHEST", "twilightforest:tower_room", ""),
+				new TwilightRow(8, "tower_library", "STRONGHOLD_LIBRARY", "twilightforest:tower_library", ""),
+				new TwilightRow(11, "darktower_cache", "STRONGHOLD_CORRIDOR", "twilightforest:darktower_cache", ""),
+				new TwilightRow(12, "darktower_key", "DUNGEON_CHEST", "twilightforest:darktower_key", ""),
+				new TwilightRow(13, "darktower_boss", "PYRAMID_JUNGLE_DISPENSER", "twilightforest:darktower_boss", ""),
+				new TwilightRow(15, "stronghold_cache", "STRONGHOLD_CORRIDOR", "twilightforest:stronghold_cache", ""),
+				new TwilightRow(16, "stronghold_room", "DUNGEON_CHEST", "twilightforest:stronghold_room", ""),
+				// no modern chest table: TFLootTables 1.20.x has cache/room only — the Knight
+				// Phantom loot rides entities/knight_phantom_defeated (an entity-drop face, out
+				// of the chest seam)
+				new TwilightRow(17, "stronghold_boss", "VILLAGE_BLACKSMITH", null,
+						"no modern chest table — the Knight Phantom loot rides twilightforest:entities/knight_phantom_defeated"),
+				new TwilightRow(18, "aurora_cache", "DUNGEON_CHEST", "twilightforest:aurora_cache", ""),
+				new TwilightRow(19, "aurora_room", "DUNGEON_CHEST", "twilightforest:aurora_room", ""),
+				// upstream :75 commented out — "This one is actually empty and unused"
+				new TwilightRow(20, "aurora_boss", "DUNGEON_CHEST", null,
+						"upstream :75 commented out — the table is empty and unused"),
+				new TwilightRow(21, "troll_garden", "DUNGEON_CHEST", "twilightforest:troll_garden", ""),
+				new TwilightRow(22, "troll_vault", "VILLAGE_BLACKSMITH", "twilightforest:troll_vault", ""));
+	}
+
+	/**
+	 * The twilight injections — one {@link InjectionRow} per ledger row with a table, in
+	 * ledger order (upstream {@code :56-78} order). Rows = the mapped category's GT rows
+	 * (the SAME lists the vanilla injections carry — the {@code :355 getOneItem} semantic)
+	 * + the hand-tuned additions that survived the existence check, at weight 1 (the
+	 * WeightedRandom pool-entry default; the merged-pool weighting is the standing
+	 * share-approximation declared on {@code GT6DungeonLootModifier}). The hand-row audit
+	 * ({@code TwilightTreasureReplacer} per index, the dead-pool rule first):
+	 * <ul>
+	 * <li>PORTED: hill2 rare stick-Basalz [4,4] :83; hedgemaze rare name-tag [4,4] / lead
+	 *     [2,2] :119-120 + stick-Breeze [4,4] :123 + uncommon food-cinnamon [12,12] :116
+	 *     ({@code gt6:food_cinnamon}, the GT6CropFoods row); troll_garden uncommon
+	 *     stick-Blitz [4,4] :275; troll_vault common/uncommon crushed-AncientDebris [4,4]/[8,8]
+	 *     :287-288 (the 1.7.10 IL.Ancient_Debris was null — the {@code get(n, crushed)}
+	 *     fallback WAS the live face) + the wither-skeleton skull [2,2] :289;</li>
+	 * <li>DEAD POOL (never rolled by the replacer, {@code :346-357}): every
+	 *     {@code useless.add} row — the tower-room nether supplies :144-149, the
+	 *     darktower quartz/end-stone :194-197, the ender pearls :210/:267, the ink
+	 *     family :158-162, the debris :286 — TF's own tables carry the junk face now;</li>
+	 * <li>CUT (no port registration — the declared pool, 勿硬造): the TC loot bag
+	 *     (mLootBag, every table), the loot bags Bag_Loot_* (:117/:121/:177/:185/:233-234),
+	 *     the Manual_Portal_TF book (:164/:176 — the GT6Books cut), the ultrarare
+	 *     Compass_Death (:166 — unported AND the ultrarare pool is dead), the TC saplings
+	 *     (:228-231), Dye_Cocoa/Resin (:113/:115), the ChocoCraft/Harvestcraft/AE/EtFu rows.</li>
+	 * </ul>
+	 */
+	public static List<InjectionRow> twilightInjections() {
+		List<InjectionRow> rRows = new ArrayList<>();
+		for (TwilightRow tLedger : twilightLedger()) {
+			if (tLedger.table() == null) continue;
+			String tName = "dungeon_inject_tf_" + tLedger.table().substring(tLedger.table().indexOf(':') + 1);
+			rRows.add(new InjectionRow(tName, tLedger.table(), ROLL_MIN, ROLL_MAX,
+					ladder(twilightEntries(tLedger.upstream()))));
+		}
+		return rRows;
+	}
+
+	/** The per-table entry stream: the mapped category rows + the live hand rows. */
+	private static Stream<EntryRow> twilightEntries(String aUpstream) {
+		switch (aUpstream) {
+		case "hill1": case "hill3":
+			return mineshaftEntries().stream();
+		case "hill2":
+			return Stream.concat(mineshaftEntries().stream(), Stream.of(mat(OP.stick, MT.Basalz, 1, 4, 4))); // :83
+		case "hedgemaze":
+			return Stream.concat(bonusEntries().stream(), Stream.of( // :113-123
+					van("name_tag", 1, 4, 4), van("lead", 1, 2, 2),
+					mat(OP.stick, MT.Breeze, 1, 4, 4),
+					new EntryRow("gt6:food_cinnamon", 1, 12, 12)));
+		case "tree_cache":
+			return bonusEntries().stream();
+		case "labyrinth_room": case "labyrinth_deadend":
+			return jungleEntries().stream();
+		case "labyrinth_vault":
+			return smithEntries().stream(); // :185 the Bag_Loot_Gems row is a bag cut
+		case "tower_room":
+			return desertEntries().stream(); // :144-149 the nether supplies are a dead-pool cut
+		case "tower_library":
+			return libraryEntries().stream(); // :164/:166 book + compass cuts
+		case "darktower_cache":
+			return corridorEntries().stream(); // :194-197 dead-pool cut
+		case "darktower_key": case "stronghold_room": case "aurora_cache": case "aurora_room":
+			return dungeonChestEntries().stream(); // :210 ender pearl dead-pool cut
+		case "darktower_boss":
+			return dispenserEntries().stream();
+		case "stronghold_cache":
+			return corridorEntries().stream();
+		case "troll_garden":
+			return Stream.concat(dungeonChestEntries().stream(), Stream.of(mat(OP.stick, MT.Blitz, 1, 4, 4))); // :275
+		case "troll_vault":
+			return Stream.concat(smithEntries().stream(), Stream.of( // :287-289
+					mat(OP.crushed, MT.AncientDebris, 1, 4, 4), mat(OP.crushed, MT.AncientDebris, 1, 8, 8),
+					van("wither_skeleton_skull", 1, 2, 2)));
+		default:
+			throw new IllegalArgumentException("unknown twilight treasure row: " + aUpstream);
+		}
 	}
 
 	/**

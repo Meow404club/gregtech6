@@ -1,0 +1,41 @@
+{
+  "type": "gt6:gt6_dungeon_inject",
+  "conditions": [],
+  "entries": [
+    {
+      "item": "gt6:book_loot_guide",
+      "max": 16,
+      "min": 8,
+      "weight": 10
+    },
+    {
+      "item": "minecraft:name_tag",
+      "max": 4,
+      "min": 4,
+      "weight": 1
+    },
+    {
+      "item": "minecraft:lead",
+      "max": 2,
+      "min": 2,
+      "weight": 1
+    },
+    {
+      "item": "gt6:stick_breeze",
+      "max": 4,
+      "min": 4,
+      "weight": 1
+    },
+    {
+      "item": "gt6:food_cinnamon",
+      "max": 12,
+      "min": 12,
+      "weight": 1
+    }
+  ],
+  "rolls": {
+    "max_inclusive": 3,
+    "min_inclusive": 1
+  },
+  "table": "twilightforest:hedge_maze"
+}
