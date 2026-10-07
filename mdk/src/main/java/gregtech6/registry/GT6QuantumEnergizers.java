@@ -55,6 +55,16 @@ import gregtech6.tileentity.energy.converters.GT6LaserConverterBlockEntity;
  * Crafting rows are the crafting pool (the laser posture — the FIELD_GENERATORS/SENSORS/
  * EMITTERS component items have no port item rows; the row shape CFC/SME/CFC with the
  * per-tier component index is pinned by the offline test for the pool card to consume).
+ *
+ * <p>Task quantum-energizer-tint-overlay: the rows carry their upstream NBT_MATERIAL —
+ * all five Loader rows register {@code NBT_MATERIAL, MT.Osmiridium} (:961-966, the
+ * NBT_COLOR derives from it, MultiTileEntityClassContainer.java:51), so the
+ * {@link GT6Lasers.LaserRow} material slot rides {@code MT.Osmiridium} and the grayscale
+ * {@code colored/} body multiplies the Osmiridium colour through the shared
+ * GTMachineTintModel/GTItemPaintTint walk ({@link #paintableBlockArray()}). The former
+ * "material-less — the white identity" posture and the self-made amber faces retired
+ * (the upstream overlays carry real art — the tex-bridge-kinetic probe verdict was
+ * wrong, the user-reported all-one-colour/no-overlay symptom is this card's face).
  * KJS surface: REGISTRATION face only, deferred to the KJS binding card.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -74,11 +84,11 @@ public final class GT6QuantumEnergizers {
 
 	static {
 		List<GT6Lasers.LaserRow> tRows = new ArrayList<>();
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer", 10121, 0, "T1", null));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t2", 10122, 1, "T2", null));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t3", 10123, 2, "T3", null));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t4", 10124, 3, "T4", null));
-		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t5", 10125, 4, "T5", null));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer", 10121, 0, "T1", () -> gregapi.data.MT.Osmiridium));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t2", 10122, 1, "T2", () -> gregapi.data.MT.Osmiridium));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t3", 10123, 2, "T3", () -> gregapi.data.MT.Osmiridium));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t4", 10124, 3, "T4", () -> gregapi.data.MT.Osmiridium));
+		tRows.add(new GT6Lasers.LaserRow("quantum_energizer_t5", 10125, 4, "T5", () -> gregapi.data.MT.Osmiridium));
 		QUANTUM_ENERGIZER_ROWS = List.copyOf(tRows);
 	}
 
@@ -115,6 +125,21 @@ public final class GT6QuantumEnergizers {
 	private static Block[] energizerBlockArray(List<GT6Lasers.LaserRow> aRows, Map<String, RegistryObject<Block>> aBlocks) {
 		Block[] rBlocks = new Block[aRows.size()];
 		for (int i = 0; i < rBlocks.length; i++) rBlocks[i] = aBlocks.get(aRows.get(i).path()).get();
+		return rBlocks;
+	}
+
+	/**
+	 * The laser-domain paint-tint walker extension (task quantum-energizer-tint-overlay —
+	 * the {@link GT6Lasers#paintableBlockArray()} form): the 5 ladder blocks whose datagen
+	 * models carry the tintindex-0 colored body, feeding BOTH consumption halves — the
+	 * baked world tint ({@code GTMachineTintModel}) and the inventory {@code ItemColor}.
+	 * Client-side call time only. The former card exemption ("the derived pre-tinted amber
+	 * art") retires: the upstream colored layer is the grayscale mRGBa seat (Loader
+	 * :961-966 NBT_MATERIAL MT.Osmiridium on every row).
+	 */
+	public static Block[] paintableBlockArray() {
+		Block[] rBlocks = new Block[QUANTUM_ENERGIZER_ROWS.size()];
+		for (int i = 0; i < rBlocks.length; i++) rBlocks[i] = QUANTUM_ENERGIZER_BLOCKS_BY_PATH.get(QUANTUM_ENERGIZER_ROWS.get(i).path()).get();
 		return rBlocks;
 	}
 

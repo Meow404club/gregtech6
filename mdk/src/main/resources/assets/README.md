@@ -9317,21 +9317,32 @@ assets are CC0 (see the Public Domain Dedication block above).
 
 - `block/machine_casing.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `iconsets/MACHINE.png`)
 
-## Quantum Energizer textures (task qu-energizer)
+## Quantum Energizer textures (task qu-energizer; re-borrowed verbatim by task quantum-energizer-tint-overlay)
 
-The two converter block faces under `gt6:textures/block/` are DERIVED, not borrowed:
-both are the committed laser-absorber face (`laser_absorber_{front,side}.png`, the
-upstream `laserabsorbers/electric_laser/colored/` pair) with a per-pixel
-luminance-preserving amber-gold tint (the grayscale noise mapped to r×1.10/g×0.95/
-b×0.52 +38/+18/−12 on the front, ×1.05/×0.98/×0.70 +18/+10/−8 on the side) — the
-upstream quantumenergizer art (`machines/quantumenergizer/quantum_laser/`) is an
-icon-container composite the port's static-face datagen has no seat for (the laser
-card's colored-layer-alone posture). The tint is the rung identity: one machine family,
-one hue. License: the base faces are upstream GregTech 6 CC0 (see above), the tint is
-this project's.
+The nine converter block faces under `gt6:textures/block/` are the byte-identical
+upstream borrows (`machines/quantumenergizer/quantum_laser/`, MultiTileEntityQuantum
+EnergizerLaser.java:49-61): the grayscale `colored/` trio is the mRGBa tint seat (all
+three faces are ONE byte-identical upstream PNG, the mRGBa = the row's NBT_MATERIAL
+MT.Osmiridium, Loader :961-966), the `overlay/` trio rides untinted and the
+`overlay_active/` trio swaps in on the ACTIVE channel (upstream
+`mActivity.mState>0 ? sOverlaysActive : sOverlays`, :45). The former self-made amber
+front/side pair (tinted laser-absorber art, the laser card's "icon-container composite"
+probe verdict) is RETIRED with this task: the upstream overlays carry 108/88/144
+opaque texels of real art each — the probe's "alpha-0 empty layers" reading was wrong.
+The two former derived files are dead — each digest retired with the file
+(task quantum-energizer-tint-overlay): `block/quantum_energizer_front.png`
+[RETIRED quantum-energizer-tint-overlay] and `block/quantum_energizer_side.png`
+[RETIRED quantum-energizer-tint-overlay]. License: upstream GregTech 6 CC0 (see above).
 
-- `block/quantum_energizer_front.png` — `f79d1113d3d95de0466b0eea881a4d8a0fc002b0fd356371e7f12fa125ba48eb` (derived: tinted `laser_absorber_front.png`)
-- `block/quantum_energizer_side.png` — `c257afe7a8678434de349e86f0be010abc78cbcfd4405f2126a784e8715df5d3` (derived: tinted `laser_absorber_side.png`)
+- `block/quantum_energizer_colored_front.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e` (upstream `quantum_laser/colored/front.png`)
+- `block/quantum_energizer_colored_back.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e` (upstream `quantum_laser/colored/back.png`; byte-identical to the front — one upstream art, three icon rows)
+- `block/quantum_energizer_colored_side.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e` (upstream `quantum_laser/colored/side.png`; byte-identical to the front)
+- `block/quantum_energizer_overlay_front.png` — `d1152f690913d11bc286fec25b44a44cf4ce38ded8c72c3da2b404f353ebdbeb` (upstream `quantum_laser/overlay/front.png`)
+- `block/quantum_energizer_overlay_back.png` — `8782f3171417fe0bd61a410129ee779b9df26ff796e530beea7502afe01f1e06` (upstream `quantum_laser/overlay/back.png`)
+- `block/quantum_energizer_overlay_side.png` — `5a1aa7f1375203df87905992547a6cb21fd81f90ae327e86c16ed77fc7b13514` (upstream `quantum_laser/overlay/side.png`)
+- `block/quantum_energizer_overlay_active_front.png` — `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db` (upstream `quantum_laser/overlay_active/front.png`)
+- `block/quantum_energizer_overlay_active_back.png` — `0fe48976578fe023b4ad2ec97d7839ebf3bb53825ad67c5e6ce376462c371112` (upstream `quantum_laser/overlay_active/back.png`)
+- `block/quantum_energizer_overlay_active_side.png` — `fef048ade7a8eb479f27b587ffc4648e536059f1b9ad471f0ae3c15723b79bc4` (upstream `quantum_laser/overlay_active/side.png`)
 
 ## task placeables (2026-09-19) — the placeables band
 

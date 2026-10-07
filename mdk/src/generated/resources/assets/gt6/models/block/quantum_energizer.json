@@ -1,36 +1,36 @@
 {
-  "parent": "minecraft:block/orientable",
+  "parent": "minecraft:block/cube",
   "elements": [
     {
       "faces": {
         "down": {
           "cullface": "down",
-          "texture": "#side",
+          "texture": "#down",
           "tintindex": 0
         },
         "east": {
           "cullface": "east",
-          "texture": "#side",
+          "texture": "#east",
           "tintindex": 0
         },
         "north": {
           "cullface": "north",
-          "texture": "#front",
+          "texture": "#north",
           "tintindex": 0
         },
         "south": {
           "cullface": "south",
-          "texture": "#side",
+          "texture": "#south",
           "tintindex": 0
         },
         "up": {
           "cullface": "up",
-          "texture": "#side",
+          "texture": "#up",
           "tintindex": 0
         },
         "west": {
           "cullface": "west",
-          "texture": "#side",
+          "texture": "#west",
           "tintindex": 0
         }
       },
@@ -44,12 +44,127 @@
         16,
         16
       ]
+    },
+    {
+      "faces": {
+        "north": {
+          "cullface": "north",
+          "texture": "#overlay_front"
+        }
+      },
+      "from": [
+        0,
+        0,
+        -0.01
+      ],
+      "to": [
+        16,
+        16,
+        0
+      ]
+    },
+    {
+      "faces": {
+        "south": {
+          "cullface": "south",
+          "texture": "#overlay_back"
+        }
+      },
+      "from": [
+        0,
+        0,
+        16
+      ],
+      "to": [
+        16,
+        16,
+        16.01
+      ]
+    },
+    {
+      "faces": {
+        "west": {
+          "cullface": "west",
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        -0.01,
+        0,
+        0
+      ],
+      "to": [
+        0,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "cullface": "east",
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        16,
+        0,
+        0
+      ],
+      "to": [
+        16.01,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "cullface": "down",
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        0,
+        -0.01,
+        0
+      ],
+      "to": [
+        16,
+        0,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "up": {
+          "cullface": "up",
+          "texture": "#overlay_side"
+        }
+      },
+      "from": [
+        0,
+        16,
+        0
+      ],
+      "to": [
+        16,
+        16.01,
+        16
+      ]
     }
   ],
   "render_type": "minecraft:cutout",
   "textures": {
-    "front": "gt6:block/quantum_energizer_front",
-    "side": "gt6:block/quantum_energizer_side",
-    "top": "gt6:block/quantum_energizer_side"
+    "down": "gt6:block/quantum_energizer_colored_side",
+    "east": "gt6:block/quantum_energizer_colored_side",
+    "north": "gt6:block/quantum_energizer_colored_front",
+    "overlay_back": "gt6:block/quantum_energizer_overlay_back",
+    "overlay_front": "gt6:block/quantum_energizer_overlay_front",
+    "overlay_side": "gt6:block/quantum_energizer_overlay_side",
+    "particle": "gt6:block/quantum_energizer_colored_side",
+    "south": "gt6:block/quantum_energizer_colored_back",
+    "up": "gt6:block/quantum_energizer_colored_side",
+    "west": "gt6:block/quantum_energizer_colored_side"
   }
 }

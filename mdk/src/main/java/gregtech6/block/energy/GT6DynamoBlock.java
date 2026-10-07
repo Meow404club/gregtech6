@@ -73,9 +73,9 @@ public class GT6DynamoBlock extends GTEntityBlock implements gregtech6.block.GTW
 
 	/**
 	 * The block's upstream {@code NBT_MATERIAL} column (task c2-controller-tint — the
-	 * tint colour source, the lazy-Supplier GTBarrels form): the EU-bridge and laser
-	 * families hand their Electric_T rung material in. Null = the material-less
-	 * registrations (the Flux/Electric dynamos, the quantum energizer) — the white
+	 * tint colour source, the lazy-Supplier GTBarrels form): the EU-bridge, laser and
+	 * quantum-energizer families hand their row material in (Electric_T rung / Osmiridium).
+	 * Null = the material-less registrations (the Flux/Electric dynamos) — the white
 	 * no-tint identity.
 	 */
 	@Nullable

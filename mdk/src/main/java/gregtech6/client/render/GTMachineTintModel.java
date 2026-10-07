@@ -182,6 +182,8 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 	 * material, the #7 reservation closing) and, since task
 	 * c2-controller-tint, the controller/energy domain (the 12 multiblock mains, the
 	 * 15 EU-bridge rungs, the 10 laser rungs, the magic absorber); since task
+	 * quantum-energizer-tint-overlay the 5 quantum energizer rungs (the Osmiridium
+	 * NBT_MATERIAL column); since task
 	 * issue8-residual the #8 stragglers (the 25 tank valve controllers, the 8 dedicated
 	 * crucible walls); since task beehive-tint (issue #15) the bee family (the hive
 	 * + the Bumbliary pair — the family colour rides the PAINT model data, the pair's
@@ -201,6 +203,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6DynamoHousings.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : GTMachines.bridgePaintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// task quantum-energizer-tint-overlay — the five energizer rungs join the same
+		// baked-tint domain: every upstream row carries NBT_MATERIAL MT.Osmiridium (Loader
+		// :961-966), the two-layer colored body is the tintindex-0 seat, the overlay/
+		// overlay_active decals untinted (the P22 contract)
+		for (Block tBlock : gregtech6.registry.GT6QuantumEnergizers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		// issue #18 (task 18-converter-tex-facing) — the converter family joins the
 		// baked-tint domain: the nine electric transformer rows (the Electric_T[0..8]
@@ -417,6 +424,9 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (Block tBlock : gregtech6.registry.GT6DynamoHousings.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : GTMachines.bridgePaintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6Lasers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
+		// task quantum-energizer-tint-overlay — the five energizer rungs' BlockItems join
+		// the same lambda (the Osmiridium column, the creative-tab face)
+		for (Block tBlock : gregtech6.registry.GT6QuantumEnergizers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		for (Block tBlock : gregtech6.registry.GT6MagicAbsorbers.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		// issue #18 (task 18-converter-tex-facing) — the converter family's 19
 		// BlockItems (the nine transformer + ten dynamo rows) join the same lambda

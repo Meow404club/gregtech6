@@ -153,8 +153,10 @@ public final class GT6Lasers {
 	 * tintindex 0 on the body cube (the {@code paintableBlockArray} census convention),
 	 * feeding BOTH consumption halves: the baked world tint ({@code GTMachineTintModel},
 	 * the p32 route) and the inventory {@code ItemColor}. Client-side call time only.
-	 * NOT in the walk: the quantum energizer (the derived pre-tinted amber art — the
-	 * card exemption).
+	 * NOT in the walk: the quantum energizer — since task quantum-energizer-tint-overlay
+	 * it walks through its OWN {@code GT6QuantumEnergizers.paintableBlockArray()} (the
+	 * same two consumers; the former "pre-tinted amber art" exemption retired with the
+	 * card).
 	 */
 	public static Block[] paintableBlockArray() {
 		Block[] rBlocks = new Block[CO2_LASER_ROWS.size() + LASER_ABSORBER_ROWS.size()];

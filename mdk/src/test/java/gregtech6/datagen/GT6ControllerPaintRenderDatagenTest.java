@@ -8,19 +8,19 @@
  * BlockTextureMulti(BlockTextureDefault(colored, mRGBa), overlay) semantics, mRGBa
  * registration-derived from NBT_MATERIAL, ClassContainer.java:51).
  *
- * <p>Coverage (the 39-block wiring): the 12 multiblock mains (4 steam turbine :1254-1257
+ * <p>Coverage (the 44-block wiring): the 12 multiblock mains (4 steam turbine :1254-1257
  * + 4 gas turbine :1264-1267 + 4 dynamo :1259-1262 — the aMat column verbatim
  * StainlessSteel/Ti/TungstenSteel/Ad, the display words are NOT the housing materials),
  * the 15 EU-bridge rungs (heater :817-821 / engine :833-837 / motor :849-853 — the
  * Electric_T[1..5] ladder MT.java:3691), the 10 laser rungs (CO2 laser :930-934 +
- * absorber :976-980, the same Electric_T ladder), the magic absorber (:1005, MT.Pd) and
- * the coke-oven bricks (:1138, MT.Ceramic — the #8 declared deviation retired).
+ * absorber :976-980, the same Electric_T ladder), the magic absorber (:1005, MT.Pd),
+ * the 5 quantum energizer rungs (:961-966, MT.Osmiridium — task
+ * quantum-energizer-tint-overlay) and the coke-oven bricks (:1138, MT.Ceramic — the #8
+ * declared deviation retired).
  *
- * <p>EXEMPTION pinned: the quantum energizer rows carry a NULL material column — its
- * amber art is pre-tinted upstream (the derived-look declaration), so the shared tinted
- * builder leaves it at the white identity. The offline fixtures cannot resolve
- * RegistryObjects, so the paintable-block-array walkers are pinned through the row
- * tables they walk (the array size is the row total, 39).
+ * <p>The offline fixtures cannot resolve RegistryObjects, so the paintable-block-array
+ * walkers are pinned through the row tables they walk (the array size is the row
+ * total, 44).
  */
 package gregtech6.datagen;
 
@@ -189,11 +189,14 @@ class GT6ControllerPaintRenderDatagenTest {
     }
 
     @Test
-    public void quantumEnergizerRowsStayMaterialless() {
-        // the card exemption: the derived pre-tinted amber art — the null column keeps the
-        // shared tinted builder at the white identity for this family
+    public void quantumEnergizerRowsCarryTheOsmiridiumMaterial() {
+        // task quantum-energizer-tint-overlay: every Loader row :961-966 registers
+        // NBT_MATERIAL MT.Osmiridium (the NBT_COLOR derives from it,
+        // MultiTileEntityClassContainer.java:51) — the former NULL "pre-tinted amber"
+        // exemption retired with the card
         for (GT6Lasers.LaserRow tRow : gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_ROWS) {
-            assertNull(tRow.material(), tRow.path() + " carries no NBT_MATERIAL (the exemption)");
+            assertSame(gregapi.data.MT.Osmiridium, tRow.material().get(),
+                    tRow.path() + " carries the :961-966 Osmiridium NBT_MATERIAL column");
         }
     }
 
@@ -210,10 +213,10 @@ class GT6ControllerPaintRenderDatagenTest {
         // the addLaserFamilies aTexture column)
         assertTintedBodyWithDecals("laser_electric");
         assertTintedBodyWithDecals("laser_absorber");
-        // the quantum energizer stays on the single-element three-arg addBridgeFamily arm
-        // (GT6BlockStates.java:1682/:1699 — no ACTIVE channel, no overlay decal pass); the
-        // tintindex is the white identity there (no material column, no tint registration)
-        assertTintedOrientableBody("quantum_energizer");
+        // task quantum-energizer-tint-overlay — the quantum energizer joined the same
+        // two-layer aActive arm (GT6BlockStates.addLaserFamilies): tinted body + 6 untinted
+        // decal shells over the byte-verbatim quantum_laser borrows
+        assertTintedBodyWithDecals("quantum_energizer");
     }
 
     // ------------------------------------------------------------------
@@ -250,13 +253,14 @@ class GT6ControllerPaintRenderDatagenTest {
     // ------------------------------------------------------------------
 
     @Test
-    public void wiringCensusStays39Blocks() {
+    public void wiringCensusStays44Blocks() {
         int tMains = GT6Turbines.STEAM_ROWS.size() + GT6Turbines.GAS_ROWS.size() + GT6DynamoHousings.DYNAMO_ROWS.size();
         int tBridges = GTMachines.ELECTRIC_HEATER_ROWS.size() + GTMachines.ELECTRIC_ENGINE_ROWS.size()
                 + GTMachines.ELECTRIC_MOTOR_ROWS.size();
         int tLasers = GT6Lasers.CO2_LASER_ROWS.size() + GT6Lasers.LASER_ABSORBER_ROWS.size();
         int tMagic = GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH.size();
-        assertEquals(39, tMains + tBridges + tLasers + tMagic + 1 /* the coke-oven bricks */,
-                "the controller-domain tint wiring census (12 mains + 15 bridges + 10 lasers + 1 absorber + 1 bricks)");
+        int tQuantum = gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_ROWS.size();
+        assertEquals(44, tMains + tBridges + tLasers + tMagic + tQuantum + 1 /* the coke-oven bricks */,
+                "the controller-domain tint wiring census (12 mains + 15 bridges + 10 lasers + 1 absorber + 5 energizers + 1 bricks)");
     }
 }
