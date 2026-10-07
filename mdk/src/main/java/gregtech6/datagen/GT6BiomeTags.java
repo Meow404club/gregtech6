@@ -331,5 +331,32 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
         tag(GT6Worldgen.LOG_FROZEN_BIOMES)
                 .add(Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.SNOWY_TAIGA);
         addTwilightVegetationBand(); // task twilight-vegetation — the 16-tag TF band (tail-append)
+
+        addAtumTags(); // task atum-dim-adaptation — the dimension-mount tag + the coconut member
+    }
+
+    /**
+     * The atum band (task atum-dim-adaptation) — the extension surface's mod-dim
+     * tenant, the vegetation-card {@code addOptional required:false} form:
+     * <ul>
+     * <li>{@code #gt6:atum_biomes} = the 11 atum biome ids verbatim
+     * ({@link GT6Worldgen#ATUM_BIOME_IDS}, AtumBiomes.java:10-20 of the atum2 master
+     * harvest). Atum's own {@code #forge:is_atum} fill covers only 2 of the 11
+     * (is_atum.json = strange_sands + oasis), so the mount/routing gate is OUR OWN
+     * tag; a member a given Atum build lacks drops silently at datapack load.</li>
+     * <li>the coconut tree tag gains {@code atum:oasis} — the ONLY atum biome the
+     * upstream coconut gate admits: BIOMES_COCONUT (CS.java:285) carries the literal
+     * "Oasis" name and atum:oasis displays exactly "Oasis" (atum en_us.json), while
+     * the exclusion sets (MOUNTAINS/FROZEN/TAIGA/SWAMP/WOODS — WorldgenTreeCoconut
+     * .java:52-58) match none of the 11 display names ("Limestone Mountains" ≠
+     * "Mountains", "Dense Woods" ∉ BIOMES_WOODS — exact-name matching).</li>
+     * </ul>
+     */
+    private void addAtumTags() {
+        for (ResourceLocation tId : GT6Worldgen.ATUM_BIOME_IDS) {
+            tag(GT6Worldgen.ATUM_BIOMES).addOptional(tId);
+        }
+        tag(treeTag("coconut")).addOptional(
+                ResourceLocation.fromNamespaceAndPath(GT6Worldgen.ATUM_MODID, "oasis"));
     }
 }

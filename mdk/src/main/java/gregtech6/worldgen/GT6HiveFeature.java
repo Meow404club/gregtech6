@@ -150,7 +150,33 @@ public class GT6HiveFeature extends Feature<NoneFeatureConfiguration> {
 		ResourceKey<Level> tDim = dimensionOf(tLevel);
 		if (tDim == Level.NETHER) return generateNether(tLevel, tRandom, tX, tZ);
 		if (tDim == Level.END) return generateEnd(tLevel, tRandom, tX, tZ);
+		// task atum-dim-adaptation — the atum case before the overworld default (the
+		// overworld modifier never mounts in atum biomes; this arm is for the
+		// gt6:atum_bumble_hives modifier's mounts). The biome probe rides OUR
+		// #gt6:atum_biomes tag — the SAME gate the modifier hangs through (the interned
+		// TagKey pairing), atum absent = empty tag = is()==false = the default arm.
+		if (tLevel.getBiome(new BlockPos(tX, 0, tZ)).is(GT6Worldgen.ATUM_BIOMES)) {
+			return generateAtum(tLevel, tRandom, tX, tZ);
+		}
 		return generateOverworld(tLevel, tRandom, tX, tZ);
+	}
+
+	/**
+	 * The atum case (task atum-dim-adaptation) — WorldgenHives.java:79-87 verbatim:
+	 * {@code tY = 16+nextInt(64)} (the y16-79 band), the host probe on the dimension's
+	 * base stone (the upstream {@code IL.ATUM_Limestone} face; the modern carrier is
+	 * Atum's own {@code #atum:base_stone_atum} fill — limestone + karst — behind OUR
+	 * {@code #gt6:atum_base_stone} indirection tag, the deadrock posture), the 5-of-6
+	 * opaque-face wall embed, and the YELLOW/900 hive (DYE_INT_Yellow, species 900 —
+	 * the {@link HiveKind#SAND} row's exact colour/species pair, passed directly like
+	 * the nether/end arms pass their kinds).
+	 */
+	private boolean generateAtum(WorldGenLevel aLevel, Random aRandom, int aX, int aZ) {
+		int tY = 16 + aRandom.nextInt(64); // :80
+		if (!inBuild(aLevel, tY)) return false;
+		if (!aLevel.getBlockState(new BlockPos(aX, tY, aZ)).is(GT6Worldgen.ATUM_BASE_STONE)) return false; // :81
+		if (!wallEmbed(aLevel, aX, tY, aZ)) return false; // :82-85
+		return placeHive(aLevel, aX, tY, aZ, HiveKind.SAND, aRandom); // :86 DYE_INT_Yellow, 900
 	}
 
 	/** The concrete dimension of a worldgen level (the dimensionSalt unwrapping). */

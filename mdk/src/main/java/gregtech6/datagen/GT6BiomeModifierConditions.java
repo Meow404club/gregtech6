@@ -160,6 +160,15 @@ public class GT6BiomeModifierConditions implements DataProvider {
             new ConditionRow(GT6WorldgenDatagen.ATUM_LARGE_VEINS_MODIFIER_KEY.location().getPath(),
                     aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)),
             new ConditionRow(GT6WorldgenDatagen.ATUM_ORES_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)),
+            // task atum-dim-adaptation — the stone/rocks/hive tenants: the 17-stone
+            // band, the 3,3 surface-rocks twin and the atum hive arm close the card's
+            // band set (six atum rows total, the CONDITIONS registry's mod-dim face).
+            new ConditionRow(GT6WorldgenDatagen.ATUM_STONES_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)),
+            new ConditionRow(GT6WorldgenDatagen.ATUM_SURFACE_ROCKS_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)),
+            new ConditionRow(GT6WorldgenDatagen.ATUM_BUMBLE_HIVES_MODIFIER_KEY.location().getPath(),
                     aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)));
 
     @Override

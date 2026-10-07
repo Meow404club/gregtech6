@@ -452,6 +452,7 @@ public final class GT6WorldgenDatagen {
         bootstrapLensOreConfigured(ctx); // task c3-lens-ores — tail-append
         bootstrapTwilightOreConfigured(ctx); // task twilight-adaptation-pilot — tail-append
         bootstrapTwilightStoneConfigured(ctx); // task twilight-stone-rows — tail-append
+        bootstrapAtumStoneConfigured(ctx); // task atum-dim-adaptation — tail-append
     }
 
     /**
@@ -598,6 +599,7 @@ public final class GT6WorldgenDatagen {
         bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
         bootstrapTwilightOrePlaced(ctx, tFeatures); // task twilight-adaptation-pilot — tail-append
         bootstrapTwilightStonePlaced(ctx, tFeatures); // task twilight-stone-rows — tail-append
+        bootstrapAtumStonePlaced(ctx, tFeatures); // task atum-dim-adaptation — tail-append
     }
 
     /**
@@ -721,6 +723,20 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task atum-dim-adaptation — the atum stone modifier: the 17-stone row over
+        // #gt6:atum_biomes at the ore step — the 12 blob stones REUSE the overworld
+        // placed features (the atum row numbers ARE the overworld row numbers,
+        // Loader_Worldgen.java:659 vs :655), the 5 marker stones ride their own
+        // atum_stone_<snake> placed variants. ONE modifier over the whole band (the
+        // twilight_stones row's shape); the mod_loaded condition rides the emission
+        // registry.
+        List<Holder<PlacedFeature>> tAtumStones = new ArrayList<>(17);
+        for (ResourceKey<PlacedFeature> tKey : GT6Worldgen.PLACED_KEYS) tAtumStones.add(tPlaced.getOrThrow(tKey));
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) tAtumStones.add(tPlaced.getOrThrow(GT6Worldgen.atumStonePlacedKey(tSnake)));
+        ctx.register(ATUM_STONES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(tAtumStones),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
 
         // task worldgen-water-replace — the vanilla-water biome modifier: EVERY overworld
         // biome (the row gates do the filtering in-feature — the chunk-granular
@@ -798,6 +814,15 @@ public final class GT6WorldgenDatagen {
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         ctx.register(biomeModifierKeyOf("end_bumble_hives"), addFeatures(
                 tBiomes.getOrThrow(BiomeTags.IS_END),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task atum-dim-adaptation — the atum hive modifier (the FOURTH vanilla-family
+        // row + the first mod-dim hive): the SAME gt6:bumble_hives placed feature over
+        // #gt6:atum_biomes at the underground step; the Feature's atum arm
+        // (WorldgenHives.java:79-87) scans y16-79 for the #gt6:atum_base_stone wall.
+        // The mod_loaded condition rides the emission registry.
+        ctx.register(ATUM_BUMBLE_HIVES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         // task worldgen-coltan — the coltan biome modifier: EVERY overworld biome
@@ -1026,6 +1051,14 @@ public final class GT6WorldgenDatagen {
                 aFeatures.getOrThrow(GT6Worldgen.SURFACE_ROCKS_CONFIGURED),
                 RarityFilter.onAverageOnceEvery(GT6Worldgen.SURFACE_ROCKS_PROBABILITY),
                 CountPlacement.of(GT6Worldgen.TWILIGHT_SURFACE_ROCKS_AMOUNT),
+        // task atum-dim-adaptation — the atum surface-rocks placed twin (the
+        // twilight-vegetation form): atum.rocks is 3,3 (Loader_Worldgen.java:625
+        // amount 3 / probability 3) over the SHARED overworld_surface_rocks lottery —
+        // the anchor-less outer chain, the overworld twin's exact shape at atum numbers.
+        PlacementUtils.register(ctx, GT6Worldgen.ATUM_SURFACE_ROCKS_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.SURFACE_ROCKS_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.ATUM_SURFACE_ROCKS_PROBABILITY),
+                CountPlacement.of(GT6Worldgen.ATUM_SURFACE_ROCKS_AMOUNT),
                 BiomeFilter.biome());
     }
 
@@ -1138,6 +1171,31 @@ public final class GT6WorldgenDatagen {
      * riding the emission registry.
      */
     public static final ResourceKey<BiomeModifier> ATUM_ORES_MODIFIER_KEY = biomeModifierKeyOf("atum_ores");
+
+    /**
+     * The atum stone-rows biome-modifier key (task atum-dim-adaptation): the 17-stone
+     * band over {@code #gt6:atum_biomes} at the ore step — 12 reused overworld blob
+     * placed features + 5 own atum lens-stone placed variants, the twilight_stones
+     * row's shape; the conditions ride the emission registry.
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_STONES_MODIFIER_KEY = biomeModifierKeyOf("atum_stones");
+
+    /**
+     * The atum surface-rocks biome-modifier key (task atum-dim-adaptation): the 3,3
+     * placed twin over {@code #gt6:atum_biomes} at the vegetal step (the
+     * twilight_surface_rocks row's shape, atum numbers), the conditions riding the
+     * emission registry.
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_SURFACE_ROCKS_MODIFIER_KEY = biomeModifierKeyOf("atum_surface_rocks");
+
+    /**
+     * The atum bumble-hive biome-modifier key (task atum-dim-adaptation): the SAME
+     * gt6:bumble_hives placed feature over {@code #gt6:atum_biomes} (the
+     * end_bumble_hives same-placed-key convention; the Feature's atum arm rides the
+     * WorldgenHives.java:79-87 case — y16-79, the #gt6:atum_base_stone wall, the
+     * yellow/900 hive), the conditions riding the emission registry.
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_BUMBLE_HIVES_MODIFIER_KEY = biomeModifierKeyOf("atum_bumble_hives");
 
     /**
      * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card
@@ -1676,6 +1734,70 @@ public final class GT6WorldgenDatagen {
                 aBiomes.getOrThrow(GT6Worldgen.SURFACE_ROCKS_TWILIGHT_BIOMES),
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.TWILIGHT_SURFACE_ROCKS_PLACED)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
+        // task atum-dim-adaptation — the atum rocks modifier: the 3,3 placed twin over
+        // #gt6:atum_biomes at the vegetal step (the overworld rocks row's step), the
+        // mod_loaded condition riding the emission registry.
+        ctx.register(ATUM_SURFACE_ROCKS_MODIFIER_KEY, addFeatures(aBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.ATUM_SURFACE_ROCKS_PLACED)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+    }
+
+    // ------------------------------------------------------------------
+    // The atum stone-row band (task atum-dim-adaptation) — the WorldgenStone loop's
+    // atum row per stone (Loader_Worldgen.java:659: amount 1 / size 200 / probability
+    // 100 / Y 0-120 — the OVERWORLD row numbers verbatim). The 12 blob stones REUSE the
+    // overworld placed features outright (identical rarity/Y chains — the modifier is
+    // the only new face); the 5 marker stones get own configured/placed (their overworld
+    // blob rows are retired to the strata lenses, the twilight-stone-rows reuse-or-own
+    // form at atum numbers). ALL mounted by the ONE {@link #ATUM_STONES_MODIFIER_KEY}
+    // row; the mod_loaded condition rides the emission registry.
+    // ------------------------------------------------------------------
+
+    /**
+     * The 5 atum-only blob configured features (the lens marker stones): vanilla
+     * {@code Feature.ORE} byte-shape-identical to the 12-blob band — the single
+     * {@code stone_ore_replaceables -> GTStoneBlocks.<snake>(STONE)} target at
+     * {@link GT6Worldgen#oreBlobSize()} (the upstream atum size 200 clamps to the same
+     * 64 the overworld 200 clamps to).
+     */
+    private static void bootstrapAtumStoneConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) {
+            FeatureUtils.register(ctx, GT6Worldgen.atumStoneConfiguredKey(tSnake), Feature.ORE,
+                    new OreConfiguration(
+                            List.of(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
+                                    GTStoneBlocks.block(tSnake, StoneVariant.STONE).get().defaultBlockState())),
+                            GT6Worldgen.oreBlobSize()));
+        }
+    }
+
+    /**
+     * The 5 atum lens-stone placed variants: RarityFilter 1/100 (Loader_Worldgen.java:659
+     * probability 100 — the WorldgenBlob.java:55 chunk gate) + InSquare + BiomeFilter +
+     * the verbatim uniform Y [0, 120] band (NO count modifier — Amount=1 IS the default
+     * count).
+     */
+    private static void bootstrapAtumStonePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) {
+            PlacementUtils.register(ctx, GT6Worldgen.atumStonePlacedKey(tSnake),
+                    aFeatures.getOrThrow(GT6Worldgen.atumStoneConfiguredKey(tSnake)),
+                    RarityFilter.onAverageOnceEvery(GT6Worldgen.BLOB_PROBABILITY),
+                    InSquarePlacement.spread(),
+                    BiomeFilter.biome(),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MIN_Y),
+                            VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MAX_Y)));
+        }
     }
 
     // ------------------------------------------------------------------
