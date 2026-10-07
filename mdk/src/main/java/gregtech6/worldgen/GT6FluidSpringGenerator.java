@@ -51,21 +51,38 @@ public final class GT6FluidSpringGenerator {
     /** The chunk-local centre offset of the bedrock-face gate (WorldgenFluidSpring.java:66 aMinX+8). */
     public static final int GATE_OFFSET = 8;
 
+    /**
+     * The three-state routing dimension (task twilight-hives-springs): the Feature's
+     * {@code hasCeiling} binary grown its twilight arm. Upstream routed by the world's
+     * registered dim-type list (the GEN_TWILIGHT rows :795-796 roll ONLY in the twilight
+     * dimension, WorldgenFluidSpring.generate's aDimType face) — the port's binary
+     * (hasCeiling = nether, else overworld) would roll the OW oil/gas band in TF, the
+     * trap the third state exists for.
+     */
+    public enum Dim { OVERWORLD, NETHER, TWILIGHT }
+
     private GT6FluidSpringGenerator() {
     }
 
     /** The row validity overworld face (the pre-nether callers). */
     public static boolean valid(GTFluidSpringConfig aRow) {
-        return valid(aRow, false);
+        return valid(aRow, Dim.OVERWORLD);
+    }
+
+    /** The boolean legacy face — nether=true rides {@link Dim#NETHER}, false the overworld. */
+    public static boolean valid(GTFluidSpringConfig aRow, boolean aNether) {
+        return valid(aRow, aNether ? Dim.NETHER : Dim.OVERWORLD);
     }
 
     /**
      * The row validity (the modern dimension-mask face): the {@code overworld} rows roll in
      * the overworld, the :797 nether lava row rolls in the nether ({@code nether=true}, task
-     * worldgen-nether-bedrock-lava); the :789-796 rows carry neither — dormant census rows.
+     * worldgen-nether-bedrock-lava), the :795-796 twilight rows roll in Twilight Forest
+     * ({@code twilight=true}, task twilight-hives-springs); the :789-794 rows carry no
+     * column — dormant census rows.
      */
-    public static boolean valid(GTFluidSpringConfig aRow, boolean aNether) {
-        return aNether ? aRow.nether() : aRow.overworld();
+    public static boolean valid(GTFluidSpringConfig aRow, Dim aDim) {
+        return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.TWILIGHT ? aRow.twilight() : aRow.overworld();
     }
 
     /**
@@ -82,7 +99,18 @@ public final class GT6FluidSpringGenerator {
 
     /** The dimension-aware face — the replay filters the ore rows like the ore Feature does. */
     public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom, boolean aNether) {
-        return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom, aNether).isEmpty();
+        return oreClaims(aOreTable, aOreRandom, aNether ? Dim.NETHER : Dim.OVERWORLD);
+    }
+
+    /**
+     * The three-state face (task twilight-hives-springs): the twilight arm returns FALSE
+     * unconditionally — no GT bedrock-ore modifier is mounted in TF (the ore rows' masks
+     * carry no twilight column), so the mutual-exclusion replay has no counterpart there
+     * and every TF chunk is spring-eligible on its own roll.
+     */
+    public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom, Dim aDim) {
+        if (aDim == Dim.TWILIGHT) return false;
+        return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom, aDim == Dim.NETHER).isEmpty();
     }
 
     /**
@@ -95,10 +123,15 @@ public final class GT6FluidSpringGenerator {
         return drawSpring(aTable, aRandom, false);
     }
 
-    /** The dimension-aware face — see {@link #valid(GTFluidSpringConfig, boolean)}. */
+    /** The dimension-aware face — see {@link #valid(GTFluidSpringConfig, Dim)}. */
     public static GTFluidSpringConfig drawSpring(GTFluidSpringConfig.Table aTable, Random aRandom, boolean aNether) {
+        return drawSpring(aTable, aRandom, aNether ? Dim.NETHER : Dim.OVERWORLD);
+    }
+
+    /** The three-state face — the roll walks ONLY the rows whose mask matches the dimension. */
+    public static GTFluidSpringConfig drawSpring(GTFluidSpringConfig.Table aTable, Random aRandom, Dim aDim) {
         for (GTFluidSpringConfig tRow : aTable.rows()) {
-            if (!valid(tRow, aNether)) continue;
+            if (!valid(tRow, aDim)) continue;
             if (aRandom.nextInt(tRow.probability()) == 0) return tRow;
         }
         return null;

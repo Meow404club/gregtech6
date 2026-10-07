@@ -35,8 +35,16 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  *
  * <p>The {@code nether} column (task worldgen-nether-bedrock-lava): the row listed
  * GEN_NETHER — the :797 nether lava dome, the only offworld dimension this port
- * hangs modifiers for; the :789-796 rows carry neither column (census-only until
+ * hangs modifiers for; the :789-794 rows carry neither column (census-only until
  * their dim cards).
+ *
+ * <p>The {@code twilight} column (task twilight-hives-springs): the :795-796
+ * GEN_TWILIGHT rows (natural gas 1/200 amount 1000, geothermal water 1/100 amount
+ * 250 — the loader args verbatim) activate in the Twilight Forest dimension. The
+ * port owns NO TF dimension routing upstream-style (the 1.7.10 GEN_* dim-type
+ * registry list), so the mask column is what keeps the routing three-state — the
+ * hasCeiling binary alone would roll the OW oil/gas band in TF (TF hangs no
+ * ceiling; the trap the column exists for).
  *
  * <p>The probability is the 1/P per-chunk roll (WorldgenFluidSpring.java:62
  * {@code aRandom.nextInt(mProbability) != 0 -> return F}): the OW band rolls
@@ -59,11 +67,16 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * the datagen table over GTFluids.SPRING_BLOCK_IDS and pinned by the parity test).
  */
 public record GTFluidSpringConfig(String name, String blockId, int probability, boolean overworld,
-        boolean nether, Integer springFluid) implements FeatureConfiguration {
+        boolean nether, boolean twilight, Integer springFluid) implements FeatureConfiguration {
 
-    /** The legacy 5-arg face (the pre-nether call sites) — nether=false, the :789-796 posture. */
+    /** The legacy 5-arg face (the pre-nether call sites) — nether=false, twilight=false, the :789-794 posture. */
     public GTFluidSpringConfig(String aName, String aBlockId, int aProbability, boolean aOverworld, Integer aSpringFluid) {
-        this(aName, aBlockId, aProbability, aOverworld, false, aSpringFluid);
+        this(aName, aBlockId, aProbability, aOverworld, false, false, aSpringFluid);
+    }
+
+    /** The nether-card face (the worldgen-nether-bedrock-lava call sites) — twilight=false, the :788/:797 posture. */
+    public GTFluidSpringConfig(String aName, String aBlockId, int aProbability, boolean aOverworld, boolean aNether, Integer aSpringFluid) {
+        this(aName, aBlockId, aProbability, aOverworld, aNether, false, aSpringFluid);
     }
 
     public static final Codec<GTFluidSpringConfig> CODEC = RecordCodecBuilder.create(aFields -> aFields.group(
@@ -72,6 +85,7 @@ public record GTFluidSpringConfig(String name, String blockId, int probability, 
             Codec.intRange(1, Integer.MAX_VALUE).fieldOf("probability").forGetter(GTFluidSpringConfig::probability),
             Codec.BOOL.fieldOf("overworld").forGetter(GTFluidSpringConfig::overworld),
             Codec.BOOL.optionalFieldOf("nether", false).forGetter(GTFluidSpringConfig::nether),
+            Codec.BOOL.optionalFieldOf("twilight", false).forGetter(GTFluidSpringConfig::twilight),
             Codec.INT.optionalFieldOf("springFluid")
                     .xmap(aOpt -> aOpt.orElse(null), java.util.Optional::ofNullable)
                     .forGetter(GTFluidSpringConfig::springFluid))

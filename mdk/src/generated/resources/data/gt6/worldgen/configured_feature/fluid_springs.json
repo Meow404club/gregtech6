@@ -98,14 +98,16 @@
         "name": "twilight.fluid.gas.natural",
         "overworld": false,
         "probability": 200,
-        "springFluid": 1000
+        "springFluid": 1000,
+        "twilight": true
       },
       {
         "block": "gt6:water_geothermal_block",
         "name": "twilight.fluid.water",
         "overworld": false,
         "probability": 100,
-        "springFluid": 250
+        "springFluid": 250,
+        "twilight": true
       },
       {
         "block": "minecraft:lava",

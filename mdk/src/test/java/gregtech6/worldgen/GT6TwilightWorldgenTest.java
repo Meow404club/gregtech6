@@ -156,6 +156,106 @@ public class GT6TwilightWorldgenTest {
                 "TF's own tag — never emitted here, the datagen resolves it empty (EmptyTagLookup)");
     }
 
+    // ---------------------------------------------------------------- the bumble-hive mount (task twilight-hives-springs)
+
+    /**
+     * The FOURTH hive modifier (task twilight-hives-springs): key path + the leg's
+     * biome_modifier registry (the TWILIGHT_ORES key pin's twin).
+     */
+    @Test
+    public void twilightHiveModifierKeyIsPinned() {
+        assertEquals("gt6:twilight_bumble_hives",
+                GT6WorldgenDatagen.TWILIGHT_HIVES_MODIFIER_KEY.location().toString(),
+                "the twilight_bumble_hives modifier id");
+        assertEquals(GT6WorldgenDatagen.biomeModifierRegistryKey().location(),
+                GT6WorldgenDatagen.TWILIGHT_HIVES_MODIFIER_KEY.registry(),
+                "the modifier lives in the leg's biome_modifier registry");
+    }
+
+    /**
+     * The hive-mount modifier in EACH leg's brand: the TF tag gate + the shared
+     * {@code gt6:bumble_hives} placed feature (the nether_bumble_hives same-placed-key
+     * convention) + the ore step + the TF-absence conditions = exactly ONE positive
+     * {@code mod_loaded twilightforest}.
+     */
+    @Test
+    public void twilightHiveModifierShipsTheTfGateInBothBrands() throws Exception {
+        for (String tBrand : new String[] {"forge", "neoforge"}) {
+            JsonObject tRow = resourceJson("data/gt6/" + tBrand + "/biome_modifier/twilight_bumble_hives.json");
+            assertEquals(tBrand + ":add_features", tRow.get("type").getAsString(), tBrand + " type brand");
+            assertEquals("#twilightforest:in_twilight_forest", tRow.get("biomes").getAsString(),
+                    "the TF tag gate (never resolved when TF is absent — the condition skips the entry first)");
+            assertEquals("gt6:bumble_hives", tRow.get("features").getAsString(),
+                    "the shared placed feature (the FOURTH modifier over the SAME placed key)");
+            assertEquals("underground_ores", tRow.get("step").getAsString(), "the ore step");
+            JsonArray tConditions = tRow.getAsJsonArray(tBrand + ":conditions");
+            assertNotNull(tConditions, "the conditions key in the " + tBrand + " brand");
+            assertEquals(1, tConditions.size(), "exactly the positive mod_loaded");
+            JsonObject tModLoaded = tConditions.get(0).getAsJsonObject();
+            assertEquals(tBrand + ":mod_loaded", tModLoaded.get("type").getAsString());
+            assertEquals("twilightforest", tModLoaded.get("modid").getAsString(),
+                    "THE TF-ABSENCE PIN: without TF the entry never registers (zero mounts, zero errors)");
+        }
+    }
+
+    /**
+     * The magical family tag ships the TF slice: exactly ONE optional entry (required:false
+     * — the deadrock red-line), the vanilla-zero discipline holds (TF absent = empty tag).
+     */
+    @Test
+    public void magicalHiveTagShipsTheTfSliceRequiredFalse() throws Exception {
+        JsonObject tTag = resourceJson("data/gt6/tags/worldgen/biome/bumble_hives/magical.json");
+        assertTrue(!tTag.has("replace") || !tTag.get("replace").getAsBoolean(), "join semantics");
+        JsonArray tValues = tTag.getAsJsonArray("values");
+        assertEquals(1, tValues.size(), "exactly the enchanted_forest slice");
+        JsonObject tEntry = tValues.get(0).getAsJsonObject();
+        assertEquals("twilightforest:enchanted_forest", tEntry.get("id").getAsString());
+        assertEquals(false, tEntry.get("required").getAsBoolean(),
+                "required:false — TF absent = empty tag = no crash, no hang");
+    }
+
+    /**
+     * The twilight FLUID-SPRING mount (task twilight-hives-springs): the modifier key twin
+     * of the hive mount.
+     */
+    @Test
+    public void twilightSpringModifierKeyIsPinned() {
+        assertEquals("gt6:twilight_fluid_springs",
+                GT6WorldgenDatagen.TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY.location().toString(),
+                "the twilight_fluid_springs modifier id");
+        assertEquals(GT6WorldgenDatagen.biomeModifierRegistryKey().location(),
+                GT6WorldgenDatagen.TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY.registry(),
+                "the modifier lives in the leg's biome_modifier registry");
+    }
+
+    /**
+     * The spring-mount modifier in EACH leg's brand: the TF tag gate + the shared
+     * {@code gt6:fluid_springs} placed feature (the nether_fluid_springs same-placed-key
+     * convention) + the ore step + the TF-absence conditions = exactly ONE positive
+     * {@code mod_loaded twilightforest}. THE ROW MASKS do the band selection (the twilight
+     * column, the :795-796 rows) — the Feature's three-state routing never walks the OW
+     * oil/gas band in TF (the hasCeiling-binary trap).
+     */
+    @Test
+    public void twilightSpringModifierShipsTheTfGateInBothBrands() throws Exception {
+        for (String tBrand : new String[] {"forge", "neoforge"}) {
+            JsonObject tRow = resourceJson("data/gt6/" + tBrand + "/biome_modifier/twilight_fluid_springs.json");
+            assertEquals(tBrand + ":add_features", tRow.get("type").getAsString(), tBrand + " type brand");
+            assertEquals("#twilightforest:in_twilight_forest", tRow.get("biomes").getAsString(),
+                    "the TF tag gate (never resolved when TF is absent — the condition skips the entry first)");
+            assertEquals("gt6:fluid_springs", tRow.get("features").getAsString(),
+                    "the shared placed feature (the nether_fluid_springs same-placed-key convention)");
+            assertEquals("underground_ores", tRow.get("step").getAsString(), "the ore step");
+            JsonArray tConditions = tRow.getAsJsonArray(tBrand + ":conditions");
+            assertNotNull(tConditions, "the conditions key in the " + tBrand + " brand");
+            assertEquals(1, tConditions.size(), "exactly the positive mod_loaded");
+            JsonObject tModLoaded = tConditions.get(0).getAsJsonObject();
+            assertEquals(tBrand + ":mod_loaded", tModLoaded.get("type").getAsString());
+            assertEquals("twilightforest", tModLoaded.get("modid").getAsString(),
+                    "THE TF-ABSENCE PIN: without TF the entry never registers (zero mounts, zero errors)");
+        }
+    }
+
     // ---------------------------------------------------------------- the JSON snapshots
 
     private static JsonObject resourceJson(String aPath) throws Exception {

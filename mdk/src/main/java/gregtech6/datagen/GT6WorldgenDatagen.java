@@ -832,6 +832,26 @@ public final class GT6WorldgenDatagen {
                 HolderSet.direct(GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.stream()
                         .map(tPlaced::getOrThrow).toList()),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task twilight-hives-springs — the FOURTH hive modifier over TF's own tag at the
+        // ore step (the twilight_ores row's division of labor: condition-free bootstrap,
+        // the loader brand keys ride the emission registry). The mount half only — the
+        // Feature's default routing IS the upstream DIM_TWILIGHT-over-OVERWORLD-case face
+        // (WorldgenHives.java:126), zero Feature changes.
+        ctx.register(TWILIGHT_HIVES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GTOreWorldgen.twilightBiomeTag()),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task twilight-hives-springs — the twilight FLUID-SPRING mount over TF's own tag at
+        // the ore step, textually AFTER the hive mount (the upstream source order: the hive
+        // row :639 precedes the spring rows :795-796). The ROW masks (the twilight column,
+        // the :795-796 rows) keep the roll mass per dimension — the Feature walks only its
+        // own dimension's rows, the nether_fluid_springs convention; the conditions ride the
+        // emission registry (the positive mod_loaded, the twilight_ores row's division of
+        // labor).
+        ctx.register(TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GTOreWorldgen.twilightBiomeTag()),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
     }
 
     /**
@@ -1044,6 +1064,34 @@ public final class GT6WorldgenDatagen {
      * {@code [mod_loaded twilightforest]}).
      */
     public static final ResourceKey<BiomeModifier> TWILIGHT_STONES_MODIFIER_KEY = biomeModifierKeyOf("twilight_stones");
+
+    /**
+     * The twilight bumble-hive biome-modifier key (task twilight-hives-springs): the FOURTH
+     * hive row — biomes {@code #twilightforest:in_twilight_forest} (the same TF tag gate as
+     * the twilight_ores row), features = the ONE {@code gt6:bumble_hives} placed feature
+     * (the nether_bumble_hives same-placed-key convention), the conditions ride the emission
+     * registry (the positive {@code [mod_loaded twilightforest]}). The upstream
+     * {@code twilight.bumblehives} row (Loader_Worldgen.java:639) routed DIM_TWILIGHT into
+     * the OVERWORLD case (WorldgenHives.java:126 — DIM_TWILIGHT in the same case group), and
+     * the Feature's default routing already sends every non-nether/end dimension to that
+     * overworld shape — this row is purely the MOUNT. The surface family chain picks the
+     * hive colour per biome: TF's magical biomes ride {@code #gt6:bumble_hives/magical}
+     * (GT6BiomeTags, the required:false pack-extension face).
+     */
+    public static final ResourceKey<BiomeModifier> TWILIGHT_HIVES_MODIFIER_KEY = biomeModifierKeyOf("twilight_bumble_hives");
+
+    /**
+     * The twilight fluid-spring biome-modifier key (task twilight-hives-springs): biomes
+     * {@code #twilightforest:in_twilight_forest} (the same TF tag gate as the twilight_ores
+     * row), features = the ONE {@code gt6:fluid_springs} placed feature (the nether_fluid_
+     * springs same-placed-key convention), the conditions ride the emission registry (the
+     * positive {@code [mod_loaded twilightforest]}). The upstream :795-796 rows (natural gas
+     * 1/200, geothermal water 1/100) routed via the GEN_TWILIGHT dim-type list; the port's
+     * Feature routes by the row's {@code twilight} mask column behind the THREE-STATE
+     * dimension face (the hasCeiling binary alone would roll the OW oil/gas band in TF —
+     * the trap the twilight column exists for).
+     */
+    public static final ResourceKey<BiomeModifier> TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY = biomeModifierKeyOf("twilight_fluid_springs");
 
     /**
      * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card
@@ -2112,9 +2160,14 @@ public final class GT6WorldgenDatagen {
                 new RandomSpreadStructurePlacement(DUNGEON_SPACING, DUNGEON_SEPARATION, RandomSpreadType.LINEAR, DUNGEON_SALT)));
     }
 
-    /** The row helper for the offworld rows (:789-797 — never drawn overworld, kept for the table census). */
+    /** The row helper for the offworld rows (:789-794 — never drawn overworld, kept for the table census). */
     private static GTFluidSpringConfig springOffworld(String aName, String aBlockId, int aProbability, int aSpringAmount) {
         return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, aSpringAmount);
+    }
+
+    /** The twilight-row helper (:795-796 — the task twilight-hives-springs activation, the twilight mask column). */
+    private static GTFluidSpringConfig springTwilight(String aName, String aBlockId, int aProbability, int aSpringAmount) {
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, true, aSpringAmount);
     }
 
     /** The lava-row helper (:788/:797 — the vanilla block face, no GT fluid id to single-source). */
@@ -2137,8 +2190,8 @@ public final class GT6WorldgenDatagen {
         springOffworld("atum.fluid.oil.light"         , "gt6:liquid_light_oil_block"     , 200, 2000), // :792
         springOffworld("erebus.fluid.gas.natural"     , "gt6:natural_gas_block"          , 200, 1000), // :793
         springOffworld("betweenlands.fluid.gas.natural", "gt6:natural_gas_block"         , 200, 1000), // :794
-        springOffworld("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200, 1000), // :795
-        springOffworld("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100,  250), // :796
+        springTwilight("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200, 1000), // :795 — the twilight mask (task twilight-hives-springs)
+        springTwilight("twilight.fluid.water"         , "gt6:water_geothermal_block"     , 100,  250), // :796 — the twilight mask (task twilight-hives-springs)
         springLava   ("nether.fluid.lava"             , 100, false, true ,      500)  // :797 — the GEN_NETHER dome (task worldgen-nether-bedrock-lava)
     );
 

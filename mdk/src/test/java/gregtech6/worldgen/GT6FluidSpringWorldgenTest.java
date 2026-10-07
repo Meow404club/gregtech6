@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
 import net.minecraft.core.BlockPos;
@@ -89,26 +91,27 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
         List<GTFluidSpringConfig> tTable = GT6WorldgenDatagen.FLUID_SPRING_TABLE;
         assertEquals(16, tTable.size(), "16 rows (the upstream WorldgenFluidSpring loop verbatim)");
 
-        // (name, blockId, P, overworld, springFluid) — the upstream ctor columns verbatim,
-        // in row order; springFluid = the mSpringFluid amount (6000 oils / 3000 gas /
-        // 500 geothermal / 1000 lava OW; 2000/1000/250/500 offworld)
+        // (name, blockId, P, overworld, twilight, springFluid) — the upstream ctor columns
+        // verbatim, in row order; springFluid = the mSpringFluid amount (6000 oils / 3000 gas /
+        // 500 geothermal / 1000 lava OW; 2000/1000/250/500 offworld); twilight = the :795-796
+        // activation (task twilight-hives-springs)
         Object[][] tExpected = {
-            {"overworld.fluid.oil.extraheavy", "gt6:liquid_extra_heavy_oil_block", 400, true , 6000}, // :782
-            {"overworld.fluid.oil.heavy"     , "gt6:liquid_heavy_oil_block"      , 400, true , 6000}, // :783
-            {"overworld.fluid.oil.medium"    , "gt6:liquid_medium_oil_block"     , 400, true , 6000}, // :784
-            {"overworld.fluid.oil.light"     , "gt6:liquid_light_oil_block"      , 400, true , 6000}, // :785
-            {"overworld.fluid.gas.natural"   , "gt6:natural_gas_block"           , 200, true , 3000}, // :786
-            {"overworld.fluid.water"         , "gt6:water_geothermal_block"      , 100, true ,  500}, // :787
-            {"overworld.fluid.lava"          , "minecraft:lava"                  , 200, true , 1000}, // :788
-            {"atum.fluid.oil.extraheavy"     , "gt6:liquid_extra_heavy_oil_block", 200, false, 2000}, // :789
-            {"atum.fluid.oil.heavy"          , "gt6:liquid_heavy_oil_block"      , 200, false, 2000}, // :790
-            {"atum.fluid.oil.medium"         , "gt6:liquid_medium_oil_block"     , 200, false, 2000}, // :791
-            {"atum.fluid.oil.light"          , "gt6:liquid_light_oil_block"      , 200, false, 2000}, // :792
-            {"erebus.fluid.gas.natural"      , "gt6:natural_gas_block"           , 200, false, 1000}, // :793
-            {"betweenlands.fluid.gas.natural", "gt6:natural_gas_block"           , 200, false, 1000}, // :794
-            {"twilight.fluid.gas.natural"    , "gt6:natural_gas_block"           , 200, false, 1000}, // :795
-            {"twilight.fluid.water"          , "gt6:water_geothermal_block"      , 100, false,  250}, // :796
-            {"nether.fluid.lava"             , "minecraft:lava"                  , 100, false,  500}};// :797
+            {"overworld.fluid.oil.extraheavy", "gt6:liquid_extra_heavy_oil_block", 400, true , false, 6000}, // :782
+            {"overworld.fluid.oil.heavy"     , "gt6:liquid_heavy_oil_block"      , 400, true , false, 6000}, // :783
+            {"overworld.fluid.oil.medium"    , "gt6:liquid_medium_oil_block"     , 400, true , false, 6000}, // :784
+            {"overworld.fluid.oil.light"     , "gt6:liquid_light_oil_block"      , 400, true , false, 6000}, // :785
+            {"overworld.fluid.gas.natural"   , "gt6:natural_gas_block"           , 200, true , false, 3000}, // :786
+            {"overworld.fluid.water"         , "gt6:water_geothermal_block"      , 100, true , false,  500}, // :787
+            {"overworld.fluid.lava"          , "minecraft:lava"                  , 200, true , false, 1000}, // :788
+            {"atum.fluid.oil.extraheavy"     , "gt6:liquid_extra_heavy_oil_block", 200, false, false, 2000}, // :789
+            {"atum.fluid.oil.heavy"          , "gt6:liquid_heavy_oil_block"      , 200, false, false, 2000}, // :790
+            {"atum.fluid.oil.medium"         , "gt6:liquid_medium_oil_block"     , 200, false, false, 2000}, // :791
+            {"atum.fluid.oil.light"          , "gt6:liquid_light_oil_block"      , 200, false, false, 2000}, // :792
+            {"erebus.fluid.gas.natural"      , "gt6:natural_gas_block"           , 200, false, false, 1000}, // :793
+            {"betweenlands.fluid.gas.natural", "gt6:natural_gas_block"           , 200, false, false, 1000}, // :794
+            {"twilight.fluid.gas.natural"    , "gt6:natural_gas_block"           , 200, false, true , 1000}, // :795
+            {"twilight.fluid.water"          , "gt6:water_geothermal_block"      , 100, false, true ,  250}, // :796
+            {"nether.fluid.lava"             , "minecraft:lava"                  , 100, false, false,  500}};// :797
         assertEquals(tTable.size(), tExpected.length);
         for (int i = 0; i < tExpected.length; i++) {
             GTFluidSpringConfig tRow = tTable.get(i);
@@ -116,7 +119,8 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
             assertEquals(tExpected[i][1], tRow.blockId(), "row " + i + " block id (the single-sourced face)");
             assertEquals(tExpected[i][2], tRow.probability(), "row " + i + " probability (the 1/P per-chunk roll)");
             assertEquals(tExpected[i][3], tRow.overworld(), "row " + i + " dimension mask");
-            assertEquals(tExpected[i][4], tRow.springFluid(), "row " + i + " springFluid amount (the 1/amount nozzle divisor)");
+            assertEquals(tExpected[i][4], tRow.twilight(), "row " + i + " twilight mask (the :795-796 activation)");
+            assertEquals(tExpected[i][5], tRow.springFluid(), "row " + i + " springFluid amount (the 1/amount nozzle divisor)");
         }
         // the overworld roll mass: 4/400 + 1/200 + 1/100 + 1/200 = 0.035/chunk — the ~3.5%
         // face behind the RCON "~144 springs/4096 chunk" order of magnitude
@@ -230,6 +234,89 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
                 "the nether-active ore row claims the nether chunk");
         assertFalse(GT6FluidSpringGenerator.oreClaims(tOreTable, new Random(0), false),
                 "the nether-active ore row never claims an overworld chunk");
+    }
+
+    // ---------------------------------------------------------------- the twilight band (task twilight-hives-springs)
+
+    /**
+     * THE twilight activation pin: exactly the :795-796 rows carry the twilight mask (the
+     * loader loader-args verbatim: gas 1/200 amount 1000, geothermal water 1/100 amount 250);
+     * every other row stays dormant in TF.
+     */
+    @Test
+    void twilightRowsAreExactlyTheGasAndWaterRows() {
+        List<String> tTwilight = new ArrayList<>();
+        for (GTFluidSpringConfig tRow : GT6WorldgenDatagen.FLUID_SPRING_TABLE) if (tRow.twilight()) tTwilight.add(tRow.name());
+        assertEquals(List.of("twilight.fluid.gas.natural", "twilight.fluid.water"), tTwilight,
+                "the :795-796 GEN_TWILIGHT rows activate");
+        // the TF roll mass: 1/200 + 1/100 = 0.015/chunk — and the OW band contributes NOTHING
+        double tSum = 0;
+        for (GTFluidSpringConfig tRow : GT6WorldgenDatagen.FLUID_SPRING_TABLE) if (tRow.twilight()) tSum += 1.0 / tRow.probability();
+        assertEquals(0.015, tSum, 1e-9, "the twilight roll mass stays the upstream order");
+    }
+
+    /**
+     * THE three-state trap pin (the card's named hazard): the hasCeiling binary alone would
+     * roll the OW oil/gas band in TF (TF hangs no ceiling). With a P=1 row in EVERY band the
+     * dimension decides the winner: TWILIGHT walks only the twilight row, OVERWORLD only the
+     * ow row, NETHER neither; the twilight arm of the exclusion replay NEVER claims (no GT
+     * bedrock ores in TF) while the OW arm still claims a P=1 ore row.
+     */
+    @Test
+    void twilightDrawWalksOnlyTheTwilightRowsAndNeverTheOwBand() {
+        GTFluidSpringConfig.Table tTable = new GTFluidSpringConfig.Table(List.of(
+                new GTFluidSpringConfig("ow", "minecraft:lava", 1, true, false, false, 1000),
+                new GTFluidSpringConfig("dormant", "minecraft:lava", 1, false, false, false, 1000),
+                new GTFluidSpringConfig("twilight", "gt6:water_geothermal_block", 1, false, false, true, 250)));
+        for (long tSeed = 0; tSeed < 50; tSeed++) {
+            assertEquals("twilight", GT6FluidSpringGenerator.drawSpring(tTable, new Random(tSeed),
+                            GT6FluidSpringGenerator.Dim.TWILIGHT).name(),
+                    "seed " + tSeed + ": the twilight roll skips the OW band (the :795-796 rows only)");
+            assertEquals("ow", GT6FluidSpringGenerator.drawSpring(tTable, new Random(tSeed),
+                            GT6FluidSpringGenerator.Dim.OVERWORLD).name(),
+                    "seed " + tSeed + ": the OW roll skips the twilight rows");
+            assertNull(GT6FluidSpringGenerator.drawSpring(tTable, new Random(tSeed),
+                            GT6FluidSpringGenerator.Dim.NETHER),
+                    "seed " + tSeed + ": the nether roll walks neither (the masks are disjoint)");
+        }
+        // the replay: the twilight arm NEVER claims — no bedrock-ore modifier exists in TF
+        GTBedrockOreConfig.Table tOreTable = new GTBedrockOreConfig.Table(List.of(
+                new GTBedrockOreConfig("ore.bedrock.coal", gregapi.data.MT.Coal, 1, true)));
+        for (long tSeed = 0; tSeed < 20; tSeed++) {
+            assertFalse(GT6FluidSpringGenerator.oreClaims(tOreTable, new Random(tSeed),
+                            GT6FluidSpringGenerator.Dim.TWILIGHT),
+                    "seed " + tSeed + ": the twilight arm has no ore-replay counterpart");
+            assertTrue(GT6FluidSpringGenerator.oreClaims(tOreTable, new Random(tSeed),
+                            GT6FluidSpringGenerator.Dim.OVERWORLD),
+                    "seed " + tSeed + ": the OW arm still claims the P=1 ore row");
+        }
+    }
+
+    /**
+     * The emitted JSON face (the KJS-editable configured feature): the two twilight rows
+     * carry {@code "twilight": true}; EVERY other row omits the key (the optionalFieldOf
+     * default — the backward-compat byte ratchet, the pre-card rows keep their bytes).
+     */
+    @Test
+    void fluidSpringsJsonShipsTheTwilightFlagsOnExactlyTheTwoRows() throws Exception {
+        JsonObject tRoot;
+        try (InputStream tStream = GT6FluidSpringWorldgenTest.class.getClassLoader()
+                .getResourceAsStream("data/gt6/worldgen/configured_feature/fluid_springs.json")) {
+            assertNotNull(tStream, "the configured feature must ship on the classpath");
+            tRoot = com.google.gson.JsonParser.parseString(
+                    new String(tStream.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+        }
+        com.google.gson.JsonArray tRows = tRoot.getAsJsonObject("config").getAsJsonArray("rows");
+        assertEquals(16, tRows.size(), "the 16-row JSON table");
+        int tTwilightFlags = 0;
+        for (int i = 0; i < tRows.size(); i++) {
+            JsonObject tRow = tRows.get(i).getAsJsonObject();
+            boolean tExpectFlag = tRow.get("name").getAsString().startsWith("twilight.fluid.");
+            assertEquals(tExpectFlag, tRow.has("twilight") && tRow.get("twilight").getAsBoolean(),
+                    "row " + i + " (" + tRow.get("name").getAsString() + "): the flag exactly on :795-796");
+            if (tExpectFlag) tTwilightFlags++;
+        }
+        assertEquals(2, tTwilightFlags, "exactly the two twilight rows flagged");
     }
 
     // ---------------------------------------------------------------- the dome shape
