@@ -335,6 +335,7 @@ public class GT6AssetCoverageGuardTest {
 			GT6SlicerBlades.class, GT6SprayCans.class, GT6StaticStorages.class,
 			GT6SurfaceBlocks.class, GT6Tanks.class, GT6Tools.class, GT6TreeBlocks.class,
 			GT6BeamBlocks.class, // task beam-blocks-register — the 8 wood-beam rows
+			gregtech6.registry.GT6PlankPanels.class, // task material-mc-g3-plank-panels — the 28 wooden panel pairs
 			GT6CropSeeds.class, // task cbc-3-crop-data-assets — the gt6:crop_seed item (the 59-card seed face)
 			GT6Turbines.class, GT6ZpmDechargers.class, GTEnergySources.class, GTBarrels.class, GTBlockEntities.class,
 			GTMachines.class, GTMultiBlocks.class, GTWires.class, GTFluidPipes.class,
