@@ -1,0 +1,58 @@
+{
+  "variants": {
+    "gt_liquid_level=0,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_empty"
+    },
+    "gt_liquid_level=0,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_empty"
+    },
+    "gt_liquid_level=1,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_1_solid"
+    },
+    "gt_liquid_level=1,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_1"
+    },
+    "gt_liquid_level=2,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_2_solid"
+    },
+    "gt_liquid_level=2,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_2"
+    },
+    "gt_liquid_level=3,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_3_solid"
+    },
+    "gt_liquid_level=3,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_3"
+    },
+    "gt_liquid_level=4,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_4_solid"
+    },
+    "gt_liquid_level=4,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_4"
+    },
+    "gt_liquid_level=5,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_5_solid"
+    },
+    "gt_liquid_level=5,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_5"
+    },
+    "gt_liquid_level=6,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_6_solid"
+    },
+    "gt_liquid_level=6,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_6"
+    },
+    "gt_liquid_level=7,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_7_solid"
+    },
+    "gt_liquid_level=7,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_7"
+    },
+    "gt_liquid_level=8,molten=false": {
+      "model": "gt6:block/smeltery_void_metal_filled_8_solid"
+    },
+    "gt_liquid_level=8,molten=true": {
+      "model": "gt6:block/smeltery_void_metal_filled_8"
+    }
+  }
+}

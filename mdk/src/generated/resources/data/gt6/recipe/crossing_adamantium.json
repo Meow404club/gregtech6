@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_adamantium"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PPP",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:crossing_adamantium"
+  }
+}

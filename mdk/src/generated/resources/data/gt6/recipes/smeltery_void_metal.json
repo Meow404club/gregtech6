@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_void_metal"
+    }
+  },
+  "pattern": [
+    "P P",
+    "P P",
+    "PPP"
+  ],
+  "result": {
+    "item": "gt6:smeltery_void_metal"
+  },
+  "show_notification": true
+}

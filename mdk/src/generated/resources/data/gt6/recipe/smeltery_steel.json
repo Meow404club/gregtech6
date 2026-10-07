@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_steel"
+    }
+  },
+  "pattern": [
+    "P P",
+    "P P",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:smeltery_steel"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_meteoric_iron"
+    }
+  },
+  "pattern": [
+    " P ",
+    "PPP",
+    " P "
+  ],
+  "result": {
+    "item": "gt6:crossing_meteoric_iron"
+  },
+  "show_notification": true
+}
