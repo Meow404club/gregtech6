@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_petrified_wood"
+    {
+      "id": "gt6:gear_gt_small_petrified_wood",
+      "required": false
+    }
   ]
 }

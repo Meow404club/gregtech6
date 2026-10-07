@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_angmallen"
+    {
+      "id": "gt6:plate_angmallen",
+      "required": false
+    }
   ]
 }

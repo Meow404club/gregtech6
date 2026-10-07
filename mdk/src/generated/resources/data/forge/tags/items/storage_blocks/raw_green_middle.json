@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_green_middle"
+    {
+      "id": "gt6:block_raw_green_middle",
+      "required": false
+    }
   ]
 }

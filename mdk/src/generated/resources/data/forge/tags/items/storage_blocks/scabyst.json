@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_scabyst",
-    "gt6:block_dust_scabyst"
+    {
+      "id": "gt6:block_gem_scabyst",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_scabyst",
+      "required": false
+    }
   ]
 }

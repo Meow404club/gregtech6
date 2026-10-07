@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_deep_iron"
+    {
+      "id": "gt6:plate_double_deep_iron",
+      "required": false
+    }
   ]
 }

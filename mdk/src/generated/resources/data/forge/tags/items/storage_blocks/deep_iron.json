@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_deep_iron",
-    "gt6:block_ingot_deep_iron"
+    {
+      "id": "gt6:block_dust_deep_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_deep_iron",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_iron_compressed"
+    {
+      "id": "gt6:nugget_iron_compressed",
+      "required": false
+    }
   ]
 }

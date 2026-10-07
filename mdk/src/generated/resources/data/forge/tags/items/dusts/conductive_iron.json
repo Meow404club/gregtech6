@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_conductive_iron"
+    {
+      "id": "gt6:dust_conductive_iron",
+      "required": false
+    }
   ]
 }

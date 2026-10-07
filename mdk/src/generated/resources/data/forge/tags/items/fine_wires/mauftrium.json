@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_mauftrium"
+    {
+      "id": "gt6:wire_fine_mauftrium",
+      "required": false
+    }
   ]
 }

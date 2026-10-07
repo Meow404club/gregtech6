@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_manasteel",
-    "gt6:block_ingot_manasteel"
+    {
+      "id": "gt6:block_dust_manasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_manasteel",
+      "required": false
+    }
   ]
 }

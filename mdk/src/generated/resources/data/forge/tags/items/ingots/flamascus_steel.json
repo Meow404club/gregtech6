@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_flamascus_steel"
+    {
+      "id": "gt6:ingot_flamascus_steel",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_spectre_iron"
+    {
+      "id": "gt6:nugget_spectre_iron",
+      "required": false
+    }
   ]
 }

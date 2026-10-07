@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_oberon_rock"
+    {
+      "id": "gt6:plate_oberon_rock",
+      "required": false
+    }
   ]
 }

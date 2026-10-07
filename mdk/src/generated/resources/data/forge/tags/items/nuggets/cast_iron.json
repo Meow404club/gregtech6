@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_cast_iron"
+    {
+      "id": "gt6:nugget_cast_iron",
+      "required": false
+    }
   ]
 }

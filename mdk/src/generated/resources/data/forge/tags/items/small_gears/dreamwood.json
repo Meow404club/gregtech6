@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_dreamwood"
+    {
+      "id": "gt6:gear_gt_small_dreamwood",
+      "required": false
+    }
   ]
 }

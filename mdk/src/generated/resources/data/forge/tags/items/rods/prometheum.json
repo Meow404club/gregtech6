@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_prometheum"
+    {
+      "id": "gt6:stick_prometheum",
+      "required": false
+    }
   ]
 }

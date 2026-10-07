@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_red_phosphorus"
+    {
+      "id": "gt6:bolt_red_phosphorus",
+      "required": false
+    }
   ]
 }

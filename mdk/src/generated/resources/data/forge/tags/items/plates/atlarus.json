@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_atlarus"
+    {
+      "id": "gt6:plate_atlarus",
+      "required": false
+    }
   ]
 }

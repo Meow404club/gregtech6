@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_bakelite",
-    "gt6:block_ingot_bakelite"
+    {
+      "id": "gt6:block_dust_bakelite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_bakelite",
+      "required": false
+    }
   ]
 }

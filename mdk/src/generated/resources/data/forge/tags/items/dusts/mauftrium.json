@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_mauftrium"
+    {
+      "id": "gt6:dust_mauftrium",
+      "required": false
+    }
   ]
 }

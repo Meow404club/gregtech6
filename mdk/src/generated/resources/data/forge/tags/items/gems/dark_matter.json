@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_dark_matter"
+    {
+      "id": "gt6:gem_dark_matter",
+      "required": false
+    }
   ]
 }

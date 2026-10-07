@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_soularium",
-    "gt6:block_ingot_soularium"
+    {
+      "id": "gt6:block_dust_soularium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_soularium",
+      "required": false
+    }
   ]
 }

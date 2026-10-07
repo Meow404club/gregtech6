@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_elvorium"
+    {
+      "id": "gt6:dust_elvorium",
+      "required": false
+    }
   ]
 }

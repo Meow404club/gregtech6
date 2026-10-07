@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_zirconium"
+    {
+      "id": "gt6:nugget_zirconium",
+      "required": false
+    }
   ]
 }

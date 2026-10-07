@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_infinity"
+    {
+      "id": "gt6:ingot_infinity",
+      "required": false
+    }
   ]
 }

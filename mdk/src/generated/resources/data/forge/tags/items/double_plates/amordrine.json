@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_amordrine"
+    {
+      "id": "gt6:plate_double_amordrine",
+      "required": false
+    }
   ]
 }

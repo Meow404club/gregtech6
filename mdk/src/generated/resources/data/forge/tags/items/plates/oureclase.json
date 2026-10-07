@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_oureclase"
+    {
+      "id": "gt6:plate_oureclase",
+      "required": false
+    }
   ]
 }

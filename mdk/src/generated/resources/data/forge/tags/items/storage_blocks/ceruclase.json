@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_ceruclase",
-    "gt6:block_ingot_ceruclase"
+    {
+      "id": "gt6:block_dust_ceruclase",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_ceruclase",
+      "required": false
+    }
   ]
 }

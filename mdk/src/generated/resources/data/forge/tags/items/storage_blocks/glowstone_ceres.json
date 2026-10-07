@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_glowstone_ceres",
-    "gt6:block_dust_glowstone_ceres"
+    {
+      "id": "gt6:block_gem_glowstone_ceres",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_ceres",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_mercury_rock"
+    {
+      "id": "gt6:bolt_mercury_rock",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_alumite"
+    {
+      "id": "gt6:nugget_alumite",
+      "required": false
+    }
   ]
 }

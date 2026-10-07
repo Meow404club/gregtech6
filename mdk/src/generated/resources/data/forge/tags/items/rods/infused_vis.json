@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_infused_vis"
+    {
+      "id": "gt6:stick_infused_vis",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_aluminium",
-    "gt6:block_ingot_aluminium"
+    {
+      "id": "gt6:block_dust_aluminium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_aluminium",
+      "required": false
+    }
   ]
 }

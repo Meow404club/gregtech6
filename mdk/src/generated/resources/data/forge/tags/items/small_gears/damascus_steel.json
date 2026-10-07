@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_damascus_steel"
+    {
+      "id": "gt6:gear_gt_small_damascus_steel",
+      "required": false
+    }
   ]
 }

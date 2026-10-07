@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_infinity"
+    {
+      "id": "gt6:plate_double_infinity",
+      "required": false
+    }
   ]
 }

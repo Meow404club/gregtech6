@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_lonsdaleite"
+    {
+      "id": "gt6:dust_lonsdaleite",
+      "required": false
+    }
   ]
 }

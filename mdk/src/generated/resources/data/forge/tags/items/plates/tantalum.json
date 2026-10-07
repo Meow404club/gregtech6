@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_tantalum"
+    {
+      "id": "gt6:plate_tantalum",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_midasium"
+    {
+      "id": "gt6:dust_midasium",
+      "required": false
+    }
   ]
 }

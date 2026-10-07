@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_desichalkos"
+    {
+      "id": "gt6:gear_gt_small_desichalkos",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_dreamwood"
+    {
+      "id": "gt6:block_dust_dreamwood",
+      "required": false
+    }
   ]
 }

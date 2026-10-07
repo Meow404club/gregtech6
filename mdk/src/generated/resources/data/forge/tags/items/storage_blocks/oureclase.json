@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_oureclase",
-    "gt6:block_ingot_oureclase"
+    {
+      "id": "gt6:block_dust_oureclase",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_oureclase",
+      "required": false
+    }
   ]
 }

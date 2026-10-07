@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_fireleaf"
+    {
+      "id": "gt6:plate_fireleaf",
+      "required": false
+    }
   ]
 }

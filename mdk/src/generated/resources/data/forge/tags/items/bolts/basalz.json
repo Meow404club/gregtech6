@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_basalz"
+    {
+      "id": "gt6:bolt_basalz",
+      "required": false
+    }
   ]
 }

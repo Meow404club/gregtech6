@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_nikoline_alloy"
+    {
+      "id": "gt6:ingot_hot_nikoline_alloy",
+      "required": false
+    }
   ]
 }

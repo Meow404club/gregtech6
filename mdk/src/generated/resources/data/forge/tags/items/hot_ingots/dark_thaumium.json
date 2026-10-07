@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_dark_thaumium"
+    {
+      "id": "gt6:ingot_hot_dark_thaumium",
+      "required": false
+    }
   ]
 }

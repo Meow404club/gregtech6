@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_azurite",
-    "gt6:block_dust_azurite"
+    {
+      "id": "gt6:block_gem_azurite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_azurite",
+      "required": false
+    }
   ]
 }

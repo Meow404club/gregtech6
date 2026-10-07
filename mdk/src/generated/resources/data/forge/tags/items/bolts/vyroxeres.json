@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_vyroxeres"
+    {
+      "id": "gt6:bolt_vyroxeres",
+      "required": false
+    }
   ]
 }

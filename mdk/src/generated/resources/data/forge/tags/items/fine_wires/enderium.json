@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_enderium"
+    {
+      "id": "gt6:wire_fine_enderium",
+      "required": false
+    }
   ]
 }

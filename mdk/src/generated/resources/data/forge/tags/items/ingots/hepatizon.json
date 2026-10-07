@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hepatizon"
+    {
+      "id": "gt6:ingot_hepatizon",
+      "required": false
+    }
   ]
 }

@@ -1,7 +1,16 @@
 {
   "values": [
-    "gt6:block_gem_zirconium",
-    "gt6:block_dust_zirconium",
-    "gt6:block_ingot_zirconium"
+    {
+      "id": "gt6:block_gem_zirconium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_zirconium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_zirconium",
+      "required": false
+    }
   ]
 }

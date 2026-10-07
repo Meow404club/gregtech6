@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_vulcanite"
+    {
+      "id": "gt6:dust_vulcanite",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_prismarine",
-    "gt6:block_dust_prismarine"
+    {
+      "id": "gt6:block_gem_prismarine",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_prismarine",
+      "required": false
+    }
   ]
 }

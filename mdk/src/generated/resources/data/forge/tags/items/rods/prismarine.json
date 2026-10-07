@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_prismarine"
+    {
+      "id": "gt6:stick_prismarine",
+      "required": false
+    }
   ]
 }

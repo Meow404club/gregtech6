@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_clay_compound"
+    {
+      "id": "gt6:ingot_hot_clay_compound",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_soularium"
+    {
+      "id": "gt6:bolt_soularium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_manasteel"
+    {
+      "id": "gt6:wire_fine_manasteel",
+      "required": false
+    }
   ]
 }

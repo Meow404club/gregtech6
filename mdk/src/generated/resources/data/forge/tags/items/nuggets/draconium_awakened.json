@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_draconium_awakened"
+    {
+      "id": "gt6:nugget_draconium_awakened",
+      "required": false
+    }
   ]
 }

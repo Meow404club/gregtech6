@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_orichalcum"
+    {
+      "id": "gt6:dust_orichalcum",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_muspelheim_power"
+    {
+      "id": "gt6:ingot_hot_muspelheim_power",
+      "required": false
+    }
   ]
 }

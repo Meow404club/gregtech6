@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_amordrine"
+    {
+      "id": "gt6:bolt_amordrine",
+      "required": false
+    }
   ]
 }

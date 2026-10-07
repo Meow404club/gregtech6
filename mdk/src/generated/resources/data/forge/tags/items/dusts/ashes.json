@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_ashes"
+    {
+      "id": "gt6:dust_ashes",
+      "required": false
+    }
   ]
 }

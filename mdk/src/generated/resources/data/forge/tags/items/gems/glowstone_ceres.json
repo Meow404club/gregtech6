@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_glowstone_ceres"
+    {
+      "id": "gt6:gem_glowstone_ceres",
+      "required": false
+    }
   ]
 }

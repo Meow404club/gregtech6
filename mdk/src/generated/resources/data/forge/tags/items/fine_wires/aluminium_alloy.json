@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_aluminium_alloy"
+    {
+      "id": "gt6:wire_fine_aluminium_alloy",
+      "required": false
+    }
   ]
 }

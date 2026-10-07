@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_draconium_awakened"
+    {
+      "id": "gt6:dust_draconium_awakened",
+      "required": false
+    }
   ]
 }

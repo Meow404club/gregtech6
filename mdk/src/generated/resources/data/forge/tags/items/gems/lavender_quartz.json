@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_lavender_quartz"
+    {
+      "id": "gt6:gem_lavender_quartz",
+      "required": false
+    }
   ]
 }

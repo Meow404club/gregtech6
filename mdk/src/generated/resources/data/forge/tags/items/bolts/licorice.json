@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_licorice"
+    {
+      "id": "gt6:bolt_licorice",
+      "required": false
+    }
   ]
 }

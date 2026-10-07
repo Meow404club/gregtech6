@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_ignatius"
+    {
+      "id": "gt6:block_raw_ignatius",
+      "required": false
+    }
   ]
 }

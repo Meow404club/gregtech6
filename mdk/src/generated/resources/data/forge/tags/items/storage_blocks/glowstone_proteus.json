@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_glowstone_proteus",
-    "gt6:block_dust_glowstone_proteus"
+    {
+      "id": "gt6:block_gem_glowstone_proteus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_proteus",
+      "required": false
+    }
   ]
 }

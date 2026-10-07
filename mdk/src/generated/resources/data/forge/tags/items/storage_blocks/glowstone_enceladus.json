@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_glowstone_enceladus",
-    "gt6:block_dust_glowstone_enceladus"
+    {
+      "id": "gt6:block_gem_glowstone_enceladus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_enceladus",
+      "required": false
+    }
   ]
 }

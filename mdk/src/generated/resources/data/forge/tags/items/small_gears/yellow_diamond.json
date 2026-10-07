@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_yellow_diamond"
+    {
+      "id": "gt6:gear_gt_small_yellow_diamond",
+      "required": false
+    }
   ]
 }

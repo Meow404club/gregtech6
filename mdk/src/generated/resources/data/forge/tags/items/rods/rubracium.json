@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_rubracium"
+    {
+      "id": "gt6:stick_rubracium",
+      "required": false
+    }
   ]
 }

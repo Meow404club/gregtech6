@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_mingrade",
-    "gt6:block_ingot_mingrade"
+    {
+      "id": "gt6:block_dust_mingrade",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_mingrade",
+      "required": false
+    }
   ]
 }

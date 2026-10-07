@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_tofu"
+    {
+      "id": "gt6:nugget_tofu",
+      "required": false
+    }
   ]
 }

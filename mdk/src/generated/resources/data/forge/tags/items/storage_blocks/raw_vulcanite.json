@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_vulcanite"
+    {
+      "id": "gt6:block_raw_vulcanite",
+      "required": false
+    }
   ]
 }

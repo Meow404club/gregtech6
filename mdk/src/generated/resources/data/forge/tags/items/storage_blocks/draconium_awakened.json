@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_draconium_awakened",
-    "gt6:block_ingot_draconium_awakened"
+    {
+      "id": "gt6:block_dust_draconium_awakened",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_draconium_awakened",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_infuscolium"
+    {
+      "id": "gt6:stick_infuscolium",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_muspelheim_power",
-    "gt6:block_ingot_muspelheim_power"
+    {
+      "id": "gt6:block_dust_muspelheim_power",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_muspelheim_power",
+      "required": false
+    }
   ]
 }

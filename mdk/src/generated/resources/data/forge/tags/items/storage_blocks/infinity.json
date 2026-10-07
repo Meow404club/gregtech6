@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_infinity",
-    "gt6:block_ingot_infinity"
+    {
+      "id": "gt6:block_dust_infinity",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_infinity",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_iodine",
-    "gt6:block_dust_iodine"
+    {
+      "id": "gt6:block_gem_iodine",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_iodine",
+      "required": false
+    }
   ]
 }

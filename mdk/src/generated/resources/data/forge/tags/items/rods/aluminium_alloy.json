@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_aluminium_alloy"
+    {
+      "id": "gt6:stick_aluminium_alloy",
+      "required": false
+    }
   ]
 }

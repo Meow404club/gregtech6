@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_frezarite",
-    "gt6:block_dust_frezarite"
+    {
+      "id": "gt6:block_gem_frezarite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_frezarite",
+      "required": false
+    }
   ]
 }

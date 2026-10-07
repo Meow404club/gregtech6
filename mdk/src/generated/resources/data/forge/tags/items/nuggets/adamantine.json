@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_adamantine"
+    {
+      "id": "gt6:nugget_adamantine",
+      "required": false
+    }
   ]
 }

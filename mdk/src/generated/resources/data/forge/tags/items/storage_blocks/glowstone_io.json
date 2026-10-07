@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_glowstone_io",
-    "gt6:block_dust_glowstone_io"
+    {
+      "id": "gt6:block_gem_glowstone_io",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_io",
+      "required": false
+    }
   ]
 }

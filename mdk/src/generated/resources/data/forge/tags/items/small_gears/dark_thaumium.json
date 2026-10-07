@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_dark_thaumium"
+    {
+      "id": "gt6:gear_gt_small_dark_thaumium",
+      "required": false
+    }
   ]
 }

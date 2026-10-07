@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_blaze_quartz"
+    {
+      "id": "gt6:bolt_blaze_quartz",
+      "required": false
+    }
   ]
 }

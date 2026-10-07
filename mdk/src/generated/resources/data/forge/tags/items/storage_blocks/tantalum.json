@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_tantalum",
-    "gt6:block_ingot_tantalum"
+    {
+      "id": "gt6:block_dust_tantalum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_tantalum",
+      "required": false
+    }
   ]
 }

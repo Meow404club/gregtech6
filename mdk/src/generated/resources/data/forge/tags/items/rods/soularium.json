@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_soularium"
+    {
+      "id": "gt6:stick_soularium",
+      "required": false
+    }
   ]
 }

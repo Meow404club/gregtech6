@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_knightmetal"
+    {
+      "id": "gt6:ingot_knightmetal",
+      "required": false
+    }
   ]
 }

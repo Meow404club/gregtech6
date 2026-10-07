@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_blue_steel"
+    {
+      "id": "gt6:wire_fine_blue_steel",
+      "required": false
+    }
   ]
 }

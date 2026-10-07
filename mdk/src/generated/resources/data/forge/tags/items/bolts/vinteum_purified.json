@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_vinteum_purified"
+    {
+      "id": "gt6:bolt_vinteum_purified",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_marshmallow"
+    {
+      "id": "gt6:plate_marshmallow",
+      "required": false
+    }
   ]
 }

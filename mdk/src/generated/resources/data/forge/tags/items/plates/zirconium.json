@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_zirconium"
+    {
+      "id": "gt6:plate_zirconium",
+      "required": false
+    }
   ]
 }

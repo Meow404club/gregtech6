@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_livingrock"
+    {
+      "id": "gt6:stick_livingrock",
+      "required": false
+    }
   ]
 }

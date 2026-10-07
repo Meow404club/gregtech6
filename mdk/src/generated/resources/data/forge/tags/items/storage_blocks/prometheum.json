@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_prometheum",
-    "gt6:block_ingot_prometheum"
+    {
+      "id": "gt6:block_dust_prometheum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_prometheum",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_fluorite"
+    {
+      "id": "gt6:dust_fluorite",
+      "required": false
+    }
   ]
 }

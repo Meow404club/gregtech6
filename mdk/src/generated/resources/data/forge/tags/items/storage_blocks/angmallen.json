@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_angmallen",
-    "gt6:block_ingot_angmallen"
+    {
+      "id": "gt6:block_dust_angmallen",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_angmallen",
+      "required": false
+    }
   ]
 }

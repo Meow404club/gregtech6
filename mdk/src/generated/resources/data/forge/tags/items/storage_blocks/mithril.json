@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_mithril",
-    "gt6:block_ingot_mithril"
+    {
+      "id": "gt6:block_dust_mithril",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_mithril",
+      "required": false
+    }
   ]
 }

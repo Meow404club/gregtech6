@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_crystalline_pink_slime"
+    {
+      "id": "gt6:nugget_crystalline_pink_slime",
+      "required": false
+    }
   ]
 }

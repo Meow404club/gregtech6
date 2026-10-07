@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_niobium"
+    {
+      "id": "gt6:nugget_niobium",
+      "required": false
+    }
   ]
 }

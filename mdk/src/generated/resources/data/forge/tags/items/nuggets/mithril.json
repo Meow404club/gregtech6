@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_mithril"
+    {
+      "id": "gt6:nugget_mithril",
+      "required": false
+    }
   ]
 }

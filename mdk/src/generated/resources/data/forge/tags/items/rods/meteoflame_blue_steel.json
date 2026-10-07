@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_meteoflame_blue_steel"
+    {
+      "id": "gt6:stick_meteoflame_blue_steel",
+      "required": false
+    }
   ]
 }

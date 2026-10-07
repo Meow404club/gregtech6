@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_dark_thaumium"
+    {
+      "id": "gt6:wire_fine_dark_thaumium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_slimy_bone"
+    {
+      "id": "gt6:block_raw_slimy_bone",
+      "required": false
+    }
   ]
 }

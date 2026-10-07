@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_blaze_quartz"
+    {
+      "id": "gt6:dust_blaze_quartz",
+      "required": false
+    }
   ]
 }

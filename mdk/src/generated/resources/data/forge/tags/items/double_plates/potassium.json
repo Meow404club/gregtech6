@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_potassium"
+    {
+      "id": "gt6:plate_double_potassium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_ceres_rock"
+    {
+      "id": "gt6:block_dust_ceres_rock",
+      "required": false
+    }
   ]
 }

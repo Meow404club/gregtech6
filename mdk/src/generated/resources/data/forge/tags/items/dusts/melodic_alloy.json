@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_melodic_alloy"
+    {
+      "id": "gt6:dust_melodic_alloy",
+      "required": false
+    }
   ]
 }

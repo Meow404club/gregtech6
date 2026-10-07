@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_manasteel"
+    {
+      "id": "gt6:stick_manasteel",
+      "required": false
+    }
   ]
 }

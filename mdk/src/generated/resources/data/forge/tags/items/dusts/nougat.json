@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_nougat"
+    {
+      "id": "gt6:dust_nougat",
+      "required": false
+    }
   ]
 }

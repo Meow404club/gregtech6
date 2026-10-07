@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_fireleaf"
+    {
+      "id": "gt6:nugget_fireleaf",
+      "required": false
+    }
   ]
 }

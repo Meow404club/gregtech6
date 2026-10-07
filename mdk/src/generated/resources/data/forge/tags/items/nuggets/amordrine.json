@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_amordrine"
+    {
+      "id": "gt6:nugget_amordrine",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_vulcanite",
-    "gt6:block_ingot_vulcanite"
+    {
+      "id": "gt6:block_dust_vulcanite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_vulcanite",
+      "required": false
+    }
   ]
 }

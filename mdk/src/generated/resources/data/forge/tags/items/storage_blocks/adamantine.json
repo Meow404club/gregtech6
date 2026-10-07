@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_adamantine",
-    "gt6:block_ingot_adamantine"
+    {
+      "id": "gt6:block_dust_adamantine",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_adamantine",
+      "required": false
+    }
   ]
 }

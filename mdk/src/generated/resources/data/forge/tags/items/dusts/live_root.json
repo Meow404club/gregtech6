@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_live_root"
+    {
+      "id": "gt6:dust_live_root",
+      "required": false
+    }
   ]
 }

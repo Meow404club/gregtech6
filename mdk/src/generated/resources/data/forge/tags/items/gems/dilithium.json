@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_dilithium"
+    {
+      "id": "gt6:gem_dilithium",
+      "required": false
+    }
   ]
 }

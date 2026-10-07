@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_plutonium240"
+    {
+      "id": "gt6:plate_double_plutonium240",
+      "required": false
+    }
   ]
 }

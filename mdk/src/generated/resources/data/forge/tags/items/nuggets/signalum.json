@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_signalum"
+    {
+      "id": "gt6:nugget_signalum",
+      "required": false
+    }
   ]
 }

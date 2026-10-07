@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_dark_thaumium"
+    {
+      "id": "gt6:nugget_dark_thaumium",
+      "required": false
+    }
   ]
 }

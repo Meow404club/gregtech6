@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_electrotine_alloy"
+    {
+      "id": "gt6:ingot_hot_electrotine_alloy",
+      "required": false
+    }
   ]
 }

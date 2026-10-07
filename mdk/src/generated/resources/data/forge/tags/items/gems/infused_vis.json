@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_infused_vis"
+    {
+      "id": "gt6:gem_infused_vis",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_pepper_black"
+    {
+      "id": "gt6:block_dust_pepper_black",
+      "required": false
+    }
   ]
 }

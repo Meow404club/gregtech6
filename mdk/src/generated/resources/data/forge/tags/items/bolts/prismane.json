@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_prismane"
+    {
+      "id": "gt6:bolt_prismane",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_iron_compressed"
+    {
+      "id": "gt6:plate_double_iron_compressed",
+      "required": false
+    }
   ]
 }

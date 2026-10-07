@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_lumium",
-    "gt6:block_ingot_lumium"
+    {
+      "id": "gt6:block_dust_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_lumium",
+      "required": false
+    }
   ]
 }

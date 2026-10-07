@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_construction_foam"
+    {
+      "id": "gt6:dust_construction_foam",
+      "required": false
+    }
   ]
 }

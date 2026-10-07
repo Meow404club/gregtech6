@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_carborundum"
+    {
+      "id": "gt6:bolt_carborundum",
+      "required": false
+    }
   ]
 }

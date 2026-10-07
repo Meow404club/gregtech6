@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_kalendrite"
+    {
+      "id": "gt6:ingot_kalendrite",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_aluminium"
+    {
+      "id": "gt6:bolt_aluminium",
+      "required": false
+    }
   ]
 }

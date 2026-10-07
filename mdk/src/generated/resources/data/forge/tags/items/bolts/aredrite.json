@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_aredrite"
+    {
+      "id": "gt6:bolt_aredrite",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_infuscolium"
+    {
+      "id": "gt6:ingot_infuscolium",
+      "required": false
+    }
   ]
 }

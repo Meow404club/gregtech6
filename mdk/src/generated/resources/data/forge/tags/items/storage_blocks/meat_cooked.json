@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_meat_cooked",
-    "gt6:block_ingot_meat_cooked"
+    {
+      "id": "gt6:block_dust_meat_cooked",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_meat_cooked",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_niobium",
-    "gt6:block_ingot_niobium"
+    {
+      "id": "gt6:block_dust_niobium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_niobium",
+      "required": false
+    }
   ]
 }

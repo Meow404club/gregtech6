@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_carmot"
+    {
+      "id": "gt6:wire_fine_carmot",
+      "required": false
+    }
   ]
 }

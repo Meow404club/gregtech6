@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_scabyst"
+    {
+      "id": "gt6:block_raw_scabyst",
+      "required": false
+    }
   ]
 }

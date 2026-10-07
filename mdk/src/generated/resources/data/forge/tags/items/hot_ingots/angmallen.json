@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_angmallen"
+    {
+      "id": "gt6:ingot_hot_angmallen",
+      "required": false
+    }
   ]
 }

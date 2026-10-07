@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_meutoite"
+    {
+      "id": "gt6:plate_double_meutoite",
+      "required": false
+    }
   ]
 }

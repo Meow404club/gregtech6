@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_ferrite",
-    "gt6:block_ingot_ferrite"
+    {
+      "id": "gt6:block_dust_ferrite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_ferrite",
+      "required": false
+    }
   ]
 }

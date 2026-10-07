@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_oureclase"
+    {
+      "id": "gt6:block_raw_oureclase",
+      "required": false
+    }
   ]
 }

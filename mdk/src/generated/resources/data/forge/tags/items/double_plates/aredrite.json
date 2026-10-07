@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_aredrite"
+    {
+      "id": "gt6:plate_double_aredrite",
+      "required": false
+    }
   ]
 }

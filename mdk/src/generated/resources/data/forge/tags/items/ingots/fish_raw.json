@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_fish_raw"
+    {
+      "id": "gt6:ingot_fish_raw",
+      "required": false
+    }
   ]
 }

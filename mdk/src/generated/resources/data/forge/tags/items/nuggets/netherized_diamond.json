@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_netherized_diamond"
+    {
+      "id": "gt6:nugget_netherized_diamond",
+      "required": false
+    }
   ]
 }

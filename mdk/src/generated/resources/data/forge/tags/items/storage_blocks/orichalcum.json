@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_orichalcum",
-    "gt6:block_ingot_orichalcum"
+    {
+      "id": "gt6:block_dust_orichalcum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_orichalcum",
+      "required": false
+    }
   ]
 }

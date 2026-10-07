@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_bentonite"
+    {
+      "id": "gt6:block_dust_bentonite",
+      "required": false
+    }
   ]
 }

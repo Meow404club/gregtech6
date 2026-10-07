@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_eximite"
+    {
+      "id": "gt6:ingot_hot_eximite",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_haderoth"
+    {
+      "id": "gt6:bolt_haderoth",
+      "required": false
+    }
   ]
 }

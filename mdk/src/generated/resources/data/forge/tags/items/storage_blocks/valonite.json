@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_valonite",
-    "gt6:block_dust_valonite"
+    {
+      "id": "gt6:block_gem_valonite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_valonite",
+      "required": false
+    }
   ]
 }

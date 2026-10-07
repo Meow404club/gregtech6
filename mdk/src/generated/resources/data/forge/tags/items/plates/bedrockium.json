@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_bedrockium"
+    {
+      "id": "gt6:plate_bedrockium",
+      "required": false
+    }
   ]
 }

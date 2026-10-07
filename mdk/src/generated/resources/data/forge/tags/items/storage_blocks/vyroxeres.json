@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_vyroxeres",
-    "gt6:block_ingot_vyroxeres"
+    {
+      "id": "gt6:block_dust_vyroxeres",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_vyroxeres",
+      "required": false
+    }
   ]
 }

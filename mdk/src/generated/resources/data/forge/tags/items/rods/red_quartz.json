@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_red_quartz"
+    {
+      "id": "gt6:stick_red_quartz",
+      "required": false
+    }
   ]
 }

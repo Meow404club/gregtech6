@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_eudialyte"
+    {
+      "id": "gt6:dust_eudialyte",
+      "required": false
+    }
   ]
 }

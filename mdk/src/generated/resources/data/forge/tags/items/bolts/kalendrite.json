@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_kalendrite"
+    {
+      "id": "gt6:bolt_kalendrite",
+      "required": false
+    }
   ]
 }

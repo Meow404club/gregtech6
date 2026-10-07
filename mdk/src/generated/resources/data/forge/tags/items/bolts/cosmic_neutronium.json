@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_cosmic_neutronium"
+    {
+      "id": "gt6:bolt_cosmic_neutronium",
+      "required": false
+    }
   ]
 }

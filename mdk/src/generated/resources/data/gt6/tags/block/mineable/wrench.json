@@ -144,8 +144,14 @@
     "gt6:charging_crafting_table_bronze",
     "gt6:advanced_crafting_table_arsenic_copper",
     "gt6:charging_crafting_table_arsenic_copper",
-    "gt6:advanced_crafting_table_aluminium",
-    "gt6:charging_crafting_table_aluminium",
+    {
+      "id": "gt6:advanced_crafting_table_aluminium",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_aluminium",
+      "required": false
+    },
     "gt6:advanced_crafting_table_brass",
     "gt6:charging_crafting_table_brass",
     "gt6:advanced_crafting_table_tin_alloy",
@@ -164,8 +170,14 @@
     "gt6:charging_crafting_table_invar",
     "gt6:advanced_crafting_table_steel",
     "gt6:charging_crafting_table_steel",
-    "gt6:advanced_crafting_table_hsla",
-    "gt6:charging_crafting_table_hsla",
+    {
+      "id": "gt6:advanced_crafting_table_hsla",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_hsla",
+      "required": false
+    },
     "gt6:advanced_crafting_table_gold",
     "gt6:charging_crafting_table_gold",
     "gt6:advanced_crafting_table_silver",
@@ -174,16 +186,34 @@
     "gt6:charging_crafting_table_manganese",
     "gt6:advanced_crafting_table_manyullyn",
     "gt6:charging_crafting_table_manyullyn",
-    "gt6:advanced_crafting_table_lumium",
-    "gt6:charging_crafting_table_lumium",
-    "gt6:advanced_crafting_table_knightmetal",
-    "gt6:charging_crafting_table_knightmetal",
+    {
+      "id": "gt6:advanced_crafting_table_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:advanced_crafting_table_knightmetal",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_knightmetal",
+      "required": false
+    },
     "gt6:advanced_crafting_table_galvanized_steel",
     "gt6:charging_crafting_table_galvanized_steel",
     "gt6:advanced_crafting_table_meteorite",
     "gt6:charging_crafting_table_meteorite",
-    "gt6:advanced_crafting_table_meteoric_steel",
-    "gt6:charging_crafting_table_meteoric_steel",
+    {
+      "id": "gt6:advanced_crafting_table_meteoric_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_meteoric_steel",
+      "required": false
+    },
     "gt6:advanced_crafting_table_gilded_iron",
     "gt6:charging_crafting_table_gilded_iron",
     "gt6:advanced_crafting_table_molybdenum",
@@ -196,12 +226,24 @@
     "gt6:charging_crafting_table_stainless_steel",
     "gt6:advanced_crafting_table_thaumium",
     "gt6:charging_crafting_table_thaumium",
-    "gt6:advanced_crafting_table_manasteel",
-    "gt6:charging_crafting_table_manasteel",
+    {
+      "id": "gt6:advanced_crafting_table_manasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_manasteel",
+      "required": false
+    },
     "gt6:advanced_crafting_table_efrine",
     "gt6:charging_crafting_table_efrine",
-    "gt6:advanced_crafting_table_tungsten_alloy",
-    "gt6:charging_crafting_table_tungsten_alloy",
+    {
+      "id": "gt6:advanced_crafting_table_tungsten_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_tungsten_alloy",
+      "required": false
+    },
     "gt6:advanced_crafting_table_titanium",
     "gt6:charging_crafting_table_titanium",
     "gt6:advanced_crafting_table_netherite",
@@ -214,20 +256,38 @@
     "gt6:charging_crafting_table_octine",
     "gt6:advanced_crafting_table_desh",
     "gt6:charging_crafting_table_desh",
-    "gt6:advanced_crafting_table_terrasteel",
-    "gt6:charging_crafting_table_terrasteel",
+    {
+      "id": "gt6:advanced_crafting_table_terrasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_terrasteel",
+      "required": false
+    },
     "gt6:advanced_crafting_table_tungstensteel",
     "gt6:charging_crafting_table_tungstensteel",
-    "gt6:advanced_crafting_table_tungsten_carbide",
-    "gt6:charging_crafting_table_tungsten_carbide",
+    {
+      "id": "gt6:advanced_crafting_table_tungsten_carbide",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_tungsten_carbide",
+      "required": false
+    },
     "gt6:advanced_crafting_table_duranium_alloy",
     "gt6:charging_crafting_table_duranium_alloy",
     "gt6:advanced_crafting_table_draconium",
     "gt6:charging_crafting_table_draconium",
     "gt6:advanced_crafting_table_ultimet",
     "gt6:charging_crafting_table_ultimet",
-    "gt6:advanced_crafting_table_desh_alloy",
-    "gt6:charging_crafting_table_desh_alloy",
+    {
+      "id": "gt6:advanced_crafting_table_desh_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_desh_alloy",
+      "required": false
+    },
     "gt6:advanced_crafting_table_tungsten",
     "gt6:charging_crafting_table_tungsten",
     "gt6:advanced_crafting_table_palladium",
@@ -236,20 +296,50 @@
     "gt6:charging_crafting_table_iridium",
     "gt6:advanced_crafting_table_osmium",
     "gt6:charging_crafting_table_osmium",
-    "gt6:advanced_crafting_table_void_metal",
-    "gt6:charging_crafting_table_void_metal",
-    "gt6:advanced_crafting_table_elementium",
-    "gt6:charging_crafting_table_elementium",
+    {
+      "id": "gt6:advanced_crafting_table_void_metal",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_void_metal",
+      "required": false
+    },
+    {
+      "id": "gt6:advanced_crafting_table_elementium",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_elementium",
+      "required": false
+    },
     "gt6:advanced_crafting_table_tritanium_alloy",
     "gt6:charging_crafting_table_tritanium_alloy",
     "gt6:advanced_crafting_table_adamantium",
     "gt6:charging_crafting_table_adamantium",
-    "gt6:advanced_crafting_table_bedrock_hsla_alloy",
-    "gt6:charging_crafting_table_bedrock_hsla_alloy",
-    "gt6:advanced_crafting_table_draconium_awakened",
-    "gt6:charging_crafting_table_draconium_awakened",
-    "gt6:advanced_crafting_table_infinity",
-    "gt6:charging_crafting_table_infinity",
+    {
+      "id": "gt6:advanced_crafting_table_bedrock_hsla_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_bedrock_hsla_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:advanced_crafting_table_draconium_awakened",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_draconium_awakened",
+      "required": false
+    },
+    {
+      "id": "gt6:advanced_crafting_table_infinity",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_crafting_table_infinity",
+      "required": false
+    },
     "gt6:distillery",
     "gt6:distillery_t2",
     "gt6:distillery_t3",
@@ -464,8 +554,14 @@
     "gt6:queue_hopper_bronze",
     "gt6:hopper_arsenic_copper",
     "gt6:queue_hopper_arsenic_copper",
-    "gt6:hopper_aluminium",
-    "gt6:queue_hopper_aluminium",
+    {
+      "id": "gt6:hopper_aluminium",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_aluminium",
+      "required": false
+    },
     "gt6:hopper_brass",
     "gt6:queue_hopper_brass",
     "gt6:hopper_tin_alloy",
@@ -484,8 +580,14 @@
     "gt6:queue_hopper_invar",
     "gt6:hopper_steel",
     "gt6:queue_hopper_steel",
-    "gt6:hopper_hsla_steel",
-    "gt6:queue_hopper_hsla_steel",
+    {
+      "id": "gt6:hopper_hsla_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_hsla_steel",
+      "required": false
+    },
     "gt6:hopper_gold",
     "gt6:queue_hopper_gold",
     "gt6:hopper_silver",
@@ -494,16 +596,34 @@
     "gt6:queue_hopper_manganese",
     "gt6:hopper_manyullyn",
     "gt6:queue_hopper_manyullyn",
-    "gt6:hopper_lumium",
-    "gt6:queue_hopper_lumium",
-    "gt6:hopper_knightmetal",
-    "gt6:queue_hopper_knightmetal",
+    {
+      "id": "gt6:hopper_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:hopper_knightmetal",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_knightmetal",
+      "required": false
+    },
     "gt6:hopper_galvanized_steel",
     "gt6:queue_hopper_galvanized_steel",
     "gt6:hopper_meteorite",
     "gt6:queue_hopper_meteorite",
-    "gt6:hopper_meteoric_steel",
-    "gt6:queue_hopper_meteoric_steel",
+    {
+      "id": "gt6:hopper_meteoric_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_meteoric_steel",
+      "required": false
+    },
     "gt6:hopper_gilded_iron",
     "gt6:queue_hopper_gilded_iron",
     "gt6:hopper_molybdenum",
@@ -516,12 +636,24 @@
     "gt6:queue_hopper_stainless_steel",
     "gt6:hopper_thaumium",
     "gt6:queue_hopper_thaumium",
-    "gt6:hopper_manasteel",
-    "gt6:queue_hopper_manasteel",
+    {
+      "id": "gt6:hopper_manasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_manasteel",
+      "required": false
+    },
     "gt6:hopper_efrine",
     "gt6:queue_hopper_efrine",
-    "gt6:hopper_tungsten_alloy",
-    "gt6:queue_hopper_tungsten_alloy",
+    {
+      "id": "gt6:hopper_tungsten_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_tungsten_alloy",
+      "required": false
+    },
     "gt6:hopper_titanium",
     "gt6:queue_hopper_titanium",
     "gt6:hopper_netherite",
@@ -534,20 +666,38 @@
     "gt6:queue_hopper_octine",
     "gt6:hopper_desh",
     "gt6:queue_hopper_desh",
-    "gt6:hopper_terrasteel",
-    "gt6:queue_hopper_terrasteel",
+    {
+      "id": "gt6:hopper_terrasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_terrasteel",
+      "required": false
+    },
     "gt6:hopper_tungstensteel",
     "gt6:queue_hopper_tungstensteel",
-    "gt6:hopper_tungsten_carbide",
-    "gt6:queue_hopper_tungsten_carbide",
+    {
+      "id": "gt6:hopper_tungsten_carbide",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_tungsten_carbide",
+      "required": false
+    },
     "gt6:hopper_duranium_alloy",
     "gt6:queue_hopper_duranium_alloy",
     "gt6:hopper_draconium",
     "gt6:queue_hopper_draconium",
     "gt6:hopper_ultimet",
     "gt6:queue_hopper_ultimet",
-    "gt6:hopper_workers_alloy",
-    "gt6:queue_hopper_workers_alloy",
+    {
+      "id": "gt6:hopper_workers_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_workers_alloy",
+      "required": false
+    },
     "gt6:hopper_tungsten",
     "gt6:queue_hopper_tungsten",
     "gt6:hopper_palladium",
@@ -556,20 +706,50 @@
     "gt6:queue_hopper_iridium",
     "gt6:hopper_osmium",
     "gt6:queue_hopper_osmium",
-    "gt6:hopper_void_metal",
-    "gt6:queue_hopper_void_metal",
-    "gt6:hopper_elementium",
-    "gt6:queue_hopper_elementium",
+    {
+      "id": "gt6:hopper_void_metal",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_void_metal",
+      "required": false
+    },
+    {
+      "id": "gt6:hopper_elementium",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_elementium",
+      "required": false
+    },
     "gt6:hopper_tritanium_alloy",
     "gt6:queue_hopper_tritanium_alloy",
     "gt6:hopper_adamantium",
     "gt6:queue_hopper_adamantium",
-    "gt6:hopper_bedrock_hsla_alloy",
-    "gt6:queue_hopper_bedrock_hsla_alloy",
-    "gt6:hopper_awakened_draconium",
-    "gt6:queue_hopper_awakened_draconium",
-    "gt6:hopper_infinity",
-    "gt6:queue_hopper_infinity",
+    {
+      "id": "gt6:hopper_bedrock_hsla_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_bedrock_hsla_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:hopper_awakened_draconium",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_awakened_draconium",
+      "required": false
+    },
+    {
+      "id": "gt6:hopper_infinity",
+      "required": false
+    },
+    {
+      "id": "gt6:queue_hopper_infinity",
+      "required": false
+    },
     "gt6:brass_item_pipe_medium",
     "gt6:brass_item_pipe_large",
     "gt6:brass_item_pipe_huge",
@@ -710,13 +890,34 @@
     "gt6:gold_fluid_pipe_huge",
     "gt6:gold_fluid_pipe_quadruple",
     "gt6:gold_fluid_pipe_nonuple",
-    "gt6:aluminium_fluid_pipe_tiny",
-    "gt6:aluminium_fluid_pipe_small",
-    "gt6:aluminium_fluid_pipe_medium",
-    "gt6:aluminium_fluid_pipe_large",
-    "gt6:aluminium_fluid_pipe_huge",
-    "gt6:aluminium_fluid_pipe_quadruple",
-    "gt6:aluminium_fluid_pipe_nonuple",
+    {
+      "id": "gt6:aluminium_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:aluminium_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:aluminium_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:aluminium_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:aluminium_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:aluminium_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:aluminium_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:tin_alloy_fluid_pipe_tiny",
     "gt6:tin_alloy_fluid_pipe_small",
     "gt6:tin_alloy_fluid_pipe_medium",
@@ -759,13 +960,34 @@
     "gt6:chromium_fluid_pipe_huge",
     "gt6:chromium_fluid_pipe_quadruple",
     "gt6:chromium_fluid_pipe_nonuple",
-    "gt6:hsla_fluid_pipe_tiny",
-    "gt6:hsla_fluid_pipe_small",
-    "gt6:hsla_fluid_pipe_medium",
-    "gt6:hsla_fluid_pipe_large",
-    "gt6:hsla_fluid_pipe_huge",
-    "gt6:hsla_fluid_pipe_quadruple",
-    "gt6:hsla_fluid_pipe_nonuple",
+    {
+      "id": "gt6:hsla_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:hsla_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:hsla_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:hsla_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:hsla_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:hsla_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:hsla_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:efrine_fluid_pipe_tiny",
     "gt6:efrine_fluid_pipe_small",
     "gt6:efrine_fluid_pipe_medium",
@@ -787,13 +1009,34 @@
     "gt6:stainless_steel_fluid_pipe_huge",
     "gt6:stainless_steel_fluid_pipe_quadruple",
     "gt6:stainless_steel_fluid_pipe_nonuple",
-    "gt6:tungsten_alloy_fluid_pipe_tiny",
-    "gt6:tungsten_alloy_fluid_pipe_small",
-    "gt6:tungsten_alloy_fluid_pipe_medium",
-    "gt6:tungsten_alloy_fluid_pipe_large",
-    "gt6:tungsten_alloy_fluid_pipe_huge",
-    "gt6:tungsten_alloy_fluid_pipe_quadruple",
-    "gt6:tungsten_alloy_fluid_pipe_nonuple",
+    {
+      "id": "gt6:tungsten_alloy_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_alloy_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_alloy_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_alloy_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_alloy_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_alloy_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_alloy_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:titanium_fluid_pipe_tiny",
     "gt6:titanium_fluid_pipe_small",
     "gt6:titanium_fluid_pipe_medium",
@@ -808,13 +1051,34 @@
     "gt6:netherite_fluid_pipe_huge",
     "gt6:netherite_fluid_pipe_quadruple",
     "gt6:netherite_fluid_pipe_nonuple",
-    "gt6:workers_alloy_fluid_pipe_tiny",
-    "gt6:workers_alloy_fluid_pipe_small",
-    "gt6:workers_alloy_fluid_pipe_medium",
-    "gt6:workers_alloy_fluid_pipe_large",
-    "gt6:workers_alloy_fluid_pipe_huge",
-    "gt6:workers_alloy_fluid_pipe_quadruple",
-    "gt6:workers_alloy_fluid_pipe_nonuple",
+    {
+      "id": "gt6:workers_alloy_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:workers_alloy_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:workers_alloy_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:workers_alloy_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:workers_alloy_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:workers_alloy_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:workers_alloy_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:tungsten_fluid_pipe_tiny",
     "gt6:tungsten_fluid_pipe_small",
     "gt6:tungsten_fluid_pipe_medium",
@@ -843,13 +1107,34 @@
     "gt6:tungstensteel_fluid_pipe_huge",
     "gt6:tungstensteel_fluid_pipe_quadruple",
     "gt6:tungstensteel_fluid_pipe_nonuple",
-    "gt6:tungsten_carbide_fluid_pipe_tiny",
-    "gt6:tungsten_carbide_fluid_pipe_small",
-    "gt6:tungsten_carbide_fluid_pipe_medium",
-    "gt6:tungsten_carbide_fluid_pipe_large",
-    "gt6:tungsten_carbide_fluid_pipe_huge",
-    "gt6:tungsten_carbide_fluid_pipe_quadruple",
-    "gt6:tungsten_carbide_fluid_pipe_nonuple",
+    {
+      "id": "gt6:tungsten_carbide_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_carbide_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_carbide_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_carbide_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_carbide_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_carbide_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:tungsten_carbide_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:iridium_fluid_pipe_tiny",
     "gt6:iridium_fluid_pipe_small",
     "gt6:iridium_fluid_pipe_medium",
@@ -857,13 +1142,34 @@
     "gt6:iridium_fluid_pipe_huge",
     "gt6:iridium_fluid_pipe_quadruple",
     "gt6:iridium_fluid_pipe_nonuple",
-    "gt6:gaia_spirit_fluid_pipe_tiny",
-    "gt6:gaia_spirit_fluid_pipe_small",
-    "gt6:gaia_spirit_fluid_pipe_medium",
-    "gt6:gaia_spirit_fluid_pipe_large",
-    "gt6:gaia_spirit_fluid_pipe_huge",
-    "gt6:gaia_spirit_fluid_pipe_quadruple",
-    "gt6:gaia_spirit_fluid_pipe_nonuple",
+    {
+      "id": "gt6:gaia_spirit_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:gaia_spirit_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:gaia_spirit_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:gaia_spirit_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:gaia_spirit_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:gaia_spirit_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:gaia_spirit_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:draconium_fluid_pipe_tiny",
     "gt6:draconium_fluid_pipe_small",
     "gt6:draconium_fluid_pipe_medium",
@@ -871,20 +1177,62 @@
     "gt6:draconium_fluid_pipe_huge",
     "gt6:draconium_fluid_pipe_quadruple",
     "gt6:draconium_fluid_pipe_nonuple",
-    "gt6:awakened_draconium_fluid_pipe_tiny",
-    "gt6:awakened_draconium_fluid_pipe_small",
-    "gt6:awakened_draconium_fluid_pipe_medium",
-    "gt6:awakened_draconium_fluid_pipe_large",
-    "gt6:awakened_draconium_fluid_pipe_huge",
-    "gt6:awakened_draconium_fluid_pipe_quadruple",
-    "gt6:awakened_draconium_fluid_pipe_nonuple",
-    "gt6:infinity_fluid_pipe_tiny",
-    "gt6:infinity_fluid_pipe_small",
-    "gt6:infinity_fluid_pipe_medium",
-    "gt6:infinity_fluid_pipe_large",
-    "gt6:infinity_fluid_pipe_huge",
-    "gt6:infinity_fluid_pipe_quadruple",
-    "gt6:infinity_fluid_pipe_nonuple",
+    {
+      "id": "gt6:awakened_draconium_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:awakened_draconium_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:awakened_draconium_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:awakened_draconium_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:awakened_draconium_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:awakened_draconium_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:awakened_draconium_fluid_pipe_nonuple",
+      "required": false
+    },
+    {
+      "id": "gt6:infinity_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:infinity_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:infinity_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:infinity_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:infinity_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:infinity_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:infinity_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:adamantium_fluid_pipe_tiny",
     "gt6:adamantium_fluid_pipe_small",
     "gt6:adamantium_fluid_pipe_medium",
@@ -892,13 +1240,34 @@
     "gt6:adamantium_fluid_pipe_huge",
     "gt6:adamantium_fluid_pipe_quadruple",
     "gt6:adamantium_fluid_pipe_nonuple",
-    "gt6:bedrock_hsla_alloy_fluid_pipe_tiny",
-    "gt6:bedrock_hsla_alloy_fluid_pipe_small",
-    "gt6:bedrock_hsla_alloy_fluid_pipe_medium",
-    "gt6:bedrock_hsla_alloy_fluid_pipe_large",
-    "gt6:bedrock_hsla_alloy_fluid_pipe_huge",
-    "gt6:bedrock_hsla_alloy_fluid_pipe_quadruple",
-    "gt6:bedrock_hsla_alloy_fluid_pipe_nonuple",
+    {
+      "id": "gt6:bedrock_hsla_alloy_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:bedrock_hsla_alloy_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:bedrock_hsla_alloy_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:bedrock_hsla_alloy_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:bedrock_hsla_alloy_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:bedrock_hsla_alloy_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:bedrock_hsla_alloy_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:thaumium_fluid_pipe_tiny",
     "gt6:thaumium_fluid_pipe_small",
     "gt6:thaumium_fluid_pipe_medium",
@@ -906,27 +1275,90 @@
     "gt6:thaumium_fluid_pipe_huge",
     "gt6:thaumium_fluid_pipe_quadruple",
     "gt6:thaumium_fluid_pipe_nonuple",
-    "gt6:manasteel_fluid_pipe_tiny",
-    "gt6:manasteel_fluid_pipe_small",
-    "gt6:manasteel_fluid_pipe_medium",
-    "gt6:manasteel_fluid_pipe_large",
-    "gt6:manasteel_fluid_pipe_huge",
-    "gt6:manasteel_fluid_pipe_quadruple",
-    "gt6:manasteel_fluid_pipe_nonuple",
-    "gt6:void_metal_fluid_pipe_tiny",
-    "gt6:void_metal_fluid_pipe_small",
-    "gt6:void_metal_fluid_pipe_medium",
-    "gt6:void_metal_fluid_pipe_large",
-    "gt6:void_metal_fluid_pipe_huge",
-    "gt6:void_metal_fluid_pipe_quadruple",
-    "gt6:void_metal_fluid_pipe_nonuple",
-    "gt6:terrasteel_fluid_pipe_tiny",
-    "gt6:terrasteel_fluid_pipe_small",
-    "gt6:terrasteel_fluid_pipe_medium",
-    "gt6:terrasteel_fluid_pipe_large",
-    "gt6:terrasteel_fluid_pipe_huge",
-    "gt6:terrasteel_fluid_pipe_quadruple",
-    "gt6:terrasteel_fluid_pipe_nonuple",
+    {
+      "id": "gt6:manasteel_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:manasteel_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:manasteel_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:manasteel_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:manasteel_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:manasteel_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:manasteel_fluid_pipe_nonuple",
+      "required": false
+    },
+    {
+      "id": "gt6:void_metal_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:void_metal_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:void_metal_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:void_metal_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:void_metal_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:void_metal_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:void_metal_fluid_pipe_nonuple",
+      "required": false
+    },
+    {
+      "id": "gt6:terrasteel_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:terrasteel_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:terrasteel_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:terrasteel_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:terrasteel_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:terrasteel_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:terrasteel_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:carbon_fluid_pipe_tiny",
     "gt6:carbon_fluid_pipe_small",
     "gt6:carbon_fluid_pipe_medium",
@@ -1083,7 +1515,10 @@
     "gt6:charging_locker_constantan",
     "gt6:charging_locker_bronze",
     "gt6:charging_locker_arsenic_copper",
-    "gt6:charging_locker_aluminium",
+    {
+      "id": "gt6:charging_locker_aluminium",
+      "required": false
+    },
     "gt6:charging_locker_brass",
     "gt6:charging_locker_tin_alloy",
     "gt6:charging_locker_cobalt",
@@ -1093,48 +1528,90 @@
     "gt6:charging_locker_germanium",
     "gt6:charging_locker_invar",
     "gt6:charging_locker_steel",
-    "gt6:charging_locker_hsla_steel",
+    {
+      "id": "gt6:charging_locker_hsla_steel",
+      "required": false
+    },
     "gt6:charging_locker_gold",
     "gt6:charging_locker_silver",
     "gt6:charging_locker_manganese",
     "gt6:charging_locker_manyullyn",
-    "gt6:charging_locker_lumium",
-    "gt6:charging_locker_knightmetal",
+    {
+      "id": "gt6:charging_locker_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_locker_knightmetal",
+      "required": false
+    },
     "gt6:charging_locker_galvanized_steel",
     "gt6:charging_locker_meteorite",
-    "gt6:charging_locker_meteoric_steel",
+    {
+      "id": "gt6:charging_locker_meteoric_steel",
+      "required": false
+    },
     "gt6:charging_locker_gilded_iron",
     "gt6:charging_locker_molybdenum",
     "gt6:charging_locker_syrmorite",
     "gt6:charging_locker_electrum",
     "gt6:charging_locker_stainless_steel",
     "gt6:charging_locker_thaumium",
-    "gt6:charging_locker_manasteel",
+    {
+      "id": "gt6:charging_locker_manasteel",
+      "required": false
+    },
     "gt6:charging_locker_efrine",
-    "gt6:charging_locker_tungsten_alloy",
+    {
+      "id": "gt6:charging_locker_tungsten_alloy",
+      "required": false
+    },
     "gt6:charging_locker_titanium",
     "gt6:charging_locker_netherite",
     "gt6:charging_locker_chromium",
     "gt6:charging_locker_platinum",
     "gt6:charging_locker_octine",
     "gt6:charging_locker_desh",
-    "gt6:charging_locker_terrasteel",
+    {
+      "id": "gt6:charging_locker_terrasteel",
+      "required": false
+    },
     "gt6:charging_locker_tungstensteel",
-    "gt6:charging_locker_tungsten_carbide",
+    {
+      "id": "gt6:charging_locker_tungsten_carbide",
+      "required": false
+    },
     "gt6:charging_locker_duranium_alloy",
     "gt6:charging_locker_draconium",
     "gt6:charging_locker_ultimet",
-    "gt6:charging_locker_workers_alloy",
+    {
+      "id": "gt6:charging_locker_workers_alloy",
+      "required": false
+    },
     "gt6:charging_locker_tungsten",
     "gt6:charging_locker_palladium",
     "gt6:charging_locker_iridium",
     "gt6:charging_locker_osmium",
-    "gt6:charging_locker_void_metal",
-    "gt6:charging_locker_elementium",
+    {
+      "id": "gt6:charging_locker_void_metal",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_locker_elementium",
+      "required": false
+    },
     "gt6:charging_locker_tritanium_alloy",
     "gt6:charging_locker_adamantium",
-    "gt6:charging_locker_bedrock_hsla_alloy",
-    "gt6:charging_locker_awakened_draconium",
-    "gt6:charging_locker_infinity"
+    {
+      "id": "gt6:charging_locker_bedrock_hsla_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_locker_awakened_draconium",
+      "required": false
+    },
+    {
+      "id": "gt6:charging_locker_infinity",
+      "required": false
+    }
   ]
 }

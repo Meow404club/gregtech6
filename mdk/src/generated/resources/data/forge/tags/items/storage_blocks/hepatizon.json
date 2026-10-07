@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_hepatizon",
-    "gt6:block_ingot_hepatizon"
+    {
+      "id": "gt6:block_dust_hepatizon",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_hepatizon",
+      "required": false
+    }
   ]
 }

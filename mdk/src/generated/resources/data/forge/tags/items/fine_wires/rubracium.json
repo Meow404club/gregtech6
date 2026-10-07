@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_rubracium"
+    {
+      "id": "gt6:wire_fine_rubracium",
+      "required": false
+    }
   ]
 }

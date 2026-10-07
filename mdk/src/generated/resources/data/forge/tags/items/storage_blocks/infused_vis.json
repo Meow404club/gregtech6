@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_infused_vis",
-    "gt6:block_dust_infused_vis"
+    {
+      "id": "gt6:block_gem_infused_vis",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_infused_vis",
+      "required": false
+    }
   ]
 }

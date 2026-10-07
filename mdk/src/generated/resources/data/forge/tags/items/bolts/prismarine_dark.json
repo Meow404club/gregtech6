@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_prismarine_dark"
+    {
+      "id": "gt6:bolt_prismarine_dark",
+      "required": false
+    }
   ]
 }

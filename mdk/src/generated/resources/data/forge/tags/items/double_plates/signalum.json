@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_signalum"
+    {
+      "id": "gt6:plate_double_signalum",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_deep_iron"
+    {
+      "id": "gt6:nugget_deep_iron",
+      "required": false
+    }
   ]
 }

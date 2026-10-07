@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_dilithium"
+    {
+      "id": "gt6:bolt_dilithium",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_celenegil",
-    "gt6:block_ingot_celenegil"
+    {
+      "id": "gt6:block_dust_celenegil",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_celenegil",
+      "required": false
+    }
   ]
 }

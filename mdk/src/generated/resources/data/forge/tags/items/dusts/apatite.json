@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_apatite"
+    {
+      "id": "gt6:dust_apatite",
+      "required": false
+    }
   ]
 }

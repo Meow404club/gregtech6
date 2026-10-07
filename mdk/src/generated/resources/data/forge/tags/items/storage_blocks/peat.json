@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_peat",
-    "gt6:block_ingot_peat"
+    {
+      "id": "gt6:block_dust_peat",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_peat",
+      "required": false
+    }
   ]
 }

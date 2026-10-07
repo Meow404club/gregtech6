@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_bedrock_hslaalloy"
+    {
+      "id": "gt6:dust_bedrock_hslaalloy",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_iffesal"
+    {
+      "id": "gt6:block_dust_iffesal",
+      "required": false
+    }
   ]
 }

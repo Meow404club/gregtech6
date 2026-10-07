@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_sanguinite"
+    {
+      "id": "gt6:wire_fine_sanguinite",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_ashes"
+    {
+      "id": "gt6:block_dust_ashes",
+      "required": false
+    }
   ]
 }

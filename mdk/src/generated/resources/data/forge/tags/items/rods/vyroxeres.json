@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_vyroxeres"
+    {
+      "id": "gt6:stick_vyroxeres",
+      "required": false
+    }
   ]
 }

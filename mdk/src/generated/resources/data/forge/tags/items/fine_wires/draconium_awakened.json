@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_draconium_awakened"
+    {
+      "id": "gt6:wire_fine_draconium_awakened",
+      "required": false
+    }
   ]
 }

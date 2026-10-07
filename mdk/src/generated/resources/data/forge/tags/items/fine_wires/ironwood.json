@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_ironwood"
+    {
+      "id": "gt6:wire_fine_ironwood",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_ceruclase"
+    {
+      "id": "gt6:gear_gt_small_ceruclase",
+      "required": false
+    }
   ]
 }

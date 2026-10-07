@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_teflon"
+    {
+      "id": "gt6:dust_teflon",
+      "required": false
+    }
   ]
 }

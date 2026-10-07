@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hard_plastic"
+    {
+      "id": "gt6:ingot_hard_plastic",
+      "required": false
+    }
   ]
 }

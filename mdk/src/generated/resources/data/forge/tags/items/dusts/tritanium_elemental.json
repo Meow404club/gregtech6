@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_tritanium_elemental"
+    {
+      "id": "gt6:dust_tritanium_elemental",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_wax_plant"
+    {
+      "id": "gt6:ingot_wax_plant",
+      "required": false
+    }
   ]
 }

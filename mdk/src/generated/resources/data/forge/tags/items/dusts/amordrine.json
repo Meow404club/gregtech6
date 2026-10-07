@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_amordrine"
+    {
+      "id": "gt6:dust_amordrine",
+      "required": false
+    }
   ]
 }

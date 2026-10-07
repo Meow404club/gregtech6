@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_elvorium"
+    {
+      "id": "gt6:nugget_elvorium",
+      "required": false
+    }
   ]
 }

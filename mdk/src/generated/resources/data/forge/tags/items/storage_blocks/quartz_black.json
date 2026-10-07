@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_quartz_black",
-    "gt6:block_dust_quartz_black"
+    {
+      "id": "gt6:block_gem_quartz_black",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_quartz_black",
+      "required": false
+    }
   ]
 }

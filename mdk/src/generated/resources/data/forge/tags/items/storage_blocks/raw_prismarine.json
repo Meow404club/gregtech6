@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_prismarine"
+    {
+      "id": "gt6:block_raw_prismarine",
+      "required": false
+    }
   ]
 }

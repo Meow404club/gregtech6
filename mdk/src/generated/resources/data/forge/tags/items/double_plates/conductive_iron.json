@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_conductive_iron"
+    {
+      "id": "gt6:plate_double_conductive_iron",
+      "required": false
+    }
   ]
 }

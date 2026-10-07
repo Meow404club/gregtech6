@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_inolashite",
-    "gt6:block_ingot_inolashite"
+    {
+      "id": "gt6:block_dust_inolashite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_inolashite",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_rubracium",
-    "gt6:block_ingot_rubracium"
+    {
+      "id": "gt6:block_dust_rubracium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_rubracium",
+      "required": false
+    }
   ]
 }

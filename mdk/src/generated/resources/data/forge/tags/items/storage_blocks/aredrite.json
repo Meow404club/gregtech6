@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_aredrite",
-    "gt6:block_ingot_aredrite"
+    {
+      "id": "gt6:block_dust_aredrite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_aredrite",
+      "required": false
+    }
   ]
 }

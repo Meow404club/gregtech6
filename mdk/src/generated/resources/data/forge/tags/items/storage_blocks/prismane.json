@@ -1,7 +1,16 @@
 {
   "values": [
-    "gt6:block_gem_prismane",
-    "gt6:block_dust_prismane",
-    "gt6:block_ingot_prismane"
+    {
+      "id": "gt6:block_gem_prismane",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_prismane",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_prismane",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_hslasteel"
+    {
+      "id": "gt6:bolt_hslasteel",
+      "required": false
+    }
   ]
 }

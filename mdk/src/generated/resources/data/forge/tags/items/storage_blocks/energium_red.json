@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_energium_red",
-    "gt6:block_dust_energium_red"
+    {
+      "id": "gt6:block_gem_energium_red",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_energium_red",
+      "required": false
+    }
   ]
 }

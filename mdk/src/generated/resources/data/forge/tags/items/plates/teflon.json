@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_teflon"
+    {
+      "id": "gt6:plate_teflon",
+      "required": false
+    }
   ]
 }

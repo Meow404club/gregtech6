@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_stellar_alloy"
+    {
+      "id": "gt6:ingot_hot_stellar_alloy",
+      "required": false
+    }
   ]
 }

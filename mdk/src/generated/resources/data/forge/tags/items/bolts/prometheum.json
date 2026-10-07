@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_prometheum"
+    {
+      "id": "gt6:bolt_prometheum",
+      "required": false
+    }
   ]
 }

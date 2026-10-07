@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_gold_inductive"
+    {
+      "id": "gt6:wire_fine_gold_inductive",
+      "required": false
+    }
   ]
 }

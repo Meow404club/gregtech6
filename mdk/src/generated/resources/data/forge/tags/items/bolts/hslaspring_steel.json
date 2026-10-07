@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_hslaspring_steel"
+    {
+      "id": "gt6:bolt_hslaspring_steel",
+      "required": false
+    }
   ]
 }

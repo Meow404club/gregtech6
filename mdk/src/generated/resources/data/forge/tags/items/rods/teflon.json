@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_teflon"
+    {
+      "id": "gt6:stick_teflon",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_fish_cooked"
+    {
+      "id": "gt6:dust_fish_cooked",
+      "required": false
+    }
   ]
 }

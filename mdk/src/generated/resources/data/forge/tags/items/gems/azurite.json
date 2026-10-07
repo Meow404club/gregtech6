@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_azurite"
+    {
+      "id": "gt6:gem_azurite",
+      "required": false
+    }
   ]
 }

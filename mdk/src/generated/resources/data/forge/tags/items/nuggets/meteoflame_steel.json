@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_meteoflame_steel"
+    {
+      "id": "gt6:nugget_meteoflame_steel",
+      "required": false
+    }
   ]
 }

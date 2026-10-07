@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_haderoth"
+    {
+      "id": "gt6:plate_double_haderoth",
+      "required": false
+    }
   ]
 }

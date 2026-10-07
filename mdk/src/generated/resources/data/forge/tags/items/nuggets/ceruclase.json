@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_ceruclase"
+    {
+      "id": "gt6:nugget_ceruclase",
+      "required": false
+    }
   ]
 }

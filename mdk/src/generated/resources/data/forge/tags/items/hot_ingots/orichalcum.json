@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_orichalcum"
+    {
+      "id": "gt6:ingot_hot_orichalcum",
+      "required": false
+    }
   ]
 }

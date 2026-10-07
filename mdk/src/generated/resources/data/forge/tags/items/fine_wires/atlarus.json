@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_atlarus"
+    {
+      "id": "gt6:wire_fine_atlarus",
+      "required": false
+    }
   ]
 }

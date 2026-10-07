@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_orichalcum"
+    {
+      "id": "gt6:wire_fine_orichalcum",
+      "required": false
+    }
   ]
 }

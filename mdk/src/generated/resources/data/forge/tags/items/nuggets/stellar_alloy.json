@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_stellar_alloy"
+    {
+      "id": "gt6:nugget_stellar_alloy",
+      "required": false
+    }
   ]
 }

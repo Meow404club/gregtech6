@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_meutoite"
+    {
+      "id": "gt6:bolt_meutoite",
+      "required": false
+    }
   ]
 }

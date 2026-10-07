@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_amordrine"
+    {
+      "id": "gt6:ingot_hot_amordrine",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_alexandrite"
+    {
+      "id": "gt6:stick_alexandrite",
+      "required": false
+    }
   ]
 }

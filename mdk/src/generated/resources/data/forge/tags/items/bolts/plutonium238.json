@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_plutonium238"
+    {
+      "id": "gt6:bolt_plutonium238",
+      "required": false
+    }
   ]
 }

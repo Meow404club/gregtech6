@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_glowstone_enceladus"
+    {
+      "id": "gt6:block_raw_glowstone_enceladus",
+      "required": false
+    }
   ]
 }

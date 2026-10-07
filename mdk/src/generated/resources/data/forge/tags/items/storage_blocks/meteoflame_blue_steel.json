@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_meteoflame_blue_steel",
-    "gt6:block_ingot_meteoflame_blue_steel"
+    {
+      "id": "gt6:block_dust_meteoflame_blue_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_meteoflame_blue_steel",
+      "required": false
+    }
   ]
 }

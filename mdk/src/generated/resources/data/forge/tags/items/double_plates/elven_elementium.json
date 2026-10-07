@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_elven_elementium"
+    {
+      "id": "gt6:plate_double_elven_elementium",
+      "required": false
+    }
   ]
 }

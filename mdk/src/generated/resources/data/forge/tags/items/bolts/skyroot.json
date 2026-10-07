@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_skyroot"
+    {
+      "id": "gt6:bolt_skyroot",
+      "required": false
+    }
   ]
 }

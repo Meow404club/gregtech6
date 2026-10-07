@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_plutonium238"
+    {
+      "id": "gt6:ingot_plutonium238",
+      "required": false
+    }
   ]
 }

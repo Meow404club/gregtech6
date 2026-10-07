@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_bedrockium"
+    {
+      "id": "gt6:dust_bedrockium",
+      "required": false
+    }
   ]
 }

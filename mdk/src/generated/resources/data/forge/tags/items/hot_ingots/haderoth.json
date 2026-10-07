@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_haderoth"
+    {
+      "id": "gt6:ingot_hot_haderoth",
+      "required": false
+    }
   ]
 }

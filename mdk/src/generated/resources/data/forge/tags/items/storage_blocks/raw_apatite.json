@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_apatite"
+    {
+      "id": "gt6:block_raw_apatite",
+      "required": false
+    }
   ]
 }

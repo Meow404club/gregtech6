@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_kreknorite"
+    {
+      "id": "gt6:gear_gt_small_kreknorite",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_infuscolium",
-    "gt6:block_ingot_infuscolium"
+    {
+      "id": "gt6:block_dust_infuscolium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_infuscolium",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_lemurite",
-    "gt6:block_ingot_lemurite"
+    {
+      "id": "gt6:block_dust_lemurite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_lemurite",
+      "required": false
+    }
   ]
 }

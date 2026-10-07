@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_ironwood",
-    "gt6:block_ingot_ironwood"
+    {
+      "id": "gt6:block_dust_ironwood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_ironwood",
+      "required": false
+    }
   ]
 }

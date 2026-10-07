@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_blizz"
+    {
+      "id": "gt6:plate_blizz",
+      "required": false
+    }
   ]
 }

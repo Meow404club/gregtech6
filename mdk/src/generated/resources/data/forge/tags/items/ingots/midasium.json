@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_midasium"
+    {
+      "id": "gt6:ingot_midasium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_ectoplasm"
+    {
+      "id": "gt6:block_dust_ectoplasm",
+      "required": false
+    }
   ]
 }

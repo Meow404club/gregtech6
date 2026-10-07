@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_lithium_oxide"
+    {
+      "id": "gt6:block_dust_lithium_oxide",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_red_matter",
-    "gt6:block_dust_red_matter"
+    {
+      "id": "gt6:block_gem_red_matter",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_matter",
+      "required": false
+    }
   ]
 }

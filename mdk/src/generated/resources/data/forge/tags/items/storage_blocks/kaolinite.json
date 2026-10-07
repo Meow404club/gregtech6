@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_kaolinite"
+    {
+      "id": "gt6:block_dust_kaolinite",
+      "required": false
+    }
   ]
 }

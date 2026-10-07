@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_eximite"
+    {
+      "id": "gt6:dust_eximite",
+      "required": false
+    }
   ]
 }

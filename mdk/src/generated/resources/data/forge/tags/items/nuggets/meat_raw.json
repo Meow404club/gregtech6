@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_meat_raw"
+    {
+      "id": "gt6:nugget_meat_raw",
+      "required": false
+    }
   ]
 }

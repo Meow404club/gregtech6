@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_palygorskite"
+    {
+      "id": "gt6:dust_palygorskite",
+      "required": false
+    }
   ]
 }

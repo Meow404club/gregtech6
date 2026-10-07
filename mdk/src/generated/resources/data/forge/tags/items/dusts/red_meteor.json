@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_red_meteor"
+    {
+      "id": "gt6:dust_red_meteor",
+      "required": false
+    }
   ]
 }

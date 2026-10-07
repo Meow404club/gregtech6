@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_sodium_hydrogencarbonate"
+    {
+      "id": "gt6:block_raw_sodium_hydrogencarbonate",
+      "required": false
+    }
   ]
 }

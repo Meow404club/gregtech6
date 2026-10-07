@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_steeleaf"
+    {
+      "id": "gt6:ingot_steeleaf",
+      "required": false
+    }
   ]
 }

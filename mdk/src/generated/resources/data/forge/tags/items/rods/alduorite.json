@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_alduorite"
+    {
+      "id": "gt6:stick_alduorite",
+      "required": false
+    }
   ]
 }

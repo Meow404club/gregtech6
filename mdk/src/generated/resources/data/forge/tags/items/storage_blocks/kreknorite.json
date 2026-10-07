@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_kreknorite",
-    "gt6:block_ingot_kreknorite"
+    {
+      "id": "gt6:block_dust_kreknorite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_kreknorite",
+      "required": false
+    }
   ]
 }

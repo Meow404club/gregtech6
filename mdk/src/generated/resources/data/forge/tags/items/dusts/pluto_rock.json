@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_pluto_rock"
+    {
+      "id": "gt6:dust_pluto_rock",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_spectre_iron"
+    {
+      "id": "gt6:stick_spectre_iron",
+      "required": false
+    }
   ]
 }

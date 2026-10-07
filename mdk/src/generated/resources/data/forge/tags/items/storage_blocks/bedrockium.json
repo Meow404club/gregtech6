@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_bedrockium",
-    "gt6:block_ingot_bedrockium"
+    {
+      "id": "gt6:block_dust_bedrockium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_bedrockium",
+      "required": false
+    }
   ]
 }

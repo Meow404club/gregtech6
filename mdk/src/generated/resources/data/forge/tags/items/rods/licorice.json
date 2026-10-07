@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_licorice"
+    {
+      "id": "gt6:stick_licorice",
+      "required": false
+    }
   ]
 }

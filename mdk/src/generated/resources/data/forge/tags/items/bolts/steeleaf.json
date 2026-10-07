@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_steeleaf"
+    {
+      "id": "gt6:bolt_steeleaf",
+      "required": false
+    }
   ]
 }

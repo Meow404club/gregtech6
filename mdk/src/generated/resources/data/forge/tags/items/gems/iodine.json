@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_iodine"
+    {
+      "id": "gt6:gem_iodine",
+      "required": false
+    }
   ]
 }

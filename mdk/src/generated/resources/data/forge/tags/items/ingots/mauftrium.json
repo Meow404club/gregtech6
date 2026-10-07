@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_mauftrium"
+    {
+      "id": "gt6:ingot_mauftrium",
+      "required": false
+    }
   ]
 }

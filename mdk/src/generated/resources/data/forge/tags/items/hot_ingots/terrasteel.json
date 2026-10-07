@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_terrasteel"
+    {
+      "id": "gt6:ingot_hot_terrasteel",
+      "required": false
+    }
   ]
 }

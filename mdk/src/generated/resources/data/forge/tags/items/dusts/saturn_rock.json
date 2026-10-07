@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_saturn_rock"
+    {
+      "id": "gt6:dust_saturn_rock",
+      "required": false
+    }
   ]
 }

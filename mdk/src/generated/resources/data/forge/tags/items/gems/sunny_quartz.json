@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_sunny_quartz"
+    {
+      "id": "gt6:gem_sunny_quartz",
+      "required": false
+    }
   ]
 }

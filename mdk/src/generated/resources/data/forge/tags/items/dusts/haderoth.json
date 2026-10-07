@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_haderoth"
+    {
+      "id": "gt6:dust_haderoth",
+      "required": false
+    }
   ]
 }

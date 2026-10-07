@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_glowstone_refined"
+    {
+      "id": "gt6:stick_glowstone_refined",
+      "required": false
+    }
   ]
 }

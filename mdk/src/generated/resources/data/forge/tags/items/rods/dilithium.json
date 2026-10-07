@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_dilithium"
+    {
+      "id": "gt6:stick_dilithium",
+      "required": false
+    }
   ]
 }

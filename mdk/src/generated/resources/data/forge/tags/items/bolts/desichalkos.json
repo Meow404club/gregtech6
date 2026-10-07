@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_desichalkos"
+    {
+      "id": "gt6:bolt_desichalkos",
+      "required": false
+    }
   ]
 }

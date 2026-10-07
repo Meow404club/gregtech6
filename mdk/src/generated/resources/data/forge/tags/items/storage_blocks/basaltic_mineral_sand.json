@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_basaltic_mineral_sand"
+    {
+      "id": "gt6:block_dust_basaltic_mineral_sand",
+      "required": false
+    }
   ]
 }

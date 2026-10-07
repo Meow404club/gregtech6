@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_neodymium",
-    "gt6:block_ingot_neodymium"
+    {
+      "id": "gt6:block_dust_neodymium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_neodymium",
+      "required": false
+    }
   ]
 }

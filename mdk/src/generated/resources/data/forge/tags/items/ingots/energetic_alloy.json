@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_energetic_alloy"
+    {
+      "id": "gt6:ingot_energetic_alloy",
+      "required": false
+    }
   ]
 }

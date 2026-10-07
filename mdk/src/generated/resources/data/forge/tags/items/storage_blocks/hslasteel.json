@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_hslasteel",
-    "gt6:block_ingot_hslasteel"
+    {
+      "id": "gt6:block_dust_hslasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_hslasteel",
+      "required": false
+    }
   ]
 }

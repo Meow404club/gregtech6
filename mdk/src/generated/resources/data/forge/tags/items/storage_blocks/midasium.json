@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_midasium",
-    "gt6:block_ingot_midasium"
+    {
+      "id": "gt6:block_dust_midasium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_midasium",
+      "required": false
+    }
   ]
 }

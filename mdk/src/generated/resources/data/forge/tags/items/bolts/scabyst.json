@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_scabyst"
+    {
+      "id": "gt6:bolt_scabyst",
+      "required": false
+    }
   ]
 }

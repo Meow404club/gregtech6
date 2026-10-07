@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_vivid_alloy",
-    "gt6:block_ingot_vivid_alloy"
+    {
+      "id": "gt6:block_dust_vivid_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_vivid_alloy",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_inolashite"
+    {
+      "id": "gt6:dust_inolashite",
+      "required": false
+    }
   ]
 }

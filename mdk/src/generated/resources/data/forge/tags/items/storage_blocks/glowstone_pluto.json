@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_glowstone_pluto",
-    "gt6:block_dust_glowstone_pluto"
+    {
+      "id": "gt6:block_gem_glowstone_pluto",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_pluto",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_tofu",
-    "gt6:block_ingot_tofu"
+    {
+      "id": "gt6:block_dust_tofu",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_tofu",
+      "required": false
+    }
   ]
 }

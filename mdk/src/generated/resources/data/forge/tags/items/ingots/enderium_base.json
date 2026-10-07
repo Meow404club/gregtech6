@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_enderium_base"
+    {
+      "id": "gt6:ingot_enderium_base",
+      "required": false
+    }
   ]
 }

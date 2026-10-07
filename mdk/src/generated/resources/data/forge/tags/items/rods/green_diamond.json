@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_green_diamond"
+    {
+      "id": "gt6:stick_green_diamond",
+      "required": false
+    }
   ]
 }

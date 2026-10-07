@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_niobium"
+    {
+      "id": "gt6:plate_double_niobium",
+      "required": false
+    }
   ]
 }

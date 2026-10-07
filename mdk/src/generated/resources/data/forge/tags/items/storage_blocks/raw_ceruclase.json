@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_ceruclase"
+    {
+      "id": "gt6:block_raw_ceruclase",
+      "required": false
+    }
   ]
 }

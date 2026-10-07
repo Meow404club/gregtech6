@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_steeleaf"
+    {
+      "id": "gt6:gear_gt_small_steeleaf",
+      "required": false
+    }
   ]
 }

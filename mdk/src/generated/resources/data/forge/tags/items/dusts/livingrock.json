@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_livingrock"
+    {
+      "id": "gt6:dust_livingrock",
+      "required": false
+    }
   ]
 }

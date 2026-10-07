@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_conductive_iron"
+    {
+      "id": "gt6:nugget_conductive_iron",
+      "required": false
+    }
   ]
 }

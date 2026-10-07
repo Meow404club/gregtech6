@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_cd_in_ag_alloy"
+    {
+      "id": "gt6:plate_double_cd_in_ag_alloy",
+      "required": false
+    }
   ]
 }

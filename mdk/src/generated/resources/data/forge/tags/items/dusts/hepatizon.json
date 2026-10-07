@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_hepatizon"
+    {
+      "id": "gt6:dust_hepatizon",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_licorice"
+    {
+      "id": "gt6:dust_licorice",
+      "required": false
+    }
   ]
 }

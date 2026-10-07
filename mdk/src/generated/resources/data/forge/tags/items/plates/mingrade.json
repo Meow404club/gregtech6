@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_mingrade"
+    {
+      "id": "gt6:plate_mingrade",
+      "required": false
+    }
   ]
 }

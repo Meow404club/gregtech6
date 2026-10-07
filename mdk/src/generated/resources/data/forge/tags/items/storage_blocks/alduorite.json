@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_alduorite",
-    "gt6:block_ingot_alduorite"
+    {
+      "id": "gt6:block_dust_alduorite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_alduorite",
+      "required": false
+    }
   ]
 }
