@@ -68,6 +68,27 @@ import gregtech6.registry.GTBlockEntities;
  * in TF); everything else stays the overworld shape (the OW rows, the deepslate shell). The
  * spring roll rides the ONE {@link GT6Worldgen#SPRING_DIMENSION_SALT} stream in all three
  * dimensions (the salt declaration — the masks, not the stream, separate the bands).
+ *
+ * atum-dim-adaptation): the {@code gt6:nether_fluid_springs} modifier row
+ * ({@code #minecraft:is_nether}) and the {@code gt6:atum_fluid_springs} row
+ * ({@code #gt6:atum_biomes}) hang the SAME placed feature, and the feature routes itself
+ * four ways — {@code dimensionType().hasCeiling()} (the upstream WD.waterLevel
+ * {@code hasNoSky} face, WD.java:430) picks the nether ({@code nether=true} rows, the
+ * NETHER_DIMENSION_SALT replay stream, the nether's own y=0 bedrock floor and the
+ * NETHERRACK dome shell, WorldgenFluidSpring.java:69 "DIM_NETHER ? netherrack"); the work
+ * chunk's biome riding {@code #gt6:atum_biomes} picks the atum band ({@code atum=true}
+ * rows, the :789-792 oil domes 1/200 · 2000mB — NO ore-replay counterpart, no GT bedrock
+ * ores carry GEN_ATUM); everything else stays the overworld shape (the OW rows, the
+ * deepslate shell). Atum's own {@code #forge:is_atum} fill covers 2 of the 11 biomes
+ * (atum2 master is_atum.json), so the port routes through its OWN 11-member tag (the
+ * {@code GT6Worldgen.ATUM_BIOMES} mount, the tag IS the in-feature routing gate —
+ * {@code TagKey.create} is interned so the runtime check matches the mount data; atum
+ * absent, the tag resolves EMPTY and {@code is} is simply false). The atum dimension
+ * carries NO ceiling (atum2 master dimension_type/atum.json {@code has_ceiling: false} —
+ * the jar-level fact the card pinned, so the binary {@code hasCeiling} arm can never
+ * misroute atum into the nether or the overworld band). The spring roll rides the ONE
+ * {@link GT6Worldgen#SPRING_DIMENSION_SALT} stream in all three dimensions (the salt
+ * declaration — the masks, not the stream, separate the bands).
  * KJS face (card declaration): the 16-row table is datapack JSON (the configured-feature
  * config); the Feature/codec registration is the registry face, out of KJS scope
  * (GT6Features javadoc clause).
@@ -90,15 +111,22 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
         // (task twilight-hives-springs): hasCeiling alone is BINARY — TF hangs no ceiling
         // (TFDimensionData twilightDimType: false //ceiling), a bare mount would roll the OW
         // oil/gas band there (upstream routed by the GEN_TWILIGHT dim-type list instead).
+                // hasNoSky face); the atum arm reads OUR #gt6:atum_biomes tag at the work chunk — atum
+        // absent, the tag resolves EMPTY, is()==false, no crash; OW biomes never carry it, so
+        // the binary's default arm stays the overworld. THE CEILING FACT: atum hangs no ceiling
+        // (atum2 master dimension_type atum.json has_ceiling=false), a bare hasCeiling binary
+        // would roll the OW oil band there (upstream routed by the GEN_ATUM dim-type list).
         GT6FluidSpringGenerator.Dim tDim = tLevel.dimensionType().hasCeiling()
                 ? GT6FluidSpringGenerator.Dim.NETHER
                 : isTwilight(tLevel, tWork) ? GT6FluidSpringGenerator.Dim.TWILIGHT
+                : isAtum(tLevel, tWork) ? GT6FluidSpringGenerator.Dim.ATUM
                 : GT6FluidSpringGenerator.Dim.OVERWORLD;
         boolean tNether = tDim == GT6FluidSpringGenerator.Dim.NETHER;
 
         // :62 — the GENERATED_NO_BEDROCK_ORE replay (the mutual-exclusion seam, see class javadoc);
         // the replay rides the SAME per-dimension salt the bedrock feature draws with (a no-op
         // arm in TF — the twilight rows roll with no ore counterpart, the generator's Dim face)
+        // arm in atum — the atum rows roll with no ore counterpart, the generator's Dim face)
         Random tOreRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(),
                 tNether ? GT6VeinGenerator.NETHER_DIMENSION_SALT : GT6VeinGenerator.OVERWORLD_DIMENSION_SALT,
                 tWork.x, tWork.z);
@@ -108,6 +136,9 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
         // (task twilight-hives-springs): all three dimensions ride the ONE SPRING_DIMENSION_
         // SALT stream — the nether precedent; the twilight roll decisions differ from the OW
         // roll at the same coords only through the row masks (the :795-796 rows vs the OW band),
+        // (task atum-dim-adaptation, the nether precedent): all three dimensions ride the ONE
+        // SPRING_DIMENSION_SALT stream — the atum roll decisions differ from the OW roll at
+        // the same coords only through the row masks (the :789-792 rows vs the OW band),
         // never through the stream.
         Random tSpringRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(),
                 GT6Worldgen.SPRING_DIMENSION_SALT, tWork.x, tWork.z);
@@ -134,6 +165,17 @@ public class GT6FluidSpringFeature extends Feature<GTFluidSpringConfig.Table> {
     private static boolean isTwilight(WorldGenLevel aLevel, ChunkPos aWork) {
         return aLevel.getBiome(new BlockPos(aWork.getMinBlockX() + 8, 0, aWork.getMinBlockZ() + 8))
                 .is(GTOreWorldgen.twilightBiomeTag());
+    }
+
+    /**
+     * The atum detection (task atum-dim-adaptation): the work chunk's biome rides
+     * {@code #gt6:atum_biomes} — OUR OWN 11-member tag (the atum_fluid_springs modifier
+     * mounts through the SAME tag, the interned-TagKey pairing), the twilight-branch
+     * detection form.
+     */
+    private static boolean isAtum(WorldGenLevel aLevel, ChunkPos aWork) {
+        return aLevel.getBiome(new BlockPos(aWork.getMinBlockX() + 8, 0, aWork.getMinBlockZ() + 8))
+                .is(GT6Worldgen.ATUM_BIOMES);
     }
 
     /**

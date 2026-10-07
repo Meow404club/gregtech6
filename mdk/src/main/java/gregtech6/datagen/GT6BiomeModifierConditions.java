@@ -24,6 +24,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 
 import gregtech6.worldgen.GTOreWorldgen;
+import gregtech6.worldgen.GT6Worldgen;
 
 /**
  * The both-legs loader-conditions emission pass (task nether-lens-end-yield,
@@ -144,7 +145,15 @@ public class GT6BiomeModifierConditions implements DataProvider {
             // modifier, the same detection face (TF absent, the :795-796 rows stay dormant
             // census and the tag never resolves).
             new ConditionRow(GT6WorldgenDatagen.TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY.location().getPath(),
-                    aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)));
+                    aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)),
+            // task atum-dim-adaptation — the positive form's atum tenants, band by band
+            // (the registry's append-only contract): each atum modifier mounts only WITH
+            // Atum present. Atum absent: the entry skips at datapack load before the
+            // #gt6:atum_biomes tag resolves — the tag is OURS and would resolve EMPTY
+            // anyway, the condition is the twilight-form parity plus the explicit
+            // dead-mod declaration.
+            new ConditionRow(GT6WorldgenDatagen.ATUM_FLUID_SPRINGS_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GT6Worldgen.ATUM_MODID)));
 
     @Override
     public CompletableFuture<?> run(CachedOutput aCache) {

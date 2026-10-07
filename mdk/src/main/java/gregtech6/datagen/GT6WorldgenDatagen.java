@@ -701,6 +701,16 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task atum-dim-adaptation — the atum spring modifier: the :789-792 oil band over
+        // OUR OWN #gt6:atum_biomes tag (Atum's #forge:is_atum fill covers 2 of the 11
+        // biomes — the 11-id fallback IS the coverage), at the ore pass, textually after
+        // the nether row (the source order: the atum band follows the OW band, :789 after
+        // :782-788). The atum rows roll with no ore-replay opponent (no GT bedrock ores
+        // carry GEN_ATUM); the mod_loaded condition rides the emission registry.
+        ctx.register(ATUM_FLUID_SPRINGS_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
 
         // task worldgen-water-replace — the vanilla-water biome modifier: EVERY overworld
         // biome (the row gates do the filtering in-feature — the chunk-granular
@@ -1092,6 +1102,14 @@ public final class GT6WorldgenDatagen {
      * the trap the twilight column exists for).
      */
     public static final ResourceKey<BiomeModifier> TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY = biomeModifierKeyOf("twilight_fluid_springs");
+
+     * The atum spring biome-modifier key (task atum-dim-adaptation): the FIRST atum row —
+     * biomes {@code #gt6:atum_biomes} (the 11-member fallback tag), features = the SAME
+     * gt6:fluid_springs placed feature (the nether_fluid_springs same-placed-key
+     * convention; the atum rows are selected by the config's atum mask in-feature), the
+     * conditions ride the emission registry (the positive {@code [mod_loaded atum]}).
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_FLUID_SPRINGS_MODIFIER_KEY = biomeModifierKeyOf("atum_fluid_springs");
 
     /**
      * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card
@@ -2160,13 +2178,22 @@ public final class GT6WorldgenDatagen {
                 new RandomSpreadStructurePlacement(DUNGEON_SPACING, DUNGEON_SEPARATION, RandomSpreadType.LINEAR, DUNGEON_SALT)));
     }
 
-    /** The row helper for the offworld rows (:789-794 — never drawn overworld, kept for the table census). */
+    /** The row helper for the offworld rows (:789-796 — never drawn overworld, kept for the table census). */
     private static GTFluidSpringConfig springOffworld(String aName, String aBlockId, int aProbability, int aSpringAmount) {
         return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, aSpringAmount);
     }
 
     /** The twilight-row helper (:795-796 — the task twilight-hives-springs activation, the twilight mask column). */
     private static GTFluidSpringConfig springTwilight(String aName, String aBlockId, int aProbability, int aSpringAmount) {
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, true, false, aSpringAmount);
+    }
+
+    /**
+     * The row helper for the atum oil band (:789-792, task atum-dim-adaptation): the atum
+     * mask arm — {@code atum=true}, never overworld (the springOffworld posture plus the
+     * atum column; 1/200 · 2000mB, half the OW band's 1/400 · 6000).
+     */
+    private static GTFluidSpringConfig springAtum(String aName, String aBlockId, int aProbability, int aSpringAmount) {
         return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, true, aSpringAmount);
     }
 
@@ -2184,10 +2211,10 @@ public final class GT6WorldgenDatagen {
         spring       ("overworld.fluid.gas.natural"   , "natural_gas"          , 200, 3000), // :786
         spring       ("overworld.fluid.water"         , "water_geothermal"     , 100,  500), // :787
         springLava   ("overworld.fluid.lava"          , 200, true , false,     1000), // :788 — the OW lava dome, the vanilla block face
-        springOffworld("atum.fluid.oil.extraheavy"    , "gt6:liquid_extra_heavy_oil_block", 200, 2000), // :789
-        springOffworld("atum.fluid.oil.heavy"         , "gt6:liquid_heavy_oil_block"     , 200, 2000), // :790
-        springOffworld("atum.fluid.oil.medium"        , "gt6:liquid_medium_oil_block"    , 200, 2000), // :791
-        springOffworld("atum.fluid.oil.light"         , "gt6:liquid_light_oil_block"     , 200, 2000), // :792
+        springAtum   ("atum.fluid.oil.extraheavy"     , "gt6:liquid_extra_heavy_oil_block", 200, 2000), // :789 — the GEN_ATUM band (task atum-dim-adaptation)
+        springAtum   ("atum.fluid.oil.heavy"          , "gt6:liquid_heavy_oil_block"     , 200, 2000), // :790
+        springAtum   ("atum.fluid.oil.medium"         , "gt6:liquid_medium_oil_block"    , 200, 2000), // :791
+        springAtum   ("atum.fluid.oil.light"          , "gt6:liquid_light_oil_block"     , 200, 2000), // :792
         springOffworld("erebus.fluid.gas.natural"     , "gt6:natural_gas_block"          , 200, 1000), // :793
         springOffworld("betweenlands.fluid.gas.natural", "gt6:natural_gas_block"         , 200, 1000), // :794
         springTwilight("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200, 1000), // :795 — the twilight mask (task twilight-hives-springs)

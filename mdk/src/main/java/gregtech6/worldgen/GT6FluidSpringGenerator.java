@@ -78,11 +78,28 @@ public final class GT6FluidSpringGenerator {
      * The row validity (the modern dimension-mask face): the {@code overworld} rows roll in
      * the overworld, the :797 nether lava row rolls in the nether ({@code nether=true}, task
      * worldgen-nether-bedrock-lava), the :795-796 twilight rows roll in Twilight Forest
-     * ({@code twilight=true}, task twilight-hives-springs); the :789-794 rows carry no
+     * ({@code twilight=true}, task twilight-hives-springs); the :789-792 atum oil rows roll
+     * in Atum ({@code atum=true}, task atum-dim-adaptation); the remaining rows carry no
      * column — dormant census rows.
      */
     public static boolean valid(GTFluidSpringConfig aRow, Dim aDim) {
         return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.TWILIGHT ? aRow.twilight() : aRow.overworld();
+    }
+
+    /**
+     * The three-state routing dimension (task atum-dim-adaptation, the twilight-column
+     * mask posture's enum face): the Feature's {@code hasCeiling} binary grown its atum
+     * arm. Upstream routed by the world's registered dim-type list (the GEN_ATUM rows
+     * :789-792 roll ONLY in DIM_ATUM, GT6WorldGenerator.java:145); the port routes by the
+     * {@code #gt6:atum_biomes} biome probe (GT6Worldgen.ATUM_BIOMES — the mount tag the
+     * atum_fluid_springs modifier hangs through, the deadrock-tag absence face: atum
+     * absent, the tag resolves EMPTY, {@code is} is simply false).
+     */
+    public enum Dim { OVERWORLD, NETHER, ATUM }
+
+    /** The enum face of the row validity — the masks, not the stream, separate the bands. */
+    public static boolean valid(GTFluidSpringConfig aRow, Dim aDim) {
+        return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.ATUM ? aRow.atum() : aRow.overworld();
     }
 
     /**
@@ -114,6 +131,17 @@ public final class GT6FluidSpringGenerator {
     }
 
     /**
+     * The enum face (task atum-dim-adaptation): the atum arm returns FALSE — the atum band
+     * carries no GT bedrock-ore rows (the :744-775 GEN_FLOOR/NETHER/MARS/EREBUS/
+     * BETWEENLANDS lists name no ATUM), so the mutual-exclusion replay has no counterpart
+     * there and the spring rolls with no ore opponent (the twilight-card arm's shape).
+     */
+    public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom, Dim aDim) {
+        if (aDim == Dim.ATUM) return false;
+        return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom, aDim == Dim.NETHER).isEmpty();
+    }
+
+    /**
      * The spring row draw (WorldgenFluidSpring.java:62/:64): table order, one
      * {@code nextInt(P)==0} per valid row, FIRST hit wins and is returned — the upstream
      * CAN_GENERATE_BEDROCK_ORE=F claim blocks every later spring row, so at most one
@@ -128,7 +156,7 @@ public final class GT6FluidSpringGenerator {
         return drawSpring(aTable, aRandom, aNether ? Dim.NETHER : Dim.OVERWORLD);
     }
 
-    /** The three-state face — the roll walks ONLY the rows whose mask matches the dimension. */
+    /** The enum face — the ONE draw walk, the enum picks the row mask ({@link #valid(GTFluidSpringConfig, Dim)}); the roll walks ONLY the rows whose mask matches the dimension. */
     public static GTFluidSpringConfig drawSpring(GTFluidSpringConfig.Table aTable, Random aRandom, Dim aDim) {
         for (GTFluidSpringConfig tRow : aTable.rows()) {
             if (!valid(tRow, aDim)) continue;
