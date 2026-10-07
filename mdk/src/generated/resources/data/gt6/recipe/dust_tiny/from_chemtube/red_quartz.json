@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_red_quartz"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Botania"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_red_quartz"

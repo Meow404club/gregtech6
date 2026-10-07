@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "harvestcraft"
+    }
+  ],
   "key": {
     "X": {
       "item": "gt6:chunk_gt_wax_plant"

@@ -16,6 +16,12 @@
     }
   },
   "material": "atlarus",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

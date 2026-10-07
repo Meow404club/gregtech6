@@ -13,6 +13,12 @@
     }
   },
   "material": "dark_matter",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ProjectE"
+    }
+  ],
   "pattern": [
     "fCC",
     " CC",

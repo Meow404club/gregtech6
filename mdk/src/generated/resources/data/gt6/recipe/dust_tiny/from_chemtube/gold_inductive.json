@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_gold_inductive"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_gold_inductive"

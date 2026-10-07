@@ -13,6 +13,12 @@
     }
   },
   "material": "vinteum_purified",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "arsmagica2"
+    }
+  ],
   "pattern": [
     "  X",
     "HYH",

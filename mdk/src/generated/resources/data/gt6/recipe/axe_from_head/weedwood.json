@@ -10,6 +10,12 @@
     }
   },
   "material": "weedwood",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thebetweenlands"
+    }
+  ],
   "pattern": [
     "H",
     "S"

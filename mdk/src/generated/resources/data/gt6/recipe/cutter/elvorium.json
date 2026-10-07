@@ -22,6 +22,12 @@
     }
   },
   "material": "elvorium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "alfheim"
+    }
+  ],
   "pattern": [
     "PfP",
     "hPd",

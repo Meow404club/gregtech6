@@ -10,6 +10,12 @@
     }
   },
   "material": "energetic_alloy",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "EnderIO"
+    }
+  ],
   "pattern": [
     "H",
     "S"

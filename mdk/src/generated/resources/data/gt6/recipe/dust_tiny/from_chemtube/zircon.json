@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_zircon"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tropicraft"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_zircon"

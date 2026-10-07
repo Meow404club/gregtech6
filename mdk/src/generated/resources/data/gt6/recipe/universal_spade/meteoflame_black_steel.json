@@ -16,6 +16,12 @@
     }
   },
   "material": "meteoflame_black_steel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "pattern": [
     "AT",
     "Sd"

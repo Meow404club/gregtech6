@@ -16,6 +16,12 @@
     }
   },
   "material": "shadow_iron",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "pattern": [
     "xVV",
     " SV",

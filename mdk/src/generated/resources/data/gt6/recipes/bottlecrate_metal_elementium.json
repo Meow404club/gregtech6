@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Botania"
+    }
+  ],
   "key": {
     "C": {
       "item": "gt6:casing_small_elven_elementium"

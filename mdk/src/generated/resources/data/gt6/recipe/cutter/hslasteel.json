@@ -22,6 +22,12 @@
     }
   },
   "material": "hslasteel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "PfP",
     "hPd",

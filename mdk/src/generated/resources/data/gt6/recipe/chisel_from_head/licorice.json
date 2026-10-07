@@ -10,6 +10,12 @@
     }
   },
   "material": "licorice",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "candycraftmod"
+    }
+  ],
   "pattern": [
     "H",
     "S"

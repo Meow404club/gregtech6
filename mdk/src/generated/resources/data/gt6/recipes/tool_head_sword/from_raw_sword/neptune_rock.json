@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "key": {
     "X": {
       "item": "gt6:tool_head_raw_sword_neptune_rock"

@@ -18,6 +18,12 @@
       "tag": "gt6:tools/wire_cutter"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "advancedRocketry"
+    }
+  ],
   "pattern": [
     "wPh",
     "P P",

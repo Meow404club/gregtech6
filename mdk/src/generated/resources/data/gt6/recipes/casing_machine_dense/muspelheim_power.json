@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "alfheim"
+    }
+  ],
   "key": {
     "X": {
       "item": "gt6:plate_dense_muspelheim_power"

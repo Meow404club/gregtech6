@@ -18,6 +18,12 @@
       "item": "gt6:cable_copper_gt01"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "pattern": [
     "SPC",
     "WQP",

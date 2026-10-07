@@ -16,6 +16,12 @@
     }
   },
   "material": "titanium_iridium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "advancedRocketry"
+    }
+  ],
   "pattern": [
     "AT",
     "Sd"

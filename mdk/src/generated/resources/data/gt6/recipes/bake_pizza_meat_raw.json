@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "MineFactoryReloaded"
+    }
+  ],
   "ingredients": [
     {
       "item": "gt6:food_dough_flat_ketchup"

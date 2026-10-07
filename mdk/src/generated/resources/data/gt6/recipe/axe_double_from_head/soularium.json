@@ -10,6 +10,12 @@
     }
   },
   "material": "soularium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "EnderIO"
+    }
+  ],
   "pattern": [
     "H",
     "S"

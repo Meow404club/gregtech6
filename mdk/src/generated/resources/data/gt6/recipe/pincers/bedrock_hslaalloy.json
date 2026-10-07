@@ -19,6 +19,12 @@
     }
   },
   "material": "bedrock_hslaalloy",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "XhX",
     " T ",

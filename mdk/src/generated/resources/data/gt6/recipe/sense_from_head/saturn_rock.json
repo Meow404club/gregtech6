@@ -10,6 +10,12 @@
     }
   },
   "material": "saturn_rock",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "pattern": [
     "H",
     "S"

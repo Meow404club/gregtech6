@@ -13,6 +13,12 @@
     }
   },
   "material": "meteoric_steel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "GalacticraftCore"
+    }
+  ],
   "pattern": [
     "  X",
     "HYH",

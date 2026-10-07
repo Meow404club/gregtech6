@@ -12,6 +12,12 @@
       "tag": "gt6:tools/screwdriver"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "CdC",
     "TCT"

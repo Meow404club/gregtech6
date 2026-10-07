@@ -1,6 +1,12 @@
 {
   "type": "gt6:material_tool",
   "category": "equipment",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "key": {
     "O": {
       "item": "gt6:ring_meteoflame_black_steel"

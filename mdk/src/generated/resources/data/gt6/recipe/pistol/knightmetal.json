@@ -22,6 +22,12 @@
     }
   },
   "material": "knightmetal",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "pattern": [
     "XXV",
     " TH",

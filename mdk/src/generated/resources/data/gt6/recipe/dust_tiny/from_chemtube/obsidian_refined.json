@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_obsidian_refined"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Mekanism"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_obsidian_refined"

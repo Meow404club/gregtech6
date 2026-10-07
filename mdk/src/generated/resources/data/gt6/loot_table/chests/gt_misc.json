@@ -257,22 +257,6 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "gt6:billet_neodymium",
-          "weight": 144
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 12.0,
-                "min": 3.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
           "name": "gt6:billet_chromium",
           "weight": 144
         },
@@ -515,54 +499,6 @@
           ],
           "name": "gt6:ore_raw_meteoric_iron",
           "weight": 72
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 8.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "gt6:stick_blizz",
-          "weight": 36
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 8.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "gt6:stick_blitz",
-          "weight": 36
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 8.0,
-                "min": 2.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
-          "name": "gt6:stick_basalz",
-          "weight": 36
         },
         {
           "type": "minecraft:item",

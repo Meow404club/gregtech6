@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Avaritia"
+    }
+  ],
   "key": {
     "P": {
       "item": "gt6:plate_cosmic_neutronium"

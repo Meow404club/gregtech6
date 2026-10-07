@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "key": {
     "A": {
       "item": "gt6:tool_head_chainsaw_steel"

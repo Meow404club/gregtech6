@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Avaritia"
+    }
+  ],
   "ingredients": [
     {
       "item": "gt6:dust_tiny_crystal_matrix"

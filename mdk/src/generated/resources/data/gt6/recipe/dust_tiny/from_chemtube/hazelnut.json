@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_hazelnut"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "BinnieCore"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_hazelnut"

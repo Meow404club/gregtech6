@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "key": {
     "I": {
       "item": "gt6:spring_small_ironwood"

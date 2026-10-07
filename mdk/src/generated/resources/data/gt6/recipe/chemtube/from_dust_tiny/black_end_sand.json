@@ -9,6 +9,12 @@
       "item": "gt6:chemtube_empty"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "enderlicious"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:chemtube_black_end_sand"

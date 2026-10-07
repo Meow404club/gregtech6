@@ -22,6 +22,12 @@
     }
   },
   "material": "crystal_matrix",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Avaritia"
+    }
+  ],
   "pattern": [
     "PfP",
     "hPd",

@@ -11,6 +11,12 @@
   },
   "material": "blue_diamond",
   "multiplier": 0.25,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "pattern": [
     "H",
     "S"

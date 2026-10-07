@@ -1,6 +1,28 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ExtraPlanets"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "GalacticraftCore"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "PneumaticCraft"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TwilightForest"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "steamcraft2"
+    }
+  ],
   "ingredients": [
     {
       "item": "gt6:gem_flawed_yellow_diamond"

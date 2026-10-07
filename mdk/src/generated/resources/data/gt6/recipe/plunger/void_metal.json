@@ -16,6 +16,12 @@
     }
   },
   "material": "void_metal",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Thaumcraft"
+    }
+  ],
   "pattern": [
     "xVV",
     " SV",

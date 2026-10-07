@@ -16,6 +16,12 @@
     }
   },
   "material": "quartz_black",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ActuallyAdditions"
+    }
+  ],
   "pattern": [
     "SVS",
     "SSS",

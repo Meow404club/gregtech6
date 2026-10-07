@@ -24,6 +24,16 @@
       "tag": "gt6:tools/wrench"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ThermalExpansion"
+    }
+  ],
   "pattern": [
     "CPC",
     "wXh",

@@ -12,6 +12,12 @@
       "tag": "gt6:tools/wrench"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "XYX",
     "YwY",

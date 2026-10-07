@@ -402,7 +402,7 @@ public final class GT6MoldDatagen {
 			java.util.Set<ResourceLocation> tSeen = new java.util.HashSet<>();
 			build(tFinished -> {
 				if (!tSeen.add(tFinished.getId())) throw new IllegalStateException("Duplicate recipe " + tFinished.getId());
-				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tFinished.serializeRecipe(), tRecipePaths.json(tFinished.getId())));
+				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, GT6ForeignRowConvergence.converged(tFinished).serializeRecipe(), tRecipePaths.json(tFinished.getId())));
 			});
 			return java.util.concurrent.CompletableFuture.allOf(tFutures.toArray(new java.util.concurrent.CompletableFuture[0]));
 		}
@@ -421,7 +421,7 @@ public final class GT6MoldDatagen {
 						if (!tSeen.add(aId)) throw new IllegalStateException("Duplicate recipe " + aId);
 						tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tRegistries,
 								net.minecraft.world.item.crafting.Recipe.CONDITIONAL_CODEC,
-								java.util.Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(aRecipe, aConditions)),
+								java.util.Optional.of(GT6ForeignRowConvergence.conditioned(aRecipe, tRegistries, aConditions)),
 								tRecipePaths.json(aId)));
 					}
 

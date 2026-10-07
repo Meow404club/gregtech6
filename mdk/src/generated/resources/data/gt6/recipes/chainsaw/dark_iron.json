@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "factorization"
+    }
+  ],
   "key": {
     "V": {
       "item": "gt6:ring_steel"

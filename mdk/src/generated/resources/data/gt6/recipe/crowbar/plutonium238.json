@@ -16,6 +16,12 @@
     }
   },
   "material": "plutonium238",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

@@ -16,6 +16,12 @@
     }
   },
   "material": "eximite",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "pattern": [
     "AT",
     "Sd"

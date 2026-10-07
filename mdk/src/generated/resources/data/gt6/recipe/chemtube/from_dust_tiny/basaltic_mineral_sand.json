@@ -9,6 +9,12 @@
       "item": "gt6:chemtube_empty"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "PFAAGeologica"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:chemtube_basaltic_mineral_sand"

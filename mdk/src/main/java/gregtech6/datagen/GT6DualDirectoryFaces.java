@@ -550,6 +550,25 @@ public class GT6DualDirectoryFaces implements DataProvider {
 			if (tShow != null && tShow.isJsonPrimitive() && tShow.getAsBoolean()) {
 				tObject.remove("show_notification");
 			}
+			// BEFORE the child walk (structural key move): the convergence conditions (task
+			// parse-errors-registration-convergence) — the forge wrapper writes the bare
+			// "conditions" key the 1.20.1 RecipeManager patch reads (RecipeManager.java.patch:29);
+			// the 1.21.1 loader reads ConditionalOps.DEFAULT_CONDITIONS_KEY ("neoforge:conditions",
+			// ConditionalOps.java:54), so the alias carries the rebranded key with the type values
+			// swapped through the verified gate (forge:mod_loaded → neoforge:mod_loaded). saveStable
+			// re-sorts the members, matching the neo-native WithConditions byte form.
+			JsonElement tConditions = tObject.get("conditions");
+			if (tConditions != null && tConditions.isJsonArray()) {
+				for (JsonElement tCondition : tConditions.getAsJsonArray()) {
+					if (!tCondition.isJsonObject()) {
+						throw new IllegalArgumentException("the recipe mirror's conditions rebrand expects condition "
+								+ "objects (got " + tCondition + " in " + aSource + ")");
+					}
+					swapConditionTypes(tCondition.getAsJsonObject(), aSource);
+				}
+				tObject.remove("conditions");
+				tObject.add("neoforge:conditions", tConditions);
+			}
 			for (Map.Entry<String, JsonElement> tMember : tObject.entrySet()) {
 				JsonElement tValue = tMember.getValue();
 				if ("tag".equals(tMember.getKey()) && tValue.isJsonPrimitive()

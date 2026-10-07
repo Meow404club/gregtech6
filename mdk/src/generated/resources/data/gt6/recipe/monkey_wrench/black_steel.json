@@ -16,6 +16,12 @@
     }
   },
   "material": "black_steel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "terrafirmacraft"
+    }
+  ],
   "pattern": [
     "PPd",
     "hPT",

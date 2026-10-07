@@ -12,6 +12,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thebetweenlands"
+    }
+  ],
   "pattern": [
     "hS",
     "Sf"

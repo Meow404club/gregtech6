@@ -13,6 +13,12 @@
     }
   },
   "material": "yellow_diamond",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "pattern": [
     "  X",
     "HYH",

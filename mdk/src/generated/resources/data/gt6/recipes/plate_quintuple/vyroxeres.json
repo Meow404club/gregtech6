@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "key": {
     "A": {
       "item": "gt6:plate_double_vyroxeres"

@@ -305,22 +305,6 @@
               "function": "minecraft:set_count"
             }
           ],
-          "name": "gt6:gem_flawless_jade",
-          "weight": 576
-        },
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "add": false,
-              "count": {
-                "type": "minecraft:uniform",
-                "max": 1.0,
-                "min": 1.0
-              },
-              "function": "minecraft:set_count"
-            }
-          ],
           "name": "gt6:gem_flawless_redstone",
           "weight": 432
         }

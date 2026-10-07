@@ -9,6 +9,12 @@
       "item": "gt6:foil_aluminium"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "pattern": [
     "MMM",
     "MGM"

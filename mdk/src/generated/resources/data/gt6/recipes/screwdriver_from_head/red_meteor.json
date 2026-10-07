@@ -1,6 +1,12 @@
 {
   "type": "gt6:material_tool",
   "category": "equipment",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meteors"
+    }
+  ],
   "key": {
     "H": {
       "item": "gt6:tool_head_screwdriver_red_meteor"

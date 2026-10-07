@@ -22,6 +22,12 @@
     }
   },
   "material": "spectre_iron",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RandomThings"
+    }
+  ],
   "pattern": [
     "XXX",
     "HHV",

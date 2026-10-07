@@ -13,6 +13,12 @@
     }
   },
   "material": "terrasteel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Botania"
+    }
+  ],
   "pattern": [
     "  X",
     "HYH",

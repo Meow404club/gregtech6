@@ -12,6 +12,12 @@
       "tag": "gt6:tools/file"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "etfuturum"
+    }
+  ],
   "pattern": [
     "CG ",
     "C  ",

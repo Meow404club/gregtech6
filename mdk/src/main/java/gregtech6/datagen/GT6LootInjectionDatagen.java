@@ -128,11 +128,22 @@ public final class GT6LootInjectionDatagen {
 	private GT6LootInjectionDatagen() {
 	}
 
-	/** The lazily-built registration universe (first use is post-initMaterials, test and datagen alike). */
+	/**
+	 * The lazily-built registration universe (first use is post-initMaterials, test and datagen
+	 * alike), minus the convergence skip (task parse-errors-registration-convergence): loot
+	 * tables have no load-time condition mechanism, so a pair that is seed-hidden on a bare
+	 * install resolves as unregistered here — the row falls to the upstream addLoot :566-569
+	 * skip face exactly like a never-ported item (the declared cost: an install carrying the
+	 * owning mod also misses the injection row).
+	 */
 	private static Set<GTMaterialItems.PrefixMaterial> sRegistered;
 
 	private static Set<GTMaterialItems.PrefixMaterial> registered() {
-		if (sRegistered == null) sRegistered = new HashSet<>(GTMaterialItems.registrationOrder());
+		if (sRegistered == null) {
+			Set<GTMaterialItems.PrefixMaterial> tAll = new HashSet<>(GTMaterialItems.registrationOrder());
+			tAll.removeIf(tPair -> GT6ForeignRowConvergence.gatingDomain(tPair.material()) != null);
+			sRegistered = tAll;
+		}
 		return sRegistered;
 	}
 

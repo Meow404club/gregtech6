@@ -6,6 +6,12 @@
       "item": "gt6:plate_dark_iron"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "factorization"
+    }
+  ],
   "pattern": [
     " P ",
     "PPP",

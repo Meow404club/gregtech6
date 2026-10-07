@@ -11,6 +11,12 @@
   },
   "material": "zircon",
   "multiplier": 0.25,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tropicraft"
+    }
+  ],
   "pattern": [
     "H",
     "S"

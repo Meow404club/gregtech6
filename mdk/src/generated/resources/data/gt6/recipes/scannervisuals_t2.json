@@ -1,6 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TConstruct"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ThermalExpansion"
+    }
+  ],
   "key": {
     "C": {
       "tag": "gt6:circuit2"

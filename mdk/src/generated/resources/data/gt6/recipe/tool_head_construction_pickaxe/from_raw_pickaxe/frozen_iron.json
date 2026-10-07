@@ -12,6 +12,12 @@
       "tag": "gt6:tools/hard_hammer"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "meteors"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:tool_head_construction_pickaxe_frozen_iron"

@@ -140,10 +140,17 @@ public final class GT6OreLootTables {
         };
     }
 
-    /** The 4884 ore blocks in registration order — the getKnownBlocks narrowing face. */
+    /**
+     * The ore blocks in registration order — the getKnownBlocks narrowing face — minus the
+     * convergence skip (task parse-errors-registration-convergence): loot tables have no
+     * load-time condition mechanism, so an ore whose material is seed-hidden on a bare install
+     * ships no table (the upstream bare shape: no item, no loot row). generate() narrows on the
+     * same predicate, so the validation and the emitted tables stay aligned.
+     */
     public static List<Block> oreLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
-        for (GT6OreBlocks.OreKey tKey : GT6OreBlocks.blocks().keySet()) rBlocks.add(GT6OreBlocks.blocks().get(tKey).get());
+        for (GT6OreBlocks.OreKey tKey : GT6OreBlocks.blocks().keySet())
+            if (GT6ForeignRowConvergence.gatingDomain(tKey.material()) == null) rBlocks.add(GT6OreBlocks.blocks().get(tKey).get());
         return rBlocks;
     }
 
@@ -227,6 +234,10 @@ public final class GT6OreLootTables {
         @Override
         protected void generate() {
             for (GT6OreBlocks.OreKey tKey : GT6OreBlocks.blocks().keySet()) {
+                // the convergence skip (task parse-errors-registration-convergence): a seed-hidden
+                // material's table references items no bare install registers and loot has no
+                // load-time condition mechanism — ship no table at all (the oreLootBlocks face).
+                if (GT6ForeignRowConvergence.gatingDomain(tKey.material()) != null) continue;
                 // the sweep guard: the ore AXIS carries five driver-hidden-able materials (Azurite/
                 // Eudialyte TROPIC, CaF2 RoC, Jade ERE, Dolamide MO — all atlas PRIMARY), whose
                 // flood items vanish under an ABSENT pin while the block axis stays (mdh-3 scope

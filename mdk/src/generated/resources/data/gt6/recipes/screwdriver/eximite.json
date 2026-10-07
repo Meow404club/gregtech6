@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "key": {
     "S": {
       "item": "gt6:stick_eximite"

@@ -19,6 +19,12 @@
     }
   },
   "material": "glowstone_refined",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Mekanism"
+    }
+  ],
   "pattern": [
     "PfP",
     " T ",

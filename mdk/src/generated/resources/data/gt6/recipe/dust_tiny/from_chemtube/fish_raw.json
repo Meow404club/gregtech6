@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_fish_raw"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Mariculture"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_fish_raw"

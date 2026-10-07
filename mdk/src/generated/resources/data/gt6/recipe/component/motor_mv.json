@@ -18,6 +18,12 @@
       "item": "gt6:wire_annealed_copper_gt02"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "pattern": [
     "CWR",
     "WIW",

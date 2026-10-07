@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Avaritia"
+    }
+  ],
   "key": {
     "P": {
       "tag": "forge:plates/crystal_matrix"

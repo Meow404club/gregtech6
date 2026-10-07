@@ -53,6 +53,28 @@
       "tag": "gt6:tools/saw"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "GalacticraftCore"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "PneumaticCraft"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TwilightForest"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "steamcraft2"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:tool_head_pickaxe_gem_purple_diamond"

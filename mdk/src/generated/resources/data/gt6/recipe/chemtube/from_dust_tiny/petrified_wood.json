@@ -9,6 +9,12 @@
       "item": "gt6:chemtube_empty"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "erebus"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:chemtube_petrified_wood"

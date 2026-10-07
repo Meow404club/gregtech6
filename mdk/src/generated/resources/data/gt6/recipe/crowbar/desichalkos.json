@@ -16,6 +16,12 @@
     }
   },
   "material": "desichalkos",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

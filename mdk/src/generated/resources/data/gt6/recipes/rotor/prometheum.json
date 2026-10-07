@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "key": {
     "T": {
       "item": "gt6:screw_prometheum"

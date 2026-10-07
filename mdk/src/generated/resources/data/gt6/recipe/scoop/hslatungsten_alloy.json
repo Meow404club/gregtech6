@@ -16,6 +16,12 @@
     }
   },
   "material": "hslatungsten_alloy",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "SVS",
     "SSS",

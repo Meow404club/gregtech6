@@ -16,6 +16,12 @@
     }
   },
   "material": "ironwood",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "pattern": [
     "SVS",
     "SSS",

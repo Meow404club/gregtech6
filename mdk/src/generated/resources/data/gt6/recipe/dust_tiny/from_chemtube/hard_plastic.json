@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_hard_plastic"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_hard_plastic"

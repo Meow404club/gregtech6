@@ -16,6 +16,12 @@
     }
   },
   "material": "marshmallow",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "candycraftmod"
+    }
+  ],
   "pattern": [
     "xVV",
     " SV",

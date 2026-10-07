@@ -13,6 +13,12 @@
     }
   },
   "material": "obsidian_refined",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Mekanism"
+    }
+  ],
   "pattern": [
     "  X",
     "HYH",

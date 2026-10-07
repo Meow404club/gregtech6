@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_tantalum"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
+  "pattern": [
+    "P P",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:faucet_tantalum"
+  }
+}

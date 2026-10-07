@@ -22,6 +22,12 @@
     }
   },
   "material": "conductive_iron",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "EnderIO"
+    }
+  ],
   "pattern": [
     "XXV",
     "THH",

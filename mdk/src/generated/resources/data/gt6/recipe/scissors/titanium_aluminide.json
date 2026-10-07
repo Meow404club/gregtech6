@@ -19,6 +19,12 @@
     }
   },
   "material": "titanium_aluminide",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "advancedRocketry"
+    }
+  ],
   "pattern": [
     "PfP",
     " T ",

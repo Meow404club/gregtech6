@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Avaritia"
+    }
+  ],
   "key": {
     "X": {
       "item": "gt6:plate_double_crystal_matrix"
