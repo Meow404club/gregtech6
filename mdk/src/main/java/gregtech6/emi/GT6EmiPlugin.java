@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 //? if forge {
@@ -18,7 +17,6 @@ import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
-import dev.emi.emi.api.recipe.EmiInfoRecipe;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.stack.EmiStack;
 
@@ -80,7 +78,7 @@ public class GT6EmiPlugin implements EmiPlugin {
 	@Override
 	public void register(EmiRegistry registry) {
 		registerMultiblockPreviews(registry);
-		registerEnergyCarrierInfo(registry);
+		registerEnergyInfoPages(registry);
 		registerMaterialToolRows(registry);
 		registerRecipeMapCategories(registry);
 		registerOreGenInfo(registry);
@@ -106,27 +104,19 @@ public class GT6EmiPlugin implements EmiPlugin {
 	}
 
 	/**
-	 * The energy-carrier info pages (task viewer-energy-jump-gear, the r6-30 phase-2
-	 * design; the JEMI red line's arm on the info face): one {@link EmiInfoRecipe} per
-	 * accepted-energy carrier over the shared pseudo {@link GT6EnergyCarrierEmiStack} and
-	 * the {@code gt6.jei.info.energy.*} keys — the page the gear widget
-	 * ({@link GT6RecipeMapEmiRecipe.GearJumpWidget}) jumps to. The carriers never enter
-	 * EMI's stack list (nothing registers them as index stacks) — the on-screen
-	 * visibility of the pseudo stack is the r6-30-flagged POC face, field_test's.
+	 * The energy-source pages (task energy-page-emi-twin, the approved energy-source-page
+	 * design; the JEMI red line's arm on the info face): one native category
+	 * ({@link GT6EnergyInfoEmiCategory}) + one page recipe per carrier chunk-run — the
+	 * ten carriers (the nine accepted-energy ones + STEAM) off
+	 * {@link gregtech6.jei.GT6EnergyCensus#carriers()}. This RETIRES the task
+	 * viewer-energy-jump-gear {@code EmiInfoRecipe} text pages in the same change (no
+	 * double-category window): the gear widget ({@link GT6RecipeMapEmiRecipe.GearJumpWidget})
+	 * still lands via {@link #displayEnergyCarrierInfo} unchanged, because the new page
+	 * recipes double-hook the pseudo {@link GT6EnergyCarrierEmiStack} into getInputs AND
+	 * getOutputs (the E1 red-proof fix — displayRecipes reads byOutput only).
 	 */
-	private static void registerEnergyCarrierInfo(EmiRegistry registry) {
-		for (gregapi.code.TagData tCarrier : gregtech6.jei.GT6RecipeMapViewerMeta.pinnedEnergyCarriers()) {
-			registry.addRecipe(new EmiInfoRecipe(
-					List.of(GT6EnergyCarrierEmiStack.of(tCarrier)),
-					List.of(Component.translatable(gregtech6.jei.GT6RecipeMapViewerMeta.energyInfoKey(tCarrier))),
-					infoPageId(tCarrier)));
-		}
-	}
-
-	/** The {@code gt6:info/energy/<code>} info-page id (paren-free arg — the ctor swap's regex). */
-	private static ResourceLocation infoPageId(gregapi.code.TagData aCarrier) {
-		String tPath = "info/energy/" + gregtech6.jei.GT6RecipeMapViewerMeta.energyTypeShortCode(aCarrier).toLowerCase(java.util.Locale.ROOT);
-		return new ResourceLocation("gt6", tPath);
+	private static void registerEnergyInfoPages(EmiRegistry registry) {
+		GT6EnergyInfoEmiCategory.register(registry);
 	}
 
 	/**
@@ -260,12 +250,13 @@ public class GT6EmiPlugin implements EmiPlugin {
 
 	/**
 	 * The gear-port jump face (task viewer-energy-jump-gear), the native EMI twin of
-	 * {@link gregtech6.jei.GT6JeiPlugin#openEnergyCarrierInfo}: opens the carrier's info
-	 * page via {@code EmiApi.displayRecipes} (EmiApi.java:131 — the recipes-for-stack page;
-	 * the info recipes index under the pseudo stack through EmiInfoRecipe.getInputs, so
-	 * the INFO category tab surfaces). Never call unguarded: only the EMI-side gear widget
-	 * reaches it (EMI present by construction there). The method reference is what the
-	 * widget carries, so the offline click pin can substitute its own consumer.
+	 * {@link gregtech6.jei.GT6JeiPlugin#openEnergyCarrierInfo}: opens the carrier's page
+	 * via {@code EmiApi.displayRecipes} (EmiApi.java:131 — the recipes-for-stack page;
+	 * since task energy-page-emi-twin the energy-source pages index under the pseudo
+	 * stack through their getOutputs double hook, so the energy_info category surfaces).
+	 * Never call unguarded: only the EMI-side gear widget reaches it (EMI present by
+	 * construction there). The method reference is what the widget carries, so the
+	 * offline click pin can substitute its own consumer.
 	 */
 	public static void displayEnergyCarrierInfo(gregapi.code.TagData aCarrier) {
 		EmiApi.displayRecipes(GT6EnergyCarrierEmiStack.of(aCarrier));
