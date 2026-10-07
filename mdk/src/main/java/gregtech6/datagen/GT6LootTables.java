@@ -318,13 +318,14 @@ public final class GT6LootTables extends LootTableProvider {
             return treeLootBlocks();
         }
 
-        /** The 36 tree blocks, registration order (saplings, logs, leaves, planks). */
+        /** The 44 tree-universe blocks, registration order (saplings, logs, leaves, planks, the generic planks). */
         public static List<Block> treeLootBlocks() {
             List<Block> rBlocks = new ArrayList<>();
             for (RegistryObject<Block> tHandle : GT6TreeBlocks.SAPLINGS) rBlocks.add(tHandle.get());
             for (RegistryObject<Block> tHandle : GT6TreeBlocks.LOGS) rBlocks.add(tHandle.get());
             for (RegistryObject<Block> tHandle : GT6TreeBlocks.LEAVES) rBlocks.add(tHandle.get());
             for (RegistryObject<Block> tHandle : GT6TreeBlocks.PLANKS) rBlocks.add(tHandle.get()); // task gt-tree-planks
+            for (RegistryObject<Block> tHandle : GT6TreeBlocks.GENERIC_PLANKS) rBlocks.add(tHandle.get()); // task planks-blockification
             return rBlocks;
         }
 
@@ -342,6 +343,7 @@ public final class GT6LootTables extends LootTableProvider {
             for (RegistryObject<Block> tLog : GT6TreeBlocks.LOGS) dropSelf(tLog.get());
             for (RegistryObject<Block> tSapling : GT6TreeBlocks.SAPLINGS) dropSelf(tSapling.get());
             for (RegistryObject<Block> tPlank : GT6TreeBlocks.PLANKS) dropSelf(tPlank.get()); // task gt-tree-planks — the 1.7.10 planks self-drop face
+            for (RegistryObject<Block> tPlank : GT6TreeBlocks.GENERIC_PLANKS) dropSelf(tPlank.get()); // task planks-blockification — the same face, metas 8-15
             for (int i = 0; i < GT6TreeBlocks.KINDS.size(); i++) {
                 gregtech6.block.tree.GT6TreeKind tKind = GT6TreeBlocks.KINDS.get(i);
                 Block tLeaves = GT6TreeBlocks.LEAVES.get(i).get();

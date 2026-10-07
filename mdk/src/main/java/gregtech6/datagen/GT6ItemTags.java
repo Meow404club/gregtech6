@@ -651,6 +651,13 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 		for (RegistryObject<Item> tPlank : gregtech6.registry.GT6TreeBlocks.PLANK_ITEMS) { // task gt-tree-planks — the OD.plankWood face
 			tag(net.minecraft.tags.ItemTags.PLANKS).add(item(tPlank.getId()));
 		}
+		// task planks-blockification — the generic rows join the item tag over the same
+		// OD.plankWood walk; the treated row stays OFF (BlockTreePlanks.java:59-62 `if (i != 10)`)
+		for (int i = 0; i < gregtech6.registry.GT6TreeBlocks.GENERIC_PLANK_ROWS.size(); i++) {
+			if (!"plank_wood_treated".equals(gregtech6.registry.GT6TreeBlocks.GENERIC_PLANK_ROWS.get(i).path())) {
+				tag(net.minecraft.tags.ItemTags.PLANKS).add(item(gregtech6.registry.GT6TreeBlocks.GENERIC_PLANK_ITEMS.get(i).getId()));
+			}
+		}
 	}
 
 	/**

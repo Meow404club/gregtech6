@@ -8,6 +8,13 @@
     "gt6:cinnamon_planks",
     "gt6:coconut_planks",
     "gt6:rainbowood_planks",
-    "gt6:blue_spruce_planks"
+    "gt6:blue_spruce_planks",
+    "gt6:plank_wood_compressed",
+    "gt6:plank_wood",
+    "gt6:crate",
+    "gt6:plank_wood_dead",
+    "gt6:plank_wood_rotten",
+    "gt6:plank_wood_mossy",
+    "gt6:plank_wood_frozen"
   ]
 }

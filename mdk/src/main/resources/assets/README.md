@@ -9088,6 +9088,28 @@ the block ids at borrow time:
   - `planks_blue_spruce.png` — upstream `PLANKS_BLUESPRUCE.png` (the BlockTreePlanks2
     meta 0 row); sha256
     `cdcd1a00aee8a52286297aba277b4f14cb71aaab936b8b3712e5e3808dee6821`
+- `gt6/textures/block/tree/<path>.png` (×8) — the GT6 generic plank cubes (task
+  planks-blockification; upstream `iconsets/PLANKS_*.png` + `CRATE.png`, renamed to the
+  block ids at borrow time — the BlockTreePlanks metas 8-15 rows of the SAME
+  `Textures.BlockIcons.PLANKS` iconset, Textures.java:330-347). Byte-identical borrows,
+  `cmp`-verified:
+  - `plank_wood_compressed.png` — upstream `PLANKS_COMPRESSED.png` (meta 8); sha256
+    `05833a385204067898f9c419292c6fcfed9e7a7c5bdf058afd3d8650132f6af6`
+  - `plank_wood.png` — upstream `PLANKS_WOOD.png` (meta 9, the IL.Plank face — the same
+    art the wood-planks-register item sprite borrow carried); sha256
+    `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
+  - `plank_wood_treated.png` — upstream `PLANKS_TREATED.png` (meta 10); sha256
+    `9c52676da53fdbfba14b0db71a89e6e06de29da580c581cd825ef2aaf1c57b15`
+  - `crate.png` — upstream `CRATE.png` (meta 11); sha256
+    `fa9914f6c40fdc9917ecedbe41d9abc20c908ceb739b8098790d06132b1db10a`
+  - `plank_wood_dead.png` — upstream `PLANKS_DRY.png` (meta 12); sha256
+    `26ac89e1909e7f5d968c05b9439b9434b7868cc9fbf3026426157890964617da`
+  - `plank_wood_rotten.png` — upstream `PLANKS_ROTTEN.png` (meta 13); sha256
+    `10dca5e5d61f3dea289970f95ffb6ad5c79bc6478cee3d47912dddb9db03e36e`
+  - `plank_wood_mossy.png` — upstream `PLANKS_MOSSY.png` (meta 14); sha256
+    `d387a632e1251225840eac4f0dbb2b5edf2be11417937923e500ea7cf64f8768`
+  - `plank_wood_frozen.png` — upstream `PLANKS_FROZEN.png` (meta 15); sha256
+    `ca2f1fe29e5771d8f87835c96b8494815695ed2dedfa3b4608511ca8193d7091`
 
 - `gt6/textures/item/comb/comb_<name>.png` (×20) — the bee-comb item icons (task
   bees-lv1). PORT-GENERATED ART (not borrowed): one 16×16 five-cell honeycomb
@@ -12518,38 +12540,15 @@ Also in this card: `item/crop_stick.png` re-seated from the cbc-1 committed blob
 `git show | cmp` clean) as the gt6:crop_seed item model texture (IC2 renders ItemCrop itself
 with the crop-stick sprite, ItemCrop.java:27).
 
-## Item material_sets borrows — the plank prefix (task wood-planks-register, 2026-10-01)
+## Item material_sets borrows — the plank prefix (task wood-planks-register, 2026-10-01; RETIRED task planks-blockification, 2026-10-07)
 
-The generic plank prefix item sprite (4 PNGs), byte-identical borrows from upstream
-`src/main/resources/assets/gregtech/textures/blocks/iconsets/PLANKS_WOOD.png` — the
-BLOCK iconset domain, deliberately NOT the items domain: upstream registers planks
-as BlockTreePlanks/2 blocks (Loader_Woods.java:62-65; the generic IL.Plank face =
-BlocksGT.Planks meta 9 "Wood Planks", Loader_Woods.java:74 + BlockTreePlanks.java:
-49) and the items materialicons/iconsets domains carry ZERO plank sprites (census,
-tmp/gt6-1.7.10 assets tree), so the meta-9 block face IS the upstream plank art.
-The port registers OP.plank as flat items (the declared item-path deviation,
-GTMaterialItems.itemPathPrefixes javadoc) and borrows the one block face under the
-item model name (`plank` — OP.plank.mNameInternal snake, the casing_machine
-serialization shape). One sprite per reachable material set, tinted at runtime by
-the ItemColor material tint (tintIndex 0, the material_sets seat method) exactly
-like every other material_sets borrow; per-species plank art (the 16 PLANKS_*.png
-iconsets) stays unpulled — the shared generic face + tint is the declared borrow
-ruling, the same uniformity the casingMachine quartet wave declared. Set list =
-the 4 texture sets reachable from the WOOD-gated plank domain (the census:
-wood 126 / rough 1 = Bark / leaf 2 = Steeleaf+Fireleaf / fine 1 = Marshmallow;
-GT6PlankRegistrationTest.plankCensusPinsTheDomainSize pins the distribution).
+The 4 generic plank prefix item sprites (`wood/rough/leaf/fine plank.png`, byte-identical
+PLANKS_WOOD.png borrows) were DELETED with the plank prefix-item retirement: upstream ships
+planks ONLY as blocks (Loader_Woods.java:62-65 BlockTreePlanks/2), and the port now does the
+same — the plank face is the GT6WoodDict BlockItem rows (the 17 cubes of BlockTreePlanks/2 +
+the vanilla identities), the block art riding the block model directly
+(`gt6/textures/block/tree/` above). The history of the item-face borrow lives in git log.
 
-- `WOOD` -> `gt6/textures/item/material_sets/wood/`:
-  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
-- `ROUGH` -> `gt6/textures/item/material_sets/rough/`:
-  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
-- `LEAF` -> `gt6/textures/item/material_sets/leaf/`:
-  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
-- `FINE` -> `gt6/textures/item/material_sets/fine/`:
-  - `plank.png` `f7acb1dfd1f99ef5181b3a420992099f2113adfc3972e0da5ad7fa012129838f`
-
-Copied on 2026-10-01. Upstream license: **CC0 1.0 Universal Public Domain
-Dedication** (same upstream `README.md` block as above).
 - `gt6/textures/item/food/*.png` — the food-item egg/meat T4a subset (29 textures, task food-meat-items), byte-identical borrows renamed to the registered ids:
   - `white_egg.png` `gt.multiitem.food/1051.png`
     (`ca521ae0d46885a2025185e6ca605ed7948f23913e9049d9748b83f68160fd51`)

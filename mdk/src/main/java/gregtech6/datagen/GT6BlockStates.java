@@ -4249,12 +4249,12 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task gt-tree-planks — the 9 plank cubes ({@link gregtech6.registry.GT6TreeBlocks#PLANKS}):
+     * Task gt-tree-planks + planks-blockification — the 17 plank cubes ({@link
+     * gregtech6.registry.GT6TreeBlocks#PLANKS} + {@link gregtech6.registry.GT6TreeBlocks#GENERIC_PLANKS}):
      * plain cube_all blockstates + item models, the vanilla planks idiom (the upstream
      * BlockTreePlanks renders Textures.BlockIcons.PLANKS[meta] on every face — one texture
-     * per species, BlockTreePlanks.java:39 / BlockTreePlanks2.java:44). Textures are the
-     * upstream iconsets byte-borrows at {@code block/tree/planks_<snake>.png} (assets/README.md
-     * rows this card).
+     * per row, BlockTreePlanks.java:39 / BlockTreePlanks2.java:44). Textures are the
+     * upstream iconsets byte-borrows (assets/README.md rows both cards).
      */
     private void addPlanks() {
         for (int i = 0; i < gregtech6.registry.GT6TreeBlocks.KINDS.size(); i++) {
@@ -4264,7 +4264,16 @@ public final class GT6BlockStates extends BlockStateProvider {
                     models().cubeAll(tSnake + "_planks", modLoc("block/tree/planks_" + tSnake)));
             itemModels().withExistingParent(tSnake + "_planks", modLoc("block/" + tSnake + "_planks"));
         }
-        LOGGER.info("GT6 planks: 9 cube_all blockstates over the 9 tree species");
+        // task planks-blockification — the 8 generic plank cubes (BlockTreePlanks metas 8-15),
+        // the same cube_all idiom over the block-path-named borrows (assets/README.md rows
+        // this card: crate.png, plank_wood.png, plank_wood_compressed.png, ...)
+        for (int i = 0; i < gregtech6.registry.GT6TreeBlocks.GENERIC_PLANK_ROWS.size(); i++) {
+            String tPath = gregtech6.registry.GT6TreeBlocks.GENERIC_PLANK_ROWS.get(i).path();
+            simpleBlock(gregtech6.registry.GT6TreeBlocks.GENERIC_PLANKS.get(i).get(),
+                    models().cubeAll(tPath, modLoc("block/tree/" + tPath)));
+            itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
+        }
+        LOGGER.info("GT6 planks: 17 cube_all blockstates (9 tree species + 8 generic BlockTreePlanks rows)");
     }
 
     /**
