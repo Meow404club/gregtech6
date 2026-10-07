@@ -92,8 +92,14 @@ public final class MaterialTreeBuilder {
 	/** One same-material prefix hop inside one recipe map (the tree's chain edges). */
 	public record ChainEdge(OreDictPrefix from, OreDictPrefix to, String mapName) {}
 
-	/** One cross-material output of a row that consumes material {@code from} (card B's display face). */
-	public record ByproductEdge(OreDictMaterial from, OreDictMaterial to, OreDictPrefix outPrefix, String mapName) {}
+	/**
+	 * One cross-material output of a row that consumes material {@code from} (card B's display
+	 * face). {@code inPrefix} is the row's material-scoped INPUT prefix — the producing step's
+	 * band (task mattree-r2-byproduct-per-step: the per-step hang needs the step, which is the
+	 * input band, not the output's; the r11-gaps census named this field as the per-step unblock,
+	 * {@code scanRow} had the pair at hand).
+	 */
+	public record ByproductEdge(OreDictMaterial from, OreDictMaterial to, OreDictPrefix inPrefix, OreDictPrefix outPrefix, String mapName) {}
 
 	/** The material -> chain-edge set index (insertion-ordered per material; membership is what callers read). */
 	private final Map<OreDictMaterial, Set<ChainEdge>> mChainIndex;
@@ -149,8 +155,8 @@ public final class MaterialTreeBuilder {
 					aChain.computeIfAbsent(tPair.material, k -> new LinkedHashSet<>())
 						.add(new ChainEdge(tInPrefix.get(i), tPair.prefix, aMapName));
 				} else {
-					aByproduct.computeIfAbsent(tInMaterial.get(i), k -> new LinkedHashSet<>())
-						.add(new ByproductEdge(tInMaterial.get(i), tPair.material, tPair.prefix, aMapName));
+						aByproduct.computeIfAbsent(tInMaterial.get(i), k -> new LinkedHashSet<>())
+							.add(new ByproductEdge(tInMaterial.get(i), tPair.material, tInPrefix.get(i), tPair.prefix, aMapName));
 				}
 			}
 		}

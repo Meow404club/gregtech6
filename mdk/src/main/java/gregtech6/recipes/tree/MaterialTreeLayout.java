@@ -241,12 +241,75 @@ public final class MaterialTreeLayout {
 	}
 
 	/**
+	 * The byproduct band's VIEW STATE (task mattree-r2-byproduct-per-step, ADR 2026-10-06
+	 * mattree-refactor R2 rider): the 逐步/逐带 REVEAL face over {@link MaterialTreeDisplay.Byproduct#step()}.
+	 * Pure order-preserving filter — the same state over the same tree always yields the same
+	 * visible set (the determinism pin), the filter never touches the chain axis (the root
+	 * card's 副产不挪主轴钉 holds under EVERY state), and the hanging band's content follows
+	 * the visible set alone:
+	 * <ul>
+	 * <li>{@link #ALL} — the aggregate face, the full band byte-identical to the pre-rider
+	 *     geometry (the EMI/JEI page legs' face, zero behavior change);</li>
+	 * <li>{@link #step(int)} — 「只看某一步的副产」: exactly the {@code step == n} slots;</li>
+	 * <li>{@link #cumulative(int)} — 「累积到某步」: every {@code 0 <= step <= n} slot, the
+	 *     reveal growing monotonically with n (the content-box monotone pin).</li>
+	 * </ul>
+	 *
+	 * <p>A {@code step == -1} slot (its producing row's input prefix is outside the display
+	 * table — an item-tree tail row) belongs to NO displayed step: only {@link #ALL} shows it.
+	 *
+	 * <p>Interaction wiring (the control strip / the step switch on a live viewer) is the R3
+	 * host-leg legs' face — this card ships the deterministic API + pins only. Note for that
+	 * wiring: the page legs' "+N" overflow bookkeeping is computed at build time for ALL; a
+	 * narrower view's own cap-hidden count is not re-derived here.
+	 */
+	public record ByproductView(Mode mode, int step) {
+		/** The reveal modes. */
+		public enum Mode { ALL, STEP, CUMULATIVE }
+
+		/** The aggregate face (also the pre-rider default — {@link #plan(MaterialTreeDisplay)} rides it). */
+		public static final ByproductView ALL = new ByproductView(Mode.ALL, -1);
+
+		/** 「只看某一步的副产」: the step-n slots alone. */
+		public static ByproductView step(int aStep) { return new ByproductView(Mode.STEP, aStep); }
+
+		/** 「累积到某步」: every slot of step 0..aStep. */
+		public static ByproductView cumulative(int aStep) { return new ByproductView(Mode.CUMULATIVE, aStep); }
+
+		/** Whether this state shows the slot. */
+		public boolean shows(MaterialTreeDisplay.Byproduct aByproduct) {
+			return switch (mode) {
+				case ALL -> true;
+				case STEP -> aByproduct.step() == step;
+				case CUMULATIVE -> aByproduct.step() >= 0 && aByproduct.step() <= step;
+			};
+		}
+
+		/** The visible subset in the band's own order (ALL returns the list itself — the zero-filter face). */
+		public List<MaterialTreeDisplay.Byproduct> apply(List<MaterialTreeDisplay.Byproduct> aByproducts) {
+			if (mode == Mode.ALL) return aByproducts;
+			List<MaterialTreeDisplay.Byproduct> rVisible = new ArrayList<>(aByproducts.size());
+			for (MaterialTreeDisplay.Byproduct tByproduct : aByproducts) if (shows(tByproduct)) rVisible.add(tByproduct);
+			return List.copyOf(rVisible);
+		}
+	}
+
+	/**
 	 * The one display's layout under {@link Policy#DEFAULT}: node coordinates, edge plans
 	 * and the content bounding box, all pure functions of the tree data (same input, same
 	 * output — the display's lists are deterministic order).
 	 */
 	public static Result plan(MaterialTreeDisplay aDisplay) {
 		return plan(aDisplay.nodes(), aDisplay.edges(), aDisplay.byproducts());
+	}
+
+	/**
+	 * The one display's layout under a byproduct VIEW STATE (task mattree-r2-byproduct-per-step):
+	 * the view filters only the hanging band's slots — the chain nodes and edge plans are the
+	 * ALL face's, byte for byte, under every state.
+	 */
+	public static Result plan(MaterialTreeDisplay aDisplay, ByproductView aView) {
+		return plan(aDisplay.nodes(), aDisplay.edges(), aView.apply(aDisplay.byproducts()));
 	}
 
 	/**

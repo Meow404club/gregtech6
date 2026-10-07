@@ -320,9 +320,11 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 
 		// the Crusher face of the SAME hop is cross-material for Iron — MT.java:2885
 		// setCrushing(Fe2O3) redirects raw Iron into crushed Hematite, so the Crusher row
-		// (GT6RecipesOreChain :153) lands on the byproduct face — the dual-face design
+		// (GT6RecipesOreChain :153) lands on the byproduct face — the dual-face design;
+		// inPrefix = the row's oreRaw input (the :153 template; task
+		// mattree-r2-byproduct-per-step added the field — the producing STEP's band)
 		assertTrue(tTree.byproductEdges(MT.Fe).contains(
-				new MaterialTreeBuilder.ByproductEdge(MT.Fe, MT.Fe2O3, OP.crushed, "gt.recipe.crusher")),
+				new MaterialTreeBuilder.ByproductEdge(MT.Fe, MT.Fe2O3, OP.oreRaw, OP.crushed, "gt.recipe.crusher")),
 				"the Crusher ore-chain row is the Fe -> Fe2O3 redirect, got: " + tTree.byproductEdges(MT.Fe));
 
 		// the purified leg's TERMINAL edge (ShCL :139 = upstream :130 crushedPurified -> dust)

@@ -231,8 +231,19 @@ public final class MaterialTreeDisplay {
 		public String viaLabel() { return MaterialTreeDisplay.viaLabel(mapNames()); }
 	}
 
-	/** One byproduct side-column slot: derived (a real row's cross-material output) or declared. */
-	public record Byproduct(ItemStack stack, boolean derived, String sourceLabel) {}
+	/**
+	 * One byproduct side-column slot: derived (a real row's cross-material output) or declared.
+	 *
+	 * <p>{@code step} is the producing PROCESS STEP's band (task mattree-r2-byproduct-per-step):
+	 * the band the producing row's material-scoped input sits in — the machine icon of that row
+	 * rides the gap under exactly this band, so 「第 n 步的副产」 = the {@code step == n} slots.
+	 * The derived face derives it from the row's input prefix ({@code columnOf(inPrefix)}); the
+	 * declared face is the upstream crushing redirect, which fires on the ore family
+	 * ({@code COL_ORE}). {@code -1} = the producing input is OUTSIDE the display table (an
+	 * item-tree tail row) — the slot belongs to no displayed step, so only the
+	 * {@link gregtech6.recipes.tree.MaterialTreeLayout.ByproductView#ALL} aggregate face shows it.
+	 */
+	public record Byproduct(ItemStack stack, boolean derived, String sourceLabel, int step) {}
 
 	/**
 	 * The explicit overflow marker (the v2 no-silent-drop clause): {@code hidden} prefixes of
@@ -397,21 +408,23 @@ public final class MaterialTreeDisplay {
 
 		// byproducts: derived first (what the rows really emit), then the declared face
 		// (the crushing target's mByProducts) minus what the derived face already shows —
-		// over MAX_ROWS the excess is COUNTED (the side column's "+N" marker), not dropped
+		// over MAX_ROWS the excess is COUNTED (the side column's "+N" marker), not dropped;
+		// each slot carries its producing step (the input band — per-step hang, task
+		// mattree-r2-byproduct-per-step; the declaration is the crushing redirect = COL_ORE)
 		List<Byproduct> tByproducts = new ArrayList<>();
 		Set<OreDictMaterial> tShown = Collections.newSetFromMap(new IdentityHashMap<>());
 		for (ByproductEdge tDerived : aTree.byproductEdges(aMaterial)) {
 			if (tByproducts.size() >= MAX_ROWS) { tHidden[COL_BYPRODUCT]++; continue; }
 			Item tItem = aItems.apply(tDerived.outPrefix(), tDerived.to());
 			if (tItem == null || !tShown.add(tDerived.to())) continue;
-			tByproducts.add(new Byproduct(new ItemStack(tItem), true, VIA_PREFIX + mapLabel(tDerived.mapName())));
+			tByproducts.add(new Byproduct(new ItemStack(tItem), true, VIA_PREFIX + mapLabel(tDerived.mapName()), columnOf(tDerived.inPrefix())));
 		}
 		for (OreDictMaterial tDeclared : GT6RecipesOreChain.crushingTarget(aMaterial).mByProducts) {
 			if (tByproducts.size() >= MAX_ROWS) { tHidden[COL_BYPRODUCT]++; continue; }
 			if (tDeclared == null || tDeclared.mID <= 0 || !tShown.add(tDeclared)) continue;
 			Item tItem = aItems.apply(OP.dust, tDeclared);
 			if (tItem == null) continue;
-			tByproducts.add(new Byproduct(new ItemStack(tItem), false, DECLARED_TEXT));
+			tByproducts.add(new Byproduct(new ItemStack(tItem), false, DECLARED_TEXT, COL_ORE));
 		}
 
 		List<Overflow> tOverflow = new ArrayList<>();
