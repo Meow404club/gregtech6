@@ -23,10 +23,12 @@ import net.minecraftforge.common.ForgeHooks;
 import gregapi.data.CS;
 import gregapi.data.MT;
 import gregapi.data.TD;
+import gregapi.oredict.OreDictItemData;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictMaterialStack;
 import gregapi.oredict.OreDictPrefix;
 import gregapi.util.UT;
+import gregtech6.components.IOreDictItemDataOverrideItem;
 import gregtech6.easter.GT6Calendars;
 import gregtech6.recipes.RecipeMapFurnaceFuel;
 import gregtech6.tooltip.GT6TooltipStyle;
@@ -60,7 +62,7 @@ import gregtech6.tooltip.GT6TooltipStyle;
  * (GT_API_Proxy_Client.onItemTooltip, ItemTooltipEvent HIGHEST :214-518) for its own pair
  * (task material-tooltip-face; the 22 lang faces live under gt6.tooltip.material.*).
  */
-public class MaterialPrefixItem extends Item {
+public class MaterialPrefixItem extends Item implements IOreDictItemDataOverrideItem {
 
     public final OreDictPrefix prefix;
     public final OreDictMaterial material;
@@ -76,6 +78,15 @@ public class MaterialPrefixItem extends Item {
         String prefixSnake = snakeCase(prefix.mNameInternal);
         this.templateKey = "gt6.tagprefix." + prefixSnake;
         this.specialKey = "gt6." + prefixSnake + "_" + snakeCase(material.mNameInternal);
+    }
+
+    /** The item is its own (prefix, material) data — arm 2 of the central component face's read
+     * chain (upstream OreDictManager.getItemData_ :694, {@link IOreDictItemDataOverrideItem}).
+     * The consult answers a fresh Prefix data per read, exactly like the upstream
+     * PrefixItem self-description; the central face ({@code gregtech6.components.OM}) decides
+     * the arm priority. */
+    @Override public OreDictItemData getOreDictItemData(ItemStack aStack) {
+        return new OreDictItemData(prefix, material);
     }
 
     /** CamelCase internal name to snake_case (GTCEu FormattingUtil.toLowerCaseUnderscore semantics, TagPrefix.java:1306-1308). */
