@@ -47,11 +47,11 @@ public class GT6MiscTabCoverageCensusTest extends GTOfflineTestBase {
 		assertEquals("mold_stone", GT6Molds.ITEMS_BY_PATH.keySet().iterator().next(), "the stone rung leads (the card-A row0)");
 		assertTrue(GT6Molds.ITEMS_BY_PATH.containsKey("mold_ceramic"), "the carvable blank (:352)");
 		assertTrue(GT6Molds.ITEMS_BY_PATH.containsKey("mold_ceramic_nugget"), "the nugget fallback row (:420)");
-		assertEquals(2, GT6Molds.FAUCET_ITEMS_BY_PATH.size(), ":300 stone / :305 ceramic");
+		assertEquals(39, GT6Molds.FAUCET_ITEMS_BY_PATH.size(), ":300 stone / :305 ceramic + the 37 metal rungs (:361-388, task faucet-material-rows — the review-seat seam on mui-dispatch-seam: the faucet landing grew the FAUCET_ITEMS_BY_PATH map 2 -> 39 without this tab census moving, the main checkout RED here; the same walk the TagsDatagen :483-side pin already carries)");
 		assertTrue(GT6Molds.FAUCET_ITEMS_BY_PATH.containsKey("faucet_stone"));
 		assertTrue(GT6Molds.FAUCET_ITEMS_BY_PATH.containsKey("faucet_ceramic"));
-		assertEquals(34, GT6Molds.ITEMS_BY_PATH.size() + GT6Molds.FAUCET_ITEMS_BY_PATH.size(),
-				"the join pool — the census's '34 finished' spans both maps of the file");
+		assertEquals(71, GT6Molds.ITEMS_BY_PATH.size() + GT6Molds.FAUCET_ITEMS_BY_PATH.size(),
+				"the join pool — the census's '34 finished' spans both maps of the file (32 molds + 39 faucets after task faucet-material-rows, the review-seat seam)");
 		assertEquals(32, GT6Molds.RAW_ITEMS_BY_PATH.size() + 1,
 				"the raw pool stays OUT of the tab — 31 mold raws + FAUCET_CERAMIC_RAW");
 		assertNotNull(GT6Molds.FAUCET_CERAMIC_RAW, "the :305 faucet raw rides the raw pool");

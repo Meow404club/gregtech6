@@ -18,6 +18,12 @@ the flipped arm's carrier is the documented menu-less form:
   canner place → check data=-1      (bound gt6:canner menu — same vanilla path)
   shredder place → check data=-2    (the row-less family since the mui-a-
       menu-deregistration dereg — the mui-a-open-chain MUI arm, unchanged)
+  press place → check data=-2       (task mui-dispatch-seam — the W1 Press
+      precedent group's live arm: PRESS_ROWS registered menu = null one day
+      BEFORE the p26 seam landed, the registration comment's "stays inert
+      until seam-①" wording is retired by that landing; the offline census
+      everyMachineRowFamilyRidesTheDispatch pins all 62 families, this spot
+      check is the precedent group's live-server face)
 
 Run:  python3 tools/rcon/chains/mui_row_dispatch.py   (add
 --node 1.21.1-neoforge for the second leg; GT6_SESSION=off for the per-chain
@@ -37,12 +43,13 @@ from framework import Chain, Step, main, phase
 
 F = gt6world.fmt
 
-# The four dispatch-family sites, >=16 apart, beyond the P16 distillery band
+# The five dispatch-family sites, >=16 apart, beyond the P16 distillery band
 # (x=320-384, z=100) — this card's band starts at x=480.
 DIS = gt6world.Site(480, 64, 100, dx=1, dy=2, dz=1)
 DRY = gt6world.Site(496, 64, 100, dx=1, dy=2, dz=1)
 CAN = gt6world.Site(512, 64, 100, dx=1, dy=2, dz=1)
 SHR = gt6world.Site(528, 64, 100, dx=1, dy=2, dz=1)
+PRS = gt6world.Site(544, 64, 100, dx=1, dy=2, dz=1)  # task mui-dispatch-seam
 
 steps = []
 
@@ -77,10 +84,21 @@ steps += [
     Step(f"gt6machine shredder check {F(SHR)}", expect="data=-2"),
 ]
 
+# ------------------------- D: the Press precedent group — the W1 menu-null row arm
+steps += [
+    phase("D: the Press precedent group (task mui-dispatch-seam): the four PRESS_ROWS "
+          "are the W1 menu-null row form (menu = null, KU, RM.Press) — the same flipped "
+          "arm as the Distillery, live-placed here as the precedent group's spot check "
+          "(data=-2, the MUI chain is the GUI; the offline census pins the other 61 "
+          "families through the same key)"),
+    Step(f"gt6machine press place {F(PRS)}", expect="GT6 press placed"),
+    Step(f"gt6machine press check {F(PRS)}", expect="data=-2"),
+]
+
 CHAIN = Chain(
     name="mui-row-dispatch",
     slug="muirowdispatch",
-    sites=gt6world.declare_sites(DIS, DRY, CAN, SHR),
+    sites=gt6world.declare_sites(DIS, DRY, CAN, SHR, PRS),
     preferred_ports=(26112, 26122),      # this card's pinned rcon/query pair
     steps=steps,
 )

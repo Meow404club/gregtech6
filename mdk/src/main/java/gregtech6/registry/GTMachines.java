@@ -695,8 +695,9 @@ public final class GTMachines {
 	// SBIT_L), item out = SBIT_R|SBIT_A (NBT_INV_SIDE_OUT SBIT_R), item auto in =
 	// SIDE_LEFT(2), item auto out = SIDE_RIGHT(4); the fluid masks ride 0 (no NBT_TANK
 	// keys upstream — the zero-fluid face, data-only). The GUI clause: menu = null (the
-	// menu-less carrier, the Distillery precedent — zero new gt6:* MenuType, the use()
-	// gate stays inert until the seam-① micro card lands the MUI dispatch).
+	// menu-less carrier, the Distillery precedent — zero new gt6:* MenuType; the seam-①
+	// micro card IS task mui-row-menu-null-dispatch, merge f1b634d8 — use() dispatches
+	// GT6MuiMachine.tryOpen, the gate is live, not inert).
 	// ---------------------------------------------------------------------------
 
 	/** The four Press rows, upstream line order :1425-1428 (T1-T4, the Kinetic_T ladder). */
@@ -914,8 +915,9 @@ public final class GTMachines {
 	// keys on any of the twelve rows → the upstream field defaults 127 (the all-sides
 	// zero-regression face, TileEntityBasicMachine :245/:786) with SIDE_UNDEFINED auto
 	// sides — zero fluid recipes are NOT a zero fluid face (the Shredder precedent).
-	// menu = null on every row: ZERO new gt6:* MenuType (the card GUI clause — use()
-	// stays inert until the menu==null dispatch seam goes live).
+	// menu = null on every row: ZERO new gt6:* MenuType (the card GUI clause — the
+	// menu==null dispatch seam is live since task mui-row-menu-null-dispatch: use()
+	// hands every row to GT6MuiMachine.tryOpen).
 	// ---------------------------------------------------------------------------
 
 	/** The four Sifter rows, upstream line order :1312-1315 (T1-T4, the Kinetic_T ladder). */
@@ -2865,8 +2867,9 @@ public final class GTMachines {
 	// item in = SBIT_U|SBIT_L|SBIT_A (the :137 read — NBT_INV_SIDE_IN SBIT_U|SBIT_L), item
 	// out = SBIT_R|SBIT_A (the :138 read); the four auto sides are the :139/:140/:145/:146
 	// columns (data-only — the auto-IO pool). menu = the menu-less carrier (the GUI pool
-	// precedent — use() stays inert, the acceptance drives inject+check like the pre-gui
-	// dryer).
+	// precedent — since task mui-row-menu-null-dispatch use() dispatches
+	// GT6MuiMachine.tryOpen; the acceptance drives inject+check, data=-2 the menu-less
+	// surface report).
 	// ---------------------------------------------------------------------------
 
 	/** The Distillery family display template key ({@code gt6.row.distillery.display}, task i18n-compose-rows). */
@@ -3081,8 +3084,9 @@ public final class GTMachines {
 	// Titanium/Tungstensteel), NBT_INPUT 32/128/512/2048 through the TIER_INPUTS
 	// conversion, hardness 7.0/6.0/9.0/12.5 (NBT_RESISTANCE == hardness), NBT_PARALLEL
 	// absent unless named, cheap overclocking T (the :773 unconditional port face) and
-	// menu = null on every row (the zero-new-MenuType GUI clause — use() stays inert,
-	// the acceptance drives inject+check):
+	// menu = null on every row (the zero-new-MenuType GUI clause — use() dispatches
+	// GT6MuiMachine.tryOpen since task mui-row-menu-null-dispatch; the acceptance drives
+	// inject+check):
 	//
 	//   Buzzsaw        20061-20064  RU  RM.CUTTER          :1318-1321  parallel 1
 	//   Squeezer       20071-20074  KU  RM.SQUEEZER        :1324-1327  PARALLEL_4_32 + duration T
