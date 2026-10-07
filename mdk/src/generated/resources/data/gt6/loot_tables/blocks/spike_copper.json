@@ -1,0 +1,61 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:spike_copper",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "falling": "false",
+                "omni": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "name": "gt6:spike_copper"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:spike_copper",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "omni": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "name": "gt6:spike_copper_block"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:spike_copper",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "falling": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "name": "gt6:spike_copper_falling"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gt6:blocks/spike_copper"
+}

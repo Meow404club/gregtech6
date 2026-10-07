@@ -126,6 +126,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		addBeamBand(); // task beam-blocks-register — the 8 wood beams join mineable/axe
 		addPlankBand(); // task gt-tree-planks — the 9 plank cubes (planks/axe)
 		addWoodenPanelBand(); // task material-mc-g3-plank-panels — the 28 wooden panels join mineable/axe
+		addDecorBand(); // task material-mc-g2-decor-misc — the decor families' tool bands
 		addRailsBand(); // task rails-31-blocks — the 31 rails join #minecraft:rails
 		addWrenchBand(); // task wrench-mining-face — the gt6:mineable/wrench face (ruling B)
 		addTwilightDeadrockBand(); // task twilight-vanilla-ores-deadrock — the gt6:tf_deadrock host-indirection tag
@@ -552,6 +553,39 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			if (tEntry.getKey().prefix() != OP.blockDust) continue;
 			tShovel.add(((BlockItem) tEntry.getValue().get()).getBlock());
 		}
+	}
+
+	/**
+	 * The decor-misc bands (task material-mc-g2-decor-misc): the upstream tool columns —
+	 * Asphalt = TOOL_pickaxe level 1 (BlockAsphalt.java:44 x BlockMetaType.java:165, the
+	 * whole BlockMetaType family face), the Bars split wood = axe / metals = pickaxe
+	 * (BlockBaseBars.java:136 {@code getMaterial() == Material.wood ? TOOL_axe :
+	 * TOOL_pickaxe}), the Spikes = pickaxe (BlockBaseSpike.java:107), the Path = shovel
+	 * level 0 (BlockPath.java:229). The Glass/GlowGlass and Bale rows join NO band: the
+	 * glass family has no tool override (hand-breakable glass, the vanilla posture —
+	 * BlockGlassClear carries none) and the bale sword face (BlockBaseBale.java:47
+	 * TOOL_sword) has NO 1.20.1 mineable tag — the declared shears-shaped defer (the
+	 * fluid-pipe aUtilWool precedent), hand-breakable at hay hardness.
+	 */
+	private void addDecorBand() {
+		var tPickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
+		var tAxe = tag(BlockTags.MINEABLE_WITH_AXE);
+		var tShovel = tag(BlockTags.MINEABLE_WITH_SHOVEL);
+		for (RegistryObject<Block> tHandle : gregtech6.registry.GT6DecorBlocks.ASPHALT_BLOCKS) {
+			tPickaxe.add(tHandle.get());
+		}
+		for (int i = 0; i < gregtech6.registry.GT6DecorBlocks.BARS_ROWS.size(); i++) {
+			Block tBlock = gregtech6.registry.GT6DecorBlocks.BARS_BLOCKS.get(i).get();
+			if (gregtech6.registry.GT6DecorBlocks.BARS_ROWS.get(i).flammable()) {
+				tAxe.add(tBlock); // the wood row (BlockBarsWood, Material.wood)
+			} else {
+				tPickaxe.add(tBlock);
+			}
+		}
+		for (RegistryObject<Block> tHandle : gregtech6.registry.GT6Spikes.BLOCKS) {
+			tPickaxe.add(tHandle.get());
+		}
+		tShovel.add(gregtech6.registry.GT6DecorBlocks.PATH.get());
 	}
 
 	/**

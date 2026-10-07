@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_blue_steel"
+    },
+    "P": {
+      "item": "gt6:plate_blue_steel"
+    },
+    "T": {
+      "item": "gt6:screw_blue_steel"
+    }
+  },
+  "pattern": [
+    "BTB",
+    "TPT",
+    "BTB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spike_blue_steel"
+  }
+}

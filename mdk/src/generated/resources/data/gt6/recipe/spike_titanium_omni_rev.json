@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "gt6:spike_titanium_falling"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spike_titanium_block"
+  }
+}

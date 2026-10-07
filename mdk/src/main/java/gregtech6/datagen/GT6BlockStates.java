@@ -332,6 +332,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addSapBag(); // task block-family-32xxx-port — the trunk-mounted collector bag (normal/full models)
         addPlantPot(); // task block-family-32xxx-port — the two-element pot (plate + body)
         addPanels(); // task material-mc-g1-panels-dyed — the 48 dyed Cover Panel rows (the grayscale+tint band, concrete form)
+        addDecor(); // task material-mc-g2-decor-misc — the 7 decor families (asphalt/glass/glow/path/bars/bales/spikes)
     }
 
     /**
@@ -6292,5 +6293,280 @@ public final class GT6BlockStates extends BlockStateProvider {
             tFace.end();
         }
         tElement.end();
+    }
+
+     * The decor-misc families (task material-mc-g2-decor-misc), the Loader_Blocks.java
+     * rows Asphalt :59 / Glass-GlowGlass :72-73 / Paths :83 / Bars :106-111 / Bales
+     * :128-129 and the spike rows :94-98 (the spikes via GT6Spikes). Model shapes:
+     * <ul>
+     * <li>Asphalt 16 — the shared tinted cube (tintedCubeAll over block/decor/asphalt,
+     *     the concrete form: the ONE grayscale upstream PNG x the fixed dye index);</li>
+     * <li>Glass/GlowGlass 32 — the same tinted cube over block/decor/glass_clear with the
+     *     {@code translucent} render type (the upstream GLASS_CLEAR alpha-48 translucent,
+     *     byte-verified), the glow arm sharing the model (light is block-state, not model);</li>
+     * <li>Path 1 — the vanilla dirt_path element form verbatim (0,0,0)-(16,15,16), up =
+     *     path_top, sides = the pre-composited path_side art (alpha-below strip, cutout),
+     *     down = vanilla dirt (the uv(0,1,16,16) side shift, the vanilla model verbatim);</li>
+     * <li>Bars 6 — ONE shared multipart over the vanilla iron_bars geometry clones
+     *     (post_ends/post/cap/cap_alt/side/side_alt, every face tintindex 0 — the tint
+     *     needs own elements, the vanilla parents carry none) over block/decor/metal_solid,
+     *     per-block item models = item/generated layer0 (the tinted inventory sprite);</li>
+     * <li>Bales 8 — the cube_column pillar form per variant (top = the variant top art,
+     *     side = the variant side art), the axis rotation map verbatim (the beam form);</li>
+     * <li>Spikes 10 — the shared 3-tier spike silhouette (base/mid/tip over
+     *     block/decor/metal_solid, tintindex 0) rotated per FACING (the vanilla
+     *     column-to-facing map), the omni/falling states over the core+six-nub model;
+     *     item models parent the block models (the casing-family-3d 3D item form, the
+     *     energium precedent).</li>
+     * </ul>
+     * Declared: the 13-pass upstream spike renderers and the AF rainbow cycle are the
+     * render-pool defer (the static silhouette IS the declared approximation, javadoc'd
+     * on GT6SpikeBlock); the bars onItemUseFirst placement-merge is the vanilla
+     * connection superseded face.
+     */
+    private void addDecor() {
+        // ---- asphalt: 16 tinted cubes ----------------------------------------------------
+        ModelFile tAsphalt = tintedCubeAll("block/asphalt", modLoc("block/decor/asphalt"));
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.ASPHALT_BLOCKS) {
+            Block tBlock = tHandle.get();
+            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tAsphalt).build());
+            itemModels().withExistingParent(tHandle.getId().getPath(), tAsphalt.getLocation());
+        }
+        // ---- glass + glow glass: 32 translucent tinted cubes ------------------------------
+        BlockModelBuilder tGlass = tintedCubeAll("block/glass_clear", modLoc("block/decor/glass_clear"));
+        tGlass.renderType("minecraft:translucent");
+        for (var tFamily : java.util.List.of(gregtech6.registry.GT6DecorBlocks.GLASS_BLOCKS,
+                gregtech6.registry.GT6DecorBlocks.GLOW_GLASS_BLOCKS)) {
+            for (var tHandle : tFamily) {
+                Block tBlock = tHandle.get();
+                getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tGlass).build());
+                itemModels().withExistingParent(tHandle.getId().getPath(), tGlass.getLocation());
+            }
+        }
+        // ---- path: the vanilla dirt_path element form -------------------------------------
+        BlockModelBuilder tPath = models().getBuilder("block/path")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("top", modLoc("block/decor/path_top"))
+                .texture("side", modLoc("block/decor/path_side"))
+                .texture("bottom", mcLoc("block/dirt"))
+                .texture("particle", "#bottom")
+                .renderType("minecraft:cutout");
+        var tPathEl = tPath.element().from(0.0F, 0.0F, 0.0F).to(16.0F, 15.0F, 16.0F);
+        tPathEl.face(Direction.DOWN).texture("#bottom").cullface(Direction.DOWN).end();
+        tPathEl.face(Direction.UP).texture("#top").end();
+        tPathEl.face(Direction.NORTH).uvs(0, 1, 16, 16).texture("#side").cullface(Direction.NORTH).end();
+        tPathEl.face(Direction.SOUTH).uvs(0, 1, 16, 16).texture("#side").cullface(Direction.SOUTH).end();
+        tPathEl.face(Direction.WEST).uvs(0, 1, 16, 16).texture("#side").cullface(Direction.WEST).end();
+        tPathEl.face(Direction.EAST).uvs(0, 1, 16, 16).texture("#side").cullface(Direction.EAST).end();
+        tPathEl.end();
+        Block tPathBlock = gregtech6.registry.GT6DecorBlocks.PATH.get();
+        getVariantBuilder(tPathBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tPath).build());
+        itemModels().withExistingParent("path", tPath.getLocation());
+        // ---- bars: the shared iron_bars multipart clones (tintindex 0) ---------------------
+        var tBarTex = modLoc("block/decor/metal_solid");
+        ModelFile tPostEnds = barsModel("decor_bars_post_ends", tBarTex, true);
+        ModelFile tPost = barsModel("decor_bars_post", tBarTex, false);
+        ModelFile tCap = barsModel("decor_bars_cap", tBarTex, false);
+        ModelFile tCapAlt = barsModel("decor_bars_cap_alt", tBarTex, false);
+        ModelFile tSide = barsModel("decor_bars_side", tBarTex, false);
+        ModelFile tSideAlt = barsModel("decor_bars_side_alt", tBarTex, false);
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.BARS_BLOCKS) {
+            Block tBlock = tHandle.get();
+            var tBuilder = getMultipartBuilder(tBlock)
+                    .part().modelFile(tPostEnds).addModel().end()
+                    .part().modelFile(tPost).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.NORTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.EAST, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.WEST, false).end()
+                    .part().modelFile(tCap).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.NORTH, true)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.EAST, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.WEST, false).end()
+                    .part().modelFile(tCap).rotationY(90).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.NORTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.EAST, true)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.WEST, false).end()
+                    .part().modelFile(tCapAlt).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.NORTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.EAST, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, true)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.WEST, false).end()
+                    .part().modelFile(tCapAlt).rotationY(90).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.NORTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.EAST, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, false)
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.WEST, true).end()
+                    .part().modelFile(tSide).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.NORTH, true).end()
+                    .part().modelFile(tSide).rotationY(90).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.EAST, true).end()
+                    .part().modelFile(tSideAlt).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, true).end()
+                    .part().modelFile(tSideAlt).rotationY(90).addModel()
+                    .condition(net.minecraft.world.level.block.CrossCollisionBlock.WEST, true).end();
+            itemModels().withExistingParent(tHandle.getId().getPath(), mcLoc("item/generated"))
+                    .texture("layer0", tBarTex);
+        }
+        // ---- bales: the 8 pillar cubes ------------------------------------------------------
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.BLOCKS_BY_PATH.values()) {
+            Block tBlock = tHandle.get();
+            String tPath2 = tHandle.getId().getPath();
+            ModelFile tModel = models().cubeColumn(tPath2,
+                    modLoc("block/decor/" + tPath2 + "_side"), modLoc("block/decor/" + tPath2 + "_top"));
+            getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS)) {
+                case X -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 90, false)};
+                case Y -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
+                case Z -> new ConfiguredModel[] {new ConfiguredModel(tModel, 90, 180, false)};
+            });
+            itemModels().withExistingParent(tPath2, tModel.getLocation());
+        }
+        // ---- spikes: the 10 shared models, 24 states each ------------------------------------
+        ModelFile tSpike = spikeModel("decor_spike", false);
+        ModelFile tSpikeOmni = spikeModel("decor_spike_omni", true);
+        for (var tHandle : gregtech6.registry.GT6Spikes.BLOCKS) {
+            Block tBlock = tHandle.get();
+            String tSnake = tHandle.getId().getPath();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                boolean tOmni = aState.getValue(gregtech6.block.decor.GT6SpikeBlock.OMNI)
+                        || aState.getValue(gregtech6.block.decor.GT6SpikeBlock.FALLING);
+                if (tOmni) return ConfiguredModel.builder().modelFile(tSpikeOmni).build();
+                return new ConfiguredModel[] {new ConfiguredModel(tSpike, rotXOf(aState), rotYOf(aState), false)};
+            });
+            // three item identities over the two models (the 3D item form, the energium seat)
+            itemModels().withExistingParent(tSnake, tSpike.getLocation());
+            itemModels().withExistingParent(tSnake + "_block", tSpikeOmni.getLocation());
+            itemModels().withExistingParent(tSnake + "_falling", tSpikeOmni.getLocation());
+        }
+        LOGGER.info("GT6 decor: 73 blockstates (16 asphalt + 32 glass + path + 6 bars multiparts + 8 bales + 10 spikes), 73+30 item models");
+    }
+
+    /** The facing rotation map of the column-to-facing blockstate (the vanilla idiom). */
+    private int rotXOf(net.minecraft.world.level.block.state.BlockState aState) {
+        return switch (aState.getValue(gregtech6.block.decor.GT6SpikeBlock.FACING)) {
+            case DOWN -> 180;
+            case NORTH, SOUTH, EAST, WEST -> 90;
+            default -> 0;
+        };
+    }
+
+    private int rotYOf(net.minecraft.world.level.block.state.BlockState aState) {
+        return switch (aState.getValue(gregtech6.block.decor.GT6SpikeBlock.FACING)) {
+            case NORTH -> 180;
+            case EAST -> 90;
+            case WEST -> 270;
+            default -> 0;
+        };
+    }
+
+    /**
+     * The spike silhouette (the declared static approximation of the 13-pass renderers):
+     * the 3-tier base/mid/tip column, every face over the metal tint band (tintindex 0);
+     * the omni arm = the core cube + the six face nubs (the upstream omni renderer's
+     * six-pyramid star, flattened to one model).
+     */
+    private BlockModelBuilder spikeModel(String aName, boolean aOmni) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("metal", modLoc("block/decor/metal_solid"))
+                .texture("particle", "#metal");
+        if (!aOmni) {
+            tier(tModel, 5, 0, 5, 11, 8, 11);
+            tier(tModel, 6, 8, 6, 10, 12, 10);
+            tier(tModel, 7, 12, 7, 9, 16, 9);
+        } else {
+            tier(tModel, 4, 4, 4, 12, 12, 12);
+            tier(tModel, 7, 12, 7, 9, 15, 9);
+            tier(tModel, 7, 1, 7, 9, 4, 9);
+            tier(tModel, 7, 7, 0, 9, 9, 3);
+            tier(tModel, 7, 7, 13, 9, 9, 16);
+            tier(tModel, 0, 7, 7, 3, 9, 9);
+            tier(tModel, 13, 7, 7, 16, 9, 9);
+        }
+        return tModel;
+    }
+
+    /** One tinted box of the spike silhouette (every face carries tintindex 0, no cullface). */
+    private void tier(BlockModelBuilder aModel, int aX1, int aY1, int aZ1, int aX2, int aY2, int aZ2) {
+        var tEl = aModel.element().from(aX1, aY1, aZ1).to(aX2, aY2, aZ2);
+        for (Direction tDir : Direction.values()) {
+            tEl.face(tDir).texture("#metal").tintindex(0).end();
+        }
+        tEl.end();
+    }
+
+    /**
+     * The vanilla iron_bars geometry clone (the tint needs own elements — the vanilla
+     * parents carry no tintindex): post_ends = the 2px post end caps, post = the center
+     * column, cap/cap_alt = the unconnected-end brackets, side/side_alt = the connected
+     * arms (the alt twins are the 90-degree-swapped planes), every face tintindex 0 over
+     * the metal tint band. The {@code aPostEnds} arm omits the bar faces (the vanilla
+     * file ships only the edge caps).
+     */
+    private BlockModelBuilder barsModel(String aName, ResourceLocation aTexture, boolean aPostEnds) {
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("bars", aTexture)
+                .texture("edge", aTexture)
+                .texture("particle", "#bars");
+        switch (aName) {
+            case "decor_bars_post_ends" -> {
+                flatPlate(tModel, 7, 0.001F, 7, 9, 0.001F, 9);
+                flatPlate(tModel, 7, 15.999F, 7, 9, 15.999F, 9);
+            }
+            case "decor_bars_post" -> {
+                flatPlate(tModel, 8, 0, 7, 8, 16, 9);
+                flatPlate(tModel, 7, 0, 8, 9, 16, 8);
+            }
+            case "decor_bars_cap" -> {
+                flatPlate(tModel, 8, 0, 8, 8, 16, 9);
+                flatPlate(tModel, 7, 0, 9, 9, 16, 9);
+            }
+            case "decor_bars_cap_alt" -> {
+                flatPlate(tModel, 8, 0, 7, 8, 16, 8);
+                flatPlate(tModel, 7, 0, 7, 9, 16, 7);
+            }
+            case "decor_bars_side" -> {
+                flatPlate(tModel, 8, 0, 0, 8, 16, 8);
+                barsArm(tModel, Direction.NORTH, 0, 7);
+            }
+            default -> { // decor_bars_side_alt
+                flatPlate(tModel, 8, 0, 8, 8, 16, 16);
+                barsArm(tModel, Direction.SOUTH, 9, 16);
+            }
+        }
+        return tModel;
+    }
+
+    /** The zero-thickness quad pair of a bar plane (west/east or north/south by axis). */
+    private void flatPlate(BlockModelBuilder aModel, float aX1, float aY1, float aZ1, float aX2, float aY2, float aZ2) {
+        var tEl = aModel.element().from(aX1, aY1, aZ1).to(aX2, aY2, aZ2);
+        if (aX1 == aX2) {
+            tEl.face(Direction.WEST).uvs(aZ1, aY1, aZ2, aY2).texture("#bars").tintindex(0).end();
+            tEl.face(Direction.EAST).uvs(aZ2, aY1, aZ1, aY2).texture("#bars").tintindex(0).end();
+        } else {
+            tEl.face(Direction.NORTH).uvs(aX1, aY1, aX2, aY2).texture("#bars").tintindex(0).end();
+            tEl.face(Direction.SOUTH).uvs(aX2, aY1, aX1, aY2).texture("#bars").tintindex(0).end();
+        }
+        tEl.end();
+    }
+
+    /** The connected side arm (the vanilla side/side_alt files): the edge post + the two edge plates. */
+    private void barsArm(BlockModelBuilder aModel, Direction aDir, float aZ1, float aZ2) {
+        var tEl = aModel.element().from(7, 0, aZ1).to(9, 16, aZ2);
+        tEl.face(aDir).uvs(7, 0, 9, 16).texture("#edge").tintindex(0).cullface(aDir).end();
+        tEl.end();
+        flatPlateEdge(aModel, 7, 0.001F, aZ1, 9, 0.001F, aZ2);
+        flatPlateEdge(aModel, 7, 15.999F, aZ1, 9, 15.999F, aZ2);
+    }
+
+    /** The edge plates (down/up faces only — the vanilla side-file edge strips). */
+    private void flatPlateEdge(BlockModelBuilder aModel, float aX1, float aY1, float aZ1, float aX2, float aY2, float aZ2) {
+        var tEl = aModel.element().from(aX1, aY1, aZ1).to(aX2, aY2, aZ2);
+        tEl.face(Direction.DOWN).uvs(aX1, aZ1, aX2, aZ2).texture("#edge").tintindex(0).end();
+        tEl.face(Direction.UP).uvs(aX1, aZ1, aX2, aZ2).texture("#edge").tintindex(0).end();
+        tEl.end();
     }
 }

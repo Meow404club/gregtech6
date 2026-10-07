@@ -1,0 +1,61 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:spike_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "falling": "false",
+                "omni": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "name": "gt6:spike_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:spike_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "omni": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "name": "gt6:spike_adamantium_block"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:spike_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "falling": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "name": "gt6:spike_adamantium_falling"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gt6:blocks/spike_adamantium"
+}

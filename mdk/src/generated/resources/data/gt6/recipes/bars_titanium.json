@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:stick_titanium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "h w",
+    "BBB"
+  ],
+  "result": {
+    "count": 3,
+    "item": "gt6:bars_titanium"
+  },
+  "show_notification": true
+}

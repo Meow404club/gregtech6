@@ -10969,3 +10969,21 @@ direct	gt6.row.basin.display	浇铸盆 (%s)	hand
 direct	gt6.row.crossing.display	坩埚浇铸道 (%s)	hand
 direct	item.gt6.basin_ceramic_raw	粘土浇铸盆	hand
 direct	item.gt6.crossing_ceramic_raw	粘土浇铸道	hand
+direct	gt6.asphalt.block	%s沥青	hand
+direct	gt6.glass.block	%s玻璃	hand
+direct	gt6.glass.glow_block	%s荧光玻璃	hand
+direct	gt6.path.block	草径	hand
+direct	gt6.bars.block	%s栏杆	hand
+direct	gt6.spike.wall	%s制壁刺	hand
+direct	gt6.spike.omni	%s制尖刺方块	hand
+direct	gt6.spike.falling	坠落的%s尖刺方块	hand
+direct	gt6.grass_bale.name	草垛	hand
+direct	gt6.dry_grass_bale.name	干草垛	hand
+direct	gt6.moldy_grass_bale.name	发霉的草垛	hand
+direct	gt6.rotten_grass_bale.name	烂草垛	hand
+direct	gt6.rye_bale.name	黑麦垛	hand
+direct	gt6.oats_bale.name	燕麦垛	hand
+direct	gt6.barley_bale.name	大麦垛	hand
+direct	gt6.rice_bale.name	水稻垛	hand
+direct	gt6.death.spike	%1$s被刺穿了	hand
+direct	gt6.death.spike.lego	%1$s踩到了乐高积木！	hand

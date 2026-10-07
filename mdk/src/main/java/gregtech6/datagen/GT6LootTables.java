@@ -2,6 +2,7 @@ package gregtech6.datagen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -145,6 +146,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6WoodenPanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g3-plank-panels — the 28 wooden panel self-drops
                 new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
                 new SubProviderEntry(GT6PanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g1-panels-dyed — the 48 panel self-drops
+                new SubProviderEntry(GT6DecorBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g2-decor-misc — the 73 decor tables
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -215,6 +217,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6WoodenPanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g3-plank-panels — the 28 wooden panel self-drops
                 new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
                 new SubProviderEntry(GT6PanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g1-panels-dyed — the 48 panel self-drops
+                new SubProviderEntry(GT6DecorBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g2-decor-misc — the 73 decor tables
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -3382,6 +3385,129 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected void generate() {
             for (Block tBlock : railLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The decor-family block list (task material-mc-g2-decor-misc): the 63 GT6DecorBlocks
+     * registrations + the 10 GT6Spikes blocks, registration order.
+     */
+    public static List<Block> decorLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>(73);
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.ASPHALT_BLOCKS) rBlocks.add(tHandle.get());
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.GLASS_BLOCKS) rBlocks.add(tHandle.get());
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.GLOW_GLASS_BLOCKS) rBlocks.add(tHandle.get());
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.BARS_BLOCKS) rBlocks.add(tHandle.get());
+        for (var tHandle : gregtech6.registry.GT6DecorBlocks.BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
+        rBlocks.add(gregtech6.registry.GT6DecorBlocks.PATH.get());
+        for (var tHandle : gregtech6.registry.GT6Spikes.BLOCKS) rBlocks.add(tHandle.get());
+        return rBlocks;
+    }
+
+    /**
+     * The decor-family loot provider (task material-mc-g2-decor-misc) — the upstream drop
+     * faces verbatim: asphalt/bars/bales self-drop (the BlockBase self-drop default, the
+     * stone-family reading), the GLASS FAMILIES drop NOTHING (upstream emits 40/80 scrapGt
+     * Glass — BlockGlassClear.java:310; the port has no scrap surface, P8 ADR ⑥, the
+     * vanilla-glass posture), the PATH drops plain dirt (BlockPath.java:143-156, no silk
+     * arm — canSilkHarvest F :226), the BARS drop the connection-count units (BlockBaseBars
+     * .java:140 quantityDropped = FACE_CONNECTION_COUNT — the datagen StatePropertiesCondition
+     * ladder over the 16 connection states), the SPIKES drop their item identity per state
+     * (BlockBaseSpike.java:110 damageDropped — wall states collapse to the wall item, the
+     * omni/falling states are self-identities).
+     */
+    public static final class GT6DecorBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6DecorBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6DecorBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return decorLootBlocks(); // narrowed to exactly the 73 blocks this provider owns
+        }
+
+        @Override
+        protected void generate() {
+            for (var tHandle : gregtech6.registry.GT6DecorBlocks.ASPHALT_BLOCKS) dropSelf(tHandle.get());
+            for (var tFamily : List.of(gregtech6.registry.GT6DecorBlocks.GLASS_BLOCKS,
+                    gregtech6.registry.GT6DecorBlocks.GLOW_GLASS_BLOCKS)) {
+                for (var tHandle : tFamily) add(tHandle.get(), LootTable.lootTable()); // the scrap-economy cut, see the class doc
+            }
+            add(gregtech6.registry.GT6DecorBlocks.PATH.get(), createSingleItemTable(Items.DIRT));
+            for (var tHandle : gregtech6.registry.GT6DecorBlocks.BARS_BLOCKS) addBars(tHandle.get());
+            for (var tHandle : gregtech6.registry.GT6DecorBlocks.BLOCKS_BY_PATH.values()) dropSelf(tHandle.get());
+            for (var tHandle : gregtech6.registry.GT6Spikes.BLOCKS) addSpike(tHandle.get());
+        }
+
+        /** The bars connection-count ladder (the FACE_CONNECTION_COUNT face, 16 state arms). */
+        private void addBars(Block aBlock) {
+            Item tItem = aBlock.asItem();
+            LootPool.Builder tPool = LootPool.lootPool();
+            for (int i = 0; i < 16; i++) {
+                final int tCount = Integer.bitCount(i);
+                tPool.add(LootItem.lootTableItem(tItem)
+                        .when(connectionCondition(aBlock, i))
+                        .when(ExplosionCondition.survivesExplosion())
+                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(tCount))));
+            }
+            add(aBlock, LootTable.lootTable().withPool(tPool));
+        }
+
+        /** The spike item-identity ladder (the damageDropped face, three state arms). */
+        private void addSpike(Block aBlock) {
+            String tPath = gregtech6.registry.GT6Spikes.BLOCKS_BY_PATH.entrySet().stream()
+                    .filter(aEntry -> aEntry.getValue().get() == aBlock)
+                    .map(Map.Entry::getKey).findFirst().orElseThrow();
+            Item tWall = spikeItemOf(aBlock, tPath);
+            Item tOmni = spikeItemOf(aBlock, tPath + "_block");
+            Item tFalling = spikeItemOf(aBlock, tPath + "_falling");
+            add(aBlock, LootTable.lootTable().withPool(LootPool.lootPool()
+                    .add(LootItem.lootTableItem(tWall)
+                            .when(stateCondition(aBlock).setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                    .hasProperty(gregtech6.block.decor.GT6SpikeBlock.OMNI, false)
+                                    .hasProperty(gregtech6.block.decor.GT6SpikeBlock.FALLING, false)))
+                            .when(ExplosionCondition.survivesExplosion()))
+                    .add(LootItem.lootTableItem(tOmni)
+                            .when(stateCondition(aBlock).setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                    .hasProperty(gregtech6.block.decor.GT6SpikeBlock.OMNI, true)))
+                            .when(ExplosionCondition.survivesExplosion()))
+                    .add(LootItem.lootTableItem(tFalling)
+                            .when(stateCondition(aBlock).setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                                    .hasProperty(gregtech6.block.decor.GT6SpikeBlock.FALLING, true)))
+                            .when(ExplosionCondition.survivesExplosion()))));
+        }
+
+        /** The spike item walk (the three identities over one block, the GT6Spikes band). */
+        private Item spikeItemOf(Block aBlock, String aPath) {
+            for (var tItem : gregtech6.registry.GT6Spikes.ITEMS) {
+                if (tItem.getId().getPath().equals(aPath) && tItem.get() instanceof net.minecraft.world.item.BlockItem tBlockItem
+                        && tBlockItem.getBlock() == aBlock) {
+                    return tItem.get();
+                }
+            }
+            throw new IllegalStateException("no spike item " + aPath);
+        }
+
+        /** The equals-state condition over the given block (the vanilla state-property loot gate). */
+        private net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.Builder stateCondition(Block aBlock) {
+            return new net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.Builder(aBlock);
+        }
+
+        /** The 4-bit connection encoding (Z-=1/Z+=2/X-=4/X+=8, the BlockBaseBars.java:196 bits). */
+        private net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.Builder connectionCondition(Block aBlock, int aBits) {
+            return stateCondition(aBlock).setProperties(net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties()
+                    .hasProperty(net.minecraft.world.level.block.CrossCollisionBlock.NORTH, (aBits & 1) != 0)
+                    .hasProperty(net.minecraft.world.level.block.CrossCollisionBlock.EAST, (aBits & 2) != 0)
+                    .hasProperty(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, (aBits & 4) != 0)
+                    .hasProperty(net.minecraft.world.level.block.CrossCollisionBlock.WEST, (aBits & 8) != 0));
         }
     }
 }

@@ -1,0 +1,113 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#bars",
+          "tintindex": 0,
+          "uv": [
+            16.0,
+            0.0,
+            8.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#bars",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        8,
+        0,
+        8
+      ],
+      "to": [
+        8,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "south": {
+          "cullface": "south",
+          "texture": "#edge",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        7,
+        0,
+        9
+      ],
+      "to": [
+        9,
+        16,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#edge",
+          "tintindex": 0,
+          "uv": [
+            7.0,
+            9.0,
+            9.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#edge",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        7,
+        0.001,
+        9
+      ],
+      "to": [
+        9,
+        0.001,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#edge",
+          "tintindex": 0,
+          "uv": [
+            7.0,
+            9.0,
+            9.0,
+            16.0
+          ]
+        },
+        "up": {
+          "texture": "#edge",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        7,
+        15.999,
+        9
+      ],
+      "to": [
+        9,
+        15.999,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "bars": "gt6:block/decor/metal_solid",
+    "edge": "gt6:block/decor/metal_solid",
+    "particle": "#bars"
+  }
+}

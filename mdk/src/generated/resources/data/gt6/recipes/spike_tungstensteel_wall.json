@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_tungstensteel"
+    },
+    "P": {
+      "item": "gt6:plate_tungstensteel"
+    },
+    "T": {
+      "item": "gt6:screw_tungstensteel"
+    }
+  },
+  "pattern": [
+    "BTB",
+    "TPT",
+    "BTB"
+  ],
+  "result": {
+    "item": "gt6:spike_tungstensteel"
+  },
+  "show_notification": true
+}

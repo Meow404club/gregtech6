@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_lead"
+    },
+    "P": {
+      "item": "gt6:plate_lead"
+    },
+    "T": {
+      "item": "gt6:screw_lead"
+    }
+  },
+  "pattern": [
+    "BTB",
+    "TPT",
+    "BTB"
+  ],
+  "result": {
+    "item": "gt6:spike_lead"
+  },
+  "show_notification": true
+}
