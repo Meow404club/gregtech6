@@ -520,6 +520,10 @@ public class GT6LangParityTest {
 		tSlots.put("gt6.row.steam_engine.display", 1);
 		tSlots.put("gt6.row.steam_engine.display.strong", 1);
 		tSlots.put("gt6.row.diesel.display", 1);
+		tSlots.put("gt6.row.rotation_engine.display", 1); // task material-mc-d-powertrain-rows
+		tSlots.put("gt6.row.transformer_gearbox.display", 1);
+		tSlots.put("gt6.row.custom_gearbox.display", 1);
+		tSlots.put("gt6.row.steam_turbine.display", 1);
 		tSlots.put("gt6.row.burning_box.display", 2);
 		tSlots.put("gt6.row.burning_box.display.dense", 2);
 		tSlots.put("gt6.row.burning_box.display.fluidbed", 1);
@@ -562,6 +566,11 @@ public class GT6LangParityTest {
 		for (GT6Kinetics.AxleSpec tSpec : GT6Kinetics.AXLE_SPECS) tUnits.add(GT6Kinetics.axleMatUnitKey(tSpec));
 		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tUnits.add(GT6Kinetics.steamMatUnitKey(tRow));
 		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) tUnits.add(GT6Kinetics.dieselMatUnitKey(tSpec));
+		// task material-mc-d-powertrain-rows — the powertrain row-material units
+		for (GT6Kinetics.RotationEngineRow tRow : GT6Kinetics.ROTATION_ENGINES) tUnits.add(tRow.matUnitKey());
+		for (GT6Kinetics.TransformerGearboxRow tRow : GT6Kinetics.TRANSFORMER_GEARBOXES) tUnits.add(tRow.matUnitKey());
+		for (GT6Kinetics.CustomGearboxRow tRow : GT6Kinetics.CUSTOM_GEARBOXES) tUnits.add(tRow.matUnitKey());
+		for (GT6Kinetics.SteamTurbineRow tRow : GT6Kinetics.STEAM_TURBINES) tUnits.add(tRow.matUnitKey());
 		for (GT6BurningBoxes.BurningBoxRow tRow : GT6BurningBoxes.allRows()) tUnits.add(GT6BurningBoxes.matUnitKeyOf(tRow));
 		for (GT6Boilers.BoilerRow tRow : GT6Boilers.allRows()) tUnits.add(GT6Boilers.matUnitKeyOf(tRow));
 		for (GTMultiBlocks.LargeBoilerRow tRow : GTMultiBlocks.LARGE_BOILER_ROWS) tUnits.add(GTMultiBlocks.boilerMatUnitKeyOf(tRow));
@@ -750,6 +759,24 @@ public class GT6LangParityTest {
 			tChecked++;
 			if (!en().containsKey(GT6Kinetics.steamMatUnitKey(tRow))) tMissing.add("steam:" + tRow.path());
 		}
+		// task material-mc-d-powertrain-rows — the four powertrain ladders (the shared
+		// gt6.row.mat namespace, the mc-D walks)
+		for (GT6Kinetics.RotationEngineRow tRow : GT6Kinetics.ROTATION_ENGINES) {
+			tChecked++;
+			if (!en().containsKey(tRow.matUnitKey())) tMissing.add("rot_eng:" + tRow.path());
+		}
+		for (GT6Kinetics.TransformerGearboxRow tRow : GT6Kinetics.TRANSFORMER_GEARBOXES) {
+			tChecked++;
+			if (!en().containsKey(tRow.matUnitKey())) tMissing.add("tgb:" + tRow.path());
+		}
+		for (GT6Kinetics.CustomGearboxRow tRow : GT6Kinetics.CUSTOM_GEARBOXES) {
+			tChecked++;
+			if (!en().containsKey(tRow.matUnitKey())) tMissing.add("cgb:" + tRow.path());
+		}
+		for (GT6Kinetics.SteamTurbineRow tRow : GT6Kinetics.STEAM_TURBINES) {
+			tChecked++;
+			if (!en().containsKey(tRow.matUnitKey())) tMissing.add("sst:" + tRow.path());
+		}
 		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) {
 			tChecked++;
 			if (!en().containsKey(GT6Kinetics.dieselMatUnitKey(tSpec))) tMissing.add("diesel:" + tSpec.material());
@@ -797,11 +824,13 @@ public class GT6LangParityTest {
 			if (!en().containsKey(GT6Tanks.sizeUnitKeyOf(tRow))) tMissing.add("tank_size:" + tRow.path());
 			if (!en().containsKey(GT6Tanks.matUnitKeyOf(tRow))) tMissing.add("tank_mat:" + tRow.path());
 		}
-		assertEquals(286, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
-            + " (44 axle + 28 steam + 8 diesel + 96 burning + 26 boiler + 4 dryer + 4 distillery"
-            + " + 6 p28 ULV rows + 5 large boiler + 11 wall (the 6 p29-w3 dense additions joined)"
-            + " + 12 attachments + 2 dry/dist shares not double-counted + 25 tank valves (task"
-            + " w3-tank-valves))"
+		assertEquals(346, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
+            + " (52 axle + 28 steam + 8 diesel + 13 rotation engines + 12 metal transformer"
+            + " gearboxes + 12 metal custom gearboxes + 15 small steam turbines + 96 burning"
+            + " + 26 boiler + 4 dryer + 4 distillery + 6 p28 ULV rows + 5 large boiler + 11 wall"
+            + " (the 6 p29-w3 dense additions joined) + 12 attachments + 2 dry/dist shares not"
+            + " double-counted + 25 tank valves (task w3-tank-valves; the mc-D powertrain arms"
+            + " task material-mc-d-powertrain-rows))"
             + " — bump this pin ONLY with a real row-table change");
 		assertTrue(tMissing.isEmpty(), "every composed row/stone unit key must exist on the en face"
 			+ " (a missing face renders the RAW key at runtime): " + tMissing);
@@ -1043,6 +1072,13 @@ public class GT6LangParityTest {
 		}
 		for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) tExempt.add(tRow.path()); // GTAdvancedCraftingTableBlock.getName -> displayOf (act-matrix, GTMachines.displayOf)
 		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tExempt.add(tRow.path()); // SteamEngineBlock.getName (GT6Kinetics:401)
+		// task material-mc-d-powertrain-rows — the 52 powertrain ladder blocks compose over
+		// the gt6.row.* templates (PowertrainBlock.getName, the static-init phase — the
+		// steam-engine line's form)
+		for (GT6Kinetics.RotationEngineRow tRow : GT6Kinetics.ROTATION_ENGINES) tExempt.add(tRow.path());
+		for (GT6Kinetics.TransformerGearboxRow tRow : GT6Kinetics.TRANSFORMER_GEARBOXES) tExempt.add(tRow.path());
+		for (GT6Kinetics.CustomGearboxRow tRow : GT6Kinetics.CUSTOM_GEARBOXES) tExempt.add(tRow.path());
+		for (GT6Kinetics.SteamTurbineRow tRow : GT6Kinetics.STEAM_TURBINES) tExempt.add(tRow.path());
 		for (GT6Molds.MoldRow tRow : GT6Molds.ROWS) tExempt.add(tRow.path()); // MoldBlock.getName (GT6Molds:316)
 		for (GT6Molds.MoldRow tRow : GT6Molds.CERAMIC_ROWS) tExempt.add(tRow.path()); // MoldBlock.getName — the pre-carved band
 		tExempt.add("mold_ceramic"); // the carvable blank the GT6Molds.withBlank(CERAMIC_ROWS) walk prepends (private helper, same MoldBlock class)
@@ -1164,7 +1200,7 @@ public class GT6LangParityTest {
 			for (int tSize = 0; tSize < GT6Kinetics.AXLE_DIAMETERS.length; tSize++) tPhaseExempt.add(GT6Kinetics.axleName(tSpec.material(), tSize));
 		}
 		for (GT6Kinetics.DieselSpec tSpec : GT6Kinetics.DIESEL_SPECS) tPhaseExempt.add(GT6Kinetics.dieselName(tSpec.material()));
-		assertEquals(52, tPhaseExempt.size(), "the construct-phase composed census (44 axles + 8 diesels)");
+		assertEquals(60, tPhaseExempt.size(), "the construct-phase composed census (52 axles + 8 diesels; the mc-D tail rows ride material-mc-d-powertrain-rows)");
 
 		List<String> tMissing = new ArrayList<>();
 		int tSeen = 0;
@@ -1223,7 +1259,8 @@ public class GT6LangParityTest {
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-		assertEquals(2038, tExemptTotal, "the derived composed-name exemption census (+113 task material-mc-c-crucible-rows on the review-seat rebase union: the crucible domain joins the composed face — +35 smeltery carriers (Smeltery 4→39) + +78 basin/crossing carriers (the Basin/Crossing full-family ROWS walks) over the 39 shared gt6.row.mat.* words, 1925 + 113; the checked census stays put) (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
+		assertEquals(2090, tExemptTotal, "the derived composed-name exemption census (+113 task material-mc-c-crucible-rows on the review-seat rebase union: the crucible domain joins the composed face — +35 smeltery carriers (Smeltery 4→39) + +78 basin/crossing carriers (the Basin/Crossing full-family ROWS walks) over the 39 shared gt6.row.mat.* words, 1925 + 113; the checked census stays put) (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
+		+ " (+52 task material-mc-d-powertrain-rows: the four powertrain ladders join the tExempt walk — PowertrainBlock.getName composes over the four gt6.row.{rotation_engine,transformer_gearbox,custom_gearbox,steam_turbine}.display templates + the shared gt6.row.mat.* words, 2038 + 52)"
 			+ " (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
 			+ " 280 <mat>_fluid_pipe_<size> carriers compose over the seven gt6.row.fluid_pipe.display.*"
 			+ " templates + the 40 family-scoped gt6.row.fluid_pipe.mat.* words; the two W1 wood rows"

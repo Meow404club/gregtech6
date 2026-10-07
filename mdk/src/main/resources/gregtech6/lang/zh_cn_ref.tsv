@@ -1477,6 +1477,7 @@ direct	gt6.row.crucible.display.smeltery_bronze	熔炼坩埚 (青铜)	hand
 direct	gt6.row.crucible.display.smeltery_ceramic	熔炼坩埚 (陶瓷)	hand
 direct	gt6.row.crucible.display.smeltery_steel	熔炼坩埚 (钢)	hand
 direct	gt6.row.crucible.display.smeltery_stone	熔炼坩埚 (石头)	hand
+direct	gt6.row.custom_gearbox.display	%s可调变速箱	hand
 direct	gt6.row.dense_wall.display	致密%s壁板	hand
 direct	gt6.row.diesel.display	%s柴油引擎	hand
 direct	gt6.row.distillery.display	蒸馏器 (%s)	hand
@@ -1666,6 +1667,7 @@ direct	gt6.row.mat.galvanized_steel	镀锌钢	hand
 direct	gt6.row.mat.germanium	锗	hand
 direct	gt6.row.mat.gilded_iron	镀金铁	hand
 direct	gt6.row.mat.gold	金	hand
+direct	gt6.row.mat.graphene	石墨烯	hand
 direct	gt6.row.mat.hsla	HSLA钢	hand
 direct	gt6.row.mat.hsla_steel	HSLA钢	hand
 direct	gt6.row.mat.hv	HV	hand
@@ -1697,6 +1699,7 @@ direct	gt6.row.mat.rose_gold	玫瑰金	hand
 direct	gt6.row.mat.silver	银	hand
 direct	gt6.row.mat.stainless_steel	不锈钢	hand
 direct	gt6.row.mat.steel	钢	hand
+direct	gt6.row.mat.steeleaf	钢叶	hand
 direct	gt6.row.mat.sterling_silver	纯银	hand
 direct	gt6.row.mat.syrmorite	赛摩铜	hand
 direct	gt6.row.mat.t1	T1	hand
@@ -1710,6 +1713,7 @@ direct	gt6.row.mat.thaumium	神秘锭	hand
 direct	gt6.row.mat.tin_alloy	锡合金	hand
 direct	gt6.row.mat.titanium	钛	hand
 direct	gt6.row.mat.titanium_iridium	钛铱合金	hand
+direct	gt6.row.mat.trinaquadalloy	碳化特林-钍瑞铌合金	hand
 direct	gt6.row.mat.trinitanium	特林钛合金	hand
 direct	gt6.row.mat.tritanium_alloy	钛金	hand
 direct	gt6.row.mat.tungsten	钨	hand
@@ -1764,6 +1768,7 @@ direct	gt6.row.printer.display	打印机 (%s)	hand
 direct	gt6.row.queue_hopper.display	%s队列料斗	hand
 direct	gt6.row.chest.display	%s箱子	hand
 direct	gt6.row.reinforced_chest.display	%s强化木箱	hand
+direct	gt6.row.rotation_engine.display	旋转动能引擎 (%s)	hand
 direct	gt6.row.scannervisuals.display	扫描仪 (%s)	hand
 direct	gt6.row.size.huge	巨型	hand
 direct	gt6.row.size.large	大型	hand
@@ -1772,6 +1777,7 @@ direct	gt6.row.size.small	小型	hand
 direct	gt6.row.slicer.display	切片器 (%s)	hand
 direct	gt6.row.steam_engine.display	蒸汽引擎 (%s)	hand
 direct	gt6.row.steam_engine.display.strong	强化蒸汽引擎 (%s)	hand
+direct	gt6.row.steam_turbine.display	蒸汽涡轮机 (%s)	hand
 direct	gt6.row.tank_size.large	大型	hand
 direct	gt6.row.tank_size.large_dense	大型致密	hand
 direct	gt6.row.tank_size.small	小型	hand
@@ -1779,6 +1785,7 @@ direct	gt6.row.tank_size.small_dense	小型致密	hand
 direct	gt6.row.tank_valve.display	%s%s储罐主阀	hand
 direct	gt6.row.tank_valve.wood.display	%s储罐主阀	hand
 direct	gt6.row.tap.display	%s龙头	hand
+direct	gt6.row.transformer_gearbox.display	%s变速箱	hand
 direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
 direct	gt6.spraycan.decolor	可为物品除色	hand
 direct	gt6.spraycan.paint	可将物品喷成%s	hand
