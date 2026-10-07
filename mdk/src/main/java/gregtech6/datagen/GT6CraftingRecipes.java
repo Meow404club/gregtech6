@@ -7407,6 +7407,35 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				new ShapelessCraftFromForm("arrows_plastic", gregapi.data.OP.arrowGtPlastic, 1, COND_ANTIMATTER, gregapi.data.OP.toolHeadArrow, 1, gregapi.data.OP.arrowGtPlastic, gregapi.data.MT.Empty, null, null, new String[0]),
 				new ShapelessCraftFromForm("cable_gt01/from_wire_gt01", gregapi.data.OP.cableGt01, 1, COND_ANTIMATTER, gregapi.data.OP.wireGt01, 1, null, null, gregapi.data.OP.plate, gregapi.data.ANY.Rubber, new String[0]),
 				new ShapelessCraftFromForm("cable_gt02/from_wire_gt02", gregapi.data.OP.cableGt02, 1, COND_ANTIMATTER, gregapi.data.OP.wireGt02, 1, null, null, gregapi.data.OP.plate, gregapi.data.ANY.Rubber, new String[0]),
+				// CHEMTUBE FUNCTIONAL-FACE POOL (task chemtube-item-family, the SPEC-3 declaration —
+				// item family itself is FULLY ported: the prefix rides GTMaterialItems.itemPathPrefixes
+				// (Loader_Items.java:127 verbatim, the generic enumerate()/registerItems path), models /
+				// textures (material_sets/copper/chemtube.png + overlay, the assets/README.md borrow
+				// sha a871ab18...) / lang (gt6.tagprefix.chemtube "Glass Tube containing %s" = the
+				// OP.java:226 mMaterialPre verbatim, + itemGroup.gt6.chemtube) all live). The faces
+				// found-but-NOT-ported, for the future cards:
+				// 1. CONTAINER RETURN (the real gap): upstream OP.chemtube.mContainerItem =
+				//    chemtube(MT.Empty) (Loader_Items.java:128; the OP.java:226 IS_CONTAINER +
+				//    SELF_REFERENCING aspects) — every crafting that consumes a tube returns the empty
+				//    tube (the ST container mechanics). The :186 melt face below (1068 rows) therefore
+				//    refunds the tube upstream, while the port MaterialPrefixItem implements no
+				//    hasCraftingRemainingItem and the tube is consumed flat. Family-uniform landing on
+				//    MaterialPrefixItem (the GTHammerItem/GTSoftHammerItem remaining-item precedent
+				//    shape), NOT per-prefix.
+				// 2. CRAFTING SOUND: tItem.mCraftingSound = SFX.IC_TREETAP (Loader_Items.java:127) —
+				//    cosmetic, zero gameplay face; no port prefix carries a crafting sound (the
+				//    port-wide cut, declared here for the family census).
+				// No BE/GUI face exists upstream: chemtube is a plain PrefixItem — its only consumers
+				// are the Extruder cell rows (Loader_Recipes_Extruder.java:254-255, 1 cell -> 3 empty
+				// tubes), the loot tables (Loader_Loot.java:177) and the book-binding shaped
+				// (Loader_Books.java:767) — recipe faces, not item functionality.
+				// The residual Unknown-item rows these two walks can produce in a foreign-mod-less
+				// install are NOT a row-count defect (the ratchet 1096/1068 is the measured datagen
+				// truth): they are the GT6ForeignMaterialAtlas PRIMARY materials the GT6ModDrivers
+				// seed hides from the live registration while datagen walks the default full universe
+				// (ADR-MDH1) — the same root cause as the B2 bucket, the registration-convergence
+				// card's face (measured 522 rows / 260 unique items in the Oct 6 boot log, e.g.
+				// chemtube_teflon = HBM, chemtube_aluminium = MT.Al -> TiC).
 				new ShapelessCraftFromForm("chemtube/from_dust_tiny", gregapi.data.OP.chemtube, 1, COND_TRUE, gregapi.data.OP.dustTiny, 1, gregapi.data.OP.chemtube, gregapi.data.MT.Empty, null, null, new String[0]),
 				new ShapelessCraftFromForm("dust_tiny/from_chemtube", gregapi.data.OP.dustTiny, 1, COND_MELT_MIN_ENV, gregapi.data.OP.chemtube, 1, null, null, null, null, new String[0]),
 				new ShapelessCraftFromForm("tool_head_raw_universal_spade/from_shovel", gregapi.data.OP.toolHeadRawUniversalSpade, 1, COND_COATED_ANTIMATTER, gregapi.data.OP.toolHeadShovel, 1, null, null, null, null, new String[] {"file", "saw"}),
