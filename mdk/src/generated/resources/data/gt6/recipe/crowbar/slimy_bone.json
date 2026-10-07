@@ -16,6 +16,12 @@
     }
   },
   "material": "slimy_bone",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "thebetweenlands"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

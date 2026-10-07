@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "netherlicious"
+    }
+  ],
   "ingredients": [
     {
       "item": "gt6:dust_tiny_abyssal_oat"

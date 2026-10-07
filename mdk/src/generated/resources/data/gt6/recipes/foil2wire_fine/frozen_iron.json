@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "meteors"
+    }
+  ],
   "key": {
     "X": {
       "item": "gt6:foil_frozen_iron"

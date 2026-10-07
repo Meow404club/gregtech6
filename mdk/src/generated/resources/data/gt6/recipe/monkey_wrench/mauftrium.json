@@ -16,6 +16,12 @@
     }
   },
   "material": "mauftrium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "alfheim"
+    }
+  ],
   "pattern": [
     "PPd",
     "hPT",

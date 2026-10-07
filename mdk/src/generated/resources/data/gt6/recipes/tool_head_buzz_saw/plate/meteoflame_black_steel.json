@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "key": {
     "P": {
       "item": "gt6:plate_meteoflame_black_steel"

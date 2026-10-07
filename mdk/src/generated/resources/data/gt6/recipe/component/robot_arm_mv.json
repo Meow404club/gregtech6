@@ -18,6 +18,12 @@
       "item": "gt6:stick_aluminium"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "pattern": [
     "CCC",
     "MSM",

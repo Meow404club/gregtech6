@@ -16,6 +16,12 @@
     }
   },
   "material": "oberon_rock",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "pattern": [
     "xVV",
     " SV",

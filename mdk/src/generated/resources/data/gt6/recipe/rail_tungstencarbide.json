@@ -9,6 +9,12 @@
       "item": "gt6:stick_wood_treated"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ReactorCraft"
+    }
+  ],
   "pattern": [
     "RSR",
     "RSR",

@@ -16,6 +16,12 @@
     }
   },
   "material": "infused_vis",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Thaumcraft"
+    }
+  ],
   "pattern": [
     "SVS",
     "SSS",

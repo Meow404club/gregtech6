@@ -22,6 +22,12 @@
     }
   },
   "material": "electrical_steel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "EnderIO"
+    }
+  ],
   "pattern": [
     "XXV",
     " TH",

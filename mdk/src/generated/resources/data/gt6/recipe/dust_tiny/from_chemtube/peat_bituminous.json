@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_peat_bituminous"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Forestry"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_peat_bituminous"

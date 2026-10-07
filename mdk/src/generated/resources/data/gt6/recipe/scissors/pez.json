@@ -19,6 +19,12 @@
     }
   },
   "material": "pez",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "candycraftmod"
+    }
+  ],
   "pattern": [
     "PfP",
     " T ",

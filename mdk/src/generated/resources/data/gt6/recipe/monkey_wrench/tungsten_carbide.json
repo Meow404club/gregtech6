@@ -16,6 +16,12 @@
     }
   },
   "material": "tungsten_carbide",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ReactorCraft"
+    }
+  ],
   "pattern": [
     "PPd",
     "hPT",

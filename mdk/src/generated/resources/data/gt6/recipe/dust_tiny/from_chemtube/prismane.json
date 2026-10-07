@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_prismane"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_prismane"

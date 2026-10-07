@@ -19,6 +19,12 @@
     }
   },
   "material": "alumite",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "pattern": [
     "XhX",
     " T ",

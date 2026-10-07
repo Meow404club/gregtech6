@@ -16,6 +16,12 @@
     }
   },
   "material": "red_matter",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ProjectE"
+    }
+  ],
   "pattern": [
     "AT",
     "Sd"

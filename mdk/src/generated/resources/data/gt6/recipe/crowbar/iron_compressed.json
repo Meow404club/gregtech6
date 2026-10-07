@@ -16,6 +16,12 @@
     }
   },
   "material": "iron_compressed",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "PneumaticCraft"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

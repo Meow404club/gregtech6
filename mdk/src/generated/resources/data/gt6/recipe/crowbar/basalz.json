@@ -16,6 +16,12 @@
     }
   },
   "material": "basalz",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ThermalExpansion"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

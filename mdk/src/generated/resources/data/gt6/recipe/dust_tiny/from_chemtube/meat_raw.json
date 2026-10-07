@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_meat_raw"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "MineFactoryReloaded"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_meat_raw"

@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_green_diamond"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_green_diamond"

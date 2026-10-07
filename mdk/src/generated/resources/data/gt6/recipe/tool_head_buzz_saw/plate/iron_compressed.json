@@ -18,6 +18,12 @@
       "tag": "gt6:tools/wire_cutter"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "PneumaticCraft"
+    }
+  ],
   "pattern": [
     "wPh",
     "P P",

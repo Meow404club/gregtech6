@@ -16,6 +16,12 @@
     }
   },
   "material": "livingwood",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Botania"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

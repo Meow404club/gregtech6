@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Botania"
+    }
+  ],
   "key": {
     "X": {
       "item": "gt6:tool_head_raw_plow_mana_quartz"

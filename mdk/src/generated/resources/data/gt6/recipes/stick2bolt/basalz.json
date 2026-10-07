@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ThermalExpansion"
+    }
+  ],
   "key": {
     "S": {
       "item": "gt6:stick_basalz"

@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_white_end_sand"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "enderlicious"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_white_end_sand"

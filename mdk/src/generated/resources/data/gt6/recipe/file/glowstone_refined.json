@@ -9,6 +9,12 @@
       "tag": "gt6:tools/knife"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Mekanism"
+    }
+  ],
   "pattern": [
     " P ",
     " Pk"

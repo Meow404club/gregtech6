@@ -1,6 +1,12 @@
 {
   "type": "gt6:material_tool",
   "category": "equipment",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "key": {
     "A": {
       "item": "gt6:tool_head_universal_spade_deep_iron"

@@ -16,6 +16,12 @@
     }
   },
   "material": "blue_diamond",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "pattern": [
     "AT",
     "Sd"

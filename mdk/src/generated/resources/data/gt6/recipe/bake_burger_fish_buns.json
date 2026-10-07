@@ -9,6 +9,12 @@
       "item": "gt6:ingot_fish_cooked"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Mariculture"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:food_burger_fish"

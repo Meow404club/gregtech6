@@ -15,6 +15,12 @@
       "item": "gt6:wire_naquadah_gt16"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "pattern": [
     "RSR",
     "PWP",

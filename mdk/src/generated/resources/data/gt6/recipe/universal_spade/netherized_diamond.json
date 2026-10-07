@@ -16,6 +16,12 @@
     }
   },
   "material": "netherized_diamond",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "netheriteplus"
+    }
+  ],
   "pattern": [
     "AT",
     "Sd"

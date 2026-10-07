@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
   "key": {
     "A": {
       "item": "gt6:ingot_workers_alloy"

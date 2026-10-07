@@ -19,6 +19,12 @@
     }
   },
   "material": "kreknorite",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "meteors"
+    }
+  ],
   "pattern": [
     "PfP",
     " T ",

@@ -10,6 +10,12 @@
     }
   },
   "material": "purple_diamond",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "pattern": [
     "CfC",
     " C ",

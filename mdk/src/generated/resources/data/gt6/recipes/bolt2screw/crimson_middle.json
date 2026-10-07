@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thebetweenlands"
+    }
+  ],
   "key": {
     "X": {
       "item": "gt6:bolt_crimson_middle"

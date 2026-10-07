@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_pistachio"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "harvestcraft"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_pistachio"

@@ -22,6 +22,12 @@
     }
   },
   "material": "zirconium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "tropicraft"
+    }
+  ],
   "pattern": [
     "XXV",
     " TH",

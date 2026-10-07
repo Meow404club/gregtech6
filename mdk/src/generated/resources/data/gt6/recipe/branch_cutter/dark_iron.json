@@ -19,6 +19,12 @@
     }
   },
   "material": "dark_iron",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "factorization"
+    }
+  ],
   "pattern": [
     "PfP",
     "PdP",

@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "PneumaticCraft"
+    }
+  ],
   "ingredients": [
     {
       "item": "gt6:tool_head_spade_iron_compressed"

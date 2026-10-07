@@ -16,6 +16,12 @@
     }
   },
   "material": "aluminium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
   "pattern": [
     "AT",
     "Sd"

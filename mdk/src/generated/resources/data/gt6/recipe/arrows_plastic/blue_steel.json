@@ -9,6 +9,12 @@
       "item": "gt6:arrow_gt_plastic_empty"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "terrafirmacraft"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:arrow_gt_plastic_blue_steel"

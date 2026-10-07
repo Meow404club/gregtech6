@@ -16,6 +16,12 @@
     }
   },
   "material": "pvc",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
   "pattern": [
     "xVV",
     " SV",

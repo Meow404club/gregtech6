@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_prismarine"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "etfuturum"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_prismarine"

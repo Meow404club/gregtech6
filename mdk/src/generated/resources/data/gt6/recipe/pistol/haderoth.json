@@ -22,6 +22,12 @@
     }
   },
   "material": "haderoth",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "pattern": [
     "XXV",
     " TH",

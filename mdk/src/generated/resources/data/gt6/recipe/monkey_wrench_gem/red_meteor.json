@@ -16,6 +16,12 @@
     }
   },
   "material": "red_meteor",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "meteors"
+    }
+  ],
   "pattern": [
     "CCd",
     "fCT",

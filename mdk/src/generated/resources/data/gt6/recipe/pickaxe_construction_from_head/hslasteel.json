@@ -10,6 +10,12 @@
     }
   },
   "material": "hslasteel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "H",
     "S"

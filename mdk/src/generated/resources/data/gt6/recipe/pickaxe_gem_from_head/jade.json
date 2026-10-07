@@ -11,6 +11,12 @@
   },
   "material": "jade",
   "multiplier": 0.25,
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "erebus"
+    }
+  ],
   "pattern": [
     "H",
     "S"

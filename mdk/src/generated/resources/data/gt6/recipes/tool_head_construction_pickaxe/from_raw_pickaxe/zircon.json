@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "tropicraft"
+    }
+  ],
   "ingredients": [
     {
       "item": "gt6:tool_head_raw_pickaxe_zircon"

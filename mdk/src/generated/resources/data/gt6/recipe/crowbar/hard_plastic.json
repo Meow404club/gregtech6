@@ -16,6 +16,12 @@
     }
   },
   "material": "hard_plastic",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "arsmagica2"
+    }
+  ],
   "key": {
     "S": {
       "item": "gt6:stick_vinteum_purified"

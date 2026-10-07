@@ -22,6 +22,12 @@
     }
   },
   "material": "meteoric_red_steel",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "terrafirmacraft"
+    }
+  ],
   "pattern": [
     "XXV",
     "THH",

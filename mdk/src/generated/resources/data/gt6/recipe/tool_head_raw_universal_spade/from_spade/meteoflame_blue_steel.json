@@ -12,6 +12,12 @@
       "tag": "gt6:tools/saw"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TwilightForest"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:tool_head_raw_universal_spade_meteoflame_blue_steel"

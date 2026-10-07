@@ -10,6 +10,12 @@
     }
   },
   "material": "greatwood",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Thaumcraft"
+    }
+  ],
   "pattern": [
     "H",
     "S"

@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "PFAAGeologica"
+    }
+  ],
   "ingredients": [
     {
       "item": "gt6:chemtube_palygorskite"

@@ -16,6 +16,12 @@
     }
   },
   "material": "prismarine",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "etfuturum"
+    }
+  ],
   "pattern": [
     "SVS",
     "SSS",

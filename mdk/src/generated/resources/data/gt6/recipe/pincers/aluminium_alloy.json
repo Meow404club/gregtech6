@@ -19,6 +19,12 @@
     }
   },
   "material": "aluminium_alloy",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "RotaryCraft"
+    }
+  ],
   "pattern": [
     "XhX",
     " T ",

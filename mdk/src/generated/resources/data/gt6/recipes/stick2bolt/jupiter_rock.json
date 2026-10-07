@@ -1,6 +1,12 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ExtraPlanets"
+    }
+  ],
   "key": {
     "S": {
       "item": "gt6:stick_jupiter_rock"

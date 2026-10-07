@@ -13,6 +13,12 @@
     }
   },
   "material": "ceruclase",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "pattern": [
     "  X",
     "HYH",

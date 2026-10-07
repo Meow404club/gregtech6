@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:plate_iridium"
+    }
+  },
+  "pattern": [
+    "P P",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:faucet_iridium"
+  }
+}

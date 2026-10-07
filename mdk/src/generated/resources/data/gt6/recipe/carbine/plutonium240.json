@@ -22,6 +22,12 @@
     }
   },
   "material": "plutonium240",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
   "pattern": [
     "XXV",
     "THH",

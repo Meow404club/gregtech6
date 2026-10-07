@@ -22,6 +22,12 @@
     }
   },
   "material": "dark_thaumium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ThaumcraftExtras"
+    }
+  ],
   "pattern": [
     "XXV",
     "THH",

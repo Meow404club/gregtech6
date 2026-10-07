@@ -16,6 +16,12 @@
     }
   },
   "material": "jade",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "erebus"
+    }
+  ],
   "pattern": [
     "hVS",
     "VSV",

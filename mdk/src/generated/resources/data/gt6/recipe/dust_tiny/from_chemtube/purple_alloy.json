@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_purple_alloy"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "bluepower"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_purple_alloy"

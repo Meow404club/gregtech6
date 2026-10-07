@@ -22,6 +22,12 @@
     }
   },
   "material": "cosmic_neutronium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Avaritia"
+    }
+  ],
   "pattern": [
     "XXV",
     " TH",

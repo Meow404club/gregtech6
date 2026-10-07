@@ -12,6 +12,12 @@
       "tag": "gt6:tools/saw"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "arsmagica2"
+    }
+  ],
   "pattern": [
     "fC ",
     " s "

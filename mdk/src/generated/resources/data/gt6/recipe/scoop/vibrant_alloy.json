@@ -16,6 +16,12 @@
     }
   },
   "material": "vibrant_alloy",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "EnderIO"
+    }
+  ],
   "pattern": [
     "SVS",
     "SSS",

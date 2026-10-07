@@ -16,6 +16,12 @@
     }
   },
   "material": "alduorite",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "Metallurgy"
+    }
+  ],
   "pattern": [
     "SVS",
     "SSS",

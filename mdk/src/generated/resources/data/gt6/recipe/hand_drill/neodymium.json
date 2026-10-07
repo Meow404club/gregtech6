@@ -13,6 +13,12 @@
     }
   },
   "material": "neodymium",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
   "pattern": [
     "  X",
     "HYH",

@@ -16,6 +16,12 @@
     }
   },
   "material": "muspelheim_power",
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "alfheim"
+    }
+  ],
   "pattern": [
     "xVV",
     " SV",

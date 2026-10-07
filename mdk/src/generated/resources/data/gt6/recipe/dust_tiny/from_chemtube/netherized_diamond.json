@@ -6,6 +6,12 @@
       "item": "gt6:chemtube_netherized_diamond"
     }
   ],
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "netheriteplus"
+    }
+  ],
   "result": {
     "count": 1,
     "id": "gt6:dust_tiny_netherized_diamond"
