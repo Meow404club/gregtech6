@@ -122,6 +122,8 @@
     "gt6:cell_plastic",
     "gt6:tap_plastic",
     "gt6:funnel_plastic",
+    "gt6:nozzle_plastic",
+    "gt6:cap_nozzle_plastic",
     "gt6:greg_o_lantern",
     "gt6:placed_stick",
     "gt6:bathing_pot_wood",

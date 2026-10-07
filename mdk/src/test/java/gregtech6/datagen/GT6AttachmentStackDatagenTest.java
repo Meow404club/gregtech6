@@ -346,7 +346,7 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
     public void attachmentItemModelsRideThe3DBlockIcons() throws Exception {
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             JsonObject tItem = json("assets/gt6/models/item/" + tRow.path() + ".json");
-            String tExpected = "gt6:block/attachment_" + (tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? "tap" : "funnel");
+            String tExpected = "gt6:block/attachment_" + modelTail(tRow.family());
             assertEquals(tExpected, tItem.get("parent").getAsString(),
                     tRow.path() + ": the 3D block icon (upstream has no dedicated item PNG)");
         }
