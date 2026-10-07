@@ -97,7 +97,7 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		InputStream tStream = GT6RecipeMapDataB2cWashRowsPourTest.class.getResourceAsStream(tPath);
 		assertNotNull(tStream, "the shipped file " + tPath + " rides the test classpath");
 		JsonObject tDoc = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
-		GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", WASH), tDoc.deepCopy()));
+		GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", WASH), tDoc.deepCopy()));
 		return tDoc.getAsJsonArray("recipes");
 	}
 

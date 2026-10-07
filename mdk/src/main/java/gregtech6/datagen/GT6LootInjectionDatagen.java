@@ -115,7 +115,7 @@ public final class GT6LootInjectionDatagen {
 	 */
 	//? if forge {
 	public static net.minecraft.world.item.Item resolveItem(String aId) {
-		return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(new net.minecraft.resources.ResourceLocation(aId));
+		return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse(aId));
 	}
 	//?} else {
 	/*public static net.minecraft.world.item.Item resolveItem(String aId) {

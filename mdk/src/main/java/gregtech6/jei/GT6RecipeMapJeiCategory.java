@@ -63,7 +63,7 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	 */
 	public static RecipeType<Recipe> recipeTypeOf(RecipeMap aMap) {
 		//? if forge {
-		return new RecipeType<>(new ResourceLocation("gt6", "recipe_map/" + aMap.mNameInternal), Recipe.class);
+		return new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal), Recipe.class);
 		//?} else {
 		/*return new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal), Recipe.class);
 		 *///?}

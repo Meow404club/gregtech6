@@ -102,7 +102,7 @@ public abstract class AbstractCoverAttachmentTorch extends AbstractCoverDefault 
 	/** The ON/OFF front sprite pair helper (upstream the sTextureFront pair per family). */
 	//? if forge {
 	public static ResourceLocation spriteOf(String aFamily, boolean aOn) {
-		return new ResourceLocation("gt6", "block/" + aFamily + "/" + (aOn ? "on" : "off") + "/front");
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/" + aFamily + "/" + (aOn ? "on" : "off") + "/front");
 	}
 	//?} else {
 	/*public static ResourceLocation spriteOf(String aFamily, boolean aOn) {

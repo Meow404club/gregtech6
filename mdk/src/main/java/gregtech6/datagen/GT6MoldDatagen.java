@@ -157,7 +157,7 @@ public final class GT6MoldDatagen {
 			 */
 			private ModelFile faucetStackModel(String aName, ResourceLocation aBody) {
 				BlockModelBuilder tModel = models().getBuilder("block/" + aName)
-						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
+						.parent(models().getExistingFile(ResourceLocation.fromNamespaceAndPath("minecraft", "block/block")))
 						.texture("all", aBody)
 						.texture("particle", "#all");
 				for (float[] tBox : gregtech6.tileentity.tools.TileEntityFaucet.MODEL_BOXES) {
@@ -220,7 +220,7 @@ public final class GT6MoldDatagen {
 				boolean tTint = GT6CrucibleDatagen.bodyTinted(aRow.material().get());
 				ResourceLocation tBody = GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(aRow.material().get()));
 				BlockModelBuilder tModel = models().getBuilder("block/" + aRow.path())
-						.parent(models().getExistingFile(new ResourceLocation("minecraft", "block/block")))
+						.parent(models().getExistingFile(ResourceLocation.fromNamespaceAndPath("minecraft", "block/block")))
 						.texture("particle", tBody)
 						.texture("body", tBody);
 				// the floor: cullface everywhere but UP — its top sits at y=1, not the
@@ -607,7 +607,7 @@ public final class GT6MoldDatagen {
 		}
 
 		private static ResourceLocation id(String aPath) {
-			return new ResourceLocation("gt6", aPath);
+			return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		}
 	}
 }

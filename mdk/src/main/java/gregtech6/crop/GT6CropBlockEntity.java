@@ -264,7 +264,7 @@ public class GT6CropBlockEntity extends BlockEntity implements CropTileView {
 
 	/** The stick item key  --  the registry-KEY face (lazy-safe offline, the class doc posture). */
 	static final net.minecraft.resources.ResourceLocation STICK_KEY =
-			new net.minecraft.resources.ResourceLocation("gt6", "crop_stick");
+			net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "crop_stick");
 
 	private static boolean isStickItem(ItemStack aStack) {
 		return STICK_KEY.equals(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(aStack.getItem()));

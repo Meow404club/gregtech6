@@ -74,7 +74,7 @@ public class GT6QuSmokeRowsPourTest extends GTRecipesOfflineTestBase {
 		try (InputStream tStream = GT6QuSmokeRowsPourTest.class.getResourceAsStream(tPath)) {
 			assertNotNull(tStream, "the shipped smoke-row file " + tPath + " rides the test classpath");
 			String tJson = new String(tStream.readAllBytes(), StandardCharsets.UTF_8);
-			GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", aMapKey), JsonParser.parseString(tJson)));
+			GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", aMapKey), JsonParser.parseString(tJson)));
 		}
 	}
 

@@ -28,8 +28,8 @@ import org.junit.jupiter.api.Test;
  */
 public class GTRenderModelListenerTest extends GTOfflineRenderTestBase {
 
-	private static final ResourceLocation TARGET = new ResourceLocation("gt6", "block/machine/oven");
-	private static final ResourceLocation ABSENT = new ResourceLocation("gt6", "block/machine/missing");
+	private static final ResourceLocation TARGET = ResourceLocation.fromNamespaceAndPath("gt6", "block/machine/oven");
+	private static final ResourceLocation ABSENT = ResourceLocation.fromNamespaceAndPath("gt6", "block/machine/missing");
 
 	private static final class FallbackProbe implements BakedModel {
 		@Override public List<net.minecraft.client.renderer.block.model.BakedQuad> getQuads(net.minecraft.world.level.block.state.BlockState aState, net.minecraft.core.Direction aSide, net.minecraft.util.RandomSource aRand) { return List.of(); }

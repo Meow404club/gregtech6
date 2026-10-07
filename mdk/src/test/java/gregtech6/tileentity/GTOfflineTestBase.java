@@ -132,7 +132,7 @@ public abstract class GTOfflineTestBase {
 		unlockItemRegistry();
 		try {
 			return net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM,
-					new net.minecraft.resources.ResourceLocation("gt6", aKey), aItem.get());
+					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aKey), aItem.get());
 		} finally {
 			lockItemRegistry();
 		}

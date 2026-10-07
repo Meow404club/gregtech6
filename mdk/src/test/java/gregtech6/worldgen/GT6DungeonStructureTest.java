@@ -369,7 +369,7 @@ class GT6DungeonStructureTest {
     void dungeonChestTableIdIsPinned() {
         assertEquals("chests/dungeon_chest", GT6DungeonPiece.DUNGEON_CHEST_TABLE,
                 "the piece-side relative id (the ResourceLocation/ResourceKey arg face)");
-        assertEquals(new ResourceLocation("gt6", "chests/dungeon_chest"),
+        assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "chests/dungeon_chest"),
                 GT6LootTables.GT6DungeonChestLoot.tableId(),
                 "the datagen-side full id — same table, both faces");
         assertEquals(Registries.STRUCTURE_SET.location().toString(), "minecraft:worldgen/structure_set",

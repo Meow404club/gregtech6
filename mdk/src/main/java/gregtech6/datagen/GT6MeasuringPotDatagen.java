@@ -127,7 +127,7 @@ public final class GT6MeasuringPotDatagen {
 		}
 
 		private static ResourceLocation id(String aPath) {
-			return new ResourceLocation("gt6", aPath);
+			return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		}
 	}
 

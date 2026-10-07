@@ -45,7 +45,7 @@ public class CoverSelectorButtonPanel extends AbstractCoverAttachmentSelector {
 	/** The atlas sprite of the mode plates (upstream sTextures, :109-126). */
 	//? if forge {
 	public static ResourceLocation spriteOf(byte aMode) {
-		return new ResourceLocation("gt6", "block/buttonselector/" + UT6.bind4(aMode));
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/buttonselector/" + UT6.bind4(aMode));
 	}
 	//?} else {
 	/*public static ResourceLocation spriteOf(byte aMode) {

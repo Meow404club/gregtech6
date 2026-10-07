@@ -178,7 +178,7 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 		List<OverlayPlan> tQuirk = GTOvenOverlayModel.planOverlayQuads(new GTOvenRenderSnapshot(true, true), Direction.NORTH, Direction.NORTH);
 		assertEquals(1, tQuirk.size());
 		assertEquals(GTOvenOverlayModel.spriteOf(OvenOverlayGroup.ACTIVE, OvenTextureFace.FRONT), tQuirk.get(0).sprite());
-		assertEquals(new ResourceLocation("gt6", "block/oven_overlay_active_front"), tQuirk.get(0).sprite());
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/oven_overlay_active_front"), tQuirk.get(0).sprite());
 
 		// every sprite id has the gt6:block/oven_overlay_<group>_<face> shape
 		for (OvenOverlayGroup tGroup : List.of(OvenOverlayGroup.ACTIVE, OvenOverlayGroup.RUNNING)) {
@@ -186,7 +186,7 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 				OverlayPlan tPlan = GTOvenOverlayModel.planOverlayQuads(new GTOvenRenderSnapshot(tGroup == OvenOverlayGroup.ACTIVE, tGroup == OvenOverlayGroup.RUNNING),
 						Direction.NORTH, tSide).get(0);
 				//? if forge {
-				assertEquals(new ResourceLocation("gt6", "block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey()),
+				assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey()),
 				//?} else {
 				/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey()),
 				*///?}

@@ -197,7 +197,7 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			tEntries.add(new GT6DungeonLootModifier.Entry(tItem, tEntry.weight(), tEntry.min(), tEntry.max(), tEntry.tag()));
 		}
 		//? if forge {
-		net.minecraft.resources.ResourceLocation tTable = new net.minecraft.resources.ResourceLocation(aRow.table());
+		net.minecraft.resources.ResourceLocation tTable = net.minecraft.resources.ResourceLocation.parse(aRow.table());
 		//?} else {
 		/*net.minecraft.resources.ResourceLocation tTable = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
 				aRow.table().split(":", 2)[0], aRow.table().split(":", 2)[1]);

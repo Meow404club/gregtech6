@@ -55,7 +55,7 @@ public class GT6ToolHoldsCondition implements LootItemCondition {
 
 		@Override
 		public GT6ToolHoldsCondition deserialize(JsonObject aJson, @SuppressWarnings("unused") JsonDeserializationContext aContext) {
-			return new GT6ToolHoldsCondition(BuiltInRegistries.ITEM.get(new ResourceLocation(aJson.get("tool").getAsString())));
+			return new GT6ToolHoldsCondition(BuiltInRegistries.ITEM.get(ResourceLocation.parse(aJson.get("tool").getAsString())));
 		}
 	}
 	//?} else {

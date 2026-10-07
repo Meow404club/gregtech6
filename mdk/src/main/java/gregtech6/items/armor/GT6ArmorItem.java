@@ -60,7 +60,7 @@ public class GT6ArmorItem extends ArmorItem {
 	 */
 	public static String armorTexturePath(String aTextureName, boolean aInnerModel) {
 		String tPath = TEXTURE_DIR + aTextureName + "_layer_" + (aInnerModel ? 2 : 1) + ".png";
-		return new ResourceLocation("gt6", tPath).toString();
+		return ResourceLocation.fromNamespaceAndPath("gt6", tPath).toString();
 	}
 
 	private final String textureName;

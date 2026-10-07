@@ -26,7 +26,7 @@ import gregtech6.covers.CoverData;
 public class CoverAsphalt extends CoverTextureSimple {
 
 	//? if forge {
-	public static final ResourceLocation ASPHALT_SPRITE = new ResourceLocation("gt6", "block/asphalt");
+	public static final ResourceLocation ASPHALT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/asphalt");
 	//?} else {
 	/*public static final ResourceLocation ASPHALT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/asphalt");
 	 *///?}

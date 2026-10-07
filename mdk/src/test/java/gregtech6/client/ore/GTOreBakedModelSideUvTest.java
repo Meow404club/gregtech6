@@ -117,9 +117,9 @@ public class GTOreBakedModelSideUvTest {
 	/** The model over the identity stub sprite: exact 0..16 UV pins on both legs. */
 	private static GTOreBakedModel model() {
 		GTOreBakedModel.Params tParams = new GTOreBakedModel.Params(
-				new ResourceLocation("minecraft", "block/stone"),
-				new ResourceLocation("gt6", "block/materialicons/" + DIRECTIONAL_SET + "/ore"),
-				new ResourceLocation("gt6", "block/materialicons/" + DIRECTIONAL_SET + "/ore_overlay"), 0xFF2040C0);
+				ResourceLocation.fromNamespaceAndPath("minecraft", "block/stone"),
+				ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/" + DIRECTIONAL_SET + "/ore"),
+				ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/" + DIRECTIONAL_SET + "/ore_overlay"), 0xFF2040C0);
 		return new GTOreBakedModel(null, tParams, aMaterial -> IdentitySprite.INSTANCE);
 	}
 

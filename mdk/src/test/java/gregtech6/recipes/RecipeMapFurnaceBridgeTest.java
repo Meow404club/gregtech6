@@ -47,7 +47,7 @@ class RecipeMapFurnaceBridgeTest extends GTRecipesOfflineTestBase {
 			"{\"type\":\"minecraft:smelting\",\"ingredient\":{\"item\":\"minecraft:sand\"},\"result\":{\"id\":\"minecraft:glass\"},\"experience\":0.1,\"cookingtime\":200}";
 	*///?}
 
-	private static final ResourceLocation GLASS_RECIPE_ID = new ResourceLocation("minecraft:glass");
+	private static final ResourceLocation GLASS_RECIPE_ID = ResourceLocation.parse("minecraft:glass");
 
 	@BeforeEach
 	void loadVanillaRecipe() {

@@ -126,7 +126,7 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 	public static final String LANG_EFFICIENCY = "gt6.jade.boiler.efficiency";
 
 	/** Provider uid（GT6MachineProvider.java:143 同形——双腿 ctor swap 由 stonecutter 表消化）。 */
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "boiler_provider");
+	private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("gt6", "boiler_provider");
 
 	private GT6BoilerProvider() {
 	}

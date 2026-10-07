@@ -307,7 +307,7 @@ class GT6BumblesTest {
 	/** The bee item id (the constructor fork: 1.21.1 privatized it, GT6HiveFeature.fromNamespaceAndPath). */
 	private static ResourceLocation beeId(String aPath) {
 		//? if forge {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		 *///?}

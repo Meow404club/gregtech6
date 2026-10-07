@@ -59,7 +59,7 @@ public class DigLadderTest {
 		if (net.minecraftforge.common.crafting.CraftingHelper.getID(
 				net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE) == null) {
 			net.minecraftforge.common.crafting.CraftingHelper.register(
-					new net.minecraft.resources.ResourceLocation("minecraft", "item"),
+					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "item"),
 					net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
 		}
 		//?} else {
@@ -202,14 +202,14 @@ public class DigLadderTest {
 		tJson.addProperty("material", "bronze");
 
 		GT6MaterialToolRecipe.Serializer tSerializer = new GT6MaterialToolRecipe.Serializer();
-		GT6MaterialToolRecipe tRecipe = tSerializer.fromJson(new net.minecraft.resources.ResourceLocation("gt6", "pickaxe/bronze"), tJson);
+		GT6MaterialToolRecipe tRecipe = tSerializer.fromJson(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "pickaxe/bronze"), tJson);
 		net.minecraft.world.inventory.CraftingContainer tContainer = new net.minecraft.world.inventory.TransientCraftingContainer(null, 1, 1);
 		ItemStack tAssembled = tRecipe.assemble(tContainer, net.minecraft.core.RegistryAccess.EMPTY);
 		OreDictMaterial tPrimary = GT6ItemData.get(tAssembled, GT6ToolStats.KEY).primaryMaterial();
 		assertSame(MT.Bronze, tPrimary, "the assembled stack carries the row's material identity");
 
 		assertThrows(com.google.gson.JsonSyntaxException.class,
-				() -> tSerializer.fromJson(new net.minecraft.resources.ResourceLocation("gt6", "pickaxe/bogus"),
+				() -> tSerializer.fromJson(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "pickaxe/bogus"),
 						tJsonDeepCopy(tJson, "not_a_material")),
 				"an unknown material is a parse error, never a silent NULL");
 	}
@@ -244,7 +244,7 @@ public class DigLadderTest {
 		tJson.addProperty("multiplier", 0.25);
 
 		GT6MaterialToolRecipe.Serializer tSerializer = new GT6MaterialToolRecipe.Serializer();
-		GT6MaterialToolRecipe tRecipe = tSerializer.fromJson(new net.minecraft.resources.ResourceLocation("gt6", "pickaxe_gem_from_head/bronze"), tJson);
+		GT6MaterialToolRecipe tRecipe = tSerializer.fromJson(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "pickaxe_gem_from_head/bronze"), tJson);
 		net.minecraft.world.inventory.CraftingContainer tContainer = new net.minecraft.world.inventory.TransientCraftingContainer(null, 1, 1);
 		ItemStack tAssembled = tRecipe.assemble(tContainer, net.minecraft.core.RegistryAccess.EMPTY);
 		CompoundTag tRoot = tAssembled.getTag();
@@ -256,7 +256,7 @@ public class DigLadderTest {
 
 		// the field is OPTIONAL: omitting it keeps the x1.0 budget (the dig-row face)
 		tJson.remove("multiplier");
-		GT6MaterialToolRecipe tBare = tSerializer.fromJson(new net.minecraft.resources.ResourceLocation("gt6", "pickaxe_from_head/bronze"), tJson);
+		GT6MaterialToolRecipe tBare = tSerializer.fromJson(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "pickaxe_from_head/bronze"), tJson);
 		ItemStack tBareAssembled = tBare.assemble(tContainer, net.minecraft.core.RegistryAccess.EMPTY);
 		assertEquals(MT.Bronze.mToolDurability * 100L,
 				tBareAssembled.getTag().getCompound("GT.ToolStats").getLong("j"),

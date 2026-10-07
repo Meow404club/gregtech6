@@ -47,7 +47,7 @@ public class ArmorSetTest {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	// ------------------------------------------------------------------ the table faces

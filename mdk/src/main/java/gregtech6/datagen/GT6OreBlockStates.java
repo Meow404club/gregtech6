@@ -89,7 +89,7 @@ public final class GT6OreBlockStates extends BlockStateProvider {
         // item models + 1 shared model.
         // ------------------------------------------------------------------
         java.util.function.Supplier<ResourceLocation> tBedrockTex =
-                () -> new ResourceLocation("minecraft", "block/bedrock");
+                () -> ResourceLocation.fromNamespaceAndPath("minecraft", "block/bedrock");
         ModelFile tBedrockModel = tShared.computeIfAbsent(tBedrockTex.get(),
                 tTex -> tintedCubeAll(modelNameOf(tTex), tTex));
         int tBedrock = 0;

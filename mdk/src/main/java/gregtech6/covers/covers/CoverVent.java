@@ -52,7 +52,7 @@ public class CoverVent extends AbstractCoverDefault {
 
 	/** The air carrier id the fill arm resolves at tick time (the declared-minimal seam, the class doc). */
 	//? if forge {
-	public static final ResourceLocation AIR_FLUID_ID = new ResourceLocation("gt6", "air");
+	public static final ResourceLocation AIR_FLUID_ID = ResourceLocation.fromNamespaceAndPath("gt6", "air");
 	//?} else {
 	/*public static final ResourceLocation AIR_FLUID_ID = ResourceLocation.fromNamespaceAndPath("gt6", "air");
 	 *///?}
@@ -95,7 +95,7 @@ public class CoverVent extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/vent/front");
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/front");
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/front");
 		 *///?}

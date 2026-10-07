@@ -50,7 +50,7 @@ public final class GT6MultiblockPreviewEmiCategory extends EmiRecipeCategory {
 	/** {@code gt6:multiblock_preview} — mirrors the JEI category uid one-to-one (the JEMI skip key). */
 	public static ResourceLocation id() {
 		//? if forge {
-		return new ResourceLocation("gt6", GT6MultiblockPreviews.UID_PATH);
+		return ResourceLocation.fromNamespaceAndPath("gt6", GT6MultiblockPreviews.UID_PATH);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", GT6MultiblockPreviews.UID_PATH);
 		 *///?}
@@ -59,7 +59,7 @@ public final class GT6MultiblockPreviewEmiCategory extends EmiRecipeCategory {
 	/** The wrapper recipe id: {@code gt6:multiblock_preview/<registry name>} — one per table row. */
 	public static ResourceLocation recipeId(GT6MultiblockPreviews.Entry aEntry) {
 		//? if forge {
-		return new ResourceLocation("gt6", GT6MultiblockPreviews.UID_PATH + "/" + aEntry.name());
+		return ResourceLocation.fromNamespaceAndPath("gt6", GT6MultiblockPreviews.UID_PATH + "/" + aEntry.name());
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", GT6MultiblockPreviews.UID_PATH + "/" + aEntry.name());
 		 *///?}

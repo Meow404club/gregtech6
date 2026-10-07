@@ -94,61 +94,61 @@ import gregapi.data.MT;
 public class GT6CraftingRecipes extends RecipeProvider {
 
 	/** The recipe id — the result path, the vanilla naming convention (gt6:spray_can_empty). */
-	public static final ResourceLocation SPRAY_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "spray_can_empty");
+	public static final ResourceLocation SPRAY_CAN_EMPTY_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "spray_can_empty");
 
 	/**
 	 * The tool-family recipe ids (task tool-hammer-wrench spec ⑤) — the result-path
 	 * vanilla naming convention; the two hammer routes cannot share the result's own id,
 	 * so the route names the suffix (the vanilla two-recipe-per-result precedent shape).
 	 */
-	public static final ResourceLocation HAMMER_STONE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_stone");
-	public static final ResourceLocation HAMMER_INGOTS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hammer_ingots");
-	public static final ResourceLocation WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "wrench");
+	public static final ResourceLocation HAMMER_STONE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "hammer_stone");
+	public static final ResourceLocation HAMMER_INGOTS_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "hammer_ingots");
+	public static final ResourceLocation WRENCH_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "wrench");
 	/** The pocket multitool recipe id (task w5-t7-pocket-eight, the result-path convention). */
-	public static final ResourceLocation POCKET_MULTITOOL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pocket_multitool");
+	public static final ResourceLocation POCKET_MULTITOOL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "pocket_multitool");
 	/** The empty-food-can crafting row (task food-can-row0 spec ③, MultiItemRandomTools.java:239). */
-	public static final ResourceLocation FOOD_CAN_EMPTY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "food_can_empty");
+	public static final ResourceLocation FOOD_CAN_EMPTY_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "food_can_empty");
 	/** The machine-face four self-craft rows (task w5-t3-machine-face-four) — the result-path convention, one per tool. */
-	public static final ResourceLocation SOFT_HAMMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "soft_hammer");
-	public static final ResourceLocation MONKEY_WRENCH_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "monkey_wrench");
-	public static final ResourceLocation MAGNIFYING_GLASS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "magnifying_glass");
-	public static final ResourceLocation PINCERS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pincers");
+	public static final ResourceLocation SOFT_HAMMER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "soft_hammer");
+	public static final ResourceLocation MONKEY_WRENCH_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "monkey_wrench");
+	public static final ResourceLocation MAGNIFYING_GLASS_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "magnifying_glass");
+	public static final ResourceLocation PINCERS_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "pincers");
 	/** The bullet-casing mold crafting trio (task explosives-chain, MultiItemTechnological.java:356-358 strokes). */
-	public static final ResourceLocation SHAPE_PRESS_SMALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_small");
-	public static final ResourceLocation SHAPE_PRESS_MEDIUM_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_medium");
-	public static final ResourceLocation SHAPE_PRESS_LARGE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_large");
+	public static final ResourceLocation SHAPE_PRESS_SMALL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_small");
+	public static final ResourceLocation SHAPE_PRESS_MEDIUM_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_medium");
+	public static final ResourceLocation SHAPE_PRESS_LARGE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "shape_press_bullet_casing_large");
 	/** The LARGE Steel Crucible crafting row (task crucible-multiblock SPEC ⑦). */
-	public static final ResourceLocation LARGE_STEEL_CRUCIBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "large_steel_crucible");
+	public static final ResourceLocation LARGE_STEEL_CRUCIBLE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "large_steel_crucible");
 	/**
 	 * The kitchen band (task kitchen-pot-bowl): the steel pot's crafting row (the
 	 * result-path convention) + the clay-bowl reverse shapeless + the Raw-bowl hardening
 	 * smelt (the :2177 tail — the result path is the vanilla convention again).
 	 */
-	public static final ResourceLocation BATHING_POT_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bathing_pot_steel");
-	public static final ResourceLocation CLAY_BOWL_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_bowl_reverse");
-	public static final ResourceLocation CLAY_BOWL_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mixing_bowl");
+	public static final ResourceLocation BATHING_POT_STEEL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bathing_pot_steel");
+	public static final ResourceLocation CLAY_BOWL_REVERSE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "clay_bowl_reverse");
+	public static final ResourceLocation CLAY_BOWL_SMELT_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "mixing_bowl");
 	/**
 	 * The issue #45 C1 clay-band ids: the bowl's forward shaped source (:132), the
 	 * juicer's three faces — the shaped craft (:131), the reverse :118 tail, the :2184
 	 * hardening smelt (output-path named, the CLAY_BOWL_SMELT_ID convention).
 	 */
-	public static final ResourceLocation CLAY_BOWL_FORWARD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_bowl");
-	public static final ResourceLocation CLAY_JUICER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_juicer");
-	public static final ResourceLocation CLAY_JUICER_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_juicer_reverse");
-	public static final ResourceLocation CLAY_JUICER_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "juicer");
+	public static final ResourceLocation CLAY_BOWL_FORWARD_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "clay_bowl");
+	public static final ResourceLocation CLAY_JUICER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "clay_juicer");
+	public static final ResourceLocation CLAY_JUICER_REVERSE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "clay_juicer_reverse");
+	public static final ResourceLocation CLAY_JUICER_SMELT_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "juicer");
 
 	// task material-mc-e-tool-anvil-rows — the anvil ids ride the result-path convention
 	// (the anvilRecipeId helper over the 35-row ladder; the two c-anvil constants retired
 	// into it)
 	/** The kitchen TABLE crafting ids (task material-mc-e-tool-anvil-rows — the result-path convention). */
-	public static final ResourceLocation BATHING_POT_TABLE_WOOD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bathing_pot_table_wood");
-	public static final ResourceLocation BATHING_POT_TABLE_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bathing_pot_table_steel");
-	public static final ResourceLocation MIXING_BOWL_TABLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mixing_bowl_table");
+	public static final ResourceLocation BATHING_POT_TABLE_WOOD_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bathing_pot_table_wood");
+	public static final ResourceLocation BATHING_POT_TABLE_STEEL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bathing_pot_table_steel");
+	public static final ResourceLocation MIXING_BOWL_TABLE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "mixing_bowl_table");
 	/** The Sifting Table crafting row (task sifting-table-family, Loader_MultiTileEntities.java:2227) — the result-path convention. */
-	public static final ResourceLocation SIFTING_TABLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sifting_table");
+	public static final ResourceLocation SIFTING_TABLE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "sifting_table");
 
 	/** The Grindstone crafting row id (task grindstone-family, the :2226 row, result-path convention). */
-	public static final ResourceLocation GRINDSTONE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "grindstone");
+	public static final ResourceLocation GRINDSTONE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "grindstone");
 
 	/** The storage-hopper crafting ids — the result-path convention, one per row (Loader :145-146). */
 	public static final java.util.List<ResourceLocation> HOPPER_RECIPE_IDS = gregtech6.registry.GT6Hoppers.ROWS.stream()
@@ -176,7 +176,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	public static ResourceLocation hopperRecipeId(GT6Hoppers.HopperRow aRow) {
 		String tPath = aRow.path();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
@@ -212,31 +212,31 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/** The Progress Sensor crafting row (task sensors-core, Loader_MultiTileEntities.java:1995) — the result-path convention. */
-	public static final ResourceLocation PROGRESSMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "progressmeter");
+	public static final ResourceLocation PROGRESSMETER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "progressmeter");
 	/** The Miniature Nether Portal crafting row (task portals-mini-nether-end, Loader :2003) — the result-path convention. */
-	public static final ResourceLocation MINI_PORTAL_NETHER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mini_portal_nether");
+	public static final ResourceLocation MINI_PORTAL_NETHER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "mini_portal_nether");
 	/** The Miniature End Portal crafting row (task portals-mini-nether-end, Loader :2004). */
-	public static final ResourceLocation MINI_PORTAL_END_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mini_portal_end");
+	public static final ResourceLocation MINI_PORTAL_END_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "mini_portal_end");
 	/** The Fluid-O-Meter Sensor crafting row (task sensors-core, Loader :1986). */
-	public static final ResourceLocation FLUIDOMETER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fluidometer");
+	public static final ResourceLocation FLUIDOMETER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "fluidometer");
 	/** The circuit wiring crafting row (task circuit-chain-recipes, MIT:571) — the result-path convention. */
-	public static final ResourceLocation CIRCUIT_WIRE_COPPER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "circuit_wire_copper");
+	public static final ResourceLocation CIRCUIT_WIRE_COPPER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "circuit_wire_copper");
 	/**
 	 * The ULV FE→EU converter crafting row (task b-fe-converter-machine) — DECLARED
 	 * NEW DESIGN, no upstream recipe exists (the machine itself is the declared deviation):
 	 * the tin-alloy double plates + red-alloy fine wires carry the signal side, the copper
 	 * ingots the conductor core; the result-path vanilla convention.
 	 */
-	public static final ResourceLocation FE_CONVERTER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "fe_converter");
+	public static final ResourceLocation FE_CONVERTER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "fe_converter");
 	/**
 	 * The Water Wheel crafting row (task c-water-wheel) — the kTFRUAddon registration
 	 * row QUANTITIES (tileEntityInit0.java:112 "Water Mill": {@code "PPP","SRS","PPP"} =
 	 * 6 planks + 2 bronze rings + 1 axle part, the clean-room semantic anchor) over the
 	 * port carriers; the result-path vanilla convention.
 	 */
-	public static final ResourceLocation WATER_WHEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "water_wheel");
+	public static final ResourceLocation WATER_WHEEL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "water_wheel");
 	/** The Greg o'Lantern crafting row id (task placeables, the result-path convention). */
-	public static final ResourceLocation GREG_O_LANTERN_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "greg_o_lantern");
+	public static final ResourceLocation GREG_O_LANTERN_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "greg_o_lantern");
 	/**
 	 * The Electric Transformer (ULV-LV) crafting row (task c-ulv-lv-transformer) —
 	 * the Loader_MultiTileEntities.java:881 row SHAPE ("WIW","XMx","WIW" — the unbound
@@ -246,35 +246,35 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * conditional entry — whoever crafts this already commands LV power), the wire keys
 	 * fold to the copper fine-wire tag, the 'I' plate key stays iron double plates.
 	 */
-	public static final ResourceLocation ELECTRIC_TRANSFORMER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "electric_transformer");
+	public static final ResourceLocation ELECTRIC_TRANSFORMER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "electric_transformer");
 
 	/** The Bumbliary pair row ids (task bumbliary-recipes — the result-path convention). */
-	public static final ResourceLocation BUMBLIARY_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bumbliary");
-	public static final ResourceLocation BUMBLIARY_ADVANCED_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bumbliary_advanced");
+	public static final ResourceLocation BUMBLIARY_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bumbliary");
+	public static final ResourceLocation BUMBLIARY_ADVANCED_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bumbliary_advanced");
 
 	/** The six dig-tool row ids (task w5-t1-dig-six — the CR row id per tool, the WRENCH_ID shape). */
-	public static final ResourceLocation PICKAXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe");
-	public static final ResourceLocation PICKAXE_GEM_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe_gem");
-	public static final ResourceLocation PICKAXE_CONSTRUCTION_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "pickaxe_construction");
-	public static final ResourceLocation SHOVEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "shovel");
-	public static final ResourceLocation SPADE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "spade");
-	public static final ResourceLocation AXE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe");
-	public static final ResourceLocation AXE_DOUBLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "axe_double");
+	public static final ResourceLocation PICKAXE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "pickaxe");
+	public static final ResourceLocation PICKAXE_GEM_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "pickaxe_gem");
+	public static final ResourceLocation PICKAXE_CONSTRUCTION_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "pickaxe_construction");
+	public static final ResourceLocation SHOVEL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "shovel");
+	public static final ResourceLocation SPADE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "spade");
+	public static final ResourceLocation AXE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "axe");
+	public static final ResourceLocation AXE_DOUBLE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "axe_double");
 
 	/** The five field-tool row ids (task w5-t4-field-five — the t1 row-id shape). */
-	public static final ResourceLocation HOE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "hoe");
-	public static final ResourceLocation PLOW_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "plow");
-	public static final ResourceLocation SENSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sense");
+	public static final ResourceLocation HOE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "hoe");
+	public static final ResourceLocation PLOW_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "plow");
+	public static final ResourceLocation SENSE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "sense");
 
 	/** The scene-tool row ids (task w5-t5-scene-six — the same CR row id shape; the flint pair is TWO rows). */
-	public static final ResourceLocation FLINT_AND_TINDER_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "flint_and_tinder");
-	public static final ResourceLocation FLINT_AND_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "flint_and_steel");
+	public static final ResourceLocation FLINT_AND_TINDER_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "flint_and_tinder");
+	public static final ResourceLocation FLINT_AND_STEEL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "flint_and_steel");
 	/** The rolling-pin WOOD-route row (Loader_Recipes_Woods.java:237) — the metal/plastic ladder (:250-253) rides the arg-8 band's per-material rows. */
-	public static final ResourceLocation ROLLING_PIN_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "rolling_pin");
+	public static final ResourceLocation ROLLING_PIN_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "rolling_pin");
 
 	/** The CR.shapeless self-recast row id of a sensor path (task sensors-core) — the path + the {@code _recast} suffix (the grass reverse-row suffix shape). */
 	public static ResourceLocation sensorRecastId(String aPath) {
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath + "_recast");
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, aPath + "_recast");
 	}
 
 	//? if forge {
@@ -991,22 +991,22 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	public static ResourceLocation slabFromRocksId(gregtech6.registry.GTStoneBlocks.StoneSpec aStone) {
 		String tPath = "slab_rock/" + aStone.snake();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	public static ResourceLocation slabFromCobbleId(gregtech6.registry.GTStoneBlocks.StoneSpec aStone) {
 		String tPath = "slab_cobble/" + aStone.snake();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	public static ResourceLocation slabToBlockId(gregtech6.registry.GTStoneBlocks.VariantKey aKey) {
 		String tPath = "slab_to_block/" + gregtech6.registry.GTStoneBlocks.path(aKey.stone().snake(), aKey.variant());
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	public static ResourceLocation slabSawId(gregtech6.registry.GTStoneBlocks.VariantKey aKey) {
 		String tPath = "slab_saw/" + gregtech6.registry.GTStoneBlocks.path(aKey.stone().snake(), aKey.variant());
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
@@ -1087,7 +1087,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	public static ResourceLocation staticStorageRecipeId(gregtech6.registry.GT6StaticStorages.StaticRow aRow) {
 		String tPath = aRow.path();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
@@ -1127,7 +1127,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The recipe id — the result path (the vanilla naming convention, the grassRecipeId form). */
 	private static ResourceLocation railRecipeId(GT6Rails.RailRow aRow) {
 		String tPath = aRow.path(); // a local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/** One rail row's builder — the :108-139 column pairs over the shared "R"/"S" frame. */
@@ -1294,13 +1294,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The forward recipe id of variant i — the result path (the vanilla naming convention). */
 	public static ResourceLocation grassRecipeId(int aVariant) {
 		String tPath = GTGrassBlocks.PATHS.get(aVariant); // a local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/** The reverse recipe id of variant i — the variant path + the {@code _reverse} suffix. */
 	public static ResourceLocation grassReverseRecipeId(int aVariant) {
 		String tPath = GTGrassBlocks.PATHS.get(aVariant) + "_reverse"; // the same bare-identifier discipline
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
@@ -1581,7 +1581,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The id of one chest row's recipe (the {@link #hopperRecipeId} join seam verbatim). */
 	public static ResourceLocation chestRecipeId(gregtech6.registry.GT6Chests.ChestRow aRow) {
 		String tPath = aRow.path();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
@@ -1757,7 +1757,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('M', tWall)
 					.unlockedBy("has_crucible_wall", has(tWall)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
 	}
@@ -1788,7 +1788,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('P', tPlate)
 					.unlockedBy("has_plate", has(tPlate)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
 	}
@@ -1820,7 +1820,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('P', tPlate)
 					.unlockedBy("has_plate", has(tPlate)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
 	}
@@ -1852,7 +1852,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('R', tStick)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.unlockedBy("has_stick", has(tStick)),
-				new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_slicer_empty")));
+				ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "shape_slicer_empty")));
 		// the seven blade rows :374-380 — 'O' frame + 'B' plateTiny + 'f' file + 's' saw
 		rRows.add(slicerBladeRow("shape_slicer_flat",              gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_FLAT.get(),           "B f", "BO ", "B s", tFrame, tPlateTiny, null));
 		rRows.add(slicerBladeRow("shape_slicer_grid",              gregtech6.registry.GT6SlicerBlades.SHAPE_SLICER_GRID.get(),           " Bf", "BOB", " Bs", tFrame, tPlateTiny, null));
@@ -1877,7 +1877,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('s', GT6ItemTags.TOOLS_SAW)
 				.unlockedBy("has_frame", has(aFrame));
 		if (aRing != null) tBuilder.define('R', aRing);
-		return new PartFamilyRecipeRow(tBuilder, new ResourceLocation(GT6DataGenerators.MOD_ID, aPath));
+		return new PartFamilyRecipeRow(tBuilder, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, aPath));
 	}
 
 	/** The crucible wall item of a wall path (the {@link gregtech6.registry.GT6Crucibles#wallBlockOf} twin — the steel rung rides the single-rung handle). */
@@ -1930,7 +1930,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('C', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.gearGtSmall, tMat).get())
 					.define('L', gregtech6.item.GT6LubricantBucket.LUBRICANT_BUCKET.get())
 					.unlockedBy("has_lubricant_bucket", has(gregtech6.item.GT6LubricantBucket.LUBRICANT_BUCKET.get())),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
 	}
@@ -2007,7 +2007,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('M', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
 					.define('C', gregtech6.registry.GTMaterialItems.get(tPlate, MT.Copper).get())
 					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(tPlate, MT.Invar).get())),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tPaths[i])));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPaths[i])));
 			// the Catalytic Cracker :1570-1573 — "IPI","ZMZ","ICI"
 			rRows.add(new CrackerRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
 					gregtech6.registry.GTMachines.CATALYTIC_CRACKER_ITEMS_BY_PATH.get(tCatPaths[i]).get())
@@ -2018,7 +2018,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('M', gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
 					.define('C', gregtech6.registry.GTMaterialItems.get(tPlate, MT.Copper).get())
 					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(tPlate, MT.Invar).get())),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tCatPaths[i])));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tCatPaths[i])));
 		}
 		return rRows;
 	}
@@ -2066,7 +2066,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('w', GT6ItemTags.TOOLS_WRENCH)
 					.unlockedBy("has_invar_plate", has(gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, MT.Invar).get())),
-						new ResourceLocation(GT6DataGenerators.MOD_ID, tPaths[i])));
+						ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPaths[i])));
 		}
 		return rRows;
 	}
@@ -2107,7 +2107,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('X', tEmitter)
 				.define('Y', tSensor)
 				.unlockedBy("has_field_generator", has(tFieldGen)),
-				new ResourceLocation(GT6DataGenerators.MOD_ID, "molecular_scanner_t3"));
+				ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "molecular_scanner_t3"));
 	}
 
 	private ShapedRecipeBuilder foodCanEmptyBuilder() {
@@ -2173,7 +2173,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('T', tScrew)
 					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
 					.unlockedBy("has_data_wire", has(tWire)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}
@@ -2185,7 +2185,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// modern face; bound through TagKey.create because the 1.21.1 leg dropped the
 		// ItemTags.MUSIC_DISCS constant (the tag itself survives in vanilla data on both legs).
 		String tDiscPath = "music_discs";
-		TagKey<Item> tRecords = TagKey.create(net.minecraft.core.registries.Registries.ITEM, new ResourceLocation("minecraft", tDiscPath));
+		TagKey<Item> tRecords = TagKey.create(net.minecraft.core.registries.Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", tDiscPath));
 		for (int i = 0; i < 4; i++) {
 			var tPlateHandle = GTMaterialItems.get(gregapi.data.OP.plate, USB_PLATE_MATS[i]);
 			var tScrewHandle = GTMaterialItems.get(gregapi.data.OP.screw, USB_PLATE_MATS[i]);
@@ -2204,7 +2204,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('W', cableItem(i + 1))
 					.define('C', tCircuit)
 					.unlockedBy("has_circuit", has(tCircuit)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}
@@ -2267,7 +2267,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('T', tScrew)
 					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
 					.unlockedBy("has_circuit", has(tCircuit)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}
@@ -2374,7 +2374,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
 					.define('P', tPlateDouble)
 					.unlockedBy("has_plate_double", has(tPlateDouble)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tEmptyId)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tEmptyId)));
 			for (MoldChainForm tForm : MOLD_CHAIN_FORMS) {
 				String tMoldId = tFamily + "_" + tForm.aMold();
 				Item tParent = tMolds.get(tFamily + "_" + tForm.aParent());
@@ -2385,7 +2385,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
 						.define('P', tParent)
 						.unlockedBy("has_" + tForm.aParent(), has(tParent)),
-						new ResourceLocation(GT6DataGenerators.MOD_ID, tMoldId)));
+						ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tMoldId)));
 			}
 		}
 		return rRows;
@@ -2466,7 +2466,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
 				.define('P', tSteelPlateDouble)
 				.unlockedBy("has_steel_plate_double", has(tSteelPlateDouble)),
-				new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_foodmold_empty")));
+				ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "shape_foodmold_empty")));
 		// the five named molds — {save-id suffix, the 3x3 stroke verbatim}; MOLDS order is
 		// empty, bun, bread, baguette, cylinder, toast so the strike walk maps index + 1
 		String[][] tStrikes = {
@@ -2484,7 +2484,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('P', tEmptyMold)
 					.unlockedBy("has_empty_food_mold", has(tEmptyMold)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, "shape_foodmold_" + tStrikes[i][0])));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "shape_foodmold_" + tStrikes[i][0])));
 		}
 		return rRows;
 	}
@@ -2828,7 +2828,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 							.requires(tKetchup)
 							.requires(tFlat, i)
 							.unlockedBy("has_flat_dough", has(tFlat)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_ketchup_flat_" + i)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bake_ketchup_flat_" + i)));
 		}
 
 		// :636 — the vanilla cake re-craft ("C"/"Z" over the cake bottom + the heavy-cream
@@ -2840,7 +2840,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.define('C', gregtech6.registry.GT6Bottles.FOOD_HEAVYCREAM.get())
 						.define('Z', bakeItem(GT6RecipesBakeIds.CAKEBOTTOM))
 						.unlockedBy("has_cake_bottom", has(bakeItem(GT6RecipesBakeIds.CAKEBOTTOM))),
-				new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_cake_heavycream")));
+				ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bake_cake_heavycream")));
 
 		// :550 — the BBQ ribs (CR.DEF_NCC)
 		rRows.add(BakeCraftRow.of(ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC,
@@ -2848,7 +2848,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.requires(gregtech6.registry.GT6Foods.FOODS.get(17).get()) // index 17 = food_rib_cooked (:547)
 						.requires(gregtech6.registry.GT6Bottles.FOOD_BARBECUESAUCE.get())
 						.unlockedBy("has_rib_cooked", has(gregtech6.registry.GT6Foods.FOODS.get(17).get())),
-				new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_rib_bbq")));
+				ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bake_rib_bbq")));
 		return rRows;
 	}
 
@@ -2963,7 +2963,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	/** The bake row save id — {@code bake_<name>} under the gt6 namespace. */
 	private static ResourceLocation bakeId(String aName) {
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, "bake_" + aName);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "bake_" + aName);
 	}
 
 	/** The {@link gregtech6.recipes.GT6RecipesBake} wiring-constant mirror for the datagen walks (the single source is GT6RecipesBake; the local alias keeps the datagen file free of the recipes-package import). The non-constant indices (the rows GT6RecipesBake's runtime band does not touch) are the BAKE_ROWS order facts, pinned by the test walk. */
@@ -3123,7 +3123,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The id of one mortar row's recipe (the result-path convention, the hopperRecipeId bare-identifier form). */
 	public static ResourceLocation mortarRecipeId(gregtech6.registry.GT6Mortars.MortarRow aRow) {
 		String tPath = aRow.path();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
@@ -3377,7 +3377,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 							net.minecraft.world.item.crafting.Ingredient.of(tIn),
 							RecipeCategory.MISC, net.minecraft.world.level.block.Blocks.TERRACOTTA, 0.0F, 200)
 					.unlockedBy("has_" + tColor + "_clay", has(tIn)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, "smelt_" + tColor + "_clay")));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "smelt_" + tColor + "_clay")));
 			//?} else {
 			/*rRows.add(new BakeSmeltRow(SimpleCookingRecipeBuilder.smelting(
 							net.minecraft.world.item.crafting.Ingredient.of(tIn),
@@ -3590,13 +3590,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// the path rides a local so the two-arg RL ctor args stay bare identifiers (the
 		// swap-table regex note, staticStorageRecipeId form)
 		String tPath = "battery/" + aRow.path();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/** The BatteryBox row's recipe id: battery_box/&lt;path&gt; (the same convention). */
 	public static ResourceLocation batteryBoxRecipeId(GT6Batteries.BoxRow aRow) {
 		String tPath = "battery_box/" + aRow.path();
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/** One staged BatteryBox row: the shared builder + the row its save face ids from (the PartFamilyRecipeRow shape). */
@@ -3688,7 +3688,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('W', tCable)
 					.define('M', tTransformer)
 					.unlockedBy("has_transformer", has(tTransformer)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}
@@ -3715,7 +3715,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('S', tAlCurved)
 					.define('W', tWire16)
 					.unlockedBy("has_wire", has(tWire16)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}
@@ -3749,7 +3749,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('I', tDoublePlates)
 					.define('M', tCasing)
 					.unlockedBy("has_fine_wire", has(tFineWires)),
-					tRow.tier() == 0 ? ELECTRIC_TRANSFORMER_ID : new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					tRow.tier() == 0 ? ELECTRIC_TRANSFORMER_ID : ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}
@@ -3790,7 +3790,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('C', GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, tHeaterWires[i]))
 					.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
 					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
-					.unlockedBy("has_screw", has(GTMaterialItems.get(gregapi.data.OP.screw, tMat).get())), new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					.unlockedBy("has_screw", has(GTMaterialItems.get(gregapi.data.OP.screw, tMat).get())), ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		// --- the Engines :833-837 ("PhP","CIC","PwP") ---
 		gregapi.oredict.OreDictMaterial[] tMagnets = {gregapi.data.MT.IronMagnetic, gregapi.data.MT.SteelMagnetic, gregapi.data.MT.SteelMagnetic, gregapi.data.MT.NeodymiumMagnetic, gregapi.data.MT.NeodymiumMagnetic};
@@ -3806,7 +3806,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('C', GT6ItemTags.materialTag(GT6ItemTags.FINE_WIRES_FAMILY, tCopperWires[i]))
 					.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 					.define('w', GT6ItemTags.TOOLS_WRENCH)
-					.unlockedBy("has_plate", has(GTMaterialItems.get(gregapi.data.OP.plateTriple, tMat).get())), new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					.unlockedBy("has_plate", has(GTMaterialItems.get(gregapi.data.OP.plateTriple, tMat).get())), ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		// --- the Motors :849-853 ("TIT","CMC","TGd") ---
 		for (int i = 0; i < 5; i++) {
@@ -3821,7 +3821,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.define('M', GTMaterialItems.get(gregapi.data.OP.casingSmall, tMat).get())
 					.define('G', GTMaterialItems.get(gregapi.data.OP.gearGt, tMat).get())
 					.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
-					.unlockedBy("has_gear", has(GTMaterialItems.get(gregapi.data.OP.gearGt, tMat).get())), new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+					.unlockedBy("has_gear", has(GTMaterialItems.get(gregapi.data.OP.gearGt, tMat).get())), ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 		}
 		return rRows;
 	}
@@ -3886,10 +3886,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
     // The coil 'W' fold: wireGt04 has no port items — ONE fine wire per cell (the
     // transformerBuilder fold precedent, the count differential declared).
     // -------------------------------------------------------------------------
-    private static final ResourceLocation WOOD_WALL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/wood_wall");
-    private static final ResourceLocation CENTRIFUGE_PART_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/centrifuge_part");
-    private static final ResourceLocation CRUSHER_WHEELS_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/crusher_wheels");
-    private static final ResourceLocation SHREDDER_BLADES_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/shredder_blades");
+    private static final ResourceLocation WOOD_WALL_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_family/wood_wall");
+    private static final ResourceLocation CENTRIFUGE_PART_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_family/centrifuge_part");
+    private static final ResourceLocation CRUSHER_WHEELS_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_family/crusher_wheels");
+    private static final ResourceLocation SHREDDER_BLADES_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_family/shredder_blades");
 
     /** One staged part-family row: the shared builder + the id its save face ids from. */
     private record PartFamilyRecipeRow(ShapedRecipeBuilder builder, ResourceLocation id) {}
@@ -3937,11 +3937,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
         // the three resolvable coils (:1167/:1169/:1172 "WWW","WxW","WWW" — the wireGt04
         // column folds to one fine wire per cell, the transformerBuilder fold)
         coilBuilder("large_copper_coil", gregapi.data.MT.AnnealedCopper)
-                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_copper_coil"))));
+                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_family/large_copper_coil"))));
         coilBuilder("large_nichrome_coil", gregapi.data.MT.Nichrome)
-                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_nichrome_coil"))));
+                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_family/large_nichrome_coil"))));
         coilBuilder("large_iridium_coil", gregapi.data.MT.Ir)
-                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_family/large_iridium_coil"))));
+                .ifPresent(tPair -> rRows.add(new PartFamilyRecipeRow(tPair, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_family/large_iridium_coil"))));
         return rRows;
     }
 
@@ -3964,7 +3964,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     //     the versatile row's S/D/R/E columns map Sapphire/Diamond/Ruby/Emerald per
     //     upstream :1185, the four ladder rows' 'P' column per :1186-1189).
     // -------------------------------------------------------------------------
-    private static final ResourceLocation VENTILATION_UNIT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "part_circuit/ventilation_unit");
+    private static final ResourceLocation VENTILATION_UNIT_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_circuit/ventilation_unit");
 
     /** The PU ladder row (path, gem tag snake) — the 'P' column per upstream :1186-1189. */
     private record ProcessorCircuitRow(String path, String gemSnake) {}
@@ -4004,7 +4004,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 .define('C', tCircuit6)
                 .define('M', tCasing)
                 .unlockedBy("has_circuit6", has(tCircuit6));
-        tVersatile.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "part_circuit/processor_unit_versatile"));
+        tVersatile.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "part_circuit/processor_unit_versatile"));
 
         // the four ladder PUs :1186-1189 "PCP"/"CMC"/"PCP" — P = the row's crystal gem tag
         ProcessorCircuitRow[] tLadder = {
@@ -4023,7 +4023,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
                     .define('C', tCircuit6)
                     .define('M', tCasing)
                     .unlockedBy("has_circuit6", has(tCircuit6));
-            tBuilder.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, tPath));
+            tBuilder.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath));
         }
     }
     //?} else {
@@ -4086,7 +4086,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     // shaped JSON cannot carry a result data tag (ShapedRecipe.java:274), the
     // GT6MaterialToolRecipe serializer precedent stamps the configuration at assemble.
     // -------------------------------------------------------------------------
-    private static final ResourceLocation CIRCUIT_BASE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "integrated_circuit");
+    private static final ResourceLocation CIRCUIT_BASE_ID = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "integrated_circuit");
 
     //? if forge {
     private void circuitProgramRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
@@ -4125,7 +4125,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
             }
             String tIdPath = "integrated_circuit/config_" + i; // the precomputed arg — the swap-table regex note
             saveCircuitProgram(aConsumer, "shaped", tPattern, tKey, tCircuit,
-                    new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath), i);
+                    ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tIdPath), i);
         }
     }
     //?} else {
@@ -4305,7 +4305,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
     /** One tank row's recipe id: tank_valve/&lt;path&gt; (the part_family/&lt;path&gt; convention). */
     private ResourceLocation tankValveRecipeId(String aPath) {
-        return new ResourceLocation(GT6DataGenerators.MOD_ID, TANK_VALVE_RECIPE_PREFIX + aPath);
+        return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, TANK_VALVE_RECIPE_PREFIX + aPath);
     }
 
     private java.util.List<PartFamilyRecipeRow> tankValveRecipeBuilders() {
@@ -4399,12 +4399,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
     /** One barrel row's recipe id: barrel/&lt;path&gt; (the tank_valve/&lt;path&gt; convention). */
     private ResourceLocation barrelRecipeId(String aPath) {
-        return new ResourceLocation(GT6DataGenerators.MOD_ID, BARREL_RECIPE_PREFIX + aPath);
+        return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, BARREL_RECIPE_PREFIX + aPath);
     }
 
     /** One boiler row's recipe id: boiler/&lt;path&gt; (the same convention). */
     private ResourceLocation boilerRecipeId(String aPath) {
-        return new ResourceLocation(GT6DataGenerators.MOD_ID, BOILER_RECIPE_PREFIX + aPath);
+        return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, BOILER_RECIPE_PREFIX + aPath);
     }
 
     /**
@@ -4695,7 +4695,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
     /** The electric row id: {@code electric_tool/<path>} (the battery/&lt;path&gt; convention). */
     public static ResourceLocation electricToolRecipeId(String aPath) {
-        return new ResourceLocation(GT6DataGenerators.MOD_ID, "electric_tool/" + aPath);
+        return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "electric_tool/" + aPath);
     }
 
     /** The Electric_T[i] material (tier 1..3 = SteelGalvanized/Al/StainlessSteel, upstream MT.java:3691). */
@@ -4811,7 +4811,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
      */
     public static ResourceLocation armorRecipeId(GT6ArmorMaterials.SuitRow aSuit, int aSlot) {
         String tPath = aSuit.pieceId(aSlot);
-        return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+        return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
     }
 
     /**
@@ -5007,7 +5007,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The row id (the result-path convention with the material leaf). */
 	private static ResourceLocation digLadderRowId(String aForm, String aSnake) {
 		String tPath = aForm + "/" + aSnake;
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	// -------------------------------------------------------------------------
@@ -5152,7 +5152,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.pattern("WPW").pattern("CGC").pattern("WPW")
 					.define('W', tWire).define('P', tPlate).define('C', tCircuit).define('G', tGem)
 					.unlockedBy("has_circuit" + i, has(tCircuit))
-					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+					.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_FIELD_GENERATORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
 		}
 		for (int i = 0; i <= 6; i++) { // EMITTERS :436-445, live rungs 0-6
 			Item tWire04 = wireItemByPath(componentWirePath(false, COMPONENT_WIRE_TOKENS[i], 4));
@@ -5166,7 +5166,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.pattern("SPC").pattern("WQP").pattern("CWS")
 					.define('S', tWire04).define('P', tPlate).define('C', tCircuit).define('Q', tGem).define('W', tCable01)
 					.unlockedBy("has_circuit" + i, has(tCircuit))
-					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_EMITTERS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+					.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_EMITTERS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
 		}
 		for (int i = 0; i <= 6; i++) { // SENSORS :447-456, live rungs 0-6
 			Item tWire01 = wireItemByPath(componentWirePath(false, COMPONENT_WIRE_TOKENS[i], 1));
@@ -5179,7 +5179,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.pattern("P Q").pattern("PS ").pattern("CPP")
 					.define('Q', tGem).define('S', tWire01).define('P', tPlate).define('C', tCircuit)
 					.unlockedBy("has_circuit" + i, has(tCircuit))
-					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
+					.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/" + gregtech6.items.GT6Emitters.FAMILY_SENSORS + "_" + gregtech6.items.GT6Emitters.TIER_TOKENS[i]));
 		}
 	}
 	//?} else {
@@ -5250,7 +5250,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tSpec[2].indexOf('f') >= 0) tBuilder.define('f', GT6ItemTags.TOOLS_FILE); // the cutter/drill rows
 			if (tSpec[2].indexOf('D') >= 0) tBuilder.define('D', itemOrNull(gregapi.data.OP.dust, gregapi.data.MT.Diamond)); // the saw row
 			tBuilder.unlockedBy("has_circuit3", has(tCircuit))
-					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "robot_tip/" + tKind));
+					.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "robot_tip/" + tKind));
 		}
 	}
 
@@ -5275,7 +5275,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.pattern("CWR").pattern("WIW").pattern("PWC")
 					.define('C', tCable).define('W', tWire).define('R', tStick).define('I', tMagnetic).define('P', tPlate)
 					.unlockedBy("has_wire", has(tWire))
-					.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/motor_" + tTier));
+					.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/motor_" + tTier));
 			if (i == 1) { // the :407 DEF twin — the SteelMagnetic stick variant
 				Item tSteelMag = itemOrNull(gregapi.data.OP.stick, gregapi.data.MT.SteelMagnetic);
 				if (tSteelMag != null) {
@@ -5283,7 +5283,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 							.pattern("CWR").pattern("WIW").pattern("PWC")
 							.define('C', tCable).define('W', tWire).define('R', tStick).define('I', tSteelMag).define('P', tPlate)
 							.unlockedBy("has_wire", has(tWire))
-							.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/motor_lv_steel_magnetic"));
+							.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/motor_lv_steel_magnetic"));
 				}
 			}
 		}
@@ -5301,7 +5301,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.pattern("RRR").pattern("MCM").pattern("RRR")
 						.define('R', tRubberPlate).define('M', tMotor).define('C', tCable)
 						.unlockedBy("has_motor", has(tMotor))
-						.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/conveyor_" + tTier));
+						.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/conveyor_" + tTier));
 			}
 			// PISTONS :420 — "TPP","dSS","TMG"
 			Item tScrew = itemOrNull(gregapi.data.OP.screw, tElectricT[i]);
@@ -5312,7 +5312,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.define('T', tScrew).define('P', tPlate).define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
 						.define('S', tStick).define('M', tMotor).define('G', tGear)
 						.unlockedBy("has_motor", has(tMotor))
-						.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/piston_" + tTier));
+						.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/piston_" + tTier));
 			}
 			// ROBOT_ARMS :421 — "CCC","MSM","PES", rungs 7-9 CUT (no #gt6:circuit7..9 tags)
 			if (i <= 6) {
@@ -5322,7 +5322,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 						.define('C', tCable).define('M', tMotor).define('S', tStick)
 						.define('P', gregtech6.registry.GT6Robotics.PISTONS.get(i).get()).define('E', tCircuit)
 						.unlockedBy("has_circuit" + i, has(tCircuit))
-						.save(aConsumer, new ResourceLocation(GT6DataGenerators.MOD_ID, "component/robot_arm_" + tTier));
+						.save(aConsumer, ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "component/robot_arm_" + tTier));
 			}
 		}
 	}
@@ -6631,7 +6631,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	/** The row id — the craftFrom <output>_from_<input> convention over the material leaf. */
 	static ResourceLocation assemblyRowId(String aForm, String aSnake) {
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, aForm + "_from_head/" + aSnake);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, aForm + "_from_head/" + aSnake);
 	}
 
 	/** The assembly's tool face (the GT6Tools registry; the switch IS the 17-form ledger). */
@@ -6793,7 +6793,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 
 	/** The row id — the digLadderRowId form: the form key + the material leaf. Package-private for the pin test. */
 	static ResourceLocation craftFromRowId(String aKey, String aSnake) {
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, aKey + "/" + aSnake);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, aKey + "/" + aSnake);
 	}
 
 	/** The datagen row: the id + the output item + count + the input item. */
@@ -7917,7 +7917,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.pattern("XX")
 					.define('X', tRock)
 					.unlockedBy("has_rock", has(tRock)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tIdPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tIdPath)));
 		}
 		return rRows;
 	}
@@ -7940,13 +7940,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 					.pattern("XX")
 					.define('X', tCobbl)
 					.unlockedBy("has_cobble", has(tCobbl)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tStairsPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tStairsPath)));
 			rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Items.COBBLESTONE_WALL, 6)
 					.pattern("XXX")
 					.pattern("XXX")
 					.define('X', tCobbl)
 					.unlockedBy("has_cobble", has(tCobbl)),
-					new ResourceLocation(GT6DataGenerators.MOD_ID, tWallPath)));
+					ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tWallPath)));
 		}
 		return rRows;
 	}
@@ -8000,7 +8000,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('P', tPlate)
 				.define('x', GT6ItemTags.TOOLS_WIRE_CUTTER)
 				.unlockedBy("has_plate", has(tPlate)),
-				new ResourceLocation(GT6DataGenerators.MOD_ID, tPath)));
+				ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath)));
 	}
 
 	// -----------------------------------------------------------------------
@@ -8043,10 +8043,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	}
 
 	/** The four vanilla-namespace override ids — the vanilla row ids verbatim. */
-	public static final ResourceLocation VANILLA_BRUSH_ID = new ResourceLocation("minecraft", "brush");
-	public static final ResourceLocation VANILLA_COPPER_BLOCK_ID = new ResourceLocation("minecraft", "copper_block");
-	public static final ResourceLocation VANILLA_LIGHTNING_ROD_ID = new ResourceLocation("minecraft", "lightning_rod");
-	public static final ResourceLocation VANILLA_SPYGLASS_ID = new ResourceLocation("minecraft", "spyglass");
+	public static final ResourceLocation VANILLA_BRUSH_ID = ResourceLocation.fromNamespaceAndPath("minecraft", "brush");
+	public static final ResourceLocation VANILLA_COPPER_BLOCK_ID = ResourceLocation.fromNamespaceAndPath("minecraft", "copper_block");
+	public static final ResourceLocation VANILLA_LIGHTNING_ROD_ID = ResourceLocation.fromNamespaceAndPath("minecraft", "lightning_rod");
+	public static final ResourceLocation VANILLA_SPYGLASS_ID = ResourceLocation.fromNamespaceAndPath("minecraft", "spyglass");
 
 	/** The vanilla brush row (pattern/tools category verbatim) with the tag input. */
 	private ShapedRecipeBuilder vanillaBrushBuilder() {
@@ -8118,7 +8118,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The result-path recipe id of one machine row (the hopper result-path convention). */
 	private ResourceLocation steamBandId(String aPath) {
 		String tPath = aPath; // the local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**
@@ -9116,7 +9116,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** The forging-ladder row id: &lt;output&gt;/&lt;material&gt; (the craftfrom-row-id convention). */
 	private ResourceLocation forgeLadderId(String aKey) {
 		String tKey = aKey; // the bare-identifier ctor-arg discipline (the swap-table regex note)
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tKey);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tKey);
 	}
 
 	/** One row's builder — the inputs top (the doubled pair "AA" / the mixed pair "AB" / the single slot "A"), the hard hammer below-left (the anvil slots + hammer semantics). */

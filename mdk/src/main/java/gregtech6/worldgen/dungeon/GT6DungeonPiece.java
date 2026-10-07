@@ -993,7 +993,7 @@ public class GT6DungeonPiece extends StructurePiece {
         if (!aClip.isInside(tPos)) return;
         //? if forge {
         this.createChest(aLevel, aClip, aRandom, tPos,
-                new net.minecraft.resources.ResourceLocation("minecraft", aVanillaPath),
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", aVanillaPath),
                 Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, aFacing));
         //?} else {
         /*this.createChest(aLevel, aClip, aRandom, tPos,
@@ -1532,7 +1532,7 @@ public class GT6DungeonPiece extends StructurePiece {
         String tPath = GTMaterialItems.itemIdOf(aPrefix, aMaterial);
         //? if forge {
         Block tBlock = net.minecraftforge.registries.ForgeRegistries.BLOCKS.getValue(
-                new net.minecraft.resources.ResourceLocation("gt6", tPath));
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath));
         //?} else {
         /*Block tBlock = net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
                 net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath));
@@ -1550,7 +1550,7 @@ public class GT6DungeonPiece extends StructurePiece {
         if (!aClip.isInside(tPos)) return;
         //? if forge {
         this.createChest(aLevel, aClip, aRandom, tPos,
-                new net.minecraft.resources.ResourceLocation("gt6", aTablePath),
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aTablePath),
                 Blocks.CHEST.defaultBlockState().setValue(ChestBlock.FACING, aFacing));
         //?} else {
         /*this.createChest(aLevel, aClip, aRandom, tPos,
@@ -2120,7 +2120,7 @@ public class GT6DungeonPiece extends StructurePiece {
     /** {@code createChest} bound to {@code gt6:chests/dungeon_chest} — the MineshaftPieces.java:270-282 face. */
     private void createDungeonChest(WorldGenLevel aLevel, BoundingBox aClip, RandomSource aRandom, int aWX, int aWY, int aWZ) {
         //? if forge {
-        this.createChest(aLevel, aClip, aRandom, aWX, aWY, aWZ, new net.minecraft.resources.ResourceLocation("gt6", DUNGEON_CHEST_TABLE));
+        this.createChest(aLevel, aClip, aRandom, aWX, aWY, aWZ, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", DUNGEON_CHEST_TABLE));
         //?} else {
         /*this.createChest(aLevel, aClip, aRandom, aWX, aWY, aWZ, net.minecraft.resources.ResourceKey.create(
                 net.minecraft.core.registries.Registries.LOOT_TABLE,

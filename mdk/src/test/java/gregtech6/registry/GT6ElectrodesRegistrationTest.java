@@ -40,7 +40,7 @@ public class GT6ElectrodesRegistrationTest {
 			"electrode_fr_ender"};
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	/** Both DRs target the vanilla item registry (the GT6Explosives shape). */

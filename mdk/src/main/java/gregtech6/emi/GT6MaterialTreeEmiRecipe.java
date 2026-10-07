@@ -118,7 +118,7 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		mDisplay = aDisplay;
 		mLayout = MaterialTreeLayout.plan(aDisplay);
 		//? if forge {
-		mId = new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH + "/" + GTMaterialItems.snakeCase(aDisplay.material.mNameInternal));
+		mId = ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH + "/" + GTMaterialItems.snakeCase(aDisplay.material.mNameInternal));
 		//?} else {
 		/*mId = ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH + "/" + GTMaterialItems.snakeCase(aDisplay.material.mNameInternal));
 		 *///?}

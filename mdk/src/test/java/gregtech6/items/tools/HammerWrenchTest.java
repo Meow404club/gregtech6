@@ -64,7 +64,7 @@ public class HammerWrenchTest {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	// ------------------------------------------------------- the action + id pins
@@ -208,7 +208,7 @@ public class HammerWrenchTest {
 	public void registrationAndTagHelperShape() {
 		assertEquals(rl("hammer"), GT6Tools.HAMMER.getId());
 		assertEquals(rl("wrench"), GT6Tools.WRENCH.getId());
-		assertEquals(new ResourceLocation(GT6ItemTags.MATERIALS_NAMESPACE, "plates/steel"),
+		assertEquals(ResourceLocation.fromNamespaceAndPath(GT6ItemTags.MATERIALS_NAMESPACE, "plates/steel"),
 				GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel").location());
 	}
 

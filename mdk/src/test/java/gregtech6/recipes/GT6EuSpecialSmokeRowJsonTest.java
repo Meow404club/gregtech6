@@ -83,9 +83,9 @@ class GT6EuSpecialSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theThreeSmokeRowsPourThroughTheLoaderSeam() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
-		tData.put(new ResourceLocation("gt6", "autocrafter"), resource("autocrafter.json"));
-		tData.put(new ResourceLocation("gt6", "lightning"), resource("lightning.json"));
-		tData.put(new ResourceLocation("gt6", "laminator"), resource("laminator.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "autocrafter"), resource("autocrafter.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "lightning"), resource("lightning.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "laminator"), resource("laminator.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("autocrafter"), "one autocrafter smoke row");

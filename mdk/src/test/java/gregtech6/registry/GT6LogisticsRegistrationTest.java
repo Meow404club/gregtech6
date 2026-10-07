@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GT6LogisticsRegistrationTest {
 
-	private static final ResourceLocation ID = new ResourceLocation("gt6", "logistics_wire");
+	private static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath("gt6", "logistics_wire");
 	private static final BlockPos POS = new BlockPos(1, 2, 3);
 
 	@BeforeAll

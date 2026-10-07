@@ -82,7 +82,7 @@ public final class GTCoverCommand {
 	private static final Logger LOGGER = LogUtils.getLogger();
 
 	/** The default install item — the p4 iron-plate cover (gt6:plate_iron). */
-	private static final net.minecraft.resources.ResourceLocation DEFAULT_COVER_ITEM = new net.minecraft.resources.ResourceLocation("gt6", "plate_iron");
+	private static final net.minecraft.resources.ResourceLocation DEFAULT_COVER_ITEM = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "plate_iron");
 
 	private GTCoverCommand() {
 	}

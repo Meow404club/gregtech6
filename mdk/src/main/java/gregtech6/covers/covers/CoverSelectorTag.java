@@ -65,7 +65,7 @@ public class CoverSelectorTag extends AbstractCoverAttachmentSelector {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aSide, CoverData aData) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/selectortag/" + mMode);
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/selectortag/" + mMode);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/selectortag/" + mMode);
 		 *///?}

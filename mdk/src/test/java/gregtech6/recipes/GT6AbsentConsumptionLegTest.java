@@ -110,7 +110,7 @@ public class GT6AbsentConsumptionLegTest extends GTRecipesOfflineTestBase {
 				   "outputs":[{"item":"minecraft:stick","count":2}],"duration":16,"eut":16}
 				]}""");
         // the pour target is the file id (the loader's map-key rule) — shredder, the JSON test's map
-        GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6:shredder"), tFile));
+        GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.parse("gt6:shredder"), tFile));
 
         assertEquals(tBefore + 1, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "only the resolvable row pours — the hidden-id row is skipped, not fatal");
         assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("shredder"), "the tracker mirrors the survivors");

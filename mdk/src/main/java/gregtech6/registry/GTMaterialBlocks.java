@@ -235,7 +235,7 @@ public final class GTMaterialBlocks {
 
     /** gt6 namespaced id (the GTMaterialItems:281 form; Forge backports a removal deprecation onto it). */
     private static ResourceLocation gtId(String path) {
-        return new ResourceLocation("gt6", path);
+        return ResourceLocation.fromNamespaceAndPath("gt6", path);
     }
 
     /** Query API: the block ITEM handle of a prefix x material pair, or null if not registered (GTMaterialItems:287 mirror). */

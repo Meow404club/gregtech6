@@ -567,7 +567,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theJsonWindowReopensForAReloadAndRefreezes() {
 		GT6RecipeMaps.freeze();
-		GT6RecipeMapJsonLoader.pour(Map.of(new net.minecraft.resources.ResourceLocation("gt6", "shredder"),
+		GT6RecipeMapJsonLoader.pour(Map.of(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "shredder"),
 				parse("{\"recipes\": [{\"inputs\": [{\"item\": \"minecraft:andesite\"}], \"outputs\": [{\"item\": \"minecraft:cobblestone\"}], \"duration\": 512, \"eut\": 16}]}")));
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("shredder"), "the frozen-reload row landed through the window");
 		assertEquals(GT6RecipeMaps.Phase.FROZEN, GT6RecipeMaps.phase(), "the window re-freezes on the way out");

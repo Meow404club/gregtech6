@@ -22,7 +22,7 @@ public class CoverLogisticsItemStorage extends AbstractCoverLogisticsFiltered {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/logistics/item/export"); // upstream :106
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/item/export"); // upstream :106
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/item/export"); // upstream :106
 		 *///?}

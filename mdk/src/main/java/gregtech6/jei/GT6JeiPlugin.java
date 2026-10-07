@@ -66,7 +66,7 @@ public class GT6JeiPlugin implements IModPlugin {
 	public static final String PLUGIN_UID_PATH = "jei_plugin";
 
 	/** Stable plugin uid — one constant instance, the offline test pins it against drift. */
-	public static final ResourceLocation PLUGIN_UID = new ResourceLocation("gt6", PLUGIN_UID_PATH);
+	public static final ResourceLocation PLUGIN_UID = ResourceLocation.fromNamespaceAndPath("gt6", PLUGIN_UID_PATH);
 
 	/** The live runtime, stashed by {@link #onRuntimeAvailable} for the jump face below. */
 	private static mezz.jei.api.runtime.IJeiRuntime sRuntime;

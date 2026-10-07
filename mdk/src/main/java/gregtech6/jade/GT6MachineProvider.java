@@ -114,7 +114,7 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	}
 
 	/** Provider uid（IJadeProvider.java:10 双腿抽象 getUid）——gt6 域单值，形同 GTCEu super(GTCEu.id(...))。 */
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "machine_provider");
+	private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("gt6", "machine_provider");
 
 	@Override
 	public ResourceLocation getUid() {

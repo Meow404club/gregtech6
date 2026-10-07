@@ -179,7 +179,7 @@ public class CoverDrain extends AbstractCoverDefault {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/drain/front");
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/drain/front");
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/drain/front");
 		 *///?}

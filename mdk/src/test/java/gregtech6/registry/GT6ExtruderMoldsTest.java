@@ -56,7 +56,7 @@ public class GT6ExtruderMoldsTest {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	/** The mold DR targets the vanilla item registry (the GT6FoodCans shape). */

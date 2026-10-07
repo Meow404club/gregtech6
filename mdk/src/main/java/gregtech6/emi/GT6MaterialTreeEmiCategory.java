@@ -31,7 +31,7 @@ public final class GT6MaterialTreeEmiCategory extends EmiRecipeCategory {
 	/** {@code gt6:material_tree} — mirrors the JEI category uid one-to-one (the JEMI skip key). */
 	public static ResourceLocation id() {
 		//? if forge {
-		return new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH);
+		return ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH);
 		 *///?}

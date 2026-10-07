@@ -91,10 +91,10 @@ public class GTFluidsCFoamFamilyTest extends GTOfflineTestBase {
 	@Test
 	public void theBaseFluidCarriesTheNamingRulingNotTheIC2CompatName() {
 		//? if forge {
-		assertEquals(new ResourceLocation("gt6", "cfoam"), GTFluids.CFOAM_TYPE.getId(), "the base FluidType id is gt6:cfoam (the ruling row)");
-		assertEquals(new ResourceLocation("gt6", "cfoam"), GTFluids.CFOAM.getId(), "the base source id");
-		assertEquals(new ResourceLocation("gt6", "cfoam_flowing"), GTFluids.CFOAM_FLOWING.getId(), "the base flowing id");
-		assertEquals(new ResourceLocation("gt6", "cfoam_block"), GTFluids.CFOAM_BLOCK.getId(), "the base block id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "cfoam"), GTFluids.CFOAM_TYPE.getId(), "the base FluidType id is gt6:cfoam (the ruling row)");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "cfoam"), GTFluids.CFOAM.getId(), "the base source id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "cfoam_flowing"), GTFluids.CFOAM_FLOWING.getId(), "the base flowing id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "cfoam_block"), GTFluids.CFOAM_BLOCK.getId(), "the base block id");
 		//?} else {
 		/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "cfoam"), GTFluids.CFOAM_TYPE.getId(), "the base FluidType id is gt6:cfoam (the ruling row)");
 		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "cfoam"), GTFluids.CFOAM.getId(), "the base source id");
@@ -123,11 +123,11 @@ public class GTFluidsCFoamFamilyTest extends GTOfflineTestBase {
 
 	private static void assertFamilyHandles(GTFluids.CFoamFluid tFamily) {
 		//? if forge {
-		ResourceLocation tBase = new ResourceLocation("gt6", tFamily.name());
+		ResourceLocation tBase = ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name());
 		assertEquals(tBase, tFamily.type.getId(), tFamily.name() + ": FluidType id");
 		assertEquals(tBase, tFamily.source.getId(), tFamily.name() + ": source fluid id");
-		assertEquals(new ResourceLocation("gt6", tFamily.name() + "_flowing"), tFamily.flowing.getId(), tFamily.name() + ": flowing fluid id");
-		assertEquals(new ResourceLocation("gt6", tFamily.name() + "_block"), tFamily.block.getId(), tFamily.name() + ": liquid block id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name() + "_flowing"), tFamily.flowing.getId(), tFamily.name() + ": flowing fluid id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name() + "_block"), tFamily.block.getId(), tFamily.name() + ": liquid block id");
 		//?} else {
 		/*ResourceLocation tBase = ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name());
 		assertEquals(tBase, tFamily.type.getId(), tFamily.name() + ": FluidType id");
@@ -158,9 +158,9 @@ public class GTFluidsCFoamFamilyTest extends GTOfflineTestBase {
 					tOwned.name() + ": the Loader_Fluids.java:125 compose verbatim");
 			// the item face (read-only): the sibling can ids are the same snake
 			//? if forge {
-			assertEquals(new ResourceLocation("gt6", "foam_spray_" + GTSprayCanItem.DYE_IDS[i]),
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "foam_spray_" + GTSprayCanItem.DYE_IDS[i]),
 					GT6FoamSprays.FOAM_SPRAYS.get(i).getId(), tDyed.name() + ": the foam_spray sibling id");
-			assertEquals(new ResourceLocation("gt6", "foam_spray_owned_" + GTSprayCanItem.DYE_IDS[i]),
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "foam_spray_owned_" + GTSprayCanItem.DYE_IDS[i]),
 					GT6FoamSprays.FOAM_SPRAYS_OWNED.get(i).getId(), tOwned.name() + ": the foam_spray_owned sibling id");
 			//?} else {
 			/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "foam_spray_" + GTSprayCanItem.DYE_IDS[i]),

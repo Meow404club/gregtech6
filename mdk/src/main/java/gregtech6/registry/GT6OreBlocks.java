@@ -735,7 +735,7 @@ public final class GT6OreBlocks {
     /** gt6 namespaced id (the GTStoneBlocks.java:227 fork form). */
     private static ResourceLocation gtId(String path) {
         //? if forge {
-        return new ResourceLocation("gt6", path);
+        return ResourceLocation.fromNamespaceAndPath("gt6", path);
         //?} else {
         /*return ResourceLocation.fromNamespaceAndPath("gt6", path); // 21.1: the (namespace, path) ctor is private
         *///?}

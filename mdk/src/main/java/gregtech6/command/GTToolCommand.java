@@ -149,7 +149,7 @@ public final class GTToolCommand {
 		String tSpec = aTagSpec.trim();
 		ResourceLocation tId;
 		try {
-			tId = new ResourceLocation(tSpec);
+			tId = ResourceLocation.parse(tSpec);
 		} catch (RuntimeException tError) {
 			aSource.sendFailure(Component.literal("gt6tags: invalid tag id: " + tSpec));
 			return 0;

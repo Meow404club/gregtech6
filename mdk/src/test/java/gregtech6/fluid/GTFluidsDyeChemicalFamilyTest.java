@@ -111,11 +111,11 @@ public class GTFluidsDyeChemicalFamilyTest extends GTOfflineTestBase {
 	public void registrationShapeCarriesTheFourRegistryHandles() {
 		for (GTFluids.DyeChemicalFluid tFamily : GTFluids.DYE_CHEMICALS) {
 			//? if forge {
-			ResourceLocation tBase = new ResourceLocation("gt6", tFamily.name());
+			ResourceLocation tBase = ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name());
 			assertEquals(tBase, tFamily.type.getId(), tFamily.name() + ": FluidType id");
 			assertEquals(tBase, tFamily.source.getId(), tFamily.name() + ": source fluid id");
-			assertEquals(new ResourceLocation("gt6", tFamily.name() + "_flowing"), tFamily.flowing.getId(), tFamily.name() + ": flowing fluid id");
-			assertEquals(new ResourceLocation("gt6", tFamily.name() + "_block"), tFamily.block.getId(), tFamily.name() + ": liquid block id");
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name() + "_flowing"), tFamily.flowing.getId(), tFamily.name() + ": flowing fluid id");
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name() + "_block"), tFamily.block.getId(), tFamily.name() + ": liquid block id");
 			//?} else {
 			/*ResourceLocation tBase = ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name());
 			assertEquals(tBase, tFamily.type.getId(), tFamily.name() + ": FluidType id");
@@ -127,10 +127,10 @@ public class GTFluidsDyeChemicalFamilyTest extends GTOfflineTestBase {
 		}
 		// chlorine: the same four handles
 		//? if forge {
-		assertEquals(new ResourceLocation("gt6", "chlorine"), GTFluids.CHLORINE_TYPE.getId(), "chlorine FluidType id");
-		assertEquals(new ResourceLocation("gt6", "chlorine"), GTFluids.CHLORINE.getId(), "chlorine source id");
-		assertEquals(new ResourceLocation("gt6", "chlorine_flowing"), GTFluids.CHLORINE_FLOWING.getId(), "chlorine flowing id");
-		assertEquals(new ResourceLocation("gt6", "chlorine_block"), GTFluids.CHLORINE_BLOCK.getId(), "chlorine block id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "chlorine"), GTFluids.CHLORINE_TYPE.getId(), "chlorine FluidType id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "chlorine"), GTFluids.CHLORINE.getId(), "chlorine source id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "chlorine_flowing"), GTFluids.CHLORINE_FLOWING.getId(), "chlorine flowing id");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "chlorine_block"), GTFluids.CHLORINE_BLOCK.getId(), "chlorine block id");
 		//?} else {
 		/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "chlorine"), GTFluids.CHLORINE_TYPE.getId(), "chlorine FluidType id");
 		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "chlorine"), GTFluids.CHLORINE.getId(), "chlorine source id");
@@ -153,7 +153,7 @@ public class GTFluidsDyeChemicalFamilyTest extends GTOfflineTestBase {
 					tFamily.name() + ": the Loader_Fluids.java:123 compose verbatim");
 			// the item face (read-only): the sibling can id is the same snake
 			//? if forge {
-			assertEquals(new ResourceLocation("gt6", "spray_paint_" + GTSprayCanItem.DYE_IDS[i]),
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "spray_paint_" + GTSprayCanItem.DYE_IDS[i]),
 					GT6SprayCans.SPRAY_PAINTS.get(i).getId(), tFamily.name() + ": the spray_paint sibling id");
 			//?} else {
 			/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "spray_paint_" + GTSprayCanItem.DYE_IDS[i]),

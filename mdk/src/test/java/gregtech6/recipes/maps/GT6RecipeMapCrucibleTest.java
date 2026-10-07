@@ -683,7 +683,7 @@ public class GT6RecipeMapCrucibleTest extends GTRecipesOfflineTestBase {
 			}
 			*///?}
 			MaterialPrefixItem rItem = aCreator.get();
-			net.minecraft.core.Registry.register(tRegistry, new ResourceLocation("gt6", aProbeId), rItem);
+			net.minecraft.core.Registry.register(tRegistry, ResourceLocation.fromNamespaceAndPath("gt6", aProbeId), rItem);
 			return rItem;
 		}
 

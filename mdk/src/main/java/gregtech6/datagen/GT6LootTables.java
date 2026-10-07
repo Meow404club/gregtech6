@@ -392,7 +392,7 @@ public final class GT6LootTables extends LootTableProvider {
                 if (tKind == GT6TreeKind.WILLOW || tKind == GT6TreeKind.BLUE_MAHOE || tKind == GT6TreeKind.HAZEL) {
                     //? if forge {
                     Item tStick = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
-                            new ResourceLocation(GT6DataGenerators.MOD_ID, "stick_" + tKind.snake()));
+                            ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "stick_" + tKind.snake()));
                     //?} else {
                     /*Item tStick = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
                             ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "stick_" + tKind.snake()));
@@ -3403,7 +3403,7 @@ public final class GT6LootTables extends LootTableProvider {
         //? if forge {
         public void generate(java.util.function.BiConsumer<ResourceLocation, LootTable.Builder> aOutput) {
             for (GT6LootInjectionDatagen.WeightRow tRow : GT6LootInjectionDatagen.weightTables()) {
-                aOutput.accept(new ResourceLocation("gt6", "chests/" + tRow.name()), table(tRow));
+                aOutput.accept(ResourceLocation.fromNamespaceAndPath("gt6", "chests/" + tRow.name()), table(tRow));
             }
         }
         //?} else {
@@ -3418,7 +3418,7 @@ public final class GT6LootTables extends LootTableProvider {
         /** The {@code gt6:chests/<name>} id — the two-arg ctor is forge-only (the 21.1 removal). */
         private static ResourceLocation tableId(String aName) {
             //? if forge {
-            return new ResourceLocation("gt6", "chests/" + aName);
+            return ResourceLocation.fromNamespaceAndPath("gt6", "chests/" + aName);
             //?} else {
             /*return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "chests/" + aName);
             *///?}
@@ -3457,7 +3457,7 @@ public final class GT6LootTables extends LootTableProvider {
         /** The table id — the two-arg ctor is forge-only (the 21.1 removal). */
         public static ResourceLocation tableId() {
             //? if forge {
-            return new ResourceLocation("gt6", "chests/dungeon_chest");
+            return ResourceLocation.fromNamespaceAndPath("gt6", "chests/dungeon_chest");
             //?} else {
             /*return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "chests/dungeon_chest");
             *///?}

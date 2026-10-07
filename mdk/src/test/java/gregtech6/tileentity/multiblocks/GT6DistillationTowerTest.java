@@ -396,7 +396,7 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 		}
 		for (int i = 0; i < tBuilt.length; i++) {
 			net.minecraftforge.registries.ForgeRegistries.FLUIDS.register(
-					new net.minecraft.resources.ResourceLocation("gt6", "tower_stand_in_" + i), tBuilt[i]);
+					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "tower_stand_in_" + i), tBuilt[i]);
 		}
 		//?} else {
 		/*// 21.1: no delegates — the vanilla register face is enough (the built-in holder

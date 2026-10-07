@@ -191,7 +191,7 @@ final class GT6MaterialItemsLookup {
     static void stub(Set<GTMaterialItems.PrefixMaterial> aKept) {
         sOriginal = GTMaterialItems.sLookup;
         net.minecraftforge.registries.RegistryObject<net.minecraft.world.item.Item> tStick =
-                net.minecraftforge.registries.RegistryObject.create(new net.minecraft.resources.ResourceLocation("minecraft", "stick"),
+                net.minecraftforge.registries.RegistryObject.create(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "stick"),
                         net.minecraft.core.registries.Registries.ITEM, "minecraft");
         GTMaterialItems.sLookup = (aPrefix, aMaterial) ->
                 aKept.contains(new GTMaterialItems.PrefixMaterial(aPrefix, aMaterial)) && GT6ModDrivers.isVisible(aMaterial) ? tStick : null;

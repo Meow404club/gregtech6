@@ -32,9 +32,9 @@ public class GTOreBakedModelLazyBakeTest {
 	/** Counting null stub — every apply is one sprite lookup (3 per bake: base + pass-0 overlay + pass-1 outline). */
 	private static GTOreBakedModel countedModel(AtomicInteger aLookups) {
 		return new GTOreBakedModel(null,
-				new Params(new ResourceLocation("gt6", "block/stones/granite/stone"),
-						new ResourceLocation("gt6", "block/ore_copper"),
-						new ResourceLocation("gt6", "block/ore_copper_overlay"), 0xFFA07828),
+				new Params(ResourceLocation.fromNamespaceAndPath("gt6", "block/stones/granite/stone"),
+						ResourceLocation.fromNamespaceAndPath("gt6", "block/ore_copper"),
+						ResourceLocation.fromNamespaceAndPath("gt6", "block/ore_copper_overlay"), 0xFFA07828),
 				aMaterial -> {
 					aLookups.incrementAndGet();
 					return null;

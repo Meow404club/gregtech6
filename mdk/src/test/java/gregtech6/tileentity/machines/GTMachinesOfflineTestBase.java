@@ -160,7 +160,7 @@ public abstract class GTMachinesOfflineTestBase extends GTRecipesOfflineTestBase
 		TestRecipeManager tManager = new TestRecipeManager();
 		JsonObject tJson = new Gson().fromJson(VANILLA_GLASS_RECIPE_JSON, JsonObject.class);
 		Map<ResourceLocation, JsonElement> tMap = new HashMap<>();
-		tMap.put(new ResourceLocation("minecraft", "glass"), tJson);
+		tMap.put(ResourceLocation.fromNamespaceAndPath("minecraft", "glass"), tJson);
 		tManager.load(tMap);
 		return new MachineLevel(tManager);
 	}

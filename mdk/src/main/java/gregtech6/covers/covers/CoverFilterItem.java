@@ -62,10 +62,10 @@ public class CoverFilterItem extends AbstractCoverDefault {
 	public static final String FILTER_KEY = "gt.filter.item";
 
 	/** The atlas sprite of the whitelist plate — visual 0. */
-	public static final ResourceLocation SPRITE_WHITELIST = new ResourceLocation("gt6", "block/filteritem/normal");
+	public static final ResourceLocation SPRITE_WHITELIST = ResourceLocation.fromNamespaceAndPath("gt6", "block/filteritem/normal");
 
 	/** The atlas sprite of the blacklist plate — visual 1. */
-	public static final ResourceLocation SPRITE_BLACKLIST = new ResourceLocation("gt6", "block/filteritem/inverted");
+	public static final ResourceLocation SPRITE_BLACKLIST = ResourceLocation.fromNamespaceAndPath("gt6", "block/filteritem/inverted");
 
 	/**
 	 * Upstream :95/:100/:104 — the filter-lane write for the held stack: the vanilla

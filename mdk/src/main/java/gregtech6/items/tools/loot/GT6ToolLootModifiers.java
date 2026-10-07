@@ -376,7 +376,7 @@ public final class GT6ToolLootModifiers {
 		if (tMaterial == null) return null;
 		//? if forge {
 		return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
-				new net.minecraft.resources.ResourceLocation("gt6", "rock_gt_" + tMaterial));
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "rock_gt_" + tMaterial));
 		//?} else {
 		/*return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
 				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "rock_gt_" + tMaterial));

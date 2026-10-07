@@ -47,10 +47,10 @@ import gregtech6.tooltip.GT6TooltipStyle;
 public class CoverShutter extends AbstractCoverDefault {
 
 	/** The atlas sprite of the normal (default-open) plate — visual 0. */
-	public static final ResourceLocation SPRITE_NORMAL = new ResourceLocation("gt6", "block/shutter/normal");
+	public static final ResourceLocation SPRITE_NORMAL = ResourceLocation.fromNamespaceAndPath("gt6", "block/shutter/normal");
 
 	/** The atlas sprite of the inverted (default-closed) plate — visual 1. */
-	public static final ResourceLocation SPRITE_INVERTED = new ResourceLocation("gt6", "block/shutter/inverted");
+	public static final ResourceLocation SPRITE_INVERTED = ResourceLocation.fromNamespaceAndPath("gt6", "block/shutter/inverted");
 
 	/**
 	 * Upstream :82-85 verbatim — the closed predicate shared by the four intercepts:

@@ -498,14 +498,14 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 
 	private static void assertPartsArrowFill(ProgressDrawable aDrawable, ProgressDrawable.Direction aDirection, String aWhat) {
 		UITexture tFill = assertInstanceOf(UITexture.class, aDrawable.getFilledTexture(), aWhat + ": the fill is a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/parts/arrow_forward_20x18.png"), tFill.location(),
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/parts/arrow_forward_20x18.png"), tFill.location(),
 				aWhat + ": the fill is the amazawa arrow part");
 		assertEquals(aDirection, aDrawable.getDirection(), aWhat + ": the mapped direction");
 		// the empty face: the arrow CELL part (composed-ui-energy-slot-and-parts — the
 		// fill-only form read as 进度箭头缺失 on an idle cell; the outline is the skins'
 		// (78,24) print, part 13)
 		UITexture tEmpty = assertInstanceOf(UITexture.class, aDrawable.getEmptyBackground(), aWhat + ": the empty cell is a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/parts/arrow_outline_20x18.png"), tEmpty.location(),
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/parts/arrow_outline_20x18.png"), tEmpty.location(),
 				aWhat + ": the empty cell is the amazawa arrow outline");
 	}
 
@@ -613,7 +613,7 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		for (String tName : new String[] {"fluid_in_0", "fluid_out_0", "fluid_out_1"}) {
 			FluidDisplayWidget tSeat = (FluidDisplayWidget) named(tPanel, tName);
 			UITexture tFrame = assertInstanceOf(UITexture.class, tSeat.getBackground(), tName + ": the frame is a texture");
-			assertEquals(new ResourceLocation("gt6", "textures/gui/parts/slot_fluid_18x19.png"), tFrame.location(),
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/parts/slot_fluid_18x19.png"), tFrame.location(),
 					tName + ": the amazawa droplet frame");
 			assertTrue(tSeat.isDisableThemeBackground(), tName + ": the theme fluidSlot frame is disabled (no double frame)");
 		}
@@ -641,7 +641,7 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		tDrawableField.setAccessible(true);
 		UITexture tGearArt = assertInstanceOf(UITexture.class, tDrawableField.get(tGearWidget),
 				"the gear-slot cell draws a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/parts/slot_special_22x22.png"), tGearArt.location(),
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/parts/slot_special_22x22.png"), tGearArt.location(),
 				"the amazawa special-slot (gear) part");
 		// decor only: no ItemSlot anywhere near the print — the content topology is pinned
 		// by the 13/3-seat tests, this is the no-double-seat guard

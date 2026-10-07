@@ -79,7 +79,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
     /** The tag key of a tree ({@code #gt6:trees/<snake>}) — GT6WorldgenDatagen references the same composition. */
     public static TagKey<Biome> treeTag(String aTreeSnake) {
         return TagKey.create(Registries.BIOME,
-                new ResourceLocation(GT6DataGenerators.MOD_ID, "trees/" + aTreeSnake));
+                ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "trees/" + aTreeSnake));
     }
 
     /**
@@ -134,7 +134,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
     }
 
     private static ResourceKey<Biome> biome(String aName) {
-        return ResourceKey.create(Registries.BIOME, new ResourceLocation("minecraft", aName));
+        return ResourceKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("minecraft", aName));
     }
 
     /**

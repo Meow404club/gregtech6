@@ -63,7 +63,7 @@ public class GT6SurfaceRockMaterialLinkTest extends GTOfflineTestBase {
 		} catch (Throwable ignored) {
 			// the NetworkHooks tail is expected offline; registries are usable by now
 		}
-		ourItemsRegistered = BuiltInRegistries.ITEM.containsKey(new ResourceLocation("gt6", "rock_gt_iron"));
+		ourItemsRegistered = BuiltInRegistries.ITEM.containsKey(ResourceLocation.fromNamespaceAndPath("gt6", "rock_gt_iron"));
 		// The hermetic bracket (reset-first, task hermetic-fml-seam-generation): the material
 		// universe is class-local on BOTH legs — a prior batch class's materials() reflow
 		// cannot leave a stale generation here. Replaces the offline-only reflection arm

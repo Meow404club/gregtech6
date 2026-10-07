@@ -292,7 +292,7 @@ public final class GTWrenchGridRenderer {
 				? new float[][] { { 0, 1 }, { 0, 0 }, { 1, 0 }, { 1, 1 } }
 				: new float[][] { { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 } };
 		VertexConsumer tBuffer = aBuffers.getBuffer(
-				RenderType.text(new ResourceLocation(GTRenderModelListener.MOD_ID, aIcon.texturePath)));
+				RenderType.text(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, aIcon.texturePath)));
 		for (int tCorner = 0; tCorner < 4; tCorner++) {
 			float[] tP = tQuads[tCorner];
 			// single-arg .color(int) is NOT in the swap table (p22 narrowing): regex cannot

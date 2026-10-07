@@ -81,10 +81,10 @@ public final class GTRodClientListener {
 	 * {@link gregtech6.client.wire.GTWireTextures} since pipe-render-closeout — the
 	 * shared dispatch seam with the datagen walk).
 	 */
-	private static final ResourceLocation PIPE_RESTRICTOR = new ResourceLocation("gt6", "block/iconsets/pipe_restrictor");
-	private static final ResourceLocation LOGISTICS_WIRE = new ResourceLocation("gt6", "block/iconsets/logistics_wire");
-	private static final ResourceLocation LOGISTICS_WIRE_OVERLAY = new ResourceLocation("gt6", "block/iconsets/logistics_wire_overlay");
-	private static final ResourceLocation AXLE = new ResourceLocation("gt6", "block/axle");
+	private static final ResourceLocation PIPE_RESTRICTOR = ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/pipe_restrictor");
+	private static final ResourceLocation LOGISTICS_WIRE = ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/logistics_wire");
+	private static final ResourceLocation LOGISTICS_WIRE_OVERLAY = ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/logistics_wire_overlay");
+	private static final ResourceLocation AXLE = ResourceLocation.fromNamespaceAndPath("gt6", "block/axle");
 
 	@SubscribeEvent
 	public static void onClientSetup(net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent aEvent) {

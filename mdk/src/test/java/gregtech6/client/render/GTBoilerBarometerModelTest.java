@@ -88,16 +88,16 @@ public class GTBoilerBarometerModelTest extends GTOfflineRenderTestBase {
 	@Test
 	void dialThenNeedleCarryTheUpstreamSpriteIds() {
 		List<GaugePlan> tPlans = GTBoilerBarometerModel.planGaugeQuads(Direction.NORTH, Direction.NORTH, 7);
-		assertEquals(new ResourceLocation("gt6", "block/barometer/base"), tPlans.get(0).sprite(), "the dial");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/barometer/base"), tPlans.get(0).sprite(), "the dial");
 		assertFalse(tPlans.get(0).needle());
-		assertEquals(new ResourceLocation("gt6", "block/barometer/07"), tPlans.get(1).sprite(), "the zero-padded needle state");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/barometer/07"), tPlans.get(1).sprite(), "the zero-padded needle state");
 		assertTrue(tPlans.get(1).needle());
 		// the needle index binds: 0 and 31 are the upstream BAROMETER_SCALE bounds, out-of-range
 		// clamps (the :232 &31 mask family)
-		assertEquals(new ResourceLocation("gt6", "block/barometer/00"), GTBoilerBarometerModel.needleSprite(0));
-		assertEquals(new ResourceLocation("gt6", "block/barometer/31"), GTBoilerBarometerModel.needleSprite(31));
-		assertEquals(new ResourceLocation("gt6", "block/barometer/31"), GTBoilerBarometerModel.needleSprite(42));
-		assertEquals(new ResourceLocation("gt6", "block/barometer/00"), GTBoilerBarometerModel.needleSprite(-3));
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/barometer/00"), GTBoilerBarometerModel.needleSprite(0));
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/barometer/31"), GTBoilerBarometerModel.needleSprite(31));
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/barometer/31"), GTBoilerBarometerModel.needleSprite(42));
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/barometer/00"), GTBoilerBarometerModel.needleSprite(-3));
 	}
 
 	@Test

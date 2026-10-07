@@ -43,7 +43,7 @@ public class GT6FoodCansTest {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	/** The tab DR targets the vanilla creative-tab registry (the GT6SprayCans shape). */

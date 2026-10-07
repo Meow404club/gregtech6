@@ -51,7 +51,7 @@ import gregtech6.tileentity.tank.GTBarrelPlasticBlockEntity;
 public class GTBarrelFamilyTest extends GTOfflineTestBase {
 
 	static final BlockPos POS = new BlockPos(2, 3, 4);
-	static final ResourceLocation TEST_SPRITE = new ResourceLocation("gt6", "block/cover/test_plate");
+	static final ResourceLocation TEST_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_plate");
 
 	static BlockEntityType<GTBarrelBlockEntity> sWoodType;
 	static BlockEntityType<GTBarrelPlasticBlockEntity> sPlasticType;

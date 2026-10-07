@@ -78,9 +78,9 @@ public class GTOreBakedModelTintTest {
 	/** The chalcopyrite-set params triple (base + pass-0 + pass-1 sprite ids), the tint aside. */
 	private static GTOreBakedModel.Params chalcopyriteParams(int aTint) {
 		return new GTOreBakedModel.Params(
-				new ResourceLocation("gt6", "block/stones/granite/stone"),
-				new ResourceLocation("gt6", "block/materialicons/chalcopyrite/ore_small"),
-				new ResourceLocation("gt6", "block/materialicons/chalcopyrite/ore_small_overlay"), aTint);
+				ResourceLocation.fromNamespaceAndPath("gt6", "block/stones/granite/stone"),
+				ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/chalcopyrite/ore_small"),
+				ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/chalcopyrite/ore_small_overlay"), aTint);
 	}
 
 	/** The core pin: the overlay vertices carry colour x tint, the base stays byte-white, both drop tintIndex 0. */

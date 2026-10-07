@@ -242,7 +242,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 		// the background rides the tower's mGUIPath (the borrowed PNG pair)
 		UITexture tBackground = assertInstanceOf(UITexture.class, tPanel.getBackground(), "the panel background is a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/machines/distillationtower.png"), tBackground.location(),
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/distillationtower.png"), tBackground.location(),
 				"the tower background path (the row-less fixture defaults the HU tower name)");
 	}
 

@@ -91,7 +91,7 @@ public final class GT6FluidProvider implements IServerExtensionProvider<TileEnti
 	 * Provider uid。v1（block component 面）沿用过的 gt6:fluid_provider 语义已随 v1 退役；
 	 * universal 链下它 = 服务端写的 {@code JadeFluidStorageUid} 与客户端 provider map 的对合键。
 	 */
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "fluid_storage");
+	private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("gt6", "fluid_storage");
 
 	/**
 	 * 客户端 decorator：ViewGroup.id → 组标题（双腿 ClientViewGroup.map 第三参同形；

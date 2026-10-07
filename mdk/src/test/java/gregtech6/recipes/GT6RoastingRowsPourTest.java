@@ -121,7 +121,7 @@ public class GT6RoastingRowsPourTest extends GTRecipesOfflineTestBase {
 		try (InputStream tStream = GT6RoastingRowsPourTest.class.getResourceAsStream(tPath)) {
 			assertNotNull(tStream, "the shipped roasting.json rides the test classpath");
 			String tJson = new String(tStream.readAllBytes(), StandardCharsets.UTF_8);
-			GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", "roasting"), JsonParser.parseString(tJson)));
+			GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", "roasting"), JsonParser.parseString(tJson)));
 		}
 		// the b2-residual-maps additions grew the file: 5 corrected Boudouard + 5 oxide + 5 combustion
 		assertEquals(15, GT6RecipeMapJsonLoader.pouredCount("roasting"), "the fifteen rows poured under the roasting key");

@@ -417,7 +417,7 @@ public class GTDieselEngineBlockEntity extends TileEntityBase03TicksAndSync impl
 	 */
 	private void pushExhaustToBackTank() {
 		if (!hasLevel() || getLevel().isClientSide()) return;
-		Fluid tCO2 = ForgeRegistries.FLUIDS.getValue(new ResourceLocation("gt6", "carbon_dioxide"));
+		Fluid tCO2 = ForgeRegistries.FLUIDS.getValue(ResourceLocation.fromNamespaceAndPath("gt6", "carbon_dioxide"));
 		if (tCO2 == null) return; // the FL.exists semantics: no registered fluid, nothing can leave as a stack
 		BlockEntity tNeighbor = getLevel().getBlockEntity(getBlockPos().relative(back()));
 		if (tNeighbor == null || tNeighbor.isRemoved()) return;

@@ -17,7 +17,7 @@ public class CoverLogisticsFluidStorage extends AbstractCoverLogisticsFluid {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/logistics/fluid/storage"); // upstream (the family texture path)
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/fluid/storage"); // upstream (the family texture path)
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/fluid/storage"); // upstream (the family texture path)
 		 *///?}

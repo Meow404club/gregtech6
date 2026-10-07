@@ -50,7 +50,7 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		mCategory = aCategory;
 		mEnergyCarrier = gregtech6.jei.GT6RecipeMapViewerMeta.energyOf(aMap);
 		//? if forge {
-		mId = new ResourceLocation("gt6", "recipe_map/" + aMap.mNameInternal + "/" + aSortedIndex);
+		mId = ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal + "/" + aSortedIndex);
 		//?} else {
 		/*mId = ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal + "/" + aSortedIndex);
 		 *///?}

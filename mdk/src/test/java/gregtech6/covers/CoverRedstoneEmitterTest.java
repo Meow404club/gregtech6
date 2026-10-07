@@ -307,7 +307,7 @@ public class CoverRedstoneEmitterTest extends GTCoverTestBase {
 			tData.visual(FACE, (short) tTier, false);
 			assertEquals("gt6:block/redstone_emitter/" + tTier, tEmitter.getCoverTextureSurface(FACE, tData).toString(),
 					"the tier maps onto its sprite");
-			assertEquals(new net.minecraft.resources.ResourceLocation("gt6", CoverRedstoneEmitter.SPRITE_PATH + tTier),
+			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", CoverRedstoneEmitter.SPRITE_PATH + tTier),
 					CoverRedstoneEmitter.spriteForTier(tTier), "the pure sprite function");
 		}
 	}

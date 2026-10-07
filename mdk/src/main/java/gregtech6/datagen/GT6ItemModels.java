@@ -798,7 +798,7 @@ public final class GT6ItemModels extends ItemModelProvider {
             .texture("layer0", modLoc("item/integrated_circuit/0"));
         for (int i = 24; i >= 0; i--) {
             tCircuit = tCircuit.override()
-                .predicate(new ResourceLocation("gt6", "config"), i)
+                .predicate(ResourceLocation.fromNamespaceAndPath("gt6", "config"), i)
                 .model(new ModelFile.UncheckedModelFile(modLoc("item/integrated_circuit/config_" + i)))
                 .end();
         }
@@ -1050,7 +1050,7 @@ public final class GT6ItemModels extends ItemModelProvider {
     /** The unchecked parent reference (the GT6BlockStates turbine form) — cross-provider block models generated later. */
     private void withExistingParentUnchecked(String aItemId, String aBlockModelPath) {
         getBuilder(aItemId).parent(new net.minecraftforge.client.model.generators.ModelFile.UncheckedModelFile(
-                new net.minecraft.resources.ResourceLocation(GT6DataGenerators.MOD_ID, aBlockModelPath)));
+                net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, aBlockModelPath)));
     }
 
     /**

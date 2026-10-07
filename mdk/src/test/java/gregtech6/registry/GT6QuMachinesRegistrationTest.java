@@ -115,17 +115,17 @@ public class GT6QuMachinesRegistrationTest {
 	/** The containment half (live leg) / the payload+mount half (offline leg) — the logistics two-leg form. */
 	@Test
 	public void registriesContainAndMountTheFourRungs() {
-		boolean tLive = BuiltInRegistries.BLOCK.containsKey(new ResourceLocation("gt6", "replicator"));
+		boolean tLive = BuiltInRegistries.BLOCK.containsKey(ResourceLocation.fromNamespaceAndPath("gt6", "replicator"));
 		String[] tPaths = {"molecular_scanner_t3", "replicator", "replicator_t2", "replicator_t3"};
 		if (tLive) { // the FML-booted leg — the id686 guard
 			GT6RecipeMaps.reset(); // hermetic: retire boot/sibling generations first (task hermetic-pour-tests)
 			GT6RecipeMaps.init(); // idempotent — the exoticMachine body reads the row's map supplier at BE creation
 			for (String tPath : tPaths) {
-				ResourceLocation tId = new ResourceLocation("gt6", tPath);
+				ResourceLocation tId = ResourceLocation.fromNamespaceAndPath("gt6", tPath);
 				assertTrue(BuiltInRegistries.BLOCK.containsKey(tId), "block face registered: " + tPath);
 				assertTrue(BuiltInRegistries.ITEM.containsKey(tId), "item face registered: " + tPath);
 				String tBetPath = tPath.startsWith("molecular") ? "molecular_scanner" : "replicator";
-				BlockEntityType<?> tType = BuiltInRegistries.BLOCK_ENTITY_TYPE.get(new ResourceLocation("gt6", tBetPath));
+				BlockEntityType<?> tType = BuiltInRegistries.BLOCK_ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("gt6", tBetPath));
 				assertNotNull(tType, "BET face registered: " + tPath);
 				BlockEntity tCreated = tType.create(POS, BuiltInRegistries.BLOCK.get(tId).defaultBlockState());
 				assertInstanceOf(TileEntityBasicMachine.class, tCreated, "the BET builds the machine BE: " + tPath);

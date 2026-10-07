@@ -17,7 +17,7 @@ public class CoverLogisticsFluidExport extends AbstractCoverLogisticsFluid {
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/logistics/fluid/export"); // upstream :111
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/fluid/export"); // upstream :111
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/fluid/export"); // upstream :111
 		 *///?}

@@ -37,7 +37,7 @@ import gregtech6.covers.CoverData;
 public class CoverCrafting extends CoverTextureSimple {
 
 	//? if forge {
-	public static final ResourceLocation CRAFTING_SPRITE = new ResourceLocation("gt6", "block/crafting/0");
+	public static final ResourceLocation CRAFTING_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/crafting/0");
 	//?} else {
 	/*public static final ResourceLocation CRAFTING_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/crafting/0");
 	 *///?}

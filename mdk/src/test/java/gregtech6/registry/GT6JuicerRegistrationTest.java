@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GT6JuicerRegistrationTest {
 
-	private static final ResourceLocation JUICER_ID = new ResourceLocation("gt6", "juicer");
-	private static final ResourceLocation JUICER_BE_ID = new ResourceLocation("gt6", "juicer");
+	private static final ResourceLocation JUICER_ID = ResourceLocation.fromNamespaceAndPath("gt6", "juicer");
+	private static final ResourceLocation JUICER_BE_ID = ResourceLocation.fromNamespaceAndPath("gt6", "juicer");
 	private static final BlockPos POS = new BlockPos(2, 2, 3);
 
 	@BeforeAll

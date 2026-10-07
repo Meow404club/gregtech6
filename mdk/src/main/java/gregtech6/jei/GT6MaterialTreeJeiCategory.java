@@ -82,7 +82,7 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 
 	public GT6MaterialTreeJeiCategory() {
 		//? if forge {
-		mRecipeType = new RecipeType<>(new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), MaterialTreeDisplay.class);
+		mRecipeType = new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), MaterialTreeDisplay.class);
 		//?} else {
 		/*mRecipeType = new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), MaterialTreeDisplay.class);
 		 *///?}

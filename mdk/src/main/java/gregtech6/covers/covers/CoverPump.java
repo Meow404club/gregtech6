@@ -60,14 +60,14 @@ public class CoverPump extends AbstractCoverDefault {
 
 	/** The atlas sprite of the out-facing plate (visual 0). */
 	//? if forge {
-	public static final ResourceLocation PUMP_OUT_SPRITE = new ResourceLocation("gt6", "block/cover_pump_out");
+	public static final ResourceLocation PUMP_OUT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_out");
 	//?} else {
 	/*public static final ResourceLocation PUMP_OUT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_out");
 	 *///?}
 
 	/** The atlas sprite of the in-facing plate (visual 1). */
 	//? if forge {
-	public static final ResourceLocation PUMP_IN_SPRITE = new ResourceLocation("gt6", "block/cover_pump_in");
+	public static final ResourceLocation PUMP_IN_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_in");
 	//?} else {
 	/*public static final ResourceLocation PUMP_IN_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_in");
 	 *///?}

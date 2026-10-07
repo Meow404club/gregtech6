@@ -88,7 +88,7 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	private static BlockState state(net.minecraft.world.level.block.Block aBlock) {

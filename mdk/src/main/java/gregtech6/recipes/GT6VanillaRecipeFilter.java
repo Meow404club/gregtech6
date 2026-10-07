@@ -112,12 +112,12 @@ public final class GT6VanillaRecipeFilter {
 	 */
 	public static final ImmutableSet<ResourceLocation> REMOVAL_IDS = ImmutableSet.of(
 			//? if forge {
-			new ResourceLocation("minecraft", "cake"),
-			new ResourceLocation("minecraft", "water_bucket"),
-			new ResourceLocation("minecraft", "milk_bucket"),
-			new ResourceLocation("minecraft", "cookie"),
-			new ResourceLocation("minecraft", "golden_apple"),
-			new ResourceLocation("minecraft", "golden_carrot")
+			ResourceLocation.fromNamespaceAndPath("minecraft", "cake"),
+			ResourceLocation.fromNamespaceAndPath("minecraft", "water_bucket"),
+			ResourceLocation.fromNamespaceAndPath("minecraft", "milk_bucket"),
+			ResourceLocation.fromNamespaceAndPath("minecraft", "cookie"),
+			ResourceLocation.fromNamespaceAndPath("minecraft", "golden_apple"),
+			ResourceLocation.fromNamespaceAndPath("minecraft", "golden_carrot")
 		//?} else {
 		/*ResourceLocation.fromNamespaceAndPath("minecraft", "cake"),
 		ResourceLocation.fromNamespaceAndPath("minecraft", "water_bucket"),

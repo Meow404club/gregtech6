@@ -83,8 +83,8 @@ class GT6DistillTowerSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void theTwoFilesPourThroughTheLoaderSeam() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
-		tData.put(new ResourceLocation("gt6", "distillationtower"), resource("distillationtower.json"));
-		tData.put(new ResourceLocation("gt6", "cryodistillationtower"), resource("cryodistillationtower.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "distillationtower"), resource("distillationtower.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "cryodistillationtower"), resource("cryodistillationtower.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		// the review-round ratchet: the tower file pours the SIX :352-:360 true rows (the
@@ -99,7 +99,7 @@ class GT6DistillTowerSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		// input-tank snapshot, size mInputMax — the oil stand-in rides the ALL rows share one
 		// input face shape (25 L), so the lookup resolves a true row and the shared faces pin
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
-		tData.put(new ResourceLocation("gt6", "distillationtower"), resource("distillationtower.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "distillationtower"), resource("distillationtower.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		Recipe tFound = GT6RecipeMaps.DISTILLATION_TOWER.findRecipe(null, 1024, ItemStack.EMPTY,

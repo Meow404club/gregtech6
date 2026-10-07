@@ -69,7 +69,7 @@ public class CrowbarTest {
 	@BeforeEach
 	void putCoverFixtures() {
 		CoverRegistry.reset();
-		CoverRegistry.put(Items.IRON_INGOT, new CoverTextureSimple(new ResourceLocation("gt6", "block/cover/test_plate")));
+		CoverRegistry.put(Items.IRON_INGOT, new CoverTextureSimple(ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_plate")));
 	}
 
 	@AfterEach

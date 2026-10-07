@@ -61,14 +61,14 @@ public class CoverFilterFluid extends AbstractCoverDefault {
 
 	/** The atlas sprite of the whitelist plate — visual 0 (upstream sTextureNormal, :139). */
 	//? if forge {
-	public static final ResourceLocation SPRITE_WHITELIST = new ResourceLocation("gt6", "block/filterfluid/normal");
+	public static final ResourceLocation SPRITE_WHITELIST = ResourceLocation.fromNamespaceAndPath("gt6", "block/filterfluid/normal");
 	//?} else {
 	/*public static final ResourceLocation SPRITE_WHITELIST = ResourceLocation.fromNamespaceAndPath("gt6", "block/filterfluid/normal");
 	 *///?}
 
 	/** The atlas sprite of the blacklist plate — visual 1 (upstream sTextureInverted, :138). */
 	//? if forge {
-	public static final ResourceLocation SPRITE_BLACKLIST = new ResourceLocation("gt6", "block/filterfluid/inverted");
+	public static final ResourceLocation SPRITE_BLACKLIST = ResourceLocation.fromNamespaceAndPath("gt6", "block/filterfluid/inverted");
 	//?} else {
 	/*public static final ResourceLocation SPRITE_BLACKLIST = ResourceLocation.fromNamespaceAndPath("gt6", "block/filterfluid/inverted");
 	 *///?}

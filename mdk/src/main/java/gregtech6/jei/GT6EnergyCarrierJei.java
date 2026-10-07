@@ -79,7 +79,7 @@ public final class GT6EnergyCarrierJei {
 		@Override
 		public ResourceLocation getResourceLocation(TagData aCarrier) {
 			String tPath = idPath(aCarrier); // paren-free local — the ctor swap's regex forbids parens in the arg
-			return new ResourceLocation("gt6", tPath);
+			return ResourceLocation.fromNamespaceAndPath("gt6", tPath);
 		}
 
 		@Override

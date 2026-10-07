@@ -69,7 +69,7 @@ class GT6HiveLootTest {
 	/** The FML-booted containment latch: the bare-JVM leg cannot even construct a mod item. */
 	static boolean beeItemsLive() {
 		//? if forge {
-		return BuiltInRegistries.ITEM.containsKey(new ResourceLocation("gt6", "bumble_drone"));
+		return BuiltInRegistries.ITEM.containsKey(ResourceLocation.fromNamespaceAndPath("gt6", "bumble_drone"));
 		//?} else {
 		/*return BuiltInRegistries.ITEM.containsKey(ResourceLocation.fromNamespaceAndPath("gt6", "bumble_drone"));
 		 *///?}

@@ -31,7 +31,7 @@ public class CoverScaleProgress extends AbstractCoverAttachmentScale {
 
 	/** The sprite id; static so the tables stay registry-free. */
 	public static ResourceLocation sprite() {
-		return new ResourceLocation("gt6", SPRITE_PATH);
+		return ResourceLocation.fromNamespaceAndPath("gt6", SPRITE_PATH);
 	}
 
 	/** Upstream :36 — the progress-face carrier (the ported machine-form mapping) only. */

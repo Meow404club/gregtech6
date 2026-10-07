@@ -36,7 +36,7 @@ public final class GTWireTextures {
 
 	/** The borrowed wire texture id of one set: {@code gt6:block/materialicons/<set>/wire}. */
 	public static net.minecraft.resources.ResourceLocation wireSprite(String aSet) {
-		return new net.minecraft.resources.ResourceLocation("gt6", "block/materialicons/" + aSet + "/wire");
+		return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/" + aSet + "/wire");
 	}
 
 	/**
@@ -61,7 +61,7 @@ public final class GTWireTextures {
 	/** The borrowed pipe-side base id of one material: {@code gt6:block/materialicons/<art set>/pipe_side}. */
 	public static net.minecraft.resources.ResourceLocation pipeSideSprite(@Nullable OreDictMaterial aMaterial) {
 		String tPath = "block/materialicons/" + pipeArtSetOf(aMaterial) + "/pipe_side";
-		return new net.minecraft.resources.ResourceLocation("gt6", tPath);
+		return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public final class GTWireTextures {
 		String tSize = aDiameterPx < 5 ? "tiny" : aDiameterPx < 7 ? "small" : aDiameterPx < 9 ? "medium"
 				: aDiameterPx < 13 ? "large" : "huge";
 		String tPath = "block/materialicons/" + pipeArtSetOf(aMaterial) + "/pipe_" + tSize;
-		return new net.minecraft.resources.ResourceLocation("gt6", tPath);
+		return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public final class GTWireTextures {
 	 * unchanged (the tex-pipe-textures two-pass form).
 	 */
 	public static final net.minecraft.resources.ResourceLocation PIPE_SIDE_OVERLAY_SPRITE =
-			new net.minecraft.resources.ResourceLocation("gt6", "block/materialicons/copper/pipe_side_overlay");
+			net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/copper/pipe_side_overlay");
 
 	/**
 	 * The laser family's fixed texture pair (task wire-fiber-texture) — the borrowed
@@ -103,11 +103,11 @@ public final class GTWireTextures {
 	 * BlockTextureDefault(FIBER_WIRE_OVERLAY))}, no glow layer.
 	 */
 	public static net.minecraft.resources.ResourceLocation fiberSprite() {
-		return new net.minecraft.resources.ResourceLocation("gt6", "block/iconsets/fiber_wire");
+		return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/fiber_wire");
 	}
 
 	/** The untinted overlay half of the laser pair ({@code FIBER_WIRE_OVERLAY}). */
 	public static net.minecraft.resources.ResourceLocation fiberOverlaySprite() {
-		return new net.minecraft.resources.ResourceLocation("gt6", "block/iconsets/fiber_wire_overlay");
+		return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/fiber_wire_overlay");
 	}
 }

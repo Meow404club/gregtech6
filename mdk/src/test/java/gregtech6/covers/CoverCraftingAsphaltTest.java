@@ -234,7 +234,7 @@ public class CoverCraftingAsphaltTest extends GTCoverTestBase {
 
 	private static ResourceLocation rid(String aPath) {
 		//? if forge {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		 *///?}

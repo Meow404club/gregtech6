@@ -398,7 +398,7 @@ public class TileEntityBedrockDrill extends TileEntityBase10MultiBlockBase imple
 		if (aFluid == null || aFluid.isEmpty()) return false;
 		if (mLubricant == null) {
 			//? if forge {
-			mLubricant = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getValue(new ResourceLocation("gt6", "lubricant"));
+			mLubricant = net.minecraftforge.registries.ForgeRegistries.FLUIDS.getValue(ResourceLocation.fromNamespaceAndPath("gt6", "lubricant"));
 			//?} else {
 			/*mLubricant = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(ResourceLocation.fromNamespaceAndPath("gt6", "lubricant"));
 			 *///?}

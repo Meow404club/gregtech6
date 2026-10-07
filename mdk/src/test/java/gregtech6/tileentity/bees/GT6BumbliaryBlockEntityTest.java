@@ -312,11 +312,11 @@ class GT6BumbliaryBlockEntityTest {
 	@Test
 	void registrationCarriesBothVariants() {
 		// acceptance ② — on an FML-booted JVM the real registries carry both variants
-		ResourceLocation tAdvanced = new ResourceLocation("gt6", "bumbliary_advanced");
+		ResourceLocation tAdvanced = ResourceLocation.fromNamespaceAndPath("gt6", "bumbliary_advanced");
 		if (!BuiltInRegistries.BLOCK.containsKey(tAdvanced)) {
 			return; // the offline bare-JVM leg; the FML-booted leg asserts for real
 		}
-		ResourceLocation tPrimary = new ResourceLocation("gt6", "bumbliary");
+		ResourceLocation tPrimary = ResourceLocation.fromNamespaceAndPath("gt6", "bumbliary");
 		assertTrue(BuiltInRegistries.BLOCK.containsKey(tPrimary), "the block pair registers");
 		assertTrue(BuiltInRegistries.ITEM.containsKey(tPrimary), "the BlockItem pair registers (the obtainable-machine face)");
 		assertTrue(BuiltInRegistries.BLOCK_ENTITY_TYPE.containsKey(tPrimary), "the BET pair registers");

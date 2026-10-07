@@ -112,7 +112,7 @@ public class GTWrenchItem extends Item implements GT6ToolLadder.LadderTool {
 	 * Self-owned {@code gt6:} namespace — one name both legs, no ecosystem fork.
 	 */
 	public static final TagKey<Block> MINEABLE_WITH_WRENCH =
-			TagKey.create(Registries.BLOCK, new ResourceLocation("gt6", "mineable/wrench"));
+			TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("gt6", "mineable/wrench"));
 
 	/** The form speed multiplier — the wrench carries none (ToolStats.java default 1.0), so the face speed is the material mToolSpeed. */
 	public static final float FORM_SPEED_MULTIPLIER = 1.0F;

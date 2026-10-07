@@ -99,7 +99,7 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 	public static final String LANG_ASH = "gt6.jade.burningbox.ash";
 	public static final String LANG_ASH_EMPTY = "gt6.jade.burningbox.ash.empty";
 
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "converter_provider");
+	private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("gt6", "converter_provider");
 
 	private GT6ConverterProvider() {
 	}

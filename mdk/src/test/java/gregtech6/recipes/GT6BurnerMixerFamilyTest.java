@@ -129,7 +129,7 @@ public class GT6BurnerMixerFamilyTest extends GTRecipesOfflineTestBase {
 		try (InputStream tStream = GT6BurnerMixerFamilyTest.class.getResourceAsStream(tPath)) {
 			assertNotNull(tStream, "the shipped burnmixer.json rides the test classpath");
 			String tJson = new String(tStream.readAllBytes(), StandardCharsets.UTF_8);
-			GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", "burnmixer"), JsonParser.parseString(tJson)));
+			GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", "burnmixer"), JsonParser.parseString(tJson)));
 		}
 		assertEquals(33, GT6RecipeMapJsonLoader.pouredCount("burnmixer"), "2 H/T burns + 5-member coal loop x3 + 16 Ti chlorination rows");
 		assertEquals(33, GT6RecipeMaps.BURN_MIXER.mRecipeList.size(), "the 33 rows poured under the burnmixer key");
