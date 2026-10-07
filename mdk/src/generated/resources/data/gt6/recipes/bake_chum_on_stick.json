@@ -1,6 +1,28 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Botania"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Thaumcraft"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "aether"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "candycraftmod"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "thebetweenlands"
+    }
+  ],
   "ingredients": [
     [
       {

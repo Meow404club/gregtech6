@@ -115,8 +115,7 @@ public final class GT6ForeignRowConvergence {
             if (tElement.isJsonObject()) {
                 collectItemIds(tElement.getAsJsonObject(), aGated, aDomains);
             } else if (tElement.isJsonArray()) {
-                for (com.google.gson.JsonElement tChild : tElement.getAsJsonArray())
-                    if (tChild.isJsonObject()) collectItemIds(tChild.getAsJsonObject(), aGated, aDomains);
+                collectItemIds(tElement, aGated, aDomains);
             } else if (tElement.isJsonPrimitive()
                     && ("item".equals(tEntry.getKey()) || "id".equals(tEntry.getKey()) || "name".equals(tEntry.getKey()))) {
                 String tId = tElement.getAsString();
@@ -124,6 +123,18 @@ public final class GT6ForeignRowConvergence {
                 String tDomain = aGated.get(tNamespaceFree);
                 if (tDomain != null) aDomains.add(tDomain);
             }
+        }
+    }
+
+    /**
+     * The array form: Forge grouped ingredients nest (the any-iron variant lists are arrays
+     * inside the ingredients array — the alternative-items form, two levels deep from the row
+     * root) — recurse through both members and nested arrays.
+     */
+    private static void collectItemIds(com.google.gson.JsonElement aJson, Map<String, String> aGated, Set<String> aDomains) {
+        for (com.google.gson.JsonElement tChild : aJson.getAsJsonArray()) {
+            if (tChild.isJsonObject()) collectItemIds(tChild.getAsJsonObject(), aGated, aDomains);
+            else if (tChild.isJsonArray()) collectItemIds(tChild, aGated, aDomains);
         }
     }
 

@@ -101,6 +101,34 @@ public class GT6ForeignRowConvergenceTest {
     }
 
     @Test
+    public void nestedVariantArraysRideTheSameLaw() {
+        // the dioptase live finding (the 2026-10-07 bare-boot residual, 169 errors): the
+        // any-iron variant lists are arrays INSIDE the ingredients array (Forge grouped
+        // ingredients, the alternative-items form) — a walker that only descends into
+        // array members' objects misses the gated variant and ships the row unconditioned.
+        // The paired id is the registration-universe member (toolHeadPickaxe x IronCompressed
+        // rides registrationOrder — the pickaxe/iron_compressed row conditions on it); the
+        // toolHeadRawPickaxe twin is OUTSIDE the universe entirely (the walk-gap residual,
+        // declared on the card).
+        JsonObject tRow = new JsonObject();
+        JsonArray tIngredients = new JsonArray();
+        JsonObject tGem = new JsonObject();
+        tGem.addProperty("item", "gt6:gem_flawed_dioptase");
+        tIngredients.add(tGem);
+        JsonArray tVariants = new JsonArray();
+        JsonObject tIron = new JsonObject();
+        tIron.addProperty("item", "gt6:tool_head_pickaxe_iron");
+        tVariants.add(tIron);
+        JsonObject tCompressed = new JsonObject();
+        tCompressed.addProperty("item", "gt6:tool_head_pickaxe_iron_compressed");
+        tVariants.add(tCompressed);
+        tIngredients.add(tVariants);
+        tRow.add("ingredients", tIngredients);
+        assertEquals(List.of(MT.MD.PnC.mID), GT6ForeignRowConvergence.rowDomains(tRow),
+                "the nested variant array's gated member is seen (the dioptase arm)");
+    }
+
+    @Test
     public void vanillaOnlyRowsCarryNoConditions() {
         JsonObject tRow = new JsonObject();
         JsonObject tIngredient = new JsonObject();
