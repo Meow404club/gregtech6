@@ -269,6 +269,10 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		java.util.List<CompletableFuture<?>> tFutures = new ArrayList<>();
 		this.buildRecipes(tRow -> {
 			if (!tSeen.add(tRow.getId())) throw new IllegalStateException("Duplicate recipe " + tRow.getId());
+			// the row-level convergence seam (task parse-errors-registration-convergence): rows
+			// referencing seed-hidden foreign ids carry forge:mod_loaded conditions — the ONE
+			// consumer every crafting family flows through, so this is the family-uniform form.
+			tRow = GT6ForeignRowConvergence.converged(tRow);
 			tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tRow.serializeRecipe(), mRecipePaths.json(tRow.getId())));
 		});
 		return CompletableFuture.allOf(tFutures.toArray(new CompletableFuture[0]));
@@ -287,7 +291,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				if (!tSeen.add(aId)) throw new IllegalStateException("Duplicate recipe " + aId);
 				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, aRegistries,
 						net.minecraft.world.item.crafting.Recipe.CONDITIONAL_CODEC,
-						java.util.Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(aRecipe, aConditions)),
+						java.util.Optional.of(GT6ForeignRowConvergence.conditioned(aRecipe, aRegistries, aConditions)),
 						tRecipePaths.json(aId)));
 			}
 

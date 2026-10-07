@@ -82,7 +82,7 @@ public final class GT6MeatDatagen {
 			java.util.Set<ResourceLocation> tSeen = new HashSet<>();
 			build(tFinished -> {
 				if (!tSeen.add(tFinished.getId())) throw new IllegalStateException("Duplicate recipe " + tFinished.getId());
-				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, tFinished.serializeRecipe(), tRecipePaths.json(tFinished.getId())));
+				tFutures.add(net.minecraft.data.DataProvider.saveStable(aCache, GT6ForeignRowConvergence.converged(tFinished).serializeRecipe(), tRecipePaths.json(tFinished.getId())));
 				// the unlock-advancement write stopped here (2026-10-03 user ruling, remember id1359:
 				// JEI/EMI ubiquitous, the vanilla recipe book is dead weight) — the builders keep their
 				// unlockedBy criteria (the builder API needs them); the JSON is simply never saved.

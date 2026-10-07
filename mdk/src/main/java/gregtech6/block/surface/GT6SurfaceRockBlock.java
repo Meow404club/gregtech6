@@ -87,9 +87,13 @@ public class GT6SurfaceRockBlock extends Block {
 	/** The cached variant table ({@link Enum#values} clones per call; getShape is a raytrace-hot path). */
 	private static final GT6SurfaceVariants.Rock[] TABLE = GT6SurfaceVariants.Rock.values();
 
-	/** The tint material (GTCEu :55-60); null on the material-less stick subclass (no tint face). */
+	/**
+	 * The tint material (GTCEu :55-60); null on the material-less stick subclass (no tint face).
+	 * Public (the GTMaterialPrefixBlock.material precedent): the loot convergence skip face
+	 * (task parse-errors-registration-convergence) reads it to narrow the surface-rock loot walk.
+	 */
 	@Nullable
-	protected final OreDictMaterial material;
+	public final OreDictMaterial material;
 
 	public GT6SurfaceRockBlock(Properties aProperties, @Nullable OreDictMaterial aMaterial) {
 		super(aProperties);

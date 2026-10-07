@@ -377,6 +377,34 @@ def _norm_recipe_result(o: dict) -> bool:
     return True
 
 
+def _norm_conditions_brand(o: dict) -> bool:
+    """行级条件键面（parse-errors-registration-convergence）：neoforge:conditions
+    → conditions + 条件类型品牌互换。
+
+    出处：canonical 复数带 = 1.20.1 forge wrapper 形——顶层键 "conditions"（forge
+    patches RecipeManager.java.patch:29 CraftingHelper.processConditions(json,
+    "conditions") 先于 serializer）+ 类型值 forge:mod_loaded（ModLoadedCondition
+    .java:16）；node 侧 = 1.21.1 neo WithConditions 形——ConditionalOps
+    .DEFAULT_CONDITIONS_KEY "neoforge:conditions"（ConditionalOps.java:54）+ 类型值
+    neoforge:mod_loaded。与镜像面 GT6DualDirectoryFaces.swapConditionTypes 同构互换
+    （KNOWN_CONDITION_TYPES 白名单 mod_loaded/not/item_exists；白名单外的类型在
+    datagen 侧已硬失败，此处零宽容直接按字节比对兜底）。census 样本：本卡 regen 后
+    recipes/ 挂条件行（如 recipes/dust_tiny/from_chemtube/teflon.json）。
+    """
+    cond = o.get("neoforge:conditions")
+    if not isinstance(cond, list):
+        return False
+    for c in cond:
+        if isinstance(c, dict):
+            t = c.get("type")
+            if isinstance(t, str) and t.startswith("neoforge:"):
+                c["type"] = "forge:" + t[len("neoforge:"):]
+    del o["neoforge:conditions"]
+    o["conditions"] = cond
+    _reorder_canonical(o)
+    return True
+
+
 def _norm_tag_c_to_forge(o: dict) -> bool:
     """配方内 tag 引用命名空间：1.21 "c:…" → 1.20.1 "forge:…"（值层，非路径层）。
 
@@ -572,6 +600,7 @@ VALUE_NORMALIZERS: list[tuple[str, str, list[tuple[str, Callable[[dict], bool]]]
         ("result-id→item(+drop count==1)", _norm_recipe_result),
         ("tag-c:→forge:", _norm_tag_c_to_forge),
         ("show_notification(1.20.1-shaped)", _norm_show_notification),
+        ("conditions-brand(neoforge:conditions→conditions)", _norm_conditions_brand),
     ]),
 ]
 

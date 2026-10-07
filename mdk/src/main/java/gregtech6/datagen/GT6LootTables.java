@@ -31,6 +31,7 @@ import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import gregapi.oredict.OreDictMaterial;
 import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.data.MT;
@@ -232,9 +233,19 @@ public final class GT6LootTables extends LootTableProvider {
         //?}
     }
 
-    /** The block list this provider owns: exactly the material prefix block array (the census walk order). */
+    /**
+     * The block list this provider owns: exactly the material prefix block array (the census
+     * walk order), minus the convergence skip (task parse-errors-registration-convergence) —
+     * loot tables have no load-time condition mechanism (ForgeHooks.loadLootTable deserializes
+     * straight into LootTable), so a block whose pair is seed-hidden on a bare install ships no
+     * table at all (the upstream bare shape: no item, no loot row); getKnownBlocks narrows to
+     * the same list, so the missing-table validation stays aligned.
+     */
     public static List<Block> lootBlocks() {
-        return List.of(GTMaterialBlocks.blockArray());
+        List<Block> rBlocks = new ArrayList<>();
+        for (Block tBlock : GTMaterialBlocks.blockArray())
+            if (!(tBlock instanceof GTMaterialPrefixBlock tMat) || GT6ForeignRowConvergence.gatingDomain(tMat.material) == null) rBlocks.add(tBlock);
+        return rBlocks;
     }
 
     /**
@@ -2887,10 +2898,18 @@ public final class GT6LootTables extends LootTableProvider {
 
     /**
      * The surface deco block list (task w6-rocks-sticks): the three per-material
-     * surface rocks + the stick — four blocks, four pickup/break loot tables.
+     * surface rocks + the stick — four blocks, four pickup/break loot tables — minus the
+     * convergence skip (task parse-errors-registration-convergence): loot has no load-time
+     * condition mechanism, so a rock whose material is seed-hidden on a bare install ships
+     * no table (its {@code rock_gt_*} drop item would dangle — the surface_rock_azurite
+     * arm). generate() narrows on the same predicate, so the validation stays aligned.
      */
     public static List<Block> surfaceLootBlocks() {
-        return GT6SurfaceBlocks.ALL.stream().map(RegistryObject::get).toList();
+        List<Block> rBlocks = new ArrayList<>();
+        for (RegistryObject<Block> tRock : GT6SurfaceBlocks.ALL)
+            if (!(tRock.get() instanceof gregtech6.block.surface.GT6SurfaceRockBlock tSurface)
+                    || GT6ForeignRowConvergence.gatingDomain(tSurface.material) == null) rBlocks.add(tRock.get());
+        return rBlocks;
     }
 
     /**
@@ -3039,7 +3058,12 @@ public final class GT6LootTables extends LootTableProvider {
             // vein material is driver-hidden (the axis carries Azurite/Eudialyte, TROPIC PRIMARY
             // :2527/:2528) — the walk-leg semantics; default mode never skips.
             for (int i = 0; i < GT6SurfaceBlocks.INDICATOR_ROCKS.size(); i++) {
-                var tRock = GTMaterialItems.get(OP.rockGt, GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get());
+                OreDictMaterial tMaterial = GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get();
+                // the convergence skip (task parse-errors-registration-convergence): the datagen
+                // JVM walks the full universe (the seed short-circuit), so the tRock == null
+                // walk-leg guard alone never fires here — predicate the atlas directly.
+                if (tMaterial == null || GT6ForeignRowConvergence.gatingDomain(tMaterial) != null) continue;
+                var tRock = GTMaterialItems.get(OP.rockGt, tMaterial);
                 if (tRock == null) continue;
                 add(GT6SurfaceBlocks.INDICATOR_ROCKS.get(i).get(), collectedTable(tRock.get()));
             }
