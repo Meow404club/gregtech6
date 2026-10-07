@@ -79,6 +79,7 @@ public class MTInitResetIdempotencyTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation") // the test pins deprecated TECH/OREMATS aliases on purpose
 	void a130_techAliasesPointAtCurrentGeneration() {
 		flood();
 		// TECH aliases (upstream MT.java:1950) are field-to-field identities; after a re-flood

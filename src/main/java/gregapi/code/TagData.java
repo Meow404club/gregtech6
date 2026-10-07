@@ -40,6 +40,9 @@ import java.util.List;
  *   Runtime behavior is identical; this removes the compile dependency on
  *   gregapi.oredict.OreDictMaterial, which is owned by task card gt-material-model.
  */
+// raw ICondition<ITagDataContainer> typing is a deliberate port deviation (see header note);
+// parameterizing ripples through the material model's raw-typed condition plumbing.
+@SuppressWarnings("rawtypes")
 public final class TagData implements ICondition<ITagDataContainer> {
 	private static final List<TagData> TAGS_INTERNAL = new ArrayList<>();
 	public static final List<TagData> TAGS = new ArrayList<>();

@@ -56,6 +56,7 @@ public interface ICondition<O> {
 		public final Not<O> NOT = new Not<>(this);
 
 		@SafeVarargs
+		@SuppressWarnings("varargs") // assigning the (safe) varargs array to a field re-flags heap pollution
 		public Or(ICondition<O>... aConditions) {
 			mConditions = aConditions;
 		}
@@ -72,6 +73,7 @@ public interface ICondition<O> {
 		public final Not<O> NOT = new Not<>(this);
 
 		@SafeVarargs
+		@SuppressWarnings("varargs") // assigning the (safe) varargs array to a field re-flags heap pollution
 		public Nor(ICondition<O>... aConditions) {
 			mConditions = aConditions;
 		}
@@ -88,6 +90,7 @@ public interface ICondition<O> {
 		public final Not<O> NOT = new Not<>(this);
 
 		@SafeVarargs
+		@SuppressWarnings("varargs") // assigning the (safe) varargs array to a field re-flags heap pollution
 		public And(ICondition<O>... aConditions) {
 			mConditions = aConditions;
 		}
@@ -104,6 +107,7 @@ public interface ICondition<O> {
 		public final Not<O> NOT = new Not<>(this);
 
 		@SafeVarargs
+		@SuppressWarnings("varargs") // assigning the (safe) varargs array to a field re-flags heap pollution
 		public Nand(ICondition<O>... aConditions) {
 			mConditions = aConditions;
 		}
