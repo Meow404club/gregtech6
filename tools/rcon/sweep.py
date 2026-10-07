@@ -157,8 +157,9 @@ SESSION_GROUPS = (
     # (z=230, x458..488) — z-disjoint strips, one cluster keeps the domain's
     # cleanup band-local.
     ("hopper_family", "static_storage"),
-    # MUI dispatch band z=98..103 x478..531 (single chain, roster backfill):
-    # the four-family menu-dispatch face, disjoint from every other band.
+    # MUI dispatch band z=98..103 x478..545 (single chain, roster backfill):
+    # the five-family menu-dispatch face (the press arm rode in with task
+    # mui-dispatch-seam), disjoint from every other band.
     ("mui_row_dispatch",),
     # Spawn-area band (one chain, roster backfill): the tag dual-tree
     # /gt6tags face (x-2..2) reuses the spawn neighbourhood the P11/P12 band
