@@ -1,11 +1,11 @@
 {
-  "comment": "task recipe-b6b-small-maps-cnc-assembler-nanofab — the RM.CNC gear walk (Loader_Recipes_Woods.java:259-263, the WoodDictionary.LIST_PLANKS body): per plank material whose gearGt item exists, 4x plank + 1 mB lubricant -> 1 wood gear, eut 16 / duration 64 verbatim. Family expansion is the PORT-universe subset: 128 of the 130 registered OP.plank materials carry a gearGt item (Bark planks have none — the upstream ST.valid(tGear) gate drops the same leg); rows sorted by material internal name (the walk order is not upstream-significant). The FluidsGT.LUBRICANT family = {gt6:lubricant} in the port (the 'rc lubricant' RotaryCraft alias is unregistered and never fired upstream either). The ST.tag(0) circuit selector legs are DROPPED — the JSON v1 row schema carries no damage/NBT faces and a configured Integrated Circuit is not expressible as a plain item id (the press.json:2/loom.json precedent; declared deviation: the rows answer without the circuit). KJS: datapack domain, zero adaptation.",
+  "comment": "task recipe-b6b-small-maps-cnc-assembler-nanofab — the RM.CNC gear walk (Loader_Recipes_Woods.java:259-263, the WoodDictionary.LIST_PLANKS body): per plank material whose gearGt item exists, 4x plank + 1 mB lubricant -> 1 wood gear, eut 16 / duration 64 verbatim. Family expansion is the PORT-universe subset: 128 of the 130 registered OP.plank materials carry a gearGt item (Bark planks have none — the upstream ST.valid(tGear) gate drops the same leg); rows sorted by material internal name (the walk order is not upstream-significant). The FluidsGT.LUBRICANT family = {gt6:lubricant} in the port (the 'rc lubricant' RotaryCraft alias is unregistered and never fired upstream either). The ST.tag(0) circuit selector legs are DROPPED — the JSON v1 row schema carries no damage/NBT faces and a configured Integrated Circuit is not expressible as a plain item id (the press.json:2/loom.json precedent; declared deviation: the rows answer without the circuit). KJS: datapack domain, zero adaptation. TASK planks-blockification CONVERGENCE: the same face — 28 rows = the 17 LIST_PLANKS GT6 entries (Treated INCLUDED: the :209 walk has no meta gate, unlike the OD.plankWood :58-62 walk; the Crate :161 entry rides the gearGt(Wood) row) + the 11 vanilla identities; the mod-wood gear rows are the compat cut.",
   "recipes": [
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Acacia plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Acacia plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_acacia",
+          "item": "minecraft:acacia_planks",
           "count": 4
         }
       ],
@@ -25,148 +25,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Alder plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Bamboo plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_alder",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_alder",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Applewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_applewood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_applewood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Ashwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_ashwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_ashwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Aspen plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_aspen",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_aspen",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Autumnwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_autumnwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_autumnwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Balsa plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_balsa",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_balsa",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Bamboo plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_bamboo",
+          "item": "minecraft:bamboo_planks",
           "count": 4
         }
       ],
@@ -186,56 +48,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Baobab plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Birch plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_baobab",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_baobab",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Beech plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_beech",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_beech",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Birch plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_birch",
+          "item": "minecraft:birch_planks",
           "count": 4
         }
       ],
@@ -255,10 +71,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the BlueMahoe plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the BlueMahoe plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_blue_mahoe",
+          "item": "gt6:blue_mahoe_planks",
           "count": 4
         }
       ],
@@ -278,10 +94,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the BlueSpruce plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the BlueSpruce plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_blue_spruce",
+          "item": "gt6:blue_spruce_planks",
           "count": 4
         }
       ],
@@ -301,102 +117,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Boxwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Cherrywood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_boxwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_boxwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Brazilwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_brazilwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_brazilwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Butternutwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_butternutwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_butternutwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Cedar plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_cedar",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_cedar",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Cherrywood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_cherrywood",
+          "item": "minecraft:cherry_planks",
           "count": 4
         }
       ],
@@ -416,33 +140,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Chestnutwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Cinnamonwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_chestnutwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_chestnutwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Cinnamonwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_cinnamonwood",
+          "item": "gt6:cinnamon_planks",
           "count": 4
         }
       ],
@@ -462,56 +163,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Citruswood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Coconutwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_citruswood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_citruswood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Cocobolowood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_cocobolowood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_cocobolowood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Coconutwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_coconutwood",
+          "item": "gt6:coconut_planks",
           "count": 4
         }
       ],
@@ -531,10 +186,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Crimsonwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Crimsonwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_crimsonwood",
+          "item": "minecraft:crimson_planks",
           "count": 4
         }
       ],
@@ -554,33 +209,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Cypress plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the DarkOak plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_cypress",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_cypress",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the DarkOak plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_dark_oak",
+          "item": "minecraft:dark_oak_planks",
           "count": 4
         }
       ],
@@ -600,424 +232,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Darkwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Hazel plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_darkwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_darkwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the DouglasFir plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_douglas_fir",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_douglas_fir",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Dreamwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_dreamwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_dreamwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Ebony plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_ebony",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_ebony",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Elderwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_elderwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_elderwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Elm plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_elm",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_elm",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Etherealwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_etherealwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_etherealwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Eucalyptus plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_eucalyptus",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_eucalyptus",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Figwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_figwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_figwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Fir plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_fir",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_fir",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Fireleaf plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_fireleaf",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_fireleaf",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Foxfirewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_foxfirewood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_foxfirewood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Giganteumwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_giganteumwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_giganteumwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Gingko plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_gingko",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_gingko",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Goldwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_goldwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_goldwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Greatwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_greatwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_greatwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Greenheart plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_greenheart",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_greenheart",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Hawthorn plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_hawthorn",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_hawthorn",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Hazel plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_hazel",
+          "item": "gt6:hazel_planks",
           "count": 4
         }
       ],
@@ -1037,240 +255,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Hellbark plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Junglewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_hellbark",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_hellbark",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Hemlock plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_hemlock",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_hemlock",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Hickory plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_hickory",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_hickory",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Holly plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_holly",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_holly",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Hornbeam plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_hornbeam",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_hornbeam",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Ipe plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_ipe",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_ipe",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Iroko plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_iroko",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_iroko",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Ironwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_ironwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_ironwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Jacaranda plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_jacaranda",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_jacaranda",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the JapaneseMaple plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_japanese_maple",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_japanese_maple",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Junglewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_junglewood",
+          "item": "minecraft:jungle_planks",
           "count": 4
         }
       ],
@@ -1290,240 +278,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Kapok plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Mangrove plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_kapok",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_kapok",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Larch plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_larch",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_larch",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Limewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_limewood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_limewood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Livingwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_livingwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_livingwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Locust plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_locust",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_locust",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Logwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_logwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_logwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Maclura plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_maclura",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_maclura",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Magicwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_magicwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_magicwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Mahoe plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_mahoe",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_mahoe",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Mahogany plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_mahogany",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_mahogany",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Mangrove plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_mangrove",
+          "item": "minecraft:mangrove_planks",
           "count": 4
         }
       ],
@@ -1543,10 +301,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Maple plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Maple plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_maple",
+          "item": "gt6:maple_planks",
           "count": 4
         }
       ],
@@ -1566,33 +324,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Marshmallow plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Oak plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_marshmallow",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_marshmallow",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Oak plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_oak",
+          "item": "minecraft:oak_planks",
           "count": 4
         }
       ],
@@ -1612,332 +347,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Ogrewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Rainbowood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_ogrewood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_ogrewood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Olivewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_olivewood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_olivewood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Padauk plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_padauk",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_padauk",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Palm plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_palm",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_palm",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Papayawood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_papayawood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_papayawood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the PeanutWood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_peanut_wood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_peanut_wood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Pearwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_pearwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_pearwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the PetrifiedWood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_petrified_wood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_petrified_wood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Pine plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_pine",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_pine",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the PinkIvory plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_pink_ivory",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_pink_ivory",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Plumwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_plumwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_plumwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Poplar plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_poplar",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_poplar",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Purpleheart plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_purpleheart",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_purpleheart",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the RainbowEucalyptus plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_rainbow_eucalyptus",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_rainbow_eucalyptus",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Rainbowood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_rainbowood",
+          "item": "gt6:rainbowood_planks",
           "count": 4
         }
       ],
@@ -1957,240 +370,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Redwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Spruce plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_redwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_redwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Rosewood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_rosewood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_rosewood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Rowan plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_rowan",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_rowan",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the SacredOak plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_sacred_oak",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_sacred_oak",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Sakura plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_sakura",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_sakura",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Sequoia plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_sequoia",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_sequoia",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Shimmerwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_shimmerwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_shimmerwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the SilverPine plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_silver_pine",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_silver_pine",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Silverwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_silverwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_silverwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Skyroot plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_skyroot",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_skyroot",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Spruce plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_spruce",
+          "item": "minecraft:spruce_planks",
           "count": 4
         }
       ],
@@ -2210,194 +393,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Steeleaf plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Warpedwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_steeleaf",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_steeleaf",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Sweetgum plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_sweetgum",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_sweetgum",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Sycamore plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_sycamore",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_sycamore",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Syzgium plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_syzgium",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_syzgium",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Teak plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_teak",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_teak",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Thorntree plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_thorntree",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_thorntree",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Towerwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_towerwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_towerwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Walnutwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_walnutwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_walnutwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Warpedwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_warpedwood",
+          "item": "minecraft:warped_planks",
           "count": 4
         }
       ],
@@ -2417,125 +416,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the Weedwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Willow plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_weedwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_weedwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Wenge plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_wenge",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_wenge",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the WhiteCedar plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_white_cedar",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_white_cedar",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the WhiteElm plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_white_elm",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_white_elm",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Whitebeam plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_whitebeam",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_whitebeam",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Willow plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_willow",
+          "item": "gt6:willow_planks",
           "count": 4
         }
       ],
@@ -2548,29 +432,6 @@
       "outputs": [
         {
           "item": "gt6:gear_gt_willow",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Witchwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_witchwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_witchwood",
           "count": 1
         }
       ],
@@ -2601,10 +462,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the WoodBleached plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the Crate plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_wood_bleached",
+          "item": "gt6:crate",
           "count": 4
         }
       ],
@@ -2616,7 +477,7 @@
       ],
       "outputs": [
         {
-          "item": "gt6:gear_gt_wood_bleached",
+          "item": "gt6:gear_gt_wood",
           "count": 1
         }
       ],
@@ -2716,29 +577,6 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the WoodPolished plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_wood_polished",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_wood_polished",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
       "comment": "Loader_Recipes_Woods.java:262 — the WoodRotten plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
@@ -2762,10 +600,10 @@
       "eut": 16
     },
     {
-      "comment": "Loader_Recipes_Woods.java:262 — the WoodRubber plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
+      "comment": "Loader_Recipes_Woods.java:262 — the WoodRubber plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; the plank leg rides the converged plank BlockItem (task planks-blockification); ST.tag(0) selector leg dropped per press.json:2)",
       "inputs": [
         {
-          "item": "gt6:plank_wood_rubber",
+          "item": "gt6:rubber_planks",
           "count": 4
         }
       ],
@@ -2778,52 +616,6 @@
       "outputs": [
         {
           "item": "gt6:gear_gt_wood_rubber",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the WoodScorched plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_wood_scorched",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_wood_scorched",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the WoodTainted plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_wood_tainted",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_wood_tainted",
           "count": 1
         }
       ],
@@ -2847,98 +639,6 @@
       "outputs": [
         {
           "item": "gt6:gear_gt_wood_treated",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the WoodVarnished plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_wood_varnished",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_wood_varnished",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Wyvernwood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_wyvernwood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_wyvernwood",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Yew plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_yew",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_yew",
-          "count": 1
-        }
-      ],
-      "duration": 64,
-      "eut": 16
-    },
-    {
-      "comment": "Loader_Recipes_Woods.java:262 — the Zebrawood plank gear (the LIST_PLANKS x FluidsGT.LUBRICANT walk; ST.tag(0) selector leg dropped per press.json:2)",
-      "inputs": [
-        {
-          "item": "gt6:plank_zebrawood",
-          "count": 4
-        }
-      ],
-      "fluidInputs": [
-        {
-          "fluid": "gt6:lubricant",
-          "amount": 1
-        }
-      ],
-      "outputs": [
-        {
-          "item": "gt6:gear_gt_zebrawood",
           "count": 1
         }
       ],
