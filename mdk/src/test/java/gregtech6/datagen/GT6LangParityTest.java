@@ -243,7 +243,11 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 5859;
+	private static final int ZH_KEY_FLOOR = 5907;
+	// +48 review-seat rebase seam, task faucet-material-rows: the 39-row faucet walk
+	// (gt6.row.faucet.mat.* over GT6Molds.FAUCET_ROWS + the mold/crucible band restructure)
+	// rides the zh face; measured 5907 on the rebased tree (main measured 5859). The
+	// history lives in `git log -L` on this line.
 	// +13 task material-mc-b-storage-mass-shelf: the metal shelf/crate compose templates
 	// gt6.row.metal_{bookshelf,bottlecrate}.display both locales, dump-verbatim zh
 	// 书架 (%s)/瓶筐 (%s) — the ONLY zh delta of the card (the 120 new metal rows compose at
@@ -356,10 +360,14 @@ public class GT6LangParityTest {
 						add("gt6.row.mold.display." + tRow.path(), "Ceramic " + tShape + " Mold");
 						add("item.gt6." + tRow.path() + "_raw", "Ceramic " + tShape + " Mold (Raw)");
 					}
-					add("gt6.row.faucet.display", "%s Crucible Faucet");
-					add("gt6.row.faucet.mat.stone", "Stone");
-					add("gt6.row.faucet.mat.ceramic", "Ceramic");
-					add("item.gt6.faucet_ceramic_raw", "Ceramic Crucible Faucet (Raw)");
+				add("gt6.row.faucet.display", "%s Crucible Faucet");
+				// the material words mirror the GT6MoldDatagen.Lang walk (task
+				// faucet-material-rows: the 39-row table replaced the two-hardcode pair;
+				// review-seat rebase seam — the replay follows the SAME registry rows)
+				for (GT6Molds.FaucetRow tRow : GT6Molds.FAUCET_ROWS) {
+					add(GT6Molds.faucetMatUnitKeyOf(tRow), tRow.matDisplay());
+				}
+				add("item.gt6.faucet_ceramic_raw", "Ceramic Crucible Faucet (Raw)");
 				}
 			}.addTranslations();
 		}
