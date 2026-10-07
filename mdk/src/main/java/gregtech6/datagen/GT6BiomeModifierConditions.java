@@ -124,6 +124,14 @@ public class GT6BiomeModifierConditions implements DataProvider {
             // 17 WorldgenStone twilight rows, Loader_Worldgen.java:657) riding the SAME
             // positive form and the SAME TF-absence semantics as the twilight_ores row.
             new ConditionRow(GT6WorldgenDatagen.TWILIGHT_STONES_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)),
+            // task twilight-vegetation — the FOURTH row, the positive form's second tenant:
+            // the twilight_surface_rocks modifier (the twilight.rocks GEN_TWILIGHT row,
+            // Loader_Worldgen.java:621) mounts only WITH Twilight Forest present. The tag
+            // is our own #gt6:surface_rocks_twilight (TF members optional = empty
+            // resolution would no-op anyway); the condition keeps the mod-dimension
+            // skeleton's detection face uniform and skips the row at datapack load.
+            new ConditionRow(GT6WorldgenDatagen.TWILIGHT_SURFACE_ROCKS_MODIFIER_KEY.location().getPath(),
                     aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)));
 
     @Override

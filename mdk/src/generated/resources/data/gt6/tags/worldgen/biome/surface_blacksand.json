@@ -1,5 +1,9 @@
 {
   "values": [
-    "#minecraft:is_river"
+    "#minecraft:is_river",
+    {
+      "id": "twilightforest:stream",
+      "required": false
+    }
   ]
 }

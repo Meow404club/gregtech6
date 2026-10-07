@@ -3,6 +3,14 @@
     "minecraft:taiga",
     "minecraft:snowy_taiga",
     "minecraft:old_growth_pine_taiga",
-    "minecraft:old_growth_spruce_taiga"
+    "minecraft:old_growth_spruce_taiga",
+    {
+      "id": "twilightforest:highlands",
+      "required": false
+    },
+    {
+      "id": "twilightforest:snowy_forest",
+      "required": false
+    }
   ]
 }

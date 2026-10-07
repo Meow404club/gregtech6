@@ -467,6 +467,15 @@ public final class GT6Worldgen {
     public static final ResourceKey<ConfiguredFeature<?, ?>> SURFACE_ROCKS_CONFIGURED = configKey("overworld_surface_rocks");
     /** The rocks' outer placed feature (rarity 3 + count 2, hangs off {@link #SURFACE_ROCKS_CONFIGURED}). */
     public static final ResourceKey<PlacedFeature> SURFACE_ROCKS_PLACED = placedKeyOf("overworld_surface_rocks");
+    /**
+     * Loader_Worldgen.java:621 {@code new WorldgenRocks("twilight.rocks", T, 4, 3, GEN_TWILIGHT)}
+     * — the TF row's Amount=4 (the overworld row :618 carries 2; a TF-wide mount of the shared
+     * placed feature would halve the TF ray mass, hence the independent placed twin over the
+     * SAME configured lottery, task twilight-vegetation).
+     */
+    public static final int TWILIGHT_SURFACE_ROCKS_AMOUNT = 4;
+    /** The twilight rocks' placed twin (rarity 3 + count 4, hangs off {@link #SURFACE_ROCKS_CONFIGURED}). */
+    public static final ResourceKey<PlacedFeature> TWILIGHT_SURFACE_ROCKS_PLACED = placedKeyOf("twilight_surface_rocks");
     /** The stick's configured feature (the bare SIMPLE_BLOCK). */
     public static final ResourceKey<ConfiguredFeature<?, ?>> SURFACE_STICK_CONFIGURED = configKey("overworld_surface_stick");
 
@@ -476,6 +485,12 @@ public final class GT6Worldgen {
 
     /** The biome tags the biome modifiers hang off (gt6 biome tag datagen, the t1-card form). */
     public static final TagKey<Biome> SURFACE_ROCKS_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "surface_rocks"));
+    /**
+     * The twilight rocks' biome tag (task twilight-vegetation): the WorldgenRocks.java:54
+     * nine-group name check intersected with the TF 1.20.1 biome universe — 12 members,
+     * all optional (the addOptional doctrine, TF absent = empty resolution = zero mounts).
+     */
+    public static final TagKey<Biome> SURFACE_ROCKS_TWILIGHT_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "surface_rocks_twilight"));
     /** WorldgenSticks.java:53 woods|swamp biomes. */
     public static final TagKey<Biome> STICKS_DENSE_BIOMES = TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("gt6", "sticks_dense"));
     /** WorldgenSticks.java:54 river|plains|savanna biomes. */

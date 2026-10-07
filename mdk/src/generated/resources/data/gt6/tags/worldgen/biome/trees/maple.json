@@ -1,5 +1,9 @@
 {
   "values": [
-    "minecraft:forest"
+    "minecraft:forest",
+    {
+      "id": "twilightforest:firefly_forest",
+      "required": false
+    }
   ]
 }

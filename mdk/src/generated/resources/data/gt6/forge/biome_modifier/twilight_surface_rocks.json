@@ -1,0 +1,12 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:surface_rocks_twilight",
+  "features": "gt6:twilight_surface_rocks",
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "twilightforest"
+    }
+  ],
+  "step": "vegetal_decoration"
+}

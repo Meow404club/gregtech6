@@ -2,6 +2,14 @@
   "values": [
     "minecraft:snowy_plains",
     "minecraft:ice_spikes",
-    "minecraft:snowy_taiga"
+    "minecraft:snowy_taiga",
+    {
+      "id": "twilightforest:snowy_forest",
+      "required": false
+    },
+    {
+      "id": "twilightforest:glacier",
+      "required": false
+    }
   ]
 }
