@@ -454,6 +454,7 @@ public final class GTOreWorldgen {
     public static List<String> hostPaths(OreDictMaterial aMaterial, Dim aDim) {
         if (aDim == Dim.NETHER) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("netherrack"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         if (aDim == Dim.END) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("endstone"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
+        if (aDim == Dim.ATUM) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("stone"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         List<String> rPaths = new ArrayList<>(24);
         rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("granite"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("diorite"), GT6OreBlocks.FormKind.SMALL, aMaterial)));

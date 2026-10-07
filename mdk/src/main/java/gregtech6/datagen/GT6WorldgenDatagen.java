@@ -2059,7 +2059,7 @@ public final class GT6WorldgenDatagen {
      */
     private static GTVeinConfig veinOffworldEnd(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
             OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
-        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, false, false, aTop, aBottom, aBetween, aSpread);
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, true, false, aTop, aBottom, aBetween, aSpread);
     }
 
     /**
