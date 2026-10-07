@@ -1433,7 +1433,8 @@ public class GT6EnUs extends LanguageProvider {
     /** Dedup across the row-family walks (a word shared by several families is ONE unit key). */
     private final Set<String> rowMatUnitsEmitted = new HashSet<>();
 
-    private void addRowMatUnit(String aKey, String aWord) {
+    /** protected since material-mc-c-crucible-rows — the crucible-domain family walks share the dedup. */
+    protected void addRowMatUnit(String aKey, String aWord) {
         if (rowMatUnitsEmitted.add(aKey)) add(aKey, aWord);
     }
 

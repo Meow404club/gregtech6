@@ -2808,6 +2808,72 @@ MOLD_CRUCIBLE_GAP_BACKFILL = {
     "gt6.row.faucet.mat.adamantium": "艾德曼合金",                     # dump mte 1749
     "item.gt6.faucet_ceramic_raw": "粘土浇铸口",                      # dump :10104 verbatim (Clay Faucet, 992)
     "item.gt6.clay_crucible_raw": "粘土坩埚",                         # dump :10098 verbatim (Clay Crucible, 989, issue #45 C2)
+    # task material-mc-c-crucible-rows — the FULL 39-rung smeltery ladder (the 35 new
+    # rungs; the four above stay): every value the dump MTE face verbatim (:10772-10919,
+    # the loader order), keyed by the port path slug.
+    "gt6.row.crucible.display.smeltery_basalt": "熔炼坩埚 (玄武岩)",               # MTE 1001
+    "gt6.row.crucible.display.smeltery_granite_black": "熔炼坩埚 (黑色花岗岩)",   # MTE 1002
+    "gt6.row.crucible.display.smeltery_granite_red": "熔炼坩埚 (红色花岗岩)",     # MTE 1003
+    "gt6.row.crucible.display.smeltery_nether_brick": "熔炼坩埚 (地狱砖)",        # MTE 1004
+    "gt6.row.crucible.display.smeltery_umber": "熔炼坩埚 (棕石)",                 # MTE 1006
+    "gt6.row.crucible.display.smeltery_livingrock": "熔炼坩埚 (活石)",            # MTE 1007
+    "gt6.row.crucible.display.smeltery_holystone": "熔炼坩埚 (圣石)",             # MTE 1008
+    "gt6.row.crucible.display.smeltery_betweenstone": "熔炼坩埚 (交错石)",        # MTE 1009
+    "gt6.row.crucible.display.smeltery_quartz": "熔炼坩埚 (石英)",                # MTE 1018
+    "gt6.row.crucible.display.smeltery_graphite": "熔炼坩埚 (碳)",                # MTE 1019
+    "gt6.row.crucible.display.smeltery_invar": "熔炼坩埚 (殷钢)",                 # MTE 1021
+    "gt6.row.crucible.display.smeltery_hsla": "熔炼坩埚 (HSLA钢)",                # MTE 1041
+    "gt6.row.crucible.display.smeltery_stainless_steel": "熔炼坩埚 (不锈钢)",     # MTE 1025
+    "gt6.row.crucible.display.smeltery_dark_iron": "熔炼坩埚 (玄铁)",             # MTE 1026
+    "gt6.row.crucible.display.smeltery_meteoric_iron": "熔炼坩埚 (陨铁)",         # MTE 1031
+    "gt6.row.crucible.display.smeltery_meteoric_steel": "熔炼坩埚 (陨钢)",        # MTE 1032
+    "gt6.row.crucible.display.smeltery_netherite": "熔炼坩埚 (下界合金)",         # MTE 1044
+    "gt6.row.crucible.display.smeltery_knightmetal": "熔炼坩埚 (骑士金属)",       # MTE 1027
+    "gt6.row.crucible.display.smeltery_fiery_steel": "熔炼坩埚 (炙热钢)",         # MTE 1028
+    "gt6.row.crucible.display.smeltery_octine": "熔炼坩埚 (炽炎铁)",              # MTE 1042
+    "gt6.row.crucible.display.smeltery_thaumium": "熔炼坩埚 (神秘锭)",            # MTE 1029
+    "gt6.row.crucible.display.smeltery_titanium": "熔炼坩埚 (钛)",                # MTE 1023
+    "gt6.row.crucible.display.smeltery_chromium": "熔炼坩埚 (铬)",                # MTE 1033
+    "gt6.row.crucible.display.smeltery_molybdenum": "熔炼坩埚 (钼)",              # MTE 1034
+    "gt6.row.crucible.display.smeltery_niobium": "熔炼坩埚 (铌)",                 # MTE 1035
+    "gt6.row.crucible.display.smeltery_tantalum": "熔炼坩埚 (钽)",                # MTE 1036
+    "gt6.row.crucible.display.smeltery_osmium": "熔炼坩埚 (锇)",                  # MTE 1037
+    "gt6.row.crucible.display.smeltery_iridium": "熔炼坩埚 (铱)",                 # MTE 1039
+    "gt6.row.crucible.display.smeltery_niobium_titanium": "熔炼坩埚 (铌钛合金)",  # MTE 1040
+    "gt6.row.crucible.display.smeltery_vanadium": "熔炼坩埚 (钒)",                # MTE 1038
+    "gt6.row.crucible.display.smeltery_tungsten": "熔炼坩埚 (钨)",                # MTE 1024
+    "gt6.row.crucible.display.smeltery_tantalum_hafnium_carbide": "熔炼坩埚 (碳化钽铪)",  # MTE 1043
+    "gt6.row.crucible.display.smeltery_void_metal": "熔炼坩埚 (虚空金属)",        # MTE 1030
+    "gt6.row.crucible.display.smeltery_bedrock_hsla_alloy": "熔炼坩埚 (基岩合金)",  # MTE 1048
+    "gt6.row.crucible.display.smeltery_adamantium": "熔炼坩埚 (艾德曼合金)",      # MTE 1049
+    # the basin/crossing composed templates (the dump verbatim word orders: 浇铸盆 (石头)
+    # :11312, 坩埚浇铸道 (石头) :11400 — the per-slug words ride the shared gt6.row.mat.*)
+    "gt6.row.basin.display": "浇铸盆 (%s)",
+    "gt6.row.crossing.display": "坩埚浇铸道 (%s)",
+    # the 18 material words the shared namespace lacked (the dump composed-name heads
+    # verbatim: 熔炼坩埚 (石头) :10772 band / 浇铸盆 (X) :11312-11350 / 坩埚浇铸道 (X) :11400-11440)
+    "gt6.row.mat.stone": "石头",
+    "gt6.row.mat.basalt": "玄武岩",
+    "gt6.row.mat.granite_black": "黑色花岗岩",
+    "gt6.row.mat.granite_red": "红色花岗岩",
+    "gt6.row.mat.nether_brick": "地狱砖",
+    "gt6.row.mat.ceramic": "陶瓷",
+    "gt6.row.mat.umber": "棕石",
+    "gt6.row.mat.livingrock": "活石",
+    "gt6.row.mat.holystone": "圣石",
+    "gt6.row.mat.betweenstone": "交错石",
+    "gt6.row.mat.quartz": "石英",
+    "gt6.row.mat.graphite": "碳",
+    "gt6.row.mat.dark_iron": "玄铁",
+    "gt6.row.mat.meteoric_iron": "陨铁",
+    "gt6.row.mat.niobium": "铌",
+    "gt6.row.mat.tantalum": "钽",
+    "gt6.row.mat.niobium_titanium": "铌钛合金",
+    "gt6.row.mat.vanadium": "钒",
+    # the two raw clay items (the dump 粘土浇铸盆 :10100 verbatim; the crossing has no
+    # dump face — the faucet 粘土浇铸口 parallel)
+    "item.gt6.basin_ceramic_raw": "粘土浇铸盆",
+    "item.gt6.crossing_ceramic_raw": "粘土浇铸道",
 }
 
 # ---- task p29-w5-t8-armor-24: the 48 Hazmat armor rows — 24 display names + the 24

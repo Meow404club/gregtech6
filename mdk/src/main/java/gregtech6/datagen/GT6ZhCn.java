@@ -2016,6 +2016,19 @@ public class GT6ZhCn extends LanguageProvider {
 		// the raw clay crucible (issue #45 C2 — the en literal key; the dump :10098 face
 		// verbatim; the smeltery_ceramic display key rides the ROWS walk above)
 		addDirect("item.gt6.clay_crucible_raw");
+		// task material-mc-c-crucible-rows — the basin/crossing faces (the ROWS walk above
+		// already covers the 39 smeltery display keys): the two composed templates + the
+		// shared material words (dump verbatim: 浇铸盆 (X) :11312-11350, 坩埚浇铸道 (X)
+		// :11400-11440; the words ride the same per-slug keys the smeltery rows compose) +
+		// the two raw clay items (the dump 粘土浇铸盆 :10100 face, the crossing twin parallel)
+		addDirect(gregtech6.registry.GT6Crucibles.BASIN_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Crucibles.CROSSING_DISPLAY_KEY);
+		java.util.Set<String> tCrucibleMats = new java.util.HashSet<>();
+		for (gregtech6.registry.GT6Crucibles.CrucibleMaterial tMat : gregtech6.registry.GT6Crucibles.MATERIALS) {
+			addRowUnit(tCrucibleMats, "gt6.row.mat." + tMat.slug());
+		}
+		addDirect("item.gt6.basin_ceramic_raw");
+		addDirect("item.gt6.crossing_ceramic_raw");
 	}
 
 	/**

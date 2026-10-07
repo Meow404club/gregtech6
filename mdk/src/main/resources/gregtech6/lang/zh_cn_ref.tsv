@@ -10891,3 +10891,60 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
+direct	gt6.row.mat.stone	石头	hand
+direct	gt6.row.mat.basalt	玄武岩	hand
+direct	gt6.row.mat.granite_black	黑色花岗岩	hand
+direct	gt6.row.mat.granite_red	红色花岗岩	hand
+direct	gt6.row.mat.nether_brick	地狱砖	hand
+direct	gt6.row.mat.ceramic	陶瓷	hand
+direct	gt6.row.mat.umber	棕石	hand
+direct	gt6.row.mat.livingrock	活石	hand
+direct	gt6.row.mat.holystone	圣石	hand
+direct	gt6.row.mat.betweenstone	交错石	hand
+direct	gt6.row.mat.quartz	石英	hand
+direct	gt6.row.mat.graphite	碳	hand
+direct	gt6.row.mat.dark_iron	玄铁	hand
+direct	gt6.row.mat.meteoric_iron	陨铁	hand
+direct	gt6.row.mat.niobium	铌	hand
+direct	gt6.row.mat.tantalum	钽	hand
+direct	gt6.row.mat.niobium_titanium	铌钛合金	hand
+direct	gt6.row.mat.vanadium	钒	hand
+direct	gt6.row.crucible.display.smeltery_basalt	熔炼坩埚 (玄武岩)	hand
+direct	gt6.row.crucible.display.smeltery_granite_black	熔炼坩埚 (黑色花岗岩)	hand
+direct	gt6.row.crucible.display.smeltery_granite_red	熔炼坩埚 (红色花岗岩)	hand
+direct	gt6.row.crucible.display.smeltery_nether_brick	熔炼坩埚 (地狱砖)	hand
+direct	gt6.row.crucible.display.smeltery_umber	熔炼坩埚 (棕石)	hand
+direct	gt6.row.crucible.display.smeltery_livingrock	熔炼坩埚 (活石)	hand
+direct	gt6.row.crucible.display.smeltery_holystone	熔炼坩埚 (圣石)	hand
+direct	gt6.row.crucible.display.smeltery_betweenstone	熔炼坩埚 (交错石)	hand
+direct	gt6.row.crucible.display.smeltery_quartz	熔炼坩埚 (石英)	hand
+direct	gt6.row.crucible.display.smeltery_graphite	熔炼坩埚 (碳)	hand
+direct	gt6.row.crucible.display.smeltery_invar	熔炼坩埚 (殷钢)	hand
+direct	gt6.row.crucible.display.smeltery_hsla	熔炼坩埚 (HSLA钢)	hand
+direct	gt6.row.crucible.display.smeltery_stainless_steel	熔炼坩埚 (不锈钢)	hand
+direct	gt6.row.crucible.display.smeltery_dark_iron	熔炼坩埚 (玄铁)	hand
+direct	gt6.row.crucible.display.smeltery_meteoric_iron	熔炼坩埚 (陨铁)	hand
+direct	gt6.row.crucible.display.smeltery_meteoric_steel	熔炼坩埚 (陨钢)	hand
+direct	gt6.row.crucible.display.smeltery_netherite	熔炼坩埚 (下界合金)	hand
+direct	gt6.row.crucible.display.smeltery_knightmetal	熔炼坩埚 (骑士金属)	hand
+direct	gt6.row.crucible.display.smeltery_fiery_steel	熔炼坩埚 (炙热钢)	hand
+direct	gt6.row.crucible.display.smeltery_octine	熔炼坩埚 (炽炎铁)	hand
+direct	gt6.row.crucible.display.smeltery_thaumium	熔炼坩埚 (神秘锭)	hand
+direct	gt6.row.crucible.display.smeltery_titanium	熔炼坩埚 (钛)	hand
+direct	gt6.row.crucible.display.smeltery_chromium	熔炼坩埚 (铬)	hand
+direct	gt6.row.crucible.display.smeltery_molybdenum	熔炼坩埚 (钼)	hand
+direct	gt6.row.crucible.display.smeltery_niobium	熔炼坩埚 (铌)	hand
+direct	gt6.row.crucible.display.smeltery_tantalum	熔炼坩埚 (钽)	hand
+direct	gt6.row.crucible.display.smeltery_osmium	熔炼坩埚 (锇)	hand
+direct	gt6.row.crucible.display.smeltery_iridium	熔炼坩埚 (铱)	hand
+direct	gt6.row.crucible.display.smeltery_niobium_titanium	熔炼坩埚 (铌钛合金)	hand
+direct	gt6.row.crucible.display.smeltery_vanadium	熔炼坩埚 (钒)	hand
+direct	gt6.row.crucible.display.smeltery_tungsten	熔炼坩埚 (钨)	hand
+direct	gt6.row.crucible.display.smeltery_tantalum_hafnium_carbide	熔炼坩埚 (碳化钽铪)	hand
+direct	gt6.row.crucible.display.smeltery_void_metal	熔炼坩埚 (虚空金属)	hand
+direct	gt6.row.crucible.display.smeltery_bedrock_hsla_alloy	熔炼坩埚 (基岩合金)	hand
+direct	gt6.row.crucible.display.smeltery_adamantium	熔炼坩埚 (艾德曼合金)	hand
+direct	gt6.row.basin.display	浇铸盆 (%s)	hand
+direct	gt6.row.crossing.display	坩埚浇铸道 (%s)	hand
+direct	item.gt6.basin_ceramic_raw	粘土浇铸盆	hand
+direct	item.gt6.crossing_ceramic_raw	粘土浇铸道	hand

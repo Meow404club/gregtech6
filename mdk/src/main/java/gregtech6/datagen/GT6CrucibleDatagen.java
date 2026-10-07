@@ -236,6 +236,72 @@ public final class GT6CrucibleDatagen {
 			}
 			// the mold_stone row moved to GT6MoldDatagen (issue #41: stone and ceramic molds
 			// share the one concave MTE design 1072 — the flat-cube placeholder retired)
+			// task material-mc-c-crucible-rows — the two new single-shell families:
+			for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.BASIN_ROWS) {
+				addBasin(tRow, GT6Crucibles.BASIN_BLOCKS_BY_PATH.get(tRow.path()).get());
+			}
+			for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.CROSSING_ROWS) {
+				addCrossing(tRow, GT6Crucibles.CROSSING_BLOCKS_BY_PATH.get(tRow.path()).get());
+			}
+		}
+
+		/**
+		 * One basin: the static open VAT shell (the MultiTileEntityBasin.java:100-104 render
+		 * passes 0-4 verbatim — four 1px full-height walls + the 1px floor, px units) + the
+		 * BlockItem parent. tintindex 0 on every face of the grayscale-borrow rows (the
+		 * GT6MoldTintListener seat). The molten content face (upstream pass 5) is the
+		 * declared mold-family render cut — the port molds render no charge either.
+		 */
+		private void addBasin(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
+			gregapi.oredict.OreDictMaterial tMaterial = aRow.material().get();
+			boolean tTinted = bodyTinted(tMaterial);
+			BlockModelBuilder tModel = models().getBuilder("block/" + aRow.path())
+					.parent(models().getExistingFile(mcLoc("block/block")))
+					.texture("all", loc(bodyTexture(tMaterial)))
+					.texture("particle", "#all");
+			// passes 0-3 — the 1px full-height walls
+			float[][] tWalls = {{0, 0, 0, 1, 16, 16}, {15, 0, 0, 16, 16, 16}, {0, 0, 0, 16, 16, 1}, {0, 0, 15, 16, 16, 16}};
+			for (float[] tBox : tWalls) addBox(tModel, tBox, tTinted);
+			// pass 4 — the 1px floor
+			addBox(tModel, new float[] {0, 0, 0, 16, 1, 16}, tTinted);
+			getVariantBuilder(aBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+			itemModels().withExistingParent(aRow.path(), modLoc("block/" + aRow.path()));
+		}
+
+		/**
+		 * One crossing: the 11-box bridge (the MultiTileEntityCrossing.java setBlockBounds2
+		 * passes 0-10 verbatim — the two 1px crossing strips + the eight rim posts) + the
+		 * BlockItem parent. Faces carry no cullface: the non-full cross renders every quad
+		 * (66 per block — the noOcclusion posture makes them all visible anyway).
+		 */
+		private void addCrossing(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
+			gregapi.oredict.OreDictMaterial tMaterial = aRow.material().get();
+			boolean tTinted = bodyTinted(tMaterial);
+			BlockModelBuilder tModel = models().getBuilder("block/" + aRow.path())
+					.parent(models().getExistingFile(mcLoc("block/block")))
+					.texture("all", loc(bodyTexture(tMaterial)))
+					.texture("particle", "#all");
+			for (float[] tBox : CROSSING_MODEL_BOXES) addBox(tModel, tBox, tTinted);
+			getVariantBuilder(aBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+			itemModels().withExistingParent(aRow.path(), modLoc("block/" + aRow.path()));
+		}
+
+		/** The crossing element boxes, px units (passes 0-2 the strips, 3-10 the rim ring). */
+		private static final float[][] CROSSING_MODEL_BOXES = {
+				{6, 1, 0, 10, 2, 16}, {0, 1, 6, 6, 2, 10}, {10, 1, 6, 16, 2, 10},
+				{5, 2, 0, 6, 6, 5}, {5, 2, 11, 6, 6, 16}, {0, 2, 5, 6, 6, 6}, {10, 2, 5, 16, 6, 6},
+				{10, 2, 0, 11, 6, 5}, {10, 2, 11, 11, 6, 16}, {0, 2, 10, 6, 6, 11}, {10, 2, 10, 11, 6, 11}};
+
+		/** One box element: all six faces #all, tintindex 0 on the tinted rows (the basin/crossing shell face). */
+		private static void addBox(BlockModelBuilder aModel, float[] aBox, boolean aTinted) {
+			var tElement = aModel.element()
+					.from(aBox[0], aBox[1], aBox[2]).to(aBox[3], aBox[4], aBox[5]);
+			for (net.minecraft.core.Direction tDir : net.minecraft.core.Direction.values()) {
+				var tFace = tElement.face(tDir).texture("#all");
+				if (aTinted) tFace.tintindex(0);
+				tFace.end();
+			}
+			tElement.end();
 		}
 
 		/**
@@ -388,14 +454,23 @@ public final class GT6CrucibleDatagen {
 		@Override
 		protected void addTranslations() {
 			super.addTranslations(); // the full base set — the file must stay complete
-			add("gt6.row.crucible.display.smeltery_stone", "Stone Smeltery");
-			add("gt6.row.crucible.display.smeltery_ceramic", "Ceramic Smeltery");
-			add("gt6.row.crucible.display.smeltery_bronze", "Bronze Smeltery");
-			add("gt6.row.crucible.display.smeltery_steel", "Steel Smeltery");
-			// the raw clay crucible item (issue #45 C2 — the upstream "Clay Crucible" raw,
-			// MultiItemRandomTools.java:113; the Clay→Ceramic rename rides the port family
-			// convention, the faucet raw precedent)
+			// the 39 smeltery rungs (task material-mc-c-crucible-rows): the display column IS
+			// the en value (the four former literals were its first four entries verbatim)
+			for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) {
+				add("gt6.row.crucible.display." + tRow.path(), tRow.display());
+			}
+			// the basin/crossing composed templates + the shared material words (the ACT
+			// :1797 live-mNameLocal form — addRowMatUnit dedups, the first writer wins, so
+			// the hopper/wall words already emitted by the base set stay untouched)
+			add(GT6Crucibles.BASIN_DISPLAY_KEY, "Basin (%s)");
+			add(GT6Crucibles.CROSSING_DISPLAY_KEY, "Crucible Crossing (%s)");
+			for (GT6Crucibles.CrucibleMaterial tMat : GT6Crucibles.MATERIALS) {
+				addRowMatUnit("gt6.row.mat." + tMat.slug(), tMat.mt().mNameLocal);
+			}
+			// the raw clay items (the port Clay→Ceramic rename family, the clay_crucible_raw form)
 			add("item.gt6.clay_crucible_raw", "Ceramic Crucible (Raw)");
+			add("item.gt6.basin_ceramic_raw", "Ceramic Basin (Raw)");
+			add("item.gt6.crossing_ceramic_raw", "Ceramic Crossing (Raw)");
 			// the stone rung this card registered (the loop over GT6Molds.ROWS degenerated when
 			// the mold card grew the 30 ceramic rows — their display keys belong to
 			// GT6MoldDatagen.Lang, which chains BELOW this provider and relabels them properly;
@@ -545,6 +620,78 @@ public final class GT6CrucibleDatagen {
 			SimpleCookingRecipeBuilder.smelting(net.minecraft.world.item.crafting.Ingredient.of(tClayCrucibleRaw), RecipeCategory.MISC, tCeramicSmeltery, 0.0F, 200)
 					.unlockedBy("has_raw", has(tClayCrucibleRaw))
 					.save(aOutput, id("smelt_smeltery_ceramic"));
+
+			// task material-mc-c-crucible-rows — the :251-292/:425-466/:471-513 craft walks.
+			// The ingredient resolves through GTMaterialItems.get (the faucet-card resolvable
+			// gate: a pair without a port item path emits NO recipe — the OP.stone/ANY-gem
+			// rows mostly CUT, the mod-stones forever). The tool marks drop to empty (the
+			// mold-card form), so the smeltery rings keep 7, the basins 5, the crossings 5
+			// items — the upstream pattern shapes with h/y/w cells blanked. smeltery_stone
+			// keeps its recorded 8-cobblestone deviation row above; the ceramic rows ride
+			// the raw-clay chains below.
+			for (GT6Crucibles.CrucibleMaterial tMat : GT6Crucibles.MATERIALS) {
+				Item tIngredientItem = craftIngredientItem(tMat);
+				if (tIngredientItem == null) continue;
+				char tKey = tMat.craft() == GT6Crucibles.CrucibleMaterial.CraftKind.PLATE_SELF
+						|| tMat.craft() == GT6Crucibles.CrucibleMaterial.CraftKind.PLATE_GRAPHENE ? 'P' : 'B';
+				Item tSmeltery = GT6Crucibles.ITEMS_BY_PATH.get(tMat.pathOf("smeltery")).get();
+				if (!"stone".equals(tMat.slug())) { // the opening row's cobblestone deviation stands
+					ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tSmeltery)
+							.pattern(tKey + " " + tKey).pattern(tKey + " " + tKey)
+							.pattern("" + tKey + tKey + tKey)
+							.define(tKey, tIngredientItem)
+							.unlockedBy("has_ingredient", has(tIngredientItem))
+							.save(aOutput, id(tMat.pathOf("smeltery")));
+				}
+				Item tBasin = GT6Crucibles.BASIN_ITEMS_BY_PATH.get(tMat.pathOf("basin")).get();
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tBasin)
+						.pattern(tKey + " " + tKey).pattern(tKey + " " + tKey).pattern(" " + tKey + " ")
+						.define(tKey, tIngredientItem)
+						.unlockedBy("has_ingredient", has(tIngredientItem))
+						.save(aOutput, id(tMat.pathOf("basin")));
+				Item tCrossing = GT6Crucibles.CROSSING_ITEMS_BY_PATH.get(tMat.pathOf("crossing")).get();
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tCrossing)
+						.pattern(" " + tKey + " ").pattern("" + tKey + tKey + tKey).pattern(" " + tKey + " ")
+						.define(tKey, tIngredientItem)
+						.unlockedBy("has_ingredient", has(tIngredientItem))
+						.save(aOutput, id(tMat.pathOf("crossing")));
+			}
+
+			// the ceramic basin/crossing raw chains (:430/:477 — the U*5 pair, the
+			// clay_crucible_raw chain form: shaped raw, shapeless reclaim, furnace hardening)
+			for (String tFamily : new String[] {"basin", "crossing"}) {
+				Item tRaw = "basin".equals(tFamily) ? GT6Crucibles.BASIN_CERAMIC_RAW.get() : GT6Crucibles.CROSSING_CERAMIC_RAW.get();
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tRaw)
+						.pattern("C C").pattern("C C").pattern(" C ")
+						.define('C', Items.CLAY_BALL)
+						.unlockedBy("has_clay", has(Items.CLAY_BALL))
+						.save(aOutput, id(tFamily + "_ceramic_raw"));
+				ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, Items.CLAY_BALL, 5)
+						.requires(tRaw)
+						.unlockedBy("has_raw", has(tRaw))
+						.save(aOutput, id(tFamily + "_ceramic_raw_reclaim"));
+				Item tFormed = "basin".equals(tFamily)
+						? GT6Crucibles.BASIN_ITEMS_BY_PATH.get("basin_ceramic").get()
+						: GT6Crucibles.CROSSING_ITEMS_BY_PATH.get("crossing_ceramic").get();
+				SimpleCookingRecipeBuilder.smelting(net.minecraft.world.item.crafting.Ingredient.of(tRaw), RecipeCategory.MISC, tFormed, 0.0F, 200)
+						.unlockedBy("has_raw", has(tRaw))
+						.save(aOutput, id("smelt_" + tFamily + "_ceramic"));
+			}
+		}
+
+		/**
+		 * The resolvable gate (the faucet-card form): the row's craft ingredient, or null =
+		 * the pair has no port item path and emits NO recipe JSON.
+		 */
+		private static @javax.annotation.Nullable Item craftIngredientItem(GT6Crucibles.CrucibleMaterial aMat) {
+			var tItem = switch (aMat.craft()) {
+				case STONE -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.stone, aMat.mt());
+				case GEM -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.gem, aMat.mt());
+				case PLATE_SELF -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, aMat.mt());
+				case PLATE_GRAPHENE -> gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plate, gregapi.data.MT.Graphene);
+				case NONE -> null;
+			};
+			return tItem == null ? null : tItem.get();
 		}
 
 		private static ResourceLocation id(String aPath) {

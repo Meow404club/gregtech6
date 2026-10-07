@@ -292,6 +292,19 @@ public final class GT6Crucibles {
 	public static final RegistryObject<Item> CLAY_CRUCIBLE_RAW = ITEMS.register("clay_crucible_raw",
 			() -> new Item(new Item.Properties()));
 
+	/**
+	 * The raw clay basin/crossing (task material-mc-c-crucible-rows — the :430/:477
+	 * {@code IL.Ceramic_Basin_Raw}/{@code IL.Ceramic_Crossing_Raw} pair, both U*5): the
+	 * vanilla furnace hardens them into the {@code basin_ceramic}/{@code crossing_ceramic}
+	 * block items (the smeltery_ceramic chain form). Registered, craft-acquired, never a
+	 * creative-tab member.
+	 */
+	public static final RegistryObject<Item> BASIN_CERAMIC_RAW = ITEMS.register("basin_ceramic_raw",
+			() -> new Item(new Item.Properties()));
+
+	public static final RegistryObject<Item> CROSSING_CERAMIC_RAW = ITEMS.register("crossing_ceramic_raw",
+			() -> new Item(new Item.Properties()));
+
 	/** The registered Smeltery blocks by path (the BET/datagen/command walkers iterate this). */
 	public static final Map<String, RegistryObject<CrucibleBlock>> BLOCKS_BY_PATH = new LinkedHashMap<>();
 
@@ -507,6 +520,16 @@ public final class GT6Crucibles {
 			return mRow;
 		}
 
+		//? if neoforge {
+		/*
+		// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+		// dispatch) — the CrucibleBlock simpleCodec representative-value form verbatim.
+		@Override
+		protected com.mojang.serialization.MapCodec<? extends BasinBlock> codec() {
+			return simpleCodec(aProperties -> new BasinBlock(BASIN_ROWS.get(0), aProperties));
+		}
+		*///?}
+
 		/** The composed display name (the BASIN_DISPLAY_KEY template over the material word). */
 		@Override
 		public net.minecraft.network.chat.MutableComponent getName() {
@@ -624,6 +647,16 @@ public final class GT6Crucibles {
 		public SmelteryRow row() {
 			return mRow;
 		}
+
+		//? if neoforge {
+		/*
+		// 21.1 made BaseEntityBlock.codec() abstract — the CrucibleBlock simpleCodec
+		// representative-value form verbatim (parse-time default, no live config).
+		@Override
+		protected com.mojang.serialization.MapCodec<? extends CrossingBlock> codec() {
+			return simpleCodec(aProperties -> new CrossingBlock(CROSSING_ROWS.get(0), aProperties));
+		}
+		*///?}
 
 		/** The composed display name (the CROSSING_DISPLAY_KEY template over the material word). */
 		@Override
