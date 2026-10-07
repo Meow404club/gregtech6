@@ -4,6 +4,18 @@
     "minecraft:snowy_plains",
     "minecraft:sunflower_plains",
     "#minecraft:is_river",
-    "#minecraft:is_savanna"
+    "#minecraft:is_savanna",
+    {
+      "id": "twilightforest:stream",
+      "required": false
+    },
+    {
+      "id": "twilightforest:clearing",
+      "required": false
+    },
+    {
+      "id": "twilightforest:oak_savannah",
+      "required": false
+    }
   ]
 }

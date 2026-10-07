@@ -888,6 +888,16 @@ public final class GT6WorldgenDatagen {
             biomeModifierKeyOf("overworld_surface_sticks_moderate"),
             biomeModifierKeyOf("overworld_surface_sticks_sparse"));
 
+    /**
+     * The twilight rocks' biome-modifier key (task twilight-vegetation): the one
+     * mod-dimension SURFACE row — biomes {@code #gt6:surface_rocks_twilight} (our own
+     * tag, the 12 TF members optional), features = the twilight placed twin (count 4),
+     * the mod_loaded condition rides the emission registry
+     * (GT6BiomeModifierConditions.CONDITION_ROWS, the twilight_ores second-row face).
+     */
+    public static final ResourceKey<BiomeModifier> TWILIGHT_SURFACE_ROCKS_MODIFIER_KEY =
+            biomeModifierKeyOf("twilight_surface_rocks");
+
     private static ResourceKey<BiomeModifier> biomeModifierKeyOf(String aPath) {
         return ResourceKey.create(biomeModifierRegistryKey(), ResourceLocation.fromNamespaceAndPath("gt6", aPath));
     }
@@ -968,6 +978,15 @@ public final class GT6WorldgenDatagen {
                     tRay[0], tRay[1], tRay[2],
                     BiomeFilter.biome());
         }
+        // task twilight-vegetation — the twilight.rocks placed twin over the SAME configured
+        // lottery (Loader_Worldgen.java:621 Amount=4 vs the overworld row :618 Amount=2, the
+        // same Probability=3): the outer chain shape above, count 4, no square/heightmap
+        // (the inline inner chains carry the positions).
+        PlacementUtils.register(ctx, GT6Worldgen.TWILIGHT_SURFACE_ROCKS_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.SURFACE_ROCKS_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.SURFACE_ROCKS_PROBABILITY),
+                CountPlacement.of(GT6Worldgen.TWILIGHT_SURFACE_ROCKS_AMOUNT),
+                BiomeFilter.biome());
     }
 
     // ------------------------------------------------------------------
@@ -1536,6 +1555,14 @@ public final class GT6WorldgenDatagen {
                     HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.placedKeyOf(GT6Worldgen.STICKS_GROUP_PATHS.get(i)))),
                     GenerationStep.Decoration.VEGETAL_DECORATION));
         }
+        // task twilight-vegetation — the twilight.rocks row (upstream GEN_TWILIGHT,
+        // Loader_Worldgen.java:621): our own 12-member optional tag over the placed twin,
+        // at the same VEGETAL_DECORATION step; the mod_loaded condition rides the
+        // emission registry (the twilight_ores division of labor).
+        ctx.register(TWILIGHT_SURFACE_ROCKS_MODIFIER_KEY, addFeatures(
+                aBiomes.getOrThrow(GT6Worldgen.SURFACE_ROCKS_TWILIGHT_BIOMES),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.TWILIGHT_SURFACE_ROCKS_PLACED)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
     }
 
     // ------------------------------------------------------------------

@@ -1,6 +1,14 @@
 {
   "values": [
     "#minecraft:is_taiga",
-    "#minecraft:is_badlands"
+    "#minecraft:is_badlands",
+    {
+      "id": "twilightforest:highlands",
+      "required": false
+    },
+    {
+      "id": "twilightforest:snowy_forest",
+      "required": false
+    }
   ]
 }

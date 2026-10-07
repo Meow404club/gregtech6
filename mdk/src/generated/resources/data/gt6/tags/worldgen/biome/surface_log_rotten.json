@@ -2,6 +2,14 @@
   "values": [
     "minecraft:swamp",
     "minecraft:mangrove_swamp",
-    "#minecraft:is_jungle"
+    "#minecraft:is_jungle",
+    {
+      "id": "twilightforest:swamp",
+      "required": false
+    },
+    {
+      "id": "twilightforest:fire_swamp",
+      "required": false
+    }
   ]
 }

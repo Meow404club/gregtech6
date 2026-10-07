@@ -17,6 +17,7 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biomes;
 import gregtech6.worldgen.GT6HiveFeature;
 import gregtech6.worldgen.GT6Worldgen;
+import gregtech6.worldgen.GTOreWorldgen;
 
 /**
  * The GT6 biome-tag datagen home (task w6-t1-trees-nine spec ③): the biome
@@ -38,12 +39,36 @@ import gregtech6.worldgen.GT6Worldgen;
  * windswept_forest/windswept_gravelly_hills/stony_shore (the 1.18 family reshape —
  * extremeHillsEdge was REMOVED in 1.18, its coverage folds into the windswept pair).
  *
+ * <p><b>The twilight band</b> (task twilight-vegetation — the extension surface's first
+ * FIRST-PARTY tenant; the main-session ruling overturned the TF-wide mount premise:
+ * every WorldgenOnSurface subclass overrides {@code canGenerate} with a BiomeNameSet
+ * name check (CS.java:263-289), so the port is a PER-FEATURE TAG ADDITION, not a
+ * modifier-wide TF mount): {@link #TWILIGHT_MEMBERS} maps each band tag to the
+ * intersection of its upstream name set with the TF 1.20.1 biome universe
+ * (twilightforest init/TFBiomes.java:19-48, display names cross-read from the en_us
+ * lang), appended via {@code addOptional} (TagsProvider.java:152, {@code required:
+ * false} — TF absent = the unknown members drop at datapack load = empty resolution,
+ * zero mounts, zero errors). Name drift declared: TF 1.20.1 renamed 1.7.10's
+ * "Dense Twilight Forest" → "Dense Forest" (twilightforest:dense_forest) — the new
+ * display name is in NO upstream name set, so dense_forest rides the WOODS/FOREST
+ * rows BY DECLARATION (the same biome renamed; a strict display-name match would
+ * exclude it). The other cross-version catches are pure display-name matches
+ * (BiomeNameSet.java:44-48, case-insensitive exact): clearing = "Twilight Clearing"
+ * (in BIOMES_PLAINS :276 AND BIOMES_HAZEL :277 verbatim) and oak_savannah = "Oak
+ * Savanna" — which lives ONLY in BIOMES_SAVANNA (:261), NOT in the plains/woods
+ * families, so it belongs to exactly the savanna-flavored rows (sticks moderate,
+ * log dry, twilight rocks) and to no tree tag.
+ * The TF members deliberately NOT appended anywhere: spooky_forest ("Spooky Forest"
+ * is in no card name set), mushroom_forest/dense_mushroom_forest (SHROOM unchecked),
+ * lake (BIOMES_RIVER_LAKE only — black sand checks BIOMES_RIVER), final_plateau and
+ * the two underground cave biomes.
+ *
  * <p><b>The empty tag</b>: rainbowood's upstream set is {@code BIOMES_RAINBOWOOD =
- * ("Enchanted Forest")} (CS.java:286) — a Thaumcraft biome with NO vanilla counterpart,
- * so pure-vanilla upstream GT6 also generates ZERO rainbowood trees. The port emits the
- * empty {@code values: []} tag (the biome-modifier row stays uniform; the tag is the
- * pack-author activation switch — strictness unaffected, an empty list references no
- * element so the TagsProvider zero-optional discipline holds).
+ * ("Enchanted Forest")} (CS.java:289) — no vanilla counterpart, so pure-vanilla GT6
+ * generates ZERO rainbowood trees and the port emits the empty {@code values: []} tag
+ * (the pack-author activation switch). The twilight band is the switch's first
+ * tenant: twilightforest:enchanted_forest rides this very tag — a TF-wide modifier
+ * mount would instead have painted rainbow trees across every dimension.
  *
  * <p>Directory: {@code data/gt6/tags/worldgen/biome/**} — the registry-key dir is
  * IDENTICAL on both legs ("worldgen/biome" already singular), so no
@@ -97,6 +122,86 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
 
     private static ResourceKey<Biome> biome(String aName) {
         return ResourceKey.create(Registries.BIOME, new ResourceLocation("minecraft", aName));
+    }
+
+    /**
+     * The twilight band (task twilight-vegetation) — the per-feature reconciliation
+     * table as data: each band tag path (under {@code data/gt6/tags/worldgen/biome/},
+     * "trees/&lt;snake&gt;" for the six TF rows of the nine trees) → the TF 1.20.1
+     * member ids, the intersection of the upstream BiomeNameSet with the TF universe
+     * (the class javadoc carries the per-row upstream anchors). The map IS the single
+     * source: the emission walk and the pin test read the same rows. Every member is
+     * appended {@code required:false}.
+     */
+    public static final java.util.Map<String, List<String>> TWILIGHT_MEMBERS;
+    static {
+        java.util.Map<String, List<String>> tMap = new java.util.LinkedHashMap<>();
+        // the six TF trees (Loader_Worldgen.java:608/:609/:610/:612/:615/:616):
+        // rubber = BIOMES_RUBBER (CS.java:267) ∩ TF; bluespruce = BIOMES_BLUESPRUCE
+        // (CS.java:282 — "Twilight Highlands"+"Thornlands", NOT the snowy pair);
+        // rainbowood = BIOMES_RAINBOWOOD (CS.java:289).
+        tMap.put("trees/rubber", List.of("highlands", "snowy_forest"));
+        tMap.put("trees/maple", List.of("firefly_forest"));
+        tMap.put("trees/willow", List.of("swamp"));
+        // hazel = BIOMES_HAZEL (CS.java:277 — "Twilight Clearing" only; TF's
+        // oak_savannah displays "Oak Savanna", a BIOMES_SAVANNA member, not hazel).
+        tMap.put("trees/hazel", List.of("clearing"));
+        tMap.put("trees/rainbowood", List.of("enchanted_forest"));
+        tMap.put("trees/blue_spruce", List.of("highlands", "thornlands"));
+        // the sticks tiers (Loader_Worldgen.java:630; WorldgenSticks.java:53-55): woods|
+        // swamp → dense, river|plains|savanna → moderate, taiga|mesa|wastelands → sparse.
+        tMap.put("sticks_dense", List.of("forest", "dense_forest", "firefly_forest", "dark_forest",
+                "dark_forest_center", "swamp", "fire_swamp"));
+        tMap.put("sticks_moderate", List.of("stream", "clearing", "oak_savannah"));
+        tMap.put("sticks_sparse", List.of("highlands", "snowy_forest"));
+        // glowtus (Loader_Worldgen.java:632; WorldgenGlowtus.java:49 jungle | "Fire Swamp").
+        tMap.put("surface_glowtus", List.of("fire_swamp"));
+        // bush (Loader_Worldgen.java:633; WorldgenBushes.java:56 plains|woods minus frozen —
+        // no SAVANNA group, so TF's "Oak Savanna" is NOT a bush biome).
+        tMap.put("surface_bush", List.of("forest", "dense_forest", "firefly_forest", "dark_forest",
+                "dark_forest_center", "clearing"));
+        // black sand (Loader_Worldgen.java:581; WorldgenBlackSand.java:49-51 — the
+        // BIOMES_RIVER requirement ∧ ¬OCEAN_BEACH ∧ ¬SWAMP; "Twilight Stream" is TF's
+        // only river-family biome, "Twilight Lake" rides BIOMES_RIVER_LAKE = excluded).
+        tMap.put("surface_blacksand", List.of("stream"));
+        // the four fallen logs (Loader_Worldgen.java:603-606): dry = PLAINS|WOODS|SAVANNA|
+        // DESERT|MESA|WASTELANDS (WorldgenLogDry.java:50 — the SAVANNA group is why TF's
+        // "Oak Savanna" rides dry but NOT mossy, whose check :52 is PLAINS|WOODS|SWAMP).
+        tMap.put("surface_log_dry", List.of("forest", "dense_forest", "firefly_forest", "dark_forest",
+                "dark_forest_center", "clearing", "oak_savannah"));
+        tMap.put("surface_log_rotten", List.of("swamp", "fire_swamp"));
+        tMap.put("surface_log_mossy", List.of("forest", "dense_forest", "firefly_forest", "dark_forest",
+                "dark_forest_center", "clearing", "swamp", "fire_swamp"));
+        tMap.put("surface_log_frozen", List.of("snowy_forest", "glacier"));
+        // the twilight rocks (Loader_Worldgen.java:621; WorldgenRocks.java:54 nine groups —
+        // DESERT|MESA|TAIGA|SWAMP|SAVANNA|PLAINS|WOODS|MOUNTAINS|WASTELANDS; the TF
+        // universe minus the untouched seven, 12 members).
+        tMap.put("surface_rocks_twilight", List.of("highlands", "snowy_forest", "thornlands", "swamp",
+                "fire_swamp", "clearing", "oak_savannah", "forest", "dense_forest", "firefly_forest",
+                "dark_forest", "dark_forest_center"));
+        TWILIGHT_MEMBERS = java.util.Collections.unmodifiableMap(tMap);
+    }
+
+    /** The twilight namespace member id ({@code twilightforest:<aPath>}). */
+    private static ResourceLocation twilightforest(String aPath) {
+        return ResourceLocation.fromNamespaceAndPath(GTOreWorldgen.TWILIGHT_MODID, aPath);
+    }
+
+    /**
+     * The twilight band emission (task twilight-vegetation): re-opens each band tag
+     * (TagsProvider.tag is computeIfAbsent — the vanilla rows above stay untouched) and
+     * appends the optional members, plus the NEW twilight-rocks tag (optional-only, the
+     * rainbowood empty-switch form: TF absent = the tag resolves empty = the modifier
+     * row is a structural no-op even before its mod_loaded condition skips it).
+     */
+    private void addTwilightVegetationBand() {
+        for (java.util.Map.Entry<String, List<String>> tRow : TWILIGHT_MEMBERS.entrySet()) {
+            var tAppender = tag(TagKey.create(Registries.BIOME,
+                    ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tRow.getKey())));
+            for (String tMember : tRow.getValue()) {
+                tAppender.addOptional(twilightforest(tMember));
+            }
+        }
     }
 
     /** The vanilla subset per kind, GT6TreeBlocks.KINDS order (the class-javadoc mapping). */
@@ -212,5 +317,6 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
         // WorldgenLogFrozen.java:50 — frozen (no vanilla snowy tag: the explicit trio).
         tag(GT6Worldgen.LOG_FROZEN_BIOMES)
                 .add(Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.SNOWY_TAIGA);
+        addTwilightVegetationBand(); // task twilight-vegetation — the 16-tag TF band (tail-append)
     }
 }
