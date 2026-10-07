@@ -1,3 +1,8 @@
 {
-  "values": []
+  "values": [
+    {
+      "id": "twilightforest:enchanted_forest",
+      "required": false
+    }
+  ]
 }

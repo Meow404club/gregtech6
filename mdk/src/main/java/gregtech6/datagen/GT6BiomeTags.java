@@ -94,14 +94,27 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
     // chain's biome-name families (WorldgenHives.java:157-172) onto
     // {@code #gt6:bumble_hives/<family>}: the vanilla members live, the modded
     // families (magical/volcanic/end/nether — 1.7.10 modded BiomeNameSets) emit
-    // EMPTY (the rainbowood activation-switch face). Jungle = the 1.7.10 jungle
+    // EMPTY except the magical family's TF slice (twilight-hives-springs:
+    // twilightforest:enchanted_forest, required:false — the deadrock face).
+    // Jungle = the 1.7.10 jungle
     // family's 1.18 survivors; frozen = the snowy family (the BIOMES_FROZEN
     // vanilla subset); shore = the OCEAN_BEACH+LAKE pair onto the vanilla ocean/
     // beach/river tags; shroom = the mushroom island biome (the mycelium contact
     // face covers it at runtime too, WorldgenHives.java:173).
     // ------------------------------------------------------------------
     private void addHiveTags() {
-        tag(GT6HiveFeature.hiveTag("magical"));   // the EMPTY pack surface (the :157 family)
+        // task twilight-hives-springs — the magical family's FIRST modded member: TF's
+        // enchanted_forest ("Enchanted Forest", TFBiomes.ENCHANTED_FOREST — the one
+        // BIOMES_MAGICAL name (CS.java:288) surviving into modern TF; "Magical Forest"/
+        // "Eldritch"/"Tainted Land"/"Eerie" are Thaumcraft/BoP names, not TF ids).
+        // required:false = the deadrock-tag face: TF absent, the tag resolves empty, no
+        // crash, no hang (zero REQUIRED elements — the zero-optional discipline holds).
+        // The remaining TF slice of the other families ("Mushroom Forest"/"Deep Mushroom
+        // Forest" ∈ BIOMES_SHROOM, "Fire Swamp" ∈ BIOMES_VOLCANIC, "Snowy Forest"/
+        // "Twilight Glacier" ∈ BIOMES_FROZEN) stays the pack-extension surface, out of
+        // this card's declared face.
+        tag(GT6HiveFeature.hiveTag("magical"))    // the :157 family — the pack surface + the TF slice
+                .addOptional(new ResourceLocation("twilightforest", "enchanted_forest"));
         tag(GT6HiveFeature.hiveTag("volcanic"));  // the EMPTY pack surface (the :159 family)
         tag(GT6HiveFeature.hiveTag("end"));       // the EMPTY pack surface (the :161 family)
         tag(GT6HiveFeature.hiveTag("nether"));    // the EMPTY pack surface (the :163 family)

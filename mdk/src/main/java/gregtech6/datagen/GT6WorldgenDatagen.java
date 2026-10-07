@@ -832,6 +832,15 @@ public final class GT6WorldgenDatagen {
                 HolderSet.direct(GT6Worldgen.TWILIGHT_STONE_PLACED_KEYS.stream()
                         .map(tPlaced::getOrThrow).toList()),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task twilight-hives-springs — the FOURTH hive modifier over TF's own tag at the
+        // ore step (the twilight_ores row's division of labor: condition-free bootstrap,
+        // the loader brand keys ride the emission registry). The mount half only — the
+        // Feature's default routing IS the upstream DIM_TWILIGHT-over-OVERWORLD-case face
+        // (WorldgenHives.java:126), zero Feature changes.
+        ctx.register(TWILIGHT_HIVES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GTOreWorldgen.twilightBiomeTag()),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
     }
 
     /**
@@ -1044,6 +1053,21 @@ public final class GT6WorldgenDatagen {
      * {@code [mod_loaded twilightforest]}).
      */
     public static final ResourceKey<BiomeModifier> TWILIGHT_STONES_MODIFIER_KEY = biomeModifierKeyOf("twilight_stones");
+
+    /**
+     * The twilight bumble-hive biome-modifier key (task twilight-hives-springs): the FOURTH
+     * hive row — biomes {@code #twilightforest:in_twilight_forest} (the same TF tag gate as
+     * the twilight_ores row), features = the ONE {@code gt6:bumble_hives} placed feature
+     * (the nether_bumble_hives same-placed-key convention), the conditions ride the emission
+     * registry (the positive {@code [mod_loaded twilightforest]}). The upstream
+     * {@code twilight.bumblehives} row (Loader_Worldgen.java:639) routed DIM_TWILIGHT into
+     * the OVERWORLD case (WorldgenHives.java:126 — DIM_TWILIGHT in the same case group), and
+     * the Feature's default routing already sends every non-nether/end dimension to that
+     * overworld shape — this row is purely the MOUNT. The surface family chain picks the
+     * hive colour per biome: TF's magical biomes ride {@code #gt6:bumble_hives/magical}
+     * (GT6BiomeTags, the required:false pack-extension face).
+     */
+    public static final ResourceKey<BiomeModifier> TWILIGHT_HIVES_MODIFIER_KEY = biomeModifierKeyOf("twilight_bumble_hives");
 
     /**
      * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card

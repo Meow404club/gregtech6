@@ -132,6 +132,12 @@ public class GT6BiomeModifierConditions implements DataProvider {
             // resolution would no-op anyway); the condition keeps the mod-dimension
             // skeleton's detection face uniform and skips the row at datapack load.
             new ConditionRow(GT6WorldgenDatagen.TWILIGHT_SURFACE_ROCKS_MODIFIER_KEY.location().getPath(),
+                    aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)),
+            // task twilight-hives-springs — the FIFTH row (rebase union: the twilight_stones
+            // and twilight_surface_rocks rows landed first): the twilight_bumble_hives modifier
+            // mounts only WITH Twilight Forest present (the twilight_ores row's detection
+            // face, the same modid — one registry entry per mod-dimension mount).
+            new ConditionRow(GT6WorldgenDatagen.TWILIGHT_HIVES_MODIFIER_KEY.location().getPath(),
                     aBrand -> modLoadedConditions(aBrand, GTOreWorldgen.TWILIGHT_MODID)));
 
     @Override
