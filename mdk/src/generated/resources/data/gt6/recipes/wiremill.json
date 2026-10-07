@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_bronze"
+    },
+    "M": {
+      "item": "gt6:casing_machine_bronze"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_bronze"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "SGS",
+    "wMh"
+  ],
+  "result": {
+    "item": "gt6:wiremill"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:gear_gt_small_bronze"
+    },
+    "M": {
+      "item": "gt6:casing_machine_bronze"
+    },
+    "P": {
+      "item": "gt6:wood_fluid_pipe_medium"
+    },
+    "R": {
+      "item": "gt6:rotor_stainless_steel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "RPG",
+    "wMG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:pressure_washer"
+  }
+}

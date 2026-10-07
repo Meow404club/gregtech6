@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_titanium"
+    },
+    "P": {
+      "item": "gt6:plate_titanium"
+    },
+    "T": {
+      "item": "gt6:screw_titanium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TwT",
+    "TdT",
+    "PMP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:magnetic_separator_t5"
+  }
+}

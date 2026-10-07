@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "gt6:compact_electric_motor_hv"
+    },
+    "M": {
+      "item": "gt6:casing_machine_stainless_steel"
+    },
+    "S": {
+      "item": "gt6:stick_long_stainless_steel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "ShS",
+    "GMG",
+    "SwS"
+  ],
+  "result": {
+    "item": "gt6:electricloom_t3"
+  },
+  "show_notification": true
+}

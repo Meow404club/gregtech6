@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "gt6:dust_diamond"
+    },
+    "G": {
+      "item": "gt6:tool_head_buzz_saw_cobalt_brass"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_steel"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_steel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "DGS",
+    "wMS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:buzzsaw_t2"
+  }
+}

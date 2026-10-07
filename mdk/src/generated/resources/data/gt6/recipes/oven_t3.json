@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "C": {
+      "item": "gt6:plate_double_copper"
+    },
+    "M": {
+      "item": "gt6:casing_machine_titanium"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "wMh",
+    "BCB"
+  ],
+  "result": {
+    "item": "gt6:oven_t3"
+  },
+  "show_notification": true
+}

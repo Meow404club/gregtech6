@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": {
+      "tag": "c:gems/emerald"
+    },
+    "F": {
+      "item": "gt6:field_generator_lv"
+    },
+    "M": {
+      "item": "gt6:casing_machine_osmiridium"
+    },
+    "S": {
+      "tag": "c:gems/sapphire"
+    },
+    "X": {
+      "item": "gt6:signal_emitter_mv"
+    }
+  },
+  "pattern": [
+    "EXE",
+    "FMF",
+    "SXS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:replicator_t2"
+  }
+}

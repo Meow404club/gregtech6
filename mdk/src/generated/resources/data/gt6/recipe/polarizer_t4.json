@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_chromium"
+    },
+    "P": {
+      "item": "gt6:plate_chromium"
+    },
+    "T": {
+      "item": "gt6:screw_chromium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TwT",
+    "PMP",
+    "TdT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:polarizer_t4"
+  }
+}

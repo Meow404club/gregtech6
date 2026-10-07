@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_steel_galvanized"
+    },
+    "P": {
+      "item": "gt6:plate_stainless_steel"
+    },
+    "S": {
+      "item": "gt6:plate_silicon"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "hPw",
+    "PMP",
+    "PSP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:freezer"
+  }
+}

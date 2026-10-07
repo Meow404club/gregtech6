@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "gt6:circuit4"
+    },
+    "M": {
+      "item": "gt6:casing_machine_chromium"
+    },
+    "P": {
+      "tag": "forge:gems/diamond"
+    },
+    "W": {
+      "item": "gt6:cable_aluminium_gt01"
+    },
+    "X": {
+      "item": "gt6:signal_emitter_ev"
+    },
+    "Y": {
+      "item": "gt6:sensor_ev"
+    },
+    "Z": {
+      "item": "minecraft:honey_bottle"
+    }
+  },
+  "pattern": [
+    "WXW",
+    "ZMP",
+    "CYC"
+  ],
+  "result": {
+    "item": "gt6:bumblelyzer_t4"
+  },
+  "show_notification": true
+}

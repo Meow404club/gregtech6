@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_chromium"
+    },
+    "P": {
+      "item": "gt6:plate_chromium"
+    },
+    "T": {
+      "item": "gt6:screw_chromium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TwT",
+    "TdT",
+    "PMP"
+  ],
+  "result": {
+    "item": "gt6:magnetic_separator_t4"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "gt6:plate_gem_tiny_diamond"
+    },
+    "G": {
+      "item": "gt6:gear_gt_steel"
+    },
+    "M": {
+      "item": "gt6:casing_machine_double_steel"
+    },
+    "S": {
+      "item": "gt6:gear_gt_small_steel"
+    },
+    "T": {
+      "item": "gt6:screw_steel"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    }
+  },
+  "pattern": [
+    "TDS",
+    "dMG"
+  ],
+  "result": {
+    "item": "gt6:lathe_t2"
+  },
+  "show_notification": true
+}

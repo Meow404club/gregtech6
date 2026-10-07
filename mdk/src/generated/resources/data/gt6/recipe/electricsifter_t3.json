@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_double_stainless_steel"
+    },
+    "R": {
+      "item": "gt6:stick_stainless_steel"
+    },
+    "S": {
+      "item": "gt6:compact_electric_piston_hv"
+    },
+    "W": {
+      "item": "gt6:wire_fine_stainless_steel"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "WxW",
+    "RMR",
+    "SwS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:electricsifter_t3"
+  }
+}
