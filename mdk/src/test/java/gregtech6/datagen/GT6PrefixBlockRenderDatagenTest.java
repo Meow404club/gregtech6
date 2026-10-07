@@ -192,17 +192,23 @@ class GT6PrefixBlockRenderDatagenTest {
     }
 
     /**
-     * The loot 1:1 rule: the provider's generate() maps dropSelf over
-     * {@link GT6LootTables#lootBlocks()} = the block array = the census walk, so the table
-     * count is the block count (3777). Offline the registries never fire, so this pins the
-     * enumeration side of the equality (3777 pairs); the generated-file side is gated by
-     * runData (loot_tables/blocks/*.json == 3777, written>0 then written:0).
+     * The loot count law: the provider's generate() maps dropSelf over
+     * {@link GT6LootTables#lootBlocks()} = the block array MINUS the convergence skip (task
+     * parse-errors-registration-convergence: loot has no load-time condition mechanism, a
+     * seed-hidden pair ships no table — the upstream bare shape). Offline the registries
+     * never fire, so this pins the enumeration side of the equality (both empty, 0 == 0);
+     * the neo junit-fml boot registers live, so the subtracted form is the executed law
+     * there (3777 pairs − the atlas-gated ones). The generated-file side is gated by
+     * runData + the GT6ForeignRowConvergenceTest loot walk.
      */
     @Test
     void lootTableCountEqualsBlockCountByConstruction() {
         assertEquals(PINNED_TOTAL, GTMaterialBlocks.registrationOrder().size(), "the census walk the blocks and tables both derive from");
-        assertEquals(GTMaterialBlocks.blockArray().length, GT6LootTables.lootBlocks().size(),
-                "lootBlocks is a snapshot of the block array (both empty offline, both 3777 in the datagen JVM)");
+        long tGated = java.util.Arrays.stream(GTMaterialBlocks.blockArray())
+                .filter(tBlock -> tBlock instanceof gregtech6.block.material.GTMaterialPrefixBlock tMat
+                        && GT6ForeignRowConvergence.gatingDomain(tMat.material) != null).count();
+        assertEquals(GTMaterialBlocks.blockArray().length - tGated, GT6LootTables.lootBlocks().size(),
+                "lootBlocks is the block array minus the gated pairs (the convergence skip face)");
         assertEquals("block_ingot_coal", GTMaterialItems.itemIdOf(OP.blockIngot, MT.Coal),
                 "the vanilla default table location: gt6:blocks/block_ingot_coal (Block.getLootTable default, zero block code)");
     }
