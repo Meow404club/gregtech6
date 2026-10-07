@@ -53,15 +53,18 @@ import gregtech6.item.MaterialPrefixItem;
  * ores/blocks/stones/crates go through PrefixBlock, pipes/wires through MultiTileEntities, and
  * identical-name aliases exist purely for oredict parsing) — plus the four casingMachine* block-family
  * prefixes the port deliberately registers as items (task casing-machine-register, the deviation
- * declared on {@link #itemPathPrefixes}) and the plank prefix (task wood-planks-register, the second
- * block-path item adaptation, same declaration face). The sixteen wire multipliers RODE this list as
+ * declared on {@link #itemPathPrefixes}). The plank prefix RODE this list as the second block-path
+ * item adaptation (task wood-planks-register) and was RETIRED from it (task planks-blockification:
+ * upstream ships planks ONLY as blocks — Loader_Woods.java:62-65 BlockTreePlanks/2, Loader_Items
+ * carries zero plank rows — and the port now matches, the plank face being the {@link GT6WoodDict}
+ * BlockItem rows). The sixteen wire multipliers RODE this list as
  * the third declared deviation (task wire-gt-registration) and were RETIRED from it (task
  * wiregt-prefix-item-retirement, the user-ruled upstream-fidelity regression 2026-10-06: the lift
  * flooded the creative screen with sixteen per-multiplier tabs of model-less wire items plus the
  * rubber wire rows — upstream ships wireGt01-16 ONLY on the MTE block path,
  * MultiTileEntityWireElectric.java:72-87, one OreDictManager.setTarget_ oredient row per multiplier;
  * upstream Loader_Items.java:57-171 carries ZERO wireGt rows). This card owns the item path, so the
- * universe is that 110-prefix list — referenced via OP fields for compile-checked existence — while
+ * universe is that 109-prefix list — referenced via OP fields for compile-checked existence — while
  * the walk below iterates ALL of {@link OreDictPrefix#VALUES} and explicitly skips the non-item paths
  * (aggregate counter in the registration log) so the deferral stays visible and auditable.
  * Block/MTE families are later cards; PREFIX_UNUSED aliases never generate.
@@ -226,13 +229,12 @@ public final class GTMaterialItems {
 
     /**
      * The per-material registration gate: {@link OreDictPrefix#isGeneratingItem} (upstream
-     * PrefixItem.java:104 = forced || !blacklist && mCondition) plus the ONE port-authority
-     * material gate — plank is restricted to the {@link TD.Properties#WOOD} family (the
-     * itemPathPrefixes javadoc carries the full upstream grounding: no upstream condition exists,
-     * the upstream plank face is wood-only blocks, an unconditioned walk floods every material).
+     * PrefixItem.java:104 = forced || !blacklist && mCondition). The former plank WOOD gate
+     * (task wood-planks-register) retired with the plank item face — task
+     * planks-blockification moved the plank face to the {@link GT6WoodDict} BlockItem rows,
+     * so every prefix here evaluates the plain upstream criterion.
      */
     static boolean generatesItemPathItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
-        if (aPrefix == OP.plank) return aMaterial.contains(TD.Properties.WOOD); // task wood-planks-register ruling
         return aPrefix.isGeneratingItem(aMaterial);
     }
 
@@ -331,33 +333,24 @@ public final class GTMaterialItems {
      * lifted them (the cable_*_gt01 registration gap is the wire-family pool's declared
      * block-domain face).
      *
-     * <p>Per-material gates need zero port code for 109 of the 110 prefixes: the OP conditions are
+     * <p>Per-material gates need zero port code for all 109 prefixes: the OP conditions are
      * already verbatim in the port (e.g. OP.java:1274-1277 — casingMachine = And(PARTS, SMITHABLE),
      * the other casing three chain casingMachine via setCondition = OreDictPrefix.isTrue →
      * canGenerateItem, OreDictPrefix.java:349) and {@link OreDictPrefix#isGeneratingItem} evaluates
-     * them unchanged. THE ONE EXCEPTION is plank: upstream OP.plank carries NO setCondition
-     * (OP.java:394 = the bare create + add(BLOCK_BASED, UNIFICATABLE_RECIPES) + setMinStacksize(16)
-     * verbatim in the port OP.java:1454-1455; the OP.java:599-620 disable/force census has no plank
-     * row) so its default condition is TRUE for every material — an unconditioned registration would
-     * flood gt6:plank_iron and friends over the whole ~210-material array. The upstream plank face
-     * is wood-only by construction (BlockTreePlanks/2 build over wood species; the OP.plank.dat
-     * carriers are Greatwood/Silverwood/Marshmallow/WoodPolished/Rainbowood,
-     * LoaderItemList.java:916-917/:1089-1091/:1284 + BlockTreePlanks.java:57), so the port gate is
-     * {@link TD.Properties#WOOD} — the tag the upstream/port {@code wood()}/{@code woodnormal()}
-     * factories stamp on every wood-family material (MT.java:804-806/822-824, MT.Wood
-     * MT.java:2098) — applied in {@link #generatesItemPathItem}, the declared port-authority
-     * material-domain ruling of task wood-planks-register.
+     * them unchanged. The one former exception (plank — upstream OP.plank carries NO setCondition,
+     * OP.java:394, default TRUE for every material, so the item adaptation needed the WOOD gate)
+     * left with the plank retirement: task planks-blockification moved the plank face to the
+     * {@link GT6WoodDict} BlockItem rows (the 17 cubes of BlockTreePlanks/2 + the vanilla
+     * identities), and {@code gt6:plank_wood}/{@code gt6:plank_wood_treated}/... survive as the
+     * generic cubes' ids (GT6TreeBlocks.GENERIC_PLANK_ROWS). No port-authority gate remains on
+     * the item path.
      *
-     * <p><b>The sawing absorb seam (declared, NOT re-poured here)</b>: the sawing increment
-     * card (task sawing-plank-concrete-increment) rides the DECLARED IDENTITY MAPPING
-     * IL.Plank (BlocksGT.Planks meta 9, Loader_Woods.java:74) -> minecraft:oak_planks and
-     * states in its sawing.json declaration that the rows re-pour onto the generic plank
-     * face when a plank registration card lands — THIS is that card. This card owns the
-     * ITEM face only ({@code gt6:plank_wood} is the identity material's item, pinned by
-     * GT6PlankRegistrationTest); the sawing.json re-pour itself is that card's follow-up
-     * (recipe JSONs are outside this card's FILES_SCOPE). The GT6RecipesBath
-     * {@code sPlankItemResolver} universe moves with this registration by design (its
-     * class doc carries the attribution).
+     * <p><b>The sawing absorb seam (ABSORBED)</b>: the sawing increment card's DECLARED IDENTITY
+     * MAPPING re-pour and the plank-mapping-sweep 76-row carry both landed on the then-registered
+     * gt6:plank_wood prefix item; task planks-blockification landed the generic plank BLOCK under
+     * the same id, so those rows ride the converged face unchanged — and the GT6RecipesBath
+     * {@code sPlankItemResolver} universe moved with the registration by design (its class doc
+     * carries the attribution).
      *
      * <p>KJS/ CraftTweaker exposure of the new families is the kjs binding card's face (deferred —
      * the registration bridge stays the single source; no KJS surface ships here).
@@ -384,7 +377,7 @@ public final class GTMaterialItems {
             OP.gearGtSmall, OP.gearGt, OP.rotor, OP.stick, OP.stickLong, OP.springSmall, OP.spring,
             OP.lens, OP.round, OP.bolt, OP.screw, OP.ring, OP.chain, OP.foil, OP.casingSmall,
             OP.casingMachine, OP.casingMachineDouble, OP.casingMachineQuadruple, OP.casingMachineDense,
-            OP.plank, OP.wireFine, OP.minecartWheels, OP.railGt,
+            OP.wireFine, OP.minecartWheels, OP.railGt,
             // NOTE the wireGt01-16 absence (task wiregt-prefix-item-retirement): upstream ships
             // them ONLY on the MTE block path (MultiTileEntityWireElectric.java:72-87, one
             // OreDictManager.setTarget_ row per multiplier; :89-93 the cableGt face), so upstream
