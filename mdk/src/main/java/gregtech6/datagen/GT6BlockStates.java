@@ -1939,10 +1939,12 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel(GTBarrels.BARREL_LOGISTICS.get(), "logistics"); // task tank-render-tint — the :2171 row joins the two-layer borrow
         for (var tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
             addBarrel(tDrum.get(), "drum");
-        // task barrel-paint-render: the datagen-JVM census half — 16 barrel blocks,
+        for (var tDrum : GTBarrels.DRUM_64K_BLOCKS.values()) // task material-mc-f-attachment-rows — the :2152-2158 tier shares the ONE drum icon set upstream
+            addBarrel(tDrum.get(), "drum");
+        // task barrel-paint-render: the datagen-JVM census half — 23 barrel blocks,
         // matching the GTBarrels.paintableBlockArray() client registration census (the
-        // offline JUnit half walks the generated tree and pins the same 16).
-        LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums, addBarrel)", mBarrelTintModels);
+        // offline JUnit half walks the generated tree and pins the same 23).
+        LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums + 7 64K drums, addBarrel)", mBarrelTintModels);
     }
 
     /** The r8 two-layer per-face barrel + its BlockItem parent (the borrowed barrel_parts family form). */

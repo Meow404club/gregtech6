@@ -2341,6 +2341,16 @@ BLOCK_BACKFILL = {
     "block.gt6.cell_infinity": "无尽单元",                  # gt.multitileentity.32631 (the %s单元 form, task cell-family-closeout)
     "block.gt6.barrel_adamantium": "艾德曼合金储罐",
     "block.gt6.barrel_awakened_draconium": "觉醒龙储罐",  # dump gt.multitileentity.32066 verbatim
+    # task material-mc-f-attachment-rows — the 64K tier (Loader :2152-2158, the dump
+    # MTE faces verbatim: 32064/:13085, 32716/:13537, 32070/:13091, 32020/:13041,
+    # 32093/:13114, 32022/:13043, 32023/:13044)
+    "block.gt6.barrel_desh": "戴斯储罐",
+    "block.gt6.barrel_efrine": "绿晶储罐",
+    "block.gt6.barrel_invar": "殷钢储罐",
+    "block.gt6.barrel_manasteel": "魔力钢储罐",
+    "block.gt6.barrel_stainless_steel": "不锈钢储罐",
+    "block.gt6.barrel_syrmorite": "赛摩铜储罐",
+    "block.gt6.barrel_thaumium": "神秘锭储罐",
     "block.gt6.barrel_draconium": "龙储罐",          # dump gt.multitileentity.32021 verbatim (龙 word root)
     "block.gt6.barrel_gaia_spirit": "盖亚储罐",
     "block.gt6.barrel_infinity": "无尽储罐",         # dump gt.multitileentity.32067 verbatim

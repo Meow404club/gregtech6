@@ -1116,6 +1116,16 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.barrel_infinity");
 		addDirect("block.gt6.barrel_logistics");
 		addDirect("block.gt6.barrel_metal");
+		// task material-mc-f-attachment-rows — the 64K tier (the dump faces verbatim:
+		// 殷钢储罐 :13085 / 不锈钢储罐 :13537 / 戴斯储罐 :13091 / 赛摩铜储罐 :13041 /
+		// 绿晶储罐 :13114 / 神秘锭储罐 :13043 / 魔力钢储罐 :13044)
+		addDirect("block.gt6.barrel_desh");
+		addDirect("block.gt6.barrel_efrine");
+		addDirect("block.gt6.barrel_invar");
+		addDirect("block.gt6.barrel_manasteel");
+		addDirect("block.gt6.barrel_stainless_steel");
+		addDirect("block.gt6.barrel_syrmorite");
+		addDirect("block.gt6.barrel_thaumium");
 		addDirect("block.gt6.barrel_netherite");
 		addDirect("block.gt6.barrel_plastic");
 		addDirect("block.gt6.barrel_tantalum_hafnium_carbide");

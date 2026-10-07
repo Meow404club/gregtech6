@@ -268,6 +268,9 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.METAL_DRUM_BLOCKS.values()) {
 			tPickaxe.add(tDrum.get());
 		}
+		for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.DRUM_64K_BLOCKS.values()) {
+			tPickaxe.add(tDrum.get()); // task material-mc-f-attachment-rows — the :2152-2158 tier rides aUtilMetal like the high tiers
+		}
 		// task c-anvil — the stone anvil pair joins the band: both rows are stone-carrier
 		// tool blocks (aUtilStone, the Loader :2185-2186 column; the vanilla
 		// mineable/pickaxe gate over hardness 1.0), the hopper/boiler family convention

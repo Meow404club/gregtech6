@@ -18,13 +18,20 @@ direct	block.gt6.acacia_beam	金合欢木梁	hand
 direct	block.gt6.acacia_beam_fireproof	金合欢木梁 (防火)	hand
 direct	block.gt6.barrel_adamantium	艾德曼合金储罐	hand
 direct	block.gt6.barrel_awakened_draconium	觉醒龙储罐	hand
+direct	block.gt6.barrel_desh	戴斯储罐	hand
+direct	block.gt6.barrel_efrine	绿晶储罐	hand
+direct	block.gt6.barrel_invar	殷钢储罐	hand
 direct	block.gt6.barrel_draconium	龙储罐	hand
 direct	block.gt6.barrel_gaia_spirit	盖亚储罐	hand
 direct	block.gt6.barrel_infinity	无尽储罐	hand
 direct	block.gt6.barrel_logistics	物流储罐	hand
+direct	block.gt6.barrel_manasteel	魔力钢储罐	hand
 direct	block.gt6.barrel_metal	青铜储罐	hand
 direct	block.gt6.barrel_netherite	下界合金储罐	hand
 direct	block.gt6.barrel_plastic	塑料储罐	hand
+direct	block.gt6.barrel_stainless_steel	不锈钢储罐	hand
+direct	block.gt6.barrel_syrmorite	赛摩铜储罐	hand
+direct	block.gt6.barrel_thaumium	神秘锭储罐	hand
 direct	block.gt6.barrel_tantalum_hafnium_carbide	碳化钽铪储罐	hand
 direct	block.gt6.barrel_titanium	钛储罐	hand
 direct	block.gt6.barrel_tungsten	钨储罐	hand

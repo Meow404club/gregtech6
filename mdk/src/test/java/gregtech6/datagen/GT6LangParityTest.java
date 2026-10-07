@@ -243,23 +243,14 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 5910;
+	private static final int ZH_KEY_FLOOR = 5917;
 	// +3 task material-mc-f-attachment-rows (review-seat rebase union): the nozzle pair
 	// compose templates gt6.row.{nozzle,capnozzle}.display + the gt6.row.attachment.mat.steel
 	// small-unit word, both locales — dump-verbatim zh %s喷嘴/%s有盖喷嘴/钢 (the 12 new rows
 	// compose at runtime over the EXISTING five attachment words). 5907 + 3.
-	// +48 review-seat rebase seam, task faucet-material-rows: the 39-row faucet walk
-	// (gt6.row.faucet.mat.* over GT6Molds.FAUCET_ROWS + the mold/crucible band restructure)
-	// rides the zh face; measured 5907 on the rebased tree (main measured 5859). The
-	// history lives in `git log -L` on this line.
-	// +13 task material-mc-b-storage-mass-shelf: the metal shelf/crate compose templates
-	// gt6.row.metal_{bookshelf,bottlecrate}.display both locales, dump-verbatim zh
-	// 书架 (%s)/瓶筐 (%s) — the ONLY zh delta of the card (the 120 new metal rows compose at
-	// runtime, no description-id keys). Measured 5859 on the committed zh_cn.json: main's
-	// committed file already sat at 5857 against its 5846 floor (11 stale), +2 templates.
-	// The first-cut 5873 (+27) was a miscount — the review-seat gate rerun measured the
-	// committed truth. The ratchet follows the measurement, only rises. — the per-card
-	// append chain is BOUNDED per the 2026-10-04 ruling
+	// +7 task material-mc-f-attachment-rows (the card's barrel commit): the seven 64K drum
+	// rows join with direct block.gt6.barrel_{invar,stainless_steel,desh,syrmorite,efrine,
+	// thaumium,manasteel} keys both locales (the dump MTE faces verbatim). 5910 + 7 = 5917.
 	// (decisions.2026-10-04-ratchet-comment-bounded): keep the latest note only, the note
 	// history lives in `git log -L` on this line.
 	// (prior note: +13 task material-mc-b-storage-mass-shelf — the metal shelf/crate
@@ -830,11 +821,12 @@ public class GT6LangParityTest {
 			if (!en().containsKey(GT6Tanks.sizeUnitKeyOf(tRow))) tMissing.add("tank_size:" + tRow.path());
 			if (!en().containsKey(GT6Tanks.matUnitKeyOf(tRow))) tMissing.add("tank_mat:" + tRow.path());
 		}
-		assertEquals(346, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
+		assertEquals(358, tChecked, "the B2 compose domain census: 17 stone blocks + the rows"
             + " (52 axle + 28 steam + 8 diesel + 13 rotation engines + 12 metal transformer"
             + " gearboxes + 12 metal custom gearboxes + 15 small steam turbines + 96 burning"
             + " + 26 boiler + 4 dryer + 4 distillery + 6 p28 ULV rows + 5 large boiler + 11 wall"
-            + " (the 6 p29-w3 dense additions joined) + 12 attachments + 2 dry/dist shares not"
+            + " (the 6 p29-w3 dense additions joined) + 24 attachments (12 tap/funnel + 12 nozzle"
+            + " pair, task material-mc-f-attachment-rows) + 2 dry/dist shares not"
             + " double-counted + 25 tank valves (task w3-tank-valves; the mc-D powertrain arms"
             + " task material-mc-d-powertrain-rows))"
             + " — bump this pin ONLY with a real row-table change");
@@ -1306,9 +1298,10 @@ public class GT6LangParityTest {
 			+ " gt6.row.crucible.display.* template) and the basin/crossing families registered"
 			+ " (78 row carriers over the gt6.row.{basin,crossing}.display templates + the 18 new"
 			+ " gt6.row.mat.* words), 1768 + 35 + 78 = 1881)");
-		assertEquals(371, tChecked,  "the checked block census: every DeferredRegister block NOT"
+		assertEquals(378, tChecked,  "the checked block census: every DeferredRegister block NOT"
 		+ " (+4 task worldgen-diggables-pits: the 4 colored-clay blocks joined the checked leg — 367 + 4 = 371 over main's racks-inclusive census, "
 		+ "the atomic block.gt6.{brown,yellow,blue,white}_clay keys both locales: the en BlockDiggable.java:52-57 names verbatim + the zh hand layer 粘土块 rows)"
+		+ " (+7 task material-mc-f-attachment-rows: the seven 64K drum rows join the CHECKED leg — direct block.gt6.barrel_* keys both locales, 371 + 7 = 378, the review-seat rebase union)"
 			+ " (task gt-tree-planks: the 9 GT6 tree plank cubes ride OUTSIDE this walk —"
 			+ " GT6TreeBlocks is not a walked class (the w6-t1 tree rows never joined this"
 			+ " census), the plank keys are pinned by GT6TreePlankCensusTest.langCarriesTheNinePlankKeys)"

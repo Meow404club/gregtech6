@@ -1,20 +1,21 @@
 /*
  * Offline pinned-count tests for task barrel-paint-render: the generated barrel
  * blockstate/model JSONs carry the tintindex-0 paint seat — the generated-JSON half of
- * the 16 census, asserted against the committed src/generated tree (the
+ * the 23 census, asserted against the committed src/generated tree (the
  * GT6MachinePaintRenderDatagenTest shape: the write side is gated by runData, first run
  * written>0, second run written:0; the datagen-JVM counter half is the GT6BlockStates
- * "16 barrel models tinted" log line).
+ * "23 barrel models tinted" log line).
  *
  * <p>Census ground truth: the barrel domain is wood (1) + plastic (1) + bronze metal (1)
  * + logistics (1) + the twelve high-tier metal drums (Loader_MultiTileEntities.java:2159-2170
- * ladder) = 16 blocks — the GTBarrels.paintableBlockArray() registration census, one model
- * each (barrels have no blockstate properties) = 16 block-model JSONs. Upstream canonical:
+ * ladder) + the seven 64K drums = 23 blocks — the GTBarrels.paintableBlockArray()
+ * registration census, one model
+ * each (barrels have no blockstate properties) = 23 block-model JSONs. Upstream canonical:
  * the barrel renders its colored/ texture multiplied by mRGBa (MultiTileEntityBarrelWood
  * .java:42-55; Plastic:42/Metal:39/Logistics:45 isomorphic). Task tex-tank-family:
  * the borrowable rows ride the two-layer per-face barrel_parts grammar (the p23
  * "overlay stays pooled" deviation is RETIRED — the overlay decal shells landed); task
- * tank-render-tint: the p12 logistics row joined the same borrow — all 16 models are
+ * tank-render-tint: the p12 logistics row joined the same borrow — all 23 models are
  * the two-layer form, the old {@code barrel_logistics.png} single texture retired.
  */
 package gregtech6.datagen;
@@ -36,9 +37,10 @@ import com.google.gson.JsonParser;
 class GT6BarrelPaintRenderDatagenTest {
 
     /**
-     * The 16 barrel-domain bases, in registration order (the GTBarrels.paintableBlockArray
-     * census): the four standalone rows, then the twelve high-tier drums in their ladder
-     * order (the METAL_DRUM_BLOCKS LinkedHashMap order).
+     * The 23 barrel-domain bases, in registration order (the GTBarrels.paintableBlockArray
+     * census): the four standalone rows, the twelve high-tier drums in their ladder
+     * order (the METAL_DRUM_BLOCKS LinkedHashMap order), then the seven 64K-tier drums
+     * (task material-mc-f-attachment-rows, the DRUM_64K_BLOCKS order).
      */
     private static final List<String> BARREL_BASES = List.of(
             "barrel_wood", "barrel_plastic", "barrel_metal", "barrel_logistics",
@@ -46,15 +48,19 @@ class GT6BarrelPaintRenderDatagenTest {
             "barrel_tungstensteel", "barrel_tungsten", "barrel_void_metal",
             "barrel_tantalum_hafnium_carbide", "barrel_gaia_spirit",
             "barrel_adamantium", "barrel_draconium", "barrel_awakened_draconium",
-            "barrel_infinity");
+            "barrel_infinity",
+            "barrel_invar", "barrel_stainless_steel", "barrel_desh",
+            "barrel_syrmorite", "barrel_efrine", "barrel_thaumium", "barrel_manasteel");
 
-    /** The twelve high-tier drums share the ONE barrel_metal.png (the p7 shared-PNG form). */
+    /** The nineteen metal drums (both ladders) share the ONE drum barrel_parts set (the p7 shared-PNG form). */
     private static final Set<String> DRUM_BASES = Set.of(
             "barrel_tungsten_alloy", "barrel_titanium", "barrel_netherite",
             "barrel_tungstensteel", "barrel_tungsten", "barrel_void_metal",
             "barrel_tantalum_hafnium_carbide", "barrel_gaia_spirit",
             "barrel_adamantium", "barrel_draconium", "barrel_awakened_draconium",
-            "barrel_infinity");
+            "barrel_infinity",
+            "barrel_invar", "barrel_stainless_steel", "barrel_desh",
+            "barrel_syrmorite", "barrel_efrine", "barrel_thaumium", "barrel_manasteel");
 
     private static final List<String> FACE_KEYS = List.of("down", "up", "north", "south", "west", "east");
 
@@ -66,11 +72,11 @@ class GT6BarrelPaintRenderDatagenTest {
         }
     }
 
-    /** The census shape: 16 barrel blocks, one model each = 16 tinted block models. */
+    /** The census shape: 23 barrel blocks, one model each = 23 tinted block models. */
     @Test
     void pinnedBarrelPaintCensus() {
-        assertEquals(16, BARREL_BASES.size(), "the barrel block census (paintableBlockArray)");
-        assertEquals(12, DRUM_BASES.size(), "the high-tier drum sub-census (the :2159-2170 ladder)");
+        assertEquals(23, BARREL_BASES.size(), "the barrel block census (paintableBlockArray)");
+        assertEquals(19, DRUM_BASES.size(), "the metal drum sub-census (the :2159-2170 ladder + the :2152-2158 64K tier)");
     }
 
     /**
@@ -78,7 +84,7 @@ class GT6BarrelPaintRenderDatagenTest {
      * tex-tank-family: the borrowable rows ride the two-layer per-face
      * barrel_parts form (body + six decal shells — the body faces tinted, the decals
      * untinted; the drums share the drum family set, every other two-layer row its own);
-     * task tank-render-tint: the p12 logistics row joined, so ALL 16 models are the
+     * task tank-render-tint: the p12 logistics row joined, so ALL 23 models are the
      * two-layer form. The full two-layer shape pins live in
      * {@link GT6TankFamilyPaintRenderDatagenTest}.
      */

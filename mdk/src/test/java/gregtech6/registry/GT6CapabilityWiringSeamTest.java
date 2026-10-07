@@ -243,8 +243,12 @@ public class GT6CapabilityWiringSeamTest extends GTOfflineTestBase {
 		assertEquals("barrel_metal", GTBarrels.BARREL_METAL_ITEM.getId().getPath());
 		assertEquals("barrel_logistics", GTBarrels.BARREL_LOGISTICS_ITEM.getId().getPath());
 		assertEquals(12, GTBarrels.METAL_DRUM_ITEMS.size(), "the p7 high-tier drum ladder");
+		assertEquals(7, GTBarrels.DRUM_64K_ITEMS.size(), "the 64K drum tier (task material-mc-f-attachment-rows)");
 		for (String tPath : GTBarrels.METAL_DRUM_ITEMS.keySet()) {
 			assertTrue(tPath.startsWith("barrel_"), "drum row id " + tPath + " must stay in the barrel_* path family the wiring scan covers");
+		}
+		for (String tPath : GTBarrels.DRUM_64K_ITEMS.keySet()) {
+			assertTrue(tPath.startsWith("barrel_"), "64K drum row id " + tPath + " must stay in the barrel_* path family the wiring scan covers");
 		}
 	}
 

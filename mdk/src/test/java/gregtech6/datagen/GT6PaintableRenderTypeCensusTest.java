@@ -335,8 +335,9 @@ class GT6PaintableRenderTypeCensusTest {
     public void barrelModelsJoinTheCutoutCensus() throws Exception {
         List<String> tUniverse = new ArrayList<>(List.of("barrel_wood", "barrel_plastic", "barrel_metal", "barrel_logistics"));
         for (var tRow : gregtech6.registry.GTBarrels.HIGH_TIER_METAL_DRUMS) tUniverse.add(tRow.path());
-        org.junit.jupiter.api.Assertions.assertEquals(16, tUniverse.size(),
-                "the two-layer barrel census stays 16 (4 rows + 12 high-tier drums)");
+        for (var tRow : gregtech6.registry.GTBarrels.DRUM_64K_ROWS) tUniverse.add(tRow.path()); // task material-mc-f-attachment-rows
+        org.junit.jupiter.api.Assertions.assertEquals(23, tUniverse.size(),
+                "the two-layer barrel census stays 23 (4 rows + 12 high-tier drums + 7 64K drums)");
         List<String> tOffenders = new ArrayList<>();
         for (String tModel : tUniverse) {
             JsonObject tJson = blockModelJson(tModel);
