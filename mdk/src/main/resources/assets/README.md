@@ -14122,3 +14122,45 @@ The tint chain (models carry tintindex 0; `GT6PanelTintListener` resolves
 listener form; the cover-mounting face (the upstream panels' real function,
 `MultiTileEntityPanel.canPlace=F`) stays pooled — the port `CoverTextureSimple`
 seat is a flat sprite with no tint index (GT6PanelBlock javadoc).
+## Item mass storage block textures (task storage-massstorage)
+
+The two machine bands borrow the upstream dedicated iconsets byte-identical
+(`textures/blocks/machines/massstorage/{standard,logistics}/{colored,overlay}/`,
+the Standard sColoreds/sOverlays :143-155 / Logistics :144-156). The colored band
+multiplies the row material at render time (the upstream BlockTextureMulti
+colored×mRGBa + overlay pass, MassStorageStandard :112-115 — the Loader :141 aMat /
+:142 MT.Black columns ride the tint dispatch), the overlay decals stay untinted
+(the P22 contract), and the digit strip rides the `characters/` band (the upstream
+gregapi `overlays/characters` BI.CHAR_* art, BI.java:42-51/:99, byte-identical).
+
+- `block/massstorage_standard/colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `machines/massstorage/standard/colored/back.png`; byte-identical to the bottom/side/top colored tiles)
+- `block/massstorage_standard/colored_bottom.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `machines/massstorage/standard/colored/bottom.png`)
+- `block/massstorage_standard/colored_front.png` — `6a86dfa00c65eb3d5884c3c436d2a16eabf01d4dac2cc0964e0835c21449d763` (upstream `machines/massstorage/standard/colored/front.png`)
+- `block/massstorage_standard/colored_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `machines/massstorage/standard/colored/side.png`)
+- `block/massstorage_standard/colored_top.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `machines/massstorage/standard/colored/top.png`)
+- `block/massstorage_standard/overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `machines/massstorage/standard/overlay/back.png`; byte-identical to the side/top overlay tiles)
+- `block/massstorage_standard/overlay_bottom.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3` (upstream `machines/massstorage/standard/overlay/bottom.png`)
+- `block/massstorage_standard/overlay_front.png` — `985ec4ba29bf70560e076db727e3444bf3e37b1e934c9219dc8e8b90fd5c1b67` (upstream `machines/massstorage/standard/overlay/front.png`)
+- `block/massstorage_standard/overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `machines/massstorage/standard/overlay/side.png`)
+- `block/massstorage_standard/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `machines/massstorage/standard/overlay/top.png`)
+- `block/massstorage_logistics/colored_back.png` — `dc86a74eb29bee4e69170c87fd3682650dc9c9599ce589168c73e7ecea2513b7` (upstream `machines/massstorage/logistics/colored/back.png`)
+- `block/massstorage_logistics/colored_bottom.png` — `07da6fadfd8c42bbeb8dd0f1b07a7b48ec08d76ece9fb49ec793ab55d01e7d23` (upstream `machines/massstorage/logistics/colored/bottom.png`)
+- `block/massstorage_logistics/colored_front.png` — `f378cc9fa9cd07e1ce116a056b730181e7608cf7c660c0282965274b5600d5e6` (upstream `machines/massstorage/logistics/colored/front.png`)
+- `block/massstorage_logistics/colored_side.png` — `f348ace8e2d98ed701a060a87c4c66ec25b708449cd96611b66aa01cc9c595f1` (upstream `machines/massstorage/logistics/colored/side.png`)
+- `block/massstorage_logistics/colored_top.png` — `633b57da65fad5f0f604c48806221479e0eab9512fd514789d3520c513782547` (upstream `machines/massstorage/logistics/colored/top.png`)
+- `block/massstorage_logistics/overlay_back.png` — `8ef20cf21c71da8d43257ca8a051f9c6822bded78000adf3b619f4c3d18943f6` (upstream `machines/massstorage/logistics/overlay/back.png`)
+- `block/massstorage_logistics/overlay_bottom.png` — `4878b4c3302a9c9c2225107ba51c3a16b62918d53225bc3dfb1ca8835e49f5d7` (upstream `machines/massstorage/logistics/overlay/bottom.png`)
+- `block/massstorage_logistics/overlay_front.png` — `f20ad3f536d930de04377b6dd0bf5413a2088536119a930e99b80d0dc8534370` (upstream `machines/massstorage/logistics/overlay/front.png`)
+- `block/massstorage_logistics/overlay_side.png` — `8177aa67fc7fedb5a8fd2dcbecf1725966701a52827fb675c6a3095a4e2f3152` (upstream `machines/massstorage/logistics/overlay/side.png`)
+- `block/massstorage_logistics/overlay_top.png` — `fa135127ae01fd01a687ae52246c0f402dc0ad1fca6f0c8dee437fdb2e14d849` (upstream `machines/massstorage/logistics/overlay/top.png`)
+- `block/characters/0.png` — `a4ebf53b6131fcd1efb9832fce268d9aaac86b41552ab926230609c6f375dc8a` (upstream gregapi `overlays/characters/0.png`)
+- `block/characters/1.png` — `38d5761f752564eb3e077416c8ac8cf58505e12d53f2725ed9150b1866ae85bc` (upstream gregapi `overlays/characters/1.png`)
+- `block/characters/2.png` — `aca8f2b1944a47a17ad751a449f93d690f03f72b62ee4e8038dfa56ae97f10c1` (upstream gregapi `overlays/characters/2.png`)
+- `block/characters/3.png` — `f04b03fb920acee0e6a0f11b12be8164a55710e289d9d4672ced71c8a755f185` (upstream gregapi `overlays/characters/3.png`)
+- `block/characters/4.png` — `359092d903c80decb8e8ceb18079f945748cc6afdc77c6b64df0b063a879516b` (upstream gregapi `overlays/characters/4.png`)
+- `block/characters/5.png` — `d36858bd93874d5732ad08b2c3fff9b513919dfef6db9bd9dafed9e12d24de43` (upstream gregapi `overlays/characters/5.png`)
+- `block/characters/6.png` — `c07cb26f15aa546c22f0d50d9f9b519f5201bd4111915a9389b868984774cd69` (upstream gregapi `overlays/characters/6.png`)
+- `block/characters/7.png` — `47c2027e73f0a34d85e8847227ea5c1fe820cee39cbc3916d62be5d0c25c14f5` (upstream gregapi `overlays/characters/7.png`)
+- `block/characters/8.png` — `5db408026f1509318f2e75a0681bfa6200adf22ae18964c329e8bd5937f63b29` (upstream gregapi `overlays/characters/8.png`)
+- `block/characters/9.png` — `342aa373eb6097648057cdbdac4659c916a97a72a547ba05542b56bf2508ee6f` (upstream gregapi `overlays/characters/9.png`)
+- `block/characters/percent.png` — `15a1c879d79191f64825b3f02008c566a430dd0e24d6e8fa084b03d72dcd42c0` (upstream gregapi `overlays/characters/percent.png`)

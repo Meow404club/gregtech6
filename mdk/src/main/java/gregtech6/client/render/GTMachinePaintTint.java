@@ -235,6 +235,13 @@ public final class GTMachinePaintTint {
 		if (tMaterial != null) return tMaterial;
 		tMaterial = hopperMaterialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
+		// task storage-massstorage — the 120 item mass storage rows join: every row
+		// carries its loader NBT_MATERIAL (Loader :141 aMat / :142 MT.Black — the black
+		// body IS the logistics identity), the body cube is the tintindex-0 seat (the
+		// upstream getTexture2 BlockTextureMulti colored×mRGBa + overlay pass,
+		// MassStorageStandard :112-115 / Logistics :113-116)
+		tMaterial = gregtech6.registry.GT6StaticStorages.GT6MassStorageBlock.materialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.tools.GT6GrindstoneBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
 		tMaterial = gregtech6.block.tools.GT6SiftingTableBlock.materialOf(aBlock);
