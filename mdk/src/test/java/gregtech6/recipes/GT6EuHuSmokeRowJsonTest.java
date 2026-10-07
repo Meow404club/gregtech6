@@ -58,6 +58,14 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 
 	@BeforeEach
 	void freshGeneration() {
+		// the neo junit-fml leg NATIVELY pre-seeds GT6RecipeMaps at test-JVM boot
+		// (boxinator/unboxinator +4 each, fermenter +1200: the FMLCommonSetup walk),
+		// and init() is a no-op once maps exist — without this reset the declared
+		// counts ride the boot rows (+4 fingerprint: expected 12330 was 12334).
+		// reset() drops the boot generation so the fixture pour is the authority on
+		// BOTH legs (the diggables id1470 posture); the forge leg is untouched (the
+		// maps are fresh-null there and reset() is a no-op on them).
+		GT6RecipeMaps.reset();
 		GT6RecipeMaps.init();
 		GT6RecipeMapJsonLoader.resetForTest();
 		GT6RecipeMapJsonLoader.sItemResolver = ITEM_FIXTURE;
