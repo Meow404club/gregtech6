@@ -213,10 +213,12 @@ public class GT6TwilightVegetationWorldgenTest {
             assertEquals(tBrand + ":mod_loaded", tCondition.get("type").getAsString());
             assertEquals("twilightforest", tCondition.get("modid").getAsString());
         }
-        // the conditions registry row (the third tenant).
-        assertEquals(3, GT6BiomeModifierConditions.CONDITION_ROWS.size(), "end_yield + twilight_ores + this row");
+        // the conditions registry row (the fourth tenant — the twilight_stones row of
+        // task twilight-stone-rows landed first, this is the rebase-union seam).
+        assertEquals(4, GT6BiomeModifierConditions.CONDITION_ROWS.size(),
+                "end_yield + twilight_ores + twilight_stones + this row");
         assertEquals("twilight_surface_rocks",
-                GT6BiomeModifierConditions.CONDITION_ROWS.get(2).rowPath());
+                GT6BiomeModifierConditions.CONDITION_ROWS.get(3).rowPath());
     }
 
     /**
