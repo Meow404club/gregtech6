@@ -18,6 +18,12 @@
       "item": "gt6:gear_gt_small_titanium_iridium"
     }
   },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "advancedRocketry"
+    }
+  ],
   "pattern": [
     "ASL",
     "SGS",
