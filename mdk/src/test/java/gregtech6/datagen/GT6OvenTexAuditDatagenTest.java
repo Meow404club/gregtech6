@@ -65,7 +65,11 @@ class GT6OvenTexAuditDatagenTest {
 				"placeable/plate_gem_top.png",
 				"barrel_parts/logistics/colored_side.png",
 				"barrel_parts/logistics/colored_top.png",
-				"barrel_parts/logistics/colored_bottom.png"));
+				"barrel_parts/logistics/colored_bottom.png",
+				// task block-family-32xxx-port — the plant pot's near-white body art (the
+				// :2229 Ceramic column is the tint carrier; the README 32xxx sha section)
+				"plant_pot/colored_side.png",
+				"plant_pot/colored_bottom.png"));
 		for (int i = 0; i < 32; i++) tWhite.add(String.format("barometer/%02d.png", i));
 		DOCUMENTED_WHITE_BLOCK_BORROWS = java.util.Collections.unmodifiableSet(tWhite);
 	}

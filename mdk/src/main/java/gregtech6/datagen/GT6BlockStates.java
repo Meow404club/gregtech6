@@ -325,6 +325,9 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBeams(); // task beam-blocks-register — the 8 wood-beam pillar blocks (the axle axis band form)
         addConcrete(); // task concrete-blocks-register — the 64 per-pair concrete blocks (the grayscale+tint band)
         addSiftingTables(); // task sifting-table-family — the manual chain tail (the pass-box element form)
+        addChargingLockers(); // task block-family-32xxx-port — the 60-material charging-locker ladder
+        addSapBag(); // task block-family-32xxx-port — the trunk-mounted collector bag (normal/full models)
+        addPlantPot(); // task block-family-32xxx-port — the two-element pot (plate + body)
     }
 
     /**
@@ -5980,6 +5983,142 @@ public final class GT6BlockStates extends BlockStateProvider {
         for (Direction tDir : Direction.values()) {
             boolean tVertical = tDir == Direction.UP || tDir == Direction.DOWN;
             var tFace = tElement.face(tDir).texture("#" + (tVertical ? aV : aH));
+            if (aTinted) tFace.tintindex(0);
+            tFace.end();
+        }
+        tElement.end();
+    }
+
+    /**
+     * Task block-family-32xxx-port — the 60 charging-locker rows (Loader
+     * MultiTileEntities.java:139, "Charging Locker (Mat)" id 7500+aID over the metalset
+     * walk :186-245): the {@link #storageModel} two-layer faceted cube verbatim — the
+     * borrowed upstream {@code machines/lockers/charging} grayscale colored/overlay art
+     * (the front/back distinct set, MultiTileEntityLockerCharging.java:70-82; the :65
+     * GLOWING flag folds — no port emissive seat), the FACING (horizontal, front on
+     * north) drives the 4-variant y-rotation, ONE shared kind model over all 60 rows
+     * (the storage ladder fold), the BlockItems parent it. The tintindex-0 body seat
+     * consumes through the GT6ChargingLockerBlock row carrier (the colored × mRGBa pass
+     * :62-66, the registration derives the material colour — the
+     * MultiTileEntityClassContainer.java:51 chain).
+     */
+    private void addChargingLockers() {
+        ModelFile tModel = storageModel("block/charging_locker", true);
+        for (gregtech6.registry.GT6ChargingLockers.ChargingLockerRow tRow : gregtech6.registry.GT6ChargingLockers.ROWS) {
+            Block tBlock = gregtech6.registry.GT6ChargingLockers.BLOCKS_BY_PATH.get(tRow.path()).get();
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY;
+                switch (aState.getValue(gregtech6.registry.GT6ChargingLockers.GT6ChargingLockerBlock.FACING)) {
+                    case SOUTH -> tY = 180;
+                    case WEST -> tY = 270;
+                    case EAST -> tY = 90;
+                    default -> tY = 0; // NORTH
+                }
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
+    /**
+     * Task block-family-32xxx-port — the Resin/Sap Bag (Loader :2221): the trunk-mounted
+     * facing box (MultiTileEntitySapBag.setBlockBounds2 :124, the north-default Z_NEG
+     * form 5,0,0..11,7,6) over TWO shared models — FULL=false carries the overlay trio,
+     * FULL=true the overlay_full trio (:145-149; the :133 pass draws colored × mRGBa +
+     * the full-state overlay). The FACING property drives the 4-variant y-rotation (the
+     * north model hugs z 0, so east=90/west=270 map the hug to x 16/x 0 — the :155-160
+     * box table). The colored body band is the tintindex-0 seat (the MT.Leather column),
+     * both overlay bands untinted (the P22 contract). The mouth face (the FACING side)
+     * stays drawn — the upstream shouldSideBeRendered arm keeps it when exposed.
+     */
+    private void addSapBag() {
+        ModelFile tEmpty = sapBagModel("gt6_sap_bag", "overlay_");
+        ModelFile tFull = sapBagModel("gt6_sap_bag_full", "overlay_full_");
+        Block tBlock = gregtech6.registry.GT6MiscToolBlocks.SAP_BAG_BLOCK.get();
+        getVariantBuilder(tBlock).forAllStates(aState -> {
+            int tY;
+            switch (aState.getValue(gregtech6.registry.GT6MiscToolBlocks.GT6SapBagBlock.FACING)) {
+                case SOUTH -> tY = 180;
+                case WEST -> tY = 270;
+                case EAST -> tY = 90;
+                default -> tY = 0; // NORTH
+            }
+            return ConfiguredModel.builder()
+                    .modelFile(aState.getValue(gregtech6.registry.GT6MiscToolBlocks.GT6SapBagBlock.FULL) ? tFull : tEmpty)
+                    .rotationY(tY).build();
+        });
+        itemModels().withExistingParent("sap_bag", tEmpty.getLocation());
+    }
+
+    /** One sap-bag body model: the facing box over the TBS trios, the band prefix picks overlay vs overlay_full. */
+    private ModelFile sapBagModel(String aName, String aOverlayBand) {
+        String tBase = "block/sap_bag/";
+        BlockModelBuilder tModel = models().getBuilder(aName)
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("top", modLoc(tBase + "colored_top"))
+                .texture("bottom", modLoc(tBase + "colored_bottom"))
+                .texture("side", modLoc(tBase + "colored_side"))
+                .texture("overlay_top", modLoc(tBase + aOverlayBand + "top"))
+                .texture("overlay_bottom", modLoc(tBase + aOverlayBand + "bottom"))
+                .texture("overlay_side", modLoc(tBase + aOverlayBand + "side"))
+                .texture("particle", "#side")
+                .renderType("cutout");
+        hopperBox(tModel, 5.0F, 0.0F, 0.0F, 11.0F, 7.0F, 6.0F, null); // the :124 Z_NEG box + the 0.01 overlay twin
+        return tModel;
+    }
+
+    /**
+     * Task block-family-32xxx-port — the Universal Plant Pot (Loader :2229): the
+     * two-element pot (MultiTileEntityPlantPot.setBlockBounds2 :67-69 — the top plate
+     * 0,10,0..16 full width, the body 1,0,1..15,10 hollow core) over the borrowed
+     * {@code machines/plantpot} grayscale TBS trios. The plate's bottom face and the
+     * body's top face stay UNDRAWN (the upstream two-pass visibility :76 — pass 0 draws
+     * the plate shell, pass 1 skips the body top under it), the rest carry the TBS
+     * mapping; the colored faces are the tintindex-0 seats (the MT.Ceramic column, the
+     * colored × mRGBa pass :76), the 0.01 overlay twins untinted (the P22 contract).
+     */
+    private void addPlantPot() {
+        String tBase = "block/plant_pot/";
+        BlockModelBuilder tModel = models().getBuilder("gt6_plant_pot")
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("top", modLoc(tBase + "colored_top"))
+                .texture("bottom", modLoc(tBase + "colored_bottom"))
+                .texture("side", modLoc(tBase + "colored_side"))
+                .texture("overlay_top", modLoc(tBase + "overlay_top"))
+                .texture("overlay_bottom", modLoc(tBase + "overlay_bottom"))
+                .texture("overlay_side", modLoc(tBase + "overlay_side"))
+                .texture("particle", "#side")
+                .renderType("cutout");
+        // the top plate (:67): the down face skipped (the body sits under it)
+        plantPotBox(tModel, 0.0F, 10.0F, 0.0F, 16.0F, 16.0F, 16.0F, false, true);
+        // the body (:69): the up face skipped (the plate covers it)
+        plantPotBox(tModel, 1.0F, 0.0F, 1.0F, 15.0F, 10.0F, 15.0F, true, false);
+        Block tBlock = gregtech6.registry.GT6MiscToolBlocks.PLANT_POT_BLOCK.get();
+        simpleBlock(tBlock, tModel);
+        itemModels().withExistingParent("plant_pot", tModel.getLocation());
+    }
+
+    /**
+     * One plant-pot element (the colored body + the 0.01-inflated overlay twin): the TBS
+     * mapping, the skipUp/skipDown faces (the upstream two-pass visibility), the colored
+     * band the tintindex-0 seat, the overlay twin untinted.
+     */
+    private void plantPotBox(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, boolean aSkipUp, boolean aSkipDown) {
+        tbsBoxLayer(aModel, aMinX, aMinY, aMinZ, aMaxX, aMaxY, aMaxZ, aSkipUp, aSkipDown, "", true);
+        tbsBoxLayer(aModel, aMinX - 0.01F, aMinY - 0.01F, aMinZ - 0.01F,
+                aMaxX + 0.01F, aMaxY + 0.01F, aMaxZ + 0.01F, aSkipUp, aSkipDown, "overlay_", false);
+    }
+
+    /** One TBS box layer: up=top/down=bottom/else=side, the skip faces dropped (the two-pass visibility fold). */
+    private void tbsBoxLayer(BlockModelBuilder aModel, float aMinX, float aMinY, float aMinZ,
+            float aMaxX, float aMaxY, float aMaxZ, boolean aSkipUp, boolean aSkipDown, String aBand, boolean aTinted) {
+        BlockModelBuilder.ElementBuilder tElement = aModel.element().from(aMinX, aMinY, aMinZ).to(aMaxX, aMaxY, aMaxZ);
+        for (Direction tDir : Direction.values()) {
+            if (aSkipUp && tDir == Direction.UP) continue;
+            if (aSkipDown && tDir == Direction.DOWN) continue;
+            var tFace = tElement.face(tDir).texture("#" + aBand
+                    + (tDir == Direction.UP ? "top" : tDir == Direction.DOWN ? "bottom" : "side"));
             if (aTinted) tFace.tintindex(0);
             tFace.end();
         }

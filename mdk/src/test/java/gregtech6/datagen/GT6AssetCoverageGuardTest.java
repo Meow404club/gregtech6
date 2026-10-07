@@ -346,7 +346,9 @@ public class GT6AssetCoverageGuardTest {
 			gregtech6.registry.GT6Explosives.class, // task explosives-chain — the dynamite trio (plain items)
 			gregtech6.registry.GT6PressMolds.class, // task explosives-chain — the bullet-casing mold trio
 			gregtech6.registry.GT6Electrodes.class, // task press-electrodes — the electrode thirteen (plain items)
-			gregtech6.registry.GT6CircuitChain.class); // task circuit-chain-items — the 53 circuit synthesis-chain intermediates (plain items)
+			gregtech6.registry.GT6CircuitChain.class, // task circuit-chain-items — the 53 circuit synthesis-chain intermediates (plain items)
+			gregtech6.registry.GT6ChargingLockers.class, // task block-family-32xxx-port — the 60-row charging-locker ladder (block + item + BET)
+			gregtech6.registry.GT6MiscToolBlocks.class); // task block-family-32xxx-port — the sap bag + plant pot singles (block + item + BET)
 
 	/** Channel 1 + channel 2 block ids ("ns:path"). */
 	private static Set<String> blockUniverse() throws Exception {

@@ -13878,3 +13878,61 @@ own pairing.
 - `block/woodchest/plain_lid_side.png` — `88125cedfbadbde02487082dbf5dd76e99b16c708f527c1f7a74beaaebe2664e` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
 - `block/woodchest/plain_side.png` — `964528f8e7356bb0a68e56c56d3e9930c72c273ca9c18ec82923ea941af6ca44` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
 - `block/woodchest/plain_top.png` — `cb49b818f6329312eca64dfc24a60797fef040db1b74ce0c2588257f8e886300` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
+sha256 manifest (25 files, task block-family-32xxx-port — the 32xxx domain: the
+charging locker (Loader :139 machines/lockers/charging), the plant pot (:2229
+machines/plantpot) and the sap bag (:2221 machines/tools/sapbag), the byte-verbatim
+group borrows; the census four-face clause):
+- `gt6/textures/block/charging_locker/colored_front.png` `228d7a251e452124863cf39fa7423c78d7679770a9ff3ce211270ca17187b3da`
+  (upstream `textures/blocks/machines/lockers/charging/colored/front.png`)
+- `gt6/textures/block/charging_locker/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/charging/colored/back.png` — the
+  body-uniform grayscale the locker family shares, the port locker colored_back twin)
+- `gt6/textures/block/charging_locker/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/charging/colored/side.png`)
+- `gt6/textures/block/charging_locker/colored_top.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/charging/colored/top.png`)
+- `gt6/textures/block/charging_locker/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+  (upstream `textures/blocks/machines/lockers/charging/colored/bottom.png`)
+- `gt6/textures/block/charging_locker/overlay_front.png` `2660369d62e9c5c7364caed24d1c83cb5720cefae3d1d6aff1a26849b667e04e`
+  (upstream `textures/blocks/machines/lockers/charging/overlay/front.png` — the
+  charging-shell decal, byte-identical to the locker family overlay_front)
+- `gt6/textures/block/charging_locker/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/charging/overlay/back.png`)
+- `gt6/textures/block/charging_locker/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/charging/overlay/side.png`)
+- `gt6/textures/block/charging_locker/overlay_top.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/charging/overlay/top.png`)
+- `gt6/textures/block/charging_locker/overlay_bottom.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+  (upstream `textures/blocks/machines/lockers/charging/overlay/bottom.png`)
+- `gt6/textures/block/plant_pot/colored_top.png` `be457a2037c72c56d3825e9fb053452b267a2ed729bc84a2f2d0efb14d63a243`
+  (upstream `textures/blocks/machines/plantpot/colored/top.png`)
+- `gt6/textures/block/plant_pot/colored_side.png` `495d8bbae20a6c079fafd32157fcc8d84321871f0202c92e9243a99041006d49`
+  (upstream `textures/blocks/machines/plantpot/colored/side.png`)
+- `gt6/textures/block/plant_pot/colored_bottom.png` `b7abe8d632095001c5643d7f8b905d8c545e0b0b34b026dad663e9ea08838ec1`
+  (upstream `textures/blocks/machines/plantpot/colored/bottom.png`)
+- `gt6/textures/block/plant_pot/overlay_top.png` `3cf7ad6db75879069331e9848489d18762851a5a74a5cf2dd6f5707889dfa792`
+  (upstream `textures/blocks/machines/plantpot/overlay/top.png`)
+- `gt6/textures/block/plant_pot/overlay_side.png` `0e6548bcd35ef47b9c08b6cedb8b7dc7d18dfcdc948e790dfbc16d561dd0a10a`
+  (upstream `textures/blocks/machines/plantpot/overlay/side.png`)
+- `gt6/textures/block/plant_pot/overlay_bottom.png` `0e6548bcd35ef47b9c08b6cedb8b7dc7d18dfcdc948e790dfbc16d561dd0a10a`
+  (upstream `textures/blocks/machines/plantpot/overlay/bottom.png`)
+- `gt6/textures/block/sap_bag/colored_top.png` `d55283f32bbba5f1419b019a588a5a949be77983ff21cd5cf8df5eae13b0c8e6`
+  (upstream `textures/blocks/machines/tools/sapbag/colored/top.png`)
+- `gt6/textures/block/sap_bag/colored_side.png` `df1d3c727e965deeee4ce13a6670fdfb3f77aaff80e735f2a1ed489f38114412`
+  (upstream `textures/blocks/machines/tools/sapbag/colored/side.png`)
+- `gt6/textures/block/sap_bag/colored_bottom.png` `53aa09d7d49172da2701152fec38f932a84835d9758ecd6821c3a9d024857dbf`
+  (upstream `textures/blocks/machines/tools/sapbag/colored/bottom.png`)
+- `gt6/textures/block/sap_bag/overlay_top.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/tools/sapbag/overlay/top.png`)
+- `gt6/textures/block/sap_bag/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/tools/sapbag/overlay/side.png`)
+- `gt6/textures/block/sap_bag/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/tools/sapbag/overlay/bottom.png`)
+- `gt6/textures/block/sap_bag/overlay_full_top.png` `99feaff3b02f55fdc0cf672d747e09b32773342add4db5338e96776f8a0502e2`
+  (upstream `textures/blocks/machines/tools/sapbag/overlay_full/top.png` — the
+  FULL-state swap, the SapBag visual data byte)
+- `gt6/textures/block/sap_bag/overlay_full_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/tools/sapbag/overlay_full/side.png`)
+- `gt6/textures/block/sap_bag/overlay_full_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
+  (upstream `textures/blocks/machines/tools/sapbag/overlay_full/bottom.png`)
+

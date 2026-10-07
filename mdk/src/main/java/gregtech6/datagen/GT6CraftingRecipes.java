@@ -18,10 +18,10 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.registries.RegistryObject;
 
 //? if forge {
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.RegistryObject;
 //?} else {
 /*import net.neoforged.neoforge.common.Tags;
 *///?}
@@ -146,6 +146,19 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final java.util.List<ResourceLocation> HOPPER_RECIPE_IDS = gregtech6.registry.GT6Hoppers.ROWS.stream()
 			.map(GT6CraftingRecipes::hopperRecipeId)
 			.collect(java.util.stream.Collectors.toList());
+
+	/** The Sap Bag crafting row id (task block-family-32xxx-port, the :2221 row, the result-path convention). */
+	public static final ResourceLocation SAP_BAG_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sap_bag");
+
+	/**
+	 * The id of one charging-locker row's recipe (the hopperRecipeId shape). The path
+	 * rides a local so the two-arg RL ctor args stay bare identifiers (the swap-table
+	 * regex note).
+	 */
+	public static ResourceLocation chargingLockerRecipeId(gregtech6.registry.GT6ChargingLockers.ChargingLockerRow aRow) {
+		String tPath = aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
 
 	/**
 	 * The id of one hopper row's recipe (the save calls' join seam). The path rides a
@@ -336,6 +349,17 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aConsumer, chestRecipeId(tRow));
 		}
+		// task block-family-32xxx-port — the charging locker rows ride the A RULING: only
+		// the rows whose 'M' (the SAME-material plain locker) exists in the port land, the
+		// rest stay ungenerated (the registry-class doc; the mc-A1 backfill owns the rest)
+		for (gregtech6.registry.GT6ChargingLockers.ChargingLockerRow tRow : gregtech6.registry.GT6ChargingLockers.ROWS) {
+			ShapedRecipeBuilder tBuilder = chargingLockerRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the A ruling — no plain locker at this material
+			tBuilder.save(aConsumer, chargingLockerRecipeId(tRow));
+		}
+		sapBagBuilder().save(aConsumer, SAP_BAG_ID);
+		// the plant pot row DEFERS: its 'U' column is IL.Ceramic_Basin — an unported item
+		// (the class doc of the builder; the reported ruling seat)
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
 		circuitWireCopperBuilder().save(aConsumer, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
 		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
@@ -622,6 +646,15 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aOutput, chestRecipeId(tRow));
 		}
+		// task block-family-32xxx-port — the charging locker A ruling + the sap bag row
+		// (the forge-leg twin above carries the full comment band)
+		for (gregtech6.registry.GT6ChargingLockers.ChargingLockerRow tRow : gregtech6.registry.GT6ChargingLockers.ROWS) {
+			ShapedRecipeBuilder tBuilder = chargingLockerRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the A ruling — no plain locker at this material
+			tBuilder.save(aOutput, chargingLockerRecipeId(tRow));
+		}
+		sapBagBuilder().save(aOutput, SAP_BAG_ID);
+		// the plant pot row DEFERS (the 'U' Ceramic Basin item is unported — the class doc)
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
 		circuitWireCopperBuilder().save(aOutput, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
 		miniPortalNetherBuilder().save(aOutput, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
@@ -1287,6 +1320,78 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.unlockedBy("has_steel_plate", has(tSteelPlates));
 	}
+
+	/**
+	 * The charging-locker crafting rows (task block-family-32xxx-port — the Loader :139
+	 * recipe, "WCW"/"WMW"/"WCW"): 'M' = the SAME-material plain Locker (upstream
+	 * {@code aRegistry.getItem(7300+aID)}), 'W' = {@code MT.DATA.CABLES_01[3]} → the
+	 * 1x insulated tier-3 cable (the battery-recipe CABLES_01 column mapping), 'C' =
+	 * {@code OD_CIRCUITS[3]} → the {@code #gt6:circuit3} tag. THE A RULING: the port
+	 * plain Locker is the storage-static-batch two-anchor fold, so only the Bronze/Steel
+	 * rows resolve 'M' — every other row returns null (the row stays UNGENERATED, the
+	 * mc-A1 backfill owns the 58-row tail; no material-compensating substitute).
+	 */
+	// package-private: the GT6DatagenWalkLegTest seam (the hopperRecipeBuilder form)
+	ShapedRecipeBuilder chargingLockerRecipeBuilder(gregtech6.registry.GT6ChargingLockers.ChargingLockerRow aRow) {
+		RegistryObject<Item> tPlainLocker = plainLockerHandle(aRow.material().slug());
+		//? if forge {
+		if (tPlainLocker == null || !tPlainLocker.isPresent()) return null; // the A ruling (the class doc)
+		//?} else {
+		/*// 21.1: the Holder face — isBound() is the throw-free presence check
+		if (tPlainLocker == null || !tPlainLocker.isBound()) return null; // the A ruling (the class doc)
+		*///?}
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+				gregtech6.registry.GT6ChargingLockers.ITEMS_BY_PATH.get(aRow.path()).get())
+				.pattern("WCW")
+				.pattern("WMW")
+				.pattern("WCW")
+				.define('M', tPlainLocker.get())
+				.define('W', wireItem(3, 1, true)) // the CABLES_01[3] column (1x insulated cable, tier 3)
+				.define('C', GT6ItemTags.gt6("circuit3")) // the OD_CIRCUITS[3] column
+				.unlockedBy("has_locker", has(tPlainLocker.get()));
+	}
+
+	/**
+	 * The plain-locker handle at a metalset material — the :139 'M' column. Bronze/Steel
+	 * resolve through the storage-static-batch anchors (the two-anchor fold), every other
+	 * metalset material has no port locker row (null — the A ruling face). The HANDLE
+	 * (not the item) is the seam: the presence check null-drops before any registry
+	 * dereference, so the walk stays throw-free on a cold JVM.
+	 */
+	// package-private: the A-ruling pin seam
+	static RegistryObject<Item> plainLockerHandle(String aSlug) {
+		return switch (aSlug) {
+			case "bronze" -> gregtech6.registry.GT6StaticStorages.ITEMS_BY_PATH.get("locker_bronze");
+			case "steel" -> gregtech6.registry.GT6StaticStorages.ITEMS_BY_PATH.get("locker_steel");
+			default -> null;
+		};
+	}
+
+	/**
+	 * The Sap Bag crafting row (task block-family-32xxx-port — the Loader :2221 recipe,
+	 * "SSS"/"LsL"/"LLL"): 'L' = {@code OD.craftingLeather} → {@code Items.LEATHER} (the
+	 * static-storage recipe mapping), 'S' = {@code OD.stickAnyWood} → the vanilla stick
+	 * (the rolling-pin 'S' precedent), 's' = the scissors tool letter → the
+	 * {@code #gt6:tools/scissors} tag (the CS.java:1906 mapping).
+	 */
+	private ShapedRecipeBuilder sapBagBuilder() {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+				gregtech6.registry.GT6MiscToolBlocks.SAP_BAG_ITEM.get())
+				.pattern("SSS")
+				.pattern("LsL")
+				.pattern("LLL")
+				.define('L', Items.LEATHER)
+				.define('S', Items.STICK)
+				.define('s', GT6ItemTags.TOOLS_SCISSORS)
+				.unlockedBy("has_leather", has(Items.LEATHER));
+	}
+
+	/**
+	 * The Universal Plant Pot crafting row — NOT GENERATED (the :2229 recipe's 'U'
+	 * column is {@code IL.Ceramic_Basin}, an item the port has not landed: the
+	 * cup/jug/measuring-pot trio ported, the crafting basin did not). Recorded here as
+	 * the reported deference seat; the builder lands with the basin item card.
+	 */
 
 	/**
 	 * The storage-hopper crafting rows (task storage-hopper-family — the Loader

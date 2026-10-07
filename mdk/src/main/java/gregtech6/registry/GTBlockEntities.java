@@ -524,6 +524,39 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("chest", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.inventories.GT6ChestBlockEntity::new,
 					GT6Chests.blockArray()).build(null));
+	// -------------------------------------------------------------------------
+	// the 32xxx domain (task block-family-32xxx-port) — the three family rows
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The Charging Locker BET — the 60-material metalset ladder (:139, aMachine), the
+	 * LOCKER_BE one-type-many-blocks multi-mount form over
+	 * {@link GT6ChargingLockers#blockArray}. Registry path "locker_charging" mirrors
+	 * GT6ChargingLockerBlockEntity#getTileEntityName (upstream
+	 * "gt.multitileentity.locker.charging").
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.inventories.GT6ChargingLockerBlockEntity>> CHARGING_LOCKER_BE =
+			BLOCK_ENTITY_TYPES.register("locker_charging", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.inventories.GT6ChargingLockerBlockEntity::new,
+					GT6ChargingLockers.blockArray()).build(null));
+
+	/**
+	 * The Sap Bag BET — the single :2221 row (the trunk-mounted collector). Registry path
+	 * "sap_bag" mirrors GT6SapBagBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.tools.GT6SapBagBlockEntity>> SAP_BAG_BE =
+			BLOCK_ENTITY_TYPES.register("sap_bag", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.tools.GT6SapBagBlockEntity::new,
+					GT6MiscToolBlocks.SAP_BAG_BLOCK.get()).build(null));
+
+	/**
+	 * The Plant Pot BET — the single :2229 row (the paint-only BE, the class doc).
+	 * Registry path "plant_pot" mirrors GT6PlantPotBlockEntity#getTileEntityName.
+	 */
+	public static final RegistryObject<BlockEntityType<gregtech6.tileentity.tools.GT6PlantPotBlockEntity>> PLANT_POT_BE =
+			BLOCK_ENTITY_TYPES.register("plant_pot", () -> BlockEntityType.Builder.of(
+					gregtech6.tileentity.tools.GT6PlantPotBlockEntity::new,
+					GT6MiscToolBlocks.PLANT_POT_BLOCK.get()).build(null));
 
 
 	/**

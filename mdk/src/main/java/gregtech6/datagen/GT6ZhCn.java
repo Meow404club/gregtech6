@@ -1842,6 +1842,18 @@ public class GT6ZhCn extends LanguageProvider {
 		for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Hoppers.matUnitKeyOf(tRow));
 		}
+		// 32xxx domain (task block-family-32xxx-port): the 充能衣橱 template (the dump
+		// composed rows gt.multitileentity.7500-7559 充能衣橱 (X) verbatim shape) over the
+		// shared material words + the two atomic singles (the dump faces :13086 万能花盆 /
+		// :13557 树液/乳胶收集袋) + the two tooltip rows (the dump :3346 + the hand row)
+		addDirect(gregtech6.registry.GT6ChargingLockers.DISPLAY_KEY);
+		for (gregtech6.registry.GT6ChargingLockers.ChargingLockerRow tRow : gregtech6.registry.GT6ChargingLockers.ROWS) {
+			addRowUnit(tEmitted, gregtech6.registry.GT6ChargingLockers.matUnitKeyOf(tRow));
+		}
+		addDirect("block.gt6.sap_bag");
+		addDirect("block.gt6.plant_pot");
+		addDirect(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_PLANT_POT);
+		addDirect(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_NO_GUI);
 		// advanced/charging crafting tables (task act-matrix): the two kind templates over
 		// the 60-material walk (the dump composed rows gt.multitileentity.5000-5059 高级工作台
 		// / 5500-5559 充能工作台 verbatim shape — the material word slot; the tsv hand rows

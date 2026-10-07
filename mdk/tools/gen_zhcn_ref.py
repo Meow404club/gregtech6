@@ -569,6 +569,16 @@ HAND_TRANSLATIONS = {
     "item.gt6.circuit_magic.tooltip": ("像魔法师那样处理事务!", "hand"),
     "item.gt6.circuit_signalum": ("信素电子电路", "hand"),
     "item.gt6.circuit_signalum.tooltip": ("逻辑电路板", "hand"),
+    # ---- 32xxx domain (task block-family-32xxx-port): the 充能衣橱 template is the dump
+    # composed row shape (gt.multitileentity.7500-7559 充能衣橱 (材质) verbatim); the two
+    # singles carry the dump faces (gt.multitileentity.32736/:13557 树液/乳胶收集袋,
+    # gt.multitileentity.32065/:13086 万能花盆); the plantpot tooltip is the :45 word
+    # (no dump row — the hand layer), the no-GUI tooltip the dump :3346 verbatim
+    "gt6.row.charging_locker.display": ("充能衣橱 (%s)", "hand"),
+    "block.gt6.sap_bag": ("树液/乳胶收集袋", "hand"),
+    "block.gt6.plant_pot": ("万能花盆", "hand"),
+    "gt6.tooltip.plantpot": ("能种任意植物在其上！", "hand"),
+    "gt6.tooltip.no_gui_click_inventory": ("没有界面，右键以放入/取出物品!", "hand"),
     "gt6.row.item_pipe.display.medium": ("%s物品管道", "hand"),
     "gt6.row.item_pipe.display.large": ("大型%s物品管道", "hand"),
     "gt6.row.item_pipe.display.huge": ("巨型%s物品管道", "hand"),

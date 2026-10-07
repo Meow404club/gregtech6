@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,full=false": {
+      "model": "gt6:block/gt6_sap_bag",
+      "y": 90
+    },
+    "facing=east,full=true": {
+      "model": "gt6:block/gt6_sap_bag_full",
+      "y": 90
+    },
+    "facing=north,full=false": {
+      "model": "gt6:block/gt6_sap_bag"
+    },
+    "facing=north,full=true": {
+      "model": "gt6:block/gt6_sap_bag_full"
+    },
+    "facing=south,full=false": {
+      "model": "gt6:block/gt6_sap_bag",
+      "y": 180
+    },
+    "facing=south,full=true": {
+      "model": "gt6:block/gt6_sap_bag_full",
+      "y": 180
+    },
+    "facing=west,full=false": {
+      "model": "gt6:block/gt6_sap_bag",
+      "y": 270
+    },
+    "facing=west,full=true": {
+      "model": "gt6:block/gt6_sap_bag_full",
+      "y": 270
+    }
+  }
+}

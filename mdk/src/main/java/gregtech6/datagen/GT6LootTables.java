@@ -141,6 +141,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
+                new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -208,6 +209,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
+                new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
                 new SubProviderEntry(GT6SiftingTableBlockLoot::new, LootContextParamSets.BLOCK), // task sifting-table-family — the table self-drop
@@ -2445,6 +2447,52 @@ public final class GT6LootTables extends LootTableProvider {
             // dropSelf registers through the void add() face — the statement form, the
             // wireLootBlocks/axleLootBlocks precedent (:176/:215)
             for (Block tBlock : staticStorageLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The 32xxx-domain block list (task block-family-32xxx-port): the 60 charging-locker
+     * rows (Loader :139), the sap bag (:2221) and the plant pot (:2229). The upstream
+     * MTEs carry the default self-drop WITH the paint round-trip (all three are
+     * paintable — the mRGBa chain), the painted-item-domain {@link #paintSelfTable} form.
+     */
+    public static List<Block> domain32xxxLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6ChargingLockers.ChargingLockerRow tRow : gregtech6.registry.GT6ChargingLockers.ROWS) {
+            rBlocks.add(gregtech6.registry.GT6ChargingLockers.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        rBlocks.add(gregtech6.registry.GT6MiscToolBlocks.SAP_BAG_BLOCK.get());
+        rBlocks.add(gregtech6.registry.GT6MiscToolBlocks.PLANT_POT_BLOCK.get());
+        return rBlocks;
+    }
+
+    /**
+     * The 32xxx-domain provider (task block-family-32xxx-port): every block in
+     * {@link #domain32xxxLootBlocks()} drops its own item carrying the paint round-trip
+     * ({@link #paintSelfTable}; the sap bag's tank/slot ride the GTEntityBlock walk, the
+     * tank voids upstream :117).
+     */
+    public static final class GT6Domain32xxxBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6Domain32xxxBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6Domain32xxxBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return domain32xxxLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : domain32xxxLootBlocks()) add(tBlock, paintSelfTable(tBlock));
         }
     }
 

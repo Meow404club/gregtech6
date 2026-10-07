@@ -388,6 +388,7 @@ direct	block.gt6.placed_plate	板	hand
 direct	block.gt6.placed_rock	石头	hand
 direct	block.gt6.placed_scrap	废料	hand
 direct	block.gt6.placed_stick	木棍	hand
+direct	block.gt6.plant_pot	万能花盆	hand
 direct	block.gt6.playercounter	玩家数量传感器	hand
 direct	block.gt6.porcelain_cup	瓷杯	hand
 direct	block.gt6.processor_unit_control	控制四核处理器	hand
@@ -452,6 +453,7 @@ direct	block.gt6.safe_keylocked_steel	钥匙锁定钢保险箱	hand
 direct	block.gt6.safe_mechanical_bronze	机械青铜保险箱	hand
 direct	block.gt6.safe_mechanical_steel	机械钢保险箱	hand
 direct	block.gt6.sandwich	三明治	hand
+direct	block.gt6.sap_bag	树液/乳胶收集袋	hand
 direct	block.gt6.shredder	粉碎机	hand
 direct	block.gt6.shredder_blades	研磨机刀片	hand
 direct	block.gt6.silverwood_beam	银树梁	hand
@@ -1461,6 +1463,7 @@ direct	gt6.row.burning_box.family.liquid	液体	hand
 direct	gt6.row.burning_box.family.solid	固体	hand
 direct	gt6.row.canner.display	罐装机 (%s)	hand
 direct	gt6.row.charging_crafting_table.display	充能工作台 (%s)	hand
+direct	gt6.row.charging_locker.display	充能衣橱 (%s)	hand
 direct	gt6.row.coagulator.display	凝结器	hand
 direct	gt6.row.crucible.display.smeltery_bronze	熔炼坩埚 (青铜)	hand
 direct	gt6.row.crucible.display.smeltery_ceramic	熔炼坩埚 (陶瓷)	hand
@@ -2354,6 +2357,8 @@ direct	gt6.tooltip.material.weapon_enchants	可用武器附魔: 	hand
 direct	gt6.tooltip.multiblock.1	使用建筑之杖快速搭建结构	hand
 direct	gt6.tooltip.multiblock.2	使用放大镜观察细节	hand
 direct	gt6.tooltip.multiblock.3	使用扳手设置朝向	hand
+direct	gt6.tooltip.no_gui_click_inventory	没有界面，右键以放入/取出物品!	hand
+direct	gt6.tooltip.plantpot	能种任意植物在其上！	hand
 direct	gt6.tooltip.pipe_fluid.1	流量: %1$s L/t	hand
 direct	gt6.tooltip.pipe_fluid.10	使用放大镜观察细节	hand
 direct	gt6.tooltip.pipe_fluid.2	容量: %2$s L	hand

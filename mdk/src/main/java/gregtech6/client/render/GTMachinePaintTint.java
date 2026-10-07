@@ -241,7 +241,24 @@ public final class GTMachinePaintTint {
 		// class — the colored sheet × mRGBa multiply, MultiTileEntityChest :349-370)
 		tMaterial = gregtech6.registry.GT6Chests.GT6ChestBlock.materialOf(aBlock);
 		if (tMaterial != null) return tMaterial;
-		return gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
+		// task block-family-32xxx-port — the 32xxx domain joins: the 60 charging-locker
+		// rows carry their loader NBT_MATERIAL through the row carrier (Loader :139 over
+		// the metalset walk — the MultiTileEntityLockerCharging :65 colored×mRGBa pass),
+		// the sap bag its MT.Leather column (:2221, the SapBag :133 pass) and the plant
+		// pot its MT.Ceramic column (:2229, the PlantPot :76 pass) through the fixed
+		// single-row constants
+		tMaterial = chargingLockerMaterialOf(aBlock);
+		if (tMaterial != null) return tMaterial;
+		if (aBlock instanceof gregtech6.registry.GT6MiscToolBlocks.GT6SapBagBlock) return MT.Leather;
+		return aBlock instanceof gregtech6.registry.GT6MiscToolBlocks.GT6PlantPotBlock ? MT.Ceramic
+				: gregtech6.tileentity.bees.GT6BumbliaryBlock.materialOf(aBlock);
+	}
+
+	/** The charging-locker row material (the shared metalset {@code HopperMaterial.mt} column), null off-carrier. */
+	@Nullable
+	private static OreDictMaterial chargingLockerMaterialOf(@Nullable net.minecraft.world.level.block.Block aBlock) {
+		return aBlock instanceof gregtech6.registry.GT6ChargingLockers.GT6ChargingLockerBlock tLocker
+				? tLocker.row().material().mt() : null;
 	}
 
 	/** The storage-hopper row material (the {@code HopperMaterial.mt} loader column), null off-carrier. */
