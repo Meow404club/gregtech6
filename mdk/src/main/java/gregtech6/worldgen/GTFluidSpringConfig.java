@@ -78,12 +78,12 @@ public record GTFluidSpringConfig(String name, String blockId, int probability, 
 
     /** The legacy 5-arg face (the pre-nether call sites) — nether=false, twilight=false, atum=false, the :782-794 posture. */
     public GTFluidSpringConfig(String aName, String aBlockId, int aProbability, boolean aOverworld, Integer aSpringFluid) {
-        this(aName, aBlockId, aProbability, aOverworld, false, false, aSpringFluid);
+        this(aName, aBlockId, aProbability, aOverworld, false, false, false, aSpringFluid);
     }
 
     /** The nether-card face (the worldgen-nether-bedrock-lava call sites) — twilight=false, atum=false, the :788/:797 posture. */
     public GTFluidSpringConfig(String aName, String aBlockId, int aProbability, boolean aOverworld, boolean aNether, Integer aSpringFluid) {
-        this(aName, aBlockId, aProbability, aOverworld, aNether, false, aSpringFluid);
+        this(aName, aBlockId, aProbability, aOverworld, aNether, false, false, aSpringFluid);
     }
 
     public static final Codec<GTFluidSpringConfig> CODEC = RecordCodecBuilder.create(aFields -> aFields.group(

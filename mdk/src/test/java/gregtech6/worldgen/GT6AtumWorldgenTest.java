@@ -84,7 +84,7 @@ public class GT6AtumWorldgenTest {
     @Test
     public void springDimRoutingIsThreeState() {
         GTFluidSpringConfig tOw = new GTFluidSpringConfig("ow", "minecraft:lava", 1, true, 100);
-        GTFluidSpringConfig tAtum = new GTFluidSpringConfig("atum", "x", 1, false, false, true, 100);
+        GTFluidSpringConfig tAtum = new GTFluidSpringConfig("atum", "x", 1, false, false, false, true, 100);
         GTFluidSpringConfig tNether = new GTFluidSpringConfig("nether", "minecraft:lava", 1, false, true, 100);
         GTFluidSpringConfig.Table tTable = new GTFluidSpringConfig.Table(List.of(tOw, tAtum, tNether));
         for (int tSeed = 0; tSeed < 200; tSeed++) {
@@ -222,10 +222,12 @@ public class GT6AtumWorldgenTest {
     public void conditionsRegistryShipsTheAtumTenants() {
         List<String> tAtumPaths = List.of("atum_fluid_springs", "atum_large_veins", "atum_ores",
                 "atum_stones", "atum_surface_rocks", "atum_bumble_hives");
-        assertEquals(9, GT6BiomeModifierConditions.CONDITION_ROWS.size(),
+        assertEquals(12, GT6BiomeModifierConditions.CONDITION_ROWS.size(),
                 "the End yield + twilight_ores + twilight_stones predecessors + the SIX atum rows"
                         + " (the twilight_stones row joined at the rebase seam — main's task"
-                        + " twilight-stone-rows rides row 3, the atum tenants follow)");
+                        + " twilight-stone-rows rides row 3, the atum tenants follow; the"
+                        + " review-seat rebase union adds main's post-base rows 4-6 —"
+                        + " twilight_surface_rocks + the twilight-hives-springs pair — 9 + 3 = 12)");
         for (String tPath : tAtumPaths) {
             GT6BiomeModifierConditions.ConditionRow tRow = GT6BiomeModifierConditions.CONDITION_ROWS.stream()
                     .filter(tCandidate -> tCandidate.rowPath().equals(tPath)).findFirst().orElseThrow();

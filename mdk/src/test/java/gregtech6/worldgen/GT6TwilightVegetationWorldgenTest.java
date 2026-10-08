@@ -162,8 +162,16 @@ public class GT6TwilightVegetationWorldgenTest {
             JsonArray tValues = resourceJson("data/gt6/tags/worldgen/biome/trees/" + tSnake + ".json")
                     .getAsJsonArray("values");
             for (JsonElement tElement : tValues) {
-                assertTrue(tElement.isJsonPrimitive(),
-                    "trees/" + tSnake + " must carry no twilight member (got " + tElement + ")");
+                if (tElement.isJsonPrimitive()) continue;
+                // (review-seat rebase union, task atum-dim-adaptation): the coconut gate
+                // admits Atum's Oasis by display name (BIOMES_COCONUT CS.java:285 — the
+                // atum:oasis required:false rider); the negative face stays scoped to the
+                // twilight dim — the ONLY allowed non-primitive is that declared rider.
+                com.google.gson.JsonObject tObj = tElement.getAsJsonObject();
+                assertEquals("atum:oasis", tObj.get("id").getAsString(),
+                    "trees/" + tSnake + " non-primitive member must be the declared atum rider (got " + tElement + ")");
+                assertEquals(false, tObj.get("required").getAsBoolean(),
+                    "trees/" + tSnake + " the atum rider stays required:false");
             }
         }
     }
@@ -216,8 +224,11 @@ public class GT6TwilightVegetationWorldgenTest {
         // the conditions registry row (the fourth tenant — the twilight_stones row of
         // task twilight-stone-rows landed first, this is the rebase-union seam; the
         // twilight-hives-springs rows 5-6 landed after, the next ratchet step).
-        assertEquals(6, GT6BiomeModifierConditions.CONDITION_ROWS.size(),
-                "end_yield + twilight_ores + twilight_stones + this row + hives + springs");
+        assertEquals(12, GT6BiomeModifierConditions.CONDITION_ROWS.size(),
+                "end_yield + twilight_ores + twilight_stones + this row + hives + springs"
+                        + " (the review-seat rebase union appends the SIX atum rows, task"
+                        + " atum-dim-adaptation — 6 + 6 = 12, the twilight prefix order"
+                        + " unchanged)");
         assertEquals("twilight_surface_rocks",
                 GT6BiomeModifierConditions.CONDITION_ROWS.get(3).rowPath());
     }

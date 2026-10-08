@@ -1051,6 +1051,8 @@ public final class GT6WorldgenDatagen {
                 aFeatures.getOrThrow(GT6Worldgen.SURFACE_ROCKS_CONFIGURED),
                 RarityFilter.onAverageOnceEvery(GT6Worldgen.SURFACE_ROCKS_PROBABILITY),
                 CountPlacement.of(GT6Worldgen.TWILIGHT_SURFACE_ROCKS_AMOUNT),
+                BiomeFilter.biome());
+
         // task atum-dim-adaptation — the atum surface-rocks placed twin (the
         // twilight-vegetation form): atum.rocks is 3,3 (Loader_Worldgen.java:625
         // amount 3 / probability 3) over the SHARED overworld_surface_rocks lottery —
@@ -1146,6 +1148,7 @@ public final class GT6WorldgenDatagen {
      */
     public static final ResourceKey<BiomeModifier> TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY = biomeModifierKeyOf("twilight_fluid_springs");
 
+    /**
      * The atum spring biome-modifier key (task atum-dim-adaptation): the FIRST atum row —
      * biomes {@code #gt6:atum_biomes} (the 11-member fallback tag), features = the SAME
      * gt6:fluid_springs placed feature (the nether_fluid_springs same-placed-key
@@ -2371,7 +2374,7 @@ public final class GT6WorldgenDatagen {
 
     /** The twilight-row helper (:795-796 — the task twilight-hives-springs activation, the twilight mask column). */
     private static GTFluidSpringConfig springTwilight(String aName, String aBlockId, int aProbability, int aSpringAmount) {
-        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, true, false, aSpringAmount);
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, true, false, aSpringAmount);
     }
 
     /**
@@ -2380,7 +2383,7 @@ public final class GT6WorldgenDatagen {
      * atum column; 1/200 · 2000mB, half the OW band's 1/400 · 6000).
      */
     private static GTFluidSpringConfig springAtum(String aName, String aBlockId, int aProbability, int aSpringAmount) {
-        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, true, aSpringAmount);
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, false, true, aSpringAmount);
     }
 
     /** The lava-row helper (:788/:797 — the vanilla block face, no GT fluid id to single-source). */

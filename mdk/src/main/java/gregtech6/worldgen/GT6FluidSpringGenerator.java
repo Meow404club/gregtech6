@@ -57,9 +57,12 @@ public final class GT6FluidSpringGenerator {
      * registered dim-type list (the GEN_TWILIGHT rows :795-796 roll ONLY in the twilight
      * dimension, WorldgenFluidSpring.generate's aDimType face) — the port's binary
      * (hasCeiling = nether, else overworld) would roll the OW oil/gas band in TF, the
-     * trap the third state exists for.
+     * trap the third state exists for. The FOURTH state (task atum-dim-adaptation, the
+     * twilight-column mask posture's enum face): the :789-792 atum oil rows roll ONLY in
+     * DIM_ATUM (GT6WorldGenerator.java:145); the port routes by the {@code #gt6:atum_biomes}
+     * biome probe (atum absent, the tag resolves EMPTY, {@code is} is simply false).
      */
-    public enum Dim { OVERWORLD, NETHER, TWILIGHT }
+    public enum Dim { OVERWORLD, NETHER, TWILIGHT, ATUM }
 
     private GT6FluidSpringGenerator() {
     }
@@ -83,23 +86,8 @@ public final class GT6FluidSpringGenerator {
      * column — dormant census rows.
      */
     public static boolean valid(GTFluidSpringConfig aRow, Dim aDim) {
-        return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.TWILIGHT ? aRow.twilight() : aRow.overworld();
-    }
-
-    /**
-     * The three-state routing dimension (task atum-dim-adaptation, the twilight-column
-     * mask posture's enum face): the Feature's {@code hasCeiling} binary grown its atum
-     * arm. Upstream routed by the world's registered dim-type list (the GEN_ATUM rows
-     * :789-792 roll ONLY in DIM_ATUM, GT6WorldGenerator.java:145); the port routes by the
-     * {@code #gt6:atum_biomes} biome probe (GT6Worldgen.ATUM_BIOMES — the mount tag the
-     * atum_fluid_springs modifier hangs through, the deadrock-tag absence face: atum
-     * absent, the tag resolves EMPTY, {@code is} is simply false).
-     */
-    public enum Dim { OVERWORLD, NETHER, ATUM }
-
-    /** The enum face of the row validity — the masks, not the stream, separate the bands. */
-    public static boolean valid(GTFluidSpringConfig aRow, Dim aDim) {
-        return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.ATUM ? aRow.atum() : aRow.overworld();
+        return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.TWILIGHT ? aRow.twilight()
+                : aDim == Dim.ATUM ? aRow.atum() : aRow.overworld();
     }
 
     /**
@@ -120,24 +108,15 @@ public final class GT6FluidSpringGenerator {
     }
 
     /**
-     * The three-state face (task twilight-hives-springs): the twilight arm returns FALSE
-     * unconditionally — no GT bedrock-ore modifier is mounted in TF (the ore rows' masks
-     * carry no twilight column), so the mutual-exclusion replay has no counterpart there
-     * and every TF chunk is spring-eligible on its own roll.
+     * The dimension-mask face: the twilight arm returns FALSE unconditionally (task
+     * twilight-hives-springs — no GT bedrock-ore modifier is mounted in TF, the ore rows'
+     * masks carry no twilight column) and the atum arm returns FALSE likewise (task
+     * atum-dim-adaptation — the :744-775 GEN_FLOOR/NETHER/MARS/EREBUS/BETWEENLANDS lists
+     * name no ATUM), so the mutual-exclusion replay has no counterpart in either mod dim
+     * and those chunks are spring-eligible on their own roll.
      */
     public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom, Dim aDim) {
-        if (aDim == Dim.TWILIGHT) return false;
-        return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom, aDim == Dim.NETHER).isEmpty();
-    }
-
-    /**
-     * The enum face (task atum-dim-adaptation): the atum arm returns FALSE — the atum band
-     * carries no GT bedrock-ore rows (the :744-775 GEN_FLOOR/NETHER/MARS/EREBUS/
-     * BETWEENLANDS lists name no ATUM), so the mutual-exclusion replay has no counterpart
-     * there and the spring rolls with no ore opponent (the twilight-card arm's shape).
-     */
-    public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom, Dim aDim) {
-        if (aDim == Dim.ATUM) return false;
+        if (aDim == Dim.TWILIGHT || aDim == Dim.ATUM) return false;
         return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom, aDim == Dim.NETHER).isEmpty();
     }
 
