@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_titanium"
+    },
+    "P": {
+      "item": "gt6:plate_titanium"
+    },
+    "T": {
+      "item": "gt6:screw_titanium"
+    }
+  },
+  "pattern": [
+    "TBT",
+    "BPB",
+    "TBT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spike_titanium_block"
+  }
+}

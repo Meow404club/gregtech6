@@ -1,0 +1,428 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "false",
+                "south": "false",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 0.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "true",
+                "south": "false",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "false",
+                "south": "false",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "true",
+                "south": "false",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "false",
+                "south": "true",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "true",
+                "south": "true",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "false",
+                "south": "true",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "true",
+                "south": "true",
+                "west": "false"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "false",
+                "south": "false",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "true",
+                "south": "false",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "false",
+                "south": "false",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "true",
+                "south": "false",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "false",
+                "south": "true",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "false",
+                "north": "true",
+                "south": "true",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "false",
+                "south": "true",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "gt6:bars_adamantium",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "east": "true",
+                "north": "true",
+                "south": "true",
+                "west": "true"
+              }
+            },
+            {
+              "condition": "minecraft:survives_explosion"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 4.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "gt6:bars_adamantium"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "gt6:blocks/bars_adamantium"
+}

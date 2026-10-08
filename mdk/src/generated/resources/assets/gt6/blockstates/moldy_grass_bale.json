@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "gt6:block/moldy_grass_bale",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "gt6:block/moldy_grass_bale"
+    },
+    "axis=z": {
+      "model": "gt6:block/moldy_grass_bale",
+      "x": 90,
+      "y": 180
+    }
+  }
+}

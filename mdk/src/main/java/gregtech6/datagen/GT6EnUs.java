@@ -207,6 +207,7 @@ public class GT6EnUs extends LanguageProvider {
         addConcrete(); // task concrete-blocks-register — table-tail append
         addWoodenPanels(); // task material-mc-g3-plank-panels — table-tail append
         addPanels(); // task material-mc-g1-panels-dyed — table-tail append
+        addDecor(); // task material-mc-g2-decor-misc — the decor families (dye/material templates + the bale/path rows)
         addBakeFoods(); // task food-bake-items — table-tail append
         addCropFoods(); // task food-crop-items — table-tail append
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
@@ -2385,6 +2386,37 @@ public class GT6EnUs extends LanguageProvider {
         for (gregtech6.block.panels.GT6PanelBlock.Family tFamily : gregtech6.block.panels.GT6PanelBlock.Family.values()) {
             add(tFamily.nameKey, tFamily.enName);
         }
+    }
+
+    /**
+     * The decor-misc family faces (task material-mc-g2-decor-misc, the addConcrete compose
+     * template form over the addTreeUnits walk): the dye families reuse the 16
+     * {@code gt6.dye.<id>} units with the BlockColored templates ("%s Asphalt" / "%s Glass" /
+     * "%s Glow Glass" — the upstream BlockColored.java:46 compose = DYE_NAMES[i] + " " +
+     * localised, the dump faces gt.block.asphalt.0-15 / gt.block.glass.0-15 /
+     * gt.block.glass.glow.0-15); the material families ride the {@code gt6.material.<snake>}
+     * units ("%s Bars" / "%s Wall Spike" / "%s Block Spike" / "Falling %s Spike Block" — the
+     * BlockBars-family/BlockSpike-family LH ladders); the Path ("Path", gt.block.paths.0) and the eight
+     * bales (the BlockBaleGrass.java:53-83/:42-72 LH faces verbatim) are the direct rows; the
+     * two death-message faces ride the DamageSourceSpike fold ("was skewered" + the AF LEGO
+     * line, DamageSourceSpike.java:40).
+     */
+    private void addDecor() {
+        // the 16 gt6.dye.<id> units already ride the addConcrete band — no re-add here
+        add(gregtech6.block.decor.GT6AsphaltBlock.BLOCK_NAME_KEY, "%s Asphalt");
+        add(gregtech6.block.decor.GT6GlassBlock.GLASS_NAME_KEY, "%s Glass");
+        add(gregtech6.block.decor.GT6GlassBlock.GLOW_NAME_KEY, "%s Glow Glass");
+        add(gregtech6.block.decor.GT6PathBlock.BLOCK_NAME_KEY, "Path");
+        add(gregtech6.block.decor.GT6BarsBlock.NAME_KEY, "%s Bars");
+        add(gregtech6.block.decor.GT6SpikeBlock.WALL_NAME_KEY, "%s Wall Spike");
+        add(gregtech6.block.decor.GT6SpikeBlock.OMNI_NAME_KEY, "%s Block Spike");
+        add(gregtech6.block.decor.GT6SpikeBlock.FALLING_NAME_KEY, "Falling %s Spike Block");
+        String[] tGrass = {"Grass Bale", "Dry Grass Bale", "Moldy Grass Bale", "Rotten Grass Bale"};
+        for (int i = 0; i < 4; i++) add(gregtech6.block.decor.GT6BaleBlock.GRASS_NAMES[i], tGrass[i]);
+        String[] tCrop = {"Rye Bale", "Oats Bale", "Barley Bale", "Rice Bale"};
+        for (int i = 0; i < 4; i++) add(gregtech6.block.decor.GT6BaleBlock.CROP_NAMES[i], tCrop[i]);
+        add("gt6.death.spike", "%1$s was skewered");
+        add("gt6.death.spike.lego", "%1$s stepped on a LEGO!");
     }
 
     /**

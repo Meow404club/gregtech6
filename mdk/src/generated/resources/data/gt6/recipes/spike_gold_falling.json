@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "gt6:spike_gold_block"
+    }
+  ],
+  "result": {
+    "item": "gt6:spike_gold_falling"
+  }
+}

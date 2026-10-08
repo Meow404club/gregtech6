@@ -56,7 +56,11 @@ class GT6OvenTexAuditDatagenTest {
 	 * the boiler barometer needle states 00..31 (task boiler-barometer's
 	 * `block/barometer/` README ledger — the 4-white-texels needle art, the dial base
 	 * itself is NOT near-white and stays outside this set; the rebase-drift extension
-	 * when that card and tank-render-tint landed on main after this audit first ran).
+	 * when that card and tank-render-tint landed on main after this audit first ran);
+	 * and {@code decor/glass_clear.png} (task material-mc-g2-decor-misc, the
+	 * `block/decor/` README ledger — the upstream GLASS_CLEAR grayscale fill,
+	 * alpha-48 translucent, white by design and dye-tinted at render by
+	 * GT6DecorTintListener).
 	 * A new white block texture must be added here WITH its ledger row, or reworked.
 	 */
 	private static final Set<String> DOCUMENTED_WHITE_BLOCK_BORROWS;
@@ -69,7 +73,8 @@ class GT6OvenTexAuditDatagenTest {
 				// task block-family-32xxx-port — the plant pot's near-white body art (the
 				// :2229 Ceramic column is the tint carrier; the README 32xxx sha section)
 				"plant_pot/colored_side.png",
-				"plant_pot/colored_bottom.png"));
+				"plant_pot/colored_bottom.png",
+				"decor/glass_clear.png"));
 		for (int i = 0; i < 32; i++) tWhite.add(String.format("barometer/%02d.png", i));
 		DOCUMENTED_WHITE_BLOCK_BORROWS = java.util.Collections.unmodifiableSet(tWhite);
 	}

@@ -1,0 +1,66 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "east": {
+          "texture": "#bars",
+          "tintindex": 0,
+          "uv": [
+            9.0,
+            0.0,
+            8.0,
+            16.0
+          ]
+        },
+        "west": {
+          "texture": "#bars",
+          "tintindex": 0
+        }
+      },
+      "from": [
+        8,
+        0,
+        8
+      ],
+      "to": [
+        8,
+        16,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "north": {
+          "texture": "#bars",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#bars",
+          "tintindex": 0,
+          "uv": [
+            9.0,
+            0.0,
+            7.0,
+            16.0
+          ]
+        }
+      },
+      "from": [
+        7,
+        0,
+        9
+      ],
+      "to": [
+        9,
+        16,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "bars": "gt6:block/decor/metal_solid",
+    "edge": "gt6:block/decor/metal_solid",
+    "particle": "#bars"
+  }
+}

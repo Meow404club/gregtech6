@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_blue_steel"
+    },
+    "P": {
+      "item": "gt6:plate_blue_steel"
+    },
+    "T": {
+      "item": "gt6:screw_blue_steel"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "terrafirmacraft"
+    }
+  ],
+  "pattern": [
+    "TBT",
+    "BPB",
+    "TBT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spike_blue_steel_block"
+  }
+}

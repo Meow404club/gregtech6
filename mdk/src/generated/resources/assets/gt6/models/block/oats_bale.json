@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "gt6:block/decor/oats_bale_top",
+    "side": "gt6:block/decor/oats_bale_side"
+  }
+}

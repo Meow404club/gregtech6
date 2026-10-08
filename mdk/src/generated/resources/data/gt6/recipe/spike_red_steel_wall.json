@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_red_steel"
+    },
+    "P": {
+      "item": "gt6:plate_red_steel"
+    },
+    "T": {
+      "item": "gt6:screw_red_steel"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "terrafirmacraft"
+    }
+  ],
+  "pattern": [
+    "BTB",
+    "TPT",
+    "BTB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spike_red_steel"
+  }
+}

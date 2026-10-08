@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "minecraft:stick"
+    },
+    "r": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "v": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "r v",
+    "BBB"
+  ],
+  "result": {
+    "count": 3,
+    "id": "gt6:bars_wood"
+  }
+}

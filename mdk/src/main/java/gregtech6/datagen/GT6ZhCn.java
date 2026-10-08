@@ -128,6 +128,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addSiftingTableUnits(); // task sifting-table-family — the manual chain tail (the dump face verbatim)
 		addConcreteUnits();     // task concrete-blocks-register — the 16 dye units + 4 templates (the dump faces verbatim)
 		addWoodenPanelUnits();  // task material-mc-g3-plank-panels — the 1 wooden panel family key (the dump face verbatim, the tsv direct band)
+		addDecorUnits();        // task material-mc-g2-decor-misc — the decor families (the dump faces verbatim)
 		addCrucibleJadeUnits(); // task crucible-jade-face
 		addCommonJadeUnits();   // task jade-redesign-core — the common jade band (hand rows, the tsv direct band)
 		addMachineJadeUnits();  // task hygiene-lang — the machine/fluid jade band (hand rows, the tsv direct band)
@@ -1028,6 +1029,32 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect(gregtech6.block.concrete.GT6ConcreteBlock.REINFORCED_NAME_KEY);
 		addDirect(gregtech6.block.concrete.GT6ConcreteSlabBlock.SLAB_NAME_KEY);
 		addDirect(gregtech6.block.concrete.GT6ConcreteSlabBlock.REINFORCED_SLAB_NAME_KEY);
+	}
+
+	/**
+	 * The decor-misc family zh faces (task material-mc-g2-decor-misc, the addConcreteUnits
+	 * shape): the dye/material unit keys the compose templates fill (the dump material
+	 * faces: 钢/钛/蓝钢/红钢/钨钢/艾德曼合金/铜/铅/金/银/黄铜/任意木头 via the gt6.material
+	 * band) + the templates (gt.block.asphalt.<meta> %s沥青 / gt.block.glass.<meta> %s玻璃 /
+	 * gt.block.glass.glow.<meta> %s荧光玻璃 / gt.block.bars.<mat> %s栏杆 /
+	 * gt.block.spikes.*.%s制壁刺 / %s制尖刺方块 / 坠落的%s尖刺方块, tmp/gregtech.lang) + the
+	 * direct rows (草径, the eight 垛 faces, the two death lines hand — the AF LEGO line is
+	 * the easter-s1 domain's hand wording).
+	 */
+	private void addDecorUnits() {
+		// the 16 gt6.dye.<id> units already ride the addConcreteUnits band — no re-add here
+		addDirect(gregtech6.block.decor.GT6AsphaltBlock.BLOCK_NAME_KEY);
+		addDirect(gregtech6.block.decor.GT6GlassBlock.GLASS_NAME_KEY);
+		addDirect(gregtech6.block.decor.GT6GlassBlock.GLOW_NAME_KEY);
+		addDirect(gregtech6.block.decor.GT6PathBlock.BLOCK_NAME_KEY);
+		addDirect(gregtech6.block.decor.GT6BarsBlock.NAME_KEY);
+		addDirect(gregtech6.block.decor.GT6SpikeBlock.WALL_NAME_KEY);
+		addDirect(gregtech6.block.decor.GT6SpikeBlock.OMNI_NAME_KEY);
+		addDirect(gregtech6.block.decor.GT6SpikeBlock.FALLING_NAME_KEY);
+		for (String tKey : gregtech6.block.decor.GT6BaleBlock.GRASS_NAMES) addDirect(tKey);
+		for (String tKey : gregtech6.block.decor.GT6BaleBlock.CROP_NAMES) addDirect(tKey);
+		addDirect("gt6.death.spike");
+		addDirect("gt6.death.spike.lego");
 	}
 
 	/**

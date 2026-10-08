@@ -83,12 +83,14 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 		int tFlour = ANY.FlourGrains.mToThis.size();
 		assertTrue(tFlour >= 8, "the FlourGrains family is live (7 grains + potato = 8): " + tFlour);
 		// flour walk: 2 feeders x 66 legs per material; wool seam 16 (white + the 15 b4 dyed legs);
-		// fodder: 4x66 + 1; grains: 4x73; wheat listener: 1+4+2+66+1 = 74; baleWheat: 1+66+1 = 68; the food band: 2+2+2+2+4
-		int tExpected = tFlour * 132 + 16 + (4 * 66 + 1) + (4 * 73) + (1 + 4 + 2 + 66 + 1) + (1 + 66 + 1) + (2 + 2 + 2 + 2 + 4);
+		// fodder: 4x66 + 1; grains: 4x73; wheat listener: 1+4+2+66+1 = 74; baleWheat: 1+66+1 = 68; the food band: 2+2+2+2+4;
+		// bale pool LANDED (material-mc-g2-decor-misc): grain bales 4x(3+66) + grass bales (8+1+4x66)
+		int tExpected = tFlour * 132 + 16 + (4 * 66 + 1) + (4 * 73) + (1 + 4 + 2 + 66 + 1) + (1 + 66 + 1) + (2 + 2 + 2 + 2 + 4)
+				+ (4 * (4 + 66)) + (8 + 1 + 4 * 66);
 		assertEquals(tExpected, tRows.size(), "the enumerated table ratchet (" + tRows.size() + ")");
 		// map destinations census
 		long tFermenter = tRows.stream().filter(aRow -> aRow.map().equals("fermenter")).count();
-		assertEquals((tFlour * 2 + 10) * 66, tFermenter, "the biomass legs: flour feeders + fodder + grains + wheat + hay");
+		assertEquals((tFlour * 2 + 10 + 8) * 66, tFermenter, "the biomass legs: flour feeders + fodder + grains + wheat + hay + the 8 bale feeders");
 		assertEquals(16, tRows.stream().filter(aRow -> aRow.note().contains(":719")).count(), "the wool seam live rows (white shred + the 15 b4 dyed legs)");
 	}
 
@@ -232,17 +234,19 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 		} else {
 			// the registry-bound leg: the live pour — the upstream-resolution pour face
 			// (the merge-state face: the 4 fodder + 4 grain-crop ids resolved once
-			// food-crop-items landed, +8 biomass feeders + the fodder/grain side rows)
-			assertEquals((tFlour + 10) * 66, GT6RecipeMaps.FERMENTER.mRecipeList.size(),
-					"the flour dust feeders + wheat/hay + the 4 fodder + the 4 grain-crop biomass legs");
-			assertEquals(1255, GT6RecipesCrops.lastPoured(), "the bound pour ratchet (the merge-state face, +15 the b4 dyed shred legs)");
-			assertEquals(tAttempted - 1255, GT6RecipesCrops.lastSkipped(), "the bound skip ledger (the blockDust arm)");
-			assertEquals(23, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool seam 16 + wheat mortarize + hay shred + potato remains + the 4 grain mortarizes");
+			// food-crop-items landed, +8 biomass feeders + the fodder/grain side rows;
+			// material-mc-g2-decor-misc: the 8 bale ids resolve TOO now — the bale
+			// blocks/items landed, the grain+grass bale bands pour live on this leg)
+			assertEquals((tFlour + 10 + 8) * 66, GT6RecipeMaps.FERMENTER.mRecipeList.size(),
+					"the flour dust feeders + wheat/hay + the 4 fodder + the 4 grain-crop biomass legs + the 8 bale feeders");
+			assertEquals(1808, GT6RecipesCrops.lastPoured(), "the bound pour ratchet (the merge-state face, +15 the b4 dyed shred legs, +553 the landed bale bands)");
+			assertEquals(tAttempted - 1808, GT6RecipesCrops.lastSkipped(), "the bound skip ledger (the blockDust arm)");
+			assertEquals(27, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool seam 16 + wheat mortarize + hay shred + potato remains + the 4 grain mortarizes + the 4 bale shreds");
 			assertEquals(6, GT6RecipeMaps.MORTAR.mRecipeList.size(), "the wheat mortarize + the 4 grain mortarizes + the potato remains");
-			assertEquals(1, GT6RecipeMaps.COMPRESSOR.mRecipeList.size(), "the wheat compact → hay block");
-			assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size(), "the hay unpack → 9 wheat");
+			assertEquals(9, GT6RecipeMaps.COMPRESSOR.mRecipeList.size(), "the wheat compact + the 4 grain + the 4 grass bale compacts");
+			assertEquals(9, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size(), "the hay unpack + the 4 grain + the 4 grass bale unpacks");
 			assertEquals(20, GT6RecipeMaps.MIXER.mRecipeList.size(), "(the 4 grain crops + cropWheat) x the 4-water mash");
-			assertEquals(6, GT6RecipeMaps.DRYING.mRecipeList.size(), "the fodder + the 4 grain crops + wheat");
+			assertEquals(11, GT6RecipeMaps.DRYING.mRecipeList.size(), "the fodder + the 4 grain crops + wheat + the fresh grass-bale leg + the 4 grain-bale dryings");
 			assertEquals(5, GT6RecipeMaps.SQUEEZER.mRecipeList.size());
 			assertEquals(5, GT6RecipeMaps.JUICER.mRecipeList.size());
 		}
@@ -265,13 +269,13 @@ class GT6RecipesCropsRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipesCrops.lastSkipped(), "no skips under full fixtures");
 		// the map destinations: the fermenter carries exactly the biomass legs
 		int tFlour = ANY.FlourGrains.mToThis.size();
-		int tBiomassRows = (tFlour * 2 + 10) * 66;
+		int tBiomassRows = (tFlour * 2 + 10 + 8) * 66; // +8 bale feeders (material-mc-g2-decor-misc)
 		assertEquals(tBiomassRows, GT6RecipeMaps.FERMENTER.mRecipeList.size(), "the fermenter = the biomass walk");
-		assertEquals(23, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool seam 16 + wheat mortarize + hay shred + 4 grain mortarizes + potato remains");
+		assertEquals(27, GT6RecipeMaps.SHREDDER.mRecipeList.size(), "wool seam 16 + wheat mortarize + hay shred + 4 grain mortarizes + potato remains + 4 bale shreds");
 		assertEquals(6, GT6RecipeMaps.MORTAR.mRecipeList.size(), "the wheat mortarize + 4 grain mortarizes + potato remains");
-		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mRecipeList.size(), "the wheat compact");
-		assertEquals(1, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size(), "the hay unpack");
-		assertEquals(6, GT6RecipeMaps.DRYING.mRecipeList.size(), "fodder + 4 grains + wheat");
+		assertEquals(9, GT6RecipeMaps.COMPRESSOR.mRecipeList.size(), "the wheat compact + 4 grain + 4 grass bale compacts");
+		assertEquals(9, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size(), "the hay unpack + 4 grain + 4 grass bale unpacks");
+		assertEquals(11, GT6RecipeMaps.DRYING.mRecipeList.size(), "fodder + 4 grains + wheat + the fresh grass-bale leg + the 4 grain-bale dryings");
 		assertEquals(20, GT6RecipeMaps.MIXER.mRecipeList.size(), "(4 grains + wheat) x 4 waters");
 		assertEquals(5, GT6RecipeMaps.SQUEEZER.mRecipeList.size());
 		assertEquals(5, GT6RecipeMaps.JUICER.mRecipeList.size());

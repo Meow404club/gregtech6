@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "terrafirmacraft"
+    }
+  ],
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_red_steel"
+    },
+    "P": {
+      "item": "gt6:plate_red_steel"
+    },
+    "T": {
+      "item": "gt6:screw_red_steel"
+    }
+  },
+  "pattern": [
+    "TBT",
+    "BPB",
+    "TBT"
+  ],
+  "result": {
+    "item": "gt6:spike_red_steel_block"
+  },
+  "show_notification": true
+}

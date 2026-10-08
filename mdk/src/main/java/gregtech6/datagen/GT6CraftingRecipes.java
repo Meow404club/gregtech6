@@ -28,6 +28,7 @@ import net.minecraftforge.common.Tags;
 
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
+import gregapi.data.OP;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.block.panels.GT6PanelBlock;
@@ -406,6 +407,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		sapBagBuilder().save(aConsumer, SAP_BAG_ID);
 		// the plant pot row DEFERS: its 'U' column is IL.Ceramic_Basin — an unported item
 		// (the class doc of the builder; the reported ruling seat)
+		decorSpikeBarsRows(aConsumer); // task material-mc-g2-decor-misc — the spike/bars crafting band
 		progressmeterBuilder().save(aConsumer, PROGRESSMETER_ID);
 		circuitWireCopperBuilder().save(aConsumer, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
 		miniPortalNetherBuilder().save(aConsumer, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
@@ -711,6 +713,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		sapBagBuilder().save(aOutput, SAP_BAG_ID);
 		// the plant pot row DEFERS (the 'U' Ceramic Basin item is unported — the class doc)
+		decorSpikeBarsRows(aOutput); // task material-mc-g2-decor-misc — the spike/bars crafting band
 		progressmeterBuilder().save(aOutput, PROGRESSMETER_ID);
 		circuitWireCopperBuilder().save(aOutput, CIRCUIT_WIRE_COPPER_ID); // task circuit-chain-recipes — MIT:571
 		miniPortalNetherBuilder().save(aOutput, MINI_PORTAL_NETHER_ID); // task portals-mini-nether-end
@@ -8994,5 +8997,130 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		return rBuilder;
 	}
 
-}
+    /**
+     * The spike/bars crafting band (task material-mc-g2-decor-misc) — the upstream
+     * registration-ctor rows: the wall/block spike shaped pairs per material
+     * (BlockBaseSpike.java:65-68, "BTB"/"TPT"/"BTB" wall and "TBT"/"BPB"/"TBT" omni over
+     * toolHeadSword+plate+screw), the falling-fold shapeless pairs (:70-74, the meta
+     * 6-7/14-15 both-way folds) and the bars stick row (BlockBaseBars.java:66, "BBB" +
+     * the tool row — wood "r v" (screwdriver+sawaxe) / metal "h w" (hammer+wrench), 3
+     * sticks to 3 bars). Declared: the sawaxe 'v' face folds into the saw tag (the
+     * nearest port member), the wood-bar stick rides the vanilla STICKS tag (the
+     * ANY.Wood pseudo-material has no port item), and a row whose material item pair is
+     * unregistered skips (the driver-hidden JSON semantics).
+     */
+    //? if forge {
+    private void decorSpikeBarsRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
+        for (gregtech6.registry.GT6Spikes.SpikeRow tRow : gregtech6.registry.GT6Spikes.ROWS) {
+            OreDictMaterial tMat = tRow.material().get();
+            Item tHead = matItem(OP.toolHeadSword, tMat);
+            Item tPlate = matItem(OP.plate, tMat);
+            Item tScrew = matItem(OP.screw, tMat);
+            if (tHead == null || tPlate == null || tScrew == null) continue; // the item-pair skip
+            Item tWall = gregtech6.registry.GT6Spikes.itemOfPath(gregtech6.registry.GT6Spikes.path(tRow));
+            Item tOmni = gregtech6.registry.GT6Spikes.itemOfPath(gregtech6.registry.GT6Spikes.omniPath(tRow));
+            Item tFalling = gregtech6.registry.GT6Spikes.itemOfPath(gregtech6.registry.GT6Spikes.fallingPath(tRow));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, tWall)
+                    .pattern("BTB").pattern("TPT").pattern("BTB")
+                    .define('B', tHead).define('P', tPlate).define('T', tScrew)
+                    .unlockedBy("has_plate", has(tPlate))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_wall"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, tOmni)
+                    .pattern("TBT").pattern("BPB").pattern("TBT")
+                    .define('B', tHead).define('P', tPlate).define('T', tScrew)
+                    .unlockedBy("has_plate", has(tPlate))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_omni"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, tFalling)
+                    .requires(tOmni)
+                    .unlockedBy("has_omni", has(tOmni))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_falling"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, tOmni)
+                    .requires(tFalling)
+                    .unlockedBy("has_falling", has(tFalling))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_omni_rev"));
+        }
+        for (gregtech6.registry.GT6DecorBlocks.BarsRow tRow : gregtech6.registry.GT6DecorBlocks.BARS_ROWS) {
+            Item tStick = tRow.flammable() ? net.minecraft.world.item.Items.STICK
+                    : matItem(OP.stick, tRow.material().get());
+            Item tBars = gregtech6.registry.GT6DecorBlocks.itemOfPath("bars_" + tRow.family());
+            if (tBars == null || tStick == null) continue;
+            ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, tBars, 3)
+                    .pattern("BBB")
+                    .pattern(tRow.flammable() ? "r v" : "h w")
+                    .pattern("BBB")
+                    .define('B', tStick)
+                    .unlockedBy("has_stick", has(tStick));
+            if (tRow.flammable()) {
+                tBuilder.define('r', GT6ItemTags.TOOLS_SCREWDRIVER).define('v', GT6ItemTags.TOOLS_SAW);
+            } else {
+                tBuilder.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH);
+            }
+            tBuilder.save(aConsumer, id("bars_" + tRow.family()));
+        }
+    }
+    //?} else {
+    /*
+    private void decorSpikeBarsRows(net.minecraft.data.recipes.RecipeOutput aConsumer) {
+        for (gregtech6.registry.GT6Spikes.SpikeRow tRow : gregtech6.registry.GT6Spikes.ROWS) {
+            OreDictMaterial tMat = tRow.material().get();
+            Item tHead = matItem(OP.toolHeadSword, tMat);
+            Item tPlate = matItem(OP.plate, tMat);
+            Item tScrew = matItem(OP.screw, tMat);
+            if (tHead == null || tPlate == null || tScrew == null) continue; // the item-pair skip
+            Item tWall = gregtech6.registry.GT6Spikes.itemOfPath(gregtech6.registry.GT6Spikes.path(tRow));
+            Item tOmni = gregtech6.registry.GT6Spikes.itemOfPath(gregtech6.registry.GT6Spikes.omniPath(tRow));
+            Item tFalling = gregtech6.registry.GT6Spikes.itemOfPath(gregtech6.registry.GT6Spikes.fallingPath(tRow));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, tWall)
+                    .pattern("BTB").pattern("TPT").pattern("BTB")
+                    .define('B', tHead).define('P', tPlate).define('T', tScrew)
+                    .unlockedBy("has_plate", has(tPlate))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_wall"));
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, tOmni)
+                    .pattern("TBT").pattern("BPB").pattern("TBT")
+                    .define('B', tHead).define('P', tPlate).define('T', tScrew)
+                    .unlockedBy("has_plate", has(tPlate))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_omni"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, tFalling)
+                    .requires(tOmni)
+                    .unlockedBy("has_omni", has(tOmni))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_falling"));
+            ShapelessRecipeBuilder.shapeless(RecipeCategory.REDSTONE, tOmni)
+                    .requires(tFalling)
+                    .unlockedBy("has_falling", has(tFalling))
+                    .save(aConsumer, id("spike_" + tRow.snake() + "_omni_rev"));
+        }
+        for (gregtech6.registry.GT6DecorBlocks.BarsRow tRow : gregtech6.registry.GT6DecorBlocks.BARS_ROWS) {
+            Item tStick = tRow.flammable() ? net.minecraft.world.item.Items.STICK
+                    : matItem(OP.stick, tRow.material().get());
+            Item tBars = gregtech6.registry.GT6DecorBlocks.itemOfPath("bars_" + tRow.family());
+            if (tBars == null || tStick == null) continue;
+            ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, tBars, 3)
+                    .pattern("BBB")
+                    .pattern(tRow.flammable() ? "r v" : "h w")
+                    .pattern("BBB")
+                    .define('B', tStick)
+                    .unlockedBy("has_stick", has(tStick));
+            if (tRow.flammable()) {
+                tBuilder.define('r', GT6ItemTags.TOOLS_SCREWDRIVER).define('v', GT6ItemTags.TOOLS_SAW);
+            } else {
+                tBuilder.define('h', GT6ItemTags.TOOLS_HARD_HAMMER).define('w', GT6ItemTags.TOOLS_WRENCH);
+            }
+            tBuilder.save(aConsumer, id("bars_" + tRow.family()));
+        }
+    }
+     *///?}
 
+
+    /** The material item walk (null when the pair is unregistered — the skip semantics);
+     * the items() map face keeps the RegistryObject/DeferredHolder swap leg-neutral (the
+     * neo DeferredHolder carries no isPresent — the map miss IS the null face). */
+    private static Item matItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
+        var tHandle = GTMaterialItems.items().get(new GTMaterialItems.PrefixMaterial(aPrefix, aMaterial));
+        return tHandle == null ? null : tHandle.get();
+    }
+
+    /** The gt6 recipe id helper. */
+    private static ResourceLocation id(String aPath) {
+        return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath);
+    }
+}

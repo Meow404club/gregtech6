@@ -1997,6 +1997,28 @@ HAND_TRANSLATIONS = {
     "gt6.concrete.block_reinforced": ("%s强化混凝土", "hand"),
     "gt6.concrete.slab": ("%s混凝土半砖", "hand"),
     "gt6.concrete.slab_reinforced": ("%s强化混凝土半砖", "hand"),
+    # task material-mc-g2-decor-misc — the decor families (the dump faces verbatim:
+    # gt.block.asphalt/glass/glass.glow %s-compose, gt.block.paths.0 草径, gt.block.bars.*
+    # %s栏杆, gt.block.spikes.* %s制壁刺/%s制尖刺方块/坠落的%s尖刺方块, gt.block.bale.*
+    # 垛 faces; the two death lines are hand — the AF LEGO line the easter-s1 wording).
+    "gt6.asphalt.block": ("%s沥青", "hand"),
+    "gt6.glass.block": ("%s玻璃", "hand"),
+    "gt6.glass.glow_block": ("%s荧光玻璃", "hand"),
+    "gt6.path.block": ("草径", "hand"),
+    "gt6.bars.block": ("%s栏杆", "hand"),
+    "gt6.spike.wall": ("%s制壁刺", "hand"),
+    "gt6.spike.omni": ("%s制尖刺方块", "hand"),
+    "gt6.spike.falling": ("坠落的%s尖刺方块", "hand"),
+    "gt6.grass_bale.name": ("草垛", "hand"),
+    "gt6.dry_grass_bale.name": ("干草垛", "hand"),
+    "gt6.moldy_grass_bale.name": ("发霉的草垛", "hand"),
+    "gt6.rotten_grass_bale.name": ("烂草垛", "hand"),
+    "gt6.rye_bale.name": ("黑麦垛", "hand"),
+    "gt6.oats_bale.name": ("燕麦垛", "hand"),
+    "gt6.barley_bale.name": ("大麦垛", "hand"),
+    "gt6.rice_bale.name": ("水稻垛", "hand"),
+    "gt6.death.spike": ("%1$s被刺穿了", "hand"),
+    "gt6.death.spike.lego": ("%1$s踩到了乐高积木！", "hand"),
     "gt6.jei.cost.temperature": ("温度: %s%s", "hand"),
     "gt6.jei.cost.not_consumed": ("该物品不会被消耗", "hand"),
     # task viewer-energy-jump-gear: the gear-port affordance line + the nine per-carrier

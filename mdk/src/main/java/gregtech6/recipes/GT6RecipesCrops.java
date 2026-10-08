@@ -270,6 +270,54 @@ public final class GT6RecipesCrops {
 	public static final int BIOMASS_LEG_COUNT = 66;
 
 	/** One RM.biomass call site → its 66 Fermenter rows (the row note carries feeder + leg anchors). */
+	/** One grain-crop bale band (:163 compact + the :165-170 bale listener verbatim):
+	 * compact 9 crops to the bale, Shredder 16/144 bale to dust x9 + grass x9, Drying
+	 * 16/360 bale to the DRY grass bale (+180 distW), biomass x1 (speed 64), unpack to
+	 * the crop x9. The IC2_Plantball/HBM arms are foreign TRUE NEGATIVES (declared). */
+	private static List<Row> grainBaleRows(String aNote, String aCropId, String aBaleId, OreDictMaterial aMaterial) {
+		List<Row> rRows = new ArrayList<>(6 + BIOMASS_LEG_COUNT);
+		rRows.add(new Row(aNote + " compact", "compressor", true, 16, 16,
+				new Slot[] {Slot.id(aCropId, 9)}, null,
+				new Slot[] {Slot.id(aBaleId, 1)}, null));
+		rRows.add(new Row(aNote + " Shredder", "shredder", true, 16, 144,
+				new Slot[] {Slot.id(aBaleId, 1)}, null,
+				new Slot[] {Slot.mat(OP.dust, aMaterial, 9), Slot.id("gt6:food_grass", 9)}, null));
+		rRows.add(new Row(aNote + " Drying", "drying", true, 16, 360,
+				new Slot[] {Slot.id(aBaleId, 1)}, null,
+				new Slot[] {Slot.id("gt6:dry_grass_bale", 1)}, new FluidLeg("gt6:distilled_water", 180)));
+		rRows.addAll(biomassRows(aNote + " biomass", Slot.id(aBaleId, 1), 64));
+		rRows.add(new Row(aNote + " unpack", "unboxinator", true, 16, 16,
+				new Slot[] {Slot.id(aBaleId, 1)}, null,
+				new Slot[] {Slot.id(aCropId, 9)}, null));
+		return rRows;
+	}
+
+	/** The four grass-bale bands (:80-141): the itemGrass* compact legs (:127-140) and the
+	 * baleGrass* unpack/Drying/biomass faces (:89-123) — the Drying leg rides the FRESH
+	 * bale only (:121, the dry/moldy/rotten variants are terminal there). */
+	private static List<Row> grassBaleRows() {
+		String[] tBales = {"gt6:grass_bale", "gt6:dry_grass_bale", "gt6:moldy_grass_bale", "gt6:rotten_grass_bale"};
+		String[] tGrass = {"gt6:food_grass", "gt6:food_grass_dry", "gt6:food_grass_moldy", "gt6:food_grass_rotten"};
+		String[] tNotes = {":140/:123 baleGrass", ":135/:111 baleGrassDry", ":131/:100 baleGrassMoldy", ":127/:89 baleGrassRotten"};
+		long[] tSpeeds = {64, 64, 16, 16};
+		List<Row> rRows = new ArrayList<>(6 + 3 * BIOMASS_LEG_COUNT);
+		for (int i = 0; i < 4; i++) {
+			rRows.add(new Row(tNotes[i] + " compact", "compressor", true, 16, 16,
+					new Slot[] {Slot.id(tGrass[i], 9)}, null,
+					new Slot[] {Slot.id(tBales[i], 1)}, null));
+			rRows.add(new Row(tNotes[i] + " unpack", "unboxinator", true, 16, 16,
+					new Slot[] {Slot.id(tBales[i], 1)}, null,
+					new Slot[] {Slot.id(tGrass[i], 9)}, null));
+			if (i == 0) { // the :121 fresh-only Drying leg
+				rRows.add(new Row(tNotes[i] + " Drying", "drying", true, 16, 360,
+						new Slot[] {Slot.id(tBales[i], 1)}, null,
+						new Slot[] {Slot.id(tBales[1], 1)}, new FluidLeg("gt6:distilled_water", 180)));
+			}
+			rRows.addAll(biomassRows(tNotes[i] + " biomass", Slot.id(tBales[i], 1), tSpeeds[i]));
+		}
+		return rRows;
+	}
+
 	public static List<Row> biomassRows(String aFeederNote, Slot aFeeder, long aSpeed) {
 		long tSize = aFeeder.count();
 		List<Row> rRows = new ArrayList<>(BIOMASS_LEG_COUNT);
@@ -320,7 +368,8 @@ public final class GT6RecipesCrops {
 					new Slot[] {Slot.mat(OP.plantGtFiber, MT.DATA.Dye_Materials[15 - i], 4)}, null));
 		}
 		// :125-141 — the itemGrass fodder family, live-wired to the work/food-crop-items ids
-		// (the compact legs of all four listeners ride the bale-item pool — declared)
+		// (the compact legs of all four listeners ride the bale-item pool — LANDED by
+		// material-mc-g2-decor-misc, the grassBaleRows band below)
 		rRows.addAll(biomassRows(":125 itemGrassRotten", Slot.id("gt6:food_grass_rotten", 9), 16));
 		rRows.addAll(biomassRows(":129 itemGrassMoldy"  , Slot.id("gt6:food_grass_moldy"  , 9), 16));
 		rRows.addAll(biomassRows(":133 itemGrassDry"    , Slot.id("gt6:food_grass_dry"    , 9), 64));
@@ -334,6 +383,16 @@ public final class GT6RecipesCrops {
 		rRows.addAll(grainCropRows(":174 cropOats" , "gt6:food_crop_oats"  , "gt6:mashgrain", MT.Oat));
 		rRows.addAll(grainCropRows(":208 cropBarley", "gt6:food_crop_barley", "gt6:mashgrain", MT.Barley));
 		rRows.addAll(grainCropRows(":224 cropRye"  , "gt6:food_crop_rye"   , "gt6:mashrye"  , MT.Rye));
+		// :163-233 the compact legs + the bale listeners (:165-170/:181-186/:211-216/:227-232)
+		// — the bale-block card (material-mc-g2-decor-misc) landed the pool, the four grain
+		// bale bands enumerate; the IC2_Plantball/HBM_Biomass arms stay foreign TRUE NEGATIVES
+		rRows.addAll(grainBaleRows(":163 cropRice/baleRice" , "gt6:food_crop_rice" , "gt6:rice_bale"  , MT.Rice ));
+		rRows.addAll(grainBaleRows(":179 cropOats/baleOats" , "gt6:food_crop_oats" , "gt6:oats_bale"  , MT.Oat  ));
+		rRows.addAll(grainBaleRows(":213 cropBarley/baleBarley", "gt6:food_crop_barley", "gt6:barley_bale", MT.Barley));
+		rRows.addAll(grainBaleRows(":229 cropRye/baleRye"   , "gt6:food_crop_rye"  , "gt6:rye_bale"   , MT.Rye  ));
+		// :80-141 the grass-bale bands — the same landed pool (the four baleGrass* listeners'
+		// unpack/Drying/biomass faces + the itemGrass* listeners' compact legs)
+		rRows.addAll(grassBaleRows());
 		// :238-252 — cropWheat (the vanilla alias face) + compact → the hay block
 		// (LoaderItemList.java:760/:761) + :247-251 the baleWheat listener over the same block
 		rRows.add(new Row(":240 cropWheat Drying", "drying", true, 16, 40,

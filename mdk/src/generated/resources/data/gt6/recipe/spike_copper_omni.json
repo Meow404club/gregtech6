@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": {
+      "item": "gt6:tool_head_sword_copper"
+    },
+    "P": {
+      "item": "gt6:plate_copper"
+    },
+    "T": {
+      "item": "gt6:screw_copper"
+    }
+  },
+  "pattern": [
+    "TBT",
+    "BPB",
+    "TBT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:spike_copper_block"
+  }
+}

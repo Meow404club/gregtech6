@@ -1,0 +1,84 @@
+{
+  "variants": {
+    "facing=down,falling=false,omni=false": {
+      "model": "gt6:block/decor_spike",
+      "x": 180
+    },
+    "facing=down,falling=false,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=down,falling=true,omni=false": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=down,falling=true,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=east,falling=false,omni=false": {
+      "model": "gt6:block/decor_spike",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,falling=false,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=east,falling=true,omni=false": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=east,falling=true,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=north,falling=false,omni=false": {
+      "model": "gt6:block/decor_spike",
+      "x": 90,
+      "y": 180
+    },
+    "facing=north,falling=false,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=north,falling=true,omni=false": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=north,falling=true,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=south,falling=false,omni=false": {
+      "model": "gt6:block/decor_spike",
+      "x": 90
+    },
+    "facing=south,falling=false,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=south,falling=true,omni=false": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=south,falling=true,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=up,falling=false,omni=false": {
+      "model": "gt6:block/decor_spike"
+    },
+    "facing=up,falling=false,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=up,falling=true,omni=false": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=up,falling=true,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=west,falling=false,omni=false": {
+      "model": "gt6:block/decor_spike",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,falling=false,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=west,falling=true,omni=false": {
+      "model": "gt6:block/decor_spike_omni"
+    },
+    "facing=west,falling=true,omni=true": {
+      "model": "gt6:block/decor_spike_omni"
+    }
+  }
+}
