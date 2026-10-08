@@ -103,9 +103,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("FURNACE", 0);
 		SNAPSHOT.put("COKE_OVEN", 47); // beam-consume-increment: +8 wood-beam rows (Loader_Recipes_Woods.java:197-201, the GT6BeamKind static activation)
 		//? if forge {
-		SNAPSHOT.put("SHREDDER", 421); // +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here) +8 task cbc-5-crop-consumption — the wool seam white shred + the cropWheat/baleWheat + 4 grain + potato-remains mortarize-shredder rows; +15 task recipe-b4-juicer-squeezer-flowerfruit — the Vanilla:719 i=1..15 dyed-wool shred legs (the dye-item-axis plantGtFiber items lit the 15 gated rows); task pool-drain-food-machine-tail: the :132 cheese Shredder row SKIPS on this leg (the unbound gt6 registries null the food/cheese-dust legs)
+		SNAPSHOT.put("SHREDDER", 425); // +4 task material-mc-g2-decor-misc (the phase-gate-ratchet-reelevate attribution: the whole 4afec58ba6..main drift is this one card's GT6RecipesCrops bale bands) — the 4 grain-bale Shredder legs (baleRice/Oats/Barley/Rye, grainBaleRows; the 4 grass bales carry no shred leg); +45 task casing-machine-register (the shared-layer join, bumped by task squeezer-seed-legs after the two-commit verification: green 353 at f4077ef5d, red 398 at the casing merge 80bd8e605) — the 840 casingMachine-prefix registrations (4 prefixes x 210) light up 45 survivors of the ShCL RECYCLABLE ring gates (pourRecyclableRing, the GT6RecipesShCL:653 walk; this card ran its own registry domain and the recipes-domain ratchet follows here) +8 task cbc-5-crop-consumption — the wool seam white shred + the cropWheat/baleWheat + 4 grain + potato-remains mortarize-shredder rows; +15 task recipe-b4-juicer-squeezer-flowerfruit — the Vanilla:719 i=1..15 dyed-wool shred legs (the dye-item-axis plantGtFiber items lit the 15 gated rows); task pool-drain-food-machine-tail: the :132 cheese Shredder row SKIPS on this leg (the unbound gt6 registries null the food/cheese-dust legs)
 		//?} else {
-		/*SNAPSHOT.put("SHREDDER", 422); // task pool-drain-food-machine-tail — +1 the :132 cheese Shredder row (the one GT6 foodCheese member + the dust_cheese output resolve live); the :123-128 foodVanilla band stays TRUE NEGATIVE (zero members); +15 task recipe-b4-juicer-squeezer-flowerfruit — the Vanilla:719 dyed shred legs (the dye-item-axis plantGtFiber items resolve live on this leg)
+		/*SNAPSHOT.put("SHREDDER", 426); // +4 task material-mc-g2-decor-misc — the same 4 grain-bale Shredder legs resolve live on this leg; task pool-drain-food-machine-tail — +1 the :132 cheese Shredder row (the one GT6 foodCheese member + the dust_cheese output resolve live); the :123-128 foodVanilla band stays TRUE NEGATIVE (zero members); +15 task recipe-b4-juicer-squeezer-flowerfruit — the Vanilla:719 dyed shred legs (the dye-item-axis plantGtFiber items resolve live on this leg)
 		*///?}
 		SNAPSHOT.put("CRUSHER", 1643); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
 		SNAPSHOT.put("LATHE", 77); // +3 task machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
@@ -116,9 +116,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("GAS_FUELS", 0);
 		SNAPSHOT.put("DISTILLERY", 8);
 		//? if forge {
-		SNAPSHOT.put("DRYING", 48); // +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs
+		SNAPSHOT.put("DRYING", 53); // +5 task material-mc-g2-decor-misc (the phase-gate-ratchet-reelevate attribution) — the 4 grain-bale Drying legs (baleRice/Oats/Barley/Rye) + the one :121 fresh-only baleGrass Drying leg; +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs
 		//?} else {
-		/*SNAPSHOT.put("DRYING", 52); // +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs; +4 task hotfix-latent-reds-phasegate-bedrock — the :74/:76-:78 colored-clay band rows (landed 55c989f01, worldgen-diggables-pits) resolve their clayBandItemOrNull band items on this live-registry leg while the forge leg null-skips them (the GT6SurfaceBlocks band lookup) — latent on this leg since 55c989f01 (the clean-main probe at 9bc741b4b reproduced DRYING=52)
+		/*SNAPSHOT.put("DRYING", 57); // +5 task material-mc-g2-decor-misc — the same 4 grain-bale + 1 fresh-grass-bale Drying legs resolve live on this leg; +6 task cbc-5-crop-consumption — the fodder + 4 grain-crop + cropWheat drying legs; +4 task hotfix-latent-reds-phasegate-bedrock — the :74/:76-:78 colored-clay band rows (landed 55c989f01, worldgen-diggables-pits) resolve their clayBandItemOrNull band items on this live-registry leg while the forge leg null-skips them (the GT6SurfaceBlocks band lookup) — latent on this leg since 55c989f01 (the clean-main probe at 9bc741b4b reproduced DRYING=52)
 		*///?}
 		//? if forge {
 		SNAPSHOT.put("CANNER", 84); // +5: the laser gas fill family closure (task debt-laser-gas-family, MultiItemTechnological.java:396-403 — neon/argon/krypton/xenon/carbonmonoxide pour; helium skips over the fixture arm) +1: task debt-hene-fluid — the heliumneon blend fluid row landed (MT.java:1024 → the Loader_Fluids.java:660 createGas walk), the :401 fill row pours; helium keeps the offline fixture skip +25: task debt-reactor-c-rods — the 24 reactor-rod fills (:742-744/:746-762/:782-785) + the :789 Tritium unpack pour
@@ -135,9 +135,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// universe, which differs 1.20.1 vs 1.21.1 by 109 compressibles — the per-leg pin
 		// (the stonecutter swap-table convention, GTRecipesOfflineTestBase shape)
 		//? if forge {
-		SNAPSHOT.put("COMPRESSOR", 2631); // +1 task cbc-5-crop-consumption — the cropWheat compact leg (9 wheat -> the hay block, the LoaderItemList:760 alias)
+		SNAPSHOT.put("COMPRESSOR", 2639); // +8 task material-mc-g2-decor-misc (the phase-gate-ratchet-reelevate attribution) — the 8 bale compact legs (the 4 grain bales baleRice/Oats/Barley/Rye + the 4 grass bales, grainBaleRows/grassBaleRows); +1 task cbc-5-crop-consumption — the cropWheat compact leg (9 wheat -> the hay block, the LoaderItemList:760 alias)
 		//?} else {
-		/*SNAPSHOT.put("COMPRESSOR", 2518); // +1 task cbc-5-crop-consumption — the cropWheat compact leg (the same +1 as the forge leg).
+		/*SNAPSHOT.put("COMPRESSOR", 2526); // +8 task material-mc-g2-decor-misc — the same 8 bale compact legs resolve live on this leg; +1 task cbc-5-crop-consumption — the cropWheat compact leg (the same +1 as the forge leg).
 		// the base 2517 = -4 task machines-bumblelyzer-crucible — the compressor walk derives from the live item universe, which the bouleGt force-table changed (the row-level mechanism rides the exclusion filters over the new gem-plate/tiny/boule items; the ratchet protocol: bump the verified drift, the walk-level accounting is the cutting-domain card's audit face)
 		*///?}
 		SNAPSHOT.put("WIREMILL", 912);
@@ -155,9 +155,9 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		SNAPSHOT.put("ANVIL", 145);
 		SNAPSHOT.put("ANVIL_BEND", 27);
 		//? if forge {
-		SNAPSHOT.put("FERMENTER", 1719); // +1716 task cbc-5-crop-consumption +3 task food-meat-recipes — the THREE vanilla raw-meat members (porkchop/beef/chicken) resolve on the forge vanilla bootstrap and spoil (:354/:357); the nine gt6 raws stay null there — the RM.biomass 66-leg walk (RM.java:688-705) over 26 feeders: 16 flour-grain dust/blockDust arms + the 4 fodder items + the 4 grain crops + cropWheat + the baleWheat hay-block alias
+		SNAPSHOT.put("FERMENTER", 2247); // +528 task material-mc-g2-decor-misc (the phase-gate-ratchet-reelevate attribution) — the 8 landed bales (baleRice/Oats/Barley/Rye + the 4 baleGrass*) x the 66-leg RM.biomass walk (8 x 66, GT6RecipesCrops biomassRows); +1716 task cbc-5-crop-consumption +3 task food-meat-recipes — the THREE vanilla raw-meat members (porkchop/beef/chicken) resolve on the forge vanilla bootstrap and spoil (:354/:357); the nine gt6 raws stay null there — the RM.biomass 66-leg walk (RM.java:688-705) over 26 feeders: 16 flour-grain dust/blockDust arms + the 4 fodder items + the 4 grain crops + cropWheat + the baleWheat hay-block alias
 		//?} else {
-		/*SNAPSHOT.put("FERMENTER", 1728); // +12 task food-meat-recipes — the :354/:357 rotten-flesh walk (the 12 raw-meat members, GT6RecipesMeat)
+		/*SNAPSHOT.put("FERMENTER", 2256); // +528 task material-mc-g2-decor-misc — the same 8 bales x the 66-leg biomass walk resolve live on this leg; +12 task food-meat-recipes — the :354/:357 rotten-flesh walk (the 12 raw-meat members, GT6RecipesMeat)
 		*///?}
 		SNAPSHOT.put("LOOM", 0);
 		SNAPSHOT.put("PRESSURE_WASHER", 0);
@@ -223,7 +223,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		// Merge order: ... -> b2-residual -> this sweep.
 		SNAPSHOT.put("CUTTER", 0);
 		SNAPSHOT.put("BOXINATOR", 4); // +4 task food-bake-recipes — the :687/:726/:756 packs + the :360 fries pack (the plateDouble-Paper pair resolves live)
-		SNAPSHOT.put("UNBOXINATOR", 4); // +1 task cbc-5-crop-consumption — the :251 baleWheat unpack (the hay block -> 9 wheat, the LoaderItemList:761 Crop_Wheat alias) +3 task food-bake-recipes — the :687/:726/:756 unpacks (union seat XVII)
+		SNAPSHOT.put("UNBOXINATOR", 12); // +8 task material-mc-g2-decor-misc (the phase-gate-ratchet-reelevate attribution) — the 8 bale unpack legs (the 4 grain bales + the 4 grass bales, both legs); +1 task cbc-5-crop-consumption — the :251 baleWheat unpack (the hay block -> 9 wheat, the LoaderItemList:761 Crop_Wheat alias) +3 task food-bake-recipes — the :687/:726/:756 unpacks (union seat XVII)
 		SNAPSHOT.put("SLUICE", 0);
 		SNAPSHOT.put("AUTOCRAFTER", 0);
 		SNAPSHOT.put("STEAM_CRACKING", 0);
