@@ -2,7 +2,7 @@
 # for the GT6ZhCn datagen provider (ADR 2026-09-06-p20-i18n-zhcn-pipeline §1.1).
 #
 # columns: kind<TAB>source<TAB>value<TAB>status
-#   kind   material | itemgroup | mte | direct
+#   kind   material | itemgroup | mte | book | direct
 #   source family rows: the dump key suffix verbatim (material Pascal internal / itemGroup
 #          camel internal / mte numeric id) — the gt6 lang key is derived provider-side by
 #          the single MaterialPrefixItem.snakeCase implementation, never here;
@@ -11,7 +11,7 @@
 #          review = pure-ASCII dump value, suspected untranslated — provider skips;
 #          hand   = human translation (script HAND_TRANSLATIONS table + the
 #                   task p27-lang-fix FAMILY_OVERRIDES family-row layer).
-# filters: dropped ktfru/written.book/enchantment keys; duplicate keys: first occurrence wins.
+# filters: dropped ktfru/enchantment keys; duplicate keys: first occurrence wins.
 #   mte rows are inert census data until the MTE ID-join subface lands (arch tasks.p20-arch-i18n).
 #
 direct	block.gt6.acacia_beam	金合欢木梁	hand
@@ -23,11 +23,11 @@ direct	block.gt6.awakened_draconium_anvil	觉醒龙砧	hand
 direct	block.gt6.barrel_adamantium	艾德曼合金储罐	hand
 direct	block.gt6.barrel_awakened_draconium	觉醒龙储罐	hand
 direct	block.gt6.barrel_desh	戴斯储罐	hand
-direct	block.gt6.barrel_efrine	绿晶储罐	hand
-direct	block.gt6.barrel_invar	殷钢储罐	hand
 direct	block.gt6.barrel_draconium	龙储罐	hand
+direct	block.gt6.barrel_efrine	绿晶储罐	hand
 direct	block.gt6.barrel_gaia_spirit	盖亚储罐	hand
 direct	block.gt6.barrel_infinity	无尽储罐	hand
+direct	block.gt6.barrel_invar	殷钢储罐	hand
 direct	block.gt6.barrel_logistics	物流储罐	hand
 direct	block.gt6.barrel_manasteel	魔力钢储罐	hand
 direct	block.gt6.barrel_metal	青铜储罐	hand
@@ -35,8 +35,8 @@ direct	block.gt6.barrel_netherite	下界合金储罐	hand
 direct	block.gt6.barrel_plastic	塑料储罐	hand
 direct	block.gt6.barrel_stainless_steel	不锈钢储罐	hand
 direct	block.gt6.barrel_syrmorite	赛摩铜储罐	hand
-direct	block.gt6.barrel_thaumium	神秘锭储罐	hand
 direct	block.gt6.barrel_tantalum_hafnium_carbide	碳化钽铪储罐	hand
+direct	block.gt6.barrel_thaumium	神秘锭储罐	hand
 direct	block.gt6.barrel_titanium	钛储罐	hand
 direct	block.gt6.barrel_tungsten	钨储罐	hand
 direct	block.gt6.barrel_tungsten_alloy	钨合金储罐	hand
@@ -1191,6 +1191,7 @@ direct	gt.crop.tea	茶树	hand
 direct	gt.crop.tearstalks	恶魂泪茎	hand
 direct	gt.crop.tine	锡藤	hand
 direct	gt.crop.tomatoplant	番茄树	hand
+direct	gt.crop.weed	杂草	hand
 direct	gt.crop.whitecurrants	白加仑	hand
 direct	gt.crop.whitegrapes	白葡萄	hand
 direct	gt.crop.withereed	凋零苇	hand
@@ -1206,6 +1207,9 @@ direct	gt.tileentity.portal.mini.tooltip.1	传送物品、流体、红石、比�
 direct	gt.tileentity.portal.mini.tooltip.2	总是将物品传送到最近的被激活的传送门。	hand
 direct	gt.tileentity.portal.nether.tooltip.1	仅在主世界和下界之间工作, 并且在下界的坐标差为在主世界的八分之一!	hand
 direct	gt.tileentity.portal.nether.tooltip.2	实际可工作区域与计算值的可容错区间: 128m	hand
+direct	gt6.asphalt.block	%s沥青	hand
+direct	gt6.barley_bale.name	大麦垛	hand
+direct	gt6.bars.block	%s栏杆	hand
 direct	gt6.concrete.block	%s混凝土	hand
 direct	gt6.concrete.block_reinforced	%s强化混凝土	hand
 direct	gt6.concrete.slab	%s混凝土半砖	hand
@@ -1213,6 +1217,9 @@ direct	gt6.concrete.slab_reinforced	%s强化混凝土半砖	hand
 direct	gt6.cover.conveyor.display	小型电动输送机 (%s)	hand
 direct	gt6.cover.robot_arm.display	小型机械臂 (%s)	hand
 direct	gt6.cover.selector_tag.display	集成电路 (%s)	hand
+direct	gt6.death.spike	%1$s被刺穿了	hand
+direct	gt6.death.spike.lego	%1$s踩到了乐高积木！	hand
+direct	gt6.dry_grass_bale.name	干草垛	hand
 direct	gt6.dye.black	黑色	hand
 direct	gt6.dye.blue	蓝色	hand
 direct	gt6.dye.brown	褐色	hand
@@ -1236,6 +1243,9 @@ direct	gt6.foamspray.mode.single_slab	单体台阶模式	hand
 direct	gt6.foamspray.mode.slab_area	3x3台阶模式	hand
 direct	gt6.foamspray.owned	干燥后仅所有者可破坏	hand
 direct	gt6.foamspray.paint	可以喷射%s泡沫	hand
+direct	gt6.glass.block	%s玻璃	hand
+direct	gt6.glass.glow_block	%s荧光玻璃	hand
+direct	gt6.grass_bale.name	草垛	hand
 direct	gt6.jade.boiler.demand	需求: %s HU/t	hand
 direct	gt6.jade.boiler.efficiency	效率: %s%%	hand
 direct	gt6.jade.boiler.heat	储存热量: %s / %s HU (%s%%)	hand
@@ -1410,10 +1420,15 @@ direct	gt6.material.carminite	胭脂石	hand
 direct	gt6.material.fireleaf	火叶	hand
 direct	gt6.material.golden_amber	金琥珀	hand
 direct	gt6.material.superconductor	超导体	hand
-direct	gt6.panel.wood	木制覆盖板	hand
+direct	gt6.moldy_grass_bale.name	发霉的草垛	hand
+direct	gt6.oats_bale.name	燕麦垛	hand
 direct	gt6.panel.asphalt	沥青覆盖板	hand
 direct	gt6.panel.cfoam	建筑泡沫覆盖板	hand
 direct	gt6.panel.concrete	混凝土覆盖板	hand
+direct	gt6.panel.wood	木制覆盖板	hand
+direct	gt6.path.block	草径	hand
+direct	gt6.rice_bale.name	水稻垛	hand
+direct	gt6.rotten_grass_bale.name	烂草垛	hand
 direct	gt6.row.advanced_crafting_table.display	高级工作台 (%s)	hand
 direct	gt6.row.attachment.mat.adamantium	艾德曼合金	hand
 direct	gt6.row.attachment.mat.ceramic	陶瓷	hand
@@ -1526,6 +1541,7 @@ direct	gt6.row.burning_box.family.gas	气体	hand
 direct	gt6.row.burning_box.family.liquid	液体	hand
 direct	gt6.row.burning_box.family.solid	固体	hand
 direct	gt6.row.canner.display	罐装机 (%s)	hand
+direct	gt6.row.capnozzle.display	%s有盖喷嘴	hand
 direct	gt6.row.charging_crafting_table.display	充能工作台 (%s)	hand
 direct	gt6.row.charging_locker.display	充能衣橱 (%s)	hand
 direct	gt6.row.chest.display	%s箱子	hand
@@ -1874,6 +1890,7 @@ direct	gt6.row.mold.display.mold_ceramic_sword	陶瓷模具 (剑)	hand
 direct	gt6.row.mold.display.mold_ceramic_tiny_plate	陶瓷模具 (小块板)	hand
 direct	gt6.row.mold.display.mold_ceramic_universal_spade	陶瓷模具 (万用铲)	hand
 direct	gt6.row.mold.display.mold_stone	石头模具	hand
+direct	gt6.row.nozzle.display	%s喷嘴	hand
 direct	gt6.row.oven.display	熔炉 (%s)	hand
 direct	gt6.row.printer.display	打印机 (%s)	hand
 direct	gt6.row.queue_hopper.display	%s队列料斗	hand
@@ -1896,9 +1913,11 @@ direct	gt6.row.tank_valve.display	%s%s储罐主阀	hand
 direct	gt6.row.tank_valve.wood.display	%s储罐主阀	hand
 direct	gt6.row.tap.display	%s龙头	hand
 direct	gt6.row.transformer_gearbox.display	%s变速箱	hand
-direct	gt6.row.nozzle.display	%s喷嘴	hand
-direct	gt6.row.capnozzle.display	%s有盖喷嘴	hand
 direct	gt6.row.unboxinator.display	拆箱机 (%s)	hand
+direct	gt6.rye_bale.name	黑麦垛	hand
+direct	gt6.spike.falling	坠落的%s尖刺方块	hand
+direct	gt6.spike.omni	%s制尖刺方块	hand
+direct	gt6.spike.wall	%s制壁刺	hand
 direct	gt6.spraycan.decolor	可为物品除色	hand
 direct	gt6.spraycan.paint	可将物品喷成%s	hand
 direct	gt6.spraycan.remaining	剩余使用次数：%s.%s	hand
@@ -2919,8 +2938,6 @@ direct	item.gt6.cranberryjuice	蔓越莓汁	hand
 direct	item.gt6.cranberrysmoothie	蔓越莓冰沙	hand
 direct	item.gt6.crop_seed	作物种子	hand
 direct	item.gt6.crop_stick	作物杆	hand
-direct	itemGroup.gt6.crops	格雷科技: 作物	hand
-direct	gt.crop.weed	杂草	hand
 direct	item.gt6.crossing_ceramic_raw	粘土浇铸道	hand
 direct	item.gt6.crowbar	撬棍	hand
 direct	item.gt6.currantjuice	醋栗汁	hand
@@ -3608,6 +3625,7 @@ direct	item.gt6.manual_hunting_skeleton	骷髅狩猎指南	hand
 direct	item.gt6.manual_hunting_spider	蜘蛛狩猎指南	hand
 direct	item.gt6.manual_hunting_witch	女巫狩猎指南	hand
 direct	item.gt6.manual_hunting_zombie	僵尸狩猎指南	hand
+direct	item.gt6.manual_portal_tf	暮色森林指南	hand
 direct	item.gt6.manual_printer	扫描仪与打印机手册	hand
 direct	item.gt6.manual_random	GregTech 六代技巧与窍门	hand
 direct	item.gt6.manual_reactors	裂变反应堆手册	hand
@@ -4009,6 +4027,7 @@ direct	itemGroup.gt6.books	说明书	hand
 direct	itemGroup.gt6.bottles	格雷牌饮料	hand
 direct	itemGroup.gt6.cells	单元	hand
 direct	itemGroup.gt6.chests	箱子	hand
+direct	itemGroup.gt6.crops	格雷科技: 作物	hand
 direct	itemGroup.gt6.electric_wires	导线	hand
 direct	itemGroup.gt6.fluid_containers	储罐	hand
 direct	itemGroup.gt6.fluid_pipes	流体管道	hand
@@ -11015,21 +11034,746 @@ mte	multiblock.tank.wooden	小型木质储罐	auto
 mte	multiblock.tank555.metal	大型储罐	auto
 mte	plantpot.tooltip.1	上面能种植任意植物!	auto
 mte	usb.switch.tooltip	使用选择面板在16个USB之间切换	auto
-direct	gt6.asphalt.block	%s沥青	hand
-direct	gt6.barley_bale.name	大麦垛	hand
-direct	gt6.bars.block	%s栏杆	hand
-direct	gt6.death.spike	%1$s被刺穿了	hand
-direct	gt6.death.spike.lego	%1$s踩到了乐高积木！	hand
-direct	gt6.dry_grass_bale.name	干草垛	hand
-direct	gt6.glass.block	%s玻璃	hand
-direct	gt6.glass.glow_block	%s荧光玻璃	hand
-direct	gt6.grass_bale.name	草垛	hand
-direct	gt6.moldy_grass_bale.name	发霉的草垛	hand
-direct	gt6.oats_bale.name	燕麦垛	hand
-direct	gt6.path.block	草径	hand
-direct	gt6.rice_bale.name	水稻垛	hand
-direct	gt6.rotten_grass_bale.name	烂草垛	hand
-direct	gt6.rye_bale.name	黑麦垛	hand
-direct	gt6.spike.falling	坠落的%s尖刺方块	hand
-direct	gt6.spike.omni	%s制尖刺方块	hand
-direct	gt6.spike.wall	%s制壁刺	hand
+book	Manual_Alloys.page.0	This Book Contains Information about every Alloy, which can be created by using a Smelting Crucible.¶===================¶In order to make an Alloy you need to reach the Melting Point of the Alloy itself.	review
+book	Manual_Alloys.page.1	And you need to reach the Melting Point of all but one of its Components. You can ofcourse also melt all of the Components, but you are free to 'not melt' one of the Components.	review
+book	Manual_Alloys.page.10	Alloy:¶Lumium¶===================¶Melting: 593 K¶Boiling: 1682 K¶===================¶Components per 4¶3 Tin¶1 Silver¶4 Ceres Glowstone¶	review
+book	Manual_Alloys.page.11	Alloy:¶Lumium¶===================¶Melting: 593 K¶Boiling: 1682 K¶===================¶Components per 4¶3 Tin¶1 Silver¶4 Io Glowstone¶	review
+book	Manual_Alloys.page.12	Alloy:¶Lumium¶===================¶Melting: 593 K¶Boiling: 1682 K¶===================¶Components per 4¶3 Tin¶1 Silver¶4 Enceladus Glowstone¶	review
+book	Manual_Alloys.page.13	Alloy:¶Lumium¶===================¶Melting: 593 K¶Boiling: 1682 K¶===================¶Components per 4¶3 Tin¶1 Silver¶4 Proteus Glowstone¶	review
+book	Manual_Alloys.page.14	Alloy:¶Lumium¶===================¶Melting: 593 K¶Boiling: 1682 K¶===================¶Components per 4¶3 Tin¶1 Silver¶4 Pluto Glowstone¶	review
+book	Manual_Alloys.page.15	Alloy:¶Lumium¶===================¶Melting: 593 K¶Boiling: 1682 K¶===================¶Components per 4¶3 Tin¶1 Silver¶4 Gloomstone¶	review
+book	Manual_Alloys.page.16	Alloy:¶Meteoric Steel¶===================¶Melting: 2246 K¶Boiling: 3334 K¶===================¶Components per 1¶1 Meteoric Iron¶1 Air¶	review
+book	Manual_Alloys.page.17	Alloy:¶Red Alloy¶===================¶Melting: 1400 K¶Boiling: 2835 K¶===================¶Components per 1¶1 Copper¶4 Redstone¶	review
+book	Manual_Alloys.page.18	Alloy:¶Red Alloy¶===================¶Melting: 1400 K¶Boiling: 2835 K¶===================¶Components per 1¶2 Red Copper¶3 Redstone¶	review
+book	Manual_Alloys.page.19	Alloy:¶Red Alloy¶===================¶Melting: 1400 K¶Boiling: 2835 K¶===================¶Components per 1¶1 Annealed Copper¶4 Redstone¶	review
+book	Manual_Alloys.page.2	In case you have to supply Air for the Crucible (for Steel), you need to point an Engine into it, which will act as a Fan. For Multiblock Crucibles the Engine has to be at the Bottom Row.	review
+book	Manual_Alloys.page.20	Alloy:¶Obsidian Steel¶===================¶Melting: 1374 K¶Boiling: 3913 K¶===================¶Components per 1¶1 Steel¶9 Obsidian¶	review
+book	Manual_Alloys.page.21	Alloy:¶Obsidian Steel¶===================¶Melting: 1374 K¶Boiling: 3913 K¶===================¶Components per 1¶1 Meteoric Steel¶9 Lava¶	review
+book	Manual_Alloys.page.22	Alloy:¶Obsidian Steel¶===================¶Melting: 1374 K¶Boiling: 3913 K¶===================¶Components per 1¶1 Steel¶9 Lava¶	review
+book	Manual_Alloys.page.23	Alloy:¶Silicon¶===================¶Melting: 1687 K¶Boiling: 3538 K¶===================¶Components per 1¶3 Silicon Dioxide¶1 Carbon¶	review
+book	Manual_Alloys.page.24	Alloy:¶Energetic Alloy¶===================¶Melting: 580 K¶Boiling: 1742 K¶===================¶Components per 1¶2 Inductive Alloy¶1 Glowstone¶	review
+book	Manual_Alloys.page.25	Alloy:¶Energetic Alloy¶===================¶Melting: 580 K¶Boiling: 1742 K¶===================¶Components per 1¶2 Inductive Alloy¶1 Ceres Glowstone¶	review
+book	Manual_Alloys.page.26	Alloy:¶Energetic Alloy¶===================¶Melting: 580 K¶Boiling: 1742 K¶===================¶Components per 1¶2 Inductive Alloy¶1 Io Glowstone¶	review
+book	Manual_Alloys.page.27	Alloy:¶Energetic Alloy¶===================¶Melting: 580 K¶Boiling: 1742 K¶===================¶Components per 1¶2 Inductive Alloy¶1 Enceladus Glowstone¶	review
+book	Manual_Alloys.page.28	Alloy:¶Energetic Alloy¶===================¶Melting: 580 K¶Boiling: 1742 K¶===================¶Components per 1¶2 Inductive Alloy¶1 Proteus Glowstone¶	review
+book	Manual_Alloys.page.29	Alloy:¶Energetic Alloy¶===================¶Melting: 580 K¶Boiling: 1742 K¶===================¶Components per 1¶2 Inductive Alloy¶1 Pluto Glowstone¶	review
+book	Manual_Alloys.page.3	Alloy:¶Alumite¶===================¶Melting: 1565 K¶Boiling: 3780 K¶===================¶Components per 9¶5 Alumina¶2 Wrought Iron¶18 Obsidian¶	review
+book	Manual_Alloys.page.30	Alloy:¶Energetic Alloy¶===================¶Melting: 580 K¶Boiling: 1742 K¶===================¶Components per 1¶2 Inductive Alloy¶1 Gloomstone¶	review
+book	Manual_Alloys.page.31	Alloy:¶Ferrite¶===================¶Melting: 593 K¶Boiling: 1218 K¶===================¶Components per 8¶5 Hematite¶3 Lithium Oxide¶	review
+book	Manual_Alloys.page.32	Alloy:¶Electrical Steel¶===================¶Melting: 1866 K¶Boiling: 3336 K¶===================¶Components per 1¶1 Steel¶1 Silicon¶	review
+book	Manual_Alloys.page.33	Alloy:¶Electrical Steel¶===================¶Melting: 1866 K¶Boiling: 3336 K¶===================¶Components per 1¶1 Meteoric Steel¶1 Silicon¶	review
+book	Manual_Alloys.page.34	Alloy:¶Constantan¶===================¶Melting: 1542 K¶Boiling: 3010 K¶===================¶Components per 2¶1 Copper¶1 Nickel¶	review
+book	Manual_Alloys.page.35	Alloy:¶Constantan¶===================¶Melting: 1542 K¶Boiling: 3010 K¶===================¶Components per 2¶1 Annealed Copper¶1 Nickel¶	review
+book	Manual_Alloys.page.36	Alloy:¶Sterling Silver¶===================¶Melting: 1258 K¶Boiling: 2515 K¶===================¶Components per 5¶1 Copper¶4 Silver¶	review
+book	Manual_Alloys.page.37	Alloy:¶Sterling Silver¶===================¶Melting: 1258 K¶Boiling: 2515 K¶===================¶Components per 5¶1 Annealed Copper¶4 Silver¶	review
+book	Manual_Alloys.page.38	Alloy:¶End Steel¶===================¶Melting: 1297 K¶Boiling: 3846 K¶===================¶Components per 1¶1 Endstone¶1 Obsidian Steel¶9 Obsidian¶	review
+book	Manual_Alloys.page.39	Alloy:¶End Steel¶===================¶Melting: 1297 K¶Boiling: 3846 K¶===================¶Components per 1¶1 Obsidian Steel¶1 Endstone¶9 Lava¶	review
+book	Manual_Alloys.page.4	Alloy:¶Alumite¶===================¶Melting: 1565 K¶Boiling: 3780 K¶===================¶Components per 5¶5 Aluminium¶2 Wrought Iron¶18 Lava¶	review
+book	Manual_Alloys.page.40	Alloy:¶Rose Gold¶===================¶Melting: 1341 K¶Boiling: 3070 K¶===================¶Components per 5¶1 Copper¶4 Gold¶	review
+book	Manual_Alloys.page.41	Alloy:¶Rose Gold¶===================¶Melting: 1341 K¶Boiling: 3070 K¶===================¶Components per 5¶1 Annealed Copper¶4 Gold¶	review
+book	Manual_Alloys.page.42	Alloy:¶Glass¶===================¶Melting: 1200 K¶Boiling: 2400 K¶===================¶Components per 81¶81 Rough Glass¶9 Calcite¶1 Borax¶	review
+book	Manual_Alloys.page.43	Alloy:¶Stainless Steel¶===================¶Melting: 1943 K¶Boiling: 3029 K¶===================¶Components per 9¶4 Wrought Iron¶3 Invar¶1 Chromium¶1 Manganese¶	review
+book	Manual_Alloys.page.44	Alloy:¶Stainless Steel¶===================¶Melting: 1943 K¶Boiling: 3029 K¶===================¶Components per 36¶24 Wrought Iron¶5 Nichrome¶3 Chromium¶4 Manganese¶	review
+book	Manual_Alloys.page.45	Alloy:¶Ultimet¶===================¶Melting: 1980 K¶Boiling: 3331 K¶===================¶Components per 9¶5 Cobalt¶1 Nickel¶2 Chromium¶1 Molybdenum¶	review
+book	Manual_Alloys.page.46	Alloy:¶Ultimet¶===================¶Melting: 1980 K¶Boiling: 3331 K¶===================¶Components per 36¶20 Cobalt¶5 Nichrome¶7 Chromium¶4 Molybdenum¶	review
+book	Manual_Alloys.page.47	Alloy:¶Iron¶===================¶Melting: 1811 K¶Boiling: 3134 K¶===================¶Components per 2¶5 Hematite¶1 Carbon¶1 Calcite¶	review
+book	Manual_Alloys.page.48	Alloy:¶Iron¶===================¶Melting: 1811 K¶Boiling: 3134 K¶===================¶Components per 6¶14 Magnetite¶3 Carbon¶	review
+book	Manual_Alloys.page.49	Alloy:¶Iron¶===================¶Melting: 1811 K¶Boiling: 3134 K¶===================¶Components per 6¶14 Basaltic Mineral Sand¶3 Carbon¶	review
+book	Manual_Alloys.page.5	Alloy:¶Signalum¶===================¶Melting: 1353 K¶Boiling: 2735 K¶===================¶Components per 8¶1 Copper¶2 Silver¶5 Red Alloy¶	review
+book	Manual_Alloys.page.50	Alloy:¶Iron¶===================¶Melting: 1811 K¶Boiling: 3134 K¶===================¶Components per 6¶14 Granitic Mineral Sand¶3 Carbon¶	review
+book	Manual_Alloys.page.51	Alloy:¶Iron¶===================¶Melting: 1811 K¶Boiling: 3134 K¶===================¶Components per 6¶28 Vanadium Magnetite¶3 Carbon¶	review
+book	Manual_Alloys.page.52	Alloy:¶Iron¶===================¶Melting: 1811 K¶Boiling: 3134 K¶===================¶Components per 2¶1 Shadow Iron¶1 Ignatius¶	review
+book	Manual_Alloys.page.53	Alloy:¶Iron¶===================¶Melting: 1811 K¶Boiling: 3134 K¶===================¶Components per 2¶1 Deep Iron¶1 Prometheum¶	review
+book	Manual_Alloys.page.54	Alloy:¶Brass¶===================¶Melting: 1160 K¶Boiling: 2835 K¶===================¶Components per 4¶3 Copper¶1 Zinc¶	review
+book	Manual_Alloys.page.55	Alloy:¶Brass¶===================¶Melting: 1160 K¶Boiling: 2835 K¶===================¶Components per 4¶3 Annealed Copper¶1 Zinc¶	review
+book	Manual_Alloys.page.56	Alloy:¶Bronze¶===================¶Melting: 1357 K¶Boiling: 2835 K¶===================¶Components per 4¶3 Copper¶1 Tin¶	review
+book	Manual_Alloys.page.57	Alloy:¶Bronze¶===================¶Melting: 1357 K¶Boiling: 2835 K¶===================¶Components per 4¶3 Annealed Copper¶1 Tin¶	review
+book	Manual_Alloys.page.58	Alloy:¶Black Bronze¶===================¶Melting: 1328 K¶Boiling: 2813 K¶===================¶Components per 5¶3 Copper¶2 Electrum¶	review
+book	Manual_Alloys.page.59	Alloy:¶Black Bronze¶===================¶Melting: 1328 K¶Boiling: 2813 K¶===================¶Components per 5¶3 Annealed Copper¶2 Electrum¶	review
+book	Manual_Alloys.page.6	Alloy:¶Signalum¶===================¶Melting: 1353 K¶Boiling: 2735 K¶===================¶Components per 8¶1 Annealed Copper¶2 Silver¶5 Red Alloy¶	review
+book	Manual_Alloys.page.60	Alloy:¶Black Bronze¶===================¶Melting: 1328 K¶Boiling: 2813 K¶===================¶Components per 20¶11 Copper¶5 Rose Gold¶4 Silver¶	review
+book	Manual_Alloys.page.61	Alloy:¶Black Bronze¶===================¶Melting: 1328 K¶Boiling: 2813 K¶===================¶Components per 20¶11 Annealed Copper¶5 Rose Gold¶4 Silver¶	review
+book	Manual_Alloys.page.62	Alloy:¶Black Bronze¶===================¶Melting: 1328 K¶Boiling: 2813 K¶===================¶Components per 20¶11 Copper¶5 Sterling Silver¶4 Gold¶	review
+book	Manual_Alloys.page.63	Alloy:¶Black Bronze¶===================¶Melting: 1328 K¶Boiling: 2813 K¶===================¶Components per 20¶11 Annealed Copper¶5 Sterling Silver¶4 Gold¶	review
+book	Manual_Alloys.page.64	Alloy:¶Hepatizon¶===================¶Melting: 1347 K¶Boiling: 2982 K¶===================¶Components per 2¶1 Gold¶1 Bronze¶	review
+book	Manual_Alloys.page.65	Alloy:¶Hepatizon¶===================¶Melting: 1347 K¶Boiling: 2982 K¶===================¶Components per 24¶8 Bronze¶1 Tin¶15 Rose Gold¶	review
+book	Manual_Alloys.page.66	Alloy:¶Arsenic Copper¶===================¶Melting: 1070 K¶Boiling: 2835 K¶===================¶Components per 4¶3 Copper¶1 Arsenic¶	review
+book	Manual_Alloys.page.67	Alloy:¶Arsenic Copper¶===================¶Melting: 1070 K¶Boiling: 2835 K¶===================¶Components per 4¶3 Annealed Copper¶1 Arsenic¶	review
+book	Manual_Alloys.page.68	Alloy:¶Arsenic Bronze¶===================¶Melting: 1357 K¶Boiling: 2835 K¶===================¶Components per 5¶1 Arsenic¶4 Bronze¶	review
+book	Manual_Alloys.page.69	Alloy:¶Arsenic Bronze¶===================¶Melting: 1357 K¶Boiling: 2835 K¶===================¶Components per 5¶4 Arsenic Copper¶1 Tin¶	review
+book	Manual_Alloys.page.7	Alloy:¶Signalum¶===================¶Melting: 1353 K¶Boiling: 2735 K¶===================¶Components per 16¶1 Copper¶5 Sterling Silver¶10 Red Alloy¶	review
+book	Manual_Alloys.page.70	Alloy:¶Steel¶===================¶Melting: 2046 K¶Boiling: 3134 K¶===================¶Components per 1¶1 Wrought Iron¶1 Air¶	review
+book	Manual_Alloys.page.71	Alloy:¶Black Steel¶===================¶Melting: 1838 K¶Boiling: 3080 K¶===================¶Components per 5¶1 Nickel¶1 Black Bronze¶3 Steel¶	review
+book	Manual_Alloys.page.72	Alloy:¶Black Steel¶===================¶Melting: 1838 K¶Boiling: 3080 K¶===================¶Components per 2¶1 Deep Iron¶1 Infuscolium¶	review
+book	Manual_Alloys.page.73	Alloy:¶Vanadiumsteel¶===================¶Melting: 2073 K¶Boiling: 3243 K¶===================¶Components per 5¶4 Steel¶1 Vanadium¶	review
+book	Manual_Alloys.page.74	Alloy:¶Vanadiumsteel¶===================¶Melting: 2073 K¶Boiling: 3243 K¶===================¶Components per 5¶4 Meteoric Steel¶1 Vanadium¶	review
+book	Manual_Alloys.page.75	Alloy:¶Tungstensteel¶===================¶Melting: 2870 K¶Boiling: 4481 K¶===================¶Components per 2¶1 Steel¶1 Tungsten¶	review
+book	Manual_Alloys.page.76	Alloy:¶Tungstensteel¶===================¶Melting: 2870 K¶Boiling: 4481 K¶===================¶Components per 2¶1 Meteoric Steel¶1 Tungsten¶	review
+book	Manual_Alloys.page.77	Alloy:¶Tungstensteel¶===================¶Melting: 2870 K¶Boiling: 4481 K¶===================¶Components per 2¶1 Meteoric Steel¶1 Sintered Tungsten¶	review
+book	Manual_Alloys.page.78	Alloy:¶Tungstensteel¶===================¶Melting: 2870 K¶Boiling: 4481 K¶===================¶Components per 2¶1 Steel¶1 Sintered Tungsten¶	review
+book	Manual_Alloys.page.79	Alloy:¶Yttrium-Barium-Cuprate¶===================¶Melting: 1200 K¶Boiling: 2400 K¶===================¶Components per 6¶3 Annealed Copper¶2 Barium¶1 Yttrium¶	review
+book	Manual_Alloys.page.8	Alloy:¶Signalum¶===================¶Melting: 1353 K¶Boiling: 2735 K¶===================¶Components per 16¶1 Annealed Copper¶5 Sterling Silver¶10 Red Alloy¶	review
+book	Manual_Alloys.page.80	Alloy:¶Yttrium-Barium-Cuprate¶===================¶Melting: 1200 K¶Boiling: 2400 K¶===================¶Components per 6¶3 Copper¶2 Barium¶1 Yttrium¶	review
+book	Manual_Alloys.page.81	Alloy:¶Aluminium Brass¶===================¶Melting: 1039 K¶Boiling: 2802 K¶===================¶Components per 4¶3 Aluminium¶1 Copper¶	review
+book	Manual_Alloys.page.82	Alloy:¶Aluminium Brass¶===================¶Melting: 1039 K¶Boiling: 2802 K¶===================¶Components per 4¶1 Annealed Copper¶3 Aluminium¶	review
+book	Manual_Alloys.page.9	Alloy:¶Lumium¶===================¶Melting: 593 K¶Boiling: 1682 K¶===================¶Components per 4¶3 Tin¶1 Silver¶4 Glowstone¶	review
+book	Manual_Elements.page.0	Hydrogen¶1/0¶===================¶ID: 10¶Melting: 14 K¶Boiling: 20 K¶Plasma: 2000 K¶===================¶Density:¶8.988E-5 g/cm3¶0.00998666665668 kg/unit¶===================¶	review
+book	Manual_Elements.page.1	Deuterium¶1/1¶===================¶ID: 11¶Melting: 14 K¶Boiling: 20 K¶Plasma: 2000 K¶===================¶Density:¶8.988E-5 g/cm3¶0.00998666665668 kg/unit¶===================¶	review
+book	Manual_Elements.page.10	Boron¶5/5¶===================¶ID: 50¶Melting: 2349 K¶Boiling: 4200 K¶Plasma: 420000 K¶===================¶Density:¶2.34 g/cm3¶259.99999973999996 kg/unit¶===================¶	review
+book	Manual_Elements.page.100	Elemental Duranium¶145/190¶===================¶ID: 1450¶Melting: 1200 K¶Boiling: 2491 K¶Plasma: 249100 K¶===================¶Density:¶20.0 g/cm3¶2222.2222199999997 kg/unit¶===================¶	review
+book	Manual_Elements.page.101	Vibranium¶152/266¶===================¶ID: 1520¶Melting: 4852 K¶Boiling: 9415 K¶Plasma: 941500 K¶===================¶Density:¶3.23978365 g/cm3¶359.9759607511351 kg/unit¶===================¶	review
+book	Manual_Elements.page.102	Naquadah¶174/352¶===================¶ID: 1740¶Melting: 1500 K¶Boiling: 3000 K¶Plasma: 300000 K¶===================¶Density:¶21.0 g/cm3¶2333.333331 kg/unit¶===================¶	review
+book	Manual_Elements.page.103	Enriched Naquadah¶174/354¶===================¶ID: 1741¶Melting: 1500 K¶Boiling: 3000 K¶Plasma: 300000 K¶===================¶Density:¶22.0 g/cm3¶2444.444442 kg/unit¶===================¶	review
+book	Manual_Elements.page.104	Naquadria¶174/348¶===================¶ID: 1742¶Melting: 1500 K¶Boiling: 3000 K¶Plasma: 300000 K¶===================¶Density:¶20.0 g/cm3¶2222.2222199999997 kg/unit¶===================¶	review
+book	Manual_Elements.page.105	Atlarus¶221/575¶===================¶ID: 2210¶Melting: 3276 K¶Boiling: 11524 K¶Plasma: 1152400 K¶===================¶Density:¶21.24625421 g/cm3¶2360.6949098615273 kg/unit¶===================¶	review
+book	Manual_Elements.page.106	Adamantium¶222/580¶===================¶ID: 2220¶Melting: 5225 K¶Boiling: 14528 K¶Plasma: 1452800 K¶===================¶Density:¶13.35624762 g/cm3¶1484.0275118493057 kg/unit¶===================¶	review
+book	Manual_Elements.page.107	Mac-Guffium¶239/665¶===================¶ID: 2390¶Melting: 200 K¶Boiling: 1000 K¶Plasma: 100000 K¶===================¶Density:¶3.122 g/cm3¶346.88888854199996 kg/unit¶===================¶	review
+book	Manual_Elements.page.108	Gravitonium¶372/1330¶===================¶ID: 3720¶Melting: 112 K¶Boiling: 1275 K¶Plasma: 127500 K¶===================¶Density:¶1768.866761 g/cm3¶196540.75102568147 kg/unit¶===================¶	review
+book	Manual_Elements.page.109	Germanium¶32/40¶===================¶ID: 320¶Melting: 1211 K¶Boiling: 3106 K¶Plasma: 310600 K¶===================¶Density:¶5.323 g/cm3¶591.444443853 kg/unit¶===================¶	review
+book	Manual_Elements.page.11	Boron-11¶5/6¶===================¶ID: 51¶Melting: 2349 K¶Boiling: 4200 K¶Plasma: 420000 K¶===================¶Density:¶2.34 g/cm3¶259.99999973999996 kg/unit¶===================¶	review
+book	Manual_Elements.page.12	Carbon¶6/6¶===================¶ID: 60¶Melting: 3800 K¶Boiling: 4300 K¶Plasma: 430000 K¶===================¶Density:¶2.267 g/cm3¶251.88888863699998 kg/unit¶===================¶	review
+book	Manual_Elements.page.13	Carbon-13¶6/7¶===================¶ID: 61¶Melting: 3800 K¶Boiling: 4300 K¶Plasma: 430000 K¶===================¶Density:¶2.267 g/cm3¶251.88888863699998 kg/unit¶===================¶	review
+book	Manual_Elements.page.14	Carbon-14¶6/8¶===================¶ID: 62¶Melting: 3800 K¶Boiling: 4300 K¶Plasma: 430000 K¶===================¶Density:¶2.267 g/cm3¶251.88888863699998 kg/unit¶===================¶	review
+book	Manual_Elements.page.15	Nitrogen¶7/7¶===================¶ID: 70¶Melting: 63 K¶Boiling: 77 K¶Plasma: 7700 K¶===================¶Density:¶0.0012506 g/cm3¶0.13895555541659999 kg/unit¶===================¶	review
+book	Manual_Elements.page.16	Oxygen¶8/8¶===================¶ID: 80¶Melting: 54 K¶Boiling: 90 K¶Plasma: 9000 K¶===================¶Density:¶0.001429 g/cm3¶0.15877777761899997 kg/unit¶===================¶	review
+book	Manual_Elements.page.17	Fluorine¶9/9¶===================¶ID: 90¶Melting: 53 K¶Boiling: 85 K¶Plasma: 8500 K¶===================¶Density:¶0.001696 g/cm3¶0.188444444256 kg/unit¶===================¶	review
+book	Manual_Elements.page.18	Neon¶10/10¶===================¶ID: 100¶Melting: 24 K¶Boiling: 27 K¶Plasma: 2700 K¶===================¶Density:¶8.999E-4 g/cm3¶0.0999888887889 kg/unit¶===================¶	review
+book	Manual_Elements.page.19	Sodium¶11/11¶===================¶ID: 110¶Melting: 370 K¶Boiling: 1156 K¶Plasma: 115600 K¶===================¶Density:¶0.971 g/cm3¶107.88888878099999 kg/unit¶===================¶	review
+book	Manual_Elements.page.2	Tritium¶1/2¶===================¶ID: 12¶Melting: 14 K¶Boiling: 20 K¶Plasma: 2000 K¶===================¶Density:¶8.988E-5 g/cm3¶0.00998666665668 kg/unit¶===================¶	review
+book	Manual_Elements.page.20	Magnesium¶12/12¶===================¶ID: 120¶Melting: 923 K¶Boiling: 1363 K¶Plasma: 136300 K¶===================¶Density:¶1.738 g/cm3¶193.11111091799998 kg/unit¶===================¶	review
+book	Manual_Elements.page.21	Aluminium¶13/13¶===================¶ID: 130¶Melting: 933 K¶Boiling: 2792 K¶Plasma: 279200 K¶===================¶Density:¶2.698 g/cm3¶299.77777747799996 kg/unit¶===================¶	review
+book	Manual_Elements.page.22	Silicon¶14/14¶===================¶ID: 140¶Melting: 1687 K¶Boiling: 3538 K¶Plasma: 353800 K¶===================¶Density:¶2.3296 g/cm3¶258.8444441856 kg/unit¶===================¶	review
+book	Manual_Elements.page.23	Phosphor¶15/15¶===================¶ID: 150¶Melting: 317 K¶Boiling: 550 K¶Plasma: 55000 K¶===================¶Density:¶1.82 g/cm3¶202.22222202 kg/unit¶===================¶	review
+book	Manual_Elements.page.24	Sulfur¶16/16¶===================¶ID: 160¶Melting: 388 K¶Boiling: 717 K¶Plasma: 71700 K¶===================¶Density:¶2.067 g/cm3¶229.66666643700003 kg/unit¶===================¶	review
+book	Manual_Elements.page.25	Chlorine¶17/18¶===================¶ID: 170¶Melting: 171 K¶Boiling: 239 K¶Plasma: 23900 K¶===================¶Density:¶0.003214 g/cm3¶0.357111110754 kg/unit¶===================¶	review
+book	Manual_Elements.page.26	Argon¶18/22¶===================¶ID: 180¶Melting: 83 K¶Boiling: 87 K¶Plasma: 8700 K¶===================¶Density:¶0.0017837 g/cm3¶0.1981888886907 kg/unit¶===================¶	review
+book	Manual_Elements.page.27	Potassium¶19/20¶===================¶ID: 190¶Melting: 336 K¶Boiling: 1032 K¶Plasma: 103200 K¶===================¶Density:¶0.862 g/cm3¶95.77777768199999 kg/unit¶===================¶	review
+book	Manual_Elements.page.28	Calcium¶20/20¶===================¶ID: 200¶Melting: 1115 K¶Boiling: 1757 K¶Plasma: 175700 K¶===================¶Density:¶1.54 g/cm3¶171.11111094 kg/unit¶===================¶	review
+book	Manual_Elements.page.29	Titanium¶22/26¶===================¶ID: 220¶Melting: 1941 K¶Boiling: 3560 K¶Plasma: 356000 K¶===================¶Density:¶4.54 g/cm3¶504.4444439399999 kg/unit¶===================¶	review
+book	Manual_Elements.page.3	Helium¶2/2¶===================¶ID: 20¶Melting: 1 K¶Boiling: 4 K¶Plasma: 400 K¶===================¶Density:¶1.785E-4 g/cm3¶0.0198333333135 kg/unit¶===================¶	review
+book	Manual_Elements.page.30	Vanadium¶23/28¶===================¶ID: 230¶Melting: 2183 K¶Boiling: 3680 K¶Plasma: 368000 K¶===================¶Density:¶6.11 g/cm3¶678.88888821 kg/unit¶===================¶	review
+book	Manual_Elements.page.31	Chromium¶24/28¶===================¶ID: 240¶Melting: 2180 K¶Boiling: 2944 K¶Plasma: 294400 K¶===================¶Density:¶7.15 g/cm3¶794.44444365 kg/unit¶===================¶	review
+book	Manual_Elements.page.32	Manganese¶25/30¶===================¶ID: 250¶Melting: 1519 K¶Boiling: 2334 K¶Plasma: 233400 K¶===================¶Density:¶7.44 g/cm3¶826.66666584 kg/unit¶===================¶	review
+book	Manual_Elements.page.33	Iron¶26/30¶===================¶ID: 260¶Melting: 1811 K¶Boiling: 3134 K¶Plasma: 313400 K¶===================¶Density:¶7.874 g/cm3¶874.8888880139999 kg/unit¶===================¶	review
+book	Manual_Elements.page.34	Cobalt¶27/32¶===================¶ID: 270¶Melting: 1768 K¶Boiling: 3200 K¶Plasma: 320000 K¶===================¶Density:¶8.86 g/cm3¶984.4444434599999 kg/unit¶===================¶	review
+book	Manual_Elements.page.35	Cobalt-60¶27/33¶===================¶ID: 278¶Melting: 1768 K¶Boiling: 3200 K¶Plasma: 320000 K¶===================¶Density:¶8.86 g/cm3¶984.4444434599999 kg/unit¶===================¶	review
+book	Manual_Elements.page.36	Nickel¶28/30¶===================¶ID: 280¶Melting: 1728 K¶Boiling: 3186 K¶Plasma: 318600 K¶===================¶Density:¶8.912 g/cm3¶990.222221232 kg/unit¶===================¶	review
+book	Manual_Elements.page.37	Copper¶29/34¶===================¶ID: 290¶Melting: 1357 K¶Boiling: 2835 K¶Plasma: 283500 K¶===================¶Density:¶8.96 g/cm3¶995.55555456 kg/unit¶===================¶	review
+book	Manual_Elements.page.38	Zinc¶30/35¶===================¶ID: 300¶Melting: 692 K¶Boiling: 1180 K¶Plasma: 118000 K¶===================¶Density:¶7.134 g/cm3¶792.666665874 kg/unit¶===================¶	review
+book	Manual_Elements.page.39	Gallium¶31/39¶===================¶ID: 310¶Melting: 302 K¶Boiling: 2477 K¶Plasma: 247700 K¶===================¶Density:¶5.907 g/cm3¶656.3333326769999 kg/unit¶===================¶	review
+book	Manual_Elements.page.4	Helium-3¶2/1¶===================¶ID: 21¶Melting: 1 K¶Boiling: 4 K¶Plasma: 400 K¶===================¶Density:¶1.785E-4 g/cm3¶0.0198333333135 kg/unit¶===================¶	review
+book	Manual_Elements.page.40	Germanium¶32/40¶===================¶ID: 320¶Melting: 1211 K¶Boiling: 3106 K¶Plasma: 310600 K¶===================¶Density:¶5.323 g/cm3¶591.444443853 kg/unit¶===================¶	review
+book	Manual_Elements.page.41	Arsenic¶33/42¶===================¶ID: 330¶Melting: 887 K¶Boiling: 1090 K¶Plasma: 109000 K¶===================¶Density:¶5.776 g/cm3¶641.7777771359999 kg/unit¶===================¶	review
+book	Manual_Elements.page.42	Selenium¶34/45¶===================¶ID: 340¶Melting: 453 K¶Boiling: 958 K¶Plasma: 95800 K¶===================¶Density:¶4.809 g/cm3¶534.333332799 kg/unit¶===================¶	review
+book	Manual_Elements.page.43	Bromine¶35/45¶===================¶ID: 350¶Melting: 265 K¶Boiling: 332 K¶Plasma: 33200 K¶===================¶Density:¶3.122 g/cm3¶346.88888854199996 kg/unit¶===================¶	review
+book	Manual_Elements.page.44	Krypton¶36/48¶===================¶ID: 360¶Melting: 115 K¶Boiling: 119 K¶Plasma: 11900 K¶===================¶Density:¶0.003733 g/cm3¶0.4147777773629999 kg/unit¶===================¶	review
+book	Manual_Elements.page.45	Rubidium¶37/48¶===================¶ID: 370¶Melting: 312 K¶Boiling: 961 K¶Plasma: 96100 K¶===================¶Density:¶1.532 g/cm3¶170.222222052 kg/unit¶===================¶	review
+book	Manual_Elements.page.46	Strontium¶38/49¶===================¶ID: 380¶Melting: 1050 K¶Boiling: 1655 K¶Plasma: 165500 K¶===================¶Density:¶2.64 g/cm3¶293.33333304 kg/unit¶===================¶	review
+book	Manual_Elements.page.47	Yttrium¶39/50¶===================¶ID: 390¶Melting: 1799 K¶Boiling: 3609 K¶Plasma: 360900 K¶===================¶Density:¶4.469 g/cm3¶496.5555550590001 kg/unit¶===================¶	review
+book	Manual_Elements.page.48	Zirconium¶40/51¶===================¶ID: 400¶Melting: 2128 K¶Boiling: 4682 K¶Plasma: 468200 K¶===================¶Density:¶6.506 g/cm3¶722.888888166 kg/unit¶===================¶	review
+book	Manual_Elements.page.49	Niobium¶41/53¶===================¶ID: 410¶Melting: 2750 K¶Boiling: 5017 K¶Plasma: 501700 K¶===================¶Density:¶8.57 g/cm3¶952.2222212699999 kg/unit¶===================¶	review
+book	Manual_Elements.page.5	Lithium¶3/4¶===================¶ID: 30¶Melting: 453 K¶Boiling: 1560 K¶Plasma: 156000 K¶===================¶Density:¶0.534 g/cm3¶59.333333274 kg/unit¶===================¶	review
+book	Manual_Elements.page.50	Molybdenum¶42/53¶===================¶ID: 420¶Melting: 2896 K¶Boiling: 4912 K¶Plasma: 491200 K¶===================¶Density:¶10.22 g/cm3¶1135.55555442 kg/unit¶===================¶	review
+book	Manual_Elements.page.51	Technetium¶43/55¶===================¶ID: 430¶Melting: 2430 K¶Boiling: 4538 K¶Plasma: 453800 K¶===================¶Density:¶11.5 g/cm3¶1277.7777764999998 kg/unit¶===================¶	review
+book	Manual_Elements.page.52	Ruthenium¶44/57¶===================¶ID: 440¶Melting: 2607 K¶Boiling: 4423 K¶Plasma: 442300 K¶===================¶Density:¶12.37 g/cm3¶1374.4444430699998 kg/unit¶===================¶	review
+book	Manual_Elements.page.53	Rhodium¶45/58¶===================¶ID: 450¶Melting: 2237 K¶Boiling: 3968 K¶Plasma: 396800 K¶===================¶Density:¶12.41 g/cm3¶1378.88888751 kg/unit¶===================¶	review
+book	Manual_Elements.page.54	Palladium¶46/60¶===================¶ID: 460¶Melting: 1828 K¶Boiling: 3236 K¶Plasma: 323600 K¶===================¶Density:¶12.02 g/cm3¶1335.55555422 kg/unit¶===================¶	review
+book	Manual_Elements.page.55	Silver¶47/60¶===================¶ID: 470¶Melting: 1234 K¶Boiling: 2435 K¶Plasma: 243500 K¶===================¶Density:¶10.501 g/cm3¶1166.7777766109998 kg/unit¶===================¶	review
+book	Manual_Elements.page.56	Cadmium¶48/64¶===================¶ID: 480¶Melting: 594 K¶Boiling: 1040 K¶Plasma: 104000 K¶===================¶Density:¶8.69 g/cm3¶965.5555545899998 kg/unit¶===================¶	review
+book	Manual_Elements.page.57	Indium¶49/65¶===================¶ID: 490¶Melting: 429 K¶Boiling: 2345 K¶Plasma: 234500 K¶===================¶Density:¶7.31 g/cm3¶812.2222214099999 kg/unit¶===================¶	review
+book	Manual_Elements.page.58	Tin¶50/68¶===================¶ID: 500¶Melting: 505 K¶Boiling: 2875 K¶Plasma: 287500 K¶===================¶Density:¶7.287 g/cm3¶809.666665857 kg/unit¶===================¶	review
+book	Manual_Elements.page.59	Antimony¶51/70¶===================¶ID: 510¶Melting: 903 K¶Boiling: 1860 K¶Plasma: 186000 K¶===================¶Density:¶6.685 g/cm3¶742.7777770349999 kg/unit¶===================¶	review
+book	Manual_Elements.page.6	Lithium-6¶3/3¶===================¶ID: 31¶Melting: 453 K¶Boiling: 1560 K¶Plasma: 156000 K¶===================¶Density:¶0.534 g/cm3¶59.333333274 kg/unit¶===================¶	review
+book	Manual_Elements.page.60	Iodine¶53/74¶===================¶ID: 530¶Melting: 386 K¶Boiling: 457 K¶Plasma: 45700 K¶===================¶Density:¶4.93 g/cm3¶547.77777723 kg/unit¶===================¶	review
+book	Manual_Elements.page.61	Xenon¶54/77¶===================¶ID: 540¶Melting: 161 K¶Boiling: 165 K¶Plasma: 16500 K¶===================¶Density:¶0.005887 g/cm3¶0.654111110457 kg/unit¶===================¶	review
+book	Manual_Elements.page.62	Caesium¶55/77¶===================¶ID: 550¶Melting: 301 K¶Boiling: 944 K¶Plasma: 94400 K¶===================¶Density:¶1.873 g/cm3¶208.111110903 kg/unit¶===================¶	review
+book	Manual_Elements.page.63	Barium¶56/81¶===================¶ID: 560¶Melting: 1000 K¶Boiling: 2170 K¶Plasma: 217000 K¶===================¶Density:¶3.594 g/cm3¶399.33333293399994 kg/unit¶===================¶	review
+book	Manual_Elements.page.64	Lanthanium¶57/81¶===================¶ID: 570¶Melting: 1193 K¶Boiling: 3737 K¶Plasma: 373700 K¶===================¶Density:¶6.145 g/cm3¶682.7777770949999 kg/unit¶===================¶	review
+book	Manual_Elements.page.65	Cerium¶58/82¶===================¶ID: 580¶Melting: 1068 K¶Boiling: 3716 K¶Plasma: 371600 K¶===================¶Density:¶6.77 g/cm3¶752.2222214699999 kg/unit¶===================¶	review
+book	Manual_Elements.page.66	Neodymium¶60/84¶===================¶ID: 600¶Melting: 1297 K¶Boiling: 3347 K¶Plasma: 334700 K¶===================¶Density:¶7.007 g/cm3¶778.5555547769999 kg/unit¶===================¶	review
+book	Manual_Elements.page.67	Holmium¶67/97¶===================¶ID: 670¶Melting: 1734 K¶Boiling: 2993 K¶Plasma: 299300 K¶===================¶Density:¶8.795 g/cm3¶977.2222212449999 kg/unit¶===================¶	review
+book	Manual_Elements.page.68	Ytterbium¶70/103¶===================¶ID: 700¶Melting: 1097 K¶Boiling: 1469 K¶Plasma: 146900 K¶===================¶Density:¶6.965 g/cm3¶773.888888115 kg/unit¶===================¶	review
+book	Manual_Elements.page.69	Hafnium¶72/106¶===================¶ID: 720¶Melting: 2506 K¶Boiling: 4876 K¶Plasma: 487600 K¶===================¶Density:¶13.31 g/cm3¶1478.88888741 kg/unit¶===================¶	review
+book	Manual_Elements.page.7	Beryllium¶4/5¶===================¶ID: 40¶Melting: 1560 K¶Boiling: 2742 K¶Plasma: 274200 K¶===================¶Density:¶1.85 g/cm3¶205.55555535 kg/unit¶===================¶	review
+book	Manual_Elements.page.70	Tantalum¶73/107¶===================¶ID: 730¶Melting: 3290 K¶Boiling: 5731 K¶Plasma: 573100 K¶===================¶Density:¶16.654 g/cm3¶1850.444442594 kg/unit¶===================¶	review
+book	Manual_Elements.page.71	Tungsten¶74/109¶===================¶ID: 740¶Melting: 3695 K¶Boiling: 5828 K¶Plasma: 582800 K¶===================¶Density:¶19.25 g/cm3¶2138.88888675 kg/unit¶===================¶	review
+book	Manual_Elements.page.72	Rhenium¶75/111¶===================¶ID: 750¶Melting: 3459 K¶Boiling: 5869 K¶Plasma: 586900 K¶===================¶Density:¶21.02 g/cm3¶2335.5555532199996 kg/unit¶===================¶	review
+book	Manual_Elements.page.73	Osmium¶76/114¶===================¶ID: 760¶Melting: 3306 K¶Boiling: 5285 K¶Plasma: 528500 K¶===================¶Density:¶22.61 g/cm3¶2512.22221971 kg/unit¶===================¶	review
+book	Manual_Elements.page.74	Iridium¶77/115¶===================¶ID: 770¶Melting: 2719 K¶Boiling: 4701 K¶Plasma: 470100 K¶===================¶Density:¶22.56 g/cm3¶2506.6666641599995 kg/unit¶===================¶	review
+book	Manual_Elements.page.75	Platinum¶78/117¶===================¶ID: 780¶Melting: 2041 K¶Boiling: 4098 K¶Plasma: 409800 K¶===================¶Density:¶21.46 g/cm3¶2384.44444206 kg/unit¶===================¶	review
+book	Manual_Elements.page.76	Gold¶79/117¶===================¶ID: 790¶Melting: 1337 K¶Boiling: 3129 K¶Plasma: 312900 K¶===================¶Density:¶19.282 g/cm3¶2142.444442302 kg/unit¶===================¶	review
+book	Manual_Elements.page.77	Gold-198¶79/119¶===================¶ID: 791¶Melting: 1337 K¶Boiling: 3129 K¶Plasma: 312900 K¶===================¶Density:¶19.282 g/cm3¶2142.444442302 kg/unit¶===================¶	review
+book	Manual_Elements.page.78	Mercury¶80/120¶===================¶ID: 800¶Melting: 234 K¶Boiling: 629 K¶Plasma: 62900 K¶===================¶Density:¶13.5336 g/cm3¶1503.7333318295998 kg/unit¶===================¶	review
+book	Manual_Elements.page.79	Lead¶82/125¶===================¶ID: 820¶Melting: 600 K¶Boiling: 2022 K¶Plasma: 202200 K¶===================¶Density:¶11.342 g/cm3¶1260.222220962 kg/unit¶===================¶	review
+book	Manual_Elements.page.8	Beryllium-7¶4/3¶===================¶ID: 41¶Melting: 1560 K¶Boiling: 2742 K¶Plasma: 274200 K¶===================¶Density:¶1.85 g/cm3¶205.55555535 kg/unit¶===================¶	review
+book	Manual_Elements.page.80	Bismuth¶83/125¶===================¶ID: 830¶Melting: 544 K¶Boiling: 1837 K¶Plasma: 183700 K¶===================¶Density:¶9.807 g/cm3¶1089.666665577 kg/unit¶===================¶	review
+book	Manual_Elements.page.81	Astatine¶85/124¶===================¶ID: 850¶Melting: 575 K¶Boiling: 610 K¶Plasma: 61000 K¶===================¶Density:¶7.0 g/cm3¶777.777777 kg/unit¶===================¶	review
+book	Manual_Elements.page.82	Radon¶86/134¶===================¶ID: 860¶Melting: 202 K¶Boiling: 211 K¶Plasma: 21100 K¶===================¶Density:¶0.00973 g/cm3¶1.08111111003 kg/unit¶===================¶	review
+book	Manual_Elements.page.83	Radium¶88/138¶===================¶ID: 880¶Melting: 973 K¶Boiling: 2010 K¶Plasma: 201000 K¶===================¶Density:¶5.5 g/cm3¶611.1111105 kg/unit¶===================¶	review
+book	Manual_Elements.page.84	Actinium¶89/136¶===================¶ID: 890¶Melting: 1323 K¶Boiling: 3471 K¶Plasma: 347100 K¶===================¶Density:¶10.07 g/cm3¶1118.8888877699999 kg/unit¶===================¶	review
+book	Manual_Elements.page.85	Thorium¶90/142¶===================¶ID: 900¶Melting: 2115 K¶Boiling: 5061 K¶Plasma: 506100 K¶===================¶Density:¶11.72 g/cm3¶1302.22222092 kg/unit¶===================¶	review
+book	Manual_Elements.page.86	Uranium¶92/146¶===================¶ID: 920¶Melting: 1405 K¶Boiling: 4404 K¶Plasma: 440400 K¶===================¶Density:¶18.95 g/cm3¶2105.55555345 kg/unit¶===================¶	review
+book	Manual_Elements.page.87	Uranium-235¶92/143¶===================¶ID: 921¶Melting: 1405 K¶Boiling: 4404 K¶Plasma: 440400 K¶===================¶Density:¶18.95 g/cm3¶2105.55555345 kg/unit¶===================¶	review
+book	Manual_Elements.page.88	Uranium-233¶92/141¶===================¶ID: 922¶Melting: 1405 K¶Boiling: 4404 K¶Plasma: 440400 K¶===================¶Density:¶18.95 g/cm3¶2105.55555345 kg/unit¶===================¶	review
+book	Manual_Elements.page.89	Neptunium¶93/144¶===================¶ID: 930¶Melting: 917 K¶Boiling: 4273 K¶Plasma: 427300 K¶===================¶Density:¶20.45 g/cm3¶2272.2222199499997 kg/unit¶===================¶	review
+book	Manual_Elements.page.9	Beryllium-8¶4/4¶===================¶ID: 42¶Melting: 1560 K¶Boiling: 2742 K¶Plasma: 274200 K¶===================¶Density:¶1.85 g/cm3¶205.55555535 kg/unit¶===================¶	review
+book	Manual_Elements.page.90	Plutonium¶94/150¶===================¶ID: 940¶Melting: 912 K¶Boiling: 3501 K¶Plasma: 350100 K¶===================¶Density:¶19.84 g/cm3¶2204.4444422399997 kg/unit¶===================¶	review
+book	Manual_Elements.page.91	Plutonium-241¶94/147¶===================¶ID: 943¶Melting: 912 K¶Boiling: 3501 K¶Plasma: 350100 K¶===================¶Density:¶19.84 g/cm3¶2204.4444422399997 kg/unit¶===================¶	review
+book	Manual_Elements.page.92	Plutonium-243¶94/149¶===================¶ID: 945¶Melting: 912 K¶Boiling: 3501 K¶Plasma: 350100 K¶===================¶Density:¶19.84 g/cm3¶2204.4444422399997 kg/unit¶===================¶	review
+book	Manual_Elements.page.93	Plutonium-239¶94/145¶===================¶ID: 947¶Melting: 912 K¶Boiling: 3501 K¶Plasma: 350100 K¶===================¶Density:¶19.84 g/cm3¶2204.4444422399997 kg/unit¶===================¶	review
+book	Manual_Elements.page.94	Americium¶95/150¶===================¶ID: 950¶Melting: 1449 K¶Boiling: 2880 K¶Plasma: 288000 K¶===================¶Density:¶13.69 g/cm3¶1521.1111095899998 kg/unit¶===================¶	review
+book	Manual_Elements.page.95	Americium-241¶95/146¶===================¶ID: 951¶Melting: 1449 K¶Boiling: 2880 K¶Plasma: 288000 K¶===================¶Density:¶13.69 g/cm3¶1521.1111095899998 kg/unit¶===================¶	review
+book	Manual_Elements.page.96	Americium-242¶95/147¶===================¶ID: 952¶Melting: 1449 K¶Boiling: 2880 K¶Plasma: 288000 K¶===================¶Density:¶13.69 g/cm3¶1521.1111095899998 kg/unit¶===================¶	review
+book	Manual_Elements.page.97	Farnsium¶117/177¶===================¶ID: 1170¶Melting: 673 K¶Boiling: 823 K¶Plasma: 82300 K¶===================¶Density:¶7.2 g/cm3¶799.9999991999999 kg/unit¶===================¶	review
+book	Manual_Elements.page.98	Elemental Tritanium¶125/198¶===================¶ID: 1250¶Melting: 2000 K¶Boiling: 3138 K¶Plasma: 313800 K¶===================¶Density:¶25.0 g/cm3¶2777.777775 kg/unit¶===================¶	review
+book	Manual_Elements.page.99	Trinium¶126/192¶===================¶ID: 1260¶Melting: 2645 K¶Boiling: 4523 K¶Plasma: 452300 K¶===================¶Density:¶1.06874 g/cm3¶118.74888877014 kg/unit¶===================¶	review
+book	Manual_Enchantments.page.0	真不敢相信这些古老附魔的信息如此难找！但终于我收集到了所有关于这魔法的知识！	auto
+book	Manual_Enchantments.page.1	附魔台¶===================¶你需要一个这样的附魔台，通常由2颗钻石、4块黑曜石和一本书构成。然后你可以使用你的魔力，有时是青金石，来给工具和书籍随机附魔！	auto
+book	Manual_Enchantments.page.10	节肢杀手¶===================¶等级1至5+¶每级额外造成125点伤害，适用于六条腿以上的生物，如讨厌的蜘蛛、螨虫、昆虫或蠹虫！	auto
+book	Manual_Enchantments.page.11	防爆¶===================¶等级1至5+¶每级额外造成3点伤害，适用于任何苦力怕！通常只能应用于Railcraft撬棍。它也可以伤害其他爆炸性怪物，如凋灵！	auto
+book	Manual_Enchantments.page.12	溶解¶===================¶对任何黏液生物造成虚弱和中毒效果！	auto
+book	Manual_Enchantments.page.13	末影离析¶===================¶等级1至5+¶对任何末影生物造成虚弱和中毒效果！被削弱的末影人无法传送，使得带有此附魔的投射物是对抗它们的无价之宝！	auto
+book	Manual_Enchantments.page.14	狼人杀手¶===================¶等级1至5+¶对任何狼形生物及类似生物造成枯萎和中毒效果！也适用于牛头人！	auto
+book	Manual_Enchantments.page.15	击退¶===================¶等级1至2+¶击中目标会将其击退，同时减少你自己40%的水平速度，只在空中明显。冲刺时等级增加一级。	auto
+book	Manual_Enchantments.page.16	火焰附加¶===================¶等级1至2+¶不仅会使敌人燃烧4秒，有时还会烤熟掉落物；等级3时还能快速熔炼采集到的方块！	auto
+book	Manual_Enchantments.page.17	掠夺¶===================¶等级1至3+¶增加从生物身上获得的掉落物数量。可能会增加总掉落物数量或稀有掉落物的几率。	auto
+book	Manual_Enchantments.page.18	丰收¶===================¶等级1至3+¶增加从方块获得的掉落物数量。可能增加总掉落物数量或稀有掉落物的几率。适用于矿石、作物、沙砾和岩浆膏。	auto
+book	Manual_Enchantments.page.19	精准采集¶===================¶仅1级¶确保用正确的工具采集方块时，掉落该方块本身而非其正常掉落物。小矿石有更高的几率掉落大宝石。	auto
+book	Manual_Enchantments.page.2	书架¶===================¶为了提升上述提到的随机附魔的效果，你只需要一些装满书的书架即可。甚至可以是金属制的精美书架！书籍也可以放在背面！	auto
+book	Manual_Enchantments.page.20	无限¶===================¶等级1+¶只要身上有一支箭，弓就可以无限射击。枪械根据等级有不同的概率不消耗弹药：50%，66%，75%，80%，84%或更高。	auto
+book	Manual_Enchantments.page.21	力量¶===================¶等级1至5+¶射出的箭矢每级额外造成25%伤害。射出的子弹飞得更快，因此具有更高的穿透率和远程高伤害。	auto
+book	Manual_Enchantments.page.22	火矢¶===================¶等级1+¶你的远程武器将使投射物着火，造成类似于或结合火焰附加的火焰伤害。你还可以用它点燃TNT和其他物品。	auto
+book	Manual_Enchantments.page.23	冲击¶===================¶等级1至2+¶你的远程武器每级击退击中的目标约3格。	auto
+book	Manual_Enchantments.page.24	海之眷顾¶===================¶等级1至3+¶增加钓到宝藏的几率，减少钓到垃圾的几率，略微减少钓到鱼的几率。	auto
+book	Manual_Enchantments.page.25	饵钓¶===================¶等级1至3+¶每级减少等待鱼咬钩的时间5秒，最高等级为5级。等级6或以上则使钓鱼竿无法用于钓鱼。	auto
+book	Manual_Enchantments.page.26	保护¶===================¶等级1至4+¶每件盔甲每级减少4%的总伤害，最高可达80%的综合减伤，包括所有其他类型的保护附魔！	auto
+book	Manual_Enchantments.page.27	防火¶===================¶等级1至4+¶每件盔甲每级减少8%的火焰伤害，最高与保护附魔一致。每级还可减少最高15%的燃烧时间。	auto
+book	Manual_Enchantments.page.28	爆炸保护¶===================¶等级1至4+¶每件盔甲每级减少8%的爆炸伤害，最高与保护附魔一致。每级还可减少最高15%的爆炸击退。	auto
+book	Manual_Enchantments.page.29	弹射物保护¶===================¶等级1至4+¶每件盔甲每级减少8%的远程伤害，最高与保护附魔一致。注意，爆炸性的远程攻击可能只有部分减伤！	auto
+book	Manual_Enchantments.page.3	铁砧¶===================¶但随机附魔不能直接从工具上移除。铁砧可以帮助你，因为它允许你将书籍中的附魔转移到工具上，并且还可以给它们命名！	auto
+book	Manual_Enchantments.page.30	摔落保护¶===================¶等级1至4+¶每件盔甲每级减少12%的末影珍珠和坠落伤害，最高与保护附魔一致。撞墙时不生效。	auto
+book	Manual_Enchantments.page.31	荆棘¶===================¶等级1至3+¶每件盔甲每级有15%的几率对近战或远程攻击者造成0.5至2心的伤害。盔甲耐久度会额外损耗。	auto
+book	Manual_Enchantments.page.32	水下呼吸¶===================¶等级1至3+¶每级增加15秒的水下氧气时间，分别为两倍、三倍或四倍于正常时间。还分别以50%、66%或75%的几率减少溺水伤害。	auto
+book	Manual_Enchantments.page.33	水中速掘¶===================¶仅1级¶使你在水下站立时能够以正常速度挖掘，而不是减慢五倍。仍然需要站在地上，否则速度还会被减慢五倍。	auto
+book	Manual_Enchantments.page.34	效率¶===================¶等级1至5+¶该附魔使工具的挖掘速度得到平方加1的加成，即+2, +5, +10, +17或+26。工具材料永远不会自带此附魔，因为没有意义。	auto
+book	Manual_Enchantments.page.35	耐久¶===================¶等级1至3+¶该附魔使工具平均寿命延长+100%每级。盔甲则分别延长+25%, +34%或+43%。工具材料永远不会自带此附魔，因为没有意义。	auto
+book	Manual_Enchantments.page.4	磨石¶===================¶据说有能移除附魔的磨石，但我从未见过！就像我常听说的缸中之脑一样神秘！	auto
+book	Manual_Enchantments.page.5	魔力¶===================¶通过击杀世界中的生物、烹饪食物或处理矿石可以获得这种力量！这就是许多人称之为经验值（XP或EXP）的原因！	auto
+book	Manual_Enchantments.page.6	列表¶===================¶以下是我所知的附魔及其效果列表。	auto
+book	Manual_Enchantments.page.7	锋利¶===================¶等级1至5+¶每级额外造成81.25点伤害，几乎适用于所有物品！	auto
+book	Manual_Enchantments.page.8	破击¶===================¶等级1至5+¶每级额外造成1.5点伤害，通常只能应用于Railcraft撬棍。	auto
+book	Manual_Enchantments.page.9	亡灵杀手¶===================¶等级1至5+¶每级额外造成125点伤害，适用于不死生物：骷髅、僵尸、溺尸、干尸、怨灵、木乃伊和巫妖！亡灵杀手 3+ 级子弹甚至可以穿透巫妖屏障！	auto
+book	Manual_Extenders.page.0	本手册包括了扩展器和过滤器。它将详细解释这些设备的使用方法，以便您能轻松使用它们。	auto
+book	Manual_Extenders.page.1	首先说明任何过滤器和扩展器的面向。主要面是你可以用扳手设置的那个面，其周围有4个点环绕中心管道。	auto
+book	Manual_Extenders.page.10	所以，如果你把漏斗放在扩展器下面，漏斗将从扩展器连接到的方块实体拉取物品。如果你把漏斗放在扩展器上面，它会将物品推入扩展器连接到的方块实体。	auto
+book	Manual_Extenders.page.11	扩展器基本上是为任何尝试以某种形式与它们互动的东西提供了一个接口，就好像附着的方块实体现在有两格大而不是一格。	auto
+book	Manual_Extenders.page.12	它们本身完全不做任何事情，它们只是在那里伪装成附着的方块实体。所以不要期望它们会主动输入输出任何物品，或者任何类似这种愚蠢的事情。	auto
+book	Manual_Extenders.page.2	次要面向是有输出样式的箭头的一面，这是使用活动扳手设置的。而扩展器/过滤器的其他面为中立面向。	auto
+book	Manual_Extenders.page.3	现在明确了这一点，我们可以讨论功能了。基本上，任何通过中立或次要面与扩展器'互动'（*稍后解释）的东西都会被重定向到主要面的方块实体。	auto
+book	Manual_Extenders.page.4	这意味着你通过中立面向或次要面插入物品时，主要面通常是（但不总是）输出侧。因此，将主要面连接到你想要延伸或进行过滤的方块实体上。	auto
+book	Manual_Extenders.page.5	关于次要面：如上文所述，5个面向会将其访问重定向到主要面的方块实体，但主要面本身也可以将所有该侧的访问重定向到次要面上的方块实体。	auto
+book	Manual_Extenders.page.6	这意味着如果你在某方块实体的同一个面有输入和输出，你可以将它的输出重定向到次要面的方向，同时从中立面向主要面的方块实体输出。	auto
+book	Manual_Extenders.page.7	从主要面到次要面的重定向不受过滤影响，只有从中立&次要面到主要面的交互是经过过滤的！希望这个解释足以让你正确使用过滤器。	auto
+book	Manual_Extenders.page.8	扩展器和过滤器不能串联使用，这意味着你需要在两个扩展器/过滤器之间放置某些东西，比如管道，除非它们是平行的。	auto
+book	Manual_Extenders.page.9	现在来解释'互动'的实际含义。漏斗从它'互动'的所有上方物体拉取物品，并向下推动物品给它可以'互动'的所有物体。这意味着物品的行进方向对于扩展器来说无关紧要。	auto
+book	Manual_Hunting_Blaze.page.0	Hi, I'm Alex Grylls, Adventurer and experienced Hunter of the several Mobs you encounter in our World. In this Guide I will explain you easy Methods to hunt for wild Mobs in their natural Habitats.	review
+book	Manual_Hunting_Blaze.page.1	Blazes¶===================¶Blazes are floating, fireball shooting, yellow Heads with valuable fiery Rods rotating around them. Those Rods only drop if they are killed by a living thing, making them rare. They also deal Melee Fire Damage too.	review
+book	Manual_Hunting_Blaze.page.10	Ghasts¶===================¶Punching their Fireballs back at them can be hard to do, especially with Lag, but Arrows can deflect the fireballs aswell, meaning you can shoot Arrows at the Fireballs as a defense.	review
+book	Manual_Hunting_Blaze.page.11	Ghasts¶===================¶In general any form of ranged Attack is advised, because it happens very rarely, that a Ghast is close enough to the ground to actually melee it. The Implosion Enchantment works well on them too.	review
+book	Manual_Hunting_Blaze.page.12	Ghasts¶===================¶It can happen very often that you are unprepared and a Ghast shows up trying to blow you into smithereens. In that case, run away and hide, first.	review
+book	Manual_Hunting_Blaze.page.13	Ghasts¶===================¶After you are done finding a hiding Spot, look at where exactly the Ghast is right now, so you can stay out of its Range. Then either continue your business or shoot the Ghast.	review
+book	Manual_Hunting_Blaze.page.14	Ghasts¶===================¶If you are going to deflect a Ghast Blast the melee way, then use a Sword for that, as it gives you a slightly increased Range. This is especially useful if you cant use a Bow.	review
+book	Manual_Hunting_Blaze.page.15	Ghasts¶===================¶Ghasts are the normal kind of Mob, they are neither Undead nor Spiders, there is no special Enchant against them, and Potions work normally on them.	review
+book	Manual_Hunting_Blaze.page.2	Blazes¶===================¶As they shoot Fireballs, they can be hard to get close to. My advice is either just shooting them with a Bow or being very creative and using a Fishing Rod to reel them in for Melee Combat.	review
+book	Manual_Hunting_Blaze.page.3	Blazes¶===================¶You can also just hide behind a Wall and wait for them to come close, and then strike and hide again, so they don't get a chance to fire back. Building such a Wall between you and the Blazes is also a good Idea.	review
+book	Manual_Hunting_Blaze.page.4	Blazes¶===================¶Fire Resistance is a nice Effect you should somehow have on yourself when you fight them, it makes you nearly immune to Blazes overall. Also possible is the use of Iron Golems, what not many think about doing.	review
+book	Manual_Hunting_Blaze.page.5	Blazes¶===================¶Snowballs are normally useless against Mobs but in case of Blazes they do cause some severe Damage and are easier throw than you can shoot a bow. Snow Golems wouldn't survive in the Nether but they would work too.	review
+book	Manual_Hunting_Blaze.page.6	Blazes¶===================¶Using Wolves or Golems can lead to them knowing Blazes down the Platforms, meaning you might not get drops, or they will now attack you from a distance, only do this for Areas that are surrounded by Netherrack.	review
+book	Manual_Hunting_Blaze.page.7	Blazes¶===================¶Blazes can also be damaged by Water Buckets, sure they won't drop anything, and Water Buckets don't work in the Nether, but this Information might be useful if you got some way to get Water over there.	review
+book	Manual_Hunting_Blaze.page.8	Ghasts¶===================¶Ghasts, flying, ghost alike, crying Tentacle Monsters with explosive Projectiles. Their Tears are hard to get due to them being airborne and the Nether being all like 'The Floor is Lava!'.	review
+book	Manual_Hunting_Blaze.page.9	Ghasts¶===================¶Their Projectiles can literally be punched back at them kinda like a Baseball, what will yield the 'Return to Sender' Achievement. What is a Baseball, you ask? I don't know either.	review
+book	Manual_Hunting_Creeper.page.0	Hi, I'm Alex Grylls, Adventurer and experienced Hunter of the several Mobs you encounter in our World. In this Guide I will explain you easy Methods to hunt for wild Mobs in their natural Habitats.	review
+book	Manual_Hunting_Creeper.page.1	Creepers¶===================¶Creepers are sneaky, suicidal, leafy sticks on 4 short Legs, which will blow up when they are close by. They drop Gunpowder and will not deal any damage aside from the explosion when you let them come close.	review
+book	Manual_Hunting_Creeper.page.2	Creepers¶===================¶If a Creeper is struck by Lightning it will become supercharged and will explode with a much larger force. Creepers in general when shot by a Skeleton, will drop Music Discs, which are usable for the Jukebox.	review
+book	Manual_Hunting_Creeper.page.3	Creepers¶===================¶In order to detonate, a Creeper needs to see the Player, due to this it is always recommended to take the high Ground as you can hide behind the Cliff you are standing on more easily.	review
+book	Manual_Hunting_Creeper.page.4	Creepers¶===================¶Water is also a good place to melee a Creeper, as knockback will get it out of explosion Range, and even if it explodes it will not cause Damage to the ground, due to the Water absorbing the shock.	review
+book	Manual_Hunting_Creeper.page.5	Creepers¶===================¶For Melee Combat in general it is adviced to have Weapons with a strong Knockback so you don't need to sprint to knock the Creeper out of the Detonation Zone. You can also just shoot an Arrow first and then melee.	review
+book	Manual_Hunting_Creeper.page.6	Creepers¶===================¶The Implosion Enchantment does a great deal of Damage to Creepers. It can however only be gotten by enchanting Crowbars, or by using Tool Materials that have the Enchantment on them normally.	review
+book	Manual_Hunting_Creeper.page.7	Creepers¶===================¶You can manually ignite Creepers with Flint and Steel or a Lighter, and Ammunition with the Fire Aspect Enchantment will ignite Creepers at a distance if Implosion is not also on the same Arrow or Bullet.	review
+book	Manual_Hunting_Creeper.page.8	Creepers¶===================¶Last but not least, you can always just drop Water between you and the Creeper, it will slow it down considerably and if its about to explode anyways, then it won't damage the Terrain.	review
+book	Manual_Hunting_End.page.0	Hi, I'm Alex Grylls, Adventurer and experienced Hunter of the several Mobs you encounter in our World. In this Guide I will explain you easy Methods to hunt for wild Mobs in their natural Habitats.	review
+book	Manual_Hunting_End.page.1	Endermen¶===================¶Endermen, 3m tall, black, purple eyed Teleporters with a weakness for Water and Silver (Disjunction Enchant), that can take some Blocks away from the World.	review
+book	Manual_Hunting_End.page.10	Endermen¶===================¶The Weakness Potion Effect is capable of preventing an Enderman from Teleporting, make use of that and splash them. (Note, that it is GregTech adding that Feature!)	review
+book	Manual_Hunting_End.page.11	Ender Dragon¶===================¶The Ender Dragon is essentially the Queen of the Endermen. She flies around between Obsidian Pillars with Magical Ender Crystals, that will regenerate her Health. Her attack pattern is Kamikaze Melee.	review
+book	Manual_Hunting_End.page.12	Ender Dragon¶===================¶She will obliterate every normal Block (except Endstone, Bedrock and Obsidian) when flying through it. She is immune to Knockback and Fire, and weak to the Disjunction Enchant found in Silver.	review
+book	Manual_Hunting_End.page.13	Ender Dragon¶===================¶The first thing you have to do is making sure you don't get knocked into the Void. Building Walls will only help if you have Obsidian with you, since she can't break it, unlike everything else you can bring.	review
+book	Manual_Hunting_End.page.14	Ender Dragon¶===================¶Once you are safe on the Main Island, you have to go and get rid of the Ender Crystals. They can easily be destroyed by Snowballs and Arrows. Do not melee those Crystals as they deal a huge explosion damage.	review
+book	Manual_Hunting_End.page.15	Ender Dragon¶===================¶Due to the Kamikaze Ram Attack, the Ender Dragon can be fought in Melee aswell as with Bow and Arrow. Use Weapons with the Disjunction Enchant and get yourself some Strength Buff in order to deal more melee.	review
+book	Manual_Hunting_End.page.16	Ender Dragon¶===================¶During the Fight it can happen that you stare at Endermen by accident, in order to prevent that you could either wear a Pumpkin as Hat and press F1, or just try to only look at a slight upwards angle.	review
+book	Manual_Hunting_End.page.2	Endermen¶===================¶Under normal circumstances Endermen just mind their Business and don't care what you are doing, but they do not like getting stared at, to the point that they will attack you if you do so.	review
+book	Manual_Hunting_End.page.3	Endermen¶===================¶If you still want to look at them without them attacking you, then wear a carved Pumpkin as Helmet. But you are hunting them, probably for the Pearls, so turn to the next Page.	review
+book	Manual_Hunting_End.page.4	Endermen¶===================¶Since Endermen don't usually attack you, I presume you just want their Pearls, and for that an Enderman Trap is a good Idea.	review
+book	Manual_Hunting_End.page.5	Endermen¶===================¶The simplest Method is just standing below a 2m tall ceiling, so they cannot get to you. And then stare at every Enderman around to let them rage at you and attack you.	review
+book	Manual_Hunting_End.page.6	Endermen¶===================¶Another way would be the use of Water Buckets to shield yourself off. Also they can only teleport distances of at least 16m btw, no shorter teleports are possible for them.	review
+book	Manual_Hunting_End.page.7	Endermen¶===================¶As you may know, normal Arrows are pretty much worthless against them, that is why you should use Arrows with Disjunction on it (Silver), in order to prevent them from teleporting.	review
+book	Manual_Hunting_End.page.8	Endermen¶===================¶If you encounter an angry Enderman, then try to run into the closest Forest, the low Trees are perfect hiding Spots, and they cant teleport to you if they are too close to you already.	review
+book	Manual_Hunting_End.page.9	Endermen¶===================¶Melee attacks only work out if you look at their feet while swinging, as they will teleport away when you stare at them, since staring at them would freeze them into place.	review
+book	Manual_Hunting_Skeleton.page.0	Hi, I'm Alex Grylls, Adventurer and experienced Hunter of the several Mobs you encounter in our World. In this Guide I will explain you easy Methods to hunt for wild Mobs in their natural Habitats.	review
+book	Manual_Hunting_Skeleton.page.1	Skeletons¶===================¶Skeletons, usually named after Fonts and armed with Bow and Arrows. They are good at aiming, some of them are even capable of picking up dropped Weapons and Armor.	review
+book	Manual_Hunting_Skeleton.page.10	Skeletons¶===================¶But if both you and the Skeleton are in deep water then diving below the surface and attacking the Skeleton from below is the best advise I can give, as the Skeletons often miss at steep angles.	review
+book	Manual_Hunting_Skeleton.page.11	Skeletons¶===================¶In some cases it is possible to just drop a Stone or a Wooden Sword for the Skeleton to pick up, they will drop their Bow in this case. However, this does not work on every Skeleton!	review
+book	Manual_Hunting_Skeleton.page.12	Skeletons¶===================¶Skeletons are grouped amoung the Undead Mobs, meaning they can be damaged by Sunlight, since it sets them on Fire. The Smite Enchant will also help a lot.	review
+book	Manual_Hunting_Skeleton.page.13	Skeletons¶===================¶Due to being undead, Healing Splash Potions deal damage to them, while poisoning ones heal them. Since Skeletons shoot Arrows, it is a good Idea to wear Armor with Projectile Protection on it.	review
+book	Manual_Hunting_Skeleton.page.14	Skeletons¶===================¶It is always a good Idea to just make Skeletons attack each other or other Mobs in order to make the attacked Mob angry at them (instead of you), causing them to kill each other.	review
+book	Manual_Hunting_Skeleton.page.15	Spider Jockeys¶===================¶Ever saw a Skeleton Ride a Spider? Yeah its a terrifying picture. The speed and mobility of a Spider and a 'Turret' on its back.	review
+book	Manual_Hunting_Skeleton.page.16	Spider Jockeys¶===================¶To fight them you can use easy tricks, like making the Spider crawl up a wall into the Roof, crushing the Skeleton that rides it in the process.	review
+book	Manual_Hunting_Skeleton.page.17	Spider Jockeys¶===================¶In general you can apply the Strategies for both the Skeletons and the Spiders, to this combo. It's always the best solution to just shoot them from far away though.	review
+book	Manual_Hunting_Skeleton.page.18	Spider Jockeys¶===================¶If you have a Bow then go for the Skeleton first, if you have to Melee then go for the Spider. Alternatively you can wait for the Sun to burn the Skeleton before engaging.	review
+book	Manual_Hunting_Skeleton.page.19	Wither Skeletons¶===================¶Wither Skeletons are just like normal Skeletons with a Stone Sword, that instead of Arrows will drop regular Coal. They also are 3 Blocks tall and can absorb your Health.	review
+book	Manual_Hunting_Skeleton.page.2	Skeletons¶===================¶If they somehow kill Creepers, those Creepers will drop Music Discs. Killing a Skeleton on long Range will yield the Sniper Duel Achievement aswell.	review
+book	Manual_Hunting_Skeleton.page.20	Wither Skeletons¶===================¶While Witherskeletons behave like any other humanoid Melee Mob, they are relatively fast and less stupid than Zombie Pigmen. If you want to know if you can handle one, practise on Zombie Pigmen first.	review
+book	Manual_Hunting_Skeleton.page.21	Wither Skeletons¶===================¶Due to being about 3m tall, just like Endermen, you can essentially hide behind a 2m tall Roof and grind them into Ashes, uhh I mean Coal.	review
+book	Manual_Hunting_Skeleton.page.22	Wither Skeletons¶===================¶In Melee Situations, walking backwards and swinging is the best way to fight them without getting yourself harmed, but watch out for Fire and Lava behind you.	review
+book	Manual_Hunting_Skeleton.page.23	Wither Skeletons¶===================¶An Iron Golem is a good Idea to have with you, just take Iron Blocks and a Pumpkin with you. The Iron Golem will turn every hostile Mob in the area into scraps.	review
+book	Manual_Hunting_Skeleton.page.24	Wither Skeletons¶===================¶Those black Skeletons spawn alongside regular Skeletons with Bow & Arrow inside a Nether Fortress, and they are the only really aggressive Mob there, aside from Blazes.	review
+book	Manual_Hunting_Skeleton.page.25	Wither Skeletons¶===================¶If you end up fighting both a Wither Skeleton and a Blaze, the best is to hide outside the Range of the Blaze and trying to fight the Skeleton first, or to bring the Skeleton between the Blaze and yourself.	review
+book	Manual_Hunting_Skeleton.page.26	Wither Skeletons¶===================¶Since most of the times you are in the Nether with these Mobs, placing a Nether Portal close by to lure Mobs inside it, by hiding behind it, might be a good Idea (if you don't plan to use that Portal later).	review
+book	Manual_Hunting_Skeleton.page.27	Wither Skeletons¶===================¶The Heads, which are dropped by every 40th Wither Skeleton, can be used to summon the Wither, but the Wither is being talked about in another Book.	review
+book	Manual_Hunting_Skeleton.page.3	Skeletons¶===================¶In order to not have a bad time with Skeletons, you need to either keep a Safe distance from them and shoot them from far away, or to quickly engage them with Melee Attacks, Speed is useful for this purpose.	review
+book	Manual_Hunting_Skeleton.page.4	Skeletons¶===================¶When you charge at a Skeleton, strave slightly to the right or left in order to have less Arrows hit you, any way to instantly kill them with one blow, will greatly reduce the chance of more Arrows flying at you.	review
+book	Manual_Hunting_Skeleton.page.5	Skeletons¶===================¶If you have a Sword then blocking with it will reduce the Damage of Arrows. This can easily be used even during Melee to not get that large amounts of Damage, even if you get hit.	review
+book	Manual_Hunting_Skeleton.page.6	Skeletons¶===================¶Backing a Skeleton into a Corner, by pushing it or knocking it back for example, will result in the Arrow getting Stuck in the Wall in a glitchy fashion and therefore not flying at you or damaging you.	review
+book	Manual_Hunting_Skeleton.page.7	Skeletons¶===================¶Walls of any kind are useful, but what really helps (if you are prepared) is Sugar Canes / Reeds as they can block their view on you, while letting you shoot through.	review
+book	Manual_Hunting_Skeleton.page.8	Skeletons¶===================¶You can also use Saplings and (sadistically) Bonemeal to instantly create a small Forest as a Shield in the Grasslands.	review
+book	Manual_Hunting_Skeleton.page.9	Skeletons¶===================¶Being in Water makes you an easy Target for the Skeleton, since you are slow and constantly get knocked back. But the Skeleton being in Water can be worse as it bounces up and down without losing accuracy!	review
+book	Manual_Hunting_Spider.page.0	Hi, I'm Alex Grylls, Adventurer and experienced Hunter of the several Mobs you encounter in our World. In this Guide I will explain you easy Methods to hunt for wild Mobs in their natural Habitats.	review
+book	Manual_Hunting_Spider.page.1	Spiders¶===================¶Spiders, octo-legged, climbing, pastry selling Arthropods, that can jump at you. Often accompanied by a random Potion Effect, which doesn't ever run out, making them invisible, resistant, regenerating or faster.	review
+book	Manual_Hunting_Spider.page.10	Cave Spiders¶===================¶Cave Spiders are just 1m in diameter and they inject poison when they melee you. They normally only spawn inside Mineshafts, since there are Spawners for them over there.	review
+book	Manual_Hunting_Spider.page.11	Cave Spiders¶===================¶The Spawners are surrounded by lots and lots of Webs, those webs will slow you down, so take your Sword or Silk Touch Shears and slice those Webs away, also useful if you need String.	review
+book	Manual_Hunting_Spider.page.12	Cave Spiders¶===================¶Cave Spiders often get Stuck at the wooden Pillars or hide in the ceiling at those, so be careful where you walk as they will fall down at you very surprisingly despite making lots of noise.	review
+book	Manual_Hunting_Spider.page.13	Cave Spiders¶===================¶Due to them being poisonous, Milk or any sort of Antidote Pill are useful Items to have on your Hotbar. Also hiding from them by closing off Paths is very needed sometimes.	review
+book	Manual_Hunting_Spider.page.2	Spiders¶===================¶They are fast, usually faster than you unless you run. They can also climb to a certain extend, so Walls won't help much, however Spiders can easily get stuck on ceilings, where they could fall down on you!	review
+book	Manual_Hunting_Spider.page.3	Spiders¶===================¶The normal way to beat them is already very effective, just melee or shoot them. They have less Health than other Mobs. The Bane of Arthropods Enchant is very effective on them.	review
+book	Manual_Hunting_Spider.page.4	Spiders¶===================¶Spiders will jump/pounce at you when they are close, if you time it right then hitting them will knock them back farther than usual. Also always have the high Ground when fighting Spiders as otherwise they'll jump you.	review
+book	Manual_Hunting_Spider.page.5	Spiders¶===================¶If you are in a Desert, then look out for some tsundere Plants called 'Cactus', plural being 'Cactii', Spiders apparently love climbing them, damaging themselves in the process.	review
+book	Manual_Hunting_Spider.page.6	Spiders¶===================¶At daytime, Spiders are tired and usually not aggressive. If you attack them then and with critical hits, then they will die by the surprise and won't damage you.	review
+book	Manual_Hunting_Spider.page.7	Spiders¶===================¶Running is the best thing to do when fighting Spiders, not running away, I mean running at them or keeping a safe distance during combat. Spiders are immune to Poison, so splashing them with it isn't effective at all.	review
+book	Manual_Hunting_Spider.page.8	Spiders¶===================¶They get stuck at overhangs, meaning if you build a pillar with 4 overhang blocks (one at each side) Spiders won't get up and you can damage them from ontop of that pillar.	review
+book	Manual_Hunting_Spider.page.9	Spiders¶===================¶due to being 2m in diameter, hiding in a 1m tight spot is a good idea when fighting regular Spiders. This doesn't work on the poinsonous Cave Spiders though.	review
+book	Manual_Hunting_Witch.page.0	Hi, I'm Alex Grylls, Adventurer and experienced Hunter of the several Mobs you encounter in our World. In this Guide I will explain you easy Methods to hunt for wild Mobs in their natural Habitats.	review
+book	Manual_Hunting_Witch.page.1	Witches¶===================¶Witches are uglier Villagers with Potion Skills. When damaged they will drink a Potion of Regeneration or Fire Resistance depending on the source of the Damage. They sometimes drop the **most recently used** Potion.	review
+book	Manual_Hunting_Witch.page.2	Witches¶===================¶Their attacks are Splash Potions of Poison and Harming. Since they use Fire Resistance Potions 'BURN THE WITCH!!!' is not an attack option for you. Drowning doesn't work either, as they use Water Breathing Potions.	review
+book	Manual_Hunting_Witch.page.3	Witches¶===================¶Bow and Arrow are ofcourse a good option, but if you have to melee then do it fast and run straight at the Witch to hit them. This will cause the Witch to try healing themself instead of attacking you.	review
+book	Manual_Hunting_Witch.page.4	Witches¶===================¶A Bucket of Water can give you the needed distance from the Witch in order to attack them with ranged Weapons. But watch out, if you are too far away, the Witch may use Speed Potions to be able to catch up with you.	review
+book	Manual_Hunting_Witch.page.5	Witches¶===================¶In swampy Areas there is the possibility to find Witch Huts, those Huts may be very small but only Witches can spawn in there, meaning a Mob Spawning Area built around it will only spawn Witches!	review
+book	Manual_Hunting_Witch.page.6	Witches¶===================¶Witches drop Empty Bottles, Sticks, Redstone, Glowstone, Sugar, Spider Eyes, Gunpowder and Potions. This makes them a valuable Mob to farm and also a way to get Glowstone and Potions without the Nether.	review
+book	Manual_Hunting_Zombie.page.0	Hi, I'm Alex Grylls, Adventurer and experienced Hunter of the several Mobs you encounter in our World. In this Guide I will explain you easy Methods to hunt for wild Mobs in their natural Habitats.	review
+book	Manual_Hunting_Zombie.page.1	Zombies¶===================¶Zombies, the most common Mob in Minecraft. Zombies always attack with Melee Damage and they can wield Weapons and wear Armor.	review
+book	Manual_Hunting_Zombie.page.10	Zombies¶===================¶As always, Bow and Arrows can help you killing Zombies, it is a good Idea to use golden Arrows or other Smite Arrows if possible. But usually there are too many of them to kill all.	review
+book	Manual_Hunting_Zombie.page.11	Zombies¶===================¶Use Knockback on Zombies even if not needed, otherwise there might be too many Zombies grouping up at you if you are surrounded, so keep them at distance.	review
+book	Manual_Hunting_Zombie.page.12	Zombies¶===================¶Keep Zombies in the Water, they are almost helpless there and can't shoot you like Skeletons would. They are swimming much slower than you do.	review
+book	Manual_Hunting_Zombie.page.13	Zombies¶===================¶Iron Golems are made for killing Zombies, they might be a viable option for your purposes.	review
+book	Manual_Hunting_Zombie.page.14	Zombies¶===================¶The official Mojang term for Zombies wearing golden Armor is 'Zom-Bling'.	review
+book	Manual_Hunting_Zombie.page.15	Baby Zombies¶===================¶Annoying little Bastards would be a better Name for them, not only that they are immune to Sunlight, they are also very fast and hard to hit!	review
+book	Manual_Hunting_Zombie.page.16	Baby Zombies¶===================¶If you didn't need the Anti Zombie Strategies before, then now you probably need to use them, since those little things can ruin your day.	review
+book	Manual_Hunting_Zombie.page.17	Baby Zombies¶===================¶If you have the option, go for the Water, they aren't fast there. Other than that, mow your lawn and then aim low and hit them as fast as you can!	review
+book	Manual_Hunting_Zombie.page.18	Chicken Jockeys¶===================¶Thought it couldn't get any worse? Chickens are faster than those Baby Zombies and now they actually ride the Chickens!	review
+book	Manual_Hunting_Zombie.page.19	Chicken Jockeys¶===================¶Shoot the Chicken, yes get rid of it as fast as possible, you won't be able to Melee it as the Zombie is in the way, but you can try to shoot it!	review
+book	Manual_Hunting_Zombie.page.2	Zombies¶===================¶Zombies are grouped amoung the Undead Mobs, meaning they can be damaged by Sunlight, since it sets them on Fire. However, this does not apply to Baby Zombies!	review
+book	Manual_Hunting_Zombie.page.20	Chicken Jockeys¶===================¶Other than that? Run for your life and try to either find a pond of water or use a Water Bucket on them, maybe you get it to dismount by doing so!	review
+book	Manual_Hunting_Zombie.page.21	Zombie Pigmen¶===================¶Zombie Pigmen, usually wielding a Golden Sword and dropping Gold Nuggets. The only pieceful Zombie, well peaceful until a Player harms it.	review
+book	Manual_Hunting_Zombie.page.22	Zombie Pigmen¶===================¶If a Player does any damage to a Zombie Pigman, all the other Pegmen get angry and try to kill you, not only are they pretty fast, but they also do lots of Damage!	review
+book	Manual_Hunting_Zombie.page.23	Zombie Pigmen¶===================¶Zombie Pigmen are immune to Fire and the Sun, if you happen to find one in the Overworld (Pig struck by Lightning, or fresh from a Portal) it is usually safe to kill.	review
+book	Manual_Hunting_Zombie.page.24	Zombie Pigmen¶===================¶The easiest Solution is not to harm them, but it always can happen that you accidentially do harm to them, or you mine the Ores of that Nether Ores Mod.	review
+book	Manual_Hunting_Zombie.page.25	Zombie Pigmen¶===================¶In that case, pillar up or dig yourself in, as fast as possible! You don't want to die instantly and drop all your Inventory into the Nether.	review
+book	Manual_Hunting_Zombie.page.26	Zombie Pigmen¶===================¶Once you have done that, make yourself a comfortable spot to attack the Pigmen from a space where they cant attack you.	review
+book	Manual_Hunting_Zombie.page.27	Zombie Pigmen¶===================¶Since most of the times you are in the Nether with these Mobs, placing a Nether Portal close by to lure Mobs inside it, by hiding behind it, might be a good Idea (if you don't plan to use that Portal later).	review
+book	Manual_Hunting_Zombie.page.28	Zombie Pigmen¶===================¶As they are undead like normal Zombies aswell, Splash Potions of Regeneration and Healing can deal great damage to them, while leaving yourself unharmed.	review
+book	Manual_Hunting_Zombie.page.29	Zombie Villagers¶===================¶They behave just like normal Zombies, even though they look much worse, the only difference is that you can cure them to get Villagers, what will be explained in the following Pages.	review
+book	Manual_Hunting_Zombie.page.3	Zombies¶===================¶Due to being undead, Healing Splash Potions deal damage to them, while poisoning ones heal them. The Smite Enchant is a good way to cause a lot of damage on them.	review
+book	Manual_Hunting_Zombie.page.30	Zombie Villagers¶===================¶First of all, you need a good place to actually cure that Zombie without other Zombies turning the Villager right back into the undead Green.	review
+book	Manual_Hunting_Zombie.page.31	Zombie Villagers¶===================¶For that you need to know, that the Transformation back into a Villager for some reason goes by faster if you use vanilla Iron Bars for the Cage.	review
+book	Manual_Hunting_Zombie.page.32	Zombie Villagers¶===================¶Once you got the Cage, there are multiple Options on the Item you use to cure the Villager Zombie. There are multiple options.	review
+book	Manual_Hunting_Zombie.page.33	Zombie Villagers¶===================¶Splash Potions of Weakness + Golden Apples are one way. Holy Water or the rainbow colored Cure-All Pill are other alternatives. Get the Item of your choice and continue.	review
+book	Manual_Hunting_Zombie.page.34	Zombie Villagers¶===================¶Now you need to somehow lure the Zombie Villager into your Cage. Don't worry, the Villager won't remember that you punched them while they were a Zombie.	review
+book	Manual_Hunting_Zombie.page.35	Zombie Villagers¶===================¶A fishing Rod can also work wonders on moving the Zombie into the right directions. Punching them into a pit and closing it off, will work aswell.	review
+book	Manual_Hunting_Zombie.page.36	Zombie Villagers¶===================¶If your Cage is outside (or improvised), then make sure the Sun won't burn the Villager before you can heal them. Add a Roof or something to your Cage, once you caught them.	review
+book	Manual_Hunting_Zombie.page.37	Zombie Villagers¶===================¶So, now that you got the Villager into a Cage, you can heal them. Once you have done that, transport the Villager somewhere else, maybe with Rails and Minecarts.	review
+book	Manual_Hunting_Zombie.page.4	Zombies¶===================¶Do not underestimate their Melee Damage and try to keep a safe distance while attacking them, make sure they dont hit you when you Melee them yourself.	review
+book	Manual_Hunting_Zombie.page.5	Zombies¶===================¶While wearing a Helmet they are immune to the Sun, that is until the Helmet loses all of its durability and breaks as it gets damaged when worn by a Zombie in Sunlight.	review
+book	Manual_Hunting_Zombie.page.6	Zombies¶===================¶Zombies are attracted by Villagers, you can use them to distract them. If you want them to murder that Village, that is.	review
+book	Manual_Hunting_Zombie.page.7	Zombies¶===================¶They can detect you from very far distances and will therefore end up swarming you from all directions, if you are not careful.	review
+book	Manual_Hunting_Zombie.page.8	Zombies¶===================¶Build yourself a small fortification if you are in the wild. Zombies luckily cannot break Blocks so they won't be able to attack you if you build it right.	review
+book	Manual_Hunting_Zombie.page.9	Zombies¶===================¶Since Zombies normally group up on you due to coincedential pathfinding, it is well advised to just throw Splash Potions of Regeneration or Healing at them, since they are damaged by those.	review
+book	Manual_Microwave.page.0	恭喜，你将一本空白的书放入微波炉中，这些文字就这样凭空出现了。	auto
+book	Manual_Microwave.page.1	你刚刚获得了一个微波炉，可能在想'我为什么需要它？'。答案很简单，微波炉只需消耗128 EU就能以惊人的速度加热食物。即使是普通的电炉也无法如此快速和经济地完成烹饪！	auto
+book	Manual_Microwave.page.2	这是最经济快捷的烹饪方式。因此，微波炉几乎可以在每个厨房中找到（详见 www.youwannabuyakitchen.ly）。	auto
+book	Manual_Microwave.page.3	长时间暴露于微波下可能会导致癌症，但Steve能否能活到因此而死还是个问题。	auto
+book	Manual_Microwave.page.4	不要放入任何金属物品。这可能导致爆炸。	auto
+book	Manual_Microwave.page.5	不要用它来烘干动物。无论你放入什么动物，结果都只会是一根热狗。	auto
+book	Manual_Microwave.page.6	不要放入易燃物体。微波炉会因此起火。	auto
+book	Manual_Microwave.page.7	不要放入诸如鸡蛋之类的爆炸物。请一定遵守这一条。	auto
+book	Manual_Portal_TF.page.0	This Books existence means that you found a GregTech 6 Dungeon with a Twilight Forest Portal inside of it, congratulations. If you don't know how to light the Portal to go on the Adventure, don't worry, in here are some instructions.	review
+book	Manual_Portal_TF.page.1	Step 1: You see the 4x4 of Grass Blocks with 12 Flowers growing on it and a 2x2 Pool of Water in the middle? That is going to be the Twilight Forest Portal.	review
+book	Manual_Portal_TF.page.10	In general all Loot Chests in Twilight Forest can be picked up wholesale as long as you have never opened them before. That way you can bring them home without cluttering your Inventory and then open them there safely.	review
+book	Manual_Portal_TF.page.100	If you combine various Trophies you got on your Journey, you will receive the Orb of Annihilation. It will grant any Holder all Progression Achievements of Twilight Forest. Just make sure that when you use the thing that you are NOT in your Base.	review
+book	Manual_Portal_TF.page.101	Placing a Snow Queen Trophy (or any of the earlier placeable Trophies) somewhere, will let anyone who rightclicks the Trophy receive all related Progression Achievements as if they collected it, so that they can enter the various Biomes.	review
+book	Manual_Portal_TF.page.102	This should conclude all the Stuff about Twilight Forest that seems noteworthy, aswell as most of the changes I made to improve the gameplay and add variety.¶-------------------¶Have Fun! ^^	review
+book	Manual_Portal_TF.page.11	If you find small ruined Buildings, it is well advised to break their wooden Floor and dig a three block deep hole to see if there is a hidden Chest in the Basement. It is a 50:50 chance for it to exist.	review
+book	Manual_Portal_TF.page.12	Water Wells can be found all over the place, it is important to note that some Wells have a Chest hidden at their Bottom. Only the Wells that have a 1-by-1 of Water can randomly have such a Chest, the ones that are 2-by-2 will never have it.	review
+book	Manual_Portal_TF.page.13	Hollow Trees can contain multiple Chests accompanied by Spider Spawners. The tiny Spiders and their noise make it easy to find, and even early Tools kill them in one hit. Bigger Hollow Trees tend to have more Chests in their Foliage.	review
+book	Manual_Portal_TF.page.14	Hedge Mazes are the next logical Step to find some Loot. First look from above where all the Rooms are, then rush for each of them, axe all the Chests, and run. Most of the Mobs in there are not hard to beat.	review
+book	Manual_Portal_TF.page.15	Ironwood is easy as you only need some Hematite/Magnetite, Gold, and some Liveroot you get from picking up Sticks. A Mortar, a Mixing Bowl, a Furnace and Stone Anvils with Stone Hammers are all you need to make basic Equipment of it.	review
+book	Manual_Portal_TF.page.16	Hollow Hills are something you can try once you are all armored up, nab some Chests from one of those. Beware it is full of very deadly and explosive Mobs, so you need to be constantly on the run and hide behind the many Stalagmites.	review
+book	Manual_Portal_TF.page.17	Steeleaf may have low durability, but it is one of the Materials you can easily get good Fortune and Looting Enchanted Tools and Arrows from, and has the Item-Auto-Collecting Ability for many GT Tools. But it will turn into regular Steel if melted.	review
+book	Manual_Portal_TF.page.18	Naga Arena¶===================¶This is the first Boss you need to defeat. All you need is 8 solid Blocks, a Bow and a few Stacks of Arrows. Run into the Arena and let the Naga spawn, then immediately pillar up 8 Blocks and attack with the Bow.	review
+book	Manual_Portal_TF.page.19	Naga Arena¶===================¶The Naga will almost definitely kill you in Melee Combat so using ranged Weapons is the best way. And those Pillars that are already in the Arena are a good hint that you should get up and out of Melee Range.	review
+book	Manual_Portal_TF.page.2	Step 2: All you need to do to activate that Portal, is throwing a Diamond into that Water Pool, and you are ready to go. Yep, it is that simple. I did all the work for you and summoned the Blocks of the Portal in the right configuration.	review
+book	Manual_Portal_TF.page.20	Naga Arena¶===================¶If against better judgement you wish to engage the Naga in Melee Combat, you better get well enchanted Armor. Also walk around the Naga Arena once to make sure all Chunks are generated and Worldgen Lag wont kill you.	review
+book	Manual_Portal_TF.page.21	Naga Arena¶===================¶The Naga Trophy you get can be used to produce KU through a Magic Field Absorber. Naga Scales can be used to make Chestplates and Leggings, but are worthless otherwise. You are able to get into Lich Towers now.	review
+book	Manual_Portal_TF.page.22	Lich Tower¶===================¶In order to enter this place you might need to kill a Naga first and touch its Trophy. The Lich Tower has one big Double Helix Central Staircase with Bridges inbetween that contain typical Dungeon Mob Spawners.	review
+book	Manual_Portal_TF.page.23	Lich Tower¶===================¶Those Mob Spawners can be lit up by putting two Firefly Jars or similar Light Sources 1 horizontal Block away from them on opposite ends. These Spawners can create Zombies, Skeletons or various Spiders.	review
+book	Manual_Portal_TF.page.24	Lich Tower¶===================¶There will not only be Spawner Mobs but also special Mobs that spawn normally. The special one in this case being a flying Tome, that drops Paper for each hit. Have fun punching it for maximized Paper drops.	review
+book	Manual_Portal_TF.page.25	Lich Tower¶===================¶At the Ground Level of the Tower is four Side Buildings, which likely contain quite a bit of Loot Chests, you should try getting into each of those by breaking into the Walls from the Outside.	review
+book	Manual_Portal_TF.page.26	Lich Tower¶===================¶The Lich is located at the top of the Staircase, and has FIVE Shields that need to be destroyed before taking Damage. To destroy a Shield you need reflect their Projectiles at them (nearly impossible in Multiplayer!).	review
+book	Manual_Portal_TF.page.27	Lich Tower¶===================¶An alternative Method for destroying a Shield is hitting it with 1.5+ Hearts of any Armor penetrating Damage. For example Smite Bullets, Pickaxes, Falling Damage and Splash Potions of Healing (but NOT Regeneration!).	review
+book	Manual_Portal_TF.page.28	Lich Tower¶===================¶Using things like Withering Damage to attack the Lich works only when all Shields are down. Damage Immunities include: Fire, Poison, Drowning, Harming Potions and anything else Undead are immune to.	review
+book	Manual_Portal_TF.page.29	Lich Tower¶===================¶Zombies and Shadowclones of the Lich will be summoned occassionally to distract you from the real Target. Avoid hitting the Shadowclones, but do kill the Zombies as they will swarm you otherwise.	review
+book	Manual_Portal_TF.page.3	Step 3: So, now that you have a Portal to the Twilight Forest, all you need to do is jump in. You don't even need Materials to prepare or anything.	review
+book	Manual_Portal_TF.page.30	Lich Tower¶===================¶The Lich Trophy you get can be used to produce QU through a Magic Field Absorber. The Scepter will either allow you to drain Life or to summon helpful Zombies. They can be reloaded in the crafting Grid.	review
+book	Manual_Portal_TF.page.31	Minoshroom Maze¶===================¶Each Fire Swamp is surrounded by four regular Swamps, which each contain a Maze full of Minotaurs, Slimes, annoying Insects, Loot and sometimes flooded with Swamp Water. Kill a Lich first before going here.	review
+book	Manual_Portal_TF.page.32	Minoshroom Maze¶===================¶Minotaurs will charge at you very quickly and from any angle. To easily get rid of the. use a Weapon with the Werebane Enchantment, which works on them and weakens them drastically.	review
+book	Manual_Portal_TF.page.33	Minoshroom Maze¶===================¶Maze Slimes behave like the normal ones and are just as vulnerable to the Dissolving Enchantment. If you have Thaumcraft, use the Fire Wand Focus for the tiny leftover Slimes, to save on your Weapons durability.	review
+book	Manual_Portal_TF.page.34	Minoshroom Maze¶===================¶Around the Entrance are a lot of Vines, harvest them with a Knife and craft Ropes out of them, which you can then use to get down the Hole. Bring extra Rope for going from the Upper Level to the Basement Level!	review
+book	Manual_Portal_TF.page.35	Minoshroom Maze¶===================¶Try to follow the universal Rules of Maze traversal, which you could train over at the Hedge Maze. Placing Torches always on the righthand side Walls helps you find the way back easily.	review
+book	Manual_Portal_TF.page.36	Minoshroom Maze¶===================¶You may be able to find a Maze Map Focus in one of the Loot Chests. Use it to craft a Maze Map and rightclick it while you stand on the ground of the Basement Level. Dont waste it on the Upper Level!	review
+book	Manual_Portal_TF.page.37	Minoshroom Maze¶===================¶The Maze Map works everywhere, even your Base should you choose so. You can also upgrade an empty Maze Map into an Ore Map and go mining with it. Though if you got Ore Magnets you wont really need that.	review
+book	Manual_Portal_TF.page.38	Minoshroom Maze¶===================¶There is a few Rooms with Mob Spawners and Loot Chests inside the Pillars. Other Loot Chests can be found in Dead Ends, just beware that those are likely TNT trapped with more than one trigger!	review
+book	Manual_Portal_TF.page.39	Minoshroom Maze¶===================¶The Room with the Minoshroom is at the Basement Level and blocked off by Fences. Just break a Fence out of the middle and shoot the Minoshroom with a Bow and a bunch of Arrows. Four Loot Chests await you inside.	review
+book	Manual_Portal_TF.page.4	Once you are inside of the Twilight Forest you can gather up Materials from the ground as usual. A good recommendation would be to find a Firefly Forest and grab a bunch of the Firefly Jars there, because they are blocklike Torches.	review
+book	Manual_Portal_TF.page.40	Minoshroom Maze¶===================¶Among the drops of the Minoshroom are Meef Stroganoff, a useless Food Item, and a +1 Diamond Axe that supposedly deals +3.5 Hearts of Extra Damage when you charge at Enemies (may be bugged, test it yourself).	review
+book	Manual_Portal_TF.page.41	Minoshroom Vault¶===================¶There is a secret Vault full of high value Loot Chests hidden in the Maze. It occupies 3 by 3 grid spaces worth of Basement Level Maze with very thick Walls. With the Maze Map you can easily find it.	review
+book	Manual_Portal_TF.page.42	Minoshroom Vault¶===================¶The Vault Room on the Basement Level is trapped, try digging at Floor Height and with an Autocollecting Pickaxe to avoid the Wooden Pressure Plates triggering the TNT next to the Chests.	review
+book	Manual_Portal_TF.page.43	Hydra Cave¶===================¶Once you have killed the Minoshroom, you can go into the Fire Swamp in the center of the Swamplands to find the Hydra Cave, the home of the aforementioned Hydra. Though there is only Ores to be found there, no Loot.	review
+book	Manual_Portal_TF.page.44	Hydra Cave¶===================¶Trying to attack the Hydra can be tricky, because if you are too far away from it, all ranged Damage you deal will be nullified, and when you are close enough it will spew explosives at you.	review
+book	Manual_Portal_TF.page.45	Hydra Cave¶===================¶In order to deal damage to it, you need to hit the Heads while their Mouth happens to be open. It will always rotate towards you, so try to avoid having the Hydra kite you away, while all other Heads attack!	review
+book	Manual_Portal_TF.page.46	Hydra Cave¶===================¶It has a high damage Bite Attack instant killing you if you dont wear Protection enchanted Armor, and a Fire Breathing Attack for which you should drink a Fire Resistance Potion ahead of time.	review
+book	Manual_Portal_TF.page.47	Hydra Cave¶===================¶To engage in Melee, you should wear strong Armor with at least one high Level regular Protection Enchantment, drink a Fire Resistance Potion and a Regeneration Potion, and get a Sword or Axe with Sharpness.	review
+book	Manual_Portal_TF.page.48	Hydra Cave¶===================¶The Hydra Trophy you get can be used to produce HU through a Magic Field Absorber. Its Blood can be used to imbue Steels including Steeleaf with a Fiery Aura, enabling Auto-Smelt on Tools and incinerating opponents!	review
+book	Manual_Portal_TF.page.49	Knight Stronghold¶===================¶Time for the Dark Forest, there is four Knightly Strongholds in there. They are underground, but you need to find the Entrance in the Forest and put one of your Trophies onto its pedestal to open it up.	review
+book	Manual_Portal_TF.page.5	The Obsidian Pillars you see spread all over the place have a Block of Lapis Lazuli at their Top, it is sometimes easier to get that then to go mining. These Pillars also have Ravens around them, if you need a Feather for a Magic Map Focus.	review
+book	Manual_Portal_TF.page.50	Knight Stronghold¶===================¶You should bring Ropes to the Stronghold as not all Areas inside of it are connected with Stairs. You will also need something that can get rid of Obsidian easily as the Tomb is encased in it.	review
+book	Manual_Portal_TF.page.51	Knight Stronghold¶===================¶The Mobs include: Helmet Crabs, Two Babies in a Trenchcoat wielding a Spear can be split in two by attacking from the back, The Sapper throwing TNT at you, And little Kids spinning Spikeballs around.	review
+book	Manual_Portal_TF.page.52	Knight Stronghold¶===================¶Speaking of Spikeball, you can craft one of those too from a lot of Knightmetal Ingots. Later there is even an upgrade to it to 'annihilate' your Enemies and the Terrain even more!	review
+book	Manual_Portal_TF.page.53	Knight Stronghold¶===================¶There is a few 3 by 3 structures made of Stone Brick Stair Blocks. Remove one of those Stairs to reveal a trapped Loot Chest hidden inside of it. They are often hidden behind actual Staircases too.	review
+book	Manual_Portal_TF.page.54	Knight Stronghold¶===================¶Search the Stronghold until you find an Obsidian Wall visible behind some Iron Bars. Break through the Obsidian Wall into the Tomb behind it. The Phantoms will spawn once you enter.	review
+book	Manual_Portal_TF.page.55	Knight Stronghold¶===================¶A lot of times the Tombs are completely disconnected from the Entrance too, because the whole Stronghold does not generate well. Just dig around a little to see if something is behind a Wall.	review
+book	Manual_Portal_TF.page.56	Knight Stronghold¶===================¶The Phantoms will only track you down a limited distance and then go back to the Tomb, so you can bait them out and kill them one by one. They look more scary than they actually are.	review
+book	Manual_Portal_TF.page.57	Knight Stronghold¶===================¶They throw a LOT of Weapons at you, but they only really distract from their melee attacks. Phantoms do NOT count as Undead for the sake of the Smite Enchantment and Splash Potions of Harming.	review
+book	Manual_Portal_TF.page.58	Knight Stronghold¶===================¶Make sure to NOT place anything in the middle of the Tomb, such as Torches, because if the spot where the Loot Chest is supposed to be is blocked, it will not spawn!	review
+book	Manual_Portal_TF.page.59	Knight Stronghold¶===================¶It is possible for there to be more than one Tomb, and every Tomb can be connected on four Sides, so breaking through the other Walls from the inside of the Tomb may unearth more of the Stronghold!	review
+book	Manual_Portal_TF.page.6	Lakes are just boring Bodies of Water, not even Squids spawn inside of them, due to the Twilight Forest being of a too low Y Level to do so. I guess the Lake is a good place to go fishing or build some IC2 Water Power Generator.	review
+book	Manual_Portal_TF.page.60	Knight Stronghold¶===================¶Killing the Phantoms will cause Mobs to no longer spawn inside the Stronghold, giving you an easier time to find more Tombs in there. However sometimes listening for hostile Mobs can point you places.	review
+book	Manual_Portal_TF.page.61	Knight Stronghold¶===================¶Weapons and Armor of the Phantoms are not special or worthwhile, so dont bother. The Knightmetal Weapons supposedly deal +1 Heart of Extra Damage to the opponent (may be bugged, test it yourself).	review
+book	Manual_Portal_TF.page.62	Dark Tower¶===================¶Found in the center of the Dark Forest, the Dark Tower is the most complex Dungeon of the Twilight Forest in this Minecraft Version. You better bring a few Enderpearls and Ropes with you, just in case.	review
+book	Manual_Portal_TF.page.63	Dark Tower¶===================¶Getting to the Tower is honestly easiest if you just walk ontop of the Dark Forest itself, way less Bushes and Trees blocking your way. Not to mention you can easily see the Dark Tower from a distance.	review
+book	Manual_Portal_TF.page.64	Dark Tower¶===================¶If you just wanna cheat and pillar up to the Roof of the Tower, beware of the big Rooftop Ghasts that will likely knock you off the Pillar and to your Death. So maybe you should try take the normal Entrance.	review
+book	Manual_Portal_TF.page.65	Dark Tower¶===================¶To enter the Tower go to one of the Red marked Doors and rightclick it. These Doors are nice and you could harvest some of them for your Base if you would like. There is also crafting Recipes for them.	review
+book	Manual_Portal_TF.page.66	Dark Tower¶===================¶Many of the Segments of this Tower have Anti-Builders in them, which prevent you from placing Blocks and will replace any broken Blocks. But they have a slight delay, enough to get into Fences for example.	review
+book	Manual_Portal_TF.page.67	Dark Tower¶===================¶There is a lot of burning Holes in the Tower, for which you will have to place Blocks or Ropes, or throw Enderpearls to get past those. Destroying any Anti-Builders you find is highly recommended.	review
+book	Manual_Portal_TF.page.68	Dark Tower¶===================¶Some Segments have Carminite Builders with Levers. Flip the Lever and look into the direction you want to go, and it will slowly place a Bridge of Blocks going there. You could harvest them for use with your Base.	review
+book	Manual_Portal_TF.page.69	Dark Tower¶===================¶Blaze Spawners can be spawnblocked by just putting eight Firefly Jars on their exact Y-Level in a Ring one Block away from their Pillar. So two Blocks above ground, barely enough space to walk under the Jars.	review
+book	Manual_Portal_TF.page.7	The Mushroom Fortress is currently not in use. No Loot or anything in there, not even Staircases or Ladders, you could make a Base inside of it though.	review
+book	Manual_Portal_TF.page.70	Dark Tower¶===================¶Locked Doors are found between Major Tower Segments. In order to open them you need to find four Tower Keys and rightclick each Corner with one of them. Or just break the Doorframe or something if you wanna cheat.	review
+book	Manual_Portal_TF.page.71	Dark Tower¶===================¶Tower Keys are found in the Knightmetal Chests of the smaller Side Towers. You can just harvest the whole Chest and the Key will drop out of it anyways, even if the Chest Loot has not been generated yet.	review
+book	Manual_Portal_TF.page.72	Dark Tower¶===================¶Golem and Spider Spawners are often found inside the Side Towers. Trapdoor Setups and partially broken Redstone Contraptions can be found too, as well as many Wooden and Metal Loot Chests.	review
+book	Manual_Portal_TF.page.73	Dark Tower¶===================¶Ghastlings can be found in various places around the Tower, usually they will not shoot you until you stare at them. Other than that they are basically Ghasts.	review
+book	Manual_Portal_TF.page.74	Dark Tower¶===================¶Towerwood Borers infest the entire Towers Walls, their Borer Essence can be used in a few Crafting Recipes related to the Devices you can find around the Dark Tower.	review
+book	Manual_Portal_TF.page.75	Dark Tower¶===================¶At the Top Segment of the Tower you will see Boxes with Pistons for pushing Redstone Blocks into them. When you push all four Redstone Blocks, the Box will turn into Gold and Diamonds ready for you to harvest.	review
+book	Manual_Portal_TF.page.76	Dark Tower¶===================¶To fight the Ur-Ghast I recommend using a Stack of high quality Arrows and an Enchanted Bow. If you have access to the Implosion Enchantment by using things like Gem Arrows, it works great on any type of Ghasts.	review
+book	Manual_Portal_TF.page.77	Dark Tower¶===================¶There is a 'special' other way to beat the Ur-Ghast using one of the four Ghost Busters References, whenever they have been charged enough by killing the small Ghasts around, and the Ur-Ghast is directly above it.	review
+book	Manual_Portal_TF.page.78	Dark Tower¶===================¶The Ur-Ghast Trophy you get can be used to produce LU through a Magic Field Absorber. Make sure you got the Achievement for collecting the Trophy! The Fiery Tears can be used on Steels just like Fiery Blood.	review
+book	Manual_Portal_TF.page.79	Yeti Cave¶===================¶Deep in the Wintery Forest you will find the Yeti Cave, complete with iced Floors and a herd of Yetis at each of the four Entrances. In the center the Alpha Yeti will wait for you to get close or attack him.	review
+book	Manual_Portal_TF.page.8	The Questing Ram is an Animal you can find in the middle of a Biome full of Rainbow Trees. If you click it with one of each type of Wool it will reward you with the Crumble Horn, a somewhat useful Mining Tool, and some Blocks of Resources.	review
+book	Manual_Portal_TF.page.80	Yeti Cave¶===================¶The Alpha Yeti himself is quite the Cry-Baby, you can kill him with a Flame Bow very easily, even when he is immune to Arrows, and whenever you hit him he will throw a tantrum and make Ice fall from the ceiling.	review
+book	Manual_Portal_TF.page.81	Yeti Cave¶===================¶Should he grapple you like a Pinchbeetle, just hit him until he gives you up and lets you down, so you can run around and desert him.	review
+book	Manual_Portal_TF.page.82	Yeti Cave¶===================¶The Yetis drop Fur which can be used for Armors, or you just take a Knife to the Crafting Grid and remove the Fur to make Leather out of it instead. The Ice Bombs can be fun to throw at unsuspecting Yetis too.	review
+book	Manual_Portal_TF.page.83	Aurora Tower¶===================¶A Blue-Green Tower is located ontop of the Glacier. It is a straight forward Dungeon with a little bit of Parkour. Look at the ceiling of each Room for 'hidden' Chests.	review
+book	Manual_Portal_TF.page.84	Aurora Tower¶===================¶Three kinds of Mobs spawn inside of it, frosty Armored Ghosts, 'Ice Blazes' which drop Blizz Rods, and corrupt 'Ice Blazes' which explode after you kill them changing the Terrain in a weird way.	review
+book	Manual_Portal_TF.page.85	Aurora Tower¶===================¶While climbing the insides of the Tower you will eventually end up finding a Room with an Ice ceiling, where you have to break through the ceiling multiple times to get up to the Snow Queen.	review
+book	Manual_Portal_TF.page.86	Aurora Tower¶===================¶On the topmost Ice Layer you will find the Snow Queen. She is floating ontop of a platform of Ice. Hitting that floating Platform will do no damage to her at all. You need to hit her from the top.	review
+book	Manual_Portal_TF.page.87	Aurora Tower¶===================¶There will be one or two 'Ice Blazes' she summons every now and then. They do mostly melee damage. She will move up and down a lot in attempt to dodge attacks, and with the Ice Platform block attacks too.	review
+book	Manual_Portal_TF.page.88	Aurora Tower¶===================¶She has a Frost Breath that deals only Damage without any Side Effects. While breathing at you, you can hit her to make her stop the attack, though it's not really all that easy to do before she stops on her own.	review
+book	Manual_Portal_TF.page.89	Aurora Tower¶===================¶The Snow Queen Trophy you get can be used to produce CU through a Magic Field Absorber. She drops a Tri-Bow or a Seeker-Bow, both of which are fun Weapons. The Ender-Bow wont teleport you when using Looting Arrows.	review
+book	Manual_Portal_TF.page.9	Druid Huts contain a Skeleton Druid Spawner, which is a renewable source of Torchberries, and a Netherrack Block that is lit on Fire. The Roof is made of Petrified Wood and therefore not flammable. There is no other Loot in there.	review
+book	Manual_Portal_TF.page.90	Troll Caves¶===================¶Up in the Highlands are the Troll Caves, a place full of various vanilla Mobs and the namesake of the Caves, Trolls. The Walls are lined with 'Troll Steinn', an ugly Block that indicates presence or lack of Light.	review
+book	Manual_Portal_TF.page.91	Troll Caves¶===================¶Many Plants unique to these Caves are located within, such as huge Mushglooms and Troll Berries, the latter of which will randomly ripen when in contact with Light, resulting in Torchberries and therefore more Light.	review
+book	Manual_Portal_TF.page.92	Troll Caves¶===================¶The Trolls themselves hit like Golems, they also throw things at you. On death they cause Troll Berries to ripen, lighting up the Area. Also 2.5% to drop Magical Beans. They avoid Sunlight but are not hurt by it.	review
+book	Manual_Portal_TF.page.93	Cloud Giants¶===================¶Far above the Highlands floats a Cloud. Use the Magical Beans from the Troll Caves on the Uberous Soil beneath that Cloud to spawn a huge Bean Stalk to get up there comfortably. Could also just pillar up though.	review
+book	Manual_Portal_TF.page.94	Cloud Giants¶===================¶Up on the big walkable Cloud you will find a giant Oak Tree and a giant small Hut, where at least two Giants live, who will respawn in that Hut every once in a while. Ranged Weapons are advisable against them.	review
+book	Manual_Portal_TF.page.95	Cloud Giants¶===================¶The entire Area may seem like everything is moving slower or laggier, but this is just an optical Illusion, everything still moves at normal speed. The Giants only seem slow because their movement didn't scale up.	review
+book	Manual_Portal_TF.page.96	Cloud Giants¶===================¶You can get a Giant Sword or a Giant Pickaxe from defeating a Giant. The Pickaxe can be used to mine any of the giant Blocks, such as the giant Leaves, giant Logs, giant Obsidian and ofcourse giant Cobblestone.	review
+book	Manual_Portal_TF.page.97	Cloud Giants¶===================¶It is also possible to use those giant Blocks to craft more Giant Pickaxes and Giant Swords. Also the Boxinator is capable of merging 64 Blocks into one of the giant Blocks using the Giant Pickaxe as free catalyst.	review
+book	Manual_Portal_TF.page.98	Troll Vault¶===================¶The giant Cube of Obsidian contains the Lamp of Cinders and vanilla Endgame Loot such as Ancient Debris and Wither Skeleton Skulls. At this Version of Minecraft it's the final worthwhile Loot of Twilight Forest.	review
+book	Manual_Portal_TF.page.99	Thorn Castle¶===================¶With the Lamp of Cinders you can either burn the Thorns or use it as an infinite Lighter. The Castle itself is unfinished, so there is not much to do there. There might be Ancient Debris below the Castle.	review
+book	Manual_Printer.page.0	恭喜您获得了一台新的扫描仪和/或打印机。您在购买时收到的这本手册将非常有用。请记住，如果您丢失了它，可以让打印机为您创建一个新的。	auto
+book	Manual_Printer.page.1	首先，您需要通过设备背面为扫描仪和打印机提供电力。只需将它们插入相应电压的插座即可。接下来，您需要一根USB线缆或一个USB闪存盘来连接它们。	auto
+book	Manual_Printer.page.2	任何USB闪存盘都可以使用，因为图像和文本文件并不大，不超过USB 1.0的标准，尽管当然也可以使用更高版本的USB接口，得益于向下兼容性。	auto
+book	Manual_Printer.page.3	现在，您需要根据所需执行的任务补充打印机的墨水储备。为此仅接受化学染料。黑色用于文本，CMYK用于图像，蓝色或白色用于蓝图。	auto
+book	Manual_Printer.page.4	完成以上步骤后，是时候将需要扫描的物品放入扫描仪中进行扫描了。只需插入USB并放入您想要扫描的书籍、画布、蓝图等。如果插入方块，它也会扫描其表面。	auto
+book	Manual_Printer.page.5	成功扫描后，它会弹出可能插入的USB闪存盘以及扫描的物品。现在您可以将数据和所需的纸张/画布类型放入打印机中，让它打印您的产品。	auto
+book	Manual_Printer.page.6	打印机不仅可以打印画布和书籍，还可以执行更多类型的打印任务。NEI会帮助您了解所有可能的配方。	auto
+book	Manual_Punch_Cards.page.0	本手册将解释打孔卡的功能，它们还没有完全实现。不，它们不会像现实生活中的打孔卡。这只是一个当前的想法集合。	auto
+book	Manual_Punch_Cards.page.1	(i1&&i2)?o1=15:o1=0;=10	review
+book	Manual_Punch_Cards.page.10	如何实现循环：每个循环只需要一张打孔卡。这些卡片可以在完成后重新开始，具体取决于您插入程序循环中的其他卡片数量，因为它们会按顺序处理。	auto
+book	Manual_Punch_Cards.page.11	一个打孔卡处理器可以并行运行最多四个循环，每个循环长度为七张打孔卡。	auto
+book	Manual_Punch_Cards.page.12	您可能会问，为什么打孔卡需要墨水来制作？因为空白卡片需要有一些线条，并且对于打孔后的卡片，它会在卡片上以“人类”可读的格式打印要执行的代码。	auto
+book	Manual_Punch_Cards.page.2	忽略所有空白字符，使用 Long 类型保存数字。	auto
+book	Manual_Punch_Cards.page.3	&& || ^^ & | ^ ! ++ -- + - % / // * ** << >> >>> < > <= >= == !=  ~ ( ) ?: , ; ;= ;=X; = i0 i1 i2 i3 i4 i5 o0 o1 o2 o3 o4 o5 v0 v1 v2 v3 v4 v5 v6 v7 v8 v9 m0 m1 m2 m3 m4 m5 m6 m7 m8 m9 A B C D E F	review
+book	Manual_Punch_Cards.page.4	'0' 表示 false, '非0' 表示 true, '!' 将 '0' 转换为 '1' 并将其他所有值转换为 '0'	auto
+book	Manual_Punch_Cards.page.5	',' 用于分隔一行中多个连续执行的代码。	auto
+book	Manual_Punch_Cards.page.6	';' 表示程序在继续之前等待下一个刻。';=10' 和 ';=10;' 都表示它将等待10个刻而不是1个。而 ';=0' 或任何小于0的值默认为0。	auto
+book	Manual_Punch_Cards.page.7	如果 '=' 操作符在括号内使用，则返回被赋值的变量值。	auto
+book	Manual_Punch_Cards.page.8	程序在其NBT中保存当前任务的字符索引、10个变量（程序循环结束时重置为0）、10个成员变量以及剩余的等待时间。	auto
+book	Manual_Punch_Cards.page.9	A = 10, B = 11, C = 12, D = 13, E = 14, F = 15，仅为节省十六进制空间，因为红石仅有4个位。	auto
+book	Manual_Random.page.0	本书包含了一些可能在某些时候有用的信息。遇到问题时请阅读它，也许能找到解决方案。	auto
+book	Manual_Random.page.1	第一个提示很明显：务必总是先阅读完工具提示！工具提示通常包含了你需要的信息，但很多人懒得读完它们。它们通常包含了机器的所有数据。	auto
+book	Manual_Random.page.10	如果你需要打印机的手册，只需将化学黑色染料和一本空的原版书放入其中并提供能量。它会立即打印出该手册。	auto
+book	Manual_Random.page.11	浸洗盆和浸洗器可以使用液态染料给皮革盔甲和GT6方块上色。¶你可以在早期通过将矿石扔进装满水的炼药锅里来清洗矿石。另外，容量为334L及以上的GT管道可以给锅加水。	auto
+book	Manual_Random.page.12	为了能够在后期自动化机器而不造成混乱，请将机器稍微分散开来。每台机器之间至少留出两个方块的空间，最好是三个！忽略可能的电力损失，这是值得的。	auto
+book	Manual_Random.page.2	如果一台机器无法处理某个配方（但能处理其他配方），那么你提供的电力不足。这总是问题所在。机器的级别决定了它比正常配方多消耗多少能量。	auto
+book	Manual_Random.page.3	机器的级别如下：每刻消耗16-64GU为一级¶二级：65-256¶三级：257-1024¶四级：1025-4096¶五级：4097-16192	auto
+book	Manual_Random.page.4	如果你使用的机器级别高于配方的级别（参见其GU/t），它会将所需的输入GU/t乘以4并将处理时间除以2，使配方总耗能加倍。	auto
+book	Manual_Random.page.5	是的，64 GU/t 仍然是第一级，你确实需要向一级机器中输入这么多！通常可以使用更高级别的电机/加热器等，在最低功率输入下获得GU/t。	auto
+book	Manual_Random.page.6	GT6电力与所有使用IC² API的模组广泛兼容，如：¶IC², IC²-Classic, IC²-Addons, Railcraft, Forestry 等！	auto
+book	Manual_Random.page.7	输出电压小于1024 EU/t的设备甚至可以为以下模组的非IC²机器供电：¶Galacticraft及其附加包, Applied Energistics, Immersive Engineering, OpenModularTurrets, TechGuns 甚至 GT5U！	auto
+book	Manual_Random.page.8	任何类型的燃烧室都存在火灾隐患，确保周围只有防火材料！关闭这些燃烧室的唯一方法是在前面放置一个实心方块或使用灭火器。	auto
+book	Manual_Random.page.9	你想搬运水或获取牛奶，但没有铁桶？尝试制作一个木桶来完成这个任务，虽然它只适用于少量种类的液体，但更便宜。	auto
+book	Manual_Reactors.page.0	¶¶===================¶前言¶===================¶	auto
+book	Manual_Reactors.page.1	[Transcript]¶恭喜 [输入员工的名字] 成功从核科学专业毕业!¶你已被录取到 Apature Atomics, 操作核心反应堆.	auto
+book	Manual_Reactors.page.10	安全重于一切, 我需要首先向你介绍最重要的部分: 始终穿戴好防辐射服. 不要引爆核反应堆. 不要引爆核反应堆. 不要引爆核反应堆. 不要让堆芯熔毁.	auto
+book	Manual_Reactors.page.100	当从另一个相邻的燃料棒再次向同一根增殖棒发射300个中子时，实际上相当于两次各发射300个中子到增殖棒上，仍然不会有中子留在增殖棒上，因为损失会应用于每次发射的中子数。	auto
+book	Manual_Reactors.page.101	这意味着单个燃料棒需要有较高的中子输出，使得作为增殖反应堆运行的次临界反应堆设计变得不可行。	auto
+book	Manual_Reactors.page.102	向具有500损失的增殖棒发射900个中子意味着400个中子最终会留在增殖棒上，这些中子会在每一次更新被用于转化成富集棒。	auto
+book	Manual_Reactors.page.103	另一根燃料棒也向同一根增殖棒发射900个中子，即实际上两次各发射900个中子，会有800个中子在增殖棒上。	auto
+book	Manual_Reactors.page.104	由于增殖棒需要紧邻一根临界的燃料棒，燃料棒便只有三个面可以放置反射棒，这意味着只有因子为1/3或更大的燃料棒才能达到超临界状态。	auto
+book	Manual_Reactors.page.105	显然不能使用慢化棒，因为增殖棒不能接受来自慢化燃料棒的中子。这意味着要么需要像钚这样的高因子燃料，要么需要使用能提高因子的冷却液。	auto
+book	Manual_Reactors.page.106	因此熔融金属冷却液，如熔融锡或熔融钠，最适合用于增殖反应堆，因为它们提高了内部燃料棒的因子，	auto
+book	Manual_Reactors.page.107	使增殖成为可能，即使使用更常见的燃料材料如铀235，或者使更好的燃料材料同时增殖更多的增殖棒。	auto
+book	Manual_Reactors.page.108	它们还有降低中子HU输出的优势，这意味着可以用较少的冷却实现更高的中子数。	auto
+book	Manual_Reactors.page.109	向增殖棒发射更高的中子计数意味着更快且更高效的增殖过程，因为计算中子损失的次数更少，使得总的中子损失减少。	auto
+book	Manual_Reactors.page.11	在发生堆芯熔毁的情况下，不要否认是你造成的。不要触摸运行中的反应堆。不要破坏运行中的反应堆。不要舔舐运行中的反应堆。不要让野生动物靠近反应堆。	auto
+book	Manual_Reactors.page.110	¶¶===================¶钍盐反应堆设计指南¶===================¶	auto
+book	Manual_Reactors.page.111	钍盐是一种非常特殊的冷却剂。事实上，它甚至不能被认为是冷却剂，因为它不会转化为携带能量的液体。	auto
+book	Manual_Reactors.page.112	相反，它可以更多地被视为一种燃料本身，因为它会变成熔融氯化锂，意味着钍盐中的钍实际上作为燃料被消耗掉。	auto
+book	Manual_Reactors.page.113	钍盐缓慢地耗尽为熔融氯化锂，每2,560,000个中子才会有一升钍盐转化为熔融氯化锂。	auto
+book	Manual_Reactors.page.114	使用钍盐的主要优势在于它对任何内部燃料棒数值的巨大提升。	auto
+book	Manual_Reactors.page.115	然而，由于无法从钍盐中提取电力（因为它不转化为携带能量的液体），你不能单独使用钍盐进行任何反应堆设计。	auto
+book	Manual_Reactors.page.116	利用钍盐的反应堆设计至少需要另外一种额外的冷却剂。	auto
+book	Manual_Reactors.page.117	装满钍盐的反应堆核心将容纳燃料棒，而相邻装有其他冷却剂的反应堆核心则通过中子吸收棒捕捉该反应堆发出的中子。	auto
+book	Manual_Reactors.page.118	由于钍盐的主要优势在于大幅提高内部燃料棒的各种数值，它通常只在临界反应堆设计中有意义。	auto
+book	Manual_Reactors.page.119	临界的钍盐反应堆是最高效的发电反应堆，但也是最难建造的之一。	auto
+book	Manual_Reactors.page.12	不要吃核燃料。不要用核反应堆做饭。在出现肿瘤的情况下，也不要吃核燃料。（这是个玩笑，请勿模仿）这些应该是你需要知道的一切，现在去做实验吧，创造一些爆炸性的科学发现!	auto
+book	Manual_Reactors.page.120	¶¶===================¶高级裂变反应堆¶===================¶	auto
+book	Manual_Reactors.page.121	本章将为您提供一些提示和数学公式，以帮助您构建最先进和高效的反应堆。	auto
+book	Manual_Reactors.page.122	计算中子发射¶===================¶当燃料棒上的中子数量较高时，它会向相邻棒发射更多的中子。	auto
+book	Manual_Reactors.page.123	任何燃料棒向一个相邻棒发射的中子数量e_n可以通过以下方式计算：¶e_n = e + ((n – s) * f)	auto
+book	Manual_Reactors.page.124	e_n: 发射的中子数¶e: 燃料棒的Emission值¶n: 燃料棒上的中子数¶s: 燃料棒的self值¶f: 燃料棒的因子	auto
+book	Manual_Reactors.page.125	计算燃料棒的消耗速率¶===================¶燃料棒通常的消耗速率为1，因此将持续时间如工具提示所建议的那样长。	auto
+book	Manual_Reactors.page.126	然而，当燃料棒上的中子数量超过中子最大值时，消耗速率会乘以这个数：¶f = 4 * n / m	auto
+book	Manual_Reactors.page.127	f: 消耗速率乘数¶n: 燃料棒上的中子数¶m: 燃料棒的最大中子值	auto
+book	Manual_Reactors.page.128	此外，如果燃料棒被慢化，其消耗速率还会额外乘以4。将燃料棒的剩余时间统计值除以计算出的消耗速率，即可得到实际的耗尽时间。	auto
+book	Manual_Reactors.page.129	小贴士和技巧¶===================¶您可以构建使用多种冷却剂的反应堆设计。对于使用慢化棒的临界反应堆来说，控制相邻的燃料棒而非慢化棒本身来控制中子数量更为明智。机械臂允许对反应堆核心进行精确自动化。¶过滤器可用于更容易地自动化燃烧和增殖反应堆。	auto
+book	Manual_Reactors.page.13	¶¶===================¶反应堆基本操作指南¶===================¶	auto
+book	Manual_Reactors.page.130	在临界反应堆设计中，较高的Self值是不利的，因为它占用了最大中子数而不影响中子发射。¶在临界反应堆设计中，Emission值对效率的影响较小。	auto
+book	Manual_Reactors.page.131	当试图控制大于9,999的中子数量时，将盖革计数器传感器设置为十六进制模式是有用的。在十六进制模式下，您可以比较最多65,535个中子。使用oc可以控制高达21亿的中子数。	auto
+book	Manual_Reactors.page.132	Setting the geiger counter sensor to hexadecimal mode is useful when trying to control neutron counts greater than 9_999. In hexadecimal mode you can compare up to 65_535 neutrons.	review
+book	Manual_Reactors.page.14	核反应堆核心（2x2）有四个反应堆棒的插槽。插入反应堆的棒只会直接与直接相邻的4个反应堆棒互动，包括在其他反应堆核心块上的相邻棒。	auto
+book	Manual_Reactors.page.15	使用棒右键点击插槽可以手动将棒插入插槽。用钳子右键点击插槽会拔出插槽内的反应堆棒。	auto
+book	Manual_Reactors.page.16	当反应堆块关闭时，反应堆棒可以自动插入顶部。同样，当块关闭时，可以从底部自动提取它们。	auto
+book	Manual_Reactors.page.17	可以用软锤手动切换反应堆的开启或关闭。也可以用红石机器开关配合红石自动开关。当反应堆关闭时，反应堆的行为与它不包含任何棒相同。	auto
+book	Manual_Reactors.page.18	各个棒也可以被切换为开启或关闭状态，以表现得如同插槽为空。这可以通过红石或手动选择器完成。	auto
+book	Manual_Reactors.page.19	反应堆核心有两个内部储罐，分别可以储存64,000升冷/热冷却液。不同的冷却液对插入的反应堆棒有不同的效果。冷冷却液可以从任意一侧输入。	auto
+book	Manual_Reactors.page.2	我会教你如何在尽量避免爆炸的情况下操作:¶大部分反应堆的心脏----反应堆核心.	auto
+book	Manual_Reactors.page.20	热冷却液将向红色面自动输出。如果冷冷却液储罐超过半满，冷冷却液将向蓝色面自动输出。红色面可以用扳手更改，蓝色面向可以用活动扳手更改。	auto
+book	Manual_Reactors.page.21	当反应堆运行时，中子会在反应堆棒上进行多种工作。	auto
+book	Manual_Reactors.page.22	通常，每个中子都会直接以HU的形式输出到反应堆。中子仅持续一秒，因此每秒才会更新一次。	auto
+book	Manual_Reactors.page.23	中子数可以用盖革计数器右键点击反应堆核心来手动测量。盖革计数器传感器也可以连接到反应堆核心，以测量4个反应堆棒上的中子总和。	auto
+book	Manual_Reactors.page.24	传感器百分比模式的100%指的是反应堆核心内所有燃料棒的最大中子值之和。反应堆还会根据所有反应堆棒上当前中子数的最高者发出辐射。	auto
+book	Manual_Reactors.page.25	强烈建议在远离任何定居点的地方建造反应堆，并穿戴辐射防护服。任何反应堆核心在没有冷却液的情况下加热都会爆炸。	auto
+book	Manual_Reactors.page.26	如果在反应堆冷却液用尽后再次吸收中子热能，反应堆将会爆炸。	auto
+book	Manual_Reactors.page.27	如果反应堆内没有空间容纳产生的热冷却液，反应堆将会爆炸。	auto
+book	Manual_Reactors.page.28	¶¶===================¶反应堆棒指南¶===================¶	auto
+book	Manual_Reactors.page.29	空反应堆棒¶===================¶什么都不会发生，也不接受中子。	auto
+book	Manual_Reactors.page.3	我们的一些工程师会说所谓的核心只是一个带有四个活塞的金属盒子, 公司为它提供的算力太多了, 四根线就能控制一切.	auto
+book	Manual_Reactors.page.30	燃料棒¶===================¶燃料棒向自身和相邻的反应堆棒发射中子。它们有几个基本属性，会根据棒的材料和反应堆中使用的冷却液而变化。	auto
+book	Manual_Reactors.page.31	Self: 表示了棒向其自身插槽输出多少中子。¶Emission: 表示它会向每个相邻反应堆棒输出多少中子。	auto
+book	Manual_Reactors.page.32	factor: 因子，表示它会向相邻反应堆棒输出多少额外的中子，输出数=因子*棒目前有的中子数。	auto
+book	Manual_Reactors.page.33	更大的因子意味着每当中子棒自身中子数提高时, 额外中子输出的更多。¶Maximum: 最大中子值，表示在这个燃料棒上可以有多少中子，大于此值时它的持续时间将会更快地降低。	auto
+book	Manual_Reactors.page.34	超过最大中子值时，燃料棒的持续时间以四倍以上的速度降低，降低速度随着超过最大中子值的中子数量线性增加。	auto
+book	Manual_Reactors.page.35	慢化燃料棒会使相邻的活动燃料棒也变为慢化。慢化燃料棒消耗速度会快四倍，并且增殖棒不会吸收慢中子。	auto
+book	Manual_Reactors.page.36	当燃料棒的剩余持续时间耗尽时，它将转换为耗尽的燃料棒。	auto
+book	Manual_Reactors.page.37	耗尽的燃料棒¶===================¶在反应堆内时什么都不做。不接受中子。可以通过离心获得一些燃料和一些更高级别的裂变燃料。	auto
+book	Manual_Reactors.page.38	吸收棒¶===================¶吸收棒从相邻的燃料棒接受中子。每个吸收棒上的中子会被转化为2HU而非1HU。	auto
+book	Manual_Reactors.page.39	反射棒¶===================¶直接将任何放置在其上的中子返回给来源。因此它们上面永远不会2HU而非1HU	auto
+book	Manual_Reactors.page.4	真有人会觉得四根破电线就能避免核毁灭? 我想他们也不希望看到满世界的核尘埃吧。因此我们的反应堆核心中，每个控制棒控制器都是有意识的。	auto
+book	Manual_Reactors.page.40	慢化棒¶===================¶像反射棒一样，它们将中子直接返回给来源，但是它们返回的中子数量会乘以向它们发射中子的燃料棒的数量。	auto
+book	Manual_Reactors.page.41	它们最多可以反射回四倍数量的中子。它们上面也不会有任何中子。但它同时也会慢化相邻的燃料棒，	auto
+book	Manual_Reactors.page.42	使它们变为慢化状态, 即消耗速度快四倍，增殖棒不吸收慢中子。慢化燃料棒同时也会使相邻的激活燃料棒变为慢化。	auto
+book	Manual_Reactors.page.43	增殖棒¶===================¶每次更新，这个棒的中子所需数量会减去棒上的中子数。如果所需中子数达到零，棒将变成富集棒。	auto
+book	Manual_Reactors.page.44	增殖棒不会接受来自慢化燃料棒的中子。每次发射到此棒上的中子数会先扣除loss值，	auto
+book	Manual_Reactors.page.45	即任何一个面发射到增殖棒上的中子都会损失一次loss值，而不仅仅是针对增殖棒整体的一次损失。	auto
+book	Manual_Reactors.page.46	¶¶===================¶冷却剂指南¶===================¶	auto
+book	Manual_Reactors.page.47	蒸馏水¶===================¶直接转化为蒸汽，不需要热交换器。消耗80 HU将1升蒸馏水转换成160升蒸汽。慢化内部的所有燃料棒。不会改变燃料棒的属性。	auto
+book	Manual_Reactors.page.48	半重水¶===================¶消耗40 HU将1升半重水转换成1升热半重水。慢化任何内部的燃料棒。不会改变燃料棒的属性。	auto
+book	Manual_Reactors.page.49	重水¶===================¶消耗50 HU将1升重水转换成1升热重水。慢化任何内部的燃料棒。将燃料棒的最大中子值除以8。	auto
+book	Manual_Reactors.page.5	它们最好是不要爆炸，因为如果那样的话我会非常生气，并将它们流放到“反应堆棒控制器”的地狱！	auto
+book	Manual_Reactors.page.50	氚化水¶===================¶消耗60 HU将1升氚化水转换成1升热氚化水。慢化任何内部的燃料棒。将燃料棒的最大中子值除以16。	auto
+book	Manual_Reactors.page.51	工业冷却液¶===================¶消耗20 HU将1升工业冷却液转换成1升热工业冷却液。将燃料棒的Self值乘以4。	auto
+book	Manual_Reactors.page.52	将燃料棒的Emit值乘以4，Factor统计值乘以2。将燃料棒因子的分母减1。	auto
+book	Manual_Reactors.page.53	二氧化碳¶===================¶消耗20 HU将1升二氧化碳转换成1升热二氧化碳。将燃料棒的Self值乘以3。	auto
+book	Manual_Reactors.page.54	氦气¶===================¶消耗30 HU将1升氦气转换成1升热氦气。将燃料棒的发射统计值除以2。	auto
+book	Manual_Reactors.page.55	熔融氯化锂¶===================¶消耗15 HU将1升熔融氯化锂转换成1升热熔融氯化锂。将燃料棒的Self值乘以5，发射统计值除以2。增加25%的燃料棒最大中子值。	auto
+book	Manual_Reactors.page.56	熔融锡¶===================¶消耗40 HU将1升熔融锡转换成1升热熔融锡。中子只转换为三分之一的HU。将燃料棒因子的分母减1。	auto
+book	Manual_Reactors.page.57	熔融钠¶===================¶消耗30 HU将1升熔融钠转换成1升热熔融钠。中子只转换为六分之一的HU。将燃料棒因子的分母减1。	auto
+book	Manual_Reactors.page.58	熔融钍盐¶===================¶消耗2,560,000 HU将1升熔融钍盐转换成1升熔融氯化锂。将燃料棒的Self值设为0，Emit值除以2。将燃料棒的最大中子值除以4。	auto
+book	Manual_Reactors.page.59	¶¶===================¶稳定反应堆设计指南¶===================¶	auto
+book	Manual_Reactors.page.6	我们是这样告诉它们的，但显然这样的地方并不存在，我们没有钱去资助每一个愚蠢的控制器。相反，它们会被送到机器人地狱，在那里被永恒地焚烧和重建，而我们可以收集有用的数据。	auto
+book	Manual_Reactors.page.60	稳定的核裂变反应堆，通常也被称为次临界反应堆，是一种没有临界燃料棒的裂变反应堆设计。这意味着在反应堆运行时，中子数量以及因此产生的热量输出不会持续增加。	auto
+book	Manual_Reactors.page.61	稳定反应堆的优点是：¶- 不需要外部控制¶- 稳定的中子/HU输出¶- 提高安全性¶- 设计简单¶- 可使用任何核燃料	auto
+book	Manual_Reactors.page.62	稳定反应堆的缺点是：¶- 燃料效率不高¶- 仅适用于发电反应堆¶- 通常比类似的临界反应堆更大	auto
+book	Manual_Reactors.page.63	当反射回燃料棒的中子数量乘以棒的因子大于或等于燃料棒的发射量时，可以认为一根反应堆棒处于超临界状态。	auto
+book	Manual_Reactors.page.64	这意味着如果周围的反射棒数量乘以因子大于或等于1，则该棒是超临界的。所以一个因子为1/3的燃料棒需要至少3个相邻的反射棒才能达到临界。	auto
+book	Manual_Reactors.page.65	因此建议在稳定反应堆中使用工业冷却液作为冷却剂。工业冷却液减少了燃料棒的因子，使得没有任何燃料棒可以在没有慢化棒的情况下达到临界。	auto
+book	Manual_Reactors.page.66	它还增加了Self值和Emit值，在稳定反应堆中这是非常有利的，因为它中子更多，从而提高效率。	auto
+book	Manual_Reactors.page.67	通常遵循以下四个规则可以使您的稳定反应堆达到最佳效率：¶如果使用的燃料因子小于1/8，用吸收棒包围燃料棒可以获得最大的HU输出。	auto
+book	Manual_Reactors.page.68	如果使用的燃料因子为1/8，用吸收棒、反射棒或其他燃料棒包围燃料棒都会产生相同的HU输出。	auto
+book	Manual_Reactors.page.69	如果使用的燃料因子大于1/8，用反射棒或其他燃料棒包围燃料棒可以获得最大的HU输出。	auto
+book	Manual_Reactors.page.7	但是它们根本不会自动插入拔出反应堆控制棒，使得反应堆绝对安全，但也相当无用，所以我们覆盖了它们对控制棒的控制权，改为由四根电线控制。	auto
+book	Manual_Reactors.page.70	不要在稳定反应堆中使用基于水的冷却液或慢化棒，因为它们会大大减少燃料棒的持续时间，因此降低效率，而在稳定反应堆设计中并无实际益处。	auto
+book	Manual_Reactors.page.71	¶¶===================¶超临界反应堆设计指南¶===================¶	auto
+book	Manual_Reactors.page.72	临界核裂变反应堆，通常也被称为超临界反应堆，是一种拥有临界燃料棒的裂变反应堆设计。这意味着在反应堆运行时，中子数量以及因此产生的热量输出会持续增加。	auto
+book	Manual_Reactors.page.73	超临界反应堆的优点是：¶- 更高的效率¶- 完全可配置的中子输出¶- 通常比类似的稳定反应堆更小¶- 可以作为燃烧或增殖反应堆工作	auto
+book	Manual_Reactors.page.74	超临界反应堆的缺点是：¶- 需要外部控制¶- HU输出不断波动¶- 设计难度更大¶- 安全性降低¶- 需要更高因子的燃料	auto
+book	Manual_Reactors.page.75	当反射回燃料棒的中子数量乘以棒的因子大于或等于燃料棒的发射量时，可以认为一根反应堆棒处于超临界状态。	auto
+book	Manual_Reactors.page.76	这意味着如果周围的反射棒数量乘以因子大于或等于1，则该棒是超临界的。所以一个因子为1/3的燃料棒需要至少3个相邻的反射棒才能达到临界。	auto
+book	Manual_Reactors.page.77	由于燃料棒上的中子数量将无限期地增加，您需要控制反应，以确保不会输出超过处理能力的功率。	auto
+book	Manual_Reactors.page.78	盖革计数器传感器允许在与红石机器开关或选择器结合使用时自动实现这种控制。	auto
+book	Manual_Reactors.page.79	当中子数量过高时，您需要关闭一根反应堆棒，使燃料棒再次变为次临界，从而使中子数量减少。	auto
+book	Manual_Reactors.page.8	任何你可能听说过的1x1反应堆核心都只是传闻，我们当然永远不会建造这样的东西，因为很明显，如果没有其他三个来陪伴它，控制棒控制器会发疯。	auto
+book	Manual_Reactors.page.80	为了获得最大的效率，您需要使燃料棒上的中子数量始终低于该燃料棒的最大中子值，同时尽可能接近它。	auto
+book	Manual_Reactors.page.81	您还需要在关闭反应堆时中子数量尽可能少地减少，以保持HU输出相对平稳。	auto
+book	Manual_Reactors.page.82	因此，您需要一种因子至少为1/4的燃料，以便能够在不使用慢化棒的情况下建造临界反应堆。	auto
+book	Manual_Reactors.page.83	最容易获取的满足这一条件的燃料是铀235。您可以通过加工铀矿石来获得它。当使用慢化棒时，燃料的因子可以低至1/16，因此使用铀238也成为可能。	auto
+book	Manual_Reactors.page.84	¶¶===================¶燃烧反应堆设计指南¶===================¶	auto
+book	Manual_Reactors.page.85	燃烧反应堆是一种核裂变设计类型，目的是尽可能快地消耗燃料棒，从而允许对耗尽的燃料棒进行处理，以获得更好的核燃料材料。	auto
+book	Manual_Reactors.page.86	有两种显著加快燃料棒消耗的方法：¶- 慢化燃料棒¶- 在最大中子值之上运行	auto
+book	Manual_Reactors.page.87	燃料棒可以通过将其放置在用蒸馏水、半重水、重水或氚化水冷却的反应堆中，或者放在慢化棒或已经慢化的燃料棒旁边来慢化。当被慢化时，燃料棒的消耗速度会快四倍。	auto
+book	Manual_Reactors.page.88	当燃料棒上的中子数量大于燃料棒的最大中子值时，它也会快四倍的速度消耗，与慢化效果叠加后可达16倍速。	auto
+book	Manual_Reactors.page.89	超出最大中子值越多，燃料棒消耗得越快；当中子数量是最大中子值的两倍时，消耗速度将再次翻倍，与慢化效果叠加后可达32倍速。	auto
+book	Manual_Reactors.page.9	在你不太可能遇到这样一个核心的情况下，这不会发生，如果它们存在的话，我们已经把它们送到了机器人地狱，在那里它们会处于不断的痛苦之中，但这不会发生，因为它们并不存在。	auto
+book	Manual_Reactors.page.90	因此，当中子数量是最大中子值的17倍时，燃料棒的消耗速度将是17倍再乘以4（因为超过了最大中子值），即68倍速；如果棒被慢化，则是272倍速，相比未慢化且中子数量低于最大中子值的情况。	auto
+book	Manual_Reactors.page.91	so 68 times faster, times 4 if the rod is moderated, so 272 times faster than an unmoderated rod with neutron counts below the neutron maximum.	review
+book	Manual_Reactors.page.92	除了大幅增加燃料棒上的中子数量外，还可以通过降低最大中子值来利用这一效应。	auto
+book	Manual_Reactors.page.93	这可以通过使用重水或氚化水轻松完成，它们分别将最大中子值降低8倍和16倍，并且因为它们是水基的，所以也能慢化所有燃料棒。	auto
+book	Manual_Reactors.page.94	为了实现极高的中子数量，建议采用超临界反应堆设计，尽管也可以将燃烧反应堆作为稳定设计来运行。	auto
+book	Manual_Reactors.page.95	钴60虽然作为反应堆燃料本身几乎无用，但很容易燃烧成钍，后者更为有用。	auto
+book	Manual_Reactors.page.96	¶¶===================¶增殖反应堆设计指南¶===================¶	auto
+book	Manual_Reactors.page.97	增殖反应堆的目标是将增殖棒转化为富集棒。它们允许从较为丰富但质量较低的燃料，如钍和铀238，中获得更优质的核燃料。	auto
+book	Manual_Reactors.page.98	然而，尽管与燃烧反应堆类似，它们构建起来要困难得多，需要非慢化的临界反应堆设计。增殖棒有一个损失值，表示从吸收的中子中减去多少。	auto
+book	Manual_Reactors.page.99	所以当您有一个损失为500的增殖棒，并尝试从一个相邻的燃料棒向其发射300个中子时，增殖棒不会接收到任何中子，这意味着增殖过程不会进行。	auto
+book	Manual_Smeltery.page.0	This is the Manual of the Smelting Crucible and related Objects. It will explain how to use the Smelting Crucible and the Molds properly, so that you can start smelting things which cannot me molten inside a regular Furnace.	review
+book	Manual_Smeltery.page.1	If you need to know how heavy an Object is or what Materials it consists out of, just use the good old vanilla F3+H Method to enable advanced Tooltips, so you can see the most relevant Data about the Object.	review
+book	Manual_Smeltery.page.10	Step 4: Smelting¶===================¶Unless your Heat Source has some kind of Temperature regulation, you may need to shut it off once the Temperature reaches the Melting Point or else you will vaporate the Metals or worse.	review
+book	Manual_Smeltery.page.11	Step 5: Shaping¶===================¶Now just click the Side of the top of the Mold where the Crucible is next to, in order to fill it with its Metals. Warning: The Mold itself can melt too if it is made of the wrong Material.	review
+book	Manual_Smeltery.page.12	Step 5: Shaping¶===================¶Wait for the Metal to cool down, but note that you should not touch or take out the Metal while it is hot or else you will burn yourself unless you wear a Hazmat Suit or something.	review
+book	Manual_Smeltery.page.13	Mold Shapes¶===================¶The following is a List of Shapes you can chisel the Mold into. The position of the Shape on the Mold is NOT important, you can rotate and mirror it too¶X = Chiseled¶O = Not Chiseled	review
+book	Manual_Smeltery.page.14	Ingot¶===================¶XXXOO¶XXXOO¶XXXOO¶XXXOO¶XXXOO¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.15	Chunk¶===================¶XXOOO¶XXOOO¶OOOOO¶OOOOO¶OOOOO¶===================¶0.250 Units required	review
+book	Manual_Smeltery.page.16	Plate¶===================¶XXXXX¶XXXXX¶XXXXX¶XXXXX¶XXXXX¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.17	Tiny Plate¶===================¶OOOOO¶OXXXO¶OXXXO¶OXXXO¶OOOOO¶===================¶0.111 Units required	review
+book	Manual_Smeltery.page.18	Bolt¶===================¶XXOOO¶OOOOO¶OOOOO¶OOOOO¶OOOOO¶===================¶0.125 Units required	review
+book	Manual_Smeltery.page.19	Rod¶===================¶OOOOO¶OOOOO¶XXXXX¶OOOOO¶OOOOO¶===================¶0.500 Units required	review
+book	Manual_Smeltery.page.2	Step 1: Heat Source¶===================¶You need a Heat Source in order to heat up your Crucible to the desired Temperature. Possible Heat Sources may include Burning Boxes, Electric Heaters, Laser Heaters and Arc Heaters.	review
+book	Manual_Smeltery.page.20	Long Rod¶===================¶XOOOO¶OXOOO¶OOXOO¶OOOXO¶OOOOX¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.21	Item Casing¶===================¶XXXOX¶XXXOX¶XXXOX¶OOOOX¶XXXOO¶===================¶0.500 Units required	review
+book	Manual_Smeltery.page.22	Ring¶===================¶OOOOO¶OXXXO¶OXOXO¶OXXXO¶OOOOO¶===================¶0.250 Units required	review
+book	Manual_Smeltery.page.23	Gear¶===================¶XOXOX¶OXXXO¶XXOXX¶OXXXO¶XOXOX¶===================¶4.000 Units required	review
+book	Manual_Smeltery.page.24	Small Gear¶===================¶OXOXO¶XXXXX¶OXOXO¶XXXXX¶OXOXO¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.25	Sword¶===================¶OOXOO¶OXXXO¶OXXXO¶OXXXO¶OXXXO¶===================¶2.000 Units required	review
+book	Manual_Smeltery.page.26	Pickaxe¶===================¶OOOOO¶OXXXO¶XOOOX¶OOOOO¶OOOOO¶===================¶3.000 Units required	review
+book	Manual_Smeltery.page.27	Spade¶===================¶OXXXO¶OXXXO¶OXXXO¶OXOXO¶OOOOO¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.28	Shovel¶===================¶OOXOO¶OXXXO¶OXXXO¶OXXXO¶OOOOO¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.29	Universal Spade¶===================¶OOXOO¶OXXXO¶OXXOO¶OXXXO¶OOOOO¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.3	Optional: Air Source¶===================¶In case you have to supply Air for the Crucible (for Steel), you need to point an Engine into it, which will act as a Fan. For Multiblock Crucibles the Engine has to be at the Bottom Row.	review
+book	Manual_Smeltery.page.30	Axe¶===================¶OOOOO¶OXXXO¶OXXXO¶OXOOO¶OOOOO¶===================¶3.000 Units required	review
+book	Manual_Smeltery.page.31	Double Axe¶===================¶OOOOO¶XXXXX¶XXXXX¶XOOOX¶OOOOO¶===================¶5.000 Units required	review
+book	Manual_Smeltery.page.32	Saw¶===================¶OOOOO¶XXXXX¶XXXXX¶OOOOO¶OOOOO¶===================¶2.000 Units required	review
+book	Manual_Smeltery.page.33	Hammer¶===================¶XXXOO¶XXXOO¶XOXOO¶XXXOO¶XXXOO¶===================¶6.000 Units required	review
+book	Manual_Smeltery.page.34	File¶===================¶OXXXO¶OXXXO¶OXXXO¶OOXOO¶OOXOO¶===================¶1.500 Units required	review
+book	Manual_Smeltery.page.35	Screwdriver¶===================¶OOOOO¶OOXOO¶OOXOO¶OOXOO¶OOXOO¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.36	Chisel¶===================¶OXXXO¶OOXOO¶OOXOO¶OOXOO¶OOXOO¶===================¶1.500 Units required	review
+book	Manual_Smeltery.page.37	Arrow¶===================¶OOOOO¶OOXOO¶OOXOO¶OXXXO¶OOOOO¶===================¶0.125 Units required	review
+book	Manual_Smeltery.page.38	Hoe¶===================¶OOOOO¶OOXXO¶OXXXO¶OOOOO¶OOOOO¶===================¶2.000 Units required	review
+book	Manual_Smeltery.page.39	Sense/Scythe¶===================¶OOOOO¶OXXXX¶XXXXX¶OOOOO¶OOOOO¶===================¶3.000 Units required	review
+book	Manual_Smeltery.page.4	Step 2: Crucible¶===================¶The choice of Crucible Material is very important. The Crucible can melt too at a certain Temperature, which is usually higher than the actual Melting Point of the Crucible itself.	review
+book	Manual_Smeltery.page.40	Plow¶===================¶XXXXX¶XXXXX¶XXXXX¶XXXXX¶OOXOO¶===================¶4.000 Units required	review
+book	Manual_Smeltery.page.41	Builder's Wand¶===================¶OOXOO¶XXXXX¶OXXXO¶OXOXO¶OOOOO¶===================¶1.000 Units required	review
+book	Manual_Smeltery.page.5	Step 2: Crucible¶===================¶Now place the Crucible of your choice at the Output Facing of the Heat Source. The Burning Box for example only emits to its Top Side, so you need to place the Crucible above it.	review
+book	Manual_Smeltery.page.6	Step 3: The Molds¶===================¶You probably want to cast the molten Metal into a Shape, so you need to place a Mold horizontally adjacent to the Crucible. As you may have noticed the Mold itself doesn't have a Shape.	review
+book	Manual_Smeltery.page.7	Step 3: The Molds¶===================¶This is why you need a Chisel in order to chisel the proper Shape into the Mold by using it in World. The most important Shapes are Listed in the last Pages of this Book.	review
+book	Manual_Smeltery.page.8	Step 3: The Molds¶===================¶If you somehow fail to put a correct Shape into the Mold, the End Result will be as many Nuggets as you have chiseled out places.	review
+book	Manual_Smeltery.page.9	Step 4: Smelting¶===================¶Now we get to smelting. Just throw the things you want to smelt into the Crucible, or use a Hopper above the Crucible to fill it. And turn up the Heat until you reach the melting Point.	review
+book	Manual_Steam.page.0	This Manual is about the proper operation of a Boiler, in order to not blow yourself up. And yes there are many people who get blown up by improper operation of a Boiler.	review
+book	Manual_Steam.page.1	First of all you need to make sure that the Boiler you use fits the Burning Box you place below. The Tooltips will hint you the proper values you can use. The Boiler itself does accept heat from all directions, not just the Bottom.	review
+book	Manual_Steam.page.2	Then you need to fill the Boiler with Water on the Sides, so that you can generate Steam with it. Placing a Funnel on it and rightclicking that Funnel with a Water Bucket works for filling aswell.	review
+book	Manual_Steam.page.3	But if you use regular Water instead of distilled Water, then you will end up with calcification and a constant decrease of Steam-Creation-Efficiency. No risk of explosion due to that though, since it just makes less Steam per Water.	review
+book	Manual_Steam.page.4	Inserting Water into an empty hot Boiler, it will rapidly increase the Pressure maybe causing it to explode, depending on how much heat and water you insert at once.	review
+book	Manual_Steam.page.5	If a Boiler stores too much Heat without being able to convert Water into Steam, then it will simply melt and break, leaving you with a giant mess.	review
+book	Manual_Steam.page.6	Steam Turbines and Engines emit distilled Water to their Sides, which makes it possible to simply cycle the distilled Water back into the Boiler for having less calcification going on.	review
+book	Manual_Steam.page.7	The Boilers have a Barometer on their Front, their ideal State is if the Line is inside the dark green Area, so in the middle of the Barometer itself. The closer it is to the red Area, the closer it is to exploding.	review
+book	Manual_Steam.page.8	Steam Engines work best if they are in green Mode, if they are too blue then they have not enough Steam (look for Boiler Calcification if it happens after a while of running normally).	review
+book	Manual_Steam.page.9	If the Engines are too Red then they will release the Steam and stop running (no Explosions, just a waste of Steam and a fizzing noise).	review
+book	Manual_Tools.page.0	This Manual is about common and uncommon Tools and how to use them. It contains a List of every normal Tool that you might not know the true purpose of.	review
+book	Manual_Tools.page.1	Swords¶===================¶It's a Sword, it deals Damage and cuts things. It can harvest Leaves, Webs and Wool Blocks.	review
+book	Manual_Tools.page.10	Pickaxes¶===================¶Mines Blocks like a normal Pickaxe usually does.	review
+book	Manual_Tools.page.11	Construction Picks¶===================¶It mines man-made Blocks much faster, but is slow on Natural Rocks.	review
+book	Manual_Tools.page.12	Gem tipped Pickaxes¶===================¶In an exchange for a lot of Durability, you can put flawed Gems onto your Raw Steel Pickaxe Head, to give it the Quality of a Gem Tool. Amber, Sapphires and Diamonds are best for this.	review
+book	Manual_Tools.page.13	JackHammers¶===================¶This thing mines Blocks and crushes them like a Hammer at an insane Speed. Not much to say about it.	review
+book	Manual_Tools.page.14	Mining Drills¶===================¶It can mine and shovel things at once and is the perfect universal mining Tool.	review
+book	Manual_Tools.page.15	Shovels¶===================¶Mines Blocks like a normal Shovel usually does.	review
+book	Manual_Tools.page.16	Spades¶===================¶A Spade has conditional Silk-Touch for certain Blocks, such as Dirt, Grass, Mycelium, Clay, Mud, Snow and Podzol, but it is slower than a normal Shovel and doesn't work on Sand.	review
+book	Manual_Tools.page.17	Plows¶===================¶The Plow harvests a 3x3x3 Area of Snow Layers and similar Blocks at once.	review
+book	Manual_Tools.page.18	Universal Spades¶===================¶Shovel, Saw, Sword and Crowbar at once. Very versatile, but that goes at the cost of Durability and Speed.	review
+book	Manual_Tools.page.19	Hammers¶===================¶Crushing Blocks and Smithery are the most common usages of this Tool. It doesn't do much else, but it can be used in Combat.	review
+book	Manual_Tools.page.2	Knifes¶===================¶They cut Food, Sticks, Rubber, Saplings into Sticks, Bark of a Tree, and similar things and are a somewhat usable early weapon. It can harvest all the things a Sword can harvest too.	review
+book	Manual_Tools.page.20	Soft Hammers¶===================¶These Hammers are mainly used to turn Machines ON and OFF. They can even turn Redstone Lamps and certain Rails ON without having to have a Redstone Signal close to them.	review
+book	Manual_Tools.page.21	Wrenches¶===================¶Adjusts the primary Facing of most Machines, sometimes it can be used to toggle Modes aswell.	review
+book	Manual_Tools.page.22	Monkey Wrenches¶===================¶Adjusts the secondary Facing of most Machines, often it can be used to toggle Modes aswell.	review
+book	Manual_Tools.page.23	Electric Wrenches¶===================¶They are a combination of the normal Wrench and the Monkey Wrench and can easily switch between them via Modes. Sneak Rightclick on a non-wrenchable Block to switch.	review
+book	Manual_Tools.page.24	Files¶===================¶Sharpens things and can comically harvest Iron Bars way faster than anything else.	review
+book	Manual_Tools.page.25	Chisels¶===================¶Can put Molds into Shape and change the looks of some Stones.	review
+book	Manual_Tools.page.26	Bending Cylinders¶===================¶Turns Plates into Curved Plates and is used for similar Metal Working procedures	review
+book	Manual_Tools.page.27	Crowbars¶===================¶Opens Crates and can be used on Rails and Minecarts	review
+book	Manual_Tools.page.28	Pincers¶===================¶Used to pick up hot things from Molds and Basins, so you don't have to wait for them to cool down before picking them up.	review
+book	Manual_Tools.page.29	Plungers¶===================¶Empties Pipes and Fluid Tanks by either voiding the Fluid or dropping the ItemStack that is stuck in them. Works on Thaumic Conduits aswell.	review
+book	Manual_Tools.page.3	Butchery Knifes¶===================¶Has a Looting Modifier on it per Default, but has a slow swing and low Damage.	review
+book	Manual_Tools.page.30	Scoops¶===================¶Catches Butterflies, Bees and Bumblebees, also needed to harvest Bumble Hives and Bee Hives.	review
+book	Manual_Tools.page.31	Hoes¶===================¶They till the ground, what do you expect? I'm not gonna explain vanilla Tools in great detail.	review
+book	Manual_Tools.page.32	Branch Cutters¶Trimmers¶===================¶Cuts Saplings out of Leaves with high precision, like a Grafter.	review
+book	Manual_Tools.page.33	Senses¶===================¶Harvests a 3x3x3 Area of Crops, Flowers and Tall Grass.	review
+book	Manual_Tools.page.34	Rolling Pins¶===================¶Flattens Dough and Clay for cooking and crafting purposes.	review
+book	Manual_Tools.page.35	Scissors¶===================¶Can cut Tripwires on Rightclick, shear Sheep and harvest Wool-ish/Cloth-ish Blocks.	review
+book	Manual_Tools.page.36	Screwdrivers¶===================¶Drives Screws and such. The most common usage is adjusting Modes on Blocks and Covers. They can rotate Comparators and Repeaters.	review
+book	Manual_Tools.page.37	Wire Cutters¶===================¶They harvest Wires. Another usage is to adjust Wires and in some cases Covers aswell.	review
+book	Manual_Tools.page.38	Hand Mixers¶===================¶These are just so you don't consume your Hunger Bar when operating the Mixing Bowl.	review
+book	Manual_Tools.page.39	Hand Drills¶===================¶Those Drill Holes in Surfaces. If you have Dynamite Sticks or Iron/Steel Rods with you, you can stick the Dynamite into Walls or reinforce Bricks and Concrete.	review
+book	Manual_Tools.page.4	Clubs¶===================¶Sometimes kindof expensive, but it works like a Hammer and deals lots of Damage, while having a larger cooldown time after a hit. It can break Rocky Blocks, but it will crush them.	review
+book	Manual_Tools.page.40	Flint and Tinder¶===================¶Sets things on Fire and can light anything that requires ignition. But it might take a few tries to do so.	review
+book	Manual_Tools.page.41	Magnifying Glasses¶===================¶With this you can look at the Details of a LOT of things in GregTech, just put a Lens of any kind on a Stick and you are good to go for a long time.	review
+book	Manual_Tools.page.42	Pocket Multitool¶===================¶A Multi-Tool that can be switched to the most common purposes. See it as a Swiss Army Knife.	review
+book	Manual_Tools.page.5	Axes¶===================¶Good in chopping down Trees, bad in chopping down Planks or other wooden things.	review
+book	Manual_Tools.page.6	Double Axes¶===================¶Still good for chopping on Trees, but also very effective as a Weapon and has 50% more Durability than the normal Axe, while requiring 66.666% more Material to create.	review
+book	Manual_Tools.page.7	Saws¶===================¶Bad for chopping Trees, but can easily cut wooden things like Planks.	review
+book	Manual_Tools.page.8	Chainsaws¶===================¶Good for pretty much all purposes, can chop Trees, saw Planks and is a very nice Weapon. It can specifically be used to spam click Creepers to death easily.	review
+book	Manual_Tools.page.9	Buzzsaws¶===================¶This Type of Saw is dedicated to Hand Crafting and cannot harvest any Blocks. It is cheaper to use this than a Chainsaw for crafting purposes.	review

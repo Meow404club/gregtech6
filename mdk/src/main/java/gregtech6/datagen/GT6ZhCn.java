@@ -24,6 +24,7 @@ import gregtech6.jade.GT6SensorProvider;
 import gregtech6.jei.GT6MultiblockPreviews;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6BookText;
+import gregtech6.registry.GT6Books;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialBlocks;
@@ -167,7 +168,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addLaserGasUnits();     // task qu-laser-domain — the 2 gas emitter names + the 2 tooltips (hand rows, the dump :10379/:10395 faces)
 		addReactorRodUnits();   // task debt-reactor-c-rods — the 46 rod names + the 28 tooltip lines (names = the dump mte 9201-9441 faces verbatim; tooltips = the hand layer, zero dump rows)
 		addRailsUnits();        // task rails-31-blocks — the 31 rail names (the dump gt.block.rail.* faces verbatim, the tsv direct band)
-		addBookUnits();         // task books-written — the 15 written-book display names (hand rows, the tsv direct band; the dump carries zero book-title faces)
+		addBookUnits();         // task books-written + books-text-family — the 16 written-book display names (hand rows, the tsv direct band) + the 200 translated page faces (the tsv book band, auto rows)
 		addLongDistancePipes(); // task long-distance-pipes — the 16 wire metas + the two endpoints (hand rows, the dump faces)
 		addTechnologicalComponents(); // task debt-emitter-sensor-generators — the 30 component names (dump faces verbatim)
 		addRoboticsUnits(); // task robotics-chain — the 60 component names + the 20 tooltips (dump faces verbatim, the tsv direct band)
@@ -372,10 +373,10 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The written-book zh faces (task books-written, the addUsbStickUnits shape): the
-	 * 15 display names riding the reference table's hand layer — the upstream dump
-	 * carries zero book-title rows (its 743 written.book.* rows are the English page
-	 * defaults), so the values are hand rows over the upstream title columns
+	 * The written-book zh faces (task books-written + books-text-family, the
+	 * addUsbStickUnits shape): the 16 display names riding the reference table's hand
+	 * layer — the upstream dump carries zero book-title rows (its 743 written.book.* rows
+	 * are the page faces), so the values are hand rows over the upstream title columns
 	 * (Loader_Books.java, the GT6BookText extractor face).
 	 */
 	private void addBookUnits() {
@@ -387,6 +388,24 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.book_loot_guide");
 		addDirect("item.gt6.book_loot_guide.tooltip");
 		addDirect("item.gt6.book_loot_guide.tooltip_loot");
+		// task books-text-family — the page faces (the upstream langfile mechanism,
+		// UT.java:610): the auto rows are the dump translations verbatim; the review rows
+		// (the untranslated code-default copies AND the 5 revised-English drift faces like
+		// Manual_Portal_TF.page.0) ride the EN CODE FACE as the zh value — 缺翻译如实英文
+		// 原文落账, never a fabricated translation (the addBackfillUnits zero-debt form:
+		// every en key gets a zh emit, the value is the English original)
+		for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
+			for (int tIndex : GT6Books.keptPageIndices(tRow)) {
+				String tKey = GT6Books.pageKey(tRow, tIndex);
+				Map<String, RefRow> tBand = reference.get("book");
+				RefRow tRef = tBand == null ? null : tBand.get(tRow.mapping() + ".page." + tIndex);
+				if (tRef == null || tRef.skipped()) {
+					add(tKey, tRow.pages().get(tIndex).replace("\u00b6", "\n"));
+				} else {
+					add(tKey, tRef.value().replace("\u00b6", "\n"));
+				}
+			}
+		}
 	}
 
 	/**

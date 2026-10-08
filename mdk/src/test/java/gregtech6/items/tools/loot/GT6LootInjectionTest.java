@@ -77,9 +77,9 @@ public class GT6LootInjectionTest {
     @Test
     public void injectionTargetsAreTheVerifiedVanillaTableIds() {
         List<GT6LootInjectionDatagen.InjectionRow> tRows = GT6LootInjectionDatagen.injections();
-        assertEquals(29, tRows.size(),
-                "ten vanilla injections + nineteen twilight injections (the pool categories and the "
-                        + "three no-row ledger rows fall out)");
+        assertEquals(30, tRows.size(),
+                "ten vanilla injections + twenty twilight injections (books-text-family re-arms the "
+                        + "basement row; only stronghold_boss/aurora_boss land no JSON)");
         assertEquals(List.of(
                 "dungeon_inject_spawn_bonus_chest",
                 "dungeon_inject_simple_dungeon",
@@ -96,6 +96,7 @@ public class GT6LootInjectionTest {
                 "dungeon_inject_tf_hill_3",
                 "dungeon_inject_tf_hedge_maze",
                 "dungeon_inject_tf_tree_cache",
+                "dungeon_inject_tf_basement",
                 "dungeon_inject_tf_labyrinth_room",
                 "dungeon_inject_tf_labyrinth_dead_end",
                 "dungeon_inject_tf_labyrinth_vault",
@@ -426,10 +427,11 @@ public class GT6LootInjectionTest {
     public void thePooledCategoriesHaveNoModifierJson() {
         // task book-loot-first: the bonus chest and the stronghold library now carry
         // their Guide rows and ship modifier JSONs; the crossing crates remain the pool.
-        // task twilight-treasure-loot: the three no-row ledger rows (basement = zero
-        // surviving rows, stronghold_boss = no modern chest table, aurora_boss = the
-        // upstream :75 commented-out empty table) ship no JSON either.
-        for (String tPooled : new String[] {"stronghold_crossing", "tf_basement", "tf_stronghold_boss",
+        // task twilight-treasure-loot: stronghold_boss (no modern chest table) and
+        // aurora_boss (the upstream :75 commented-out empty table) ship no JSON.
+        // task books-text-family: basement left the pooled set — the Manual_Portal_TF
+        // rare row (:176) re-arms it as the table's sole surviving row.
+        for (String tPooled : new String[] {"stronghold_crossing", "tf_stronghold_boss",
                 "tf_aurora_boss"}) {
             try (InputStream tStream = GT6LootInjectionTest.class.getClassLoader()
                     .getResourceAsStream("data/gt6/loot_modifiers/dungeon_inject_" + tPooled + ".json")) {
@@ -468,11 +470,11 @@ public class GT6LootInjectionTest {
         assertEquals(1.0, tCount.get("max").getAsDouble(), "the flawless [1,1] stack ceiling");
     }
 
-    /** The twin modifier index: the 41 entries in the MODIFIER_NAMES call order. */
+    /** The twin modifier index: the 42 entries in the MODIFIER_NAMES call order. */
     @Test
-    public void theTwinIndexCarriesAllFortyOneEntriesInCallOrder() throws IOException {
+    public void theTwinIndexCarriesAllFortyTwoEntriesInCallOrder() throws IOException {
         JsonArray tTwin = tree("data/neoforge/loot_modifiers/global_loot_modifiers.json").getAsJsonArray("entries");
-        assertEquals(41, tTwin.size(), "the 12 tool rows + the 29 dungeon injections (10 vanilla + 19 twilight)");
+        assertEquals(42, tTwin.size(), "the 12 tool rows + the 30 dungeon injections (10 vanilla + 20 twilight, books-text-family re-armed basement)");
         assertEquals("gt6:dungeon_inject_spawn_bonus_chest", tTwin.get(12).getAsString(), "the tail-append order (task p38 head)");
         assertEquals("gt6:dungeon_inject_stronghold_library", tTwin.get(19).getAsString(), "the :524 library row (task p38)");
         assertEquals("gt6:dungeon_inject_stronghold_corridor", tTwin.get(20).getAsString());
@@ -481,7 +483,9 @@ public class GT6LootInjectionTest {
         // task twilight-treasure-loot — the twilight tail in the :56-78 ledger order
         assertEquals("gt6:dungeon_inject_tf_hill_1", tTwin.get(22).getAsString(), "the twilight head");
         assertEquals("gt6:dungeon_inject_tf_hedge_maze", tTwin.get(25).getAsString());
-        assertEquals("gt6:dungeon_inject_tf_troll_vault", tTwin.get(40).getAsString(), "the twilight tail");
+        assertEquals("gt6:dungeon_inject_tf_basement", tTwin.get(27).getAsString(),
+                "the books-text-family re-arm rides the ledger position (after tree_cache)");
+        assertEquals("gt6:dungeon_inject_tf_troll_vault", tTwin.get(41).getAsString(), "the twilight tail");
         JsonArray tForge = tree("data/forge/loot_modifiers/global_loot_modifiers.json").getAsJsonArray("entries");
         assertEquals(tTwin.size(), tForge.size(), "same entry set on both indices");
     }
@@ -510,7 +514,9 @@ public class GT6LootInjectionTest {
         }
         List<GT6LootInjectionDatagen.TwilightRow> tLanded = tLedger.stream()
                 .filter(aRow -> aRow.table() != null).toList();
-        assertEquals(19, tLanded.size(), "nineteen injections; basement/stronghold_boss/aurora_boss land no JSON");
+        assertEquals(20, tLanded.size(),
+                "twenty injections — books-text-family re-arms basement (the Manual_Portal_TF row); "
+                        + "stronghold_boss/aurora_boss land no JSON");
         for (GT6LootInjectionDatagen.TwilightRow tRow : tLanded) {
             assertTrue(tRow.table().startsWith("twilightforest:"), tRow.upstream() + " targets a TF table");
         }
@@ -520,16 +526,19 @@ public class GT6LootInjectionTest {
         assertEquals("STRONGHOLD_CROSSING", tLedger.get(5).category(), ":61 basement");
         assertEquals("PYRAMID_JUNGLE_DISPENSER", tLedger.get(13).category(), ":69 darktower_boss");
         assertEquals("VILLAGE_BLACKSMITH", tLedger.get(21).category(), ":77 troll_vault");
+        // the basement re-arm (books-text-family, the Manual_Portal_TF rare row :176)
+        assertEquals("twilightforest:basement", tLedger.get(5).table(),
+                "TFLootTables.java:45 register(\"basement\") — the TF 1.20.x table exists");
+        assertTrue(tLedger.get(5).note().contains("Manual_Portal_TF"));
         // the no-JSON dispositions
-        assertEquals(null, tLedger.get(5).table(), "basement — zero surviving rows");
-        assertTrue(tLedger.get(5).note().contains("declared pool"));
         assertEquals(null, tLedger.get(16).table(), "stronghold_boss — no modern chest table");
         assertTrue(tLedger.get(16).note().contains("knight_phantom_defeated"));
         assertEquals(null, tLedger.get(19).table(), "aurora_boss — the upstream :75 commented-out row");
         // the landed table ids, spot-pinned against the harvest TFLootTables :34-63
         assertEquals("twilightforest:hill_1", tLanded.get(0).table());
-        assertEquals("twilightforest:labyrinth_dead_end", tLanded.get(6).table(), ":42 the dead-end name");
-        assertEquals("twilightforest:troll_vault", tLanded.get(18).table());
+        assertEquals("twilightforest:basement", tLanded.get(5).table(), ":61 the basement cache");
+        assertEquals("twilightforest:labyrinth_dead_end", tLanded.get(7).table(), ":42 the dead-end name");
+        assertEquals("twilightforest:troll_vault", tLanded.get(19).table());
     }
 
     /** Every ledger injection carries the mapped category's rows (the :355 getOneItem semantic). */
@@ -546,6 +555,21 @@ public class GT6LootInjectionTest {
         assertEquals(GT6LootInjectionDatagen.mineshaftEntries(), tByTable.get("twilightforest:hill_3"));
         assertEquals(GT6LootInjectionDatagen.mineshaftEntries(),
                 tByTable.get("twilightforest:hill_2"), ":83 the Basalz rare row is the TE-gated skip");
+        // tower_library :164 — the library rows + the Manual_Portal_TF tail (books-text-family)
+        List<GT6LootInjectionDatagen.EntryRow> tTowerLibrary = tByTable.get("twilightforest:tower_library");
+        assertEquals(GT6LootInjectionDatagen.libraryEntries().size() + 1, tTowerLibrary.size());
+        assertEquals(GT6LootInjectionDatagen.libraryEntries(),
+                tTowerLibrary.subList(0, GT6LootInjectionDatagen.libraryEntries().size()));
+        assertEquals("gt6:manual_portal_tf", tTowerLibrary.get(tTowerLibrary.size() - 1).item(), ":164 the rare row");
+        assertTrue(tTowerLibrary.get(tTowerLibrary.size() - 1).weight() == 1
+                && tTowerLibrary.get(tTowerLibrary.size() - 1).min() == 1
+                && tTowerLibrary.get(tTowerLibrary.size() - 1).max() == 1,
+                ":164 the unweighted WeightedRandom pool-entry default [1,1]");
+        // basement :176 — the book is the table's SOLE surviving row
+        List<GT6LootInjectionDatagen.EntryRow> tBasement = tByTable.get("twilightforest:basement");
+        assertEquals(1, tBasement.size(), ":176 the Manual_Portal_TF rare row only — the crossing crates "
+                + "are the declared pool, :177 the Bag_Loot_Misc row is a bag cut");
+        assertEquals("gt6:manual_portal_tf", tBasement.get(0).item());
         // the smith-class vaults (:64/:72/:77), the dungeon-class tables (:68/:71/:73-74/:76)
         assertEquals(GT6LootInjectionDatagen.smithEntries(), tByTable.get("twilightforest:labyrinth_vault"));
         assertEquals(GT6LootInjectionDatagen.dungeonChestEntries(), tByTable.get("twilightforest:darktower_key"));
@@ -621,10 +645,11 @@ public class GT6LootInjectionTest {
         }
     }
 
-    /** The declared hand-row cuts must never leak into a twilight row (勿硬造). */
+    /** The declared hand-row cuts must never leak into a twilight row (勿硬造) — the
+     * Manual_Portal_TF fragment left the list with the books-text-family re-arm. */
     @Test
     public void theTwilightDeclaredCutsProduceZeroRows() {
-        List<String> tCuts = List.of("compass", "manual_portal", "bag_loot", "ink", "pickle", "resin",
+        List<String> tCuts = List.of("compass", "bag_loot", "ink", "pickle", "resin",
                 "dye_cocoa", "greatwood", "silverwood", "ender_pearl", "certus", "skystone_48", "chorus",
                 "dragon_breath", "ancient_debris_item");
         for (GT6LootInjectionDatagen.InjectionRow tRow : GT6LootInjectionDatagen.injections()) {
@@ -649,6 +674,10 @@ public class GT6LootInjectionTest {
             assertEquals(tRow.table(), tJson.get("table").getAsString(), tName + " target");
             assertTrue(tJson.getAsJsonArray("entries").size() > 0, tName + " carries rows");
         }
+        JsonObject tBasement = tree("data/gt6/loot_modifiers/dungeon_inject_tf_basement.json");
+        assertEquals("twilightforest:basement", tBasement.get("table").getAsString());
+        assertEquals(1, tBasement.getAsJsonArray("entries").size(), ":176 the sole rare row");
+        assertTrue(tBasement.getAsJsonArray("entries").toString().contains("manual_portal_tf"));
         JsonObject tHill2 = tree("data/gt6/loot_modifiers/dungeon_inject_tf_hill_2.json");
         JsonArray tEntries = tHill2.getAsJsonArray("entries");
         // :83 the Basalz tail row rides the TE convergence skip — the JSON is the mineshaft

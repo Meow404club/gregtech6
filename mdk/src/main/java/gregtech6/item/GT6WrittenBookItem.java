@@ -28,7 +28,11 @@ import gregtech6.registry.GT6Books;
  * /give stacks with NBT. So {@link #use} synthesizes a vanilla written-book stack with
  * the converted NBT and opens it — exactly the upstream UT.Books.display shape
  * (gregapi/util/UT.java:572-574: {@code displayGUIBook(ST.make(Items.written_book, 1, 0, NBT))};
- * the 1.7.10 GT book item itself carried the content in a static map, not on the stack).</li>
+ * the 1.7.10 GT book item itself carried the content in a static map, not on the stack).
+ * Task books-text-family: the pages are the translate-component JSON carriers
+ * (GT6Books.convertPages) — the vanilla BookViewScreen parses each page as a JSON text
+ * component first (getPageRaw, BookViewScreen.java:339-349), so the text resolves per
+ * active language from the lang files.</li>
  * <li>1.21.1 (neo): the content rides the item prototype's DEFAULT
  * {@code DataComponents.WRITTEN_BOOK_CONTENT} component (set in the GT6Books registration
  * lambda via {@code Item.Properties.component}) — every stack incl. /give IS a written
@@ -38,9 +42,9 @@ import gregtech6.registry.GT6Books;
  * </ul>
  *
  * <p>Out of shape on purpose (the declared deviations, GT6Books javadoc): no creative-tab
- * entry (the tab system is the pool card), no dungeon-loot/printer recipe face (successor
- * card seams), pages shipped as the upstream English code face on both legs (the 743 dump
- * written.book.* zh page overrides are the deferred localization wave).
+ * entry beyond the dedicated BOOKS_TAB walk, no printer recipe face (successor card seam);
+ * the pages ride the lang keys (UT.java:610 mechanism) — en_us carries the code face,
+ * zh_cn the dump translations, untranslated pages fall back to the en face client-side.
  */
 public class GT6WrittenBookItem extends WrittenBookItem {
 

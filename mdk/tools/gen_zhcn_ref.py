@@ -8,9 +8,13 @@ mdk/src/main/resources/gregtech6/lang/zh_cn_ref.tsv (columns kind/source/value/s
 2026-09-06-p20-i18n-zhcn-pipeline §1.1).
 
 Pipeline ruling implemented here (ADR §1.1/§1.2):
-  - The dump lines look like "    S:<key>=<value>" (Forge Configuration render). Only three
-    key families are collected: gt.material.* / itemGroup.* / gt.multitileentity.*; addon and
-    out-of-face keys (ktfru.* = KekzTech addon, written.book.*, enchantment.*) are dropped.
+  - The dump lines look like "    S:<key>=<value>" (Forge Configuration render). Four key
+    families are collected: gt.material.* / itemGroup.* / gt.multitileentity.* /
+    written.book.* (task books-text-family — the book-page band; the status rule for it is
+    CJK presence, not ascii_review, because the dump's book rows are either the code-default
+    copy written back by LanguageHandler.langfile or a real translation — a revised-English
+    drift row must NOT ship as the zh face); addon and out-of-face keys (ktfru.* = KekzTech
+    addon, enchantment.*) are dropped.
   - ZERO key-name logic on the Python side: family rows carry the dump key suffix verbatim
     (material Pascal internal / itemGroup camel internal / mte numeric id); the target gt6
     lang keys are derived provider-side by the single MaterialPrefixItem.snakeCase
@@ -53,13 +57,17 @@ from pathlib import Path
 DUMP_LINE = re.compile(r"^    S:([^=]+)=(.*)$")
 
 # Out-of-face keys: the KekzTech addon family and non-item lang keys (ADR §1.1 filter).
-DROP_KEY_PREFIXES = ("ktfru.", "written.book.", "enchantment.")
+DROP_KEY_PREFIXES = ("ktfru.", "enchantment.")
 
-# kind -> dump key prefix (the three collected families; everything else is ignored).
+# kind -> dump key prefix (the four collected families; everything else is ignored).
 FAMILIES = (
     ("gt.material.", "material"),
     ("itemGroup.", "itemgroup"),
     ("gt.multitileentity.", "mte"),
+    # task books-text-family — the source is the FULL dump key suffix (the upstream
+    # UT.java:610 written.book.<Mapping>.page.<i> form verbatim; the provider joins it
+    # over the GT6BookText mapping column)
+    ("written.book.", "book"),
 )
 
 REVIEW_NOTE = "value is pure ASCII — suspected untranslated dump entry (e.g. Magnite=Magnite, tmp/gregtech.lang:5003)"
@@ -2817,31 +2825,13 @@ MOLD_SHAPE_WORDS = {
     "nugget": "粒",
 }
 
-# task material-mc-e-tool-anvil-rows rescue — the six energy-page rows landed the TSV
-# without this py layer (the energy-page-jei-leg card); values verbatim from the
-# committed TSV so the regen keeps every zh face. (The interim faucet-rescue 12-row set
-# retired with the rebase: every row it carried gained a hand-layer proper entry on main,
-# where its presence here collided — the sys.exit "backfill row already in the hand layer"
-# that made main's own --check red.)
-ORPHAN_TSV_RESCUE = {
-    # task material-mc-e-tool-anvil-rows rescue — the six energy-page rows landed the TSV
-    # without this py layer (the energy-page-jei-leg card); values verbatim from the
-    # committed TSV so the regen keeps every zh face
-    "gt6.viewer.energy.empty": "尚无已移植的产生机器",
-    "gt6.viewer.energy.emits": "发射 %s",
-    "gt6.viewer.energy.group.converters": "转换器 · Converters",
-    "gt6.viewer.energy.group.generators": "产生 · Generators",
-    "gt6.viewer.energy.group.processors": "消费·处理 · Processors",
-    "gt6.viewer.energy.transfer": "传输：EU→线缆 / RU·KU→轴系 / HU·CU·Steam→管",
-    # rebase reseat (task material-mc-e-tool-anvil-rows review seat): the four G1 panel
-    # rows landed main's TSV with no py layer (same shape the six rows above rescue —
-    # invisible on main because its --check died at import on the stale faucet set);
-    # values verbatim from the committed TSV so the regen keeps every zh face
-    "gt6.panel.asphalt": "沥青覆盖板",
-    "gt6.panel.cfoam": "建筑泡沫覆盖板",
-    "gt6.panel.concrete": "混凝土覆盖板",
-    "gt6.panel.wood": "木制覆盖板",
-}
+# task faucet-material-rows rescue: the ORPHAN_TSV_RESCUE backfill (the 12 TSV hand rows
+# main carried with no py layer) is RETIRED — every row it rescued has since landed in the
+# hand layer proper (jade.crucible.owner via crucible-jade-face, the clay/grindstone/circuit
+# rows via the later lang waves), and the backfill loop hard-exits on any duplicate; the
+# values were verified identical before the removal (books-text-family unblock, TSV-neutral).
+# (the ten panel/viewer.energy rows that main's interim ORPHAN_TSV_RESCUE carried ride on in
+# DIRECT_TSV_ONLY_RESCUE below — same values, the rebase union seat48)
 
 MOLD_CRUCIBLE_GAP_BACKFILL = {
     "gt6.row.crucible.display.smeltery_stone": "熔炼坩埚 (石头)",     # dump :10772 verbatim (MTE 1000)
@@ -3892,6 +3882,10 @@ LEGACY_ITEM_BACKFILL = {
     'item.gt6.manual_random': 'GregTech 六代技巧与窍门',
     'item.gt6.manual_reactors': '裂变反应堆手册',
     'item.gt6.manual_smeltery': '冶炼坩埚手册',
+    # task books-text-family — the Manual_Portal_TF re-arm (Loader_Books.java:111 "The
+    # Twilight Forest Guide"); no dump title face exists (like the other 15), the value
+    # is the community-canonical TF name 暮色森林 (the TC 微光叶 hand-row convention class)
+    'item.gt6.manual_portal_tf': '暮色森林指南',
 
     # ---- the 2 LD pipe endpoint display names (task p35-long-distance-pipes, review-seat backfill 2026-09-23) ----
     # the dump gt.multitileentity.10060/10061 rows verbatim (the tsv direct rows landed without the py layer)
@@ -4919,11 +4913,30 @@ MOLD_FOOD_DIRECT_BACKFILL = {
 };
 
 
-for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL, BOTTLES_FAMILIES_A_BACKFILL, BOTTLES_FAMILIES_B_BACKFILL, BOTTLES_DYE_BACKFILL, ROBOTICS_BACKFILL, CIRCUIT_CHAIN_BACKFILL, ELECTRODE_BACKFILL, EXPLOSIVES_BACKFILL, MOLD_FOOD_DIRECT_BACKFILL, ORPHAN_TSV_RESCUE):
+# task books-text-family unblock: the 10 TSV direct rows the panel (material-mc-g1/
+# asphalt-panel-followup) and energy-viewer (energy-page-jei-leg) cards direct-wrote into
+# the committed TSV without a py backfill — a regen would silently drop them (the W2
+# lesson, the retired ORPHAN_TSV_RESCUE class). Values verbatim from the committed table
+# (zh_cn_ref.tsv direct band), so the regen is face-neutral for them.
+DIRECT_TSV_ONLY_RESCUE = {
+    "gt6.panel.asphalt": "沥青覆盖板",
+    "gt6.panel.cfoam": "建筑泡沫覆盖板",
+    "gt6.panel.concrete": "混凝土覆盖板",
+    "gt6.panel.wood": "木制覆盖板",
+    "gt6.viewer.energy.emits": "发射 %s",
+    "gt6.viewer.energy.empty": "尚无已移植的产生机器",
+    "gt6.viewer.energy.group.converters": "转换器 · Converters",
+    "gt6.viewer.energy.group.generators": "产生 · Generators",
+    "gt6.viewer.energy.group.processors": "消费·处理 · Processors",
+    "gt6.viewer.energy.transfer": "传输：EU→线缆 / RU·KU→轴系 / HU·CU·Steam→管",
+}
+
+for _backfill in (BLOCK_BACKFILL, FLUID_BACKFILL, DYE_CHEMICAL_BACKFILL, DYE_BOTTLE_BACKFILL, SPRAY_BACKFILL, FOAM_SPRAY_BACKFILL, MATERIAL_BACKFILL, TAB_BACKFILL, MOLD_CRUCIBLE_GAP_BACKFILL, ARMOR_BACKFILL, BUMBLE_BACKFILL, POTION_DRINK_BACKFILL, FOOD_FLUID_BACKFILL, CHEM_FLUID_BACKFILL, NAMING_FLUID_BACKFILL, LEGACY_ITEM_BACKFILL, LEGACY_BLOCK_BACKFILL, ROW_MISC_BACKFILL, BOTTLES_FAMILIES_A_BACKFILL, BOTTLES_FAMILIES_B_BACKFILL, BOTTLES_DYE_BACKFILL, ROBOTICS_BACKFILL, CIRCUIT_CHAIN_BACKFILL, ELECTRODE_BACKFILL, EXPLOSIVES_BACKFILL, MOLD_FOOD_DIRECT_BACKFILL, DIRECT_TSV_ONLY_RESCUE):
     for _key, _value in _backfill.items():
         if _key in HAND_TRANSLATIONS:
             sys.exit(f"backfill row {_key} already in the hand layer")
         HAND_TRANSLATIONS[_key] = (_value, "hand")
+
 
 
 # ---------------------------------------------------------------------------
@@ -5065,6 +5078,20 @@ def dump_rows(dump_path: Path):
 def ascii_review(value: str) -> bool:
     """Pure-ASCII values are suspected untranslated dump entries -> status=review."""
     return value.isascii()
+
+
+def _has_cjk(value: str) -> bool:
+    return any("\u4e00" <= ch <= "\u9fff" for ch in value)
+
+
+def book_status(value: str) -> str:
+    """The book-band status rule (task books-text-family): auto iff the value is a real
+    translation (CJK present), review otherwise — the dump's book rows are either the
+    code-default English copy written back by LanguageHandler.langfile (UT.java:610's
+    fallback face, including the 5 revised-English drift rows like
+    written.book.Manual_Portal_TF.page.0) or a human translation; the drift rows must
+    ride the en fallback like the untranslated ones, never ship as the zh face."""
+    return "auto" if _has_cjk(value) else "review"
 
 
 # ---------------------------------------------------------------------------
@@ -5247,7 +5274,7 @@ def main(argv=None) -> int:
         "# for the GT6ZhCn datagen provider (ADR 2026-09-06-p20-i18n-zhcn-pipeline §1.1).",
         "#",
         "# columns: kind<TAB>source<TAB>value<TAB>status",
-        "#   kind   material | itemgroup | mte | direct",
+        "#   kind   material | itemgroup | mte | book | direct",
         "#   source family rows: the dump key suffix verbatim (material Pascal internal / itemGroup",
         "#          camel internal / mte numeric id) — the gt6 lang key is derived provider-side by",
         "#          the single MaterialPrefixItem.snakeCase implementation, never here;",
@@ -5262,7 +5289,7 @@ def main(argv=None) -> int:
     ]
 
     counts: dict[str, int] = {}
-    for kind in ("direct", "material", "itemgroup", "mte"):
+    for kind in ("direct", "material", "itemgroup", "mte", "book"):
         rows: list[tuple[str, str, str]] = []
         if kind == "direct":
             for key, (value, status) in sorted(HAND_TRANSLATIONS.items()):
@@ -5273,6 +5300,8 @@ def main(argv=None) -> int:
             for source, value in sorted(collected[kind].items()):
                 if (kind, source) in FAMILY_OVERRIDES:
                     rows.append((source, value, "hand"))  # overridden value = human-authored (task p27-lang-fix)
+                elif kind == "book":
+                    rows.append((source, value, book_status(value)))
                 else:
                     rows.append((source, value, "review" if ascii_review(value) else "auto"))
         counts[kind] = len(rows)
@@ -5283,9 +5312,11 @@ def main(argv=None) -> int:
     args.out.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
     review_family = sum(1 for kind in ("material", "itemgroup", "mte") for v in collected[kind].values() if ascii_review(v))
+    book_auto = sum(1 for v in collected["book"].values() if _has_cjk(v))
     print(f"wrote {args.out}")
-    print(f"  direct={counts['direct']} (hand) material={counts['material']} itemgroup={counts['itemgroup']} mte={counts['mte']}")
+    print(f"  direct={counts['direct']} (hand) material={counts['material']} itemgroup={counts['itemgroup']} mte={counts['mte']} book={counts['book']}")
     print(f"  family review (skipped by provider): {review_family} {REVIEW_NOTE}")
+    print(f"  book band: {book_auto} translated (auto) / {counts['book'] - book_auto} fallback (review, the provider skips -> the en_us face)")
     print(f"  dump housekeeping: dropped={dropped} duplicate-keys={duplicates}")
     return 0
 
