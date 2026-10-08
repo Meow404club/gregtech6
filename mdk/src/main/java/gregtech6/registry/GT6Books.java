@@ -1,5 +1,6 @@
 package gregtech6.registry;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,15 +35,16 @@ import gregtech6.item.GT6WrittenBookItem;
  * census-refresh ledger claimed — :45/:61/:72 are just the first three calls (the same
  * read-truncation class as the RM "67 字段" errata ①). The obtainability face is the
  * "gt.books" dungeon-loot table (Loader_Loot.java:340-356, exactly 17 books); this port
- * ships its 15 STATIC books. The five CUT books (each with independent evidence, the
- * generator docstring carries the same list):
+ * ships those 15 STATIC books PLUS Manual_Portal_TF (task books-text-family — the TF
+ * loot-injection domain is ported by twilight-treasure-loot, and the book's obtainability
+ * IS that domain: the TwilightTreasureReplacer.java:164/:176 rare-pool rows, re-armed as
+ * the {@code tower_library}/{@code basement} GLM injections). The four CUT books (each
+ * with independent evidence, the generator docstring carries the same list):
  * <ul>
  * <li>Manual_Punch_Cards (:45) — no obtainability face upstream at all (the punch-card
  * system was never implemented; the book is a placeholder).</li>
  * <li>Manual_Microwave (:61) — obtainable only through the Microwave recipe-map easter
  * egg (RecipeMapMicrowave.java:56); the Microwave RM is not ported.</li>
- * <li>Manual_Portal_TF (:111) — Twilight Forest domain (the TF portal-room chest +
- * TwilightTreasureReplacer.java:164/:176); TF is not ported.</li>
  * <li>Manual_Alloys (:582) / Manual_Elements (:596) — pages generated at runtime from
  * the OreDictMaterial registry (:574-580/:588-594), not static text; no mechanical
  * comparison target exists.</li>
@@ -52,23 +54,34 @@ import gregtech6.item.GT6WrittenBookItem;
  * MultiItemBooks dye-carrier family) whose stacks carry title/author/pages NBT; the port
  * registers ONE item PER BOOK (the census 稀疏档 ruling — a written_book_content carrier
  * is per-title data), the item display name IS the book title (the lang walk, GT6EnUs).
- * The content conversion is the SINGLE-SOURCE converter below: the upstream
- * createWrittenBook page semantics (gregapi/util/UT.java:622-628) — pages of raw length
- * &gt;= 256 are dropped (no static page hits the bound, measured max 253; the rule only
- * ever fired for the dynamic books) and '¶' page markers become newlines — plus the
- * 1.21.1 written_book_content codec's 0..32 title bound (WrittenBookContent.CODEC title
- * field), applied on BOTH legs so the converter stays single-sourced (one title, the
+ * The page conversion is the SINGLE-SOURCE converter below: the upstream createWrittenBook
+ * page filter (gregapi/util/UT.java:622-628 — pages of raw length &gt;= 256 are dropped, no
+ * static page hits the bound, measured max 253) rides {@link #keptPageIndices}; the page
+ * TEXT itself is the upstream langfile mechanism (UT.java:610 — every page is read back
+ * through {@code LanguageHandler.langfile("written.book.<Mapping>.page.<i>", default)}),
+ * so the carriers reference those keys ({@link #convertPages}, the
+ * {@code BookViewScreen.WrittenBookAccess.getPageRaw} JSON face on the 1.20.1 leg and the
+ * translatable components on the 1.21.1 leg) and the VALUES live in the lang files
+ * (GT6EnUs the code face, GT6ZhCn the dump translations — the '¶' marker folds to a
+ * newline in the lang values, the UT.java:624 display fold). Plus the 1.21.1
+ * written_book_content codec's 0..32 title bound (WrittenBookContent.CODEC title field),
+ * applied on BOTH legs so the converter stays single-sourced (one title, the
  * "Hunting Guide for Blazes and Ghasts" 35-char row, truncates on the forge NBT leg too).
  *
  * <p>Obtainability: the dedicated BOOKS_TAB (task tabfix-d-ruling, the user ruling —
  * the manuals should be easy for players to get; supersedes the old "/give-reachable,
  * the sensors posture" declaration). The dungeon-loot face (the upstream "gt.books" table
- * via the p34 loot injection seam) and the Printer recipe face (GT6_Main.java:352) are
- * successor-card seams, out of this card's files scope. The 1.7.10 zh langfile page
- * overrides (the dump carries 743 written.book.* page faces, tmp/gregtech.lang) are a
- * deferred localization wave: 1.20.1 book pages are plain strings (no per-locale
- * component resolution) — the shipped content is the upstream code-face English default,
- * uniform on both legs.
+ * via the p34 loot injection seam) landed with book-loot-first; the TF treasure face (the
+ * Manual_Portal_TF rare-pool rows) landed with books-text-family. The Printer recipe face
+ * (GT6_Main.java:352) stays a successor-card seam. The zh localization (task
+ * books-text-family): the dump carries 743 written.book.* page faces over the 20 upstream
+ * books, 200 of them real translations within the shipped 16 (Reactors 131, Enchantments
+ * 36, Random 13, Extenders 13, Printer 7); the untranslated pages ship the code-face
+ * English via the lang fallback (zh_cn simply omits the key — the client resolves
+ * en_us), never a fabricated translation. The dump's 5 revised-English page faces
+ * (Manual_Portal_TF.page.0-2, Manual_Hunting_Zombie.page.4/:33 — the langfile drifted
+ * from the code) are NOT shipped either: the code face is the single en authority, the
+ * drift is this javadoc's ledger row.
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6Books {
@@ -90,10 +103,10 @@ public final class GT6Books {
 							new net.minecraft.world.item.component.WrittenBookContent(
 									net.minecraft.server.network.Filterable.passThrough(convertTitle(fRow)),
 									fRow.author(), 0,
-									convertPages(fRow).stream()
-											// the cast pins Filterable<Component> — literal() is a MutableComponent
-											.map(aPage -> net.minecraft.server.network.Filterable.passThrough(
-													(net.minecraft.network.chat.Component) net.minecraft.network.chat.Component.literal(aPage))).toList(),
+									pageKeys(fRow).stream()
+											// the cast pins Filterable<Component> — translatable() is a MutableComponent
+											.map(aKey -> net.minecraft.server.network.Filterable.passThrough(
+													(net.minecraft.network.chat.Component) net.minecraft.network.chat.Component.translatable(aKey))).toList(),
 									true)))));
 			*///?}
 		}
@@ -149,17 +162,41 @@ public final class GT6Books {
 					.build());
 
 	/**
-	 * The single-source page converter — the upstream createWrittenBook semantics
-	 * (gregapi/util/UT.java:622-628): pages of raw length &gt;= 256 are dropped (the
-	 * 1.7.10 page cap; the else-branch printed a loader warning), '¶' markers become
-	 * newlines. The raw length is measured BEFORE the marker replacement (the '¶' is one
-	 * char, exactly like the upstream guard).
+	 * The kept-index walk — the UT.java:622-623 page filter (raw length &lt; 256 kept), over
+	 * the ORIGINAL page indices (the upstream langfile keys keep the input index even when
+	 * a later page drops; no static page hits the bound, so in practice this is 0..n-1).
+	 * The single source every consumer walks: the carriers ({@link #convertPages}), the
+	 * 1.21.1 component list and both lang emitters (GT6EnUs/GT6ZhCn page faces).
+	 */
+	public static List<Integer> keptPageIndices(GT6BookText.BookText aBook) {
+		List<Integer> rIndices = new ArrayList<>();
+		for (int i = 0; i < aBook.pages().size(); i++) {
+			if (aBook.pages().get(i).length() < 256) rIndices.add(i);
+		}
+		return rIndices;
+	}
+
+	/** The upstream page lang key — the UT.java:610 {@code written.book.<Mapping>.page.<i>} form. */
+	public static String pageKey(GT6BookText.BookText aBook, int aIndex) {
+		return "written.book." + aBook.mapping() + ".page." + aIndex;
+	}
+
+	/** The kept pages as lang keys (the 1.21.1 component list source, the lang emitters' walk). */
+	public static List<String> pageKeys(GT6BookText.BookText aBook) {
+		return keptPageIndices(aBook).stream().map(aIndex -> pageKey(aBook, aIndex)).toList();
+	}
+
+	/**
+	 * The forge-leg page carrier (the key carriage): the 1.20.1 written-book pages are
+	 * plain strings, and {@code BookViewScreen.WrittenBookAccess.getPageRaw} parses each
+	 * page as a JSON text component before falling back to raw text (tmp/vanilla-1.20.1
+	 * BookViewScreen.java:339-349) — so the carrier is the translate-component JSON and
+	 * the client resolves the key against the active language (the upstream langfile
+	 * override mechanism, UT.java:610, re-hosted client-side). The '¶' fold lives in the
+	 * lang VALUES now (the display text), not in the carrier.
 	 */
 	public static List<String> convertPages(GT6BookText.BookText aBook) {
-		return aBook.pages().stream()
-				.filter(aPage -> aPage.length() < 256)
-				.map(aPage -> aPage.replace("¶", "\n"))
-				.toList();
+		return pageKeys(aBook).stream().map(aKey -> "{\"translate\":\"" + aKey + "\"}").toList();
 	}
 
 	/**

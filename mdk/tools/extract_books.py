@@ -3,12 +3,14 @@
 
 Reads the GregTech 1.7.10 book loader (tmp/gt6-1.7.10/src/main/java/gregtech/loaders/b/
 Loader_Books.java — NOT in the repo, the ADR §1.1 CI principle like gen_zhcn_ref.py's dump)
-and emits mdk/src/main/java/gregtech6/registry/GT6BookText.java: the 15 static books of the
-upstream "gt.books" obtainability face (Loader_Loot.java:340-356) with their pages VERBATIM
-(no hand-copying — this script is the only writer, the committed file is the reviewable
-distillate).
+and emits mdk/src/main/java/gregtech6/registry/GT6BookText.java: the 16 static books of the
+upstream "gt.books" obtainability face (Loader_Loot.java:340-356) plus Manual_Portal_TF
+(task books-text-family — the TF loot-injection domain is ported by twilight-treasure-loot,
+its obtainability is the TwilightTreasureReplacer.java:164/:176 rare-pool rows) with their
+pages VERBATIM (no hand-copying — this script is the only writer, the committed file is the
+reviewable distillate).
 
-Census basis (task card 申报, coordinator-approved 15-book scope): Loader_Books.java carries
+Census basis (task card 申报, coordinator-approved scope; Portal_TF re-armed by books-text-family): Loader_Books.java carries
 20 createWrittenBook calls, not the 3 the p35 census-refresh ledger claimed (:45/:61/:72 are
 just the first three — the same read-truncation class as the RM "67 字段" errata). Five are
 CUT here, each with its own evidence:
@@ -16,13 +18,11 @@ CUT here, each with its own evidence:
                                  implemented; the book is a placeholder).
   - Manual_Microwave    (:61)  — obtainable only via the Microwave recipe-map easter egg
                                  (RecipeMapMicrowave.java:56); the Microwave RM is not ported.
-  - Manual_Portal_TF    (:111) — Twilight Forest domain (loot from the TF portal room chest +
-                                 TwilightTreasureReplacer.java:164/:176); TF is not ported.
   - Manual_Alloys       (:582) — pages generated at runtime from OreDictMaterial.ALLOYS
                                  (:574-580), not static text; cannot be mechanically pinned.
   - Manual_Elements     (:596) — pages generated at runtime from MATERIAL_ARRAY elements
                                  (:588-594), same class.
-The generator enforces this set: the emitted BOOKS list is exactly the 15, and the page
+The generator enforces this set: the emitted BOOKS list is exactly the 16, and the page
 literals are extracted by a string-aware Java expression walker (adjacent "..."+"..."
 concatenations joined, the tAlexGryllsIntro variable inlined, the tBook.add(...) statement
 sequences for Manual_Tools/Manual_Smeltery replayed from their last tBook.clear()).
@@ -50,7 +50,6 @@ from pathlib import Path
 CUT_BOOKS = [
     "Manual_Punch_Cards",
     "Manual_Microwave",
-    "Manual_Portal_TF",
     "Manual_Alloys",
     "Manual_Elements",
 ]
@@ -261,11 +260,11 @@ def emit_java(books, out_path: Path) -> None:
     # the static CUT books must all be present and the kept set exactly the approved 15
     kept = [b for b in books if b[0] not in CUT_BOOKS]
     cut_seen = [b[0] for b in books if b[0] in CUT_BOOKS]
-    missing = [c for c in ["Manual_Punch_Cards", "Manual_Microwave", "Manual_Portal_TF"] if c not in cut_seen]
+    missing = [c for c in ["Manual_Punch_Cards", "Manual_Microwave"] if c not in cut_seen]
     if missing:
         sys.exit(f"FATAL: static CUT books absent from upstream file: {missing}")
-    if len(kept) != 15:
-        sys.exit(f"FATAL: expected the approved 15-book set, got {len(kept)}: {[b[0] for b in kept]}")
+    if len(kept) != 16:
+        sys.exit(f"FATAL: expected the approved 16-book set, got {len(kept)}: {[b[0] for b in kept]}")
 
     out = []
     out.append("package gregtech6.registry;")
@@ -279,14 +278,17 @@ def emit_java(books, out_path: Path) -> None:
     out.append(" * <p>The " + str(len(kept)) + " static books of the upstream \"gt.books\" obtainability face")
     out.append(" * (Loader_Loot.java:340-356), pages VERBATIM ('¶' page markers included — the")
     out.append(" * runtime conversion lives in GT6Books, the single-source converter, UT.java:622-628")
-    out.append(" * semantics). Task p35-books-written, coordinator-approved 15-book scope; the five CUT")
-    out.append(" * books carry their own evidence in the generator docstring (Punch_Cards/Microwave/")
-    out.append(" * Portal_TF/Alloys/Elements).")
+    out.append(" * semantics). Tasks p35-books-written + books-text-family (the Portal_TF re-arm, the")
+    out.append(" * TF loot-injection domain is ported); the four CUT books carry their own evidence in")
+    out.append(" * the generator docstring (Punch_Cards/Microwave/Alloys/Elements).")
     out.append(" */")
     out.append("public final class GT6BookText {")
     out.append("")
-    out.append("\t/** One book: the registry path, the title/author columns and the raw pages (upstream order). */")
-    out.append("\tpublic record BookText(String path, String title, String author, List<String> pages) {")
+    out.append("\t/** One book: the registry path, the upstream createWrittenBook mapping (the")
+    out.append("\t * written.book.&lt;Mapping&gt;.page.&lt;i&gt; lang-key form, UT.java:610 — the path is NOT")
+    out.append("\t * always reversible, Manual_Portal_TF -&gt; manual_portal_tf loses the TF casing), the")
+    out.append("\t * title/author columns and the raw pages (upstream order). */")
+    out.append("\tpublic record BookText(String path, String mapping, String title, String author, List<String> pages) {")
     out.append("\t}")
     out.append("")
     out.append("\tpublic static final List<BookText> BOOKS = List.of(")
@@ -298,7 +300,7 @@ def emit_java(books, out_path: Path) -> None:
         if not pages:
             sys.exit(f"FATAL: {mapping} has no pages")
         out.append(f"\t\t\t// upstream Loader_Books.java:{line_no} — {len(pages)} pages")
-        out.append("\t\t\tnew BookText(\"" + snake(mapping) + "\", \"" + esc(title) + "\", \"" + esc(author) + "\", List.of(")
+        out.append("\t\t\tnew BookText(\"" + snake(mapping) + "\", \"" + mapping + "\", \"" + esc(title) + "\", \"" + esc(author) + "\", List.of(")
         for p_idx, page in enumerate(pages):
             comma = "," if p_idx < len(pages) - 1 else ""
             out.append("\t\t\t\t\"" + esc(page) + "\"" + comma)

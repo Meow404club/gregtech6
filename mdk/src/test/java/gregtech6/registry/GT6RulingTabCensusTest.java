@@ -40,10 +40,10 @@ public class GT6RulingTabCensusTest extends GTOfflineTestBase {
 		assertNotNull(GT6Rails.ROAD_ITEM, "the Road Stripe's own item field — the walk accepts it before the map walk");
 	}
 
-	/** Ruling ② — the written books: 15 items on the dedicated tab. */
+	/** Ruling ② — the written books: 16 items on the dedicated tab (books-text-family re-armed Manual_Portal_TF). */
 	@Test
 	public void theBooksOwnTheirDedicatedTabWithAll15() {
-		assertEquals(15, GT6Books.ITEMS_BY_PATH.size(), "the 15 static books (the gt.books pool minus the 5 CUT rows, the p35 basis)");
+		assertEquals(16, GT6Books.ITEMS_BY_PATH.size(), "the gt.books 15 static books + the re-armed Manual_Portal_TF (books-text-family, the TF rare-row face)");
 		assertNotNull(GT6Books.BOOKS_TAB, "the dedicated tab exists (the user ruling: the manuals should be easy to get)");
 		assertEquals("gt6:books", GT6Books.BOOKS_TAB.getId().toString(), "the tab registry id");
 	}
