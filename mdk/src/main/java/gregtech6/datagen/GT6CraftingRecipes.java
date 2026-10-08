@@ -397,10 +397,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
 			woodenPanelRecipeBuilder(tRow).save(aConsumer, woodenPanelRecipeId(tRow));
 		}
-		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed
-			ShapedRecipeBuilder tBuilder = panelRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the asphalt input family is unported — the declared G2 cut
-			tBuilder.save(aConsumer, panelRecipeId(tRow));
+		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed + asphalt-panel-followup
+			panelRecipeBuilder(tRow).save(aConsumer, panelRecipeId(tRow)); // all 48 rows build — the G2 asphalt family landed, the cut retired
 		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
@@ -716,10 +714,8 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
 			woodenPanelRecipeBuilder(tRow).save(aOutput, woodenPanelRecipeId(tRow));
 		}
-		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed
-			ShapedRecipeBuilder tBuilder = panelRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the asphalt input family is unported — the declared G2 cut
-			tBuilder.save(aOutput, panelRecipeId(tRow));
+		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed + asphalt-panel-followup
+			panelRecipeBuilder(tRow).save(aOutput, panelRecipeId(tRow)); // all 48 rows build — the G2 asphalt family landed, the cut retired
 		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
@@ -3146,10 +3142,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * families, result 6x): 'P' = the colour-matched source block item — Concrete takes
 	 * the 16 per-pair port concrete blocks (faithful 1:1); C-Foam takes the UNCOLOURED
 	 * dried cfoam item (the foam family's collapsed item ladder — the input colour face
-	 * folds, the declared deviation; the 16 output colours still walk); Asphalt returns
-	 * null — the upstream input is the BlocksGT.Asphalt 16-colour band (Loader_Blocks
-	 * .java:59) and the port has no asphalt block family yet (residual_sweep G2 pool),
-	 * the declared recipe cut, the band lands with G2. 'T' =
+	 * folds, the declared deviation; the 16 output colours still walk); Asphalt takes
+	 * the 16 per-dye port asphalt blocks (task asphalt-panel-followup — the G2 family
+	 * landed, the upstream :2054 row {@code ST.make(BlocksGT.Asphalt, 1, i)} rides
+	 * {@code GT6DecorBlocks.ASPHALT_BLOCKS}, faithful 1:1, the declared G2 cut retired).
+	 * 'T' =
 	 * {@code OP.screw.dat(ANY.Iron)} → the iron screw item (the sifting-table
 	 * ANY.Iron→MT.Iron fold), 's' = the saw tag, 'd' = the screwdriver tag (the upstream
 	 * CR.java:211/:229 tool letters, not consumed — the tools carry their own
@@ -3163,7 +3160,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		} else if (aRow.family() == GT6PanelBlock.Family.CFOAM) {
 			tSource = gregtech6.registry.GT6FoamBlocks.CFOAM_ITEM.get();
 		} else {
-			return null; // the asphalt input family is unported — the declared G2 cut
+			tSource = gregtech6.registry.GT6DecorBlocks.ASPHALT_BLOCKS.get(aRow.dyeIndex() & 15).get().asItem();
 		}
 		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
 						gregtech6.registry.GT6Panels.ITEMS.get(aRow.family().ordinal() * 16 + (aRow.dyeIndex() & 15)).get(), 6)
