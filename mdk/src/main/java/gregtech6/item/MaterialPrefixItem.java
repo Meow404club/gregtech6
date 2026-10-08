@@ -315,8 +315,12 @@ public class MaterialPrefixItem extends Item implements IOreDictItemDataOverride
     /**
      * The F3+H component row (:459-475 verbatim): WHITE amount + YELLOW material word +
      * the M/B/W stat block (CYAN labels, RED Kelvin units, YELLOW kg).
+     *
+     * <p>Public static: the ONE row builder shared with the central-face consumer
+     * {@code GT6ComponentTooltipListener} (task component-tooltip-f3h-rows) — two copies
+     * of the format would drift; this class keeps single source of truth.
      */
-    private static Component containedMaterialRow(OreDictMaterialStack aStack) {
+    public static Component containedMaterialRow(OreDictMaterialStack aStack) {
         double tWeight = aStack.weight();
         long tFrac = ((long)(tWeight * 1000)) % 1000; // the :461 fraction digits
         return Component.empty()
