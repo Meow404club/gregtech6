@@ -33,7 +33,10 @@ import gregtech6.item.MaterialPrefixItem;
  * The central component face pins (task component-central-face, the six acceptance arms).
  *
  * <p>Offline posture: the vanilla registries bootstrap, the GT material universe refills
- * ({@code GTMaterialItems.initMaterials()}, the GT6RecipeTagFallbackTest convention), and the
+ * ({@code GT6MaterialTestSupport.materials()}, the hermetic single-flood bracket — a bare
+ * {@code initMaterials()} here was a mid-fork SECOND flood and poisoned every later consumer
+ * class in the fork with stale-generation identities, the known rotating-reds fingerprint the
+ * GT6MaterialTestSupport javadoc documents), and the
  * reverse-tag seam {@link OM#sStackTags} runs under an injected membership stub — the production
  * binding is {@code ItemStack::getTags}, which reads EMPTY offline (the tag manager never boots;
  * the GT6RecipeTagFallbackTest.java:53 seam discipline, the same-value ruling
@@ -42,7 +45,11 @@ import gregtech6.item.MaterialPrefixItem;
  *
  * <p>OM state is static: every test writes through its own probe Item instances so the
  * (item, damage) keys never collide, and the tag seam is restored to the production binding
- * after every test.
+ * after every test. The class's VANILLA-item map registrations (the copper-ingot-Gold probe,
+ * the nugget/axe/pickaxe/pants faces) are snapshot+cleared in {@link #bootOffline()} and
+ * restored in {@link #leaveTheProductionBindingInPlace()} — a leaked entry would shadow every
+ * later consumer class in the fork, because the map arm outranks the family-tag arm in the
+ * read chain (OM.getItemData_ arm 3 before arm 3b).
  */
 class OMComponentFaceTest {
 
@@ -58,13 +65,32 @@ class OMComponentFaceTest {
 			: aStack.getItem() == Items.COPPER_INGOT ? Stream.of(GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, "copper"))
 			: Stream.empty();
 
+	/** The saved map content (see the class doc — the vanilla-item registrations must not
+	 * outlive this class). */
+	static java.util.Map<Object, Object> sSavedMap;
+
+	/** The live OM data map (private in OM — reflection; ponytail: add an OM test-reset hook
+	 * if a third consumer card needs one). */
+	@SuppressWarnings("unchecked")
+	static java.util.Map<Object, Object> omDataMap() {
+		try {
+			java.lang.reflect.Field tMap = OM.class.getDeclaredField("sItemStack2DataMap");
+			tMap.setAccessible(true);
+			return (java.util.Map<Object, Object>)tMap.get(null);
+		} catch (ReflectiveOperationException aE) {
+			throw new IllegalStateException("could not reach the OM data map", aE);
+		}
+	}
+
 	@BeforeAll
 	static void bootOffline() {
 		SharedConstants.tryDetectVersion();
 		try {
 			Bootstrap.bootStrap(); // the Forge-patched boot throws offline at NetworkHooks — the registries are ready by then
 		} catch (Throwable ignored) {}
-		gregtech6.registry.GTMaterialItems.initMaterials(); // MT.init + OP.init, the offline material universe
+		gregtech6.registry.GT6MaterialTestSupport.materials(); // the hermetic bracket: reset FIRST, then the full refill — the single-flood gate (task component-crucible-feed-resolve: the bare initMaterials() here was the mid-fork second flood)
+		sSavedMap = new java.util.HashMap<>(omDataMap());
+		omDataMap().clear(); // this class's vanilla-item probes must not shadow later consumer classes (the map arm outranks the family-tag arm)
 		OM.addListener(sRecorder);
 	}
 
@@ -82,6 +108,9 @@ class OMComponentFaceTest {
 	@AfterAll
 	static void leaveTheProductionBindingInPlace() {
 		OM.sStackTags = ItemStack::getTags;
+		java.util.Map<Object, Object> tMap = omDataMap(); // the class's vanilla-item registrations die here
+		tMap.clear();
+		tMap.putAll(sSavedMap);
 	}
 
 	// ------------------------------------------------------------- ① the read-chain priorities

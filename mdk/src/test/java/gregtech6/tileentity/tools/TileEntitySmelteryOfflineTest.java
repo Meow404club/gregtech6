@@ -59,6 +59,27 @@ public class TileEntitySmelteryOfflineTest {
 	static BlockEntityType<TileEntityMold> sMoldType;
 	static MaterialPrefixItem DUST_IRON, INGOT_IRON;
 
+	/**
+	 * The family-tag membership stub for the vanilla ingot/nugget pins (task
+	 * component-crucible-feed-resolve: the bridges are gone, the pins ride the read chain's
+	 * family-tag arm). The real tag manager never boots offline — the stub feeds
+	 * {@code OM.sStackTags} the ids the live VANILLA_INTERSECTION emission produces
+	 * ({@code forge:ingots/iron = [minecraft:iron_ingot, gt6:ingot_iron]}). The "c"
+	 * namespace rides GT6ItemTags.COMMON_NAMESPACE — the leg-neutral face (both legs'
+	 * namespace gates accept it). Built in {@link #boot()}, NOT a static initializer:
+	 * {@code Items.*} cannot be touched at class-init (before any
+	 * {@code Bootstrap.bootStrap()} the registry classes fail to even load offline — the
+	 * isolated-run initializationError).
+	 */
+	static java.util.Map<Item, net.minecraft.tags.TagKey<Item>> FAMILY_TAGS;
+
+	static net.minecraft.tags.TagKey<Item> familyTag(String aPath) {
+		return net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
+				new net.minecraft.resources.ResourceLocation("c", aPath));
+	}
+
+	static java.util.function.Function<ItemStack, java.util.stream.Stream<net.minecraft.tags.TagKey<Item>>> sSavedTags;
+
 	@BeforeAll
 	static void boot() {
 		ProbeBoot.boot();
@@ -79,11 +100,23 @@ public class TileEntitySmelteryOfflineTest {
 			if (r.prefix() == OP.ingot && r.material() == MT.Iron) tItem = INGOT_IRON;
 			return tItem == null || r.count() < 1 ? null : new ItemStack(tItem, (int)Math.min(64, r.count()));
 		};
+		FAMILY_TAGS = java.util.Map.of(
+				Items.IRON_INGOT, familyTag("ingots/iron"),
+				Items.GOLD_INGOT, familyTag("ingots/gold"),
+				Items.COPPER_INGOT, familyTag("ingots/copper"),
+				Items.IRON_NUGGET, familyTag("nuggets/iron"),
+				Items.GOLD_NUGGET, familyTag("nuggets/gold"));
+		sSavedTags = gregtech6.components.OM.sStackTags;
+		gregtech6.components.OM.sStackTags = aStack -> {
+			net.minecraft.tags.TagKey<Item> tTag = FAMILY_TAGS.get(aStack.getItem());
+			return tTag == null ? java.util.stream.Stream.empty() : java.util.stream.Stream.of(tTag);
+		};
 	}
 
 	@AfterAll
 	static void restoreResolvers() {
 		GT6RecipeMapCrucible.sMatResolver = GT6RecipeMapCrucible.DEFAULT_MAT_RESOLVER;
+		gregtech6.components.OM.sStackTags = sSavedTags;
 	}
 
 	static TileEntitySmeltery makeSmeltery() {
