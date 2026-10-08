@@ -14,8 +14,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
-import gregtech6.registry.GT6Foods;
-
 /**
  * The crop seed item — task cbc-3-crop-data-assets, the port of IC2's seed carrier
  * (1.12 decompiled ItemCropSeed.generateItemStackFromValues :110-121 via
@@ -33,7 +31,8 @@ import gregtech6.registry.GT6Foods;
  * <p>The item model reuses the family crop-stick sprite (gt6:item/crop_stick — the same borrow
  * cbc-1 seated; IC2 itself renders ItemCrop with the crop_stick texture, ItemCrop.java:27);
  * the datagen model line lives in GT6ItemModels. Creative seat: the crop domain's
- * "Nature &amp; Foods" tab ({@code gt6:food}, the GT6CropSticks seat form — task cbc-6).
+ * "GregTech: Crops" tab ({@code gt6:crops}, task crop-creative-tab — the tab walk emits
+ * one fully-scanned representative seed per card).
  *
  * <p>KJS face: REGISTRATION face only, deferred to the KJS binding card.
  * RCON face: none. Viewer face: no machine diagram, zero JEI/EMI recipe surfaces — the
@@ -60,8 +59,8 @@ public final class GT6CropSeeds {
 	 * ItemCropSeed.addInformation :63-75: scanLevel &gt;= 4 discloses the three stat
 	 * bytes, scanLevel &gt;= 1 names the crop through the cbc-3 {@code gt.crop.<name>}
 	 * keys; below 1 the payload is undisclosed, scan with the Cropnalyzer); the creative
-	 * seat rides the crop domain's "Nature &amp; Foods" tab (the GT6CropSticks seat form,
-	 * task cbc-6).
+	 * seat rides the crop domain's "GregTech: Crops" tab ({@code gt6:crops}, task
+	 * crop-creative-tab — the GT6CropSticks.walkDisplayItems emission).
 	 */
 	public static final RegistryObject<Item> CROP_SEED = ITEMS.register("crop_seed", () -> new Item(new Item.Properties()) {
 		//? if forge {
@@ -105,14 +104,6 @@ public final class GT6CropSeeds {
 					.withStyle(net.minecraft.ChatFormatting.AQUA)
 					.append(net.minecraft.network.chat.Component.literal(String.valueOf(tData.resistance()))
 							.withStyle(net.minecraft.ChatFormatting.GRAY)));
-		}
-	}
-
-	/** The food-tab seat (the crop domain's upstream home — the "Nature & Foods" band, the GT6CropSticks form). */
-	@SubscribeEvent
-	public static void onBuildTabContents(net.minecraftforge.event.BuildCreativeModeTabContentsEvent aEvent) {
-		if (aEvent.getTabKey().location().equals(GT6Foods.FOOD_TAB.getId())) {
-			aEvent.accept(new ItemStack(CROP_SEED.get()));
 		}
 	}
 
