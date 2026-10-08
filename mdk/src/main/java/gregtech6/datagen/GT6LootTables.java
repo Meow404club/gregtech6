@@ -140,6 +140,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ConcreteBlockLoot::new, LootContextParamSets.BLOCK), // task concrete-blocks-register — the 64 concrete tables
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
+                new SubProviderEntry(GT6ItemPipeBlockLoot::new, LootContextParamSets.BLOCK), // task item-pipes-loot-self — the 108 ungated item-pipe self-drops
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
@@ -211,6 +212,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6ConcreteBlockLoot::new, LootContextParamSets.BLOCK), // task concrete-blocks-register — the 64 concrete tables
                 new SubProviderEntry(GT6GrassBlockLoot::new, LootContextParamSets.BLOCK), // task grass-block
                 new SubProviderEntry(GT6PipeBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-pipe-spray
+                new SubProviderEntry(GT6ItemPipeBlockLoot::new, LootContextParamSets.BLOCK), // task item-pipes-loot-self — the 108 ungated item-pipe self-drops
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
@@ -2395,6 +2397,65 @@ public final class GT6LootTables extends LootTableProvider {
                 .copy(quoted(TileEntityBase03TicksAndSync.NBT_PAINTED), "BlockEntityTag." + quoted(TileEntityBase03TicksAndSync.NBT_PAINTED),
                         CopyNbtFunction.MergeStrategy.REPLACE);
         //?}
+    }
+
+    // -------------------------------------------------------------------------
+    // task item-pipes-loot-self — the item-pipe family band
+    // -------------------------------------------------------------------------
+
+    /**
+     * The item-pipe family block list (task item-pipes-loot-self): the ungated rows of
+     * {@link gregtech6.registry.GTItemPipes#ROWS} (21 materials x 6 variants = the 126-row
+     * universe). Pre-existing state: the family shipped TABLE-LESS and the block has no
+     * getDrops override (GTItemPipeBlock.java:52 — the vanilla default loot-table lookup
+     * missing = breaking dropped NOTHING), while the upstream MTE default self-drops
+     * (TileEntityBase04MultiTileEntities.getDrops:166-171 over the IMTE_GetDrops chain;
+     * MultiTileEntityPipeItem has zero item storage, the only drop IS the self-drop). This
+     * is the tank-valve lane ({@link #GT6TankBlockLoot}, the plain {@code dropSelf}):
+     * nothing to carry — the port item pipe BE has no foam layer and no inventory
+     * (GTItemPipeBlockEntity:434), so no {@code copy_nbt} arm (the
+     * {@link #foamPaintSelfTable} shape stays the fluid-pipe family's).
+     *
+     * <p>The walk skips the gated-domain rows ({@link GT6ForeignRowConvergence#gatingDomain}
+     * — the loot faces have NO load-time condition mechanism, ForgeHooks.loadLootTable
+     * deserializes straight into LootTable, and {@code registers()} is useless at datagen
+     * where the JVM seeds all-PRESENT, so the skip is the only gate; the
+     * GT6BlockLoot:254 precedent). DECLARED COST (the convergence 1443 same shape): an
+     * install carrying the owning mod also misses the row's table — the gated set is
+     * pinned by the GT6ItemPipeLootSelfPinTest ledger.
+     */
+    public static List<Block> itemPipeLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (var tRow : gregtech6.registry.GTItemPipes.ROWS) {
+            if (GT6ForeignRowConvergence.gatingDomain(tRow.material().oreDictMaterial()) != null) continue; // the mdh convergence skip (loot has no condition mechanism)
+            rBlocks.add(gregtech6.registry.GTItemPipes.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The item-pipe self-drop provider (task item-pipes-loot-self; the tank-valve provider shape). */
+    public static final class GT6ItemPipeBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6ItemPipeBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6ItemPipeBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return itemPipeLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : itemPipeLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     // -------------------------------------------------------------------------
