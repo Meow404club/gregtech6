@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -48,6 +49,18 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 	static BlockEntityType<TestCrucible> sCrucibleType;
 	static BlockEntityType<CrucibleWallBlockEntity> sWallType;
 	static MaterialPrefixItem DUST_IRON;
+
+	/**
+	 * The family-tag membership stub for the vanilla-ingot pin (task
+	 * component-crucible-feed-resolve: the bridge is gone, the pin rides the read chain's
+	 * family-tag arm) — the TileEntitySmelteryOfflineTest FAMILY_TAGS form verbatim.
+	 * Built in {@link #buildInputFixtures()}, NOT a static initializer: {@code Items.*}
+	 * cannot be touched at class-init (before any {@code Bootstrap.bootStrap()} the
+	 * registry classes fail to even load offline — the isolated-run initializationError).
+	 */
+	static java.util.Map<Item, net.minecraft.tags.TagKey<Item>> FAMILY_TAGS;
+
+	static java.util.function.Function<ItemStack, java.util.stream.Stream<net.minecraft.tags.TagKey<Item>>> sSavedTags;
 
 	/** The concrete test BE — the crucible over a vanilla-block BET, wall and suck bound. */
 	public static final class TestCrucible extends TileEntityCrucible {
@@ -84,6 +97,19 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 		BlockEntityType<CrucibleWallBlockEntity>[] tWallHolder = (BlockEntityType<CrucibleWallBlockEntity>[]) new BlockEntityType<?>[1];
 		tWallHolder[0] = BlockEntityType.Builder.of(CrucibleWallBlockEntity::new, Blocks.BRICKS).build(null);
 		sWallType = tWallHolder[0];
+		FAMILY_TAGS = java.util.Map.of(
+				net.minecraft.world.item.Items.IRON_INGOT, net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
+						new net.minecraft.resources.ResourceLocation("c", "ingots/iron")));
+		sSavedTags = gregtech6.components.OM.sStackTags;
+		gregtech6.components.OM.sStackTags = aStack -> {
+			net.minecraft.tags.TagKey<Item> tTag = FAMILY_TAGS.get(aStack.getItem());
+			return tTag == null ? java.util.stream.Stream.empty() : java.util.stream.Stream.of(tTag);
+		};
+	}
+
+	@AfterAll
+	static void restoreTheTagSeam() {
+		gregtech6.components.OM.sStackTags = sSavedTags;
 	}
 
 	/** A formed crucible at (100, 64, 100) with its relaying wall ring (the physics-suite relay fixture). */
