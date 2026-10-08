@@ -186,6 +186,18 @@ public class GT6BooksWrittenPinTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void theGuidePoolStaysTheGtBooksMembership() {
+		// the Guide's random roll (Behavior_Drop_Loot) reads manualPool — upstream the pool
+		// is the gt.books table (Loader_Loot.java:340-356, 17 books) which does NOT carry
+		// Manual_Portal_TF; the port's 15-book approximation must not silently grow with
+		// the re-armed book (its face is the TF treasure rows, books-text-family). The
+		// exclusion is pinned as the constant (the pool walk itself binds RegistryObjects,
+		// a runtime-only face — the offline wall, the GT6RulingTabCensusTest form).
+		assertEquals("manual_portal_tf", GT6Books.GUIDE_POOL_EXCLUDED, "the non-gt.books member the Guide pool excludes");
+		assertEquals(16, GT6Books.ITEMS_BY_PATH.size(), "the shipped 16 = the pool 15 + the excluded row");
+	}
+
+	@Test
 	public void itemsWalkTheRowsOneToOne() {
 		assertEquals(GT6BookText.BOOKS.size(), GT6Books.ITEMS_BY_PATH.size(), "one item per book row");
 		int i = 0;

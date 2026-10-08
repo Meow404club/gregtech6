@@ -125,10 +125,19 @@ public final class GT6Books {
 	/**
 	 * The {@code gt.books} loot pool — the 15 static manuals (upstream Loader_Loot.java:340-356
 	 * carries 17 books at equal weight 144 [1,1]; Manual_Elements/Manual_Alloys are the
-	 * p35-CUT dynamic rows), so a uniform pick reproduces the upstream roll.
+	 * p35-CUT dynamic rows), so a uniform pick reproduces the upstream roll. Manual_Portal_TF
+	 * stays OUT (books-text-family): it is not a gt.books member upstream — its obtainability
+	 * is the TF treasure rare rows alone (TwilightTreasureReplacer.java:164/:176, the
+	 * dungeon_inject_tf_basement/tower_library GLM rows).
 	 */
+	public static final String GUIDE_POOL_EXCLUDED = "manual_portal_tf";
+
 	public static List<Item> manualPool() {
-		return ITEMS_BY_PATH.values().stream().map(RegistryObject::get).toList();
+		RegistryObject<Item> tExcluded = ITEMS_BY_PATH.get(GUIDE_POOL_EXCLUDED);
+		return ITEMS_BY_PATH.values().stream()
+				.filter(aRow -> aRow != tExcluded)
+				.map(RegistryObject::get)
+				.toList();
 	}
 
 	/** One uniform pick from the manual pool (the ChestGenHooks.getOneItem face). */
