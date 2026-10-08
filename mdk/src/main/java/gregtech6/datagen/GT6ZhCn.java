@@ -389,16 +389,21 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("item.gt6.book_loot_guide.tooltip");
 		addDirect("item.gt6.book_loot_guide.tooltip_loot");
 		// task books-text-family — the page faces (the upstream langfile mechanism,
-		// UT.java:610): only the dump's real translations ride zh_cn (the book band's
-		// auto rows), the untranslated/revised-English rows stay review and the client
-		// falls back to the en_us code face (缺翻译如实英文原文, never a fabricated value)
+		// UT.java:610): the auto rows are the dump translations verbatim; the review rows
+		// (the untranslated code-default copies AND the 5 revised-English drift faces like
+		// Manual_Portal_TF.page.0) ride the EN CODE FACE as the zh value — 缺翻译如实英文
+		// 原文落账, never a fabricated translation (the addBackfillUnits zero-debt form:
+		// every en key gets a zh emit, the value is the English original)
 		for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
 			for (int tIndex : GT6Books.keptPageIndices(tRow)) {
 				String tKey = GT6Books.pageKey(tRow, tIndex);
 				Map<String, RefRow> tBand = reference.get("book");
 				RefRow tRef = tBand == null ? null : tBand.get(tRow.mapping() + ".page." + tIndex);
-				if (tRef == null || tRef.skipped()) continue;
-				add(tKey, tRef.value().replace("\u00b6", "\n"));
+				if (tRef == null || tRef.skipped()) {
+					add(tKey, tRow.pages().get(tIndex).replace("\u00b6", "\n"));
+				} else {
+					add(tKey, tRef.value().replace("\u00b6", "\n"));
+				}
 			}
 		}
 	}

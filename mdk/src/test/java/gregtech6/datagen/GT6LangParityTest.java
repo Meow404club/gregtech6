@@ -243,7 +243,7 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 6205;
+	private static final int ZH_KEY_FLOOR = 6553;
 	// +185 task books-text-family (measured 6195 = 6010 + 200 + 1 − 16): +200 the translated
 	// book-page faces (the tsv book band auto rows, written.book.<Mapping>.page.<i> — the
 	// UT.java:610 langfile mechanism re-hosted; the CUT-book auto rows stay inert), +1 the
@@ -251,6 +251,14 @@ public class GT6LangParityTest {
 	// the wire-gt prefix items (they were never in the committed face — the walk was removed
 	// by wiregt-prefix-item-retirement while the py hand layer kept them; the regen surfaced
 	// them as parity orphans and they left the hand layer).
+	// +530 task books-text-family (measured 6540 = 6010 + 529 + 1): +529 the book-page faces
+	// (written.book.<Mapping>.page.<i>, the UT.java:610 langfile mechanism re-hosted — every
+	// kept page of the 16 books rides both locales, the 200 dump translations + the 329
+	// untranslated pages as the en original, the addBackfillUnits zero-debt form), +1 the
+	// item.gt6.manual_portal_tf title hand row. (The regen also retired the 16 wire_gt01-16
+	// tab hand rows — never in the committed face, the walk was removed by
+	// wiregt-prefix-item-retirement; and backfilled the 10 panel/viewer TSV-only rows,
+	// zh-count neutral.)
 	// (decisions.2026-10-04-ratchet-comment-bounded): keep the latest note only, the note
 	// history lives in `git log -L` on this line.
 	// (prior note: +13 task material-mc-b-storage-mass-shelf — the metal shelf/crate
@@ -948,28 +956,34 @@ public class GT6LangParityTest {
 	}
 
 	/** The book-page band (task books-text-family): the en face carries every kept page
-	 * (529 keys, the UT.java:610 form), the zh face exactly the 200 dump translations, the
-	 * untranslated pages ride the en fallback (缺翻译如实英文原文). */
+	 * (529 keys, the UT.java:610 form), the zh face the same 529 keys — the 200 dump
+	 * translations verbatim + the 329 untranslated pages AS THE EN ORIGINAL (缺翻译如实
+	 * 英文原文落账, the addBackfillUnits zero-debt form; the 5 revised-English drift faces
+	 * ship the code face, never the drift). */
 	@Test
 	public void theBookPagesRideTheLangKeysOnBothSides() {
-		int tEnPages = 0;
+		int tEnPages = 0, tZhPages = 0, tZhTranslated = 0;
 		for (String tKey : en().keySet()) if (tKey.startsWith("written.book.")) tEnPages++;
 		assertEquals(529, tEnPages, "en carries every kept page of the 16 books (7+10+13+103+36+9+28+38+14+17+16+7+43+42+13+133)");
-		int tZhPages = 0;
 		for (String tKey : zh().keySet()) {
 			if (!tKey.startsWith("written.book.")) continue;
 			tZhPages++;
 			assertTrue(en().containsKey(tKey), "zh page key without an en face: " + tKey);
 			assertTrue(zh().get(tKey).contains("\u00b6") == false, "the '¶' marker folded to a newline in the zh value: " + tKey);
 		}
-		assertEquals(200, tZhPages, "the dump's shipped-book translations (Reactors 131 + Enchantments 36 + Random 13 + Extenders 13 + Printer 7); the CUT-book rows stay inert");
-		// the spot faces: the Portal_TF en code face, the Printer zh translation verbatim
-		assertEquals("If you found this Book next to a Twilight Forest Portal, but you don't know how to light the Portal to go on the Adventure, don't worry, in here are some instructions. If found inside the Twilight Forest, you can probably skip 3 Pages.",
-				en().get("written.book.Manual_Portal_TF.page.0"), "the Loader_Books.java:112 code face");
+		assertEquals(529, tZhPages, "zh covers every kept page (the zero-debt contract)");
+		// the translated corpus: the 200 dump CJK faces, spot-verbatim
 		assertEquals("恭喜您获得了一台新的扫描仪和/或打印机。您在购买时收到的这本手册将非常有用。请记住，如果您丢失了它，可以让打印机为您创建一个新的。",
 				zh().get("written.book.Manual_Printer.page.0"), "the dump translation verbatim");
-		assertFalse(zh().containsKey("written.book.Manual_Portal_TF.page.0"),
-				"the untranslated Portal_TF pages ride the en fallback (the dump's 0-CJK rows are review)");
+		for (String tKey : zh().keySet()) {
+			if (tKey.startsWith("written.book.") && !zh().get(tKey).equals(en().get(tKey))) tZhTranslated++;
+		}
+		assertEquals(200, tZhTranslated, "the dump's shipped-book translations (Reactors 131 + Enchantments 36 + Random 13 + Extenders 13 + Printer 7)");
+		// the untranslated face: the Portal_TF en code face ON BOTH LOCALES (the dump's
+		// 0-CJK rows are review; the revised-English drift does not ship)
+		String tPortalTf = "If you found this Book next to a Twilight Forest Portal, but you don't know how to light the Portal to go on the Adventure, don't worry, in here are some instructions. If found inside the Twilight Forest, you can probably skip 3 Pages.";
+		assertEquals(tPortalTf, en().get("written.book.Manual_Portal_TF.page.0"), "the Loader_Books.java:112 code face");
+		assertEquals(tPortalTf, zh().get("written.book.Manual_Portal_TF.page.0"), "the zh face is the en original verbatim");
 	}
 
 	@Test
