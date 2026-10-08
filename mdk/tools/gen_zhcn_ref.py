@@ -1506,6 +1506,7 @@ HAND_TRANSLATIONS = {
     "item.gt6.screwdriver": ("螺丝刀", "hand"),
     "item.gt6.wrench": ("扳手", "hand"),
     "itemGroup.gt6.food_cans": ("格雷科技: 罐头", "hand"),
+    "itemGroup.gt6.crops": ("格雷科技: 作物", "hand"),  # task crop-creative-tab (seat48 review write-back): the crop tab title, the food_cans half-width-colon family form
 
     # ---- rebase write-back (review session 2026-09-09): the 33 direct rows the merged
     # p26-c-foam-fluid-refill card authored straight into the TSV (its 2ab32e16 fluid
@@ -3937,6 +3938,8 @@ LEGACY_ITEM_BACKFILL = {
     # (蛋茄 for the Eggplant egg-drop pun, 铜棉 Coppon, 银穗苇 Argentia, 钻石苇 Diareed).
     # The GT6ZhCn addCropCardUnits walk emits the keys over the GT6CropCards ROWS.
     'item.gt6.crop_seed': '作物种子',
+    'item.gt6.crop_stick': '作物杆',  # task crop-creative-tab (seat48 review write-back): the cbc-1 name gap (the tab icon item)
+    'gt.crop.weed': '杂草',  # task crop-creative-tab (seat48 review write-back): the WEED singleton (outside the ROWS walk, rides the tab)
     'gt.crop.indigo': '靛蓝',
     'gt.crop.flax': '亚麻',
     'gt.crop.oilberries': '油脂莓',
