@@ -461,20 +461,28 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 		// nav-m3-jei: the category carries the EMI twin's 20px control strip below the canvas
 		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tCategory.getHeight());
 
-		List<int[]> tSlots = new ArrayList<>(); // [role ordinal, x, y]
-		List<Boolean> tSlotItems = new ArrayList<>();
+		// 旧钉迁移声明 (task mattree-jei-panzoom): this pin used to assert the slot
+		// COORDINATES the builder received — that face died with the invisible-slot mount
+		// (addInvisibleIngredients carries no coordinates). The shared-plan rendering moved
+		// to the self-drawn GT6MaterialTreeJeiTreeWidget (whose geometry is the SAME
+		// MaterialTreeLayout table these plan pins cover), and the mount contract (roles,
+		// stacks, zero visible slots) is pinned in GT6MaterialTreeJeiPanzoomTest. What stays
+		// pinned HERE is the category's geometry contract: canvas + strip against the shared
+		// constants, and that setRecipe enters through the invisible seam only.
+		List<String> tSlotBuilders = new ArrayList<>();
+		List<RecipeIngredientRole> tInvisibleRoles = new ArrayList<>();
 		Object tBuilder = Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[] {IRecipeLayoutBuilder.class},
 			(aProxy, aMethod, aArgs) -> {
 				String tName = aMethod.getName();
-				if (tName.equals("addSlot")) {
-					tSlots.add(new int[] {((RecipeIngredientRole) aArgs[0]).ordinal(), (Integer) aArgs[1], (Integer) aArgs[2]});
-					tSlotItems.add(false);
-					return slotProxy(tSlotItems, tSlotItems.size() - 1);
+				if (tName.equals("addSlot") || tName.equals("addInputSlot") || tName.equals("addOutputSlot")) {
+					tSlotBuilders.add(tName);
+					return slotProxy(new ArrayList<>(), 0);
 				}
-				if (tName.equals("addInputSlot") || tName.equals("addOutputSlot")) {
-					tSlots.add(new int[] {tName.equals("addInputSlot") ? 0 : 1, (Integer) aArgs[0], (Integer) aArgs[1]});
-					tSlotItems.add(false);
-					return slotProxy(tSlotItems, tSlotItems.size() - 1);
+				if (tName.equals("addInvisibleIngredients")) {
+					tInvisibleRoles.add((RecipeIngredientRole) aArgs[0]);
+					return Proxy.newProxyInstance(getClass().getClassLoader(),
+						new Class<?>[] {mezz.jei.api.gui.builder.IIngredientAcceptor.class},
+						(aP, aM, aA) -> aM.getName().equals("addItemStack") ? aP : smartDefault(aM.getReturnType()));
 				}
 				return smartDefault(aMethod.getReturnType());
 			});
@@ -482,23 +490,12 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 			(aProxy, aMethod, aArgs) -> smartDefault(aMethod.getReturnType()));
 		tCategory.setRecipe((IRecipeLayoutBuilder) tBuilder, tDisplay, (mezz.jei.api.recipe.IFocusGroup) tFocuses);
 
-		// the machine slots sit exactly at (machine.x-1, machine.y-1) — the SAME plans as the EMI leg
-		List<EdgeLayout> tPlans = MaterialTreeLayout.layout(tDisplay);
-		List<Edge> tEdges = tDisplay.edges();
-		for (int i = 0; i < tEdges.size(); i++) {
-			Rect tMachine = tPlans.get(i).machine();
-			if (tMachine == null) continue;
-			final int tExpectedRole = RecipeIngredientRole.RENDER_ONLY.ordinal();
-			final int tX = tMachine.x() - 1, tY = tMachine.y() - 1;
-			assertTrue(tSlots.stream().anyMatch(s -> s[0] == tExpectedRole && s[1] == tX && s[2] == tY),
-					"RENDER_ONLY machine slot at (" + tX + "," + tY + "), got " + tSlots);
-		}
-		// the byproduct output slots sit at (byproductX(i), byproductY()) — the SAME shared table as the EMI leg
-		for (int b = 0; b < tDisplay.byproducts().size(); b++) {
-			final int tX = MaterialTreeDisplay.byproductX(b), tY = MaterialTreeDisplay.byproductY();
-			assertTrue(tSlots.stream().anyMatch(s -> s[0] == 1 && s[1] == tX && s[2] == tY),
-					"byproduct output slot " + b + " at (" + tX + "," + tY + "), got " + tSlots);
-		}
+		assertTrue(tSlotBuilders.isEmpty(), "no visible slot builder may run — the frozen-coordinate face is retired");
+		// every role the page mounts (ore INPUT / downstream + byproducts OUTPUT / machines
+		// RENDER_ONLY) enters through the invisible seam — the index contract's shape check
+		assertTrue(tInvisibleRoles.contains(RecipeIngredientRole.INPUT), "the ore column mounts invisible INPUT");
+		assertTrue(tInvisibleRoles.contains(RecipeIngredientRole.OUTPUT), "downstream + byproducts mount invisible OUTPUT");
+		assertTrue(tInvisibleRoles.contains(RecipeIngredientRole.RENDER_ONLY), "machine icons mount invisible RENDER_ONLY");
 	}
 
 	// ------------------------------------------------------------------

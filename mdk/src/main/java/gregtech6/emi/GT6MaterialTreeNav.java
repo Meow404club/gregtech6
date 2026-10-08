@@ -104,7 +104,7 @@ public final class GT6MaterialTreeNav {
 	 * a no-op. All the math stays in {@link MaterialTreeViewport#zoomAt}.
 	 */
 	public static void wheelZoom(MaterialTreeViewport aView, double aDelta, double aFocusX, double aFocusY) {
-		if (!(aDelta != 0.0)) return; // zero and NaN both fail the guard
+		if (aDelta == 0.0 || Double.isNaN(aDelta)) return; // a hostile delta cannot move the pose
 		aView.zoomAt(aFocusX, aFocusY, aDelta > 0 ? WHEEL_STEP : 1.0 / WHEEL_STEP);
 	}
 
