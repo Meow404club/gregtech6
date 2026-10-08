@@ -171,6 +171,18 @@ import gregtech6.util.GTSideTables;
  * {@link #buildUI} delegates to the {@link GTBasicMachineMUI} panel factory over the
  * {@link GTBasicMachineMenu#hostOf} projection; the row families (dryer/canner/
  * distillery) keep the vanilla MenuProvider path ({@link #createMenu}) byte-identical.
+ *
+ * <p>Teardown dist note (task basicmachine-onremove-distleak, the forensics record): the
+ * dedicated-server /fill teardown of a producing machine of this family once detonated
+ * ("Attempted to load class brachy/modularui/screen/ModularScreen for invalid dist
+ * DEDICATED_SERVER", gt6_rs_session_1201-forge_kinbe-e2e87ecb.log:41215-41216, zombie BE
+ * left at 33,64,4). The site is NOT on this class — no onRemove/setRemoved override
+ * exists here and the classfile carries zero ModularScreen references (pinned by
+ * {@code TileEntityBasicMachineDistFacePinTest}); the real site is the shared seam
+ * {@code GTEntityBlock.beCanDrop} → the getMethod interface-default walk resolving the
+ * {@link GT6MuiMachine} {@code createScreen} default's client-only return type. Root fix
+ * = the mui-fill-teardown-distleak card. This family must stay free of client-typed
+ * member declarations — the interface default is the sanctioned carrier.
  */
 public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync implements MenuProvider, GT6MuiMachine {
 
