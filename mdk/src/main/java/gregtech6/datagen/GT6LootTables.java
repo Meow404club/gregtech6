@@ -1675,14 +1675,14 @@ public final class GT6LootTables extends LootTableProvider {
     }
 
     /**
-     * The anvil block list (task c-anvil): the two stone anvil rows — the FE
-     * converter list shape over two blocks, self-drop (the MTE Drops default; the
-     * working-surface content pop rides the block's onRemove face, not the loot table).
+     * The anvil block list (task c-anvil; task material-mc-e-tool-anvil-rows walks the
+     * full :2185-2219 ladder — the FE converter list shape over the 35 row blocks,
+     * self-drop (the MTE Drops default; the working-surface content pop rides the
+     * block's onRemove face, not the loot table).
      */
     public static List<Block> anvilLootBlocks() {
-        return List.of(
-                gregtech6.registry.GT6Anvils.STONE_ANVIL.get(),
-                gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get());
+        return gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.values().stream()
+                .<Block>map(RegistryObject::get).toList();
     }
 
     /** The anvil self-drop provider (task c-anvil, the GT6FeConverterBlockLoot form). */

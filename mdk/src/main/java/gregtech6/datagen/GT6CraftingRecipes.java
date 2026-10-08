@@ -137,8 +137,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	public static final ResourceLocation CLAY_JUICER_REVERSE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "clay_juicer_reverse");
 	public static final ResourceLocation CLAY_JUICER_SMELT_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "juicer");
 
-	public static final ResourceLocation STONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "stone_anvil");
-	public static final ResourceLocation BLACKSTONE_ANVIL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "blackstone_anvil");
+	// task material-mc-e-tool-anvil-rows — the anvil ids ride the result-path convention
+	// (the anvilRecipeId helper over the 35-row ladder; the two c-anvil constants retired
+	// into it)
+	/** The kitchen TABLE crafting ids (task material-mc-e-tool-anvil-rows — the result-path convention). */
+	public static final ResourceLocation BATHING_POT_TABLE_WOOD_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bathing_pot_table_wood");
+	public static final ResourceLocation BATHING_POT_TABLE_STEEL_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "bathing_pot_table_steel");
+	public static final ResourceLocation MIXING_BOWL_TABLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "mixing_bowl_table");
 	/** The Sifting Table crafting row (task sifting-table-family, Loader_MultiTileEntities.java:2227) — the result-path convention. */
 	public static final ResourceLocation SIFTING_TABLE_ID = new ResourceLocation(GT6DataGenerators.MOD_ID, "sifting_table");
 
@@ -362,6 +367,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BakeSmeltRow tRow : bakeSmeltRows()) tRow.builder().save(aConsumer, tRow.id()); // task food-bake-recipes
 		largeSteelCrucibleBuilder().save(aConsumer, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aConsumer, BATHING_POT_STEEL_ID);
+		// task material-mc-e-tool-anvil-rows — the three :2174/:2176/:2178 table rows
+		kitchenTableBuilder(GT6Kitchen.BATHING_POT_TABLE_WOOD.get(), GT6Kitchen.BATHING_POT_WOOD_ITEM.get())
+				.save(aConsumer, BATHING_POT_TABLE_WOOD_ID);
+		kitchenTableBuilder(GT6Kitchen.BATHING_POT_TABLE_STEEL.get(), GT6Kitchen.BATHING_POT_STEEL_ITEM.get())
+				.save(aConsumer, BATHING_POT_TABLE_STEEL_ID);
+		kitchenTableBuilder(GT6Kitchen.MIXING_BOWL_TABLE.get(), GT6Kitchen.MIXING_BOWL_ITEM.get())
+				.save(aConsumer, MIXING_BOWL_TABLE_ID);
 		clayBowlForwardBuilder().save(aConsumer, CLAY_BOWL_FORWARD_ID);
 		clayBowlReverseBuilder().save(aConsumer, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aConsumer, CLAY_BOWL_SMELT_ID);
@@ -369,8 +381,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clayJuicerReverseBuilder().save(aConsumer, CLAY_JUICER_REVERSE_ID);
 		clayJuicerSmeltingBuilder().save(aConsumer, CLAY_JUICER_SMELT_ID);
 		for (BakeSmeltRow tRow : clayPitSmeltRows()) tRow.builder().save(aConsumer, tRow.id()); // task worldgen-diggables-pits — the 4 colored-clay hardening smelts
-		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aConsumer, STONE_ANVIL_ID);
-		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aConsumer, BLACKSTONE_ANVIL_ID);
+		for (gregtech6.registry.GT6Anvils.AnvilRow tAnvilRow : gregtech6.registry.GT6Anvils.ROWS) { // task material-mc-e-tool-anvil-rows — the :2185-2219 ladder
+			net.minecraft.world.level.ItemLike tAnvilIngredient = anvilIngredient(tAnvilRow);
+			if (tAnvilIngredient == null) continue; // the carrier item is driver-hidden — the JSON skip semantics
+			anvilBuilder(gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tAnvilRow.path()).get(), tAnvilIngredient)
+					.save(aConsumer, anvilRecipeId(tAnvilRow));
+		}
 		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
 			ShapelessRecipeBuilder tMortarBuilder = mortarBuilder(tRow);
 			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
@@ -670,6 +686,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BakeSmeltRow tRow : bakeSmeltRows()) tRow.builder().save(aOutput, tRow.id()); // task food-bake-recipes
 		largeSteelCrucibleBuilder().save(aOutput, LARGE_STEEL_CRUCIBLE_ID);
 		bathingPotSteelBuilder().save(aOutput, BATHING_POT_STEEL_ID);
+		// task material-mc-e-tool-anvil-rows — the three :2174/:2176/:2178 table rows
+		kitchenTableBuilder(GT6Kitchen.BATHING_POT_TABLE_WOOD.get(), GT6Kitchen.BATHING_POT_WOOD_ITEM.get())
+				.save(aOutput, BATHING_POT_TABLE_WOOD_ID);
+		kitchenTableBuilder(GT6Kitchen.BATHING_POT_TABLE_STEEL.get(), GT6Kitchen.BATHING_POT_STEEL_ITEM.get())
+				.save(aOutput, BATHING_POT_TABLE_STEEL_ID);
+		kitchenTableBuilder(GT6Kitchen.MIXING_BOWL_TABLE.get(), GT6Kitchen.MIXING_BOWL_ITEM.get())
+				.save(aOutput, MIXING_BOWL_TABLE_ID);
 		clayBowlForwardBuilder().save(aOutput, CLAY_BOWL_FORWARD_ID);
 		clayBowlReverseBuilder().save(aOutput, CLAY_BOWL_REVERSE_ID);
 		clayBowlSmeltingBuilder().save(aOutput, CLAY_BOWL_SMELT_ID);
@@ -677,8 +700,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		clayJuicerReverseBuilder().save(aOutput, CLAY_JUICER_REVERSE_ID);
 		clayJuicerSmeltingBuilder().save(aOutput, CLAY_JUICER_SMELT_ID);
 		for (BakeSmeltRow tRow : clayPitSmeltRows()) tRow.builder().save(aOutput, tRow.id()); // task worldgen-diggables-pits — the 4 colored-clay hardening smelts
-		anvilBuilder(GT6Anvils.STONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.STONE).save(aOutput, STONE_ANVIL_ID);
-		anvilBuilder(GT6Anvils.BLACKSTONE_ANVIL.get(), net.minecraft.world.level.block.Blocks.BLACKSTONE).save(aOutput, BLACKSTONE_ANVIL_ID);
+		for (gregtech6.registry.GT6Anvils.AnvilRow tAnvilRow : gregtech6.registry.GT6Anvils.ROWS) { // task material-mc-e-tool-anvil-rows — the :2185-2219 ladder
+			net.minecraft.world.level.ItemLike tAnvilIngredient = anvilIngredient(tAnvilRow);
+			if (tAnvilIngredient == null) continue; // the carrier item is driver-hidden — the JSON skip semantics
+			anvilBuilder(gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tAnvilRow.path()).get(), tAnvilIngredient)
+					.save(aOutput, anvilRecipeId(tAnvilRow));
+		}
 		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
 			ShapelessRecipeBuilder tMortarBuilder = mortarBuilder(tRow);
 			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
@@ -2985,6 +3012,49 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				.define('R', aStone)
 				.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
 				.unlockedBy("has_stone", has(aStone));
+	}
+
+	/**
+	 * The 'R'/'I' ingredient carrier of one anvil row (task material-mc-e-tool-anvil-rows
+	 * — the upstream recipe tails verbatim): the :2185 Stone row keys {@code Blocks.stone},
+	 * the :2186 Blackstone row keys {@code OP.stone.dat(Blackstone)} (= the vanilla
+	 * blackstone item, the c-anvil mapping), the :2187-2188 stone-carrier rows key
+	 * {@code OP.stone.dat(aMat)} and the :2189-2219 rungs {@code OP.ingot.dat(aMat)} —
+	 * the AnvilRow's sound column IS the aUtil carrier proxy (STONE → the stone prefix,
+	 * the METAL/WOOD rows → the ingot). null = the carrier item is not registered in the
+	 * port universe — the skip semantics (the mortarBuilder form, the negative ledger the
+	 * domain census pins).
+	 */
+	static net.minecraft.world.level.ItemLike anvilIngredient(gregtech6.registry.GT6Anvils.AnvilRow aRow) {
+		if ("stone_anvil".equals(aRow.path())) return net.minecraft.world.level.block.Blocks.STONE;
+		if ("blackstone_anvil".equals(aRow.path())) return net.minecraft.world.level.block.Blocks.BLACKSTONE;
+		var tItem = gregtech6.registry.GTMaterialItems.get(
+				aRow.sound() == net.minecraft.world.level.block.SoundType.STONE
+						? gregapi.data.OP.stone : gregapi.data.OP.ingot,
+				aRow.material().get());
+		return tItem == null ? null : tItem.get();
+	}
+
+	/** The id of one anvil row's recipe (the result-path convention, the mortarRecipeId form — the local-var shape the stonecutter ctor swap matches). */
+	private static ResourceLocation anvilRecipeId(gregtech6.registry.GT6Anvils.AnvilRow aRow) {
+		String tPath = aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/**
+	 * The three kitchen TABLE crafting rows (task material-mc-e-tool-anvil-rows — the
+	 * upstream registration tails :2174/:2176/:2178 verbatim {@code "M","S"}): 'M' = the
+	 * base carrier's own item ({@code aRegistry.getItem()} — the pot/bowl the table
+	 * raises), 'S' = {@code ST.make(Blocks.stone_slab, 1, 4)} = the 1.7.10 BRICK slab
+	 * meta (the 1.20.1 identity {@code minecraft:brick_slab}). Result 1x the table.
+	 */
+	private ShapedRecipeBuilder kitchenTableBuilder(net.minecraft.world.level.block.Block aResult, net.minecraft.world.level.ItemLike aBase) {
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, aResult)
+				.pattern("M")
+				.pattern("S")
+				.define('M', aBase)
+				.define('S', net.minecraft.world.level.block.Blocks.BRICK_SLAB)
+				.unlockedBy("has_base", has(aBase));
 	}
 
 	/**

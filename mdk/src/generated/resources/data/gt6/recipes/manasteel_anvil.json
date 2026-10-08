@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Botania"
+    }
+  ],
+  "key": {
+    "R": {
+      "item": "gt6:ingot_manasteel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "hR ",
+    "RRR"
+  ],
+  "result": {
+    "item": "gt6:manasteel_anvil"
+  },
+  "show_notification": true
+}
