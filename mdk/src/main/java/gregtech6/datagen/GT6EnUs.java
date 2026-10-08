@@ -2388,6 +2388,7 @@ public class GT6EnUs extends LanguageProvider {
         }
     }
 
+    /**
      * The decor-misc family faces (task material-mc-g2-decor-misc, the addConcrete compose
      * template form over the addTreeUnits walk): the dye families reuse the 16
      * {@code gt6.dye.<id>} units with the BlockColored templates ("%s Asphalt" / "%s Glass" /

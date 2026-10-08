@@ -6295,6 +6295,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         tElement.end();
     }
 
+    /**
      * The decor-misc families (task material-mc-g2-decor-misc), the Loader_Blocks.java
      * rows Asphalt :59 / Glass-GlowGlass :72-73 / Paths :83 / Bars :106-111 / Bales
      * :128-129 and the spike rows :94-98 (the spikes via GT6Spikes). Model shapes:
