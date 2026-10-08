@@ -123,8 +123,11 @@ public abstract class GTOfflineTestBase {
 		if (ItemLatch.LOCKED_OFFSET != -1) ItemLatch.UNSAFE.putBoolean(tRegistry, ItemLatch.LOCKED_OFFSET, true);
 	}
 
-	/** The ItemStack ctor needs a registry DELEGATE (ForgeRegistry.getDelegateOrThrow), so the fixtures register under fixture keys with the latch momentarily open. */
-	protected static <T extends Item> T registerItemFixture(String aKey, java.util.function.Supplier<T> aItem) {
+	/** The item latch arm state — the per-class telemetry assumes (the bare {@code assumeTrue(ARMED)} mirrors) read this. */
+	public static boolean itemLatchArmed() { return ItemLatch.ARMED; }
+
+	/** The ItemStack ctor needs a registry DELEGATE (ForgeRegistry.getDelegateOrThrow), so the fixtures register under fixture keys with the latch momentarily open. Public: fixture seats also live in classes outside the {@code GTOfflineTestBase} tree (the GT6QuMachinePairE2eTest form). */
+	public static <T extends Item> T registerItemFixture(String aKey, java.util.function.Supplier<T> aItem) {
 		org.junit.jupiter.api.Assumptions.assumeTrue(ItemLatch.ARMED, "the offline registry latch is unreachable on this JVM");
 		unlockItemRegistry();
 		try {
@@ -133,6 +136,69 @@ public abstract class GTOfflineTestBase {
 		} finally {
 			lockItemRegistry();
 		}
+	}
+
+	// -------------------------------------------------------------------------
+	// the block-fixture seat (the ItemLatch shape over the BLOCK registry — the
+	// per-class BlockLatch mirrors GT6MachineBlockItemTest / GTAxleTintArmTest /
+	// GT6LargeMachineTexDatagenTest fold onto this; task probeitem-latch-hygiene).
+	// Same lazy class-init discipline and the same locked-optional ARM rule (the
+	// frozen offset is the sole ARM condition, the locked offset -1 sentinel skips
+	// its poke — task offline-testbase-latch-neo).
+	// -------------------------------------------------------------------------
+
+	/** The lazy latch holder over {@code BuiltInRegistries.BLOCK} (the ItemLatch shape verbatim). */
+	private static final class BlockLatch {
+		static final sun.misc.Unsafe UNSAFE;
+		static final long LOCKED_OFFSET;
+		static final long FROZEN_OFFSET;
+		static final boolean ARMED;
+		static {
+			sun.misc.Unsafe tUnsafe = null;
+			long tLocked = -1, tFrozen = -1;
+			boolean tArmed = true;
+			try {
+				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
+				tUnsafeField.setAccessible(true);
+				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
+				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
+				try {
+					tLocked = tUnsafe.objectFieldOffset(findNestedField(tClass, "locked"));
+				} catch (NoSuchFieldException ignored) {
+					// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
+				}
+				tFrozen = tUnsafe.objectFieldOffset(findNestedField(tClass, "frozen"));
+			} catch (Throwable ignored) {
+				tArmed = false; // the telemetry leg (no registered fixtures)
+			}
+			UNSAFE = tUnsafe;
+			LOCKED_OFFSET = tLocked;
+			FROZEN_OFFSET = tFrozen;
+			ARMED = tArmed;
+		}
+	}
+
+	/** The block latch arm state (the GT6LargeMachineTexDatagenTest graceful {@code if (ARMED)} form reads this — no assumption there). */
+	public static boolean blockLatchArmed() { return BlockLatch.ARMED; }
+
+	/** Runs the work inside an open BLOCK-registry write window (construct/registered blocks, no assume — the caller picks its own unarmed posture). */
+	public static <T> T underBlockWriteWindow(java.util.function.Supplier<T> aWork) {
+		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
+		if (BlockLatch.LOCKED_OFFSET != -1) BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.LOCKED_OFFSET, false);
+		BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.FROZEN_OFFSET, false);
+		try {
+			return aWork.get();
+		} finally {
+			BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.FROZEN_OFFSET, true);
+			if (BlockLatch.LOCKED_OFFSET != -1) BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.LOCKED_OFFSET, true);
+		}
+	}
+
+	/** The block fixture under a UNIQUE fixture key with the latch momentarily open (the registerItemFixture shape over BLOCK; assumes armed). */
+	public static <T extends net.minecraft.world.level.block.Block> T registerBlockFixture(String aKey, java.util.function.Supplier<T> aBlock) {
+		org.junit.jupiter.api.Assumptions.assumeTrue(BlockLatch.ARMED, "the offline block-registry latch is unreachable on this JVM");
+		return underBlockWriteWindow(() -> net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+				new net.minecraft.resources.ResourceLocation("gt6", aKey), aBlock.get()));
 	}
 
 	/**

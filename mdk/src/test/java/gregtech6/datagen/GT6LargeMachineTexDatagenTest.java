@@ -47,6 +47,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import gregtech6.registry.GTMaterialItems;
+import gregtech6.tileentity.GTOfflineTestBase;
 
 class GT6LargeMachineTexDatagenTest {
 
@@ -75,54 +76,11 @@ class GT6LargeMachineTexDatagenTest {
      */
     private static List<net.minecraft.world.level.block.Block> sControllers;
 
-    /**
-     * The {@code gregtech6.tileentity.GTOfflineTestBase} ItemLatch shape over the BLOCK
-     * registry: the plain {@code Block} ctor binds its intrusive holder, so the write
-     * window opens for the fixture builds and closes again (the latch class-init stays
-     * lazy — touching BuiltInRegistries before the bootstrap fails the registry class).
-     */
-    private static final class BlockLatch {
-        static final sun.misc.Unsafe UNSAFE;
-        static final long LOCKED_OFFSET;
-        static final long FROZEN_OFFSET;
-        static final boolean ARMED;
-        static {
-            sun.misc.Unsafe tUnsafe = null;
-            long tLocked = -1, tFrozen = -1;
-            boolean tArmed = true;
-            try {
-                java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-                tUnsafeField.setAccessible(true);
-                tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
-                Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
-                try {
-                    tLocked = tUnsafe.objectFieldOffset(walkNestedField(tClass, "locked"));
-                } catch (NoSuchFieldException ignored) {
-                    // the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
-                }
-                tFrozen = tUnsafe.objectFieldOffset(walkNestedField(tClass, "frozen"));
-            } catch (Throwable ignored) {
-                tArmed = false; // the fallback leg (no constructed fixtures)
-            }
-            UNSAFE = tUnsafe;
-            LOCKED_OFFSET = tLocked;
-            FROZEN_OFFSET = tFrozen;
-            ARMED = tArmed;
-        }
-
-        /** The latch fields live on wrapper superclasses — walk up (getDeclaredField sees one class only). */
-        private static java.lang.reflect.Field walkNestedField(Class<?> aClass, String aName)
-                throws NoSuchFieldException {
-            for (Class<?> tWalk = aClass; tWalk != null; tWalk = tWalk.getSuperclass()) {
-                try {
-                    return tWalk.getDeclaredField(aName);
-                } catch (NoSuchFieldException ignored) {
-                    // the superclass carries it
-                }
-            }
-            throw new NoSuchFieldException(aName);
-        }
-    }
+    // The ItemLatch-over-BLOCK shape folded onto the base latch (the per-class BlockLatch
+    // mirror deleted — task probeitem-latch-hygiene): the plain {@code Block} ctor binds
+    // its intrusive holder, so the write window opens for the fixture builds and closes
+    // again (the latch class-init stays lazy — touching BuiltInRegistries before the
+    // bootstrap fails the registry class).
 
     private static List<net.minecraft.world.level.block.Block> buildControllerBlocks() {
         var tProps = net.minecraft.world.level.block.state.BlockBehaviour.Properties.of();
@@ -149,21 +107,10 @@ class GT6LargeMachineTexDatagenTest {
         }
         GTMaterialItems.initMaterials();
         // the fixture blocks build under the opened write window (no-op when the latch
-        // is unreachable — the dispatch test then skips itself, the telemetry face)
-        if (BlockLatch.ARMED) {
-            var tRegistry = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
-            if (BlockLatch.LOCKED_OFFSET != -1) {
-                BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.LOCKED_OFFSET, false);
-            }
-            BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.FROZEN_OFFSET, false);
-            try {
-                sControllers = buildControllerBlocks();
-            } finally {
-                BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.FROZEN_OFFSET, true);
-                if (BlockLatch.LOCKED_OFFSET != -1) {
-                    BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.LOCKED_OFFSET, true);
-                }
-            }
+        // is unreachable — the dispatch test then skips itself, the telemetry face;
+        // the graceful if-armed posture kept as-is, no assume here)
+        if (GTOfflineTestBase.blockLatchArmed()) {
+            sControllers = GTOfflineTestBase.underBlockWriteWindow(GT6LargeMachineTexDatagenTest::buildControllerBlocks);
         }
     }
 
@@ -365,7 +312,7 @@ class GT6LargeMachineTexDatagenTest {
         // the GTOfflineTestBase.registerItemFixture telemetry face (ItemLatch is designed
         // for exactly this: "the latch fields may be unreachable (module access)") — the
         // armed leg carries the 17-material pin, the unarmed leg skips itself
-        org.junit.jupiter.api.Assumptions.assumeTrue(BlockLatch.ARMED,
+        org.junit.jupiter.api.Assumptions.assumeTrue(GTOfflineTestBase.blockLatchArmed(),
                 "the offline registry latch is unreachable on this JVM");
         assertNotNull(sControllers, "the fixture controllers must build (the offline latch arm)");
         assertEquals(17, sControllers.size(), "the large-controller census stays 17");

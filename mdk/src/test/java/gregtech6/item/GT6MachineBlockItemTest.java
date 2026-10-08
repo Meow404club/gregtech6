@@ -51,42 +51,14 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 	static GT6MachineBlockItem sConverter;
 
 	/**
-	 * The block-construction write window (the GT6LargeMachineTexDatagenTest.BlockLatch
-	 * shape): real GT block classes cannot be constructed after the offline Bootstrap
-	 * froze the block registry, so the latch reopens the write window for the two fixture
-	 * blocks. 'locked' only exists on the forge 1.20.1 wrapper — the 21.1 leg runs on
-	 * 'frozen' alone (the offline-testbase-latch-neo repair); if even that flag is
-	 * unreachable the real-block tests telemetry-skip.
+	 * The block-construction write window: real GT block classes cannot be constructed
+	 * after the offline Bootstrap froze the block registry, so the base's BlockLatch
+	 * (the per-class mirror folded onto GTOfflineTestBase — task probeitem-latch-hygiene)
+	 * reopens the write window for the two fixture blocks. 'locked' only exists on the
+	 * forge 1.20.1 wrapper — the 21.1 leg runs on 'frozen' alone (the
+	 * offline-testbase-latch-neo repair); if even that flag is unreachable the real-block
+	 * tests telemetry-skip.
 	 */
-	private static final class BlockLatch {
-		static final sun.misc.Unsafe UNSAFE;
-		static final long LOCKED_OFFSET;
-		static final long FROZEN_OFFSET;
-		static final boolean ARMED;
-		static {
-			sun.misc.Unsafe tUnsafe = null;
-			long tLocked = -1, tFrozen = -1;
-			boolean tArmed = true;
-			try {
-				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-				tUnsafeField.setAccessible(true);
-				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
-				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
-				try {
-					tLocked = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "locked"));
-				} catch (NoSuchFieldException ignored) {
-					// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
-				}
-				tFrozen = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "frozen"));
-			} catch (Throwable ignored) {
-				tArmed = false; // the fallback leg (no constructed fixtures)
-			}
-			UNSAFE = tUnsafe;
-			LOCKED_OFFSET = tLocked;
-			FROZEN_OFFSET = tFrozen;
-			ARMED = tArmed;
-		}
-	}
 
 	@BeforeAll
 	static void buildFixtures() {
@@ -111,28 +83,10 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 		// constructed AND registered under the block write window (the item registration
 		// callback resolves the block's registry delegate, ForgeRegistry.getDelegateOrThrow
 		// through BlockItem.registerBlocks), then mounted into item fixtures
-		org.junit.jupiter.api.Assumptions.assumeTrue(BlockLatch.ARMED,
-				"the offline block-registry latch is unreachable on this JVM");
-		Block tCokeOven;
-		Block tEnergySource;
-		var tBlockRegistry = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
-		if (BlockLatch.LOCKED_OFFSET != -1) {
-			BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.LOCKED_OFFSET, false);
-		}
-		BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.FROZEN_OFFSET, false);
-		try {
-			tCokeOven = net.minecraft.core.Registry.register(tBlockRegistry,
-					new net.minecraft.resources.ResourceLocation("gt6", "fixture_tooltip_multiblock_coke_oven"),
-					new GTCokeOvenBlock(BlockBehaviour.Properties.of()));
-			tEnergySource = net.minecraft.core.Registry.register(tBlockRegistry,
-					new net.minecraft.resources.ResourceLocation("gt6", "fixture_tooltip_generator_rig"),
-					new GTEnergySourceBlock(BlockBehaviour.Properties.of()));
-		} finally {
-			BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.FROZEN_OFFSET, true);
-			if (BlockLatch.LOCKED_OFFSET != -1) {
-				BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.LOCKED_OFFSET, true);
-			}
-		}
+		Block tCokeOven = registerBlockFixture("fixture_tooltip_multiblock_coke_oven",
+				() -> new GTCokeOvenBlock(BlockBehaviour.Properties.of()));
+		Block tEnergySource = registerBlockFixture("fixture_tooltip_generator_rig",
+				() -> new GTEnergySourceBlock(BlockBehaviour.Properties.of()));
 		sCokeOven = registerItemFixture("fixture_tooltip_multiblock_coke_oven",
 				() -> new GT6MachineBlockItem(tCokeOven, new Item.Properties(), "multiblock"));
 		sEnergySource = registerItemFixture("fixture_tooltip_generator_rig",

@@ -19,6 +19,7 @@ import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.data.TD;
 import gregtech6.item.MaterialPrefixItem;
+import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.items.GT6UsbSticks;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.maps.GT6RecipeMapReplicator;
@@ -34,66 +35,17 @@ import gregtech6.registry.GTMaterialItems;
  */
 public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBase {
 
-	// ------------------------------------------------------------------ the latch (the GT6UsbDataTest posture)
-
-	static final sun.misc.Unsafe UNSAFE;
-	static final long LOCKED_OFFSET;
-	static final long FROZEN_OFFSET;
-	static final boolean ARMED;
-	static {
-		sun.misc.Unsafe tUnsafe = null;
-		long tLocked = -1, tFrozen = -1;
-		boolean tArmed = true;
-		try {
-			java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-			tUnsafeField.setAccessible(true);
-			tUnsafe = (sun.misc.Unsafe)tUnsafeField.get(null);
-			Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass();
-			try {
-				tLocked = tUnsafe.objectFieldOffset(findField(tClass, "locked"));
-			} catch (NoSuchFieldException ignored) {
-				// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
-			}
-			tFrozen = tUnsafe.objectFieldOffset(findField(tClass, "frozen"));
-		} catch (Throwable ignored) {
-			tArmed = false;
-		}
-		UNSAFE = tUnsafe;
-		LOCKED_OFFSET = tLocked;
-		FROZEN_OFFSET = tFrozen;
-		ARMED = tArmed;
-	}
-
-	private static java.lang.reflect.Field findField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> tWalk = aClass; tWalk != null; tWalk = tWalk.getSuperclass()) {
-			try {
-				return tWalk.getDeclaredField(aName);
-			} catch (NoSuchFieldException ignored) {
-				// keep walking
-			}
-		}
-		throw new NoSuchFieldException(aName + " (walked " + aClass + " up)");
-	}
-
-	static Item registerFixture(String aKey, java.util.function.Supplier<Item> aItem) {
-		Assumptions.assumeTrue(ARMED, "the offline registry latch is unreachable on this JVM");
-		if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, false);
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, false);
-		try {
-			return net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM,
-					new net.minecraft.resources.ResourceLocation("gt6", aKey), aItem.get());
-		} finally {
-			UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, true);
-			if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, true);
-		}
-	}
+	// the per-class Unsafe latch folded onto GTOfflineTestBase.registerItemFixture
+	// (the identical assume/unlock/register("gt6", key)/relock walk — task
+	// probeitem-latch-hygiene; this class rides the machines base tree, hence the
+	// qualified calls below).
 
 	static GT6UsbSticks.GT6UsbStickItem sStick;
 	static MaterialPrefixItem sScannedGem;
 
 	static GT6UsbSticks.GT6UsbStickItem stick() {
 		if (sStick == null) {
-			sStick = (GT6UsbSticks.GT6UsbStickItem)registerFixture("fixture_qu_e2e_usb_stick_3",
+			sStick = (GT6UsbSticks.GT6UsbStickItem)GTOfflineTestBase.registerItemFixture("fixture_qu_e2e_usb_stick_3",
 					() -> new GT6UsbSticks.GT6UsbStickItem(new Item.Properties(), (byte)3));
 		}
 		return sStick;
@@ -101,7 +53,7 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 
 	static MaterialPrefixItem scannedGem() {
 		if (sScannedGem == null) {
-			sScannedGem = (MaterialPrefixItem)registerFixture("fixture_qu_e2e_scanned_gem",
+			sScannedGem = (MaterialPrefixItem)GTOfflineTestBase.registerItemFixture("fixture_qu_e2e_scanned_gem",
 					() -> new MaterialPrefixItem(new Item.Properties(), OP.gem, MT.H));
 		}
 		return sScannedGem;
@@ -130,7 +82,7 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 	/** The scanner chain: gem + stick in → the stick back WITH the scan data, both inputs consumed. */
 	@Test
 	public void scannerChainWritesTheUsbData() {
-		Assumptions.assumeTrue(ARMED);
+		Assumptions.assumeTrue(GTOfflineTestBase.itemLatchArmed());
 		GTMaterialItems.initMaterials();
 		TileEntityBasicMachine tMachine = makeMachine(GT6RecipeMaps.SCANNER_MOLECULAR, 1, false, TD.Energy.QU);
 		tMachine.mInputMin = 256;
@@ -151,7 +103,7 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 	/** The replicator chain: data stick + charged matter in → the replicated material out, the stick retained. */
 	@Test
 	public void replicatorChainReplicatesFromTheStickData() {
-		Assumptions.assumeTrue(ARMED);
+		Assumptions.assumeTrue(GTOfflineTestBase.itemLatchArmed());
 		GTMaterialItems.initMaterials();
 		injectStubs();
 		TileEntityBasicMachine tMachine = makeMachine(GT6RecipeMaps.REPLICATOR, 1, false, TD.Energy.QU);
@@ -178,7 +130,7 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 	/** The window gate: the synthesis refuses at a below-recipe rung (the anti-strand face). */
 	@Test
 	public void replicatorWindowGatesTheSynthesis() {
-		Assumptions.assumeTrue(ARMED);
+		Assumptions.assumeTrue(GTOfflineTestBase.itemLatchArmed());
 		GTMaterialItems.initMaterials();
 		injectStubs();
 		TileEntityBasicMachine tMachine = makeMachine(GT6RecipeMaps.REPLICATOR, 1, false, TD.Energy.QU);
