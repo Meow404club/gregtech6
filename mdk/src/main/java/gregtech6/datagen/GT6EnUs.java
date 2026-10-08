@@ -224,9 +224,18 @@ public class GT6EnUs extends LanguageProvider {
      * {@code LH.add("gt.crop."+mName, aCropName)}), the key = the lowercased de-spaced name
      * (GT_BaseCrop.java:59) — walked over the GT6CropCards.rows() so the key/value pairs cannot
      * drift from the data rows. Plus item.gt6.crop_seed (the GT6CropSeeds item name).
+     *
+     * <p>Task crop-creative-tab literals: the "GregTech: Crops" tab title (the
+     * GT6CropSticks.TAB_TITLE_KEY single source), the crop-stick item name (the tab entry
+     * item — the cbc-1 gap this task closes; the upstream IC2 lang word), and
+     * {@code gt.crop.weed} (the WEED singleton lives outside GT6CropCards.rows(), but its
+     * representative seed rides the tab walk, so its tooltip name line needs the key).
      */
     private void addCropCards() {
         add("item.gt6.crop_seed", "Crop Seeds");
+        add(gregtech6.registry.GT6CropSticks.TAB_TITLE_KEY, "GregTech: Crops");
+        add("item.gt6.crop_stick", "Crop Stick");
+        add("gt.crop.weed", "Weed");
         for (gregtech6.crop.GT6CropCards.CropCardRow tRow : gregtech6.crop.GT6CropCards.rows()) {
             add("gt.crop." + tRow.name().toLowerCase().replaceAll(" ", ""), tRow.name());
         }

@@ -3069,9 +3069,17 @@ public class GT6ZhCn extends LanguageProvider {
 	 * the Eggplant egg-drop pun, 铜棉 Coppon, 银穗苇 Argentia). Walked over the GT6CropCards
 	 * ROWS so the keys cannot drift from the data rows. Hand rows (the TSV regen and this walk
 	 * land in the SAME commit).
+	 *
+	 * <p>Task crop-creative-tab literals: the 作物 tab title (the GT6CropSticks.TAB_TITLE_KEY
+	 * single source, the user-ruled 作物域自有创造页), the crop-stick item 作物杆 (the cbc-1
+	 * name gap this task closes), and {@code gt.crop.weed} 杂草 (the WEED singleton rides the
+	 * tab walk but lives outside the ROWS walk).
 	 */
 	private void addCropCardUnits() {
 		addDirect("item.gt6.crop_seed");
+		addDirect(gregtech6.registry.GT6CropSticks.TAB_TITLE_KEY);
+		addDirect("item.gt6.crop_stick");
+		addDirect("gt.crop.weed");
 		for (gregtech6.crop.GT6CropCards.CropCardRow tRow : gregtech6.crop.GT6CropCards.rows()) {
 			addDirect("gt.crop." + tRow.name().toLowerCase().replaceAll(" ", ""));
 		}

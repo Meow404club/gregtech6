@@ -2918,6 +2918,9 @@ direct	item.gt6.cover_vent	通风口	hand
 direct	item.gt6.cranberryjuice	蔓越莓汁	hand
 direct	item.gt6.cranberrysmoothie	蔓越莓冰沙	hand
 direct	item.gt6.crop_seed	作物种子	hand
+direct	item.gt6.crop_stick	作物杆	hand
+direct	itemGroup.gt6.crops	格雷科技: 作物	hand
+direct	gt.crop.weed	杂草	hand
 direct	item.gt6.crossing_ceramic_raw	粘土浇铸道	hand
 direct	item.gt6.crowbar	撬棍	hand
 direct	item.gt6.currantjuice	醋栗汁	hand
