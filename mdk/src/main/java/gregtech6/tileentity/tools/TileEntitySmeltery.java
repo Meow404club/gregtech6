@@ -2,7 +2,6 @@ package gregtech6.tileentity.tools;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -41,6 +40,7 @@ import gregtech6.fluid.FluidBridge;
 import gregtech6.recipes.maps.GT6RecipeMapCanner;
 import gregtech6.recipes.maps.GT6RecipeMapCrucible;
 import gregtech6.registry.GT6Crucibles;
+import gregtech6.tileentity.CrucibleFeed;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.MaterialStackNBT;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
@@ -144,66 +144,6 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	@Nullable
 	public OreDictMaterial displayedLightestMaterial() {
 		return GT6Crucibles.materialById(mDisplayedLightest);
-	}
-
-	/**
-	 * The vanilla-ore bridge for the feed ladder (the OM.anydata counterpart for
-	 * un-oredicted vanilla ores; declared minimal set, the oredict universe rides
-	 * MaterialPrefixItem). Call-time MT reads (the GTWireSpecs:35 rule, pinned by
-	 * GT6RegistryStaticInitGuardTest): the eager {@code static final Map.of} form read
-	 * MT.Fe/Au/Cu inside {@code <clinit>}, so the table's contents rode the class-init
-	 * order lottery — this class first loads through the {@code GT6Crucibles} BET
-	 * supplier, and any load-point shift toward mod construct (before the enqueueWork
-	 * {@code MT.init()}) would have frozen nine pre-init nulls and dead-dropped the
-	 * bridge with zero noise. The lazy form pins the reads to call time.
-	 */
-	private static volatile Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaOres = null;
-
-	/** The vanilla-ore bridge, built on first use (one material generation — the lazy form). */
-	private static Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaOres() {
-		Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaOres;
-		if (tTable == null) sVanillaOres = tTable = Map.of(
-				net.minecraft.world.item.Items.IRON_ORE, MT.Fe,
-				net.minecraft.world.item.Items.DEEPSLATE_IRON_ORE, MT.Fe,
-				net.minecraft.world.item.Items.RAW_IRON, MT.Fe,
-				net.minecraft.world.item.Items.GOLD_ORE, MT.Au,
-				net.minecraft.world.item.Items.DEEPSLATE_GOLD_ORE, MT.Au,
-				net.minecraft.world.item.Items.RAW_GOLD, MT.Au,
-				net.minecraft.world.item.Items.COPPER_ORE, MT.Cu,
-				net.minecraft.world.item.Items.DEEPSLATE_COPPER_ORE, MT.Cu,
-				net.minecraft.world.item.Items.RAW_COPPER, MT.Cu);
-		return tTable;
-	}
-
-	/**
-	 * The vanilla ingot/nugget bridge (task crucible-behavior-fixes — the OM.anydata
-	 * counterpart for the un-oredicted vanilla ingot family: upstream registered the
-	 * ingotIron/ingotGold/ingotCopper/nugget* names, so the :229-232 generic arm fed
-	 * the prefix amount; the port's MaterialPrefixItem-only gate returned null and the
-	 * items were trashed instead of melting). Same lazy form as {@link #vanillaOres()} —
-	 * the call-time OP.ingot/OP.nugget reads keep the GTWireSpecs:35 rule.
-	 */
-	private static volatile Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaIngots = null;
-
-	/** The vanilla ingot bridge, built on first use (one material generation — the lazy form). */
-	private static Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaIngots() {
-		Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaIngots;
-		if (tTable == null) sVanillaIngots = tTable = Map.of(
-				net.minecraft.world.item.Items.IRON_INGOT, MT.Fe,
-				net.minecraft.world.item.Items.GOLD_INGOT, MT.Au,
-				net.minecraft.world.item.Items.COPPER_INGOT, MT.Cu);
-		return tTable;
-	}
-
-	private static volatile Map<net.minecraft.world.level.ItemLike, OreDictMaterial> sVanillaNuggets = null;
-
-	/** The vanilla nugget bridge (vanilla has no copper nugget — two entries). */
-	private static Map<net.minecraft.world.level.ItemLike, OreDictMaterial> vanillaNuggets() {
-		Map<net.minecraft.world.level.ItemLike, OreDictMaterial> tTable = sVanillaNuggets;
-		if (tTable == null) sVanillaNuggets = tTable = Map.of(
-				net.minecraft.world.item.Items.IRON_NUGGET, MT.Fe,
-				net.minecraft.world.item.Items.GOLD_NUGGET, MT.Au);
-		return tTable;
 	}
 
 	/**
@@ -391,51 +331,15 @@ public class TileEntitySmeltery extends TileEntityBase03TicksAndSync implements 
 	}
 
 	/**
-	 * The :158-183 feed ladder: a MaterialPrefixItem feeds its prefix amount per item
-	 * (the :179-183 generic arm); ore-family prefixes feed the ore-direct projection
-	 * (:167-183 — mTargetCrushing × mOreMultiplier with the form-factor scaling); a
-	 * vanilla ore rides {@link #vanillaOres()}, the vanilla ingot/nugget family rides
-	 * {@link #vanillaIngots()}/{@link #vanillaNuggets()} at the prefix amount; anything
-	 * else returns null (the :160-162 trash+fizz arm).
+	 * The :158-183 feed ladder, delegated to the shared {@link CrucibleFeed} (task
+	 * component-crucible-feed-resolve: the central-face consult — {@code OM.anydata_}
+	 * :159, the arms over the READ DATA :163-183 — replacing the former
+	 * {@code instanceof MaterialPrefixItem} field reads; the vanilla-ore fallback and the
+	 * whole-slot count scaling live there now, one copy for both crucibles).
 	 */
 	@Nullable
 	public List<OreDictMaterialStack> feedStacks(ItemStack aStack) {
-		if (aStack.getItem() instanceof gregtech6.item.MaterialPrefixItem tItem) {
-			long tCount = aStack.getCount();
-			List<OreDictMaterialStack> rList = new ArrayList<>();
-			if (tItem.prefix == OP.oreRaw || tItem.prefix.contains(TD.Prefix.STANDARD_ORE)) {
-				rList.add(CruciblePhysics.oreDirect(tItem.material, 1)); // :167-168/:175-176
-			} else if (tItem.prefix == OP.blockRaw) {
-				rList.add(CruciblePhysics.oreDirect(tItem.material, 9)); // :169-170
-			} else if (tItem.prefix.contains(TD.Prefix.DENSE_ORE)) {
-				rList.add(CruciblePhysics.oreDirect(tItem.material, 2)); // :177-178
-			} else if (tItem.prefix.mAmount > 0) {
-				rList.add(new OreDictMaterialStack(tItem.material, tItem.prefix.mAmount * tCount)); // :179-183
-			}
-			rList.removeIf(tStack -> tStack.mAmount <= 0);
-			return rList.isEmpty() ? null : rList;
-		}
-		OreDictMaterial tVanilla = vanillaOres().get(aStack.getItem());
-		if (tVanilla != null) {
-			List<OreDictMaterialStack> rList = new ArrayList<>();
-			rList.add(CruciblePhysics.oreDirect(tVanilla, 1)); // a vanilla ore block = one standard ore
-			return rList;
-		}
-		// the vanilla ingot/nugget bridge — the prefix amount per item (the :229-232 generic
-		// arm over the OM.anydata ingotIron/nugget* data; whole-stack, the declared deviation)
-		OreDictMaterial tVanillaIngot = vanillaIngots().get(aStack.getItem());
-		if (tVanillaIngot != null) {
-			List<OreDictMaterialStack> rList = new ArrayList<>();
-			rList.add(new OreDictMaterialStack(tVanillaIngot, OP.ingot.mAmount * aStack.getCount()));
-			return rList;
-		}
-		OreDictMaterial tVanillaNugget = vanillaNuggets().get(aStack.getItem());
-		if (tVanillaNugget != null) {
-			List<OreDictMaterialStack> rList = new ArrayList<>();
-			rList.add(new OreDictMaterialStack(tVanillaNugget, OP.nugget.mAmount * aStack.getCount()));
-			return rList;
-		}
-		return null;
+		return CrucibleFeed.feedStacks(aStack);
 	}
 
 	/**
