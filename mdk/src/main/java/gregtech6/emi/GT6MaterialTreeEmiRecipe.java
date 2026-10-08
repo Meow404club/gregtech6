@@ -64,15 +64,16 @@ import gregtech6.registry.GTMaterialItems;
  * precedent's (wheel = anchored zoom, drag = follow-the-cursor pan), brought onto the
  * recipe page through the one seam that can deliver these events.
  *
- * <p><b>The icon-scale audit</b> (task mattree-item-zoom-pose): the page's labels ride the
- * unified {@link MaterialTreeLayout#pose} primitive at render time and the
- * {@link GT6MaterialTreeTransformSlot} bounds pan/zoom every slot face with the viewport —
- * but EMI 1.1.24's {@code SlotWidget.drawStack} CENTRES a 16 px icon inside the transformed
- * bounds without scaling it (javap emi-forge-1.1.24: {@code (width - 16) / 2} then
- * {@code EmiIngredient.render}), so a zoomed slot box grows while its icon stays 16 px
- * (centred, so no 错位 — a scale lag only). The sync fix (a {@code drawStack} pose override)
- * rides the R3 nav-unify card; the bounds math stays pinned in
- * {@code GT6MaterialTreeNavTest#transformSlotBoundsFollowTheViewport}.
+ * <p><b>The icon-scale audit</b> (task mattree-item-zoom-pose) — <b>RESOLVED</b> by task
+ * mattree-r3-nav-unify: the page's labels ride the unified
+ * {@link MaterialTreeLayout#pose} primitive at render time and the
+ * {@link GT6MaterialTreeTransformSlot} bounds pan/zoom every slot face with the viewport;
+ * EMI 1.1.24's {@code SlotWidget.drawStack} used to centre a fixed 16 px icon inside the
+ * transformed bounds (javap emi-forge-1.1.24: {@code (width - 16) / 2} then
+ * {@code EmiIngredient.render} — a scale lag, centred so never 错位), and the slot's
+ * {@code drawStack} pose override now renders the icon at the viewport scale, centred in
+ * the box (the pin lives in {@code GT6MaterialTreeNavTest}); the bounds math stays pinned
+ * in {@code GT6MaterialTreeNavTest#transformSlotBoundsFollowTheViewport}.
  */
 public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 

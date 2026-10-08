@@ -55,6 +55,7 @@ import gregtech6.recipes.GT6RecipesShCL;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.tree.MaterialTreeBuilder;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
+import gregtech6.recipes.tree.MaterialTreeLayout;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
@@ -422,6 +423,35 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		MaterialTreeViewport.Point tBack = tCentre.unapply(-93, -71);
 		assertEquals(4.0, tBack.x(), EPSILON);
 		assertEquals(16.0, tBack.y(), EPSILON);
+	}
+
+	/**
+	 * The icon-scale face (task mattree-r3-nav-unify, closing the mattree-item-zoom-pose
+	 * audit): the icon mount rides the unified pose primitive — at the fit pose it is EMI's
+	 * own {@code bounds.x + (size - 16) / 2} verbatim, and at 2x the icon's centre equals
+	 * the transformed box's centre EXACTLY (the 16*scale px icon centred in the scaled box —
+	 * the former scale lag), for every slot family the page mounts.
+	 */
+	@Test
+	public void theSlotIconPoseCentresTheScaledIconInTheBox() throws Exception {
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		// fit: the mount degenerates to EMI's own drawStack coordinates (18px slot -> +1)
+		MaterialTreeLayout.Pose tFit = GT6MaterialTreeTransformSlot.iconPose(tView, 4, 16, 18);
+		assertEquals(5.0, tFit.x(), EPSILON);
+		assertEquals(17.0, tFit.y(), EPSILON);
+		assertEquals(1.0, tFit.scale(), EPSILON);
+		// the 16px machine face: zero inset (the bare icon box)
+		MaterialTreeLayout.Pose tMachine = GT6MaterialTreeTransformSlot.iconPose(tView, 4, 16, 16);
+		assertEquals(4.0, tMachine.x(), EPSILON);
+		assertEquals(16.0, tMachine.y(), EPSILON);
+		// at 2x about the origin: icon centre == box centre on both axes
+		tView.zoomAt(0, 0, 2);
+		MaterialTreeLayout.Pose tZoom = GT6MaterialTreeTransformSlot.iconPose(tView, 4, 16, 18);
+		Bounds tBox = GT6MaterialTreeTransformSlot.transformedBounds(tView, 4, 16, 18);
+		assertEquals(tBox.x() + tBox.width() / 2.0, tZoom.x() + 16.0 * tZoom.scale() / 2.0, EPSILON, "icon centre x == box centre x");
+		assertEquals(tBox.y() + tBox.height() / 2.0, tZoom.y() + 16.0 * tZoom.scale() / 2.0, EPSILON, "icon centre y == box centre y");
+		// and the override is really mounted on the render seam EMI calls
+		assertTrue(bytesOf(GT6MaterialTreeTransformSlot.class).contains("drawStack"), "drawStack override present");
 	}
 
 	// ------------------------------------------------------------------
