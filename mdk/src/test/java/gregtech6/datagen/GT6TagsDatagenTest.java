@@ -15,11 +15,13 @@
  * decisions.p24-material-name-normalization ruling (aluminium→aluminum,
  * aluminium_brass→aluminum_brass, direct-member mirrors).
  *
- * <p>Strictness pin: zero {@code optional()} members anywhere — a TagEntry with
- * {@code required:false} serializes as a JSON object, so "values contain only strings"
- * is the machine-checkable form of the TagsProvider.java:85-94 throw contract
- * ("Couldn't define tag %s as it is missing following references"): every reference in
- * the batch resolves against the live registry or runData fails loudly.
+ * <p>Strictness pin (task tag-residual-convergence evolution): the old "zero optional
+ * members anywhere" reader assertion is superseded by the bidirectional member law —
+ * optional ⇔ the id is seed-hideable (the atlas-gated set), required ⇔ registers on every
+ * install — pinned over every shipped tag JSON in GT6ForeignRowConvergenceTest. Ungated
+ * members keep the strict string form, so the TagsProvider.java:85-94 throw contract
+ * ("Couldn't define tag %s as it is missing following references") still fails runData
+ * loudly on a genuine walk gap.
  */
 package gregtech6.datagen;
 
@@ -125,7 +127,7 @@ class GT6TagsDatagenTest {
 
     // ------------------------------------------------------------------ the block face
 
-    /** One generated tag JSON's values array (classpath face of the committed tree). */
+    /** One generated tag JSON's values array (classpath face of the committed tree): both member forms as id strings — the strict string form and the optional object form ({@code {"id":..,"required":false}}, the tag-residual-convergence gated-member face). */
     private static List<String> tagValues(String aDataPath) throws Exception {
         try (InputStream tStream = GT6TagsDatagenTest.class.getClassLoader().getResourceAsStream("data/" + aDataPath)) {
             assertNotNull(tStream, "the generated tag must be on the classpath: " + aDataPath);
@@ -133,9 +135,8 @@ class GT6TagsDatagenTest {
                     .getAsJsonObject().getAsJsonArray("values");
             List<String> rValues = new ArrayList<>();
             for (var tEntry : tArray) {
-                assertTrue(tEntry.isJsonPrimitive(),
-                        "zero optional members — a required:false TagEntry serializes as an object: " + aDataPath);
-                rValues.add(tEntry.getAsString());
+                rValues.add(tEntry.isJsonPrimitive() ? tEntry.getAsString()
+                : tEntry.getAsJsonObject().get("id").getAsString());
             }
             return rValues;
         }
@@ -180,8 +181,8 @@ class GT6TagsDatagenTest {
      * (rolling batch 1 adds the shovel file to the pin).
      */
     @Test
-    void noOptionalEntriesInTheMiningTags() throws Exception {
-        tagValues("minecraft/tags/blocks/mineable/pickaxe.json"); // the reader itself asserts primitive-only
+    void miningTagsParseBothMemberForms() throws Exception {
+        tagValues("minecraft/tags/blocks/mineable/pickaxe.json"); // the reader accepts both forms
         tagValues("minecraft/tags/blocks/mineable/axe.json");
         tagValues("minecraft/tags/blocks/mineable/shovel.json");
     }
