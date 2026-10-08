@@ -234,7 +234,11 @@ class GT6CupBlockEntityTest extends GTOfflineTestBase {
 		CompoundTag tTag = tFilled.getOrCreateTag();
 		tTag.put(GT6CupBlockEntity.NBT_TANK, tTank);
 		//?} else {
-		/*net.minecraft.world.item.component.CustomData.set(gregtech6.registry.GT6DataComponents.BARREL_CONTENT, tFilled, tTank);
+		/*// the producer (GT6CupBlock.getDrops) ships the whole envelope as the CustomData root —
+		//the tank rides the NBT_TANK key inside it, the bare tank misses the read gate
+		CompoundTag tEnvelope = new CompoundTag();
+		tEnvelope.put(GT6CupBlockEntity.NBT_TANK, tTank);
+		net.minecraft.world.item.component.CustomData.set(gregtech6.registry.GT6DataComponents.BARREL_CONTENT, tFilled, tEnvelope);
 		 *///?}
 		assertEquals(1, tItem.getMaxStackSize(tFilled), "the FILLED item stacks 1 — the :423 content gate");
 	}
