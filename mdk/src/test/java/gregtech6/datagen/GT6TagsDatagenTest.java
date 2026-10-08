@@ -302,6 +302,12 @@ class GT6TagsDatagenTest {
                 // BlockTreePlanks metas 8-15 in meta order, tail-appended after the species walk)
                 "gt6:plank_wood_compressed", "gt6:plank_wood", "gt6:plank_wood_treated", "gt6:crate",
                 "gt6:plank_wood_dead", "gt6:plank_wood_rotten", "gt6:plank_wood_mossy", "gt6:plank_wood_frozen"));
+        // task material-mc-g3-plank-panels (review seam) — the 28 wooden Cover Panels ride
+        // the band (the addWoodenPanelBand walk in ROW_TABLE order, tail-appended after
+        // the plank cubes; aWooden = Loader :2058/:2067/:2076)
+        for (var tRow : gregtech6.registry.GT6PlankPanels.ROW_TABLE) {
+            tBand.add("gt6:" + gregtech6.registry.GT6PlankPanels.path(tRow.slug()));
+        }
         assertEquals(tBand, tagValues("minecraft/tags/blocks/mineable/axe.json"));
     }
 
