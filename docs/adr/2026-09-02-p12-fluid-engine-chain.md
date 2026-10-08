@@ -41,6 +41,8 @@
    不挂现有三桶（改既有排水语义=发明语义+回归）；机制零改动（mdk FluidTankGT 全在）。
 5. **Tap/Funnel**：一卡两族（液体面共享附件基座），Nozzle/CapNozzle（气体面）裁池
    随用随开——气体消费者不在本波。
+   （2026-10-08 现状更正： nozzle pair 已随 99971081fa 以 12 行落地同一附件基座，
+   "随用随开"池位已消费；气体抽取/充注激活链仍裁归 nozzle-function 池卡。）
 6. **GearBox 齿轮实物安装面**（gearGt 物品）裁池，RCON 直写掩码=验收通道
    （/gt6cover signal 直写先例 P9）；玩家配置面=p12-gear-items 池卡。
 7. **红线**：根模块零 net.minecraft（全部新件落 mdk）；GT6Mod/GTModBusListener 冻结、
