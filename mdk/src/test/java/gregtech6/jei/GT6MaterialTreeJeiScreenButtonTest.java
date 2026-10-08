@@ -74,8 +74,8 @@ public class GT6MaterialTreeJeiScreenButtonTest {
 		new GT6MaterialTreeJeiCategory().createRecipeExtras(tBuilder, null, null);
 		assertTrue(tCalls.contains("addWidget"), "the cell mounts as a draw widget");
 		assertTrue(tCalls.contains("addGuiEventListener"), "the cell mounts as an input listener");
-		// the M3 union (nav-s4-tree-screen, the review-seat seam): the nav face mounts
-		// FIRST, the cell second — the button is the SECOND widget/listener pair
+		// the extras union (task mattree-jei-panzoom added the tree-body widget in front):
+		// the mount order is tree body -> nav face -> this cell — found by class, not position
 		Object tWidget = null, tListener = null;
 		for (int i = 0; i < tCalls.size(); i++) {
 			if ("addWidget".equals(tCalls.get(i)) && tArgs.get(i) instanceof GT6MaterialTreeJeiScreenButton) {

@@ -50,14 +50,17 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
  * <ul>
  * <li><b>control strip band</b>: the category grows by the SAME 20px strip the EMI twin
  *     uses ({@link GT6MaterialTreeEmiRecipe#CONTROL_STRIP_H}), width unchanged;</li>
- * <li><b>registration seam</b>: {@code createRecipeExtras} registers exactly one nav face
- *     as BOTH an {@link IRecipeWidget} (draw) and an {@link IJeiGuiEventListener} (input)
- *     — one instance, one shared viewport closure — plus the three hover-tooltip areas on
- *     the EMI-parity button cells;</li>
+ * <li><b>registration seam</b>: {@code createRecipeExtras} mounts the self-drawn tree body
+ *     widget, the nav face (an {@link IRecipeWidget} draw hat + an {@link IJeiGuiEventListener}
+ *     input hat — one instance, one shared viewport closure) and the S4 corner entry, plus
+ *     the whole-canvas pan/zoom handler on the {@code addInputHandler} seam and the hover
+ *     hints (task mattree-jei-panzoom updated the counts — the javadoc here states the
+ *     migration);</li>
  * <li><b>双向钉 (acceptance ①)</b>: strip button clicks and canvas keys drive the viewport
  *     both ways (2x 档位, centre anchor, ceiling freeze idempotent, reset home);</li>
- * <li><b>red line</b>: clicks outside the three strip cells (native slot cells included)
- *     and unmapped keys fall through unconsumed — the native U/R face is untouched;</li>
+ * <li><b>red line</b>: clicks outside the three strip cells and unmapped keys fall through
+ *     unconsumed — the canvas click/wheel/drag domain belongs to the canvas input handler
+ *     (pinned in {@code GT6MaterialTreeJeiPanzoomTest});</li>
  * <li><b>apiSurface guard (acceptance ③)</b>: every {@code mezz/jei/} reference in the
  *     new/changed JEI classes' bytes lives under {@code mezz/jei/api/}, and no
  *     {@code dev/emi/emi} leaks into the JEI leg.</li>
@@ -93,23 +96,29 @@ public class GT6MaterialTreeJeiNavTest {
 		RecordingExtras tExtras = new RecordingExtras();
 		tCategory.createRecipeExtras(tExtras.self(), null, null);
 
-		// the S4 union (nav-s4-tree-screen, the review-seat seam): the extras mounts TWO
-		// faces — the nav strip first, then the full-screen corner entry — each wearing
-		// both hats over its own instance
-		assertEquals(2, tExtras.mWidgets.size(), "the nav face + the S4 corner cell");
-		assertEquals(2, tExtras.mListeners.size(), "both faces listen");
-		assertTrue(tExtras.mWidgets.get(0) instanceof GT6MaterialTreeJeiNavWidget, "the nav face is the port's widget");
-		assertSame(tExtras.mWidgets.get(0), tExtras.mListeners.get(0),
+		// the panzoom union (task mattree-jei-panzoom): the extras mounts THREE widgets —
+		// the self-drawn tree body first (draw-only hat), then the nav strip, then the S4
+		// corner entry (both hats over their own instances) — and the whole-canvas pan/zoom/
+		// jump face rides the separate addInputHandler seam.
+		// 旧钉迁移声明: the old 「2 widgets / 2 listeners」 pin died with the unfreeze —
+		// the replacement registration shape is 3 widgets / 2 listeners / 1 input handler.
+		assertEquals(3, tExtras.mWidgets.size(), "tree body + nav strip + S4 corner cell");
+		assertEquals(2, tExtras.mListeners.size(), "nav strip + corner cell listen");
+		assertEquals(1, tExtras.mInputHandlers.size(), "one whole-canvas input handler");
+		assertTrue(tExtras.mWidgets.get(0) instanceof gregtech6.jei.GT6MaterialTreeJeiTreeWidget,
+				"the tree body leads the widget stack (the draw hat)");
+		assertTrue(tExtras.mWidgets.get(1) instanceof GT6MaterialTreeJeiNavWidget, "the nav face is the port's widget");
+		assertSame(tExtras.mWidgets.get(1), tExtras.mListeners.get(0),
 				"draw and input are ONE instance = one shared viewport closure");
-		assertTrue(tExtras.mWidgets.get(0) instanceof IRecipeWidget
+		assertTrue(tExtras.mWidgets.get(1) instanceof IRecipeWidget
 				&& tExtras.mListeners.get(0) instanceof IJeiGuiEventListener,
 				"the face wears both hats");
-		assertTrue(tExtras.mWidgets.get(1) instanceof gregtech6.jei.GT6MaterialTreeJeiScreenButton,
+		assertTrue(tExtras.mWidgets.get(2) instanceof gregtech6.jei.GT6MaterialTreeJeiScreenButton,
 				"the corner entry rides the same seam (nav-s4-tree-screen)");
-		assertSame(tExtras.mWidgets.get(1), tExtras.mListeners.get(1), "the cell wears both hats too");
+		assertSame(tExtras.mWidgets.get(2), tExtras.mListeners.get(1), "the cell wears both hats too");
 
 		// the draw origin is the page origin, so draw/input coordinates are page coordinates
-		GT6MaterialTreeJeiNavWidget tNav = (GT6MaterialTreeJeiNavWidget)tExtras.mWidgets.get(0);
+		GT6MaterialTreeJeiNavWidget tNav = (GT6MaterialTreeJeiNavWidget)tExtras.mWidgets.get(1);
 		assertEquals(0, tNav.getPosition().x(), "draw origin x");
 		assertEquals(0, tNav.getPosition().y(), "draw origin y");
 
@@ -215,8 +224,11 @@ public class GT6MaterialTreeJeiNavTest {
 		GT6MaterialTreeJeiNavWidget tNav = new GT6MaterialTreeJeiNavWidget(new MaterialTreeViewport());
 		MaterialTreeViewport tView = tNav.mView;
 
-		// a canvas click (native slot territory — the U/R face) is unconsumed and inert
-		assertFalse(tNav.mouseClicked(16, 60, 0), "canvas clicks fall through to the native slot face");
+		// a canvas click is unconsumed and inert here — it belongs to the registered canvas
+		// input handler (JEI routes input handlers BEFORE the gui event listeners; the old
+		// 「native slot territory」 reading died with the invisible slots — the replacement
+		// face is GT6MaterialTreeJeiPanzoomTest's click-protocol pins)
+		assertFalse(tNav.mouseClicked(16, 60, 0), "canvas clicks fall through to the canvas input handler");
 		assertEquals(1.0, tView.scale(), EPSILON);
 		// a non-left button on a strip cell is unconsumed too
 		assertFalse(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 1, GT6MaterialTreeEmiRecipe.BUTTON_Y + 1, 1),
@@ -263,6 +275,7 @@ public class GT6MaterialTreeJeiNavTest {
 	private static final class RecordingExtras implements InvocationHandler {
 		final List<Object> mWidgets = new ArrayList<>();
 		final List<Object> mListeners = new ArrayList<>();
+		final List<Object> mInputHandlers = new ArrayList<>();
 		final List<int[]> mTooltipAreas = new ArrayList<>();
 		final List<List<Object>> mTooltipTexts = new ArrayList<>();
 		private List<Object> mOpenTooltips = new ArrayList<>();
@@ -277,6 +290,7 @@ public class GT6MaterialTreeJeiNavTest {
 			switch (aMethod.getName()) {
 				case "addWidget" -> mWidgets.add(aArgs[0]);
 				case "addGuiEventListener" -> mListeners.add(aArgs[0]);
+				case "addInputHandler" -> mInputHandlers.add(aArgs[0]);
 				case "addTooltipArea" -> {
 					mTooltipAreas.add(new int[] {(Integer)aArgs[0], (Integer)aArgs[1], (Integer)aArgs[2], (Integer)aArgs[3]});
 					mOpenTooltips = new ArrayList<>();

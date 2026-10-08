@@ -43,49 +43,42 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * {@code CONTROL_STRIP_H} — javac inlines the compile-time ints, so this class carries no
  * EMI bytecode) and sleeps the same buttons at the S1 floor/ceiling.
  *
- * <p><b>槽位变换缝评估 (acceptance ②) — JEI 侧无缝，降级为按钮+键盘缩放，无逐槽 pan。</b>
- * The EMI twin transforms every slot through a {@code getBounds} override because EMI's
- * SlotWidget render/hit/tooltip faces all consume it; JEI has NO equivalent seam:
- * <ul>
- * <li>slot coordinates freeze at layout build — {@code IRecipeSlotBuilder.setPosition}
- *     (an {@code IPlaceable} face) only exists inside {@code setRecipe}; there is no
- *     render-time move API;</li>
- * <li>the slot drawables themselves ({@code RecipeSlot} and friends) live in JEI's
- *     library-internal packages — plugins cannot subclass them, and the api
- *     {@code IRecipeSlotDrawable} face is a read-only view with no bounds override;</li>
- * <li>moving slots with the viewport would mean rebuilding the whole {@code RecipeLayout}
- *     (re-running {@code setRecipe}) — no public API triggers that from a widget click.</li>
- * </ul>
- * The remaining option — self-drawing the whole tree over invisible slots — is REJECTED by
- * the user ruling (the native hover U/R affordance is the point of the JEI leg), so on this
- * leg the tree geometry does NOT consume the viewport at all: the controls drive the shared
- * nav state (slider-free button face, visible sleep states, hover hints) and the full
- * pan/zoom experience stays with the EMI twin and the later S4 independent screen. This is
- * the pre-authorized degradation (按钮+键盘缩放，无逐槽 pan), not a silent no-op.
+ * <p><b>The unfrozen face (task mattree-jei-panzoom)</b> — the strip and keyboard drive the
+ * LIVE viewport now: the page's tree body is self-drawn through the same viewport by
+ * {@link GT6MaterialTreeJeiTreeWidget} (built alongside this face in the category's
+ * extras closure), so every op here moves the real ink. <b>旧钉迁移声明</b>: the
+ * nav-m3-jei-era assessment 「JEI has no slot transform seam, the controls stay an
+ * authorized idle degradation (按钮+键盘缩放，无逐槽 pan), self-drawing is REJECTED」 died
+ * here — the mattree-jei-unfreeze-poc ruling reversed it (invisible slots keep the lookup
+ * index; the widget + canvas handler rebuild the affordances), and the idle-degradation
+ * pins live on only in the panzoom test's history notes.
  *
  * <p><b>Lifecycle</b>: the viewport is created by
- * {@code GT6MaterialTreeJeiCategory.createRecipeExtras} and this instance closes over it;
+ * {@code GT6MaterialTreeJeiCategory.createRecipeExtras} and this instance closes over it
+ * (the SAME instance the tree widget and the canvas handler share — one pose per page);
  * JEI keeps extras "as long as a recipe layout is on screen" (IRecipeExtrasBuilder javadoc)
  * and rebuilds layouts on page updates, which is the same fresh-per-page-open closure the
  * EMI twin gets from {@code addWidgets}.
  *
- * <p><b>The red line (native U/R untouched)</b>: {@link #mouseClicked} consumes ONLY
- * left-clicks inside the three 12px strip cells — the band below the canvas holds no native
- * slots, and every other click returns false and falls through to the native routing
- * (RecipeLayoutInputHandler tries input handlers, then gui event listeners, then the legacy
- * category face). {@link #keyPressed} consumes only the mapped nav keys and mirrors the EMI
- * twin's hover gating: JEI only dispatches keys into the layout while the pointer hovers it
+ * <p><b>The click red line</b>: {@link #mouseClicked} consumes ONLY left-clicks inside the
+ * three 12px strip cells — every canvas click returns false (it belongs to the registered
+ * {@link GT6MaterialTreeJeiCanvasHandler}, which JEI routes BEFORE the gui event listeners)
+ * and non-canvas clicks fall through to JEI's native routing. {@link #keyPressed} consumes
+ * only the mapped nav keys and mirrors the EMI twin's hover gating: JEI only dispatches
+ * keys into the layout while the pointer hovers it
  * ({@code RecipeLayoutInputHandler.handleInput}'s {@code isMouseOver} gate, 15.x :36-39,
- * 19.x same shape). Slot tooltips keep their native priority (IRecipeExtrasBuilder: slots
- * take priority for tooltips), so the hover hints never shadow a slot.
+ * 19.x same shape). The hover hints on the strip cells stay tooltip-only
+ * (IRecipeExtrasBuilder: slots take priority for tooltips — with the slots invisible, these
+ * hints and the tree widget's own tooltip are the only hover text on the page).
  *
  * <p>Consumed faces (JEI 15.x = 1.20.1-forge 15.62 and 19.x = 1.21.1-neoforge 19.52,
  * identical on this surface): {@code IRecipeWidget} ({@code getPosition}/
  * {@code drawWidget} — 15.20/19.19 floors), {@code IJeiGuiEventListener}
- * ({@code getArea}/mouseClicked/keyPressed — since 15.9/19.6). The scroll/drag defaults are
- * left untouched on purpose: the ruling keeps this leg on EMI-parity button+keyboard
- * semantics. Consumed MC types are the loader-neutral records ScreenPosition/ScreenRectangle
- * (identical on 1.20.1 and 1.21.1) plus GuiGraphics fill/drawString as in the EMI twin.
+ * ({@code getArea}/mouseClicked/keyPressed — since 15.9/19.6). The scroll/drag defaults
+ * stay untouched (this face is strip + keyboard; the canvas wheel/drag belong to the
+ * {@link GT6MaterialTreeJeiCanvasHandler}). Consumed MC types are the loader-neutral
+ * records ScreenPosition/ScreenRectangle (identical on 1.20.1 and 1.21.1) plus GuiGraphics
+ * fill/drawString as in the EMI twin.
  */
 public class GT6MaterialTreeJeiNavWidget implements IRecipeWidget, IJeiGuiEventListener {
 
@@ -164,7 +157,7 @@ public class GT6MaterialTreeJeiNavWidget implements IRecipeWidget, IJeiGuiEventL
 	public boolean mouseClicked(double aMouseX, double aMouseY, int aButton) {
 		if (aButton != 0) return false;
 		int tCell = cellAt(aMouseX, aMouseY);
-		if (tCell < 0) return false; // canvas clicks (native slot territory) fall through — the red line
+		if (tCell < 0) return false; // canvas clicks belong to the canvas input handler (routes first)
 		return GT6MaterialTreeNav.handle(mView, actionOf(tCell), mFocusX, mFocusY);
 	}
 
