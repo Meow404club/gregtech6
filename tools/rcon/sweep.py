@@ -802,6 +802,16 @@ SESSION_GROUPS = (
     # mutates member — the rig is a band-local setblock + fill teardown).
     # --group gui_bmach matches through the chain's embedded name prefix.
     ("gui_bmach",),
+    # bmach_teardown (task basicmachine-onremove-distleak): the basic-machine family
+    # /fill teardown dist chain — a fresh z=494 band (census-clear between the gui_bmach
+    # z=484 band and the ore_overlay z=508 stage; the x355..363 column is disjoint from
+    # gui_bmach's x383..389 with margin), the Shredder/Crusher/Lathe row placed LOADED
+    # (non-empty slots arm the GTEntityBlock drop walk) then the judged fill restore —
+    # the red→green 对照 instrument for the GT6MuiMachine createScreen dist seam.
+    # Admission mirroring the gui_bmach form (bbox-registered, no fresh_boot /
+    # mutates member — the teardown is the band's own fill).
+    # --group bmach_teardown matches through the chain's embedded name prefix.
+    ("bmach_teardown",),
     # sensors-trivial-14 (task sensors-trivial-14): the sensor-batch live
     # chain — a fresh band x=678..684 z=125..143 y=64 (clear of the P26 sensor band
     # x432..436 and every registered band; the x=6xx electric/prospector chains sit
