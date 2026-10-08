@@ -28,8 +28,10 @@ import net.minecraft.client.gui.GuiGraphics;
 /**
  * The material-tree page's CLICK-TRACK zoom slider (task nav-m2-emi) — a track where a
  * click JUMPS the zoom to the clicked level ({@code MIN + fraction*(MAX-MIN)} anchored at
- * the canvas centre, {@link GT6MaterialTreeNav#zoomToFraction}). Click-track, not drag:
- * a click lands through {@code mouseClicked} (:420-446: every non-SlotWidget under the
+ * the canvas centre, {@link GT6MaterialTreeNav#zoomToFraction}; the centre anchor is the
+ * EMI degraded face KEPT BY DESIGN — task mattree-zoom-anchor: this page leg cannot see
+ * the pointer for zoom, the standalone screen's wheel is the pointer face). Click-track,
+ * not drag: a click lands through {@code mouseClicked} (:420-446: every non-SlotWidget under the
  * cursor gets the press) — the one dispatch EMI gives every widget natively. The wheel
  * and drag faces went to the nav canvas's {@code EmiInteractionSink} seam (task
  * mattree-emi-panzoom); the track stays as the direct "point at a level, go there" face.

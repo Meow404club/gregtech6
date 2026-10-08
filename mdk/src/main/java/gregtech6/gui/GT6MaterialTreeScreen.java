@@ -22,6 +22,7 @@ package gregtech6.gui;
 import java.util.List;
 import java.util.function.Consumer;
 
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -86,6 +87,14 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * died here; the replacement pins are the zoom-2x centring in {@code MaterialTreeLayoutTest}
  * and the rig screenshot).
  *
+ * <p><b>Wheel and double-click</b> (task mattree-zoom-anchor): the wheel takes the Nav
+ * table's fine 1.25x step anchored under the pointer (the 指针锚默认化 face — a >2x fit now
+ * reaches the 4x ceiling in graded notches instead of one frozen 2x jump), and a
+ * double-click (the vanilla 250 ms window, made spatial by
+ * {@link GT6MaterialTreeNav#isDoubleClick}) re-lands the fit pose — the image-viewer
+ * 「double-click = fit」 standard. A clean single click stays the jump; a dragged release
+ * breaks the double-click chain.
+ *
  * <p><b>Node clicks jump to the viewer</b> (所见即所跳): the release-within-slop click
  * resolves through the viewport's unapply inverse and routes by the shared
  * {@link GTViewerJump#preferredViewer()} predicate — the kitchen-NEI seam, EMI 双装优先 —
@@ -137,6 +146,9 @@ public class GT6MaterialTreeScreen extends Screen {
 	private int mPaneWidth, mPaneHeight;
 	private boolean mPressed;
 	private double mDragDistance;
+	/** The last clean click's stamp/position — the double-click chain (0 = none, mattree-zoom-anchor). */
+	private long mLastClickMs;
+	private double mLastClickX, mLastClickY;
 	/** The jump seam (package-private: the offline test substitutes a recorder). */
 	Consumer<ItemStack> mJump = GT6MaterialTreeScreen::openInViewerLive;
 
@@ -174,11 +186,15 @@ public class GT6MaterialTreeScreen extends Screen {
 	// input: wheel, drag pan, click-to-jump, keyboard — all through the M2 table
 	// ------------------------------------------------------------------
 
-	/** The wheel core (leg-neutral, the two {@code mouseScrolled} generations fork onto it): one notch = the 2x 档位 about the pointer. */
+	/**
+	 * The wheel core (leg-neutral, the two {@code mouseScrolled} generations fork onto it):
+	 * one notch = the {@link GT6MaterialTreeNav#WHEEL_STEP} small step about the pointer
+	 * (the Nav table's {@link GT6MaterialTreeNav#wheelZoom} — task mattree-zoom-anchor's
+	 * 指针锚默认化/wheel 小步进; the former inline 2x-quantum choice died with it).
+	 */
 	boolean scroll(double aMouseX, double aMouseY, double aDelta) {
 		if (mView == null) return false;
-		double tFactor = aDelta > 0 ? GT6MaterialTreeNav.ZOOM_FACTOR : 1.0 / GT6MaterialTreeNav.ZOOM_FACTOR;
-		mView.zoomAt(aMouseX, aMouseY, tFactor);
+		GT6MaterialTreeNav.wheelZoom(mView, aDelta, aMouseX, aMouseY);
 		return true;
 	}
 
@@ -222,8 +238,21 @@ public class GT6MaterialTreeScreen extends Screen {
 		mPressed = false;
 		if (mView == null || !tWasPress || aButton != 0) return false;
 		if (mDragDistance <= CLICK_SLOP) {
+			long tNow = Util.getMillis();
+			// double-click = fit (mattree-zoom-anchor): the second clean click inside the Nav
+			// table's window+radius re-lands the fit pose and is CONSUMED — no jump rides it
+			if (GT6MaterialTreeNav.isDoubleClick(tNow, mLastClickMs, aMouseX, mLastClickX, aMouseY, mLastClickY)) {
+				mLastClickMs = 0;
+				GT6MaterialTreeNav.handle(mView, GT6MaterialTreeNav.Action.RESET, mPaneWidth / 2.0, mPaneHeight / 2.0);
+				return true;
+			}
+			mLastClickMs = tNow;
+			mLastClickX = aMouseX;
+			mLastClickY = aMouseY;
 			ItemStack tStack = itemAt(aMouseX, aMouseY);
 			if (!tStack.isEmpty()) mJump.accept(tStack);
+		} else {
+			mLastClickMs = 0; // a drag is not a click: it breaks the double-click chain
 		}
 		return true;
 	}

@@ -81,6 +81,9 @@ import net.minecraft.world.item.Item;
  *     canvas (strip and off-page scrolls stay EMI's) and pans only from an empty-canvas
  *     press, while slot presses yield to the native U/R/drag-stack faces and a dead
  *     gesture never consumes release;</li>
+ * <li><b>double-click detection (mattree-zoom-anchor)</b>: {@link GT6MaterialTreeNav#isDoubleClick}
+ *     is the vanilla list idiom's 250 ms window made spatial (the 4 px radius) — the screen
+ *     leg's double-click re-fit rides it;</li>
  * <li><b>click-track slider</b>: a click at track fraction f zooms to MIN + f*(MAX-MIN)
  *     about the canvas centre (the direct "point at a level" face beside the seam);</li>
  * <li><b>wheel/drag ops (task mattree-jei-panzoom)</b>: the JEI canvas face of the table —
@@ -321,6 +324,20 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		assertTrue(tNav.mouseReleased(2));
 		// the strip is control chrome, not canvas: no gesture from there
 		assertFalse(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X + 4, MaterialTreeDisplay.HEIGHT + 8, 0));
+	}
+
+	@Test
+	public void doubleClickDetectionPinsTheVanillaWindowMadeSpatial() {
+		// no previous click (the fresh state) is never a double
+		assertFalse(GT6MaterialTreeNav.isDoubleClick(1000, 0, 50, 50, 50, 50));
+		// inside the 250 ms window and the 4 px radius: a double
+		assertTrue(GT6MaterialTreeNav.isDoubleClick(1150, 1000, 50, 50, 50, 50));
+		assertTrue(GT6MaterialTreeNav.isDoubleClick(1249, 1000, 54, 50, 54, 50), "the radius corner is inside");
+		// the window closes at 250 ms
+		assertFalse(GT6MaterialTreeNav.isDoubleClick(1250, 1000, 50, 50, 50, 50), "the vanilla window is exclusive");
+		// and the spatial bound holds per axis
+		assertFalse(GT6MaterialTreeNav.isDoubleClick(1100, 1000, 55, 50, 50, 50), "5 px off in x is a fresh click");
+		assertFalse(GT6MaterialTreeNav.isDoubleClick(1100, 1000, 50, 50, 55, 50), "5 px off in y is a fresh click");
 	}
 
 	// ------------------------------------------------------------------
