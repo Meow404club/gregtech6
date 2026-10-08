@@ -83,10 +83,17 @@ class GT6MachinePaintItemLootDatagenTest {
             "unboxinator", "unboxinator_t2", "unboxinator_t3", "unboxinator_t4", // task w1-eu-hu-families
             "fermenter"); // task w1-eu-hu-families
 
-    /** The full census: the manual bases + the 120 act-matrix ACT rows walked (walked so the pin cannot drift from the registered rows). */
+    /**
+     * The full census: the manual bases + the act-matrix ACT rows walked (walked so the
+     * pin cannot drift from the registered rows), minus the mdh-6 convergence skip (task
+     * loot-unported-census: the 15 {@code driverDomain()} slugs ride the same skip the
+     * GT6LootTables.advancedCraftingTableLootBlocks face applies, so the census walks the
+     * 90 shipping rows, not the 120 registered ones).
+     */
     private static List<String> paintBases() {
         List<String> rBases = new java.util.ArrayList<>(MANUAL_PAINT_BASES);
         for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) {
+            if (tRow.material().driverDomain() != null) continue; // the loot face's convergence skip mirrored (the pin follows the shipped tree)
             rBases.add(tRow.path());
         }
         return rBases;
@@ -119,7 +126,7 @@ class GT6MachinePaintItemLootDatagenTest {
     @Test
     void pinnedMachinePaintLootCensus() throws Exception {
         List<String> tBases = paintBases();
-        assertEquals(223, tBases.size(), "the paintSelfTable census (103 manual rows: 24 p22 incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + the six p29 process families 24 + the 25 p29 eu-hu rows + the act-matrix 120: 103 + 120 = 223)");
+        assertEquals(193, tBases.size(), "the paintSelfTable census (103 manual rows: 24 p22 incl. the oven ladder + canner 4 + kinetic trio 12 + press/extruder 8 + the six p28 ULV rows + the six p29 process families 24 + the 25 p29 eu-hu rows + the act-matrix 120 minus the 15 mdh-6 gated slugs = 90: 103 + 90 = 193, task loot-unported-census)");
         for (String tBase : tBases) assertPaintSelfTable(tBase);
     }
 
