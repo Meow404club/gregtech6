@@ -1,5 +1,8 @@
 package gregtech6.block;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
@@ -118,16 +121,46 @@ public abstract class GTEntityBlock extends BaseEntityBlock {
 	 * The BE-declared upstream gate, honoured when the family carries one:
 	 * TileEntityAdvancedCraftingTable.canDrop :770 keeps the holo pair (31/32) with the
 	 * block self-drop. Undeclared = all slots (the sole census entry — no other BE declares
-	 * a canDrop(int) — so the reflective probe cannot mis-gate a family).
+	 * a canDrop(int) — so the probe cannot mis-gate a family).
+	 *
+	 * <p>The probe must be {@linkplain #probeDeclared declared-only}: a server-side
+	 * {@code getMethod} miss falls back to enumerating every interface default method, and
+	 * building those Method objects resolves their signatures — IUIHolder.createScreen
+	 * (ModularUI fork api/IUIHolder.java:30-31) names ModularScreen
+	 * (screen/ModularScreen.java:63, {@code @OnlyIn(Dist.CLIENT)}), so reflecting over any
+	 * GT6MuiMachine implementor detonates on a dedicated server (FML RuntimeDistCleaner
+	 * "invalid dist DEDICATED_SERVER" — the /fill teardown crash, qu_machines both legs).
 	 */
 	private static boolean beCanDrop(TileEntityBase03TicksAndSync aTile, int aSlot) {
 		try {
-			return (Boolean) aTile.getClass().getMethod("canDrop", int.class).invoke(aTile, aSlot);
-		} catch (NoSuchMethodException aE) {
-			return true; // the all-drop default
+			Method tMethod = probeDeclared(aTile.getClass(), "canDrop", int.class);
+			return tMethod == null || (Boolean) tMethod.invoke(aTile, aSlot);
 		} catch (ReflectiveOperationException aE) {
 			return true;
 		}
+	}
+
+	/**
+	 * The class-hierarchy probe behind both reflective gates ({@link #beCanDrop},
+	 * {@link #dropInventory}): walks {@code getDeclaredMethod} up the superclass chain —
+	 * public members only (the {@code getMethod} visibility parity). It never enumerates
+	 * interface default methods, so no implementor signature — the GT6MuiMachine
+	 * {@code createScreen → ModularScreen} seam included — is ever resolved on the server
+	 * path. The census: canDrop(int) lives only on TileEntityAdvancedCraftingTable :774,
+	 * getInventory() on the machines/storages/hoppers/chest families (TestMachineBlockEntity
+	 * :91 … TileEntityBase10MultiBlockMachine :883) — both found inside the GT hierarchy,
+	 * never via an interface.
+	 */
+	static Method probeDeclared(Class<?> aClass, String aName, Class<?>... aParams) {
+		for (Class<?> tClass = aClass; tClass != null && tClass != Object.class; tClass = tClass.getSuperclass()) {
+			try {
+				Method tMethod = tClass.getDeclaredMethod(aName, aParams);
+				if (Modifier.isPublic(tMethod.getModifiers())) {
+					return tMethod;
+				}
+			} catch (NoSuchMethodException aE) { /* keep walking up */ }
+		}
+		return null;
 	}
 
 	/**
@@ -137,7 +170,10 @@ public abstract class GTEntityBlock extends BaseEntityBlock {
 	 * machines/storages/hoppers/chest families to TileEntityBase10MultiBlockMachine:883)
 	 * reflectively; a block bridges a differently-spelled accessor by overriding this
 	 * (GTAnvilBlock hands over the BE's {@code inventory()}). Blocks whose BE answers null
-	 * are untouched by the fallback.
+	 * are untouched by the fallback. The probe is {@linkplain #probeDeclared declared-only}
+	 * — the same dist seam as {@link #beCanDrop} (a {@code getMethod} miss here would
+	 * enumerate the MUI interface defaults and detonate on a dedicated server for any
+	 * family lacking the accessor).
 	 *
 	 * <p>ponytail: a typed seam interface would mean editing every BE file for the same
 	 * join; the public accessor IS the existing duck-typed contract, and this card may not
@@ -146,7 +182,8 @@ public abstract class GTEntityBlock extends BaseEntityBlock {
 	@Nullable
 	protected IItemHandler dropInventory(BlockEntity aTile) {
 		try {
-			return (IItemHandler) aTile.getClass().getMethod("getInventory").invoke(aTile);
+			Method tMethod = probeDeclared(aTile.getClass(), "getInventory");
+			return tMethod == null ? null : (IItemHandler) tMethod.invoke(aTile);
 		} catch (ReflectiveOperationException aE) {
 			return null; // the family exposes no inventory — nothing to drop
 		}
