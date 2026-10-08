@@ -489,6 +489,10 @@ public class GT6ReactorCore2x2Test extends GTOfflineTestBase {
 			super(EntityType.PIG, null);
 		}
 
+		/** The Unsafe allocator skips the ctor, so the {@code type} field stays null — the 21.1
+		 * undead/arthropod tag gate (ReactorRadioactivity {@code getType().is(...)}) reads it. */
+		@Override public EntityType<? extends LivingEntity> getType() {return EntityType.PIG;}
+
 		@Override public boolean isAlive() {return true;} // the Unsafe carrier has no syncher data
 		//? if forge {
 		@Override public boolean hasEffect(MobEffect aEffect) {return false;}

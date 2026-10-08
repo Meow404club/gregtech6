@@ -69,8 +69,14 @@ class GT6ReactorRodsCensusTest extends GTOfflineTestBase {
 		try {
 			registerItemFixture(aRow.path(), () -> new GT6ReactorRodItem(aRow));
 		} catch (IllegalStateException | IllegalArgumentException tFailure) {
-			// NOT silently swallowed: the vanilla ITEM registry is AIR-defaulted, so a
-			// get() fallback would mask the failure — surface the cause instead
+			// the 21.1 FML test boot fires the real DR before the fixture window — a duplicate
+			// key means the real rod already sits under this path, so reuse it (the sLiveReady
+			// probe below still validates the item class). Any other failure stays surfaced:
+			// the vanilla ITEM registry is AIR-defaulted, so a get() fallback would mask it.
+			// (the local dodges the parens — the stonecutter swap regex skips parenthesized args)
+			String tPath = aRow.path();
+			if (net.minecraft.core.registries.BuiltInRegistries.ITEM
+					.containsKey(new net.minecraft.resources.ResourceLocation("gt6", tPath))) return;
 			throw new IllegalStateException("the fixture registration of " + aRow.path() + " failed: " + tFailure, tFailure);
 		}
 	}
