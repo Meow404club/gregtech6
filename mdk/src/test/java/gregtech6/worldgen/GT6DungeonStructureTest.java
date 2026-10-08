@@ -323,13 +323,26 @@ class GT6DungeonStructureTest {
 
     /**
      * The dungeon-chest carrier rows: the DUNGEON_CHEST category (the boundary — see the
-     * accessor javadoc). 16 metal-ladder rows + the Guide row; the ZPM artifact rides
-     * the migrated GT6 dungeon face (task dungeon-library-zpm), not the table JSON.
+     * accessor javadoc). 13 rows = the 12 ladder survivors + the Guide row; the ZPM artifact
+     * rides the migrated GT6 dungeon face (task dungeon-library-zpm), not the table JSON.
+     *
+     * <p>Negative account (4 rows): the four DamascusSteel arms — upstream
+     * Loader_Loot.java:421/:425/:429/:433, weight 2 ingot/plate/stick/toolHeadArrow — ride the
+     * MET convergence skip: DamascusSteel is a Metallurgy-family atlas-PRIMARY material
+     * (GT6ForeignMaterialAtlas.java:249), and the loot row faces SKIP gated pairs at datagen
+     * (loot tables have no load-time condition mechanism — the ruling of task
+     * parse-errors-registration-convergence; its selftest {@code GT6ForeignRowConvergenceTest}
+     * is the single update anchor). The 17 pin predated that gate; 13 IS the honest
+     * reconciliation (勿硬造 — the bare-install shape, same cost declaration as the ore-loot
+     * census card).
      */
     @Test
     void dungeonChestRowsArePinned() {
         List<GT6LootInjectionDatagen.EntryRow> tRows = GT6LootInjectionDatagen.dungeonChestEntries();
-        assertEquals(17, tRows.size(), "16 ladder rows + the Guide row (:418-442)");
+        assertEquals(13, tRows.size(), "the 4-metal ladder minus the 4 MET-gated DamascusSteel arms "
+                + "(:421/:425/:429/:433) + the Guide row (:418-442)");
+        assertTrue(tRows.stream().noneMatch(aRow -> aRow.item().contains("damascus")),
+                "the four DamascusSteel arms ride the MET convergence skip (ingot/plate/stick/toolHeadArrow)");
         assertEquals("gt6:book_loot_guide", tRows.get(tRows.size() - 1).item(), "the Guide row is the tail (:442)");
         assertEquals(50, tRows.get(tRows.size() - 1).weight(), "the Guide weight 50 (:442)");
         assertEquals(2, tRows.get(tRows.size() - 1).min(), "the Guide stack floor 2 (:442)");
