@@ -24,6 +24,8 @@ import gregtech6.tileentity.GTOfflineTestBase;
 import gregtech6.tileentity.energy.GT6BatteryBoxBlockEntity;
 import gregtech6.tileentity.energy.GT6ElectricDynamoBlockEntity;
 import gregtech6.tileentity.energy.GT6ElectricTransformerBlockEntity;
+import gregtech6.tileentity.energy.GT6RotationEngineBlockEntity;
+import gregtech6.tileentity.energy.GT6SteamTurbineBlockEntity;
 import gregtech6.tileentity.energy.GT6WaterWheelBlockEntity;
 import gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity;
 import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
@@ -58,6 +60,8 @@ public class GT6ConverterProviderTest extends GTOfflineTestBase {
 	static BlockEntityType<GT6BatteryBoxBlockEntity> sBoxType;
 	static BlockEntityType<GT6ZpmDechargerBlockEntity> sZpmType;
 	static BlockEntityType<GT6WaterWheelBlockEntity> sWheelType;
+	static BlockEntityType<GT6RotationEngineBlockEntity> sRotationEngineType;
+	static BlockEntityType<GT6SteamTurbineBlockEntity> sKineticTurbineType;
 
 	@BeforeAll
 	static void fixtures() {
@@ -70,6 +74,8 @@ public class GT6ConverterProviderTest extends GTOfflineTestBase {
 		sZpmType = offlineType((aType, aPos, aState) -> new GT6ZpmDechargerBlockEntity(aType, aPos, aState,
 				gregapi.data.TD.Energy.EU), Blocks.STONE);
 		sWheelType = offlineType(GT6WaterWheelBlockEntity::new, Blocks.STONE);
+		sRotationEngineType = offlineType(GT6RotationEngineBlockEntity::new, Blocks.STONE);
+		sKineticTurbineType = offlineType(GT6SteamTurbineBlockEntity::new, Blocks.STONE);
 	}
 
 	/** The offline BET factory seam (the self-referencing holder, GT6CrucibleProviderTest.fixture shape). */
@@ -149,6 +155,37 @@ public class GT6ConverterProviderTest extends GTOfflineTestBase {
 		assertTrue(tTag.getBoolean(GT6ConverterProvider.KEY_ACTIVE));
 		// no single throughput field on this family — the rate face stays dark
 		assertEquals(0L, tTag.getLong(GT6ConverterProvider.KEY_RATE));
+	}
+
+	/** The kinetics-BE family joins the converter face (task kinetics-be-function-family):
+	 *  the rotation engine's RU→KU bipolar storage + the SST's STEAM→RU rated-rate row. */
+	@Test
+	public void rotationEnginePinsTheKuStorageFace() {
+		GT6RotationEngineBlockEntity tEngine = new GT6RotationEngineBlockEntity(
+				sRotationEngineType, POS, Blocks.STONE.defaultBlockState());
+		tEngine.mStorage = 8;
+		tEngine.mActive = true;
+		CompoundTag tTag = new CompoundTag();
+		GT6ConverterProvider.writeFamilyData(tTag, tEngine);
+		assertEquals(8L, tTag.getLong(GT6ConverterProvider.KEY_STORED));
+		assertEquals(16L, tTag.getLong(GT6ConverterProvider.KEY_CAPACITY), "tInput 8 × 2 capacitor (the wooden row fallback)");
+		assertEquals("KU", tTag.getString(GT6ConverterProvider.KEY_UNIT));
+		assertTrue(tTag.getBoolean(GT6ConverterProvider.KEY_ACTIVE));
+		// the ±bipolar pair has no single rate field — the electric-transformer row shape
+		assertEquals(0L, tTag.getLong(GT6ConverterProvider.KEY_RATE));
+	}
+
+	@Test
+	public void steamTurbinePinsTheRuRateFace() {
+		GT6SteamTurbineBlockEntity tTurbine = new GT6SteamTurbineBlockEntity(
+				sKineticTurbineType, POS, Blocks.STONE.defaultBlockState());
+		tTurbine.mStorage = 32;
+		CompoundTag tTag = new CompoundTag();
+		GT6ConverterProvider.writeFamilyData(tTag, tTurbine);
+		assertEquals(32L, tTag.getLong(GT6ConverterProvider.KEY_STORED));
+		assertEquals(96L, tTag.getLong(GT6ConverterProvider.KEY_CAPACITY), "tInput 48 × 2 capacitor (the Bronze row fallback)");
+		assertEquals(16L, tTag.getLong(GT6ConverterProvider.KEY_RATE), "the Bronze row's rated RU output");
+		assertEquals("RU", tTag.getString(GT6ConverterProvider.KEY_UNIT));
 	}
 
 	@Test
