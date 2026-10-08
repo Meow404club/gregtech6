@@ -28,7 +28,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import gregapi.data.TD;
-import gregtech6.item.MaterialPrefixItem;
+import gregapi.oredict.OreDictItemData;
+import gregtech6.components.OM;
 import gregtech6.items.GT6UsbSticks;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
@@ -67,10 +68,14 @@ import gregtech6.recipes.RecipeMap;
  *     machine-supplied window — the 校验不砍 ruling).</li>
  * </ul>
  *
- * <p>The material resolution rides the port's item→material seam
- * ({@code MaterialPrefixItem.prefix/material}, the melting-gate seam face) — the upstream
- * {@code OM.anydata_} walk has no wider port counterpart yet, so non-GT stacks are
- * unresolvable and just fall through (upstream :63's {@code return rRecipe} arm).
+ * <p>The material resolution rides the central component face
+ * ({@link OM#anydata_}, the upstream :55 {@code OM.anydata_(tScanned)} walk verbatim —
+ * task component-scanner-resolve, the third MS-3 consumer of
+ * {@code gregtech6.components.OM}): GT prefix items through the self-description arm, and
+ * non-GT stacks through the map and vanilla family-tag arms, exactly the wider upstream
+ * face. A stack the chain cannot resolve falls through (upstream :63's
+ * {@code return rRecipe} arm) — the port guards the null read where upstream :56 would
+ * dereference it.
  */
 public class GT6RecipeMapScannerMolecular extends RecipeMap {
 
@@ -107,10 +112,13 @@ public class GT6RecipeMapScannerMolecular extends RecipeMap {
 				tScanned = aInput;
 			}
 			if (tUSB != null && tScanned != null && !tScanned.isEmpty()) {
-				// :55-56 — the (prefix, material) resolution + the SCANNABLE gate
-				if (!(tScanned.getItem() instanceof MaterialPrefixItem tItem) || tItem.material == null
-						|| tItem.material.mID < 1 || !tItem.prefix.contains(TD.Prefix.SCANNABLE)) return rRecipe;
-				long tEUt = (tItem.material.mProtons + tItem.material.mNeutrons) * SCAN_EUT_PER_NUCLEON;
+				// :55-56 — the central-face walk (OM.anydata_) + the (prefix, material) SCANNABLE
+				// gate, verbatim; the null guard is the port's fall-through for the unresolvable
+				// stack (upstream :56 would dereference the null read)
+				OreDictItemData tData = OM.anydata_(tScanned);
+				if (tData == null || tData.mPrefix == null || tData.mMaterial == null
+						|| tData.mMaterial.mMaterial.mID < 1 || !tData.mPrefix.contains(TD.Prefix.SCANNABLE)) return rRecipe;
+				long tEUt = (tData.mMaterial.mMaterial.mProtons + tData.mMaterial.mMaterial.mNeutrons) * SCAN_EUT_PER_NUCLEON;
 				// the voltage-window gate on the SYNTHESIZED row — the machine hands us its
 				// window (aSize = mInputMax, the :712 call) and the stored-row gate
 				// (RecipeMap.findRecipe's absGreaterEqual(aSize × mPower, eUt)) applies to the
@@ -125,7 +133,7 @@ public class GT6RecipeMapScannerMolecular extends RecipeMap {
 				// :57-61 — the one-time row: both inputs consumed, the stick back WITH the data
 				ItemStack tOutput = tUSB.copy();
 				tOutput.setCount(1);
-				GT6UsbSticks.writeMaterialData(tOutput, tItem.material);
+				GT6UsbSticks.writeMaterialData(tOutput, tData.mMaterial.mMaterial);
 				return new Recipe(false, // :57 aCanBeBuffered F — one-time rows never cache
 						new ItemStack[] {tScanned.copy(), tUSB.copy()},
 						new ItemStack[] {tOutput},
