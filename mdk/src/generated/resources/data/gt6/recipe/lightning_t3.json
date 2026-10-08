@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_stainless_steel"
+    },
+    "W": {
+      "item": "gt6:wire_gold_gt04"
+    },
+    "X": {
+      "item": "gt6:wire_steel_gt04"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "pattern": [
+    "XxX",
+    "WwW",
+    "XMX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:lightning_t3"
+  }
+}

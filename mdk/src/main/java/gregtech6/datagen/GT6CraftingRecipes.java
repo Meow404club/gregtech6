@@ -8713,7 +8713,24 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			return true;
 		}));
 		// -- the Nanoscale Fabricator CUT (no port machine registration) -----------
-		// -- the Lightning Processor CUT ('X' = wireGt01 over ANY.Iron, no iron wire rung) --
+		// -- the Lightning Processor rows (task lightning-processor-pour) ----------
+		// Census: the upstream ANY.Iron wireGt inputs are 7 rows total — these 5
+		// (:1582-1586) + the 2 battery-cell rows (MultiItemTechnological:469/:474; the
+		// batteryRecipeBuilder fold is a separately-ruled face — do NOT re-pour here).
+		// The aggregate's effective wire member is Steel alone (the addElectricWires
+		// iron rungs, Loader:1914-1950 — Fe/WroughtIron ship no wire item), so the
+		// 'X' column folds to the wire_steel_gt01/02/04/08/16 rung (no new tag: the
+		// member set is single). 'W' = WIRES_04[1..5] Sn/Cu/Au/Al/Pt with the
+		// ANY.Cu → Cu fold (the steam-band precedent, the oven 'C' column).
+		rRows.addAll(machinePour(gregtech6.registry.GTMachines.LIGHTNING_ITEMS_BY_PATH, gregtech6.registry.GTMachines.LIGHTNING_ROWS, new String[] {"XxX", "WwW", "XMX"}, (b, row) -> { // :1582-1586 ('X' = wireGt01-16 over ANY.Iron → wire_steel, 'W' = WIRES_04[1..5], 'x' = the wire cutter)
+			String[] tGauges = {"01", "02", "04", "08", "16"}; // the per-tier wireGt multiplier of the raw rows
+			Item casing = itemOrNull(gregapi.data.OP.casingMachine, row.material().get());
+			if (casing == null) return false;
+			b.define('X', wireItemByPath("wire_steel_gt" + tGauges[row.tier()]))
+					.define('W', wireItemByPath("wire_" + COMPONENT_WIRE_TOKENS[row.tier() + 1] + "_gt04")) // WIRES_04[1..5], the [1..5] offset of the shared ladder
+					.define('M', casing).unlockedBy("has_casing", has(casing));
+			return true;
+		}));
 		rRows.addAll(machinePour(gregtech6.registry.GTMachines.SANDING_ITEMS_BY_PATH, gregtech6.registry.GTMachines.SANDING_ROWS, new String[] {"SGS", "XXX", "wMh"}, (b, row) -> { // :1589-1592 ('X' = OD.sandstone → vanilla sandstone)
 			gregapi.oredict.OreDictMaterial m = row.material().get();
 			Item casing = itemOrNull(gregapi.data.OP.casingMachineDouble, m), gear = itemOrNull(gregapi.data.OP.gearGt, m), gearSmall = itemOrNull(gregapi.data.OP.gearGtSmall, m);
