@@ -3,12 +3,6 @@
   "conditions": [],
   "entries": [
     {
-      "item": "gt6:book_loot_guide",
-      "max": 8,
-      "min": 4,
-      "weight": 40
-    },
-    {
       "item": "gt6:manual_portal_tf",
       "max": 1,
       "min": 1,
@@ -19,5 +13,5 @@
     "max_inclusive": 3,
     "min_inclusive": 1
   },
-  "table": "twilightforest:tower_library"
+  "table": "twilightforest:basement"
 }

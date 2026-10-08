@@ -350,11 +350,11 @@ public final class GT6LootInjectionDatagen {
 				new TwilightRow(3, "hill3", "MINESHAFT_CORRIDOR", "twilightforest:hill_3", ""),
 				new TwilightRow(4, "hedgemaze", "BONUS_CHEST", "twilightforest:hedge_maze", ""),
 				new TwilightRow(14, "tree_cache", "BONUS_CHEST", "twilightforest:tree_cache", ""),
-				// the mapped category kept zero rows (:528-544 the crates are the declared
-				// pool) AND the hand rows are all cut (:176 the Guide book is the GT6Books cut,
-				// :177 the loot bags are the declared pool) — no rows, no JSON
-				new TwilightRow(9, "basement", "STRONGHOLD_CROSSING", null,
-						"zero surviving rows: the crossing crates + the coins/bags are the declared pool, the Manual_Portal_TF + Bag_Loot_Misc hand rows cut"),
+				// the mapped category keeps zero pool rows (:528-544 the crates are the
+				// declared pool, :177 the loot bags are a bag cut) — the sole row is the
+				// Manual_Portal_TF re-arm (task books-text-family, :176 the rare pool)
+				new TwilightRow(9, "basement", "STRONGHOLD_CROSSING", "twilightforest:basement",
+						"the Manual_Portal_TF rare row only (:176, task books-text-family) — the crossing crates + the Bag_Loot_Misc hand rows stay cut"),
 				new TwilightRow(5, "labyrinth_room", "PYRAMID_JUNGLE_CHEST", "twilightforest:labyrinth_room", ""),
 				new TwilightRow(6, "labyrinth_deadend", "PYRAMID_JUNGLE_CHEST", "twilightforest:labyrinth_dead_end", ""),
 				new TwilightRow(10, "labyrinth_vault", "VILLAGE_BLACKSMITH", "twilightforest:labyrinth_vault", ""),
@@ -400,11 +400,13 @@ public final class GT6LootInjectionDatagen {
 	 *     {@code useless.add} row — the tower-room nether supplies :144-149, the
 	 *     darktower quartz/end-stone :194-197, the ender pearls :210/:267, the ink
 	 *     family :158-162, the debris :286 — TF's own tables carry the junk face now;</li>
+	 * <li>PORTED (task books-text-family): the Manual_Portal_TF rare rows :164 (tower_library)
+	 *     / :176 (basement — the table's sole surviving row, the ledger note updated).</li>
 	 * <li>CUT (no port registration — the declared pool, 勿硬造): the TC loot bag
 	 *     (mLootBag, every table), the loot bags Bag_Loot_* (:117/:121/:177/:185/:233-234),
-	 *     the Manual_Portal_TF book (:164/:176 — the GT6Books cut), the ultrarare
-	 *     Compass_Death (:166 — unported AND the ultrarare pool is dead), the TC saplings
-	 *     (:228-231), Dye_Cocoa/Resin (:113/:115), the ChocoCraft/Harvestcraft/AE/EtFu rows.</li>
+	 *     the ultrarare Compass_Death (:166 — unported AND the ultrarare pool is dead), the
+	 *     TC saplings (:228-231), Dye_Cocoa/Resin (:113/:115), the
+	 *     ChocoCraft/Harvestcraft/AE/EtFu rows.</li>
 	 * </ul>
 	 */
 	public static List<InjectionRow> twilightInjections() {
@@ -439,7 +441,11 @@ public final class GT6LootInjectionDatagen {
 		case "tower_room":
 			return desertEntries().stream(); // :144-149 the nether supplies are a dead-pool cut
 		case "tower_library":
-			return libraryEntries().stream(); // :164/:166 book + compass cuts
+			// :164 the Manual_Portal_TF rare row (task books-text-family re-arm) + :166 the
+			// Death Compass stays cut (unported AND the ultrarare pool is dead)
+			return Stream.concat(libraryEntries().stream(), Stream.of(portalTfRow()));
+		case "basement":
+			return Stream.of(portalTfRow()); // :176 the Manual_Portal_TF rare row (books-text-family)
 		case "darktower_cache":
 			return corridorEntries().stream(); // :194-197 dead-pool cut
 		case "darktower_key": case "stronghold_room": case "aurora_cache": case "aurora_room":
@@ -466,6 +472,18 @@ public final class GT6LootInjectionDatagen {
 	 */
 	private static EntryRow guideRow(int aWeight, int aMin, int aMax) {
 		return new EntryRow("gt6:book_loot_guide", aWeight, aMin, aMax);
+	}
+
+	/**
+	 * The Manual_Portal_TF row (task books-text-family) — the registered
+	 * {@code gt6:manual_portal_tf} book (Loader_Books.java:111, upstream meta 1005); the
+	 * upstream face is {@code ST.book("Manual_Portal_TF")} in the rare pool
+	 * (TwilightTreasureReplacer.java:164 tower_library / :176 basement), an unweighted
+	 * WeightedRandom entry — weight 1 [1,1], the pool-entry default the other hand rows
+	 * ride.
+	 */
+	private static EntryRow portalTfRow() {
+		return new EntryRow("gt6:manual_portal_tf", 1, 1, 1);
 	}
 
 	/**

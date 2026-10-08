@@ -93,6 +93,7 @@ public class GT6ToolLootModifiersDatagen extends GlobalLootModifierProvider {
 			"dungeon_inject_tf_hill_3",
 			"dungeon_inject_tf_hedge_maze",
 			"dungeon_inject_tf_tree_cache",
+			"dungeon_inject_tf_basement", // books-text-family — the Manual_Portal_TF rare row (:176)
 			"dungeon_inject_tf_labyrinth_room",
 			"dungeon_inject_tf_labyrinth_dead_end",
 			"dungeon_inject_tf_labyrinth_vault",
