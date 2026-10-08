@@ -379,6 +379,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		grindstoneBuilder().save(aConsumer, GRINDSTONE_ID); // task grindstone-family — the :2226 row
 		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
 			woodenPanelRecipeBuilder(tRow).save(aConsumer, woodenPanelRecipeId(tRow));
+		}
 		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed
 			ShapedRecipeBuilder tBuilder = panelRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the asphalt input family is unported — the declared G2 cut
@@ -685,6 +686,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		grindstoneBuilder().save(aOutput, GRINDSTONE_ID); // task grindstone-family — the :2226 row
 		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
 			woodenPanelRecipeBuilder(tRow).save(aOutput, woodenPanelRecipeId(tRow));
+		}
 		for (gregtech6.registry.GT6Panels.PanelRow tRow : gregtech6.registry.GT6Panels.registrationOrder()) { // task material-mc-g1-panels-dyed
 			ShapedRecipeBuilder tBuilder = panelRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the asphalt input family is unported — the declared G2 cut
