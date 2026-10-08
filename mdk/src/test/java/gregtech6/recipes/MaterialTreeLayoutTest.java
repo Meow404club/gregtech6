@@ -38,6 +38,7 @@ import gregapi.oredict.OreDictPrefix;
 import gregtech6.emi.GT6MaterialTreeEmiRecipe;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.jei.GT6MaterialTreeJeiCategory;
+import gregtech6.jei.GT6MaterialTreeJeiTreeWidget;
 import gregtech6.recipes.tree.MaterialTreeBuilder;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
@@ -401,10 +402,16 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 	void emiLegRendersSharedPlans() {
 		MaterialTreeDisplay tDisplay = feDisplay();
 		GT6MaterialTreeEmiRecipe tRecipe = new GT6MaterialTreeEmiRecipe(tDisplay);
-		assertEquals(MaterialTreeDisplay.WIDTH, tRecipe.getDisplayWidth());
+		// <b>旧钉迁移声明</b> (task mattree-r3-nav-unify): the former 「page dims == the fixed
+		// Display constants」 pins died here — the page IS the engine's content box now (the
+		// EMI per-recipe face; the Fe tight box is 146 wide, NOT the 202 worst case)
+		MaterialTreeLayout.Result tEngine = MaterialTreeLayout.plan(tDisplay);
+		assertEquals(tEngine.width(), tRecipe.getDisplayWidth(), "the EMI page width IS the engine box");
 		// nav-m2-emi grew the display by the control strip (the pin lagged the change;
 		// review-seat absorb from the nav-m3-jei branch, seat 8)
-		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight());
+		assertEquals(tEngine.height() + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight(),
+				"the control strip extends the engine box below the tree canvas");
+		assertEquals(146, tRecipe.getDisplayWidth(), "the Fe tight box (the unified value, not the 202 worst case)");
 
 		List<Widget> tAdded = new ArrayList<>();
 		WidgetHolder tHolder = new WidgetHolder() {
@@ -454,12 +461,21 @@ class MaterialTreeLayoutTest extends GTRecipesOfflineTestBase {
 	}
 
 	@Test
-	void jeiLegRendersSharedPlans() {
+	void jeiLegRendersSharedPlans() throws Exception {
 		MaterialTreeDisplay tDisplay = feDisplay();
 		GT6MaterialTreeJeiCategory tCategory = new GT6MaterialTreeJeiCategory();
 		assertEquals(MaterialTreeDisplay.WIDTH, tCategory.getWidth());
 		// nav-m3-jei: the category carries the EMI twin's 20px control strip below the canvas
 		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tCategory.getHeight());
+		// task mattree-r3-nav-unify: the page FRAME keeps the worst-case constants (the
+		// per-category seam cannot see a recipe), but the CONTENT is the engine Result —
+		// the three-host single-authority pin (the byte ref is the consumption seam)
+		String tTreeBytes;
+		try (var tIn = GT6MaterialTreeJeiTreeWidget.class.getResourceAsStream("GT6MaterialTreeJeiTreeWidget.class")) {
+			assertNotNull(tIn, "the tree widget class bytes");
+			tTreeBytes = new String(tIn.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
+		}
+		assertTrue(tTreeBytes.contains("MaterialTreeLayout$Result"), "the JEI tree body consumes the engine Result");
 
 		// 旧钉迁移声明 (task mattree-jei-panzoom): this pin used to assert the slot
 		// COORDINATES the builder received — that face died with the invisible-slot mount

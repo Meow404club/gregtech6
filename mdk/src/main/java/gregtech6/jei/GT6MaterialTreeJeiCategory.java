@@ -55,6 +55,14 @@ import gregtech6.recipes.tree.MaterialTreeLayout.EdgeLayout;
  *     next to the S4 corner entry.</li>
  * </ul>
  *
+ * <p><b>The frame vs the content</b> (task mattree-r3-nav-unify): {@link #getWidth}/
+ * {@link #getHeight} are PER-CATEGORY on this API — no recipe reaches them — so the page
+ * frame stays the worst-case {@link MaterialTreeDisplay#WIDTH} constants (that is their
+ * surviving seat, pinned equal to the engine's worst case by
+ * {@code MaterialTreeLayoutTest}); the CONTENT is not: the tree body plans through the
+ * engine's {@code Result} like the EMI twin and the standalone screen, so all three hosts
+ * consume ONE geometry authority.
+ *
  * <p><b>旧钉迁移声明</b>: the nav-m3-jei-era pins 「the tree geometry stays viewport-frozen
  * (JEI freezes slot coordinates, no render-time move seam)」 and 「self-drawing the tree is
  * ruled out — native hover U/R is the leg's point」 both died here: the freeze was real but

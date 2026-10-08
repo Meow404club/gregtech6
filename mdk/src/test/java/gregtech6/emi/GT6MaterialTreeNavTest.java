@@ -534,9 +534,14 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void pageWiringLeadsWithWiresAndClosesWithControls() throws Exception {
 		GT6MaterialTreeEmiRecipe tRecipe = ironRecipe();
-		assertEquals(MaterialTreeDisplay.WIDTH, tRecipe.getDisplayWidth());
-		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight(),
+		// task mattree-r3-nav-unify: the page IS the engine's content box — the strip rides
+		// below the plan box, and the whole page stays inside the worst-case JEI frame
+		int tCanvasW = tRecipe.mLayout.width(), tCanvasH = tRecipe.mLayout.height();
+		assertEquals(tCanvasW, tRecipe.getDisplayWidth(), "the page width is the engine box");
+		assertEquals(tCanvasH + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight(),
 				"the control strip extends the page below the tree canvas");
+		assertTrue(tCanvasW <= MaterialTreeDisplay.WIDTH && tCanvasH <= MaterialTreeDisplay.HEIGHT,
+				"the engine box never exceeds the worst-case page frame");
 
 		RecordingHolder tHolder = new RecordingHolder();
 		tRecipe.addWidgets(tHolder);
@@ -566,15 +571,16 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		}
 		assertEquals(4, tButtons.size(), "zoom in, zoom out, reset + the S4 corner entry (nav-s4-tree-screen)");
 		assertTrue(tSliderAt > tLastSlotAt && tNavAt > tLastSlotAt, "controls ride above the tree layer");
-		// the strip geometry: 12px buttons on the HEIGHT+4 row, the 8px track centred under them
-		assertEquals(new Bounds(4, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(0).getBounds());
-		assertEquals(new Bounds(20, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(1).getBounds());
-		assertEquals(new Bounds(36, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(2).getBounds());
+		// the strip geometry: 12px buttons on the page's own strip row (the plan box + 4),
+		// the 8px track centred under them; the S4 corner is the page's own top-right cell
+		assertEquals(new Bounds(4, tCanvasH + 4, 12, 12), tButtons.get(0).getBounds());
+		assertEquals(new Bounds(20, tCanvasH + 4, 12, 12), tButtons.get(1).getBounds());
+		assertEquals(new Bounds(36, tCanvasH + 4, 12, 12), tButtons.get(2).getBounds());
 		// the S4 corner entry: the canvas's top-right 12px cell, always live
-		assertEquals(new Bounds(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12),
+		assertEquals(new Bounds(tCanvasW - 16, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12),
 				tButtons.get(3).getBounds());
 		assertTrue(activeOf(tButtons.get(3)), "the corner entry never sleeps");
-		assertEquals(new Bounds(GT6MaterialTreeEmiRecipe.SLIDER_X, GT6MaterialTreeEmiRecipe.SLIDER_Y,
+		assertEquals(new Bounds(GT6MaterialTreeEmiRecipe.SLIDER_X, tCanvasH + 6,
 				GT6MaterialTreeEmiRecipe.SLIDER_W, GT6MaterialTreeEmiRecipe.SLIDER_H), tHolder.mSlider.getBounds());
 		// the key canvas covers the whole page (the RecipeScreen hover gate is bounds-based)
 		Bounds tNavBounds = tHolder.mNav.getBounds();
@@ -587,6 +593,10 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		GT6MaterialTreeEmiRecipe tRecipe = ironRecipe();
 		RecordingHolder tHolder = new RecordingHolder();
 		tRecipe.addWidgets(tHolder);
+		// the page's own anchor: the ENGINE box centre (task mattree-r3-nav-unify — the Fe
+		// box is 146x206, so the x anchor is 73, not the worst-case 101)
+		double tCx = tRecipe.mLayout.width() / 2.0, tCy = tRecipe.mLayout.height() / 2.0;
+		int tSliderY = tHolder.mSlider.getBounds().y();
 
 		// identity: the first node slot sits at its layout coordinate
 		GT6MaterialTreeTransformSlot tFirst = tHolder.mSlots.get(0);
@@ -607,23 +617,22 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		Bounds tZoomed = tFirst.getBounds();
 		assertTrue(tZoomed.width() > tHome.width() && tZoomed.height() > tHome.height(),
 				"the zoom-in button scaled the slot box");
-		assertEquals(tHome.x() * 2 - 101, tZoomed.x(), "the centre-anchored transform moved the slot (2x, offset -101)");
-		assertEquals(tHome.y() * 2 - 103, tZoomed.y(), "the centre-anchored transform moved the slot (2x, offset -103)");
+		assertEquals(tHome.x() * 2 - (int) tCx, tZoomed.x(), "the centre-anchored transform moved the slot (2x, offset -73 on the Fe box)");
+		assertEquals(tHome.y() * 2 - (int) tCy, tZoomed.y(), "the centre-anchored transform moved the slot (2x, offset -103)");
 		// the zoom-out button un-does it
 		click(tZoomOut);
 		assertEquals(tHome, tFirst.getBounds(), "the zoom-out button returns the slot");
 
 		// the slider: a click at the track's midpoint jumps to 2.5x
 		tHolder.mSlider.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X + GT6MaterialTreeEmiRecipe.SLIDER_W / 2,
-				GT6MaterialTreeEmiRecipe.SLIDER_Y, 0);
+				tSliderY, 0);
 		assertEquals(2.5, tView.scale(), EPSILON, "the click-track slider jumped to the midpoint zoom");
-		assertEquals(Math.round(tHome.x() * 2.5 - 151.5), tFirst.getBounds().x(), EPSILON,
-				"the centre-anchored 2.5x pose: apply(4) = -141.5, the corner round (half-up) lands on -141");
+		assertEquals(Math.round(tHome.x() * 2.5 + tCx * (1 - 2.5)), tFirst.getBounds().x(), EPSILON,
+				"the centre-anchored 2.5x pose: apply(4) = -99.5, the corner round (half-up) lands on -99");
 
 		// the keyboard: UP pans one lane, R resets home
 		assertTrue(tHolder.mNav.keyPressed(265, 0, 0), "UP is consumed by the canvas");
-		assertEquals(MaterialTreeDisplay.HEIGHT / 2.0 * (1 - 2.5) + GT6MaterialTreeNav.PAN_STEP,
-				tView.offsetY(), EPSILON);
+		assertEquals(tCy * (1 - 2.5) + GT6MaterialTreeNav.PAN_STEP, tView.offsetY(), EPSILON);
 		assertTrue(tHolder.mNav.keyPressed(82, 0, 0), "R is consumed by the canvas");
 		assertEquals(1.0, tView.scale(), EPSILON);
 		assertEquals(tHome, tFirst.getBounds(), "reset brings every slot home");
@@ -632,10 +641,10 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		// the buttons' active faces: at the fit pose zoom-out sleeps, at the ceiling zoom-in does
 		assertTrue(activeOf(tZoomIn), "zoom-in is live at the fit pose");
 		assertTrue(activeOf(tReset), "reset is always live");
-		GT6MaterialTreeNav.zoomToFraction(tView, 1.0, 101, 103);
+		GT6MaterialTreeNav.zoomToFraction(tView, 1.0, tCx, tCy);
 		assertFalse(activeOf(tZoomIn), "zoom-in sleeps at the ceiling");
 		assertTrue(activeOf(tZoomOut), "zoom-out is live at the ceiling");
-		GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, 101, 103);
+		GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, tCx, tCy);
 		assertFalse(activeOf(tZoomOut), "zoom-out sleeps at the fit pose");
 	}
 
