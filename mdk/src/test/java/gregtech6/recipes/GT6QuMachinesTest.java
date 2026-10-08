@@ -30,9 +30,13 @@ import net.minecraftforge.fluids.FluidStack;
 
 import gregapi.data.MT;
 import gregapi.data.OP;
+import gregapi.oredict.OreDictItemData;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.components.OM;
+import gregtech6.datagen.GT6ItemTags;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.items.GT6UsbSticks;
+import gregtech6.recipes.maps.GT6RecipeMapScannerMolecular;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.GTOfflineTestBase;
 
@@ -281,6 +285,77 @@ public class GT6QuMachinesTest extends GTOfflineTestBase {
 		Recipe tTwoGems = GT6RecipeMaps.SCANNER_MOLECULAR.findRecipe(null, 1024, ItemStack.EMPTY, null,
 				new ItemStack(scannedGem(), 1), new ItemStack(scannedGem(), 1));
 		assertNull(tTwoGems, "no stick in the input set — no synthesis");
+	}
+
+	// ------------------------------------------------- ②b the central-face resolution (component-scanner-resolve)
+
+	/**
+	 * The scanner tag stub (the OMComponentFaceTest.sTagStub shape): the vanilla iron ingot
+	 * sits in the {@code <family>:ingots/iron} intersection tag, everything else in nothing.
+	 */
+	private static final java.util.function.Function<ItemStack, java.util.stream.Stream<net.minecraft.tags.TagKey<Item>>> sScannerTagStub =
+			aStack -> aStack.getItem() == Items.IRON_INGOT
+					? java.util.stream.Stream.of(GT6ItemTags.materialTag(GT6ItemTags.INGOTS_FAMILY, "iron"))
+					: java.util.stream.Stream.empty();
+
+	/**
+	 * The scan resolution rides the central component face ({@link OM#anydata_}, the upstream
+	 * RecipeMapScannerMolecular.java:55 walk): the USB-written material id IS the central
+	 * face's answer for the scanned stack — GT prefix form (the self-description arm) and
+	 * vanilla ingot form (the family-tag arm) alike, the scan ↔ face consistency pin.
+	 */
+	@Test
+	public void theScannerResolutionAgreesWithTheCentralFace() {
+		// GT form: the row's material is the face's material, id and nucleons both
+		ItemStack tGem = new ItemStack(scannedGem(), 1);
+		Recipe tRow = GT6RecipeMaps.SCANNER_MOLECULAR.findRecipe(null, 1024, ItemStack.EMPTY, null, tGem, new ItemStack(stick(), 1));
+		assertNotNull(tRow, "the SCANNABLE gem scans");
+		OreDictItemData tFaceData = OM.anydata_(tGem);
+		assertNotNull(tFaceData, "the central face resolves the gem");
+		assertEquals(tFaceData.mMaterial.mMaterial.mID, GT6UsbSticks.readMaterialId(tRow.mOutputs[0]),
+				"the scan writes the central face's material id (scan ↔ face consistency)");
+		assertEquals((tFaceData.mMaterial.mMaterial.mProtons + tFaceData.mMaterial.mMaterial.mNeutrons)
+				* GT6RecipeMapScannerMolecular.SCAN_EUT_PER_NUCLEON, tRow.mEUt,
+				"the :57 power face rides the face's nucleons");
+
+		// vanilla form: the iron ingot resolves (ingot, Iron) through the family-tag arm and scans to it
+		OM.sStackTags = sScannerTagStub;
+		try {
+			ItemStack tIngot = new ItemStack(Items.IRON_INGOT, 1);
+			OreDictItemData tIngotData = OM.anydata_(tIngot);
+			assertNotNull(tIngotData, "the vanilla ingot resolves through the family-tag arm");
+			// the T3 window (256..1024) refuses the (26+30)×512 row LOUD — the declared
+			// 校验不砍 deviation: refusal at lookup, before any consume (the javadoc'd hole)
+			assertNull(GT6RecipeMaps.SCANNER_MOLECULAR.findRecipe(null, 1024, ItemStack.EMPTY, null, tIngot, new ItemStack(stick(), 1)),
+					"the T3 window refuses the 56-nucleon row");
+			Recipe tIngotRow = GT6RecipeMaps.SCANNER_MOLECULAR.findRecipe(null,
+					(MT.Iron.mProtons + MT.Iron.mNeutrons) * GT6RecipeMapScannerMolecular.SCAN_EUT_PER_NUCLEON,
+					ItemStack.EMPTY, null, tIngot, new ItemStack(stick(), 1));
+			assertNotNull(tIngotRow, "a window that fits the row scans the vanilla ingot (the upstream :55 walk)");
+			assertEquals(tIngotData.mMaterial.mMaterial.mID, GT6UsbSticks.readMaterialId(tIngotRow.mOutputs[0]),
+					"the vanilla scan writes the central face's answer — Iron");
+		} finally {
+			OM.sStackTags = ItemStack::getTags;
+		}
+	}
+
+	/**
+	 * The map page: the stored stand-in row answers BEFORE the dynamic arm ever walks
+	 * (super.findRecipe precedence, the upstream :47 face) — the poured page row serves as
+	 * the buffered static row it is, the one-time synthesis never shadows the page.
+	 */
+	@Test
+	public void theScannerStoredStandInRowWinsOverTheSynthesis() throws Exception {
+		GT6RecipeMapJsonLoader.sItemResolver = aId -> switch (aId.getPath()) {
+			case "ender_pearl" -> Items.ENDER_PEARL;
+			case "paper" -> Items.PAPER;
+			default -> Items.AIR;
+		};
+		pourShipped("scannermolecular");
+		Recipe tRow = GT6RecipeMaps.SCANNER_MOLECULAR.findRecipe(null, 1024, ItemStack.EMPTY, null,
+				new ItemStack(Items.ENDER_PEARL, 1), new ItemStack(Items.PAPER, 1));
+		assertNotNull(tRow, "the poured stand-in row answers the lookup");
+		assertTrue(tRow.mCanBeBuffered, "the stored row is the buffered static-row face (vs the one-time synthesis)");
 	}
 
 	// ------------------------------------------------------------------ ③ the replicator synthesis
