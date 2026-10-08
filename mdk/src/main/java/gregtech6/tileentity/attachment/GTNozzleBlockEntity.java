@@ -65,7 +65,24 @@ public class GTNozzleBlockEntity extends GTAttachmentSmallBlockEntity {
 	}
 
 	public GTNozzleBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
-		super(false, aType != null ? aType : gregtech6.registry.GTBlockEntities.NOZZLE_BE.get(), aPos, aState);
+		super(false, aType != null ? aType : betFor(aState), aPos, aState);
+	}
+
+	/**
+	 * The mounting BET from the row family (the block carrier answers; the one-arg
+	 * supplier {@code GTNozzleBlockEntity::new} is shared by BOTH BET rows, so the
+	 * type follows the block, not a fixed default). The fixed NOZZLE_BE default was
+	 * the mc-F landing's latent defect: 1.20.1 never checks the type/state pair, but
+	 * the 21.1 BlockEntity ctor validates it (the mc-F card's own test-infra note) —
+	 * every cap-nozzle placement died with "Invalid block entity gt6:nozzle".
+	 * Bare-carrier states (the offline stone fixtures) ride NOZZLE_BE.
+	 */
+	private static BlockEntityType<?> betFor(BlockState aState) {
+		if (aState.getBlock() instanceof GTAttachmentSmallBlock tBlock
+				&& tBlock.row().family() == GTAttachmentSmallBlock.Family.CAP_NOZZLE) {
+			return gregtech6.registry.GTBlockEntities.CAP_NOZZLE_BE.get();
+		}
+		return gregtech6.registry.GTBlockEntities.NOZZLE_BE.get();
 	}
 
 	@Override
