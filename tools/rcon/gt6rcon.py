@@ -291,6 +291,22 @@ class RconClient:
         return False
 
 
+# The vanilla setblock success receipt — THE one assertion seam for `setblock`
+# steps (card rcon-setblock-dialect-normalize). The feared forge/neo receipt
+# dialect does not exist: SetBlockCommand answers Component.translatable(
+# "commands.setblock.success", x, y, z) on BOTH legs (tmp/vanilla-1.20.1 ...
+# SetBlockCommand.java:103; neoforge-21.1.249 sources jar SetBlockCommand.java:105)
+# and both legs' en_us.json render it byte-identically 'Changed the block at
+# %s, %s, %s' — the failure receipt 'Could not set the block'
+# (commands.setblock.failed, same file :25) is identical too (every /tmp chain
+# log shows exactly the two shapes, same on both legs). Chains import
+# SETBLOCK_OK instead of hardcoding the string, so a future node drift is a
+# one-line fix here, not a hunt through the chains.
+# ponytail: plain shared constant, no per-node resolution machinery; if a leg
+# ever drifts, turn this into a node-keyed table resolved by step_expect.
+SETBLOCK_OK = "Changed the block at"
+
+
 def judge_output(index, body, expected=None, allowed=False):
     """Print and score one command's output; return 1 when it counts as a failure.
 
