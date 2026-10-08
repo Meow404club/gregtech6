@@ -265,9 +265,9 @@ class GT6FluidSpringWorldgenTest extends gregtech6.tileentity.GTOfflineTestBase 
     @Test
     void twilightDrawWalksOnlyTheTwilightRowsAndNeverTheOwBand() {
         GTFluidSpringConfig.Table tTable = new GTFluidSpringConfig.Table(List.of(
-                new GTFluidSpringConfig("ow", "minecraft:lava", 1, true, false, false, 1000),
-                new GTFluidSpringConfig("dormant", "minecraft:lava", 1, false, false, false, 1000),
-                new GTFluidSpringConfig("twilight", "gt6:water_geothermal_block", 1, false, false, true, 250)));
+                new GTFluidSpringConfig("ow", "minecraft:lava", 1, true, false, false, false, 1000),
+                new GTFluidSpringConfig("dormant", "minecraft:lava", 1, false, false, false, false, 1000),
+                new GTFluidSpringConfig("twilight", "gt6:water_geothermal_block", 1, false, false, true, false, 250)));
         for (long tSeed = 0; tSeed < 50; tSeed++) {
             assertEquals("twilight", GT6FluidSpringGenerator.drawSpring(tTable, new Random(tSeed),
                             GT6FluidSpringGenerator.Dim.TWILIGHT).name(),

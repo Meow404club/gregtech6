@@ -80,15 +80,22 @@ public class GT6LargeVeinFeature extends Feature<GTVeinConfig.Table> {
         // #is_end (its conditions are the has_planet_veins yield gate), so the draw
         // filters ORE_END rows there — the biome probe is the runtime face of the
         // upstream per-dim flag lists (GT6WorldGenerator.java:93 + the :126-127 switch).
+        // task atum-dim-adaptation: the atum modifier hangs the SAME placed feature on
+        // #gt6:atum_biomes, the draw filters the ORE_ATUM rows there (:886-916, 31 rows).
         boolean tEndRows = tLevel.getBiome(aContext.origin()).is(net.minecraft.tags.BiomeTags.IS_END);
+        boolean tAtumRows = !tEndRows && tLevel.getBiome(aContext.origin()).is(GT6Worldgen.ATUM_BIOMES);
+        // the atum stream salt (the ATUM_DIMENSION_SALT synthetic — the legacy dimensionSalt
+        // default arm hands 0 to every mod dimension, mirroring the OW vein picks
+        // chunk-for-chunk; upstream seeded per dim, WD.random(seed^dim))
+        long tSalt = tAtumRows ? GT6Worldgen.ATUM_DIMENSION_SALT : GT6VeinGenerator.dimensionSalt(tLevel);
         Map<Block, GT6OreBlocks.OreFamily> tHosts = GT6OreBlocks.stoneToOreFamilies();
-        GT6VeinGenerator.SliceSink tSink = levelSink(tLevel, tHosts);
+        GT6VeinGenerator.SliceSink tSink = levelSink(tLevel, tHosts, tAtumRows);
         boolean rPlaced = false;
         for (int tDX = -2; tDX <= 2; tDX++) for (int tDZ = -2; tDZ <= 2; tDZ++) {
             int tOriginX = tWork.x + tDX, tOriginZ = tWork.z + tDZ;
             if (!GT6VeinGenerator.isOriginCell(tOriginX) || !GT6VeinGenerator.isOriginCell(tOriginZ)) continue;
-            Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), GT6VeinGenerator.dimensionSalt(tLevel), tOriginX, tOriginZ);
-            GTVeinConfig tVein = GT6VeinGenerator.drawVein(aContext.config().veins(), tRandom, tEndRows);
+            Random tRandom = GT6VeinGenerator.veinRandom(tLevel.getSeed(), tSalt, tOriginX, tOriginZ);
+            GTVeinConfig tVein = GT6VeinGenerator.drawVein(aContext.config().veins(), tRandom, tEndRows, tAtumRows);
             if (tVein == null) continue;
             rPlaced |= GT6VeinGenerator.generateSlice(tVein, tRandom, tOriginX << 4, tOriginZ << 4,
                     tWork.getMinBlockX(), tWork.getMinBlockX() + 15, tWork.getMinBlockZ(), tWork.getMinBlockZ() + 15,
@@ -97,12 +104,26 @@ public class GT6LargeVeinFeature extends Feature<GTVeinConfig.Table> {
         return rPlaced;
     }
 
-    private GT6VeinGenerator.SliceSink levelSink(WorldGenLevel aLevel, Map<Block, GT6OreBlocks.OreFamily> aHosts) {
+    /**
+     * The atum host arm (task atum-dim-adaptation): atum's base stones (limestone/karst,
+     * the {@code #atum:base_stone_atum} fill behind OUR {@code #gt6:atum_base_stone}
+     * indirection tag) are NOT in the vanilla/GT host map, so the veins would place
+     * nothing — the atum arm resolves them onto the GT STONE ore family (the port-level
+     * declaration translation, the TF-shell deepslate posture: the ore block is the
+     * stone family's, the host provides only the placement surface). The probe SUITABLE
+     * face grows the same tag arm (the atum base stone is the dimension's vein ground).
+     */
+    private GT6VeinGenerator.SliceSink levelSink(WorldGenLevel aLevel, Map<Block, GT6OreBlocks.OreFamily> aHosts,
+            boolean aAtum) {
         return new GT6VeinGenerator.SliceSink() {
             @Override
             public void ore(int aX, int aY, int aZ, OreDictMaterial aMaterial) {
                 BlockPos tPos = new BlockPos(aX, aY, aZ);
-                GT6OreBlocks.OreFamily tFamily = aHosts.get(aLevel.getBlockState(tPos).getBlock()); // WD.java:750
+                BlockState tState = aLevel.getBlockState(tPos);
+                GT6OreBlocks.OreFamily tFamily = aHosts.get(tState.getBlock()); // WD.java:750
+                if (tFamily == null && aAtum && tState.is(GT6Worldgen.ATUM_BASE_STONE)) {
+                    tFamily = GTOreWorldgen.oreFamily("stone"); // the atum host-skin declaration
+                }
                 if (tFamily == null) return;
                 Block tBlock = GT6OreBlocks.get(tFamily, GT6OreBlocks.FormKind.NORMAL, aMaterial).get();
                 aLevel.setBlock(tPos, tBlock.defaultBlockState(), 2);
@@ -126,7 +147,8 @@ public class GT6LargeVeinFeature extends Feature<GTVeinConfig.Table> {
                 BlockState tState = aLevel.getBlockState(tPos);
                 if (!tState.getFluidState().isEmpty()) return PROBE_LIQUID; // :101 — checked BEFORE opacity
                 if (tState.isAir() || !tState.canOcclude()) return PROBE_PASS; // :102 isOpaqueCube
-                if (tState.is(BlockTags.DIRT) || aHosts.containsKey(tState.getBlock())) return PROBE_SUITABLE;
+                if (tState.is(BlockTags.DIRT) || aHosts.containsKey(tState.getBlock())
+                        || (aAtum && tState.is(GT6Worldgen.ATUM_BASE_STONE))) return PROBE_SUITABLE;
                 return PROBE_OTHER;
             }
 

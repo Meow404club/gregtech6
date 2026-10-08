@@ -39,8 +39,10 @@ import gregtech6.registry.GTStoneBlocks;
  * card spec pins the 17-stone key set aligned with GTStoneBlocks.STONES (the acceptance
  * key-order audit). Of the dim rows the nether row landed with the nether-lens band
  * (above), the twilight row with task twilight-stone-rows (both carrying the same 17+7
- * declared deviation); erebus/atum/tropics (:658-660) stay deferred — those mods have no
- * high-version port target (the research.r12-worldgen-coverage-audit face).
+ * declared deviation), the atum row with task atum-dim-adaptation (below — the ONE mod
+ * dim with a 1.20.1 carrier, same 17-stone key set); erebus/tropics (:658/:660) stay
+ * deferred — those mods have no high-version port target (the
+ * research.r12-worldgen-coverage-audit face).
  */
 public final class GT6Worldgen {
 
@@ -611,6 +613,102 @@ public final class GT6Worldgen {
      * (0/-1/1) and the spring's 2, so the coltan stream never collides with any other.
      */
     public static final long COLTAN_DIMENSION_SALT = 3;
+
+    // ------------------------------------------------------------------
+    // The Atum dimension band (task atum-dim-adaptation) — the ONE mod dimension
+    // with a 1.20.1 carrier (Atum 2, modid {@code atum}, dimension key
+    // {@code atum:atum}; Atum.java:43-54 of the 2.2.x/2.3.x line). The mount tag is
+    // OUR OWN {@code #gt6:atum_biomes}: Atum's own {@code #forge:is_atum} fill ships
+    // only 2 of the 11 biomes (atum2 src/main/resources data/forge/tags/worldgen/
+    // biome/is_atum.json = strange_sands + oasis — one member not even a registered
+    // biome key), so a tag mount would cover a sliver of the dimension; the 11-id
+    // fallback the card pins IS the correct coverage (AtumBiomes.java:10-20 of the
+    // 2.3.0 master harvest, the addOptional required:false vegetation-card form).
+    // ------------------------------------------------------------------
+
+    /** The Atum modid — the mod_loaded conditions trigger AND the tag id namespace. */
+    public static final String ATUM_MODID = "atum";
+
+    /** The atum dimension-mount biome tag ({@code #gt6:atum_biomes}), the modifier + in-feature routing gate. */
+    public static final TagKey<Biome> ATUM_BIOMES = biomeTag("atum_biomes");
+
+    /**
+     * The 11 atum biome ids, AtumBiomes.java:10-20 order verbatim (the 2.3.0 master
+     * harvest — the 1.20.1 2.2.x line predates none of them; the emission is
+     * {@code addOptional required:false}, an id a given build lacks drops silently).
+     */
+    public static final List<ResourceLocation> ATUM_BIOME_IDS = List.of(
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "dead_oasis"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "dense_woods"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "sparse_woods"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "dried_river"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "limestone_crags"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "limestone_mountains"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "oasis"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "sand_dunes"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "sand_hills"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "sand_plains"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "karst_caves"));
+
+    /**
+     * The atum host-stone block tag ({@code #gt6:atum_base_stone}) — the deadrock
+     * red-line indirection (a foreign block id may never appear in a feature JSON;
+     * the OUR-tag file carries the members with {@code required:false}). Members =
+     * Atum's own {@code #atum:base_stone_atum} fill (AtumAPI.java:46 tag constant,
+     * base_stone_atum.json = limestone + karst), the modern counterpart of the
+     * upstream ATUM_Limestone compat block (WorldgenHives.java:80 hive host, the
+     * WD.setSmallOre/setOre stone face).
+     */
+    public static final TagKey<net.minecraft.world.level.block.Block> ATUM_BASE_STONE =
+            TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("gt6", "atum_base_stone"));
+
+    /** The {@code #atum:base_stone_atum} fill verbatim (atum2 master base_stone_atum.json). */
+    public static final List<ResourceLocation> ATUM_BASE_STONE_IDS = List.of(
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "limestone"),
+            ResourceLocation.fromNamespaceAndPath(ATUM_MODID, "karst"));
+
+    /**
+     * The port-owned synthetic salt of the atum vein stream ({@link GT6VeinGenerator#veinRandom}
+     * face, the {@link #SPRING_DIMENSION_SALT}/{@link #COLTAN_DIMENSION_SALT} form): the
+     * legacy salts are 0/-1/1 (overworld/nether/end) and the default {@code dimensionSalt}
+     * arm hands 0 to every mod dimension — atum sharing the overworld stream would mirror
+     * the overworld vein picks chunk-for-chunk, a visible artifact across a full mining
+     * dimension. 4 is outside every used set (0/-1/1/2/3).
+     */
+    public static final long ATUM_DIMENSION_SALT = 4;
+
+    /**
+     * The 5 atum-only blob configured keys of the stone band ({@code gt6:atum_stone_<snake>},
+     * the twilight-stone-rows reuse-or-own form): the 5 marker stones have no overworld blob
+     * configured to reuse (their rows ride the strata lenses), the 12 blob stones reuse the
+     * overworld placed features verbatim — the atum row numbers (Loader_Worldgen.java:659:
+     * amount 1 / size 200 / probability 100 / Y 0-120) ARE the overworld row numbers.
+     */
+    public static List<ResourceKey<ConfiguredFeature<?, ?>>> atumStoneConfiguredKeys() {
+        return LENS_STONE_SNAKES.stream().map(GT6Worldgen::atumStoneConfiguredKey).toList();
+    }
+
+    /** The configured-feature key of an atum lens stone ({@code gt6:atum_stone_<snake>}). */
+    public static ResourceKey<ConfiguredFeature<?, ?>> atumStoneConfiguredKey(String aStoneSnake) {
+        return configKey("atum_stone_" + aStoneSnake);
+    }
+
+    /** The placed-feature key of an atum lens stone (same path as its configured sibling). */
+    public static ResourceKey<PlacedFeature> atumStonePlacedKey(String aStoneSnake) {
+        return placedKeyOf("atum_stone_" + aStoneSnake);
+    }
+
+    /**
+     * The atum surface-rocks placed key ({@code gt6:atum_surface_rocks}): the
+     * twilight-vegetation placed-twin form over the SHARED {@link #SURFACE_ROCKS_CONFIGURED}
+     * lottery — atum's own numbers are amount 3 / probability 3 (Loader_Worldgen.java:625
+     * {@code "atum.rocks", T, 3, 3, GEN_ATUM}).
+     */
+    public static final ResourceKey<PlacedFeature> ATUM_SURFACE_ROCKS_PLACED = placedKeyOf("atum_surface_rocks");
+    /** Loader_Worldgen.java:625 atum.rocks amount=3 (the per-chunk ray targets). */
+    public static final int ATUM_SURFACE_ROCKS_AMOUNT = 3;
+    /** Loader_Worldgen.java:625 atum.rocks probability=3 (the per-ray gate). */
+    public static final int ATUM_SURFACE_ROCKS_PROBABILITY = 3;
 
     private GT6Worldgen() {
     }

@@ -452,6 +452,7 @@ public final class GT6WorldgenDatagen {
         bootstrapLensOreConfigured(ctx); // task c3-lens-ores — tail-append
         bootstrapTwilightOreConfigured(ctx); // task twilight-adaptation-pilot — tail-append
         bootstrapTwilightStoneConfigured(ctx); // task twilight-stone-rows — tail-append
+        bootstrapAtumStoneConfigured(ctx); // task atum-dim-adaptation — tail-append
     }
 
     /**
@@ -598,6 +599,7 @@ public final class GT6WorldgenDatagen {
         bootstrapLensOrePlaced(ctx, tFeatures); // task c3-lens-ores — tail-append
         bootstrapTwilightOrePlaced(ctx, tFeatures); // task twilight-adaptation-pilot — tail-append
         bootstrapTwilightStonePlaced(ctx, tFeatures); // task twilight-stone-rows — tail-append
+        bootstrapAtumStonePlaced(ctx, tFeatures); // task atum-dim-adaptation — tail-append
     }
 
     /**
@@ -701,6 +703,40 @@ public final class GT6WorldgenDatagen {
                 tBiomes.getOrThrow(BiomeTags.IS_NETHER),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task atum-dim-adaptation — the atum spring modifier: the :789-792 oil band over
+        // OUR OWN #gt6:atum_biomes tag (Atum's #forge:is_atum fill covers 2 of the 11
+        // biomes — the 11-id fallback IS the coverage), at the ore pass, textually after
+        // the nether row (the source order: the atum band follows the OW band, :789 after
+        // :782-788). The atum rows roll with no ore-replay opponent (no GT bedrock ores
+        // carry GEN_ATUM); the mod_loaded condition rides the emission registry.
+        ctx.register(ATUM_FLUID_SPRINGS_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.FLUID_SPRINGS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task atum-dim-adaptation — the atum large-vein modifier: the SAME
+        // gt6:large_veins placed feature over #gt6:atum_biomes (the END_YIELD
+        // same-placed-key convention), at the ore step; the Feature's biome probe picks
+        // the ORE_ATUM rows (:886-916, 31 rows) and rides the ATUM_DIMENSION_SALT stream
+        // there. The atum host face is the #gt6:atum_base_stone tag (the stone-family
+        // ore skin — atum's limestone/karst are the dimension's vein ground).
+        ctx.register(ATUM_LARGE_VEINS_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.LARGE_VEINS_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task atum-dim-adaptation — the atum stone modifier: the 17-stone row over
+        // #gt6:atum_biomes at the ore step — the 12 blob stones REUSE the overworld
+        // placed features (the atum row numbers ARE the overworld row numbers,
+        // Loader_Worldgen.java:659 vs :655), the 5 marker stones ride their own
+        // atum_stone_<snake> placed variants. ONE modifier over the whole band (the
+        // twilight_stones row's shape); the mod_loaded condition rides the emission
+        // registry.
+        List<Holder<PlacedFeature>> tAtumStones = new ArrayList<>(17);
+        for (ResourceKey<PlacedFeature> tKey : GT6Worldgen.PLACED_KEYS) tAtumStones.add(tPlaced.getOrThrow(tKey));
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) tAtumStones.add(tPlaced.getOrThrow(GT6Worldgen.atumStonePlacedKey(tSnake)));
+        ctx.register(ATUM_STONES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(tAtumStones),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
 
         // task worldgen-water-replace — the vanilla-water biome modifier: EVERY overworld
         // biome (the row gates do the filtering in-feature — the chunk-granular
@@ -778,6 +814,15 @@ public final class GT6WorldgenDatagen {
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         ctx.register(biomeModifierKeyOf("end_bumble_hives"), addFeatures(
                 tBiomes.getOrThrow(BiomeTags.IS_END),
+                HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
+        // task atum-dim-adaptation — the atum hive modifier (the FOURTH vanilla-family
+        // row + the first mod-dim hive): the SAME gt6:bumble_hives placed feature over
+        // #gt6:atum_biomes at the underground step; the Feature's atum arm
+        // (WorldgenHives.java:79-87) scans y16-79 for the #gt6:atum_base_stone wall.
+        // The mod_loaded condition rides the emission registry.
+        ctx.register(ATUM_BUMBLE_HIVES_MODIFIER_KEY, addFeatures(
+                tBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
                 HolderSet.direct(tPlaced.getOrThrow(GT6Worldgen.BUMBLE_HIVES_PLACED)),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
         // task worldgen-coltan — the coltan biome modifier: EVERY overworld biome
@@ -1007,6 +1052,16 @@ public final class GT6WorldgenDatagen {
                 RarityFilter.onAverageOnceEvery(GT6Worldgen.SURFACE_ROCKS_PROBABILITY),
                 CountPlacement.of(GT6Worldgen.TWILIGHT_SURFACE_ROCKS_AMOUNT),
                 BiomeFilter.biome());
+
+        // task atum-dim-adaptation — the atum surface-rocks placed twin (the
+        // twilight-vegetation form): atum.rocks is 3,3 (Loader_Worldgen.java:625
+        // amount 3 / probability 3) over the SHARED overworld_surface_rocks lottery —
+        // the anchor-less outer chain, the overworld twin's exact shape at atum numbers.
+        PlacementUtils.register(ctx, GT6Worldgen.ATUM_SURFACE_ROCKS_PLACED,
+                aFeatures.getOrThrow(GT6Worldgen.SURFACE_ROCKS_CONFIGURED),
+                RarityFilter.onAverageOnceEvery(GT6Worldgen.ATUM_SURFACE_ROCKS_PROBABILITY),
+                CountPlacement.of(GT6Worldgen.ATUM_SURFACE_ROCKS_AMOUNT),
+                BiomeFilter.biome());
     }
 
     // ------------------------------------------------------------------
@@ -1094,6 +1149,58 @@ public final class GT6WorldgenDatagen {
     public static final ResourceKey<BiomeModifier> TWILIGHT_FLUID_SPRINGS_MODIFIER_KEY = biomeModifierKeyOf("twilight_fluid_springs");
 
     /**
+     * The atum spring biome-modifier key (task atum-dim-adaptation): the FIRST atum row —
+     * biomes {@code #gt6:atum_biomes} (the 11-member fallback tag), features = the SAME
+     * gt6:fluid_springs placed feature (the nether_fluid_springs same-placed-key
+     * convention; the atum rows are selected by the config's atum mask in-feature), the
+     * conditions ride the emission registry (the positive {@code [mod_loaded atum]}).
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_FLUID_SPRINGS_MODIFIER_KEY = biomeModifierKeyOf("atum_fluid_springs");
+
+    /**
+     * The atum large-vein biome-modifier key (task atum-dim-adaptation): the SAME
+     * gt6:large_veins placed feature over {@code #gt6:atum_biomes} (the END_YIELD
+     * same-placed-key convention; the Feature's biome probe picks the ORE_ATUM rows
+     * there — :886-916, 31 rows) at the ore pass, the conditions riding the emission
+     * registry (the positive {@code [mod_loaded atum]}).
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_LARGE_VEINS_MODIFIER_KEY = biomeModifierKeyOf("atum_large_veins");
+
+    /**
+     * The atum small-ore biome-modifier key (task atum-dim-adaptation): the 35 atum
+     * placement pairs (the Dim.ATUM projection of the shared rows :800-848) over
+     * {@code #gt6:atum_biomes} at the ore pass, the hosts riding the
+     * {@code #gt6:atum_base_stone} tag arm (the oreTargets ATUM face), the conditions
+     * riding the emission registry.
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_ORES_MODIFIER_KEY = biomeModifierKeyOf("atum_ores");
+
+    /**
+     * The atum stone-rows biome-modifier key (task atum-dim-adaptation): the 17-stone
+     * band over {@code #gt6:atum_biomes} at the ore step — 12 reused overworld blob
+     * placed features + 5 own atum lens-stone placed variants, the twilight_stones
+     * row's shape; the conditions ride the emission registry.
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_STONES_MODIFIER_KEY = biomeModifierKeyOf("atum_stones");
+
+    /**
+     * The atum surface-rocks biome-modifier key (task atum-dim-adaptation): the 3,3
+     * placed twin over {@code #gt6:atum_biomes} at the vegetal step (the
+     * twilight_surface_rocks row's shape, atum numbers), the conditions riding the
+     * emission registry.
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_SURFACE_ROCKS_MODIFIER_KEY = biomeModifierKeyOf("atum_surface_rocks");
+
+    /**
+     * The atum bumble-hive biome-modifier key (task atum-dim-adaptation): the SAME
+     * gt6:bumble_hives placed feature over {@code #gt6:atum_biomes} (the
+     * end_bumble_hives same-placed-key convention; the Feature's atum arm rides the
+     * WorldgenHives.java:79-87 case — y16-79, the #gt6:atum_base_stone wall, the
+     * yellow/900 hive), the conditions riding the emission registry.
+     */
+    public static final ResourceKey<BiomeModifier> ATUM_BUMBLE_HIVES_MODIFIER_KEY = biomeModifierKeyOf("atum_bumble_hives");
+
+    /**
      * The planet-mod id of the yield inversion, the SINGLE flip point — the trigger card
      * MUST verify the target planet mod's actual modern modid before shipping the flip
      * (coordinator ruling 2026-09-18; "galacticraft" = the GT6 1.7.10 planet-domain
@@ -1142,6 +1249,13 @@ public final class GT6WorldgenDatagen {
         }
         if (aDim == GTOreWorldgen.Dim.END) {
             return List.of(OreConfiguration.target(new BlockMatchTest(Blocks.END_STONE), smallState("endstone", aMaterial)));
+        }
+        if (aDim == GTOreWorldgen.Dim.ATUM) {
+            // task atum-dim-adaptation — the single #gt6:atum_base_stone tag arm (the
+            // deadrock red-line indirection: atum:limestone + atum:karst ride OUR tag file
+            // required:false; atum absent = empty tag = the feature replaces nothing), the
+            // state is the STONE family's small-ore block (the host-skin declaration).
+            return List.of(OreConfiguration.target(new TagMatchTest(GT6Worldgen.ATUM_BASE_STONE), smallState("stone", aMaterial)));
         }
         List<OreConfiguration.TargetBlockState> rTargets = new ArrayList<>(24);
         rTargets.add(OreConfiguration.target(new BlockMatchTest(Blocks.GRANITE), smallState("granite", aMaterial)));
@@ -1242,6 +1356,18 @@ public final class GT6WorldgenDatagen {
                     HolderSet.direct(tHolders),
                     GenerationStep.Decoration.UNDERGROUND_ORES));
         }
+        // task atum-dim-adaptation — the THIRD small-ore modifier: the 35 atum pairs over
+        // OUR OWN #gt6:atum_biomes tag (the ore_small_nether/end shape; no lens chain in
+        // atum — the strata lenses are overworld strata), at the ore pass. The atum hosts
+        // ride the #gt6:atum_base_stone tag arm (the oreTargets ATUM face); the mod_loaded
+        // condition rides the emission registry.
+        List<Holder<PlacedFeature>> tAtumHolders = new ArrayList<>(35);
+        for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
+            if (tPair.dim() == GTOreWorldgen.Dim.ATUM) tAtumHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
+        }
+        ctx.register(ATUM_ORES_MODIFIER_KEY, addFeatures(aBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(tAtumHolders),
+                GenerationStep.Decoration.UNDERGROUND_ORES));
     }
 
     // ------------------------------------------------------------------
@@ -1611,6 +1737,70 @@ public final class GT6WorldgenDatagen {
                 aBiomes.getOrThrow(GT6Worldgen.SURFACE_ROCKS_TWILIGHT_BIOMES),
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.TWILIGHT_SURFACE_ROCKS_PLACED)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
+        // task atum-dim-adaptation — the atum rocks modifier: the 3,3 placed twin over
+        // #gt6:atum_biomes at the vegetal step (the overworld rocks row's step), the
+        // mod_loaded condition riding the emission registry.
+        ctx.register(ATUM_SURFACE_ROCKS_MODIFIER_KEY, addFeatures(aBiomes.getOrThrow(GT6Worldgen.ATUM_BIOMES),
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.ATUM_SURFACE_ROCKS_PLACED)),
+                GenerationStep.Decoration.VEGETAL_DECORATION));
+    }
+
+    // ------------------------------------------------------------------
+    // The atum stone-row band (task atum-dim-adaptation) — the WorldgenStone loop's
+    // atum row per stone (Loader_Worldgen.java:659: amount 1 / size 200 / probability
+    // 100 / Y 0-120 — the OVERWORLD row numbers verbatim). The 12 blob stones REUSE the
+    // overworld placed features outright (identical rarity/Y chains — the modifier is
+    // the only new face); the 5 marker stones get own configured/placed (their overworld
+    // blob rows are retired to the strata lenses, the twilight-stone-rows reuse-or-own
+    // form at atum numbers). ALL mounted by the ONE {@link #ATUM_STONES_MODIFIER_KEY}
+    // row; the mod_loaded condition rides the emission registry.
+    // ------------------------------------------------------------------
+
+    /**
+     * The 5 atum-only blob configured features (the lens marker stones): vanilla
+     * {@code Feature.ORE} byte-shape-identical to the 12-blob band — the single
+     * {@code stone_ore_replaceables -> GTStoneBlocks.<snake>(STONE)} target at
+     * {@link GT6Worldgen#oreBlobSize()} (the upstream atum size 200 clamps to the same
+     * 64 the overworld 200 clamps to).
+     */
+    private static void bootstrapAtumStoneConfigured(
+        //? if forge {
+        BootstapContext<ConfiguredFeature<?, ?>> ctx
+        //?} else {
+        /*BootstrapContext<ConfiguredFeature<?, ?>> ctx
+        *///?}
+    ) {
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) {
+            FeatureUtils.register(ctx, GT6Worldgen.atumStoneConfiguredKey(tSnake), Feature.ORE,
+                    new OreConfiguration(
+                            List.of(OreConfiguration.target(new TagMatchTest(BlockTags.STONE_ORE_REPLACEABLES),
+                                    GTStoneBlocks.block(tSnake, StoneVariant.STONE).get().defaultBlockState())),
+                            GT6Worldgen.oreBlobSize()));
+        }
+    }
+
+    /**
+     * The 5 atum lens-stone placed variants: RarityFilter 1/100 (Loader_Worldgen.java:659
+     * probability 100 — the WorldgenBlob.java:55 chunk gate) + InSquare + BiomeFilter +
+     * the verbatim uniform Y [0, 120] band (NO count modifier — Amount=1 IS the default
+     * count).
+     */
+    private static void bootstrapAtumStonePlaced(
+        //? if forge {
+        BootstapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        //?} else {
+        /*BootstrapContext<PlacedFeature> ctx, HolderGetter<ConfiguredFeature<?, ?>> aFeatures
+        *///?}
+    ) {
+        for (String tSnake : GT6Worldgen.LENS_STONE_SNAKES) {
+            PlacementUtils.register(ctx, GT6Worldgen.atumStonePlacedKey(tSnake),
+                    aFeatures.getOrThrow(GT6Worldgen.atumStoneConfiguredKey(tSnake)),
+                    RarityFilter.onAverageOnceEvery(GT6Worldgen.BLOB_PROBABILITY),
+                    InSquarePlacement.spread(),
+                    BiomeFilter.biome(),
+                    HeightRangePlacement.uniform(VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MIN_Y),
+                            VerticalAnchor.absolute(GT6Worldgen.OVERWORLD_MAX_Y)));
+        }
     }
 
     // ------------------------------------------------------------------
@@ -1847,13 +2037,13 @@ public final class GT6WorldgenDatagen {
     /** The row helper: an overworld row (indicator on, distance 0). */
     private static GTVeinConfig vein(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
             OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
-        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, false, aTop, aBottom, aBetween, aSpread);
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, false, false, aTop, aBottom, aBetween, aSpread);
     }
 
     /** The row helper for the offworld rows (:917-925 — never drawn overworld, kept for the table census). */
     private static GTVeinConfig veinOffworld(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
             OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
-        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, false, aTop, aBottom, aBetween, aSpread);
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, false, false, aTop, aBottom, aBetween, aSpread);
     }
 
     /**
@@ -1862,7 +2052,7 @@ public final class GT6WorldgenDatagen {
      */
     private static GTVeinConfig veinEnd(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
             OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
-        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, true, aTop, aBottom, aBetween, aSpread);
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, true, false, aTop, aBottom, aBetween, aSpread);
     }
 
     /**
@@ -1872,42 +2062,59 @@ public final class GT6WorldgenDatagen {
      */
     private static GTVeinConfig veinOffworldEnd(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
             OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
-        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, true, aTop, aBottom, aBetween, aSpread);
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, false, true, false, aTop, aBottom, aBetween, aSpread);
+    }
+
+    /**
+     * The row helper for the ORE_ATUM+ORE_OVERWORLD rows (task atum-dim-adaptation:
+     * the :886-916 block minus the three ORE_END rows — 28 rows, drawn in BOTH the
+     * overworld and atum; the atum arm rides the {@link GT6Worldgen#ATUM_DIMENSION_SALT}
+     * stream and the #gt6:atum_base_stone host face).
+     */
+    private static GTVeinConfig veinAtum(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
+            OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, false, true, aTop, aBottom, aBetween, aSpread);
+    }
+
+    /** The row helper for the ORE_ATUM+ORE_END+ORE_OVERWORLD triple (:904-906 — the three-row intersection). */
+    private static GTVeinConfig veinEndAtum(String aName, int aMinY, int aMaxY, int aWeight, int aDensity, int aSize,
+            OreDictMaterial aTop, OreDictMaterial aBottom, OreDictMaterial aBetween, OreDictMaterial aSpread) {
+        return new GTVeinConfig(aName, aMinY, aMaxY, aWeight, aDensity, aSize, 0, true, true, true, true, aTop, aBottom, aBetween, aSpread);
     }
 
     /** The ONE 40-row large-vein table — the card spec ② "40 脉合一张 JSON 脉表". */
     public static final List<GTVeinConfig> LARGE_VEIN_TABLE = List.of(
-        vein("ore.large.lignite"     , 50, 130, 160, 8, 32, MT.Lignite                     , MT.Lignite                     , MT.Lignite                     , MT.Coal               ), // :886
-        vein("ore.large.coal"        , 50,  80,  80, 6, 32, MT.Coal                         , MT.Coal                         , MT.Coal                         , MT.Lignite            ), // :887
-        vein("ore.large.apatite"     , 40,  60,  60, 3, 16, MT.Apatite                      , MT.Apatite                      , MT.PhosphorusBlue               , MT.PO4                ), // :888
-        vein("ore.large.lapis"       , 20,  50,  40, 5, 16, MT.Lazurite                     , MT.Sodalite                     , MT.Lapis                        , MT.Azurite            ), // :889
-        vein("ore.large.bauxite"     , 50,  90,  80, 4, 24, MT.OREMATS.Bauxite              , MT.OREMATS.Bauxite              , MT.OREMATS.Bauxite              , MT.OREMATS.Ilmenite   ), // :890
-        vein("ore.large.iodinesalt"  , 50,  60,  30, 3, 24, MT.KIO3                         , MT.NaCl                         , MT.OREMATS.Borax                , MT.OREMATS.Zeolite    ), // :891
-        vein("ore.large.rocksalt"    , 50,  60,  30, 3, 24, MT.KCl                          , MT.OREMATS.Coltan               , MT.OREMATS.Lepidolite           , MT.OREMATS.Spodumene  ), // :892
-        vein("ore.large.asbestos"    , 10,  40,  30, 3, 16, MT.OREMATS.Chromite             , MT.Talc                         , MT.Gypsum                       , MT.Asbestos           ), // :893
-        vein("ore.large.sapphire"    , 10,  40,  30, 3, 16, MT.BlueSapphire                 , MT.OrangeSapphire               , MT.YellowSapphire               , MT.Ruby               ), // :894
-        vein("ore.large.sapphire2"   , 10,  40,  30, 3, 16, MT.GreenSapphire                , MT.Ruby                         , MT.BlueSapphire                 , MT.PurpleSapphire     ), // :895
-        vein("ore.large.garnet"      , 10,  40,  60, 3, 16, MT.Almandine                    , MT.Pyrope                       , MT.Andradite                    , MT.Uvarovite          ), // :896
-        vein("ore.large.pitchblende" , 10,  40,  40, 3, 16, MT.OREMATS.Pitchblende          , MT.OREMATS.Pitchblende          , MT.OREMATS.Uraninite            , MT.OREMATS.Uraninite  ), // :897
-        vein("ore.large.monazite"    , 10,  40,  30, 3, 16, MT.OREMATS.Bastnasite           , MT.OREMATS.Bastnasite           , MT.Monazite                     , MT.Nd                 ), // :898
-        vein("ore.large.diamond"     ,  5,  20,  40, 2, 16, MT.Graphite                     , MT.Graphite                     , MT.Diamond                      , MT.Graphite           ), // :899
-        vein("ore.large.galena"      , 30,  60,  40, 5, 16, MT.OREMATS.Galena               , MT.OREMATS.Galena               , MT.Ag                           , MT.Pb                 ), // :900
-        vein("ore.large.quartz"      , 40,  80,  60, 3, 16, MT.MilkyQuartz                  , MT.OREMATS.Barite               , MT.CertusQuartz                 , MT.CertusQuartz       ), // :901
-        vein("ore.large.peridot"     , 10,  40,  60, 3, 16, MT.OREMATS.Kyanite              , MT.MgCO3                        , MT.Peridot                      , MT.OREMATS.Glauconite ), // :902
-        vein("ore.large.gold"        , 20,  30,   5, 3, 16, MT.Pyrite                       , MT.OREMATS.Chalcopyrite         , MT.OREMATS.Arsenopyrite         , MT.Au                 ), // :903
-        veinEnd("ore.large.platinum"    , 40,  50,   5, 3, 16, MT.OREMATS.Cooperite            , MT.Pd                           , MT.OREMATS.Sperrylite           , MT.Ir                 ), // :904 ORE_END
-        veinEnd("ore.large.molybdenum"  , 20,  50,   5, 3, 16, MT.OREMATS.Wulfenite            , MT.OREMATS.Molybdenite          , MT.Mo                           , MT.OREMATS.Powellite  ), // :905 ORE_END
-        veinEnd("ore.large.cassiterite" , 40,  90, 170, 5, 24, MT.OREMATS.Stannite             , MT.OREMATS.Kesterite            , MT.OREMATS.Huebnerite           , MT.OREMATS.Cassiterite), // :906 ORE_END
-        vein("ore.large.tungstate"   , 20,  50,  10, 3, 16, MT.OREMATS.Scheelite            , MT.OREMATS.Russellite           , MT.OREMATS.Tungstate            , MT.OREMATS.Pinalite   ), // :907
-        vein("ore.large.manganese"   , 20,  30,  20, 3, 16, MT.Grossular                    , MT.Spessartine                  , MT.MnO2                         , MT.OREMATS.Coltan     ), // :908
-        vein("ore.large.beryllium"   ,  5,  30,  15, 3, 16, MT.Aquamarine                   , MT.Maxixe                       , MT.Emerald                      , MT.Th                 ), // :909
-        vein("ore.large.beryllium2"  ,  5,  30,  15, 3, 16, MT.Bixbite                      , MT.Goshenite                    , MT.Heliodor                     , MT.Morganite          ), // :910
-        vein("ore.large.titanium"    , 10,  40,  40, 3, 16, MT.TiO2                         , MT.TiO2                         , MT.Zircon                       , MT.OREMATS.Ilmenite   ), // :911
-        vein("ore.large.nickel"      , 10,  40,  40, 3, 16, MT.OREMATS.Garnierite           , MT.Ni                           , MT.OREMATS.Cobaltite            , MT.OREMATS.Pentlandite), // :912
-        vein("ore.large.redstone"    , 10,  40,  60, 3, 24, MT.Redstone                     , MT.Redstone                     , MT.Ruby                         , MT.OREMATS.Cinnabar   ), // :913
-        vein("ore.large.tetrahedrite", 70, 120, 150, 4, 24, MT.OREMATS.Tetrahedrite         , MT.OREMATS.Tetrahedrite         , MT.Cu                           , MT.OREMATS.Stibnite   ), // :914
-        vein("ore.large.iron"        , 10,  40, 120, 4, 24, MT.OREMATS.BrownLimonite        , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.OREMATS.Malachite  ), // :915
-        vein("ore.large.copper"      , 10,  30,  80, 4, 24, MT.OREMATS.Chalcopyrite         , MT.Fe2O3                        , MT.Pyrite                       , MT.Cu                 ), // :916
+        veinAtum("ore.large.lignite"     , 50, 130, 160, 8, 32, MT.Lignite                     , MT.Lignite                     , MT.Lignite                     , MT.Coal               ), // :886
+        veinAtum("ore.large.coal"        , 50,  80,  80, 6, 32, MT.Coal                         , MT.Coal                         , MT.Coal                         , MT.Lignite            ), // :887
+        veinAtum("ore.large.apatite"     , 40,  60,  60, 3, 16, MT.Apatite                      , MT.Apatite                      , MT.PhosphorusBlue               , MT.PO4                ), // :888
+        veinAtum("ore.large.lapis"       , 20,  50,  40, 5, 16, MT.Lazurite                     , MT.Sodalite                     , MT.Lapis                        , MT.Azurite            ), // :889
+        veinAtum("ore.large.bauxite"     , 50,  90,  80, 4, 24, MT.OREMATS.Bauxite              , MT.OREMATS.Bauxite              , MT.OREMATS.Bauxite              , MT.OREMATS.Ilmenite   ), // :890
+        veinAtum("ore.large.iodinesalt"  , 50,  60,  30, 3, 24, MT.KIO3                         , MT.NaCl                         , MT.OREMATS.Borax                , MT.OREMATS.Zeolite    ), // :891
+        veinAtum("ore.large.rocksalt"    , 50,  60,  30, 3, 24, MT.KCl                          , MT.OREMATS.Coltan               , MT.OREMATS.Lepidolite           , MT.OREMATS.Spodumene  ), // :892
+        veinAtum("ore.large.asbestos"    , 10,  40,  30, 3, 16, MT.OREMATS.Chromite             , MT.Talc                         , MT.Gypsum                       , MT.Asbestos           ), // :893
+        veinAtum("ore.large.sapphire"    , 10,  40,  30, 3, 16, MT.BlueSapphire                 , MT.OrangeSapphire               , MT.YellowSapphire               , MT.Ruby               ), // :894
+        veinAtum("ore.large.sapphire2"   , 10,  40,  30, 3, 16, MT.GreenSapphire                , MT.Ruby                         , MT.BlueSapphire                 , MT.PurpleSapphire     ), // :895
+        veinAtum("ore.large.garnet"      , 10,  40,  60, 3, 16, MT.Almandine                    , MT.Pyrope                       , MT.Andradite                    , MT.Uvarovite          ), // :896
+        veinAtum("ore.large.pitchblende" , 10,  40,  40, 3, 16, MT.OREMATS.Pitchblende          , MT.OREMATS.Pitchblende          , MT.OREMATS.Uraninite            , MT.OREMATS.Uraninite  ), // :897
+        veinAtum("ore.large.monazite"    , 10,  40,  30, 3, 16, MT.OREMATS.Bastnasite           , MT.OREMATS.Bastnasite           , MT.Monazite                     , MT.Nd                 ), // :898
+        veinAtum("ore.large.diamond"     ,  5,  20,  40, 2, 16, MT.Graphite                     , MT.Graphite                     , MT.Diamond                      , MT.Graphite           ), // :899
+        veinAtum("ore.large.galena"      , 30,  60,  40, 5, 16, MT.OREMATS.Galena               , MT.OREMATS.Galena               , MT.Ag                           , MT.Pb                 ), // :900
+        veinAtum("ore.large.quartz"      , 40,  80,  60, 3, 16, MT.MilkyQuartz                  , MT.OREMATS.Barite               , MT.CertusQuartz                 , MT.CertusQuartz       ), // :901
+        veinAtum("ore.large.peridot"     , 10,  40,  60, 3, 16, MT.OREMATS.Kyanite              , MT.MgCO3                        , MT.Peridot                      , MT.OREMATS.Glauconite ), // :902
+        veinAtum("ore.large.gold"        , 20,  30,   5, 3, 16, MT.Pyrite                       , MT.OREMATS.Chalcopyrite         , MT.OREMATS.Arsenopyrite         , MT.Au                 ), // :903
+        veinEndAtum("ore.large.platinum"    , 40,  50,   5, 3, 16, MT.OREMATS.Cooperite            , MT.Pd                           , MT.OREMATS.Sperrylite           , MT.Ir                 ), // :904 ORE_END
+        veinEndAtum("ore.large.molybdenum"  , 20,  50,   5, 3, 16, MT.OREMATS.Wulfenite            , MT.OREMATS.Molybdenite          , MT.Mo                           , MT.OREMATS.Powellite  ), // :905 ORE_END
+        veinEndAtum("ore.large.cassiterite" , 40,  90, 170, 5, 24, MT.OREMATS.Stannite             , MT.OREMATS.Kesterite            , MT.OREMATS.Huebnerite           , MT.OREMATS.Cassiterite), // :906 ORE_END
+        veinAtum("ore.large.tungstate"   , 20,  50,  10, 3, 16, MT.OREMATS.Scheelite            , MT.OREMATS.Russellite           , MT.OREMATS.Tungstate            , MT.OREMATS.Pinalite   ), // :907
+        veinAtum("ore.large.manganese"   , 20,  30,  20, 3, 16, MT.Grossular                    , MT.Spessartine                  , MT.MnO2                         , MT.OREMATS.Coltan     ), // :908
+        veinAtum("ore.large.beryllium"   ,  5,  30,  15, 3, 16, MT.Aquamarine                   , MT.Maxixe                       , MT.Emerald                      , MT.Th                 ), // :909
+        veinAtum("ore.large.beryllium2"  ,  5,  30,  15, 3, 16, MT.Bixbite                      , MT.Goshenite                    , MT.Heliodor                     , MT.Morganite          ), // :910
+        veinAtum("ore.large.titanium"    , 10,  40,  40, 3, 16, MT.TiO2                         , MT.TiO2                         , MT.Zircon                       , MT.OREMATS.Ilmenite   ), // :911
+        veinAtum("ore.large.nickel"      , 10,  40,  40, 3, 16, MT.OREMATS.Garnierite           , MT.Ni                           , MT.OREMATS.Cobaltite            , MT.OREMATS.Pentlandite), // :912
+        veinAtum("ore.large.redstone"    , 10,  40,  60, 3, 24, MT.Redstone                     , MT.Redstone                     , MT.Ruby                         , MT.OREMATS.Cinnabar   ), // :913
+        veinAtum("ore.large.tetrahedrite", 70, 120, 150, 4, 24, MT.OREMATS.Tetrahedrite         , MT.OREMATS.Tetrahedrite         , MT.Cu                           , MT.OREMATS.Stibnite   ), // :914
+        veinAtum("ore.large.iron"        , 10,  40, 120, 4, 24, MT.OREMATS.BrownLimonite        , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.OREMATS.Malachite  ), // :915
+        veinAtum("ore.large.copper"      , 10,  30,  80, 4, 24, MT.OREMATS.Chalcopyrite         , MT.Fe2O3                        , MT.Pyrite                       , MT.Cu                 ), // :916
         veinOffworld("ore.large.adamantium", 10, 120,   5, 2, 16, MT.OREMATS.BrownLimonite  , MT.OREMATS.YellowLimonite       , MT.Fe2O3                        , MT.Adamantine         ), // :917
         veinOffworldEnd("ore.large.naquadah"  , 10,  60,  10, 4, 32, MT.Nq                     , MT.Nq                           , MT.Nq                           , MT.Nq                 ), // :918 ORE_END
         veinOffworldEnd("ore.large.trinium"   , 10,  90, 100, 1, 12, MT.Ke                     , MT.Ke                           , MT.Ke                           , MT.Ke                 ), // :919 ORE_END
@@ -2160,14 +2367,23 @@ public final class GT6WorldgenDatagen {
                 new RandomSpreadStructurePlacement(DUNGEON_SPACING, DUNGEON_SEPARATION, RandomSpreadType.LINEAR, DUNGEON_SALT)));
     }
 
-    /** The row helper for the offworld rows (:789-794 — never drawn overworld, kept for the table census). */
+    /** The row helper for the offworld rows (:789-796 — never drawn overworld, kept for the table census). */
     private static GTFluidSpringConfig springOffworld(String aName, String aBlockId, int aProbability, int aSpringAmount) {
         return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, aSpringAmount);
     }
 
     /** The twilight-row helper (:795-796 — the task twilight-hives-springs activation, the twilight mask column). */
     private static GTFluidSpringConfig springTwilight(String aName, String aBlockId, int aProbability, int aSpringAmount) {
-        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, true, aSpringAmount);
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, true, false, aSpringAmount);
+    }
+
+    /**
+     * The row helper for the atum oil band (:789-792, task atum-dim-adaptation): the atum
+     * mask arm — {@code atum=true}, never overworld (the springOffworld posture plus the
+     * atum column; 1/200 · 2000mB, half the OW band's 1/400 · 6000).
+     */
+    private static GTFluidSpringConfig springAtum(String aName, String aBlockId, int aProbability, int aSpringAmount) {
+        return new GTFluidSpringConfig(aName, aBlockId, aProbability, false, false, false, true, aSpringAmount);
     }
 
     /** The lava-row helper (:788/:797 — the vanilla block face, no GT fluid id to single-source). */
@@ -2184,10 +2400,10 @@ public final class GT6WorldgenDatagen {
         spring       ("overworld.fluid.gas.natural"   , "natural_gas"          , 200, 3000), // :786
         spring       ("overworld.fluid.water"         , "water_geothermal"     , 100,  500), // :787
         springLava   ("overworld.fluid.lava"          , 200, true , false,     1000), // :788 — the OW lava dome, the vanilla block face
-        springOffworld("atum.fluid.oil.extraheavy"    , "gt6:liquid_extra_heavy_oil_block", 200, 2000), // :789
-        springOffworld("atum.fluid.oil.heavy"         , "gt6:liquid_heavy_oil_block"     , 200, 2000), // :790
-        springOffworld("atum.fluid.oil.medium"        , "gt6:liquid_medium_oil_block"    , 200, 2000), // :791
-        springOffworld("atum.fluid.oil.light"         , "gt6:liquid_light_oil_block"     , 200, 2000), // :792
+        springAtum   ("atum.fluid.oil.extraheavy"     , "gt6:liquid_extra_heavy_oil_block", 200, 2000), // :789 — the GEN_ATUM band (task atum-dim-adaptation)
+        springAtum   ("atum.fluid.oil.heavy"          , "gt6:liquid_heavy_oil_block"     , 200, 2000), // :790
+        springAtum   ("atum.fluid.oil.medium"         , "gt6:liquid_medium_oil_block"    , 200, 2000), // :791
+        springAtum   ("atum.fluid.oil.light"          , "gt6:liquid_light_oil_block"     , 200, 2000), // :792
         springOffworld("erebus.fluid.gas.natural"     , "gt6:natural_gas_block"          , 200, 1000), // :793
         springOffworld("betweenlands.fluid.gas.natural", "gt6:natural_gas_block"         , 200, 1000), // :794
         springTwilight("twilight.fluid.gas.natural"   , "gt6:natural_gas_block"          , 200, 1000), // :795 — the twilight mask (task twilight-hives-springs)

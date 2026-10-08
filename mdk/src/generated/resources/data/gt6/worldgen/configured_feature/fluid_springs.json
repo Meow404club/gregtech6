@@ -52,6 +52,7 @@
         "springFluid": 1000
       },
       {
+        "atum": true,
         "block": "gt6:liquid_extra_heavy_oil_block",
         "name": "atum.fluid.oil.extraheavy",
         "overworld": false,
@@ -59,6 +60,7 @@
         "springFluid": 2000
       },
       {
+        "atum": true,
         "block": "gt6:liquid_heavy_oil_block",
         "name": "atum.fluid.oil.heavy",
         "overworld": false,
@@ -66,6 +68,7 @@
         "springFluid": 2000
       },
       {
+        "atum": true,
         "block": "gt6:liquid_medium_oil_block",
         "name": "atum.fluid.oil.medium",
         "overworld": false,
@@ -73,6 +76,7 @@
         "springFluid": 2000
       },
       {
+        "atum": true,
         "block": "gt6:liquid_light_oil_block",
         "name": "atum.fluid.oil.light",
         "overworld": false,

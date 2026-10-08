@@ -35,17 +35,23 @@ import gregtech6.registry.GTMaterialItems;
  * Per-row fields
  * = upstream ctor order
  * (name, minY, maxY, amount, material) plus the vanilla-dimension projection of the
- * row's GEN_* flag list ({@code dims} — GEN_OVERWORLD/GEN_NETHER/GEN_END; the
- * mod-dimension flags CW2/A97/Erebus/Atum/Aether/Mars/... have no modern carrier and
- * are dropped with the dim-coverage defer). The mod-gated rows (:854-874) and the
+ * row's GEN_* flag list ({@code dims} — GEN_OVERWORLD/GEN_NETHER/GEN_END; task
+ * atum-dim-adaptation adds the GEN_ATUM projection — the ONE mod flag with a 1.20.1
+ * carrier, 35 of the in-table rows; the remaining mod-dimension flags CW2/A97/Erebus/
+ * Aether/Mars/... have no modern carrier and stay dropped with the dim-coverage defer).
+ * The mod-gated rows (:854-874) and the
  * large-vein table (:886-925, the t3 card) stay out — the ore-1 registration axis
  * rulings (the pool loop joined in r7-b: the loop carries no axis filter, so all 61
  * flagged members get rows; its GEN_GEMS domain projects to overworld only,
  * CS.java:965; the boundary blobs joined in worldgen-edge-ores-b2-orphans, the
- * declared deviations on the rows below).
+ * declared deviations on the rows below). Atum note: the :854-870 mod-gated rows
+ * ALSO listed GEN_ATUM upstream — they stay out per the compat-pool ruling (a 1.7.10
+ * mod id has no modern mod_loaded target), the atum projection rides the in-table
+ * rows only.
  *
  * <p><b>Placement = one (row, dim) pair each</b> (coordinator ruling 2026-09-17, the
- * verbatim-flag translation): overworld 114 + nether 20 + end 33 = 167. The one
+ * verbatim-flag translation): overworld 114 + nether 20 + end 33 = 167, + the atum
+ * 35 (task atum-dim-adaptation) = 202. The one
  * ancientdebris row (:852) stays in the table with its {@code NETHER} dim but is
  * placement-gated (GT6OreBlocks.java:328-332 口径: the upstream gate
  * {@code !IL.Ancient_Debris.exists()} is a PLACEMENT-time compat check and vanilla
@@ -94,9 +100,13 @@ import gregtech6.registry.GTMaterialItems;
  */
 public final class GTOreWorldgen {
 
-    /** The vanilla carrier dimensions of the upstream GEN_* flag lists. */
+    /**
+     * The carrier dimensions of the upstream GEN_* flag lists (task atum-dim-adaptation
+     * grew the ATUM arm — the ONE mod dimension with a 1.20.1 carrier; the segment feeds
+     * the {@code ore_small_<segment>/<tail>} feature keys).
+     */
     public enum Dim {
-        OVERWORLD("overworld"), NETHER("nether"), END("end");
+        OVERWORLD("overworld"), NETHER("nether"), END("end"), ATUM("atum");
 
         /** The feature-key directory segment ({@code ore_small_<segment>/<tail>}). */
         public final String segment;
@@ -124,43 +134,43 @@ public final class GTOreWorldgen {
     /** The 54 upstream rows, Loader_Worldgen.java order (:800-852 + :875; per-row line cite). */
     public static final List<SmallOreRow> ROWS = List.of(
         // -- :800-819, the shared-list block --------------------------------------------------------
-        row("ore.small.copper"      ,  60, 120, 16, () -> MT.Cu                     , Dim.OVERWORLD, Dim.END),              // :800
-        row("ore.small.chalcopyrite",  60, 120, 16, () -> MT.OREMATS.Chalcopyrite   , Dim.OVERWORLD, Dim.END),              // :801
-        row("ore.small.malachite"   ,  40,  70,  8, () -> MT.OREMATS.Malachite      , Dim.OVERWORLD, Dim.END),              // :802
-        row("ore.small.tin"         ,  60, 120, 16, () -> MT.Sn                     , Dim.OVERWORLD, Dim.END),              // :803
-        row("ore.small.cassiterite" ,  60, 120, 16, () -> MT.OREMATS.Cassiterite    , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :804
-        row("ore.small.zinc"        ,  40,  70,  4, () -> MT.Zn                     , Dim.OVERWORLD, Dim.END),              // :805
-        row("ore.small.sphalerite"  ,  30,  60, 12, () -> MT.OREMATS.Sphalerite     , Dim.OVERWORLD, Dim.END),              // :806
-        row("ore.small.smithsonite" ,  30,  60,  2, () -> MT.OREMATS.Smithsonite    , Dim.OVERWORLD, Dim.END),              // :807
-        row("ore.small.stibnite"    ,  20,  40,  2, () -> MT.OREMATS.Stibnite       , Dim.OVERWORLD, Dim.END),              // :808
-        row("ore.small.bismuth"     ,  80, 120,  8, () -> MT.Bi                     , Dim.OVERWORLD, Dim.NETHER),           // :809
-        row("ore.small.lead"        ,  40,  80, 16, () -> MT.Pb                     , Dim.OVERWORLD, Dim.END),              // :810
-        row("ore.small.galena"      ,  40,  80, 16, () -> MT.OREMATS.Galena         , Dim.OVERWORLD, Dim.END),              // :811
-        row("ore.small.silver"      ,  20,  40,  4, () -> MT.Ag                     , Dim.OVERWORLD, Dim.END),              // :812
-        row("ore.small.gold"        ,  20,  40,  4, () -> MT.Au                     , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :813
-        row("ore.small.pyrite"      ,  20,  40,  4, () -> MT.Pyrite                 , Dim.OVERWORLD, Dim.END),              // :814
-        row("ore.small.hematite"    ,  40,  80, 24, () -> MT.Fe2O3                  , Dim.OVERWORLD, Dim.END),              // :815
-        row("ore.small.pyrolusite"  ,  20,  40,  4, () -> MT.MnO2                   , Dim.OVERWORLD, Dim.END),              // :816
-        row("ore.small.garnierite"  ,  20,  40,  4, () -> MT.OREMATS.Garnierite     , Dim.OVERWORLD, Dim.END),              // :817
-        row("ore.small.pentlandite" ,  20,  40,  4, () -> MT.OREMATS.Pentlandite    , Dim.OVERWORLD, Dim.END),              // :818
-        row("ore.small.scheelite"   ,   5,  50,  1, () -> MT.OREMATS.Scheelite      , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :819
+        row("ore.small.copper"      ,  60, 120, 16, () -> MT.Cu                     , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :800
+        row("ore.small.chalcopyrite",  60, 120, 16, () -> MT.OREMATS.Chalcopyrite   , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :801
+        row("ore.small.malachite"   ,  40,  70,  8, () -> MT.OREMATS.Malachite      , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :802
+        row("ore.small.tin"         ,  60, 120, 16, () -> MT.Sn                     , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :803
+        row("ore.small.cassiterite" ,  60, 120, 16, () -> MT.OREMATS.Cassiterite    , Dim.OVERWORLD, Dim.NETHER, Dim.END, Dim.ATUM),  // :804
+        row("ore.small.zinc"        ,  40,  70,  4, () -> MT.Zn                     , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :805
+        row("ore.small.sphalerite"  ,  30,  60, 12, () -> MT.OREMATS.Sphalerite     , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :806
+        row("ore.small.smithsonite" ,  30,  60,  2, () -> MT.OREMATS.Smithsonite    , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :807
+        row("ore.small.stibnite"    ,  20,  40,  2, () -> MT.OREMATS.Stibnite       , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :808
+        row("ore.small.bismuth"     ,  80, 120,  8, () -> MT.Bi                     , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :809
+        row("ore.small.lead"        ,  40,  80, 16, () -> MT.Pb                     , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :810
+        row("ore.small.galena"      ,  40,  80, 16, () -> MT.OREMATS.Galena         , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :811
+        row("ore.small.silver"      ,  20,  40,  4, () -> MT.Ag                     , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :812
+        row("ore.small.gold"        ,  20,  40,  4, () -> MT.Au                     , Dim.OVERWORLD, Dim.NETHER, Dim.END, Dim.ATUM),  // :813
+        row("ore.small.pyrite"      ,  20,  40,  4, () -> MT.Pyrite                 , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :814
+        row("ore.small.hematite"    ,  40,  80, 24, () -> MT.Fe2O3                  , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :815
+        row("ore.small.pyrolusite"  ,  20,  40,  4, () -> MT.MnO2                   , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :816
+        row("ore.small.garnierite"  ,  20,  40,  4, () -> MT.OREMATS.Garnierite     , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :817
+        row("ore.small.pentlandite" ,  20,  40,  4, () -> MT.OREMATS.Pentlandite    , Dim.OVERWORLD, Dim.END, Dim.ATUM),              // :818
+        row("ore.small.scheelite"   ,   5,  50,  1, () -> MT.OREMATS.Scheelite      , Dim.OVERWORLD, Dim.NETHER, Dim.END, Dim.ATUM),  // :819
         // -- :820-835 ------------------------------------------------------------------------------
-        row("ore.small.salt"        ,  40,  80,  6, () -> MT.NaCl                   , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :820
-        row("ore.small.rocksalt"    ,  40,  80,  6, () -> MT.KCl                    , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :821
-        row("ore.small.borax"       ,  10,  40,  4, () -> MT.OREMATS.Borax          , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :822
-        row("ore.small.asbestos"    ,  20,  40,  8, () -> MT.Asbestos               , Dim.OVERWORLD, Dim.NETHER),           // :823
-        row("ore.small.diamond"     ,   5,  10,  2, () -> MT.Diamond                , Dim.OVERWORLD, Dim.NETHER),           // :824
-        row("ore.small.amber"       ,   5,  70,  1, () -> MT.Amber                  , Dim.OVERWORLD),                       // :825
-        row("ore.small.craponite"   ,   5, 250,  2, () -> MT.Craponite              , Dim.OVERWORLD, Dim.NETHER, Dim.END),  // :826
-        row("ore.small.redstone"    ,   5,  20, 16, () -> MT.Redstone               , Dim.OVERWORLD, Dim.NETHER),           // :827
-        row("ore.small.redcinnabar" ,   5,  20,  4, () -> MT.OREMATS.Cinnabar       , Dim.OVERWORLD, Dim.NETHER),           // :828
-        row("ore.small.lapis"       ,  20,  40,  8, () -> MT.Lapis                  , Dim.OVERWORLD),                       // :829
+        row("ore.small.salt"        ,  40,  80,  6, () -> MT.NaCl                   , Dim.OVERWORLD, Dim.NETHER, Dim.END, Dim.ATUM),  // :820
+        row("ore.small.rocksalt"    ,  40,  80,  6, () -> MT.KCl                    , Dim.OVERWORLD, Dim.NETHER, Dim.END, Dim.ATUM),  // :821
+        row("ore.small.borax"       ,  10,  40,  4, () -> MT.OREMATS.Borax          , Dim.OVERWORLD, Dim.NETHER, Dim.END, Dim.ATUM),  // :822
+        row("ore.small.asbestos"    ,  20,  40,  8, () -> MT.Asbestos               , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :823
+        row("ore.small.diamond"     ,   5,  10,  2, () -> MT.Diamond                , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :824
+        row("ore.small.amber"       ,   5,  70,  1, () -> MT.Amber                  , Dim.OVERWORLD, Dim.ATUM),                       // :825
+        row("ore.small.craponite"   ,   5, 250,  2, () -> MT.Craponite              , Dim.OVERWORLD, Dim.NETHER, Dim.END, Dim.ATUM),  // :826
+        row("ore.small.redstone"    ,   5,  20, 16, () -> MT.Redstone               , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :827
+        row("ore.small.redcinnabar" ,   5,  20,  4, () -> MT.OREMATS.Cinnabar       , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :828
+        row("ore.small.lapis"       ,  20,  40,  8, () -> MT.Lapis                  , Dim.OVERWORLD, Dim.ATUM),                       // :829
         row("ore.small.eudialyte"   ,  20,  40,  4, () -> MT.Eudialyte              , Dim.OVERWORLD),                       // :830
         row("ore.small.azurite"     ,  20,  40,  4, () -> MT.Azurite                , Dim.OVERWORLD),                       // :831
-        row("ore.small.coal"        ,  40, 100, 36, () -> MT.Coal                   , Dim.OVERWORLD),                       // :832
-        row("ore.small.graphite"    ,   5,  10,  2, () -> MT.Graphite               , Dim.OVERWORLD, Dim.NETHER),           // :833
-        row("ore.small.pollucite"   ,   1, 250,  1, () -> MT.OREMATS.Pollucite      , Dim.OVERWORLD, Dim.NETHER),           // :834
-        row("ore.small.zeolite"     ,   1, 250,  1, () -> MT.OREMATS.Zeolite        , Dim.OVERWORLD, Dim.NETHER),           // :835
+        row("ore.small.coal"        ,  40, 100, 36, () -> MT.Coal                   , Dim.OVERWORLD, Dim.ATUM),                       // :832
+        row("ore.small.graphite"    ,   5,  10,  2, () -> MT.Graphite               , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :833
+        row("ore.small.pollucite"   ,   1, 250,  1, () -> MT.OREMATS.Pollucite      , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :834
+        row("ore.small.zeolite"     ,   1, 250,  1, () -> MT.OREMATS.Zeolite        , Dim.OVERWORLD, Dim.NETHER, Dim.ATUM),           // :835
         // -- :836-852, the dim-exclusive blocks -----------------------------------------------------
         row("ore.small.coltan"      ,   1, 250,  4, () -> MT.OREMATS.Coltan         , Dim.NETHER, Dim.END),                 // :836
         row("ore.small.platinum"    ,  20,  40,  6, () -> MT.Pt                     , Dim.END),                             // :837
@@ -174,7 +184,7 @@ public final class GTOreWorldgen {
         row("ore.small.sugilite"    ,  10,  80, 16, () -> MT.Sugilite               , Dim.END),                             // :845
         row("ore.small.ambrosium"   ,  30, 120, 64, () -> MT.Ambrosium              ),                                      // :846 (aether only)
         row("ore.small.zanite"      ,  30, 120, 16, () -> MT.Zanite                 ),                                      // :847 (aether only)
-        row("ore.small.sulfur"      ,   5,  15,  8, () -> MT.S                      , Dim.OVERWORLD),                       // :848
+        row("ore.small.sulfur"      ,   5,  15,  8, () -> MT.S                      , Dim.OVERWORLD, Dim.ATUM),                       // :848
         row("ore.small.niter"       ,  10, 120, 32, () -> MT.Niter                  , Dim.NETHER),                          // :849
         row("ore.small.efrine"      ,  90, 120,  8, () -> MT.Efrine                 , Dim.NETHER),                          // :850
         row("ore.small.cinnabar"    ,   5, 250, 16, () -> MT.OREMATS.Cinnabar       , Dim.NETHER),                          // :851
@@ -315,11 +325,11 @@ public final class GTOreWorldgen {
     public record Placement(SmallOreRow row, Dim dim) {}
 
     /**
-     * The 167 placement pairs, ROWS order × {@link Dim} order, minus the
+     * The 202 placement pairs, ROWS order × {@link Dim} order, minus the
      * {@link #PLACEMENT_GATED} rows: overworld 114 + nether 20 + end 33.
      */
     public static List<Placement> placementPairs() {
-        List<Placement> rPairs = new ArrayList<>(167);
+        List<Placement> rPairs = new ArrayList<>(202);
         for (SmallOreRow tRow : ROWS) {
             if (PLACEMENT_GATED.contains(tRow.tail())) continue;
             for (Dim tDim : Dim.values()) {
@@ -352,11 +362,11 @@ public final class GTOreWorldgen {
         return ResourceLocation.fromNamespaceAndPath("gt6", "ore_small_" + aDim.segment + "/" + aRow.tail());
     }
 
-    /** The 167 configured keys, placementPairs() order. */
+    /** The 202 configured keys, placementPairs() order. */
     public static final List<ResourceKey<ConfiguredFeature<?, ?>>> CONFIGURED_KEYS =
             placementPairs().stream().map(tPair -> configuredKey(tPair.row(), tPair.dim())).toList();
 
-    /** The 167 placed keys, same order (placed[i] hangs off configured[i]). */
+    /** The 202 placed keys, same order (placed[i] hangs off configured[i]). */
     public static final List<ResourceKey<PlacedFeature>> PLACED_KEYS =
             placementPairs().stream().map(tPair -> placedKey(tPair.row(), tPair.dim())).toList();
 
@@ -434,11 +444,17 @@ public final class GTOreWorldgen {
      * <li>nether = TagMatchTest(#base_stone_nether) → ore_small_netherrack_&lt;m&gt;</li>
      * <li>end = BlockMatchTest(end_stone) → ore_small_endstone_&lt;m&gt;</li>
      * </ol>
-     * Overworld = 24 targets, nether/end = 1 (the acceptance target counts 24/1/1).
+     * Overworld = 24 targets, nether/end = 1, atum = 1 (the acceptance target counts
+     * 24/1/1/1). ATUM (task atum-dim-adaptation): the single {@code #gt6:atum_base_stone}
+     * tag arm resolving onto the STONE family's small-ore block — atum's base stones
+     * (limestone/karst) host the stone-family ore face, the port-level declaration
+     * translation (the TF netherite-row hostTag posture; a foreign id never appears in
+     * a feature JSON, the OUR-tag file carries it required:false).
      */
     public static List<String> hostPaths(OreDictMaterial aMaterial, Dim aDim) {
         if (aDim == Dim.NETHER) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("netherrack"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         if (aDim == Dim.END) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("endstone"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
+        if (aDim == Dim.ATUM) return List.of(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("stone"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         List<String> rPaths = new ArrayList<>(24);
         rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("granite"), GT6OreBlocks.FormKind.SMALL, aMaterial)));
         rPaths.add(GT6OreBlocks.path(new GT6OreBlocks.OreKey(oreFamily("diorite"), GT6OreBlocks.FormKind.SMALL, aMaterial)));

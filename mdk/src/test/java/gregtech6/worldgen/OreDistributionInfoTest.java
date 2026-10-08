@@ -81,10 +81,14 @@ class OreDistributionInfoTest {
     @Test
     void faceTotalsCrossAuditTheTables() {
         List<OreDistributionInfo.Entry> tEntries = OreDistributionInfo.entries();
-        // every placement pair lands on some entry (91 = overworld 38 + nether 20 + end 33)
+        // every placement pair lands on some entry (202 = overworld 38 + nether 20 + end 33
+        // + atum 35 x... — the pairs sum derives from the live walk; task atum-dim-adaptation
+        // added the 35 Dim.ATUM pairs)
         assertEquals(GTOreWorldgen.placementPairs().size(),
                 tEntries.stream().mapToInt(e -> e.smallOres().size()).sum());
-        // 121 vein faces: per generating row (distinct slots) x (its dims) — e.g. lignite 2, platinum 4x2, naquadah 1
+        // 121 vein faces: per generating row (distinct slots) x (its dims) — e.g. lignite 2,
+        // platinum 4x2, naquadah 1 (atum adds NO vein faces — the info walk is the
+        // overworld/end pair only)
         assertEquals(121, tEntries.stream().mapToInt(e -> e.veins().size()).sum());
         // all 33 overworld bedrock rows kept as faces (gold.a and gold.b BOTH)
         assertEquals(33, tEntries.stream().mapToInt(e -> e.bedrockOres().size()).sum());
@@ -100,7 +104,8 @@ class OreDistributionInfoTest {
         assertEquals(List.of(
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.OVERWORLD, "ore.small.cassiterite", 60, 120, 16),
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.NETHER,    "ore.small.cassiterite", 60, 120, 16),
-                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.END,       "ore.small.cassiterite", 60, 120, 16)),
+                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.END,       "ore.small.cassiterite", 60, 120, 16),
+                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.ATUM,      "ore.small.cassiterite", 60, 120, 16)),
                 tEntry.smallOres());
         assertEquals(List.of(
                 new OreDistributionInfo.Vein(GTOreWorldgen.Dim.OVERWORLD, "ore.large.cassiterite", 40, 90, 170, 24),
@@ -116,6 +121,7 @@ class OreDistributionInfoTest {
         assertEquals(List.of(
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.OVERWORLD, "ore.small.redcinnabar", 5, 20, 4),
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.NETHER,    "ore.small.redcinnabar", 5, 20, 4),
+                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.ATUM,      "ore.small.redcinnabar", 5, 20, 4),
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.NETHER,    "ore.small.cinnabar",   5, 250, 16)),
                 tEntry.smallOres());
         assertEquals(List.of(
@@ -130,7 +136,8 @@ class OreDistributionInfoTest {
         OreDistributionInfo.Entry tEntry = OreDistributionInfo.of(MT.Fe2O3);
         assertEquals(List.of(
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.OVERWORLD, "ore.small.hematite", 40, 80, 24),
-                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.END,       "ore.small.hematite", 40, 80, 24)),
+                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.END,       "ore.small.hematite", 40, 80, 24),
+                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.ATUM,      "ore.small.hematite", 40, 80, 24)),
                 tEntry.smallOres());
         assertEquals(List.of(
                 new OreDistributionInfo.Vein(GTOreWorldgen.Dim.OVERWORLD, "ore.large.iron",   10, 40, 120, 24),
@@ -157,11 +164,12 @@ class OreDistributionInfoTest {
                 new OreDistributionInfo.BedrockOre("ore.bedrock.gold.a", 32000),
                 new OreDistributionInfo.BedrockOre("ore.bedrock.gold.b", 32000)),
                 tEntry.bedrockOres());
-        assertEquals(3, tEntry.smallOres().size(), "ow+nether+end :813");
+        assertEquals(4, tEntry.smallOres().size(), "ow+nether+end+atum :813 (the atum face rides task atum-dim-adaptation)");
         assertEquals(List.of(
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.OVERWORLD, "ore.small.gold", 20, 40, 4),
                 new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.NETHER,    "ore.small.gold", 20, 40, 4),
-                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.END,       "ore.small.gold", 20, 40, 4)),
+                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.END,       "ore.small.gold", 20, 40, 4),
+                new OreDistributionInfo.SmallOre(GTOreWorldgen.Dim.ATUM,      "ore.small.gold", 20, 40, 4)),
                 tEntry.smallOres());
         assertEquals(List.of(new OreDistributionInfo.Vein(GTOreWorldgen.Dim.OVERWORLD, "ore.large.gold", 20, 30, 5, 16)), tEntry.veins());
     }

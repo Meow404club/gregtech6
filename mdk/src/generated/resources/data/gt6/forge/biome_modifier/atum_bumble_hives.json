@@ -1,0 +1,12 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:atum_biomes",
+  "features": "gt6:bumble_hives",
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "atum"
+    }
+  ],
+  "step": "underground_ores"
+}

@@ -1,0 +1,30 @@
+{
+  "type": "forge:add_features",
+  "biomes": "#gt6:atum_biomes",
+  "features": [
+    "gt6:overworld_stone_granite_black",
+    "gt6:overworld_stone_limestone",
+    "gt6:overworld_stone_granite",
+    "gt6:overworld_stone_diorite",
+    "gt6:overworld_stone_andesite",
+    "gt6:overworld_stone_greenschist",
+    "gt6:overworld_stone_blueschist",
+    "gt6:overworld_stone_quartzite",
+    "gt6:overworld_stone_prismarine_light",
+    "gt6:overworld_stone_prismarine_dark",
+    "gt6:overworld_stone_slate",
+    "gt6:overworld_stone_shale",
+    "gt6:atum_stone_marble",
+    "gt6:atum_stone_basalt",
+    "gt6:atum_stone_kimberlite",
+    "gt6:atum_stone_granite_red",
+    "gt6:atum_stone_komatiite"
+  ],
+  "forge:conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "atum"
+    }
+  ],
+  "step": "underground_ores"
+}

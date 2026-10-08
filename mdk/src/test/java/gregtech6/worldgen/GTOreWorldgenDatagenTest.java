@@ -79,42 +79,42 @@ class GTOreWorldgenDatagenTest {
      * (T, 5, 250, 1, GEN_GEMS→OVERWORLD) parameters.
      */
     private static Map<String, String> UPSTREAM_ROWS = Map.ofEntries(
-        Map.entry("ore.small.copper"      , "800 60 120 16 OVERWORLD END"),
-        Map.entry("ore.small.chalcopyrite", "801 60 120 16 OVERWORLD END"),
-        Map.entry("ore.small.malachite"   , "802 40 70 8 OVERWORLD END"),
-        Map.entry("ore.small.tin"         , "803 60 120 16 OVERWORLD END"),
-        Map.entry("ore.small.cassiterite" , "804 60 120 16 OVERWORLD NETHER END"),
-        Map.entry("ore.small.zinc"        , "805 40 70 4 OVERWORLD END"),
-        Map.entry("ore.small.sphalerite"  , "806 30 60 12 OVERWORLD END"),
-        Map.entry("ore.small.smithsonite" , "807 30 60 2 OVERWORLD END"),
-        Map.entry("ore.small.stibnite"    , "808 20 40 2 OVERWORLD END"),
-        Map.entry("ore.small.bismuth"     , "809 80 120 8 OVERWORLD NETHER"),
-        Map.entry("ore.small.lead"        , "810 40 80 16 OVERWORLD END"),
-        Map.entry("ore.small.galena"      , "811 40 80 16 OVERWORLD END"),
-        Map.entry("ore.small.silver"      , "812 20 40 4 OVERWORLD END"),
-        Map.entry("ore.small.gold"        , "813 20 40 4 OVERWORLD NETHER END"),
-        Map.entry("ore.small.pyrite"      , "814 20 40 4 OVERWORLD END"),
-        Map.entry("ore.small.hematite"    , "815 40 80 24 OVERWORLD END"),
-        Map.entry("ore.small.pyrolusite"  , "816 20 40 4 OVERWORLD END"),
-        Map.entry("ore.small.garnierite"  , "817 20 40 4 OVERWORLD END"),
-        Map.entry("ore.small.pentlandite" , "818 20 40 4 OVERWORLD END"),
-        Map.entry("ore.small.scheelite"   , "819 5 50 1 OVERWORLD NETHER END"),
-        Map.entry("ore.small.salt"        , "820 40 80 6 OVERWORLD NETHER END"),
-        Map.entry("ore.small.rocksalt"    , "821 40 80 6 OVERWORLD NETHER END"),
-        Map.entry("ore.small.borax"       , "822 10 40 4 OVERWORLD NETHER END"),
-        Map.entry("ore.small.asbestos"    , "823 20 40 8 OVERWORLD NETHER"),
-        Map.entry("ore.small.diamond"     , "824 5 10 2 OVERWORLD NETHER"),
-        Map.entry("ore.small.amber"       , "825 5 70 1 OVERWORLD"),
-        Map.entry("ore.small.craponite"   , "826 5 250 2 OVERWORLD NETHER END"),
-        Map.entry("ore.small.redstone"    , "827 5 20 16 OVERWORLD NETHER"),
-        Map.entry("ore.small.redcinnabar" , "828 5 20 4 OVERWORLD NETHER"),
-        Map.entry("ore.small.lapis"       , "829 20 40 8 OVERWORLD"),
+        Map.entry("ore.small.copper"      , "800 60 120 16 OVERWORLD END ATUM"),
+        Map.entry("ore.small.chalcopyrite", "801 60 120 16 OVERWORLD END ATUM"),
+        Map.entry("ore.small.malachite"   , "802 40 70 8 OVERWORLD END ATUM"),
+        Map.entry("ore.small.tin"         , "803 60 120 16 OVERWORLD END ATUM"),
+        Map.entry("ore.small.cassiterite" , "804 60 120 16 OVERWORLD NETHER END ATUM"),
+        Map.entry("ore.small.zinc"        , "805 40 70 4 OVERWORLD END ATUM"),
+        Map.entry("ore.small.sphalerite"  , "806 30 60 12 OVERWORLD END ATUM"),
+        Map.entry("ore.small.smithsonite" , "807 30 60 2 OVERWORLD END ATUM"),
+        Map.entry("ore.small.stibnite"    , "808 20 40 2 OVERWORLD END ATUM"),
+        Map.entry("ore.small.bismuth"     , "809 80 120 8 OVERWORLD NETHER ATUM"),
+        Map.entry("ore.small.lead"        , "810 40 80 16 OVERWORLD END ATUM"),
+        Map.entry("ore.small.galena"      , "811 40 80 16 OVERWORLD END ATUM"),
+        Map.entry("ore.small.silver"      , "812 20 40 4 OVERWORLD END ATUM"),
+        Map.entry("ore.small.gold"        , "813 20 40 4 OVERWORLD NETHER END ATUM"),
+        Map.entry("ore.small.pyrite"      , "814 20 40 4 OVERWORLD END ATUM"),
+        Map.entry("ore.small.hematite"    , "815 40 80 24 OVERWORLD END ATUM"),
+        Map.entry("ore.small.pyrolusite"  , "816 20 40 4 OVERWORLD END ATUM"),
+        Map.entry("ore.small.garnierite"  , "817 20 40 4 OVERWORLD END ATUM"),
+        Map.entry("ore.small.pentlandite" , "818 20 40 4 OVERWORLD END ATUM"),
+        Map.entry("ore.small.scheelite"   , "819 5 50 1 OVERWORLD NETHER END ATUM"),
+        Map.entry("ore.small.salt"        , "820 40 80 6 OVERWORLD NETHER END ATUM"),
+        Map.entry("ore.small.rocksalt"    , "821 40 80 6 OVERWORLD NETHER END ATUM"),
+        Map.entry("ore.small.borax"       , "822 10 40 4 OVERWORLD NETHER END ATUM"),
+        Map.entry("ore.small.asbestos"    , "823 20 40 8 OVERWORLD NETHER ATUM"),
+        Map.entry("ore.small.diamond"     , "824 5 10 2 OVERWORLD NETHER ATUM"),
+        Map.entry("ore.small.amber"       , "825 5 70 1 OVERWORLD ATUM"),
+        Map.entry("ore.small.craponite"   , "826 5 250 2 OVERWORLD NETHER END ATUM"),
+        Map.entry("ore.small.redstone"    , "827 5 20 16 OVERWORLD NETHER ATUM"),
+        Map.entry("ore.small.redcinnabar" , "828 5 20 4 OVERWORLD NETHER ATUM"),
+        Map.entry("ore.small.lapis"       , "829 20 40 8 OVERWORLD ATUM"),
         Map.entry("ore.small.eudialyte"   , "830 20 40 4 OVERWORLD"),
         Map.entry("ore.small.azurite"     , "831 20 40 4 OVERWORLD"),
-        Map.entry("ore.small.coal"        , "832 40 100 36 OVERWORLD"),
-        Map.entry("ore.small.graphite"    , "833 5 10 2 OVERWORLD NETHER"),
-        Map.entry("ore.small.pollucite"   , "834 1 250 1 OVERWORLD NETHER"),
-        Map.entry("ore.small.zeolite"     , "835 1 250 1 OVERWORLD NETHER"),
+        Map.entry("ore.small.coal"        , "832 40 100 36 OVERWORLD ATUM"),
+        Map.entry("ore.small.graphite"    , "833 5 10 2 OVERWORLD NETHER ATUM"),
+        Map.entry("ore.small.pollucite"   , "834 1 250 1 OVERWORLD NETHER ATUM"),
+        Map.entry("ore.small.zeolite"     , "835 1 250 1 OVERWORLD NETHER ATUM"),
         Map.entry("ore.small.coltan"      , "836 1 250 4 NETHER END"),
         Map.entry("ore.small.platinum"    , "837 20 40 6 END"),
         Map.entry("ore.small.iridium"     , "838 20 40 6 END"),
@@ -127,7 +127,7 @@ class GTOreWorldgenDatagenTest {
         Map.entry("ore.small.sugilite"    , "845 10 80 16 END"),
         Map.entry("ore.small.ambrosium"   , "846 30 120 64 -"), // aether only
         Map.entry("ore.small.zanite"      , "847 30 120 16 -"), // aether only
-        Map.entry("ore.small.sulfur"      , "848 5 15 8 OVERWORLD"),
+        Map.entry("ore.small.sulfur"      , "848 5 15 8 OVERWORLD ATUM"),
         Map.entry("ore.small.niter"       , "849 10 120 32 NETHER"),
         Map.entry("ore.small.efrine"      , "850 90 120 8 NETHER"),
         Map.entry("ore.small.cinnabar"    , "851 5 250 16 NETHER"),
@@ -256,14 +256,15 @@ class GTOreWorldgenDatagenTest {
         assertEquals(UPSTREAM_ROWS.size(), tSeen.size(), "every transcription consumed");
     }
 
-    /** The 167 placement pairs = the verbatim GEN-flag walk: 114 overworld + 20 nether + 33 end. */
+    /** The 202 placement pairs = the verbatim GEN-flag walk: 114 overworld + 20 nether + 33 end + 35 atum. */
     @Test
     void placementPairsArePinned() {
         List<GTOreWorldgen.Placement> tPairs = GTOreWorldgen.placementPairs();
-        assertEquals(167, tPairs.size(), "114 OW + 20 NETHER + 33 END (the coordinator-ruled verbatim walk, r7-b pool + b2 boundary + batch2 anchor rows included)");
+        assertEquals(202, tPairs.size(), "114 OW + 20 NETHER + 33 END + 35 ATUM (the atum face rides task atum-dim-adaptation: the 35 in-table rows carrying upstream GEN_ATUM, :800-829 + :832-835 + :848)");
         assertEquals(114, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.OVERWORLD).count(), "overworld pairs");
         assertEquals(20, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.NETHER).count(), "nether pairs (21 table rows − ancientdebris gate)");
         assertEquals(33, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.END).count(), "end pairs");
+        assertEquals(35, tPairs.stream().filter(tPair -> tPair.dim() == GTOreWorldgen.Dim.ATUM).count(), "atum pairs (the :854-870 mod-gated rows stay out — the compat-pool ruling)");
         // the gate: the ancientdebris row keeps its NETHER dim in the table but produces no pair
         assertTrue(GTOreWorldgen.PLACEMENT_GATED.contains("ancientdebris"), "the :852 gate face");
         GTOreWorldgen.SmallOreRow tDebris = GTOreWorldgen.ROWS.stream()
@@ -337,7 +338,7 @@ class GTOreWorldgenDatagenTest {
                 "end bands fit the 256-tall end as-is — overworld/end rows never clamp");
     }
 
-    /** The WD.setSmallOre host face: 24 overworld targets / 1 nether / 1 end, rule order pinned. */
+    /** The WD.setSmallOre host face: 24 overworld targets / 1 nether / 1 end / 1 atum, rule order pinned. */
     @Test
     void hostTargetFacesArePinned() {
         assertEquals(26, GT6OreBlocks.FAMILIES.size(), "precondition: the ore-1 26-family layout");
@@ -368,6 +369,9 @@ class GTOreWorldgenDatagenTest {
                 GTOreWorldgen.hostPaths(tCopper, GTOreWorldgen.Dim.NETHER), "the nether host face");
         assertEquals(List.of("ore_small_endstone_copper"),
                 GTOreWorldgen.hostPaths(tCopper, GTOreWorldgen.Dim.END), "the end host face");
+        assertEquals(List.of("ore_small_stone_copper"),
+                GTOreWorldgen.hostPaths(tCopper, GTOreWorldgen.Dim.ATUM),
+                "the atum host face — the single #gt6:atum_base_stone tag arm onto the stone family (task atum-dim-adaptation)");
         // every placement row's material yields the 24/1/1 face and stays inside the
         // registered ore_small universe (zero new blocks — the axis membership is the
         // offline face of block existence)

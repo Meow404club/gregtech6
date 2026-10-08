@@ -78,11 +78,12 @@ class GT6OreGenInfoLayoutTest {
                 "Small Overworld Y 60-120 16/chunk",
                 "Small Nether Y 60-120 16/chunk",
                 "Small End Y 60-120 16/chunk",
+                "Small Atum Y 60-120 16/chunk",
                 "Vein Overworld Y 40-90 w170 s24",
                 "Vein End Y 40-90 w170 s24",
                 "Bedrock cassiterite 1/2000/chunk"),
                 GT6OreGenInfoLayout.faceLines(tCassiterite));
-        assertEquals("Overworld, Nether, End", GT6OreGenInfoLayout.dimsLine(tCassiterite));
+        assertEquals("Overworld, Nether, End, Atum", GT6OreGenInfoLayout.dimsLine(tCassiterite));
     }
 
     /** Ferberite: bedrock-only — one dim, one line, and the bedrock row's P verbatim. */
@@ -167,8 +168,9 @@ class GT6OreGenInfoLayoutTest {
             tWorst = Math.max(tWorst, GT6OreGenInfoLayout.height(tEntry));
         }
         assertEquals(tWorst, GT6OreGenInfoLayout.categoryHeight(), "category height = the max per-entry height");
-        // the formula: face band base (38) + 4 pad + lines x 10 — Cassiterite's 6 lines pin it
-        assertEquals(38 + 4 + 6 * 10, GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)));
+        // the formula: face band base (38) + 4 pad + lines x 10 — Cassiterite's 7 lines pin it
+        // (the atum small face joined at task atum-dim-adaptation, 6 -> 7)
+        assertEquals(38 + 4 + 7 * 10, GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)));
         assertTrue(GT6OreGenInfoLayout.WIDTH >= 200, "wide enough for the longest pinned line");
     }
 }

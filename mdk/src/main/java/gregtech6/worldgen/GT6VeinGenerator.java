@@ -102,10 +102,24 @@ public final class GT6VeinGenerator {
      * extension (zero row edits), so the End drawable set is 5 rows.
      */
     public static GTVeinConfig drawVein(List<GTVeinConfig> aTable, Random aRandom, boolean aEndRows) {
+        return drawVein(aTable, aRandom, aEndRows, false);
+    }
+
+    /**
+     * The three-state draw (task atum-dim-adaptation): {@code aAtumRows} selects the
+     * ORE_ATUM rows — exactly the :886-916 block, lignite..copper, 31 rows sharing the
+     * ORE_OVERWORLD list (the three ORE_END rows :904-906 among them) — over the
+     * {@link GT6Worldgen#ATUM_DIMENSION_SALT} stream; aEndRows/aAtumRows never ride
+     * together (the dim-type routing is exclusive upstream, GT6WorldGenerator.java:143
+     * vs the :126-127 switch). The draw sum rides the dimension's own rows, the upstream
+     * :93 semantics; the axis gate below is the shared validity face (the atum rows place
+     * through the same host-skin sink, the #gt6:atum_base_stone tag face).
+     */
+    public static GTVeinConfig drawVein(List<GTVeinConfig> aTable, Random aRandom, boolean aEndRows, boolean aAtumRows) {
         int tMaxWeight = 0;
         List<GTVeinConfig> tList = new ArrayList<>(aTable.size());
         for (GTVeinConfig tVein : aTable) {
-            if (aEndRows ? !tVein.end() : !tVein.overworld()) continue;
+            if (aAtumRows ? !tVein.atum() : aEndRows ? !tVein.end() : !tVein.overworld()) continue;
             if (!valid(tVein.oreTop()) && !valid(tVein.oreBottom()) && !valid(tVein.oreBetween())
                     && !valid(tVein.oreSpread())) continue;
             tMaxWeight += tVein.weight();

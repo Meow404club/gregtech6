@@ -46,6 +46,13 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * hasCeiling binary alone would roll the OW oil/gas band in TF (TF hangs no
  * ceiling; the trap the column exists for).
  *
+ * <p>The {@code atum} column (task atum-dim-adaptation, the twilight-column mask
+ * posture grown one more arm): the four :789-792 GEN_ATUM oil rows (1/200, amount
+ * 2000 — the loader args verbatim, half the OW 1/400 · 6000 band) activate in the
+ * Atum dimension ({@code atum:atum}, the one mod dim with a 1.20.1 carrier). The
+ * codec face is {@code optionalFieldOf("atum", false)}: every pre-atum row decodes
+ * and re-emits unchanged semantics (the default false), the old JSON stays valid.
+ *
  * <p>The probability is the 1/P per-chunk roll (WorldgenFluidSpring.java:62
  * {@code aRandom.nextInt(mProbability) != 0 -> return F}): the OW band rolls
  * oil-extraheavy/heavy/medium/light 1/400 (:782-785), natural gas 1/200 (:786),
@@ -67,16 +74,16 @@ import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfigur
  * the datagen table over GTFluids.SPRING_BLOCK_IDS and pinned by the parity test).
  */
 public record GTFluidSpringConfig(String name, String blockId, int probability, boolean overworld,
-        boolean nether, boolean twilight, Integer springFluid) implements FeatureConfiguration {
+        boolean nether, boolean twilight, boolean atum, Integer springFluid) implements FeatureConfiguration {
 
-    /** The legacy 5-arg face (the pre-nether call sites) — nether=false, twilight=false, the :789-794 posture. */
+    /** The legacy 5-arg face (the pre-nether call sites) — nether=false, twilight=false, atum=false, the :782-794 posture. */
     public GTFluidSpringConfig(String aName, String aBlockId, int aProbability, boolean aOverworld, Integer aSpringFluid) {
-        this(aName, aBlockId, aProbability, aOverworld, false, false, aSpringFluid);
+        this(aName, aBlockId, aProbability, aOverworld, false, false, false, aSpringFluid);
     }
 
-    /** The nether-card face (the worldgen-nether-bedrock-lava call sites) — twilight=false, the :788/:797 posture. */
+    /** The nether-card face (the worldgen-nether-bedrock-lava call sites) — twilight=false, atum=false, the :788/:797 posture. */
     public GTFluidSpringConfig(String aName, String aBlockId, int aProbability, boolean aOverworld, boolean aNether, Integer aSpringFluid) {
-        this(aName, aBlockId, aProbability, aOverworld, aNether, false, aSpringFluid);
+        this(aName, aBlockId, aProbability, aOverworld, aNether, false, false, aSpringFluid);
     }
 
     public static final Codec<GTFluidSpringConfig> CODEC = RecordCodecBuilder.create(aFields -> aFields.group(
@@ -86,6 +93,7 @@ public record GTFluidSpringConfig(String name, String blockId, int probability, 
             Codec.BOOL.fieldOf("overworld").forGetter(GTFluidSpringConfig::overworld),
             Codec.BOOL.optionalFieldOf("nether", false).forGetter(GTFluidSpringConfig::nether),
             Codec.BOOL.optionalFieldOf("twilight", false).forGetter(GTFluidSpringConfig::twilight),
+            Codec.BOOL.optionalFieldOf("atum", false).forGetter(GTFluidSpringConfig::atum),
             Codec.INT.optionalFieldOf("springFluid")
                     .xmap(aOpt -> aOpt.orElse(null), java.util.Optional::ofNullable)
                     .forGetter(GTFluidSpringConfig::springFluid))
@@ -94,8 +102,8 @@ public record GTFluidSpringConfig(String name, String blockId, int probability, 
     /**
      * The configured-feature config: the ONE 16-row bedrock-spring table
      * (Loader_Worldgen.java:782-797 verbatim rows, GT6WorldgenDatagen.FLUID_SPRING_TABLE;
-     * the upstream per-dim registration lists carry only the OW band in this port — the
-     * atum/erebus/betweenlands/twilight dims are unported, the nether row rides the mask).
+     * the atum oil band rides the atum mask since task atum-dim-adaptation — the
+     * erebus/betweenlands/twilight dims stay unported, the nether row rides the mask).
      * Serialized inline in the {@code gt6:fluid_springs} configured-feature JSON — the
      * same tier-a datapack face as the vein/lens/bedrock tables (edit the 1/P columns
      * without touching Java).

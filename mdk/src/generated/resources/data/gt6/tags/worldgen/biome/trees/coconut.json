@@ -1,5 +1,9 @@
 {
   "values": [
-    "minecraft:beach"
+    "minecraft:beach",
+    {
+      "id": "atum:oasis",
+      "required": false
+    }
   ]
 }

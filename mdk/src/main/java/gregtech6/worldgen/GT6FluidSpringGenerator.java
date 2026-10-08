@@ -57,9 +57,12 @@ public final class GT6FluidSpringGenerator {
      * registered dim-type list (the GEN_TWILIGHT rows :795-796 roll ONLY in the twilight
      * dimension, WorldgenFluidSpring.generate's aDimType face) — the port's binary
      * (hasCeiling = nether, else overworld) would roll the OW oil/gas band in TF, the
-     * trap the third state exists for.
+     * trap the third state exists for. The FOURTH state (task atum-dim-adaptation, the
+     * twilight-column mask posture's enum face): the :789-792 atum oil rows roll ONLY in
+     * DIM_ATUM (GT6WorldGenerator.java:145); the port routes by the {@code #gt6:atum_biomes}
+     * biome probe (atum absent, the tag resolves EMPTY, {@code is} is simply false).
      */
-    public enum Dim { OVERWORLD, NETHER, TWILIGHT }
+    public enum Dim { OVERWORLD, NETHER, TWILIGHT, ATUM }
 
     private GT6FluidSpringGenerator() {
     }
@@ -78,11 +81,13 @@ public final class GT6FluidSpringGenerator {
      * The row validity (the modern dimension-mask face): the {@code overworld} rows roll in
      * the overworld, the :797 nether lava row rolls in the nether ({@code nether=true}, task
      * worldgen-nether-bedrock-lava), the :795-796 twilight rows roll in Twilight Forest
-     * ({@code twilight=true}, task twilight-hives-springs); the :789-794 rows carry no
+     * ({@code twilight=true}, task twilight-hives-springs); the :789-792 atum oil rows roll
+     * in Atum ({@code atum=true}, task atum-dim-adaptation); the remaining rows carry no
      * column — dormant census rows.
      */
     public static boolean valid(GTFluidSpringConfig aRow, Dim aDim) {
-        return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.TWILIGHT ? aRow.twilight() : aRow.overworld();
+        return aDim == Dim.NETHER ? aRow.nether() : aDim == Dim.TWILIGHT ? aRow.twilight()
+                : aDim == Dim.ATUM ? aRow.atum() : aRow.overworld();
     }
 
     /**
@@ -103,13 +108,15 @@ public final class GT6FluidSpringGenerator {
     }
 
     /**
-     * The three-state face (task twilight-hives-springs): the twilight arm returns FALSE
-     * unconditionally — no GT bedrock-ore modifier is mounted in TF (the ore rows' masks
-     * carry no twilight column), so the mutual-exclusion replay has no counterpart there
-     * and every TF chunk is spring-eligible on its own roll.
+     * The dimension-mask face: the twilight arm returns FALSE unconditionally (task
+     * twilight-hives-springs — no GT bedrock-ore modifier is mounted in TF, the ore rows'
+     * masks carry no twilight column) and the atum arm returns FALSE likewise (task
+     * atum-dim-adaptation — the :744-775 GEN_FLOOR/NETHER/MARS/EREBUS/BETWEENLANDS lists
+     * name no ATUM), so the mutual-exclusion replay has no counterpart in either mod dim
+     * and those chunks are spring-eligible on their own roll.
      */
     public static boolean oreClaims(GTBedrockOreConfig.Table aOreTable, Random aOreRandom, Dim aDim) {
-        if (aDim == Dim.TWILIGHT) return false;
+        if (aDim == Dim.TWILIGHT || aDim == Dim.ATUM) return false;
         return !GT6BedrockOreGenerator.drawRows(aOreTable, aOreRandom, aDim == Dim.NETHER).isEmpty();
     }
 
@@ -128,7 +135,7 @@ public final class GT6FluidSpringGenerator {
         return drawSpring(aTable, aRandom, aNether ? Dim.NETHER : Dim.OVERWORLD);
     }
 
-    /** The three-state face — the roll walks ONLY the rows whose mask matches the dimension. */
+    /** The enum face — the ONE draw walk, the enum picks the row mask ({@link #valid(GTFluidSpringConfig, Dim)}); the roll walks ONLY the rows whose mask matches the dimension. */
     public static GTFluidSpringConfig drawSpring(GTFluidSpringConfig.Table aTable, Random aRandom, Dim aDim) {
         for (GTFluidSpringConfig tRow : aTable.rows()) {
             if (!valid(tRow, aDim)) continue;

@@ -72,12 +72,13 @@ public final class GT6OreGenInfoLayout {
     /** The page title lang key — the {@code gt6.jei.info.*} viewer-neutral domain (GT6RecipeViewerText precedent), key mirrors the category uid one-to-one; the values live on both lang faces (task debt-oregen-title-i18n). */
     public static final String TITLE_KEY = "gt6.jei.info.ore_gen_info";
 
-    /** The vanilla dim names in {@link GTOreWorldgen.Dim} declaration order — proper nouns, unlocalized (GTCEu used icons; text is the B-lite face). */
+    /** The dim names in {@link GTOreWorldgen.Dim} declaration order — proper nouns, unlocalized (GTCEu used icons; text is the B-lite face). Atum is the one mod dim with a carrier (task atum-dim-adaptation): the ores only generate there with the mod in, the name row is the honest face. */
     public static String dimName(GTOreWorldgen.Dim aDim) {
         return switch (aDim) {
             case OVERWORLD -> "Overworld";
             case NETHER -> "Nether";
             case END -> "End";
+            case ATUM -> "Atum";
         };
     }
 
