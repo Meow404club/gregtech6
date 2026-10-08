@@ -401,7 +401,14 @@ class GT6TextureCensusTest {
         // as assets/gt6/textures/block/tree/leaves_blue_spruce_xmas.png.mcmeta (same
         // JSON-metadata-never-a-PNG face as the molten row above); the XMAS PNG grounds
         // directly. GT6SeasonalAssetsTest pins the mcmeta bytes.
-        "6fa30d635125baf1212840c239add6b9e7f0d5be8e11094191f950c557881913");
+        "6fa30d635125baf1212840c239add6b9e7f0d5be8e11094191f950c557881913",
+        // material-mc-g1-panels-dyed (README panels section): the upstream
+        // iconsets/CFOAM_HARDENED.png source sha behind the C-Foam Panel's DECLARED
+        // TEXTURE-SEAT DEVIATION — the panel rides the port's own
+        // block/cfoam_hardened.png (bf018495…), so these upstream bytes never ship
+        // verbatim and the row can never ground. Anti-rot: if a borrow ever vendored
+        // this tile, the row grounds above and must leave this list.
+        "1d646405f64407271d7ff9db0237648e4ad57bd6d09e26d85eed06049f7ce2cf");
 
     /**
      * Pin f (task c5-asset-coverage-guard): the FULL sha256 ledger reconciles against
