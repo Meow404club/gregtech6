@@ -24,6 +24,7 @@ import gregtech6.jei.GT6MultiblockPreviews;
 import gregtech6.jei.GT6RecipeMapViewerMeta;
 import gregtech6.registry.GT6Attachments;
 import gregtech6.registry.GT6BookText;
+import gregtech6.registry.GT6Books;
 import gregtech6.registry.GT6ExtruderMolds;
 import gregtech6.registry.GT6FoodCans;
 import gregtech6.registry.GT6FoamSprays;
@@ -3598,6 +3599,14 @@ public class GT6EnUs extends LanguageProvider {
     private void addBooks() {
         for (GT6BookText.BookText tRow : GT6BookText.BOOKS) {
             add("item.gt6." + tRow.path(), tRow.title());
+            // task books-text-family — the page text face: the upstream langfile mechanism
+            // (UT.java:610) re-hosted; the carriers reference these keys, the values are the
+            // code-face pages with the '¶' marker folded to newlines (the UT.java:624 display
+            // fold — the display text lives in the lang layer now, the key walk is the
+            // GT6Books single source)
+            for (int tIndex : GT6Books.keptPageIndices(tRow)) {
+                add(GT6Books.pageKey(tRow, tIndex), tRow.pages().get(tIndex).replace("\u00b6", "\n"));
+            }
         }
         // the Dusty Guide Book loot carrier (task book-loot-first) — the upstream
         // MultiItemBooks.java:67 name + the two tooltip columns (:67 description +
