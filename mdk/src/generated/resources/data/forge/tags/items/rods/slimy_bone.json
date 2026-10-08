@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_slimy_bone"
+    {
+      "id": "gt6:stick_slimy_bone",
+      "required": false
+    }
   ]
 }

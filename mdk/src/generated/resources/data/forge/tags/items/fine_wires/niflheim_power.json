@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_niflheim_power"
+    {
+      "id": "gt6:wire_fine_niflheim_power",
+      "required": false
+    }
   ]
 }

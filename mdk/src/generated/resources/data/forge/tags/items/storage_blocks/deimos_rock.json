@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_deimos_rock"
+    {
+      "id": "gt6:block_dust_deimos_rock",
+      "required": false
+    }
   ]
 }

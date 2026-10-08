@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_iapetus_rock"
+    {
+      "id": "gt6:block_dust_iapetus_rock",
+      "required": false
+    }
   ]
 }

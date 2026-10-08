@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_glowstone_io"
+    {
+      "id": "gt6:gem_glowstone_io",
+      "required": false
+    }
   ]
 }

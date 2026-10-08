@@ -7,6 +7,9 @@
  * condition mechanism exists there, ForgeHooks.loadLootTable). The law this class pins:
  * every committed row referencing a would-be-absent gt6 id is either conditioned (recipes)
  * or absent (loot) — the bare install loads clean, the with-mod install loads the row.
+ * Task tag-residual-convergence adds the third form: tags carry no condition mechanism
+ * either, so their gated members ship the optional object form — the member law
+ * (optional ⇔ gated) is pinned over every shipped tag JSON below.
  */
 package gregtech6.datagen;
 
@@ -288,5 +291,99 @@ public class GT6ForeignRowConvergenceTest {
                 tLootRows++;
             }
         assertTrue(tLootRows > 15000, "the loot walk saw the shipped domains: " + tLootRows);
+    }
+
+    // ---- the tag form (task tag-residual-convergence): the member law over every shipped tag ----
+
+    /** Every *.json under any {@code tags} tree of the generated data root — minecraft/forge/gt6/c, both directory spellings. Fluid tags are out of scope: the gate map keys block/item registrations, and the water-join face ({@code gt6:seawater}) predates this card with its own optional semantics. */
+    private static Stream<Path> shippedTagJson() throws IOException {
+        Path tData = mdkRoot().resolve("src/generated/resources/data");
+        return Files.walk(tData)
+                .filter(p -> p.toString().endsWith(".json"))
+                .filter(p -> {
+                    boolean tTags = false, tFluid = false;
+                    for (java.nio.file.Path tSegment : p) {
+                        String tName = tSegment.toString();
+                        if (tName.equals("tags")) tTags = true;
+                        if (tName.startsWith("fluid")) tFluid = true;
+                    }
+                    return tTags && !tFluid;
+                });
+    }
+
+    /**
+     * THE tag-member law (the third JSON form): a shipped member answers its registration
+     * axis in exactly one of two shapes — the strict string (registers on every install) or
+     * the optional object {@code {"id":..,"required":false}} (the atlas-gated set, the bare
+     * install loads the tag clean, the with-mod install joins). A required gated member
+     * ships a dangling id to the bare install (the 2103 TagLoader headers); an optional
+     * ungated member drops a live member for nothing. Run AFTER runData: the pin audits the
+     * committed tree. Foreign members (the twilight deadrock {@code required:false}
+     * indirection and every vanilla/forge member) are out of scope — the law keys gt6 only.
+     */
+    @Test
+    public void everyShippedTagMemberAnswersItsRegistrationAxis() throws IOException {
+        int tFiles = 0;
+        int tOptionalMembers = 0;
+        int tRequiredMembers = 0;
+        for (Path tFile : shippedTagJson().toList()) {
+            JsonObject tTag = com.google.gson.JsonParser.parseString(Files.readString(tFile)).getAsJsonObject();
+            if (!tTag.has("values")) continue; // tag files are the values-carrying shape
+            for (var tElement : tTag.getAsJsonArray("values")) {
+                if (tElement.isJsonPrimitive()) {
+                    String tId = tElement.getAsString();
+                    if (tId.startsWith("gt6:")) {
+                        assertTrue(!GT6ForeignRowConvergence.gatedId(tId.substring(4)),
+                                "required member is seed-hideable (must ship optional): " + tId + " in " + tFile);
+                        tRequiredMembers++;
+                    }
+                } else {
+                    JsonObject tMember = tElement.getAsJsonObject();
+                    assertTrue(tMember.has("id"), "the optional object form carries the id: " + tFile);
+                    String tId = tMember.get("id").getAsString();
+                    if (tId.startsWith("gt6:")) {
+                        assertTrue(GT6ForeignRowConvergence.gatedId(tId.substring(4)),
+                                "optional member is NOT gated (drops a live member for nothing): " + tId + " in " + tFile);
+                        tOptionalMembers++;
+                    }
+                }
+            }
+            tFiles++;
+        }
+        assertTrue(tFiles > 2000, "the walk saw the shipped tag trees: " + tFiles);
+        assertTrue(tOptionalMembers > 3000, "the gated-member coverage exists: " + tOptionalMembers);
+        assertTrue(tRequiredMembers > 18000, "the strict bulk survives: " + tRequiredMembers);
+    }
+
+    /**
+     * The machine-family census of the gated-id map (the tag face extension): one gated
+     * anchor per family of the bare-boot census (the 2103 TagLoader headers) — the ACT
+     * pairs, the five metalset ladders, the fluid pipes, the high-tier drums, the cells —
+     * plus the prefix-walk face, and the never-gate controls (GT-core rows register on
+     * every install).
+     */
+    @Test
+    public void theMachineFamiliesRideTheGatedIdMap() {
+        // the prefix-walk face (the 2522-id bulk of the bare-boot census)
+        assertTrue(GT6ForeignRowConvergence.gatedId("block_dust_aluminium"), "prefix pair anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("stick_sanguinite"), "rods family anchor");
+        // the ACT pairs
+        assertTrue(GT6ForeignRowConvergence.gatedId("advanced_crafting_table_aluminium"), "ACT anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("charging_crafting_table_aluminium"), "charging ACT anchor");
+        // the five metalset ladders
+        assertTrue(GT6ForeignRowConvergence.gatedId("hopper_aluminium"), "hopper anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("queue_hopper_aluminium"), "queue hopper anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("chest_aluminium"), "chest anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("reinforced_chest_aluminium"), "reinforced chest anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("charging_locker_aluminium"), "charging locker anchor");
+        // the fluid pipes / drums / cells
+        assertTrue(GT6ForeignRowConvergence.gatedId("aluminium_fluid_pipe_tiny"), "fluid pipe anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("barrel_void_metal"), "high-tier drum anchor");
+        assertTrue(GT6ForeignRowConvergence.gatedId("cell_aluminium"), "cell anchor");
+        // the never-gate controls (GT core / port-native)
+        assertTrue(!GT6ForeignRowConvergence.gatedId("hopper_bronze"), "GT-core metalset row never gates");
+        assertTrue(!GT6ForeignRowConvergence.gatedId("barrel_wood"), "port-native barrel never gates");
+        assertTrue(!GT6ForeignRowConvergence.gatedId("oven"), "port-native machine never gates");
+        assertTrue(!GT6ForeignRowConvergence.gatedId("wood_fluid_pipe_small"), "GT-core pipe never gates");
     }
 }

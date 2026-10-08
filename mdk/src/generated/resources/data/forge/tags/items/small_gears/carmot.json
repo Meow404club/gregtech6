@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_carmot"
+    {
+      "id": "gt6:gear_gt_small_carmot",
+      "required": false
+    }
   ]
 }

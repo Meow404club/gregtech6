@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_red_matter"
+    {
+      "id": "gt6:gear_gt_small_red_matter",
+      "required": false
+    }
   ]
 }

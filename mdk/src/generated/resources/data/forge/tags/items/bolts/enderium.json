@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_enderium"
+    {
+      "id": "gt6:bolt_enderium",
+      "required": false
+    }
   ]
 }

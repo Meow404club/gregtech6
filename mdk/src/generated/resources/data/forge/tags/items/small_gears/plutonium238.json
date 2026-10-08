@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_plutonium238"
+    {
+      "id": "gt6:gear_gt_small_plutonium238",
+      "required": false
+    }
   ]
 }

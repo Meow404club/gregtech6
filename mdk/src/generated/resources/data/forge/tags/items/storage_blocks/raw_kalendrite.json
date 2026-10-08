@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_kalendrite"
+    {
+      "id": "gt6:block_raw_kalendrite",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_stellar_alloy",
-    "gt6:block_ingot_stellar_alloy"
+    {
+      "id": "gt6:block_dust_stellar_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_stellar_alloy",
+      "required": false
+    }
   ]
 }

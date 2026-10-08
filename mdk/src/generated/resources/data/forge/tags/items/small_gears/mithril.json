@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_mithril"
+    {
+      "id": "gt6:gear_gt_small_mithril",
+      "required": false
+    }
   ]
 }

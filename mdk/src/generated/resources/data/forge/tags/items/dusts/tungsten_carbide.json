@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_tungsten_carbide"
+    {
+      "id": "gt6:dust_tungsten_carbide",
+      "required": false
+    }
   ]
 }

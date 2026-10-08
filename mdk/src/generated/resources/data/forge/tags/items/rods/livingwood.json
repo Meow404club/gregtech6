@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_livingwood"
+    {
+      "id": "gt6:stick_livingwood",
+      "required": false
+    }
   ]
 }

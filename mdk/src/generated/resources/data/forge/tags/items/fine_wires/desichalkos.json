@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_desichalkos"
+    {
+      "id": "gt6:wire_fine_desichalkos",
+      "required": false
+    }
   ]
 }

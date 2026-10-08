@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_nikoline_alloy",
-    "gt6:block_ingot_nikoline_alloy"
+    {
+      "id": "gt6:block_dust_nikoline_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_nikoline_alloy",
+      "required": false
+    }
   ]
 }

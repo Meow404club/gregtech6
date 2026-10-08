@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_crystal_matrix"
+    {
+      "id": "gt6:wire_fine_crystal_matrix",
+      "required": false
+    }
   ]
 }

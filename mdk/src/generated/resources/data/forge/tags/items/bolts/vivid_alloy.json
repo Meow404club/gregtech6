@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_vivid_alloy"
+    {
+      "id": "gt6:bolt_vivid_alloy",
+      "required": false
+    }
   ]
 }

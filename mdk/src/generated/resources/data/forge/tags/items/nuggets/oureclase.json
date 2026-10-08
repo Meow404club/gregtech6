@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_oureclase"
+    {
+      "id": "gt6:nugget_oureclase",
+      "required": false
+    }
   ]
 }

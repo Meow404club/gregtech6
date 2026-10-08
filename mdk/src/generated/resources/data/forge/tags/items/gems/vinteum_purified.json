@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_vinteum_purified"
+    {
+      "id": "gt6:gem_vinteum_purified",
+      "required": false
+    }
   ]
 }

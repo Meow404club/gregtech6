@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_ceruclase"
+    {
+      "id": "gt6:wire_fine_ceruclase",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_inolashite"
+    {
+      "id": "gt6:ingot_inolashite",
+      "required": false
+    }
   ]
 }

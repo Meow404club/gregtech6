@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_neodymium"
+    {
+      "id": "gt6:ingot_neodymium",
+      "required": false
+    }
   ]
 }

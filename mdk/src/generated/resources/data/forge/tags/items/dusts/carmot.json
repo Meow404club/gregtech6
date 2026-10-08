@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_carmot"
+    {
+      "id": "gt6:dust_carmot",
+      "required": false
+    }
   ]
 }

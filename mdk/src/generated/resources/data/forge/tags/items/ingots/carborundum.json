@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_carborundum"
+    {
+      "id": "gt6:ingot_carborundum",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_energetic_alloy"
+    {
+      "id": "gt6:nugget_energetic_alloy",
+      "required": false
+    }
   ]
 }

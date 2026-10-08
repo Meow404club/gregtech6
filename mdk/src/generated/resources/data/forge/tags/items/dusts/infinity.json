@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_infinity"
+    {
+      "id": "gt6:dust_infinity",
+      "required": false
+    }
   ]
 }

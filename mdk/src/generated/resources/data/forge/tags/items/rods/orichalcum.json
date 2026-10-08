@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_orichalcum"
+    {
+      "id": "gt6:stick_orichalcum",
+      "required": false
+    }
   ]
 }

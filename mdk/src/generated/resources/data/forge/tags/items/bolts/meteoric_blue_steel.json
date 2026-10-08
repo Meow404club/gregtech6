@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_meteoric_blue_steel"
+    {
+      "id": "gt6:bolt_meteoric_blue_steel",
+      "required": false
+    }
   ]
 }

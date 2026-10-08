@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_void_metal"
+    {
+      "id": "gt6:gear_gt_small_void_metal",
+      "required": false
+    }
   ]
 }

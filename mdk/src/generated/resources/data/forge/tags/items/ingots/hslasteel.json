@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hslasteel"
+    {
+      "id": "gt6:ingot_hslasteel",
+      "required": false
+    }
   ]
 }

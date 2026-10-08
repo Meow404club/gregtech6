@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_hepatizon"
+    {
+      "id": "gt6:bolt_hepatizon",
+      "required": false
+    }
   ]
 }

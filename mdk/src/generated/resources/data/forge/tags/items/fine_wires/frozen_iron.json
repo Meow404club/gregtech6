@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_frozen_iron"
+    {
+      "id": "gt6:wire_fine_frozen_iron",
+      "required": false
+    }
   ]
 }

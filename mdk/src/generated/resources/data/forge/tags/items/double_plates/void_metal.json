@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_void_metal"
+    {
+      "id": "gt6:plate_double_void_metal",
+      "required": false
+    }
   ]
 }

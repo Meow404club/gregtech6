@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_datolite"
+    {
+      "id": "gt6:block_dust_datolite",
+      "required": false
+    }
   ]
 }

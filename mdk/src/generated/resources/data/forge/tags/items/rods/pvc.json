@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_pvc"
+    {
+      "id": "gt6:stick_pvc",
+      "required": false
+    }
   ]
 }

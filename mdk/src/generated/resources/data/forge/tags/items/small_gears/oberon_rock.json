@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_oberon_rock"
+    {
+      "id": "gt6:gear_gt_small_oberon_rock",
+      "required": false
+    }
   ]
 }

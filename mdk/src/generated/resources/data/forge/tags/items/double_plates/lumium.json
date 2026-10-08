@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_lumium"
+    {
+      "id": "gt6:plate_double_lumium",
+      "required": false
+    }
   ]
 }

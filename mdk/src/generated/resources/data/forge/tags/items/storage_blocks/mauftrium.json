@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_mauftrium",
-    "gt6:block_ingot_mauftrium"
+    {
+      "id": "gt6:block_dust_mauftrium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_mauftrium",
+      "required": false
+    }
   ]
 }

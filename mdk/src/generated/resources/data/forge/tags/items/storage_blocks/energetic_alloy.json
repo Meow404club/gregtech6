@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_energetic_alloy",
-    "gt6:block_ingot_energetic_alloy"
+    {
+      "id": "gt6:block_dust_energetic_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_energetic_alloy",
+      "required": false
+    }
   ]
 }

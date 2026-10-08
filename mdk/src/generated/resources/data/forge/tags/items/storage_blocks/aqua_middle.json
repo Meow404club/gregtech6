@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_aqua_middle",
-    "gt6:block_dust_aqua_middle"
+    {
+      "id": "gt6:block_gem_aqua_middle",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_aqua_middle",
+      "required": false
+    }
   ]
 }

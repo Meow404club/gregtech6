@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_frezarite"
+    {
+      "id": "gt6:gem_frezarite",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_pulsating_iron",
-    "gt6:block_ingot_pulsating_iron"
+    {
+      "id": "gt6:block_dust_pulsating_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_pulsating_iron",
+      "required": false
+    }
   ]
 }

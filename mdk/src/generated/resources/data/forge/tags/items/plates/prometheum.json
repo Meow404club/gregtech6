@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_prometheum"
+    {
+      "id": "gt6:plate_prometheum",
+      "required": false
+    }
   ]
 }

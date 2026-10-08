@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_sanguinite"
+    {
+      "id": "gt6:stick_sanguinite",
+      "required": false
+    }
   ]
 }

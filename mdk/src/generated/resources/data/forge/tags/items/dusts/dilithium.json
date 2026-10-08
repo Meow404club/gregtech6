@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_dilithium"
+    {
+      "id": "gt6:dust_dilithium",
+      "required": false
+    }
   ]
 }

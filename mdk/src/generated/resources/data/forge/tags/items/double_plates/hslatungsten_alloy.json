@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_hslatungsten_alloy"
+    {
+      "id": "gt6:plate_double_hslatungsten_alloy",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_crimson_middle"
+    {
+      "id": "gt6:bolt_crimson_middle",
+      "required": false
+    }
   ]
 }

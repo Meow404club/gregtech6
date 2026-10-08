@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_valonite"
+    {
+      "id": "gt6:gear_gt_small_valonite",
+      "required": false
+    }
   ]
 }

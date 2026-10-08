@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_basalz"
+    {
+      "id": "gt6:gear_gt_small_basalz",
+      "required": false
+    }
   ]
 }

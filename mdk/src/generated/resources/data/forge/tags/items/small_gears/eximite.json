@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_eximite"
+    {
+      "id": "gt6:gear_gt_small_eximite",
+      "required": false
+    }
   ]
 }

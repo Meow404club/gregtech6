@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_carmot"
+    {
+      "id": "gt6:plate_double_carmot",
+      "required": false
+    }
   ]
 }

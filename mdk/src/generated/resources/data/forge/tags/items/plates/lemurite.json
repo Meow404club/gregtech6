@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_lemurite"
+    {
+      "id": "gt6:plate_lemurite",
+      "required": false
+    }
   ]
 }

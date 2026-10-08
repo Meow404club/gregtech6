@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_neodymium"
+    {
+      "id": "gt6:plate_double_neodymium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_carborundum"
+    {
+      "id": "gt6:stick_carborundum",
+      "required": false
+    }
   ]
 }

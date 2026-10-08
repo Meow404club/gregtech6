@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_purple_alloy",
-    "gt6:block_ingot_purple_alloy"
+    {
+      "id": "gt6:block_dust_purple_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_purple_alloy",
+      "required": false
+    }
   ]
 }

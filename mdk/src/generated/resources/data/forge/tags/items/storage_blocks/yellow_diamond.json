@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_yellow_diamond",
-    "gt6:block_dust_yellow_diamond"
+    {
+      "id": "gt6:block_gem_yellow_diamond",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_yellow_diamond",
+      "required": false
+    }
   ]
 }

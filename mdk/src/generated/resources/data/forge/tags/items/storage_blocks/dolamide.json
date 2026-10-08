@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_dolamide"
+    {
+      "id": "gt6:block_dust_dolamide",
+      "required": false
+    }
   ]
 }

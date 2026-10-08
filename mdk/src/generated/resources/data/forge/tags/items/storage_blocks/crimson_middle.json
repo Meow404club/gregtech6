@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_crimson_middle",
-    "gt6:block_dust_crimson_middle"
+    {
+      "id": "gt6:block_gem_crimson_middle",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_crimson_middle",
+      "required": false
+    }
   ]
 }

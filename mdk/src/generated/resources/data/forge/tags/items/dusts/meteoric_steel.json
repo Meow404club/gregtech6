@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_meteoric_steel"
+    {
+      "id": "gt6:dust_meteoric_steel",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_enderium_base",
-    "gt6:block_ingot_enderium_base"
+    {
+      "id": "gt6:block_dust_enderium_base",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_enderium_base",
+      "required": false
+    }
   ]
 }

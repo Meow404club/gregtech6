@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_yellow_diamond"
+    {
+      "id": "gt6:gem_yellow_diamond",
+      "required": false
+    }
   ]
 }

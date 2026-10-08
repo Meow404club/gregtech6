@@ -174,7 +174,9 @@ class GT6ChestTexDatagenTest {
 
     private Set<String> tagValues(String aPath) throws IOException {
         Set<String> rValues = new HashSet<>();
-        json(aPath).getAsJsonArray("values").forEach(tValue -> rValues.add(tValue.getAsString()));
+        // both member forms — the strict string and the tag-residual-convergence optional object
+        json(aPath).getAsJsonArray("values").forEach(tValue -> rValues.add(tValue.isJsonPrimitive()
+                ? tValue.getAsString() : tValue.getAsJsonObject().get("id").getAsString()));
         return rValues;
     }
 

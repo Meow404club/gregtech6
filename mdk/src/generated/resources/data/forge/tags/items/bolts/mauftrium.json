@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_mauftrium"
+    {
+      "id": "gt6:bolt_mauftrium",
+      "required": false
+    }
   ]
 }

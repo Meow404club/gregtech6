@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_prismarine"
+    {
+      "id": "gt6:gear_gt_small_prismarine",
+      "required": false
+    }
   ]
 }

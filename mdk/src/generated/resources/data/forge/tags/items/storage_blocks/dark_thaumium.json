@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_dark_thaumium",
-    "gt6:block_ingot_dark_thaumium"
+    {
+      "id": "gt6:block_dust_dark_thaumium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_dark_thaumium",
+      "required": false
+    }
   ]
 }

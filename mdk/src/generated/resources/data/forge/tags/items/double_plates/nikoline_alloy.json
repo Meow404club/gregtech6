@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_nikoline_alloy"
+    {
+      "id": "gt6:plate_double_nikoline_alloy",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_manasteel"
+    {
+      "id": "gt6:dust_manasteel",
+      "required": false
+    }
   ]
 }

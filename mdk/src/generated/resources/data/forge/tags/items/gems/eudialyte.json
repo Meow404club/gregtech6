@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_eudialyte"
+    {
+      "id": "gt6:gem_eudialyte",
+      "required": false
+    }
   ]
 }

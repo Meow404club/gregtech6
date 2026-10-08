@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_elven_dragonstone",
-    "gt6:block_dust_elven_dragonstone"
+    {
+      "id": "gt6:block_gem_elven_dragonstone",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_elven_dragonstone",
+      "required": false
+    }
   ]
 }

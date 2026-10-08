@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_dilithium"
+    {
+      "id": "gt6:block_raw_dilithium",
+      "required": false
+    }
   ]
 }

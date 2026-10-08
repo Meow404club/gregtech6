@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_vulcanite"
+    {
+      "id": "gt6:stick_vulcanite",
+      "required": false
+    }
   ]
 }

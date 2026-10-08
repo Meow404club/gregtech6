@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_mauftrium"
+    {
+      "id": "gt6:nugget_mauftrium",
+      "required": false
+    }
   ]
 }

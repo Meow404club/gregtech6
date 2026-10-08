@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_steeleaf"
+    {
+      "id": "gt6:plate_double_steeleaf",
+      "required": false
+    }
   ]
 }

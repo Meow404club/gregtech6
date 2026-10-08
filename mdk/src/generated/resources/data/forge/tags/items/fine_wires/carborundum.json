@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_carborundum"
+    {
+      "id": "gt6:wire_fine_carborundum",
+      "required": false
+    }
   ]
 }

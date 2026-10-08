@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_licorice"
+    {
+      "id": "gt6:block_raw_licorice",
+      "required": false
+    }
   ]
 }

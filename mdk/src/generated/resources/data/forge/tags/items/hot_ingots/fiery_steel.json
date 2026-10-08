@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_fiery_steel"
+    {
+      "id": "gt6:ingot_hot_fiery_steel",
+      "required": false
+    }
   ]
 }

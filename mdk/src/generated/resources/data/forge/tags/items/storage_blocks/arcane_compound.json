@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_arcane_compound"
+    {
+      "id": "gt6:block_dust_arcane_compound",
+      "required": false
+    }
   ]
 }

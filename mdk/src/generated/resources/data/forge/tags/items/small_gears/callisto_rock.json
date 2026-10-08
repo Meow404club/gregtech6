@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_callisto_rock"
+    {
+      "id": "gt6:gear_gt_small_callisto_rock",
+      "required": false
+    }
   ]
 }

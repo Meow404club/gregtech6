@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_dreamwood"
+    {
+      "id": "gt6:bolt_dreamwood",
+      "required": false
+    }
   ]
 }

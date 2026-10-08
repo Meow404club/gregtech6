@@ -15,13 +15,34 @@
     "gt6:wood_treated_fluid_pipe_huge",
     "gt6:wood_treated_fluid_pipe_quadruple",
     "gt6:wood_treated_fluid_pipe_nonuple",
-    "gt6:iron_wood_fluid_pipe_tiny",
-    "gt6:iron_wood_fluid_pipe_small",
-    "gt6:iron_wood_fluid_pipe_medium",
-    "gt6:iron_wood_fluid_pipe_large",
-    "gt6:iron_wood_fluid_pipe_huge",
-    "gt6:iron_wood_fluid_pipe_quadruple",
-    "gt6:iron_wood_fluid_pipe_nonuple",
+    {
+      "id": "gt6:iron_wood_fluid_pipe_tiny",
+      "required": false
+    },
+    {
+      "id": "gt6:iron_wood_fluid_pipe_small",
+      "required": false
+    },
+    {
+      "id": "gt6:iron_wood_fluid_pipe_medium",
+      "required": false
+    },
+    {
+      "id": "gt6:iron_wood_fluid_pipe_large",
+      "required": false
+    },
+    {
+      "id": "gt6:iron_wood_fluid_pipe_huge",
+      "required": false
+    },
+    {
+      "id": "gt6:iron_wood_fluid_pipe_quadruple",
+      "required": false
+    },
+    {
+      "id": "gt6:iron_wood_fluid_pipe_nonuple",
+      "required": false
+    },
     "gt6:plastic_fluid_pipe_tiny",
     "gt6:plastic_fluid_pipe_small",
     "gt6:plastic_fluid_pipe_medium",
@@ -36,7 +57,10 @@
     "gt6:reinforced_chest_constantan",
     "gt6:reinforced_chest_bronze",
     "gt6:reinforced_chest_arsenic_copper",
-    "gt6:reinforced_chest_aluminium",
+    {
+      "id": "gt6:reinforced_chest_aluminium",
+      "required": false
+    },
     "gt6:reinforced_chest_brass",
     "gt6:reinforced_chest_tin_alloy",
     "gt6:reinforced_chest_cobalt",
@@ -46,49 +70,91 @@
     "gt6:reinforced_chest_germanium",
     "gt6:reinforced_chest_invar",
     "gt6:reinforced_chest_steel",
-    "gt6:reinforced_chest_hsla_steel",
+    {
+      "id": "gt6:reinforced_chest_hsla_steel",
+      "required": false
+    },
     "gt6:reinforced_chest_gold",
     "gt6:reinforced_chest_silver",
     "gt6:reinforced_chest_manganese",
     "gt6:reinforced_chest_manyullyn",
-    "gt6:reinforced_chest_lumium",
-    "gt6:reinforced_chest_knightmetal",
+    {
+      "id": "gt6:reinforced_chest_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:reinforced_chest_knightmetal",
+      "required": false
+    },
     "gt6:reinforced_chest_galvanized_steel",
     "gt6:reinforced_chest_meteorite",
-    "gt6:reinforced_chest_meteoric_steel",
+    {
+      "id": "gt6:reinforced_chest_meteoric_steel",
+      "required": false
+    },
     "gt6:reinforced_chest_gilded_iron",
     "gt6:reinforced_chest_molybdenum",
     "gt6:reinforced_chest_syrmorite",
     "gt6:reinforced_chest_electrum",
     "gt6:reinforced_chest_stainless_steel",
     "gt6:reinforced_chest_thaumium",
-    "gt6:reinforced_chest_manasteel",
+    {
+      "id": "gt6:reinforced_chest_manasteel",
+      "required": false
+    },
     "gt6:reinforced_chest_efrine",
-    "gt6:reinforced_chest_tungsten_alloy",
+    {
+      "id": "gt6:reinforced_chest_tungsten_alloy",
+      "required": false
+    },
     "gt6:reinforced_chest_titanium",
     "gt6:reinforced_chest_netherite",
     "gt6:reinforced_chest_chromium",
     "gt6:reinforced_chest_platinum",
     "gt6:reinforced_chest_octine",
     "gt6:reinforced_chest_desh",
-    "gt6:reinforced_chest_terrasteel",
+    {
+      "id": "gt6:reinforced_chest_terrasteel",
+      "required": false
+    },
     "gt6:reinforced_chest_tungstensteel",
-    "gt6:reinforced_chest_tungsten_carbide",
+    {
+      "id": "gt6:reinforced_chest_tungsten_carbide",
+      "required": false
+    },
     "gt6:reinforced_chest_duranium_alloy",
     "gt6:reinforced_chest_draconium",
     "gt6:reinforced_chest_ultimet",
-    "gt6:reinforced_chest_workers_alloy",
+    {
+      "id": "gt6:reinforced_chest_workers_alloy",
+      "required": false
+    },
     "gt6:reinforced_chest_tungsten",
     "gt6:reinforced_chest_palladium",
     "gt6:reinforced_chest_iridium",
     "gt6:reinforced_chest_osmium",
-    "gt6:reinforced_chest_void_metal",
-    "gt6:reinforced_chest_elementium",
+    {
+      "id": "gt6:reinforced_chest_void_metal",
+      "required": false
+    },
+    {
+      "id": "gt6:reinforced_chest_elementium",
+      "required": false
+    },
     "gt6:reinforced_chest_tritanium_alloy",
     "gt6:reinforced_chest_adamantium",
-    "gt6:reinforced_chest_bedrock_hsla_alloy",
-    "gt6:reinforced_chest_awakened_draconium",
-    "gt6:reinforced_chest_infinity",
+    {
+      "id": "gt6:reinforced_chest_bedrock_hsla_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:reinforced_chest_awakened_draconium",
+      "required": false
+    },
+    {
+      "id": "gt6:reinforced_chest_infinity",
+      "required": false
+    },
     "gt6:wood_wall",
     "gt6:tank_wood",
     "gt6:bookshelf_oak",
@@ -113,7 +179,10 @@
     "gt6:bottlecrate_warped",
     "gt6:cell_wax",
     "gt6:cell_bees_wax",
-    "gt6:cell_plant_wax",
+    {
+      "id": "gt6:cell_plant_wax",
+      "required": false
+    },
     "gt6:cell_paraffin_wax",
     "gt6:cell_refractory_wax",
     "gt6:cell_magic_wax",

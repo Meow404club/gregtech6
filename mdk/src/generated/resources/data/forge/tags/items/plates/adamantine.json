@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_adamantine"
+    {
+      "id": "gt6:plate_adamantine",
+      "required": false
+    }
   ]
 }

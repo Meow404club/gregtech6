@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_steeleaf"
+    {
+      "id": "gt6:wire_fine_steeleaf",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_potassium"
+    {
+      "id": "gt6:stick_potassium",
+      "required": false
+    }
   ]
 }

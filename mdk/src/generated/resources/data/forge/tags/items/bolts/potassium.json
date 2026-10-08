@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_potassium"
+    {
+      "id": "gt6:bolt_potassium",
+      "required": false
+    }
   ]
 }

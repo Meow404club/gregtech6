@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_elvorium",
-    "gt6:block_ingot_elvorium"
+    {
+      "id": "gt6:block_dust_elvorium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_elvorium",
+      "required": false
+    }
   ]
 }

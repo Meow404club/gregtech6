@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_meteoric_steel",
-    "gt6:block_ingot_meteoric_steel"
+    {
+      "id": "gt6:block_dust_meteoric_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_meteoric_steel",
+      "required": false
+    }
   ]
 }

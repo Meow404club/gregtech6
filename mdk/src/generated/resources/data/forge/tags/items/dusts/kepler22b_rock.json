@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_kepler22b_rock"
+    {
+      "id": "gt6:dust_kepler22b_rock",
+      "required": false
+    }
   ]
 }

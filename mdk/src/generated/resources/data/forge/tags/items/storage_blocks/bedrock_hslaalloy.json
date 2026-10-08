@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_bedrock_hslaalloy",
-    "gt6:block_ingot_bedrock_hslaalloy"
+    {
+      "id": "gt6:block_dust_bedrock_hslaalloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_bedrock_hslaalloy",
+      "required": false
+    }
   ]
 }

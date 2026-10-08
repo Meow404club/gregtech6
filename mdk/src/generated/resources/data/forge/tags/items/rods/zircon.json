@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_zircon"
+    {
+      "id": "gt6:stick_zircon",
+      "required": false
+    }
   ]
 }

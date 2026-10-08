@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_hydrogen_borate"
+    {
+      "id": "gt6:block_dust_hydrogen_borate",
+      "required": false
+    }
   ]
 }

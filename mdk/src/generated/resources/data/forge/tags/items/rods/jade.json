@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_jade"
+    {
+      "id": "gt6:stick_jade",
+      "required": false
+    }
   ]
 }

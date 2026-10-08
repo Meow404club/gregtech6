@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_terrasteel"
+    {
+      "id": "gt6:nugget_terrasteel",
+      "required": false
+    }
   ]
 }

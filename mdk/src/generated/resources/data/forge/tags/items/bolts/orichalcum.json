@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_orichalcum"
+    {
+      "id": "gt6:bolt_orichalcum",
+      "required": false
+    }
   ]
 }

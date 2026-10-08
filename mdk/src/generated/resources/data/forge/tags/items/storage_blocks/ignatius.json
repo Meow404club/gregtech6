@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_ignatius",
-    "gt6:block_ingot_ignatius"
+    {
+      "id": "gt6:block_dust_ignatius",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_ignatius",
+      "required": false
+    }
   ]
 }

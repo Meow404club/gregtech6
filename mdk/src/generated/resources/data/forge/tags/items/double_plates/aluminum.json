@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_aluminium"
+    {
+      "id": "gt6:plate_double_aluminium",
+      "required": false
+    }
   ]
 }

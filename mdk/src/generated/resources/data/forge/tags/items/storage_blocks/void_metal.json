@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_void_metal",
-    "gt6:block_ingot_void_metal"
+    {
+      "id": "gt6:block_dust_void_metal",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_void_metal",
+      "required": false
+    }
   ]
 }

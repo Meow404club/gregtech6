@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_desichalkos",
-    "gt6:block_ingot_desichalkos"
+    {
+      "id": "gt6:block_dust_desichalkos",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_desichalkos",
+      "required": false
+    }
   ]
 }

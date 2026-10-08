@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_prometheum"
+    {
+      "id": "gt6:block_raw_prometheum",
+      "required": false
+    }
   ]
 }

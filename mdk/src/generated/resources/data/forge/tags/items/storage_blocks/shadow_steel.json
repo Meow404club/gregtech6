@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_shadow_steel",
-    "gt6:block_ingot_shadow_steel"
+    {
+      "id": "gt6:block_dust_shadow_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_shadow_steel",
+      "required": false
+    }
   ]
 }

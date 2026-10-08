@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_basalz"
+    {
+      "id": "gt6:stick_basalz",
+      "required": false
+    }
   ]
 }

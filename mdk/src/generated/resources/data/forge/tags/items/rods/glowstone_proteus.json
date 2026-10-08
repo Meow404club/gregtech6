@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_glowstone_proteus"
+    {
+      "id": "gt6:stick_glowstone_proteus",
+      "required": false
+    }
   ]
 }

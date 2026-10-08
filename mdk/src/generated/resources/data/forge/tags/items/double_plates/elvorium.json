@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_elvorium"
+    {
+      "id": "gt6:plate_double_elvorium",
+      "required": false
+    }
   ]
 }

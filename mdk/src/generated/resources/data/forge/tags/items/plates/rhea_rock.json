@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_rhea_rock"
+    {
+      "id": "gt6:plate_rhea_rock",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_titanium_aluminide"
+    {
+      "id": "gt6:plate_titanium_aluminide",
+      "required": false
+    }
   ]
 }

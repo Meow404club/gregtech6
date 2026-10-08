@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_bedrockium"
+    {
+      "id": "gt6:block_raw_bedrockium",
+      "required": false
+    }
   ]
 }

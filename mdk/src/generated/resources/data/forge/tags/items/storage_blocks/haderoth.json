@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_haderoth",
-    "gt6:block_ingot_haderoth"
+    {
+      "id": "gt6:block_dust_haderoth",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_haderoth",
+      "required": false
+    }
   ]
 }

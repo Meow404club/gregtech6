@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_white_phosphorus"
+    {
+      "id": "gt6:dust_white_phosphorus",
+      "required": false
+    }
   ]
 }

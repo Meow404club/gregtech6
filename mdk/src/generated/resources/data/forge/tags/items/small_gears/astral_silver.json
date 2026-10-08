@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_astral_silver"
+    {
+      "id": "gt6:gear_gt_small_astral_silver",
+      "required": false
+    }
   ]
 }

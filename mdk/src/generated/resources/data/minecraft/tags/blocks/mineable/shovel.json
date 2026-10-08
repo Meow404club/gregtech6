@@ -18,11 +18,17 @@
     "gt6:block_dust_carbon14",
     "gt6:block_dust_sodium",
     "gt6:block_dust_magnesium",
-    "gt6:block_dust_aluminium",
+    {
+      "id": "gt6:block_dust_aluminium",
+      "required": false
+    },
     "gt6:block_dust_silicon",
     "gt6:block_dust_phosphor",
     "gt6:block_dust_sulfur",
-    "gt6:block_dust_potassium",
+    {
+      "id": "gt6:block_dust_potassium",
+      "required": false
+    },
     "gt6:block_dust_calcium",
     "gt6:block_dust_scandium",
     "gt6:block_dust_titanium",
@@ -42,8 +48,14 @@
     "gt6:block_dust_rubidium",
     "gt6:block_dust_strontium",
     "gt6:block_dust_yttrium",
-    "gt6:block_dust_zirconium",
-    "gt6:block_dust_niobium",
+    {
+      "id": "gt6:block_dust_zirconium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_niobium",
+      "required": false
+    },
     "gt6:block_dust_molybdenum",
     "gt6:block_dust_technetium",
     "gt6:block_dust_ruthenium",
@@ -51,17 +63,26 @@
     "gt6:block_dust_palladium",
     "gt6:block_dust_silver",
     "gt6:block_dust_cadmium",
-    "gt6:block_dust_indium",
+    {
+      "id": "gt6:block_dust_indium",
+      "required": false
+    },
     "gt6:block_dust_tin",
     "gt6:block_dust_antimony",
     "gt6:block_dust_tellurium",
-    "gt6:block_dust_iodine",
+    {
+      "id": "gt6:block_dust_iodine",
+      "required": false
+    },
     "gt6:block_dust_caesium",
     "gt6:block_dust_barium",
     "gt6:block_dust_lanthanium",
     "gt6:block_dust_cerium",
     "gt6:block_dust_praseodymium",
-    "gt6:block_dust_neodymium",
+    {
+      "id": "gt6:block_dust_neodymium",
+      "required": false
+    },
     "gt6:block_dust_promethium",
     "gt6:block_dust_samarium",
     "gt6:block_dust_europium",
@@ -74,7 +95,10 @@
     "gt6:block_dust_ytterbium",
     "gt6:block_dust_lutetium",
     "gt6:block_dust_hafnium",
-    "gt6:block_dust_tantalum",
+    {
+      "id": "gt6:block_dust_tantalum",
+      "required": false
+    },
     "gt6:block_dust_tungsten",
     "gt6:block_dust_rhenium",
     "gt6:block_dust_osmium_elemental",
@@ -98,10 +122,16 @@
     "gt6:block_dust_uranium233",
     "gt6:block_dust_neptunium",
     "gt6:block_dust_plutonium",
-    "gt6:block_dust_plutonium240",
+    {
+      "id": "gt6:block_dust_plutonium240",
+      "required": false
+    },
     "gt6:block_dust_plutonium241",
     "gt6:block_dust_plutonium243",
-    "gt6:block_dust_plutonium238",
+    {
+      "id": "gt6:block_dust_plutonium238",
+      "required": false
+    },
     "gt6:block_dust_plutonium239",
     "gt6:block_dust_americium",
     "gt6:block_dust_americium241",
@@ -132,7 +162,10 @@
     "gt6:block_dust_oganesson",
     "gt6:block_dust_ununennium",
     "gt6:block_dust_unbinilium",
-    "gt6:block_dust_tritanium_elemental",
+    {
+      "id": "gt6:block_dust_tritanium_elemental",
+      "required": false
+    },
     "gt6:block_dust_trinium",
     "gt6:block_dust_duranium_elemental",
     "gt6:block_dust_vibranium",
@@ -143,7 +176,10 @@
     "gt6:block_dust_coralium",
     "gt6:block_dust_dreadium",
     "gt6:block_dust_ethaxium",
-    "gt6:block_dust_atlarus",
+    {
+      "id": "gt6:block_dust_atlarus",
+      "required": false
+    },
     "gt6:block_dust_adamantium",
     "gt6:block_dust_anti_lithium",
     "gt6:block_dust_anti_lithium6",
@@ -273,11 +309,26 @@
     "gt6:block_dust_silicon_dioxide",
     "gt6:block_dust_glass",
     "gt6:block_dust_flint",
-    "gt6:block_dust_carborundum",
-    "gt6:block_dust_lithium_oxide",
-    "gt6:block_dust_ferrite",
-    "gt6:block_dust_datolite",
-    "gt6:block_dust_hydrogen_borate",
+    {
+      "id": "gt6:block_dust_carborundum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_lithium_oxide",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ferrite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_datolite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_hydrogen_borate",
+      "required": false
+    },
     "gt6:block_dust_alumina",
     "gt6:block_dust_cryolite",
     "gt6:block_dust_aluminium_fluoride",
@@ -306,19 +357,43 @@
     "gt6:block_dust_potassium_fluoride",
     "gt6:block_dust_sodium_fluoride",
     "gt6:block_dust_potassium_heptafluorotantalate",
-    "gt6:block_dust_sodium_hydrogencarbonate",
+    {
+      "id": "gt6:block_dust_sodium_hydrogencarbonate",
+      "required": false
+    },
     "gt6:block_dust_sand",
     "gt6:block_dust_soulsand",
     "gt6:block_dust_sluice_sand",
     "gt6:block_dust_platinum_group_sludge",
     "gt6:block_dust_red_sand",
-    "gt6:block_dust_white_end_sand",
-    "gt6:block_dust_black_end_sand",
-    "gt6:block_dust_teflon",
-    "gt6:block_dust_pvc",
-    "gt6:block_dust_bakelite",
-    "gt6:block_dust_hard_plastic",
-    "gt6:block_dust_ashes",
+    {
+      "id": "gt6:block_dust_white_end_sand",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_black_end_sand",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_teflon",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_pvc",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_bakelite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_hard_plastic",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ashes",
+      "required": false
+    },
     "gt6:block_dust_dark_ashes",
     "gt6:block_dust_volcanic_ashes",
     "gt6:block_dust_sylvite",
@@ -327,8 +402,14 @@
     "gt6:block_dust_niter",
     "gt6:block_dust_phosphate",
     "gt6:block_dust_phosphorus",
-    "gt6:block_dust_apatite",
-    "gt6:block_dust_blizz",
+    {
+      "id": "gt6:block_dust_apatite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_blizz",
+      "required": false
+    },
     "gt6:block_dust_blaze",
     "gt6:block_dust_pyrotheum",
     "gt6:block_dust_cryotheum",
@@ -341,14 +422,20 @@
     "gt6:block_dust_gunpowder",
     "gt6:block_dust_wood",
     "gt6:block_dust_wood_treated",
-    "gt6:block_dust_live_root",
+    {
+      "id": "gt6:block_dust_live_root",
+      "required": false
+    },
     "gt6:block_dust_wood_rubber",
     "gt6:block_dust_ceramic",
     "gt6:block_dust_phosphorite",
     "gt6:block_dust_peanut_wood",
     "gt6:block_dust_indigo",
     "gt6:block_dust_cobalt_hexahydrate",
-    "gt6:block_dust_sodium_bisulfate",
+    {
+      "id": "gt6:block_dust_sodium_bisulfate",
+      "required": false
+    },
     "gt6:block_dust_sodium_pyrosulfate",
     "gt6:block_dust_potassium_bisulfate",
     "gt6:block_dust_potassium_pyrosulfate",
@@ -357,15 +444,30 @@
     "gt6:block_dust_wax_bee",
     "gt6:block_dust_wax_refractory",
     "gt6:block_dust_wax_paraffin",
-    "gt6:block_dust_wax_plant",
+    {
+      "id": "gt6:block_dust_wax_plant",
+      "required": false
+    },
     "gt6:block_dust_wax_magic",
     "gt6:block_dust_iodine_salt",
-    "gt6:block_dust_silver_iodide",
-    "gt6:block_dust_tallow",
+    {
+      "id": "gt6:block_dust_silver_iodide",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_tallow",
+      "required": false
+    },
     "gt6:block_dust_petrotheum",
     "gt6:block_dust_aerotheum",
-    "gt6:block_dust_basalz",
-    "gt6:block_dust_blitz",
+    {
+      "id": "gt6:block_dust_basalz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_blitz",
+      "required": false
+    },
     "gt6:block_dust_dynamite",
     "gt6:block_dust_black",
     "gt6:block_dust_red",
@@ -385,37 +487,94 @@
     "gt6:block_dust_white",
     "gt6:block_dust_asphalt",
     "gt6:block_dust_wood_polished",
-    "gt6:block_dust_sodium_hydroxide",
+    {
+      "id": "gt6:block_dust_sodium_hydroxide",
+      "required": false
+    },
     "gt6:block_dust_sodium_sulfite",
     "gt6:block_dust_sodium_sulfate",
     "gt6:block_dust_potassium_sulfate",
     "gt6:block_dust_potassium_sulfide",
-    "gt6:block_dust_porcelain",
+    {
+      "id": "gt6:block_dust_porcelain",
+      "required": false
+    },
     "gt6:block_dust_calcium_sulfate",
-    "gt6:block_dust_bark",
+    {
+      "id": "gt6:block_dust_bark",
+      "required": false
+    },
     "gt6:block_dust_clay_brown",
-    "gt6:block_dust_petrified_wood",
-    "gt6:block_dust_mana_diamond",
-    "gt6:block_dust_elven_dragonstone",
+    {
+      "id": "gt6:block_dust_petrified_wood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_mana_diamond",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_elven_dragonstone",
+      "required": false
+    },
     "gt6:block_dust_wax_amnesic",
     "gt6:block_dust_wax_soulful",
-    "gt6:block_dust_crimson_middle",
-    "gt6:block_dust_green_middle",
-    "gt6:block_dust_aqua_middle",
-    "gt6:block_dust_valonite",
-    "gt6:block_dust_weedwood",
-    "gt6:block_dust_slimy_bone",
-    "gt6:block_dust_scabyst",
-    "gt6:block_dust_livingwood",
-    "gt6:block_dust_dreamwood",
-    "gt6:block_dust_skyroot",
+    {
+      "id": "gt6:block_dust_crimson_middle",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_green_middle",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_aqua_middle",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_valonite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_weedwood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_slimy_bone",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_scabyst",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_livingwood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_dreamwood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_skyroot",
+      "required": false
+    },
     "gt6:block_dust_zanite",
     "gt6:block_dust_ambrosium",
     "gt6:block_dust_gravitite",
     "gt6:block_dust_continuum",
-    "gt6:block_dust_greatwood",
-    "gt6:block_dust_silverwood",
-    "gt6:block_dust_energium_red",
+    {
+      "id": "gt6:block_dust_greatwood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_silverwood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_energium_red",
+      "required": false
+    },
     "gt6:block_dust_energium_cyan",
     "gt6:block_dust_diamond",
     "gt6:block_dust_emerald",
@@ -434,17 +593,26 @@
     "gt6:block_dust_orange_sapphire",
     "gt6:block_dust_yellow_sapphire",
     "gt6:block_dust_vinteum",
-    "gt6:block_dust_dilithium",
+    {
+      "id": "gt6:block_dust_dilithium",
+      "required": false
+    },
     "gt6:block_dust_ender_pearl",
     "gt6:block_dust_ender_eye",
     "gt6:block_dust_nether_star",
-    "gt6:block_dust_jade",
+    {
+      "id": "gt6:block_dust_jade",
+      "required": false
+    },
     "gt6:block_dust_craponite",
     "gt6:block_dust_aquamarine",
     "gt6:block_dust_morganite",
     "gt6:block_dust_dioptase",
     "gt6:block_dust_spinel",
-    "gt6:block_dust_vinteum_purified",
+    {
+      "id": "gt6:block_dust_vinteum_purified",
+      "required": false
+    },
     "gt6:block_dust_blue_sapphire",
     "gt6:block_dust_amethyst_ender",
     "gt6:block_dust_lazurite",
@@ -452,7 +620,10 @@
     "gt6:block_dust_lapis",
     "gt6:block_dust_redstone",
     "gt6:block_dust_coal",
-    "gt6:block_dust_hydrated_coal",
+    {
+      "id": "gt6:block_dust_hydrated_coal",
+      "required": false
+    },
     "gt6:block_dust_charcoal",
     "gt6:block_dust_lignite",
     "gt6:block_dust_monazite",
@@ -467,7 +638,10 @@
     "gt6:block_dust_charged_certus_quartz",
     "gt6:block_dust_coal_coke",
     "gt6:block_dust_infused_dull",
-    "gt6:block_dust_infused_vis",
+    {
+      "id": "gt6:block_dust_infused_vis",
+      "required": false
+    },
     "gt6:block_dust_infused_air",
     "gt6:block_dust_infused_fire",
     "gt6:block_dust_infused_earth",
@@ -475,54 +649,141 @@
     "gt6:block_dust_infused_entropy",
     "gt6:block_dust_infused_order",
     "gt6:block_dust_infused_balance",
-    "gt6:block_dust_peat",
-    "gt6:block_dust_peat_bituminous",
+    {
+      "id": "gt6:block_dust_peat",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_peat_bituminous",
+      "required": false
+    },
     "gt6:block_dust_anthracite",
-    "gt6:block_dust_prismane",
-    "gt6:block_dust_lonsdaleite",
+    {
+      "id": "gt6:block_dust_prismane",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_lonsdaleite",
+      "required": false
+    },
     "gt6:block_dust_lignite_coke",
-    "gt6:block_dust_arcane_compound",
-    "gt6:block_dust_arcane_ashes",
-    "gt6:block_dust_glowstone_ceres",
-    "gt6:block_dust_glowstone_io",
-    "gt6:block_dust_glowstone_enceladus",
-    "gt6:block_dust_glowstone_proteus",
-    "gt6:block_dust_glowstone_pluto",
-    "gt6:block_dust_ectoplasm",
-    "gt6:block_dust_quartz_black",
+    {
+      "id": "gt6:block_dust_arcane_compound",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_arcane_ashes",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_ceres",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_io",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_enceladus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_proteus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_glowstone_pluto",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ectoplasm",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_quartz_black",
+      "required": false
+    },
     "gt6:block_dust_redstonia",
     "gt6:block_dust_palis",
     "gt6:block_dust_diamantine",
     "gt6:block_dust_void_crystal",
     "gt6:block_dust_emeradic",
     "gt6:block_dust_enori",
-    "gt6:block_dust_dark_matter",
-    "gt6:block_dust_red_matter",
+    {
+      "id": "gt6:block_dust_dark_matter",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_matter",
+      "required": false
+    },
     "gt6:block_dust_purple_sapphire",
     "gt6:block_dust_heliodor",
     "gt6:block_dust_goshenite",
     "gt6:block_dust_bixbite",
     "gt6:block_dust_maxixe",
-    "gt6:block_dust_alexandrite",
+    {
+      "id": "gt6:block_dust_alexandrite",
+      "required": false
+    },
     "gt6:block_dust_fluix",
     "gt6:block_dust_petroleum_coke",
-    "gt6:block_dust_frezarite",
-    "gt6:block_dust_red_meteor",
-    "gt6:block_dust_sunny_quartz",
-    "gt6:block_dust_lavender_quartz",
-    "gt6:block_dust_red_quartz",
-    "gt6:block_dust_blaze_quartz",
-    "gt6:block_dust_smokey_quartz",
-    "gt6:block_dust_mana_quartz",
-    "gt6:block_dust_elven_quartz",
-    "gt6:block_dust_shimmerwood",
+    {
+      "id": "gt6:block_dust_frezarite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_meteor",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_sunny_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_lavender_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_blaze_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_smokey_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_mana_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_elven_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_shimmerwood",
+      "required": false
+    },
     "gt6:block_dust_onyx_red",
     "gt6:block_dust_onyx_black",
     "gt6:block_dust_amazonite",
     "gt6:block_dust_bamboo",
-    "gt6:block_dust_zircon",
-    "gt6:block_dust_azurite",
-    "gt6:block_dust_eudialyte",
+    {
+      "id": "gt6:block_dust_zircon",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_azurite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_eudialyte",
+      "required": false
+    },
     "gt6:block_dust_dominican_amber",
     "gt6:block_dust_diamond_industrial",
     "gt6:block_dust_pink_diamond",
@@ -559,17 +820,41 @@
     "gt6:block_dust_clay_red",
     "gt6:block_dust_gloomstone",
     "gt6:block_dust_void_quartz",
-    "gt6:block_dust_blue_phosphorus",
-    "gt6:block_dust_red_phosphorus",
-    "gt6:block_dust_white_phosphorus",
+    {
+      "id": "gt6:block_dust_blue_phosphorus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_phosphorus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_white_phosphorus",
+      "required": false
+    },
     "gt6:block_dust_niobium_pentoxide",
     "gt6:block_dust_tantalum_pentoxide",
     "gt6:block_dust_sugilite",
-    "gt6:block_dust_blue_diamond",
-    "gt6:block_dust_green_diamond",
-    "gt6:block_dust_purple_diamond",
-    "gt6:block_dust_red_diamond",
-    "gt6:block_dust_yellow_diamond",
+    {
+      "id": "gt6:block_dust_blue_diamond",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_green_diamond",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_purple_diamond",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_diamond",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_yellow_diamond",
+      "required": false
+    },
     "gt6:block_dust_golden_amber",
     "gt6:block_dust_carminite",
     "gt6:block_dust_breeze",
@@ -593,7 +878,10 @@
     "gt6:block_dust_granite",
     "gt6:block_dust_betweenstone",
     "gt6:block_dust_pitstone",
-    "gt6:block_dust_livingrock",
+    {
+      "id": "gt6:block_dust_livingrock",
+      "required": false
+    },
     "gt6:block_dust_holystone",
     "gt6:block_dust_deadrock",
     "gt6:block_dust_cragrock",
@@ -605,39 +893,90 @@
     "gt6:block_dust_electrum",
     "gt6:block_dust_sterling_silver",
     "gt6:block_dust_rose_gold",
-    "gt6:block_dust_angmallen",
-    "gt6:block_dust_gold_inductive",
-    "gt6:block_dust_cd_in_ag_alloy",
+    {
+      "id": "gt6:block_dust_angmallen",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_gold_inductive",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_cd_in_ag_alloy",
+      "required": false
+    },
     "gt6:block_dust_gilded_iron",
     "gt6:block_dust_bronze",
     "gt6:block_dust_black_bronze",
     "gt6:block_dust_bismuth_bronze",
-    "gt6:block_dust_hepatizon",
+    {
+      "id": "gt6:block_dust_hepatizon",
+      "required": false
+    },
     "gt6:block_dust_arsenic_copper",
     "gt6:block_dust_arsenic_bronze",
     "gt6:block_dust_brass",
     "gt6:block_dust_cobalt_brass",
-    "gt6:block_dust_aluminium_alloy",
+    {
+      "id": "gt6:block_dust_aluminium_alloy",
+      "required": false
+    },
     "gt6:block_dust_steel",
-    "gt6:block_dust_black_steel",
-    "gt6:block_dust_blue_steel",
-    "gt6:block_dust_red_steel",
-    "gt6:block_dust_damascus_steel",
+    {
+      "id": "gt6:block_dust_black_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_blue_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_damascus_steel",
+      "required": false
+    },
     "gt6:block_dust_tungstensteel",
     "gt6:block_dust_stainless_steel",
-    "gt6:block_dust_hslasteel",
-    "gt6:block_dust_tungsten_carbide",
-    "gt6:block_dust_hslaspring_steel",
-    "gt6:block_dust_deep_iron",
+    {
+      "id": "gt6:block_dust_hslasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_tungsten_carbide",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_hslaspring_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_deep_iron",
+      "required": false
+    },
     "gt6:block_dust_pig_iron",
-    "gt6:block_dust_dark_iron",
+    {
+      "id": "gt6:block_dust_dark_iron",
+      "required": false
+    },
     "gt6:block_dust_meteoric_iron",
-    "gt6:block_dust_meteoric_steel",
+    {
+      "id": "gt6:block_dust_meteoric_steel",
+      "required": false
+    },
     "gt6:block_dust_steel_galvanized",
     "gt6:block_dust_vanadium_steel",
     "gt6:block_dust_titanium_gold",
-    "gt6:block_dust_purple_alloy",
-    "gt6:block_dust_electrotine_alloy",
+    {
+      "id": "gt6:block_dust_purple_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_electrotine_alloy",
+      "required": false
+    },
     "gt6:block_dust_blue_alloy",
     "gt6:block_dust_red_alloy",
     "gt6:block_dust_invar",
@@ -649,18 +988,51 @@
     "gt6:block_dust_tin_alloy",
     "gt6:block_dust_battery_alloy",
     "gt6:block_dust_soldering_alloy",
-    "gt6:block_dust_shadow_iron",
-    "gt6:block_dust_shadow_steel",
-    "gt6:block_dust_ironwood",
-    "gt6:block_dust_steeleaf",
-    "gt6:block_dust_knightmetal",
-    "gt6:block_dust_fiery_steel",
-    "gt6:block_dust_astral_silver",
-    "gt6:block_dust_midasium",
-    "gt6:block_dust_mithril",
+    {
+      "id": "gt6:block_dust_shadow_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_shadow_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ironwood",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_steeleaf",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_knightmetal",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_fiery_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_astral_silver",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_midasium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_mithril",
+      "required": false
+    },
     "gt6:block_dust_thaumium",
-    "gt6:block_dust_dark_thaumium",
-    "gt6:block_dust_void_metal",
+    {
+      "id": "gt6:block_dust_dark_thaumium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_void_metal",
+      "required": false
+    },
     "gt6:block_dust_osmiridium",
     "gt6:block_dust_sunnarium",
     "gt6:block_dust_trinaquadalloy",
@@ -669,123 +1041,369 @@
     "gt6:block_dust_yttrium_barium_cuprate",
     "gt6:block_dust_niobium_nitride",
     "gt6:block_dust_niobium_titanium",
-    "gt6:block_dust_meteoric_black_steel",
-    "gt6:block_dust_meteoric_blue_steel",
-    "gt6:block_dust_meteoric_red_steel",
-    "gt6:block_dust_meteoflame_steel",
-    "gt6:block_dust_meteoflame_black_steel",
-    "gt6:block_dust_meteoflame_blue_steel",
-    "gt6:block_dust_meteoflame_red_steel",
-    "gt6:block_dust_flamascus_steel",
-    "gt6:block_dust_fireleaf",
+    {
+      "id": "gt6:block_dust_meteoric_black_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meteoric_blue_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meteoric_red_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meteoflame_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meteoflame_black_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meteoflame_blue_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meteoflame_red_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_flamascus_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_fireleaf",
+      "required": false
+    },
     "gt6:block_dust_aluminium_brass",
-    "gt6:block_dust_aredrite",
-    "gt6:block_dust_alumite",
+    {
+      "id": "gt6:block_dust_aredrite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_alumite",
+      "required": false
+    },
     "gt6:block_dust_manyullyn",
     "gt6:block_dust_vibranium_steel",
     "gt6:block_dust_vibranium_silver",
     "gt6:block_dust_vibramantium",
     "gt6:block_dust_ardite",
-    "gt6:block_dust_signalum",
-    "gt6:block_dust_lumium",
-    "gt6:block_dust_enderium",
+    {
+      "id": "gt6:block_dust_signalum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_lumium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_enderium",
+      "required": false
+    },
     "gt6:block_dust_electrum_flux",
-    "gt6:block_dust_obsidian_refined",
+    {
+      "id": "gt6:block_dust_obsidian_refined",
+      "required": false
+    },
     "gt6:block_dust_yellorium",
     "gt6:block_dust_blutonium",
     "gt6:block_dust_cyanite",
-    "gt6:block_dust_bedrock_hslaalloy",
-    "gt6:block_dust_manasteel",
-    "gt6:block_dust_terrasteel",
-    "gt6:block_dust_elven_elementium",
+    {
+      "id": "gt6:block_dust_bedrock_hslaalloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_manasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_terrasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_elven_elementium",
+      "required": false
+    },
     "gt6:block_dust_ludicrite",
     "gt6:block_dust_yellorite",
-    "gt6:block_dust_pulsating_iron",
-    "gt6:block_dust_vibrant_alloy",
-    "gt6:block_dust_conductive_iron",
-    "gt6:block_dust_energetic_alloy",
-    "gt6:block_dust_enderium_base",
-    "gt6:block_dust_electrical_steel",
+    {
+      "id": "gt6:block_dust_pulsating_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_vibrant_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_conductive_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_energetic_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_enderium_base",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_electrical_steel",
+      "required": false
+    },
     "gt6:block_dust_obsidian_steel",
-    "gt6:block_dust_soularium",
+    {
+      "id": "gt6:block_dust_soularium",
+      "required": false
+    },
     "gt6:block_dust_redstone_alloy",
-    "gt6:block_dust_spectre_iron",
-    "gt6:block_dust_gaia_spirit",
+    {
+      "id": "gt6:block_dust_spectre_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_gaia_spirit",
+      "required": false
+    },
     "gt6:block_dust_endium",
-    "gt6:block_dust_nikoline_alloy",
-    "gt6:block_dust_mauftrium",
-    "gt6:block_dust_elvorium",
-    "gt6:block_dust_niflheim_power",
-    "gt6:block_dust_muspelheim_power",
-    "gt6:block_dust_iffesal",
+    {
+      "id": "gt6:block_dust_nikoline_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_mauftrium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_elvorium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_niflheim_power",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_muspelheim_power",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_iffesal",
+      "required": false
+    },
     "gt6:block_dust_ancient_debris",
     "gt6:block_dust_netherite",
-    "gt6:block_dust_netherized_diamond",
+    {
+      "id": "gt6:block_dust_netherized_diamond",
+      "required": false
+    },
     "gt6:block_dust_efrine",
     "gt6:block_dust_desh",
     "gt6:block_dust_duranium",
     "gt6:block_dust_tritanium",
-    "gt6:block_dust_dolamide",
+    {
+      "id": "gt6:block_dust_dolamide",
+      "required": false
+    },
     "gt6:block_dust_oriharukon",
     "gt6:block_dust_adamantite",
     "gt6:block_dust_duralumin",
     "gt6:block_dust_meteorite",
-    "gt6:block_dust_frozen_iron",
-    "gt6:block_dust_kreknorite",
-    "gt6:block_dust_alduorite",
-    "gt6:block_dust_infuscolium",
-    "gt6:block_dust_rubracium",
-    "gt6:block_dust_meutoite",
-    "gt6:block_dust_lemurite",
-    "gt6:block_dust_ceruclase",
-    "gt6:block_dust_hslatungsten_alloy",
-    "gt6:block_dust_oureclase",
-    "gt6:block_dust_kalendrite",
-    "gt6:block_dust_orichalcum",
-    "gt6:block_dust_carmot",
-    "gt6:block_dust_sanguinite",
-    "gt6:block_dust_vyroxeres",
-    "gt6:block_dust_eximite",
-    "gt6:block_dust_prometheum",
-    "gt6:block_dust_ignatius",
-    "gt6:block_dust_vulcanite",
-    "gt6:block_dust_inolashite",
-    "gt6:block_dust_haderoth",
-    "gt6:block_dust_celenegil",
-    "gt6:block_dust_workers_alloy",
-    "gt6:block_dust_desichalkos",
-    "gt6:block_dust_tartarite",
-    "gt6:block_dust_amordrine",
-    "gt6:block_dust_adamantine",
+    {
+      "id": "gt6:block_dust_frozen_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_kreknorite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_alduorite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_infuscolium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_rubracium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meutoite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_lemurite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ceruclase",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_hslatungsten_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_oureclase",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_kalendrite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_orichalcum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_carmot",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_sanguinite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_vyroxeres",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_eximite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_prometheum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ignatius",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_vulcanite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_inolashite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_haderoth",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_celenegil",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_workers_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_desichalkos",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_tartarite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_amordrine",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_adamantine",
+      "required": false
+    },
     "gt6:block_dust_syrmorite",
     "gt6:block_dust_octine",
     "gt6:block_dust_trinitanium",
     "gt6:block_dust_draconium",
-    "gt6:block_dust_draconium_awakened",
-    "gt6:block_dust_titanium_iridium",
-    "gt6:block_dust_titanium_aluminide",
-    "gt6:block_dust_bedrockium",
+    {
+      "id": "gt6:block_dust_draconium_awakened",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_titanium_iridium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_titanium_aluminide",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_bedrockium",
+      "required": false
+    },
     "gt6:block_dust_hssg",
     "gt6:block_dust_hsse",
     "gt6:block_dust_hsss",
-    "gt6:block_dust_crystal_matrix",
-    "gt6:block_dust_cosmic_neutronium",
-    "gt6:block_dust_infinity",
+    {
+      "id": "gt6:block_dust_crystal_matrix",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_cosmic_neutronium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_infinity",
+      "required": false
+    },
     "gt6:block_dust_tantalum_hafnium_carbide",
-    "gt6:block_dust_mingrade",
-    "gt6:block_dust_unstable",
-    "gt6:block_dust_clay_compound",
-    "gt6:block_dust_end_steel",
-    "gt6:block_dust_energetic_silver",
-    "gt6:block_dust_melodic_alloy",
-    "gt6:block_dust_stellar_alloy",
-    "gt6:block_dust_vivid_alloy",
-    "gt6:block_dust_crystalline_alloy",
-    "gt6:block_dust_crystalline_pink_slime",
+    {
+      "id": "gt6:block_dust_mingrade",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_unstable",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_clay_compound",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_end_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_energetic_silver",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_melodic_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_stellar_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_vivid_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_crystalline_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_crystalline_pink_slime",
+      "required": false
+    },
     "gt6:block_dust_pumice",
     "gt6:block_dust_diatomite",
-    "gt6:block_dust_basaltic_mineral_sand",
-    "gt6:block_dust_granitic_mineral_sand",
+    {
+      "id": "gt6:block_dust_basaltic_mineral_sand",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_granitic_mineral_sand",
+      "required": false
+    },
     "gt6:block_dust_garnet_sand",
     "gt6:block_dust_quartz_sand",
     "gt6:block_dust_uranium_tetrafluoride",
@@ -841,8 +1459,14 @@
     "gt6:block_dust_lepidolite",
     "gt6:block_dust_glauconite",
     "gt6:block_dust_vermiculite",
-    "gt6:block_dust_bentonite",
-    "gt6:block_dust_palygorskite",
+    {
+      "id": "gt6:block_dust_bentonite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_palygorskite",
+      "required": false
+    },
     "gt6:block_dust_pitchblende",
     "gt6:block_dust_malachite",
     "gt6:block_dust_mirabilite",
@@ -855,7 +1479,10 @@
     "gt6:block_dust_wollastonite",
     "gt6:block_dust_zeolite",
     "gt6:block_dust_kyanite",
-    "gt6:block_dust_kaolinite",
+    {
+      "id": "gt6:block_dust_kaolinite",
+      "required": false
+    },
     "gt6:block_dust_talc",
     "gt6:block_dust_gneiss",
     "gt6:block_dust_greenschist",
@@ -901,12 +1528,21 @@
     "gt6:block_dust_sperrylite",
     "gt6:block_dust_kesterite",
     "gt6:block_dust_stannite",
-    "gt6:block_dust_fluorite",
+    {
+      "id": "gt6:block_dust_fluorite",
+      "required": false
+    },
     "gt6:block_dust_arsenopyrite",
     "gt6:block_dust_wolframite",
     "gt6:block_dust_kimberlite",
-    "gt6:block_dust_prismarine",
-    "gt6:block_dust_prismarine_dark",
+    {
+      "id": "gt6:block_dust_prismarine",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_prismarine_dark",
+      "required": false
+    },
     "gt6:block_dust_bischofite",
     "gt6:block_dust_slate",
     "gt6:block_dust_blackstone",
@@ -920,28 +1556,94 @@
     "gt6:block_dust_columbite",
     "gt6:block_dust_coltan",
     "gt6:block_dust_deepslate",
-    "gt6:block_dust_phobos_rock",
-    "gt6:block_dust_deimos_rock",
-    "gt6:block_dust_venus_rock",
-    "gt6:block_dust_mercury_rock",
-    "gt6:block_dust_ceres_rock",
-    "gt6:block_dust_jupiter_rock",
-    "gt6:block_dust_io_rock",
-    "gt6:block_dust_europa_rock",
-    "gt6:block_dust_ganymede_rock",
-    "gt6:block_dust_callisto_rock",
-    "gt6:block_dust_saturn_rock",
-    "gt6:block_dust_rhea_rock",
-    "gt6:block_dust_titan_rock",
-    "gt6:block_dust_oberon_rock",
-    "gt6:block_dust_iapetus_rock",
-    "gt6:block_dust_uranus_rock",
-    "gt6:block_dust_titania_rock",
-    "gt6:block_dust_neptune_rock",
-    "gt6:block_dust_triton_rock",
-    "gt6:block_dust_pluto_rock",
-    "gt6:block_dust_eris_rock",
-    "gt6:block_dust_kepler22b_rock",
+    {
+      "id": "gt6:block_dust_phobos_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_deimos_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_venus_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_mercury_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ceres_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_jupiter_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_io_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_europa_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_ganymede_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_callisto_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_saturn_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_rhea_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_titan_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_oberon_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_iapetus_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_uranus_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_titania_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_neptune_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_triton_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_pluto_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_eris_rock",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_kepler22b_rock",
+      "required": false
+    },
     "gt6:block_dust_quicklime",
     "gt6:block_dust_oak",
     "gt6:block_dust_birch",
@@ -1053,46 +1755,127 @@
     "gt6:block_dust_wood_bleached",
     "gt6:block_dust_foxfirewood",
     "gt6:block_dust_blue_spruce",
-    "gt6:block_dust_meat_raw",
-    "gt6:block_dust_meat_cooked",
+    {
+      "id": "gt6:block_dust_meat_raw",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_meat_cooked",
+      "required": false
+    },
     "gt6:block_dust_wheat",
     "gt6:block_dust_sugar",
-    "gt6:block_dust_barley",
-    "gt6:block_dust_rye",
-    "gt6:block_dust_rice",
-    "gt6:block_dust_oat",
-    "gt6:block_dust_corn",
+    {
+      "id": "gt6:block_dust_barley",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_rye",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_rice",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_oat",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_corn",
+      "required": false
+    },
     "gt6:block_dust_potato",
     "gt6:block_dust_meat_rotten",
-    "gt6:block_dust_fish_cooked",
-    "gt6:block_dust_fish_raw",
-    "gt6:block_dust_fish_rotten",
-    "gt6:block_dust_almond",
-    "gt6:block_dust_marshmallow",
-    "gt6:block_dust_pez",
-    "gt6:block_dust_licorice",
-    "gt6:block_dust_nougat",
-    "gt6:block_dust_abyssal_oat",
-    "gt6:block_dust_tofu",
+    {
+      "id": "gt6:block_dust_fish_cooked",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_fish_raw",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_fish_rotten",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_almond",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_marshmallow",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_pez",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_licorice",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_nougat",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_abyssal_oat",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_tofu",
+      "required": false
+    },
     "gt6:block_dust_soylent_green",
     "gt6:block_dust_cheese",
     "gt6:block_dust_chili",
     "gt6:block_dust_cocoa",
-    "gt6:block_dust_chocolate",
-    "gt6:block_dust_coffee",
-    "gt6:block_dust_cinnamon",
-    "gt6:block_dust_nutmeg",
-    "gt6:block_dust_vanilla",
-    "gt6:block_dust_pepper_black",
-    "gt6:block_dust_curry",
+    {
+      "id": "gt6:block_dust_chocolate",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_coffee",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_cinnamon",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_nutmeg",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_vanilla",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_pepper_black",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_curry",
+      "required": false
+    },
     "gt6:block_dust_milk",
     "gt6:block_dust_honey",
     "gt6:block_dust_tea",
     "gt6:block_dust_honeydew",
     "gt6:block_dust_mint",
-    "gt6:block_dust_peanut",
-    "gt6:block_dust_hazelnut",
-    "gt6:block_dust_pistachio",
+    {
+      "id": "gt6:block_dust_peanut",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_hazelnut",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_pistachio",
+      "required": false
+    },
     "gt6:block_dust_snow",
     "gt6:block_dust_ice",
     "gt6:block_dust_sodium_persulfate",
@@ -1101,7 +1884,10 @@
     "gt6:block_dust_oil_sand",
     "gt6:block_dust_crude_oil",
     "gt6:block_dust_oil_shale",
-    "gt6:block_dust_construction_foam",
+    {
+      "id": "gt6:block_dust_construction_foam",
+      "required": false
+    },
     "gt6:turf",
     "gt6:black_sand",
     "gt6:brown_clay",

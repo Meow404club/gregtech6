@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_vinteum_purified"
+    {
+      "id": "gt6:stick_vinteum_purified",
+      "required": false
+    }
   ]
 }

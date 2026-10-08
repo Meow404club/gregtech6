@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_carborundum",
-    "gt6:block_ingot_carborundum"
+    {
+      "id": "gt6:block_dust_carborundum",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_carborundum",
+      "required": false
+    }
   ]
 }

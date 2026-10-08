@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_fireleaf",
-    "gt6:block_ingot_fireleaf"
+    {
+      "id": "gt6:block_dust_fireleaf",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_fireleaf",
+      "required": false
+    }
   ]
 }

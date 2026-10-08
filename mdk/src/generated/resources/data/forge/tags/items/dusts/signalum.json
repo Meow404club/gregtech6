@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_signalum"
+    {
+      "id": "gt6:dust_signalum",
+      "required": false
+    }
   ]
 }

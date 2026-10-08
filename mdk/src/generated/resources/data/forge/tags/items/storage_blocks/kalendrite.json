@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_kalendrite",
-    "gt6:block_ingot_kalendrite"
+    {
+      "id": "gt6:block_dust_kalendrite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_kalendrite",
+      "required": false
+    }
   ]
 }

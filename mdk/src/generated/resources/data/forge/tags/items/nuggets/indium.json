@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_indium"
+    {
+      "id": "gt6:nugget_indium",
+      "required": false
+    }
   ]
 }

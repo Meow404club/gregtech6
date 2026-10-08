@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_vinteum_purified"
+    {
+      "id": "gt6:block_raw_vinteum_purified",
+      "required": false
+    }
   ]
 }

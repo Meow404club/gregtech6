@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_soularium"
+    {
+      "id": "gt6:ingot_soularium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_hazelnut"
+    {
+      "id": "gt6:block_dust_hazelnut",
+      "required": false
+    }
   ]
 }

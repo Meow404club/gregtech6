@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_blue_phosphorus"
+    {
+      "id": "gt6:gem_blue_phosphorus",
+      "required": false
+    }
   ]
 }

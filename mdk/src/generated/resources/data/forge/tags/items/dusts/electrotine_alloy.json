@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_electrotine_alloy"
+    {
+      "id": "gt6:dust_electrotine_alloy",
+      "required": false
+    }
   ]
 }

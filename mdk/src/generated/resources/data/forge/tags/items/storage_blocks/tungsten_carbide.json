@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_tungsten_carbide",
-    "gt6:block_ingot_tungsten_carbide"
+    {
+      "id": "gt6:block_dust_tungsten_carbide",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_tungsten_carbide",
+      "required": false
+    }
   ]
 }

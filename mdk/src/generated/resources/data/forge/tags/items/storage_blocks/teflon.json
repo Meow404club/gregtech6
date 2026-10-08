@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_teflon",
-    "gt6:block_ingot_teflon"
+    {
+      "id": "gt6:block_dust_teflon",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_teflon",
+      "required": false
+    }
   ]
 }

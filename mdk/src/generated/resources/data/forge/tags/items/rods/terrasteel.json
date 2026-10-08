@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_terrasteel"
+    {
+      "id": "gt6:stick_terrasteel",
+      "required": false
+    }
   ]
 }

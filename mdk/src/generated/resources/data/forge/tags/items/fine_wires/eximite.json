@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_eximite"
+    {
+      "id": "gt6:wire_fine_eximite",
+      "required": false
+    }
   ]
 }

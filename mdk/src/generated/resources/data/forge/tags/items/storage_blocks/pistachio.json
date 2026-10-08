@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_pistachio"
+    {
+      "id": "gt6:block_dust_pistachio",
+      "required": false
+    }
   ]
 }

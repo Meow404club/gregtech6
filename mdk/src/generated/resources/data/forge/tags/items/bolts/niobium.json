@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_niobium"
+    {
+      "id": "gt6:bolt_niobium",
+      "required": false
+    }
   ]
 }

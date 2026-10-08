@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_coffee"
+    {
+      "id": "gt6:block_dust_coffee",
+      "required": false
+    }
   ]
 }

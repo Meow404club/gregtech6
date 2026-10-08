@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_kreknorite"
+    {
+      "id": "gt6:ingot_kreknorite",
+      "required": false
+    }
   ]
 }

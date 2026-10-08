@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_tartarite"
+    {
+      "id": "gt6:stick_tartarite",
+      "required": false
+    }
   ]
 }

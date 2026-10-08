@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_desichalkos"
+    {
+      "id": "gt6:dust_desichalkos",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_wax_plant",
-    "gt6:block_ingot_wax_plant"
+    {
+      "id": "gt6:block_dust_wax_plant",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_wax_plant",
+      "required": false
+    }
   ]
 }

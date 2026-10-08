@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_zirconium"
+    {
+      "id": "gt6:gem_zirconium",
+      "required": false
+    }
   ]
 }

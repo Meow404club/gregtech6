@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_neodymium"
+    {
+      "id": "gt6:nugget_neodymium",
+      "required": false
+    }
   ]
 }

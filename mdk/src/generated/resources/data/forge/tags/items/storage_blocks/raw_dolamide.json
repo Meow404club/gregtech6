@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_dolamide"
+    {
+      "id": "gt6:block_raw_dolamide",
+      "required": false
+    }
   ]
 }

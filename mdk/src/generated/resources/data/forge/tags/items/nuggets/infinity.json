@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_infinity"
+    {
+      "id": "gt6:nugget_infinity",
+      "required": false
+    }
   ]
 }

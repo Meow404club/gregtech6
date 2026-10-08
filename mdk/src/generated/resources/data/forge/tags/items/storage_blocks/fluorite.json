@@ -1,7 +1,16 @@
 {
   "values": [
-    "gt6:block_gem_fluorite",
-    "gt6:block_dust_fluorite",
-    "gt6:block_ingot_fluorite"
+    {
+      "id": "gt6:block_gem_fluorite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_fluorite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_fluorite",
+      "required": false
+    }
   ]
 }

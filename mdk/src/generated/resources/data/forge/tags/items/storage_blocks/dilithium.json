@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_dilithium",
-    "gt6:block_dust_dilithium"
+    {
+      "id": "gt6:block_gem_dilithium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_dilithium",
+      "required": false
+    }
   ]
 }

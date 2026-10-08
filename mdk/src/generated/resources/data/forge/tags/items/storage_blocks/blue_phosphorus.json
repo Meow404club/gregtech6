@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_blue_phosphorus",
-    "gt6:block_dust_blue_phosphorus"
+    {
+      "id": "gt6:block_gem_blue_phosphorus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_blue_phosphorus",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_weedwood"
+    {
+      "id": "gt6:block_dust_weedwood",
+      "required": false
+    }
   ]
 }

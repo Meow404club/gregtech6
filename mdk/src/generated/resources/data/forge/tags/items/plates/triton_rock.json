@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_triton_rock"
+    {
+      "id": "gt6:plate_triton_rock",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_dark_iron"
+    {
+      "id": "gt6:ingot_dark_iron",
+      "required": false
+    }
   ]
 }

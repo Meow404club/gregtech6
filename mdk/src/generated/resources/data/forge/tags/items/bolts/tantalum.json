@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_tantalum"
+    {
+      "id": "gt6:bolt_tantalum",
+      "required": false
+    }
   ]
 }

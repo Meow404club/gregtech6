@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_cosmic_neutronium"
+    {
+      "id": "gt6:gear_gt_small_cosmic_neutronium",
+      "required": false
+    }
   ]
 }

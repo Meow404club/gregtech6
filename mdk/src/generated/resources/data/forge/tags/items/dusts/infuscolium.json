@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_infuscolium"
+    {
+      "id": "gt6:dust_infuscolium",
+      "required": false
+    }
   ]
 }

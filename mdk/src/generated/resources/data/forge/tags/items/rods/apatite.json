@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_apatite"
+    {
+      "id": "gt6:stick_apatite",
+      "required": false
+    }
   ]
 }

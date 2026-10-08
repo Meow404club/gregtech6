@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_sodium_hydrogencarbonate"
+    {
+      "id": "gt6:block_dust_sodium_hydrogencarbonate",
+      "required": false
+    }
   ]
 }

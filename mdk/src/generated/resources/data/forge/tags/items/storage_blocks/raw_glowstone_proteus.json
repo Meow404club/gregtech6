@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_glowstone_proteus"
+    {
+      "id": "gt6:block_raw_glowstone_proteus",
+      "required": false
+    }
   ]
 }

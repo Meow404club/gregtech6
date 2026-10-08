@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_mithril"
+    {
+      "id": "gt6:ingot_mithril",
+      "required": false
+    }
   ]
 }

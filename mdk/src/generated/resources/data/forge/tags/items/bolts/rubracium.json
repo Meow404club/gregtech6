@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_rubracium"
+    {
+      "id": "gt6:bolt_rubracium",
+      "required": false
+    }
   ]
 }

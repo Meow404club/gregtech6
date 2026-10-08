@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_niobium"
+    {
+      "id": "gt6:dust_niobium",
+      "required": false
+    }
   ]
 }

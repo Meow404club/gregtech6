@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_ignatius"
+    {
+      "id": "gt6:plate_double_ignatius",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_elven_elementium"
+    {
+      "id": "gt6:dust_elven_elementium",
+      "required": false
+    }
   ]
 }

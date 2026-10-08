@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_glowstone_refined"
+    {
+      "id": "gt6:plate_double_glowstone_refined",
+      "required": false
+    }
   ]
 }

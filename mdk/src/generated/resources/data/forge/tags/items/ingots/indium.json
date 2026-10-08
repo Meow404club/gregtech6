@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_indium"
+    {
+      "id": "gt6:ingot_indium",
+      "required": false
+    }
   ]
 }

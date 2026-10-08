@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_void_metal"
+    {
+      "id": "gt6:nugget_void_metal",
+      "required": false
+    }
   ]
 }

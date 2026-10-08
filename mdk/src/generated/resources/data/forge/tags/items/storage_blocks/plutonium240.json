@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_plutonium240",
-    "gt6:block_ingot_plutonium240"
+    {
+      "id": "gt6:block_dust_plutonium240",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_plutonium240",
+      "required": false
+    }
   ]
 }

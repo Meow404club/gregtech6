@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_iapetus_rock"
+    {
+      "id": "gt6:bolt_iapetus_rock",
+      "required": false
+    }
   ]
 }

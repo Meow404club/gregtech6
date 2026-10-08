@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_fish_rotten"
+    {
+      "id": "gt6:dust_fish_rotten",
+      "required": false
+    }
   ]
 }

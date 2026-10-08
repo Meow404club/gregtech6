@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_titanium_iridium",
-    "gt6:block_ingot_titanium_iridium"
+    {
+      "id": "gt6:block_dust_titanium_iridium",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_titanium_iridium",
+      "required": false
+    }
   ]
 }

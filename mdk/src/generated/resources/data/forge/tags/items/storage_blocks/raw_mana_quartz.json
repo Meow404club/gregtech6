@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_mana_quartz"
+    {
+      "id": "gt6:block_raw_mana_quartz",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_astral_silver"
+    {
+      "id": "gt6:stick_astral_silver",
+      "required": false
+    }
   ]
 }

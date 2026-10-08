@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_workers_alloy"
+    {
+      "id": "gt6:ingot_workers_alloy",
+      "required": false
+    }
   ]
 }

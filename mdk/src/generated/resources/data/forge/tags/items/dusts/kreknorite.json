@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_kreknorite"
+    {
+      "id": "gt6:dust_kreknorite",
+      "required": false
+    }
   ]
 }

@@ -10,7 +10,14 @@ import com.google.gson.JsonObject;
 
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.registry.GT6Cells;
+import gregtech6.registry.GT6ChargingLockers;
+import gregtech6.registry.GT6Chests;
 import gregtech6.registry.GT6ForeignMaterialAtlas;
+import gregtech6.registry.GT6Hoppers;
+import gregtech6.registry.GTBarrels;
+import gregtech6.registry.GTFluidPipes;
+import gregtech6.registry.GTMachines;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GTMaterialItems;
 
@@ -48,6 +55,16 @@ import gregtech6.registry.GTMaterialItems;
  *     tree carries no loot JSON referencing a would-be-absent id — the upstream bare-install
  *     shape (no item, no loot row; Loader_Loot addLoot :566-569 skip face), with the declared
  *     cost that an install carrying the owning mod also misses the row.</li>
+ * <li><b>tags</b> (task tag-residual-convergence, the 2103 TagLoader error face) have no
+ *     top-level condition mechanism either (forge 1.20.1 TagLoader.patch carries only the
+ *     per-entry {@code required} flag — the TagFile codec reads values/replace/remove, no
+ *     conditions key; NeoForge 21.1 the same), so the gated MEMBERS ship
+ *     {@code "required": false} (the vanilla optional form — the twilight deadrock band's
+ *     addOptional shape): the bare install loads the tag clean (absent optional members
+ *     never error), the modded install resolves them and JOINS — the same
+ *     loads-iff-registered correspondence the recipe conditions give, without a declared
+ *     loss. {@link #gatedId} keys the emission routing; the map covers the material walks
+ *     AND the mdh-6 machine families ({@link #machineFamilies}).</li>
  * </ul>
  *
  * <p>The predicate is registration-axis-free BY RULING: {@link #gatingDomain} reads the static
@@ -58,6 +75,8 @@ public final class GT6ForeignRowConvergence {
 
     /** item id (the {@code itemIdOf} form, no namespace) -> owning modid, for every gated gt6 pair. */
     private static Map<String, String> sGatedIds;
+    /** The machine-family tail (the tag face only): paths the two material walks never carry. */
+    private static Map<String, String> sMachineGatedIds;
 
     private GT6ForeignRowConvergence() {
     }
@@ -77,7 +96,14 @@ public final class GT6ForeignRowConvergence {
         return GT6ForeignMaterialAtlas.seedableDomains().contains(tDomain) ? tDomain : null;
     }
 
-    /** The gated id map, lazily over the item + block walks (first use is post-initMaterials). */
+    /**
+     * The gated id map of the RECIPE + LOOT faces, lazily over the item + block walks (first
+     * use is post-initMaterials). The machine-family tail is deliberately NOT here: the loot
+     * face skips gated pairs at datagen over the material walks (the convergence card's four
+     * loot seams), and machine-family loot rows are the declared residual of the unported-
+     * family loot card — folding them in here would flip that card's law red without a fix
+     * behind it. {@link #gatedId} is the union (the tag face routes on it).
+     */
     private static Map<String, String> gatedIds() {
         if (sGatedIds == null) {
             Map<String, String> rIds = new HashMap<>();
@@ -92,6 +118,60 @@ public final class GT6ForeignRowConvergence {
             sGatedIds = rIds;
         }
         return sGatedIds;
+    }
+
+    /**
+     * The tag face extension (task tag-residual-convergence): the machine-family rows the two
+     * material walks never carry. Every mdh-6 gated row of the seven gated registries
+     * contributes its registered path — the SAME rows the class-load seed drops on an install
+     * lacking the owning mod ({@code registers()} = {@code GT6ModDrivers.isLoaded(driverDomain)}),
+     * keyed by the row's own registered path. The prefix walks above stay the bulk (2522 of the
+     * bare-boot census' 2848 distinct ids); these families are the 326 machine tail (ACT pairs,
+     * the metalset ladders, fluid pipes, high-tier drums, cells). A future gated family must
+     * tail-append here — the pin test's family census ratchet (GT6TagResidualConvergenceTest)
+     * fails loudly until it does.
+     */
+    private static void machineFamilies(Map<String, String> rIds) {
+        if (sMachineGatedIds == null) {
+            Map<String, String> rMachine = new HashMap<>();
+            for (GTMachines.CraftingTableRow tRow : GTMachines.CRAFTING_TABLE_ROWS)
+                putSeedable(rMachine, tRow.path(), tRow.material().driverDomain());
+            for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS)
+                putSeedable(rMachine, tRow.path(), tRow.material().driverDomain());
+            for (GT6Chests.ChestRow tRow : GT6Chests.ROWS)
+                putSeedable(rMachine, tRow.path(), tRow.material().driverDomain());
+            for (GT6ChargingLockers.ChargingLockerRow tRow : GT6ChargingLockers.ROWS)
+                putSeedable(rMachine, tRow.path(), tRow.material().driverDomain());
+            for (GTFluidPipes.FluidPipeMaterial tMat : GTFluidPipes.MATERIALS)
+                for (GTFluidPipes.FluidPipeVariant tVariant : GTFluidPipes.FluidPipeVariant.values())
+                    putSeedable(rMachine, new GTFluidPipes.FluidPipeRow(tMat, tVariant).path(), tMat.driverDomain());
+            for (GTBarrels.MetalDrumRow tRow : GTBarrels.HIGH_TIER_METAL_DRUMS)
+                putSeedable(rMachine, tRow.path(), tRow.driverDomain());
+            for (GTBarrels.MetalDrumRow tRow : GTBarrels.DRUM_64K_ROWS) // task material-mc-f-attachment-rows — the 64K tier landed after this card base; the manasteel row (BOTA PRIMARY, GTBarrels.java:223) is seed-hideable and must ship optional like the high tiers
+                putSeedable(rMachine, tRow.path(), tRow.driverDomain());
+            for (GT6Cells.CellRow tRow : GT6Cells.ROWS)
+                putSeedable(rMachine, tRow.path(), GT6Cells.driverDomainOf(tRow));
+            sMachineGatedIds = rMachine;
+        }
+        rIds.putAll(sMachineGatedIds);
+    }
+
+    /** The row gate: the mdh driver domain when SOME install lacks it (atlas seedable), else no entry. */
+    private static void putSeedable(Map<String, String> rIds, String aPath, String aDomain) {
+        if (aDomain != null && GT6ForeignMaterialAtlas.seedableDomains().contains(aDomain)) rIds.put(aPath, aDomain);
+    }
+
+    /**
+     * The tag-member gate (the tags analogue of {@link #rowDomains}): TRUE when the id's owner
+     * row hides with its owning mod absent — the member must ship {@code "required": false}
+     * so the bare install loads the tag clean and the modded install joins the member. The
+     * key is the registered path (no namespace) — the tag-member form. The map is the UNION
+     * of the material walks and the machine-family tail (a lazy-cache union: the machine map
+     * fills once, then rides every call).
+     */
+    public static boolean gatedId(String aNamespaceFreePath) {
+        if (sMachineGatedIds == null) machineFamilies(new HashMap<>());
+        return sMachineGatedIds.containsKey(aNamespaceFreePath) || gatedIds().containsKey(aNamespaceFreePath);
     }
 
     /** The modids a serialized recipe row must require: the gated domains of its gt6 item refs, sorted. */

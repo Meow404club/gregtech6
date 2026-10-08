@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_plutonium238"
+    {
+      "id": "gt6:block_raw_plutonium238",
+      "required": false
+    }
   ]
 }

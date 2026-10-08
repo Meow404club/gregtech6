@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_terrasteel",
-    "gt6:block_ingot_terrasteel"
+    {
+      "id": "gt6:block_dust_terrasteel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_terrasteel",
+      "required": false
+    }
   ]
 }

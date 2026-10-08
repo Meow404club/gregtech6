@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_jade"
+    {
+      "id": "gt6:gem_jade",
+      "required": false
+    }
   ]
 }

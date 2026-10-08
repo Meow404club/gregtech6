@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_alexandrite"
+    {
+      "id": "gt6:gem_alexandrite",
+      "required": false
+    }
   ]
 }

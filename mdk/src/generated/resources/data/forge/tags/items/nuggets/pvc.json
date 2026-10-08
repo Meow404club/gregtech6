@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_pvc"
+    {
+      "id": "gt6:nugget_pvc",
+      "required": false
+    }
   ]
 }

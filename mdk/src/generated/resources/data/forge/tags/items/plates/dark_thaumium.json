@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_dark_thaumium"
+    {
+      "id": "gt6:plate_dark_thaumium",
+      "required": false
+    }
   ]
 }

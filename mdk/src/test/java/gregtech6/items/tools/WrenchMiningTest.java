@@ -315,7 +315,7 @@ public class WrenchMiningTest {
 				+ "+ 24 valves + 8 turbines + 1 reactor + 5 energizers + 2 dechargers + 1 absorber + 3 BE + 18 pipes + 5 transformers + 128 storage)");
 	}
 
-	/** The wrench tag's committed values (the runData product) as a path set. */
+	/** The wrench tag's committed values (the runData product) as a path set — both member forms (the strict string and the tag-residual-convergence optional object). */
 	private static Set<String> wrenchTagMembers() throws Exception {
 		InputStream tStream = WrenchMiningTest.class.getClassLoader()
 				.getResourceAsStream("data/gt6/tags/blocks/mineable/wrench.json");
@@ -324,9 +324,8 @@ public class WrenchMiningTest {
 				.getAsJsonObject().getAsJsonArray("values");
 		Set<String> rMembers = new java.util.HashSet<>();
 		for (var tEntry : tArray) {
-			assertTrue(tEntry.isJsonPrimitive(),
-					"zero optional members — a required:false TagEntry serializes as an object");
-			rMembers.add(tEntry.getAsString());
+			rMembers.add(tEntry.isJsonPrimitive() ? tEntry.getAsString()
+			: tEntry.getAsJsonObject().get("id").getAsString());
 		}
 		return rMembers;
 	}

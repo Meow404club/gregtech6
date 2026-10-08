@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_mithril"
+    {
+      "id": "gt6:plate_double_mithril",
+      "required": false
+    }
   ]
 }

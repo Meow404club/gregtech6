@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_crystalline_alloy"
+    {
+      "id": "gt6:dust_crystalline_alloy",
+      "required": false
+    }
   ]
 }

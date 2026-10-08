@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_elvorium"
+    {
+      "id": "gt6:stick_elvorium",
+      "required": false
+    }
   ]
 }

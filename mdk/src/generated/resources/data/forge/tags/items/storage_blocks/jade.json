@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_jade",
-    "gt6:block_dust_jade"
+    {
+      "id": "gt6:block_gem_jade",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_jade",
+      "required": false
+    }
   ]
 }

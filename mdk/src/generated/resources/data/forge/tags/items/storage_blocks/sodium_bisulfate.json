@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_sodium_bisulfate"
+    {
+      "id": "gt6:block_dust_sodium_bisulfate",
+      "required": false
+    }
   ]
 }

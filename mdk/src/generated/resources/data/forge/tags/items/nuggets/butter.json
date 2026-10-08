@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_butter"
+    {
+      "id": "gt6:nugget_butter",
+      "required": false
+    }
   ]
 }

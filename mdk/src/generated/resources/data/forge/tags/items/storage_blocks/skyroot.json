@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_skyroot"
+    {
+      "id": "gt6:block_dust_skyroot",
+      "required": false
+    }
   ]
 }

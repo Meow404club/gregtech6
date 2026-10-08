@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_aluminium"
+    {
+      "id": "gt6:ingot_hot_aluminium",
+      "required": false
+    }
   ]
 }

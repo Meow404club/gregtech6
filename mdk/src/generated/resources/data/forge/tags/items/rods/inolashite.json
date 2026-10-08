@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_inolashite"
+    {
+      "id": "gt6:stick_inolashite",
+      "required": false
+    }
   ]
 }

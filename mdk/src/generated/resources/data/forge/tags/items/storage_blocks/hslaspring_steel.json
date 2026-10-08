@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_hslaspring_steel",
-    "gt6:block_ingot_hslaspring_steel"
+    {
+      "id": "gt6:block_dust_hslaspring_steel",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_hslaspring_steel",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_kalendrite"
+    {
+      "id": "gt6:wire_fine_kalendrite",
+      "required": false
+    }
   ]
 }

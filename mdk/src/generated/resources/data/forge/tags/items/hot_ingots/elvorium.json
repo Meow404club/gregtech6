@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_elvorium"
+    {
+      "id": "gt6:ingot_hot_elvorium",
+      "required": false
+    }
   ]
 }

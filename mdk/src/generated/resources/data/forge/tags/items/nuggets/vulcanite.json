@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_vulcanite"
+    {
+      "id": "gt6:nugget_vulcanite",
+      "required": false
+    }
   ]
 }

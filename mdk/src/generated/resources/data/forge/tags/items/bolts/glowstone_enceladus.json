@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_glowstone_enceladus"
+    {
+      "id": "gt6:bolt_glowstone_enceladus",
+      "required": false
+    }
   ]
 }

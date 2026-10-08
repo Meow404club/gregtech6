@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_lumium"
+    {
+      "id": "gt6:stick_lumium",
+      "required": false
+    }
   ]
 }

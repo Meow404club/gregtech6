@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_cast_iron"
+    {
+      "id": "gt6:ingot_cast_iron",
+      "required": false
+    }
   ]
 }

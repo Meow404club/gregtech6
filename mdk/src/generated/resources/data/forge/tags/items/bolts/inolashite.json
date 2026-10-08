@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_inolashite"
+    {
+      "id": "gt6:bolt_inolashite",
+      "required": false
+    }
   ]
 }

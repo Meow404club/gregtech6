@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_bakelite"
+    {
+      "id": "gt6:dust_bakelite",
+      "required": false
+    }
   ]
 }

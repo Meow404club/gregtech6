@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_pez"
+    {
+      "id": "gt6:block_dust_pez",
+      "required": false
+    }
   ]
 }

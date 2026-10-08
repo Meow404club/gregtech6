@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_zirconium"
+    {
+      "id": "gt6:wire_fine_zirconium",
+      "required": false
+    }
   ]
 }

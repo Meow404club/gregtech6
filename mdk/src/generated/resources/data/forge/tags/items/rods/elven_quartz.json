@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_elven_quartz"
+    {
+      "id": "gt6:stick_elven_quartz",
+      "required": false
+    }
   ]
 }

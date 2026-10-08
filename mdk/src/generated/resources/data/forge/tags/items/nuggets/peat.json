@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_peat"
+    {
+      "id": "gt6:nugget_peat",
+      "required": false
+    }
   ]
 }

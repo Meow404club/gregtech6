@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_aqua_middle"
+    {
+      "id": "gt6:block_raw_aqua_middle",
+      "required": false
+    }
   ]
 }

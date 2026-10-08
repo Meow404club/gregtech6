@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_plutonium240"
+    {
+      "id": "gt6:stick_plutonium240",
+      "required": false
+    }
   ]
 }

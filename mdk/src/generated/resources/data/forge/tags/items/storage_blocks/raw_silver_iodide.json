@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_silver_iodide"
+    {
+      "id": "gt6:block_raw_silver_iodide",
+      "required": false
+    }
   ]
 }

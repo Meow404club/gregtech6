@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_red_quartz"
+    {
+      "id": "gt6:block_raw_red_quartz",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_titanium_aluminide"
+    {
+      "id": "gt6:ingot_titanium_aluminide",
+      "required": false
+    }
   ]
 }

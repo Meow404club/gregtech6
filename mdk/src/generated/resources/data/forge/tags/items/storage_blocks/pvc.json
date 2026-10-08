@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_pvc",
-    "gt6:block_ingot_pvc"
+    {
+      "id": "gt6:block_dust_pvc",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_pvc",
+      "required": false
+    }
   ]
 }

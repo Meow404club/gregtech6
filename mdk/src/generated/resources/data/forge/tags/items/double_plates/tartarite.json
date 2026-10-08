@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_tartarite"
+    {
+      "id": "gt6:plate_double_tartarite",
+      "required": false
+    }
   ]
 }

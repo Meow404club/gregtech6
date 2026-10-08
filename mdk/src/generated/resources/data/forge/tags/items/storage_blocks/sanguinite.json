@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_sanguinite",
-    "gt6:block_ingot_sanguinite"
+    {
+      "id": "gt6:block_dust_sanguinite",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_sanguinite",
+      "required": false
+    }
   ]
 }

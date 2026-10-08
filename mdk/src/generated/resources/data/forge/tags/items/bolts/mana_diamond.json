@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_mana_diamond"
+    {
+      "id": "gt6:bolt_mana_diamond",
+      "required": false
+    }
   ]
 }

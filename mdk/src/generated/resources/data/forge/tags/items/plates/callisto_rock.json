@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_callisto_rock"
+    {
+      "id": "gt6:plate_callisto_rock",
+      "required": false
+    }
   ]
 }

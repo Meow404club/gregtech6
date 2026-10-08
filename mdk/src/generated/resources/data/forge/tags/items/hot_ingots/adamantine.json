@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_adamantine"
+    {
+      "id": "gt6:ingot_hot_adamantine",
+      "required": false
+    }
   ]
 }

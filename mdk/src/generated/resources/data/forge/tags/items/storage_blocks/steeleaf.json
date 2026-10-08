@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_steeleaf",
-    "gt6:block_ingot_steeleaf"
+    {
+      "id": "gt6:block_dust_steeleaf",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_steeleaf",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_sanguinite"
+    {
+      "id": "gt6:bolt_sanguinite",
+      "required": false
+    }
   ]
 }

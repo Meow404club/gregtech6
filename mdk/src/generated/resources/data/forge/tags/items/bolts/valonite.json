@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_valonite"
+    {
+      "id": "gt6:bolt_valonite",
+      "required": false
+    }
   ]
 }

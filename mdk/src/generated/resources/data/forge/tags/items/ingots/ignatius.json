@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_ignatius"
+    {
+      "id": "gt6:ingot_ignatius",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_blizz"
+    {
+      "id": "gt6:stick_blizz",
+      "required": false
+    }
   ]
 }

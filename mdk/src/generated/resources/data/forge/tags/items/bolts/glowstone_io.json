@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_glowstone_io"
+    {
+      "id": "gt6:bolt_glowstone_io",
+      "required": false
+    }
   ]
 }

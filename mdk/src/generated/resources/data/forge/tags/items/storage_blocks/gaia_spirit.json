@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_gaia_spirit",
-    "gt6:block_ingot_gaia_spirit"
+    {
+      "id": "gt6:block_dust_gaia_spirit",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_gaia_spirit",
+      "required": false
+    }
   ]
 }

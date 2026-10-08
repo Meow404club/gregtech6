@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_meteoflame_black_steel"
+    {
+      "id": "gt6:plate_meteoflame_black_steel",
+      "required": false
+    }
   ]
 }

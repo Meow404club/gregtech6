@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_mana_quartz",
-    "gt6:block_dust_mana_quartz"
+    {
+      "id": "gt6:block_gem_mana_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_mana_quartz",
+      "required": false
+    }
   ]
 }

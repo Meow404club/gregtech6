@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_mingrade"
+    {
+      "id": "gt6:dust_mingrade",
+      "required": false
+    }
   ]
 }

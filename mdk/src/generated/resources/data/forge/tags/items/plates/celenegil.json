@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_celenegil"
+    {
+      "id": "gt6:plate_celenegil",
+      "required": false
+    }
   ]
 }

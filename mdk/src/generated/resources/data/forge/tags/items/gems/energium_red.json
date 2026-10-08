@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_energium_red"
+    {
+      "id": "gt6:gem_energium_red",
+      "required": false
+    }
   ]
 }

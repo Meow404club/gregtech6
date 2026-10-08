@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_celenegil"
+    {
+      "id": "gt6:ingot_hot_celenegil",
+      "required": false
+    }
   ]
 }

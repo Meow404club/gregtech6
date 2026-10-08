@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_cosmic_neutronium"
+    {
+      "id": "gt6:nugget_cosmic_neutronium",
+      "required": false
+    }
   ]
 }

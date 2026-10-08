@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_alexandrite"
+    {
+      "id": "gt6:gear_gt_small_alexandrite",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_carmot",
-    "gt6:block_ingot_carmot"
+    {
+      "id": "gt6:block_dust_carmot",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_carmot",
+      "required": false
+    }
   ]
 }

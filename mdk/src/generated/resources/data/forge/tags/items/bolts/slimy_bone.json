@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_slimy_bone"
+    {
+      "id": "gt6:bolt_slimy_bone",
+      "required": false
+    }
   ]
 }

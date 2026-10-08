@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_niobium"
+    {
+      "id": "gt6:ingot_niobium",
+      "required": false
+    }
   ]
 }

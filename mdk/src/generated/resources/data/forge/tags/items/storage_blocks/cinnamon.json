@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_cinnamon"
+    {
+      "id": "gt6:block_dust_cinnamon",
+      "required": false
+    }
   ]
 }

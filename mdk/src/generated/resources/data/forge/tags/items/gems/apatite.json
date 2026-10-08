@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_apatite"
+    {
+      "id": "gt6:gem_apatite",
+      "required": false
+    }
   ]
 }

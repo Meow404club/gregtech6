@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_atlarus",
-    "gt6:block_ingot_atlarus"
+    {
+      "id": "gt6:block_dust_atlarus",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_atlarus",
+      "required": false
+    }
   ]
 }

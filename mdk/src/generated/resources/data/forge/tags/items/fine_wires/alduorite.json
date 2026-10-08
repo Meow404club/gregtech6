@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_alduorite"
+    {
+      "id": "gt6:wire_fine_alduorite",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:wire_fine_adamantine"
+    {
+      "id": "gt6:wire_fine_adamantine",
+      "required": false
+    }
   ]
 }

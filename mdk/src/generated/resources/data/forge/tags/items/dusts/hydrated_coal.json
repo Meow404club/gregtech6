@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_hydrated_coal"
+    {
+      "id": "gt6:dust_hydrated_coal",
+      "required": false
+    }
   ]
 }

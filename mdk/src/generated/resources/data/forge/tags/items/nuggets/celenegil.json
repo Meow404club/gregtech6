@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_celenegil"
+    {
+      "id": "gt6:nugget_celenegil",
+      "required": false
+    }
   ]
 }

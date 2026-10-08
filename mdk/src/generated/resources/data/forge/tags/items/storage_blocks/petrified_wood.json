@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_petrified_wood"
+    {
+      "id": "gt6:block_dust_petrified_wood",
+      "required": false
+    }
   ]
 }

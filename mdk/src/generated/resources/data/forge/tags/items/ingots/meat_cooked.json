@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_meat_cooked"
+    {
+      "id": "gt6:ingot_meat_cooked",
+      "required": false
+    }
   ]
 }

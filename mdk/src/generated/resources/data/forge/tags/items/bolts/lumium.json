@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_lumium"
+    {
+      "id": "gt6:bolt_lumium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_tungsten_sintered"
+    {
+      "id": "gt6:bolt_tungsten_sintered",
+      "required": false
+    }
   ]
 }

@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_red_meteor",
-    "gt6:block_dust_red_meteor"
+    {
+      "id": "gt6:block_gem_red_meteor",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_red_meteor",
+      "required": false
+    }
   ]
 }

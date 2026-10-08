@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gem_prismane"
+    {
+      "id": "gt6:gem_prismane",
+      "required": false
+    }
   ]
 }

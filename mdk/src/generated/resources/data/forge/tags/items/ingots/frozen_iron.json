@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_frozen_iron"
+    {
+      "id": "gt6:ingot_frozen_iron",
+      "required": false
+    }
   ]
 }

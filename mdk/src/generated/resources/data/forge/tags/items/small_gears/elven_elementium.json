@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_elven_elementium"
+    {
+      "id": "gt6:gear_gt_small_elven_elementium",
+      "required": false
+    }
   ]
 }

@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_meutoite"
+    {
+      "id": "gt6:gear_gt_small_meutoite",
+      "required": false
+    }
   ]
 }

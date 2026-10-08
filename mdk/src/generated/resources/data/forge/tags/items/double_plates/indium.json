@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_double_indium"
+    {
+      "id": "gt6:plate_double_indium",
+      "required": false
+    }
   ]
 }

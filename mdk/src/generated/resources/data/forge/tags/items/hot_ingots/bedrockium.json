@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_bedrockium"
+    {
+      "id": "gt6:ingot_hot_bedrockium",
+      "required": false
+    }
   ]
 }

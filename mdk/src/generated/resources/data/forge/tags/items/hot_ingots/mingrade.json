@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_mingrade"
+    {
+      "id": "gt6:ingot_hot_mingrade",
+      "required": false
+    }
   ]
 }

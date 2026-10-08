@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_raw_alduorite"
+    {
+      "id": "gt6:block_raw_alduorite",
+      "required": false
+    }
   ]
 }

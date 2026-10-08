@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_fluorite"
+    {
+      "id": "gt6:nugget_fluorite",
+      "required": false
+    }
   ]
 }

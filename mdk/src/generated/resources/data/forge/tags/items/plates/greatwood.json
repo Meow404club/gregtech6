@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_greatwood"
+    {
+      "id": "gt6:plate_greatwood",
+      "required": false
+    }
   ]
 }

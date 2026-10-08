@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_red_matter"
+    {
+      "id": "gt6:bolt_red_matter",
+      "required": false
+    }
   ]
 }

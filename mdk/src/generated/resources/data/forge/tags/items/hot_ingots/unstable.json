@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_unstable"
+    {
+      "id": "gt6:ingot_hot_unstable",
+      "required": false
+    }
   ]
 }

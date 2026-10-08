@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_niflheim_power"
+    {
+      "id": "gt6:dust_niflheim_power",
+      "required": false
+    }
   ]
 }

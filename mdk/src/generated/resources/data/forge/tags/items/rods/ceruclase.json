@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_ceruclase"
+    {
+      "id": "gt6:stick_ceruclase",
+      "required": false
+    }
   ]
 }

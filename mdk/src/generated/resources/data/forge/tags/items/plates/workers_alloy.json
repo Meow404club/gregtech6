@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:plate_workers_alloy"
+    {
+      "id": "gt6:plate_workers_alloy",
+      "required": false
+    }
   ]
 }

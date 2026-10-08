@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_eudialyte",
-    "gt6:block_dust_eudialyte"
+    {
+      "id": "gt6:block_gem_eudialyte",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_eudialyte",
+      "required": false
+    }
   ]
 }

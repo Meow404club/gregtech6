@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_elven_dragonstone"
+    {
+      "id": "gt6:dust_elven_dragonstone",
+      "required": false
+    }
   ]
 }

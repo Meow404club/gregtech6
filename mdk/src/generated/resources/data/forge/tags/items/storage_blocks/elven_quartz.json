@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_gem_elven_quartz",
-    "gt6:block_dust_elven_quartz"
+    {
+      "id": "gt6:block_gem_elven_quartz",
+      "required": false
+    },
+    {
+      "id": "gt6:block_dust_elven_quartz",
+      "required": false
+    }
   ]
 }

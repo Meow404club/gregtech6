@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_fireleaf"
+    {
+      "id": "gt6:stick_fireleaf",
+      "required": false
+    }
   ]
 }

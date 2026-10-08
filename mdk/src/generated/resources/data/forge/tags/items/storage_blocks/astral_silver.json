@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_astral_silver",
-    "gt6:block_ingot_astral_silver"
+    {
+      "id": "gt6:block_dust_astral_silver",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_astral_silver",
+      "required": false
+    }
   ]
 }

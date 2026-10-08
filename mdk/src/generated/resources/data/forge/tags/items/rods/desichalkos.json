@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:stick_desichalkos"
+    {
+      "id": "gt6:stick_desichalkos",
+      "required": false
+    }
   ]
 }

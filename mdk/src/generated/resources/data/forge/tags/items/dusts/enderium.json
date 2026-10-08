@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_enderium"
+    {
+      "id": "gt6:dust_enderium",
+      "required": false
+    }
   ]
 }

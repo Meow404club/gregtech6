@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:bolt_rhea_rock"
+    {
+      "id": "gt6:bolt_rhea_rock",
+      "required": false
+    }
   ]
 }

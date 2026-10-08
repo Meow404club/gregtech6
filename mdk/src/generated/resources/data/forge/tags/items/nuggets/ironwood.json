@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:nugget_ironwood"
+    {
+      "id": "gt6:nugget_ironwood",
+      "required": false
+    }
   ]
 }

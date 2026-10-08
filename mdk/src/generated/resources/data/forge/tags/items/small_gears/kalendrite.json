@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:gear_gt_small_kalendrite"
+    {
+      "id": "gt6:gear_gt_small_kalendrite",
+      "required": false
+    }
   ]
 }

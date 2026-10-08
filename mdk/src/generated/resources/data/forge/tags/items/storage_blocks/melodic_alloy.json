@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_melodic_alloy",
-    "gt6:block_ingot_melodic_alloy"
+    {
+      "id": "gt6:block_dust_melodic_alloy",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_melodic_alloy",
+      "required": false
+    }
   ]
 }

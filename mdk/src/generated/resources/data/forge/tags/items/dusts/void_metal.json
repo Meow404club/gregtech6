@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:dust_void_metal"
+    {
+      "id": "gt6:dust_void_metal",
+      "required": false
+    }
   ]
 }

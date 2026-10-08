@@ -1,6 +1,12 @@
 {
   "values": [
-    "gt6:block_dust_frozen_iron",
-    "gt6:block_ingot_frozen_iron"
+    {
+      "id": "gt6:block_dust_frozen_iron",
+      "required": false
+    },
+    {
+      "id": "gt6:block_ingot_frozen_iron",
+      "required": false
+    }
   ]
 }

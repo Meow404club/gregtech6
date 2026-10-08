@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:block_dust_abyssal_oat"
+    {
+      "id": "gt6:block_dust_abyssal_oat",
+      "required": false
+    }
   ]
 }

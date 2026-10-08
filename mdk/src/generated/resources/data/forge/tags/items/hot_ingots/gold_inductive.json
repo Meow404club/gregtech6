@@ -1,5 +1,8 @@
 {
   "values": [
-    "gt6:ingot_hot_gold_inductive"
+    {
+      "id": "gt6:ingot_hot_gold_inductive",
+      "required": false
+    }
   ]
 }
