@@ -11,7 +11,6 @@ import java.util.List;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.TranslatableContents;
@@ -28,6 +27,7 @@ import gregapi.data.OP;
 import gregapi.data.TD;
 import gregapi.oredict.OreDictItemData;
 import gregtech6.components.OM;
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialItems;
 
@@ -76,13 +76,13 @@ public class GT6ComponentTooltipListenerTest {
 		} catch (Throwable ignored) {
 		}
 		GTMaterialItems.initMaterials();
-		sMachine = probeItem("fixture_f3h_machine", () -> new Item(new Item.Properties()));
-		sAlloyMachine = probeItem("fixture_f3h_alloy_machine", () -> new Item(new Item.Properties()));
-		sHintMachine = probeItem("fixture_f3h_hint_machine", () -> new Item(new Item.Properties()));
-		sDontShowMachine = probeItem("fixture_f3h_dontshow_machine", () -> new Item(new Item.Properties()));
-		sBare = probeItem("fixture_f3h_bare", () -> new Item(new Item.Properties()));
-		sPrefixIngot = probeItem("fixture_f3h_prefix_ingot",
-				() -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Fe));
+		sMachine = OMComponentFaceTest.probeItem("minecraft", "fixture_f3h_machine", Item::new);
+		sAlloyMachine = OMComponentFaceTest.probeItem("minecraft", "fixture_f3h_alloy_machine", Item::new);
+		sHintMachine = OMComponentFaceTest.probeItem("minecraft", "fixture_f3h_hint_machine", Item::new);
+		sDontShowMachine = OMComponentFaceTest.probeItem("minecraft", "fixture_f3h_dontshow_machine", Item::new);
+		sBare = OMComponentFaceTest.probeItem("minecraft", "fixture_f3h_bare", Item::new);
+		sPrefixIngot = OMComponentFaceTest.probeItem("minecraft", "fixture_f3h_prefix_ingot",
+				p -> new MaterialPrefixItem(p, OP.ingot, MT.Fe));
 	}
 
 	private static List<Component> hover(ItemStack aStack, boolean aAdvanced) {
@@ -198,61 +198,6 @@ public class GT6ComponentTooltipListenerTest {
 				"the DONT_SHOW_THIS_COMPONENT filter leaves zero rows, header included");
 	}
 
-	// ------------------------------------------------------------- the probe seat
-
-	/**
-	 * The offline probe item (the OMComponentFaceTest/GT6RecipeTagFallbackTest posture,
-	 * third mirror — the FileSawTest helper's grandchild): the intrusive holder makes
-	 * {@code new Item(...)} throw while the vanilla item registry is frozen, so the probe
-	 * item registers under a dedicated fixture id.
-	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Supplier<I> aCreator) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the Forge runtime shape: THREE locks must open (the vanilla frozen flag, the
-			// delegate ForgeRegistry.isFrozen, the NamespacedWrapper.locked register gate)
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 runtime shape: a single frozen flag guards both the intrusive-holder
-			// construction and Registry.register
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.get();
-		net.minecraft.core.Registry.register(tRegistry, aProbeId, rItem);
-		return rItem;
-	}
-
-	/** getDeclaredField along the superclass chain (the FileSawTest helper, mirrored). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// walk up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
+	// the probe seat: the single OMComponentFaceTest.probeItem definition serves this file
+	// (task om-hygiene-mini folded the private third mirror away — same body, one home).
 }

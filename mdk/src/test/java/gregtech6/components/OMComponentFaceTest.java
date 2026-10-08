@@ -53,7 +53,7 @@ import gregtech6.item.MaterialPrefixItem;
  * {@link #bootOffline()}/{@link #leaveTheProductionBindingInPlace()} additionally snapshot+restore
  * the whole map around the class so foreign entries survive it untouched.
  */
-class OMComponentFaceTest {
+public class OMComponentFaceTest {
 
 	/** The recyclable notification recorder — it records the registered item only (the wave2
 	 * recycling card listens for the container itself). */
@@ -143,7 +143,7 @@ class OMComponentFaceTest {
 	void providerArmBeatsTheMapOnlyOnOverrideReads() {
 		// the registered probe (the GT6RecipeTagFallbackTest posture — the Forge intrusive
 		// holder makes a bare `new MaterialPrefixItem` throw while the registry is frozen)
-		sProbeItem = probeItem("omface_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
+		sProbeItem = probeItem("minecraft", "omface_probe_ingot_iron", p -> new MaterialPrefixItem(p, OP.ingot, MT.Iron));
 		ItemStack tProbe = new ItemStack(sProbeItem);
 		// the map disagrees with the provider on purpose (prefix-less Copper data)
 		assertTrue(OM.setItemData(tProbe, new OreDictItemData(new OreDictMaterialStack(MT.Copper, CS.U))));
@@ -404,14 +404,35 @@ class OMComponentFaceTest {
 		assertTrue(OM.getStack(null, 1).isEmpty());
 	}
 
-	// ------------------------------------------------------------- the offline probe (the GT6RecipeTagFallbackTest helper, mirrored)
+	// ------------------------------------------------------------- the offline probe (THE single definition)
 
 	/**
-	 * The offline probe item (the FileSawTest/ScrewdriverTest precedent): the Forge
-	 * intrusive holder makes {@code new MaterialPrefixItem(...)} throw while the vanilla
-	 * item registry is frozen, so the probe item registers under a dedicated probe id.
+	 * The offline probe item (the FileSawTest/ScrewdriverTest precedent, now THE one
+	 * definition — task om-hygiene-mini folded the FileSawTest and
+	 * GT6ComponentTooltipListenerTest private mirrors onto this method): the Forge
+	 * intrusive holder makes {@code new Item(...)} throw while the vanilla item registry
+	 * is frozen, so the probe item registers under a dedicated probe id. The creator
+	 * receives a fresh {@code Item.Properties} (call {@code durability(...)} on it when
+	 * the probe needs a max damage — the FileSaw items pin 512).
+	 *
+	 * <p>THREE locks guard the offline forge registry (the runtime class of
+	 * {@code BuiltInRegistries.ITEM} is a {@code NamespacedWrapper} over a ForgeRegistry
+	 * delegate): ① the vanilla {@code frozen} flag — the Item constructor's
+	 * intrusive-holder gate (Item.java:61); ② the delegate {@code ForgeRegistry.isFrozen}
+	 * — its own {@code unfreeze()} clears it and mirrors the wrapper lock off
+	 * (ForgeRegistry.java:693-698); ③ the {@code NamespacedWrapper.locked} register gate.
+	 * On the 21.1 leg a single frozen flag guards both the construction and
+	 * {@code Registry.register}. The walk is Test-JVM-local; the probe never reaches any
+	 * committed data.
+	 *
+	 * <p>The namespace is a PARAMETER on purpose (the one behavioral dimension the three
+	 * mirrors used to disagree on): the String overload would land every probe in the
+	 * minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
+	 * synthetic universe rides — its wrap-around aliasing re-deals on pool size. Callers
+	 * that historically rode the minecraft pool pass "minecraft"; probes that must stay
+	 * out of it pass "gt6".
 	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Supplier<I> aCreator) {
+	public static <I extends Item> I probeItem(String aNamespace, String aProbeId, java.util.function.Function<Item.Properties, I> aCreator) {
 		var tRegistry = BuiltInRegistries.ITEM;
 		//? if forge {
 		try {
@@ -442,12 +463,12 @@ class OMComponentFaceTest {
 			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
 		}
 		*///?}
-		I rItem = aCreator.get();
-		net.minecraft.core.Registry.register(tRegistry, aProbeId, rItem);
+		I rItem = aCreator.apply(new Item.Properties());
+		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation(aNamespace, aProbeId), rItem);
 		return rItem;
 	}
 
-	/** getDeclaredField along the superclass chain (the FileSawTest helper, mirrored). */
+	/** getDeclaredField along the superclass chain (the probe's own key-walk helper). */
 	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
 		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
 			try {
