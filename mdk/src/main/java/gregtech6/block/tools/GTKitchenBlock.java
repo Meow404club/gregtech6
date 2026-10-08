@@ -94,6 +94,17 @@ public class GTKitchenBlock extends GTEntityBlock {
 	public static final VoxelShape SHAPE_JUICER = Shapes.box(0.125, 0.0, 0.125, 0.875, 0.25, 0.875);
 
 	/**
+	 * The table variants' shape (task material-mc-e-tool-anvil-rows) — the upstream
+	 * collision AND selection pool verbatim: the FULL cube (MultiTileEntityBathingPotTable
+	 * :64-66 — {@code getCollisionBoundingBoxFromPool} == {@code
+	 * getSelectedBoundingBoxFromPool} == box(0,0,0)-(16,16,16); the stand + the raised pot
+	 * fill the whole cell visually — the {@code addCollisionBoxesToList2} wall boxes only
+	 * refine the additive pass on top of the same full pool box). The {@code noOcclusion()}
+	 * kitchen properties stay (the raised tub's cavity renders the neighbour faces).
+	 */
+	public static final VoxelShape SHAPE_TABLE = Shapes.block();
+
+	/**
 	 * @param aCapacityL the per-tank litres (upstream {@code NBT_TANK_CAPACITY}: wood pot
 	 *        4000, steel pot 8000, ceramic bowl 8000 — Loader_MultiTileEntities.java:2173/
 	 *        :2175/:2177; the BE sizes its input AND output tank ARRAYS from the recipe
@@ -101,8 +112,8 @@ public class GTKitchenBlock extends GTEntityBlock {
 	 * @param aMaterial the upstream {@code NBT_MATERIAL} (resolved lazily — class-load
 	 *        precedes MT.init); the -100 K melt doors read {@code mMeltingPoint} and the
 	 *        paint tint reads the colour (the {@link #materialOf} dispatch)
-	 * @param aShape the sub-cube vessel shape ({@link #SHAPE_TUB} / {@link #SHAPE_JUICER} —
-	 *        the upstream collision-pool row)
+	 * @param aShape the sub-cube vessel shape ({@link #SHAPE_TUB} / {@link #SHAPE_JUICER} /
+	 *        {@link #SHAPE_TABLE} — the upstream collision-pool row)
 	 * @param aTickerType the family BET (pot pair share one, the bowl mounts its own)
 	 */
 	public GTKitchenBlock(long aCapacityL, Supplier<OreDictMaterial> aMaterial, VoxelShape aShape,

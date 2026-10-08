@@ -72,6 +72,7 @@ public final class GT6MoldTintListener {
 		if (aBlock instanceof gregtech6.tileentity.tools.TileEntityFaucet.FaucetBlock tFaucet) return materialTintARGB(tFaucet.faucetRow().material().get(), aTintIndex);
 		if (aBlock instanceof GT6Crucibles.BasinBlock tBasin) return materialTintARGB(tBasin.row().material().get(), aTintIndex); // task material-mc-c-crucible-rows
 		if (aBlock instanceof GT6Crucibles.CrossingBlock tCrossing) return materialTintARGB(tCrossing.row().material().get(), aTintIndex);
+		if (aBlock instanceof gregtech6.block.tools.GTAnvilBlock tAnvil) return materialTintARGB(tAnvil.material(), aTintIndex); // task material-mc-e-tool-anvil-rows — the 33 tinted ladder rows
 		return -1;
 	}
 
@@ -118,17 +119,19 @@ public final class GT6MoldTintListener {
 				: -1;
 	}
 
-	/** The family walk: the 32 mold rows + the 2 faucets + the 39 smelteries + the 39 basins + the 39 crossings. */
+	/** The family walk: the 32 mold rows + the 2 faucets + the 39 smelteries + the 39 basins + the 39 crossings + the 35 anvil rows (task material-mc-e-tool-anvil-rows). */
 	private static Block[] familyBlocks() {
 		Block[] rBlocks = new Block[GT6Molds.BLOCKS_BY_PATH.size()
 				+ GT6Molds.FAUCET_BLOCKS_BY_PATH.size() + GT6Crucibles.BLOCKS_BY_PATH.size()
-				+ GT6Crucibles.BASIN_BLOCKS_BY_PATH.size() + GT6Crucibles.CROSSING_BLOCKS_BY_PATH.size()];
+				+ GT6Crucibles.BASIN_BLOCKS_BY_PATH.size() + GT6Crucibles.CROSSING_BLOCKS_BY_PATH.size()
+				+ gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.size()];
 		int i = 0;
 		for (var tHandle : GT6Molds.BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
 		for (var tHandle : GT6Molds.FAUCET_BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
 		for (var tHandle : GT6Crucibles.BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
 		for (var tHandle : GT6Crucibles.BASIN_BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
 		for (var tHandle : GT6Crucibles.CROSSING_BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
+		for (var tHandle : gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.values()) rBlocks[i++] = tHandle.get();
 		return rBlocks;
 	}
 
