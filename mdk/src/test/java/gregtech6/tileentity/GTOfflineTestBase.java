@@ -31,6 +31,13 @@ import org.junit.jupiter.api.BeforeAll;
  * takes an intrusive holder ({@code createIntrusiveHolder → validateWrite()}).
  * Synthetic fixture BETs therefore need the registry writable again, mirroring the
  * production registration window; assertions never touch the freeze state.
+ *
+ * <p><b>Accounting discipline (task offline-testbase-latch-neo)</b>: every domain test
+ * report must distinguish T(ested)/F(ailed)/S(kipped) per leg — a class with skips is
+ * <em>not</em> true-run green on that leg. History: before 2026-10-08 the item latch
+ * was deterministically ARMED=false on the whole 1.21.1 leg (its registries carry no
+ * {@code locked} field), so every {@link #registerItemFixture} consumer silently
+ * assume-skipped there while the leg still read "0 failures".
  */
 public abstract class GTOfflineTestBase {
 
@@ -47,9 +54,13 @@ public abstract class GTOfflineTestBase {
 
 	// -------------------------------------------------------------------------
 	// the item-fixture seat (task p35 — lifted verbatim from GT6BatteryItemTest, the
-	// forge wrapper latches the vanilla ITEM registry write window; on this JVM the
-	// latch fields may be unreachable (module access), in which case the fixture
-	// consumers ASSUME-SKIP)
+	// latch opens the vanilla ITEM registry write window. Two runtime shapes:
+	// forge 1.20.1 wraps vanilla registries in NamespacedWrapper (its own 'locked'
+	// gate on top of vanilla 'frozen'); neo 1.21.1 leaves them bare MappedRegistry
+	// where 'frozen' alone guards both the intrusive-holder ctor call and
+	// Registry.register, so 'locked' does not exist and stays skipped (task
+	// offline-testbase-latch-neo). If both flags are unreachable the latch stays
+	// unarmed and the fixture consumers ASSUME-SKIP.)
 	// -------------------------------------------------------------------------
 
 	/** The lazy latch holder — the class-init MUST stay lazy: touching BuiltInRegistries before the @BeforeAll Bootstrap fails the registry class. */
@@ -60,14 +71,18 @@ public abstract class GTOfflineTestBase {
 		static final boolean ARMED;
 		static {
 			sun.misc.Unsafe tUnsafe = null;
-			long tLocked = 0, tFrozen = 0;
+			long tLocked = -1, tFrozen = -1;
 			boolean tArmed = true;
 			try {
 				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
 				tUnsafeField.setAccessible(true);
 				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
 				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass();
-				tLocked = tUnsafe.objectFieldOffset(findNestedField(tClass, "locked"));
+				try {
+					tLocked = tUnsafe.objectFieldOffset(findNestedField(tClass, "locked"));
+				} catch (NoSuchFieldException ignored) {
+					// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
+				}
 				tFrozen = tUnsafe.objectFieldOffset(findNestedField(tClass, "frozen"));
 			} catch (Throwable ignored) {
 				tArmed = false; // the telemetry leg
@@ -97,13 +112,15 @@ public abstract class GTOfflineTestBase {
 	}
 
 	static void unlockItemRegistry() {
-		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.LOCKED_OFFSET, false);
-		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.FROZEN_OFFSET, false);
+		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
+		if (ItemLatch.LOCKED_OFFSET != -1) ItemLatch.UNSAFE.putBoolean(tRegistry, ItemLatch.LOCKED_OFFSET, false);
+		ItemLatch.UNSAFE.putBoolean(tRegistry, ItemLatch.FROZEN_OFFSET, false);
 	}
 
 	static void lockItemRegistry() {
-		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.FROZEN_OFFSET, true);
-		ItemLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, ItemLatch.LOCKED_OFFSET, true);
+		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
+		ItemLatch.UNSAFE.putBoolean(tRegistry, ItemLatch.FROZEN_OFFSET, true);
+		if (ItemLatch.LOCKED_OFFSET != -1) ItemLatch.UNSAFE.putBoolean(tRegistry, ItemLatch.LOCKED_OFFSET, true);
 	}
 
 	/** The ItemStack ctor needs a registry DELEGATE (ForgeRegistry.getDelegateOrThrow), so the fixtures register under fixture keys with the latch momentarily open. */

@@ -42,14 +42,18 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 	static final boolean ARMED;
 	static {
 		sun.misc.Unsafe tUnsafe = null;
-		long tLocked = 0, tFrozen = 0;
+		long tLocked = -1, tFrozen = -1;
 		boolean tArmed = true;
 		try {
 			java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
 			tUnsafeField.setAccessible(true);
 			tUnsafe = (sun.misc.Unsafe)tUnsafeField.get(null);
 			Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass();
-			tLocked = tUnsafe.objectFieldOffset(findField(tClass, "locked"));
+			try {
+				tLocked = tUnsafe.objectFieldOffset(findField(tClass, "locked"));
+			} catch (NoSuchFieldException ignored) {
+				// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
+			}
 			tFrozen = tUnsafe.objectFieldOffset(findField(tClass, "frozen"));
 		} catch (Throwable ignored) {
 			tArmed = false;
@@ -73,14 +77,14 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 
 	static Item registerFixture(String aKey, java.util.function.Supplier<Item> aItem) {
 		Assumptions.assumeTrue(ARMED, "the offline registry latch is unreachable on this JVM");
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, false);
+		if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, false);
 		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, false);
 		try {
 			return net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM,
 					new net.minecraft.resources.ResourceLocation("gt6", aKey), aItem.get());
 		} finally {
 			UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, true);
-			UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, true);
+			if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, true);
 		}
 	}
 

@@ -82,14 +82,18 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 	static final boolean ARMED;
 	static {
 		sun.misc.Unsafe tUnsafe = null;
-		long tLocked = 0, tFrozen = 0;
+		long tLocked = -1, tFrozen = -1;
 		boolean tArmed = true;
 		try {
 			java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
 			tUnsafeField.setAccessible(true);
 			tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
 			Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass();
-			tLocked = tUnsafe.objectFieldOffset(findField(tClass, "locked"));
+			try {
+				tLocked = tUnsafe.objectFieldOffset(findField(tClass, "locked"));
+			} catch (NoSuchFieldException ignored) {
+				// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
+			}
 			tFrozen = tUnsafe.objectFieldOffset(findField(tClass, "frozen"));
 		} catch (Throwable ignored) {
 			tArmed = false; // the telemetry leg: the carrier tests assume-skip
@@ -113,13 +117,13 @@ public class ElectricNineteenTest extends GTOfflineTestBase {
 	}
 
 	static void unlockItemRegistry() {
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, false);
+		if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, false);
 		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, false);
 	}
 
 	static void lockItemRegistry() {
 		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, true);
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, true);
+		if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, true);
 	}
 
 	/** The ItemStack ctor needs a registry DELEGATE, so the fixtures register under fixture keys with the latch momentarily open. */

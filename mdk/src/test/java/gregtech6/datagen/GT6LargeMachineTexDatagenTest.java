@@ -88,14 +88,18 @@ class GT6LargeMachineTexDatagenTest {
         static final boolean ARMED;
         static {
             sun.misc.Unsafe tUnsafe = null;
-            long tLocked = 0, tFrozen = 0;
+            long tLocked = -1, tFrozen = -1;
             boolean tArmed = true;
             try {
                 java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
                 tUnsafeField.setAccessible(true);
                 tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
                 Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
-                tLocked = tUnsafe.objectFieldOffset(walkNestedField(tClass, "locked"));
+                try {
+                    tLocked = tUnsafe.objectFieldOffset(walkNestedField(tClass, "locked"));
+                } catch (NoSuchFieldException ignored) {
+                    // the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
+                }
                 tFrozen = tUnsafe.objectFieldOffset(walkNestedField(tClass, "frozen"));
             } catch (Throwable ignored) {
                 tArmed = false; // the fallback leg (no constructed fixtures)
@@ -147,17 +151,18 @@ class GT6LargeMachineTexDatagenTest {
         // the fixture blocks build under the opened write window (no-op when the latch
         // is unreachable — the dispatch test then skips itself, the telemetry face)
         if (BlockLatch.ARMED) {
-            BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-                    BlockLatch.FROZEN_OFFSET, false);
-            BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-                    BlockLatch.LOCKED_OFFSET, false);
+            var tRegistry = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
+            if (BlockLatch.LOCKED_OFFSET != -1) {
+                BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.LOCKED_OFFSET, false);
+            }
+            BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.FROZEN_OFFSET, false);
             try {
                 sControllers = buildControllerBlocks();
             } finally {
-                BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-                        BlockLatch.FROZEN_OFFSET, true);
-                BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-                        BlockLatch.LOCKED_OFFSET, true);
+                BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.FROZEN_OFFSET, true);
+                if (BlockLatch.LOCKED_OFFSET != -1) {
+                    BlockLatch.UNSAFE.putBoolean(tRegistry, BlockLatch.LOCKED_OFFSET, true);
+                }
             }
         }
     }
