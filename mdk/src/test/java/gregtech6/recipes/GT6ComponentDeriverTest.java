@@ -224,7 +224,7 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				"exactly the derivation's own registration lands");
 
 		// the byte-identical second /reload
-		GT6ComponentDeriver.Key tKey1 = new ArrayList<>(GT6ComponentDeriver.sDerived.keySet()).get(0);
+		OM.StackKey tKey1 = new ArrayList<>(GT6ComponentDeriver.sDerived.keySet()).get(0);
 		GT6ComponentDeriver.apply(tManager, GT6ComponentDeriver.Manifest.EMPTY, ACCESS);
 		assertTrue(GT6ComponentDeriver.sDerived.containsKey(tKey1),
 				"the (item, damage) key is content-stable across passes (forge ItemStack equality is not — caps compare)");
@@ -253,7 +253,7 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				shaped2x2("minecraft:hopper", "minecraft:iron_ingot", 1));
 		GT6ComponentDeriver.apply(tManager, GT6ComponentDeriver.Manifest.EMPTY, ACCESS);
 		assertSame(tExplicit, OM.data(tHopper), "the explicit declaration beat the derivation write");
-		assertFalse(GT6ComponentDeriver.sDerived.containsKey(new GT6ComponentDeriver.Key(Items.HOPPER, 0)),
+		assertFalse(GT6ComponentDeriver.sDerived.containsKey(new OM.StackKey(Items.HOPPER, 0)),
 				"a declined write is never tracked");
 
 		GT6ComponentDeriver.apply(new TestRecipeManager(), GT6ComponentDeriver.Manifest.EMPTY, ACCESS);

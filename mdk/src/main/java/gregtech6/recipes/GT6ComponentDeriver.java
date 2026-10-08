@@ -33,7 +33,6 @@ import com.google.gson.JsonParser;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -145,18 +144,15 @@ public final class GT6ComponentDeriver {
 	 */
 	public static Function<Ingredient, Collection<ItemStack>> sCellMembers = aCell -> List.of();
 
-	/** The derived set this engine authored: the (item, damage) key → what it wrote — the
-	 * upstream ItemStackContainer :103 key shape (the central face stores under the same
-	 * pair), NOT the ItemStack itself: forge-patched ItemStack equality compares capability
-	 * dispatchers, which are not content-stable across offline-fabricated copies (two
-	 * equal-content result stacks answered equals=false in the idempotency pin), and a
-	 * false-unequal key would retire+rewrite a LIVE derivation every /reload. The reconcile
-	 * bookkeeping (the class doc); test-visible for the state hygiene. */
-	static Map<Key, Derived> sDerived = new LinkedHashMap<>();
-
-	/** The derivation key: (item, damage), the OM.StackKey shape (central-face private, so a
-	 * local record here — same fields, same upstream :103 citation). */
-	record Key(Item item, int damage) {}
+	/** The derived set this engine authored: the {@link OM.StackKey} (item, damage) key → what
+	 * it wrote — the upstream ItemStackContainer :103 key shape, the central face's OWN key
+	 * record (task stackkey-unification folded the former local mirror into it), NOT the
+	 * ItemStack itself: forge-patched ItemStack equality compares capability dispatchers,
+	 * which are not content-stable across offline-fabricated copies (two equal-content result
+	 * stacks answered equals=false in the idempotency pin), and a false-unequal key would
+	 * retire+rewrite a LIVE derivation every /reload. The reconcile bookkeeping (the class
+	 * doc); test-visible for the state hygiene. */
+	static Map<OM.StackKey, Derived> sDerived = new LinkedHashMap<>();
 
 	/** One derived row: the natural-count stack the write went through (the central face's
 	 * amortization divides by ITS count, upstream :653-657) and the data instance authored. */
@@ -169,7 +165,7 @@ public final class GT6ComponentDeriver {
 	 * keeps the FIRST derivation (the add-only face, upstream parity).
 	 */
 	public static void apply(RecipeManager aManager, Manifest aManifest, net.minecraft.core.RegistryAccess aAccess) {
-		Map<Key, Derived> tFresh = new LinkedHashMap<>();
+		Map<OM.StackKey, Derived> tFresh = new LinkedHashMap<>();
 		//? if forge {
 		for (Recipe<?> tRecipe : aManager.getRecipes()) collect(tRecipe.getId(), tRecipe, aManifest, aAccess, tFresh);
 		//?} else {
@@ -179,7 +175,7 @@ public final class GT6ComponentDeriver {
 	}
 
 	/** The upstream CR.java:368-410 walk, one recipe. */
-	private static void collect(ResourceLocation aId, Recipe<?> aRecipe, Manifest aManifest, net.minecraft.core.RegistryAccess aAccess, Map<Key, Derived> aFresh) {
+	private static void collect(ResourceLocation aId, Recipe<?> aRecipe, Manifest aManifest, net.minecraft.core.RegistryAccess aAccess, Map<OM.StackKey, Derived> aFresh) {
 		if (!(aRecipe instanceof ShapedRecipe tShaped)) return; // shapeless v1: no derivation (CR.java:454 — the DEF default carries no REV)
 		if (!aManifest.shouldDerive(aId)) return;
 		ItemStack tResult = tShaped.getResultItem(aAccess);
@@ -190,7 +186,7 @@ public final class GT6ComponentDeriver {
 		int x = -1;
 		for (Ingredient tCell : tCells) tData[++x] = resolveCell(tCell);
 		if (!containsSomething(tData)) return; // upstream :409 gate (UT.Code.containsSomething :1327-1330)
-		aFresh.putIfAbsent(new Key(tResult.getItem(), tResult.getDamageValue()), new Derived(tResult, new OreDictItemData(tData))); // first wins
+		aFresh.putIfAbsent(new OM.StackKey(tResult.getItem(), tResult.getDamageValue()), new Derived(tResult, new OreDictItemData(tData))); // first wins
 	}
 
 	/**
@@ -224,7 +220,7 @@ public final class GT6ComponentDeriver {
 	 * the new/changed rows through the add-only face. Unchanged rows touch nothing — no
 	 * re-write, no duplicate recyclable registration (the class doc).
 	 */
-	private static void reconcile(Map<Key, Derived> aFresh) {
+	private static void reconcile(Map<OM.StackKey, Derived> aFresh) {
 		for (var tIterator = sDerived.entrySet().iterator(); tIterator.hasNext();) {
 			var tPrevious = tIterator.next();
 			Derived tCurrent = aFresh.get(tPrevious.getKey());
