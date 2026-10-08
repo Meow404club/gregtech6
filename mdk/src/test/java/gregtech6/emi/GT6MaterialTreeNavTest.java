@@ -78,6 +78,9 @@ import net.minecraft.world.item.Item;
  *     RecipeScreen.mouseScrolled :510-524 routes to the sidebar/page flip; the vendored
  *     MUI RecipeScreenMixin forwards only to its own UIWrapperWidget, not to api
  *     widgets);</li>
+ * <li><b>wheel/drag ops (task mattree-jei-panzoom)</b>: the JEI canvas face of the table —
+ *     wheelZoom steps WHEEL_STEP about the POINTER anchor (sign-direction, zero/NaN no-op,
+ *     ceiling freeze), dragPan is the clamped pan.</li>
  * <li><b>apply/unapply closure</b>: through every nav op the apply/unapply roundtrip
  *     stays exact, and two page opens are independent identities (no static state);</li>
  * <li><b>TransformSlot seam</b>: the bounds math (SlotWidget.getBounds is a non-final
@@ -153,6 +156,54 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		// guards: null action / null viewport are a consumed-nothing false
 		assertFalse(GT6MaterialTreeNav.handle(tView, null, tCx, tCy));
 		assertFalse(GT6MaterialTreeNav.handle(null, GT6MaterialTreeNav.Action.ZOOM_IN, tCx, tCy));
+	}
+
+	// ------------------------------------------------------------------
+	// the wheel/drag ops (task mattree-jei-panzoom: the JEI canvas face of the table)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void wheelZoomAnchorsAtThePointerAndDragsPan() {
+		double tPx = 60.0, tPy = 90.0; // a pointer anchor off-centre — the wheel's whole point
+
+		// one notch in: the exact WHEEL_STEP, the tree point under the pointer stays under it
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		MaterialTreeViewport.Point tBefore = tView.unapply(tPx, tPy);
+		GT6MaterialTreeNav.wheelZoom(tView, 1.0, tPx, tPy);
+		assertEquals(GT6MaterialTreeNav.WHEEL_STEP, tView.scale(), EPSILON);
+		MaterialTreeViewport.Point tAfter = tView.unapply(tPx, tPy);
+		assertEquals(tBefore.x(), tAfter.x(), EPSILON, "the pointer anchor holds on zoom-in");
+		assertEquals(tBefore.y(), tAfter.y(), EPSILON, "the pointer anchor holds on zoom-in");
+
+		// one notch out undoes it exactly (1.25 * 1/1.25); a fractional delta rides the signum
+		GT6MaterialTreeNav.wheelZoom(tView, -0.25, tPx, tPy);
+		assertEquals(1.0, tView.scale(), EPSILON);
+		assertEquals(0.0, tView.offsetX(), EPSILON);
+		assertEquals(0.0, tView.offsetY(), EPSILON);
+
+		// zero/NaN deltas are no-ops (a hostile event cannot move the pose)
+		GT6MaterialTreeNav.wheelZoom(tView, 0.0, tPx, tPy);
+		GT6MaterialTreeNav.wheelZoom(tView, Double.NaN, tPx, tPy);
+		assertEquals(1.0, tView.scale(), EPSILON);
+
+		// the ceiling freezes through the wheel too (the 档位幂等, no residue)
+		for (int i = 0; i < 40; i++) GT6MaterialTreeNav.wheelZoom(tView, 1.0, tPx, tPy);
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tView.scale(), EPSILON);
+		double tFrozenX = tView.offsetX(), tFrozenY = tView.offsetY();
+		GT6MaterialTreeNav.wheelZoom(tView, 1.0, tPx, tPy);
+		assertEquals(tFrozenX, tView.offsetX(), EPSILON);
+		assertEquals(tFrozenY, tView.offsetY(), EPSILON);
+
+		// the drag op is the clamped pan: huge ticks pin at the bounds, free ticks travel
+		GT6MaterialTreeNav.dragPan(tView, 1e9, 0);
+		assertEquals(0.0, tView.offsetX(), EPSILON, "the x pan ceiling is 0 (clamped)");
+		GT6MaterialTreeNav.dragPan(tView, 0, -1e9);
+		assertEquals(MaterialTreeDisplay.HEIGHT * (1 - tView.scale()), tView.offsetY(), EPSILON,
+				"the y pan floor is the canvas basis (206*(1-scale), clamped)");
+		// free travel away from the pinned corners: x opens leftward, y opens upward
+		GT6MaterialTreeNav.dragPan(tView, -1.0, 1.0);
+		assertEquals(-1.0, tView.offsetX(), EPSILON);
+		assertEquals(MaterialTreeDisplay.HEIGHT * (1 - tView.scale()) + 1.0, tView.offsetY(), EPSILON);
 	}
 
 	@Test

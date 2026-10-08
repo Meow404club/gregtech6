@@ -23,9 +23,10 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
 
 /**
  * The material-tree nav ACTION TABLE (task nav-m2-emi, the M2 EMI card's pure seam) —
- * every input source (ButtonWidget clicks, the canvas keyboard, the click-track slider)
- * funnels into {@link #handle}/{@code zoomToFraction} so the page has exactly one nav
- * behaviour, all of it riding the S1 {@link MaterialTreeViewport} math.
+ * every input source (ButtonWidget clicks, the canvas keyboard, the click-track slider, and
+ * since task mattree-jei-panzoom the JEI canvas wheel/drag) funnels into
+ * {@link #handle}/{@code zoomToFraction}/{@link #wheelZoom}/{@link #dragPan} so the page has
+ * exactly one nav behaviour, all of it riding the S1 {@link MaterialTreeViewport} math.
  *
  * <p><b>Pure</b>: only {@code java.lang} + the viewport import — no EMI, no MC (pinned by
  * {@code GT6MaterialTreeNavTest}), so the whole table is offline-testable and the M3 JEI /
@@ -43,6 +44,12 @@ public final class GT6MaterialTreeNav {
 
 	/** The button/keyboard zoom step — 2x, binary-exact so the clamps freeze without residue. */
 	public static final double ZOOM_FACTOR = 2.0;
+	/**
+	 * One wheel notch's zoom step (the JEI canvas wheel face, task mattree-jei-panzoom):
+	 * gentler than the 2x button 档位 because a wheel is continuous — the zoom-anchor card's
+	 * 1.25 档 (small steps are the wheel's job; the big jumps stay with the buttons).
+	 */
+	public static final double WHEEL_STEP = 1.25;
 	/** One arrow-key pan = one lane pitch of the shared layout (MaterialTreeLayout.LANE_PITCH). */
 	public static final double PAN_STEP = 28.0;
 
@@ -87,6 +94,27 @@ public final class GT6MaterialTreeNav {
 			case 48, 82 -> Action.RESET; // GLFW_KEY_0, GLFW_KEY_R
 			default -> null;
 		};
+	}
+
+	/**
+	 * The wheel op (the JEI canvas face): one notch of {@code aDelta} = one
+	 * {@link #WHEEL_STEP} about the given anchor — the pointer, so the tree point under it
+	 * stays under it (the zoom-at-cursor standard). The sign carries the direction (some
+	 * platforms send fractional deltas — the signum is the whole read); a zero/NaN delta is
+	 * a no-op. All the math stays in {@link MaterialTreeViewport#zoomAt}.
+	 */
+	public static void wheelZoom(MaterialTreeViewport aView, double aDelta, double aFocusX, double aFocusY) {
+		if (!(aDelta != 0.0)) return; // zero and NaN both fail the guard
+		aView.zoomAt(aFocusX, aFocusY, aDelta > 0 ? WHEEL_STEP : 1.0 / WHEEL_STEP);
+	}
+
+	/**
+	 * The drag-pan op (the JEI canvas face): one drag tick's screen-space delta. A
+	 * pass-through to {@link MaterialTreeViewport#pan} (which clamps) — named in the table so
+	 * no consumer leg carries a pan verb of its own.
+	 */
+	public static void dragPan(MaterialTreeViewport aView, double aDx, double aDy) {
+		aView.pan(aDx, aDy);
 	}
 
 	/**
