@@ -9,6 +9,9 @@ import brachy.modularui.screen.ModularScreen;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 /**
  * The GT6 face of the ModularUI machine open chain (task mui-a-open-chain — the P25
  * batch-A ruling "machines opened after this default to ModularUI"): the ACT full-chain
@@ -32,8 +35,19 @@ public interface GT6MuiMachine extends IUIHolder<PosGuiData> {
 	 * The generic client wrapper (the {@code GTActMenu.createScreen} :68-70 shape): the MUI
 	 * main panel under the MUI mod id, no per-machine state — the default serves every
 	 * implementor.
+	 *
+	 * <p>The {@code @OnlyIn} is the dist seam, not decoration: it strips this method from
+	 * the dedicated-server bytecode, so no server-side reflective walk over an implementor
+	 * resolves the client-only ModularScreen signature — the same mechanism as the fork's
+	 * IUIHolder.createScreen (api/IUIHolder.java:30-31) and the ACT override
+	 * (TileEntityAdvancedCraftingTable :855-860, the known_bugs.act_chain_rcon_red
+	 * precedent). This default was the one un-annotated link: /fill-tearing-down any
+	 * zero-override machine (TileEntityBasicMachine — the scanner) enumerated the
+	 * interface defaults and died on "Attempted to load class ModularScreen for invalid
+	 * dist DEDICATED_SERVER" (task mui-fill-teardown-distleak, qu_machines both legs).
 	 */
 	@Override
+	@OnlyIn(Dist.CLIENT)
 	default ModularScreen createScreen(PosGuiData aData, ModularPanel<?> aMainPanel) {
 		return new ModularScreen(brachy.modularui.ModularUI.MOD_ID, aMainPanel);
 	}
