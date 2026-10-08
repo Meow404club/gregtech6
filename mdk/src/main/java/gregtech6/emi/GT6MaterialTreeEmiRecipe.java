@@ -56,6 +56,14 @@ import gregtech6.registry.GTMaterialItems;
  * page-size source (RecipeDisplay.height = getDisplayHeight), and EMI stacks each recipe
  * at its own height, so the extra 20px cost nothing.
  *
+ * <p>The pointer seam (task mattree-emi-panzoom): the nav canvas also implements the
+ * vendored MUI {@code EmiInteractionSink}, so wheel zooms pointer-anchored and an
+ * empty-canvas drag pans — both gated to the tree canvas rect, with slot presses yielded
+ * to the native U/R/drag-stack faces (the canvas receives the page's slot list in add
+ * order and replays EMI's own bounds test). The interaction shape is the standalone-screen
+ * precedent's (wheel = anchored zoom, drag = follow-the-cursor pan), brought onto the
+ * recipe page through the one seam that can deliver these events.
+ *
  * <p><b>The icon-scale audit</b> (task mattree-item-zoom-pose): the page's labels ride the
  * unified {@link MaterialTreeLayout#pose} primitive at render time and the
  * {@link GT6MaterialTreeTransformSlot} bounds pan/zoom every slot face with the viewport —
@@ -145,6 +153,9 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 
 		List<Edge> tEdges = mDisplay.edges();
 		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(mDisplay);
+		// the nav canvas's slot yield set: every TransformSlot in add order, so a canvas press
+		// can replay EMI's own first-hit bounds test and yield to the native slot faces
+		List<GT6MaterialTreeTransformSlot> tSlots = new ArrayList<>();
 		// FIRST: the wires + arrowheads + labels, one drawable over the whole page ( GuiGraphics.fill
 		// per rect — no diagonal primitive on 1.20.1), so they render under the slots. The
 		// labels moved in here with the nav suite: their positions must follow the viewport
@@ -178,8 +189,8 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 			}
 		});
 		for (Node tNode : mDisplay.nodes()) {
-			aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tNode.stack()),
-					MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode), tView));
+			tSlots.add(aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tNode.stack()),
+					MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode), tView)));
 		}
 		// the v2 machine-icon nodes: a background-free slot (drawBack false — the bare 16x16 icon
 		// face) per machine-resolved edge, hover box one px around the shared helper's icon rect,
@@ -187,15 +198,20 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		for (int i = 0; i < tEdges.size(); i++) {
 			EdgeLayout tLayout = tLayouts.get(i);
 			if (tLayout.machine() == null) continue;
-			aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tEdges.get(i).machine()),
-					tLayout.machine().x() - 1, tLayout.machine().y() - 1, tView)
-					.drawBack(false)
+			// drawBack/appendTooltip return the SlotWidget supertype — mutate on the typed
+			// local, the chain result is the same instance
+			GT6MaterialTreeTransformSlot tMachine = new GT6MaterialTreeTransformSlot(EmiStack.of(tEdges.get(i).machine()),
+					tLayout.machine().x() - 1, tLayout.machine().y() - 1, tView);
+			tSlots.add(tMachine);
+			aWidgets.add(tMachine.drawBack(false)
 					.appendTooltip(Component.literal(tEdges.get(i).viaLabel())));
 		}
 		int i = 0;
 		for (Byproduct tByproduct : mDisplay.byproducts()) {
-			aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tByproduct.stack()),
-					MaterialTreeDisplay.byproductX(i), MaterialTreeDisplay.byproductY(), tView))
+			GT6MaterialTreeTransformSlot tByproductSlot = new GT6MaterialTreeTransformSlot(EmiStack.of(tByproduct.stack()),
+					MaterialTreeDisplay.byproductX(i), MaterialTreeDisplay.byproductY(), tView);
+			tSlots.add(tByproductSlot);
+			aWidgets.add(tByproductSlot)
 					.appendTooltip(Component.literal(tByproduct.sourceLabel()));
 			i++;
 		}
@@ -212,10 +228,11 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 				() -> true,
 				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, tCx, tCy));
 		aWidgets.add(new GT6MaterialTreeSliderWidget(tView, SLIDER_X, SLIDER_Y, SLIDER_W, SLIDER_H, tCx, tCy));
-		// the key canvas LAST: it covers the page for the keyboard face but paints nil and
-		// lets clicks fall through — the slots' U/R faces are untouched
+		// the key canvas LAST: it covers the page for the keyboard face but paints nil, and its
+		// mouse faces gate to the tree canvas (the pointer seam above) — clicks on slots pass
+		// through, so the slots' U/R faces are untouched
 		aWidgets.add(new GT6MaterialTreeNavWidget(tView, 0, 0,
-				MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H, tCx, tCy));
+				MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H, tCx, tCy, tSlots));
 		// hover hints — invisible tooltip widgets, they never consume clicks
 		aWidgets.addTooltipText(List.of(Component.literal("Zoom in (+)")), BUTTON_X0, BUTTON_Y, 12, 12);
 		aWidgets.addTooltipText(List.of(Component.literal("Zoom out (-)")), BUTTON_X0 + BUTTON_PITCH, BUTTON_Y, 12, 12);

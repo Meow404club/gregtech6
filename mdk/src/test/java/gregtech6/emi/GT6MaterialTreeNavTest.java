@@ -73,11 +73,16 @@ import net.minecraft.world.item.Item;
  *     exact unit transform (acceptance ①);</li>
  * <li><b>keyboard map</b>: GLFW key codes (verified javap lwjgl-glfw 3.3.1) map to the
  *     actions, unknown keys return null;</li>
+ * <li><b>wheel actions</b> (task mattree-emi-panzoom): WHEEL_IN/WHEEL_OUT step the
+ *     pointer-anchored 1.25x fine grain through the same table, the floor/ceiling freeze
+ *     included;</li>
+ * <li><b>the pointer seam</b> (task mattree-emi-panzoom): the nav canvas implements the
+ *     vendored MUI {@code EmiInteractionSink} — wheel consumes only inside the tree
+ *     canvas (strip and off-page scrolls stay EMI's) and pans only from an empty-canvas
+ *     press, while slot presses yield to the native U/R/drag-stack faces and a dead
+ *     gesture never consumes release;</li>
  * <li><b>click-track slider</b>: a click at track fraction f zooms to MIN + f*(MAX-MIN)
- *     about the canvas centre (the EMI 1.1.24 配方页 drag/scroll 硬不可达 substitute —
- *     RecipeScreen.mouseScrolled :510-524 routes to the sidebar/page flip; the vendored
- *     MUI RecipeScreenMixin forwards only to its own UIWrapperWidget, not to api
- *     widgets);</li>
+ *     about the canvas centre (the direct "point at a level" face beside the seam);</li>
  * <li><b>wheel/drag ops (task mattree-jei-panzoom)</b>: the JEI canvas face of the table —
  *     wheelZoom steps WHEEL_STEP about the POINTER anchor (sign-direction, zero/NaN no-op,
  *     ceiling freeze), dragPan is the clamped pan.</li>
@@ -223,6 +228,99 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		assertNull(GT6MaterialTreeNav.keyToAction(256)); // ESC
 		assertNull(GT6MaterialTreeNav.keyToAction(65)); // A
 		assertNull(GT6MaterialTreeNav.keyToAction(257)); // ENTER
+	}
+
+	// ------------------------------------------------------------------
+	// the wheel actions (task mattree-emi-panzoom: the pointer-anchored fine grain)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void wheelActionsZoomAtThePointerAnchor() {
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		// one notch in: 1.25x about the pointer (80, 60) — the tree point under it stays put
+		MaterialTreeViewport.Point tUnder = tView.unapply(80, 60);
+		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
+		assertEquals(1.25, tView.scale(), EPSILON);
+		assertEquals(-20.0, tView.offsetX(), EPSILON, "80 - 80*1.25");
+		assertEquals(-15.0, tView.offsetY(), EPSILON, "60 - 60*1.25");
+		MaterialTreeViewport.Point tBack = tView.unapply(80, 60);
+		assertEquals(tUnder.x(), tBack.x(), EPSILON, "the pointer anchor holds");
+		assertEquals(tUnder.y(), tBack.y(), EPSILON, "the pointer anchor holds");
+		// and out again, exactly home
+		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_OUT, 80, 60));
+		assertEquals(1.0, tView.scale(), EPSILON);
+		assertEquals(0.0, tView.offsetX(), EPSILON);
+		assertEquals(0.0, tView.offsetY(), EPSILON);
+		// the ceiling freeze is the same 档位幂等: hostile scrolling cannot drift the pose
+		GT6MaterialTreeNav.zoomToFraction(tView, 1.0, 80, 60);
+		double tFrozenX = tView.offsetX(), tFrozenY = tView.offsetY();
+		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tView.scale(), EPSILON);
+		assertEquals(tFrozenX, tView.offsetX(), EPSILON);
+		assertEquals(tFrozenY, tView.offsetY(), EPSILON);
+		// guards stay guards for the new actions too
+		assertFalse(GT6MaterialTreeNav.handle(tView, null, 80, 60));
+		assertFalse(GT6MaterialTreeNav.handle(null, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
+	}
+
+	// ------------------------------------------------------------------
+	// the pointer seam (task mattree-emi-panzoom: bounds-gated wheel/pan on the canvas)
+	// ------------------------------------------------------------------
+
+	@Test
+	public void thePointerSeamGatesWheelAndPanToTheCanvas() {
+		// a synthetic page: one slot at (10,10) 18px — everything else in the canvas is
+		// provably empty, so the gesture coords are deterministic without the layout table
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		GT6MaterialTreeTransformSlot tSlot = new GT6MaterialTreeTransformSlot(dev.emi.emi.api.stack.EmiStack.EMPTY, 10, 10, tView);
+		GT6MaterialTreeNavWidget tNav = new GT6MaterialTreeNavWidget(tView, 0, 0,
+				MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H,
+				MaterialTreeDisplay.WIDTH / 2.0, MaterialTreeDisplay.HEIGHT / 2.0, List.of(tSlot));
+
+		// wheel inside the canvas: consumed, pointer-anchored 1.25x
+		//? if forge {
+		assertTrue(tNav.mouseScrolled(80, 60, 1), "in-canvas wheel is consumed");
+		//?} else {
+		/*assertTrue(tNav.mouseScrolled(80, 60, 0, 1), "in-canvas wheel is consumed");
+		 *///?}
+		assertEquals(1.25, tView.scale(), EPSILON);
+		assertEquals(-20.0, tView.offsetX(), EPSILON);
+		assertEquals(-15.0, tView.offsetY(), EPSILON);
+		// wheel outside (the control strip below the canvas, and off-page negative x):
+		// NOT consumed — sidebar scroll / page flip keep their EMI behaviour
+		//? if forge {
+		assertFalse(tNav.mouseScrolled(GT6MaterialTreeEmiRecipe.SLIDER_X + 4, MaterialTreeDisplay.HEIGHT + 8, 1));
+		assertFalse(tNav.mouseScrolled(-3, 60, 1));
+		//?} else {
+		/*assertFalse(tNav.mouseScrolled(GT6MaterialTreeEmiRecipe.SLIDER_X + 4, MaterialTreeDisplay.HEIGHT + 8, 0, 1));
+		assertFalse(tNav.mouseScrolled(-3, 60, 0, 1));
+		 *///?}
+		assertEquals(1.25, tView.scale(), EPSILON, "a refused wheel moves nothing");
+		tView.reset();
+		tView.zoomAt(19, 19, 2); // the identity pose has ZERO pan slack (the S1 clamp pins it) —
+		// zoom 2x about the slot corner first: slot rect lands at (1..37), offsets (-19,-19)
+
+		// a slot press yields: the native U/R / drag-stack faces own it, no gesture opens
+		assertFalse(tNav.mouseClicked(30, 30, 0), "the transformed slot rect (1..37) is the native slot's press");
+		assertFalse(tNav.mouseDragged(0, 4, 4), "no gesture, no pan");
+		assertFalse(tNav.mouseReleased(0), "no gesture, release passes through");
+
+		// an empty-canvas press opens the pan gesture; the content follows the cursor
+		assertTrue(tNav.mouseClicked(60, 60, 0), "empty canvas press opens the pan gesture");
+		assertTrue(tNav.mouseDragged(0, 12, -7), "the live gesture consumes the drag");
+		assertEquals(-7.0, tView.offsetX(), EPSILON, "-19 + 12 (content follows the cursor)");
+		assertEquals(-26.0, tView.offsetY(), EPSILON, "-19 - 7");
+		assertTrue(tNav.mouseReleased(0), "the live gesture consumes the release");
+		assertFalse(tNav.mouseDragged(0, 5, 0), "the gesture is dead after release");
+		assertFalse(tNav.mouseReleased(0), "a dead gesture never consumes release");
+
+		// right button never pans; middle does (the standalone-screen precedent's shape)
+		assertFalse(tNav.mouseClicked(60, 60, 1));
+		assertTrue(tNav.mouseClicked(60, 60, 2), "middle opens the pan gesture too");
+		assertTrue(tNav.mouseDragged(2, 3, 3));
+		assertTrue(tNav.mouseReleased(2));
+		// the strip is control chrome, not canvas: no gesture from there
+		assertFalse(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X + 4, MaterialTreeDisplay.HEIGHT + 8, 0));
 	}
 
 	// ------------------------------------------------------------------
