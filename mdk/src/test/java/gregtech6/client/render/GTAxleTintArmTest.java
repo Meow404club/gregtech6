@@ -91,14 +91,18 @@ public class GTAxleTintArmTest extends GTOfflineTestBase {
 		static final boolean ARMED;
 		static {
 			sun.misc.Unsafe tUnsafe = null;
-			long tLocked = 0, tFrozen = 0;
+			long tLocked = -1, tFrozen = -1;
 			boolean tArmed = true;
 			try {
 				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
 				tUnsafeField.setAccessible(true);
 				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
 				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
-				tLocked = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "locked"));
+				try {
+					tLocked = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "locked"));
+				} catch (NoSuchFieldException ignored) {
+					// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
+				}
 				tFrozen = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "frozen"));
 			} catch (Throwable ignored) {
 				tArmed = false; // the fallback leg (no registered fixtures)
@@ -117,7 +121,7 @@ public class GTAxleTintArmTest extends GTOfflineTestBase {
 		GTAxleBlock tAxle;
 		BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
 				BlockLatch.FROZEN_OFFSET, false);
-		BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+		if (BlockLatch.LOCKED_OFFSET != -1) BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
 				BlockLatch.LOCKED_OFFSET, false);
 		try {
 			tAxle = new GTAxleBlock(BlockBehaviour.Properties.of(),
@@ -128,7 +132,7 @@ public class GTAxleTintArmTest extends GTOfflineTestBase {
 		} finally {
 			BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
 					BlockLatch.FROZEN_OFFSET, true);
-			BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+			if (BlockLatch.LOCKED_OFFSET != -1) BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
 					BlockLatch.LOCKED_OFFSET, true);
 		}
 		return tAxle;

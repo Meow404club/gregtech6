@@ -54,8 +54,9 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 	 * The block-construction write window (the GT6LargeMachineTexDatagenTest.BlockLatch
 	 * shape): real GT block classes cannot be constructed after the offline Bootstrap
 	 * froze the block registry, so the latch reopens the write window for the two fixture
-	 * blocks. Unarmed (the 1.21.1 JVM form) = the real-block tests telemetry-skip — the
-	 * known ItemLatch dual-leg asymmetry, the tex-large-machines 备案 form.
+	 * blocks. 'locked' only exists on the forge 1.20.1 wrapper — the 21.1 leg runs on
+	 * 'frozen' alone (the offline-testbase-latch-neo repair); if even that flag is
+	 * unreachable the real-block tests telemetry-skip.
 	 */
 	private static final class BlockLatch {
 		static final sun.misc.Unsafe UNSAFE;
@@ -64,14 +65,18 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 		static final boolean ARMED;
 		static {
 			sun.misc.Unsafe tUnsafe = null;
-			long tLocked = 0, tFrozen = 0;
+			long tLocked = -1, tFrozen = -1;
 			boolean tArmed = true;
 			try {
 				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
 				tUnsafeField.setAccessible(true);
 				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
 				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
-				tLocked = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "locked"));
+				try {
+					tLocked = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "locked"));
+				} catch (NoSuchFieldException ignored) {
+					// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
+				}
 				tFrozen = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "frozen"));
 			} catch (Throwable ignored) {
 				tArmed = false; // the fallback leg (no constructed fixtures)
@@ -110,22 +115,23 @@ public class GT6MachineBlockItemTest extends GTOfflineTestBase {
 				"the offline block-registry latch is unreachable on this JVM");
 		Block tCokeOven;
 		Block tEnergySource;
-		BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-				BlockLatch.FROZEN_OFFSET, false);
-		BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-				BlockLatch.LOCKED_OFFSET, false);
+		var tBlockRegistry = net.minecraft.core.registries.BuiltInRegistries.BLOCK;
+		if (BlockLatch.LOCKED_OFFSET != -1) {
+			BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.LOCKED_OFFSET, false);
+		}
+		BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.FROZEN_OFFSET, false);
 		try {
-			tCokeOven = net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+			tCokeOven = net.minecraft.core.Registry.register(tBlockRegistry,
 					new net.minecraft.resources.ResourceLocation("gt6", "fixture_tooltip_multiblock_coke_oven"),
 					new GTCokeOvenBlock(BlockBehaviour.Properties.of()));
-			tEnergySource = net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
+			tEnergySource = net.minecraft.core.Registry.register(tBlockRegistry,
 					new net.minecraft.resources.ResourceLocation("gt6", "fixture_tooltip_generator_rig"),
 					new GTEnergySourceBlock(BlockBehaviour.Properties.of()));
 		} finally {
-			BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-					BlockLatch.FROZEN_OFFSET, true);
-			BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-					BlockLatch.LOCKED_OFFSET, true);
+			BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.FROZEN_OFFSET, true);
+			if (BlockLatch.LOCKED_OFFSET != -1) {
+				BlockLatch.UNSAFE.putBoolean(tBlockRegistry, BlockLatch.LOCKED_OFFSET, true);
+			}
 		}
 		sCokeOven = registerItemFixture("fixture_tooltip_multiblock_coke_oven",
 				() -> new GT6MachineBlockItem(tCokeOven, new Item.Properties(), "multiblock"));
