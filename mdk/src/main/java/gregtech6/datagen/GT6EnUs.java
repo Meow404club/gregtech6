@@ -206,6 +206,7 @@ public class GT6EnUs extends LanguageProvider {
         addBeams(); // task beam-blocks-register — table-tail append
         addConcrete(); // task concrete-blocks-register — table-tail append
         addWoodenPanels(); // task material-mc-g3-plank-panels — table-tail append
+        addPanels(); // task material-mc-g1-panels-dyed — table-tail append
         addBakeFoods(); // task food-bake-items — table-tail append
         addCropFoods(); // task food-crop-items — table-tail append
         addCropCards(); // task cbc-3-crop-data-assets — table-tail append
@@ -2369,6 +2370,21 @@ public class GT6EnUs extends LanguageProvider {
         add(gregtech6.block.concrete.GT6ConcreteBlock.REINFORCED_NAME_KEY, "%s Reinforced Concrete");
         add(gregtech6.block.concrete.GT6ConcreteSlabBlock.SLAB_NAME_KEY, "%s Concrete Slab");
         add(gregtech6.block.concrete.GT6ConcreteSlabBlock.REINFORCED_SLAB_NAME_KEY, "%s Reinforced Concrete Slab");
+    }
+
+    /**
+     * The dyed Cover Panel family faces (task material-mc-g1-panels-dyed): the THREE
+     * atomic family keys — the upstream dump carries NO colour word, all 16 metas of a
+     * family share one name ({@code gt.multitileentity.32452} "Concrete Panel" /
+     * 32468 "C-Foam Panel" / 32484 "Asphalt Panel", the registration names
+     * Loader_MultiTileEntities.java:2045/:2049/:2053), so no dye compose (the
+     * {@link #addConcrete} template face does not apply). The block classes resolve the
+     * family key at runtime (GT6PanelBlock.getName).
+     */
+    private void addPanels() {
+        for (gregtech6.block.panels.GT6PanelBlock.Family tFamily : gregtech6.block.panels.GT6PanelBlock.Family.values()) {
+            add(tFamily.nameKey, tFamily.enName);
+        }
     }
 
     /**

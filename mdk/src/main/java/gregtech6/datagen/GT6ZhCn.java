@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.block.panels.GT6PanelBlock;
 import gregtech6.fluid.GTFluids;
 import gregtech6.item.GT6Circuits;
 import gregtech6.item.MaterialPrefixItem;
@@ -173,6 +174,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addEnergyViewerUnits(); // task energy-page-jei-leg — the energy-source page band (the frozen E5 key set, the tsv direct band)
 		addCropCardUnits(); // task cbc-3-crop-data-assets — the 59 crop names + the seed item (hand rows, the tsv direct band; the dump carries zero gt.crop.* faces)
 		addFoodsideUnits(); // task vanilla-alias-foodside — the 4 Remains names (the dump gt.multiitem.food.1210x faces verbatim) + the 2 new-native honey drops (hand rows)
+		addPanelUnits(); // task material-mc-g1-panels-dyed — the 3 panel family names (the dump mte 32452/32468/32484 faces verbatim, the tsv direct band)
 	}
 
 	/**
@@ -189,6 +191,20 @@ public class GT6ZhCn extends LanguageProvider {
 	private void addFoodsideUnits() {
 		for (gregtech6.registry.GT6FoodsideItems.SideRow tRow : gregtech6.registry.GT6FoodsideItems.ROWS) {
 			addDirect("item.gt6." + tRow.id());
+		}
+	}
+
+	/**
+	 * The dyed Cover Panel family zh faces (task material-mc-g1-panels-dyed, the
+	 * addFoodsideUnits shape): THREE atomic family keys — the upstream dump carries NO
+	 * colour word, all 16 metas of a family share one name (tmp/gregtech.lang:13333
+	 * {@code gt.multitileentity.32452} 混凝土覆盖板 / :13349 32468 建筑泡沫覆盖板 /
+	 * :13365 32484 沥青覆盖板, the mte 32452-32499 bands walked verbatim in
+	 * zh_cn_ref.tsv:9014-9061). The values ride the reference table's direct layer.
+	 */
+	private void addPanelUnits() {
+		for (GT6PanelBlock.Family tFamily : GT6PanelBlock.Family.values()) {
+			addDirect(tFamily.nameKey);
 		}
 	}
 

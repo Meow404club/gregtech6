@@ -264,11 +264,15 @@ class GT6ConcreteRegistryTest {
             }
         }
         // the 8 shared tinted models (2 cubes + 2 slab triads) — and ONLY 8, the shared-model
-        // face (no per-colour model files: a per-colour copy would mean the tint leg died)
+        // face (no per-colour model files: a per-colour copy would mean the tint leg died).
+        // The dyed Cover Panel family model (concrete_panel.json, task
+        // material-mc-g1-panels-dyed) shares the "concrete" prefix but is its own family's
+        // single tinted cube — excluded here, pinned by GT6PanelsRegistryTest.
         Set<String> tModels = new HashSet<>();
         try (var tStream = Files.list(tGen.resolve("assets/gt6/models/block"))) {
             tStream.map(aPath -> aPath.getFileName().toString())
-                    .filter(aName -> aName.startsWith("concrete")).forEach(tModels::add);
+                    .filter(aName -> aName.startsWith("concrete") && !aName.equals("concrete_panel.json"))
+                    .forEach(tModels::add);
         }
         assertEquals(Set.of("concrete.json", "concrete_reinforced.json",
                 "concrete_slab_bottom.json", "concrete_slab_top.json", "concrete_slab_double.json",

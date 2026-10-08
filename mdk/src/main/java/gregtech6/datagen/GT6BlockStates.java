@@ -29,6 +29,7 @@ import gregtech6.block.GTOvenBlock;
 import gregtech6.block.attachment.GTAttachmentSmallBlock;
 import gregtech6.block.concrete.GT6ConcreteBlock; // task concrete-blocks-register
 import gregtech6.block.concrete.GT6ConcreteSlabBlock; // task concrete-blocks-register
+import gregtech6.block.panels.GT6PanelBlock; // task material-mc-g1-panels-dyed
 import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.block.surface.GT6WildBushBlock; // task berry-overlay (the AGE->model map)
 import gregtech6.block.tank.GT6GasCylinderBlock; // task small-tank-gas-cylinder
@@ -330,6 +331,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addChargingLockers(); // task block-family-32xxx-port — the 60-material charging-locker ladder
         addSapBag(); // task block-family-32xxx-port — the trunk-mounted collector bag (normal/full models)
         addPlantPot(); // task block-family-32xxx-port — the two-element pot (plate + body)
+        addPanels(); // task material-mc-g1-panels-dyed — the 48 dyed Cover Panel rows (the grayscale+tint band, concrete form)
     }
 
     /**
@@ -6057,6 +6059,33 @@ public final class GT6BlockStates extends BlockStateProvider {
                     (tBlock.reinforced ? "concrete_reinforced_slab_bottom" : "concrete_slab_bottom")));
         }
         LOGGER.info("GT6 concrete: 64 blockstates (32 cubes + 32 slab triads) over 8 shared tinted models, 64 item models");
+    }
+
+    /**
+     * Task material-mc-g1-panels-dyed — the 48 dyed Cover Panel rows
+     * ({@link gregtech6.registry.GT6Panels}, the Loader_MultiTileEntities.java:2043-2056
+     * loop: Concrete Panel 32452+i / C-Foam Panel 32468+i / Asphalt Panel 32484+i). The
+     * RENDER face is the upstream tint leg, NOT 48 pre-coloured PNGs: ONE grayscale tile
+     * per family (Textures.BlockIcons CONCRETE/CFOAM_HARDENED/ASPHALT +
+     * {@code DYES[i]}, MultiTileEntityPanelColored.java:33-36), so ALL 16 colours of a
+     * family SHARE one tinted cube (the addConcrete 16-colours-over-one-model form; the
+     * textures are the EXISTING family seats — block/concrete + block/asphalt are the
+     * upstream iconsets byte-verbatim, block/cfoam_hardened rides the foam family's
+     * established port art, the assets/README.md ledger) and the colour resolves per BLOCK
+     * in the {@code GT6PanelTintListener} Block/ItemColor (each per-row block carries its
+     * FIXED dye index). 48 item models: parent the family cube (the concrete item form).
+     */
+    private void addPanels() {
+        for (GT6PanelBlock.Family tFamily : GT6PanelBlock.Family.values()) {
+            ModelFile tCube = tintedCubeAll("block/" + tFamily.snake, modLoc(tFamily.texture));
+            for (var tHandle : gregtech6.registry.GT6Panels.BLOCKS) {
+                GT6PanelBlock tBlock = (GT6PanelBlock) tHandle.get();
+                if (tBlock.family != tFamily) continue;
+                getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tCube).build());
+                itemModels().withExistingParent(tBlock.snake, modLoc("block/" + tFamily.snake));
+            }
+        }
+        LOGGER.info("GT6 panels: 48 blockstates + 48 item models over 3 shared tinted cubes");
     }
 
     /**

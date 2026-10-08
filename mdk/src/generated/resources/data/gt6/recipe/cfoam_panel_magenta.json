@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "gt6:cfoam"
+    },
+    "T": {
+      "item": "gt6:screw_iron"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "s": {
+      "tag": "gt6:tools/saw"
+    }
+  },
+  "pattern": [
+    "TsT",
+    "TPT",
+    "TdT"
+  ],
+  "result": {
+    "count": 6,
+    "id": "gt6:cfoam_panel_magenta"
+  }
+}

@@ -14022,3 +14022,32 @@ the wooden singleton's art — the mc-B "same class reuse" ruling), and the meta
 custom-gearbox rows ride a tinted cube over the `block/gearbox` iconset borrow
 (`6f36d27836e0ee13fc54515e58fac44b75347d7b00d0ead792e24c846f4853f8`, the
 gearbox-transformer card's ledger row — the cube gains the tintindex-0 seat).
+## task material-mc-g1-panels-dyed (2026-10-07) — the dyed Cover Panel 3-tile ride
+
+The 48 dyed Cover Panel rows (Loader_MultiTileEntities.java:2043-2056 — Concrete
+Panel 32452+i / C-Foam Panel 32468+i / Asphalt Panel 32484+i, `NBT_COLOR=i`,
+`MultiTileEntityPanelColored.java:33-36` tinting Textures.BlockIcons
+CONCRETE/CFOAM_HARDENED/ASPHALT by `DYES[i]`) ride the EXISTING grayscale tint
+carriers — ZERO new pixels (the concrete family borrow form, the same ledger the
+concrete task section keeps):
+
+- `block/concrete.png` — `fd31a7e446d7a3023aeb304f09be7b693e97a313440d64bde42219be15a26142`
+  (upstream `iconsets/CONCRETE.png` byte-verbatim; already ledgered in the
+  concrete-blocks-register section — the Concrete Panel family shares the seat,
+  the upstream panel icon IS the same CONCRETE tile)
+- `block/asphalt.png` — `2b51ec88d0be3a57588a04d886e5902dcbc8b9de0afa70e2ea181bdcbb6925a0`
+  (upstream `iconsets/ASPHALT.png` byte-verbatim; already ledgered in the
+  covers-crafting-asphalt section — the Asphalt Panel family shares the seat,
+  upstream `MultiTileEntityPanelAsphalt` uses the same ASPHALT tile)
+- `block/cfoam_hardened.png` — `bf018495315d6048be6112bd3f6749308cbf5796b72ac220b0fe4ac56d82c56d`
+  (the foam family's established port seat, c-foam-block-family — DECLARED
+  TEXTURE-SEAT DEVIATION: the upstream panel icon is `iconsets/CFOAM_HARDENED.png`
+  sha256 `1d646405f64407271d7ff9db0237648e4ad57bd6d09e26d85eed06049f7ce2cf`,
+  NOT byte-identical to the port tile; the panel rides the port's hardened-foam
+  art so the C-Foam Panel matches the port foam family it crafts from)
+
+The tint chain (models carry tintindex 0; `GT6PanelTintListener` resolves
+`GTSprayCanItem.DYES_INT[dyeIndex]` per block+item) is the concrete/attachment
+listener form; the cover-mounting face (the upstream panels' real function,
+`MultiTileEntityPanel.canPlace=F`) stays pooled — the port `CoverTextureSimple`
+seat is a flat sprite with no tint index (GT6PanelBlock javadoc).
