@@ -89,6 +89,7 @@ public class GT6MachinesCraftingPourTest extends GTOfflineTestBase {
         // machines3, the exotic rungs
         tCount += assertRows(GTMachines.MASSFAB_SMALL_ROWS, GTMachines.MASSFAB_SMALL_ITEMS_BY_PATH);
         tCount += assertRows(GTMachines.REPLICATOR_ROWS, GTMachines.REPLICATOR_ITEMS_BY_PATH);
+        tCount += assertRows(GTMachines.LIGHTNING_ROWS, GTMachines.LIGHTNING_ITEMS_BY_PATH); // :1582-1586 (task lightning-processor-pour)
         tCount += assertRows(GTMachines.SANDING_ROWS, GTMachines.SANDING_ITEMS_BY_PATH);
         tCount += assertRows(GTMachines.PLANTALYZER_ROWS, GTMachines.PLANTALYZER_ITEMS_BY_PATH);
         tCount += assertRows(GTMachines.BUMBLELYZER_ROWS, GTMachines.BUMBLELYZER_ITEMS_BY_PATH);
@@ -104,10 +105,11 @@ public class GT6MachinesCraftingPourTest extends GTOfflineTestBase {
         tCount += assertRows(GTMachines.FERMENTER_ROWS, GTMachines.FERMENTER_ITEMS_BY_PATH);
         tCount += assertRows(GTMachines.AUTOCLAVE_ROWS, GTMachines.AUTOCLAVE_ITEMS_BY_PATH);
         tCount += assertRows(GTMachines.MELTER_ROWS, GTMachines.MELTER_ITEMS_BY_PATH);
-        // the measured walk total (the port row lists ARE the truth — 187 = 12 flat-trio
-        // + 43 row-list families over the 4/5/3-rung port ladders + 6 single-variant
-        // rungs; the replicator carries 3 rungs, the port registration face)
-        assertEquals(187, tCount, "the measured family face of the pour walk");
+        // the measured walk total (the port row lists ARE the truth — 192 = 12 flat-trio
+        // + 44 row-list families over the 4/5/3-rung port ladders + 6 single-variant
+        // rungs; the replicator carries 3 rungs, the port registration face; the
+        // Lightning 5 ride the :1582-1586 rows — task lightning-processor-pour)
+        assertEquals(192, tCount, "the measured family face of the pour walk");
     }
 
     /** The walk of one MachineRow family: every row's item registered AND its crafting file on the tree; returns the row count. */
@@ -148,11 +150,32 @@ public class GT6MachinesCraftingPourTest extends GTOfflineTestBase {
         assertCraftingFile("melter");
     }
 
-    /** The Laser Welder family ships NO crafting rows (the DYE_OREDICTS_LENS[Yellow] lens family is pooled, GTMachines:2032) and the Lightning Processor ships none ('X' = wireGt01 over ANY.Iron, no iron wire rung — the upstream input itself is dead). */
+    /** The Laser Welder family ships NO crafting rows (the DYE_OREDICTS_LENS[Yellow] lens family is pooled, GTMachines:2032). */
     @Test
-    public void theLensAndIronWireFamiliesShipNoCraftingRows() {
+    public void theLensFamilyShipsNoCraftingRows() {
         for (GTBasicMachineBlock.MachineRow tRow : GTMachines.LASER_WELDER_ROWS) assertNull(craftingFileOrNull(tRow.path()), "no crafting row: " + tRow.path());
-        for (GTBasicMachineBlock.MachineRow tRow : GTMachines.LIGHTNING_ROWS) assertNull(craftingFileOrNull(tRow.path()), "no crafting row: " + tRow.path());
+    }
+
+    /** The Lightning Processor POURS all 5 rungs (task lightning-processor-pour). Erratum: the old "upstream input itself is dead" pin was FALSE — the ANY.Iron wireGt aggregate's effective member set is {Steel wire} alone (the addElectricWires iron rungs, Loader:1914-1950: Fe/WroughtIron ship no wire item), so the :1582-1586 rows are live and the pour folds 'X' to the wire_steel_gt01/02/04/08/16 rung. */
+    @Test
+    public void theLightningRowsPourTheSteelWireRungs() throws Exception {
+        for (GTBasicMachineBlock.MachineRow tRow : GTMachines.LIGHTNING_ROWS) assertCraftingFile(tRow.path());
+        assertEquals(5, GTMachines.LIGHTNING_ROWS.size(), "the 5-rung lightning ladder");
+        JsonObject tRow = generated("lightning");
+        assertGrid(tRow, "XxX", "WwW", "XMX");
+        assertEquals("gt6:wire_steel_gt01", tRow.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "T1 'X' = the steel wireGt01 rung (the ANY.Iron aggregate's effective member)");
+        assertEquals("gt6:wire_tin_gt04", tRow.getAsJsonObject("key").get("W").getAsJsonObject().get("item").getAsString(),
+                "T1 'W' = WIRES_04[1] (Sn verbatim)");
+        assertEquals("gt6:" + GTMaterialItems.itemIdOf(gregapi.data.OP.casingMachine, material("SteelGalvanized")),
+                tRow.getAsJsonObject("key").get("M").getAsJsonObject().get("item").getAsString(), "T1 'M' = the Electric_T[1] casing");
+        assertEquals("gt6:lightning", tRow.getAsJsonObject("result").get("item").getAsString(), "the T1 result item");
+        JsonObject tT5 = generated("lightning_t5");
+        assertEquals("gt6:wire_steel_gt16", tT5.getAsJsonObject("key").get("X").getAsJsonObject().get("item").getAsString(),
+                "T5 'X' = the steel wireGt16 rung");
+        assertEquals("gt6:wire_platinum_gt04", tT5.getAsJsonObject("key").get("W").getAsJsonObject().get("item").getAsString(),
+                "T5 'W' = WIRES_04[5] (Pt verbatim)");
+        assertEquals("gt6:lightning_t5", tT5.getAsJsonObject("result").get("item").getAsString(), "the T5 result item");
     }
 
     // ------------------------------------------------------------------
