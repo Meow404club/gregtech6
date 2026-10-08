@@ -165,8 +165,9 @@ class GT6TankFamilyPaintRenderDatagenTest {
     @Test
     public void highTierDrumsShareTheDrumFamilyAndTheOldPngsAreRetired() throws Exception {
         Set<String> tTextureSets = new HashSet<>();
-        List<String> tDrums = gregtech6.registry.GTBarrels.HIGH_TIER_METAL_DRUMS.stream().map(r -> r.path()).toList();
-        assertEquals(12, tDrums.size(), "the high-tier drum census stays 12");
+        List<String> tDrums = new java.util.ArrayList<>(gregtech6.registry.GTBarrels.HIGH_TIER_METAL_DRUMS.stream().map(r -> r.path()).toList());
+        tDrums.addAll(gregtech6.registry.GTBarrels.DRUM_64K_ROWS.stream().map(r -> r.path()).toList()); // task material-mc-f-attachment-rows
+        assertEquals(19, tDrums.size(), "the drum census stays 19 (12 high-tier + 7 64K tier)");
         for (String tDrum : tDrums) {
             JsonObject tModel = json("assets/gt6/models/block/" + tDrum + ".json");
             JsonObject tTextures = tModel.getAsJsonObject("textures");

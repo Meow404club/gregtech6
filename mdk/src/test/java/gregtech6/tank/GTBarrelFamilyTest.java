@@ -196,7 +196,8 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 
 	/** The row lookup by registry path (the truth-table rows are keyed by it). */
 	private static MetalDrumRow rowByPath(String aPath) {
-		return GTBarrels.HIGH_TIER_METAL_DRUMS.stream().filter(aRow -> aRow.path().equals(aPath)).findFirst().orElseThrow();
+		return java.util.stream.Stream.concat(GTBarrels.HIGH_TIER_METAL_DRUMS.stream(), GTBarrels.DRUM_64K_ROWS.stream())
+				.filter(aRow -> aRow.path().equals(aPath)).findFirst().orElseThrow();
 	}
 
 	private static void assertRow(String aPath, String aDisplay, long aCapacity, long aHU) {
@@ -231,6 +232,27 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 	}
 
 	/**
+	 * The 64K tier minus bronze (task material-mc-f-attachment-rows), the upstream rows
+	 * Loader_MultiTileEntities.java:2152-2158 verbatim: every row 64000 L, NO explicit
+	 * NBT_CAPACITY_HU (the :66 material-formula bridge applies), resistance 6.0F
+	 * (the row side) — the material resolution per line (spec ③).
+	 */
+	@Test
+	public void drum64kRowTruthTable() {
+		assertEquals(7, GTBarrels.DRUM_64K_ROWS.size(), ":2152-2158 minus the bronze :2151 row");
+		assertRow("barrel_invar", "Invar Drum", 64000, -1);
+		assertRow("barrel_stainless_steel", "Stainless Steel Drum", 64000, -1);
+		assertRow("barrel_desh", "Desh Drum", 64000, -1);
+		assertRow("barrel_syrmorite", "Syrmorite Drum", 64000, -1);
+		assertRow("barrel_efrine", "Efrine Drum", 64000, -1);
+		assertRow("barrel_thaumium", "Thaumium Drum", 64000, -1);
+		assertRow("barrel_manasteel", "Manasteel Drum", 64000, -1);
+		for (MetalDrumRow tRow : GTBarrels.DRUM_64K_ROWS) {
+			assertEquals(6.0F, tRow.resistanceF(), tRow.path() + ": the :2152-2158 resistance column (6.0F on every 64K row)");
+		}
+	}
+
+	/**
 	 * The bridge else-branch (TileEntityBase08Barrel.java:66 {@code (long)(mMeltingPoint *
 	 * 1.25)}) over the live dataset — literal spot checks where the material melting
 	 * point is directly traceable, plus the per-row formula agreement (no hardcoded
@@ -254,6 +276,10 @@ public class GTBarrelFamilyTest extends GTOfflineTestBase {
 		// every formula row agrees with the live dataset — the bridge computes, never guesses
 		for (MetalDrumRow tRow : GTBarrels.HIGH_TIER_METAL_DRUMS) {
 			if (tRow.explicitHU() >= 0) continue;
+			assertEquals((long)(tRow.material().get().mMeltingPoint * 1.25), tRow.meltingPointK(), tRow.path());
+		}
+		// the 64K tier rides the same else-branch (no explicit HU in the set)
+		for (MetalDrumRow tRow : GTBarrels.DRUM_64K_ROWS) {
 			assertEquals((long)(tRow.material().get().mMeltingPoint * 1.25), tRow.meltingPointK(), tRow.path());
 		}
 	}

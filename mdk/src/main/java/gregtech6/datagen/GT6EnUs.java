@@ -1477,6 +1477,11 @@ public class GT6EnUs extends LanguageProvider {
         // "Stainless"/"Tantalum Hafnium Carbide" differ from the gt6.material locals)
         add(GT6Attachments.TAP_DISPLAY_KEY, "%s Tap");
         add(GT6Attachments.FUNNEL_DISPLAY_KEY, "%s Funnel");
+        // task material-mc-f-attachment-rows: the nozzle pair joins the compose — the
+        // upstream row display faces ("Plastic Nozzle".."Adamantium Cap Nozzle",
+        // Loader_MultiTileEntities.java:2122-2134); the walk below now covers 24 rows
+        add(GT6Attachments.NOZZLE_DISPLAY_KEY, "%s Nozzle");
+        add(GT6Attachments.CAP_NOZZLE_DISPLAY_KEY, "%s Cap Nozzle");
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             addRowMatUnit(GT6Attachments.matUnitKeyOf(tRow), tRow.matDisplay());
         }
@@ -1631,6 +1636,15 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.barrel_wood", "Wooden Barrel");
         add("block.gt6.barrel_plastic", "Plastic Canister");
         add("block.gt6.barrel_metal", "Bronze Drum");
+        // task material-mc-f-attachment-rows — the 64K tier minus bronze
+        // (Loader_MultiTileEntities.java:2152-2158, the display names verbatim)
+        add("block.gt6.barrel_invar", "Invar Drum");
+        add("block.gt6.barrel_stainless_steel", "Stainless Steel Drum");
+        add("block.gt6.barrel_desh", "Desh Drum");
+        add("block.gt6.barrel_syrmorite", "Syrmorite Drum");
+        add("block.gt6.barrel_efrine", "Efrine Drum");
+        add("block.gt6.barrel_thaumium", "Thaumium Drum");
+        add("block.gt6.barrel_manasteel", "Manasteel Drum");
         add("block.gt6.barrel_tungsten_alloy", "Tungsten Alloy Drum");
         add("block.gt6.barrel_titanium", "Titanium Drum");
         add("block.gt6.barrel_netherite", "Netherite Drum");

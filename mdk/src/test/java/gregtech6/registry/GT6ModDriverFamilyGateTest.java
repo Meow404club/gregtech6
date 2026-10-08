@@ -83,6 +83,7 @@ public class GT6ModDriverFamilyGateTest {
     @Test
     public void defaultFreezeIsThePreMdh6Universe() {
         assertEquals(DRUMS, GTBarrels.HIGH_TIER_METAL_DRUMS.size(), "drum table frozen at the full 12");
+        assertEquals(7, GTBarrels.DRUM_64K_ROWS.size(), "the 64K drum tier (task material-mc-f-attachment-rows, :2152-2158 minus bronze)");
         assertEquals(CELLS, GT6Cells.ROWS.size(), "cell table frozen at the full 40");
         assertEquals(CELLS, GT6Cells.BLOCKS_IN_ORDER.size(), "cell blocks frozen one-per-row");
         assertEquals(HOPPER_ROWS, GT6Hoppers.ROWS.size(), "hopper rows frozen at the full 120");
@@ -98,6 +99,10 @@ public class GT6ModDriverFamilyGateTest {
         for (GTBarrels.MetalDrumRow tRow : GTBarrels.HIGH_TIER_METAL_DRUMS) {
             assertEquals(GT6ForeignMaterialAtlas.domainOf(tRow.material().get()), tRow.driverDomain(),
                     "drum " + tRow.path() + " column vs atlas");
+        }
+        for (GTBarrels.MetalDrumRow tRow : GTBarrels.DRUM_64K_ROWS) {
+            assertEquals(GT6ForeignMaterialAtlas.domainOf(tRow.material().get()), tRow.driverDomain(),
+                    "64K drum " + tRow.path() + " column vs atlas");
         }
         for (GT6Cells.CellRow tRow : GT6Cells.ROWS) {
             assertEquals(GT6ForeignMaterialAtlas.domainOf(tRow.material().get()), GT6Cells.driverDomainOf(tRow),

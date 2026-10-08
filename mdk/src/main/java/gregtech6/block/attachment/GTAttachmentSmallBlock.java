@@ -88,6 +88,20 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 			public boolean isValidMount(Direction aFacing) {
 				return aFacing != Direction.UP;
 			}
+		},
+		/** The fluid nozzle (task material-mc-f-attachment-rows) — four horizontals (MultiTileEntityFluidNozzle carries no getValidSides override, the 10Attachment:51 default like the tap). */
+		NOZZLE {
+			@Override
+			public boolean isValidMount(Direction aFacing) {
+				return aFacing.getAxis() != Direction.Axis.Y;
+			}
+		},
+		/** The fluid cap nozzle — four horizontals (MultiTileEntityFluidCapNozzle carries no getValidSides override, the 10Attachment:51 default like the tap). */
+		CAP_NOZZLE {
+			@Override
+			public boolean isValidMount(Direction aFacing) {
+				return aFacing.getAxis() != Direction.Axis.Y;
+			}
 		};
 
 		public abstract boolean isValidMount(Direction aFacing);
@@ -115,14 +129,13 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 	}
 
 	/**
-	 * The composed attachment name (task i18n-compose-rows): the tap/funnel family
-	 * template over the gt6.row.attachment.mat small unit.
+	 * The composed attachment name (task i18n-compose-rows): the family template over
+	 * the gt6.row.attachment.mat small unit (the four-family seam, task
+	 * material-mc-f-attachment-rows — nozzle/cap-nozzle compose the same way).
 	 */
 	@Override
 	public net.minecraft.network.chat.MutableComponent getName() {
-		return net.minecraft.network.chat.Component.translatable(
-				mRow.family() == Family.TAP ? gregtech6.registry.GT6Attachments.TAP_DISPLAY_KEY : gregtech6.registry.GT6Attachments.FUNNEL_DISPLAY_KEY,
-				net.minecraft.network.chat.Component.translatable(gregtech6.registry.GT6Attachments.matUnitKeyOf(mRow)));
+		return gregtech6.registry.GT6Attachments.displayOf(mRow);
 	}
 
 	public Family family() {
@@ -173,15 +186,21 @@ public class GTAttachmentSmallBlock extends Block implements EntityBlock {
 	 * The upstream selection envelopes (task rod-render-pool) — the tap
 	 * getSelectedBoundingBoxFromPool (MultiTileEntityFluidTap.java:226-233) and the
 	 * funnel (MultiTileEntityFluidFunnel.java:156-163) verbatim: the full taper/spout
-	 * stack envelope against the host edge (FACING points AT the host). The previous
+	 * stack envelope against the host edge (FACING points AT the host). The nozzle and
+	 * cap-nozzle families (task material-mc-f-attachment-rows) share the tap envelope —
+	 * their getSelectedBoundingBoxFromPool (MultiTileEntityFluidNozzle.java:172-178 /
+	 * MultiTileEntityFluidCapNozzle.java:136-142) projects to the same
+	 * (6,3,0)-(10,7,6) north box. The previous
 	 * 4x4x4 placeholder predates the render geometry landing; collision stays
 	 * {@link #getCollisionShape empty} (upstream 10Attachment:35).
 	 */
 	@Override
 	public VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
 		Direction tFacing = aState.getValue(FACING);
-		if (mFamily == Family.TAP) {
-			// MultiTileEntityFluidTap :226-233 (PX_P/PX_N px: (6,3,0)-(10,7,6) on north)
+		if (mFamily != Family.FUNNEL) {
+			// MultiTileEntityFluidTap :226-233 (PX_P/PX_N px: (6,3,0)-(10,7,6) on north) —
+			// verbatim shared by the tap/nozzle/cap-nozzle trio (the nozzle pair's own
+			// projection is byte-equal, see the javadoc)
 			return switch (tFacing) {
 				case NORTH -> Block.box(6, 3, 0, 10, 7, 6);
 				case SOUTH -> Block.box(6, 3, 10, 10, 7, 16);

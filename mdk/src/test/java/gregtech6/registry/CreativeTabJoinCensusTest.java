@@ -134,10 +134,10 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(21, GT6Sensors.ITEMS_BY_PATH.size());
 	}
 
-	/** The 12 attachments (6 taps + 6 funnels, :2108-2120). */
+	/** The 24 attachments (6 taps + 6 funnels :2108-2120 + 6 nozzles + 6 cap nozzles :2122-2134, task material-mc-f-attachment-rows). */
 	@Test
-	public void attachmentsJoinTwelve() {
-		assertEquals(12, GT6Attachments.ITEMS_BY_PATH.size());
+	public void attachmentsJoinTwentyFour() {
+		assertEquals(24, GT6Attachments.ITEMS_BY_PATH.size());
 	}
 
 	/** The 148 static storages (2 metals x 4 kinds + 10 planks x 2 wooden kinds + the 60-material metal shelf/crate ladders, task material-mc-b-storage-mass-shelf). */
@@ -230,13 +230,12 @@ public class CreativeTabJoinCensusTest {
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size()
 				+ GT6Emitters.ITEMS_BY_PATH.size();
-		// 563 = 323 (the p38 batch total, hoppers@120 and static-storages@28 inside)
-		// + 120 (mc-A chests) + 120 (mc-B: the static-storage join grew 28 to 148, the
-		// metal shelf/crate ladders). The review-seat rebase seam re-measured the
-		// union: mc-A and mc-B each grew the same pre-merge base by 120 on their own
-		// branch, so both self-reported 443 — the merged truth is the sum of both
-		// deltas (the count follows the live walk, only rises).
-		assertEquals(563, tTotal, "323 (the p38 batch total) + 120 (task material-mc-a-storage-chests: the metalset chest pair 132-133 over the 60-material loop) + 120 (task material-mc-b-storage-mass-shelf: the static-storage join grew 28 to 148, the metal shelf/crate ladders over the metalset)");
+		// 575 = 563 + 12 (task material-mc-f-attachment-rows: the nozzle pair joins the
+		// GT6Attachments ITEMS_BY_PATH walk, 12 -> 24 rows — the Loader :2122-2134
+		// nozzle/cap-nozzle lines, the MACHINES_TAB pooling face)
+		// (history: 563 = 323 p38 + 120 mc-A + 120 mc-B; 443 = the pre-merge self-reports,
+		// the union seam — the count follows the live walk, only rises).
+		assertEquals(575, tTotal, "563 (323 p38 batch + 120 mc-A chests + 120 mc-B shelf/crate ladders) + 12 (task material-mc-f-attachment-rows: the nozzle pair joins the attachment walk, 12 -> 24 rows over the metalset-free nozzle material set)");
 	}
 
 	/**

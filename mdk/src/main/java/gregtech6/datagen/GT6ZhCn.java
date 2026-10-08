@@ -1116,6 +1116,16 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.barrel_infinity");
 		addDirect("block.gt6.barrel_logistics");
 		addDirect("block.gt6.barrel_metal");
+		// task material-mc-f-attachment-rows — the 64K tier (the dump faces verbatim:
+		// 殷钢储罐 :13085 / 不锈钢储罐 :13537 / 戴斯储罐 :13091 / 赛摩铜储罐 :13041 /
+		// 绿晶储罐 :13114 / 神秘锭储罐 :13043 / 魔力钢储罐 :13044)
+		addDirect("block.gt6.barrel_desh");
+		addDirect("block.gt6.barrel_efrine");
+		addDirect("block.gt6.barrel_invar");
+		addDirect("block.gt6.barrel_manasteel");
+		addDirect("block.gt6.barrel_stainless_steel");
+		addDirect("block.gt6.barrel_syrmorite");
+		addDirect("block.gt6.barrel_thaumium");
 		addDirect("block.gt6.barrel_netherite");
 		addDirect("block.gt6.barrel_plastic");
 		addDirect("block.gt6.barrel_tantalum_hafnium_carbide");
@@ -1987,9 +1997,13 @@ public class GT6ZhCn extends LanguageProvider {
 		}
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_ENERGY);
 		addDirect(gregtech6.block.multiblock.GTLightningRodBlock.Item.KEY_CAPACITY);
-		// attachments: the two family templates + the attachment material words
+		// attachments: the four family templates + the attachment material words
 		addDirect(gregtech6.registry.GT6Attachments.TAP_DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6Attachments.FUNNEL_DISPLAY_KEY);
+		// task material-mc-f-attachment-rows — the nozzle pair templates (the dump faces
+		// verbatim: 钢喷嘴 :13567 / 钢有盖喷嘴 :13079 — the compose is 材质词+后缀, no space)
+		addDirect(gregtech6.registry.GT6Attachments.NOZZLE_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6Attachments.CAP_NOZZLE_DISPLAY_KEY);
 		for (gregtech6.registry.GT6Attachments.AttachmentRow tRow : gregtech6.registry.GT6Attachments.ROWS) {
 			addRowUnit(tEmitted, gregtech6.registry.GT6Attachments.matUnitKeyOf(tRow));
 		}

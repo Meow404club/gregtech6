@@ -4269,6 +4269,22 @@ public class GT6CraftingRecipes extends RecipeProvider {
                     .define('S', tStickB)
                     .unlockedBy("has_plate", has(tCurved)), barrelRecipeId("barrel_metal")));
         }
+        // :2152-2158 the 64K tier minus bronze (task material-mc-f-attachment-rows) — the
+        // same " h ","PSP","PSP" grid per row material (plateCurved + stickLong of aMat,
+        // the row tails verbatim); a row whose curved plate or long stick has no port
+        // item skips silently (the faucet-row craft-face convention — the negative
+        // account is a declaration, never a guessed substitute)
+        for (gregtech6.registry.GTBarrels.MetalDrumRow tDrum : gregtech6.registry.GTBarrels.DRUM_64K_ROWS) {
+            Item tPlateC = itemOrNull(gregapi.data.OP.plateCurved, tDrum.material().get());
+            Item tStickL = itemOrNull(gregapi.data.OP.stickLong, tDrum.material().get());
+            if (tPlateC == null || tStickL == null) continue;
+            rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTBarrels.DRUM_64K_ITEMS.get(tDrum.path()).get())
+                    .pattern(" h ").pattern("PSP").pattern("PSP")
+                    .define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+                    .define('P', tPlateC)
+                    .define('S', tStickL)
+                    .unlockedBy("has_plate", has(tPlateC)), barrelRecipeId(tDrum.path())));
+        }
         return rRows;
     }
 

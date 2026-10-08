@@ -184,8 +184,9 @@ public final class GTBarrels {
 	 * the :66 branch 1 overrides the material formula (the Infinity drum's ceiling is
 	 * upstream's own 1e9 K, an effectively-never-melting figure; the card's "keep-MAX"
 	 * clause covers materials whose dataset mMeltingPoint IS MAX_VALUE, see
-	 * {@link #meltingPointK(long)}). The 64K non-bronze alloy variants (:2152-2158) stay
-	 * a pool cut per the card boundary.
+	 * {@link #meltingPointK(long)}). The 64K non-bronze alloy variants (:2152-2158)
+	 * joined {@link #DRUM_64K_ROWS} (task material-mc-f-attachment-rows — the pool cut
+	 * is revoked).
 	 */
 	public static final List<MetalDrumRow> HIGH_TIER_METAL_DRUMS = List.of(
 			new MetalDrumRow("barrel_tungsten_alloy", "Tungsten Alloy Drum", () -> MT.TungstenAlloy, 128000, -1, 9.0F, MT.MD.RoC.mID), // MT.java:2429 — TungstenAlloy RoC PRIMARY (atlas, mdh-6)
@@ -200,6 +201,26 @@ public final class GTBarrels {
 			new MetalDrumRow("barrel_draconium", "Draconium Drum", () -> MT.Draconium, 4096000, -1, 100.0F), // COMMON_SECONDARY (MT.java:2512) — never hides (ADR-MDH2; the card's Draconium ruling)
 			new MetalDrumRow("barrel_awakened_draconium", "Awakened Draconium Drum", () -> MT.DraconiumAwakened, 8192000, 10000, 100.0F, MT.MD.DE.mID), // MT.java:2513 — DE PRIMARY (atlas, mdh-6)
 			new MetalDrumRow("barrel_infinity", "Infinity Drum", () -> MT.Infinity, 10000000000L, 1000000000L, 100.0F, MT.MD.AV.mID)); // MT.java:2518 — Infinity AV PRIMARY (atlas, mdh-6)
+
+	/**
+	 * The 64K drum tier minus bronze (task material-mc-f-attachment-rows — the census
+	 * 桶域 7 rows, Loader_MultiTileEntities.java:2152-2158 verbatim): {Invar,
+	 * StainlessSteel, Desh, Syrmorite, Efrine, Thaumium, Manasteel}, every row
+	 * NBT_TANK_CAPACITY 64000 / resistance 6.0 / hardness 1.0 / aUtilMetal, NO explicit
+	 * NBT_CAPACITY_HU (the :66 material-formula melt bridge applies). The driver column
+	 * rides the atlas: Manasteel is the only PRIMARY attribution in the set
+	 * (GT6ForeignMaterialAtlas :2466 BOTA — the Gaia-row form); Desh/Syrmorite/Efrine/
+	 * Thaumium are COMMON_SECONDARY and Invar/StainlessSteel unattributed, so those six
+	 * never hide (ADR-MDH2).
+	 */
+	public static final List<MetalDrumRow> DRUM_64K_ROWS = List.of(
+			new MetalDrumRow("barrel_invar", "Invar Drum", () -> MT.Invar, 64000, -1, 6.0F), // :2152
+			new MetalDrumRow("barrel_stainless_steel", "Stainless Steel Drum", () -> MT.StainlessSteel, 64000, -1, 6.0F), // :2153
+			new MetalDrumRow("barrel_desh", "Desh Drum", () -> MT.Desh, 64000, -1, 6.0F), // :2154
+			new MetalDrumRow("barrel_syrmorite", "Syrmorite Drum", () -> MT.Syrmorite, 64000, -1, 6.0F), // :2155
+			new MetalDrumRow("barrel_efrine", "Efrine Drum", () -> MT.Efrine, 64000, -1, 6.0F), // :2156 — the row's NBT_PLASMAPROOF=T has no port consumer (the P4 quartet pool)
+			new MetalDrumRow("barrel_thaumium", "Thaumium Drum", () -> MT.Thaumium, 64000, -1, 6.0F), // :2157
+			new MetalDrumRow("barrel_manasteel", "Manasteel Drum", () -> MT.Manasteel, 64000, -1, 6.0F, MT.MD.BOTA.mID)); // :2158 — Manasteel BOTA PRIMARY (atlas, mdh-6)
 
 	/**
 	 * The high-tier blocks/BlockItems, one pair per row. The material suppliers resolve
@@ -223,15 +244,36 @@ public final class GTBarrels {
 	}
 
 	/**
+	 * The 64K-tier blocks/BlockItems (task material-mc-f-attachment-rows) — the same
+	 * loop form over {@link #DRUM_64K_ROWS}, same shared BET and block-item carrier;
+	 * the declaration order places the maps BEFORE {@link #BARREL_METAL_BE} so the BET
+	 * validity sees both ladders (the static-init order rule).
+	 */
+	public static final Map<String, RegistryObject<GTBarrelBlock>> DRUM_64K_BLOCKS = new LinkedHashMap<>();
+	public static final Map<String, RegistryObject<Item>> DRUM_64K_ITEMS = new LinkedHashMap<>();
+	static {
+		for (MetalDrumRow tRow : DRUM_64K_ROWS) {
+			if (!tRow.registers()) continue; // the mdh-6 family gate (the high-tier loop form)
+			DRUM_64K_BLOCKS.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GTBarrelBlock(tRow.capacityL(), tRow.meltingPointK(), true,
+							() -> GTBarrels.BARREL_METAL_BE.get(), tRow.material(), BlockBehaviour.Properties.of()
+									.strength(1.0F, tRow.resistanceF()).sound(SoundType.COPPER))));
+			DRUM_64K_ITEMS.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new GTBarrelBlockItem(GTBarrels.DRUM_64K_BLOCKS.get(tRow.path()).get(), new Item.Properties().stacksTo(16))));
+		}
+	}
+
+	/**
 	 * The metal drum BET — the shared-BET multi-mount (ADR-P3-1, the GT6 "one TE class,
 	 * many material blocks" counterpart): valid over the bronze drum AND every high-tier
-	 * row; zero new BE classes.
+	 * row AND every 64K-tier row (task material-mc-f-attachment-rows); zero new BE classes.
 	 */
 	public static final RegistryObject<BlockEntityType<GTBarrelMetalBlockEntity>> BARREL_METAL_BE =
 			BLOCK_ENTITY_TYPES.register("barrel_metal", () -> BlockEntityType.Builder.of(
 					GTBarrelMetalBlockEntity::new,
-					Stream.concat(Stream.of(GTBarrels.BARREL_METAL.get()),
-							GTBarrels.METAL_DRUM_BLOCKS.values().stream().map(RegistryObject::get))
+					Stream.concat(Stream.concat(Stream.of(GTBarrels.BARREL_METAL.get()),
+									GTBarrels.METAL_DRUM_BLOCKS.values().stream().map(RegistryObject::get)),
+							GTBarrels.DRUM_64K_BLOCKS.values().stream().map(RegistryObject::get))
 						.toArray(Block[]::new)).build(null));
 
 	/** The metal drum item — the p12 carrier item (same shape as the wood row). */
@@ -279,31 +321,34 @@ public final class GTBarrels {
 						aOutput.accept(new ItemStack(BARREL_METAL_ITEM.get()));
 						aOutput.accept(new ItemStack(BARREL_LOGISTICS_ITEM.get())); // the :2171 row pools here — its upstream "Logistics" category is a port pool cut
 						for (RegistryObject<Item> tItem : GTBarrels.METAL_DRUM_ITEMS.values()) aOutput.accept(new ItemStack(tItem.get()));
+						for (RegistryObject<Item> tItem : GTBarrels.DRUM_64K_ITEMS.values()) aOutput.accept(new ItemStack(tItem.get())); // the :2152-2158 tier (task material-mc-f-attachment-rows)
 					})
 					.build());
 
 	private GTBarrels() {}
 
 	/**
-	 * The barrel-family paint-tint walker (task barrel-paint-render): the pinned 16
-	 * barrel-domain blocks the client paint Block/Item colors register over — the wood
-	 * barrel + plastic canister + bronze drum + logistics tank (4 standalone rows) plus the
-	 * twelve high-tier metal drums (the :2159-2170 ladder, {@link #METAL_DRUM_BLOCKS} in
-	 * registration order). The paint CAPABILITY itself predates this card: every barrel BE
-	 * rides {@code TileEntityBase08Barrel extends TileEntityBase03TicksAndSync}
+	 * The barrel-family paint-tint walker (task barrel-paint-render): the barrel-domain
+	 * blocks the client paint Block/Item colors register over — the wood
+	 * barrel + plastic canister + bronze drum + logistics tank (4 standalone rows) plus
+	 * the twelve high-tier metal drums (the :2159-2170 ladder, {@link #METAL_DRUM_BLOCKS}
+	 * in registration order) plus the seven 64K-tier drums (the :2152-2158 tier, task
+	 * material-mc-f-attachment-rows). The paint CAPABILITY itself predates this card: every
+	 * barrel BE rides {@code TileEntityBase08Barrel extends TileEntityBase03TicksAndSync}
 	 * (IPaintableTE), so {@code /gt6machine paint} and the spray can already write the NBT —
 	 * this walker only exposes the render consumer face (the {@code GTMachinePaintTint}/
 	 * {@code GTItemPaintTint} registration census, the GTMachines.paintableBlockArray 21
 	 * precedent). Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		Block[] rBlocks = new Block[4 + METAL_DRUM_BLOCKS.size()];
+		Block[] rBlocks = new Block[4 + METAL_DRUM_BLOCKS.size() + DRUM_64K_BLOCKS.size()];
 		rBlocks[0] = BARREL.get();
 		rBlocks[1] = BARREL_PLASTIC.get();
 		rBlocks[2] = BARREL_METAL.get();
 		rBlocks[3] = BARREL_LOGISTICS.get();
 		int i = 4;
 		for (RegistryObject<GTBarrelBlock> tBlock : METAL_DRUM_BLOCKS.values()) rBlocks[i++] = tBlock.get();
+		for (RegistryObject<GTBarrelBlock> tBlock : DRUM_64K_BLOCKS.values()) rBlocks[i++] = tBlock.get();
 		return rBlocks;
 	}
 

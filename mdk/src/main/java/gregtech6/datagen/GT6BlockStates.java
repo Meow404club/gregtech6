@@ -1939,10 +1939,12 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBarrel(GTBarrels.BARREL_LOGISTICS.get(), "logistics"); // task tank-render-tint — the :2171 row joins the two-layer borrow
         for (var tDrum : GTBarrels.METAL_DRUM_BLOCKS.values())
             addBarrel(tDrum.get(), "drum");
-        // task barrel-paint-render: the datagen-JVM census half — 16 barrel blocks,
+        for (var tDrum : GTBarrels.DRUM_64K_BLOCKS.values()) // task material-mc-f-attachment-rows — the :2152-2158 tier shares the ONE drum icon set upstream
+            addBarrel(tDrum.get(), "drum");
+        // task barrel-paint-render: the datagen-JVM census half — 23 barrel blocks,
         // matching the GTBarrels.paintableBlockArray() client registration census (the
-        // offline JUnit half walks the generated tree and pins the same 16).
-        LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums, addBarrel)", mBarrelTintModels);
+        // offline JUnit half walks the generated tree and pins the same 23).
+        LOGGER.info("GT6 barrel paint tint: {} barrel models tinted (4 rows + 12 high-tier drums + 7 64K drums, addBarrel)", mBarrelTintModels);
     }
 
     /** The r8 two-layer per-face barrel + its BlockItem parent (the borrowed barrel_parts family form). */
@@ -2865,10 +2867,19 @@ public final class GT6BlockStates extends BlockStateProvider {
                 {5, 9, 0, 11, 10, 6}, {6, 8, 0, 10, 9, 4}, {7, 7, 0, 9, 8, 2}});
         ModelFile tFunnelDown = attachmentModel("block/attachment_funnel_down", "funnel", new float[][] {
                 {5, 2, 5, 11, 3, 11}, {6, 1, 6, 10, 2, 10}, {7, 0, 7, 9, 1, 9}});
+        // task material-mc-f-attachment-rows — the nozzle pair's two render passes
+        // (MultiTileEntityFluidNozzle setBlockBounds2 :165-183 / FluidCapNozzle :121-139,
+        // the north projection verbatim like the tap/funnel boxes above): the colored
+        // plate + the spout stick. Horizontal-only families: the DOWN slot reuses the
+        // horizontal model (family-invalid, never placed — the tap arm's convention).
+        ModelFile tNozzle = attachmentModel("block/attachment_nozzle", "nozzle", new float[][] {
+                {6, 3, 1, 10, 7, 2}, {7, 4, 0, 9, 6, 6}});
+        ModelFile tCapNozzle = attachmentModel("block/attachment_cap_nozzle", "cap_nozzle", new float[][] {
+                {6, 3, 1, 10, 7, 6}, {7, 4, 0, 9, 6, 2}});
         for (GT6Attachments.AttachmentRow tRow : GT6Attachments.ROWS) {
             Block tBlock = GT6Attachments.BLOCKS_BY_PATH.get(tRow.path()).get();
-            ModelFile tModel = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? tTap : tFunnel;
-            ModelFile tDownModel = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.TAP ? tTap : tFunnelDown;
+            ModelFile tModel = familyAttachmentModel(tRow, tTap, tFunnel, tNozzle, tCapNozzle);
+            ModelFile tDownModel = tRow.family() == gregtech6.block.attachment.GTAttachmentSmallBlock.Family.FUNNEL ? tFunnelDown : tModel;
             getVariantBuilder(tBlock).forAllStates(aState -> switch (aState.getValue(GTAttachmentSmallBlock.FACING)) {
                 case NORTH -> new ConfiguredModel[] {new ConfiguredModel(tModel)};
                 case SOUTH -> new ConfiguredModel[] {new ConfiguredModel(tModel, 0, 180, false)};
@@ -2877,14 +2888,36 @@ public final class GT6BlockStates extends BlockStateProvider {
                 case DOWN  -> new ConfiguredModel[] {new ConfiguredModel(tDownModel)};
                 case UP    -> new ConfiguredModel[] {new ConfiguredModel(tModel)}; // family-invalid, never placed
             });
-            itemModels().withExistingParent(tRow.path(), modLoc("block/" + (tModel == tTap ? "attachment_tap" : "attachment_funnel")));
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + attachmentModelName(tRow)));
         }
     }
 
+    /** The horizontal model per family (the addAttachments dispatch seam). */
+    private static ModelFile familyAttachmentModel(GT6Attachments.AttachmentRow aRow, ModelFile aTap, ModelFile aFunnel,
+            ModelFile aNozzle, ModelFile aCapNozzle) {
+        return switch (aRow.family()) {
+            case TAP -> aTap;
+            case FUNNEL -> aFunnel;
+            case NOZZLE -> aNozzle;
+            case CAP_NOZZLE -> aCapNozzle;
+        };
+    }
+
+    /** The model-name tail per family (the item-model parent + the stack-datagen walk key). */
+    public static String attachmentModelName(GT6Attachments.AttachmentRow aRow) {
+        return switch (aRow.family()) {
+            case TAP -> "attachment_tap";
+            case FUNNEL -> "attachment_funnel";
+            case NOZZLE -> "attachment_nozzle";
+            case CAP_NOZZLE -> "attachment_cap_nozzle";
+        };
+    }
+
     /**
-     * One attachment stack model: three colored box elements over the family texture
-     * (the upstream three render passes verbatim, tintindex 0 = the material-dye seat
-     * {@code GT6AttachmentTintListener} answers), each twinned by an overlay-pass
+     * One attachment stack model: one colored box element per family render pass over
+     * the family texture (the tap/funnel three-pass stack, the nozzle pair's two-pass
+     * one — task material-mc-f-attachment-rows), tintindex 0 = the material-dye seat
+     * {@code GT6AttachmentTintListener} answers, each twinned by an overlay-pass
      * element inflated 0.01 outward (the addConverterModel decal grammar — the
      * :204/:124 getTexture2 second layer) over the cutout layer, cullface only where
      * the UNDERLYING box face lies on the block boundary (the interior coplanar faces
