@@ -154,9 +154,10 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 			writeConverterData(aData, true, aLd.mActive, aLd.mStopped,
 					0, 0, aLd.mThroughput > 0 ? aLd.mThroughput : aLd.mOutput, "", "EU");
 		} else if (aBE instanceof GTTransformerRotationBlockEntity aRt) {
-			// 旋转变压器：STORAGE_CAPACITY = tInput*2 常量（:91）。
+			// 旋转变压器：容量 = tInput*2（:91；task kinetics-be-function-family 起随行
+			// 采纳——金属行走其行值对，木单例仍 :1668 常量）。
 			writeConverterData(aData, true, aRt.mActive, aRt.mStopped,
-					aRt.mStorage, GTTransformerRotationBlockEntity.STORAGE_CAPACITY, 0, "RU", "");
+					aRt.mStorage, aRt.storageCapacity(), 0, "RU", "");
 		} else if (aBE instanceof GT6MagicAbsorberBlockEntity aAbsorber) {
 			// 魔法吸收器：无缓冲，mOutput 随状态 1/64（:164-166），出线 QU/TU（:98）。
 			writeConverterData(aData, true, aAbsorber.mActive, aAbsorber.mStopped,

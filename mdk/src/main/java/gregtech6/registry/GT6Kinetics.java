@@ -581,7 +581,7 @@ public final class GT6Kinetics {
 	 * <p>Facing = the placement orientation (the GT6PlacementFacing canon) — FRONT toward
 	 * the placer, the upstream input face convention the BE card inherits.
 	 */
-	public static final class PowertrainBlock extends Block {
+	public static final class PowertrainBlock extends gregtech6.block.GTEntityBlock {
 
 		/** Facing property (horizontal — the placement orientation). */
 		public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
@@ -597,6 +597,21 @@ public final class GT6Kinetics {
 		/** The registration row (the GTBarrelBlock carrier read form). */
 		public PowertrainRow row() {
 			return mRow;
+		}
+
+		/**
+		 * The family BET (task kinetics-be-function-family — the mc-D 遗留 B 案面):
+		 * the rotation-engine rows mount the ROTATION_ENGINE_BE, the transformer-gearbox
+		 * rows the TRANSFORMER_BE (the seated wooden singleton's shared type, the
+		 * ADR-P3-1 multi-mount), the custom-gearbox rows the GEARBOX_BE, the steam-turbine
+		 * rows the STEAM_TURBINE_BE — the SteamEngineBlock.tickerType() dispatch form.
+		 */
+		@Override
+		protected net.minecraft.world.level.block.entity.BlockEntityType<? extends gregtech6.tileentity.TileEntityBase03TicksAndSync> tickerType() {
+			if (mRow instanceof TransformerGearboxRow) return GTBlockEntities.TRANSFORMER_BE.get();
+			if (mRow instanceof CustomGearboxRow) return GTBlockEntities.GEARBOX_BE.get();
+			if (mRow instanceof SteamTurbineRow) return GTBlockEntities.STEAM_TURBINE_BE.get();
+			return GTBlockEntities.ROTATION_ENGINE_BE.get(); // the RotationEngineRow default
 		}
 
 		/** The composed row name (task i18n-compose-rows): the family template over the material unit. */
@@ -616,6 +631,17 @@ public final class GT6Kinetics {
 			// the front TOWARDS the placer (task singleblock-facing-canon, the steam-engine form)
 			return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 		}
+		//? if neoforge {
+		/*
+		// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
+		// dispatch). The simpleCodec representative-value form is the vanilla StairBlock
+		// precedent — a parse-time default carrying no live config; world save/load never
+		// runs through this codec (the registry-id + property mapper does).
+		@Override
+		protected com.mojang.serialization.MapCodec<? extends PowertrainBlock> codec() {
+			return simpleCodec(aProperties -> new PowertrainBlock(ROTATION_ENGINES.get(0), aProperties));
+		}
+		*///?}
 	}
 
 	/** The combined powertrain block list in declaration order (the tint-wrap + datagen walkers). */
