@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": {
+      "item": "gt6:ingot_draconium_awakened"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "DraconicEvolution"
+    }
+  ],
+  "pattern": [
+    "RRR",
+    "hR ",
+    "RRR"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:awakened_draconium_anvil"
+  }
+}

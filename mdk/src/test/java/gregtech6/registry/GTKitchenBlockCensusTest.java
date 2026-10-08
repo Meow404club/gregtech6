@@ -143,6 +143,7 @@ public class GTKitchenBlockCensusTest {
 	/** The register census: 4 kitchen blocks — a drift forces a look and a seam reuse. */
 	@Test
 	public void kitchenRegisterCensusDoesNotDrift() {
-		assertEquals(4, GT6Kitchen.BLOCKS.getEntries().size(), "the kitchen register census drifted");
+		// task material-mc-e-tool-anvil-rows: 4 pots + the three TABLE variants (:2174/:2176/:2178)
+		assertEquals(7, GT6Kitchen.BLOCKS.getEntries().size(), "the kitchen register census drifted");
 	}
 }

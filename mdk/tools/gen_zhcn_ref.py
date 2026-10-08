@@ -2534,6 +2534,43 @@ BLOCK_BACKFILL = {
     "block.gt6.long_dist_pipe_15": "远距零阻流体管道 (0 K)",
     "block.gt6.longdist_item_pipe": "远距传输用物品管道",
     "block.gt6.longdist_fluid_pipe": "远距传输用流体管道",
+
+    # ---- the 33 anvil ladder rows (task material-mc-e-tool-anvil-rows, the mc-E card) ----
+    # the dump gt.multitileentity.* faces verbatim, Loader :2187-2219 (the two c-anvil
+    # pioneers 32025/32095 ride the pre-existing hand layer above)
+    "block.gt6.granite_black_anvil": "黑色花岗岩砧",          # gt.multitileentity.32026
+    "block.gt6.granite_red_anvil": "红色花岗岩砧",            # gt.multitileentity.32027
+    "block.gt6.lead_anvil": "铅砧",                        # gt.multitileentity.32050
+    "block.gt6.bronze_anvil": "青铜砧",                     # gt.multitileentity.32028
+    "block.gt6.arsenic_copper_anvil": "砷铜砧",               # gt.multitileentity.32106
+    "block.gt6.arsenic_bronze_anvil": "砷青铜砧",              # gt.multitileentity.32107
+    "block.gt6.syrmorite_anvil": "赛摩铜砧",                  # gt.multitileentity.32029
+    "block.gt6.iron_wood_anvil": "铁木砧",                   # gt.multitileentity.32030
+    "block.gt6.steel_anvil": "钢砧",                       # gt.multitileentity.32031
+    "block.gt6.desh_anvil": "戴斯砧",                       # gt.multitileentity.32071
+    "block.gt6.efrine_anvil": "绿晶砧",                      # gt.multitileentity.32092
+    "block.gt6.thaumium_anvil": "神秘锭砧",                   # gt.multitileentity.32032
+    "block.gt6.manasteel_anvil": "魔力钢砧",                  # gt.multitileentity.32033
+    "block.gt6.black_steel_anvil": "黑钢砧",                  # gt.multitileentity.32034
+    "block.gt6.blue_steel_anvil": "蓝钢砧",                  # gt.multitileentity.32035
+    "block.gt6.red_steel_anvil": "红钢砧",                   # gt.multitileentity.32036
+    "block.gt6.vanadium_steel_anvil": "钒钢砧",                # gt.multitileentity.32037
+    "block.gt6.octine_anvil": "炽炎铁砧",                    # gt.multitileentity.32038
+    "block.gt6.fiery_steel_anvil": "炙热钢砧",                 # gt.multitileentity.32039
+    "block.gt6.tungsten_alloy_anvil": "钨合金砧",              # gt.multitileentity.32091
+    "block.gt6.titanium_anvil": "钛砧",                      # gt.multitileentity.32040
+    "block.gt6.netherite_anvil": "下界合金砧",                 # gt.multitileentity.32088
+    "block.gt6.terrasteel_anvil": "泰拉钢砧",                 # gt.multitileentity.32041
+    "block.gt6.void_metal_anvil": "虚空金属砧",                # gt.multitileentity.32042
+    "block.gt6.titanium_gold_anvil": "钛金砧",                 # gt.multitileentity.32043
+    "block.gt6.tungsten_steel_anvil": "钨钢砧",                # gt.multitileentity.32044
+    "block.gt6.tungsten_anvil": "钨砧",                      # gt.multitileentity.32045
+    "block.gt6.iridium_anvil": "铱砧",                      # gt.multitileentity.32046
+    "block.gt6.gaia_spirit_anvil": "盖亚之魂砧",               # gt.multitileentity.32047
+    "block.gt6.adamantium_anvil": "艾德曼合金砧",              # gt.multitileentity.32048
+    "block.gt6.draconium_anvil": "龙砧",                     # gt.multitileentity.32049
+    "block.gt6.awakened_draconium_anvil": "觉醒龙砧",           # gt.multitileentity.32068
+    "block.gt6.infinity_anvil": "无尽砧",                    # gt.multitileentity.32069
 }
 
 # ---- fluid.gt6.* (21): hand translations with dump anchors (蒸馏水/柴油/幻露 per the
@@ -2733,32 +2770,18 @@ MATERIAL_BACKFILL = {
     "gt6.material.superconductor": "超导体",   # TeamNED double-source cross
 }
 
-# ---- itemGroup.gt6.* (2+16): the P22 spray-can tab + the billet prefix tab (the billet
-# word = the existing %s坯料 template's noun) + the sixteen wire multiplier tabs (task
-# wire-gt-registration — the same NO-dump-row face: upstream wireGt01-16 have no PrefixItem
-# and no tab; the word = the gt6.tagprefix.wire_gtNN template minus its %s slot, the billet
-# ruling applied mechanically — "1×线".."16×线", the adjudicated wire=线/cable=线缆 split).
+# ---- itemGroup.gt6.* (2): the P22 spray-can tab + the billet prefix tab (the billet
+# word = the existing %s坯料 template's noun). The sixteen wire multiplier tabs of task
+# wire-gt-registration left with task wiregt-prefix-item-retirement — upstream OP.wireGt01-16
+# ride the MTE block path (MultiTileEntityWireElectric.java:72-87), no PrefixItem and no tab
+# (the GT6ZhCn addTierUnitTabs absence note); the py layer follows the retirement (task
+# material-mc-e-tool-anvil-rows — the regen resurrected them into the TSV and the
+# noHandRowIsOrphaned pin caught the orphan class).
 # The former itemGroup.gt6.plank row left with task planks-blockification (the tab dies with
 # the plank prefix-item retirement — zero plank prefix items, tabPrefixes() skips the tab).
 TAB_BACKFILL = {
     "itemGroup.gt6.billet": "坯料",
     "itemGroup.gt6.spray_cans": "喷漆罐",
-    "itemGroup.gt6.wire_gt01": "1×线",
-    "itemGroup.gt6.wire_gt02": "2×线",
-    "itemGroup.gt6.wire_gt03": "3×线",
-    "itemGroup.gt6.wire_gt04": "4×线",
-    "itemGroup.gt6.wire_gt05": "5×线",
-    "itemGroup.gt6.wire_gt06": "6×线",
-    "itemGroup.gt6.wire_gt07": "7×线",
-    "itemGroup.gt6.wire_gt08": "8×线",
-    "itemGroup.gt6.wire_gt09": "9×线",
-    "itemGroup.gt6.wire_gt10": "10×线",
-    "itemGroup.gt6.wire_gt11": "11×线",
-    "itemGroup.gt6.wire_gt12": "12×线",
-    "itemGroup.gt6.wire_gt13": "13×线",
-    "itemGroup.gt6.wire_gt14": "14×线",
-    "itemGroup.gt6.wire_gt15": "15×线",
-    "itemGroup.gt6.wire_gt16": "16×线",
 }
 
 # ---------------------------------------------------------------------------
@@ -2793,23 +2816,30 @@ MOLD_SHAPE_WORDS = {
     "nugget": "粒",
 }
 
-# task faucet-material-rows rescue: the 12 TSV hand rows main carried with NO py backfill
-# (the --check ratchet was red on main: "tsv row with no hand row" — cards landed the TSV
-# row without the py layer). Values verbatim from the main TSV so the regen keeps every
-# committed zh face; key order mirrors the TSV sort.
+# task material-mc-e-tool-anvil-rows rescue — the six energy-page rows landed the TSV
+# without this py layer (the energy-page-jei-leg card); values verbatim from the
+# committed TSV so the regen keeps every zh face. (The interim faucet-rescue 12-row set
+# retired with the rebase: every row it carried gained a hand-layer proper entry on main,
+# where its presence here collided — the sys.exit "backfill row already in the hand layer"
+# that made main's own --check red.)
 ORPHAN_TSV_RESCUE = {
-    "gt6.jade.crucible.owner": "归属: %s",
-    "block.gt6.blue_clay": "蓝色粘土块",
-    "block.gt6.brown_clay": "棕色粘土块",
-    "block.gt6.grindstone": "打磨石",
-    "block.gt6.white_clay": "白色粘土块",
-    "block.gt6.yellow_clay": "黄色粘土块",
-    "item.gt6.circuit_enderium": "末影电子电路",
-    "item.gt6.circuit_enderium.tooltip": "在另一个维度处理您的数据",
-    "item.gt6.circuit_magic": "魔法电子电路",
-    "item.gt6.circuit_magic.tooltip": "像魔法师那样处理事务!",
-    "item.gt6.circuit_signalum": "信素电子电路",
-    "item.gt6.circuit_signalum.tooltip": "逻辑电路板",
+    # task material-mc-e-tool-anvil-rows rescue — the six energy-page rows landed the TSV
+    # without this py layer (the energy-page-jei-leg card); values verbatim from the
+    # committed TSV so the regen keeps every zh face
+    "gt6.viewer.energy.empty": "尚无已移植的产生机器",
+    "gt6.viewer.energy.emits": "发射 %s",
+    "gt6.viewer.energy.group.converters": "转换器 · Converters",
+    "gt6.viewer.energy.group.generators": "产生 · Generators",
+    "gt6.viewer.energy.group.processors": "消费·处理 · Processors",
+    "gt6.viewer.energy.transfer": "传输：EU→线缆 / RU·KU→轴系 / HU·CU·Steam→管",
+    # rebase reseat (task material-mc-e-tool-anvil-rows review seat): the four G1 panel
+    # rows landed main's TSV with no py layer (same shape the six rows above rescue —
+    # invisible on main because its --check died at import on the stale faucet set);
+    # values verbatim from the committed TSV so the regen keeps every zh face
+    "gt6.panel.asphalt": "沥青覆盖板",
+    "gt6.panel.cfoam": "建筑泡沫覆盖板",
+    "gt6.panel.concrete": "混凝土覆盖板",
+    "gt6.panel.wood": "木制覆盖板",
 }
 
 MOLD_CRUCIBLE_GAP_BACKFILL = {

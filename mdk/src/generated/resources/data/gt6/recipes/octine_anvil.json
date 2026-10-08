@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": {
+      "item": "gt6:ingot_octine"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "hR ",
+    "RRR"
+  ],
+  "result": {
+    "item": "gt6:octine_anvil"
+  },
+  "show_notification": true
+}

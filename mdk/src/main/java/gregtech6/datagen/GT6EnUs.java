@@ -1542,6 +1542,11 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.bathing_pot_steel", "Bathing Pot");
         add("block.gt6.mixing_bowl", "Mixing Bowl"); // decisions.p29-mixingbowl-ruling — the en drift corrected
         add("block.gt6.juicer", "Juicer"); // task food-machines-kitchen — the Loader :2184 name column verbatim
+        // task material-mc-e-tool-anvil-rows — the three TABLE variants (:2174/:2176/:2178
+        // name columns verbatim)
+        add("block.gt6.bathing_pot_table_wood", "Wooden Bathing Pot Table");
+        add("block.gt6.bathing_pot_table_steel", "Bathing Pot Table");
+        add("block.gt6.mixing_bowl_table", "Ceramic Bowl Table");
         add("item.gt6.clay_bowl", "Clay Bowl");
         add("item.gt6.clay_juicer", "Clay Juicer"); // issue #45 C1 — the MultiItemRandomTools.java:118 name column verbatim
     }
@@ -1588,15 +1593,16 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * The anvil family keys (task c-anvil): the two stone anvil blocks, display
-     * names VERBATIM from the upstream registration rows (aMat.mNameLocal + " Anvil",
-     * Loader_MultiTileEntities.java:2185-2186 — "Stone Anvil" / "Blackstone Anvil",
-     * both "Misc Tool Blocks"). The items ride the machines tab (the kitchen join form),
-     * no tab key here.
+     * The anvil family keys (task c-anvil; task material-mc-e-tool-anvil-rows walks the
+     * full 35-row ladder): display names VERBATIM from the upstream registration rows
+     * (aMat.mNameLocal + " Anvil", Loader_MultiTileEntities.java:2185-2219 — "Stone
+     * Anvil" / "Blackstone Anvil" / "Black Granite Anvil" / …, all "Misc Tool Blocks").
+     * The items ride the machines tab (the kitchen join form), no tab key here.
      */
     private void addAnvils() {
-        add("block.gt6.stone_anvil", "Stone Anvil");
-        add("block.gt6.blackstone_anvil", "Blackstone Anvil");
+        for (gregtech6.registry.GT6Anvils.AnvilRow tRow : gregtech6.registry.GT6Anvils.ROWS) {
+            add("block.gt6." + tRow.path(), tRow.material().get().mNameLocal + " Anvil");
+        }
     }
 
     /**

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": {
+      "item": "gt6:ingot_steel"
+    },
+    "h": {
+      "tag": "gt6:tools/hard_hammer"
+    }
+  },
+  "pattern": [
+    "RRR",
+    "hR ",
+    "RRR"
+  ],
+  "result": {
+    "item": "gt6:steel_anvil"
+  },
+  "show_notification": true
+}

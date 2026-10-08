@@ -1298,7 +1298,10 @@ public class GT6LangParityTest {
 			+ " gt6.row.crucible.display.* template) and the basin/crossing families registered"
 			+ " (78 row carriers over the gt6.row.{basin,crossing}.display templates + the 18 new"
 			+ " gt6.row.mat.* words), 1768 + 35 + 78 = 1881)");
-		assertEquals(378, tChecked,  "the checked block census: every DeferredRegister block NOT"
+		assertEquals(414, tChecked,  "the checked block census: every DeferredRegister block NOT"
+		+ " (+36 task material-mc-e-tool-anvil-rows: the anvil ladder walked 2 -> 35 and the kitchen family 4 -> 7 —"
+		+ " the three TABLE variants — every new block.gt6.* key both locales; the rebase union onto main's 378 (the"
+		+ " +7 drum seat below rides in the shared chain): 378 + 36 = 414)"
 		+ " (+4 task worldgen-diggables-pits: the 4 colored-clay blocks joined the checked leg — 367 + 4 = 371 over main's racks-inclusive census, "
 		+ "the atomic block.gt6.{brown,yellow,blue,white}_clay keys both locales: the en BlockDiggable.java:52-57 names verbatim + the zh hand layer 粘土块 rows)"
 		+ " (+7 task material-mc-f-attachment-rows: the seven 64K drum rows join the CHECKED leg — direct block.gt6.barrel_* keys both locales, 371 + 7 = 378, the review-seat rebase union)"

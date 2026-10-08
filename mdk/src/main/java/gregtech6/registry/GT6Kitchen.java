@@ -30,13 +30,14 @@ import gregtech6.tileentity.tools.GT6JuicerBlockEntity;
 import gregtech6.tileentity.tools.GT6MixingBowlBlockEntity;
 
 /**
- * The kitchen family registration (task kitchen-pot-bowl) — card-owned
- * {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the construct event,
- * the GTBarrels shape (ADR-P3-4; a separate class keeps the wave-4 card scopes
- * disjoint). Ports the "Misc Tool Blocks" kitchen rows of
- * Loader_MultiTileEntities.java:2173-2178 (the pot pair + the bowl; the Table variants
- * :2174/:2176/:2178 and the Mortar/Juicer/Grindstone/SiftingTable neighbours :2179+ are
- * the pool cuts of the research split).
+ * The kitchen family registration (task kitchen-pot-bowl + material-mc-e-tool-anvil-rows)
+ * — card-owned {@code @EventBusSubscriber(MOD)} DeferredRegisters attached from the
+ * construct event, the GTBarrels shape (ADR-P3-4; a separate class keeps the wave-4 card
+ * scopes disjoint). Ports the "Misc Tool Blocks" kitchen rows of
+ * Loader_MultiTileEntities.java:2173-2178 (the pot pair + the bowl; the Mortar/Juicer/
+ * Grindstone/SiftingTable neighbours :2179+ were the other cards' rows — the mortar/
+ * juicer/grindstone/sifting rows have since landed). Task material-mc-e-tool-anvil-rows
+ * appended the Table variants :2174/:2176/:2178 (the kitchen-tool-domain census tail).
  *
  * <p>Rows (upstream NBT → the block carrier):
  * <ul>
@@ -149,18 +150,40 @@ public final class GT6Kitchen {
 					() -> GT6Kitchen.JUICER_BE.get(), kitchenProperties(SoundType.STONE, 5.0F)));
 
 	/**
+	 * The three TABLE variants (task material-mc-e-tool-anvil-rows — Loader_MultiTileEntities
+	 * :2174/:2176/:2178): the same pot/bowl carriers raised on their stand. Upstream the
+	 * table MTEs are behavioural NO-OP subclasses (MultiTileEntityBathingPotTable only
+	 * overrides render/collision/surface), so the port reuses the base carrier classes with
+	 * {@link GTKitchenBlock#SHAPE_TABLE} and the SAME BETs (the shared-BET multi-mount, the
+	 * anvil form). Registration columns verbatim: the wood table (:2174, aUtilWood, 5.0,
+	 * flammability 100 recorded like its pot), the steel table (:2176, aUtilMetal, 6.0),
+	 * the bowl table (:2178, aUtilStone, 5.0). The wood row rides the same MT.WoodTreated
+	 * melt-door carrier as its pot.
+	 */
+	public static final RegistryObject<GTKitchenBlock> BATHING_POT_TABLE_WOOD = BLOCKS.register("bathing_pot_table_wood",
+			() -> new GTKitchenBlock(4000, () -> MT.WoodTreated, GTKitchenBlock.SHAPE_TABLE,
+					() -> GT6Kitchen.BATHING_POT_BE.get(), kitchenProperties(SoundType.WOOD, 5.0F)));
+	public static final RegistryObject<GTKitchenBlock> BATHING_POT_TABLE_STEEL = BLOCKS.register("bathing_pot_table_steel",
+			() -> new GTKitchenBlock(8000, () -> MT.StainlessSteel, GTKitchenBlock.SHAPE_TABLE,
+					() -> GT6Kitchen.BATHING_POT_BE.get(), kitchenProperties(SoundType.METAL, 6.0F)));
+	public static final RegistryObject<GTKitchenBlock> MIXING_BOWL_TABLE = BLOCKS.register("mixing_bowl_table",
+			() -> new GTKitchenBlock(8000, () -> MT.Ceramic, GTKitchenBlock.SHAPE_TABLE,
+					() -> GT6Kitchen.MIXING_BOWL_BE.get(), kitchenProperties(SoundType.STONE, 5.0F)));
+
+	/**
 	 * The pot BET — the shared-BET multi-mount (ADR-P3-1): one BE class over the wood +
-	 * steel rows (the upstream wood/steel class split carried no behavioural difference
-	 * beyond the registration NBT the carrier now holds).
+	 * steel rows AND their table variants (the upstream table classes carried no behavioural
+	 * difference beyond the registration NBT + render the carrier now holds).
 	 */
 	public static final RegistryObject<BlockEntityType<GT6BathingPotBlockEntity>> BATHING_POT_BE =
 			BLOCK_ENTITY_TYPES.register("bathing_pot", () -> BlockEntityType.Builder.of(
-					GT6BathingPotBlockEntity::new, BATHING_POT_WOOD.get(), BATHING_POT_STEEL.get()).build(null));
+					GT6BathingPotBlockEntity::new, BATHING_POT_WOOD.get(), BATHING_POT_STEEL.get(),
+					BATHING_POT_TABLE_WOOD.get(), BATHING_POT_TABLE_STEEL.get()).build(null));
 
-	/** The bowl BET — one BlockEntityType over the ceramic bowl. */
+	/** The bowl BET — one BlockEntityType over the ceramic bowl + its table. */
 	public static final RegistryObject<BlockEntityType<GT6MixingBowlBlockEntity>> MIXING_BOWL_BE =
 			BLOCK_ENTITY_TYPES.register("mixing_bowl", () -> BlockEntityType.Builder.of(
-					GT6MixingBowlBlockEntity::new, MIXING_BOWL.get()).build(null));
+					GT6MixingBowlBlockEntity::new, MIXING_BOWL.get(), MIXING_BOWL_TABLE.get()).build(null));
 
 	/** The Juicer BET — one BlockEntityType over the ceramic Juicer (task food-machines-kitchen). */
 	public static final RegistryObject<BlockEntityType<GT6JuicerBlockEntity>> JUICER_BE =
@@ -176,6 +199,13 @@ public final class GT6Kitchen {
 			() -> new BlockItem(MIXING_BOWL.get(), new Item.Properties()));
 	public static final RegistryObject<Item> JUICER_ITEM = ITEMS.register("juicer",
 			() -> new BlockItem(JUICER.get(), new Item.Properties()));
+	/** The table items (the :2174/:2176/:2178 rows — the "M","S" recipe results). */
+	public static final RegistryObject<Item> BATHING_POT_TABLE_WOOD_ITEM = ITEMS.register("bathing_pot_table_wood",
+			() -> new BlockItem(BATHING_POT_TABLE_WOOD.get(), new Item.Properties()));
+	public static final RegistryObject<Item> BATHING_POT_TABLE_STEEL_ITEM = ITEMS.register("bathing_pot_table_steel",
+			() -> new BlockItem(BATHING_POT_TABLE_STEEL.get(), new Item.Properties()));
+	public static final RegistryObject<Item> MIXING_BOWL_TABLE_ITEM = ITEMS.register("mixing_bowl_table",
+			() -> new BlockItem(MIXING_BOWL_TABLE.get(), new Item.Properties()));
 
 	/**
 	 * The Clay Bowl raw item — upstream MultiItemRandomTools.java:119 ("Clay Bowl", "Put
@@ -219,6 +249,10 @@ public final class GT6Kitchen {
 			aEvent.accept(new ItemStack(JUICER_ITEM.get()));
 			aEvent.accept(new ItemStack(CLAY_BOWL_RAW.get()));
 			aEvent.accept(new ItemStack(CLAY_JUICER_RAW.get()));
+			// the table variants (:2174/:2176/:2178) join after their pots (the row order)
+			aEvent.accept(new ItemStack(BATHING_POT_TABLE_WOOD_ITEM.get()));
+			aEvent.accept(new ItemStack(BATHING_POT_TABLE_STEEL_ITEM.get()));
+			aEvent.accept(new ItemStack(MIXING_BOWL_TABLE_ITEM.get()));
 		}
 	}
 
@@ -268,6 +302,7 @@ public final class GT6Kitchen {
 	 * Ceramic / Ceramic, the carrier rows). Client-side call time only.
 	 */
 	public static Block[] paintableBlockArray() {
-		return new Block[] { BATHING_POT_WOOD.get(), BATHING_POT_STEEL.get(), MIXING_BOWL.get(), JUICER.get() };
+		return new Block[] { BATHING_POT_WOOD.get(), BATHING_POT_STEEL.get(), MIXING_BOWL.get(), JUICER.get(),
+				BATHING_POT_TABLE_WOOD.get(), BATHING_POT_TABLE_STEEL.get(), MIXING_BOWL_TABLE.get() };
 	}
 }

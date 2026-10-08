@@ -483,15 +483,18 @@ public class GT6ZhCn extends LanguageProvider {
 	}
 
 	/**
-	 * The anvil family zh faces (task c-anvil) — the upstream zh dump rows VERBATIM
-	 * (tmp/gregtech.lang: "石头砧" = meta 32025 Stone Anvil, "黑石砧" = meta 32095
-	 * Blackstone Anvil). Hand rows (the reference dump keys are the meta-keyed 1.7 forms,
-	 * lifted onto the direct hand layer — the addDirect absent-row skip is why the TSV
-	 * regen and this walk land in the SAME commit, the noHandRowIsOrphaned pin).
+	 * The anvil family zh faces (task c-anvil; task material-mc-e-tool-anvil-rows walks
+	 * the full 35-row ladder) — the upstream zh dump rows VERBATIM (tmp/gregtech.lang:
+	 * "石头砧" = meta 32025 Stone Anvil, "黑石砧" = meta 32095 Blackstone Anvil, the
+	 * :2185-2219 meta band — 32026 黑色花岗岩砧 … 32069 无尽砧). Hand rows (the reference
+	 * dump keys are the meta-keyed 1.7 forms, lifted onto the direct hand layer — the
+	 * addDirect absent-row skip is why the TSV regen and this walk land in the SAME
+	 * commit, the noHandRowIsOrphaned pin).
 	 */
 	private void addAnvilUnits() {
-		addDirect("block.gt6.stone_anvil");
-		addDirect("block.gt6.blackstone_anvil");
+		for (gregtech6.registry.GT6Anvils.AnvilRow tRow : gregtech6.registry.GT6Anvils.ROWS) {
+			addDirect("block.gt6." + tRow.path());
+		}
 	}
 
 	/**
@@ -549,6 +552,11 @@ public class GT6ZhCn extends LanguageProvider {
 		add("block.gt6.bathing_pot_steel", "浸洗盆");
 		add("block.gt6.mixing_bowl", "搅拌盆");
 		add("block.gt6.juicer", "榨汁机"); // task food-machines-kitchen — the dump gt.multitileentity.32722 face 榨汁机 verbatim (tmp/gregtech.lang:13543)
+		// task material-mc-e-tool-anvil-rows — the three TABLE variants, dump faces verbatim
+		// (32720 木质浸洗桌 tmp/gregtech.lang:13541 / 32707 浸洗桌 :13528 / 32705 搅拌桌 :13526)
+		add("block.gt6.bathing_pot_table_wood", "木质浸洗桌");
+		add("block.gt6.bathing_pot_table_steel", "浸洗桌");
+		add("block.gt6.mixing_bowl_table", "搅拌桌");
 		add("item.gt6.clay_bowl", "粘土碗");
 		add("item.gt6.clay_juicer", "粘土榨汁机"); // issue #45 C1 — the raw 994 hand face (Clay Juicer + 榨汁机 dump face)
 	}

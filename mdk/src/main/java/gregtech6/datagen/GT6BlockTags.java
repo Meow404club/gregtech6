@@ -323,11 +323,17 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		for (RegistryObject<GTBarrelBlock> tDrum : GTBarrels.DRUM_64K_BLOCKS.values()) {
 			tPickaxe.add(tDrum.get()); // task material-mc-f-attachment-rows — the :2152-2158 tier rides aUtilMetal like the high tiers
 		}
-		// task c-anvil — the stone anvil pair joins the band: both rows are stone-carrier
-		// tool blocks (aUtilStone, the Loader :2185-2186 column; the vanilla
-		// mineable/pickaxe gate over hardness 1.0), the hopper/boiler family convention
-		tPickaxe.add(gregtech6.registry.GT6Anvils.STONE_ANVIL.get());
-		tPickaxe.add(gregtech6.registry.GT6Anvils.BLACKSTONE_ANVIL.get());
+		// task c-anvil — the anvil ladder joins the band (task material-mc-e-tool-anvil-rows
+		// walks the full :2185-2219 table): the aUtilStone/aUtilMetal columns are pickaxe
+		// (34 rows — both stone-carrier pairs + the ingot rungs; the vanilla mineable/pickaxe
+		// gate over hardness 1.0), the hopper/boiler family convention. The single aUtilWood
+		// Ironwood row (:2194) rides the axe band below. (Rebase union: the interim two-line
+		// stone-pair seat of the same c-anvil ruling is subsumed by this full-table walk.)
+		for (gregtech6.registry.GT6Anvils.AnvilRow tAnvilRow : gregtech6.registry.GT6Anvils.ROWS) {
+			if (!gregtech6.registry.GT6Anvils.isWoodBand(tAnvilRow)) {
+				tPickaxe.add(gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tAnvilRow.path()).get());
+			}
+		}
 		// task concrete-blocks-register — the 64 concrete blocks join the band: upstream
 		// getHarvestTool = TOOL_pickaxe for the WHOLE BlockMetaType family incl. slabs
 		// (BlockMetaType.java:166), and the vanilla pickaxe tag enumerates slabs
@@ -406,6 +412,10 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		tPickaxe.add(gregtech6.registry.GT6Kitchen.BATHING_POT_STEEL.get());
 		tPickaxe.add(gregtech6.registry.GT6Kitchen.MIXING_BOWL.get());
 		tPickaxe.add(gregtech6.registry.GT6Kitchen.JUICER.get());
+		// task material-mc-e-tool-anvil-rows — the steel/bowl TABLE variants (:2176 aUtilMetal
+		// / :2178 aUtilStone); the wood table (:2174 aUtilWood) rides the axe band below.
+		tPickaxe.add(gregtech6.registry.GT6Kitchen.BATHING_POT_TABLE_STEEL.get());
+		tPickaxe.add(gregtech6.registry.GT6Kitchen.MIXING_BOWL_TABLE.get());
 		tPickaxe.add(gregtech6.registry.GTMultiBlocks.COKE_OVEN.get());
 		tPickaxe.add(gregtech6.registry.GTMultiBlocks.COKE_OVEN_BRICKS.get());
 		for (gregtech6.registry.GT6Cells.CellRow tRow : gregtech6.registry.GT6Cells.ROWS) {
@@ -522,6 +532,14 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		tAxe.add(gregtech6.registry.GT6Placeables.GREG_O_LANTERN.get());
 		tAxe.add(gregtech6.registry.GT6Placeables.PLACED_STICK.get());
 		tAxe.add(gregtech6.registry.GT6Kitchen.BATHING_POT_WOOD.get());
+		// task material-mc-e-tool-anvil-rows — the wooden TABLE (:2174 aUtilWood, the
+		// wood-table sibling) + the single aUtilWood anvil rung (the :2194 Ironwood row).
+		tAxe.add(gregtech6.registry.GT6Kitchen.BATHING_POT_TABLE_WOOD.get());
+		for (gregtech6.registry.GT6Anvils.AnvilRow tAnvilRow : gregtech6.registry.GT6Anvils.ROWS) {
+			if (gregtech6.registry.GT6Anvils.isWoodBand(tAnvilRow)) {
+				tAxe.add(gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tAnvilRow.path()).get());
+			}
+		}
 		tAxe.add(gregtech6.registry.GT6BeeHives.BUMBLIARY.get());
 		tAxe.add(gregtech6.registry.GT6BeeHives.BUMBLIARY_ADVANCED.get());
 		for (gregtech6.registry.GT6Kinetics.AxleSpec tSpec : gregtech6.registry.GT6Kinetics.AXLE_SPECS) {

@@ -253,7 +253,16 @@ public class GT6KitchenNeiModel extends GTDynamicBakedModel {
 
 	@SubscribeEvent
 	public static void onModifyBakingResult(ModelEvent.ModifyBakingResult aEvent) {
-		for (Block tBlock : GT6Kitchen.paintableBlockArray()) wrapStates(tBlock, aEvent);
+		// the NEI-eligible four — NOT the paintableBlockArray walk: task
+		// material-mc-e-tool-anvil-rows added the three TABLE variants to the paint
+		// census (their tintindex-0 faces resolve the row material), but the upstream
+		// table MTEs draw NO NEI glyph (MultiTileEntityBathingPotTable.getRenderPasses2
+		// :35 = 8 geometry passes, no BI.nei() pass) — the wrap would paint a corner
+		// glyph onto the raised tub rim.
+		for (Block tBlock : new Block[] {GT6Kitchen.BATHING_POT_WOOD.get(), GT6Kitchen.BATHING_POT_STEEL.get(),
+				GT6Kitchen.MIXING_BOWL.get(), GT6Kitchen.JUICER.get()}) {
+			wrapStates(tBlock, aEvent);
+		}
 	}
 
 	private static void wrapStates(Block tBlock, ModelEvent.ModifyBakingResult aEvent) {

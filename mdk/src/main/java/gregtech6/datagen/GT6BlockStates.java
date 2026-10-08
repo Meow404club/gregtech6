@@ -763,25 +763,28 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task c-anvil — the two stone anvil rows (Loader_MultiTileEntities.java
-     * :2185-2186). Task tex-placeholder-audit UPGRADED the target (the probe verdict:
-     * upstream ships NO dedicated anvil PNG group — the anvil body renders the row
-     * material's SMOOTH SET TEXTURE, {@code mMaterial.getTextureSmooth(mRGBa, T)},
-     * MultiTileEntityAnvil.java:306, the material-icon system the mold/crucible body
-     * researchcard mapped): ONE cube_all per ROW over the vanilla smooth-stone family
-     * texture — stone → {@code minecraft:block/smooth_stone} (the SET_STONE ruling,
+     * Task c-anvil — the stone anvil pair; task material-mc-e-tool-anvil-rows walks the
+     * FULL 35-row ladder (Loader_MultiTileEntities.java:2185-2219). Task
+     * tex-placeholder-audit UPGRADED the target (the probe verdict: upstream ships NO
+     * dedicated anvil PNG group — the anvil body renders the row material's SMOOTH SET
+     * TEXTURE, {@code mMaterial.getTextureSmooth(mRGBa, T)}, MultiTileEntityAnvil
+     * .java:306, the material-icon system the mold/crucible body researchcard mapped).
+     * The two c-anvil rows keep their FINISHED vanilla faces — stone →
+     * {@code minecraft:block/smooth_stone} (the SET_STONE ruling,
      * GT6CrucibleDatagen.bodyTexture), blackstone → {@code minecraft:block/blackstone}
      * (the row crafts from the vanilla BLACKSTONE item, the GT6Anvils doc — the port's
-     * faithful material face). The top face is the same art (the single smooth texture
+     * faithful material face). The 33 ladder rows (:2187-2219) ride the SHARED
+     * crucible dispatch ({@link GT6CrucibleDatagen#bodyTexture} + {@link GT6CrucibleDatagen#bodyTinted}
+     * — the basin/crossing 39-row borrow): the grayscale materialicons art carries
+     * tintindex 0 and {@code GT6MoldTintListener} answers the mRGBaSolid (task
+     * debt-material-tint). The top face is the same art (the single smooth texture
      * serves every body pass upstream), the FACING y-rotation stays (the upstream
-     * SIDES_VALID :413 horizontal band — visually inert on the cube, load-bearing when
-     * the anvil-silhouette geometry joins the pool). Both rows keep their own model. The
-     * 2 BlockItem models parent their row model; the {@code anvil_top/anvil_side}
-     * placeholder pair is retired.
+     * SIDES_VALID :413 horizontal band). Each row keeps its own model; the BlockItem
+     * models parent their row model.
      */
     private void addAnvils() {
         for (gregtech6.registry.GT6Anvils.AnvilRow tRow : gregtech6.registry.GT6Anvils.ROWS) {
-            ModelFile tModel = models().cubeAll(tRow.path(), anvilBodyTexture(tRow.path()));
+            ModelFile tModel = anvilModel(tRow);
             Block tBlock = gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
                 int tY = switch (aState.getValue(gregtech6.block.tools.GTAnvilBlock.FACING)) {
@@ -796,7 +799,26 @@ public final class GT6BlockStates extends BlockStateProvider {
         }
     }
 
-    /** The smooth material face of an anvil row (the getTextureSmooth mapping). */
+    /**
+     * One anvil row model: the two finished-texture rows ride cube_all (the c-anvil
+     * faces, kept byte-stable); the tinted ladder rows ride the full-cube element over
+     * the borrowed grayscale (the basin/crossing shell grammar — cullface everywhere,
+     * tintindex 0 for the {@code GT6MoldTintListener} mRGBaSolid multiply).
+     */
+    private ModelFile anvilModel(gregtech6.registry.GT6Anvils.AnvilRow aRow) {
+        boolean tLegacy = "stone_anvil".equals(aRow.path()) || "blackstone_anvil".equals(aRow.path());
+        if (tLegacy) return models().cubeAll(aRow.path(), anvilBodyTexture(aRow.path()));
+        net.minecraft.resources.ResourceLocation tBody = GT6CrucibleDatagen
+                .loc(GT6CrucibleDatagen.bodyTexture(aRow.material().get()));
+        BlockModelBuilder tModel = models().getBuilder(aRow.path())
+                .parent(models().getExistingFile(mcLoc("block/block")))
+                .texture("all", tBody).texture("particle", tBody);
+        tModel.element().from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                .allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir)).end();
+        return tModel;
+    }
+
+    /** The smooth material face of the two legacy anvil rows (the getTextureSmooth mapping). */
     private net.minecraft.resources.ResourceLocation anvilBodyTexture(String aPath) {
         return mcLoc("stone_anvil".equals(aPath) ? "block/smooth_stone" : "block/blackstone");
     }
@@ -5238,6 +5260,14 @@ public final class GT6BlockStates extends BlockStateProvider {
         addKitchenBlock(GT6Kitchen.BATHING_POT_STEEL.get(), "bathing_pot_steel", "bathing_pot", false, false);
         addKitchenBlock(GT6Kitchen.MIXING_BOWL.get(), "mixing_bowl", "mixing_bowl", false, true);
         addKitchenBlock(GT6Kitchen.JUICER.get(), "juicer", "juicer", true, false);
+        // task material-mc-e-tool-anvil-rows — the three TABLE variants (:2174/:2176/:2178,
+        // the pot/bowl tub raised PX_P[8] over the pass-7 pedestal, MultiTileEntityBathingPotTable
+        // .setBlockBounds2 :40-52 — passes 0-6 are the pot boxes shifted +8px, pass 7 the
+        // 16x8x16 stand). The overlay shells ride the raised tub (the wood hoops / the bowl
+        // decor keep their faces).
+        addKitchenTable(GT6Kitchen.BATHING_POT_TABLE_WOOD.get(), "bathing_pot_table_wood", "bathing_pot_wood", true);
+        addKitchenTable(GT6Kitchen.BATHING_POT_TABLE_STEEL.get(), "bathing_pot_table_steel", "bathing_pot", false);
+        addKitchenTable(GT6Kitchen.MIXING_BOWL_TABLE.get(), "mixing_bowl_table", "mixing_bowl", true);
     }
 
     /**
@@ -5247,6 +5277,17 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addKitchenBlock(Block aBlock, String aName, String aFamily, boolean aJuicer, boolean aOverlay) {
         ModelFile tModel = aJuicer ? kitchenJuicerModel(aName, aFamily) : kitchenTubModel(aName, aFamily, aOverlay);
+        simpleBlock(aBlock, tModel);
+        itemModels().withExistingParent(aName, tModel.getLocation());
+    }
+
+    /**
+     * One kitchen TABLE block (task material-mc-e-tool-anvil-rows): the raised tub over
+     * the pedestal (the {@link #kitchenTubModel} grammar at lift 8 + the pass-7 stand),
+     * the property-free blockstate + the BlockItem parent (the addKitchenBlock form).
+     */
+    private void addKitchenTable(Block aBlock, String aName, String aFamily, boolean aOverlay) {
+        ModelFile tModel = kitchenTubModel(aName, aFamily, aOverlay, 8.0F);
         simpleBlock(aBlock, tModel);
         itemModels().withExistingParent(aName, tModel.getLocation());
     }
@@ -5287,35 +5328,56 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /** The hollow-tub model (pot pair + bowl): 2px walls y 2..8 + the 2px base slab (its up face is the cavity floor); the overlay decor families add the shell layer. */
     private ModelFile kitchenTubModel(String aName, String aFamily, boolean aOverlay) {
+        return kitchenTubModel(aName, aFamily, aOverlay, 0.0F);
+    }
+
+    /**
+     * The hollow-tub model at a pedestal lift (the floor-sitting family rides 0; task
+     * material-mc-e-tool-anvil-rows raises the TABLE variants by the upstream PX_P[8]
+     * shift — MultiTileEntityBathingPotTable.setBlockBounds2 passes 0-6 are the pot
+     * boxes translated +8px over the pass-7 stand). The lift applies to the base slab
+     * AND the walls (the cavity floor stays the slab's up face); the pedestal element
+     * fills y 0..lift with the family's own tiles (its up face lands opposite-facing on
+     * the slab's down face — the same-face-plane culling pair the wall panels use).
+     */
+    private ModelFile kitchenTubModel(String aName, String aFamily, boolean aOverlay, float aLift) {
         BlockModelBuilder tModel = kitchenTextures(models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block"))), aFamily, false);
         if (aOverlay) {
             kitchenOverlayTextures(tModel, aFamily);
             tModel.renderType("cutout"); // the shells' transparent texels must discard (the mortar two-layer form)
         }
-        tModel.element().from(0.0F, 0.0F, 0.0F).to(16.0F, 2.0F, 16.0F)
+        if (aLift > 0.0F) {
+            tModel.element().from(0.0F, 0.0F, 0.0F).to(16.0F, aLift, 16.0F)
+                    .allFaces((aDir, aFace) -> {
+                        aFace.texture(aDir == Direction.UP ? "#top"
+                                : aDir == Direction.DOWN ? "#bottom" : "#sides");
+                        aFace.tintindex(0);
+                    }).end();
+        }
+        tModel.element().from(0.0F, aLift, 0.0F).to(16.0F, aLift + 2.0F, 16.0F)
                 .allFaces((aDir, aFace) -> {
                     aFace.texture(aDir == Direction.UP ? "#top"
                             : aDir == Direction.DOWN ? "#bottom" : "#sides");
                     aFace.tintindex(0);
                 }).end();
-        kitchenTubWall(tModel, 0.0F, 0.0F, 16.0F, 2.0F, Direction.NORTH);
-        kitchenTubWall(tModel, 0.0F, 14.0F, 16.0F, 16.0F, Direction.SOUTH);
-        kitchenTubWall(tModel, 0.0F, 2.0F, 2.0F, 14.0F, Direction.WEST);
-        kitchenTubWall(tModel, 14.0F, 2.0F, 16.0F, 14.0F, Direction.EAST);
+        kitchenTubWall(tModel, 0.0F, 0.0F, 16.0F, 2.0F, Direction.NORTH, aLift);
+        kitchenTubWall(tModel, 0.0F, 14.0F, 16.0F, 16.0F, Direction.SOUTH, aLift);
+        kitchenTubWall(tModel, 0.0F, 2.0F, 2.0F, 14.0F, Direction.WEST, aLift);
+        kitchenTubWall(tModel, 14.0F, 2.0F, 16.0F, 14.0F, Direction.EAST, aLift);
         if (aOverlay) {
-            kitchenTubSlabShell(tModel, kitchenDecorFamily(aFamily));
-            kitchenTubWallShell(tModel, 0.0F, 0.0F, 16.0F, 2.0F, Direction.NORTH, kitchenDecorFamily(aFamily));
-            kitchenTubWallShell(tModel, 0.0F, 14.0F, 16.0F, 16.0F, Direction.SOUTH, kitchenDecorFamily(aFamily));
-            kitchenTubWallShell(tModel, 0.0F, 2.0F, 2.0F, 14.0F, Direction.WEST, kitchenDecorFamily(aFamily));
-            kitchenTubWallShell(tModel, 14.0F, 2.0F, 16.0F, 14.0F, Direction.EAST, kitchenDecorFamily(aFamily));
+            kitchenTubSlabShell(tModel, kitchenDecorFamily(aFamily), aLift);
+            kitchenTubWallShell(tModel, 0.0F, 0.0F, 16.0F, 2.0F, Direction.NORTH, kitchenDecorFamily(aFamily), aLift);
+            kitchenTubWallShell(tModel, 0.0F, 14.0F, 16.0F, 16.0F, Direction.SOUTH, kitchenDecorFamily(aFamily), aLift);
+            kitchenTubWallShell(tModel, 0.0F, 2.0F, 2.0F, 14.0F, Direction.WEST, kitchenDecorFamily(aFamily), aLift);
+            kitchenTubWallShell(tModel, 14.0F, 2.0F, 16.0F, 14.0F, Direction.EAST, kitchenDecorFamily(aFamily), aLift);
         }
         return tModel;
     }
 
-    /** One tub wall panel: (aMinX, aMinZ)-(aMaxX, aMaxZ) footprint, y 2..8 (the down face lands opposite-facing on the base slab). */
-    private void kitchenTubWall(BlockModelBuilder aModel, float aMinX, float aMinZ, float aMaxX, float aMaxZ, Direction aOutward) {
-        aModel.element().from(aMinX, 2.0F, aMinZ).to(aMaxX, 8.0F, aMaxZ)
+    /** One tub wall panel: (aMinX, aMinZ)-(aMaxX, aMaxZ) footprint, y lift+2..lift+8 (the down face lands opposite-facing on the base slab). */
+    private void kitchenTubWall(BlockModelBuilder aModel, float aMinX, float aMinZ, float aMaxX, float aMaxZ, Direction aOutward, float aLift) {
+        aModel.element().from(aMinX, aLift + 2.0F, aMinZ).to(aMaxX, aLift + 8.0F, aMaxZ)
                 .allFaces((aDir, aFace) -> {
                     aFace.texture(kitchenPanelTexture(aDir, aOutward));
                     aFace.tintindex(0);
@@ -5328,9 +5390,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      * glyph's rim seat). The bowl decorates up+down+sides; the wood pot's hoops wrap the
      * outer sides only (its top/bottom overlay tiles are fully transparent upstream).
      */
-    private void kitchenTubSlabShell(BlockModelBuilder aModel, boolean aDecor) {
+    private void kitchenTubSlabShell(BlockModelBuilder aModel, boolean aDecor, float aLift) {
         BlockModelBuilder.ElementBuilder tElement = aModel.element()
-                .from(-0.01F, -0.01F, -0.01F).to(16.01F, 2.01F, 16.01F);
+                .from(-0.01F, aLift - 0.01F, -0.01F).to(16.01F, aLift + 2.01F, 16.01F);
         if (aDecor) {
             tElement.face(Direction.UP).texture("#overlay_top").end();
             tElement.face(Direction.DOWN).texture("#overlay_bottom").end();
@@ -5351,9 +5413,9 @@ public final class GT6BlockStates extends BlockStateProvider {
      * contract, BlockTextureDefault.get(sOverlaySides) carries no mRGBa).
      */
     private void kitchenTubWallShell(BlockModelBuilder aModel, float aMinX, float aMinZ, float aMaxX, float aMaxZ,
-            Direction aOutward, boolean aDecor) {
+            Direction aOutward, boolean aDecor, float aLift) {
         BlockModelBuilder.ElementBuilder tElement = aModel.element()
-                .from(aMinX - 0.01F, 2.0F, aMinZ - 0.01F).to(aMaxX + 0.01F, 8.0F, aMaxZ + 0.01F);
+                .from(aMinX - 0.01F, aLift + 2.0F, aMinZ - 0.01F).to(aMaxX + 0.01F, aLift + 8.0F, aMaxZ + 0.01F);
         for (Direction tDir : new Direction[] {Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST}) {
             if (tDir.getOpposite() == aOutward && !aDecor) continue; // the cavity face: bowl-only art
             String tPanel = kitchenPanelTexture(tDir, aOutward); // "#sides" / "#insides" — strip the marker for the overlay band
