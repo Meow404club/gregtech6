@@ -228,7 +228,7 @@ public class GT6MaterialTreeScreen extends Screen {
 	public boolean mouseDragged(double aMouseX, double aMouseY, int aButton, double aDragX, double aDragY) {
 		if (mView == null || !mPressed || aButton != 0) return false;
 		mDragDistance += Math.abs(aDragX) + Math.abs(aDragY);
-		mView.pan(aDragX, aDragY);
+		GT6MaterialTreeNav.dragPan(mView, aDragX, aDragY);
 		return true;
 	}
 

@@ -73,9 +73,12 @@ import net.minecraft.world.item.Item;
  *     exact unit transform (acceptance ①);</li>
  * <li><b>keyboard map</b>: GLFW key codes (verified javap lwjgl-glfw 3.3.1) map to the
  *     actions, unknown keys return null;</li>
- * <li><b>wheel actions</b> (task mattree-emi-panzoom): WHEEL_IN/WHEEL_OUT step the
- *     pointer-anchored 1.25x fine grain through the same table, the floor/ceiling freeze
- *     included;</li>
+ * <li><b>wheel actions</b> (<b>旧钉迁移声明</b>, task mattree-r3-nav-unify): the
+ *     emi-panzoom WHEEL_IN/WHEEL_OUT table entries and their direct pin died here — the
+ *     pointer-anchored 1.25x fine grain they covered is {@link GT6MaterialTreeNav#wheelZoom}'s
+ *     own pin (wheelZoomAnchorsAtThePointerAndDragsPan), and the hostile-delta divergence the
+ *     seam's signum branch carried (a NaN delta scrolled OUT) is now pinned frozen through the
+ *     one guard, in thePointerSeamGatesWheelAndPanToTheCanvas;</li>
  * <li><b>the pointer seam</b> (task mattree-emi-panzoom): the nav canvas implements the
  *     vendored MUI {@code EmiInteractionSink} — wheel consumes only inside the tree
  *     canvas (strip and off-page scrolls stay EMI's) and pans only from an empty-canvas
@@ -234,37 +237,9 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// the wheel actions (task mattree-emi-panzoom: the pointer-anchored fine grain)
+	// (the wheel-actions direct pin retired — see the class javadoc 旧钉迁移声明,
+	// task mattree-r3-nav-unify: the entries died with their consumer)
 	// ------------------------------------------------------------------
-
-	@Test
-	public void wheelActionsZoomAtThePointerAnchor() {
-		MaterialTreeViewport tView = new MaterialTreeViewport();
-		// one notch in: 1.25x about the pointer (80, 60) — the tree point under it stays put
-		MaterialTreeViewport.Point tUnder = tView.unapply(80, 60);
-		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
-		assertEquals(1.25, tView.scale(), EPSILON);
-		assertEquals(-20.0, tView.offsetX(), EPSILON, "80 - 80*1.25");
-		assertEquals(-15.0, tView.offsetY(), EPSILON, "60 - 60*1.25");
-		MaterialTreeViewport.Point tBack = tView.unapply(80, 60);
-		assertEquals(tUnder.x(), tBack.x(), EPSILON, "the pointer anchor holds");
-		assertEquals(tUnder.y(), tBack.y(), EPSILON, "the pointer anchor holds");
-		// and out again, exactly home
-		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_OUT, 80, 60));
-		assertEquals(1.0, tView.scale(), EPSILON);
-		assertEquals(0.0, tView.offsetX(), EPSILON);
-		assertEquals(0.0, tView.offsetY(), EPSILON);
-		// the ceiling freeze is the same 档位幂等: hostile scrolling cannot drift the pose
-		GT6MaterialTreeNav.zoomToFraction(tView, 1.0, 80, 60);
-		double tFrozenX = tView.offsetX(), tFrozenY = tView.offsetY();
-		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
-		assertEquals(MaterialTreeViewport.MAX_SCALE, tView.scale(), EPSILON);
-		assertEquals(tFrozenX, tView.offsetX(), EPSILON);
-		assertEquals(tFrozenY, tView.offsetY(), EPSILON);
-		// guards stay guards for the new actions too
-		assertFalse(GT6MaterialTreeNav.handle(tView, null, 80, 60));
-		assertFalse(GT6MaterialTreeNav.handle(null, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
-	}
 
 	// ------------------------------------------------------------------
 	// the pointer seam (task mattree-emi-panzoom: bounds-gated wheel/pan on the canvas)
@@ -299,6 +274,16 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		assertFalse(tNav.mouseScrolled(-3, 60, 0, 1));
 		 *///?}
 		assertEquals(1.25, tView.scale(), EPSILON, "a refused wheel moves nothing");
+		// a hostile delta is CONSUMED (the canvas is ours) but moves nothing — the one
+		// guard in Nav.wheelZoom is every host's wheel semantics (the former seam-local
+		// signum branch routed a NaN into a zoom-out; mattree-r3-nav-unify)
+		tView.reset();
+		//? if forge {
+		assertTrue(tNav.mouseScrolled(80, 60, Double.NaN), "in-canvas scroll stays consumed");
+		//?} else {
+		/*assertTrue(tNav.mouseScrolled(80, 60, 0, Double.NaN), "in-canvas scroll stays consumed");
+		 *///?}
+		assertEquals(1.0, tView.scale(), EPSILON, "a hostile delta moves nothing");
 		tView.reset();
 		tView.zoomAt(19, 19, 2); // the identity pose has ZERO pan slack (the S1 clamp pins it) —
 		// zoom 2x about the slot corner first: slot rect lands at (1..37), offsets (-19,-19)
@@ -492,6 +477,24 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 			assertNotNull(tIn, aClass.getSimpleName() + " class bytes");
 			return new String(tIn.readAllBytes(), java.nio.charset.StandardCharsets.ISO_8859_1);
 		}
+	}
+
+	/**
+	 * The nav-table unification pin (task mattree-r3-nav-unify acceptance ③): wheel and drag
+	 * on EVERY host ride the one {@link GT6MaterialTreeNav} table — no host carries a wheel or
+	 * pan verb of its own (the byte refs are the invocation seams), and the retired
+	 * WHEEL_IN/WHEEL_OUT enum seats stay retired (the single-declaration terminal state).
+	 */
+	@Test
+	public void theNavTableDrivesAllThreeHosts() throws Exception {
+		assertTrue(bytesOf(gregtech6.gui.GT6MaterialTreeScreen.class).contains("dragPan"), "the screen's drag rides the table");
+		assertTrue(bytesOf(gregtech6.gui.GT6MaterialTreeScreen.class).contains("wheelZoom"), "the screen's wheel rides the table");
+		assertTrue(bytesOf(GT6MaterialTreeNavWidget.class).contains("dragPan"), "the EMI canvas drag rides the table");
+		assertTrue(bytesOf(GT6MaterialTreeNavWidget.class).contains("wheelZoom"), "the EMI canvas wheel rides the table");
+		assertTrue(bytesOf(gregtech6.jei.GT6MaterialTreeJeiCanvasHandler.class).contains("dragPan"), "the JEI canvas drag rides the table");
+		assertTrue(bytesOf(gregtech6.jei.GT6MaterialTreeJeiCanvasHandler.class).contains("wheelZoom"), "the JEI canvas wheel rides the table");
+		assertFalse(bytesOf(GT6MaterialTreeNav.class).contains("WHEEL_IN"), "the WHEEL_IN enum seat is retired");
+		assertFalse(bytesOf(GT6MaterialTreeNav.class).contains("WHEEL_OUT"), "the WHEEL_OUT enum seat is retired");
 	}
 
 	// ------------------------------------------------------------------

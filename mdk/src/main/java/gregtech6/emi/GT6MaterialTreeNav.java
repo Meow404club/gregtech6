@@ -76,8 +76,15 @@ public final class GT6MaterialTreeNav {
 	// (the EMI leg's own WHEEL_STEP seat folded into the declaration above — the rebase
 	// union of task mattree-jei-panzoom and task mattree-emi-panzoom, same name/value)
 
-	/** One navigation op, source-agnostic (button, key, or whatever a later card wires). */
-	public enum Action { ZOOM_IN, ZOOM_OUT, RESET, PAN_UP, PAN_DOWN, PAN_LEFT, PAN_RIGHT, WHEEL_IN, WHEEL_OUT }
+	/**
+	 * One navigation op, source-agnostic (button, key, or whatever a later card wires).
+	 * <b>旧钉迁移声明</b> (task mattree-r3-nav-unify): the emi-panzoom-era {@code WHEEL_IN} /
+	 * {@code WHEEL_OUT} entries died here — their one consumer (the EMI seam's signum branch)
+	 * routed a hostile delta (zero/NaN) into a zoom-OUT, diverging from the
+	 * {@link #wheelZoom} guard; every host's wheel now rides {@link #wheelZoom} alone and the
+	 * enum carries only ops no other entry covers.
+	 */
+	public enum Action { ZOOM_IN, ZOOM_OUT, RESET, PAN_UP, PAN_DOWN, PAN_LEFT, PAN_RIGHT }
 
 	private GT6MaterialTreeNav() {}
 
@@ -97,8 +104,6 @@ public final class GT6MaterialTreeNav {
 			case PAN_DOWN -> aView.pan(0, -PAN_STEP);
 			case PAN_LEFT -> aView.pan(PAN_STEP, 0);
 			case PAN_RIGHT -> aView.pan(-PAN_STEP, 0);
-			case WHEEL_IN -> aView.zoomAt(aFocusX, aFocusY, WHEEL_STEP);
-			case WHEEL_OUT -> aView.zoomAt(aFocusX, aFocusY, 1.0 / WHEEL_STEP);
 		}
 		return true;
 	}

@@ -118,7 +118,7 @@ public class GT6MaterialTreeNavWidget extends Widget implements EmiInteractionSi
 	@Override
 	public boolean mouseDragged(int aButton, double aDeltaX, double aDeltaY) {
 		if (!mPanning || aButton != mPanButton) return false;
-		mViewport.pan(aDeltaX, aDeltaY);
+		GT6MaterialTreeNav.dragPan(mViewport, aDeltaX, aDeltaY);
 		return true;
 	}
 
@@ -146,11 +146,14 @@ public class GT6MaterialTreeNavWidget extends Widget implements EmiInteractionSi
 	 * the floored int keeps a pixel left/above the canvas out (conservative: EMI's own
 	 * click dispatch truncates, we refuse to swallow a scroll it would not have gated).
 	 * The anchor stays the raw double coords — the zoom must not quantise the pointer.
+	 * The op is the table's {@link GT6MaterialTreeNav#wheelZoom} alone (task
+	 * mattree-r3-nav-unify): the former signum branch into WHEEL_IN/OUT carried a hostile
+	 * delta divergence (NaN routed a zoom-out); the one guard inside wheelZoom is every
+	 * host's wheel semantics now.
 	 */
 	private boolean scrollImpl(double aMouseX, double aMouseY, double aAmount) {
 		if (!mCanvas.contains((int)Math.floor(aMouseX), (int)Math.floor(aMouseY))) return false;
-		GT6MaterialTreeNav.handle(mViewport, aAmount > 0
-				? GT6MaterialTreeNav.Action.WHEEL_IN : GT6MaterialTreeNav.Action.WHEEL_OUT, aMouseX, aMouseY);
+		GT6MaterialTreeNav.wheelZoom(mViewport, aAmount, aMouseX, aMouseY);
 		return true;
 	}
 }
