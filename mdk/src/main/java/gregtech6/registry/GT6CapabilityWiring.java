@@ -20,6 +20,7 @@ import gregtech6.item.GTBarrelBlockItem;
 import gregtech6.tileentity.connectors.GTFluidPipeBlockEntity;
 import gregtech6.tileentity.connectors.GTItemPipeBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
+import gregtech6.tileentity.energy.GT6SteamTurbineBlockEntity; // kinetics-be-function-family tail-append
 import gregtech6.tileentity.energy.GT6FeBatteryBlockEntity; // p26 tail-append
 import gregtech6.tileentity.energy.GT6FeConverterBlockEntity; // p28 tail-append
 import gregtech6.tileentity.energy.GT6FeSourceBlockEntity; // p28 tail-append
@@ -124,6 +125,7 @@ public final class GT6CapabilityWiring {
 		registerLongDistancePipeFaces(aEvent); // task long-distance-pipes (tail-append; shared serial file)
 		registerReactorCoreFaces(aEvent); // task debt-reactor-b-2x2-be (tail-append; shared serial file)
 		registerSiftingTableFace(aEvent); // task sifting-table-family (tail-append; shared serial file)
+		registerSteamTurbineFace(aEvent); // task kinetics-be-function-family (tail-append; shared serial file)
 	}
 
 	// -- the machines seam: registerBlockEntity(cap, beType, (be, side) -> be.getCapability(cap, side)) --
@@ -993,6 +995,21 @@ BlockEntityType<GT6HeatExchangerBlockEntity> tHeatExchanger = GT6HeatExchangers.
 		BlockEntityType<gregtech6.tileentity.tools.GT6SiftingTableBlockEntity> tTable = GT6SiftingTables.SIFTING_TABLE_BE.get();
 		aEvent.registerBlockEntity(Capabilities.ItemHandler.BLOCK, tTable,
 				(aBe, aSide) -> aBe.getCapability(Capabilities.ItemHandler.BLOCK, aSide));
+	}
+
+	// -- the small steam turbine (kinetics-be-function-family; TAIL-APPENDED ROW, the
+	// shared serial file: append-only discipline) --
+	// FLUID-ONLY face (zero item slots on the class — the steam-engine row shape): the
+	// steam fill door on the BACK face (the upstream getFluidTankFillable2 :116 gate —
+	// steam only, only while not stopped; the :239 side gate answers inside the BE seam
+	// member). The forge leg answers through the GT6SteamTurbineBlockEntity getCapability
+	// override and cannot see this file. Without this row every external fluid push
+	// (pipe/hopper level query) against the turbine is capability-blind on this node
+	// while the 1.20.1 BE override hides the gap — the ADR-P15-4 census discipline.
+	private static void registerSteamTurbineFace(RegisterCapabilitiesEvent aEvent) {
+		BlockEntityType<GT6SteamTurbineBlockEntity> tTurbine = GTBlockEntities.STEAM_TURBINE_BE.get();
+		aEvent.registerBlockEntity(Capabilities.FluidHandler.BLOCK, tTurbine,
+				(aBe, aSide) -> aBe.getCapability(Capabilities.FluidHandler.BLOCK, aSide));
 	}
 
 }

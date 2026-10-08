@@ -24,6 +24,8 @@ import gregtech6.tileentity.energy.GT6ElectricTransformerBlockEntity;
 import gregtech6.tileentity.energy.GT6FeConverterBlockEntity;
 import gregtech6.tileentity.energy.GT6FluxDynamoBlockEntity;
 import gregtech6.tileentity.energy.GT6LongDistanceTransformerBlockEntity;
+import gregtech6.tileentity.energy.GT6RotationEngineBlockEntity;
+import gregtech6.tileentity.energy.GT6SteamTurbineBlockEntity;
 import gregtech6.tileentity.energy.GT6ZpmDechargerBlockEntity;
 import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
@@ -154,9 +156,20 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 			writeConverterData(aData, true, aLd.mActive, aLd.mStopped,
 					0, 0, aLd.mThroughput > 0 ? aLd.mThroughput : aLd.mOutput, "", "EU");
 		} else if (aBE instanceof GTTransformerRotationBlockEntity aRt) {
-			// 旋转变压器：STORAGE_CAPACITY = tInput*2 常量（:91）。
+			// 旋转变压器：容量 = tInput*2（:91；task kinetics-be-function-family 起随行
+			// 采纳——金属行走其行值对，木单例仍 :1668 常量）。
 			writeConverterData(aData, true, aRt.mActive, aRt.mStopped,
-					aRt.mStorage, GTTransformerRotationBlockEntity.STORAGE_CAPACITY, 0, "RU", "");
+					aRt.mStorage, aRt.storageCapacity(), 0, "RU", "");
+		} else if (aBE instanceof GT6RotationEngineBlockEntity aRen) {
+			// 旋转引擎（task kinetics-be-function-family）：RU→KU 双极，行值对随 mc-D 行
+			// 采纳（木单例 :1667 = 8→4），无单一吞吐字段（±双极突发，电动变压器行形）。
+			writeConverterData(aData, true, aRen.mActive, aRen.mStopped,
+					aRen.mStorage, aRen.storageCapacity(), 0, "KU", "");
+		} else if (aBE instanceof GT6SteamTurbineBlockEntity aTurbine) {
+			// 小蒸汽轮机（task kinetics-be-function-family）：STEAM→RU 反形，存量/上限为
+			// 电容面，速率 = 行额定 RU 出（:794-:811 行值对，随 mc-D 行采纳）。
+			writeConverterData(aData, true, aTurbine.mActive, aTurbine.mStopped,
+					aTurbine.mStorage, aTurbine.storageCapacity(), aTurbine.outputRU(), "RU", "RU");
 		} else if (aBE instanceof GT6MagicAbsorberBlockEntity aAbsorber) {
 			// 魔法吸收器：无缓冲，mOutput 随状态 1/64（:164-166），出线 QU/TU（:98）。
 			writeConverterData(aData, true, aAbsorber.mActive, aAbsorber.mStopped,

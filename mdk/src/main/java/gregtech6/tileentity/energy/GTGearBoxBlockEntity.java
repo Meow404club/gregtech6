@@ -98,6 +98,20 @@ public class GTGearBoxBlockEntity extends TileEntityBase03TicksAndSync implement
 	/** The speed rating (upstream mMaxThroughPut :60, the row's NBT_INPUT = VMAX[0] = 16, Loader :1669). */
 	public long mMaxThroughPut = GT6Kinetics.GEARBOX_MAX_THROUGHPUT;
 
+	/**
+	 * The ROW ADOPTION (task kinetics-be-function-family — the mc-D data layer wired):
+	 * a Custom Gearbox row block ({@code GT6Kinetics.CUSTOM_GEARBOXES}, task
+	 * material-mc-d-powertrain-rows) carries its own VMAX[tier] rating — the mounted
+	 * block's row overrides the wooden VMAX[0] default at each tick head.
+	 */
+	public long maxThroughput() {
+		if (getBlockState().getBlock() instanceof GT6Kinetics.PowertrainBlock tBlock
+				&& tBlock.row() instanceof GT6Kinetics.CustomGearboxRow tRow) {
+			return tRow.maxThroughput();
+		}
+		return mMaxThroughPut;
+	}
+
 	/** The interlock state (upstream :59): jammed / a gear was used this tick / the gears mesh. */
 	public boolean mJammed = false, mUsedGear = false, mGearsWork = true;
 
@@ -342,7 +356,7 @@ public class GTGearBoxBlockEntity extends TileEntityBase03TicksAndSync implement
 
 		long tSpeed = Math.abs(aSpeed); // upstream :355
 
-		if (tSpeed > mMaxThroughPut) { // upstream :357-370 — the gears EXPLODE
+		if (tSpeed > maxThroughput()) { // upstream :357-370 — the gears EXPLODE (the adopted row rating)
 			if (getTimer() < 10) return aPower; // upstream :358 (the load grace)
 			breakGears();
 			return aPower;
@@ -492,12 +506,12 @@ public class GTGearBoxBlockEntity extends TileEntityBase03TicksAndSync implement
 
 	@Override
 	public long getEnergySizeOutputRecommended(TagData aEnergyType, byte aSide) {
-		return mMaxThroughPut / 2; // upstream :416
+		return maxThroughput() / 2; // upstream :416
 	}
 
 	@Override
 	public long getEnergySizeOutputMax(TagData aEnergyType, byte aSide) {
-		return mMaxThroughPut; // upstream :417
+		return maxThroughput(); // upstream :417
 	}
 
 	@Override
@@ -507,12 +521,12 @@ public class GTGearBoxBlockEntity extends TileEntityBase03TicksAndSync implement
 
 	@Override
 	public long getEnergySizeInputRecommended(TagData aEnergyType, byte aSide) {
-		return mMaxThroughPut / 2; // upstream :419
+		return maxThroughput() / 2; // upstream :419
 	}
 
 	@Override
 	public long getEnergySizeInputMax(TagData aEnergyType, byte aSide) {
-		return mMaxThroughPut; // upstream :420
+		return maxThroughput(); // upstream :420
 	}
 
 	@Override

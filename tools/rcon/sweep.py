@@ -67,7 +67,7 @@ import gt6world
 SESSION_GROUPS = (
     ("cover_shutter_filter", "engine-crank", "axle-family",
      "gearbox-transformer", "engine-diesel", "engine-steam",
-     "engine_fuel_fluids"),
+     "engine_fuel_fluids", "kinetics-be"),
     ("hu_steam_foundation", "burning_box_family", "fluid-item-carrier",
      "tap-funnel-attachment", "barrel-keepfilter-logistics",
      "steam_proof_repay"),

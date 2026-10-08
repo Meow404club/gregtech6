@@ -30,6 +30,8 @@ import gregtech6.tileentity.energy.GTCrankBlockEntity;
 import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
+import gregtech6.tileentity.energy.GT6RotationEngineBlockEntity;
+import gregtech6.tileentity.energy.GT6SteamTurbineBlockEntity;
 import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
 
 /**
@@ -240,16 +242,55 @@ public final class GTEngineCommand {
 			return Command.SINGLE_SUCCESS;
 		}
 		if (tLevel.getBlockEntity(aPos) instanceof GTTransformerRotationBlockEntity tTrans) {
+			// task kinetics-be-function-family: the metal rows ride their row pair (the
+			// inputSpeed/outputSpeed adoption); the seated wooden singleton keeps the
+			// :1668 constants — the readout names the pair either way
+			// the wooden singleton keeps the byte-identical "8→2 wood row" tail (the
+			// gearbox-transformer chain pins it); the metal rows read out their pair
+			String tPair = tTrans.inputSpeed() == GTTransformerRotationBlockEntity.INPUT_SPEED
+					&& tTrans.outputSpeed() == GTTransformerRotationBlockEntity.OUTPUT_SPEED
+					? GTTransformerRotationBlockEntity.INPUT_SPEED + "→" + GTTransformerRotationBlockEntity.OUTPUT_SPEED + " wood row"
+					: tTrans.inputSpeed() + "→" + tTrans.outputSpeed() + " row";
 			String tLine = "GT6 transformer_rotation at " + aPos.toShortString()
 					+ ": facing=" + Direction.from3DDataValue(tTrans.getFacing()).getName() + "(" + tTrans.getFacing() + ") input-side"
 					+ ", multiplier=" + GTTransformerRotationBlockEntity.MULTIPLIER + " (speed ÷" + GTTransformerRotationBlockEntity.MULTIPLIER
-					+ " power ×" + GTTransformerRotationBlockEntity.MULTIPLIER + ", " + GTTransformerRotationBlockEntity.INPUT_SPEED + "→"
-					+ GTTransformerRotationBlockEntity.OUTPUT_SPEED + " wood row)"
-					+ ", storage=" + tTrans.mStorage + "/" + GTTransformerRotationBlockEntity.STORAGE_CAPACITY
+					+ " power ×" + GTTransformerRotationBlockEntity.MULTIPLIER + ", " + tPair + ")"
+					+ ", storage=" + tTrans.mStorage + "/" + tTrans.storageCapacity()
 					+ ", active=" + tTrans.mActive
 					+ ", last in=" + tTrans.mLastInSize + "x" + tTrans.mLastInAmount
 					+ ", last out=" + tTrans.mLastOutSize + "x" + tTrans.mLastOutAmount
 					+ ", overload strikes=" + tTrans.mExplosionPrevention;
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+		if (tLevel.getBlockEntity(aPos) instanceof GT6RotationEngineBlockEntity tEngine) {
+			// the bipolar readout (the axle-family chain grammar): the row pair + the
+			// last converted burst (the ± signs ARE the rotation directions)
+			String tLine = "GT6 rotation_engine at " + aPos.toShortString()
+					+ ": facing=" + Direction.from3DDataValue(tEngine.getFacing()).getName() + "(" + tEngine.getFacing() + ") axis"
+					+ ", row=" + tEngine.inputSpeed() + "→" + tEngine.outputSpeed() + " (RU→KU, bipolar both poles)"
+					+ ", storage=" + tEngine.mStorage + "/" + tEngine.storageCapacity()
+					+ ", active=" + tEngine.mActive
+					+ ", last in=" + tEngine.mLastInSize + "x" + tEngine.mLastInAmount
+					+ ", last out=" + tEngine.mLastOutSize + "x" + tEngine.mLastOutAmount
+					+ ", overload strikes=" + tEngine.mExplosionPrevention;
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
+		if (tLevel.getBlockEntity(aPos) instanceof GT6SteamTurbineBlockEntity tTurbine) {
+			// the SST readout (the engine stat grammar + the dist-w ledger): the row pair,
+			// the steam tank, the two-tick banked half and the 蒸馏水 pending litres
+			String tLine = "GT6 small_steam_turbine at " + aPos.toShortString()
+					+ ": facing=" + Direction.from3DDataValue(tTurbine.getFacing()).getName() + "(" + tTurbine.getFacing() + ") output-side"
+					+ ", row=" + tTurbine.inputSU() + "SU→" + tTurbine.outputRU() + "RU"
+					+ ", tank=" + tTurbine.mTank.amount() + "/" + tTurbine.mTank.getCapacity()
+					+ ", storage=" + tTurbine.mStorage + "/" + tTurbine.storageCapacity()
+					+ ", banked=" + tTurbine.mEnergyProducedNextTick
+					+ ", dist-water=" + tTurbine.mDistWaterPending + "L pending"
+					+ ", active=" + tTurbine.mActive
+					+ ", last out=" + tTurbine.mLastOutSize + "x" + tTurbine.mLastOutAmount;
 			aSource.sendSuccess(() -> Component.literal(tLine), false);
 			LOGGER.info(tLine);
 			return Command.SINGLE_SUCCESS;
@@ -298,6 +339,17 @@ public final class GTEngineCommand {
 	 */
 	private static int mode(CommandSourceStack aSource, BlockPos aPos, boolean aOn) {
 		ServerLevel tLevel = aSource.getLevel();
+		if (tLevel.getBlockEntity(aPos) instanceof GT6SteamTurbineBlockEntity tTurbine) {
+			// task kinetics-be-function-family — the SST shares the soft-hammer stop face
+			// (the base NBT_STOPPED; the turbine's own on/off echo)
+			tTurbine.mStopped = !aOn;
+			tTurbine.setChanged();
+			String tLine = "GT6 steam turbine mode at " + aPos.toShortString() + ": " + (aOn ? "on" : "off")
+					+ " (stopped=" + tTurbine.mStopped + ")";
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return Command.SINGLE_SUCCESS;
+		}
 		if (!(tLevel.getBlockEntity(aPos) instanceof GTSteamEngineBlockEntity tEngine)) {
 			aSource.sendFailure(Component.literal("MODE FAILED: no steam engine BE at " + aPos.toShortString()));
 			return 0;
@@ -322,6 +374,14 @@ public final class GTEngineCommand {
 	 */
 	private static int fill(CommandSourceStack aSource, BlockPos aPos, int aAmount) {
 		ServerLevel tLevel = aSource.getLevel();
+		if (tLevel.getBlockEntity(aPos) instanceof GT6SteamTurbineBlockEntity tTurbine) {
+			// task kinetics-be-function-family — the SST shares the direct-intake channel
+			// (the ADR 2026-09-02-steam-proof-deviation form, the back-face door)
+			String tLine = tTurbine.rconFill(aAmount);
+			aSource.sendSuccess(() -> Component.literal(tLine), false);
+			LOGGER.info(tLine);
+			return tLine.contains("(REJECTED)") ? 0 : Command.SINGLE_SUCCESS;
+		}
 		if (!(tLevel.getBlockEntity(aPos) instanceof GTSteamEngineBlockEntity tEngine)) {
 			aSource.sendFailure(Component.literal("FILL FAILED: no steam engine BE at " + aPos.toShortString()));
 			return 0;

@@ -31,6 +31,8 @@ import gregtech6.tileentity.energy.GTDieselEngineBlockEntity;
 import gregtech6.tileentity.energy.GTEnergySourceBlockEntity;
 import gregtech6.tileentity.energy.GTSteamEngineBlockEntity;
 import gregtech6.tileentity.energy.GT6WaterWheelBlockEntity;
+import gregtech6.tileentity.energy.GT6RotationEngineBlockEntity;
+import gregtech6.tileentity.energy.GT6SteamTurbineBlockEntity;
 import gregtech6.tileentity.energy.GTGearBoxBlockEntity;
 import gregtech6.tileentity.energy.GTTransformerRotationBlockEntity;
 import gregtech6.tileentity.example.GTExampleChestBlockEntity;
@@ -237,7 +239,21 @@ public final class GTBlockEntities {
 	 */
 	public static final RegistryObject<BlockEntityType<GTGearBoxBlockEntity>> GEARBOX_BE =
 			BLOCK_ENTITY_TYPES.register("gearbox", () -> BlockEntityType.Builder.of(
-					GTGearBoxBlockEntity::new, GT6Kinetics.GEARBOX.get()).build(null));
+					GTGearBoxBlockEntity::new, gearboxBlockArray()).build(null));
+
+	/**
+	 * The GEARBOX_BE multi-mount (task kinetics-be-function-family — the ADR-P3-1
+	 * one-type-many-blocks form): the seated wooden singleton PLUS the 12 metal Custom
+	 * Gearbox row blocks (task material-mc-d-powertrain-rows) — the row blocks carry
+	 * their VMAX[tier] rating through the GTGearBoxBlockEntity.maxThroughput adoption.
+	 */
+	private static Block[] gearboxBlockArray() {
+		Block[] rBlocks = new Block[1 + GT6Kinetics.CUSTOM_GEARBOX_BLOCKS.size()];
+		rBlocks[0] = GT6Kinetics.GEARBOX.get();
+		int i = 1;
+		for (RegistryObject<Block> tBlock : GT6Kinetics.CUSTOM_GEARBOX_BLOCKS.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
 
 	/**
 	 * The Rotation Transformer BET (task gearbox-transformer — the CRANK_BE
@@ -246,7 +262,38 @@ public final class GTBlockEntities {
 	 */
 	public static final RegistryObject<BlockEntityType<GTTransformerRotationBlockEntity>> TRANSFORMER_BE =
 			BLOCK_ENTITY_TYPES.register("transformer_rotation", () -> BlockEntityType.Builder.of(
-					GTTransformerRotationBlockEntity::new, GT6Kinetics.TRANSFORMER_ROTATION.get()).build(null));
+					GTTransformerRotationBlockEntity::new, transformerBlockArray()).build(null));
+
+	/**
+	 * The TRANSFORMER_BE multi-mount (task kinetics-be-function-family — the ADR-P3-1
+	 * one-type-many-blocks form, the axleBlockArray shape): the seated wooden singleton
+	 * PLUS the 12 metal Transformer Gearbox row blocks (task material-mc-d-powertrain-rows)
+	 * — the row blocks are plain {@code GT6Kinetics.PowertrainBlock}s whose BE adopts the
+	 * row's V[t]→V[t-1] pair (the GTTransformerRotationBlockEntity.row adoption).
+	 */
+	private static Block[] transformerBlockArray() {
+		Block[] rBlocks = new Block[1 + GT6Kinetics.TRANSFORMER_GEARBOX_BLOCKS.size()];
+		rBlocks[0] = GT6Kinetics.TRANSFORMER_ROTATION.get();
+		int i = 1;
+		for (RegistryObject<Block> tBlock : GT6Kinetics.TRANSFORMER_GEARBOX_BLOCKS.values()) rBlocks[i++] = tBlock.get();
+		return rBlocks;
+	}
+
+	// task kinetics-be-function-family — the mc-D 遗留 B 案面: the rotation engine +
+	// the small steam turbine BETs (the conversion/motor behaviour the mc-D card declared
+	// as this card's surface, GT6PowertrainRowCensusTest doc)
+
+	/** The Rotation Engine BET — one type over the 13 row blocks (the AXLE_BE multi-mount form). */
+	public static final RegistryObject<BlockEntityType<GT6RotationEngineBlockEntity>> ROTATION_ENGINE_BE =
+			BLOCK_ENTITY_TYPES.register("rotation_engine", () -> BlockEntityType.Builder.of(
+					GT6RotationEngineBlockEntity::new, GT6Kinetics.ROTATION_ENGINE_BLOCKS.values().stream()
+							.map(RegistryObject::get).toArray(Block[]::new)).build(null));
+
+	/** The Small Steam Turbine BET — one type over the 15 row blocks (the AXLE_BE multi-mount form). */
+	public static final RegistryObject<BlockEntityType<GT6SteamTurbineBlockEntity>> STEAM_TURBINE_BE =
+			BLOCK_ENTITY_TYPES.register("small_steam_turbine", () -> BlockEntityType.Builder.of(
+					GT6SteamTurbineBlockEntity::new, GT6Kinetics.STEAM_TURBINE_BLOCKS.values().stream()
+							.map(RegistryObject::get).toArray(Block[]::new)).build(null));
 
 	// water wheel (task c-water-wheel) — the kinetics family's RU-source row
 	// -------------------------------------------------------------------------
