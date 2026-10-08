@@ -132,11 +132,15 @@ public class GT6LootInjectionTest {
         }
     }
 
-    /** The dungeon metal ladder (:418-433) + the Guide :442: 17 entries — the ZPM row LEFT this face. */
+    /** The dungeon metal ladder (:418-433) + the Guide :442 — 13 rows: the four DamascusSteel
+     *  arms (:421/:425/:429/:432) ride the MET convergence skip (the atlas-PRIMARY gate of
+     *  task parse-errors-registration-convergence; its selftest ledger — loot_tables_removed /
+     *  injection_pairs_skipped — is the single update anchor). */
     @Test
     public void simpleDungeonCarriesTheMetalLadderVerbatim() {
         Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(1).entries());
-        assertEquals(17, tMap.size(), "the four 4-metal ladders (ingot/plate/stick/toolHeadArrow) + the Guide");
+        assertEquals(13, tMap.size(), "the 4-metal ladders minus the MET-gated DamascusSteel arms "
+                + "(ingot/plate/stick/toolHeadArrow) + the Guide");
         for (String tMetal : new String[] {"steel", "bronze", "brass"}) {
             assertEquals(12, tMap.get("gt6:ingot_" + tMetal)[0], ":418-420 weight");
             assertEquals(12, tMap.get("gt6:plate_" + tMetal)[0], ":422-424 weight");
@@ -147,7 +151,10 @@ public class GT6LootInjectionTest {
             assertTrue(tMap.get("gt6:tool_head_arrow_" + tMetal)[1] == 4
                     && tMap.get("gt6:tool_head_arrow_" + tMetal)[2] == 24, ":430-432 stack [4,24]");
         }
-        assertEquals(2, tMap.get("gt6:ingot_damascus_steel")[0], ":421 the damascus weight-2 arm");
+        // the damascus weight-2 arm :421 — MET-gated, the row is the declared skip (勿硬造)
+        assertEquals(0, GT6LootInjectionDatagen.injections().get(1).entries().stream()
+                        .filter(aRow -> aRow.item().contains("damascus")).count(),
+                "the DamascusSteel arms ride the MET convergence skip");
         // the Guide :442 — weight 50 [2,8] verbatim (task p38)
         assertTrue(tMap.get("gt6:book_loot_guide")[0] == 50
                 && tMap.get("gt6:book_loot_guide")[1] == 2 && tMap.get("gt6:book_loot_guide")[2] == 8,
@@ -180,33 +187,41 @@ public class GT6LootInjectionTest {
                 "gt.active.energy = the store-as-full key (the 2/3 dungeon dice stay collapsed to always-full)");
     }
 
-    /** The mineshaft rows (:468-482): the seven vanilla ore blocks + the six dig heads. */
+    /** The mineshaft rows (:468-482): the seven vanilla ore blocks + the four surviving dig
+     *  heads — the toolHeadShovel/toolHeadPickaxe DamascusSteel arms (:478/:482) ride the MET
+     *  convergence skip (parse-errors-registration-convergence, its selftest ledger the
+     *  update anchor). */
     @Test
     public void mineshaftCarriesTheOreBlocksAndDigHeads() {
         Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.injections().get(5).entries());
-        assertEquals(13, tMap.size());
+        assertEquals(11, tMap.size());
         assertEquals(4, tMap.get("minecraft:coal_ore")[0], ":470");
         assertEquals(1, tMap.get("minecraft:diamond_ore")[0], ":475");
         assertTrue(tMap.get("minecraft:diamond_ore")[1] == 4 && tMap.get("minecraft:diamond_ore")[2] == 16,
                 ":475 stack [4,16]");
         assertEquals(5, tMap.get("gt6:tool_head_shovel_arsenic_bronze")[0], ":477");
         assertEquals(3, tMap.get("gt6:tool_head_raw_pickaxe_steel")[0], ":481");
+        assertTrue(tMap.keySet().stream().noneMatch(aId -> aId.contains("damascus")),
+                "the DamascusSteel dig heads ride the MET convergence skip");
     }
 
-    /** The village/corridor/pyramid/jungle/dispenser anchor rows. */
+    /** The village/corridor/pyramid/jungle/dispenser anchor rows — the MET-gated arms
+     *  (DamascusSteel ingot :506; the corridor sword :546/axeDouble :548/arrow :550) ride the
+     *  convergence skip (parse-errors-registration-convergence, its selftest ledger the
+     *  update anchor). */
     @Test
     public void theRemainingTablesCarryTheirAnchors() {
         Map<String, int[]> tVillage = byItem(GT6LootInjectionDatagen.injections().get(6).entries());
-        assertEquals(17, tVillage.size(), ":491-506 the smith ladder (the small-gear bronze/brass arms "
-                + "fall to the registration universe — the gearGtSmall condition gates on the big-gear "
-                + "prefix, the modern universe has no gear_gt for them; the declared skip) + the Guide :512");
+        assertEquals(16, tVillage.size(), ":491-506 the smith ladder minus the MET-gated DamascusSteel "
+                + "ingot (the small-gear bronze/brass arms DO resolve) + the Guide :512");
         assertEquals(2, tVillage.get("gt6:gear_gt_small_steel")[0], ":494");
-        assertEquals(1, tVillage.get("gt6:ingot_damascus_steel")[0], ":506");
+        assertTrue(tVillage.keySet().stream().noneMatch(aId -> aId.contains("damascus")),
+                "the :506 DamascusSteel ingot rides the MET convergence skip");
         assertTrue(tVillage.get("gt6:book_loot_guide")[0] == 40
                 && tVillage.get("gt6:book_loot_guide")[1] == 4 && tVillage.get("gt6:book_loot_guide")[2] == 8,
                 ":512 the Guide row [40, 4..8]");
         Map<String, int[]> tCorridor = byItem(GT6LootInjectionDatagen.injections().get(8).entries());
-        assertEquals(6, tCorridor.size(), ":546-551");
+        assertEquals(3, tCorridor.size(), ":546-551 minus the three MET-gated DamascusSteel arms");
         assertEquals(6, tCorridor.get("gt6:arrow_gt_wood_sterling_silver")[0], ":551");
         Map<String, int[]> tDesert = byItem(GT6LootInjectionDatagen.injections().get(2).entries());
         assertEquals(1, tDesert.get("gt6:tool_head_arrow_naquadah")[0], ":446 the Nq arrow head");
@@ -278,15 +293,19 @@ public class GT6LootInjectionTest {
 
     // ------------------------------------------------- 3: the bag weight tables (row face)
 
-    /** gt.flawless (:84-103): every row [1,1], the flagship weights pinned verbatim. */
+    /** gt.flawless (:84-103): every row [1,1], the flagship weights pinned verbatim — 19
+     *  rows: the :96 gemFlawless Jade arm rides the ERE convergence skip
+     *  (parse-errors-registration-convergence, its selftest ledger the update anchor). */
     @Test
     public void flawlessTableCarriesTheUpstreamWeights() {
         Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.weightTables().get(0).entries());
-        assertEquals(20, tMap.size(), ":84-103 the twenty gem rows");
+        assertEquals(19, tMap.size(), ":84-103 the twenty gem rows minus the ERE-gated Jade arm");
         assertEquals(2160, tMap.get("gt6:gem_flawless_diamond")[0], ":84");
         assertEquals(1152, tMap.get("gt6:gem_flawless_emerald")[0], ":86");
         assertEquals(720, tMap.get("gt6:gem_flawless_ruby")[0], ":93");
         assertEquals(432, tMap.get("gt6:gem_flawless_redstone")[0], ":103");
+        assertTrue(tMap.keySet().stream().noneMatch(aId -> aId.contains("_jade")),
+                "the :96 gemFlawless Jade arm rides the ERE convergence skip");
         for (int[] tSpec : tMap.values()) {
             assertEquals(1, tSpec[1], "every flawless row is [1,1] upstream");
             assertEquals(1, tSpec[2]);
@@ -313,16 +332,21 @@ public class GT6LootInjectionTest {
         }
     }
 
-    /** gt.misc (:132-177): the vanilla rows, the billet ladder and the blaze sticks. */
+    /** gt.misc (:132-177): the vanilla rows, the billet ladder and the blaze sticks — the
+     *  :147 billet Neodymium arm rides the HBM convergence skip and the :164/:166 Blizz/Blitz
+     *  stick arms the TE gate (parse-errors-registration-convergence, its selftest ledger the
+     *  update anchor); the :163 meteoric rows survive (COMMON_SECONDARY — never hidden). */
     @Test
     public void miscTableCarriesTheVanillaAndBilletRows() {
         Map<String, int[]> tMap = byItem(GT6LootInjectionDatagen.weightTables().get(2).entries());
         assertEquals(144, tMap.get("minecraft:name_tag")[0], ":132");
         assertEquals(13, tMap.get("minecraft:music_disc_13")[0], ":135 the disc weight");
-        assertEquals(144, tMap.get("gt6:billet_neodymium")[0], ":147 (MT.Nd = Neodymium)");
         assertEquals(144, tMap.get("gt6:billet_lead")[0], ":158");
         assertEquals(72, tMap.get("gt6:ore_raw_meteoric_iron")[0], ":163");
-        assertEquals(36, tMap.get("gt6:stick_blizz")[0], ":164");
+        assertTrue(tMap.keySet().stream().noneMatch(aId -> aId.contains("billet_neodymium")),
+                ":147 (MT.Nd = Neodymium) rides the HBM convergence skip");
+        assertTrue(tMap.keySet().stream().noneMatch(aId -> aId.contains("_blizz") || aId.contains("_blitz")),
+                ":164/:166 the Blizz/Blitz stick arms ride the TE convergence skip");
         assertEquals(144, tMap.get("gt6:rock_gt_sky_stone")[0],
                 ":160 the SkyStone rock row — the resolver never skips it");
     }
@@ -338,21 +362,24 @@ public class GT6LootInjectionTest {
 
     // ------------------------------------------------- 4: the generated GLM JSONs (ACCEPTANCE ①)
 
-    /** The generated modifier JSON: the target table id + the entry anchors, per-param. */
+    /** The generated modifier JSON: the target table id + the entry anchors, per-param —
+     *  13 entries: the MET-gated DamascusSteel arms skip the JSON too (the row tables and the
+     *  emitted tree skip on the SAME predicate, parse-errors-registration-convergence). */
     @Test
     public void generatedDungeonModifierJsonPinsTheAnchors() throws IOException {
         JsonObject tJson = tree("data/gt6/loot_modifiers/dungeon_inject_simple_dungeon.json");
         assertEquals("gt6:gt6_dungeon_inject", tJson.get("type").getAsString(), "the serializer row id");
         assertEquals("minecraft:chests/simple_dungeon", tJson.get("table").getAsString(), "the in-codec target");
         JsonArray tEntries = tJson.getAsJsonArray("entries");
-        assertEquals(17, tEntries.size(), "the metal ladder + the Guide :442 (the artifact row left, task dungeon-library-zpm)");
+        assertEquals(13, tEntries.size(), "the metal ladder minus the MET-gated arms + the Guide :442 "
+                + "(the artifact row left, task dungeon-library-zpm)");
         JsonObject tFirst = tEntries.get(0).getAsJsonObject();
         assertEquals("gt6:ingot_steel", tFirst.get("item").getAsString());
         assertEquals(12, tFirst.get("weight").getAsInt(), ":418 weight");
         assertEquals(1, tFirst.get("min").getAsInt());
         assertEquals(6, tFirst.get("max").getAsInt());
         // the Guide rides the tail of the ladder
-        JsonObject tGuide = tEntries.get(16).getAsJsonObject();
+        JsonObject tGuide = tEntries.get(12).getAsJsonObject();
         assertEquals("gt6:book_loot_guide", tGuide.get("item").getAsString(), "the :442 Guide row");
         assertEquals(50, tGuide.get("weight").getAsInt());
         JsonObject tRolls = tJson.getAsJsonObject("rolls");
@@ -512,11 +539,13 @@ public class GT6LootInjectionTest {
         for (GT6LootInjectionDatagen.InjectionRow tRow : GT6LootInjectionDatagen.injections()) {
             if (tRow.name().startsWith("dungeon_inject_tf_")) tByTable.put(tRow.table(), tRow.entries());
         }
-        // hill1/hill3 = the mineshaft rows verbatim (:56-58); hill2 = +the :83 Basalz row
+        // hill1/hill3 = the mineshaft rows verbatim (:56-58); hill2 = the SAME rows — the :83
+        // Basalz rare row rides the TE convergence skip (parse-errors-registration-convergence,
+        // its selftest ledger the update anchor)
         assertEquals(GT6LootInjectionDatagen.mineshaftEntries(), tByTable.get("twilightforest:hill_1"));
         assertEquals(GT6LootInjectionDatagen.mineshaftEntries(), tByTable.get("twilightforest:hill_3"));
-        assertEquals(GT6LootInjectionDatagen.mineshaftEntries().size() + 1,
-                tByTable.get("twilightforest:hill_2").size(), ":83 the Basalz rare row rides the tail");
+        assertEquals(GT6LootInjectionDatagen.mineshaftEntries(),
+                tByTable.get("twilightforest:hill_2"), ":83 the Basalz rare row is the TE-gated skip");
         // the smith-class vaults (:64/:72/:77), the dungeon-class tables (:68/:71/:73-74/:76)
         assertEquals(GT6LootInjectionDatagen.smithEntries(), tByTable.get("twilightforest:labyrinth_vault"));
         assertEquals(GT6LootInjectionDatagen.dungeonChestEntries(), tByTable.get("twilightforest:darktower_key"));
@@ -535,7 +564,11 @@ public class GT6LootInjectionTest {
     /**
      * The hand-tuned additions that survived the existence check
      * ({@code TwilightTreasureReplacer} live-pool rows; the useless/ultrarare buckets are
-     * the :346-357 dead pool and the unregistered items are the declared cut).
+     * the :346-357 dead pool and the unregistered items are the declared cut). Since task
+     * parse-errors-registration-convergence the survival set is narrower still: the :83
+     * stick-Basalz and :275 stick-Blitz hand rows ride the TE convergence skip (atlas-PRIMARY
+     * TE material, no loot conditions — the selftest ledger loot_tables_removed /
+     * injection_pairs_skipped is the single update anchor).
      */
     @Test
     public void theTwilightHandRowsAreTheLiveSurvivors() {
@@ -543,12 +576,12 @@ public class GT6LootInjectionTest {
         for (GT6LootInjectionDatagen.InjectionRow tRow : GT6LootInjectionDatagen.injections()) {
             if (tRow.name().startsWith("dungeon_inject_tf_")) tByTable.put(tRow.table(), tRow.entries());
         }
-        // hill_2 :83 — the "way to obtain Basalz Rods" rare row, [4,4]
-        GT6LootInjectionDatagen.EntryRow tBasalz = tByTable.get("twilightforest:hill_2")
-                .get(tByTable.get("twilightforest:hill_2").size() - 1);
-        assertEquals("gt6:stick_basalz", tBasalz.item());
-        assertEquals(1, tBasalz.weight());
-        assertTrue(tBasalz.min() == 4 && tBasalz.max() == 4, ":83 four rods");
+        // hill_2 :83 — the "way to obtain Basalz Rods" rare row is upstream-live but rides the
+        // TE convergence skip (Basalz is atlas-PRIMARY TE; parse-errors-registration-
+        // convergence, its selftest ledger the update anchor) — hill2 stays the mineshaft rows
+        assertTrue(tByTable.get("twilightforest:hill_2").stream()
+                        .noneMatch(aRow -> aRow.item().equals("gt6:stick_basalz")),
+                ":83 the Basalz rods row is the TE-gated skip (勿硬造)");
         // hedge_maze :116-123 — the live rows ride the tail after the Guide
         List<GT6LootInjectionDatagen.EntryRow> tHedge = tByTable.get("twilightforest:hedge_maze")
                 .subList(1, tByTable.get("twilightforest:hedge_maze").size());
@@ -562,11 +595,11 @@ public class GT6LootInjectionTest {
         assertTrue(tHedge.get(2).min() == 4 && tHedge.get(2).max() == 4, ":123");
         assertEquals("gt6:food_cinnamon", tHedge.get(3).item());
         assertTrue(tHedge.get(3).min() == 12 && tHedge.get(3).max() == 12, ":116");
-        // troll_garden :275 — the Blitz uncommon row
-        List<GT6LootInjectionDatagen.EntryRow> tGarden = tByTable.get("twilightforest:troll_garden");
-        GT6LootInjectionDatagen.EntryRow tBlitz = tGarden.get(tGarden.size() - 1);
-        assertEquals("gt6:stick_blitz", tBlitz.item());
-        assertTrue(tBlitz.min() == 4 && tBlitz.max() == 4, ":275 four rods");
+        // troll_garden :275 — the Blitz uncommon row rides the TE convergence skip too
+        // (Blitz is atlas-PRIMARY TE; the same update anchor) — the garden is the dungeon
+        // carrier rows verbatim
+        assertEquals(GT6LootInjectionDatagen.dungeonChestEntries(), tByTable.get("twilightforest:troll_garden"),
+                ":275 the Blitz rods row is the TE-gated skip (勿硬造)");
         // troll_vault :287-289 — the crushed-debris faces (the 1.7.10 IL.Ancient_Debris was
         // null; the crushed fallback WAS the live face) + the wither skull
         List<GT6LootInjectionDatagen.EntryRow> tVault = tByTable.get("twilightforest:troll_vault")
@@ -618,9 +651,10 @@ public class GT6LootInjectionTest {
         }
         JsonObject tHill2 = tree("data/gt6/loot_modifiers/dungeon_inject_tf_hill_2.json");
         JsonArray tEntries = tHill2.getAsJsonArray("entries");
-        assertEquals(GT6LootInjectionDatagen.mineshaftEntries().size() + 1, tEntries.size());
-        JsonObject tBasalz = tEntries.get(tEntries.size() - 1).getAsJsonObject();
-        assertEquals("gt6:stick_basalz", tBasalz.get("item").getAsString(), ":83 the Basalz tail row");
-        assertEquals(4, tBasalz.get("min").getAsInt());
+        // :83 the Basalz tail row rides the TE convergence skip — the JSON is the mineshaft
+        // rows verbatim (the same predicate skipped the row table AND the emit)
+        assertEquals(GT6LootInjectionDatagen.mineshaftEntries().size(), tEntries.size());
+        assertTrue(tEntries.toString().indexOf("basalz") < 0,
+                ":83 the Basalz tail row is the TE-gated skip in the emitted JSON too");
     }
 }

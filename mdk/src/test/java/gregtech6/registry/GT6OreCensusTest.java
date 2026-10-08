@@ -3,14 +3,17 @@
  * ledgers of the landed ore universe pinned against EACH OTHER per key, not just per
  * card — the registration walk (ledger 1, ore-1: 11618 since worldgen-axis-batch2 on the b1+b2 union), the generated blockstates +
  * item models + shared base models + atlas seam (ledger 2, ore-3), the generated loot
- * tables in BOTH directory bands (ledger 3, ore-4: 11618 x 2 = 23236), and the borrowed
+ * tables in BOTH directory bands (ledger 3, ore-4: the loot walk 11100 x 2 = 22200 — the
+ * registration walk minus the convergence loot skip, see {@link #PINNED_LOOT_TOTAL}), and the borrowed
  * materialicon ore textures (ledger 4, ore-2: 60 PNGs) — plus the creative tab content
  * face (the material axis minus the mHidden filter, the GT6OreBlocks registerCreativeTab
  * walk).
  *
  * <p>Per-key reconciliation (the "四源一致" acceptance): every (family, form, material)
  * path of {@link GT6OreBlocks#registrationOrder()} must own exactly one blockstate JSON,
- * one item-model JSON and two loot JSONs (forge loot_tables + 21.1 loot_table), with NO
+ * one item-model JSON and — for the loot-walk keys (the convergence-gated materials ship
+ * no table, see {@link #PINNED_LOOT_TOTAL}) — two loot JSONs (forge loot_tables + 21.1
+ * loot_table), with NO
  * ore-prefixed orphans in any ledger — a missing file is a merge drift, an extra file a
  * dead entry; both fail. The texture side walks the CONSUMER face ({@link
  * gregtech6.client.ore.GTOreBakedModel#buildParams()}): every gt6-namespaced sprite any
@@ -19,7 +22,9 @@
  *
  * <p>Offline-safe: the walk is registry-free (the census-walk posture) — the file faces
  * resolve from the mdk root (the GT6TextureCensusTest mdkRoot walk), the tab face reads
- * only {@link GT6OreBlocks#materialAxis()} + mHidden.
+ * only {@link GT6OreBlocks#materialAxis()} + mHidden; the loot narrowing reads the STATIC
+ * foreign-material atlas (GT6ForeignRowConvergence.gatingDomain — registration-axis-free
+ * by ruling, initMaterials is the only boot it needs).
  */
 package gregtech6.registry;
 
@@ -54,8 +59,20 @@ class GT6OreCensusTest {
      *  (nether_quartz_ore / amethyst_block / packed_mud, GT6NetherOres.KEYS)
      *  (gt6:block/ore/bedrock, minecraft:block/bedrock) joins the 28. */
     private static final int PINNED_BASE_MODELS = 32;
-    /** Ledger 3 — the ore-4 loot trees: one table per block, BOTH directory bands. */
-    private static final int PINNED_LOOT_TOTAL = 2 * PINNED_BLOCKS;
+    /** Ledger 3 — the ore-4 loot trees: one table per loot-walk key, BOTH directory bands.
+     *  The loot walk is the registration walk MINUS the convergence loot skip (task
+     *  parse-errors-registration-convergence, the seat41 debt reconciliation): loot tables
+     *  have NO load-time condition mechanism, so every atlas-PRIMARY material the live seed
+     *  can hide ships no table in either band (the upstream bare shape: no item, no loot
+     *  row). Seven axis materials ride the gate — Azurite/Eudialyte/Zircon (TROPIC), CaF2
+     *  (RoC), Jade (ERE), Dolamide (MO), Neodymium (HBM) — 7 x 74 walk rows = 518 per band;
+     *  11618 - 518 = 11100 per band, x2 bands = 22200. The narrowing predicate is the
+     *  GENERATOR's own ({@code GT6OreLootTables.oreLootBlocks} over
+     *  {@code GT6ForeignRowConvergence.gatingDomain} — the static-atlas read,
+     *  registration-axis-free by ruling); the update anchor is the parse-errors
+     *  registration-convergence selftest ledger (loot_tables_removed /
+     *  injection_pairs_skipped) — a gating-face change moves BOTH. */
+    private static final int PINNED_LOOT_TOTAL = 22200;
     /** Ledger 4 — the ore-2 texture batch: 22 SETs x {ore, ore_small, + the two overlays} (gem_vertical joined with a-ore-axis-extension; emerald/glass/gem_horizontal/opal joined with b-gem-pool-extension; stone/powder joined with worldgen-axis-batch2). */
     private static final int PINNED_SETS = 22;
     private static final int PINNED_TEXTURES = PINNED_SETS * 4;
@@ -94,6 +111,18 @@ class GT6OreCensusTest {
         List<String> rPaths = new ArrayList<>();
         for (OreKey tKey : GT6OreBlocks.registrationOrder()) rPaths.add(GT6OreBlocks.path(tKey));
         return rPaths;
+    }
+
+    /**
+     * The loot-band narrowing — the GENERATOR's own predicate
+     * ({@code GT6OreLootTables.oreLootBlocks} / {@code GT6ForeignRowConvergence.gatingDomain},
+     * the static foreign-material atlas): an atlas-gated material is seed-hidden on a bare
+     * install and loot has no load-time condition mechanism, so its blocks ship no table in
+     * either band (the upstream bare shape — no item, no loot row). The blockstate/item-model
+     * ledgers stay the FULL walk; only the loot faces narrow.
+     */
+    private static boolean lootShips(OreKey aKey) {
+        return gregtech6.datagen.GT6ForeignRowConvergence.gatingDomain(aKey.material()) == null;
     }
 
     /**
@@ -145,6 +174,12 @@ class GT6OreCensusTest {
                     "ledger 2: blockstate JSON of " + tPath);
             assertTrue(Files.isRegularFile(tAssets.resolve("models").resolve("item").resolve(tPath + ".json")),
                     "ledger 2: item model JSON of " + tPath);
+        }
+        // the loot bands narrow on the convergence gate (the generator's own predicate) —
+        // the gated materials' blocks exist but ship no loot table (see PINNED_LOOT_TOTAL)
+        for (OreKey tKey : GT6OreBlocks.registrationOrder()) {
+            if (!lootShips(tKey)) continue;
+            String tPath = GT6OreBlocks.path(tKey);
             assertTrue(Files.isRegularFile(tData.resolve("loot_tables").resolve("blocks").resolve(tPath + ".json")),
                     "ledger 3: loot_tables band JSON of " + tPath);
             assertTrue(Files.isRegularFile(tData.resolve("loot_table").resolve("blocks").resolve(tPath + ".json")),
@@ -152,12 +187,15 @@ class GT6OreCensusTest {
         }
     }
 
-    /** No orphans: the ore-prefixed file census of ledgers 2 and 3 equals the walk exactly. */
+    /** No orphans: the ore-prefixed file census of ledgers 2 and 3 equals their walks exactly. */
     @Test
     void oreFileCensusHasNoOrphans() throws IOException {
         Set<String> tWalk = new HashSet<>(walkPaths());
         tWalk.addAll(bedrockPaths()); // ledger 2's generated dirs carry the bedrock band too (bedrock-ore)
-        Set<String> tLootWalk = new HashSet<>(walkPaths()); // the loot bands stay 11618-only: the bedrock band is noLootTable
+        Set<String> tLootWalk = new HashSet<>(); // the loot bands narrow on the convergence gate (see PINNED_LOOT_TOTAL)
+        for (OreKey tKey : GT6OreBlocks.registrationOrder()) {
+            if (lootShips(tKey)) tLootWalk.add(GT6OreBlocks.path(tKey));
+        }
         Path tAssets = mdkRoot().resolve(GENERATED_TREE).resolve("assets").resolve("gt6");
         Path tData = mdkRoot().resolve(GENERATED_TREE).resolve("data").resolve("gt6");
         assertEquals(tWalk, fileStems(tAssets.resolve("blockstates"), "ore_"),
@@ -170,7 +208,7 @@ class GT6OreCensusTest {
                 "ledger 3: the loot_table band ore census is the walk, no drift either way");
     }
 
-    /** The ledger-3 band total (11618 x 2 = 23236) and the ledger-2 shared base models (28). */
+    /** The ledger-3 band total (the loot walk 11100 x 2 = 22200) and the ledger-2 shared base models (28). */
     @Test
     void ledgerTotalsArePinned() throws IOException {
         Path tAssets = mdkRoot().resolve(GENERATED_TREE).resolve("assets").resolve("gt6");
@@ -182,7 +220,7 @@ class GT6OreCensusTest {
                         .filter(tFile -> tFile.getFileName().toString().startsWith("ore_")).count();
             }
         }
-        assertEquals(PINNED_LOOT_TOTAL, tLoot, "ledger 3: both directory bands carry the walk");
+        assertEquals(PINNED_LOOT_TOTAL, tLoot, "ledger 3: both directory bands carry the loot walk (the walk minus the convergence gate)");
         // the shared base models: the vanilla-named anchors at the ore/ top level —
         // 11 free + the ore-tex-b trio (granite/diorite/andesite) — plus the remaining
         // 14 GT-stone models under ore/stones/ + the bedrock cube + the 3 nether stand-ins = 32
