@@ -7,7 +7,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -30,6 +29,7 @@ import gregapi.oredict.OreDictMaterialStack;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.components.IOreDictListenerRecyclable;
 import gregtech6.components.OM;
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.registry.GTMaterialItems;
 
 /**
@@ -88,7 +88,7 @@ class GT6RecyclingProcessingTest {
 	 * MT.java:414, so iron plates melt NOTHING; pinned in its own test below). */
 	@Test
 	void furnacePlatePoursMelterAndSmelterRowsWithTheFormulaDuration() {
-		Item tProbe = probeItem("recycling_probe_plate_cu");
+		Item tProbe = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_plate_cu", Item::new);
 		ItemStack tStack = new ItemStack(tProbe);
 		stubMolten(MT.Cu);
 		assertTrue(OM.setItemData(tStack, new OreDictItemData(OP.plate, MT.Cu))); // plate is RECYCLABLE (OP.java:1245) — the notification gate opens
@@ -117,7 +117,7 @@ class GT6RecyclingProcessingTest {
 	 * own material-handler rows upstream, never through RecyclingProcessing). */
 	@Test
 	void neverFurnacePlateMeltsNothing() {
-		Item tProbe = probeItem("recycling_probe_plate_fe");
+		Item tProbe = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_plate_fe", Item::new);
 		ItemStack tStack = new ItemStack(tProbe);
 		stubMolten(MT.Fe); // the fluid WOULD resolve — the gate, not the seam, declines
 		assertTrue(OM.setItemData(tStack, new OreDictItemData(OP.plate, MT.Fe)));
@@ -131,8 +131,8 @@ class GT6RecyclingProcessingTest {
 	 * 16/16; no melt rows (Paper carries no MELTING flag). */
 	@Test
 	void paperGrindsToDustOnTheMortarMap() {
-		Item tProbe = probeItem("recycling_probe_paper");
-		Item tDust = probeItem("recycling_probe_paper_dust");
+		Item tProbe = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_paper", Item::new);
+		Item tDust = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_paper_dust", Item::new);
 		ItemStack tStack = new ItemStack(tProbe);
 		GT6RecyclingProcessing.sPrefixItem = (aPrefix, aMaterial) -> aPrefix == OP.dust && aMaterial == MT.Paper ? tDust : null;
 		assertTrue(OM.setItemData(tStack, new OreDictItemData(new OreDictMaterialStack(MT.Paper, CS.U))));
@@ -149,14 +149,14 @@ class GT6RecyclingProcessingTest {
 	/** The :248 byproduct gate: Bone grinds ONLY when the data carries no byproducts. */
 	@Test
 	void boneGrindsOnlyWithoutByproducts() {
-		Item tProbe = probeItem("recycling_probe_bone");
-		Item tDust = probeItem("recycling_probe_bone_dust");
+		Item tProbe = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_bone", Item::new);
+		Item tDust = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_bone_dust", Item::new);
 		GT6RecyclingProcessing.sPrefixItem = (aPrefix, aMaterial) -> aPrefix == OP.dust && aMaterial == MT.Bone ? tDust : null;
 		ItemStack tClean = new ItemStack(tProbe);
 		assertTrue(OM.setItemData(tClean, new OreDictItemData(new OreDictMaterialStack(MT.Bone, CS.U))));
 		assertEquals(1, GT6RecyclingProcessing.rows(GT6RecipeMaps.MORTAR, tClean).size());
 		// a second probe item whose Bone data carries a byproduct: the mortar arm stays silent
-		Item tProbe2 = probeItem("recycling_probe_bone2");
+		Item tProbe2 = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_bone2", Item::new);
 		ItemStack tWithByproduct = new ItemStack(tProbe2);
 		assertTrue(OM.setItemData(tWithByproduct, new OreDictItemData(MT.Bone, CS.U, MT.Cu, CS.U4)));
 		assertTrue(GT6RecyclingProcessing.rows(GT6RecipeMaps.MORTAR, tWithByproduct).isEmpty());
@@ -169,7 +169,7 @@ class GT6RecyclingProcessingTest {
 	 * card's pin, this is the listener-side door behind it). */
 	@Test
 	void orePrefixedDataYieldsZeroRows() {
-		Item tProbe = probeItem("recycling_probe_ore");
+		Item tProbe = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_ore", Item::new);
 		stubMolten(MT.Cu);
 		GT6RecyclingProcessing.INSTANCE.onRecycleableRegistration(new IOreDictListenerRecyclable.OreDictRecyclingContainer(
 				new ItemStack(tProbe), new OreDictItemData(OP.ore, MT.Cu)));
@@ -187,14 +187,14 @@ class GT6RecyclingProcessingTest {
 	@Test
 	void doubleFluidMaterialsYieldZeroRowsButSingleFluidPours() {
 		// two resolvable targets: zero rows on both maps
-		Item tProbe2 = probeItem("recycling_probe_alloy2");
+		Item tProbe2 = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_alloy2", Item::new);
 		ItemStack tAlloy = new ItemStack(tProbe2);
 		stubMolten(MT.Cu, MT.Sn);
 		assertTrue(OM.setItemData(tAlloy, new OreDictItemData(new OreDictMaterialStack(MT.Cu, CS.U), new OreDictMaterialStack(MT.Sn, CS.U))));
 		assertTrue(GT6RecyclingProcessing.rows(GT6RecipeMaps.MELTER, tAlloy).isEmpty());
 		assertTrue(GT6RecyclingProcessing.rows(GT6RecipeMaps.SMELTER, tAlloy).isEmpty());
 		// one resolvable target (the other material has no registered molten row — the negative-account shape): pours
-		Item tProbe1 = probeItem("recycling_probe_alloy1");
+		Item tProbe1 = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_alloy1", Item::new);
 		ItemStack tSingle = new ItemStack(tProbe1);
 		stubMolten(MT.Cu); // Sn resolves to null and skips silently (:277 mLiquid == null arm)
 		assertTrue(OM.setItemData(tSingle, new OreDictItemData(new OreDictMaterialStack(MT.Cu, CS.U), new OreDictMaterialStack(MT.Sn, CS.U))));
@@ -210,7 +210,7 @@ class GT6RecyclingProcessingTest {
 	 * "addListener 即活" catch-up). */
 	@Test
 	void regenerationIsIdempotent() {
-		Item tProbe = probeItem("recycling_probe_idem");
+		Item tProbe = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_idem", Item::new);
 		ItemStack tStack = new ItemStack(tProbe);
 		stubMolten(MT.Cu);
 		// prefix-less data re-declares freely (the OM gate only refuses prefixed overwrites)
@@ -235,7 +235,7 @@ class GT6RecyclingProcessingTest {
 	 * material and the Melter finds that stack's row through the real map. */
 	@Test
 	void recyclingRowsFaceTheCentralQueryConsistently() {
-		Item tProbe = probeItem("recycling_probe_consistency");
+		Item tProbe = OMComponentFaceTest.probeItem("minecraft", "recycling_probe_consistency", Item::new);
 		ItemStack tStack = new ItemStack(tProbe);
 		stubMolten(MT.Cu);
 		// the negative face: an unregistered item is unqueryable and unrecyclable
@@ -265,54 +265,8 @@ class GT6RecyclingProcessingTest {
 		};
 	}
 
-	/**
-	 * The offline probe item (the OMComponentFaceTest helper, mirrored): the Forge intrusive
-	 * holder makes item construction/registration throw while the registry is frozen, so the
-	 * probe registers under a dedicated probe id after the three forge locks open.
-	 */
-	private static Item probeItem(String aProbeId) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		Item rItem = new Item(new Item.Properties());
-		net.minecraft.core.Registry.register(tRegistry, aProbeId, rItem);
-		return rItem;
-	}
-
-	/** getDeclaredField along the superclass chain (the FileSawTest helper, mirrored). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// walk up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
+	// The offline probe items ride the common definition OMComponentFaceTest.probeItem
+	// with the "minecraft" namespace (the historical Registry.register(reg, id, item)
+	// String-overload landing — task probeitem-latch-hygiene: the namespace parameter
+	// preserves each file's historical pool, the pool lottery stays untouched).
 }

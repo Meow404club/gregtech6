@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.items.tools.GTHammerItem;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
@@ -189,7 +190,7 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 
 	@Test
 	public void hammerInHandStrikesRatherThanStores() {
-		GTHammerItem tHammerItem = probeItem("anvil_probe_hammer", GTHammerItem::new);
+		GTHammerItem tHammerItem = OMComponentFaceTest.probeItem("gt6", "anvil_probe_hammer", p -> new GTHammerItem(p.durability(512)));
 		GT6AnvilBlockEntity tAnvil = anvil(30000);
 		tAnvil.inventory().setStackInSlot(0, new ItemStack(Items.STONE, 1));
 		ItemStack tHammer = new ItemStack(tHammerItem);
@@ -372,59 +373,9 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 		assertEquals(1, tUnderAnvil.getInventory().getStackInSlot(0).getCount(), "one dropped item sucked");
 	}
 
-	/**
-	 * The probe-item bracket (the BendingCylinderSmallTest.probeItem form verbatim): the
-	 * three forge locks / single 21.1 frozen flag; the probe item rides a dedicated probe
-	 * id and never reaches any committed data.
-	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Function<Item.Properties, I> aCreator) {
-		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the vanilla frozen flag (the Item ctor intrusive-holder gate), the delegate
-			// ForgeRegistry.isFrozen, the NamespacedWrapper.locked register gate
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]: " + aE, aE);
-		}
-		//?} else {
-		/*try {
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.apply(new Item.Properties().durability(512));
-		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in
-		// the minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
-		// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
-
-	/** getDeclaredField along the superclass chain (the defaulted wrapper hides the lock one level up). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> tClass = aClass; tClass != null; tClass = tClass.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = tClass.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException aE) {/* walk up */}
-		}
-		throw new NoSuchFieldException(aName + " not found on " + aClass.getName());
-	}
+	// the probe-item bracket (the BendingCylinderSmallTest form) folded onto the common
+	// definition OMComponentFaceTest.probeItem (the gt6 namespace preserved,
+	// durability(512) at the call site — task probeitem-latch-hygiene).
 
 	/** The hopper fixture (the GT6HopperFamilyTest BET-free form + the anvil/spy overrides). */
 	private static final class HopperFixture extends GT6HopperBaseBlockEntity {

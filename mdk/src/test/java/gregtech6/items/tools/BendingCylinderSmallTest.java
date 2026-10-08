@@ -32,7 +32,6 @@ import java.util.List;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.Container;
@@ -44,6 +43,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gregapi.data.MT;
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GT6MaterialTestSupport;
@@ -127,10 +127,10 @@ public class BendingCylinderSmallTest {
 	 */
 	@Test
 	public void realCraftingChannelChargesAllFourLettersOnePoint() {
-		GTSawItem tSaw = probeItem("crafting_probe_foodcan_saw", GTSawItem::new);
-		GT6FileItem tFile = probeItem("crafting_probe_foodcan_file", GT6FileItem::new);
-		GTHammerItem tHammer = probeItem("crafting_probe_foodcan_hammer", GTHammerItem::new);
-		GT6BendingCylinderSmallItem tCylinder = probeItem("crafting_probe_foodcan_cylinder", GT6BendingCylinderSmallItem::new);
+		GTSawItem tSaw = OMComponentFaceTest.probeItem("gt6", "crafting_probe_foodcan_saw", p -> new GTSawItem(p.durability(512)));
+		GT6FileItem tFile = OMComponentFaceTest.probeItem("gt6", "crafting_probe_foodcan_file", p -> new GT6FileItem(p.durability(512)));
+		GTHammerItem tHammer = OMComponentFaceTest.probeItem("gt6", "crafting_probe_foodcan_hammer", p -> new GTHammerItem(p.durability(512)));
+		GT6BendingCylinderSmallItem tCylinder = OMComponentFaceTest.probeItem("gt6", "crafting_probe_foodcan_cylinder", p -> new GT6BendingCylinderSmallItem(p.durability(512)));
 
 		ItemStack tSawStack = worn(tSaw, 10);
 		ItemStack tFileStack = worn(tFile, 20);
@@ -157,7 +157,7 @@ public class BendingCylinderSmallTest {
 	/** The cylinder at one-below-max survives the live channel (strictly-greater consumes). */
 	@Test
 	public void realCraftingChannelCylinderAtTheMaxBoundaryStillReturns() {
-		GT6BendingCylinderSmallItem tCylinder = probeItem("crafting_probe_foodcan_cylinder_worn", GT6BendingCylinderSmallItem::new);
+		GT6BendingCylinderSmallItem tCylinder = OMComponentFaceTest.probeItem("gt6", "crafting_probe_foodcan_cylinder_worn", p -> new GT6BendingCylinderSmallItem(p.durability(512)));
 		ItemStack tInput = worn(tCylinder, GT6BendingCylinderSmallItem.DURABILITY_POINTS - 1);
 		NonNullList<ItemStack> tRemainders = craftingChannel(tInput);
 		assertFalse(tRemainders.get(0).isEmpty(), "one-below-max is a returned copy (strictly-greater consumes)");
@@ -167,7 +167,7 @@ public class BendingCylinderSmallTest {
 	/** The cylinder past the boundary is CONSUMED by the live channel (the worn-out null). */
 	@Test
 	public void realCraftingChannelCylinderPastTheMaxIsConsumed() {
-		GT6BendingCylinderSmallItem tCylinder = probeItem("crafting_probe_foodcan_cylinder_dead", GT6BendingCylinderSmallItem::new);
+		GT6BendingCylinderSmallItem tCylinder = OMComponentFaceTest.probeItem("gt6", "crafting_probe_foodcan_cylinder_dead", p -> new GT6BendingCylinderSmallItem(p.durability(512)));
 		ItemStack tInput = worn(tCylinder, GT6BendingCylinderSmallItem.DURABILITY_POINTS);
 		assertTrue(craftingChannel(tInput).get(0).isEmpty(), "past-max hands back EMPTY = the tool is consumed");
 	}
@@ -176,62 +176,6 @@ public class BendingCylinderSmallTest {
 		ItemStack rStack = new ItemStack(aItem);
 		rStack.setDamageValue(aDamage);
 		return rStack;
-	}
-
-	/**
-	 * The GTWireBlockUseLockTest:43 reflection bracket, the HammerWrenchTest.probeItem
-	 * form verbatim (the three forge locks / single 21.1 frozen flag; the probe item is
-	 * registered under a dedicated probe id and never reaches any committed data).
-	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Function<Item.Properties, I> aCreator) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the Forge runtime shape: THREE locks must open (the GT6ToolsCreativeTabTest walk)
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 runtime shape: the plain vanilla DefaultedMappedRegistry — one frozen flag
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.apply(new Item.Properties().durability(512));
-		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in
-		// the minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
-		// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
-
-	/** getDeclaredField along the superclass chain (the defaulted wrapper hides the lock one level up). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// keep walking up
-			}
-		}
-		throw new NoSuchFieldException(aName);
 	}
 
 	/**

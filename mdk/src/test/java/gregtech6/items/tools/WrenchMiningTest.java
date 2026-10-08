@@ -57,6 +57,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GT6Hoppers;
 import gregtech6.registry.GT6LongDistanceTransformers;
@@ -100,7 +101,7 @@ public class WrenchMiningTest {
 		}
 		GT6MaterialTestSupport.materials(); // the hermetic bracket (the MT.Steel fallback path)
 		gWrenchMineable = TagKey.create(Registries.BLOCK, new ResourceLocation("gt6", "mineable/wrench"));
-		gWrench = probeItem("mining_probe_wrench", GTWrenchItem::new);
+		gWrench = OMComponentFaceTest.probeItem("gt6", "mining_probe_wrench", p -> new GTWrenchItem(p.durability(512)));
 		bindWrenchFace(holder(Blocks.HOPPER), holder(Blocks.DISPENSER), holder(Blocks.DROPPER),
 				holder(Blocks.PISTON), holder(Blocks.STICKY_PISTON), holder(Blocks.PISTON_HEAD),
 				holder(Blocks.MOVING_PISTON), holder(Blocks.REDSTONE_LAMP), holder(Blocks.IRON_BARS));
@@ -341,59 +342,7 @@ public class WrenchMiningTest {
 		*///?}
 	}
 
-	/**
-	 * The HammerWrenchTest.probeItem bracket verbatim — the Forge registry write window
-	 * (a mod Item cannot otherwise be constructed past the intrusive-holder wall).
-	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Function<Item.Properties, I> aCreator) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// three locks: the vanilla frozen flag, the delegate ForgeRegistry.isFrozen,
-			// the NamespacedWrapper.locked register gate (the HammerWrenchTest walk)
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 runtime shape: a single frozen flag guards both walls
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.apply(new Item.Properties().durability(512));
-		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in
-		// the minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
-		// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
+	// the probe-item bracket folded onto OMComponentFaceTest.probeItem (the gt6
+	// namespace preserved, durability(512) at the call site — task probeitem-latch-hygiene).
 
-	/** getDeclaredField along the superclass chain (the HammerWrenchTest walker). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// keep walking up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
 }

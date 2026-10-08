@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +23,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 
 /**
@@ -192,56 +192,11 @@ public class GT6FileBeltDatagenTest extends GTRecipesOfflineTestBase {
 		return tExisting != null ? tExisting : probeItem(aKey);
 	}
 
-	/** The offline item probe under the exact generated id — the GTAdvancedCraftingTableTest bracket (the three forge locks / the single vanilla lock). */
+	/** The offline item probe under the exact generated id — folded onto the common
+	 * definition OMComponentFaceTest.probeItem (gt6 namespace, bare Properties — task
+	 * probeitem-latch-hygiene). */
 	private static Item probeItem(String aKey) {
-		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the vanilla frozen flag, the delegate ForgeRegistry.isFrozen, the NamespacedWrapper.locked gate
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setAccessible(true);
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 shape: the plain vanilla DefaultedMappedRegistry — a single frozen flag
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		//? if forge {
-		return net.minecraft.core.Registry.register(tRegistry, new ResourceLocation("gt6", aKey), new Item(new Item.Properties()));
-		//?} else {
-		/*return net.minecraft.core.Registry.register(tRegistry, ResourceLocation.fromNamespaceAndPath("gt6", aKey), new Item(new Item.Properties()));
-		*///?}
-	}
-
-	/** getDeclaredField along the superclass chain (the GTAdvancedCraftingTableTest helper verbatim). */
-	private static Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// keep walking up
-			}
-		}
-		throw new NoSuchFieldException(aName);
+		return OMComponentFaceTest.probeItem("gt6", aKey, Item::new);
 	}
 
 	/** The row id (the leg-correct ResourceLocation ctor). */
