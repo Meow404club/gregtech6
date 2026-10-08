@@ -181,5 +181,10 @@ public final class GT6DataGenerators {
         /*event.getGenerator().addProvider(true,
             new gregtech6.items.tools.loot.GT6ToolLootModifiersDatagen(event.getGenerator().getPackOutput(), event.getLookupProvider()));
         *///?}
+        // task component-derivation-reload: the C-leg deriver's datapack-domain gate file
+        // (data/gt6/components/derivation.json, force/suppress recipe ids; v1 = empty gates,
+        // the mechanism row) — tail-append per the seam discipline above.
+        event.getGenerator().addProvider(true,
+            new GT6ComponentDerivationManifest(event.getGenerator().getPackOutput()));
     }
 }

@@ -314,6 +314,28 @@ public class OM {
 	}
 
 	/**
+	 * The derivation-face re-entry seam (ADR docs/adr/2026-10-06-components-subsystem.md red
+	 * line 3: "/reload 重入必须幂等（derived 集清除重建）"). Upstream never re-enters (1.7.10
+	 * derivation ran once per JVM at registration time), so it needed no removal face; the
+	 * port's reload deriver re-enters on every /reload and must be able to retire ITS OWN
+	 * previous writes when the recipe graph moved under them. Removes the stored data at this
+	 * stack's (item, damage) key AND prunes the matching recyclable registrations (the
+	 * container is identity-held, IOreDictListenerRecyclable.OreDictRecyclingContainer has no
+	 * equals — a stale entry would replay forever to every late listener). Only callers that
+	 * can prove they authored the entry may call this (the deriver tracks its own written
+	 * keys); explicit declarations are untouchable by derivation, upstream add-only semantics.
+	 * No-op on absent keys. Task component-derivation-reload.
+	 */
+	public static boolean removeItemData(ItemStack aStack) {
+		if (invalid(aStack)) return F;
+		StackKey tKey = new StackKey(aStack.getItem(), aStack.getDamageValue());
+		boolean rAny = sItemStack2DataMap.remove(tKey) != null;
+		rAny |= sRecyclableRegistrations.removeIf(tRegistration ->
+				tRegistration.mStack.getItem() == aStack.getItem() && tRegistration.mStack.getDamageValue() == aStack.getDamageValue());
+		return rAny;
+	}
+
+	/**
 	 * The fluid arms of upstream :659 ({@code FL.getFluid(aStack, T) != null} plus the
 	 * {@code IFluidContainerItem.getCapacity > 0} leg): the modern item fluid-handler
 	 * capability with content — forge FluidUtil.getFluidContained (the in-repo precedent,
