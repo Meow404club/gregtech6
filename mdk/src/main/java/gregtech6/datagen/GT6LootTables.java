@@ -681,11 +681,18 @@ public final class GT6LootTables extends LootTableProvider {
      * boiler/burning-box family face — only the INVENTORY contents ride the
      * {@code breakBlock} pop, TileEntityBase05Inventories.java:151-170 returns F for the
      * block item, the MTE registry block break drops the machine item); the 1.20.1
-     * equivalent is exactly {@code dropSelf}.
+     * equivalent is exactly {@code dropSelf}. Minus the mdh-6 convergence skip (task
+     * loot-unported-census): the 15 {@code driverDomain()} slugs (GT6Hoppers:190-203
+     * switch; hopper + queue_hopper = 30 rows) skip at datagen — loot tables have no
+     * load-time condition mechanism (ForgeHooks.loadLootTable deserializes straight into
+     * LootTable; registers() is useless here, the datagen JVM seeds all-PRESENT), and
+     * the declared cost is that an install carrying the owning mod also misses those 30
+     * hopper tables (the parse-errors-registration-convergence 1443-table precedent).
      */
     public static List<Block> hopperLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS) {
+            if (tRow.material().driverDomain() != null) continue; // the mdh-6 convergence skip (loot has no condition mechanism)
             rBlocks.add(gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
@@ -721,11 +728,19 @@ public final class GT6LootTables extends LootTableProvider {
      * GT6Chests rows — the loader MTE default self-drop over the metalset chest pair
      * (:132-133; canDrop == T on every slot, MultiTileEntityChest.java:250), the
      * hopperLootBlocks shape verbatim. The chest CONTENTS ride the vanilla break pops
-     * (the GTEntityBlock fallback), the block itself self-drops.
+     * (the GTEntityBlock fallback), the block itself self-drops. Minus the mdh-6
+     * convergence skip (task loot-unported-census): the 15 {@code driverDomain()}
+     * slugs (the shared GT6Hoppers.HopperMaterial switch, GT6Hoppers:190-203; plain +
+     * reinforced = 30 rows) skip at datagen — loot tables have no load-time condition
+     * mechanism (ForgeHooks.loadLootTable deserializes straight into LootTable;
+     * registers() is useless here, the datagen JVM seeds all-PRESENT), and the
+     * declared cost is that an install carrying the owning mod also misses those 30
+     * chest tables (the parse-errors-registration-convergence 1443-table precedent).
      */
     public static List<Block> chestLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) {
+            if (tRow.material().driverDomain() != null) continue; // the mdh-6 convergence skip (loot has no condition mechanism)
             rBlocks.add(gregtech6.registry.GT6Chests.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
@@ -1342,12 +1357,20 @@ public final class GT6LootTables extends LootTableProvider {
      * The Advanced/Charging Crafting Table block list (task act-machine → act-matrix):
      * the 120-row matrix (Loader_MultiTileEntities.java:136-137 over :186-245) — the
      * cannerLootBlocks shape over the two shared BETs' 120 blocks, the MTE default
-     * self-drop with the paint carry on every row.
+     * self-drop with the paint carry on every row. Minus the mdh-6 convergence skip
+     * (task loot-unported-census): the 15 {@code driverDomain()} slugs
+     * (CraftingTableMaterial switch, GTMachines:2690-2705; advanced + charging = 30
+     * rows) skip at datagen — loot tables have no load-time condition mechanism
+     * (ForgeHooks.loadLootTable deserializes straight into LootTable; registers() is
+     * useless here, the datagen JVM seeds all-PRESENT), and the declared cost is that
+     * an install carrying the owning mod also misses those 30 crafting-table tables
+     * (the parse-errors-registration-convergence 1443-table precedent).
      */
     public static List<Block> advancedCraftingTableLootBlocks() {
         List<Block> rBlocks = new java.util.ArrayList<>();
-        for (var tHandle : gregtech6.registry.GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.values()) {
-            rBlocks.add(tHandle.get());
+        for (var tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) {
+            if (tRow.material().driverDomain() != null) continue; // the mdh-6 convergence skip (loot has no condition mechanism)
+            rBlocks.add(gregtech6.registry.GTMachines.CRAFTING_TABLE_BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
     }
@@ -2254,17 +2277,29 @@ public final class GT6LootTables extends LootTableProvider {
 
     /**
      * The fluid-pipe family block list (task c-foam-pipe-spray spec ⑦, extended to
-     * the full matrix by task fluid-pipe-matrix): all 280 row blocks walk
-     * {@link gregtech6.registry.GTFluidPipes#BLOCKS_BY_PATH}. Pre-existing state: the
-     * pipes shipped TABLE-LESS (breaking dropped nothing — the same gap the p22 machine
-     * census closed for its 13); the foam NBT round-trip needs a real drop, so this card
-     * gives them the upstream MTE default self-drop WITH the foam carry (upstream
-     * writeItemNBT2, TileEntityBase10ConnectorRendered.java:82-87 — the port's
-     * writeItemNBT2 counterpart is the loot copy_nbt, the p22 painted-item form).
+     * the full matrix by task fluid-pipe-matrix): the row walk over
+     * {@link gregtech6.registry.GTFluidPipes#ROWS}, minus the mdh-6 convergence skip
+     * (task loot-unported-census): the 13 {@code driverDomain()} slugs (GTFluidPipes
+     * :186-198 switch, 7 variants each = 91 rows) reference items a bare install never
+     * registers, and loot tables have no load-time condition mechanism
+     * (ForgeHooks.loadLootTable deserializes straight into LootTable — registers() is
+     * useless here, the datagen JVM seeds all-PRESENT), so those rows skip at datagen
+     * like the upstream bare shape (no item, no loot row). The declared cost: an
+     * install carrying the owning mod also misses those 91 pipe tables (the
+     * parse-errors-registration-convergence 1443-table precedent, same shape).
+     * Pre-existing state: the pipes shipped TABLE-LESS (breaking dropped nothing — the
+     * same gap the p22 machine census closed for its 13); the foam NBT round-trip
+     * needs a real drop, so this card gives them the upstream MTE default self-drop
+     * WITH the foam carry (upstream writeItemNBT2,
+     * TileEntityBase10ConnectorRendered.java:82-87 — the port's writeItemNBT2
+     * counterpart is the loot copy_nbt, the p22 painted-item form).
      */
     public static List<Block> pipeLootBlocks() {
         java.util.List<Block> rBlocks = new java.util.ArrayList<>();
-        for (var tHandle : gregtech6.registry.GTFluidPipes.BLOCKS_BY_PATH.values()) rBlocks.add(tHandle.get());
+        for (var tRow : gregtech6.registry.GTFluidPipes.ROWS) {
+            if (tRow.material().driverDomain() != null) continue; // the mdh-6 convergence skip (loot has no condition mechanism)
+            rBlocks.add(gregtech6.registry.GTFluidPipes.BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
         return rBlocks;
     }
 
@@ -2558,10 +2593,18 @@ public final class GT6LootTables extends LootTableProvider {
      * rows (Loader :139), the sap bag (:2221) and the plant pot (:2229). The upstream
      * MTEs carry the default self-drop WITH the paint round-trip (all three are
      * paintable — the mRGBa chain), the painted-item-domain {@link #paintSelfTable} form.
+     * The locker walk carries the mdh-6 convergence skip (task loot-unported-census):
+     * the 15 {@code driverDomain()} slugs (the shared GT6Hoppers.HopperMaterial switch,
+     * GT6Hoppers:189-203) skip at datagen — loot tables have no load-time condition
+     * mechanism (ForgeHooks.loadLootTable deserializes straight into LootTable;
+     * registers() is useless here, the datagen JVM seeds all-PRESENT), and the declared
+     * cost is that an install carrying the owning mod also misses those 15 locker
+     * tables (the parse-errors-registration-convergence 1443-table precedent).
      */
     public static List<Block> domain32xxxLootBlocks() {
         List<Block> rBlocks = new ArrayList<>();
         for (gregtech6.registry.GT6ChargingLockers.ChargingLockerRow tRow : gregtech6.registry.GT6ChargingLockers.ROWS) {
+            if (tRow.material().driverDomain() != null) continue; // the mdh-6 convergence skip (loot has no condition mechanism)
             rBlocks.add(gregtech6.registry.GT6ChargingLockers.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         rBlocks.add(gregtech6.registry.GT6MiscToolBlocks.SAP_BAG_BLOCK.get());
