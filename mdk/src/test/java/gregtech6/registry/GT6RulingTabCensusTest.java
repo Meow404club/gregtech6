@@ -42,7 +42,7 @@ public class GT6RulingTabCensusTest extends GTOfflineTestBase {
 
 	/** Ruling ② — the written books: 16 items on the dedicated tab (books-text-family re-armed Manual_Portal_TF). */
 	@Test
-	public void theBooksOwnTheirDedicatedTabWithAll15() {
+	public void theBooksOwnTheirDedicatedTabWithAll16() {
 		assertEquals(16, GT6Books.ITEMS_BY_PATH.size(), "the gt.books 15 static books + the re-armed Manual_Portal_TF (books-text-family, the TF rare-row face)");
 		assertNotNull(GT6Books.BOOKS_TAB, "the dedicated tab exists (the user ruling: the manuals should be easy to get)");
 		assertEquals("gt6:books", GT6Books.BOOKS_TAB.getId().toString(), "the tab registry id");
