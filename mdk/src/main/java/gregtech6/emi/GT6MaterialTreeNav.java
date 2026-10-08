@@ -35,10 +35,12 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * <p><b>The 档位 feel</b>: zoom buttons step the exact power-of-two 2x (1→2→4 and back) —
  * binary-exact products mean the S1 floor/ceiling freezes land without float residue.
  * The slider carries the fine grain ({@code MIN + f*(MAX-MIN)}, anchored at the canvas
- * centre) — the substitute for a drag/wheel zoom, which EMI 1.1.24 recipe widgets cannot
- * receive (RecipeScreen.mouseScrolled routes to the sidebar/page flip; mouseDragged/
- * mouseReleased belong to the slot drag stack; the vendored MUI RecipeScreenMixin forwards
- * only to its own UIWrapperWidget, not to api widgets).
+ * centre); the wheel carries the pointer-anchored fine grain ({@link #WHEEL_STEP} per
+ * notch, task mattree-emi-panzoom riding the vendored MUI {@code RecipeScreenMixin}
+ * seam — EMI 1.1.24 dispatches scroll/drag/release to no api widget itself, the mixin's
+ * HEAD injections are the only delivery path, gated to {@code EmiInteractionSink}).
+ * Drag pan needs no table entry of its own: it is the raw screen-space delta straight
+ * into {@link MaterialTreeViewport#pan}.
  */
 public final class GT6MaterialTreeNav {
 
@@ -52,9 +54,11 @@ public final class GT6MaterialTreeNav {
 	public static final double WHEEL_STEP = 1.25;
 	/** One arrow-key pan = one lane pitch of the shared layout (MaterialTreeLayout.LANE_PITCH). */
 	public static final double PAN_STEP = 28.0;
+	// (the EMI leg's own WHEEL_STEP seat folded into the declaration above — the rebase
+	// union of task mattree-jei-panzoom and task mattree-emi-panzoom, same name/value)
 
 	/** One navigation op, source-agnostic (button, key, or whatever a later card wires). */
-	public enum Action { ZOOM_IN, ZOOM_OUT, RESET, PAN_UP, PAN_DOWN, PAN_LEFT, PAN_RIGHT }
+	public enum Action { ZOOM_IN, ZOOM_OUT, RESET, PAN_UP, PAN_DOWN, PAN_LEFT, PAN_RIGHT, WHEEL_IN, WHEEL_OUT }
 
 	private GT6MaterialTreeNav() {}
 
@@ -74,6 +78,8 @@ public final class GT6MaterialTreeNav {
 			case PAN_DOWN -> aView.pan(0, -PAN_STEP);
 			case PAN_LEFT -> aView.pan(PAN_STEP, 0);
 			case PAN_RIGHT -> aView.pan(-PAN_STEP, 0);
+			case WHEEL_IN -> aView.zoomAt(aFocusX, aFocusY, WHEEL_STEP);
+			case WHEEL_OUT -> aView.zoomAt(aFocusX, aFocusY, 1.0 / WHEEL_STEP);
 		}
 		return true;
 	}

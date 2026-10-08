@@ -27,6 +27,7 @@
 package gregtech6.emi;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -66,8 +67,12 @@ public class GT6MultiblockPreviewEmiInputTest {
 		assertTrue(tMixin.contains("mouseScrolled") && tMixin.contains("mouseDragged")
 				&& tMixin.contains("mouseReleased"),
 				"the mixin injects all three events upstream EMI never dispatches to widgets");
-		assertTrue(tMixin.contains("ModularUIEmiRecipe$UIWrapperWidget"),
-				"the mixin forwards into ModularUIEmiRecipe.UIWrapperWidget (upstream MUI PR #39)");
+		// 旧钉迁移声明 (§6-7, task mattree-emi-panzoom): the pin used to read
+		// 「ModularUIEmiRecipe$UIWrapperWidget」 in the mixin bytes — the gate widened from the
+		// wrapper instanceof to the MUI-owned EmiInteractionSink interface (UIWrapperWidget
+		// implements it; MUI behaviour unchanged), so the seam pin migrates to that name
+		assertTrue(tMixin.contains("brachy/modularui/integration/emi/recipe/EmiInteractionSink"),
+				"the mixin forwards through the EmiInteractionSink seam (the widened UIWrapperWidget gate)");
 	}
 
 	@Test
@@ -82,5 +87,54 @@ public class GT6MultiblockPreviewEmiInputTest {
 		// the pair upstream EMI dispatches natively (RecipeScreen :432 click / :553 key)
 		assertTrue(tWrapper.contains("mouseClicked") && tWrapper.contains("keyPressed"),
 				"the Widget-face pair (click/key) stays forwarded too");
+	}
+
+	/**
+	 * The seam widening (task mattree-emi-panzoom): the gate is the MUI-owned
+	 * {@code EmiInteractionSink} interface, and the GT6 material-tree nav canvas is on it.
+	 * Pinned byte-level, this leg's own build outputs (the property is per-leg): the
+	 * interface class exists and carries the three event names, the descriptor pins hold
+	 * the per-leg scroll signature (forge single amount / neoforge dual-axis — the same
+	 * {@code //?} split the mixin has), the mixin gates on the interface, the wrapper
+	 * implements it, and the nav canvas implements it. Dropping any link silently kills
+	 * the tree page's wheel/pan (or MUI's own scroll/drag) — this pin fails first.
+	 */
+	@Test
+	public void theSeamInterfaceCarriesTheWidenedGateAndBothLegSignatures() throws IOException {
+		String tSink = modularuiFile("classes", "brachy", "modularui", "integration", "emi", "recipe",
+				"EmiInteractionSink.class");
+		assertTrue(tSink.contains("mouseScrolled") && tSink.contains("mouseDragged")
+				&& tSink.contains("mouseReleased"),
+				"the seam interface carries the three undispatched event names");
+		// the per-leg scroll signature + the leg-independent drag/release descriptors
+		//? if forge {
+		assertTrue(tSink.contains("(DDD)Z"), "forge scroll = (mouseX, mouseY, amount)");
+		assertFalse(tSink.contains("(DDDD)Z"), "forge has no dual-axis scroll");
+		//?} else {
+		/*assertTrue(tSink.contains("(DDDD)Z"), "neoforge scroll = (mouseX, mouseY, scrollX, scrollY)");
+		 *///?}
+		assertTrue(tSink.contains("(IDD)Z") && tSink.contains("(I)Z"),
+				"drag = (button, dX, dY), release = (button)");
+		// the gate: the mixin names the interface (instanceof + invokeinterface)
+		String tMixin = modularuiFile("classes", "brachy", "modularui", "core", "mixins", "emi",
+				"RecipeScreenMixin.class");
+		assertTrue(tMixin.contains("brachy/modularui/integration/emi/recipe/EmiInteractionSink"),
+				"the mixin's gate is the seam interface");
+		// the two implementers: MUI's wrapper (behaviour unchanged) and GT6's nav canvas
+		String tWrapper = modularuiFile("classes", "brachy", "modularui", "integration", "emi", "recipe",
+				"ModularUIEmiRecipe$UIWrapperWidget.class");
+		assertTrue(tWrapper.contains("brachy/modularui/integration/emi/recipe/EmiInteractionSink"),
+				"UIWrapperWidget implements the seam (the legacy consumer keeps its forwards)");
+		assertTrue(mainClassBytes(GT6MaterialTreeNavWidget.class)
+						.contains("brachy/modularui/integration/emi/recipe/EmiInteractionSink"),
+				"GT6MaterialTreeNavWidget implements the seam (the tree page's wheel/pan face)");
+	}
+
+	/** Main output class bytes as ISO-8859-1 (the NavTest bytesOf form, duplicated to keep this test fixture-free). */
+	private static String mainClassBytes(Class<?> aClass) throws IOException {
+		try (var tIn = aClass.getResourceAsStream(aClass.getSimpleName() + ".class")) {
+			assertNotNull(tIn, aClass.getSimpleName() + " class bytes (the mdk main output is on the test classpath)");
+			return new String(tIn.readAllBytes(), StandardCharsets.ISO_8859_1);
+		}
 	}
 }
