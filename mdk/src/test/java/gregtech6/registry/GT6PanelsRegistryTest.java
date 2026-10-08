@@ -30,7 +30,6 @@
 package gregtech6.registry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
@@ -235,22 +234,17 @@ class GT6PanelsRegistryTest {
     }
 
     /**
-     * The recipe band: 32 JSONs (Concrete 16 faithful + C-Foam 16 over the uncoloured
-     * cfoam input), the upstream pattern "TsT"/"TPT"/"TdT" -> 6x, iron screw + saw +
-     * screwdriver; the Asphalt 16 build NO recipe (the declared G2 cut — no port asphalt
-     * block family).
+     * The recipe band: 48 JSONs (Concrete 16 faithful + C-Foam 16 over the uncoloured
+     * cfoam input + Asphalt 16 faithful over the colour-matched G2 asphalt blocks — the
+     * declared G2 cut retired, task asphalt-panel-followup), the upstream pattern
+     * "TsT"/"TPT"/"TdT" -> 6x, iron screw + saw + screwdriver.
      */
     @Test
-    void recipeBandIs32WithTheAsphaltCutDeclared() throws Exception {
+    void recipeBandIs48AcrossThe3Families() throws Exception {
         Path tRecipes = generated().resolve("data/gt6/recipes");
         for (GT6PanelBlock.Family tFamily : GT6PanelBlock.Family.values()) {
             for (int i = 0; i < 16; i++) {
                 String tPath = GT6Panels.path(tFamily, i) + ".json";
-                if (tFamily == GT6PanelBlock.Family.ASPHALT) {
-                    assertFalse(Files.exists(tRecipes.resolve(tPath)),
-                            "the declared asphalt cut stays dead: " + tPath);
-                    continue;
-                }
                 var tRecipe = json(tRecipes.resolve(tPath));
                 var tPattern = tRecipe.getAsJsonArray("pattern");
                 assertEquals("TsT", tPattern.get(0).getAsString(), "the upstream row 1 on " + tPath);
@@ -270,7 +264,9 @@ class GT6PanelsRegistryTest {
             }
         }
         // the source columns: Concrete takes the colour-matched concrete item (faithful),
-        // C-Foam takes the single uncoloured cfoam item (the collapsed item ladder fold)
+        // C-Foam takes the single uncoloured cfoam item (the collapsed item ladder fold),
+        // Asphalt takes the colour-matched asphalt item (faithful, the G2 GT6DecorBlocks
+        // band — the upstream :2054 ST.make(BlocksGT.Asphalt, 1, i) row)
         var tConcrete = json(tRecipes.resolve("concrete_panel_red.json"));
         assertEquals("gt6:concrete_red",
                 tConcrete.getAsJsonObject("key").getAsJsonObject("P").get("item").getAsString(),
@@ -281,6 +277,13 @@ class GT6PanelsRegistryTest {
         assertEquals("gt6:cfoam", json(tRecipes.resolve("cfoam_panel_blue.json"))
                 .getAsJsonObject("key").getAsJsonObject("P").get("item").getAsString(),
                 "every cfoam row rides the same uncoloured input");
+        var tAsphalt = json(tRecipes.resolve("asphalt_panel_red.json"));
+        assertEquals("gt6:asphalt_red",
+                tAsphalt.getAsJsonObject("key").getAsJsonObject("P").get("item").getAsString(),
+                "the colour-matched asphalt source (the G2 family)");
+        assertEquals("gt6:asphalt_blue", json(tRecipes.resolve("asphalt_panel_blue.json"))
+                .getAsJsonObject("key").getAsJsonObject("P").get("item").getAsString(),
+                "the asphalt rows walk their 16 colours, no fold");
     }
 
     /** The loot pin: the panels self-drop (the concrete full-block arm). */
