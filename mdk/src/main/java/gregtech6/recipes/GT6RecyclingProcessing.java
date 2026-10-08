@@ -139,20 +139,16 @@ public final class GT6RecyclingProcessing implements IOreDictListenerRecyclable 
 	 * answers the registration index (GTMaterialItems.get), offline tests inject probe items. */
 	public static BiFunction<OreDictPrefix, OreDictMaterial, Item> sPrefixItem = GT6RecyclingProcessing::prefixItem;
 
-	/** The produced-row ledger. Keyed by the central face's own StackKey shape (item + damage,
-	 * OM.java:423/307 — package-private there, mirrored below): ItemStack's equals is content
-	 * based but its hashCode is NOT, so a bare HashMap&lt;ItemStack,…&gt; misses every lookup.
-	 * The write path amortizes registrations to ONE-count copies (OM.setItemData_ :656), so
-	 * damage is the only per-stack axis the ledger needs. */
-	private static final Map<StackKey, List<Row>> sRows = new HashMap<>();
+	/** The produced-row ledger. Keyed by the central face's public {@link OM.StackKey} (item +
+	 * damage — the authoritative keying shape, OM.java:452/307; the third local mirror was
+	 * folded into it, task om-hygiene-mini): ItemStack's equals is content based but its
+	 * hashCode is NOT, so a bare HashMap&lt;ItemStack,…&gt; misses every lookup. The write
+	 * path amortizes registrations to ONE-count copies (OM.setItemData_ :656), so damage is
+	 * the only per-stack axis the ledger needs. */
+	private static final Map<OM.StackKey, List<Row>> sRows = new HashMap<>();
 
 	/** One produced row and the map it lives in (the subset-replace bookkeeping). */
 	private record Row(RecipeMap map, Recipe recipe) {}
-
-	/** The ledger key (the OM.java:423 form). */
-	private record StackKey(Item item, int damage) {
-		static StackKey of(ItemStack aStack) {return new StackKey(aStack.getItem(), aStack.getDamageValue());}
-	}
 
 	// ------------------------------------------------------------------ the lifecycle
 
@@ -234,7 +230,7 @@ public final class GT6RecyclingProcessing implements IOreDictListenerRecyclable 
 		if (tMelter == null || tSmelter == null || tMortar == null) return; // no map generation — nothing to pour into (a broken lifecycle)
 		boolean tReopened = GT6RecipeMaps.reopenWindow();
 		try {
-			List<Row> tPrevious = sRows.put(StackKey.of(aKey), aRows);
+			List<Row> tPrevious = sRows.put(new OM.StackKey(aKey.getItem(), aKey.getDamageValue()), aRows);
 			if (tPrevious != null) for (Row tRow : tPrevious) tRow.map().mRecipeList.remove(tRow.recipe());
 			for (Row tRow : aRows) tRow.map().addRecipe(tRow.recipe());
 			if (tPrevious != null && !tPrevious.isEmpty()) { // the P1 fix: a removed row must never be served from a stale bucket
@@ -346,7 +342,7 @@ public final class GT6RecyclingProcessing implements IOreDictListenerRecyclable 
 
 	/** The rows this class currently holds for a stack in a map (the acceptance/audit read). */
 	public static List<Recipe> rows(RecipeMap aMap, ItemStack aStack) {
-		List<Row> tRows = sRows.get(StackKey.of(aStack));
+		List<Row> tRows = sRows.get(new OM.StackKey(aStack.getItem(), aStack.getDamageValue()));
 		if (tRows == null) return List.of();
 		List<Recipe> rList = new ArrayList<>(1);
 		for (Row tRow : tRows) if (tRow.map() == aMap) rList.add(tRow.recipe());
