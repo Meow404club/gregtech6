@@ -55,7 +55,7 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 
 	/** The probe circuit item — REALLY registered offline (an ItemStack constructor resolves
 	 * the registry delegate eagerly, so an unregistered item cannot ride the channel; the
-	 * FileSawTest probeItem three-lock bracket, circuit flavor). */
+	 * OMComponentFaceTest.probeItem three-lock bracket, circuit flavor). */
 	private static net.minecraft.world.item.Item sCircuitItem;
 
 	/** The circuit fixture — a REAL registered {@code IntegratedCircuitItem} instance (the
@@ -96,8 +96,8 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 	}
 
 	/**
-	 * The GTWireBlockUseLockTest:43 reflection bracket, item flavor (the FileSawTest
-	 * probeItem body verbatim minus the durability column) — the offline item registry
+	 * The GTWireBlockUseLockTest:43 reflection bracket, item flavor (the
+	 * OMComponentFaceTest.probeItem body minus the durability column) — the offline item registry
 	 * keeps THREE locks on the forge wrapper shape / ONE on the 21.1 vanilla shape.
 	 */
 	private static void registerCircuitFixture() {

@@ -69,8 +69,8 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * </ul>
  *
  * <p>The offline fixture is the MaterialPrefixItem probe walk (the
- * GT6RecipeMapHashIndexTest.probeItem three-lock precedent hoisted per-class by
- * MaterialTreeBuilderTest): every (prefix, material) resolves to a registered probe so the
+ * OMComponentFaceTest.probeItem three-lock walk, the probe items registered under
+ * dedicated gt6 probe ids): every (prefix, material) resolves to a registered probe so the
  * pour covers the full 4 x 53 walk offline.
  */
 class GT6SifterDustOreRowsTest extends GTRecipesOfflineTestBase {

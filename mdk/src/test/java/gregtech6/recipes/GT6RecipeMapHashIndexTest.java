@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,6 +25,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import gregapi.data.MT;
 import gregapi.data.OP;
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialItems;
 
@@ -403,58 +403,9 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 		};
 	}
 
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Supplier<I> aCreator) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// three locks must open (the FileSawTest walk): the vanilla frozen flag, the
-			// delegate ForgeRegistry.isFrozen, the NamespacedWrapper.locked register gate
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// 21.1: the plain vanilla DefaultedMappedRegistry — a single frozen flag
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.get();
-		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in the
-		// minecraft namespace, growing the frozen-vanilla pool that GT6RecipesCokeOvenTest's
-		// synthetic universe rides (its wrap-around aliasing re-deals on pool size) — the
-		// FileSawTest probe posture registers gt6-namespaced for the same reason.
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
+	// the probe-item helper folded onto OMComponentFaceTest.probeItem (the gt6 namespace
+	// preserved per file — task probeitem-latch-hygiene).
 
-	/** getDeclaredField along the superclass chain (the FileSawTest helper, mirrored). */
-	private static Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// walk up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
 
 	// ------------------------------------------------------------------
 	// lifecycle: the offline material universe + the probe items + the census fixtures
@@ -463,8 +414,8 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 	@BeforeAll
 	static void bootAndBuildProbes() {
 		GTMaterialItems.initMaterials(); // the offline material universe (the ShCL convention)
-		INGOT_IRON = probeItem("hashindex_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
-		PLATE_IRON = probeItem("hashindex_probe_plate_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.plate, MT.Iron));
+		INGOT_IRON = OMComponentFaceTest.probeItem("gt6", "hashindex_probe_ingot_iron", p -> new MaterialPrefixItem(p, OP.ingot, MT.Iron));
+		PLATE_IRON = OMComponentFaceTest.probeItem("gt6", "hashindex_probe_plate_iron", p -> new MaterialPrefixItem(p, OP.plate, MT.Iron));
 		// capture the resolver seams BEFORE the first @BeforeEach arms them (the phase-gate
 		// capture/restore discipline — the census fixtures must not leak into sibling classes)
 		capture(() -> GT6RecipesEngineFuels.sFluidResolver, aV -> GT6RecipesEngineFuels.sFluidResolver = aV);

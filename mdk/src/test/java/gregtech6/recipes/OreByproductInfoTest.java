@@ -53,7 +53,7 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  *
  * <p><b>The derived leg here</b> is the Crusher ore-chain census (GT6RecipesOreChain.load()
  * with one identity-carrying probe item per referenced (prefix, material) pair — the
- * GT6RecipeMapHashIndexTest probeItem pattern, hoisted once per class); the crushing redirects
+ * OMComponentFaceTest.probeItem pattern, hoisted once per class); the crushing redirects
  * (Fe -> Fe2O3, W -> OREMATS.Scheelite) are the derived byproduct edges that exist TODAY.
  */
 class OreByproductInfoTest extends GTRecipesOfflineTestBase {
@@ -251,7 +251,7 @@ class OreByproductInfoTest extends GTRecipesOfflineTestBase {
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 
-	/** The offline item-registry unlock (GT6RecipeMapHashIndexTest.probeItem, hoisted to once-per-class). */
+	/** The offline item-registry unlock (the OMComponentFaceTest.probeItem walk, hoisted once per class). */
 	private static void openOfflineItemRegistry() {
 		var tRegistry = BuiltInRegistries.ITEM;
 		//? if forge {
