@@ -396,6 +396,7 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		tPickaxe.add(gregtech6.registry.GT6Kinetics.CRANK.get());
 		for (Block tBlock : gregtech6.registry.GTStoneSlabBlocks.blockArray()) {
 			tPickaxe.add(tBlock);
+		}
 		// task material-mc-g1-panels-dyed — the 48 dyed Cover Panel blocks join the band:
 		// the Loader rows carry harvest class aStone (Loader_MultiTileEntities.java:2045/
 		// :2049/:2053), the concrete family convention (the mineable/pickaxe gate)
