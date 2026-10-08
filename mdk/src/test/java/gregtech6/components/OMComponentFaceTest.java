@@ -43,13 +43,15 @@ import gregtech6.item.MaterialPrefixItem;
  * decisions.p25-tag-input-fallback-rulings ②). The stub returns the platform-family tag ids the
  * datagen emits, so the positive verdict is the same one a live registry answers.
  *
- * <p>OM state is static: every test writes through its own probe Item instances so the
- * (item, damage) keys never collide, and the tag seam is restored to the production binding
- * after every test. The class's VANILLA-item map registrations (the copper-ingot-Gold probe,
- * the nugget/axe/pickaxe/pants faces) are snapshot+cleared in {@link #bootOffline()} and
- * restored in {@link #leaveTheProductionBindingInPlace()} — a leaked entry would shadow every
- * later consumer class in the fork, because the map arm outranks the family-tag arm in the
- * read chain (OM.getItemData_ arm 3 before arm 3b).
+ * <p>OM state is static: every fixture's (item, damage) keys retire after EVERY test through
+ * {@link OM#removeItemData} (map entry + recyclable registration — the vanilla items the tests
+ * write through the production map, {@link #fixtureItems()}, plus the registered probe item), so
+ * no sibling test and no later class in a combined JVM reads a leftover instead of the tag arm:
+ * the map arm outranks the family-tag arm in the read chain (OM.getItemData_ arm 3 before
+ * arm 3b), and this residue once turned the deriver domain's tag-cell reads red in a combined
+ * run (known_bugs.omfacetest-vanilla-item-map-residue, task stackkey-unification).
+ * {@link #bootOffline()}/{@link #leaveTheProductionBindingInPlace()} additionally snapshot+restore
+ * the whole map around the class so foreign entries survive it untouched.
  */
 class OMComponentFaceTest {
 
@@ -68,6 +70,21 @@ class OMComponentFaceTest {
 	/** The saved map content (see the class doc — the vanilla-item registrations must not
 	 * outlive this class). */
 	static java.util.Map<Object, Object> sSavedMap;
+
+	/** The registered probe item of the provider-arm pin (its map key retires per-test too,
+	 * with {@link #fixtureItems()}). */
+	static MaterialPrefixItem sProbeItem;
+
+	/** The vanilla items the fixtures write through the production map (IRON_INGOT rides along:
+	 * its writes are gate-refused today, removeItemData is a no-op on the absent key). The
+	 * per-test retire list of the class doc — a METHOD, not a field: an eager {@code Items.*}
+	 * static would clinit before the @BeforeAll bootstrap (the "Not bootstrapped" trap the
+	 * other static fields dodge by holding Items behind lambdas). */
+	static List<Item> fixtureItems() {
+		return List.of(Items.COPPER_INGOT, Items.IRON_INGOT, Items.IRON_PICKAXE,
+				Items.IRON_SHOVEL, Items.IRON_AXE, Items.IRON_NUGGET, Items.EGG, Items.BRICK, Items.GOLD_NUGGET,
+				Items.RAW_IRON, Items.LEATHER, Items.OAK_PLANKS, Items.STICK, Items.IRON_BLOCK, Items.FLINT);
+	}
 
 	/** The live OM data map (private in OM — reflection; ponytail: add an OM test-reset hook
 	 * if a third consumer card needs one). */
@@ -102,6 +119,10 @@ class OMComponentFaceTest {
 	@AfterEach
 	void restoreProductionBinding() {
 		OM.sStackTags = ItemStack::getTags;
+		// the per-test clean slate (the class doc): retire this fixture's map entry AND its
+		// recyclable registration — the same removal face the deriver reconciles through.
+		for (Item tItem : fixtureItems()) OM.removeItemData(new ItemStack(tItem));
+		if (sProbeItem != null) OM.removeItemData(new ItemStack(sProbeItem));
 		sNotifications.clear();
 	}
 
@@ -122,8 +143,8 @@ class OMComponentFaceTest {
 	void providerArmBeatsTheMapOnlyOnOverrideReads() {
 		// the registered probe (the GT6RecipeTagFallbackTest posture — the Forge intrusive
 		// holder makes a bare `new MaterialPrefixItem` throw while the registry is frozen)
-		MaterialPrefixItem tIngotIron = probeItem("omface_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
-		ItemStack tProbe = new ItemStack(tIngotIron);
+		sProbeItem = probeItem("omface_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
+		ItemStack tProbe = new ItemStack(sProbeItem);
 		// the map disagrees with the provider on purpose (prefix-less Copper data)
 		assertTrue(OM.setItemData(tProbe, new OreDictItemData(new OreDictMaterialStack(MT.Copper, CS.U))));
 		// map-only read: the map entry wins (the provider arm never runs)
