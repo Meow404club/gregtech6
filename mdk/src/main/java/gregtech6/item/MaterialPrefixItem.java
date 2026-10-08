@@ -22,6 +22,7 @@ import net.minecraftforge.common.ForgeHooks;
 
 import gregapi.data.CS;
 import gregapi.data.MT;
+import gregapi.data.OP;
 import gregapi.data.TD;
 import gregapi.oredict.OreDictItemData;
 import gregapi.oredict.OreDictMaterial;
@@ -31,6 +32,7 @@ import gregapi.util.UT;
 import gregtech6.components.IOreDictItemDataOverrideItem;
 import gregtech6.easter.GT6Calendars;
 import gregtech6.recipes.RecipeMapFurnaceFuel;
+import gregtech6.registry.GTMaterialItems;
 import gregtech6.tooltip.GT6TooltipStyle;
 
 /**
@@ -87,6 +89,63 @@ public class MaterialPrefixItem extends Item implements IOreDictItemDataOverride
      * the arm priority. */
     @Override public OreDictItemData getOreDictItemData(ItemStack aStack) {
         return new OreDictItemData(prefix, material);
+    }
+
+    // -------------------------------------------------------------------------
+    // The container-return face (task material-prefix-container-return). Upstream
+    // PrefixItem.getContainerItem (PrefixItem.java:160-165) refunds the prefix's
+    // mContainerItem after a craft, unless the consumed stack IS that container
+    // (:162 — a consumed empty tube is gone, no self-refund loop). Exactly three
+    // prefixes declare mContainerItem upstream: OP.bottle = the vanilla glass
+    // bottle (OP.java:576), OP.cell = the IC2 empty cell (LoaderItemList.java:780),
+    // OP.chemtube = this family's own MT.Empty tube (Loader_Items.java:128). The
+    // port item path materializes ONLY chemtube (GTMaterialItems itemPathPrefixes,
+    // the Loader_Items.java:57-171 census — bottle/cell land no port prefix items,
+    // so their declarations have no port face; no capsule/bucket declaration exists
+    // upstream). The melt walk therefore refunds again: every
+    // dust_tiny/from_chemtube crafting row (the 1068 ratchet,
+    // GT6CraftFromDatagenTest) hands back the empty tube through the vanilla
+    // crafting-remainder channel (Recipe.getRemainingItems → ResultSlot.onTake,
+    // 1.20.1 ResultSlot.java:59-82 / 1.21.1 :61-93) — zero recipe-JSON
+    // involvement, the datagen tree stays byte-identical. Family-uniform landing
+    // per the chemtube declaration pool (GT6CraftingRecipes.java:7456-7463): the
+    // gate rides this class, the value decides per pair.
+    // -------------------------------------------------------------------------
+
+    /**
+     * The container-item declaration table — the port face of upstream
+     * {@code mContainerItem} (OreDictPrefix.java:74 / PrefixItem.java:57): the
+     * MATERIAL whose item this prefix's consumers get back after a craft, or
+     * {@code null} when the prefix declares none. One live row: chemtube →
+     * MT.Empty (Loader_Items.java:128).
+     */
+    private static OreDictMaterial containerMaterial(OreDictPrefix aPrefix) {
+        return aPrefix == OP.chemtube ? MT.Empty : null;
+    }
+
+    /**
+     * The dispatch GATE, constant {@code true} — the dead-gate review lesson
+     * (id410/id413, the GT6FileItem.java:73-76 shape): the real crafting loop keys
+     * on this first (Recipe.getRemainingItems, the forge Recipe.java:26
+     * ItemStack-sensitive face), so a get override without an open gate never runs.
+     * Consumption vs refund is decided in the GET face (an empty remainder =
+     * consumed flat).
+     */
+    @Override public boolean hasCraftingRemainingItem(ItemStack aStack) {
+        return true;
+    }
+
+    /**
+     * The container refund (upstream PrefixItem.java:160-165): the declaring
+     * prefix's container item — or nothing when the pair declares none or IS the
+     * container itself (:162, the empty tube is never refunded for itself). The
+     * lookup rides the leg-neutral {@link GTMaterialItems#stackOf} (empty when the
+     * pair is unregistered — the datagen/offline JVM face).
+     */
+    @Override public ItemStack getCraftingRemainingItem(ItemStack aStack) {
+        OreDictMaterial tContainer = containerMaterial(prefix);
+        if (tContainer == null || material == tContainer) return ItemStack.EMPTY;
+        return GTMaterialItems.stackOf(prefix, tContainer);
     }
 
     /** CamelCase internal name to snake_case (GTCEu FormattingUtil.toLowerCaseUnderscore semantics, TagPrefix.java:1306-1308). */
