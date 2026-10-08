@@ -64,44 +64,109 @@ class GT6OreGenInfoLayoutTest {
         assertEquals(125, tWithSmall, "small-ore materials");
         assertEquals(98, tWithVein, "large-vein materials");
         assertEquals(32, tWithBedrock, "overworld bedrock-ore materials");
-        // every row renders at least one face line — no blank pages in the category
+        // every row renders at least one section (header + face line) — no blank pages in the category
         for (OreDistributionInfo.Entry tEntry : OreDistributionInfo.entries()) {
-            assertTrue(!GT6OreGenInfoLayout.faceLines(tEntry).isEmpty(), tEntry.material()::toString);
+            assertTrue(GT6OreGenInfoLayout.rows(tEntry).size() >= 2, tEntry.material()::toString);
         }
     }
 
-    /** The 1.5x-口径 contract the display must NOT violate: the seam never rewrites amounts. */
+    /**
+     * The sectioned structure (task oregen-info-relayout — the pre-relayout page was a flat
+     * wall of same-style strings, the "一坨字糊一起" complaint): Cassiterite renders THREE
+     * sections in the data layer's column order (small, vein, bedrock), each = header at
+     * {@code TEXT_X} + members indented by {@code INDENT}, {@code LINE_HEIGHT} within a
+     * block and {@code LINE_HEIGHT + SECTION_GAP} between blocks (the GTCEu drawUI rhythm,
+     * OreVeinRecipeWidget.java:103-134).
+     */
     @Test
-    void faceLinesCarryUpstreamSemanticsVerbatim() {
+    void cassiteriteRendersThreeSectionedBlocks() {
         OreDistributionInfo.Entry tCassiterite = OreDistributionInfo.of(MT.OREMATS.Cassiterite);
-        assertEquals(List.of(
-                "Small Overworld Y 60-120 16/chunk",
-                "Small Nether Y 60-120 16/chunk",
-                "Small End Y 60-120 16/chunk",
-                "Small Atum Y 60-120 16/chunk",
-                "Vein Overworld Y 40-90 w170 s24",
-                "Vein End Y 40-90 w170 s24",
-                "Bedrock cassiterite 1/2000/chunk"),
-                GT6OreGenInfoLayout.faceLines(tCassiterite));
-        assertEquals("Overworld, Nether, End, Atum", GT6OreGenInfoLayout.dimsLine(tCassiterite));
+        List<GT6OreGenInfoLayout.Row> tRows = GT6OreGenInfoLayout.rows(tCassiterite);
+        // review-seat rebase union: the atum small face (task atum-dim-adaptation) rides the
+        // sectioned structure as the 4th small line — 10 rows, not the authored 9
+        assertEquals(10, tRows.size(), "3 headers + 4 small (Atum rides the atum dim) + 2 vein + 1 bedrock");
+        assertEquals(GT6OreGenInfoLayout.SECTION_SMALL_KEY, tRows.get(0).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_SMALL_KEY, tRows.get(1).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_SMALL_KEY, tRows.get(2).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_SMALL_KEY, tRows.get(3).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_SMALL_KEY, tRows.get(4).key());
+        assertEquals(GT6OreGenInfoLayout.SECTION_VEIN_KEY, tRows.get(5).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_VEIN_KEY, tRows.get(6).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_VEIN_KEY, tRows.get(7).key());
+        assertEquals(GT6OreGenInfoLayout.SECTION_BEDROCK_KEY, tRows.get(8).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_BEDROCK_KEY, tRows.get(9).key());
+        // headers sit at TEXT_X, members one INDENT in — the sectioning is visible geometry, not string prefixes
+        assertEquals(GT6OreGenInfoLayout.TEXT_X, tRows.get(0).x());
+        assertEquals(GT6OreGenInfoLayout.TEXT_X + GT6OreGenInfoLayout.INDENT, tRows.get(1).x());
+        assertEquals(GT6OreGenInfoLayout.TEXT_X + GT6OreGenInfoLayout.INDENT, tRows.get(9).x());
+        // the y rhythm: 10px line steps, +SECTION_GAP before each following header
+        assertEquals(GT6OreGenInfoLayout.FACE_BASE_Y, tRows.get(0).y());
+        assertEquals(GT6OreGenInfoLayout.FACE_BASE_Y + 5 * GT6OreGenInfoLayout.LINE_HEIGHT + GT6OreGenInfoLayout.SECTION_GAP,
+                tRows.get(5).y(), "the vein header clears the small block (header + 4 faces incl Atum) by a gap");
+        assertEquals(tRows.get(5).y() + 3 * GT6OreGenInfoLayout.LINE_HEIGHT + GT6OreGenInfoLayout.SECTION_GAP,
+                tRows.get(8).y(), "the bedrock header clears the vein block (header + 2 faces) by a gap");
+        // every visible word rides a lang key — no literal display strings on the seam
+        for (GT6OreGenInfoLayout.Row tRow : tRows) {
+            assertTrue(tRow.key().startsWith(GT6OreGenInfoLayout.TITLE_KEY + "."), tRow.key());
+        }
     }
 
-    /** Ferberite: bedrock-only — one dim, one line, and the bedrock row's P verbatim. */
+    /** The 1.5x-口径 contract the display must NOT violate: the args are the UPSTREAM table values verbatim. */
+    @Test
+    void rowsCarryUpstreamSemanticsVerbatim() {
+        OreDistributionInfo.Entry tCassiterite = OreDistributionInfo.of(MT.OREMATS.Cassiterite);
+        List<GT6OreGenInfoLayout.Row> tRows = GT6OreGenInfoLayout.rows(tCassiterite);
+        // small face args: [dim component, minY, maxY, amount] — Y 60-120, 16/chunk
+        assertEquals(GT6OreGenInfoLayout.DIM_OVERWORLD_KEY,
+                ((net.minecraft.network.chat.contents.TranslatableContents) ((net.minecraft.network.chat.Component) tRows.get(1).args().get(0)).getContents()).getKey());
+        assertEquals(60, tRows.get(1).args().get(1));
+        assertEquals(120, tRows.get(1).args().get(2));
+        assertEquals(16, tRows.get(1).args().get(3));
+        // vein face args: [dim, minY, maxY, weight, size] — w170 s24 (the old soup, now labeled);
+        // the vein LINE sits at row 6 (the atum small line occupies row 4, review-seat rebase union)
+        assertEquals(40, tRows.get(6).args().get(1));
+        assertEquals(90, tRows.get(6).args().get(2));
+        assertEquals(170, tRows.get(6).args().get(3));
+        assertEquals(24, tRows.get(6).args().get(4));
+        // the dims row: the four-dim union of translatable siblings (en proper nouns pinned by
+        // key, zh rides the dump faces; Atum joined at task atum-dim-adaptation)
+        List<net.minecraft.network.chat.Component> tSiblings = GT6OreGenInfoLayout.dimsRow(tCassiterite).getSiblings();
+        assertEquals(7, tSiblings.size(), "dim, sep, dim, sep, dim, sep, atum");
+        assertEquals(GT6OreGenInfoLayout.DIM_OVERWORLD_KEY, dimKey(tSiblings.get(0)));
+        assertEquals(GT6OreGenInfoLayout.DIM_NETHER_KEY, dimKey(tSiblings.get(2)));
+        assertEquals(GT6OreGenInfoLayout.DIM_END_KEY, dimKey(tSiblings.get(4)));
+    }
+
+    /** Ferberite: bedrock-only — one section (header + line), one dim, and the bedrock row's P verbatim. */
     @Test
     void ferberiteRendersOneBedrockLine() {
         OreDistributionInfo.Entry tFerberite = OreDistributionInfo.of(MT.OREMATS.Ferberite);
         assertNotNull(tFerberite);
-        assertEquals(List.of("Bedrock ferberite 1/96000/chunk"), GT6OreGenInfoLayout.faceLines(tFerberite));
-        assertEquals("Overworld", GT6OreGenInfoLayout.dimsLine(tFerberite));
+        List<GT6OreGenInfoLayout.Row> tRows = GT6OreGenInfoLayout.rows(tFerberite);
+        assertEquals(2, tRows.size(), "the bedrock header + the one face line");
+        assertEquals(GT6OreGenInfoLayout.SECTION_BEDROCK_KEY, tRows.get(0).key());
+        assertEquals(GT6OreGenInfoLayout.LINE_BEDROCK_KEY, tRows.get(1).key());
+        assertEquals("ferberite", tRows.get(1).args().get(0), "the row-name suffix is DATA (the row id), not copy");
+        assertEquals(96000, tRows.get(1).args().get(1), "1/96000 per chunk, the upstream P verbatim");
+        List<net.minecraft.network.chat.Component> tDims = GT6OreGenInfoLayout.dimsRow(tFerberite).getSiblings();
+        assertEquals(1, tDims.size(), "bedrock rows are overworld-only by construction");
+        assertEquals(GT6OreGenInfoLayout.DIM_OVERWORLD_KEY, dimKey(tDims.get(0)));
     }
 
     /** The gold pair: TWO independent rolls, both rendered (the data card's double-roll pin, display face). */
     @Test
     void goldBedrockPairRendersBothRolls() {
         OreDistributionInfo.Entry tGold = OreDistributionInfo.of(MT.Au);
-        List<String> tLines = GT6OreGenInfoLayout.faceLines(tGold);
-        assertTrue(tLines.contains("Bedrock gold.a 1/32000/chunk"), () -> String.join(" | ", tLines));
-        assertTrue(tLines.contains("Bedrock gold.b 1/32000/chunk"), () -> String.join(" | ", tLines));
+        List<GT6OreGenInfoLayout.Row> tRows = GT6OreGenInfoLayout.rows(tGold);
+        assertEquals(2, tRows.stream().filter(tRow -> tRow.key().equals(GT6OreGenInfoLayout.LINE_BEDROCK_KEY)
+                && String.valueOf(tRow.args().get(0)).startsWith("gold.")).count(),
+                "gold.a + gold.b, both rolls kept");
+        for (GT6OreGenInfoLayout.Row tRow : tRows) {
+            if (tRow.key().equals(GT6OreGenInfoLayout.LINE_BEDROCK_KEY)
+                    && String.valueOf(tRow.args().get(0)).startsWith("gold.")) {
+                assertEquals(32000, tRow.args().get(1), "the independent 1/P roll, verbatim");
+            }
+        }
     }
 
     // ---------------------------------------------------------------- the invisible mounting walk
@@ -168,9 +233,22 @@ class GT6OreGenInfoLayoutTest {
             tWorst = Math.max(tWorst, GT6OreGenInfoLayout.height(tEntry));
         }
         assertEquals(tWorst, GT6OreGenInfoLayout.categoryHeight(), "category height = the max per-entry height");
-        // the formula: face band base (38) + 4 pad + lines x 10 — Cassiterite's 7 lines pin it
-        // (the atum small face joined at task atum-dim-adaptation, 6 -> 7)
-        assertEquals(38 + 4 + 7 * 10, GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)));
-        assertTrue(GT6OreGenInfoLayout.WIDTH >= 200, "wide enough for the longest pinned line");
+        // the formula: Cassiterite's 10 rows (3 headers + 7 faces incl the atum small line,
+        // review-seat rebase union), + line height + pad — the authored 9-row 140 grew by one
+        // LINE_HEIGHT when the atum dim joined (task atum-dim-adaptation)
+        List<GT6OreGenInfoLayout.Row> tRows = GT6OreGenInfoLayout.rows(OreDistributionInfo.of(MT.OREMATS.Cassiterite));
+        assertEquals(tRows.get(tRows.size() - 1).y() + GT6OreGenInfoLayout.LINE_HEIGHT + 4,
+                GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)));
+        assertEquals(150, GT6OreGenInfoLayout.height(OreDistributionInfo.of(MT.OREMATS.Cassiterite)),
+                "38 base + 10 rows x 10 + 2 section gaps x 4 + 4 pad");
+        // wide enough for the widest pinned en face line: "Overworld Y 40-90 · Weight 170 · Size 24" = 40 chars x ~6px/char
+        assertTrue(GT6OreGenInfoLayout.WIDTH >= 250, "wide enough for the longest pinned line");
+    }
+
+    /** The translatable-key extraction for component pins (offline-safe: never resolves through Language). */
+    private static String dimKey(net.minecraft.network.chat.Component aComponent) {
+        assertTrue(aComponent.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents,
+                "the dim rides the translatable seam");
+        return ((net.minecraft.network.chat.contents.TranslatableContents) aComponent.getContents()).getKey();
     }
 }
