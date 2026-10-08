@@ -147,6 +147,8 @@ public final class GT6ForeignRowConvergence {
                     putSeedable(rMachine, new GTFluidPipes.FluidPipeRow(tMat, tVariant).path(), tMat.driverDomain());
             for (GTBarrels.MetalDrumRow tRow : GTBarrels.HIGH_TIER_METAL_DRUMS)
                 putSeedable(rMachine, tRow.path(), tRow.driverDomain());
+            for (GTBarrels.MetalDrumRow tRow : GTBarrels.DRUM_64K_ROWS) // task material-mc-f-attachment-rows — the 64K tier landed after this card base; the manasteel row (BOTA PRIMARY, GTBarrels.java:223) is seed-hideable and must ship optional like the high tiers
+                putSeedable(rMachine, tRow.path(), tRow.driverDomain());
             for (GT6Cells.CellRow tRow : GT6Cells.ROWS)
                 putSeedable(rMachine, tRow.path(), GT6Cells.driverDomainOf(tRow));
             sMachineGatedIds = rMachine;
