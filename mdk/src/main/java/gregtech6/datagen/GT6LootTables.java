@@ -142,6 +142,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
+                new SubProviderEntry(GT6WoodenPanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g3-plank-panels — the 28 wooden panel self-drops
                 new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
@@ -210,6 +211,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6CFoamBlockLoot::new, LootContextParamSets.BLOCK), // task c-foam-block-family
                 new SubProviderEntry(GT6SensorBlockLoot::new, LootContextParamSets.BLOCK), // task sensors-core
                 new SubProviderEntry(GT6StaticStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-static-batch — the 148 self-drops
+                new SubProviderEntry(GT6WoodenPanelBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-g3-plank-panels — the 28 wooden panel self-drops
                 new SubProviderEntry(GT6Domain32xxxBlockLoot::new, LootContextParamSets.BLOCK), // task block-family-32xxx-port — the 62 self-drops with the paint carry
                 new SubProviderEntry(GT6FeConverterBlockLoot::new, LootContextParamSets.BLOCK), // task b-fe-converter-machine
                 new SubProviderEntry(GT6AnvilBlockLoot::new, LootContextParamSets.BLOCK), // task c-anvil — the stone anvil pair
@@ -2460,6 +2462,47 @@ public final class GT6LootTables extends LootTableProvider {
             // dropSelf registers through the void add() face — the statement form, the
             // wireLootBlocks/axleLootBlocks precedent (:176/:215)
             for (Block tBlock : staticStorageLootBlocks()) dropSelf(tBlock);
+        }
+    }
+
+    /**
+     * The wooden panel family block list (task material-mc-g3-plank-panels): the 28
+     * wooden Cover Panel blocks, registration order.
+     */
+    public static List<Block> woodenPanelLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>(gregtech6.registry.GT6PlankPanels.rows().size());
+        for (var tHandle : gregtech6.registry.GT6PlankPanels.BLOCKS) rBlocks.add(tHandle.get());
+        return rBlocks;
+    }
+
+    /**
+     * The wooden panel self-drop provider (task material-mc-g3-plank-panels) — plain full
+     * blocks self-drop (the MTE default {@code Drops==null} face, PrefixBlock.java:227, the
+     * static-storage reading). No silk/fortune arms (no override upstream), {@code
+     * requires_correct_tool_for_drops} NOT set (the card red line — the rows declare no
+     * tool-gated drop).
+     */
+    public static final class GT6WoodenPanelBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6WoodenPanelBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6WoodenPanelBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return woodenPanelLootBlocks(); // narrowed to exactly the 28 blocks this provider owns
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : woodenPanelLootBlocks()) dropSelf(tBlock);
         }
     }
 

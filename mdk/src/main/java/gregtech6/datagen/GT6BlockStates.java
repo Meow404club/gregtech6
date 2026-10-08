@@ -304,6 +304,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addGrassBlocks(); // task grass-block — the 6 per-pair GT grass variants
         addTreeBlocks(); // task w6-t1-trees-nine — the 27 per-pair tree blocks
         addPlanks(); // task gt-tree-planks — the 9 per-pair plank cubes
+        addWoodenPanels(); // task material-mc-g3-plank-panels — the 28 wooden Cover Panel rows (the plank-model reference face)
         addFoamBlocks(); // task c-foam-block-family — the C-Foam pair + slabs + the owned carrier
         addSensors(); // task sensors-core — the three pioneer sensor blocks
         addAnvils(); // task c-anvil — the stone anvil pair
@@ -4343,6 +4344,34 @@ public final class GT6BlockStates extends BlockStateProvider {
             itemModels().withExistingParent(tPath, modLoc("block/" + tPath));
         }
         LOGGER.info("GT6 planks: 17 cube_all blockstates (9 tree species + 8 generic BlockTreePlanks rows)");
+    }
+
+    /**
+     * Task material-mc-g3-plank-panels — the 28 wooden Cover Panel rows ({@link
+     * gregtech6.registry.GT6PlankPanels}, the MultiTileEntityPanelWood band,
+     * Loader_MultiTileEntities.java:2057-2083). The upstream texture leg is a COPY of the
+     * plank's texture ({@code PlankData.PLANK_ICONS[i] = new IconContainerCopied(
+     * ST.block(mPlank), ST.meta_(mPlank))}, PlankEntry.java:120) — so the port points the
+     * panel blockstate at the EXISTING plank cube model directly (the GT6 rows at {@code
+     * gt6:block/<dict id>}, the vanilla rows at {@code minecraft:block/<wood>_planks}) and
+     * the item models parent the same: zero new PNG or model file, the reference IS the
+     * upstream semantic (the bookshelf plank-ladder face, addStaticStorages, binds the
+     * vanilla tiles under the same posture). No tint face — unlike the G1 dyed families
+     * there is no grayscale-times-dye leg, every row binds its own tile.
+     */
+    private void addWoodenPanels() {
+        for (int i = 0; i < gregtech6.registry.GT6PlankPanels.rows().size(); i++) {
+            gregtech6.registry.GT6PlankPanels.PanelRow tRow = gregtech6.registry.GT6PlankPanels.rows().get(i);
+            String tPlankId = tRow.spec().plankId();
+            net.minecraft.resources.ResourceLocation tModelLoc = tPlankId.startsWith("minecraft:")
+                    ? mcLoc("block/" + tPlankId.substring("minecraft:".length()))
+                    : modLoc(tPlankId); // the addPlanks same-run cube_all
+            var tModel = models().getExistingFile(tModelLoc);
+            getVariantBuilder(gregtech6.registry.GT6PlankPanels.BLOCKS.get(i).get())
+                    .forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+        LOGGER.info("GT6 wooden panels: 28 blockstates + 28 item models riding the existing plank cubes");
     }
 
     /**

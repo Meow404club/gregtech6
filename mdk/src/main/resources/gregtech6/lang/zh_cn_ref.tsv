@@ -1360,6 +1360,7 @@ direct	gt6.material.carminite	胭脂石	hand
 direct	gt6.material.fireleaf	火叶	hand
 direct	gt6.material.golden_amber	金琥珀	hand
 direct	gt6.material.superconductor	超导体	hand
+direct	gt6.panel.wood	木制覆盖板	hand
 direct	gt6.row.advanced_crafting_table.display	高级工作台 (%s)	hand
 direct	gt6.row.attachment.mat.adamantium	艾德曼合金	hand
 direct	gt6.row.attachment.mat.ceramic	陶瓷	hand

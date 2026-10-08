@@ -35,6 +35,7 @@ import gregtech6.item.GT6Circuits;
 import gregtech6.items.GT6CircuitProgramRecipe;
 import gregtech6.registry.GT6Batteries;
 import gregtech6.registry.GT6BeeHives;
+import gregtech6.registry.GT6PlankPanels;
 import gregtech6.registry.GT6Placeables;
 import gregtech6.registry.GT6ElectricTransformers;
 import gregtech6.registry.GTWires;
@@ -168,6 +169,38 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	public static ResourceLocation hopperRecipeId(GT6Hoppers.HopperRow aRow) {
 		String tPath = aRow.path();
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+	}
+
+	/**
+	 * The wooden Cover Panel crafting rows (task material-mc-g3-plank-panels — the upstream
+	 * loop Loader_MultiTileEntities.java:2060/:2069/:2078, {@code "TsT","TPT","TdT"},
+	 * result 6x; upstream gates on {@code ST.valid(PlankData.PLANKS[i])} — the port fills
+	 * all 28 rows with real planks, so the walk is unconditional, the hidden-slot face is
+	 * the declared negative): 'P' = the row's OWN plank (the dict walk — vanilla planks for
+	 * the vanilla rows, the GT6 plank items for the GT6 rows), 'T' =
+	 * {@code OP.screw.dat(ANY.Iron)} → the iron screw item (the ANY.Iron→MT.Iron fold, the
+	 * G1 panel band form), 's' = the saw tag, 'd' = the screwdriver tag (the CR.java:211/
+	 * :229 tool letters, not consumed). The vanilla shaped auto-mirror carries CR.DEF_MIR
+	 * (the anvil note).
+	 */
+	private ShapedRecipeBuilder woodenPanelRecipeBuilder(gregtech6.registry.GT6PlankPanels.PanelRow aRow) {
+		Item tPlank = aRow.plankEntry().plank().get();
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+						GT6PlankPanels.ITEMS.get(GT6PlankPanels.rows().indexOf(aRow)).get(), 6)
+				.pattern("TsT")
+				.pattern("TPT")
+				.pattern("TdT")
+				.define('T', GTMaterialItems.get(gregapi.data.OP.screw, MT.Iron).get())
+				.define('P', tPlank)
+				.define('s', GT6ItemTags.TOOLS_SAW)
+				.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.unlockedBy("has_plank_for_" + aRow.path(), has(tPlank));
+	}
+
+	/** The id of one wooden panel row's recipe (the result-path convention, the hopperRecipeId form). */
+	public static ResourceLocation woodenPanelRecipeId(gregtech6.registry.GT6PlankPanels.PanelRow aRow) {
+		String tPath = aRow.path(); // a local so the two-arg RL ctor args stay bare identifiers (the swap-table regex note)
 		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
@@ -343,6 +376,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		siftingTableBuilder().save(aConsumer, SIFTING_TABLE_ID); // task sifting-table-family
 		grindstoneBuilder().save(aConsumer, GRINDSTONE_ID); // task grindstone-family — the :2226 row
+		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
+			woodenPanelRecipeBuilder(tRow).save(aConsumer, woodenPanelRecipeId(tRow));
+		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
@@ -642,6 +678,9 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		siftingTableBuilder().save(aOutput, SIFTING_TABLE_ID); // task sifting-table-family
 		grindstoneBuilder().save(aOutput, GRINDSTONE_ID); // task grindstone-family — the :2226 row
+		for (gregtech6.registry.GT6PlankPanels.PanelRow tRow : gregtech6.registry.GT6PlankPanels.rows()) { // task material-mc-g3-plank-panels
+			woodenPanelRecipeBuilder(tRow).save(aOutput, woodenPanelRecipeId(tRow));
+		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
