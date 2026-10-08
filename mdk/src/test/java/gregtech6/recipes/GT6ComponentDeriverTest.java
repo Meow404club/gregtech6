@@ -224,7 +224,7 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				"exactly the derivation's own registration lands");
 
 		// the byte-identical second /reload
-		GT6ComponentDeriver.Key tKey1 = new ArrayList<>(GT6ComponentDeriver.sDerived.keySet()).get(0);
+		OM.StackKey tKey1 = new ArrayList<>(GT6ComponentDeriver.sDerived.keySet()).get(0);
 		GT6ComponentDeriver.apply(tManager, GT6ComponentDeriver.Manifest.EMPTY, ACCESS);
 		assertTrue(GT6ComponentDeriver.sDerived.containsKey(tKey1),
 				"the (item, damage) key is content-stable across passes (forge ItemStack equality is not — caps compare)");
@@ -253,7 +253,7 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				shaped2x2("minecraft:hopper", "minecraft:iron_ingot", 1));
 		GT6ComponentDeriver.apply(tManager, GT6ComponentDeriver.Manifest.EMPTY, ACCESS);
 		assertSame(tExplicit, OM.data(tHopper), "the explicit declaration beat the derivation write");
-		assertFalse(GT6ComponentDeriver.sDerived.containsKey(new GT6ComponentDeriver.Key(Items.HOPPER, 0)),
+		assertFalse(GT6ComponentDeriver.sDerived.containsKey(new OM.StackKey(Items.HOPPER, 0)),
 				"a declined write is never tracked");
 
 		GT6ComponentDeriver.apply(new TestRecipeManager(), GT6ComponentDeriver.Manifest.EMPTY, ACCESS);
@@ -377,8 +377,12 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				}
 			}
 		}
-		assertEquals(41069, tTotal, "the gt6-namespace shipped recipe universe");
-		assertEquals(23429, tTypes.get("minecraft:crafting_shaped"),
+		// 41103/23463: the mc-E anvil-ladder + kitchen-table rows (+34 crafting_shaped, all
+		// gt6-namespace) landed in merge 0af79a237f without this census in their gate domain —
+		// the review-seat rebase seam re-pins the EXACT ratchet (shapeless/material_tool/smelting
+		// moved by zero; tree walk recomputed byte-identical on both main and the branch).
+		assertEquals(41103, tTotal, "the gt6-namespace shipped recipe universe");
+		assertEquals(23463, tTypes.get("minecraft:crafting_shaped"),
 				"the derivation candidate set — the over-derivation upper bound (bump-on-change ratchet)");
 		assertEquals(4594, tTypes.get("minecraft:crafting_shapeless"),
 				"declared skip v1 (CR.java:454 — the shapeless default had no REV)");

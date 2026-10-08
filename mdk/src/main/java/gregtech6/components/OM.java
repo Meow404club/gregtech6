@@ -440,7 +440,14 @@ public class OM {
 		return aStack == null || aStack.isEmpty();
 	}
 
-	/** The map key: (item identity, damage axis) — the 1.20.1 collapse of upstream
-	 * ItemStackContainer (mItem, mMetaData), equals/hashCode over both members (:103-104). */
-	record StackKey(Item item, int damage) {}
+	/** THE authoritative (item, damage) map key of the central face — the 1.20.1 collapse of
+	 * upstream ItemStackContainer (mItem, mMetaData), equals/hashCode over both members
+	 * (:103-104). Public on purpose (task stackkey-unification, the keying house rule):
+	 * forge-patched 1.20.1 ItemStack compares equals by CONTENT but hashes by IDENTITY (the
+	 * capability-dispatcher hash — a bare ItemStack key writes fine and then reads miss,
+	 * probe-proven in the component-recycling-recipes card), so every ItemStack-keyed map keys
+	 * through this record instead. In-repo consumers: the storage map (:111), the read chain
+	 * (:176/:178/:187), the write (:307) and removal (:331) faces, and the reload deriver's
+	 * derived-set bookkeeping (GT6ComponentDeriver.sDerived). */
+	public record StackKey(Item item, int damage) {}
 }
