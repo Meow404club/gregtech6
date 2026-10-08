@@ -40,16 +40,19 @@ import net.minecraft.world.level.material.Fluids;
  * verbatim spot checks read the shipped rows directly, and the walk faces pin their
  * port-universe membership counts.
  *
- * <p><b>The accounting</b> (the live registration walk of 2026-10-03): CNC = 128 rows
- * (the 130 registered OP.plank materials minus Bark — no gearGt item, the upstream
- * {@code ST.valid(tGear)} gate — times the one-member FluidsGT.LUBRICANT family). The
- * card-spec "5 站" assembler reading was the pre-dump estimate; the upstream实文 is
- * two walk statements, not static rows: assembler = 260 rows (130 planks x :237/:238),
- * the :345-351 match-stick walk rides NO row (IL.Tool_Matches is not ported), the FR/
- * BC compat rows are the P10 cuts. Nanofab = 45 rows (41 Other + 4 Ores); the :841-844
- * wireGt01 legs and the :876-894 pipe legs ride NO row (unregistered carriers). The
- * HeatMixer face needs NO map — upstream RM.java:75 HeatMixer IS Mixer, the pure
- * alias (the GT6RecipeMapDataB1ChemRowsPourTest flip).
+ * <p><b>The accounting</b> (re-cut by planks-retired-tail-hygiene against the
+ * planks-blockification ship shape): CNC = 28 rows (the GT6WoodDict.ROWS walk — the ONE
+ * plank authority that absorbed the retired 130-item OP.plank prefix family, every row's
+ * gearGt item exists, times the one-member FluidsGT.LUBRICANT family). The card-spec
+ * "5 站" assembler reading was the pre-dump estimate; the upstream实文 is two walk
+ * statements, not static rows: assembler = 54 rows (27 plank rows x :237/:238 — the
+ * shipped walk carries 27 of the 28 WoodDict rows, the treated-planks row is not a
+ * :237/:238 listener member in the planks-blockification re-cut), the :345-351
+ * match-stick walk rides NO row (IL.Tool_Matches is not
+ * ported), the FR/BC compat rows are the P10 cuts. Nanofab = 45 rows (41 Other + 4
+ * Ores); the :841-844 wireGt01 legs and the :876-894 pipe legs ride NO row (unregistered
+ * carriers). The HeatMixer face needs NO map — upstream RM.java:75 HeatMixer IS Mixer,
+ * the pure alias (the GT6RecipeMapDataB1ChemRowsPourTest flip).
  */
 public class GT6RecipeMapDataB6bRowsPourTest extends GTRecipesOfflineTestBase {
 
@@ -58,8 +61,8 @@ public class GT6RecipeMapDataB6bRowsPourTest extends GTRecipesOfflineTestBase {
 
 	/** The per-map census of this card: file key -> expected poured rows (zero skips). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"cnc", 128,        // 128 plank x gear materials x the 1-member LUBRICANT family
-			"assembler", 260,  // 130 planks x the :237/:238 listener pair
+			"cnc", 28,         // the 28 GT6WoodDict.ROWS plank rows x gear x the 1-member LUBRICANT family
+			"assembler", 54,   // 27 plank rows x the :237/:238 listener pair (28 WoodDict rows minus the treated row)
 			"nanofab", 45);    // 41 Other:818-894 (the port-registered shapes) + 4 Ores:341-344
 
 	/** The file-head declarations: every file must keep naming its declared-out blockers. */
@@ -154,17 +157,20 @@ public class GT6RecipeMapDataB6bRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:gear_gt_wood", tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
 		assertEquals(64, tRow.get("duration").getAsLong());
 		assertEquals(16, tRow.get("eut").getAsLong());
-		// the walk membership: one row per plank-x-gear material — the Bark planks (no gear
-		// item, the upstream ST.valid(tGear) gate) and nothing else dropped; the 128 = the
-		// 130 registered planks minus Bark, times the one registered LUBRICANT member
+		// the walk membership: one row per plank-x-gear material — the GT6WoodDict.ROWS
+		// walk (the ONE plank authority since planks-blockification retired the 130-item
+		// OP.plank prefix family; every one of the 28 rows carries a gearGt item)
 		assertEquals(1, gregtech6.fluid.GTFluids.LUBRICANT_FLUID_SPECS.size(), "the port LUBRICANT family is the single lubricant row");
-		assertEquals(128, countRows(tRows, "Loader_Recipes_Woods.java:262"), "the LIST_PLANKS x LUBRICANT walk = 128 port members");
+		assertEquals(28, countRows(tRows, "Loader_Recipes_Woods.java:262"), "the LIST_PLANKS x LUBRICANT walk = the 28 WoodDict rows");
 	}
 
 	/**
 	 * Spot check 2 — the assembler listener pair (Loader_Recipes_OreDict.java:237/:238):
 	 * 8 planks + redstone dust -> note block at 32 t, 8 planks + diamond -> jukebox at
-	 * 64 t, both 16 EUt, one row per registered plank item (130 x 2).
+	 * 64 t, both 16 EUt, one row per plankWood listener member (27 x 2 — the shipped walk
+	 * carries 27 of the 28 WoodDict rows, the treated-planks row is not a :237/:238
+	 * listener member in the planks-blockification re-cut of task
+	 * recipe-b6b-small-maps-cnc-assembler-nanofab).
 	 */
 	@Test
 	public void assemblerListenerPairIsUpstreamVerbatim() throws Exception {
@@ -179,8 +185,8 @@ public class GT6RecipeMapDataB6bRowsPourTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6:gem_diamond", tJukebox.getAsJsonArray("inputs").get(1).getAsJsonObject().get("item").getAsString());
 		assertEquals("minecraft:jukebox", tJukebox.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString());
 		assertEquals(64, tJukebox.get("duration").getAsLong());
-		assertEquals(130, countRows(tRows, "Loader_Recipes_OreDict.java:237"), "the noteblock walk = one row per registered plank item");
-		assertEquals(130, countRows(tRows, "Loader_Recipes_OreDict.java:238"), "the jukebox walk = one row per registered plank item");
+		assertEquals(27, countRows(tRows, "Loader_Recipes_OreDict.java:237"), "the noteblock walk = one row per plankWood listener member");
+		assertEquals(27, countRows(tRows, "Loader_Recipes_OreDict.java:238"), "the jukebox walk = one row per plankWood listener member");
 	}
 
 	/**
@@ -227,6 +233,12 @@ public class GT6RecipeMapDataB6bRowsPourTest extends GTRecipesOfflineTestBase {
 		}
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialBlocks.registrationOrder()) {
 			tUniverse.add("gt6:" + gregtech6.registry.GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
+		}
+		// task planks-blockification — the plank prefix items retired; the plank face is the
+		// GT6WoodDict BlockItem rows (the ONE plank authority, the GT6TreeBlocks cube family),
+		// so the 17 gt6 family ids join the universe (the vanilla rows are not gt6-namespace)
+		for (gregtech6.registry.GT6WoodDict.PlankEntry tPlank : gregtech6.registry.GT6WoodDict.GT6_ROWS) {
+			tUniverse.add("gt6:" + tPlank.id());
 		}
 		// the fluid face: the lubricant family is the CNC walk's only fluid carrier (its
 		// registered spec names are the fluid ids, GTFluids.java:2804)

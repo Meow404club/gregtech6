@@ -401,6 +401,13 @@ public class GT6RecipeMapDataB2cSawingRowsPourTest extends GTRecipesOfflineTestB
 			tItemUniverse.add("gt6:" + tKind.snake() + "_log");
 			tItemUniverse.add("gt6:" + tKind.snake() + "_planks"); // sawing-plank-concrete-increment
 		}
+		// task planks-blockification — the plank prefix items retired; the plank face is the
+		// GT6WoodDict BlockItem rows (the ONE plank authority, the GT6TreeBlocks cube family),
+		// so the generic family ids join the universe (the :66 DEFAULT_BEAM sawing legs pour
+		// onto gt6:plank_wood, the species planks above are the tree-kind half of the family)
+		for (gregtech6.registry.GT6WoodDict.PlankEntry tPlank : gregtech6.registry.GT6WoodDict.GT6_ROWS) {
+			tItemUniverse.add("gt6:" + tPlank.id());
+		}
 		tItemUniverse.add("gt6:" + GT6BeamKind.WOOD.snake() + "_beam"); // the :66 input face
 		for (GT6ConcreteBlocks.ConcreteRow tPair : GT6ConcreteBlocks.registrationOrder()) {
 			tItemUniverse.add("gt6:" + GT6ConcreteBlocks.path(tPair.family(), tPair.dyeIndex()));

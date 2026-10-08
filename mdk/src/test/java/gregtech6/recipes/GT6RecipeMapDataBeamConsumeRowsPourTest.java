@@ -63,8 +63,9 @@ import net.minecraftforge.fluids.FluidStack;
  * gt-tree-planks card's face.
  *
  * <p>Task plank-mapping-sweep (2026-10-01) absorbed the sawing-card identity mapping: the
- * :66 sawing rows' plank output pours gt6:plank_wood (the wood-planks-register carrier,
- * OP.plank x MT.Wood); the six vanilla BeamEntry faces keep their upstream
+ * :66 sawing rows' plank output pours gt6:plank_wood (since task planks-blockification the
+ * generic plank BlockItem of the GT6WoodDict rows — the OP.plank prefix item it poured onto
+ * at sweep time is retired); the six vanilla BeamEntry faces keep their upstream
  * minecraft:*_planks ids (the BEAMS table carries both faces verbatim).
  */
 public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTestBase {
@@ -260,6 +261,13 @@ public class GT6RecipeMapDataBeamConsumeRowsPourTest extends GTRecipesOfflineTes
 			tUniverse.add("gt6:" + GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
 		for (GT6BeamKind tKind : GT6BeamKind.values()) tUniverse.add("gt6:" + GT6BeamBlocks.path(tKind));
+		// task planks-blockification — the plank prefix items retired; the plank face is the
+		// GT6WoodDict BlockItem rows (the ONE plank authority, the GT6TreeBlocks cube family),
+		// so the 17 gt6 family ids join the universe (the :66 WOOD-face sawing legs output
+		// gt6:plank_wood; the vanilla identities below stay the explicit whitelist form)
+		for (gregtech6.registry.GT6WoodDict.PlankEntry tPlank : gregtech6.registry.GT6WoodDict.GT6_ROWS) {
+			tUniverse.add("gt6:" + tPlank.id());
+		}
 		for (String tPlank : new String[] {"oak_planks", "spruce_planks", "birch_planks", "jungle_planks",
 				"acacia_planks", "dark_oak_planks"}) tUniverse.add("minecraft:" + tPlank);
 		Set<String> tMissing = new HashSet<>();
