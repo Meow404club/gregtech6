@@ -213,11 +213,15 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 		TestRecipeManager tManager = managerWith(ID_MACHINE_BAND,
 				shaped2x2("minecraft:iron_bars", "minecraft:iron_ingot", 1));
 
+		int tBaselineRegistrations = OM.recyclingRegistrations().size(); // review-seat seam: the shared
+		// static registration set carries earlier classes' leftovers in a combined-JVM run — the
+		// pin asserts THIS test's delta (exactly its own row), not the global absolute.
 		GT6ComponentDeriver.apply(tManager, GT6ComponentDeriver.Manifest.EMPTY, ACCESS);
 		OreDictItemData tFirst = OM.data(new ItemStack(Items.IRON_BARS));
 		assertNotNull(tFirst);
 		int tNotificationsAfterFirst = sNotifications.size();
-		assertEquals(1, OM.recyclingRegistrations().size());
+		assertEquals(tBaselineRegistrations + 1, OM.recyclingRegistrations().size(),
+				"exactly the derivation's own registration lands");
 
 		// the byte-identical second /reload
 		GT6ComponentDeriver.Key tKey1 = new ArrayList<>(GT6ComponentDeriver.sDerived.keySet()).get(0);
@@ -226,12 +230,13 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				"the (item, damage) key is content-stable across passes (forge ItemStack equality is not — caps compare)");
 		assertSame(tFirst, OM.data(new ItemStack(Items.IRON_BARS)), "unchanged rows touch nothing — the stored instance survives");
 		assertEquals(tNotificationsAfterFirst, sNotifications.size(), "no re-write fired a second registration");
-		assertEquals(1, OM.recyclingRegistrations().size(), "no duplicate registration accumulated");
+		assertEquals(tBaselineRegistrations + 1, OM.recyclingRegistrations().size(), "no duplicate registration accumulated");
 
 		// the graph moved under the derivation: the empty graph retires the key
 		GT6ComponentDeriver.apply(new TestRecipeManager(), GT6ComponentDeriver.Manifest.EMPTY, ACCESS);
 		assertNull(OM.data(new ItemStack(Items.IRON_BARS)));
-		assertEquals(0, OM.recyclingRegistrations().size(), "removeItemData pruned the map entry AND the registration");
+		assertEquals(tBaselineRegistrations, OM.recyclingRegistrations().size(),
+				"removeItemData pruned the map entry AND the registration — back to the pre-test baseline");
 		assertTrue(GT6ComponentDeriver.sDerived.isEmpty());
 	}
 
@@ -372,10 +377,10 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				}
 			}
 		}
-		assertEquals(40956, tTotal, "the gt6-namespace shipped recipe universe");
-		assertEquals(23336, tTypes.get("minecraft:crafting_shaped"),
+		assertEquals(41069, tTotal, "the gt6-namespace shipped recipe universe");
+		assertEquals(23429, tTypes.get("minecraft:crafting_shaped"),
 				"the derivation candidate set — the over-derivation upper bound (bump-on-change ratchet)");
-		assertEquals(4574, tTypes.get("minecraft:crafting_shapeless"),
+		assertEquals(4594, tTypes.get("minecraft:crafting_shapeless"),
 				"declared skip v1 (CR.java:454 — the shapeless default had no REV)");
 		Map<String, Integer> tExpectedOthers = new TreeMap<>();
 		tExpectedOthers.put("gt6:material_tool", 12959); // the serializer face owns these
