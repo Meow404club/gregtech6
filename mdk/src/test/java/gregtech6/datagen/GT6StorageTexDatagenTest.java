@@ -145,13 +145,25 @@ class GT6StorageTexDatagenTest {
 
     @Test
     public void anvilsPointAtTheVanillaSmoothMaterialFaces() throws Exception {
-        assertEquals(2, gregtech6.registry.GT6Anvils.ROWS.size(), "the anvil census stays 2");
+        // task material-mc-e-tool-anvil-rows: the ladder walked 2 → 35 (the full
+        // :2185-2219 table). The two c-anvil rows KEEP the finished vanilla faces
+        // (byte-stable seats); the 33 ladder rows ride the shared crucible dispatch
+        // (the GT6CrucibleDatagen.bodyTexture grayscale borrow + the GT6MoldTintListener
+        // mRGBaSolid — the basin/crossing 39-row form), so their "all" face lives in the
+        // gt6 namespace, never the vanilla block atlas.
+        assertEquals(35, gregtech6.registry.GT6Anvils.ROWS.size(), "the anvil census stays 35");
         assertEquals("minecraft:block/smooth_stone",
                 json("assets/gt6/models/block/stone_anvil.json").getAsJsonObject("textures").get("all").getAsString(),
                 "stone anvil = the SET_STONE smooth face");
         assertEquals("minecraft:block/blackstone",
                 json("assets/gt6/models/block/blackstone_anvil.json").getAsJsonObject("textures").get("all").getAsString(),
                 "blackstone anvil = the vanilla blackstone face (the crafting item)");
+        for (var tRow : gregtech6.registry.GT6Anvils.ROWS) {
+            if (tRow.path().equals("stone_anvil") || tRow.path().equals("blackstone_anvil")) continue;
+            assertTrue(json("assets/gt6/models/block/" + tRow.path() + ".json").getAsJsonObject("textures")
+                    .get("all").getAsString().startsWith("gt6:"),
+                    "the ladder row rides the borrowed grayscale: " + tRow.path());
+        }
     }
 
     // ------------------------------------------------------------------

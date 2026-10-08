@@ -335,7 +335,9 @@ public class GT6AnvilBlockEntityTest extends GTOfflineTestBase {
 
 	@Test
 	public void rowAxisReproducesTheLoaderAnchors() {
-		assertEquals(2, GT6Anvils.ROWS.size());
+		// task material-mc-e-tool-anvil-rows: the ladder walked 2 → 35 (the full
+		// :2185-2219 table); the full-column walk rides GT6ToolRowCensusTest.
+		assertEquals(35, GT6Anvils.ROWS.size());
 		AnvilRow tStone = GT6Anvils.ROWS.get(0), tBlackstone = GT6Anvils.ROWS.get(1);
 		assertEquals("stone_anvil", tStone.path());
 		assertEquals("blackstone_anvil", tBlackstone.path());
