@@ -256,13 +256,15 @@ public final class MaterialTreeDisplay {
 	/**
 	 * x of a node's slot (the parallel lane: lanes grow RIGHT).
 	 *
-	 * <p><b>The legacy fixed-grid view</b> (task mattree-r2-layout-engine): the layout
-	 * ENGINE face is {@link MaterialTreeLayout#plan} — its {@code Result} computes these
-	 * coordinates from a {@code Policy} and derives the canvas from the content. This
-	 * static table (and {@code WIDTH/HEIGHT}) survives as the VIEWER PAGES' published
-	 * geometry (the EMI/JEI page legs, the nav tables); under the default policy the two
-	 * are numerically identical — the equality is pinned by {@code MaterialTreeLayoutTest}.
-	 * The standalone screen consumes the engine face.
+	 * <p><b>The legacy fixed-grid view</b> (task mattree-r2-layout-engine; seat narrowed by
+	 * task mattree-r3-nav-unify): the layout ENGINE face is {@link MaterialTreeLayout#plan}
+	 * — its {@code Result} computes these coordinates from a {@code Policy} and derives the
+	 * canvas from the content, and ALL THREE hosts now consume that face (the standalone
+	 * screen since R2, the EMI and JEI page geometry since R3). This static table survives
+	 * as (a) the JEI page FRAME's constants — {@code WIDTH/HEIGHT} are the worst-case canvas
+	 * the per-category {@code IRecipeCategory.getWidth/getHeight} seam has to publish — and
+	 * (b) the TEST ORACLE: the equality with the engine is pinned by
+	 * {@code MaterialTreeLayoutTest#engineMatchesTheLegacyStatics}.
 	 */
 	public static int nodeX(Node aNode) { return LANE_X0 + aNode.row() * LANE_PITCH; }
 	/** y of a node's slot (the stage band: stages grow DOWN). */

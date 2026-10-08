@@ -55,6 +55,7 @@ import gregtech6.recipes.GT6RecipesShCL;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.recipes.tree.MaterialTreeBuilder;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
+import gregtech6.recipes.tree.MaterialTreeLayout;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
@@ -73,9 +74,12 @@ import net.minecraft.world.item.Item;
  *     exact unit transform (acceptance ①);</li>
  * <li><b>keyboard map</b>: GLFW key codes (verified javap lwjgl-glfw 3.3.1) map to the
  *     actions, unknown keys return null;</li>
- * <li><b>wheel actions</b> (task mattree-emi-panzoom): WHEEL_IN/WHEEL_OUT step the
- *     pointer-anchored 1.25x fine grain through the same table, the floor/ceiling freeze
- *     included;</li>
+ * <li><b>wheel actions</b> (<b>旧钉迁移声明</b>, task mattree-r3-nav-unify): the
+ *     emi-panzoom WHEEL_IN/WHEEL_OUT table entries and their direct pin died here — the
+ *     pointer-anchored 1.25x fine grain they covered is {@link GT6MaterialTreeNav#wheelZoom}'s
+ *     own pin (wheelZoomAnchorsAtThePointerAndDragsPan), and the hostile-delta divergence the
+ *     seam's signum branch carried (a NaN delta scrolled OUT) is now pinned frozen through the
+ *     one guard, in thePointerSeamGatesWheelAndPanToTheCanvas;</li>
  * <li><b>the pointer seam</b> (task mattree-emi-panzoom): the nav canvas implements the
  *     vendored MUI {@code EmiInteractionSink} — wheel consumes only inside the tree
  *     canvas (strip and off-page scrolls stay EMI's) and pans only from an empty-canvas
@@ -234,37 +238,9 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
-	// the wheel actions (task mattree-emi-panzoom: the pointer-anchored fine grain)
+	// (the wheel-actions direct pin retired — see the class javadoc 旧钉迁移声明,
+	// task mattree-r3-nav-unify: the entries died with their consumer)
 	// ------------------------------------------------------------------
-
-	@Test
-	public void wheelActionsZoomAtThePointerAnchor() {
-		MaterialTreeViewport tView = new MaterialTreeViewport();
-		// one notch in: 1.25x about the pointer (80, 60) — the tree point under it stays put
-		MaterialTreeViewport.Point tUnder = tView.unapply(80, 60);
-		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
-		assertEquals(1.25, tView.scale(), EPSILON);
-		assertEquals(-20.0, tView.offsetX(), EPSILON, "80 - 80*1.25");
-		assertEquals(-15.0, tView.offsetY(), EPSILON, "60 - 60*1.25");
-		MaterialTreeViewport.Point tBack = tView.unapply(80, 60);
-		assertEquals(tUnder.x(), tBack.x(), EPSILON, "the pointer anchor holds");
-		assertEquals(tUnder.y(), tBack.y(), EPSILON, "the pointer anchor holds");
-		// and out again, exactly home
-		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_OUT, 80, 60));
-		assertEquals(1.0, tView.scale(), EPSILON);
-		assertEquals(0.0, tView.offsetX(), EPSILON);
-		assertEquals(0.0, tView.offsetY(), EPSILON);
-		// the ceiling freeze is the same 档位幂等: hostile scrolling cannot drift the pose
-		GT6MaterialTreeNav.zoomToFraction(tView, 1.0, 80, 60);
-		double tFrozenX = tView.offsetX(), tFrozenY = tView.offsetY();
-		assertTrue(GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
-		assertEquals(MaterialTreeViewport.MAX_SCALE, tView.scale(), EPSILON);
-		assertEquals(tFrozenX, tView.offsetX(), EPSILON);
-		assertEquals(tFrozenY, tView.offsetY(), EPSILON);
-		// guards stay guards for the new actions too
-		assertFalse(GT6MaterialTreeNav.handle(tView, null, 80, 60));
-		assertFalse(GT6MaterialTreeNav.handle(null, GT6MaterialTreeNav.Action.WHEEL_IN, 80, 60));
-	}
 
 	// ------------------------------------------------------------------
 	// the pointer seam (task mattree-emi-panzoom: bounds-gated wheel/pan on the canvas)
@@ -299,6 +275,16 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		assertFalse(tNav.mouseScrolled(-3, 60, 0, 1));
 		 *///?}
 		assertEquals(1.25, tView.scale(), EPSILON, "a refused wheel moves nothing");
+		// a hostile delta is CONSUMED (the canvas is ours) but moves nothing — the one
+		// guard in Nav.wheelZoom is every host's wheel semantics (the former seam-local
+		// signum branch routed a NaN into a zoom-out; mattree-r3-nav-unify)
+		tView.reset();
+		//? if forge {
+		assertTrue(tNav.mouseScrolled(80, 60, Double.NaN), "in-canvas scroll stays consumed");
+		//?} else {
+		/*assertTrue(tNav.mouseScrolled(80, 60, 0, Double.NaN), "in-canvas scroll stays consumed");
+		 *///?}
+		assertEquals(1.0, tView.scale(), EPSILON, "a hostile delta moves nothing");
 		tView.reset();
 		tView.zoomAt(19, 19, 2); // the identity pose has ZERO pan slack (the S1 clamp pins it) —
 		// zoom 2x about the slot corner first: slot rect lands at (1..37), offsets (-19,-19)
@@ -439,6 +425,35 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		assertEquals(16.0, tBack.y(), EPSILON);
 	}
 
+	/**
+	 * The icon-scale face (task mattree-r3-nav-unify, closing the mattree-item-zoom-pose
+	 * audit): the icon mount rides the unified pose primitive — at the fit pose it is EMI's
+	 * own {@code bounds.x + (size - 16) / 2} verbatim, and at 2x the icon's centre equals
+	 * the transformed box's centre EXACTLY (the 16*scale px icon centred in the scaled box —
+	 * the former scale lag), for every slot family the page mounts.
+	 */
+	@Test
+	public void theSlotIconPoseCentresTheScaledIconInTheBox() throws Exception {
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		// fit: the mount degenerates to EMI's own drawStack coordinates (18px slot -> +1)
+		MaterialTreeLayout.Pose tFit = GT6MaterialTreeTransformSlot.iconPose(tView, 4, 16, 18);
+		assertEquals(5.0, tFit.x(), EPSILON);
+		assertEquals(17.0, tFit.y(), EPSILON);
+		assertEquals(1.0, tFit.scale(), EPSILON);
+		// the 16px machine face: zero inset (the bare icon box)
+		MaterialTreeLayout.Pose tMachine = GT6MaterialTreeTransformSlot.iconPose(tView, 4, 16, 16);
+		assertEquals(4.0, tMachine.x(), EPSILON);
+		assertEquals(16.0, tMachine.y(), EPSILON);
+		// at 2x about the origin: icon centre == box centre on both axes
+		tView.zoomAt(0, 0, 2);
+		MaterialTreeLayout.Pose tZoom = GT6MaterialTreeTransformSlot.iconPose(tView, 4, 16, 18);
+		Bounds tBox = GT6MaterialTreeTransformSlot.transformedBounds(tView, 4, 16, 18);
+		assertEquals(tBox.x() + tBox.width() / 2.0, tZoom.x() + 16.0 * tZoom.scale() / 2.0, EPSILON, "icon centre x == box centre x");
+		assertEquals(tBox.y() + tBox.height() / 2.0, tZoom.y() + 16.0 * tZoom.scale() / 2.0, EPSILON, "icon centre y == box centre y");
+		// and the override is really mounted on the render seam EMI calls
+		assertTrue(bytesOf(GT6MaterialTreeTransformSlot.class).contains("drawStack"), "drawStack override present");
+	}
+
 	// ------------------------------------------------------------------
 	// acceptance ②: the apiSurface guard — EMI api only, byte-level
 	// ------------------------------------------------------------------
@@ -494,6 +509,24 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
+	/**
+	 * The nav-table unification pin (task mattree-r3-nav-unify acceptance ③): wheel and drag
+	 * on EVERY host ride the one {@link GT6MaterialTreeNav} table — no host carries a wheel or
+	 * pan verb of its own (the byte refs are the invocation seams), and the retired
+	 * WHEEL_IN/WHEEL_OUT enum seats stay retired (the single-declaration terminal state).
+	 */
+	@Test
+	public void theNavTableDrivesAllThreeHosts() throws Exception {
+		assertTrue(bytesOf(gregtech6.gui.GT6MaterialTreeScreen.class).contains("dragPan"), "the screen's drag rides the table");
+		assertTrue(bytesOf(gregtech6.gui.GT6MaterialTreeScreen.class).contains("wheelZoom"), "the screen's wheel rides the table");
+		assertTrue(bytesOf(GT6MaterialTreeNavWidget.class).contains("dragPan"), "the EMI canvas drag rides the table");
+		assertTrue(bytesOf(GT6MaterialTreeNavWidget.class).contains("wheelZoom"), "the EMI canvas wheel rides the table");
+		assertTrue(bytesOf(gregtech6.jei.GT6MaterialTreeJeiCanvasHandler.class).contains("dragPan"), "the JEI canvas drag rides the table");
+		assertTrue(bytesOf(gregtech6.jei.GT6MaterialTreeJeiCanvasHandler.class).contains("wheelZoom"), "the JEI canvas wheel rides the table");
+		assertFalse(bytesOf(GT6MaterialTreeNav.class).contains("WHEEL_IN"), "the WHEEL_IN enum seat is retired");
+		assertFalse(bytesOf(GT6MaterialTreeNav.class).contains("WHEEL_OUT"), "the WHEEL_OUT enum seat is retired");
+	}
+
 	// ------------------------------------------------------------------
 	// the page wiring (acceptance ①: the REAL widgets drive the viewport)
 	// ------------------------------------------------------------------
@@ -501,9 +534,14 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void pageWiringLeadsWithWiresAndClosesWithControls() throws Exception {
 		GT6MaterialTreeEmiRecipe tRecipe = ironRecipe();
-		assertEquals(MaterialTreeDisplay.WIDTH, tRecipe.getDisplayWidth());
-		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight(),
+		// task mattree-r3-nav-unify: the page IS the engine's content box — the strip rides
+		// below the plan box, and the whole page stays inside the worst-case JEI frame
+		int tCanvasW = tRecipe.mLayout.width(), tCanvasH = tRecipe.mLayout.height();
+		assertEquals(tCanvasW, tRecipe.getDisplayWidth(), "the page width is the engine box");
+		assertEquals(tCanvasH + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tRecipe.getDisplayHeight(),
 				"the control strip extends the page below the tree canvas");
+		assertTrue(tCanvasW <= MaterialTreeDisplay.WIDTH && tCanvasH <= MaterialTreeDisplay.HEIGHT,
+				"the engine box never exceeds the worst-case page frame");
 
 		RecordingHolder tHolder = new RecordingHolder();
 		tRecipe.addWidgets(tHolder);
@@ -533,15 +571,16 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		}
 		assertEquals(4, tButtons.size(), "zoom in, zoom out, reset + the S4 corner entry (nav-s4-tree-screen)");
 		assertTrue(tSliderAt > tLastSlotAt && tNavAt > tLastSlotAt, "controls ride above the tree layer");
-		// the strip geometry: 12px buttons on the HEIGHT+4 row, the 8px track centred under them
-		assertEquals(new Bounds(4, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(0).getBounds());
-		assertEquals(new Bounds(20, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(1).getBounds());
-		assertEquals(new Bounds(36, MaterialTreeDisplay.HEIGHT + 4, 12, 12), tButtons.get(2).getBounds());
+		// the strip geometry: 12px buttons on the page's own strip row (the plan box + 4),
+		// the 8px track centred under them; the S4 corner is the page's own top-right cell
+		assertEquals(new Bounds(4, tCanvasH + 4, 12, 12), tButtons.get(0).getBounds());
+		assertEquals(new Bounds(20, tCanvasH + 4, 12, 12), tButtons.get(1).getBounds());
+		assertEquals(new Bounds(36, tCanvasH + 4, 12, 12), tButtons.get(2).getBounds());
 		// the S4 corner entry: the canvas's top-right 12px cell, always live
-		assertEquals(new Bounds(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12),
+		assertEquals(new Bounds(tCanvasW - 16, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12),
 				tButtons.get(3).getBounds());
 		assertTrue(activeOf(tButtons.get(3)), "the corner entry never sleeps");
-		assertEquals(new Bounds(GT6MaterialTreeEmiRecipe.SLIDER_X, GT6MaterialTreeEmiRecipe.SLIDER_Y,
+		assertEquals(new Bounds(GT6MaterialTreeEmiRecipe.SLIDER_X, tCanvasH + 6,
 				GT6MaterialTreeEmiRecipe.SLIDER_W, GT6MaterialTreeEmiRecipe.SLIDER_H), tHolder.mSlider.getBounds());
 		// the key canvas covers the whole page (the RecipeScreen hover gate is bounds-based)
 		Bounds tNavBounds = tHolder.mNav.getBounds();
@@ -554,6 +593,10 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		GT6MaterialTreeEmiRecipe tRecipe = ironRecipe();
 		RecordingHolder tHolder = new RecordingHolder();
 		tRecipe.addWidgets(tHolder);
+		// the page's own anchor: the ENGINE box centre (task mattree-r3-nav-unify — the Fe
+		// box is 146x206, so the x anchor is 73, not the worst-case 101)
+		double tCx = tRecipe.mLayout.width() / 2.0, tCy = tRecipe.mLayout.height() / 2.0;
+		int tSliderY = tHolder.mSlider.getBounds().y();
 
 		// identity: the first node slot sits at its layout coordinate
 		GT6MaterialTreeTransformSlot tFirst = tHolder.mSlots.get(0);
@@ -574,23 +617,22 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		Bounds tZoomed = tFirst.getBounds();
 		assertTrue(tZoomed.width() > tHome.width() && tZoomed.height() > tHome.height(),
 				"the zoom-in button scaled the slot box");
-		assertEquals(tHome.x() * 2 - 101, tZoomed.x(), "the centre-anchored transform moved the slot (2x, offset -101)");
-		assertEquals(tHome.y() * 2 - 103, tZoomed.y(), "the centre-anchored transform moved the slot (2x, offset -103)");
+		assertEquals(tHome.x() * 2 - (int) tCx, tZoomed.x(), "the centre-anchored transform moved the slot (2x, offset -73 on the Fe box)");
+		assertEquals(tHome.y() * 2 - (int) tCy, tZoomed.y(), "the centre-anchored transform moved the slot (2x, offset -103)");
 		// the zoom-out button un-does it
 		click(tZoomOut);
 		assertEquals(tHome, tFirst.getBounds(), "the zoom-out button returns the slot");
 
 		// the slider: a click at the track's midpoint jumps to 2.5x
 		tHolder.mSlider.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X + GT6MaterialTreeEmiRecipe.SLIDER_W / 2,
-				GT6MaterialTreeEmiRecipe.SLIDER_Y, 0);
+				tSliderY, 0);
 		assertEquals(2.5, tView.scale(), EPSILON, "the click-track slider jumped to the midpoint zoom");
-		assertEquals(Math.round(tHome.x() * 2.5 - 151.5), tFirst.getBounds().x(), EPSILON,
-				"the centre-anchored 2.5x pose: apply(4) = -141.5, the corner round (half-up) lands on -141");
+		assertEquals(Math.round(tHome.x() * 2.5 + tCx * (1 - 2.5)), tFirst.getBounds().x(), EPSILON,
+				"the centre-anchored 2.5x pose: apply(4) = -99.5, the corner round (half-up) lands on -99");
 
 		// the keyboard: UP pans one lane, R resets home
 		assertTrue(tHolder.mNav.keyPressed(265, 0, 0), "UP is consumed by the canvas");
-		assertEquals(MaterialTreeDisplay.HEIGHT / 2.0 * (1 - 2.5) + GT6MaterialTreeNav.PAN_STEP,
-				tView.offsetY(), EPSILON);
+		assertEquals(tCy * (1 - 2.5) + GT6MaterialTreeNav.PAN_STEP, tView.offsetY(), EPSILON);
 		assertTrue(tHolder.mNav.keyPressed(82, 0, 0), "R is consumed by the canvas");
 		assertEquals(1.0, tView.scale(), EPSILON);
 		assertEquals(tHome, tFirst.getBounds(), "reset brings every slot home");
@@ -599,10 +641,10 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		// the buttons' active faces: at the fit pose zoom-out sleeps, at the ceiling zoom-in does
 		assertTrue(activeOf(tZoomIn), "zoom-in is live at the fit pose");
 		assertTrue(activeOf(tReset), "reset is always live");
-		GT6MaterialTreeNav.zoomToFraction(tView, 1.0, 101, 103);
+		GT6MaterialTreeNav.zoomToFraction(tView, 1.0, tCx, tCy);
 		assertFalse(activeOf(tZoomIn), "zoom-in sleeps at the ceiling");
 		assertTrue(activeOf(tZoomOut), "zoom-out is live at the ceiling");
-		GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, 101, 103);
+		GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, tCx, tCy);
 		assertFalse(activeOf(tZoomOut), "zoom-out sleeps at the fit pose");
 	}
 

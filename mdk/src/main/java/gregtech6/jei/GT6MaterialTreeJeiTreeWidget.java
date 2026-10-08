@@ -87,6 +87,12 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 
 	private final MaterialTreeDisplay mDisplay;
 	private final MaterialTreeViewport mView;
+	/**
+	 * The layout engine's plan (task mattree-r3-nav-unify): the tree geometry authority —
+	 * the same {@code Result} the EMI twin and the standalone screen consume; the Display
+	 * statics' legacy page-canvas seat is the category frame only.
+	 */
+	private final MaterialTreeLayout.Result mLayout;
 	private final IFocusGroup mFocuses;
 	private final List<Edge> mEdges;
 	private final List<EdgeLayout> mLayouts;
@@ -96,8 +102,9 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 		mDisplay = aDisplay;
 		mView = aView;
 		mFocuses = aFocuses;
+		mLayout = aDisplay == null ? null : MaterialTreeLayout.plan(aDisplay);
 		mEdges = aDisplay == null ? List.of() : aDisplay.edges();
-		mLayouts = aDisplay == null ? List.of() : MaterialTreeLayout.layout(aDisplay);
+		mLayouts = mLayout == null ? List.of() : mLayout.edges();
 	}
 
 	@Override
@@ -116,8 +123,9 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 		Font tFont = Minecraft.getInstance().font;
 		// the headers
 		label(aGui, tFont, MaterialTreeDisplay.materialName(mDisplay.material), 4, 4, HEADER_INK);
-		label(aGui, tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
-				MaterialTreeDisplay.LANE_X0, MaterialTreeDisplay.BYPRODUCT_HEADER_Y, HEADER_INK);
+		if (mLayout.byproductBand()) // the hanging band's header — only when the band exists (the EMI twin's content-driven face)
+			label(aGui, tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
+					mLayout.overflowX(), mLayout.byproductHeaderY(), HEADER_INK);
 		// the wires + arrowheads: corner-pair transforms so shared rect edges stay seamless
 		// at any scale (the EMI twin's fillTransformed shape — a per-leg render wiring copy,
 		// not leg geometry; every coordinate still comes from the shared table)
@@ -134,26 +142,25 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 		// the "+N" overflow markers (the explicit-not-silent clause)
 		for (Overflow tOverflow : mDisplay.overflow())
 			label(aGui, tFont, "+" + tOverflow.hidden(),
-					MaterialTreeDisplay.overflowX(), MaterialTreeDisplay.overflowY(tOverflow.column()), HEADER_INK);
+					mLayout.overflowX(), mLayout.overflowY(tOverflow.column()), HEADER_INK);
 		// the icons: nodes and byproducts at their +1 cell inset, machine icons bare on the
 		// helper's 16px rect (the -1 mount is the old hover-box pad — icon lands on the rect)
 		for (Node tNode : mDisplay.nodes())
-			item(aGui, tNode.stack(), MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode));
+			item(aGui, tNode.stack(), mLayout.nodeX(tNode), mLayout.nodeY(tNode));
 		for (int i = 0; i < mEdges.size(); i++) {
 			EdgeLayout tLayout = mLayouts.get(i);
 			if (tLayout.machine() == null) continue;
 			item(aGui, mEdges.get(i).machine(), tLayout.machine().x() - 1, tLayout.machine().y() - 1);
 		}
 		for (int b = 0; b < mDisplay.byproducts().size(); b++)
-			item(aGui, mDisplay.byproducts().get(b).stack(),
-					MaterialTreeDisplay.byproductX(b), MaterialTreeDisplay.byproductY());
+			item(aGui, mDisplay.byproducts().get(b).stack(), mLayout.byproductX(b), mLayout.byproductY());
 		// the focus outlines (the invisible slots' replacement highlight)
 		for (Node tNode : mDisplay.nodes())
 			if (isFocused(tNode.stack()))
-				focusBox(aGui, MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode));
+				focusBox(aGui, mLayout.nodeX(tNode), mLayout.nodeY(tNode));
 		for (int b = 0; b < mDisplay.byproducts().size(); b++)
 			if (isFocused(mDisplay.byproducts().get(b).stack()))
-				focusBox(aGui, MaterialTreeDisplay.byproductX(b), MaterialTreeDisplay.byproductY());
+				focusBox(aGui, mLayout.byproductX(b), mLayout.byproductY());
 	}
 
 	/**
@@ -185,7 +192,7 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 		double tX = tPoint.x(), tY = tPoint.y();
 		int tSlot = MaterialTreeLayout.SLOT;
 		for (Node tNode : mDisplay.nodes()) {
-			int tNX = MaterialTreeDisplay.nodeX(tNode), tNY = MaterialTreeDisplay.nodeY(tNode);
+			int tNX = mLayout.nodeX(tNode), tNY = mLayout.nodeY(tNode);
 			if (tX >= tNX && tX < tNX + tSlot && tY >= tNY && tY < tNY + tSlot) return new Hit(tNode.stack(), "");
 		}
 		for (int i = 0; i < mEdges.size(); i++) {
@@ -197,7 +204,7 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 				return new Hit(ItemStack.EMPTY, mEdges.get(i).viaLabel()); // label-only: no jump face
 		}
 		for (int b = 0; b < mDisplay.byproducts().size(); b++) {
-			int tBX = MaterialTreeDisplay.byproductX(b), tBY = MaterialTreeDisplay.byproductY();
+			int tBX = mLayout.byproductX(b), tBY = mLayout.byproductY();
 			if (tX >= tBX && tX < tBX + tSlot && tY >= tBY && tY < tBY + tSlot)
 				return new Hit(mDisplay.byproducts().get(b).stack(), mDisplay.byproducts().get(b).sourceLabel());
 		}

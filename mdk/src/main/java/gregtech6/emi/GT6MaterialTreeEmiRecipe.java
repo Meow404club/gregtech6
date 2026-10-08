@@ -49,12 +49,26 @@ import gregtech6.registry.GTMaterialItems;
  * <p>Nav suite (task nav-m2-emi, consuming the S1 {@link MaterialTreeViewport}): every page
  * open creates a FRESH viewport and wires it through all the widgets — the wires/labels
  * drawable and the {@link GT6MaterialTreeTransformSlot}s transform through it at render
- * time, the control strip (zoom in/out/reset buttons, click-track slider) and the invisible
- * key canvas drive it — and closing the page drops the widgets, which is the whole
+ * time, the control strip (zoom in/out/reset buttons, click-track slider) and the
+ * invisible key canvas drive it — and closing the page drops the widgets, which is the whole
  * apply-unapply 闭环 (no static state, nothing leaks between opens). The control strip
  * rides a band BELOW the canvas ({@link #CONTROL_STRIP_H}) — the recipe height is the EMI
  * page-size source (RecipeDisplay.height = getDisplayHeight), and EMI stacks each recipe
  * at its own height, so the extra 20px cost nothing.
+ *
+ * <p><b>The page IS the engine's content box</b> (task mattree-r3-nav-unify, closing the
+ * mattree-r2-layout-engine leftover): the display plans ONCE in the constructor and the
+ * {@link MaterialTreeLayout.Result} is the single geometry authority — the page dims
+ * ({@link #getDisplayWidth}/{@link #getDisplayHeight}), the viewport content box, the
+ * canvas rect, the zoom anchor, the strip row and every slot/wire/label coordinate flow
+ * from it, so a small tree opens a tight page instead of the worst-case 202x206 canvas
+ * (EMI stacks per-recipe heights natively, the seam the unification rides). The JEI twin
+ * keeps the worst-case frame (its category dims are per-category, not per-recipe — the
+ * {@link MaterialTreeDisplay#WIDTH} constants stay THAT seat, pinned equal to the engine's
+ * worst case by {@code MaterialTreeLayoutTest}); <b>旧钉迁移声明</b>: the former
+ * 「page dims == the fixed Display constants」 pins died here — the replacement is
+ * page-dims == the engine box (the same migration the standalone screen made in
+ * mattree-r2-layout-engine).
  *
  * <p>The pointer seam (task mattree-emi-panzoom): the nav canvas also implements the
  * vendored MUI {@code EmiInteractionSink}, so wheel zooms pointer-anchored and an
@@ -64,33 +78,45 @@ import gregtech6.registry.GTMaterialItems;
  * precedent's (wheel = anchored zoom, drag = follow-the-cursor pan), brought onto the
  * recipe page through the one seam that can deliver these events.
  *
- * <p><b>The icon-scale audit</b> (task mattree-item-zoom-pose): the page's labels ride the
- * unified {@link MaterialTreeLayout#pose} primitive at render time and the
- * {@link GT6MaterialTreeTransformSlot} bounds pan/zoom every slot face with the viewport —
- * but EMI 1.1.24's {@code SlotWidget.drawStack} CENTRES a 16 px icon inside the transformed
- * bounds without scaling it (javap emi-forge-1.1.24: {@code (width - 16) / 2} then
- * {@code EmiIngredient.render}), so a zoomed slot box grows while its icon stays 16 px
- * (centred, so no 错位 — a scale lag only). The sync fix (a {@code drawStack} pose override)
- * rides the R3 nav-unify card; the bounds math stays pinned in
- * {@code GT6MaterialTreeNavTest#transformSlotBoundsFollowTheViewport}.
+ * <p><b>The icon-scale audit</b> (task mattree-item-zoom-pose) — <b>RESOLVED</b> by task
+ * mattree-r3-nav-unify: the page's labels ride the unified
+ * {@link MaterialTreeLayout#pose} primitive at render time and the
+ * {@link GT6MaterialTreeTransformSlot} bounds pan/zoom every slot face with the viewport;
+ * EMI 1.1.24's {@code SlotWidget.drawStack} used to centre a fixed 16 px icon inside the
+ * transformed bounds (javap emi-forge-1.1.24: {@code (width - 16) / 2} then
+ * {@code EmiIngredient.render} — a scale lag, centred so never 错位), and the slot's
+ * {@code drawStack} pose override now renders the icon at the viewport scale, centred in
+ * the box (the pin lives in {@code GT6MaterialTreeNavTest}); the bounds math stays pinned
+ * in {@code GT6MaterialTreeNavTest#transformSlotBoundsFollowTheViewport}.
  */
 public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 
 	/** The nav control strip below the tree canvas (12px buttons + an 8px track on a 20px band). */
 	public static final int CONTROL_STRIP_H = 20;
-	/** The strip buttons' column (zoom in / zoom out / reset, 12px cells, 4px gaps), on the band's top row. */
+	/**
+	 * The strip's X axis and the JEI page's strip ROW (12px cells, 4px gaps, on the
+	 * worst-case canvas — task mattree-r3-nav-unify: the EMI page derives its own strip row
+	 * from the plan height, these Y constants are the JEI category frame's seat, the
+	 * category dims being per-category and unable to see a recipe).
+	 */
 	public static final int BUTTON_X0 = 4, BUTTON_PITCH = 16, BUTTON_Y = MaterialTreeDisplay.HEIGHT + 4;
-	/** The click-track zoom slider: a 138x8 track, vertically centred in the strip. */
+	/** The click-track zoom slider: a 138x8 track, vertically centred in the strip (the same JEI seat on Y). */
 	public static final int SLIDER_X = 56, SLIDER_Y = MaterialTreeDisplay.HEIGHT + 6;
 	public static final int SLIDER_W = 138, SLIDER_H = 8;
 
 	public final MaterialTreeDisplay mDisplay;
+	/**
+	 * The layout engine's plan (task mattree-r3-nav-unify): the page's single geometry
+	 * authority — dims, viewport box, anchor and every coordinate flow from it.
+	 */
+	public final MaterialTreeLayout.Result mLayout;
 	private final ResourceLocation mId;
 	private final List<EmiIngredient> mInputs;
 	private final List<EmiStack> mOutputs;
 
 	public GT6MaterialTreeEmiRecipe(MaterialTreeDisplay aDisplay) {
 		mDisplay = aDisplay;
+		mLayout = MaterialTreeLayout.plan(aDisplay);
 		//? if forge {
 		mId = new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH + "/" + GTMaterialItems.snakeCase(aDisplay.material.mNameInternal));
 		//?} else {
@@ -129,12 +155,12 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 
 	@Override
 	public int getDisplayWidth() {
-		return MaterialTreeDisplay.WIDTH;
+		return mLayout.width();
 	}
 
 	@Override
 	public int getDisplayHeight() {
-		return MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H;
+		return mLayout.height() + CONTROL_STRIP_H;
 	}
 
 	/** No recipe tree this card: the transfer/ghost face stays batch 4 (the batch-1 不做 clause). */
@@ -146,13 +172,17 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 	@Override
 	public void addWidgets(WidgetHolder aWidgets) {
 		// the nav viewport: FRESH per page-open (the apply-unapply 闭环 — entering applies it
-		// to every widget below, leaving drops the widgets, nothing static survives)
-		MaterialTreeViewport tView = new MaterialTreeViewport();
+		// to every widget below, leaving drops the widgets, nothing static survives). The
+		// content box is the ENGINE'S (task mattree-r3-nav-unify): content == pane on the
+		// plan's own box — fit 1:1, the same semantics the legacy default constructor gave
+		// the worst-case canvas, now on the page's real geometry.
+		int tCanvasW = mLayout.width(), tCanvasH = mLayout.height();
+		MaterialTreeViewport tView = new MaterialTreeViewport(tCanvasW, tCanvasH, tCanvasW, tCanvasH);
 		// the shared zoom anchor: the canvas centre (buttons, keys and slider all focus it)
-		double tCx = MaterialTreeDisplay.WIDTH / 2.0, tCy = MaterialTreeDisplay.HEIGHT / 2.0;
+		double tCx = tCanvasW / 2.0, tCy = tCanvasH / 2.0;
+		// the strip row: the page's own band below the plan box (the statics above are the JEI frame's seat)
+		int tButtonY = tCanvasH + 4, tSliderY = tCanvasH + 6;
 
-		List<Edge> tEdges = mDisplay.edges();
-		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(mDisplay);
 		// the nav canvas's slot yield set: every TransformSlot in add order, so a canvas press
 		// can replay EMI's own first-hit bounds test and yield to the native slot faces
 		List<GT6MaterialTreeTransformSlot> tSlots = new ArrayList<>();
@@ -160,6 +190,8 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		// per rect — no diagonal primitive on 1.20.1), so they render under the slots. The
 		// labels moved in here with the nav suite: their positions must follow the viewport
 		// at RENDER time, and a TextWidget freezes its coordinate at add time.
+		List<EdgeLayout> tLayouts = mLayout.edges();
+		List<Edge> tEdges = mDisplay.edges();
 		List<Rect> tWires = new ArrayList<>(), tArrows = new ArrayList<>();
 		for (EdgeLayout tLayout : tLayouts) {
 			tWires.addAll(tLayout.wire());
@@ -168,8 +200,9 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		record Label(Component text, int x, int y, int color) {}
 		List<Label> tLabels = new ArrayList<>();
 		tLabels.add(new Label(Component.literal(MaterialTreeDisplay.materialName(mDisplay.material)), 4, 4, 0xFF000000));
-		tLabels.add(new Label(Component.literal(MaterialTreeDisplay.BYPRODUCT_HEADER),
-				MaterialTreeDisplay.LANE_X0, MaterialTreeDisplay.BYPRODUCT_HEADER_Y, 0xFF000000));
+		if (mLayout.byproductBand()) // the hanging band's header — only when the band exists (the content-driven canvas has no room for a floating label)
+			tLabels.add(new Label(Component.literal(MaterialTreeDisplay.BYPRODUCT_HEADER),
+					mLayout.overflowX(), mLayout.byproductHeaderY(), 0xFF000000));
 		for (int e = 0; e < tEdges.size(); e++) {
 			EdgeLayout tLayout = tLayouts.get(e);
 			if (tLayout.machine() != null) continue; // the via-label lives on the machine slot's tooltip
@@ -177,9 +210,9 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		}
 		for (Overflow tOverflow : mDisplay.overflow()) {
 			tLabels.add(new Label(Component.literal("+" + tOverflow.hidden()),
-					MaterialTreeDisplay.overflowX(), MaterialTreeDisplay.overflowY(tOverflow.column()), 0xFF000000));
+					mLayout.overflowX(), mLayout.overflowY(tOverflow.column()), 0xFF000000));
 		}
-		aWidgets.addDrawable(0, 0, MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H, (aGuiGraphics, aMouseX, aMouseY, aDelta) -> {
+		aWidgets.addDrawable(0, 0, tCanvasW, tCanvasH + CONTROL_STRIP_H, (aGuiGraphics, aMouseX, aMouseY, aDelta) -> {
 			// corner-pair transforms: shared rect edges stay seamless at any scale
 			for (Rect tRect : tWires) fillTransformed(aGuiGraphics, tView, tRect, MaterialTreeLayout.WIRE_INK);
 			for (Rect tRect : tArrows) fillTransformed(aGuiGraphics, tView, tRect, MaterialTreeLayout.ARROW_INK);
@@ -190,7 +223,7 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		});
 		for (Node tNode : mDisplay.nodes()) {
 			tSlots.add(aWidgets.add(new GT6MaterialTreeTransformSlot(EmiStack.of(tNode.stack()),
-					MaterialTreeDisplay.nodeX(tNode), MaterialTreeDisplay.nodeY(tNode), tView)));
+					mLayout.nodeX(tNode), mLayout.nodeY(tNode), tView)));
 		}
 		// the v2 machine-icon nodes: a background-free slot (drawBack false — the bare 16x16 icon
 		// face) per machine-resolved edge, hover box one px around the shared helper's icon rect,
@@ -209,7 +242,7 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		int i = 0;
 		for (Byproduct tByproduct : mDisplay.byproducts()) {
 			GT6MaterialTreeTransformSlot tByproductSlot = new GT6MaterialTreeTransformSlot(EmiStack.of(tByproduct.stack()),
-					MaterialTreeDisplay.byproductX(i), MaterialTreeDisplay.byproductY(), tView);
+					mLayout.byproductX(i), mLayout.byproductY(), tView);
 			tSlots.add(tByproductSlot);
 			aWidgets.add(tByproductSlot)
 					.appendTooltip(Component.literal(tByproduct.sourceLabel()));
@@ -218,37 +251,38 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 		// the control strip (the EMI 1.1.24 native button seam — WidgetHolder.addButton onto the
 		// blank cell u=72 v=0 of emi buttons.png, whose hover/inactive rows ButtonWidget picks by
 		// itself): the zoom buttons sleep at the S1 floor/ceiling, reset never does
-		aWidgets.addButton(BUTTON_X0, BUTTON_Y, 12, 12, 72, 0,
+		aWidgets.addButton(BUTTON_X0, tButtonY, 12, 12, 72, 0,
 				() -> tView.scale() < MaterialTreeViewport.MAX_SCALE,
 				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.ZOOM_IN, tCx, tCy));
-		aWidgets.addButton(BUTTON_X0 + BUTTON_PITCH, BUTTON_Y, 12, 12, 72, 0,
+		aWidgets.addButton(BUTTON_X0 + BUTTON_PITCH, tButtonY, 12, 12, 72, 0,
 				() -> tView.scale() > MaterialTreeViewport.MIN_SCALE,
 				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.ZOOM_OUT, tCx, tCy));
-		aWidgets.addButton(BUTTON_X0 + 2 * BUTTON_PITCH, BUTTON_Y, 12, 12, 72, 0,
+		aWidgets.addButton(BUTTON_X0 + 2 * BUTTON_PITCH, tButtonY, 12, 12, 72, 0,
 				() -> true,
 				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, tCx, tCy));
-		aWidgets.add(new GT6MaterialTreeSliderWidget(tView, SLIDER_X, SLIDER_Y, SLIDER_W, SLIDER_H, tCx, tCy));
+		aWidgets.add(new GT6MaterialTreeSliderWidget(tView, SLIDER_X, tSliderY, SLIDER_W, SLIDER_H, tCx, tCy));
 		// the key canvas LAST: it covers the page for the keyboard face but paints nil, and its
 		// mouse faces gate to the tree canvas (the pointer seam above) — clicks on slots pass
 		// through, so the slots' U/R faces are untouched
-		aWidgets.add(new GT6MaterialTreeNavWidget(tView, 0, 0,
-				MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT + CONTROL_STRIP_H, tCx, tCy, tSlots));
+		aWidgets.add(new GT6MaterialTreeNavWidget(tView, 0, 0, tCanvasW, tCanvasH + CONTROL_STRIP_H, tCx, tCy, tSlots));
 		// hover hints — invisible tooltip widgets, they never consume clicks
-		aWidgets.addTooltipText(List.of(Component.literal("Zoom in (+)")), BUTTON_X0, BUTTON_Y, 12, 12);
-		aWidgets.addTooltipText(List.of(Component.literal("Zoom out (-)")), BUTTON_X0 + BUTTON_PITCH, BUTTON_Y, 12, 12);
-		aWidgets.addTooltipText(List.of(Component.literal("Reset view (R/0)")), BUTTON_X0 + 2 * BUTTON_PITCH, BUTTON_Y, 12, 12);
-		aWidgets.addTooltipText(List.of(Component.literal("Click to set zoom")), SLIDER_X, SLIDER_Y, SLIDER_W, SLIDER_H);
+		aWidgets.addTooltipText(List.of(Component.literal("Zoom in (+)")), BUTTON_X0, tButtonY, 12, 12);
+		aWidgets.addTooltipText(List.of(Component.literal("Zoom out (-)")), BUTTON_X0 + BUTTON_PITCH, tButtonY, 12, 12);
+		aWidgets.addTooltipText(List.of(Component.literal("Reset view (R/0)")), BUTTON_X0 + 2 * BUTTON_PITCH, tButtonY, 12, 12);
+		aWidgets.addTooltipText(List.of(Component.literal("Click to set zoom")), SLIDER_X, tSliderY, SLIDER_W, SLIDER_H);
 		// the S4 escape hatch (task nav-s4-tree-screen) — tail-appended after the M2 nav face:
 		// the canvas's top-right corner cell opens the standalone full-screen tree
 		// (GT6MaterialTreeScreen), the r11 大树走独立屏 ruling's face. The blank native cell
 		// (u=72 v=0, the strip convention) carries a "T" glyph drawable above it; the click
 		// replaces the EMI page with the screen (setScreen has no barrier from a widget click).
-		aWidgets.addButton(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12, 72, 0,
+		// The corner is the page's own top-right (the static SCREEN_BUTTON_X is the JEI frame's).
+		int tScreenX = tCanvasW - 16;
+		aWidgets.addButton(tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12, 72, 0,
 				() -> true, (aMx, aMy, aBtn) -> GT6MaterialTreeScreen.open(mDisplay));
-		aWidgets.addDrawable(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12,
+		aWidgets.addDrawable(tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12,
 				(aGuiGraphics, aMx, aMy, aDelta) -> aGuiGraphics.drawString(Minecraft.getInstance().font, "T", 3, 2, 0xFFE0E0E0, false));
 		aWidgets.addTooltipText(List.of(Component.literal("Open full tree view")),
-				GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12);
+				tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12);
 	}
 
 	/** One wire/arrow rect through the viewport as a corner pair, then filled (exclusive x2/y2). */

@@ -26,7 +26,6 @@ import brachy.modularui.integration.emi.recipe.EmiInteractionSink;
 import dev.emi.emi.api.widget.Bounds;
 import dev.emi.emi.api.widget.Widget;
 
-import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -69,7 +68,7 @@ public class GT6MaterialTreeNavWidget extends Widget implements EmiInteractionSi
 
 	private final MaterialTreeViewport mViewport;
 	private final Bounds mBounds;
-	/** The tree canvas inside the page — the ONLY rect where wheel/pan gestures live (the strip below is control chrome). */
+	/** The tree canvas inside the page — the ONLY rect where wheel/pan gestures live (derived: the page bounds minus the control strip, so it follows the per-recipe page shape). */
 	private final Bounds mCanvas;
 	private final double mFocusX, mFocusY;
 	/** The page's slots in add order — the yield set (press hits = native slot affordance wins). */
@@ -82,7 +81,10 @@ public class GT6MaterialTreeNavWidget extends Widget implements EmiInteractionSi
 			double aFocusX, double aFocusY, List<GT6MaterialTreeTransformSlot> aSlots) {
 		mViewport = aViewport;
 		mBounds = new Bounds(aX, aY, aWidth, aHeight);
-		mCanvas = new Bounds(aX, aY, MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT);
+		// the tree canvas = the page minus the control-strip band (task mattree-r3-nav-unify):
+		// derived, not a static — the EMI page height is the engine's per-recipe content box
+		// plus the strip, so the canvas follows whatever page shape this widget is given
+		mCanvas = new Bounds(aX, aY, aWidth, aHeight - GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H);
 		mFocusX = aFocusX;
 		mFocusY = aFocusY;
 		mSlots = aSlots;
@@ -118,7 +120,7 @@ public class GT6MaterialTreeNavWidget extends Widget implements EmiInteractionSi
 	@Override
 	public boolean mouseDragged(int aButton, double aDeltaX, double aDeltaY) {
 		if (!mPanning || aButton != mPanButton) return false;
-		mViewport.pan(aDeltaX, aDeltaY);
+		GT6MaterialTreeNav.dragPan(mViewport, aDeltaX, aDeltaY);
 		return true;
 	}
 
@@ -146,11 +148,14 @@ public class GT6MaterialTreeNavWidget extends Widget implements EmiInteractionSi
 	 * the floored int keeps a pixel left/above the canvas out (conservative: EMI's own
 	 * click dispatch truncates, we refuse to swallow a scroll it would not have gated).
 	 * The anchor stays the raw double coords — the zoom must not quantise the pointer.
+	 * The op is the table's {@link GT6MaterialTreeNav#wheelZoom} alone (task
+	 * mattree-r3-nav-unify): the former signum branch into WHEEL_IN/OUT carried a hostile
+	 * delta divergence (NaN routed a zoom-out); the one guard inside wheelZoom is every
+	 * host's wheel semantics now.
 	 */
 	private boolean scrollImpl(double aMouseX, double aMouseY, double aAmount) {
 		if (!mCanvas.contains((int)Math.floor(aMouseX), (int)Math.floor(aMouseY))) return false;
-		GT6MaterialTreeNav.handle(mViewport, aAmount > 0
-				? GT6MaterialTreeNav.Action.WHEEL_IN : GT6MaterialTreeNav.Action.WHEEL_OUT, aMouseX, aMouseY);
+		GT6MaterialTreeNav.wheelZoom(mViewport, aAmount, aMouseX, aMouseY);
 		return true;
 	}
 }
