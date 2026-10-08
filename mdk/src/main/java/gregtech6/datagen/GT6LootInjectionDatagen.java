@@ -388,12 +388,14 @@ public final class GT6LootInjectionDatagen {
 	 * share-approximation declared on {@code GT6DungeonLootModifier}). The hand-row audit
 	 * ({@code TwilightTreasureReplacer} per index, the dead-pool rule first):
 	 * <ul>
-	 * <li>PORTED: hill2 rare stick-Basalz [4,4] :83; hedgemaze rare name-tag [4,4] / lead
-	 *     [2,2] :119-120 + stick-Breeze [4,4] :123 + uncommon food-cinnamon [12,12] :116
-	 *     ({@code gt6:food_cinnamon}, the GT6CropFoods row); troll_garden uncommon
-	 *     stick-Blitz [4,4] :275; troll_vault common/uncommon crushed-AncientDebris [4,4]/[8,8]
-	 *     :287-288 (the 1.7.10 IL.Ancient_Debris was null — the {@code get(n, crushed)}
-	 *     fallback WAS the live face) + the wither-skeleton skull [2,2] :289;</li>
+ * <li>PORTED: hill2 rare stick-Basalz [4,4] :83; hedgemaze rare name-tag [4,4] / lead
+ *     [2,2] :119-120 + stick-Breeze [4,4] :123 + uncommon food-cinnamon [12,12] :116
+ *     ({@code gt6:food_cinnamon}, the GT6CropFoods row); troll_garden uncommon
+ *     stick-Blitz [4,4] :275; troll_vault common/uncommon crushed-AncientDebris [4,4]/[8,8]
+ *     :287-288 (the 1.7.10 IL.Ancient_Debris was null — the {@code get(n, crushed)}
+ *     fallback WAS the live face) + the wither-skeleton skull [2,2] :289; the stick-Basalz/
+ *     stick-Blitz rows are TE PRIMARY and ride the convergence skip at emit — the row lists
+ *     still declare them, {@code registered()} cuts the gated pair when TE is absent;</li>
 	 * <li>DEAD POOL (never rolled by the replacer, {@code :346-357}): every
 	 *     {@code useless.add} row — the tower-room nether supplies :144-149, the
 	 *     darktower quartz/end-stone :194-197, the ender pearls :210/:267, the ink
