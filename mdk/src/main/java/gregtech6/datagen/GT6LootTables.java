@@ -108,11 +108,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
                 new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
-<<<<<<< HEAD
                 new SubProviderEntry(GT6ChestBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-a-storage-chests — the 120 chest self-drops
-=======
                 new SubProviderEntry(GT6MassStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-massstorage — the 120 self-drops
->>>>>>> b481fd7596 (feat(datagen): the mass-storage datagen band — blockstates/recipes/lang/loot/tags + the 606-file generated tree)
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
@@ -186,11 +183,8 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BurningBoxBlockLoot::new, LootContextParamSets.BLOCK), // task burning-box-family
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
                 new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
-<<<<<<< HEAD
                 new SubProviderEntry(GT6ChestBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-a-storage-chests — the 120 chest self-drops
-=======
                 new SubProviderEntry(GT6MassStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-massstorage — the 120 self-drops
->>>>>>> b481fd7596 (feat(datagen): the mass-storage datagen band — blockstates/recipes/lang/loot/tags + the 606-file generated tree)
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine

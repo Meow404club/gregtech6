@@ -942,6 +942,5 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		// task storage-massstorage — the 120 item mass storage rows (the aMachine family,
 		// Loader :141-142 TOOL_wrench block column; the wrench-band ruling)
 		GT6StaticStorages.MASS_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
->>>>>>> b481fd7596 (feat(datagen): the mass-storage datagen band — blockstates/recipes/lang/loot/tags + the 606-file generated tree)
 	}
 }

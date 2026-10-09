@@ -74,7 +74,7 @@ class GT6OvenTexAuditDatagenTest {
 				// :2229 Ceramic column is the tint carrier; the README 32xxx sha section)
 				"plant_pot/colored_side.png",
 				"plant_pot/colored_bottom.png",
-				"decor/glass_clear.png,
+				"decor/glass_clear.png",
 				// task storage-massstorage: the logistics mass storage body art — the
 				// upstream dedicated iconset's near-white body (the loader row paints it
 				// MT.Black through the tint dispatch, Loader :142), the README
@@ -84,7 +84,6 @@ class GT6OvenTexAuditDatagenTest {
 				"massstorage_logistics/colored_bottom.png",
 				"massstorage_logistics/colored_front.png",
 				"massstorage_logistics/colored_back.png"));
->>>>>>> 945e8517b0 (test(storage): the mass-storage pin suite — row parity, insert/overflow/fill math, partial units, the digit gates, the full-cube trio)
 		for (int i = 0; i < 32; i++) tWhite.add(String.format("barometer/%02d.png", i));
 		DOCUMENTED_WHITE_BLOCK_BORROWS = java.util.Collections.unmodifiableSet(tWhite);
 	}

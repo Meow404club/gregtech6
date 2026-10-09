@@ -1095,7 +1095,6 @@ public class GT6LangParityTest {
 		// (GT6MassStorageBlock.getName -> massDisplayOf over the two family templates +
 		// the shared gt6.row.mat.* words; the template pins ride GT6MassStorageFamilyTest)
 		for (gregtech6.registry.GT6StaticStorages.MassRow tRow : gregtech6.registry.GT6StaticStorages.MASS_ROWS) tExempt.add(tRow.path());
->>>>>>> 945e8517b0 (test(storage): the mass-storage pin suite — row parity, insert/overflow/fill math, partial units, the digit gates, the full-cube trio)
 		for (gregtech6.registry.GTMachines.CraftingTableRow tRow : gregtech6.registry.GTMachines.CRAFTING_TABLE_ROWS) tExempt.add(tRow.path()); // GTAdvancedCraftingTableBlock.getName -> displayOf (act-matrix, GTMachines.displayOf)
 		for (GT6Kinetics.SteamEngineRow tRow : GT6Kinetics.STEAM_ENGINES) tExempt.add(tRow.path()); // SteamEngineBlock.getName (GT6Kinetics:401)
 		// task material-mc-d-powertrain-rows — the 52 powertrain ladder blocks compose over
@@ -1285,12 +1284,9 @@ public class GT6LangParityTest {
 		// entries, but those are phase-exempted before the checked count.
 		assertEquals(0, tExempt.size(), "every exempted path must name a REGISTERED block (a stale"
 			+ " exemption = a row table shrank or a path typo'd)");
-<<<<<<< HEAD
-		assertEquals(2102, tExemptTotal, "the derived composed-name exemption census (+12 task material-mc-f-attachment-rows (review-seat rebase union): the nozzle pair joins the GT6Attachments.ROWS exemption walk, 12 -> 24 rows — GTAttachmentSmallBlock.getName composes over the gt6.row.{nozzle,capnozzle}.display templates + the attachment-namespace small-unit words incl. the new .steel) (+113 task material-mc-c-crucible-rows on the review-seat rebase union: the crucible domain joins the composed face — +35 smeltery carriers (Smeltery 4→39) + +78 basin/crossing carriers (the Basin/Crossing full-family ROWS walks) over the 39 shared gt6.row.mat.* words, 1925 + 113; the checked census stays put) (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
+		assertEquals(2222, tExemptTotal, "the derived composed-name exemption census (+12 task material-mc-f-attachment-rows (review-seat rebase union): the nozzle pair joins the GT6Attachments.ROWS exemption walk, 12 -> 24 rows — GTAttachmentSmallBlock.getName composes over the gt6.row.{nozzle,capnozzle}.display templates + the attachment-namespace small-unit words incl. the new .steel) (+113 task material-mc-c-crucible-rows on the review-seat rebase union: the crucible domain joins the composed face — +35 smeltery carriers (Smeltery 4→39) + +78 basin/crossing carriers (the Basin/Crossing full-family ROWS walks) over the 39 shared gt6.row.mat.* words, 1925 + 113; the checked census stays put) (+37 task faucet-material-rows: the faucet ROWS walk grew 2 to 39 — the Loader:300-341 multi-material projection; every FaucetBlock carrier composes over gt6.row.faucet.display + its gt6.row.faucet.mat.* word, the pre-existing composed face; review-seat union on the rebase, 1888 + 37) (+120 task material-mc-b-storage-mass-shelf: the metal shelf/crate ladders join the GT6StaticStorages ROWS exemption walk — GT6StorageBlock.getName composes over the gt6.row.metal_{bookshelf,bottlecrate}.display templates + the shared gt6.row.mat.* words, 1768 + 120) (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
 		+ " (+52 task material-mc-d-powertrain-rows: the four powertrain ladders join the tExempt walk — PowertrainBlock.getName composes over the four gt6.row.{rotation_engine,transformer_gearbox,custom_gearbox,steam_turbine}.display templates + the shared gt6.row.mat.* words, 2038 + 52)"
-=======
-		assertEquals(1888, tExemptTotal, "the derived composed-name exemption census (+18 task flower-blocks-indicator-family: the 18 vanilla potted companions join the ROWS walk — the FlowerPotBlock unnamed-pot face, the vanilla potted parity) (+116 task hopper-matrix follow-move landed on review: main's pin stayed 1630 while the 120-row hopper walk landed — the pre-existing-red reconciliation shape, the pickaxeBand seat-V precedent) (+4 task act-matrix: the two kind templates + the 3 truly-new gt6.row.mat words of the 60-row crafting walk, measured 1634 -> 1750 on the rebase)"
->>>>>>> 945e8517b0 (test(storage): the mass-storage pin suite — row parity, insert/overflow/fill math, partial units, the digit gates, the full-cube trio)
+		+ " (+120 task storage-massstorage: the 120 item mass storage rows join the compose walk — GT6MassStorageBlock.getName composes over the two family templates gt6.row.{,logistics_}massstorage.display (dump-verbatim 量子存储器/物流量子存储器) + the shared gt6.row.mat.* words, 2102 + 120 on the review-seat rebase union)"
 			+ " (+280 task fluid-pipe-matrix: the full fluid-pipe matrix joins the ROWS walk — the"
 			+ " 280 <mat>_fluid_pipe_<size> carriers compose over the seven gt6.row.fluid_pipe.display.*"
 			+ " templates + the 40 family-scoped gt6.row.fluid_pipe.mat.* words; the two W1 wood rows"
@@ -1325,7 +1321,6 @@ public class GT6LangParityTest {
 			+ " (+120 task act-matrix: the 120 crafting-table row carriers compose over the two"
 			+ " gt6.row.advanced_crafting_table/charging_crafting_table.display templates + the 60"
 			+ " gt6.row.mat.* words; the retired bare-path atomic key nets zero, 1514 + 120 = 1634)"
-<<<<<<< HEAD
 			+ " (+113 task material-mc-c-crucible-rows: the crucible-domain families joined — the"
 			+ " Smeltery ROWS walk grew 4 -> 39 (35 new rung carriers over the"
 			+ " gt6.row.crucible.display.* template) and the basin/crossing families registered"
@@ -1338,12 +1333,6 @@ public class GT6LangParityTest {
 		+ " (−2 task wiregt-legacy-anchor-removal: the p7 legacy wire_electric_1x/2x block carriers left"
 		+ " the checked leg with their registrations — 414 -> 412, GTWires 2 -> 0 checked: the atomic"
 		+ " block.gt6.wire_electric_1x/2x keys retired from both faces)"
-=======
-			+ " (+120 task storage-massstorage: the 120 item mass storage row carriers compose"
-			+ " over the two gt6.row.massstorage/logistics_massstorage.display templates + the"
-			+ " shared gt6.row.mat.* words, 1768 + 120 = 1888)");
-		assertEquals(371, tChecked,  "the checked block census: every DeferredRegister block NOT"
->>>>>>> 945e8517b0 (test(storage): the mass-storage pin suite — row parity, insert/overflow/fill math, partial units, the digit gates, the full-cube trio)
 		+ " (+4 task worldgen-diggables-pits: the 4 colored-clay blocks joined the checked leg — 367 + 4 = 371 over main's racks-inclusive census, "
 		+ "the atomic block.gt6.{brown,yellow,blue,white}_clay keys both locales: the en BlockDiggable.java:52-57 names verbatim + the zh hand layer 粘土块 rows)"
 		+ " (+7 task material-mc-f-attachment-rows: the seven 64K drum rows join the CHECKED leg — direct block.gt6.barrel_* keys both locales, 371 + 7 = 378, the review-seat rebase union)"

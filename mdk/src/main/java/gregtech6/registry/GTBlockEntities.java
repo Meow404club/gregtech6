@@ -625,6 +625,8 @@ public final class GTBlockEntities {
 			BLOCK_ENTITY_TYPES.register("plant_pot", () -> BlockEntityType.Builder.of(
 					gregtech6.tileentity.tools.GT6PlantPotBlockEntity::new,
 					GT6MiscToolBlocks.PLANT_POT_BLOCK.get()).build(null));
+
+	/**
 	 * The item Mass Storage BET (task storage-massstorage) — the standard kind over the
 	 * 60-material walk (Loader :141, id 6000+aID). Registry path "mass_storage".
 	 */

@@ -1352,7 +1352,6 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.plant_pot", "Universal Plant Pot");
         add(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_PLANT_POT, "Can grow any Plants ontop of it!");
         add(gregtech6.registry.GT6MiscToolBlocks.TOOLTIP_NO_GUI, "No GUI. Click to insert/extract Items!");
->>>>>>> b481fd7596 (feat(datagen): the mass-storage datagen band — blockstates/recipes/lang/loot/tags + the 606-file generated tree)
     }
 
     /**
