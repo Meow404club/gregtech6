@@ -317,8 +317,9 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 	 * 04:120 write-back): {@code gt.color} (Integer) + {@code gt.painted} (Boolean),
 	 * written only while painted so an unpainted BE carries no paint keys. Because
 	 * {@link #getUpdateTag()} = {@code saveWithoutMetadata()}, both sync channels
-	 * (chunk data + block update) carry the two keys for free — the client
-	 * {@link #load} rehydrates them.
+	 * (chunk data + block update) carry the full tag — key ABSENCE is therefore the
+	 * unpainted state on every channel (the contract the client {@link #load} reads,
+	 * task spray-paint-domain-two-way).
 	 */
 	@Override
 	protected void saveAdditional(CompoundTag aNBT) {
@@ -330,10 +331,29 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 	}
 
 	/**
-	 * The upstream readFromNBT2 :57-58 hasKey-guarded pair. The client arm: a paint
-	 * change arriving through either sync channel refreshes the ModelDataManager
-	 * (dirty-gated like the oven's mOvenVisualDirty — requestModelDataUpdate alone is
-	 * client-side-only, IForgeBlockEntity:153 / IBlockEntityExtension:76).
+	 * The upstream readFromNBT2 :57-58 pair, reshaped for the SYNC channels (task
+	 * spray-paint-domain-two-way): {@code gt.painted} is read UNCONDITIONALLY because
+	 * both sync channels carry the FULL {@code saveWithoutMetadata()} tag, not a delta —
+	 * an unpainted BE omits the keys entirely, so the contains-guard kept a painted
+	 * client BE stale forever after an unpaint (Jade still showed the colour, the user
+	 * symptom 34; a relog was the only cure). The colour stays guarded: it only
+	 * matters while painted, and an unpainted BE resolves it to {@link #UNCOLORED}
+	 * (the render arm falls to the block's material carrier regardless).
+	 *
+	 * <p>The client arm is the {@link GTRenderUpdates#scheduleRenderUpdate} PAIR, not a
+	 * bare {@code requestModelDataUpdate()} (symptom 33): requestModelDataUpdate only
+	 * queues the BE in the client ModelDataManager (IForgeBlockEntity:153 →
+	 * ModelDataManager.requestRefresh) and that queue is consumed only by a chunk
+	 * rebuild's {@code getAt}. The rebuild was assumed to come from the block-update
+	 * broadcast of {@link #markPaintChanged}, but paint never changes the BlockState —
+	 * the client {@code ClientboundBlockUpdatePacket} handler routes through
+	 * {@code Level.setBlock → LevelChunk.setBlockState}, which early-returns null for
+	 * an identical state (LevelChunk.java:248-250) before {@code sendBlockUpdated} is
+	 * ever reached (Level.java:215-228) — so no rebuild was ever scheduled and the
+	 * world kept the material tint while Jade (the data face) showed the new colour.
+	 * The pair forces the section rebuild (ClientLevel.sendBlockUpdated →
+	 * LevelRenderer.blockChanged, no state comparison) and refreshes the snapshot
+	 * cache the rebuild task reads.
 	 */
 	@Override
 	public void load(CompoundTag aNBT) {
@@ -341,9 +361,10 @@ public abstract class TileEntityBase03TicksAndSync extends TileEntityBase01Root 
 		int tWasRGBa = mRGBa;
 		super.load(aNBT);
 		if (aNBT.contains(NBT_COLOR, Tag.TAG_ANY_NUMERIC)) mRGBa = aNBT.getInt(NBT_COLOR); // upstream :57
-		if (aNBT.contains(NBT_PAINTED)) mIsPainted = aNBT.getBoolean(NBT_PAINTED); // upstream :58
+		mIsPainted = aNBT.getBoolean(NBT_PAINTED); // upstream :58 — UNCONDITIONAL: absent keys = unpainted on every channel
+		if (!mIsPainted && !aNBT.contains(NBT_COLOR, Tag.TAG_ANY_NUMERIC)) mRGBa = UNCOLORED;
 		if (hasLevel() && isClientSide() && (mIsPainted != tWasPainted || mRGBa != tWasRGBa)) {
-			requestModelDataUpdate();
+			gregtech6.client.render.GTRenderUpdates.scheduleRenderUpdate(this); // the pair: rebuild + snapshot refresh
 		}
 	}
 

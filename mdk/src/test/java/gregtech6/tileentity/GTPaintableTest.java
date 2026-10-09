@@ -164,10 +164,67 @@ public class GTPaintableTest extends GTOfflineTestBase {
 		assertFalse(tAfter.contains(TileEntityBase03TicksAndSync.NBT_COLOR));
 		assertFalse(tAfter.contains(TileEntityBase03TicksAndSync.NBT_PAINTED));
 
-		// an empty tag load is the readFromNBT2 :57-58 hasKey-guarded no-op
+		// an empty tag load is the hasKey-guarded no-op on an unpainted BE
 		tOven.load(new CompoundTag());
 		assertFalse(tOven.isPainted());
 		assertEquals(TileEntityBase03TicksAndSync.UNCOLORED, tOven.getPaint());
+	}
+
+	/**
+	 * Symptom34 nail (task spray-paint-domain-two-way): the remover clears the SERVER BE,
+	 * and the next update tag of the unpainted BE carries NO paint keys
+	 * ({@code saveAdditional} writes them only while painted). Both sync channels are the
+	 * FULL {@code saveWithoutMetadata()} tag, never a delta, so the key-less tag IS the
+	 * unpainted state — the former contains-guard kept the client BE painted=true forever
+	 * (Jade showed the stale colour, the PAINT ModelData kept the world tinted; a relog
+	 * was the only cure). {@code gt.painted} therefore reads UNCONDITIONALLY.
+	 */
+	@Test
+	void unpaintSyncTagClearsTheStaleClientPaint() {
+		TileEntityOven tServer = oven();
+		tServer.mixPaint(DYE_RED);
+
+		// the client BE holds the painted state (the push landed earlier)
+		TileEntityOven tClient = oven();
+		tClient.load(tServer.saveWithoutMetadata());
+		assertTrue(tClient.isPainted());
+		assertEquals(DYE_RED, tClient.getPaint());
+		assertTrue(tClient.getModelData().has(GTModelProperties.PAINT), "the stale snapshot still carries PAINT");
+
+		// the server unpaints — the next update tag is key-less
+		assertTrue(tServer.unpaint());
+		CompoundTag tUnpaintedTag = tServer.saveWithoutMetadata();
+		assertFalse(tUnpaintedTag.contains(TileEntityBase03TicksAndSync.NBT_PAINTED));
+		assertFalse(tUnpaintedTag.contains(TileEntityBase03TicksAndSync.NBT_COLOR));
+
+		tClient.load(tUnpaintedTag);
+		assertFalse(tClient.isPainted(), "the key-less unpaint tag clears the stale client flag");
+		assertEquals(TileEntityBase03TicksAndSync.UNCOLORED, tClient.getPaint());
+		assertFalse(tClient.getModelData().has(GTModelProperties.PAINT),
+				"PAINT leaves the snapshot — the tint arm falls back to the block's material carrier "
+				+ "(GTMachinePaintTintTest.unpaintedMachineTintsWithTheRowMaterial pins that half)");
+	}
+
+	/**
+	 * Symptom33's data half (task spray-paint-domain-two-way): the PAINT snapshot the
+	 * chunk-rebuild task reads flows from the SYNC tag through {@link #load} — pin the
+	 * sync-face rehydration (the tint consumption itself is pinned in
+	 * GTMachinePaintTintTest/GTMachineTintModelTest; the rebuild trigger is the live
+	 * RCON/dev-client leg — requestModelDataUpdate alone never schedules one, the pair
+	 * in TileEntityBase03TicksAndSync.load does).
+	 */
+	@Test
+	void paintSyncTagRetintsTheModelDataThroughTheLoadFace() {
+		TileEntityOven tServer = oven();
+		tServer.mixPaint(DYE_ORANGE);
+		CompoundTag tPaintedTag = tServer.saveWithoutMetadata(); // the update-tag form
+
+		TileEntityOven tClient = oven();
+		tClient.load(tPaintedTag);
+		assertTrue(tClient.isPainted(), "the sync tag rehydrates the painted flag");
+		assertEquals(DYE_ORANGE, tClient.getPaint());
+		assertTrue(tClient.getModelData().has(GTModelProperties.PAINT));
+		assertEquals(DYE_ORANGE, tClient.getModelData().get(GTModelProperties.PAINT));
 	}
 
 	// ---------------------------------------------------------------------------

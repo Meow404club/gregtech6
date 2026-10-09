@@ -1041,6 +1041,15 @@ SESSION_GROUPS = (
     # form (bbox-registered, no fresh_boot / mutates member).
     # --group crop_a_world matches through the chain's embedded name prefix.
     ("crop_a_world",),
+    # spray-paint-domain-two-way (the paint SYNC-face card): the paintable
+    # chain's data-face sibling — the two-channel update-tag face live in both
+    # directions (spray: the tag carries gt.color+gt.painted; unpaint: the tag
+    # is KEY-LESS — the contract the client load() reads). One fresh x=820
+    # z=64 band, clear of every registered cluster (the highest neighbours are
+    # x762 z100 and the x700 z204..218 strip). Band-local setblocks only — no
+    # fresh_boot / mutates member. --group spraypaint2way matches through the
+    # chain's file stem.
+    ("spray_paint_two_way",),
 )
 
 PROBE_MODULE = "keepfilter_reboot_probe"
