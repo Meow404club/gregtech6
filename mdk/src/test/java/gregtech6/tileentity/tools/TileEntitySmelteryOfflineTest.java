@@ -75,7 +75,7 @@ public class TileEntitySmelteryOfflineTest {
 
 	static net.minecraft.tags.TagKey<Item> familyTag(String aPath) {
 		return net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
-				new net.minecraft.resources.ResourceLocation("c", aPath));
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", aPath));
 	}
 
 	static java.util.function.Function<ItemStack, java.util.stream.Stream<net.minecraft.tags.TagKey<Item>>> sSavedTags;
@@ -512,7 +512,7 @@ public class TileEntitySmelteryOfflineTest {
 			net.minecraft.core.Registry<Item> tRegistry = BuiltInRegistries.ITEM;
 			openOffline(tRegistry);
 			MaterialPrefixItem rItem = aCreator.get();
-			net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
+			net.minecraft.core.Registry.register(tRegistry, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aProbeId), rItem);
 			return rItem;
 		}
 

@@ -195,7 +195,7 @@ public class GT6DualDirectoryFaces implements DataProvider {
 			}
 		}
 		mirrorBiomeModifiers(aCache, tData, tSaves);
-		return CompletableFuture.allOf(tSaves.toArray(new CompletableFuture[0]));
+		return CompletableFuture.allOf(tSaves.toArray(new CompletableFuture<?>[0]));
 	}
 
 	/**

@@ -192,9 +192,9 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 	protected void ensureTanks() {
 		if (mTanksInput != null) return;
 		RecipeMap tMap = recipeMap();
-		mTanksInput = new FluidTankGT[(int)tMap.mInputFluidCount];
+		mTanksInput = new FluidTankGT[tMap.mInputFluidCount];
 		for (int i = 0; i < mTanksInput.length; i++) mTanksInput[i] = new FluidTankGT(mCapacityL);
-		mTanksOutput = new FluidTankGT[(int)tMap.mOutputFluidCount];
+		mTanksOutput = new FluidTankGT[tMap.mOutputFluidCount];
 		for (int i = 0; i < mTanksOutput.length; i++) mTanksOutput[i] = new FluidTankGT(mCapacityL);
 	}
 
@@ -280,7 +280,7 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 	 * fluid output and pass the hot/lighter/gas(pot)|not-simple(bowl)/overflow doors.
 	 */
 	protected boolean canOutput(Recipe aRecipe) {
-		int tOutSlots = (int)recipeMap().mOutputItemsCount;
+		int tOutSlots = recipeMap().mOutputItemsCount;
 		for (int i = 0; i < tOutSlots; i++) {
 			ItemStack tSlot = mInventory.getStackInSlot(i + INPUT_SLOTS);
 			if (tSlot.isEmpty()) continue;
@@ -350,7 +350,7 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 				if (canOutput(tRecipe) && tRecipe.isRecipeInputEqual(true, false, fluidSnapshot(mTanksInput), tInputItems)) {
 					ItemStack[] tOutputs = tRecipe.getOutputs();
 					FluidStack[] tFluidOutputs = tRecipe.getFluidOutputs();
-					int tOutSlots = (int)tMap.mOutputItemsCount;
+					int tOutSlots = tMap.mOutputItemsCount;
 					for (int i = 0; i < tOutSlots && i < tOutputs.length; i++) addStackToSlot(INPUT_SLOTS + i, tOutputs[i]);
 					for (int i = 0; i < mTanksOutput.length && i < tFluidOutputs.length; i++) mTanksOutput[i].fill(tFluidOutputs[i], IFluidHandler.FluidAction.EXECUTE);
 					// :202/:223 — UT.Entities.exhaust(aPlayer, max(1, totalPower) / <divisor>)
@@ -698,6 +698,8 @@ public abstract class GT6ManualKitchenBlockEntity extends TileEntityBase03TicksA
 	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — this
 	// member is the provider seam; the GT6CapabilityWiring registerBlockEntity delegates
 	// to it. No @Override: the parent method does not exist on 21.1.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, net.minecraft.core.Direction> aCapability, @Nullable net.minecraft.core.Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			return (T) newItemHandler();

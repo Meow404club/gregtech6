@@ -96,7 +96,7 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 	private static Item prefixItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
 		if (aPrefix == null || aMaterial == null) return null;
 		return PREFIX_ITEMS.computeIfAbsent(new PrefixMaterial(aPrefix, aMaterial), aPair ->
-			Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("gt6", "mtree_display_probe_" + sNextProbeId++),
+			Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("gt6", "mtree_display_probe_" + sNextProbeId++),
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 
@@ -327,18 +327,18 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 
 		// JEI leg: the category's uid is the shared id, geometry from the shared model
 		GT6MaterialTreeJeiCategory tCategory = new GT6MaterialTreeJeiCategory();
-		assertEquals(new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), tCategory.getRecipeType().getUid());
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), tCategory.getRecipeType().getUid());
 		assertEquals(MaterialTreeDisplay.WIDTH, tCategory.getWidth());
 		// nav-m3-jei: the category carries the EMI twin's 20px control strip below the canvas
 		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tCategory.getHeight());
 
 		// EMI leg: same category id (the JEMI balance — both twins ship in this card), and the
 		// Fe recipe's input/output split mirrors the JEI slot split
-		assertEquals(new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), GT6MaterialTreeEmiCategory.id());
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH), GT6MaterialTreeEmiCategory.id());
 		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
 		MaterialTreeDisplay tFe = MaterialTreeDisplay.of(tTree, MT.Fe, MaterialTreeDisplayTest::prefixItem);
 		GT6MaterialTreeEmiRecipe tRecipe = new GT6MaterialTreeEmiRecipe(tFe);
-		assertEquals(new ResourceLocation("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH + "/iron"), tRecipe.getId());
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH + "/iron"), tRecipe.getId());
 		assertEquals(GT6MaterialTreeEmiCategory.INSTANCE, tRecipe.getCategory());
 		assertFalse(tRecipe.getInputs().isEmpty(), "the ore column rides inputs (U reachability)");
 		assertTrue(tRecipe.getInputs().stream().anyMatch(tIn -> tIn.getEmiStacks().get(0).getItemStack().getItem() == prefixItem(OP.oreRaw, MT.Fe)),

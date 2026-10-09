@@ -905,7 +905,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static TagKey<Item> materialTag(String aFamilyPath, String aMaterialSnake) {
 		String tPath = aFamilyPath.formatted(aMaterialSnake);
 		// the 1.20.1 two-arg ctor form; shifted to fromNamespaceAndPath on the 21.1 leg
-		return TagKey.create(Registries.ITEM, new ResourceLocation(MATERIALS_NAMESPACE, tPath));
+		return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MATERIALS_NAMESPACE, tPath));
 	}
 
 	/**
@@ -919,7 +919,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 	public static TagKey<Item> commonTag(String aFamilyPath, String aMaterialSnake) {
 		String tPath = aFamilyPath.formatted(aMaterialSnake);
 		// the 1.20.1 two-arg ctor form; shifted to fromNamespaceAndPath on the 21.1 leg
-		return TagKey.create(Registries.ITEM, new ResourceLocation(COMMON_NAMESPACE, tPath));
+		return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(COMMON_NAMESPACE, tPath));
 	}
 
 	/**
@@ -966,7 +966,7 @@ public final class GT6ItemTags extends TagsProvider<Item> {
 
 	/** The gt6-namespaced resource location factory (the 1.20.1 two-arg ctor form). */
 	public static ResourceLocation gt6Rl(String aPath) {
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, aPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, aPath);
 	}
 
 	/** The element face TagsProvider appends with — a registry key over the gt6 id. */

@@ -213,7 +213,7 @@ public final class GT6CropCards {
 	/** The registry-id lookup — null when unregistered (containsKey/get, never the AIR fallthrough). */
 	@Nullable
 	private static Item resolveItemById(String aId) {
-		ResourceLocation tKey = new ResourceLocation(aId);
+		ResourceLocation tKey = ResourceLocation.parse(aId);
 		//? if forge {
 		if (!ForgeRegistries.ITEMS.containsKey(tKey)) return null;
 		Item tItem = ForgeRegistries.ITEMS.getValue(tKey);

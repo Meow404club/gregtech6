@@ -64,7 +64,7 @@ public class GT6MaterialToolJeiExtensionTest {
 		if (net.minecraftforge.common.crafting.CraftingHelper.getID(
 				net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE) == null) {
 			net.minecraftforge.common.crafting.CraftingHelper.register(
-					new net.minecraft.resources.ResourceLocation("minecraft", "item"),
+					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "item"),
 					net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
 		}
 		//?} else {
@@ -134,7 +134,7 @@ public class GT6MaterialToolJeiExtensionTest {
 		GT6MaterialToolJeiExtension tExtension = new GT6MaterialToolJeiExtension(row("iron"));
 		assertEquals(2, tExtension.getWidth(), "the 2x2 grid width — not the shapeless row");
 		assertEquals(2, tExtension.getHeight(), "the 2x2 grid height — not the shapeless row");
-		assertEquals(new net.minecraft.resources.ResourceLocation("gt6", "screwdriver/iron"),
+		assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "screwdriver/iron"),
 				tExtension.getRegistryName(), "the advanced-tooltip recipe id face");
 	}
 	//?} else {
@@ -175,7 +175,7 @@ public class GT6MaterialToolJeiExtensionTest {
 		tJson.add("result", tResult);
 		tJson.addProperty("material", aMaterial);
 		return new GT6MaterialToolRecipe.Serializer().fromJson(
-				new net.minecraft.resources.ResourceLocation("gt6", "screwdriver/" + aMaterial), tJson);
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "screwdriver/" + aMaterial), tJson);
 	}
 
 	private static ItemStack bare(GT6MaterialToolRecipe aRecipe) {

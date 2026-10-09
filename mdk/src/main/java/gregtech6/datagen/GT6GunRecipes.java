@@ -240,7 +240,7 @@ public class GT6GunRecipes implements net.minecraft.data.DataProvider {
 		for (GunRow tRow : gunRows()) {
 			// the swap-table local — the bare-local form both legs read (the grassRecipeId precedent)
 			String tPath = tRow.aForm().aId() + "/" + tRow.aSnake();
-			ResourceLocation tId = new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+			ResourceLocation tId = ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 			Map<Character, Ingredient> tKey = new LinkedHashMap<>();
 			List<String> tPattern = new ArrayList<>();
 			for (String tPatternRow : tRow.aForm().aPattern()) {

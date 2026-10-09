@@ -528,9 +528,9 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 			assertEquals(0, tEngine.doEnergyInjection(TD.Energy.RU, tFacing, 16, 1, true), "the incoming door is shut");
 		}
 		// the offered/band surfaces (:228-231)
-		assertEquals(16, tEngine.getEnergyOffered(TD.Energy.RU, (byte) tEngine.mFacing, 16), "min(mRate, mEnergy)");
+		assertEquals(16, tEngine.getEnergyOffered(TD.Energy.RU, tEngine.mFacing, 16), "min(mRate, mEnergy)");
 		tEngine.mEnergy = 5;
-		assertEquals(5, tEngine.getEnergyOffered(TD.Energy.RU, (byte) tEngine.mFacing, 16), "capped at the stored energy");
+		assertEquals(5, tEngine.getEnergyOffered(TD.Energy.RU, tEngine.mFacing, 16), "capped at the stored energy");
 		tEngine.mEnergy = 100;
 		for (byte tSide = 0; tSide < 6; tSide++) {
 			assertEquals(16, tEngine.getEnergySizeOutputMin(TD.Energy.RU, tSide));

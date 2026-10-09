@@ -40,7 +40,7 @@ public class CoverRedstoneConductorIN extends AbstractCoverDefault {
 
 	/** The sprite id ({@code gt6:block/redstone_conductor/in}); static so the tables stay registry-free. */
 	public static ResourceLocation sprite() {
-		return new ResourceLocation("gt6", SPRITE_PATH);
+		return ResourceLocation.fromNamespaceAndPath("gt6", SPRITE_PATH);
 	}
 
 	/** Upstream AbstractCoverAttachment :37 — a marker click is never consumed. */

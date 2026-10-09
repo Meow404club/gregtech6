@@ -90,7 +90,7 @@ public final class GT6PlaceablesCommand {
 			tSource.sendFailure(Component.literal("gt6placeables: unknown face (use down|up|north|south|west|east)"));
 			return 0;
 		}
-		Item tItem = BuiltInRegistries.ITEM.get(new ResourceLocation(aItemId));
+		Item tItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(aItemId));
 		if (tItem == net.minecraft.world.item.Items.AIR) {
 			tSource.sendFailure(Component.literal("gt6placeables: unknown item id: " + aItemId));
 			return 0;

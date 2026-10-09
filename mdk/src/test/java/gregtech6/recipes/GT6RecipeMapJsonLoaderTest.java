@@ -67,7 +67,7 @@ class GT6RecipeMapJsonLoaderTest extends GTRecipesOfflineTestBase {
 	}
 
 	private static ResourceLocation rl(String aId) {
-		return new ResourceLocation(aId);
+		return ResourceLocation.parse(aId);
 	}
 
 	private static JsonElement json(String aJson) {

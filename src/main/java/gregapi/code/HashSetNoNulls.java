@@ -45,6 +45,7 @@ public class HashSetNoNulls<E> extends AbstractSet<E> {
 	}
 
 	@SafeVarargs
+	@SuppressWarnings("varargs") // passing the (safe) varargs array on to Arrays.asList
 	public HashSetNoNulls(boolean aDummyParameter, E... aArray) {
 		this(Arrays.asList(aArray));
 	}

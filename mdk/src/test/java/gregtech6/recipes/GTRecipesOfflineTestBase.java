@@ -82,7 +82,7 @@ public abstract class GTRecipesOfflineTestBase {
 		if (net.minecraftforge.common.crafting.CraftingHelper.getID(
 				net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE) == null) {
 			net.minecraftforge.common.crafting.CraftingHelper.register(
-					new ResourceLocation("minecraft:item"), net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
+					ResourceLocation.parse("minecraft:item"), net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE);
 		}
 		//?} else {
 		/*// 21.1: CraftingHelper/VanillaIngredientSerializer are gone — vanilla ingredients
@@ -139,10 +139,10 @@ public abstract class GTRecipesOfflineTestBase {
 		}
 
 		static Holder<DimensionType> dimensionHolder() {
-			ResourceKey<DimensionType> tKey = ResourceKey.create(Registries.DIMENSION_TYPE, new ResourceLocation("gt6:test"));
+			ResourceKey<DimensionType> tKey = ResourceKey.create(Registries.DIMENSION_TYPE, ResourceLocation.parse("gt6:test"));
 			DimensionType tType = new DimensionType(java.util.OptionalLong.empty(), true, false, false, true, 1.0, true, false, -64, 384, 384,
-					TagKey.create(Registries.BLOCK, new ResourceLocation("minecraft:infiniburn_overworld")),
-					new ResourceLocation("minecraft:overworld"), 0.0F, null);
+					TagKey.create(Registries.BLOCK, ResourceLocation.parse("minecraft:infiniburn_overworld")),
+					ResourceLocation.parse("minecraft:overworld"), 0.0F, null);
 			// Holder has no default methods; a tiny anonymous implementation avoids the
 			// package-private Reference.bind* path entirely.
 			return new Holder<DimensionType>() {

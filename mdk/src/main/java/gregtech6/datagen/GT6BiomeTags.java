@@ -79,7 +79,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
     /** The tag key of a tree ({@code #gt6:trees/<snake>}) — GT6WorldgenDatagen references the same composition. */
     public static TagKey<Biome> treeTag(String aTreeSnake) {
         return TagKey.create(Registries.BIOME,
-                new ResourceLocation(GT6DataGenerators.MOD_ID, "trees/" + aTreeSnake));
+                ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, "trees/" + aTreeSnake));
     }
 
     /**
@@ -114,7 +114,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
         // "Twilight Glacier" ∈ BIOMES_FROZEN) stays the pack-extension surface, out of
         // this card's declared face.
         tag(GT6HiveFeature.hiveTag("magical"))    // the :157 family — the pack surface + the TF slice
-                .addOptional(new ResourceLocation("twilightforest", "enchanted_forest"));
+                .addOptional(ResourceLocation.fromNamespaceAndPath("twilightforest", "enchanted_forest"));
         tag(GT6HiveFeature.hiveTag("volcanic"));  // the EMPTY pack surface (the :159 family)
         tag(GT6HiveFeature.hiveTag("end"));       // the EMPTY pack surface (the :161 family)
         tag(GT6HiveFeature.hiveTag("nether"));    // the EMPTY pack surface (the :163 family)
@@ -134,7 +134,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
     }
 
     private static ResourceKey<Biome> biome(String aName) {
-        return ResourceKey.create(Registries.BIOME, new ResourceLocation("minecraft", aName));
+        return ResourceKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("minecraft", aName));
     }
 
     /**
@@ -261,8 +261,8 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
                 tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake())); // the empty activation switch
                 continue;
             }
-            tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake()))
-                    .add(tBiomes.toArray(new ResourceKey[0]));
+            TagsProvider.TagAppender<Biome> tAppend = tag(treeTag(gregtech6.registry.GT6TreeBlocks.KINDS.get(i).snake()));
+            for (ResourceKey<Biome> tBiome : tBiomes) tAppend.add(tBiome); // the singular add — the varargs toArray form was raw (JLS rawtypes)
         }
         // task w6-rocks-sticks — the surface deco bands (the tags are NOT
         // loader-branded, one band serves both legs; the rocks version's

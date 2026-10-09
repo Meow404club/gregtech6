@@ -176,7 +176,7 @@ class GT6StorageMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	private static int unitOf(IWidget aWidget, String aAxis, String aUnit) throws Exception {
-		brachy.modularui.api.widget.IPositioned tPositioned = (brachy.modularui.api.widget.IPositioned) aWidget;
+		brachy.modularui.api.widget.IPositioned<?> tPositioned = (brachy.modularui.api.widget.IPositioned<?>) aWidget;
 		java.lang.reflect.Field tAxis = tPositioned.resizer().getClass().getDeclaredField(aAxis);
 		tAxis.setAccessible(true);
 		Object tSizer = tAxis.get(tPositioned.resizer());

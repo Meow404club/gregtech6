@@ -48,10 +48,10 @@ public class CoverRobotArm extends AbstractCoverDefault {
 	public static final String TOOL_MONKEYWRENCH = "monkeywrench";
 
 	/** The atlas sprite of the out-facing plate (visual 0). */
-	public static final ResourceLocation ROBOT_ARM_OUT_SPRITE = new ResourceLocation("gt6", "block/robotarm/out");
+	public static final ResourceLocation ROBOT_ARM_OUT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/robotarm/out");
 
 	/** The atlas sprite of the in-facing plate (visual 1). */
-	public static final ResourceLocation ROBOT_ARM_IN_SPRITE = new ResourceLocation("gt6", "block/robotarm/in");
+	public static final ResourceLocation ROBOT_ARM_IN_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/robotarm/in");
 
 	/** Upstream :44-48 — the constructor argument is the tick period, floored at 1 (the conveyor's 512&gt;&gt;i table, MultiItemTechnological.java:53). */
 	public final int mTiming;

@@ -61,20 +61,20 @@ public final class GT6SeasonalLeafClientListener {
 			// forge 1.20.1 takes the plain RL; neoforge 21.1 wraps it in an MRL (the
 			// GTBoilerClientListener.modelId leg split)
 			//? if forge {
-			aEvent.register(new ResourceLocation(GTRenderModelListener.MOD_ID, XMAS_MODEL_PATH));
+			aEvent.register(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, XMAS_MODEL_PATH));
 			//? } else {
 			/*aEvent.register(new ModelResourceLocation(
-					new ResourceLocation(GTRenderModelListener.MOD_ID, XMAS_MODEL_PATH), "standalone"));*/
+					ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, XMAS_MODEL_PATH), "standalone"));*/
 			//? }
 		}
 		GT6Calendars.MapleSeason tSeason = GT6Calendars.mapleSeasonOfMonth(GT6Calendars.sMonth);
 		if (tSeason != GT6Calendars.MapleSeason.NONE) {
 			String tPath = "block/maple_leaves_" + tSeason.suffix();
 			//? if forge {
-			aEvent.register(new ResourceLocation(GTRenderModelListener.MOD_ID, tPath));
+			aEvent.register(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, tPath));
 			//? } else {
 			/*aEvent.register(new ModelResourceLocation(
-					new ResourceLocation(GTRenderModelListener.MOD_ID, tPath), "standalone"));*/
+					ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, tPath), "standalone"));*/
 			//? }
 		}
 	}

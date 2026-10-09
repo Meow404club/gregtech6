@@ -64,7 +64,7 @@ public class GTBarrelPaintTest extends GTOfflineTestBase {
 	static final byte DYE_RED_INDEX = 1;
 	static final byte DYE_ORANGE_INDEX = 14;
 
-	static final ResourceLocation TEST_SPRITE = new ResourceLocation("gt6", "block/cover/test_plate");
+	static final ResourceLocation TEST_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_plate");
 
 	static BlockEntityType<GTBarrelBlockEntity> sType;
 	static BlockEntityType<GTBarrelMetalBlockEntity> sMetalType;

@@ -135,14 +135,14 @@ public final class GT6RecipesCrops {
 
 	@Nullable
 	static Item resolveItemById(String aId) {
-		Item tItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(aId));
+		Item tItem = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(aId));
 		return tItem == null || tItem == Items.AIR ? null : tItem;
 	}
 
 	@Nullable
 	static Fluid resolveFluidById(String aId) {
 		if ("minecraft:water".equals(aId)) return Fluids.WATER; // the source-still constant, registry-free
-		Fluid tFluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(aId));
+		Fluid tFluid = ForgeRegistries.FLUIDS.getValue(ResourceLocation.parse(aId));
 		return tFluid == null || tFluid == Fluids.EMPTY ? null : tFluid;
 	}
 

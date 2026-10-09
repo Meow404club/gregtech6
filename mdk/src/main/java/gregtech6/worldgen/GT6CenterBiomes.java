@@ -191,7 +191,7 @@ public final class GT6CenterBiomes {
 
     /** The gt6 block by registry path — null when the registration has not landed (the BLOCK registry is defaulted to air, the miss face reads back air → null). */
     static Block byName(String aPath) {
-        Block tBlock = BuiltInRegistries.BLOCK.get(new ResourceLocation("gt6", aPath));
+        Block tBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.fromNamespaceAndPath("gt6", aPath));
         return tBlock == Blocks.AIR ? null : tBlock;
     }
 

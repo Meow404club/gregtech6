@@ -40,7 +40,7 @@ public final class GT6PaintIconProvider implements IBlockComponentProvider {
 	public static final GT6PaintIconProvider INSTANCE = new GT6PaintIconProvider();
 
 	/** 唯一 id（IJadeProvider 抽象面，GT6CrucibleProvider 同形）。 */
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "paint_icon_provider");
+	private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("gt6", "paint_icon_provider");
 
 	private GT6PaintIconProvider() {
 	}

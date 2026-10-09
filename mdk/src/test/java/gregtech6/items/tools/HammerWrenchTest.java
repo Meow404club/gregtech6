@@ -64,7 +64,7 @@ public class HammerWrenchTest {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	// ------------------------------------------------------- the action + id pins
@@ -208,7 +208,7 @@ public class HammerWrenchTest {
 	public void registrationAndTagHelperShape() {
 		assertEquals(rl("hammer"), GT6Tools.HAMMER.getId());
 		assertEquals(rl("wrench"), GT6Tools.WRENCH.getId());
-		assertEquals(new ResourceLocation(GT6ItemTags.MATERIALS_NAMESPACE, "plates/steel"),
+		assertEquals(ResourceLocation.fromNamespaceAndPath(GT6ItemTags.MATERIALS_NAMESPACE, "plates/steel"),
 				GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, "steel").location());
 	}
 
@@ -260,10 +260,10 @@ public class HammerWrenchTest {
 	public void realCraftingChannelKeepsTheWrenchAndPaysOnePoint() {
 		GTWrenchItem tWrench = OMComponentFaceTest.probeItem("gt6", "crafting_probe_wrench", p -> new GTWrenchItem(p.durability(512)));
 		ItemStack tInput = new ItemStack(tWrench);
-		tInput.setDamageValue(tWrench.DURABILITY_POINTS - 2);
+		tInput.setDamageValue(GTWrenchItem.DURABILITY_POINTS - 2);
 		ItemStack tRemaining = craftingChannel(tInput);
 		assertFalse(tRemaining.isEmpty(), "the wrench gate must be open at one-below-max (strictly-greater consumes)");
-		assertEquals(tWrench.DURABILITY_POINTS - 2 + GT6FileItem.DAMAGE_PER_CRAFT, tRemaining.getDamageValue());
+		assertEquals(GTWrenchItem.DURABILITY_POINTS - 2 + GT6FileItem.DAMAGE_PER_CRAFT, tRemaining.getDamageValue());
 	}
 
 	// the probe-item bracket folded onto the common definition

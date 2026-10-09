@@ -46,7 +46,7 @@ import gregtech6.covers.covers.CoverVent;
  */
 public class GTCoverRenderSnapshotTest {
 
-	private static final ResourceLocation UNMAPPED = new ResourceLocation("gt6", "block/cover/test_unmapped");
+	private static final ResourceLocation UNMAPPED = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_unmapped");
 
 	/**
 	 * The census test is the first suite member to class-load {@link GT6Covers} — whose
@@ -175,8 +175,8 @@ public class GTCoverRenderSnapshotTest {
 	void ventIsTheFacetedFamily() {
 		ResourceLocation tVentFront = new CoverVent().getCoverTextureSurface((byte) 0, null);
 		GTCoverRenderSnapshot.Facets tFacets = GTCoverRenderSnapshot.facetsOf(tVentFront);
-		assertEquals(new ResourceLocation("gt6", "block/vent/back"), tFacets.back(), "upstream :78 — the attachment back face");
-		assertEquals(new ResourceLocation("gt6", "block/vent/sides"), tFacets.rim(), "upstream :78/:79 — the rim/holder faces");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/back"), tFacets.back(), "upstream :78 — the attachment back face");
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/sides"), tFacets.rim(), "upstream :78/:79 — the rim/holder faces");
 		assertNull(GTCoverRenderSnapshot.facetsOf(new CoverDrain().getCoverTextureSurface((byte) 0, null)),
 				"the drain's facet dispatch is the declared follow-up, not this card");
 		assertNull(GTCoverRenderSnapshot.facetsOf(CoverControllerRedstone.sprite()), "the flat-plate family stays facet-free");

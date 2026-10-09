@@ -238,6 +238,8 @@ public class GT6CellBlockEntity extends TileEntityBase03TicksAndSync {
 	/*// (1.21.1 seam: NeoForge 21.1 deleted BlockEntity#getCapability — this member is the
 	// provider seam (no @Override: the parent method does not exist on 21.1), delegated to
 	// by the GT6CapabilityWiring registerBlockEntity row exactly like the gas cylinder.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, net.minecraft.core.Direction> aCapability,
 			@Nullable net.minecraft.core.Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {

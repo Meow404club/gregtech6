@@ -94,7 +94,7 @@ public class GT6RecipeMapDataStrippedLogQolRowsPourTest extends GTRecipesOffline
 		InputStream tStream = GT6RecipeMapDataStrippedLogQolRowsPourTest.class.getResourceAsStream(tPath);
 		assertNotNull(tStream, "the shipped file " + tPath + " rides the test classpath");
 		JsonObject tDoc = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
-		GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", aKey), tDoc.deepCopy()));
+		GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", aKey), tDoc.deepCopy()));
 		return tDoc.getAsJsonArray("recipes");
 	}
 
@@ -223,7 +223,7 @@ public class GT6RecipeMapDataStrippedLogQolRowsPourTest extends GTRecipesOffline
 		for (String tSpecies : SPECIES) tStrippedIds.add("minecraft:stripped_" + tSpecies + "_log");
 		Set<String> tUnregistered = new HashSet<>();
 		for (String tId : tStrippedIds) {
-			if (!BuiltInRegistries.ITEM.containsKey(new ResourceLocation(tId))) tUnregistered.add(tId);
+			if (!BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(tId))) tUnregistered.add(tId);
 		}
 		assertTrue(tUnregistered.isEmpty(), "the vanilla registry must know every stripped id: " + tUnregistered);
 		// every minecraft: id in the QoL rows is in the exact whitelist (no stray/typo'd ids)

@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GT6CircuitPartsRegistrationTest {
 
-	private static final ResourceLocation VENT_ID = new ResourceLocation("gt6", "ventilation_unit");
+	private static final ResourceLocation VENT_ID = ResourceLocation.fromNamespaceAndPath("gt6", "ventilation_unit");
 	private static final ResourceLocation[] PU_IDS = {
-			new ResourceLocation("gt6", "processor_unit_versatile"),   // 18200
-			new ResourceLocation("gt6", "processor_unit_logic"),       // 18201
-			new ResourceLocation("gt6", "processor_unit_control"),     // 18202
-			new ResourceLocation("gt6", "processor_unit_storage"),     // 18203
-			new ResourceLocation("gt6", "processor_unit_conversion"),  // 18204
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_versatile"),   // 18200
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_logic"),       // 18201
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_control"),     // 18202
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_storage"),     // 18203
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_conversion"),  // 18204
 	};
 	private static final int[] PU_METAS = {18200, 18201, 18202, 18203, 18204};
 

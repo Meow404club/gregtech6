@@ -85,7 +85,7 @@ public class GT6RoboticsRowsPourTest extends GTRecipesOfflineTestBase {
 		assertNotNull(tStream, "the shipped file " + tPath + " rides the test classpath");
 		String tJson = new String(tStream.readAllBytes(), StandardCharsets.UTF_8);
 		JsonObject tDoc = JsonParser.parseString(tJson).getAsJsonObject();
-		GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", "boxinator"), tDoc.deepCopy()));
+		GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", "boxinator"), tDoc.deepCopy()));
 		return tDoc.getAsJsonArray("recipes");
 	}
 

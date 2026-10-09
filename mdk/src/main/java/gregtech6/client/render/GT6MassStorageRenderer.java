@@ -59,7 +59,7 @@ public final class GT6MassStorageRenderer implements BlockEntityRenderer<GT6Mass
 	/** The digit sprite sheet (the upstream gregapi overlays/characters band, byte-identical copies). */
 	public static final Material CHAR_SHEET = new Material(
 			net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS,
-			new ResourceLocation("gt6", "block/characters"));
+			ResourceLocation.fromNamespaceAndPath("gt6", "block/characters"));
 
 	/** The digit cell horizontal band in face-local px (the upstream x 2..14 strip). */
 	public static final float STRIP_LEFT_PX = 2.0F, STRIP_RIGHT_PX = 14.0F, STRIP_BOTTOM_PX = 12.0F, STRIP_TOP_PX = 14.0F;
@@ -129,7 +129,7 @@ public final class GT6MassStorageRenderer implements BlockEntityRenderer<GT6Mass
 			float tX1 = tX0 + tCellWidth / 16.0F;
 			float tY0 = STRIP_BOTTOM_PX / 16.0F;
 			float tY1 = STRIP_TOP_PX / 16.0F;
-			var tSprite = tSpriteLookup.apply(new ResourceLocation("gt6", "block/characters/" + tChar));
+			var tSprite = tSpriteLookup.apply(ResourceLocation.fromNamespaceAndPath("gt6", "block/characters/" + tChar));
 			// the quad: outward normal (+Z local), UV upright
 			int tR = (tTint >> 16) & 0xFF, tG = (tTint >> 8) & 0xFF, tB = tTint & 0xFF;
 			quad(tConsumer, aPoseStack, tX0 - 0.5F, tY0 - 0.5F, tFrontZ, tX1 - 0.5F, tY1 - 0.5F, tSprite, tR, tG, tB, aPackedLight);

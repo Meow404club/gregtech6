@@ -384,8 +384,11 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 		// the review-seat rebase seam re-pins the EXACT ratchet again (shapeless/
 		// material_tool/smelting/circuit_program moved by zero; tree walk recomputed
 		// byte-identical on both main 41119/23479 and the branch 41124/23484).
-		assertEquals(41124, tTotal, "the gt6-namespace shipped recipe universe");
-		assertEquals(23484, tTypes.get("minecraft:crafting_shaped"),
+		// 41124 -> 41184: +60 task storage-massstorage (the 60 standard-row "TCT/wMd/TCT" recipes, merge cedf692692;
+		// the logistics twin is the GTBarrels pool-cut — recipe null, +0) — the card-2 gate domain missed this pin;
+		// review-seat 54 re-pin on the measured universe (shaped 23484 -> 23544, the 60 new rows are crafting_shaped).
+		assertEquals(41184, tTotal, "the gt6-namespace shipped recipe universe");
+		assertEquals(23544, tTypes.get("minecraft:crafting_shaped"),
 				"the derivation candidate set — the over-derivation upper bound (bump-on-change ratchet)");
 		assertEquals(4594, tTypes.get("minecraft:crafting_shapeless"),
 				"declared skip v1 (CR.java:454 — the shapeless default had no REV)");
@@ -435,7 +438,7 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 
 	private static ResourceLocation rl(String aId) {
 		//? if forge {
-		return new ResourceLocation(aId);
+		return ResourceLocation.parse(aId);
 		//?} else {
 		/*return ResourceLocation.parse(aId); // the full "namespace:path" string parses itself
 		*///?}

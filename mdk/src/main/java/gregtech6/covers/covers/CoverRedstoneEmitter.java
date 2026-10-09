@@ -84,7 +84,7 @@ public class CoverRedstoneEmitter extends AbstractCoverDefault {
 
 	/** The tier sprite id ({@code gt6:block/redstone_emitter/<aTier>}); pure for the offline tables. */
 	public static ResourceLocation spriteForTier(int aTier) {
-		return new ResourceLocation("gt6", SPRITE_PATH + aTier);
+		return ResourceLocation.fromNamespaceAndPath("gt6", SPRITE_PATH + aTier);
 	}
 
 	// ---------------------------------------------------------------------------

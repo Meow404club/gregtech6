@@ -51,7 +51,8 @@ class GT6SmallGemFallbackTest {
 
     /** A Random that records its bounded draws (the sequence-contract witness). */
     private static final class CountingRandom extends Random {
-        final List<Integer> bounds = new ArrayList<>();
+        private static final long serialVersionUID = 1L;
+        final ArrayList<Integer> bounds = new ArrayList<>();
         @Override public int nextInt(int aBound) {
             bounds.add(aBound);
             return super.nextInt(aBound);

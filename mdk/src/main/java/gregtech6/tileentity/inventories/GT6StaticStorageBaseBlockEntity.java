@@ -246,6 +246,8 @@ public abstract class GT6StaticStorageBaseBlockEntity extends TileEntityBase03Ti
 	//?} else {
 	/*// 21.1: BlockEntity carries no capability override (21.1.249 javap) — the seam member
 	// the GT6CapabilityWiring rows delegate to (the GTItemPipeBlockEntity seam shape).
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			return (T) sideView(sideOf(aSide));

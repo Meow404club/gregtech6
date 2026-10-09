@@ -104,7 +104,7 @@ public final class GT6Atlases extends SpriteSourceProvider {
         for (String tFamily : new String[] {"cpu_logic", "cpu_control", "cpu_storage", "cpu_conversion"}) {
             for (int i = 0; i <= 10; i++) {
                 //? if forge {
-                atlas(BLOCKS_ATLAS).addSource(new SingleFile(new ResourceLocation("gt6", "block/logistics/display/" + tFamily + "/" + i), Optional.empty()));
+                atlas(BLOCKS_ATLAS).addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/display/" + tFamily + "/" + i), Optional.empty()));
                 //?} else {
                 /*atlas(BLOCKS_ATLAS).addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/display/" + tFamily + "/" + i), Optional.empty()));
                  *///?}

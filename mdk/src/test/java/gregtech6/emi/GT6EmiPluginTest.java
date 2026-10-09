@@ -207,7 +207,7 @@ public class GT6EmiPluginTest {
 
 	private static ResourceLocation id(String aPath) {
 		//? if forge {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		*///?}

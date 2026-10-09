@@ -62,7 +62,7 @@ public abstract class AbstractCoverLogisticsDisplay extends AbstractCoverAttachm
 	/** The display family answer — the CoverData visual lane picks the 0..10 bar sprite (the underlay folds in at 0). */
 	public ResourceLocation displayTexture(CoverData aData, byte aSide, String aFamily) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/logistics/display/" + aFamily + "/" + Math.max(0, Math.min(10, aData.mVisuals[aSide])));
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/display/" + aFamily + "/" + Math.max(0, Math.min(10, aData.mVisuals[aSide])));
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/display/" + aFamily + "/" + Math.max(0, Math.min(10, aData.mVisuals[aSide])));
 		 *///?}

@@ -621,7 +621,7 @@ public final class GT6RecipesCanner {
 	 */
 	static ItemStack liveLaserEmitter(String aGas) {
 		if ("helium".equals(aGas)) {
-			Item tHe = ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation("gt6", "comp_laser_gas_he"));
+			Item tHe = ForgeRegistries.ITEMS.getValue(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "comp_laser_gas_he"));
 			return tHe == null || tHe == Items.AIR ? ItemStack.EMPTY : new ItemStack(tHe);
 		}
 		return switch (aGas) {

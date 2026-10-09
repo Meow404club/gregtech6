@@ -107,7 +107,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 		try (InputStream tStream = GT6UsbDataTest.class.getResourceAsStream(tPath)) {
 			assertNotNull(tStream, "the shipped row file " + tPath + " rides the test classpath");
 			String tJson = new String(tStream.readAllBytes(), StandardCharsets.UTF_8);
-			GT6RecipeMapJsonLoader.pour(java.util.Map.of(new ResourceLocation("gt6", aMapKey), JsonParser.parseString(tJson)));
+			GT6RecipeMapJsonLoader.pour(java.util.Map.of(ResourceLocation.fromNamespaceAndPath("gt6", aMapKey), JsonParser.parseString(tJson)));
 		}
 	}
 

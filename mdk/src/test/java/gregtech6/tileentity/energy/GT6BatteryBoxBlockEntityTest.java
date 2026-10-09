@@ -52,6 +52,7 @@ public class GT6BatteryBoxBlockEntityTest extends GTOfflineTestBase {
 	@BeforeAll
 	static void warmUpAndBuild() {
 		gregtech6.tileentity.energy.GTEnergySourceBlockEntity.resolveEnergyType("TU"); // the TD CME warm-up
+		@SuppressWarnings("unchecked")
 		BlockEntityType<GT6BatteryBoxBlockEntity>[] tHolder = (BlockEntityType<GT6BatteryBoxBlockEntity>[]) new BlockEntityType<?>[1];
 		tHolder[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new GT6BatteryBoxBlockEntity(tHolder[0], aPos, aState), Blocks.STONE).build(null);

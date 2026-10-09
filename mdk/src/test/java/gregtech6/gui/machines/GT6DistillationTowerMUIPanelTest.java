@@ -131,7 +131,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 	/** The widget build position — pos() lands in the resizer's start Unit (the Area only resolves at layout, which needs an initialized ResizeNode tree the headless build lacks); read the stored pixel value directly. */
 	private static int posOf(IWidget aWidget, boolean aX) throws Exception {
-		brachy.modularui.api.widget.IPositioned tPositioned = (brachy.modularui.api.widget.IPositioned) aWidget;
+		brachy.modularui.api.widget.IPositioned<?> tPositioned = (brachy.modularui.api.widget.IPositioned<?>) aWidget;
 		java.lang.reflect.Field tAxis = tPositioned.resizer().getClass().getDeclaredField(aX ? "x" : "y");
 		tAxis.setAccessible(true);
 		Object tSizer = tAxis.get(tPositioned.resizer());
@@ -147,7 +147,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 	/** The widget build size — size() rides the resizer's size Unit (same headless face as pos()); read the stored pixel value directly. */
 	private static int sizeOf(IWidget aWidget, boolean aWidth) throws Exception {
-		brachy.modularui.api.widget.IPositioned tPositioned = (brachy.modularui.api.widget.IPositioned) aWidget;
+		brachy.modularui.api.widget.IPositioned<?> tPositioned = (brachy.modularui.api.widget.IPositioned<?>) aWidget;
 		java.lang.reflect.Field tAxis = tPositioned.resizer().getClass().getDeclaredField(aWidth ? "x" : "y");
 		tAxis.setAccessible(true);
 		Object tSizer = tAxis.get(tPositioned.resizer());
@@ -242,7 +242,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 		// the background rides the tower's mGUIPath (the borrowed PNG pair)
 		UITexture tBackground = assertInstanceOf(UITexture.class, tPanel.getBackground(), "the panel background is a texture");
-		assertEquals(new ResourceLocation("gt6", "textures/gui/machines/distillationtower.png"), tBackground.location(),
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/distillationtower.png"), tBackground.location(),
 				"the tower background path (the row-less fixture defaults the HU tower name)");
 	}
 

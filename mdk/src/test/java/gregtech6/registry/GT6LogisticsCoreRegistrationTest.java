@@ -33,16 +33,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GT6LogisticsCoreRegistrationTest {
 
-	private static final ResourceLocation CORE_ID = new ResourceLocation("gt6", "logistics_core");
-	private static final ResourceLocation CORE_BE_ID = new ResourceLocation("gt6", "multiblock_logistics_core");
+	private static final ResourceLocation CORE_ID = ResourceLocation.fromNamespaceAndPath("gt6", "logistics_core");
+	private static final ResourceLocation CORE_BE_ID = ResourceLocation.fromNamespaceAndPath("gt6", "multiblock_logistics_core");
 	private static final ResourceLocation[] PART_IDS = {
-			new ResourceLocation("gt6", "machine_wall_galvanized_steel"),   // 18008
-			new ResourceLocation("gt6", "ventilation_unit"),                // 18299
-			new ResourceLocation("gt6", "processor_unit_versatile"),        // 18200
-			new ResourceLocation("gt6", "processor_unit_logic"),            // 18201
-			new ResourceLocation("gt6", "processor_unit_control"),          // 18202
-			new ResourceLocation("gt6", "processor_unit_storage"),          // 18203
-			new ResourceLocation("gt6", "processor_unit_conversion"),       // 18204
+			ResourceLocation.fromNamespaceAndPath("gt6", "machine_wall_galvanized_steel"),   // 18008
+			ResourceLocation.fromNamespaceAndPath("gt6", "ventilation_unit"),                // 18299
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_versatile"),        // 18200
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_logic"),            // 18201
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_control"),          // 18202
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_storage"),          // 18203
+			ResourceLocation.fromNamespaceAndPath("gt6", "processor_unit_conversion"),       // 18204
 	};
 	private static final BlockPos POS = new BlockPos(1, 2, 3);
 

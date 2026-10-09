@@ -673,6 +673,8 @@ public class GT6ReactorCore2x2BlockEntity extends TileEntityBase03TicksAndSync {
 	/*// (21.1 seam: NeoForge removed BlockEntity#getCapability — the GT6CapabilityWiring
 	//registerBlockEntity row delegates to this member; no @Override. The GT6BatteryBox /
 	//GT6HopperBase member shape.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {
 			return (T) new ReactorFluidDoor();

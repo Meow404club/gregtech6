@@ -31,8 +31,9 @@ import gregapi.code.TagData;
  * {@code IIngredientHelper} (getIngredientType/getDisplayName/getUniqueId(V, UidContext)/
  * getResourceLocation/copyIngredient/getErrorInfo) + {@code IIngredientRenderer}
  * (render(GuiGraphics, T)/getTooltip(T, TooltipFlag)) — read off the harvested API sources,
- * zero stonecutter fork. The {@code new ResourceLocation} sites keep paren-free arguments
- * so the neoforge-leg ctor swap can digest them (mdk/stonecutter.gradle.kts regex table).
+ * zero stonecutter fork. ResourceLocation sites go through the platform factories
+ * ({@code parse}/{@code fromNamespaceAndPath}) on both legs since 562c2248 — the neoforge
+ * ctor swap entries (mdk/stonecutter.gradle.kts regex table) are dormant.
  */
 public final class GT6EnergyCarrierJei {
 
@@ -79,7 +80,7 @@ public final class GT6EnergyCarrierJei {
 		@Override
 		public ResourceLocation getResourceLocation(TagData aCarrier) {
 			String tPath = idPath(aCarrier); // paren-free local — the ctor swap's regex forbids parens in the arg
-			return new ResourceLocation("gt6", tPath);
+			return ResourceLocation.fromNamespaceAndPath("gt6", tPath);
 		}
 
 		@Override

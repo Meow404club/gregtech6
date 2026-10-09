@@ -99,7 +99,7 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 		sWallType = tWallHolder[0];
 		FAMILY_TAGS = java.util.Map.of(
 				net.minecraft.world.item.Items.IRON_INGOT, net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
-						new net.minecraft.resources.ResourceLocation("c", "ingots/iron")));
+						net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", "ingots/iron")));
 		sSavedTags = gregtech6.components.OM.sStackTags;
 		gregtech6.components.OM.sStackTags = aStack -> {
 			net.minecraft.tags.TagKey<Item> tTag = FAMILY_TAGS.get(aStack.getItem());
@@ -384,7 +384,7 @@ public class GTMultiBlockCrucibleInputTest extends GTMultiBlocksOfflineTestBase 
 			net.minecraft.core.Registry<Item> tRegistry = BuiltInRegistries.ITEM;
 			openOffline(tRegistry);
 			MaterialPrefixItem rItem = aCreator.get();
-			net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
+			net.minecraft.core.Registry.register(tRegistry, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aProbeId), rItem);
 			return rItem;
 		}
 

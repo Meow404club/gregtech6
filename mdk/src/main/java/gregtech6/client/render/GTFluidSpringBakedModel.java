@@ -265,7 +265,7 @@ public final class GTFluidSpringBakedModel extends GTDynamicBakedModel {
 	// ---------------------------------------------------------------------------
 
 	private static Material materialOf(ResourceLocation aSpriteId) {
-		return new Material(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS, aSpriteId);
+		return new Material(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS, aSpriteId);
 	}
 
 	/**

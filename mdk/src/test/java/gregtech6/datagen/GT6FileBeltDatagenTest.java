@@ -202,7 +202,7 @@ public class GT6FileBeltDatagenTest extends GTRecipesOfflineTestBase {
 	/** The row id (the leg-correct ResourceLocation ctor). */
 	private static ResourceLocation resourceId(String aPath) {
 		//? if forge {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 		*///?}

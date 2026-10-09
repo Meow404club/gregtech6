@@ -33,7 +33,7 @@ import gregtech6.tileentity.machines.TileEntityOven;
  */
 public class GTOvenRenderSnapshotTest extends GTMachinesOfflineTestBase {
 
-	private static final ResourceLocation TEST_SPRITE = new ResourceLocation("gt6", "block/cover/test_plate");
+	private static final ResourceLocation TEST_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_plate");
 
 	private static BlockEntityType<TileEntityOven> sSnapshotOvenType;
 

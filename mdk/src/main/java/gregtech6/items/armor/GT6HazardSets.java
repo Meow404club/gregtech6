@@ -119,7 +119,7 @@ public final class GT6HazardSets {
 	}
 
 	private static ResourceLocation gt6Id(String aPath) {
-		return new ResourceLocation(MOD_ID, aPath);
+		return ResourceLocation.fromNamespaceAndPath(MOD_ID, aPath);
 	}
 
 	private GT6HazardSets() {

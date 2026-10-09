@@ -78,7 +78,7 @@ public class GT6ItemDataTest {
 		CompoundTag tToolTag = tRoot.getCompound("GT.ToolStats");
 		assertTrue(tToolTag.contains("a", Tag.TAG_SHORT), "the 'a' key must be stored as a short");
 		assertFalse(tToolTag.contains("a", Tag.TAG_INT), "the 'a' key must not widen to an int");
-		assertEquals((short) MT.Steel.mID, tToolTag.getShort("a"));
+		assertEquals(MT.Steel.mID, tToolTag.getShort("a"));
 		assertTrue(tToolTag.contains("j", Tag.TAG_LONG), "the 'j' key is the long max-damage snapshot");
 		assertFalse(tToolTag.contains("c"), "no secondary material, no c/d keys (:184 absent stays absent)");
 		//?} else {

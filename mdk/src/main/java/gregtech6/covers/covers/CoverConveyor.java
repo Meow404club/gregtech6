@@ -66,14 +66,14 @@ public class CoverConveyor extends AbstractCoverDefault {
 
 	/** The atlas sprite of the out-facing plate (visual 0). */
 	//? if forge {
-	public static final ResourceLocation CONVEYOR_OUT_SPRITE = new ResourceLocation("gt6", "block/conveyor/out");
+	public static final ResourceLocation CONVEYOR_OUT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/out");
 	//?} else {
 	/*public static final ResourceLocation CONVEYOR_OUT_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/out");
 	 *///?}
 
 	/** The atlas sprite of the in-facing plate (visual 1). */
 	//? if forge {
-	public static final ResourceLocation CONVEYOR_IN_SPRITE = new ResourceLocation("gt6", "block/conveyor/in");
+	public static final ResourceLocation CONVEYOR_IN_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/in");
 	//?} else {
 	/*public static final ResourceLocation CONVEYOR_IN_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/in");
 	 *///?}

@@ -67,7 +67,7 @@ public final class GTBoilerClientListener {
 		return new ModelResourceLocation(GTRenderModelListener.MOD_ID, aPath, aVariant);
 		//? } else {
 		/*return new ModelResourceLocation(
-				new ResourceLocation(GTRenderModelListener.MOD_ID, aPath), aVariant);*/
+				ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, aPath), aVariant);*/
 		//? }
 	}
 

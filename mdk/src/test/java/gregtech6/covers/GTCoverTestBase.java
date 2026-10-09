@@ -29,7 +29,7 @@ public abstract class GTCoverTestBase extends GTMachinesOfflineTestBase {
 	/** The six vanilla items carrying the per-test covers — one per face of the round-trip. */
 	static final Item[] COVER_ITEMS = {Items.BRICKS, Items.IRON_INGOT, Items.GOLD_INGOT, Items.DIAMOND, Items.EMERALD, Items.NETHERITE_INGOT};
 
-	static final ResourceLocation TEST_SPRITE = new ResourceLocation("gt6", "block/cover/test_plate");
+	static final ResourceLocation TEST_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_plate");
 
 	static final BlockPos COVER_POS = new BlockPos(2, 2, 3);
 

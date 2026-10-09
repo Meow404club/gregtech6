@@ -198,6 +198,7 @@ public class OreDictMaterialChemistryTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation") // copy-helper block exercises deprecated stealQuality on purpose
 	public void setStatsAndSetStatsElementComputeMass() {
 		OreDictMaterial m = mat("Stats A", "Stats A");
 		m.setStats(26, 30, 1811, 3134, 7.874);

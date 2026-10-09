@@ -33,7 +33,7 @@ public class CoverDisplayEnergy extends AbstractCoverAttachmentDisplay {
 	/** The sprite id for a gauge level (0..10). */
 	//? if forge {
 	public static ResourceLocation spriteOf(int aLevel) {
-		return new ResourceLocation("gt6", String.format(SPRITE_PATH, Math.max(0, Math.min(10, aLevel))));
+		return ResourceLocation.fromNamespaceAndPath("gt6", String.format(SPRITE_PATH, Math.max(0, Math.min(10, aLevel))));
 	}
 	//?} else {
 	/*public static ResourceLocation spriteOf(int aLevel) {

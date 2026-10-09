@@ -72,7 +72,7 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 		assertEquals(6, tPlans.size(), "all six faces marked → six arrow quads");
 		for (GTFluidPipeFlowModel.FlowQuad tPlan : tPlans) {
 			assertEquals(GTFluidPipeFlowModel.ARROW_SPRITE, tPlan.sprite());
-			assertEquals(new ResourceLocation("gt6", "block/pipe_flow_arrow"), tPlan.sprite());
+			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/pipe_flow_arrow"), tPlan.sprite());
 		}
 	}
 

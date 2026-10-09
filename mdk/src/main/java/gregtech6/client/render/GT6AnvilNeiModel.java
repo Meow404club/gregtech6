@@ -104,7 +104,7 @@ public class GT6AnvilNeiModel extends GTDynamicBakedModel {
 	}
 
 	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
-		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(aSpriteId);
 	}
 
 	/** Unconditional (the kitchen shape): the glyph must render with or without a snapshot. */

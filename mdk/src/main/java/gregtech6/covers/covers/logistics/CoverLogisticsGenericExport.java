@@ -20,7 +20,7 @@ public class CoverLogisticsGenericExport extends AbstractCoverAttachmentLogistic
 	@Override
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		//? if forge {
-		return new ResourceLocation("gt6", "block/logistics/generic/export"); // upstream :40
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/generic/export"); // upstream :40
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "block/logistics/generic/export"); // upstream :40
 		 *///?}

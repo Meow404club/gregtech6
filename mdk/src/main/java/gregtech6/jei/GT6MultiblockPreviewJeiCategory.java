@@ -59,7 +59,7 @@ public class GT6MultiblockPreviewJeiCategory extends ModularUIJeiCategory<GT6Mul
 
 	private static RecipeType<Wrapper> recipeType() {
 		//? if forge {
-		return new RecipeType<>(new ResourceLocation("gt6", GT6MultiblockPreviews.UID_PATH), Wrapper.class);
+		return new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", GT6MultiblockPreviews.UID_PATH), Wrapper.class);
 		//?} else {
 		/*return new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", GT6MultiblockPreviews.UID_PATH), Wrapper.class);
 		 *///?}
@@ -68,7 +68,7 @@ public class GT6MultiblockPreviewJeiCategory extends ModularUIJeiCategory<GT6Mul
 	/** One wrapper per table row (the GTCEu registerRecipes loop over the definition registry). */
 	public static Wrapper wrapperOf(GT6MultiblockPreviews.Entry aEntry) {
 		//? if forge {
-		return new Wrapper(aEntry, new ResourceLocation("gt6", GT6MultiblockPreviews.UID_PATH + "/" + aEntry.name()));
+		return new Wrapper(aEntry, ResourceLocation.fromNamespaceAndPath("gt6", GT6MultiblockPreviews.UID_PATH + "/" + aEntry.name()));
 		//?} else {
 		/*return new Wrapper(aEntry, ResourceLocation.fromNamespaceAndPath("gt6",
 				GT6MultiblockPreviews.UID_PATH + "/" + aEntry.name()));

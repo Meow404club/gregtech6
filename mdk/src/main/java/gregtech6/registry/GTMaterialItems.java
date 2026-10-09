@@ -471,7 +471,7 @@ public final class GTMaterialItems {
 
     /** gt6 namespaced id. The two-arg constructor is the vanilla 1.20.1 form (ResourceLocation.java:37); Forge userdev backports a removal deprecation onto it. */
     private static ResourceLocation gtId(String path) {
-        return new ResourceLocation("gt6", path);
+        return ResourceLocation.fromNamespaceAndPath("gt6", path);
     }
 
     /** Query API for later cards: the handle of a prefix x material item, or null if not registered. */

@@ -112,7 +112,7 @@ public class GT6RecipeMapDataSqueezerSeedRowsPourTest extends GTRecipesOfflineTe
 		assertNotNull(tStream, "the shipped file " + tPath + " rides the test classpath");
 		String tJson = new String(tStream.readAllBytes(), StandardCharsets.UTF_8);
 		JsonObject tDoc = JsonParser.parseString(tJson).getAsJsonObject();
-		GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", FILE_KEY), tDoc.deepCopy()));
+		GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", FILE_KEY), tDoc.deepCopy()));
 		return tDoc.getAsJsonArray("recipes");
 	}
 
@@ -249,7 +249,7 @@ public class GT6RecipeMapDataSqueezerSeedRowsPourTest extends GTRecipesOfflineTe
 				for (JsonElement tSlot : tRow.getAsJsonArray(tLeg)) {
 					String tId = tSlot.getAsJsonObject().get("item").getAsString();
 					if (tId.startsWith("minecraft:")) {
-						assertTrue(BuiltInRegistries.ITEM.containsKey(new ResourceLocation(tId)), tId + " resolves in the vanilla registry");
+						assertTrue(BuiltInRegistries.ITEM.containsKey(ResourceLocation.parse(tId)), tId + " resolves in the vanilla registry");
 					} else {
 						assertTrue(tUniverse.contains(tId), tId + " resolves in the gt6 id universe");
 					}

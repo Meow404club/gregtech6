@@ -56,8 +56,8 @@ public final class GT6FluidTags extends FluidTagsProvider {
     protected void addTags(HolderLookup.Provider aProvider) {
         var tAppender = tag(FluidTags.WATER);
         for (String tBody : WATER_BODIES) {
-            tAppender.addOptional(new ResourceLocation(GT6DataGenerators.MOD_ID, tBody))
-                     .addOptional(new ResourceLocation(GT6DataGenerators.MOD_ID, tBody + "_flowing"));
+            tAppender.addOptional(ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tBody))
+                     .addOptional(ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tBody + "_flowing"));
         }
     }
 

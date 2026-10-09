@@ -145,9 +145,9 @@ class GT6OreRenderDatagenTest {
 	/** The shared model path derivation (the extendWithFolder pin: explicit block/ segment). */
 	@Test
 	void sharedModelNamesDeriveFromTheBaseTexture() {
-		assertEquals("block/ore/stone", GT6OreBlockStates.modelNameOf(new ResourceLocation("minecraft", "block/stone")));
+		assertEquals("block/ore/stone", GT6OreBlockStates.modelNameOf(ResourceLocation.fromNamespaceAndPath("minecraft", "block/stone")));
 		assertEquals("block/ore/stones/granite_black/stone",
-			GT6OreBlockStates.modelNameOf(new ResourceLocation("gt6", "block/stones/granite_black/stone")));
+			GT6OreBlockStates.modelNameOf(ResourceLocation.fromNamespaceAndPath("gt6", "block/stones/granite_black/stone")));
 	}
 
 	/** The composition contract: 7872 JSONs, not per-pair (the red line), model-shared. */

@@ -91,10 +91,10 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theFourSmokeRowsPourThroughTheLoaderSeam() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
-		tData.put(new ResourceLocation("gt6", "loom"), resource("loom.json"));
-		tData.put(new ResourceLocation("gt6", "boxinator"), resource("boxinator.json"));
-		tData.put(new ResourceLocation("gt6", "unboxinator"), resource("unboxinator.json"));
-		tData.put(new ResourceLocation("gt6", "fermenter"), resource("fermenter.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "loom"), resource("loom.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "boxinator"), resource("boxinator.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "unboxinator"), resource("unboxinator.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "fermenter"), resource("fermenter.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		// 2 since task recipe-b4-juicer-squeezer-flowerfruit: the seated smoke row + exactly one
@@ -148,7 +148,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 	@Test
 	void repeatedPourReplacesTheSubsetIdempotently() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
-		tData.put(new ResourceLocation("gt6", "fermenter"), resource("fermenter.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "fermenter"), resource("fermenter.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 		GT6RecipeMapJsonLoader.pour(tData);
 		assertEquals(195, GT6RecipeMaps.FERMENTER.mRecipeList.size(), "the subset replace — never a duplicate");

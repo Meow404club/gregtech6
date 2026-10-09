@@ -435,6 +435,8 @@ public class GT6SiftingTableBlockEntity extends TileEntityBase03TicksAndSync {
 	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability — this member is
 	// the provider seam; the GT6CapabilityWiring registerBlockEntity delegates to it.
 	// No @Override: the parent method does not exist on 21.1.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			return (T) newSideHandler();

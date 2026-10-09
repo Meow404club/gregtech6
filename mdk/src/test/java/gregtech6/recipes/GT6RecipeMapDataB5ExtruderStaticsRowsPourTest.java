@@ -80,7 +80,7 @@ public class GT6RecipeMapDataB5ExtruderStaticsRowsPourTest extends GTRecipesOffl
 		try (InputStream tStream = GT6RecipeMapDataB5ExtruderStaticsRowsPourTest.class.getResourceAsStream(tPath)) {
 			assertNotNull(tStream, "the shipped true-row file " + tPath + " rides the test classpath");
 			JsonObject tDoc = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
-			GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", "extruder"), tDoc));
+			GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", "extruder"), tDoc));
 			return tDoc;
 		}
 	}

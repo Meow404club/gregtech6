@@ -53,7 +53,7 @@ public class GTFoodTailTest extends GTOfflineTestBase {
 		assertEquals(GTFluids.FOOD_TAIL_SPECS, GTFluids.foodTailFluids().stream().map(f -> f.spec).toList());
 		for (GTFluids.AquaFluid tFamily : GTFluids.foodTailFluids()) {
 			//? if forge {
-			assertEquals(new net.minecraft.resources.ResourceLocation("gt6", tFamily.spec.name()), tFamily.source.getId());
+			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name()), tFamily.source.getId());
 			//?} else {
 			/*assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name()), tFamily.source.getId());
 			*///?}

@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GT6JuicerRegistrationTest {
 
-	private static final ResourceLocation JUICER_ID = new ResourceLocation("gt6", "juicer");
-	private static final ResourceLocation JUICER_BE_ID = new ResourceLocation("gt6", "juicer");
+	private static final ResourceLocation JUICER_ID = ResourceLocation.fromNamespaceAndPath("gt6", "juicer");
+	private static final ResourceLocation JUICER_BE_ID = ResourceLocation.fromNamespaceAndPath("gt6", "juicer");
 	private static final BlockPos POS = new BlockPos(2, 2, 3);
 
 	@BeforeAll
@@ -80,7 +80,7 @@ public class GT6JuicerRegistrationTest {
 				(aPos, aState) -> new GT6JuicerBlockEntity(tHolder[0], aPos, aState), Blocks.STONE).build(null);
 		assertTrue(tHolder[0].isValid(Blocks.STONE.defaultBlockState()), "the offline BET mounts the fixture block");
 		assertInstanceOf(GT6JuicerBlockEntity.class, tHolder[0].create(POS, Blocks.STONE.defaultBlockState()));
-		assertEquals("juicer", ((GT6JuicerBlockEntity)tHolder[0].create(POS, Blocks.STONE.defaultBlockState())).getTileEntityName());
+		assertEquals("juicer", (tHolder[0].create(POS, Blocks.STONE.defaultBlockState())).getTileEntityName());
 
 		if (BuiltInRegistries.BLOCK.containsKey(JUICER_ID)) {
 			// THE id686 guard — this JVM's registries are the real mod runtime view

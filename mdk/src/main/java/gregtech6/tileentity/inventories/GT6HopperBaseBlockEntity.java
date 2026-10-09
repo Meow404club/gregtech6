@@ -703,6 +703,8 @@ public abstract class GT6HopperBaseBlockEntity extends TileEntityBase03TicksAndS
 	/*// (21.1 seam: NeoForge removed BlockEntity#getCapability — the W4 registerBlockEntity
 	// delegates to this member; no @Override. Fresh per-call wrapper kept: the side is part
 	// of the handler identity (the GTItemPipeBlockEntity seam shape).
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			byte tSide = aSide == null ? SIDE_ANY : (byte) aSide.get3DDataValue();

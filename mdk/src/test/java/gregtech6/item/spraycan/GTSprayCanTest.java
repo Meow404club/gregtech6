@@ -80,7 +80,7 @@ public class GTSprayCanTest extends GTOfflineTestBase {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	/** The stack carrier read — 1.20.1 freeform NBT, 21.1 the opaque CUSTOM_DATA envelope (the item's own fork shape); a payload-less stack reads as the empty tag. */

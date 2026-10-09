@@ -37,7 +37,7 @@ public class GT6OreGenInfoEmiRecipe implements EmiRecipe {
 	public GT6OreGenInfoEmiRecipe(OreDistributionInfo.Entry aEntry, int aIndex) {
 		mEntry = aEntry;
 		//? if forge {
-		mId = new ResourceLocation("gt6", "ore_gen_info/" + aIndex);
+		mId = ResourceLocation.fromNamespaceAndPath("gt6", "ore_gen_info/" + aIndex);
 		//?} else {
 		/*mId = ResourceLocation.fromNamespaceAndPath("gt6", "ore_gen_info/" + aIndex);
 		 *///?}

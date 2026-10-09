@@ -95,8 +95,8 @@ public class GTCoverClientListenerTest {
 		for (String tDead : DEAD_FILE_IDS) {
 			BakedModel tStub = new StubFallback();
 			//? if forge {
-			tStubs.put(new ResourceLocation("gt6", tDead), tStub);
-			tModels.put(new ResourceLocation("gt6", tDead), tStub);
+			tStubs.put(ResourceLocation.fromNamespaceAndPath("gt6", tDead), tStub);
+			tModels.put(ResourceLocation.fromNamespaceAndPath("gt6", tDead), tStub);
 			//?} else {
 			/*tStubs.put(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("gt6", tDead)), tStub);
 			tModels.put(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("gt6", tDead)), tStub);
@@ -117,7 +117,7 @@ public class GTCoverClientListenerTest {
 		}
 		for (String tDead : DEAD_FILE_IDS) {
 			//? if forge {
-			assertTrue(tModels.get(new ResourceLocation("gt6", tDead)) instanceof StubFallback,
+			assertTrue(tModels.get(ResourceLocation.fromNamespaceAndPath("gt6", tDead)) instanceof StubFallback,
 			//?} else {
 			/*assertTrue(tModels.get(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("gt6", tDead))) instanceof StubFallback, // 21.1: MRL is a record over its id (no longer an RL) — the probe must use the same standalone-MRL key the stubs were inserted with (mirrors the insertion above)
 			*///?}

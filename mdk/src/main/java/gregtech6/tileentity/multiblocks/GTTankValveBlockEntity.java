@@ -645,6 +645,8 @@ public class GTTankValveBlockEntity extends TileEntityBase10MultiBlockBase
 	//?} else {
 	/*// 21.1: BlockEntity carries no getCapability — the seam member the
 	//GT6CapabilityWiring provider delegates into (the TileEntityLargeBoiler fork shape).
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.FluidHandler.BLOCK) {
 			return (T) new TankValveFluidHandler();

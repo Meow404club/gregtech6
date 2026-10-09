@@ -432,7 +432,7 @@ public class GT6ElectricToolItem extends Item implements IItemEnergy {
 	public static ItemStack switchForm(Spec aSpec, ItemStack aStack) {
 		//? if forge {
 		Item tTwin = net.minecraft.core.registries.BuiltInRegistries.ITEM
-				.get(new net.minecraft.resources.ResourceLocation("gt6", aSpec.aTwinPath()));
+				.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aSpec.aTwinPath()));
 		//?} else {
 		/*Item tTwin = net.minecraft.core.registries.BuiltInRegistries.ITEM
 				.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aSpec.aTwinPath()));

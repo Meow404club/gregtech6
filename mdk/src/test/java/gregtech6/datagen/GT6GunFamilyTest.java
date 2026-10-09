@@ -75,9 +75,9 @@ public class GT6GunFamilyTest extends GTOfflineTestBase {
 		assertSame(GT6Tools.CARBINE, GT6Tools.TAB_TABLE.get(65), "row 65 is the carbine");
 		assertSame(GT6Tools.RIFLE, GT6Tools.TAB_TABLE.get(66), "row 66 is the rifle");
 		assertEquals(GT6Tools.ARMOR_ROWS.get(0), GT6Tools.TAB_TABLE.get(67), "the armor tail stays put (the ArmorSetTest window)");
-		assertEquals(new net.minecraft.resources.ResourceLocation("gt6", "pistol"), GT6Tools.PISTOL.getId());
-		assertEquals(new net.minecraft.resources.ResourceLocation("gt6", "carbine"), GT6Tools.CARBINE.getId());
-		assertEquals(new net.minecraft.resources.ResourceLocation("gt6", "rifle"), GT6Tools.RIFLE.getId());
+		assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "pistol"), GT6Tools.PISTOL.getId());
+		assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "carbine"), GT6Tools.CARBINE.getId());
+		assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "rifle"), GT6Tools.RIFLE.getId());
 		assertEquals(3, GT6Tools.GUN_ROWS.size());
 	}
 

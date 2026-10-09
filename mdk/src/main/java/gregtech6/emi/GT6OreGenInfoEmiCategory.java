@@ -37,7 +37,7 @@ public final class GT6OreGenInfoEmiCategory extends EmiRecipeCategory {
 	/** {@code gt6:ore_gen_info} — mirrors the JEI category uid one-to-one (the JEMI skip key). */
 	public static ResourceLocation idOf() {
 		//? if forge {
-		return new ResourceLocation("gt6", "ore_gen_info");
+		return ResourceLocation.fromNamespaceAndPath("gt6", "ore_gen_info");
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "ore_gen_info");
 		 *///?}

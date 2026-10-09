@@ -128,7 +128,7 @@ public class GTBoilerBarometerModel extends GTDynamicBakedModel {
 	}
 
 	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
-		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(aSpriteId);
 	}
 
 	/** This model keys on the barometer property, not the cover chain's RENDER_SNAPSHOT. */

@@ -45,7 +45,7 @@ public class GT6OreGenInfoJeiCategory implements IRecipeCategory<OreDistribution
 
 	public GT6OreGenInfoJeiCategory() {
 		//? if forge {
-		mRecipeType = new RecipeType<>(new ResourceLocation("gt6", "ore_gen_info"), OreDistributionInfo.Entry.class);
+		mRecipeType = new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", "ore_gen_info"), OreDistributionInfo.Entry.class);
 		//?} else {
 		/*mRecipeType = new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", "ore_gen_info"), OreDistributionInfo.Entry.class);
 		 *///?}

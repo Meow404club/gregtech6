@@ -3296,17 +3296,17 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addDynamoLadders() {
         addDynamoFamily("electric_dynamo", List.of(
-                Map.entry("electric_dynamo", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO.get()),
-                Map.entry("electric_dynamo_t2", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T2.get()),
-                Map.entry("electric_dynamo_t3", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T3.get()),
-                Map.entry("electric_dynamo_t4", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T4.get()),
-                Map.entry("electric_dynamo_t5", (Block) GT6ElectricDynamos.ELECTRIC_DYNAMO_T5.get())));
+                Map.entry("electric_dynamo", GT6ElectricDynamos.ELECTRIC_DYNAMO.get()),
+                Map.entry("electric_dynamo_t2", GT6ElectricDynamos.ELECTRIC_DYNAMO_T2.get()),
+                Map.entry("electric_dynamo_t3", GT6ElectricDynamos.ELECTRIC_DYNAMO_T3.get()),
+                Map.entry("electric_dynamo_t4", GT6ElectricDynamos.ELECTRIC_DYNAMO_T4.get()),
+                Map.entry("electric_dynamo_t5", GT6ElectricDynamos.ELECTRIC_DYNAMO_T5.get())));
         addDynamoFamily("flux_dynamo", List.of(
-                Map.entry("flux_dynamo", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO.get()),
-                Map.entry("flux_dynamo_t2", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T2.get()),
-                Map.entry("flux_dynamo_t3", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T3.get()),
-                Map.entry("flux_dynamo_t4", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T4.get()),
-                Map.entry("flux_dynamo_t5", (Block) gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T5.get())));
+                Map.entry("flux_dynamo", gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO.get()),
+                Map.entry("flux_dynamo_t2", gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T2.get()),
+                Map.entry("flux_dynamo_t3", gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T3.get()),
+                Map.entry("flux_dynamo_t4", gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T4.get()),
+                Map.entry("flux_dynamo_t5", gregtech6.registry.GT6FluxDynamos.FLUX_DYNAMO_T5.get())));
     }
 
     /** One ladder walk — the shared two-layer model pair + the row BlockItem parents (the addElectricTransformer rotation form). */
@@ -4838,7 +4838,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         // the DENSE WALLS (the MultiblockPartRow rows — the ctor convention pins their
         // family DESIGNS at 7, the metalwalldense texture family)
         for (var tRow : gregtech6.registry.GTMultiBlocks.WALL_ROWS) {
-            GTMultiBlockPartBlock tBlock = (GTMultiBlockPartBlock) gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(tRow.path()).get();
+            GTMultiBlockPartBlock tBlock = gregtech6.registry.GTMultiBlocks.WALL_BLOCKS_BY_PATH.get(tRow.path()).get();
             for (int d = 0; d <= tBlock.maxDesign(); d++) {
                 ModelFile tModel = partModel(tRow.path() + "_design_" + d, "metalwalldense", d);
                 getVariantBuilder(tBlock).partialState().with(tBlock.DESIGN, d).setModels(new ConfiguredModel(tModel));
@@ -5144,11 +5144,11 @@ public final class GT6BlockStates extends BlockStateProvider {
      */
     private void addTurbinesDynamo() {
         addTurbineFamily("steam", "largeturbine", gregtech6.registry.GT6Turbines.STEAM_ROWS.stream()
-                .map(r -> Map.entry(r.path(), (net.minecraft.world.level.block.Block) gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(r.path()).get())).toList());
+                .map(r -> Map.entry(r.path(), gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(r.path()).get())).toList());
         addTurbineFamily("gas", "gasturbine", gregtech6.registry.GT6Turbines.GAS_ROWS.stream()
-                .map(r -> Map.entry(r.path(), (net.minecraft.world.level.block.Block) gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(r.path()).get())).toList());
+                .map(r -> Map.entry(r.path(), gregtech6.registry.GT6Turbines.BLOCKS_BY_PATH.get(r.path()).get())).toList());
         addTurbineFamily("dynamo", "largedynamo", gregtech6.registry.GT6DynamoHousings.DYNAMO_ROWS.stream()
-                .map(r -> Map.entry(r.path(), (net.minecraft.world.level.block.Block) gregtech6.registry.GT6DynamoHousings.BLOCKS_BY_PATH.get(r.path()).get())).toList());
+                .map(r -> Map.entry(r.path(), gregtech6.registry.GT6DynamoHousings.BLOCKS_BY_PATH.get(r.path()).get())).toList());
     }
 
     /** One family walk — the shared model over the four variant blocks (the row paths name the item models). */

@@ -1521,6 +1521,8 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — this member
 	// is the provider seam; W4's RegisterCapabilitiesEvent.registerBlockEntity delegates to it.
 	// No @Override: the parent method does not exist on 21.1.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.ItemHandler.BLOCK) {
 			if (aSide == null) {

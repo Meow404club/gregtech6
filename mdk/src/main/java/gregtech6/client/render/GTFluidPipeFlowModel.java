@@ -63,7 +63,7 @@ public class GTFluidPipeFlowModel extends GTDynamicBakedModel {
 	public static final double ARROW_THICKNESS = 1.0 / 16.0;
 
 	/** The arrow sprite — the datagen lands it as a single-file atlas source (GT6Atlases). */
-	public static final ResourceLocation ARROW_SPRITE = new ResourceLocation("gt6", "block/pipe_flow_arrow");
+	public static final ResourceLocation ARROW_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/pipe_flow_arrow");
 
 	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
 	private final Function<ResourceLocation, TextureAtlasSprite> mSpriteLookup;
@@ -80,7 +80,7 @@ public class GTFluidPipeFlowModel extends GTDynamicBakedModel {
 	}
 
 	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
-		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(aSpriteId);
 	}
 
 	/**

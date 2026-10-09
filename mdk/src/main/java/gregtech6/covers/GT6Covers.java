@@ -588,7 +588,7 @@ public final class GT6Covers {
 	 */
 	public static ResourceLocation ironPlateSprite() {
 		//? if forge {
-		return new ResourceLocation("gt6", "item/material_sets/" + GT6ItemModels.iconsetOf(MT.Iron) + "/" + MaterialPrefixItem.snakeCase(OP.plate.mNameInternal));
+		return ResourceLocation.fromNamespaceAndPath("gt6", "item/material_sets/" + GT6ItemModels.iconsetOf(MT.Iron) + "/" + MaterialPrefixItem.snakeCase(OP.plate.mNameInternal));
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "item/material_sets/" + GT6ItemModels.iconsetOf(MT.Iron) + "/" + MaterialPrefixItem.snakeCase(OP.plate.mNameInternal));
 		//21.1 privatised the two-arg ResourceLocation constructor; the swap-table regex

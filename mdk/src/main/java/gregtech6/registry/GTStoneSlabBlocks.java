@@ -123,7 +123,7 @@ public final class GTStoneSlabBlocks {
     /** gt6 namespaced id (GTStoneBlocks.java:227 form). */
     private static ResourceLocation gtId(String path) {
         //? if forge {
-        return new ResourceLocation("gt6", path);
+        return ResourceLocation.fromNamespaceAndPath("gt6", path);
         //?} else {
         /*return ResourceLocation.fromNamespaceAndPath("gt6", path); // 21.1: the (namespace, path) ctor is private
         *///?}

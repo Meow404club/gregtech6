@@ -61,14 +61,14 @@ public class GT6MaterialTreeJeiScreenButtonTest {
 		List<String> tCalls = new ArrayList<>();
 		List<Object> tArgs = new ArrayList<>();
 		IRecipeExtrasBuilder tBuilder = (IRecipeExtrasBuilder) Proxy.newProxyInstance(
-				GT6MaterialTreeJeiScreenButtonTest.class.getClassLoader(), new Class[]{IRecipeExtrasBuilder.class},
+				GT6MaterialTreeJeiScreenButtonTest.class.getClassLoader(), new Class<?>[]{IRecipeExtrasBuilder.class},
 				(aProxy, aMethod, aMethodArgs) -> {
 					tCalls.add(aMethod.getName());
 					if (aMethodArgs != null && aMethodArgs.length > 0) tArgs.add(aMethodArgs[0]);
 					Class<?> tReturn = aMethod.getReturnType();
 					// the fluent faces (addTooltipArea...) hand back an opaque double
 					return tReturn.isInterface()
-							? Proxy.newProxyInstance(tReturn.getClassLoader(), new Class[]{tReturn}, (p, m, a) -> null)
+							? Proxy.newProxyInstance(tReturn.getClassLoader(), new Class<?>[]{tReturn}, (p, m, a) -> null)
 							: null;
 				});
 		new GT6MaterialTreeJeiCategory().createRecipeExtras(tBuilder, null, null);

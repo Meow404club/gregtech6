@@ -54,7 +54,7 @@ public class GTWiresCreativeTabTest {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	private static List<ResourceLocation> ids(List<RegistryObject<net.minecraft.world.item.Item>> aTable) {

@@ -644,7 +644,7 @@ public final class GTMachines {
 	private static GTBasicMachineBlock.MachineRow canner(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
 		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), CANNER_DISPLAY_KEY, aMetaId, aHardness, aTier, 1, false,
 				() -> GT6RecipeMaps.CANNER, TD.Energy.EU, "canner",
-				(byte)(GTBasicMachineBlock.SBIT_B) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				GTBasicMachineBlock.SBIT_B /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_TANK_SIDE_IN SBIT_U|SBIT_L*/,
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_TANK_SIDE_OUT SBIT_R|SBIT_D*/,
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_INV_SIDE_IN SBIT_U|SBIT_L*/,
@@ -1219,7 +1219,7 @@ public final class GTMachines {
 		return new GTBasicMachineBlock.MachineRow("canner_ulv", "ulv", "ULV", ELECTRIC_T0, CANNER_DISPLAY_KEY, 20166, 4.0F,
 				0, 1, false,
 				() -> GT6RecipeMaps.CANNER, TD.Energy.EU, "canner",
-				(byte)(GTBasicMachineBlock.SBIT_B) /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
+				GTBasicMachineBlock.SBIT_B /*NBT_ENERGY_ACCEPTED_SIDES SBIT_B*/,
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_TANK_SIDE_IN*/,
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_TANK_SIDE_OUT*/,
 				(byte)(GTBasicMachineBlock.SBIT_U | GTBasicMachineBlock.SBIT_L) /*NBT_INV_SIDE_IN*/,

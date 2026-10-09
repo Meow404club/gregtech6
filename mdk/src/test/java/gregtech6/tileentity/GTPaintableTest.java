@@ -253,7 +253,7 @@ public class GTPaintableTest extends GTOfflineTestBase {
 		// the TileEntityOvenCoverTest shape: the cover chain rides RENDER_SNAPSHOT, the oven
 		// visuals OVEN_SNAPSHOT, the paint PAINT — three single-valued keys on one snapshot
 		CoverRegistry.reset();
-		CoverRegistry.put(Items.IRON_INGOT, new CoverTextureSimple(new net.minecraft.resources.ResourceLocation("gt6", "block/cover/test_plate")));
+		CoverRegistry.put(Items.IRON_INGOT, new CoverTextureSimple(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_plate")));
 
 		TileEntityOven tOven = oven();
 		assertFalse(tOven.getModelData().has(GTModelProperties.PAINT), "unpainted covered oven → no PAINT");

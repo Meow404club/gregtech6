@@ -176,7 +176,7 @@ class GT6HopperMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 	/** The widget build position — pos() lands in the resizer's start Unit (the headless face the batterybox test pins). */
 	private static int posOf(IWidget aWidget, boolean aX) throws Exception {
-		brachy.modularui.api.widget.IPositioned tPositioned = (brachy.modularui.api.widget.IPositioned) aWidget;
+		brachy.modularui.api.widget.IPositioned<?> tPositioned = (brachy.modularui.api.widget.IPositioned<?>) aWidget;
 		java.lang.reflect.Field tAxis = tPositioned.resizer().getClass().getDeclaredField(aX ? "x" : "y");
 		tAxis.setAccessible(true);
 		Object tSizer = tAxis.get(tPositioned.resizer());

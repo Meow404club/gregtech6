@@ -76,7 +76,7 @@ public class GTDrinksB2Test extends GTOfflineTestBase {
 		assertEquals(GTFluids.FOOD_B2_SPECS, GTFluids.foodB2Fluids().stream().map(f -> f.spec).toList());
 		for (GTFluids.AquaFluid tFamily : GTFluids.foodB2Fluids()) {
 			//? if forge {
-			assertEquals(new net.minecraft.resources.ResourceLocation("gt6", tFamily.spec.name()), tFamily.source.getId());
+			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name()), tFamily.source.getId());
 			//?} else {
 			/*assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name()), tFamily.source.getId());
 			*///?}

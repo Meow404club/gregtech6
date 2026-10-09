@@ -236,6 +236,7 @@ public class MTTableFidelityTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation") // the test pins deprecated TECH/OREMATS aliases on purpose
 	void a130_deprecatedAliasesAndInnerClasses() {
 		// upstream MT.java:1904 @Deprecated aliases are field-to-field identities
 		assertSame(MT.Ke, MT.Trinium);

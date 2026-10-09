@@ -131,7 +131,7 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 		}
 		*///?}
 		sCircuitItem = net.minecraft.core.Registry.register(tRegistry,
-				new ResourceLocation("gt6", "probe_integrated_circuit"),
+				ResourceLocation.fromNamespaceAndPath("gt6", "probe_integrated_circuit"),
 				new gregtech6.item.GT6Circuits.IntegratedCircuitItem(new net.minecraft.world.item.Item.Properties()));
 	}
 
@@ -153,8 +153,8 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 	static MachineLevel craftingLevel() {
 		TestRecipeManager tManager = new TestRecipeManager();
 		Map<ResourceLocation, com.google.gson.JsonElement> tMap = new HashMap<>();
-		tMap.put(new ResourceLocation("minecraft", "stick"), new Gson().fromJson(VANILLA_STICK_RECIPE_JSON, JsonObject.class));
-		tMap.put(new ResourceLocation("minecraft", "chest"), new Gson().fromJson(VANILLA_CHEST_RECIPE_JSON, JsonObject.class));
+		tMap.put(ResourceLocation.fromNamespaceAndPath("minecraft", "stick"), new Gson().fromJson(VANILLA_STICK_RECIPE_JSON, JsonObject.class));
+		tMap.put(ResourceLocation.fromNamespaceAndPath("minecraft", "chest"), new Gson().fromJson(VANILLA_CHEST_RECIPE_JSON, JsonObject.class));
 		tManager.load(tMap);
 		return new MachineLevel(tManager);
 	}

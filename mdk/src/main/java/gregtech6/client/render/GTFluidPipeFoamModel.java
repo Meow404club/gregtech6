@@ -61,10 +61,10 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 	public static final int FOAM_TINT_INDEX = 1;
 
 	/** The four grayscale foam sprites — FRESH/HARDENED x normal/owned (upstream :261-262 pairs). */
-	public static final ResourceLocation FRESH_SPRITE = new ResourceLocation("gt6", "block/cfoam_fresh");
-	public static final ResourceLocation FRESH_OWNED_SPRITE = new ResourceLocation("gt6", "block/cfoam_fresh_owned");
-	public static final ResourceLocation HARDENED_SPRITE = new ResourceLocation("gt6", "block/cfoam_hardened");
-	public static final ResourceLocation HARDENED_OWNED_SPRITE = new ResourceLocation("gt6", "block/cfoam_hardened_owned");
+	public static final ResourceLocation FRESH_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cfoam_fresh");
+	public static final ResourceLocation FRESH_OWNED_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cfoam_fresh_owned");
+	public static final ResourceLocation HARDENED_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cfoam_hardened");
+	public static final ResourceLocation HARDENED_OWNED_SPRITE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cfoam_hardened_owned");
 
 	/** Sprite resolver — runtime: the block atlas (Minecraft.java:2386); tests: a stub. */
 	private final Function<ResourceLocation, TextureAtlasSprite> mSpriteLookup;
@@ -81,7 +81,7 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 	}
 
 	private static Function<ResourceLocation, TextureAtlasSprite> defaultSpriteLookup() {
-		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(aSpriteId);
+		return aSpriteId -> net.minecraft.client.Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(aSpriteId);
 	}
 
 	/**

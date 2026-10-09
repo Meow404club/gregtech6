@@ -84,10 +84,10 @@ class GT6EuCoreSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 	@Test
 	void theFourSmokeRowsPourThroughTheLoaderSeam() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
-		tData.put(new ResourceLocation("gt6", "electrolyzer"), resource("electrolyzer.json"));
-		tData.put(new ResourceLocation("gt6", "injector"), resource("injector.json"));
-		tData.put(new ResourceLocation("gt6", "printer"), resource("printer.json"));
-		tData.put(new ResourceLocation("gt6", "scannervisuals"), resource("scannervisuals.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "electrolyzer"), resource("electrolyzer.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "injector"), resource("injector.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "printer"), resource("printer.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "scannervisuals"), resource("scannervisuals.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 
 		assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("electrolyzer"), "one electrolyzer smoke row");
@@ -110,7 +110,7 @@ class GT6EuCoreSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 	@Test
 	void repeatedPourReplacesTheSubsetIdempotently() throws Exception {
 		Map<ResourceLocation, JsonElement> tData = new HashMap<>();
-		tData.put(new ResourceLocation("gt6", "electrolyzer"), resource("electrolyzer.json"));
+		tData.put(ResourceLocation.fromNamespaceAndPath("gt6", "electrolyzer"), resource("electrolyzer.json"));
 		GT6RecipeMapJsonLoader.pour(tData);
 		GT6RecipeMapJsonLoader.pour(tData);
 		assertEquals(1, GT6RecipeMaps.ELECTROLYZER.mRecipeList.size(), "the subset replace — never a duplicate");

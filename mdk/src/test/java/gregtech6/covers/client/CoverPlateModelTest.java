@@ -38,8 +38,8 @@ import gregtech6.client.render.GTOfflineRenderTestBase;
  */
 public class CoverPlateModelTest extends GTOfflineRenderTestBase {
 
-	private static final ResourceLocation SPRITE_UP = new ResourceLocation("gt6", "block/cover/test_up");
-	private static final ResourceLocation SPRITE_NORTH = new ResourceLocation("gt6", "block/cover/test_north");
+	private static final ResourceLocation SPRITE_UP = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_up");
+	private static final ResourceLocation SPRITE_NORTH = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover/test_north");
 
 
 	@AfterEach
@@ -212,8 +212,8 @@ public class CoverPlateModelTest extends GTOfflineRenderTestBase {
 	@Test
 	void facetCoverPlansItsBackAndRimSprites() {
 		ResourceLocation tVentFront = new gregtech6.covers.covers.CoverVent().getCoverTextureSurface((byte) 0, null);
-		ResourceLocation tVentBack = new ResourceLocation("gt6", "block/vent/back");
-		ResourceLocation tVentSides = new ResourceLocation("gt6", "block/vent/sides");
+		ResourceLocation tVentBack = ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/back");
+		ResourceLocation tVentSides = ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/sides");
 		Map<Direction, ResourceLocation> tSprites = new HashMap<>();
 		tSprites.put(Direction.UP, tVentFront);
 		GTCoverRenderSnapshot tSnapshot = new GTCoverRenderSnapshot(tSprites);

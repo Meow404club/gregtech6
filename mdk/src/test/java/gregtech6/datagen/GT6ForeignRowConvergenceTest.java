@@ -194,7 +194,7 @@ public class GT6ForeignRowConvergenceTest {
 
             @Override
             public net.minecraft.resources.ResourceLocation getId() {
-                return new net.minecraft.resources.ResourceLocation("gt6", aId.substring(4));
+                return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aId.substring(4));
             }
 
             @Override

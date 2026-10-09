@@ -134,7 +134,7 @@ public final class GT6CropGrains {
 	 */
 	public static void registerBaseSeed(GT6CropCard aCard) {
 		String tItemId = grainItemId(aCard.name()); // the local keeps the 2-arg ctor swap-matchable on 21.1
-		BASE_SEEDS.put(new ResourceLocation("gt6", tItemId), new GT6Crops.BaseSeed(aCard, 1, 1, 1, 1));
+		BASE_SEEDS.put(ResourceLocation.fromNamespaceAndPath("gt6", tItemId), new GT6Crops.BaseSeed(aCard, 1, 1, 1, 1));
 	}
 
 	/** The {@code Crops.instance.getBaseSeed(stack)} face  --  null when the item plants nothing. */

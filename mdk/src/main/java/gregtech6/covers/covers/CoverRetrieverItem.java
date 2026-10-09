@@ -80,10 +80,10 @@ public class CoverRetrieverItem extends AbstractCoverDefault {
 	public static final String FILTER_KEY = CoverFilterItem.FILTER_KEY;
 
 	/** The atlas sprite of the normal plate — visual 0 (upstream :148, the borrow under assets/README.md). */
-	public static final ResourceLocation SPRITE_NORMAL = new ResourceLocation("gt6", "block/retrieveritem/normal");
+	public static final ResourceLocation SPRITE_NORMAL = ResourceLocation.fromNamespaceAndPath("gt6", "block/retrieveritem/normal");
 
 	/** The atlas sprite of the inverted plate — visual 1 (upstream :147). */
-	public static final ResourceLocation SPRITE_INVERTED = new ResourceLocation("gt6", "block/retrieveritem/inverted");
+	public static final ResourceLocation SPRITE_INVERTED = ResourceLocation.fromNamespaceAndPath("gt6", "block/retrieveritem/inverted");
 
 	/** Upstream :61 — the periodic trigger phase within the 20-tick window. */
 	public static final long TRIGGER_PHASE = 15;

@@ -853,6 +853,8 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
 	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.
 	// Fresh per-call wrapper kept: the side is part of the handler identity.
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == Capabilities.FluidHandler.BLOCK) {
 			return (T) new SideFluidHandler(this, aSide);

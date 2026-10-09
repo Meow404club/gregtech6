@@ -640,7 +640,7 @@ class GT6RecipesCannerTest extends GTRecipesOfflineTestBase {
 			// (b) index ↔ the inverse lookup
 			assertEquals(i, gregtech6.fluid.GTFluids.dyeIndexOf(tFluidPath), "index " + i + ": dyeIndexOf inverts dyeChemicalName");
 			// (c) index ↔ the spray_paint sibling id (RegistryObject.getId is offline-safe)
-			assertEquals(new net.minecraft.resources.ResourceLocation("gt6", "spray_paint_" + GTSprayCanItem.DYE_IDS[i]),
+			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "spray_paint_" + GTSprayCanItem.DYE_IDS[i]),
 					GT6SprayCans.SPRAY_PAINTS.get(i).getId(), "index " + i + ": the spray_paint sibling id");
 			// (d) the ROW leg — the poured row for resolver(i) outputs that sibling item
 			// (resolve through the LIVE seam form: the pour captured sResolvedIndices in order)

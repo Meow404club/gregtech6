@@ -165,7 +165,7 @@ public class CoverControllerDisplay extends AbstractCoverAttachmentController {
 	public ResourceLocation getCoverTextureSurface(byte aCoverSide, CoverData aData) {
 		String tPath = (aData.mVisuals[aCoverSide] >>> 10) % 2 != 0 ? SPRITE_PATH_TOP : SPRITE_PATH_BOTTOM;
 		//? if forge {
-		return new ResourceLocation("gt6", tPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", tPath);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", tPath);
 		 *///?}

@@ -674,6 +674,8 @@ public final class GT6Distillation {
 		/*// 21.1 face: the provider wiring (GT6CapabilityWiring.registerDistillationFaces)
 		// delegates into this seam — the TileEntityBase10MultiBlockMachine :832-840 fork form,
 		// overridden so the FLUID_HANDLER branch answers the tower's own handler.
+		// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+		@SuppressWarnings("unchecked")
 		public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 			if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {
 				return (T) new TowerFluidHandler(this, aSide);

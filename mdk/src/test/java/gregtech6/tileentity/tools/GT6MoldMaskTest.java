@@ -101,6 +101,7 @@ public class GT6MoldMaskTest extends GTOfflineTestBase {
 		} catch (Exception aE) {
 			throw new IllegalStateException("could not unfreeze the offline block-entity-type registry", aE);
 		}
+		@SuppressWarnings("unchecked")
 		BlockEntityType<TileEntityMold>[] tTypes = (BlockEntityType<TileEntityMold>[]) new BlockEntityType<?>[1];
 		tTypes[0] = BlockEntityType.Builder.of((aPos, aState) -> new TileEntityMold(tTypes[0], aPos, aState), Blocks.STONE).build(null);
 		sMoldType = tTypes[0];
@@ -161,7 +162,7 @@ public class GT6MoldMaskTest extends GTOfflineTestBase {
 			throw new IllegalStateException("could not clear the offline registry lock", aE);
 		}
 		MaterialPrefixItem rItem = aCreator.get();
-		net.minecraft.core.Registry.register(tRegistry, new ResourceLocation("gt6", aProbeId), rItem);
+		net.minecraft.core.Registry.register(tRegistry, ResourceLocation.fromNamespaceAndPath("gt6", aProbeId), rItem);
 		return rItem;
 	}
 

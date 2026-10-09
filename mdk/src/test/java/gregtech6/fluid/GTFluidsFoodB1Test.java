@@ -318,8 +318,8 @@ public class GTFluidsFoodB1Test extends GTOfflineTestBase {
 		assertEquals(GTFluids.FOOD_B1_SPECS, GTFluids.foodB1Fluids().stream().map(f -> f.spec).toList());
 		for (GTFluids.AquaFluid tFamily : GTFluids.foodB1Fluids()) {
 			//? if forge {
-			assertEquals(new net.minecraft.resources.ResourceLocation("gt6", tFamily.spec.name()), tFamily.source.getId());
-			assertEquals(new net.minecraft.resources.ResourceLocation("gt6", tFamily.spec.name() + "_flowing"), tFamily.flowing.getId());
+			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name()), tFamily.source.getId());
+			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name() + "_flowing"), tFamily.flowing.getId());
 			//?} else {
 			/*assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name()), tFamily.source.getId());
 			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tFamily.spec.name() + "_flowing"), tFamily.flowing.getId());

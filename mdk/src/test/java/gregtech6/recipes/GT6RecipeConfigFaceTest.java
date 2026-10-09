@@ -89,7 +89,7 @@ public class GT6RecipeConfigFaceTest extends GTRecipesOfflineTestBase {
 	}
 
 	private static ResourceLocation rl(String aId) {
-		return new ResourceLocation(aId);
+		return ResourceLocation.parse(aId);
 	}
 
 	private static JsonObject json(String aJson) {

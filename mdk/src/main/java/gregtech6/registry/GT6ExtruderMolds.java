@@ -54,7 +54,7 @@ public final class GT6ExtruderMolds {
 	 * port's family face: the not-consumable predicate and future mold-keyed rows key on
 	 * the TAG, not the item (the TOOLS_BUILDER_WAND ruling, GT6ItemTags.java:64-70).
 	 */
-	public static final TagKey<Item> EXTRUDER_SHAPES_TAG = TagKey.create(Registries.ITEM, new net.minecraft.resources.ResourceLocation("gt6", "extruder_shapes"));
+	public static final TagKey<Item> EXTRUDER_SHAPES_TAG = TagKey.create(Registries.ITEM, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "extruder_shapes"));
 
 	// ---- the FULL family (task mold-extruder-shapes): every upstream
 	// ---- MultiItemTechnological meta 10000-10031 (:182-216) and 10200-10231 (:258-292),

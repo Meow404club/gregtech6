@@ -119,6 +119,9 @@ public final class GT6BeeHives {
 	 *  GT6BumbleHiveBlockEntityTest fixture shape — the lambda defers the read past init). */
 	public static final RegistryObject<BlockEntityType<GT6BumbliaryBlockEntity>> BUMBLIARY_ADVANCED_BE = registerAdvancedBet();
 
+	// the raw one-slot array seam: the parameterized form is not creatable (generic array
+	// creation), and the lambda write needs the exact functional type — erasure = zero bytecode
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private static RegistryObject<BlockEntityType<GT6BumbliaryBlockEntity>> registerAdvancedBet() {
 		final BlockEntityType.BlockEntitySupplier<GT6BumbliaryBlockEntity>[] tFactory =
 				new BlockEntityType.BlockEntitySupplier[1];

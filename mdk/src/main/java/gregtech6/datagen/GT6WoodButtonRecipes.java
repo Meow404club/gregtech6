@@ -86,7 +86,7 @@ public class GT6WoodButtonRecipes implements net.minecraft.data.DataProvider {
 	/** The recipe id — {@code <form>/wood} (the head-row <form>/<snake> convention; free leaves, no craftfrom collision). */
 	static ResourceLocation rowId(BeltForm aForm) {
 		String tPath = aForm.aId() + "/wood"; // the local — the stonecutter two-arg-ctor shift skips parenthesized args (GT6ItemTags.gt6Rl note)
-		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
+		return ResourceLocation.fromNamespaceAndPath(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/**

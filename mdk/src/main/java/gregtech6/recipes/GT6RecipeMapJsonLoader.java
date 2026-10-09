@@ -568,7 +568,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 		String tText = tId.getAsString(); // hoisted: the 1.21.1 parse swap's regex takes no nested-call args
 		ResourceLocation tKey;
 		try {
-			tKey = new ResourceLocation(tText);
+			tKey = ResourceLocation.parse(tText);
 		} catch (IllegalArgumentException e) {
 			return badRow(aFileId, aIndex, "malformed item id \"" + tText + "\": " + e.getMessage());
 		}
@@ -589,7 +589,7 @@ public final class GT6RecipeMapJsonLoader extends SimpleJsonResourceReloadListen
 		String tText = tId.getAsString();
 		ResourceLocation tKey;
 		try {
-			tKey = new ResourceLocation(tText);
+			tKey = ResourceLocation.parse(tText);
 		} catch (IllegalArgumentException e) {
 			return badRow(aFileId, aIndex, "malformed fluid id \"" + tText + "\": " + e.getMessage());
 		}

@@ -76,7 +76,7 @@ class GT6RockLinesTest {
 		assertEquals(GT6RockLines.NETHER, GT6RockLines.dimensionLine(Level.NETHER), ":95 — dimensionId -1");
 		assertEquals(GT6RockLines.OVERWORLD, GT6RockLines.dimensionLine(Level.OVERWORLD), ":96 — dimensionId 0");
 		assertEquals(GT6RockLines.END, GT6RockLines.dimensionLine(Level.END), ":97 — dimensionId +1");
-		ResourceKey<Level> tProbe = ResourceKey.create(Registries.DIMENSION, new ResourceLocation("gt6", "probe_dim"));
+		ResourceKey<Level> tProbe = ResourceKey.create(Registries.DIMENSION, ResourceLocation.fromNamespaceAndPath("gt6", "probe_dim"));
 		assertEquals(GT6RockLines.FALLBACK, GT6RockLines.dimensionLine(tProbe), ":104 — every other dimension falls through");
 	}
 

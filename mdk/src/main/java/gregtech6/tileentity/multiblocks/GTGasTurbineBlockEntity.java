@@ -179,6 +179,8 @@ public class GTGasTurbineBlockEntity extends GTMultiBlockConverter {
 	//GT6CapabilityWiring provider row delegates to this member; no @Override.
 	//The FRESH per-call side wrapper form is kept — the TileEntityLargeBoiler
 	//getCapability seam shape, the side accepted unused.)
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, net.minecraft.core.Direction> aCapability, @Nullable net.minecraft.core.Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {
 			return (T) new GasFluidHandler();

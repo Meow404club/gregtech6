@@ -132,7 +132,7 @@ public abstract class GTOfflineTestBase {
 		unlockItemRegistry();
 		try {
 			return net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM,
-					new net.minecraft.resources.ResourceLocation("gt6", aKey), aItem.get());
+					net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aKey), aItem.get());
 		} finally {
 			lockItemRegistry();
 		}
@@ -198,7 +198,7 @@ public abstract class GTOfflineTestBase {
 	public static <T extends net.minecraft.world.level.block.Block> T registerBlockFixture(String aKey, java.util.function.Supplier<T> aBlock) {
 		org.junit.jupiter.api.Assumptions.assumeTrue(BlockLatch.ARMED, "the offline block-registry latch is unreachable on this JVM");
 		return underBlockWriteWindow(() -> net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-				new net.minecraft.resources.ResourceLocation("gt6", aKey), aBlock.get()));
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aKey), aBlock.get()));
 	}
 
 	/**

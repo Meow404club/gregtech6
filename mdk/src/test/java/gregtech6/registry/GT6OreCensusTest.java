@@ -216,8 +216,8 @@ class GT6OreCensusTest {
         int tLoot = 0;
         for (String tBand : new String[] {"loot_tables", "loot_table"}) {
             try (Stream<Path> tWalk = Files.list(tData.resolve(tBand).resolve("blocks"))) {
-                tLoot += tWalk.filter(Files::isRegularFile)
-                        .filter(tFile -> tFile.getFileName().toString().startsWith("ore_")).count();
+                tLoot = (int) (tLoot + tWalk.filter(Files::isRegularFile) // JLS 15.26.2 compound-assign narrowing, now explicit
+                        .filter(tFile -> tFile.getFileName().toString().startsWith("ore_")).count());
             }
         }
         assertEquals(PINNED_LOOT_TOTAL, tLoot, "ledger 3: both directory bands carry the loot walk (the walk minus the convergence gate)");

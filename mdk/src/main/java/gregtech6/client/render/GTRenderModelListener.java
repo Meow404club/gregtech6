@@ -41,7 +41,7 @@ import net.minecraftforge.fml.common.Mod;
  * generated {@code assets/gt6/atlases/blocks.json} (a datagen provider output; hand-written
  * JSON is forbidden; SpriteResourceLoader merges sources across namespaces — atlas
  * sources list, forge-docs). Runtime side — resolve the sprite through
- * {@code Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(spriteId)}
+ * {@code Minecraft.getInstance().getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(spriteId)}
  * (Minecraft.java:2386) and bake the quad's UVs from it. Textures living under
  * {@code textures/block/} are additionally always stitched by vanilla's cross-namespace
  * {@code directory("block")} atlas source (vanilla blocks.json) — the explicit source is

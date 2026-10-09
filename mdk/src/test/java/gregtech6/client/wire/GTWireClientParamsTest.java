@@ -71,7 +71,7 @@ public class GTWireClientParamsTest {
         GTWireBakedModel.Params tTin01 = GTWireClientListener.paramsFor("wire_tin_gt01");
         assertEquals(false, tTin01.insulated());
         assertEquals(2, tTin01.diameterPx(), "wireGt01 = PX_P[2]");
-        assertEquals(new ResourceLocation(GTRenderModelListener.MOD_ID, "block/materialicons/copper/wire"),
+        assertEquals(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, "block/materialicons/copper/wire"),
                 tTin01.wireSprite(), "tin = SET_COPPER");
 
         GTWireBakedModel.Params tCable12 = GTWireClientListener.paramsFor("cable_tin_gt12");
@@ -107,9 +107,9 @@ public class GTWireClientParamsTest {
         // FIBER_WIRE_OVERLAY untinted); Loader:1814-1815 — one block, PX_P[6], no cable form.
         GTWireBakedModel.Params tLaser = GTWireClientListener.paramsFor("wire_laser");
         assertNotNull(tLaser);
-        assertEquals(new ResourceLocation(GTRenderModelListener.MOD_ID, "block/iconsets/fiber_wire"), tLaser.wireSprite(),
+        assertEquals(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, "block/iconsets/fiber_wire"), tLaser.wireSprite(),
                 "the borrowed FIBER_WIRE base (tint index 0 = the mRGBa dye)");
-        assertEquals(new ResourceLocation(GTRenderModelListener.MOD_ID, "block/iconsets/fiber_wire_overlay"),
+        assertEquals(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, "block/iconsets/fiber_wire_overlay"),
                 tLaser.overlaySprite(), "the untinted FIBER_WIRE_OVERLAY layer");
         assertEquals(false, tLaser.insulated(), "the bare fiber form — no cable upstream");
         assertEquals(6, tLaser.diameterPx(), "PX_P[6] (Loader:1815 NBT_DIAMETER)");

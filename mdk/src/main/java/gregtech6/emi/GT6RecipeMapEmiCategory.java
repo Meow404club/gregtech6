@@ -43,7 +43,7 @@ public final class GT6RecipeMapEmiCategory extends EmiRecipeCategory {
 	/** {@code gt6:recipe_map/<internal>} — mirrors the JEI category uid one-to-one (the JEMI skip key). */
 	public static ResourceLocation idOf(RecipeMap aMap) {
 		//? if forge {
-		return new ResourceLocation("gt6", "recipe_map/" + aMap.mNameInternal);
+		return ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "recipe_map/" + aMap.mNameInternal);
 		 *///?}

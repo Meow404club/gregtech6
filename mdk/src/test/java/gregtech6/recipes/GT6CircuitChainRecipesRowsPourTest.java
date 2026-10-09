@@ -123,7 +123,7 @@ public class GT6CircuitChainRecipesRowsPourTest extends GTRecipesOfflineTestBase
 		InputStream tStream = GT6CircuitChainRecipesRowsPourTest.class.getResourceAsStream(tPath);
 		assertNotNull(tStream, "the shipped file " + tPath + " rides the test classpath");
 		JsonObject tDoc = JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
-		GT6RecipeMapJsonLoader.pour(Map.of(new ResourceLocation("gt6", aKey), tDoc.deepCopy()));
+		GT6RecipeMapJsonLoader.pour(Map.of(ResourceLocation.fromNamespaceAndPath("gt6", aKey), tDoc.deepCopy()));
 		return tDoc.getAsJsonArray("recipes");
 	}
 

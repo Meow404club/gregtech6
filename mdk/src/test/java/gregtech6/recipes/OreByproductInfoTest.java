@@ -247,7 +247,7 @@ class OreByproductInfoTest extends GTRecipesOfflineTestBase {
 	private static Item prefixItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
 		if (aPrefix == null || aMaterial == null) return null; // the loaders' null-pair drop semantics
 		return PREFIX_ITEMS.computeIfAbsent(new PrefixMaterial(aPrefix, aMaterial), aPair ->
-			Registry.register(BuiltInRegistries.ITEM, new net.minecraft.resources.ResourceLocation("gt6", "byproduct_probe_" + sNextProbeId++),
+			Registry.register(BuiltInRegistries.ITEM, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "byproduct_probe_" + sNextProbeId++),
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 

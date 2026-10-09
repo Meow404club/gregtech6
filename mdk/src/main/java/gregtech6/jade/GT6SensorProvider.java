@@ -83,7 +83,7 @@ public final class GT6SensorProvider implements IBlockComponentProvider, IServer
 	};
 
 	/** Provider uid（GT6BoilerProvider.java:74 同形）。 */
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "sensor_provider");
+	private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("gt6", "sensor_provider");
 
 	private GT6SensorProvider() {
 	}

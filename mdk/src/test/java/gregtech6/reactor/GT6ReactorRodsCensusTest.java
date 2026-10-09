@@ -76,7 +76,7 @@ class GT6ReactorRodsCensusTest extends GTOfflineTestBase {
 			// (the local dodges the parens — the stonecutter swap regex skips parenthesized args)
 			String tPath = aRow.path();
 			if (net.minecraft.core.registries.BuiltInRegistries.ITEM
-					.containsKey(new net.minecraft.resources.ResourceLocation("gt6", tPath))) return;
+					.containsKey(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath))) return;
 			throw new IllegalStateException("the fixture registration of " + aRow.path() + " failed: " + tFailure, tFailure);
 		}
 	}

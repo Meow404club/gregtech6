@@ -61,8 +61,8 @@ public class WrenchInteractionKeyTest {
 	public void formalWrenchStacksAreTheKey() {
 		GTWrenchItem tWrench = OMComponentFaceTest.probeItem("gt6", "wrench_key_probe_wrench", p -> new GTWrenchItem(p.durability(512)));
 		ItemStack tStack = new ItemStack(tWrench);
-		assertTrue(tWrench.classifies(GT6ToolActions.WRENCH), "the item's own classification is unchanged");
-		assertFalse(tWrench.classifies(ToolActions.HOE_DIG),
+		assertTrue(GTWrenchItem.classifies(GT6ToolActions.WRENCH), "the item's own classification is unchanged");
+		assertFalse(GTWrenchItem.classifies(ToolActions.HOE_DIG),
 				"the wrench enters through the WRENCH leg, never by classifying HOE_DIG (p25 ②)");
 		assertTrue(GT6ToolActions.isWrenchInteractionKey(tStack),
 				"THE FIX: the formal wrench shows the nine-cell grid and clicks the pipes/oven");

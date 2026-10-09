@@ -49,7 +49,7 @@ public class GT6BuilderWandItemTest {
 	}
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	// ------------------------------------------------------- the action + id pins

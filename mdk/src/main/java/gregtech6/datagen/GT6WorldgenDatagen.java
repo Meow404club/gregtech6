@@ -1345,14 +1345,14 @@ public final class GT6WorldgenDatagen {
     ) {
         // two modifiers, the nether/end faces at the ore pass (the overworld face rides
         // the strata_lenses chain — task lens-ore-base-order); keys follow Dim order.
-        TagKey<Biome>[] tDimTags = new TagKey[] {BiomeTags.IS_NETHER, BiomeTags.IS_END};
+        List<TagKey<Biome>> tDimTags = List.of(BiomeTags.IS_NETHER, BiomeTags.IS_END);
         GTOreWorldgen.Dim[] tDims = new GTOreWorldgen.Dim[] {GTOreWorldgen.Dim.NETHER, GTOreWorldgen.Dim.END};
         for (int i = 0; i < ORE_BIOME_MODIFIER_KEYS.size(); i++) {
             List<Holder<PlacedFeature>> tHolders = new ArrayList<>(54);
             for (GTOreWorldgen.Placement tPair : GTOreWorldgen.placementPairs()) {
                 if (tPair.dim() == tDims[i]) tHolders.add(aPlaced.getOrThrow(GTOreWorldgen.placedKey(tPair.row(), tPair.dim())));
             }
-            ctx.register(ORE_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tDimTags[i]),
+            ctx.register(ORE_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tDimTags.get(i)),
                     HolderSet.direct(tHolders),
                     GenerationStep.Decoration.UNDERGROUND_ORES));
         }
@@ -1722,9 +1722,10 @@ public final class GT6WorldgenDatagen {
         ctx.register(SURFACE_BIOME_MODIFIER_KEYS.get(0), addFeatures(aBiomes.getOrThrow(GT6Worldgen.SURFACE_ROCKS_BIOMES),
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.SURFACE_ROCKS_PLACED)),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
+        List<TagKey<Biome>> tSticksTags = List.of(GT6Worldgen.STICKS_DENSE_BIOMES, GT6Worldgen.STICKS_MODERATE_BIOMES,
+                GT6Worldgen.STICKS_SPARSE_BIOMES);
         for (int i = 0; i < GT6Worldgen.STICKS_GROUP_PATHS.size(); i++) {
-            TagKey<Biome> tTag = new TagKey[] {GT6Worldgen.STICKS_DENSE_BIOMES, GT6Worldgen.STICKS_MODERATE_BIOMES,
-                    GT6Worldgen.STICKS_SPARSE_BIOMES}[i];
+            TagKey<Biome> tTag = tSticksTags.get(i);
             ctx.register(SURFACE_BIOME_MODIFIER_KEYS.get(i + 1), addFeatures(aBiomes.getOrThrow(tTag),
                     HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.placedKeyOf(GT6Worldgen.STICKS_GROUP_PATHS.get(i)))),
                     GenerationStep.Decoration.VEGETAL_DECORATION));
@@ -1982,16 +1983,16 @@ public final class GT6WorldgenDatagen {
         /*BootstrapContext<BiomeModifier> ctx, HolderGetter<Biome> aBiomes, HolderGetter<PlacedFeature> aPlaced
         *///?}
     ) {
-        HolderSet<PlacedFeature>[] tPlaced = new HolderSet[] {
+        List<HolderSet<PlacedFeature>> tPlaced = List.of(
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.GLOWTUS_PLACED)),
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.BUSH_PLACED)),
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.BLACKSAND_PLACED)),
                 HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.TURF_PLACED)),
-                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.PIT_CLAY_PLACED))};
-        TagKey<Biome>[] tTags = new TagKey[] {GT6Worldgen.GLOWTUS_BIOMES, GT6Worldgen.BUSH_BIOMES,
-                GT6Worldgen.BLACKSAND_BIOMES, GT6Worldgen.TURF_BIOMES, GT6Worldgen.PIT_CLAY_BIOMES};
+                HolderSet.direct(aPlaced.getOrThrow(GT6Worldgen.PIT_CLAY_PLACED)));
+        List<TagKey<Biome>> tTags = List.of(GT6Worldgen.GLOWTUS_BIOMES, GT6Worldgen.BUSH_BIOMES,
+                GT6Worldgen.BLACKSAND_BIOMES, GT6Worldgen.TURF_BIOMES, GT6Worldgen.PIT_CLAY_BIOMES);
         for (int i = 0; i < 5; i++) {
-            ctx.register(PLANT_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tTags[i]), tPlaced[i],
+            ctx.register(PLANT_BIOME_MODIFIER_KEYS.get(i), addFeatures(aBiomes.getOrThrow(tTags.get(i)), tPlaced.get(i),
                     i < 2 ? GenerationStep.Decoration.VEGETAL_DECORATION // the plant rows ride the deco pass
                           : GenerationStep.Decoration.LOCAL_MODIFICATIONS)); // the soil disks ride the vanilla disk pass
         }
@@ -2004,8 +2005,8 @@ public final class GT6WorldgenDatagen {
                     GenerationStep.Decoration.LOCAL_MODIFICATIONS));
         }
         for (int i = 0; i < GT6Worldgen.FALLEN_LOG_PLACED_KEYS.size(); i++) {
-            TagKey<Biome> tLogTag = new TagKey[] {GT6Worldgen.LOG_DRY_BIOMES, GT6Worldgen.LOG_ROTTEN_BIOMES,
-                    GT6Worldgen.LOG_MOSSY_BIOMES, GT6Worldgen.LOG_FROZEN_BIOMES}[i];
+            TagKey<Biome> tLogTag = List.of(GT6Worldgen.LOG_DRY_BIOMES, GT6Worldgen.LOG_ROTTEN_BIOMES,
+                    GT6Worldgen.LOG_MOSSY_BIOMES, GT6Worldgen.LOG_FROZEN_BIOMES).get(i);
             // the frozen row rides TOP_LAYER_MODIFICATION (appends AFTER the vanilla
             // FREEZE_TOP_LAYER in the same step list): its contact face needs the snow
             // layer ALREADY on the ground — the vegetal step runs before the freeze and

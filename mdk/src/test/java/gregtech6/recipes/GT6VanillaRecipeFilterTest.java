@@ -104,7 +104,7 @@ public class GT6VanillaRecipeFilterTest extends GTRecipesOfflineTestBase {
 
 	private static ResourceLocation mc(String aPath) {
 		//? if forge {
-		return new ResourceLocation("minecraft", aPath);
+		return ResourceLocation.fromNamespaceAndPath("minecraft", aPath);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("minecraft", aPath);
 		*///?}

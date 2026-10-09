@@ -888,6 +888,8 @@ public class TileEntityCrucible extends TileEntityBase10MultiBlockBase implement
 	// delegates to this member; no @Override. The item face = the slot-0 feed handler over
 	// the Root mInventory carrier (the GT6HopperBaseBlockEntity seam shape), so the
 	// MULTIBLOCK_CRUCIBLE_BE wiring row and every wall-part relay resolve the feed slot.
+	// the (T) ItemHandler cast: T pairs with aCapability by the caller contract; erasure = zero bytecode
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			return (T) mInventory;

@@ -171,7 +171,7 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 	public static final int MAX_CONTENT_ROWS = 5;
 
 	/** 熔毁行/温度行的显示量纲词——上游温度计与 tooltip 均裸 K（Smeltery:512/:114）。 */
-	private static final ResourceLocation UID = new ResourceLocation("gt6", "crucible_provider");
+	private static final ResourceLocation UID = ResourceLocation.fromNamespaceAndPath("gt6", "crucible_provider");
 
 	private GT6CrucibleProvider() {
 	}

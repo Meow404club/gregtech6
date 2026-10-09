@@ -54,7 +54,7 @@ class GTOreOverlay211SeamTest {
 		// forge dispatch's toString-split contract must yield the table path.
 		net.minecraft.client.resources.model.ModelResourceLocation tKey =
 				new net.minecraft.client.resources.model.ModelResourceLocation(
-						new net.minecraft.resources.ResourceLocation("gt6", tPath), "inventory");
+						net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath), "inventory");
 		String tKeyString = tKey.toString();
 		assertEquals("gt6:" + tPath + "#inventory", tKeyString);
 		assertEquals(tPath, tKeyString.substring("gt6".length() + 1).split("#", 2)[0]);

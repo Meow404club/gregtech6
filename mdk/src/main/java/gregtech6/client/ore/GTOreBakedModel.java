@@ -163,7 +163,7 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 
 	/** The material of a sprite id: the blocks atlas + the id (the 1.20.1 lookup's payload split out). */
 	public static Material materialOf(ResourceLocation aSpriteId) {
-		return new Material(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS, aSpriteId);
+		return new Material(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS, aSpriteId);
 	}
 
 	private static Function<Material, TextureAtlasSprite> defaultSpriteLookup() {
@@ -447,7 +447,7 @@ public class GTOreBakedModel implements IDynamicBakedModel {
 
 	/** The vanilla-namespaced block texture id. */
 	private static ResourceLocation mcBlock(String aPath) {
-		return new ResourceLocation("minecraft", "block/" + aPath);
+		return ResourceLocation.fromNamespaceAndPath("minecraft", "block/" + aPath);
 	}
 
 	/**

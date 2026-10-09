@@ -278,7 +278,7 @@ public final class GT6ComponentDeriver {
 		public static Manifest load(ResourceManager aManager) {
 			try {
 				//? if forge {
-				var tResource = aManager.getResource(new ResourceLocation("gt6", MANIFEST_PATH));
+				var tResource = aManager.getResource(ResourceLocation.fromNamespaceAndPath("gt6", MANIFEST_PATH));
 				//?} else {
 				/*var tResource = aManager.getResource(ResourceLocation.fromNamespaceAndPath("gt6", MANIFEST_PATH));
 				 *///?}
@@ -298,7 +298,7 @@ public final class GT6ComponentDeriver {
 			var rIds = new java.util.LinkedHashSet<ResourceLocation>(tArray.size());
 			for (JsonElement tEntry : tArray) {
 				//? if forge {
-				rIds.add(new ResourceLocation(tEntry.getAsString()));
+				rIds.add(ResourceLocation.parse(tEntry.getAsString()));
 				//?} else {
 				/*rIds.add(ResourceLocation.parse(tEntry.getAsString())); // the full "gt6:foo" id string parses itself
 				 *///?}

@@ -31,7 +31,7 @@ public class CoverSelectorManual extends AbstractCoverAttachmentSelector {
 	/** The atlas sprite of the mode plates — the per-mode art (upstream sTextures, :99-116). */
 	//? if forge {
 	public static ResourceLocation spriteOf(byte aMode) {
-		return new ResourceLocation("gt6", "block/manualselector/" + UT6.bind4(aMode));
+		return ResourceLocation.fromNamespaceAndPath("gt6", "block/manualselector/" + UT6.bind4(aMode));
 	}
 	//?} else {
 	/*public static ResourceLocation spriteOf(byte aMode) {
@@ -52,7 +52,7 @@ public class CoverSelectorManual extends AbstractCoverAttachmentSelector {
 	public void onCoverLoaded(byte aSide, CoverData aData) {
 		super.onCoverLoaded(aSide, aData);
 		if (aData.mTileEntity instanceof ITileEntitySwitchableMode tSwitchable)
-			tSwitchable.setStateMode((byte) UT6.bind4(aData.mVisuals[aSide] & 15));
+			tSwitchable.setStateMode(UT6.bind4(aData.mVisuals[aSide] & 15));
 	}
 
 	/** Upstream :50-52 — a block update mirrors the host dial (blocked hosts do not mirror). */

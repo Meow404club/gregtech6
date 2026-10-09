@@ -123,7 +123,7 @@ public class GT6PlankRegistrationTest {
         // path, GT6TreeBlocks.registerItems) and the vanilla half resolves unguarded.
         for (GT6WoodDict.PlankEntry tRow : GT6WoodDict.GT6_ROWS) {
             //? if forge {
-            net.minecraft.resources.ResourceLocation tLoc = new net.minecraft.resources.ResourceLocation("gt6", tRow.id());
+            net.minecraft.resources.ResourceLocation tLoc = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tRow.id());
             //?} else {
             /*net.minecraft.resources.ResourceLocation tLoc = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tRow.id());
              *///?}
@@ -174,7 +174,7 @@ public class GT6PlankRegistrationTest {
     /** Whether the mod-runtime JVM bound the plank item face (the id686 guard probe). */
     private static boolean plankWoodBound() {
         //? if forge {
-        return net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(new net.minecraft.resources.ResourceLocation("gt6", "plank_wood"));
+        return net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "plank_wood"));
         //?} else {
         /*return net.minecraft.core.registries.BuiltInRegistries.ITEM.containsKey(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "plank_wood"));
          *///?}

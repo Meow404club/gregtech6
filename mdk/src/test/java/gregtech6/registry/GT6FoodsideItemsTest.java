@@ -60,7 +60,7 @@ public class GT6FoodsideItemsTest {
 	}
 
 	private static ResourceLocation rl(String aNamespace, String aPath) {
-		return new ResourceLocation(aNamespace, aPath);
+		return ResourceLocation.fromNamespaceAndPath(aNamespace, aPath);
 	}
 
 	private static ResourceLocation rl(String aPath) {

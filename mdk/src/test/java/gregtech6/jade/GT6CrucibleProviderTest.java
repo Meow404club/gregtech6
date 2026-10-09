@@ -232,7 +232,7 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 		assertEquals(tMoltenFace.tintARGB(), tMoltenOverlay.getInt(GT6CrucibleProvider.OVERLAY_TINT));
 		// the upstream :299 edge: exactly AT the melting point counts as molten (the > gate)
 		CompoundTag tEdge = new CompoundTag();
-		GT6CrucibleProvider.writeCrucibleData(tEdge, (long)MT.Cu.mMeltingPoint, 2000, false, 16 * CS.U, tCopper);
+		GT6CrucibleProvider.writeCrucibleData(tEdge, MT.Cu.mMeltingPoint, 2000, false, 16 * CS.U, tCopper);
 		assertTrue(tEdge.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), "melting point <= temperature — the <= arm");
 	}
 

@@ -75,10 +75,10 @@ public record GTCoverRenderSnapshot(Map<Direction, ResourceLocation> coverSprite
 		Map<Direction, List<ResourceLocation>> layers) implements GTRenderSnapshot {
 
 	/** The plate background sprite — upstream {@code machines/covers/base.png} (AbstractCoverDefault.java:111 BACKGROUND_COVER), borrowed byte-identical (see assets README). */
-	public static final ResourceLocation SPRITE_PLATE_BASE = new ResourceLocation("gt6", "block/covers/base");
+	public static final ResourceLocation SPRITE_PLATE_BASE = ResourceLocation.fromNamespaceAndPath("gt6", "block/covers/base");
 
 	/** The cover controller's own background — upstream {@code machines/covers/coverswitch/base.png} (CoverControllerCovers.java:104 sTextureBackground), NOT the shared base. */
-	public static final ResourceLocation SPRITE_COVER_SWITCH_BASE = new ResourceLocation("gt6", "block/cover_switch/base");
+	public static final ResourceLocation SPRITE_COVER_SWITCH_BASE = ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_switch/base");
 
 	/**
 	 * The census table (task render-cover-multilayer): surface sprite id → the
@@ -168,49 +168,49 @@ public record GTCoverRenderSnapshot(Map<Direction, ResourceLocation> coverSprite
 	private static Map<ResourceLocation, ResourceLocation> buildUnderlays() {
 		Map<ResourceLocation, ResourceLocation> rMap = new HashMap<>();
 		// the shared BACKGROUND_COVER base (AbstractCoverDefault.java:111) under every plain-fg cover:
-		rMap.put(new ResourceLocation("gt6", "block/redstone_switch/circuit"), SPRITE_PLATE_BASE);      // CoverControllerRedstone :62 (fg :65)
-		rMap.put(new ResourceLocation("gt6", "block/auto_redstone_switch/circuit"), SPRITE_PLATE_BASE);  // CoverControllerAutoRedstone :64 (fg :67)
-		rMap.put(new ResourceLocation("gt6", "block/shutter/normal"), SPRITE_PLATE_BASE);                // CoverShutter :88 (fg :93)
-		rMap.put(new ResourceLocation("gt6", "block/shutter/inverted"), SPRITE_PLATE_BASE);              // CoverShutter :88 (fg :94)
-		rMap.put(new ResourceLocation("gt6", "block/filteritem/normal"), SPRITE_PLATE_BASE);             // CoverFilterItem :140 (fg :145)
-		rMap.put(new ResourceLocation("gt6", "block/filteritem/inverted"), SPRITE_PLATE_BASE);           // CoverFilterItem :140 (fg :146)
-		rMap.put(new ResourceLocation("gt6", "block/conveyor/in"), SPRITE_PLATE_BASE);                   // CoverConveyor :84 (fg :93)
-		rMap.put(new ResourceLocation("gt6", "block/conveyor/out"), SPRITE_PLATE_BASE);                  // CoverConveyor :84 (fg :94)
-		rMap.put(new ResourceLocation("gt6", "block/robotarm/in"), SPRITE_PLATE_BASE);                   // CoverRobotArm :111 (fg :119)
-		rMap.put(new ResourceLocation("gt6", "block/robotarm/out"), SPRITE_PLATE_BASE);                  // CoverRobotArm :111 (fg :120)
-		rMap.put(new ResourceLocation("gt6", "block/cover_pump_in"), SPRITE_PLATE_BASE);                 // CoverPump :88 (fg :96/:97)
-		rMap.put(new ResourceLocation("gt6", "block/cover_pump_out"), SPRITE_PLATE_BASE);                // CoverPump :88 (fg :96/:97)
-		rMap.put(new ResourceLocation("gt6", "block/redstone_conductor/in"), SPRITE_PLATE_BASE);         // CoverRedstoneConductorIN :32 (fg :35)
-		rMap.put(new ResourceLocation("gt6", "block/redstone_conductor/out"), SPRITE_PLATE_BASE);        // CoverRedstoneConductorOUT :60 (fg :63)
-		rMap.put(new ResourceLocation("gt6", "item/material_sets/metallic/plate"), SPRITE_PLATE_BASE);   // the iron plate cover (CoverTextureSimple :50; GT6Covers.ironPlateSprite)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/redstone_switch/circuit"), SPRITE_PLATE_BASE);      // CoverControllerRedstone :62 (fg :65)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/auto_redstone_switch/circuit"), SPRITE_PLATE_BASE);  // CoverControllerAutoRedstone :64 (fg :67)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/shutter/normal"), SPRITE_PLATE_BASE);                // CoverShutter :88 (fg :93)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/shutter/inverted"), SPRITE_PLATE_BASE);              // CoverShutter :88 (fg :94)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/filteritem/normal"), SPRITE_PLATE_BASE);             // CoverFilterItem :140 (fg :145)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/filteritem/inverted"), SPRITE_PLATE_BASE);           // CoverFilterItem :140 (fg :146)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/in"), SPRITE_PLATE_BASE);                   // CoverConveyor :84 (fg :93)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/conveyor/out"), SPRITE_PLATE_BASE);                  // CoverConveyor :84 (fg :94)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/robotarm/in"), SPRITE_PLATE_BASE);                   // CoverRobotArm :111 (fg :119)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/robotarm/out"), SPRITE_PLATE_BASE);                  // CoverRobotArm :111 (fg :120)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_in"), SPRITE_PLATE_BASE);                 // CoverPump :88 (fg :96/:97)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_pump_out"), SPRITE_PLATE_BASE);                // CoverPump :88 (fg :96/:97)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/redstone_conductor/in"), SPRITE_PLATE_BASE);         // CoverRedstoneConductorIN :32 (fg :35)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/redstone_conductor/out"), SPRITE_PLATE_BASE);        // CoverRedstoneConductorOUT :60 (fg :63)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "item/material_sets/metallic/plate"), SPRITE_PLATE_BASE);   // the iron plate cover (CoverTextureSimple :50; GT6Covers.ironPlateSprite)
 		for (int i = 0; i < 16; i++) {
 			// the emitter's 16 composed tier sprites (CoverRedstoneEmitter :112 wraps the surface multi in BACKGROUND_COVER; the tier PNGs already fold underlay+digit)
-			rMap.put(new ResourceLocation("gt6", "block/redstone_emitter/" + i), SPRITE_PLATE_BASE);
+			rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/redstone_emitter/" + i), SPRITE_PLATE_BASE);
 		}
 		// the cover controller's OWN background (CoverControllerCovers :101 with sTextureBackground :104):
-		rMap.put(new ResourceLocation("gt6", "block/cover_switch/circuit"), SPRITE_COVER_SWITCH_BASE);
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/cover_switch/circuit"), SPRITE_COVER_SWITCH_BASE);
 		// — the cover-underlay-census widening — the attachment-wrap family (upstream wraps fg in BACKGROUND_COVER):
-		rMap.put(new ResourceLocation("gt6", "block/filterfluid/normal"), SPRITE_PLATE_BASE);      // CoverFilterFluid :132 (fg :139)
-		rMap.put(new ResourceLocation("gt6", "block/filterfluid/inverted"), SPRITE_PLATE_BASE);    // CoverFilterFluid :132 (fg :138)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/filterfluid/normal"), SPRITE_PLATE_BASE);      // CoverFilterFluid :132 (fg :139)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/filterfluid/inverted"), SPRITE_PLATE_BASE);    // CoverFilterFluid :132 (fg :138)
 		for (int i = 0; i < 16; i++) {
 			// the tag-selector ladder (CoverSelectorTag :60 — surface = multi(selectortag/underlay, digit), wrapped in BACKGROUND_COVER;
 			// the port's 16 shipped PNGs pre-composite underlay+digit, so the census base completes the 3-layer stack)
-			rMap.put(new ResourceLocation("gt6", "block/selectortag/" + i), SPRITE_PLATE_BASE);
+			rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/selectortag/" + i), SPRITE_PLATE_BASE);
 		}
-		rMap.put(new ResourceLocation("gt6", "block/crafting/0"), SPRITE_PLATE_BASE);              // CoverCrafting → CoverTextureMulti :71 (fg folder :42)
-		rMap.put(new ResourceLocation("gt6", "block/asphalt"), SPRITE_PLATE_BASE);                 // CoverAsphalt → CoverTextureSimple :50
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/crafting/0"), SPRITE_PLATE_BASE);              // CoverCrafting → CoverTextureMulti :71 (fg folder :42)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/asphalt"), SPRITE_PLATE_BASE);                 // CoverAsphalt → CoverTextureSimple :50
 		// the facet family — NO BACKGROUND_COVER wrap upstream (vent :77-84 / drain :246-253 / pressure valve :80-91 are
 		// single-texture attachments), but the flush-host surface pass :453 still pairs the host wall under the art; the
 		// port's plate replaces that host face, so the base stands in for it (the same single-sprite-fold defect):
-		rMap.put(new ResourceLocation("gt6", "block/vent/front"), SPRITE_PLATE_BASE);              // CoverVent :77 (surface)
-		rMap.put(new ResourceLocation("gt6", "block/drain/front"), SPRITE_PLATE_BASE);             // CoverDrain :246 (surface)
-		rMap.put(new ResourceLocation("gt6", "block/pressurevalve/front"), SPRITE_PLATE_BASE);     // CoverPressureValve :80 (surface)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/front"), SPRITE_PLATE_BASE);              // CoverVent :77 (surface)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/drain/front"), SPRITE_PLATE_BASE);             // CoverDrain :246 (surface)
+		rMap.put(ResourceLocation.fromNamespaceAndPath("gt6", "block/pressurevalve/front"), SPRITE_PLATE_BASE);     // CoverPressureValve :80 (surface)
 		return Map.copyOf(rMap);
 	}
 
 	/** The facet table — the one faceted family (upstream CoverVent :77-84; drain :247 shares the shape, same follow-up). */
 	private static Map<ResourceLocation, Facets> buildFacets() {
-		return Map.of(new ResourceLocation("gt6", "block/vent/front"),
-				new Facets(new ResourceLocation("gt6", "block/vent/back"), new ResourceLocation("gt6", "block/vent/sides")));
+		return Map.of(ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/front"),
+				new Facets(ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/back"), ResourceLocation.fromNamespaceAndPath("gt6", "block/vent/sides")));
 	}
 }

@@ -161,11 +161,11 @@ public class GTFluidsBottlesPrereqTest extends GTOfflineTestBase {
 		for (List<GTFluids.DyeFluid> tFamilies : List.of(GTFluids.DYE_WATERMIXED, GTFluids.DYE_FLOWER)) {
 			for (GTFluids.DyeFluid tFamily : tFamilies) {
 				//? if forge {
-				ResourceLocation tBase = new ResourceLocation("gt6", tFamily.name());
+				ResourceLocation tBase = ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name());
 				assertEquals(tBase, tFamily.type.getId(), tFamily.name() + ": FluidType id");
 				assertEquals(tBase, tFamily.source.getId(), tFamily.name() + ": source fluid id");
-				assertEquals(new ResourceLocation("gt6", tFamily.name() + "_flowing"), tFamily.flowing.getId(), tFamily.name() + ": flowing fluid id");
-				assertEquals(new ResourceLocation("gt6", tFamily.name() + "_block"), tFamily.block.getId(), tFamily.name() + ": liquid block id");
+				assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name() + "_flowing"), tFamily.flowing.getId(), tFamily.name() + ": flowing fluid id");
+				assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name() + "_block"), tFamily.block.getId(), tFamily.name() + ": liquid block id");
 				//?} else {
 				/*ResourceLocation tBase = ResourceLocation.fromNamespaceAndPath("gt6", tFamily.name());
 				assertEquals(tBase, tFamily.type.getId(), tFamily.name() + ": FluidType id");

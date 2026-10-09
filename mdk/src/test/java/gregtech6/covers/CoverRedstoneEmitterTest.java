@@ -144,7 +144,7 @@ public class CoverRedstoneEmitterTest extends GTCoverTestBase {
 			tData.value(tEmissionFace, (short) 1, false);
 			assertEquals(7, tOven.getRedstoneOutStrong(tQuerySide, 0), "gate on: the strong exit carries the tier");
 			// the neighbouring query from the SAME side the emitter sits on reads the bare face
-			byte tBareQuery = (byte) tEmissionFace; // querying along the emission face folds to OPOS[face] != face
+			byte tBareQuery = tEmissionFace; // querying along the emission face folds to OPOS[face] != face
 			byte tOtherFace = UT6.OPOS[tBareQuery];
 			if (tOtherFace != tEmissionFace) {
 				assertEquals(0, tOven.getRedstoneOutWeak(tBareQuery, 0), "the opposite query lands on the bare face");
@@ -307,7 +307,7 @@ public class CoverRedstoneEmitterTest extends GTCoverTestBase {
 			tData.visual(FACE, (short) tTier, false);
 			assertEquals("gt6:block/redstone_emitter/" + tTier, tEmitter.getCoverTextureSurface(FACE, tData).toString(),
 					"the tier maps onto its sprite");
-			assertEquals(new net.minecraft.resources.ResourceLocation("gt6", CoverRedstoneEmitter.SPRITE_PATH + tTier),
+			assertEquals(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", CoverRedstoneEmitter.SPRITE_PATH + tTier),
 					CoverRedstoneEmitter.spriteForTier(tTier), "the pure sprite function");
 		}
 	}

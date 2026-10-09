@@ -122,10 +122,10 @@ public class GTRenderUpdatesTest extends GTOfflineRenderTestBase {
 		}
 
 		static Holder<DimensionType> dimensionHolder() {
-			ResourceKey<DimensionType> tKey = ResourceKey.create(Registries.DIMENSION_TYPE, new ResourceLocation("gt6:test"));
+			ResourceKey<DimensionType> tKey = ResourceKey.create(Registries.DIMENSION_TYPE, ResourceLocation.parse("gt6:test"));
 			DimensionType tType = new DimensionType(java.util.OptionalLong.empty(), true, false, false, true, 1.0, true, false, -64, 384, 384,
-					net.minecraft.tags.TagKey.create(Registries.BLOCK, new ResourceLocation("minecraft:infiniburn_overworld")),
-					new ResourceLocation("minecraft:overworld"), 0.0F, null);
+					net.minecraft.tags.TagKey.create(Registries.BLOCK, ResourceLocation.parse("minecraft:infiniburn_overworld")),
+					ResourceLocation.parse("minecraft:overworld"), 0.0F, null);
 			return new Holder<DimensionType>() {
 				@Override public DimensionType value() { return tType; }
 				@Override public boolean isBound() { return true; }

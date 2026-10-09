@@ -51,7 +51,7 @@ import gregtech6.tileentity.GTOfflineTestBase;
 public class GT6CropsCreativeTabTest extends GTOfflineTestBase {
 
 	private static ResourceLocation rl(String aPath) {
-		return new ResourceLocation("gt6", aPath);
+		return ResourceLocation.fromNamespaceAndPath("gt6", aPath);
 	}
 
 	/** The holder-bound face — the FML test JVM binds live, the bare forge JVM does not (the CropEndToEndTest:177 fork). */

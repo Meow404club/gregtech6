@@ -100,7 +100,7 @@ public class WrenchMiningTest {
 			// NetworkHooks.init() failure is expected offline; registries are ready by now.
 		}
 		GT6MaterialTestSupport.materials(); // the hermetic bracket (the MT.Steel fallback path)
-		gWrenchMineable = TagKey.create(Registries.BLOCK, new ResourceLocation("gt6", "mineable/wrench"));
+		gWrenchMineable = TagKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("gt6", "mineable/wrench"));
 		gWrench = OMComponentFaceTest.probeItem("gt6", "mining_probe_wrench", p -> new GTWrenchItem(p.durability(512)));
 		bindWrenchFace(holder(Blocks.HOPPER), holder(Blocks.DISPENSER), holder(Blocks.DROPPER),
 				holder(Blocks.PISTON), holder(Blocks.STICKY_PISTON), holder(Blocks.PISTON_HEAD),
@@ -111,8 +111,13 @@ public class WrenchMiningTest {
 	 * The offline stand-in for the datapack tag load — the registry-level bindTags (the
 	 * vanilla MappedRegistry.java:374 load face) over the nine vanilla band members.
 	 */
+	@SafeVarargs
 	private static void bindWrenchFace(Holder<Block>... aMembers) {
-		BuiltInRegistries.BLOCK.bindTags(java.util.Map.of(gWrenchMineable, List.of(aMembers)));
+		// the explicit copy — List.of(aMembers) would pass the non-reifiable array to another
+		// varargs callee, which [varargs] flags even under @SafeVarargs
+		java.util.List<Holder<Block>> tMembers = new java.util.ArrayList<>(aMembers.length);
+		for (Holder<Block> tMember : aMembers) tMembers.add(tMember);
+		BuiltInRegistries.BLOCK.bindTags(java.util.Map.of(gWrenchMineable, List.copyOf(tMembers)));
 	}
 
 	private static Holder<Block> holder(Block aBlock) {
@@ -132,7 +137,7 @@ public class WrenchMiningTest {
 	public void theWrenchFaceDigsAtTheMaterialSpeedAndAuthorizesDrops() {
 		for (String tPath : VANILLA_MEMBERS) {
 			BlockState tState = BuiltInRegistries.BLOCK.get(
-					new ResourceLocation(tPath)).defaultBlockState();
+					ResourceLocation.parse(tPath)).defaultBlockState();
 			assertEquals(6.0F, gWrench.getDestroySpeed(ItemStack.EMPTY, tState),
 					"the wrench-mineable surface digs at the Steel anchor (identity-less = the fallback): " + tPath);
 			assertTrue(isCorrectTool(gWrench, tState), "the face authorizes the drops: " + tPath);
