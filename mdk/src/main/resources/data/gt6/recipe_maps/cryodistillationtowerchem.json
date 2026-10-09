@@ -1,11 +1,11 @@
 {
-  "_header": "RM.CRYO_DISTILLATION_TOWER Chem face — Loader_Recipes_Chem.java:363-365 (task recipe-b1-chem-domain; the :363 plain-air row rewired onto the registered gt6:air, task cryo-distillery-air-rewire). Gas ladders integer-floor per the upstream long arithmetic (U7->142, U20->50, U100->10, U1000->1 mB). KJS: datapack domain.",
+  "_header": "RM.CRYO_DISTILLATION_TOWER Chem face — Loader_Recipes_Chem.java:363-365 (task recipe-b1-chem-domain; the :363 plain-air row rewired onto the registered gt6:air, task cryo-distillery-air-rewire). Gas ladders integer-floor per the upstream long arithmetic (U7->142, U20->50, U100->10, U1000->1 mB). The :363/:365 dust legs are OP.dustTiny.mat(MT.Ice, 1) — only :364 is Ash (the early ashes seating misread the upstream rows; repointed, task cryo-ice-repoint). KJS: datapack domain.",
   "recipes": [
     {
       "comment": "RM.CryoDT Chem:363 Plain Air",
       "outputs": [
         {
-          "item": "gt6:dust_tiny_ashes",
+          "item": "gt6:dust_tiny_ice",
           "count": 1,
           "chance": 9000
         }
@@ -93,7 +93,7 @@
       "comment": "RM.CryoDT Chem:365 Ender Air",
       "outputs": [
         {
-          "item": "gt6:dust_tiny_ashes",
+          "item": "gt6:dust_tiny_ice",
           "count": 1,
           "chance": 6000
         }
