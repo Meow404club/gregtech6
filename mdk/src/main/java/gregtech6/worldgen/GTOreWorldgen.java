@@ -734,6 +734,7 @@ public final class GTOreWorldgen {
         // (GT6OreBlocks.axisWitness) — the known_bugs.datagen_axis_emission_jvm_lottery
         // root fix.
         GTMaterialItems.initMaterials();
+        List<OreDictMaterial> tAmbient = GT6OreBlocks.materialAxis(); // one scan shared by the walk and the canary below
         List<TwilightOreRow> rRows = new ArrayList<>(23);
         for (TwilightOreRow tRow : TWILIGHT_ORE_ROWS) {
             if (twilightOnAxis(tRow)) rRows.add(tRow);
@@ -742,7 +743,39 @@ public final class GTOreWorldgen {
             if (twilightOnAxis(tRow)) rRows.add(tRow);
         }
         if (twilightOnAxis(TWILIGHT_NETHERITE_ROW)) rRows.add(TWILIGHT_NETHERITE_ROW);
+        emissionWindowCanary(tAmbient);
         return rRows;
+    }
+
+    /**
+     * The re-offense pin (task emission-window-mutator): the ambient re-derivation and the
+     * boot registration witness must answer IDENTICALLY for every census row, or the JVM's
+     * material state moved between registration and emission — the
+     * known_bugs.datagen_axis_emission_jvm_lottery signature (the seat19/20 runs shipped
+     * SILENTLY under-emitted JSON from exactly this divergence). On a BLOCKS-empty JVM the
+     * witness itself IS the ambient scan, so the two answers agree by construction and the
+     * pin self-disables; on a booted JVM divergence is impossible unless an intra-JVM
+     * mutator moved the material/prefix state after registration — the id1467-class
+     * corruption this refuses to ship from (the archaeology verdict, GT6OreBlocks
+     * .axisWitness javadoc: no fixable mutator exists on the current tree, the emission
+     * window's concurrency face is platform-owned).
+     */
+    private static void emissionWindowCanary(List<OreDictMaterial> aAmbient) {
+        List<TwilightOreRow> tCensus = new ArrayList<>(TWILIGHT_ORE_ROWS.size() + TWILIGHT_ORE_ROWS_A.size() + 1);
+        tCensus.addAll(TWILIGHT_ORE_ROWS);
+        tCensus.addAll(TWILIGHT_ORE_ROWS_A);
+        tCensus.add(TWILIGHT_NETHERITE_ROW);
+        for (TwilightOreRow tRow : tCensus) {
+            OreDictMaterial tMaterial = tRow.material().get();
+            boolean tAmbientMember = tMaterial != null && tMaterial.mID >= 0
+                && aAmbient.contains(MaterialRegistry.INSTANCE.get(tMaterial)); // alias slot -> target, the twilightOnAxis shape
+            boolean tWitnessMember = twilightOnAxis(tRow);
+            if (tAmbientMember != tWitnessMember) throw new IllegalStateException(
+                "emission-window canary (known_bugs.datagen_axis_emission_jvm_lottery / id1467): row '" + tRow.tail()
+                + "' ambient-axis=" + tAmbientMember + " vs boot-witness=" + tWitnessMember
+                + " — the material state moved between registration and emission; refusing to emit from a"
+                + " diverged JVM (see GT6OreBlocks.axisWitness javadoc for the archaeology)");
+        }
     }
 
     /** The configured-feature key of a twilight row ({@code gt6:twilight_ore/<tail>}). */
