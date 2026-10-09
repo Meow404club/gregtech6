@@ -166,6 +166,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register + beam-fireproof-closeout — the wood beams + fireproof twins self-drop
                 new SubProviderEntry(GT6KitchenBlockLoot::new, LootContextParamSets.BLOCK), // task kitchen-loot-dropface — the seven manual-kitchen self-drops
+                new SubProviderEntry(GT6MiscToolBlockLoot::new, LootContextParamSets.BLOCK), // task misc-toolblocks-loot — the misc-tool census tail (mortars/grindstone/cup dropSelf + the tank-carry pot)
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -239,6 +240,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register + beam-fireproof-closeout — the wood beams + fireproof twins self-drop
                 new SubProviderEntry(GT6KitchenBlockLoot::new, LootContextParamSets.BLOCK), // task kitchen-loot-dropface — the seven manual-kitchen self-drops
+                new SubProviderEntry(GT6MiscToolBlockLoot::new, LootContextParamSets.BLOCK), // task misc-toolblocks-loot — the misc-tool census tail (mortars/grindstone/cup dropSelf + the tank-carry pot)
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -3681,5 +3683,161 @@ public final class GT6LootTables extends LootTableProvider {
         protected void generate() {
             for (Block tBlock : kitchenLootBlocks()) dropSelf(tBlock);
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // task misc-toolblocks-loot — the Misc Tool Blocks census tail
+    // -------------------------------------------------------------------------
+
+    /**
+     * The misc-tool census gap list (task misc-toolblocks-loot): the six dropSelf blocks of
+     * the registered-but-table-less "Misc Tool Blocks"/small-tank census tail — the five
+     * mortar rows ({@code GT6Mortars.ROWS}, Loader_MultiTileEntities.java:2179-2183), the
+     * Grindstone (:2226) and the Porcelain Cup (:2094). The census's covered members are
+     * NOT here: the Sifting Table ships via {@code GT6SiftingTableBlockLoot}, the hopper
+     * matrix via {@code GT6HopperBlockLoot} (driver-domain skip face), the anvils via
+     * {@code GT6AnvilBlockLoot}, the Sap Bag/Plant Pot via the 32xxx domain provider, the
+     * seven kitchen rows via {@link GT6KitchenBlockLoot}. The adjacent small-tank rows
+     * (ceramic_jug :2095, the barometer gas cylinders :2101-2104) are NOT a gap: their
+     * live drop face is the port block getDrops override itself (GT6JugBlock:175 /
+     * GT6GasCylinderBlock:195 — the cells/drums closed family, which ships with no loot
+     * tables either), so a table would be dead weight there, not a fix.
+     */
+    public static List<Block> miscToolLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS)
+            rBlocks.add(gregtech6.registry.GT6Mortars.BLOCKS_BY_PATH.get(tRow.path()).get());
+        rBlocks.add(gregtech6.registry.GT6Grindstones.GRINDSTONE.get());
+        rBlocks.add(gregtech6.registry.GT6Cups.PORCELAIN_CUP.get());
+        return rBlocks;
+    }
+
+    /** The Measuring Pot — the census's one content-carrying row (Loader :2096), the {@link #tankSelfTable} owner. */
+    public static Block measuringPotLootBlock() {
+        return gregtech6.registry.GT6MeasuringPot.MEASURING_POT.get();
+    }
+
+    /**
+     * The misc-tool loot provider (task misc-toolblocks-loot; the kitchen dropSelf lane plus
+     * one content-carrying tank row). Per-member upstream verdicts, each read in
+     * tmp/gt6-1.7.10:
+     *
+     * <ul>
+     * <li><b>Mortars (5 rows, :2179-2183)</b> — {@code MultiTileEntityMortar} overrides
+     *     NEITHER getDrops NOR writeItemNBT2 ({@code canDrop} T, :183, is the inventory-slot
+     *     gate, vacuous on the content-less mortar): breaking lands the MTE-default
+     *     self-drop (TileEntityBase04MultiTileEntities.getDrops:166-171) whose item NBT is
+     *     ONLY customName/paint (writeItemNBT:128-133); the NBT_DESIGN 0-4 is baked into the
+     *     per-row MTE ID, not the stack. The port BE (GT6MortarBlockEntity) carries no
+     *     paint/custom-name NBT (the paintable face is the declared render defer) — dropSelf
+     *     is the 1:1 translation.</li>
+     * <li><b>Grindstone (:2226)</b> — {@code MultiTileEntityGrindStone.writeItemNBT2}:71-74
+     *     carries the abrasive ({@code NBT_STATE}) into the dropped stack ({@code canDrop}
+     *     F, :265). The PORT's live break face is the block getDrops override
+     *     (GT6GrindstoneBlock.getDrops — the {@code gt.toolstate} carry, the GT6CellBlock
+     *     seam): the override intercepts every BE-present roll, so the loot table fires ONLY
+     *     in the BE-less context (the explosion/nullable-BE path) where a copy source is
+     *     null and {@code CopyNbtFunction.run} no-ops anyway (vanilla CopyNbtFunction.java
+     *     :57-62) — dropSelf (the STONE-0 body, exactly what the override yields for an
+     *     empty grindstone) is observably identical to a copy form in every context.</li>
+     * <li><b>Porcelain Cup (:2094)</b> — the small-tank content carry lives upstream in
+     *     {@code TileEntityBase08FluidContainer.writeItemNBT2}:92-95 (the tank rides the
+     *     dropped stack). The PORT's live break face is again the block override
+     *     (GT6CupBlock.getDrops:171-197 — the BE tank carry, tag-less when empty), so the
+     *     same reasoning as the Grindstone: the table is the BE-less fallback face, dropSelf
+     *     = the empty-cup body.</li>
+     * <li><b>Ceramic Measuring Pot (:2096)</b> — same upstream content carry
+     *     ({@code writeItemNBT2}:61-63 chains the Base08 :92-95 tank write) PLUS the
+     *     capacity re-bind: upstream writes {@code NBT_MODE} beside the tank (the
+     *     MeasuringPot :61-63 override; written only off the class default), and the PORT
+     *     BE keeps that face (GT6MeasuringPotBlockEntity.saveAdditional:158 / load:151 —
+     *     the empty-hand horizontal click re-binds {@code mTank} capacity, bounded
+     *     {@code [1, DEFAULT_CAPACITY]}). The port block has NO getDrops override
+     *     (GT6MeasuringPotBlock) — the loot table IS the live break face, so BOTH keys
+     *     must ride the table: {@link #tankSelfTable}, the vanilla shulker-box contract
+     *     ({@code copy_nbt} keys → {@code BlockEntityTag.*}, the
+     *     {@code BlockItem.updateCustomBlockEntityTag} placement merge — the
+     *     paintSelfTable javadoc's verified anchor). The empty tank writes NO key
+     *     (FluidTankGT.writeToNBT:165 guard) and the mode rides only off the default
+     *     (:158 guard), so an untouched pot drops tag-less and stacks clean; a used pot
+     *     drops with its content and rehydrates on placement through the BE {@code load}
+     *     (mode first, then tank — load:151-152, order preserved because both keys ride
+     *     the one BlockEntityTag compound).</li>
+     * </ul>
+     *
+     * <p>No driver-domain skip: Ceramic/Steel/Porcelain/Netherite/gem pestles — zero
+     * foreign-gated materials under ADR-MDH2.
+     */
+    public static final class GT6MiscToolBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6MiscToolBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6MiscToolBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            List<Block> rBlocks = new ArrayList<>(miscToolLootBlocks());
+            rBlocks.add(measuringPotLootBlock());
+            return rBlocks;
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : miscToolLootBlocks()) dropSelf(tBlock);
+            Block tPot = measuringPotLootBlock();
+            add(tPot, tankSelfTable(tPot));
+        }
+    }
+
+    /**
+     * The tank-carrying self-drop table (task misc-toolblocks-loot) — the
+     * {@link #paintSelfTable} single-pool shape over ONE {@code copy_nbt} function with the
+     * TWO small-tank keys: the {@code tank} compound AND the {@code mode} capacity re-bind
+     * (the flat keys, no dot-quoting needed — the TileEntityBase10FluidContainerSmall
+     * NBT_TANK / GT6MeasuringPotBlockEntity NBT_MODE constants, single decision sites with
+     * the BE save) from the block entity into the dropped stack's {@code BlockEntityTag},
+     * REPLACE strategy each.
+     */
+    static LootTable.Builder tankSelfTable(ItemLike aItem) {
+        return LootTable.lootTable()
+                .withPool(LootPool.lootPool()
+                        .setRolls(ConstantValue.exactly(1.0F))
+                        .when(ExplosionCondition.survivesExplosion())
+                        .add(LootItem.lootTableItem(aItem).apply(tankCopyNbt())));
+    }
+
+    /**
+     * The tank carry function builder — the paintCopyNbt dual-leg chained form over the two
+     * flat keys: REPLACE {@code tank} and {@code mode} from the block-entity NBT into the
+     * item's {@code BlockEntityTag} compound (the vanilla shulker placement convention —
+     * the {@code BlockItem.updateCustomBlockEntityTag} merge, verified in the
+     * paintSelfTable javadoc).
+     */
+    private static LootItemFunction.Builder tankCopyNbt() {
+        //? if neoforge {
+        /*return net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction
+                .copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy(gregtech6.tileentity.tank.TileEntityBase10FluidContainerSmall.NBT_TANK,
+                        "BlockEntityTag." + gregtech6.tileentity.tank.TileEntityBase10FluidContainerSmall.NBT_TANK,
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE)
+                .copy(gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity.NBT_MODE,
+                        "BlockEntityTag." + gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity.NBT_MODE,
+                        net.minecraft.world.level.storage.loot.functions.CopyCustomDataFunction.MergeStrategy.REPLACE);
+         *///?} else {
+        return CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy(gregtech6.tileentity.tank.TileEntityBase10FluidContainerSmall.NBT_TANK,
+                        "BlockEntityTag." + gregtech6.tileentity.tank.TileEntityBase10FluidContainerSmall.NBT_TANK,
+                        CopyNbtFunction.MergeStrategy.REPLACE)
+                .copy(gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity.NBT_MODE,
+                        "BlockEntityTag." + gregtech6.tileentity.tank.GT6MeasuringPotBlockEntity.NBT_MODE,
+                        CopyNbtFunction.MergeStrategy.REPLACE);
+        //?}
     }
 }
