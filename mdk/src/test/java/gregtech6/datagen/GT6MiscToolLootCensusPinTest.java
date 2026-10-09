@@ -8,7 +8,9 @@
  * registration classes ({@code GT6Mortars}/{@code GT6Grindstones}/{@code GT6SiftingTables}/
  * {@code GT6Cups}/{@code GT6Hoppers}/{@code GT6MeasuringPot}) register must have its
  * {@code gt6:blocks/<id>} table in BOTH committed bands. Pre-card gap (the verdict the card
- * closed): mortar=0, grindstone=0, porcelain_cup=0, measuring_pot=0. Already-covered
+ * closed): mortar=0, grindstone=0, porcelain_cup=0, measuring_pot=0. Task
+ * measuring-pot-variants grew the pot family to FOUR tables (the :2097-2099 metal rows join
+ * the tankSelfTable shape). Already-covered
  * negative ledger: sifting_table (GT6SiftingTableBlockLoot), the hopper matrix
  * (GT6HopperBlockLoot, the driver-domain skip face — 90 tables over the 120-row universe,
  * the loot-unported-census shape), anvils (GT6AnvilBlockLoot), sap_bag/plant_pot (the 32xxx
@@ -19,9 +21,9 @@
  * self-drop with zero item NBT, Loader:2179-2183 + TileEntityBase04MultiTileEntities
  * .getDrops:166-171; grindstone/cup = the BE-less fallback face whose live content carry is
  * the port block getDrops override — a table-side copy could never fire where the override
- * does not). The Measuring Pot is the one content-carrying table ({@code copy_nbt} tank
- * + mode → {@code BlockEntityTag.*}, the behavior pin below forbids the dropSelf shape
- * for it forever).
+ * does not). The Measuring Pot is the content-carrying FAMILY ({@code copy_nbt} tank
+ * + mode → {@code BlockEntityTag.*} over the :2096-2099 four rows, the behavior pin below
+ * forbids the dropSelf shape for it forever).
  *
  * <p>Why tree files, not the face itself: the family blocks live in {@code RegistryObject}s
  * that only bind under real registry events, so the datagen-side lists cannot dereference in
@@ -50,7 +52,6 @@ import net.minecraft.server.Bootstrap;
 
 import gregtech6.registry.GT6Cups;
 import gregtech6.registry.GT6Grindstones;
-import gregtech6.registry.GT6MeasuringPot;
 import gregtech6.registry.GT6Mortars;
 import gregtech6.registry.GT6SiftingTables;
 import gregtech6.registry.GTMaterialItems;
@@ -64,8 +65,12 @@ public class GT6MiscToolLootCensusPinTest {
     /** The single-row gap members: the Grindstone (:2226) and the Porcelain Cup (:2094) — dropSelf shape. */
     private static final List<String> DROPSELF_SLUGS = List.of("grindstone", "porcelain_cup");
 
-    /** The content-carrying row: the Ceramic Measuring Pot (:2096) — the tankSelfTable copy shape. */
-    private static final String MEASURING_POT_SLUG = "measuring_pot";
+    /** The content-carrying rows: the Ceramic Measuring Pot (:2096) + the three metal rows (:2097-2099, task measuring-pot-variants) — the tankSelfTable copy shape family. */
+    private static final List<String> MEASURING_POT_SLUGS = List.of(
+            "measuring_pot", // :2096 ceramic
+            "measuring_pot_stainless_steel", // :2097
+            "measuring_pot_tungsten", // :2098
+            "measuring_pot_tantalum_hafnium_carbide"); // :2099
 
     /** The negative-ledger single: the Sifting Table (:2227) — GT6SiftingTableBlockLoot's, not this card's provider. */
     private static final String SIFTING_TABLE_SLUG = "sifting_table";
@@ -74,7 +79,9 @@ public class GT6MiscToolLootCensusPinTest {
     // 17079 -> 17199: +120 task storage-massstorage (the 120 mass-storage dropSelf loot rows, merge cedf692692) —
     // the card-2 gate domain missed this pin (it walked FamilyLootConvergence/StoneBlockCensus, not this tree walk);
     // review-seat 54 re-pin on the measured tree (the +120 rows are the only delta, shapeless/special faces moved by zero).
-    private static final int TREE_RATCHET = 17199;
+    // 17199 -> 17202: +3 task measuring-pot-variants (the :2097-2099 metal rows join the
+    // tankSelfTable family, +3 tables per band).
+    private static final int TREE_RATCHET = 17202;
 
     /** The mdk project root, walking up from the (leg-dependent) test working dir (the convergence-test anchor). */
     private static Path mdkRoot() {
@@ -107,7 +114,7 @@ public class GT6MiscToolLootCensusPinTest {
         rPaths.add(single(GT6Grindstones.BLOCKS)); // the :2226 row
         rPaths.add(single(GT6SiftingTables.BLOCKS)); // the :2227 row
         rPaths.add(single(GT6Cups.BLOCKS)); // the :2094 row
-        rPaths.add(single(GT6MeasuringPot.BLOCKS)); // the :2096 row
+        rPaths.addAll(MEASURING_POT_SLUGS); // the :2096-2099 four-row family (the ceramic single + the :2097-2099 metal rows)
         for (gregtech6.registry.GT6Hoppers.HopperRow tRow : gregtech6.registry.GT6Hoppers.ROWS)
             rPaths.add(tRow.path());
         return rPaths;
@@ -187,29 +194,32 @@ public class GT6MiscToolLootCensusPinTest {
     }
 
     @Test
-    public void theMeasuringPotTableCarriesItsTank() throws IOException {
+    public void theMeasuringPotTablesCarryTheirTanks() throws IOException {
         Path tBand = bands().get(0);
-        String tJson = Files.readString(tBand.resolve(MEASURING_POT_SLUG + ".json"));
-        assertTrue(tJson.contains("\"type\": \"minecraft:block\""), MEASURING_POT_SLUG + ": a block table");
-        assertTrue(tJson.contains("\"name\": \"gt6:" + MEASURING_POT_SLUG + "\""),
-                MEASURING_POT_SLUG + ": drops its own item");
-        assertTrue(tJson.contains("minecraft:survives_explosion"), MEASURING_POT_SLUG + ": the explosion gate");
-        // the :2096 verdict: upstream carries the tank into the dropped stack
-        // (TileEntityBase08FluidContainer.writeItemNBT2:92-95) plus the capacity re-bind
-        // (MultiTileEntityMeasuringPot.writeItemNBT2:61-63, NBT_MODE off the default) and
-        // the port block has no getDrops override — the table IS the live face, so
-        // dropSelf would lose content AND the re-bound capacity.
-        assertTrue(tJson.contains("\"function\": \"minecraft:copy_nbt\"")
-                || tJson.contains("minecraft:copy_custom_data"), MEASURING_POT_SLUG + ": the tank copy function");
-        assertTrue(tJson.contains("\"source\": \"block_entity\""), MEASURING_POT_SLUG + ": the BE source");
-        assertTrue(tJson.contains("\"source\": \"tank\"") && tJson.contains("\"target\": \"BlockEntityTag.tank\"")
-                && tJson.contains("\"op\": \"replace\""),
-                MEASURING_POT_SLUG + ": the tank -> BlockEntityTag.tank REPLACE op");
-        // the mode verdict: the re-bind rides NBT_MODE (GT6MeasuringPotBlockEntity
-        // .saveAdditional:158 off-default guard / load:151 restore) — the pot re-bound by
-        // the empty-hand click keeps its capacity through break/place only if the key rides.
-        assertTrue(tJson.contains("\"source\": \"mode\"") && tJson.contains("\"target\": \"BlockEntityTag.mode\"")
-                && tJson.contains("\"op\": \"replace\""),
-                MEASURING_POT_SLUG + ": the mode -> BlockEntityTag.mode REPLACE op");
+        for (String tSlug : MEASURING_POT_SLUGS) {
+            String tJson = Files.readString(tBand.resolve(tSlug + ".json"));
+            assertTrue(tJson.contains("\"type\": \"minecraft:block\""), tSlug + ": a block table");
+            assertTrue(tJson.contains("\"name\": \"gt6:" + tSlug + "\""),
+                    tSlug + ": drops its own item");
+            assertTrue(tJson.contains("minecraft:survives_explosion"), tSlug + ": the explosion gate");
+            // the :2096-2099 verdict: upstream carries the tank into the dropped stack
+            // (TileEntityBase08FluidContainer.writeItemNBT2:92-95) plus the capacity re-bind
+            // (MultiTileEntityMeasuringPot.writeItemNBT2:61-63, NBT_MODE off the default) and
+            // the port blocks have no getDrops override — the tables ARE the live face, so
+            // dropSelf would lose content AND the re-bound capacity. All four rows share the
+            // one BE class and its NBT pair (the same table family).
+            assertTrue(tJson.contains("\"function\": \"minecraft:copy_nbt\"")
+                    || tJson.contains("minecraft:copy_custom_data"), tSlug + ": the tank copy function");
+            assertTrue(tJson.contains("\"source\": \"block_entity\""), tSlug + ": the BE source");
+            assertTrue(tJson.contains("\"source\": \"tank\"") && tJson.contains("\"target\": \"BlockEntityTag.tank\"")
+                    && tJson.contains("\"op\": \"replace\""),
+                    tSlug + ": the tank -> BlockEntityTag.tank REPLACE op");
+            // the mode verdict: the re-bind rides NBT_MODE (GT6MeasuringPotBlockEntity
+            // .saveAdditional:158 off-default guard / load:151 restore) — the pot re-bound by
+            // the empty-hand click keeps its capacity through break/place only if the key rides.
+            assertTrue(tJson.contains("\"source\": \"mode\"") && tJson.contains("\"target\": \"BlockEntityTag.mode\"")
+                    && tJson.contains("\"op\": \"replace\""),
+                    tSlug + ": the mode -> BlockEntityTag.mode REPLACE op");
+        }
     }
 }
