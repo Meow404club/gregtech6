@@ -71,7 +71,10 @@ public class GT6MiscToolLootCensusPinTest {
     private static final String SIFTING_TABLE_SLUG = "sifting_table";
 
     /** The committed band tree total (plural + singular twins): 17071 + the 8 new tables. */
-    private static final int TREE_RATCHET = 17079;
+    // 17079 -> 17199: +120 task storage-massstorage (the 120 mass-storage dropSelf loot rows, merge cedf692692) —
+    // the card-2 gate domain missed this pin (it walked FamilyLootConvergence/StoneBlockCensus, not this tree walk);
+    // review-seat 54 re-pin on the measured tree (the +120 rows are the only delta, shapeless/special faces moved by zero).
+    private static final int TREE_RATCHET = 17199;
 
     /** The mdk project root, walking up from the (leg-dependent) test working dir (the convergence-test anchor). */
     private static Path mdkRoot() {
@@ -146,7 +149,7 @@ public class GT6MiscToolLootCensusPinTest {
                         tBand.getFileName() + ": the covered hopper row must stay covered: " + tPath);
     }
 
-    // ---- the tree ratchet: 17071 -> 17079, exactly, both bands ----
+    // ---- the tree ratchet: 17071 -> 17079 -> 17199, exactly, both bands ----
 
     @Test
     public void theTreeTotalIsExactlyTheRatchet() throws IOException {
