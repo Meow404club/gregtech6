@@ -245,7 +245,8 @@ dependencies {
     }
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // launcher on the COMPILE classpath too: the fork-boot LauncherSessionListener (gt6-test-fork-boot)
+    testImplementation("org.junit.platform:junit-platform-launcher")
 }
 
 // kjs OFF 态包排光（与 build.forge.gradle.kts 同构对称；本节点主用途靠 stonecutter 常量，

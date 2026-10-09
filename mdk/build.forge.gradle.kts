@@ -215,7 +215,8 @@ dependencies {
     // onTick 分发 / 材料适配器 / 注册判定与 first-wins 断言；junit-bom 全模块一份。
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    // launcher on the COMPILE classpath too: the fork-boot LauncherSessionListener (gt6-test-fork-boot)
+    testImplementation("org.junit.platform:junit-platform-launcher")
 }
 
 // kjs OFF 态包排光（task p34-kjs-bindings 双态验收①）：本节点是 stonecutter 活动节点，对共享源

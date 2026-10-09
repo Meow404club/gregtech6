@@ -53,6 +53,7 @@ import gregapi.data.OP;
 import gregapi.data.TD;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.registry.GT6MaterialTestSupport;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.tileentity.GTOfflineTestBase;
 
@@ -60,7 +61,11 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 
 	@BeforeAll
 	static void boot() {
-		GTMaterialItems.initMaterials();
+		// the hermetic bracket (reset-FIRST + the single-flood gate): the bare initMaterials
+		// form rides whatever material generation a fork neighbour left — in the
+		// registry+datagen combo draw it walked a polluted universe and measured 0 head rows
+		// against the 3397 pin (the cold/polluted fork face of the maxParallelForks lottery)
+		GT6MaterialTestSupport.materials();
 	}
 
 	private static JsonObject generated(String aPath) throws Exception {

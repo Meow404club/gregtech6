@@ -69,6 +69,9 @@ class GT6DecorRegistryTest {
         } catch (Throwable aE) {
             throw new IllegalStateException("could not unfreeze the offline block registry", aE);
         }
+        // the spike names + tint seam dereference MT.* (GT6SpikeBlock.nameOf / the fRGBaSolid face):
+        // the hermetic material bracket — without it a cold fork reads null materials (the fork-5 NPE)
+        GT6MaterialTestSupport.materials();
     }
 
     // ------------------------------------------------------------------ the census

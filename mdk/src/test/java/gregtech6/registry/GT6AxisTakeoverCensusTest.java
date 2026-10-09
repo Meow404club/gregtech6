@@ -150,7 +150,10 @@ public class GT6AxisTakeoverCensusTest {
         assertEquals(157, GT6OreBlocks.materialAxis().size(), "block axis: 53 + 13 + 15 + 56 + 22 (the 15 EDGE suppliers = b2's 10 boundary blobs + batch2's 5 anchors; Bauxite/MilkyQuartz dedup against the B1 vein faces, 13 net-new)");
         assertEquals(45, GT6BedrockOreBlocks.materialAxis().size(), "bedrock axis: 46 table rows, gold.a/b share");
         assertEquals(130, GTOreWorldgen.ROWS.size(), "54 always-on rows + 61 gem-pool rows + the 10 boundary-blob rows (b2) + the 5 stone-layer/lens anchor rows (batch2)");
-        assertEquals(167, GTOreWorldgen.placementPairs().size(), "overworld 114 + nether 20 + end 33, ancientdebris gated (b2 boundary + batch2 anchor rows joined)");
+        // 202 verified against the ROWS table: overworld 114 + nether 20 + end 33 + atum 35
+        // (the atum ore band's Dim.ATUM small-ore projection, bd12083135 — the three vanilla
+        // dimension counts are unchanged since the 167 pin, ancientdebris stays gated)
+        assertEquals(202, GTOreWorldgen.placementPairs().size(), "overworld 114 + nether 20 + end 33 + atum 35, ancientdebris gated (b2 boundary + batch2 anchor rows + the atum projection joined)");
         assertEquals(22, GT6WorldgenDatagen.LENS_ORE_TABLE.size(), "5-lens companion table");
         assertEquals(40, GT6WorldgenDatagen.LARGE_VEIN_TABLE.size(), "large-vein table :886-925");
         assertEquals(46, GT6WorldgenDatagen.BEDROCK_ORE_TABLE.size(), "bedrock table :725-770, HEX row cut");
