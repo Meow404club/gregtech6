@@ -263,10 +263,10 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 		assertEquals(10, tFouts.get(2).getAsJsonObject().get("amount").getAsInt(), "MT.CO2.gas(U100)");
 		assertEquals(1, tFouts.get(3).getAsJsonObject().get("amount").getAsInt(), "MT.Kr.gas(U1000)");
 		assertEquals(6000, tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("chance").getAsLong(), "new long[] {6000}");
-		assertEquals("gt6:dust_tiny_ashes", slotId(tRow.getAsJsonArray("outputs").get(0)), "OP.dustTiny.mat(MT.Ice/Ash, 1)");
+		assertEquals("gt6:dust_tiny_ice", slotId(tRow.getAsJsonArray("outputs").get(0)), "OP.dustTiny.mat(MT.Ice, 1)");
 	}
 
-	/** Verbatim 10 — the plain-air cryo split (Chem:363, the flipped no-plain-air pin): FL.Air 200 in, the He/Ne/Ar ladder and the {9000} chance on the ash dust. */
+	/** Verbatim 10 — the plain-air cryo split (Chem:363, the flipped no-plain-air pin): FL.Air 200 in, the He/Ne/Ar ladder and the {9000} chance on the ice dust. */
 	@Test
 	public void thePlainAirCryoRowIsUpstreamVerbatim() throws Exception {
 		assertTrue(rowsText("cryodistillationtowerchem.json").contains("gt6:air\""),
@@ -291,7 +291,7 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 		assertEquals("gt6:argon", slotId(tFouts.get(5)));
 		assertEquals(1, slotAmount(tFouts.get(5)), "MT.Ar.gas(U1000)");
 		assertEquals(9000, tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("chance").getAsLong(), "new long[] {9000}");
-		assertEquals("gt6:dust_tiny_ashes", slotId(tRow.getAsJsonArray("outputs").get(0)), "OP.dustTiny.mat(MT.Ice, 1) — the file's seated Ice/Ash dust leg");
+		assertEquals("gt6:dust_tiny_ice", slotId(tRow.getAsJsonArray("outputs").get(0)), "OP.dustTiny.mat(MT.Ice, 1) — the :363/:365 dust legs are Ice, only :364 is Ash (task cryo-ice-repoint)");
 	}
 
 	/** The kelp census: the forgery is GONE from autoclave.json (the user bug-report anchor), the file is the 12-row Bayer face. */
@@ -354,6 +354,8 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 			tUniverse.add("gt6:" + gregtech6.registry.GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
 		}
 		assertTrue(tUniverse.contains("gt6:dust_coal"), "the id universe built (" + tUniverse.size() + " ids)");
+		assertTrue(tUniverse.contains("gt6:dust_tiny_ice"),
+				"Ice rides G_GEM_TRANSPARENT (MT.java:1901, TD.java:599 ⊃ DUSTS) so dustTiny passes the OP.java:1199 gate and registers — the direct proof behind the cryo :363/:365 dust legs (task cryo-ice-repoint)");
 
 		java.util.Set<String> tMissing = new java.util.TreeSet<>();
 		for (String tKey : CENSUS.keySet()) {
