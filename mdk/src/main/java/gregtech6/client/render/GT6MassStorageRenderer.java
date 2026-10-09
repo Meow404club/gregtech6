@@ -112,8 +112,7 @@ public final class GT6MassStorageRenderer implements BlockEntityRenderer<GT6Mass
 		int tCount = aStorage.slot(GT6MassStorageBlockEntity.SLOT_MASS).getCount();
 		boolean tFull = tCount >= aStorage.mMaxStorage;
 		int tTint = tFull ? GT6MassStorageBlockEntity.FULL_DIGIT_ARGB : aStorage.digitARGB();
-		var tSpriteLookup = (java.util.function.Function<ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite>)
-				Minecraft.getInstance().getTextureAtlas(CHAR_SHEET.atlasLocation());
+		var tSpriteLookup = Minecraft.getInstance().getTextureAtlas(CHAR_SHEET.atlasLocation());
 
 		float tCellWidth = (STRIP_RIGHT_PX - STRIP_LEFT_PX) / 6.0F;
 		float tFrontZ = 0.5F + 0.002F;

@@ -370,6 +370,9 @@ public class GT6MassStorageBlockEntity extends TileEntityBase03TicksAndSync
 	//?} else {
 	/*// 21.1: BlockEntity carries no capability override — the seam member the
 	// GT6CapabilityWiring rows delegate to (the static-batch fork verbatim).
+	// (T) is the BlockCapability dispatch the caller types — T is not expressible
+	// here (no Class token on BlockCapability); the platform-documented shape.
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK) {
 			return (T) sideView(aSide);
@@ -421,7 +424,7 @@ public class GT6MassStorageBlockEntity extends TileEntityBase03TicksAndSync
 			if (!mTE.canExtractItem(aSlot, mSide)) return ItemStack.EMPTY;
 			ItemStack tContent = mTE.slot(aSlot);
 			if (tContent.isEmpty() || aAmount <= 0) return ItemStack.EMPTY;
-			int tTake = (int)Math.min(Math.min(aAmount, tContent.getCount()), Integer.MAX_VALUE);
+			int tTake = Math.min(Math.min(aAmount, tContent.getCount()), Integer.MAX_VALUE);
 			if (aSimulate) return mTE.slot(aSlot).copyWithCount(tTake);
 			ItemStack rOut = mTE.slot(aSlot).copyWithCount(tTake);
 			if (tTake >= tContent.getCount()) {
@@ -592,7 +595,7 @@ public class GT6MassStorageBlockEntity extends TileEntityBase03TicksAndSync
 			if (!slotHas(aSlot)) continue;
 			int tMaxStack = Math.max(1, slot(aSlot).getMaxStackSize());
 			for (int i = 0; i < aPlayer.getInventory().getContainerSize() && slotHas(aSlot); i++) {
-				int tChunk = (int)Math.min(slot(aSlot).getCount(), tMaxStack);
+				int tChunk = Math.min(slot(aSlot).getCount(), tMaxStack);
 				ItemStack tMove = slot(aSlot).copyWithCount(tChunk);
 				aPlayer.getInventory().add(tMove); // mutates: the unfitted count stays on tMove
 				int tMoved = tChunk - tMove.getCount();
@@ -704,12 +707,12 @@ public class GT6MassStorageBlockEntity extends TileEntityBase03TicksAndSync
 		if (slotHas(SLOT_MASS)) {
 			int tAmount = takeTierAt(tCoords[0], tCoords[1]);
 			if (tAmount > 0) {
-				tAmount = (int)Math.min(tAmount, slot(SLOT_MASS).getCount());
+				tAmount = Math.min(tAmount, slot(SLOT_MASS).getCount());
 				if (tAmount > 0) {
 					slot(SLOT_MASS).setCount(slot(SLOT_MASS).getCount() - tAmount);
 					int tLeft = tAmount;
 					while (tLeft > 0 && slotHas(SLOT_MASS)) {
-						int tChunk = (int)Math.min(tLeft, Math.max(1, slot(SLOT_MASS).getMaxStackSize()));
+						int tChunk = Math.min(tLeft, Math.max(1, slot(SLOT_MASS).getMaxStackSize()));
 						tLeft -= tChunk;
 						spawnAtFront(slot(SLOT_MASS).copyWithCount(tChunk));
 					}

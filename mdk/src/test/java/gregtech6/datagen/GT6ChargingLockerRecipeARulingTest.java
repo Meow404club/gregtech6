@@ -90,6 +90,6 @@ class GT6ChargingLockerRecipeARulingTest extends GTOfflineTestBase {
 	/** The recipe id face: result-path convention, one per row. */
 	@Test
 	void recipeIdsRideTheResultPathConvention() {
-		assertEquals("gt6:charging_locker_lead", RECIPES.chargingLockerRecipeId(row("lead")).toString());
+		assertEquals("gt6:charging_locker_lead", GT6CraftingRecipes.chargingLockerRecipeId(row("lead")).toString());
 	}
 }

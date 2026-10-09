@@ -209,7 +209,7 @@ public final class GT6RecyclingProcessing implements IOreDictListenerRecyclable 
 		long tHot = Math.max(tMaterial.mMaterial.mMeltingPoint, fluidTemperature(tFluid));
 		double tWeight = weight(aEvent.mItemData.getAllMaterialStacks());
 		long tDuration = (long)Math.max(
-				isLava(tFluid) ? UT.Code.divup(tFluid.getAmount() * (long)EU_PER_LAVA, 16) : 16,
+				isLava(tFluid) ? UT.Code.divup(tFluid.getAmount() * EU_PER_LAVA, 16) : 16,
 				tWeight * (tHot - DEF_ENV_TEMP) / 1600);
 		tRows.add(new Row(GT6RecipeMaps.MELTER , new Recipe(T, new ItemStack[] {aEvent.mStack}, new ItemStack[0], new FluidStack[0], new FluidStack[] {tFluid}, tDuration, 16, 0)));
 		tRows.add(new Row(GT6RecipeMaps.SMELTER, new Recipe(T, new ItemStack[] {aEvent.mStack}, new ItemStack[0], new FluidStack[0], new FluidStack[] {tFluid}, tDuration, 16, 0)));

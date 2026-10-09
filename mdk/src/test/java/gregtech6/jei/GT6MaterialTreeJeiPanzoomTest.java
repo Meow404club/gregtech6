@@ -507,6 +507,10 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 		MaterialTreeDisplay.Node tNode = tDisplay.nodes().get(0);
 
 		// a focus group proxy carrying the node's item as an item-stack focus
+		// (proxy Object→generic IFocus<ItemStack> is erasure-inexpressible: the proxy
+		// itself is built from the raw IFocus.class token — narrow annotation, no cast
+		// can be made checkable; the handler pins every method the walk touches)
+		@SuppressWarnings("unchecked")
 		IFocus<ItemStack> tFocus = (IFocus<ItemStack>)Proxy.newProxyInstance(IFocus.class.getClassLoader(),
 				new Class<?>[] {IFocus.class}, (aProxy, aMethod, aArgs) -> switch (aMethod.getName()) {
 					case "getTypedValue" -> Proxy.newProxyInstance(mezz.jei.api.ingredients.ITypedIngredient.class.getClassLoader(),
