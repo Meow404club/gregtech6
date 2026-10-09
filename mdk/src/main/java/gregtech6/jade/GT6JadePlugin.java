@@ -2,6 +2,7 @@ package gregtech6.jade;
 
 import gregtech6.block.GTEntityBlock;
 import gregtech6.block.multiblock.GTCrucibleWallBlock;
+import gregtech6.block.multiblock.GTMultiBlockPartBlock;
 import gregtech6.tileentity.TileEntityBase01Root;
 
 import snownee.jade.api.IWailaClientRegistration;
@@ -62,6 +63,15 @@ public class GT6JadePlugin implements IWailaPlugin {
 	public void registerClient(IWailaClientRegistration aRegistration) {
 		// tooltip 挂全 GT6 承 BE 方块基类（GTEntityBlock.java:37 所有机器/多方块方块都经它）。
 		aRegistration.registerBlockComponent(GT6MachineProvider.INSTANCE, GTEntityBlock.class);
+		// 部件族客户端腿（task machine-provider-wall-coverage，crucible-jade-follower 遗留②）：
+		// 多方块部件方块全族在同一棵类树——GTMultiBlockPartBlock extends BaseEntityBlock 直系
+		// （GTMultiBlockPartBlock.java:62），GTEntityBlock 锚沿 getSuperclass 链永不命中
+		// （jade-1201 impl HierarchyLookup.java:70-75，下方坩埚墙锚行同断点）。此行以
+		// GTMultiBlockPartBlock 一个类锚盖全族（GTCrucibleWallBlock/GTHeatTransmitterBlock/
+		// WoodWallPartBlock 全子类）；体内 relay 臂 getTarget 门保证未挂控制器的散件零输出
+		// （GT6MachineProvider.appendPartData）。坩埚墙面自此与控制器面同带 formed 行
+		// （GT6CrucibleProvider 类 doc："多方块成形态行仍由 GT6MachineProvider 出"——两行共存）。
+		aRegistration.registerBlockComponent(GT6MachineProvider.INSTANCE, GTMultiBlockPartBlock.class);
 		// 流体段 universal 客户端腿：Jade 按 JadeFluidStorageUid 从 uid map 找回本 provider
 		// （jade-1201 addon/universal/FluidStorageProvider.java:44 / jade-1211 :67-68）。
 		aRegistration.registerFluidStorageClient(GT6FluidProvider.INSTANCE);

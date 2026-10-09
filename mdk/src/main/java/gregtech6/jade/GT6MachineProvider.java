@@ -15,6 +15,8 @@ import snownee.jade.api.config.IPluginConfig;
 import gregapi.code.TagData;
 import gregtech6.tileentity.TileEntityBase01Root;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
+import gregtech6.tileentity.multiblocks.ITileEntityMultiBlockController;
+import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
@@ -47,6 +49,20 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  *     （TileEntityBase10MultiBlockBase.mStructureOkay :72）。mParallel 不显示（归 tooltip
  *     静态面 = 注册期数据）。</li>
  * </ol>
+ *
+ * <p>task machine-provider-wall-coverage（跨卡债，crucible-jade-follower 遗留②）——部件
+ * relay 臂：多方块部件族（{@link MultiBlockPartBlockEntity}，墙/致密墙/热传输器等，
+ * Block = GTMultiBlockPartBlock 族）此前零 machine 行——服务端腿挂 TileEntityBase01Root
+ * 全族本就路由，但 appendServerData 无部件分支不写键；客户端腿挂 GTEntityBlock，而部件
+ * 方块树 GTMultiBlockPartBlock extends BaseEntityBlock 直系（GTMultiBlockPartBlock.java:62），
+ * Jade 客户端分发只沿 getSuperclass() 链找注册锚（jade-1201 impl HierarchyLookup.java:70-75）
+ * 永不命中。语义锚（考古结论）：上游 1.7.10 对 WAILA 零 API 集成、部件 addToolTips 仅两行
+ * 工具提示（MultiTileEntityMultiBlockPart.java:170-174），但部件数据接口面全是控制器转发——
+ * getProgressValue/Max（:480-489）、能量 stored/capacity（:607-624）、gibbl/温度
+ * （:644-670）均 {@code getTarget(T)} 透传——"指墙 = 问控制器" 即该数据面的显示侧，
+ * 与坩埚墙臂同构（GT6CrucibleProvider:201-208 先例：getTarget(true) 有效性门 + relay）。
+ * 成形态行/机器行全用既有键（gt6.jade.common.formed/incomplete + gt6.jade.machine.*），
+ * 零 lang 新键；未挂控制器的散件 getTarget 答 null = 零行（同坩埚臂门）。
  *
  * <p>退役载荷：KEY_SUCCESSFUL（写而不读的死键，载荷最小化）。
  */
@@ -123,6 +139,13 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 			// 多方块成形态（TileEntityBase10MultiBlockBase.java:72，FORMED BlockState 的 BE 侧真源）。
 			aData.putBoolean(KEY_STRUCTURE_OKAY, aMulti.mStructureOkay);
 		}
+		if (aRoot instanceof MultiBlockPartBlockEntity aPart) {
+			// 部件 relay 臂（task machine-provider-wall-coverage）：指墙 = 问控制器——上游部件
+			// 数据接口全 getTarget(T) 透传（MultiTileEntityMultiBlockPart.java:480-489 进度族/
+			// :607-624 能量族/:644-670 gibbl/温度），本臂即该语义的显示侧；getTarget(true) 门 =
+			// 结构成立才出数据（散件/坏塔零行，坩埚墙臂同款）。
+			appendPartData(aData, aPart);
+		}
 		if (!aRoot.ERROR_MESSAGE.isEmpty()) {
 			// Malfunction 标记（TileEntityBase01Root.java:88）——任何 GT6 BE 都可能带，非空才写；
 			// 原文随键走（客户端潜行截断渲染，GT6JadeRows.MAX_DETAIL_CHARS）。
@@ -148,6 +171,25 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 		writeMachineData(aData, aMachine.mProgress, aMachine.mMaxProgress, aMachine.mActive, aMachine.mRunning,
 				aMachine.mEnergy, aMachine.mEnergyTypeAccepted,
 				aMachine.mInputMin, aMachine.mInput, aMachine.mInputMax);
+	}
+
+	/**
+	 * 部件 relay 缝（task machine-provider-wall-coverage）：部件 BE 经 getTarget(true) 解析
+	 * 控制器（{@link MultiBlockPartBlockEntity#getTarget} 的懒重建 + isInsideStructure 归属
+	 * 校验 + cheap-path 有效性探针），控制器是多方块机器 → 机器键面全量 relay（
+	 * {@link #appendMachineData(CompoundTag, TileEntityBase10MultiBlockMachine)} 既有缝复用），
+	 * 是任意多方块 → 成形态键（MultiBlockMachine extends MultiBlockBase，两 if 与控制器臂
+	 * 同构同键）。键面零新增——appendTooltip 的既有门（KEY_MAX_PROGRESS/KEY_STRUCTURE_OKAY）
+	 * 原样消费，显示格式零改动。静态缝离线可测（GT6MachineProviderTest 部件 fixture）。
+	 */
+	static void appendPartData(CompoundTag aData, MultiBlockPartBlockEntity aPart) {
+		ITileEntityMultiBlockController tTarget = aPart.getTarget(true);
+		if (tTarget instanceof TileEntityBase10MultiBlockMachine aMachine) {
+			appendMachineData(aData, aMachine);
+		}
+		if (tTarget instanceof TileEntityBase10MultiBlockBase aMulti) {
+			aData.putBoolean(KEY_STRUCTURE_OKAY, aMulti.mStructureOkay);
+		}
 	}
 
 	/** 同缝写体（两 concrete 分发的唯一落点——键面单点，载荷最小化：无 SUCCESSFUL 死键）。 */
