@@ -50,6 +50,7 @@ import gregtech6.block.sensors.GTSensorBlock;
 import gregtech6.block.tank.GT6CellBlock; // task small-tank-cell
 import gregtech6.block.tank.GT6CupBlock; // task small-tank-cup
 import gregtech6.block.tank.GT6JugBlock; // task small-tank-jug
+import gregtech6.block.tank.GT6MeasuringPotBlock; // task measuring-pot-variants
 import gregtech6.block.stone.GTStoneBlock;
 import gregtech6.block.stone.StoneVariant;
 import gregtech6.block.surface.GT6SurfaceVariants;
@@ -5715,6 +5716,14 @@ public final class GT6BlockStates extends BlockStateProvider {
         potElement(tModel,  5.0F, 1.0F, 11.0F, 11.0F, 8.0F, 12.0F, Direction.SOUTH);
         simpleBlock(tBlock, tModel);
         itemModels().withExistingParent("measuring_pot", tModel.getLocation());
+        // task measuring-pot-variants — the three metal rows (:2097-2099) share the ONE
+        // model: the four upstream rows share the visual 32719 column, the colored band
+        // ships UN-TINTED (the #40-41 declared deviation above), so each variant blockstate
+        // points at the shared "measuring_pot" model and each BlockItem parents it.
+        for (RegistryObject<GT6MeasuringPotBlock> tVariant : gregtech6.registry.GT6MeasuringPot.VARIANT_BLOCKS) {
+            simpleBlock(tVariant.get(), tModel);
+            itemModels().withExistingParent(tVariant.getId().getPath(), tModel.getLocation());
+        }
     }
 
     /** One pot element (body box + the 0.01-inflated overlay shell): aOutward null = the base slab (every side face = sides). */

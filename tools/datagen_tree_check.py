@@ -826,6 +826,13 @@ FORGE_GATED_ONLY_CANONICAL = frozenset({
     "data/gt6/recipes/clay_measuring_pot.json",
     "data/gt6/recipes/clay_measuring_pot_reverse.json",
     "data/gt6/recipes/smelt_clay_measuring_pot.json",
+    # task measuring-pot-variants 交卡补录（2026-10-09，与 clay_measuring_pot 同构
+    # forge-gated）：量锅三金属行（Loader :2097-2099 inline "Ch"/"Pf" 网格，同一
+    # GT6MeasuringPotDatagen.Recipes 的 //? if forge crafting 面；advancement 面已砍），
+    # singular recipe/ 镜像由 SEGMENT_MAP 归一折入复数面对账，无需声明。runtime 不受影响。
+    "data/gt6/recipes/measuring_pot_stainless_steel.json",
+    "data/gt6/recipes/measuring_pot_tungsten.json",
+    "data/gt6/recipes/measuring_pot_tantalum_hafnium_carbide.json",
     # task small-tank-gas-cylinder 交卡补录（2026-09-30，与 clay_measuring_pot 同构
     # forge-gated）：gas cylinder 四行（Loader :2101-2104 inline "RCR"/"BCh"/"TPd" 网格，
     # GT6GasCylinderDatagen.Recipes 的 //? if forge crafting 面；advancement 面已砍，advancement-removal 卡），

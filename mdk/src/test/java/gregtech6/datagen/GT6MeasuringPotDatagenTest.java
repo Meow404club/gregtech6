@@ -1,8 +1,9 @@
 /**
  * The Measuring Pot datagen pin (task issue45-c3, issue #45) — reads the committed
  * generated tree on the classpath (the GT6MoldAssetDatagenTest form — no datagen run) and
- * pins the whole chain: the three recipe rows (the upstream :134 shaped + the :121 reverse
- * + the Loader :2096 smelt), the two-layer block model over the 8 borrowed PNGs, the raw
+ * pins the whole chain: the three clay-chain recipe rows (the upstream :134 shaped + the
+ * :121 reverse + the Loader :2096 smelt), the :2097-2099 metal "Ch"/"Pf" rows (task
+ * measuring-pot-variants), the two-layer block model over the 8 borrowed PNGs, the raw
  * item model over the 997 borrow, the en/zh lang faces, and the registration-id face
  * (the RegistryObject.getId() path read — the C2 lesson: never .get() an unregistered
  * holder offline).
@@ -53,6 +54,76 @@ public class GT6MeasuringPotDatagenTest extends GTOfflineTestBase {
 		assertEquals("measuring_pot", GT6MeasuringPot.MEASURING_POT_BE.getId().getPath(), "the BET id");
 		assertEquals("measuring_pot", GT6MeasuringPot.MEASURING_POT_ITEM.getId().getPath(), "the BlockItem id");
 		assertEquals("clay_measuring_pot", GT6MeasuringPot.CLAY_MEASURING_POT_RAW.getId().getPath(), "the raw id (the 997 clay band, the clay_juicer naming law)");
+	}
+
+	/**
+	 * The :2096-2099 row ledger — FOUR rows total (the ceramic single + the three metal
+	 * rows, task measuring-pot-variants): the :2097-2099 name/resistance columns verbatim
+	 * and the material columns (SS / Tungsten / Ta4HfC5 — the :2098 {@code ANY.W} column
+	 * resolving to MT.Tungsten, the gas-cylinder-row ruling).
+	 */
+	@Test
+	void theRowLedgerIsTheFourLoaderRows() {
+		assertEquals(4, GT6MeasuringPot.BLOCKS_IN_ORDER.size(), "the :2096-2099 band, ceramic first");
+		assertEquals(3, GT6MeasuringPot.ROWS.size(), "the :2097-2099 metal rows");
+		assertEquals("measuring_pot_stainless_steel", GT6MeasuringPot.ROWS.get(0).path());
+		assertEquals("Stainless Measuring Pot", GT6MeasuringPot.ROWS.get(0).displayName(), "the :2097 name column verbatim");
+		assertEquals(6.0F, GT6MeasuringPot.ROWS.get(0).resistanceF(), "the :2097 NBT_RESISTANCE (NOT the 10.0 band)");
+		assertEquals(gregapi.data.MT.StainlessSteel, GT6MeasuringPot.ROWS.get(0).material().get(), "the :2097 NBT_MATERIAL");
+		assertEquals("measuring_pot_tungsten", GT6MeasuringPot.ROWS.get(1).path());
+		assertEquals("Tungsten Measuring Pot", GT6MeasuringPot.ROWS.get(1).displayName(), "the :2098 name column verbatim");
+		assertEquals(10.0F, GT6MeasuringPot.ROWS.get(1).resistanceF(), "the :2098 NBT_RESISTANCE");
+		assertEquals(gregapi.data.MT.Tungsten, GT6MeasuringPot.ROWS.get(1).material().get(), "the :2098 NBT_MATERIAL (ANY.W → MT.Tungsten)");
+		assertEquals("measuring_pot_tantalum_hafnium_carbide", GT6MeasuringPot.ROWS.get(2).path());
+		assertEquals("Tantalum Hafnium Carbide Measuring Pot", GT6MeasuringPot.ROWS.get(2).displayName(), "the :2099 name column verbatim");
+		assertEquals(10.0F, GT6MeasuringPot.ROWS.get(2).resistanceF(), "the :2099 NBT_RESISTANCE");
+		assertEquals(gregapi.data.MT.Ta4HfC5, GT6MeasuringPot.ROWS.get(2).material().get(), "the :2099 NBT_MATERIAL");
+		assertEquals(5, GT6MeasuringPot.ITEMS.getEntries().size(),
+				"the item register: 4 BlockItems + the clay raw (the BlockItem-per-block law)");
+	}
+
+	/** The :2097-2099 inline grids — "Ch"/"Pf" per material ('C' plateCurved, 'P' plate, 'h' hammer, 'f' file). */
+	@Test
+	void theMetalRecipesCarryTheChPfGrid() throws Exception {
+		String[][] tPlates = {
+				{"gt6:plate_curved_stainless_steel", "gt6:plate_stainless_steel"},
+				{"gt6:plate_curved_tungsten", "gt6:plate_tungsten"},
+				{"gt6:plate_curved_tantalum_hafnium_carbide", "gt6:plate_tantalum_hafnium_carbide"}};
+		for (int i = 0; i < GT6MeasuringPot.ROWS.size(); i++) {
+			GT6MeasuringPot.PotRow tRow = GT6MeasuringPot.ROWS.get(i);
+			JsonObject tRecipe = generatedJson("data/gt6/recipes/" + tRow.path() + ".json");
+			assertEquals("minecraft:crafting_shaped", tRecipe.get("type").getAsString(), tRow.path() + ": the shaped form");
+			JsonArray tPattern = tRecipe.getAsJsonArray("pattern");
+			assertEquals(2, tPattern.size(), tRow.path() + ": the 2-row form");
+			assertEquals("Ch", tPattern.get(0).getAsString(), tRow.path() + ": row 1 (plateCurved/hammer) verbatim");
+			assertEquals("Pf", tPattern.get(1).getAsString(), tRow.path() + ": row 2 (plate/file) verbatim");
+			var tKey = tRecipe.getAsJsonObject("key");
+			assertEquals(4, tKey.size(), tRow.path() + ": C P h f — the :2097 letter set");
+			assertEquals(tPlates[i][0], tKey.getAsJsonObject("C").get("item").getAsString(),
+					tRow.path() + ": C = OP.plateCurved.dat(aMat)");
+			assertEquals(tPlates[i][1], tKey.getAsJsonObject("P").get("item").getAsString(),
+					tRow.path() + ": P = OP.plate.dat(aMat)");
+			assertTrue(tKey.getAsJsonObject("h").toString().contains("tools/hard_hammer"), tRow.path() + ": the hammer tool mark");
+			assertTrue(tKey.getAsJsonObject("f").toString().contains("tools/file"), tRow.path() + ": the file tool mark");
+			assertEquals("gt6:" + tRow.path(), tRecipe.getAsJsonObject("result").get("item").getAsString(),
+					tRow.path() + ": the result is the row's own item");
+		}
+	}
+
+	/** The variant asset faces: each blockstate points at the ONE shared model (the visual 32719 column), each item parents it. */
+	@Test
+	void theVariantBlockstatesAndItemModelsShareTheModel() throws Exception {
+		for (int i = 0; i < GT6MeasuringPot.ROWS.size(); i++) {
+			String tPath = GT6MeasuringPot.ROWS.get(i).path();
+			JsonObject tState = generatedJson("assets/gt6/blockstates/" + tPath + ".json");
+			var tVariants = tState.getAsJsonObject("variants");
+			assertEquals(1, tVariants.size(), tPath + ": the property-free single state");
+			assertEquals("gt6:block/measuring_pot", tVariants.getAsJsonObject("").get("model").getAsString(),
+					tPath + ": the row points at the ONE shared tub model (the visual 32719 column)");
+			JsonObject tItem = generatedJson("assets/gt6/models/item/" + tPath + ".json");
+			assertEquals("gt6:block/measuring_pot", tItem.get("parent").getAsString(),
+					tPath + ": the item parents the shared block model");
+		}
 	}
 
 	/** The :134 shaped row — "CkC"/"CCR" over 4 clay balls + the knife + the rolling-pin tag marks. */
@@ -131,15 +202,21 @@ public class GT6MeasuringPotDatagenTest extends GTOfflineTestBase {
 		assertNotNull(tBlockstate.getAsJsonObject("variants").get(""), "the property-free single state");
 	}
 
-	/** The lang faces: en = the :2096/:121 name columns verbatim, zh = the dump faces verbatim. */
+	/** The lang faces: en = the :2096-2099/:121 name columns verbatim, zh = the dump faces verbatim. */
 	@Test
 	void theLangFacesLandVerbatim() throws Exception {
 		JsonObject tEn = generatedJson("assets/gt6/lang/en_us.json");
 		assertEquals("Ceramic Measuring Pot", tEn.get("block.gt6.measuring_pot").getAsString());
 		assertEquals("Clay Measuring Pot", tEn.get("item.gt6.clay_measuring_pot").getAsString());
+		assertEquals("Stainless Measuring Pot", tEn.get("block.gt6.measuring_pot_stainless_steel").getAsString(), "the :2097 name column verbatim");
+		assertEquals("Tungsten Measuring Pot", tEn.get("block.gt6.measuring_pot_tungsten").getAsString(), "the :2098 name column verbatim");
+		assertEquals("Tantalum Hafnium Carbide Measuring Pot", tEn.get("block.gt6.measuring_pot_tantalum_hafnium_carbide").getAsString(), "the :2099 name column verbatim");
 		JsonObject tZh = generatedJson("assets/gt6/lang/zh_cn.json");
 		assertEquals("陶瓷量杯", tZh.get("block.gt6.measuring_pot").getAsString(), "the dump mte 32738 face verbatim");
 		assertEquals("粘土量杯", tZh.get("item.gt6.clay_measuring_pot").getAsString(), "the dump meta-997 face verbatim");
+		assertEquals("不锈钢量杯", tZh.get("block.gt6.measuring_pot_stainless_steel").getAsString(), "the dump mte 32743 face verbatim");
+		assertEquals("钨量杯", tZh.get("block.gt6.measuring_pot_tungsten").getAsString(), "the dump mte 32744 face verbatim");
+		assertEquals("碳化钽铪量杯", tZh.get("block.gt6.measuring_pot_tantalum_hafnium_carbide").getAsString(), "the dump mte 32077 face verbatim");
 	}
 
 	/** The nine borrowed PNGs are on the classpath (the texture-reference walk, 8 block + 1 item). */

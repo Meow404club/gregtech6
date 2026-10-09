@@ -1604,10 +1604,13 @@ public class GT6EnUs extends LanguageProvider {
         }
     }
 
-    /** The Measuring Pot pair (task issue45-c3, issue #45) — the Loader :2096 name column + the :121 raw row, both verbatim. */
+    /** The Measuring Pot pair (task issue45-c3, issue #45) — the Loader :2096 name column + the :121 raw row, both verbatim; the :2097-2099 metal name columns ride the rows (task measuring-pot-variants). */
     private void addMeasuringPot() {
         add("block.gt6.measuring_pot", "Ceramic Measuring Pot"); // the Loader_MultiTileEntities.java:2096 name column verbatim
         add("item.gt6.clay_measuring_pot", "Clay Measuring Pot"); // the MultiItemRandomTools.java:121 raw row verbatim
+        for (gregtech6.registry.GT6MeasuringPot.PotRow tRow : gregtech6.registry.GT6MeasuringPot.ROWS) {
+            add("block.gt6." + tRow.path(), tRow.displayName()); // :2097/:2098/:2099 name columns verbatim
+        }
     }
 
     /** The Porcelain Cup pair (task small-tank-cup) — the Loader :2094 name column + the :76 raw row, both verbatim. */

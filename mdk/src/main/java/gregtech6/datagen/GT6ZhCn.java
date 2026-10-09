@@ -586,10 +586,16 @@ public class GT6ZhCn extends LanguageProvider {
 	 * (陶瓷量杯, tmp/gregtech.lang:13559 — the mte census row, the provider-side port-key
 	 * join done by hand) and the raw item the meta-997 row (粘土量杯, tmp/gregtech.lang
 	 * :10114; the multiitem family is NOT a collected tsv band, the hand face only).
+	 * The :2097-2099 metal rows (task measuring-pot-variants) ride their dump faces
+	 * verbatim: 32743 不锈钢量杯 (tmp/gregtech.lang:13564), 32744 钨量杯 (:13565),
+	 * 32077 碳化钽铪量杯 (:13098).
 	 */
 	private void addMeasuringPotUnits() {
 		add("block.gt6.measuring_pot", "陶瓷量杯");
 		add("item.gt6.clay_measuring_pot", "粘土量杯");
+		add("block.gt6.measuring_pot_stainless_steel", "不锈钢量杯"); // dump mte 32743 verbatim
+		add("block.gt6.measuring_pot_tungsten", "钨量杯"); // dump mte 32744 verbatim
+		add("block.gt6.measuring_pot_tantalum_hafnium_carbide", "碳化钽铪量杯"); // dump mte 32077 verbatim
 	}
 
 

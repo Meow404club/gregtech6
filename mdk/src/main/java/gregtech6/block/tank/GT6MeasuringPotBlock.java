@@ -84,6 +84,17 @@ public class GT6MeasuringPotBlock extends GTEntityBlock {
 				.noOcclusion().isViewBlocking(GT6MeasuringPotBlock::never);
 	}
 
+	/**
+	 * The metal-row properties (upstream :2097-2099 NBT_HARDNESS 0.5; NBT_RESISTANCE 6.0 on
+	 * the stainless row, 10.0 on the tungsten/Ta4HfC5 rows; aUtilMetal → the iron tool set).
+	 * The sound is the metal-row COPPER stand-in (the GT6GasCylinderBlock.rowProperties form).
+	 */
+	public static net.minecraft.world.level.block.state.BlockBehaviour.Properties variantProperties(float aResistance) {
+		return net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+				.strength(0.5F, aResistance).sound(SoundType.COPPER)
+				.noOcclusion().isViewBlocking(GT6MeasuringPotBlock::never);
+	}
+
 	/** The fog-only rider (the GT6Kitchen seam body — the sub-cube vessel never blocks the view). */
 	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
 		return false;
