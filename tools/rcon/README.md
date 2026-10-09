@@ -924,3 +924,32 @@ Step("execute if block 694 91 150 minecraft:gravel", expect="Test passed",
 终值全中；forge 腿 `tick_fallback_poll=10` 降级路径同链 GREEN。日志：
 `/tmp/gt6_rs_p32tickneo.log`、`/tmp/gt6_rs_p32tickforge.log`（GT6_SESSION=off
 per-chain boot 形）。
+
+### setblock 收据缝 SETBLOCK_OK（rcon-setblock-dialect-normalize，README tail-append）
+
+`setblock` 步的成功断言从 gt6rcon 导入 `SETBLOCK_OK`，不再手写文案串：
+
+```python
+from gt6rcon import SETBLOCK_OK
+Step(f"setblock {WP} gt6:barrel_wood", expect=SETBLOCK_OK),
+```
+
+取证结论（2026-10-08）：**两腿 setblock 回执无方言**。1.20.1 与 1.21.1 的
+SetBlockCommand 成功路径同为 `commands.setblock.success` 平移键（1.20.1 反编译
+`SetBlockCommand.java:103`；neoforge-21.1.249 sources jar 同文件 `:105`），
+失败路径同为 `commands.setblock.failed`（1.20.1 `:25/:87/:100`）；两腿语言
+文件（client-extra jar / minecraft-resources jar 的 en_us.json）同串
+`Changed the block at %s, %s, %s` / `Could not set the block`。全 /tmp 链日志
+回执形状普查仅两种且双腿同分布：成功 `Changed the block at X, Y, Z` 86×、
+失败 `Could not set the block` 131×（后者是同态 no-op setblock 的正常拒绝，
+ore_census/ore_overlay 链注释在案）。
+
+历史勘误：遗池条目"21.1 setblock 回执方言跨链共病"为伪账——nozzle/kinetics-be
+双腿日志里 neo 腿回执与 forge 腿逐字同形；真身疑为 21.1 BE ctor 校验拒放置时的
+server log 行 `Invalid block entity`（服务端日志，非 RCON 回执）被误记。
+
+常量缝是单一权威：未来任一腿文案漂移只改 `gt6rcon.py` 一行（若真分叉，升级为
+node 键控表由 `step_expect` 解析）。存量链手写断言本就双腿通吃，随各自链的
+未来域卡顺手收编即可，永不收编也无害。试点消费方：`chains/barrel_paint.py`
+（7 断言点，双腿实跑取证 /tmp/gt6_rs_barrel-paint-forge*.log、
+/tmp/gt6_rs_barrel-paint-neo*.log）。

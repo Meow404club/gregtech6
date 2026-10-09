@@ -37,13 +37,15 @@ for _path in (str(_HERE), str(_HERE.parent)):
 
 import gt6world
 from framework import Chain, Step, main, phase
+from gt6rcon import SETBLOCK_OK   # the setblock receipt seam (both legs, one authority)
 
 # The sites — x 388..390, z 124: clear of the P21 paintable shredder (x 382), the
 # P13/P14 boiler chains (x 104..172), the P16 chains (x 184..200 / x 300..360), the
 # P19 drying rig (x 360, z 20) and the P19 chisel chain (x 372..378, z 124..130).
 W = gt6world.Site(388, 64, 124)   # barrel_wood
 P = gt6world.Site(389, 64, 124)   # barrel_plastic
-D = gt6world.Site(390, 64, 124)   # barrel_infinity (the top drum row)
+D = gt6world.Site(390, 64, 124)   # barrel_draconium (the mdh-6 always-registering drum row;
+                                  # barrel_infinity is AV-gated = absent from dev boots, GTBarrels.java:173-175)
 
 WP = "388 64 124"
 PP = "389 64 124"
@@ -54,7 +56,7 @@ steps = []
 # --------------------------------- A: the wood barrel — the same report as the P21 machine chain
 steps += [
     phase("A: barrel_wood — dye 1 (Red #FF0000) lands verbatim, the same spray is the no-op"),
-    Step(f"setblock {WP} gt6:barrel_wood", expect="Changed the block"),
+    Step(f"setblock {WP} gt6:barrel_wood", expect=SETBLOCK_OK),
     Step(f"gt6machine paint {WP} 1",
          expect="dye 1 (Red #FF0000), RGB #FFFFFF->#FF0000 painted=true (APPLIED)"),
     Step(f"gt6machine paint {WP} 1",
@@ -65,13 +67,13 @@ steps += [
 
 # ------------------------------------------------- B: the family rides — plastic + a top drum
 steps += [
-    phase("B: the family rides — barrel_plastic and barrel_infinity each take a paint/unpaint round"),
-    Step(f"setblock {PP} gt6:barrel_plastic", expect="Changed the block"),
+    phase("B: the family rides — barrel_plastic and barrel_draconium each take a paint/unpaint round"),
+    Step(f"setblock {PP} gt6:barrel_plastic", expect=SETBLOCK_OK),
     Step(f"gt6machine paint {PP} 14",
          expect="dye 14 (Orange #FF8000), RGB #FFFFFF->#FF8000 painted=true (APPLIED)"),
     Step(f"gt6machine unpaint {PP}",
          expect="dye none (unpaint), RGB #FF8000->#FFFFFF painted=false (APPLIED)"),
-    Step(f"setblock {DP} gt6:barrel_infinity", expect="Changed the block"),
+    Step(f"setblock {DP} gt6:barrel_draconium", expect=SETBLOCK_OK),
     Step(f"gt6machine paint {DP} 5",
          expect="dye 5 (Purple #800080), RGB #FFFFFF->#800080 painted=true (APPLIED)"),
     Step(f"gt6machine unpaint {DP}",
@@ -81,16 +83,16 @@ steps += [
 # -------------------------------------------------- C: the non-paintable negative
 steps += [
     phase("C: the negative — a vanilla block carries no IPaintableTE face, the spray refuses"),
-    Step(f"setblock {WP} minecraft:stone", expect="Changed the block"),
+    Step(f"setblock {WP} minecraft:stone", expect=SETBLOCK_OK),
     Step(f"gt6machine paint {WP} 5", expect="No paintable GT6 TileEntity", allow_failed=True),
 ]
 
 # --------------------------------------------------------------------- T: teardown
 steps += [
     phase("T: teardown — the explicit restore (the pass-open bbox is the backstop)"),
-    Step(f"setblock {WP} air", expect="Changed the block"),
-    Step(f"setblock {PP} air", expect="Changed the block"),
-    Step(f"setblock {DP} air", expect="Changed the block"),
+    Step(f"setblock {WP} air", expect=SETBLOCK_OK),
+    Step(f"setblock {PP} air", expect=SETBLOCK_OK),
+    Step(f"setblock {DP} air", expect=SETBLOCK_OK),
     Step("time query daytime", expect="The time is"),
 ]
 
