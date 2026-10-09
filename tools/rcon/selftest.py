@@ -1239,6 +1239,104 @@ def check_15_port_segment_stagger():
             os.environ["GT6_RCON_SEGMENT_OFFSET"] = real_offset
 
 
+def check_16_fresh_world_reset():
+    """The sweep-layer world reset (--fresh-world, card rcon-hygiene-combo).
+
+    The node run dir is SHARED across sessions: block entities a crashed or
+    torn-down chain left outside its bbox cleanup persist in the world save
+    and world-load CCE a later boot (drum-mdh6-chain-sweep: the kf forge leg
+    hit chunk[2,2] shredder/crusher BE residue, GTMachines.java:425).
+    reset_world deletes the world* dirs (the census_ore.delete_worlds form)
+    and keeps server.properties/eula; run_and_record gates it behind the CLI
+    flag, absent/False flag = legacy behaviour byte for byte. Serverless:
+    scratch run dir, the boot surface faked, reset_world recorded not run.
+    """
+    print("\n--- 16: fresh-world reset (--fresh-world, run-dir residue fix)")
+    import argparse
+    import sweep
+    node = "1.20.1-forge"
+
+    # ① unit face: world* dirs go, config stays, empty run dir is a no-op
+    tmp = Path(tempfile.mkdtemp())
+    run_dir_ = tmp / "mdk" / "versions" / node / "run"
+    for name in ("world", "world_nether", "world_the_end"):
+        (run_dir_ / name).mkdir(parents=True)
+    (run_dir_ / "server.properties").write_text("level-type=minecraft\\:flat\n",
+                                                encoding="utf-8")
+    (run_dir_ / "eula.txt").write_text("eula=true\n", encoding="utf-8")
+    (run_dir_ / "world" / "level.dat").write_bytes(b"stub")
+    removed = sweep.reset_world(node, worktree=tmp, log=lambda *a, **k: None)
+    check("16a reset removes exactly the world* dirs",
+          removed == ["world", "world_nether", "world_the_end"]
+          and not any((run_dir_ / name).exists()
+                      for name in ("world", "world_nether", "world_the_end")),
+          str(removed))
+    check("16b reset keeps server.properties and eula.txt",
+          (run_dir_ / "server.properties").read_text(encoding="utf-8")
+          == "level-type=minecraft\\:flat\n"
+          and (run_dir_ / "eula.txt").read_text(encoding="utf-8") == "eula=true\n")
+    check("16c reset on an already-fresh run dir is a clean no-op",
+          sweep.reset_world(node, worktree=tmp, log=lambda *a, **k: None) == [])
+    shutil.rmtree(tmp, ignore_errors=True)
+
+    # ② the run_and_record gate: flag on resets before the run, flag off never
+    real_sleep = _install_fakes()
+    gt6server.assert_ports_free = lambda *a, **k: True
+    roster = [framework.Chain(
+        name="selftest-fw", slug="sfw",
+        sites=gt6world.declare_sites(gt6world.Site(0, 64, 0)),
+        steps=[framework.Step("say hi", expect="ok")])]
+    real_select, real_load_chain, real_path = \
+        sweep.select, sweep.load_chain, sweep.result_path
+    scratch = Path(tempfile.mkdtemp())
+    fake_chains = {"selftest-fw": roster[0]}
+    resets = []
+    real_reset = sweep.reset_world
+    sweep.select = lambda stems, only: ["selftest-fw"]
+    sweep.load_chain = lambda stem: fake_chains[stem]
+    sweep.result_path = lambda mode, node_, concurrency=1, tag=None: \
+        scratch / "selftest_sweep_fw.json"
+    sweep.reset_world = lambda node_, **k: resets.append(node_) or []
+    try:
+        sweep.run_and_record(argparse.Namespace(
+            mode="perboot", node=node, concurrency=1, only=None,
+            fresh_world=True))
+        sweep.run_and_record(argparse.Namespace(
+            mode="perboot", node=node, concurrency=1, only=None))
+        check("16d --fresh-world resets before the run; absent flag never does",
+              resets == [node], f"resets={resets}")
+    finally:
+        sweep.select, sweep.load_chain, sweep.result_path = \
+            real_select, real_load_chain, real_path
+        sweep.reset_world = real_reset
+        shutil.rmtree(scratch, ignore_errors=True)
+        time.sleep = real_sleep
+
+    # ③ the CLI flag routes through main() into run_and_record: True with the
+    #    flag, False without (argparse store_true default — and run_and_record's
+    #    getattr tolerance covers only hand-built Namespaces predating it)
+    real_lock_dir, real_run = sweep.SWEEP_LOCK_DIR, sweep.run_and_record
+    lock_scratch = Path(tempfile.mkdtemp())
+    sweep.SWEEP_LOCK_DIR = lock_scratch
+    seen = []
+
+    def _record_args(args):
+        seen.append(getattr(args, "fresh_world", None))
+        return {"mode": args.mode, "node": args.node, "wall_s": 0.0,
+                "boots": 0, "chains": {}}
+
+    sweep.run_and_record = _record_args
+    try:
+        sweep.main(["--mode", "session", "--node", node, "--fresh-world"])
+        sweep.main(["--mode", "session", "--node", node])
+        check("16e CLI --fresh-world reaches run_and_record True, "
+              "bare main arrives flag-less False", seen == [True, False],
+              f"seen={seen}")
+    finally:
+        sweep.SWEEP_LOCK_DIR, sweep.run_and_record = real_lock_dir, real_run
+        shutil.rmtree(lock_scratch, ignore_errors=True)
+
+
 def main():
     check_1_chain_node_writeback()
     check_2_session_slug()
@@ -1255,6 +1353,7 @@ def main():
     check_13_structured_judge()
     check_14_tick_primitive()
     check_15_port_segment_stagger()
+    check_16_fresh_world_reset()
     print(f"\n[selftest] {'ALL GREEN' if not FAILURES else 'FAILURES: ' + str(FAILURES)}")
     return 1 if FAILURES else 0
 

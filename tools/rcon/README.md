@@ -953,3 +953,30 @@ node 键控表由 `step_expect` 解析）。存量链手写断言本就双腿通
 未来域卡顺手收编即可，永不收编也无害。试点消费方：`chains/barrel_paint.py`
 （7 断言点，双腿实跑取证 /tmp/gt6_rs_barrel-paint-forge*.log、
 /tmp/gt6_rs_barrel-paint-neo*.log）。
+
+### fresh-world 世界重置 --fresh-world（rcon-hygiene-combo，README tail-append）
+
+债源（drum-mdh6-chain-sweep 交卡 2026-10-08）：节点 run-dir
+（`mdk/versions/<node>/run`）**跨会话共享**——崩链/拆除链落在 bbox 清场域外的
+BE 残留在世界存档里，下一次 boot 世界加载即 CCE（实证：barrel-keepfilter-
+logistics forge 腿 chunk[2,2] 残留 shredder×7/crusher×1 BE，
+GTMachines.java:425 AirBlock→GTBasicMachineBlock，logs/latest.log:27538-
+27748）。bbox 清场只覆盖"跑过的链声明过的站点"，覆盖不了存档里的历史残渣。
+
+动词（`sweep.py --fresh-world`，选择性启用）：
+
+```bash
+python3 tools/rcon/sweep.py --mode session --group ulv_chain --fresh-world
+```
+
+`run_and_record` 在首次 boot 前（session/perboot 两模型同）调
+`reset_world(node)`：删节点 run-dir 的 `world*` 目录（`census_ore.
+delete_worlds` 删世界先例的同形），`server.properties`/`eula.txt` 等其余
+文件零触碰；`--dual` 把旗透传另一腿，两腿同一策略。**不带旗 = 行为逐字节
+同旧**（`getattr(args, "fresh_world", False)`，selftest 16d/16e 钉）。
+
+并发安全：每节点 sweep 锁（P32）已串行化同节点 sweep，重置不可能与并发
+sweep 竞速；重置时运行中的非 sweep 外来 boot 在本动词之前就已是毒化形态。
+世界每 sweep 一次新生，跨 boot 依赖世界存档的链语义不存在（各链站点每 pass
+带内自摆，worldgen 扫描驱动自管世界与种子）——sample 实证见
+tasks.rcon-hygiene-combo 交卡报告。
