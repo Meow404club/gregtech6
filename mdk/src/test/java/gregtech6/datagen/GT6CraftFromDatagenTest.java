@@ -109,11 +109,11 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
     @Test
     public void theRowCountIsTheMeasuredItemTruth() {
         List<GT6CraftingRecipes.CraftFromMaterialRow> tRows = GT6CraftingRecipes.craftFromMaterialRows();
-        assertEquals(962, tRows.size(), "11 boule + 205 plate split + 5 tiers x 109 + regular 201");
+        assertEquals(964, tRows.size(), "11 boule + 205 plate split + 5 tiers x 109 + regular 201 (+2 task gem-ice-force-rows — the gem2plate chipped/flawed Ice rows ride the forced items)");
         assertEquals(11, materialsOf("boule2plate_gem").size(), "the :178 boule cut (the forced-boule face)");
         assertEquals(205, materialsOf("plate2plate_tiny").size(), "the :171 plate split (the plateGem face)");
-        assertEquals(109, materialsOf("gem2plate_gem/chipped").size(), "the :172 chipped tier (the chipped face)");
-        assertEquals(109, materialsOf("gem2plate_gem/flawed").size(), "the :173 flawed tier");
+        assertEquals(110, materialsOf("gem2plate_gem/chipped").size(), "the :172 chipped tier (the chipped face) (+1 task gem-ice-force-rows)");
+        assertEquals(110, materialsOf("gem2plate_gem/flawed").size(), "the :173 flawed tier (+1 task gem-ice-force-rows)");
         assertEquals(201, materialsOf("gem2plate_gem/regular").size(), "the :174 regular tier (the whole GEMS face)");
         assertEquals(109, materialsOf("gem2plate_gem/flawless").size(), "the :175 flawless tier");
         assertEquals(109, materialsOf("gem2plate_gem/exquisite").size(), "the :176 exquisite tier");
@@ -813,9 +813,9 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
         assertEquals(309, shapelessMaterialsOf("tool_head_raw_universal_spade/from_shovel").size(), "the :187 face");
         assertEquals(309, shapelessMaterialsOf("tool_head_raw_universal_spade/from_spade").size(), "the :188 face");
         assertEquals(309, shapelessMaterialsOf("tool_head_construction_pickaxe/from_raw_pickaxe").size(), "the :189 face");
-        assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/from_raw_any_iron").size(), "the :190 face");
-        assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/from_any_iron").size(), "the :191 face");
-        assertEquals(95, shapelessMaterialsOf("tool_head_pickaxe_gem/retip").size(), "the :192 face — the fixed MT.Empty head slot exists since the :621 force landed (task toolhead-family-closeout); the rows ride the same toolHeadPickaxeGem ∩ gemFlawed face as :191");
+        assertEquals(96, shapelessMaterialsOf("tool_head_pickaxe_gem/from_raw_any_iron").size(), "the :190 face (+1 task gem-ice-force-rows — Ice joins the toolHeadPickaxeGem ∩ gemFlawed face)");
+        assertEquals(96, shapelessMaterialsOf("tool_head_pickaxe_gem/from_any_iron").size(), "the :191 face (+1 task gem-ice-force-rows)");
+        assertEquals(96, shapelessMaterialsOf("tool_head_pickaxe_gem/retip").size(), "the :192 face — the fixed MT.Empty head slot exists since the :621 force landed (task toolhead-family-closeout); the rows ride the same toolHeadPickaxeGem ∩ gemFlawed face as :191 (+1 task gem-ice-force-rows)");
     }
 
     private static Set<String> shapelessMaterialsOf(String aFormKey) {
@@ -932,9 +932,9 @@ public class GT6CraftFromDatagenTest extends GTOfflineTestBase {
     /** Row-count pin (the measured item truth): 6313 = the arrow trio (95 chipped + 79 rock + 539 raw) + 4x312 + 8x544 family faces. */
     @Test
     public void theFileBeltRowCountIsTheMeasuredItemTruth() {
-        assertEquals(6313, GT6CraftingRecipes.fileBeltCraftFromMaterialRows().size(),
-                "95 + 79 + 539 + 4x312 (saw/chisel/universalSpade/axeDouble) + 8x544 (sword/pickaxe/shovel/spade/axe/hoe/sense/plow)");
-        assertEquals(95, fileBeltMaterialsOf("tool_head_arrow/from_gem_chipped").size(), "the :420 chipped face (the flawed-gem-tier face, the :190 twin)");
+        assertEquals(6314, GT6CraftingRecipes.fileBeltCraftFromMaterialRows().size(),
+                "95 + 79 + 539 + 4x312 (saw/chisel/universalSpade/axeDouble) + 8x544 (sword/pickaxe/shovel/spade/axe/hoe/sense/plow) (+1 task gem-ice-force-rows — the chipped-face arrow row for Ice)");
+        assertEquals(96, fileBeltMaterialsOf("tool_head_arrow/from_gem_chipped").size(), "the :420 chipped face (the flawed-gem-tier face, the :190 twin) (+1 task gem-ice-force-rows)");
         assertEquals(79, fileBeltMaterialsOf("tool_head_arrow/from_rock_gt").size(), "the :421 rock face (the STONE positive leg)");
         assertEquals(539, fileBeltMaterialsOf("tool_head_arrow/from_raw_arrow").size(), "the :422 raw-arrow face (== the whole toolHeadArrow face, the :181 twin)");
         assertEquals(312, fileBeltMaterialsOf("tool_head_saw/from_raw_saw").size(), "the :423 saw face");
