@@ -242,11 +242,20 @@ class GTGrassBlockTest {
 		}
 	}
 
-	/** One generated tag JSON's values array (the GT6TagsDatagenTest reader shape). */
+	/**
+	 * One generated tag JSON's values array (the GT6TagsDatagenTest reader shape). Both
+	 * member forms: the strict string AND the optional {@code {id, required}} object the
+	 * harvest-bands cards emit into the shared vanilla tags (the wrenchTagMembers
+	 * reader shape — a bare {@code getAsString} dies on the object form,
+	 * UnsupportedOperationException: JsonObject).
+	 */
 	private static List<String> tagValues(String aDataPath) throws Exception {
 		JsonObject tObject = generated("data/" + aDataPath);
 		List<String> rValues = new ArrayList<>();
-		for (var tEntry : tObject.getAsJsonArray("values")) rValues.add(tEntry.getAsString());
+		for (var tEntry : tObject.getAsJsonArray("values")) {
+			rValues.add(tEntry.isJsonPrimitive() ? tEntry.getAsString()
+					: tEntry.getAsJsonObject().get("id").getAsString());
+		}
 		return rValues;
 	}
 
