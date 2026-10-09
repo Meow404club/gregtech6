@@ -377,12 +377,15 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 				}
 			}
 		}
-		// 41103/23463: the mc-E anvil-ladder + kitchen-table rows (+34 crafting_shaped, all
-		// gt6-namespace) landed in merge 0af79a237f without this census in their gate domain —
-		// the review-seat rebase seam re-pins the EXACT ratchet (shapeless/material_tool/smelting
-		// moved by zero; tree walk recomputed byte-identical on both main and the branch).
-		assertEquals(41103, tTotal, "the gt6-namespace shipped recipe universe");
-		assertEquals(23463, tTypes.get("minecraft:crafting_shaped"),
+		// 41124/23484: 41103/23463 was the mc-E anvil-ladder + kitchen-table re-pin (merge
+		// 0af79a237f, +34 crafting_shaped); since then the 16 Asphalt Panel dyeing recipes
+		// (merge of 70a3beb773, again no census in that gate domain) and the 5 Lightning
+		// Processor rungs (task lightning-processor-pour, +5 crafting_shaped) landed —
+		// the review-seat rebase seam re-pins the EXACT ratchet again (shapeless/
+		// material_tool/smelting/circuit_program moved by zero; tree walk recomputed
+		// byte-identical on both main 41119/23479 and the branch 41124/23484).
+		assertEquals(41124, tTotal, "the gt6-namespace shipped recipe universe");
+		assertEquals(23484, tTypes.get("minecraft:crafting_shaped"),
 				"the derivation candidate set — the over-derivation upper bound (bump-on-change ratchet)");
 		assertEquals(4594, tTypes.get("minecraft:crafting_shapeless"),
 				"declared skip v1 (CR.java:454 — the shapeless default had no REV)");
