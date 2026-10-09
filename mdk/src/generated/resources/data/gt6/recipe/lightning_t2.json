@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "M": {
+      "item": "gt6:casing_machine_aluminium"
+    },
+    "W": {
+      "item": "gt6:wire_copper_gt04"
+    },
+    "X": {
+      "item": "gt6:wire_steel_gt02"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    },
+    "x": {
+      "tag": "gt6:tools/wire_cutter"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
+  "pattern": [
+    "XxX",
+    "WwW",
+    "XMX"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:lightning_t2"
+  }
+}
