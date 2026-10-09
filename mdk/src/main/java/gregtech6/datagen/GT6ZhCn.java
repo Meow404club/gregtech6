@@ -1943,6 +1943,14 @@ public class GT6ZhCn extends LanguageProvider {
 		// storage hoppers (task storage-hopper-family): the two kind templates over the
 		// bronze/steel row words (the boiler walk emits them; the tsv hand rows carry the
 		// 料斗/队列料斗 wording since task lang-batch1-fix — funnel keeps 漏斗)
+		// item mass storage (task storage-massstorage): the two kind templates (the dump
+		// composed rows gt.multitileentity.6000-6059 量子存储器 / 6200-6259 物流量子存储器
+		// verbatim shape) + the two tooltip keys (the tmp/gregtech.lang :15123-15124
+		// verbatim); the mat words ride the shared family walk below
+		addDirect(gregtech6.registry.GT6StaticStorages.MASS_DISPLAY_KEY);
+		addDirect(gregtech6.registry.GT6StaticStorages.MASS_LOGISTICS_DISPLAY_KEY);
+		addDirect("gt.multitileentity.massstorage.tooltip.1");
+		addDirect("gt.multitileentity.massstorage.tooltip.2");
 		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_KEY);
 		addDirect(gregtech6.registry.GT6Hoppers.DISPLAY_QUEUE_KEY);
 		// metal chests (task material-mc-a-storage-chests): the two kind templates over the

@@ -381,6 +381,7 @@ public final class GTClientHandlers {
     private static void onRegisterStorageReactorPaintItemColors(RegisterColorHandlersEvent.Item event) {
         List<Item> tRowTintItems = new ArrayList<>();
         for (Block tBlock : GT6StaticStorages.metalBlockArray()) tRowTintItems.add(tBlock.asItem());
+        for (RegistryObject<Item> tItem : GT6StaticStorages.MASS_ITEMS_BY_PATH.values()) tRowTintItems.add(tItem.get()); // task storage-massstorage
         tRowTintItems.add(GT6Reactors.REACTOR_CORE_2X2_ITEM.get());
         // task material-mc-a-storage-chests — the 120 metal-chest BlockItems join the
         // same row-material lambda (both kinds are NBT_MATERIAL rows; the item models

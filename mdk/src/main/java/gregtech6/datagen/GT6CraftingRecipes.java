@@ -452,6 +452,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the hopper walk's skip semantics
 			tBuilder.save(aConsumer, staticStorageRecipeId(tRow));
 		}
+		for (gregtech6.registry.GT6StaticStorages.MassRow tRow : gregtech6.registry.GT6StaticStorages.MASS_ROWS) {
+			ShapedRecipeBuilder tBuilder = massStorageRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the logistics row's cover column is unported — the GTBarrels pool-cut face
+			tBuilder.save(aConsumer, massStorageRecipeId(tRow));
+		}
 		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
 			tRow.builder().save(aConsumer, tRow.id());
 		}
@@ -766,6 +771,11 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			ShapedRecipeBuilder tBuilder = staticStorageRecipeBuilder(tRow);
 			if (tBuilder == null) continue; // the row's material is driver-hidden — the hopper walk's skip semantics
 			tBuilder.save(aOutput, staticStorageRecipeId(tRow));
+		}
+		for (gregtech6.registry.GT6StaticStorages.MassRow tRow : gregtech6.registry.GT6StaticStorages.MASS_ROWS) {
+			ShapedRecipeBuilder tBuilder = massStorageRecipeBuilder(tRow);
+			if (tBuilder == null) continue; // the logistics row's cover column is unported — the GTBarrels pool-cut face
+			tBuilder.save(aOutput, massStorageRecipeId(tRow));
 		}
 		for (PartFamilyRecipeRow tRow : partFamilyRecipeBuilders()) {
 			tRow.builder().save(aOutput, tRow.id());
@@ -1242,6 +1252,35 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			rBuilder.unlockedBy("has_plank", has(aRow.plank().item()));
 		}
 		return rBuilder;
+	}
+
+	/**
+	 * Task storage-massstorage — the :141 standard-row recipe verbatim ("TCT"/"wMd"/"TCT"):
+	 * T = the material screw, C = the material chest (the {@code aRegistry.getItem(aID)}
+	 * column — the LOCKER ruling folds it onto {@code Tags.Items.CHESTS}, the static-batch
+	 * precedent), M = the machine casing, w = the wrench, d = the screwdriver (CR.java:358
+	 * /:342 letter table). The :142 logistics recipe pools (the Q column rides
+	 * {@code IL.Cover_Logistics_Generic_Storage}, unported — the GTBarrels logistics-tank
+	 * ruling), so the answer is null there.
+	 */
+	ShapedRecipeBuilder massStorageRecipeBuilder(gregtech6.registry.GT6StaticStorages.MassRow aRow) {
+		if (aRow.logistics()) return null;
+		OreDictMaterial tMaterial = aRow.material().mt();
+		return ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS,
+				gregtech6.registry.GT6StaticStorages.MASS_ITEMS_BY_PATH.get(aRow.path()).get())
+				.pattern("TCT").pattern("wMd").pattern("TCT")
+				.define('T', GTMaterialItems.get(gregapi.data.OP.screw, tMaterial).get())
+				.define('C', Tags.Items.CHESTS)
+				.define('M', GTMaterialItems.get(gregapi.data.OP.casingMachine, tMaterial).get())
+				.define('w', GT6ItemTags.TOOLS_WRENCH)
+				.define('d', GT6ItemTags.TOOLS_SCREWDRIVER)
+				.unlockedBy("has_plate", has(GT6ItemTags.materialTag(GT6ItemTags.PLATES_FAMILY, aRow.material().slug())));
+	}
+
+	/** The mass-storage recipe id — the result path (the vanilla naming convention). */
+	private static ResourceLocation massStorageRecipeId(gregtech6.registry.GT6StaticStorages.MassRow aRow) {
+		String tPath = aRow.path(); // a local so the two-arg RL ctor args stay bare identifiers
+		return new ResourceLocation(GT6DataGenerators.MOD_ID, tPath);
 	}
 
 	/** The recipe result item of a row (the registered BlockItem). */

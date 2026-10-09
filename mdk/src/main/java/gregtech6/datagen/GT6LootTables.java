@@ -109,6 +109,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
                 new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
                 new SubProviderEntry(GT6ChestBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-a-storage-chests — the 120 chest self-drops
+                new SubProviderEntry(GT6MassStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-massstorage — the 120 self-drops
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
@@ -183,6 +184,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6BoilerTankBlockLoot::new, LootContextParamSets.BLOCK), // task boiler-tank
                 new SubProviderEntry(GT6HopperBlockLoot::new, LootContextParamSets.BLOCK), // task hopper-matrix — the 120 self-drops
                 new SubProviderEntry(GT6ChestBlockLoot::new, LootContextParamSets.BLOCK), // task material-mc-a-storage-chests — the 120 chest self-drops
+                new SubProviderEntry(GT6MassStorageBlockLoot::new, LootContextParamSets.BLOCK), // task storage-massstorage — the 120 self-drops
                 new SubProviderEntry(GT6DryerBlockLoot::new, LootContextParamSets.BLOCK), // task dryer-family
                 new SubProviderEntry(GT6DistilleryBlockLoot::new, LootContextParamSets.BLOCK), // task distillery-family
                 new SubProviderEntry(GT6CannerBlockLoot::new, LootContextParamSets.BLOCK), // task canner-machine
@@ -703,6 +705,44 @@ public final class GT6LootTables extends LootTableProvider {
             rBlocks.add(gregtech6.registry.GT6Hoppers.BLOCKS_BY_PATH.get(tRow.path()).get());
         }
         return rBlocks;
+    }
+
+    /**
+     * The item mass storage self-drop provider (task storage-massstorage) — the
+     * hopper-matrix face verbatim (the MTE default self-drop over the :141-142 rows;
+     * the INVENTORY contents ride the onRemove pop, the taped keep face).
+     */
+    public static List<Block> massStorageLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        for (gregtech6.registry.GT6StaticStorages.MassRow tRow : gregtech6.registry.GT6StaticStorages.MASS_ROWS) {
+            rBlocks.add(gregtech6.registry.GT6StaticStorages.MASS_BLOCKS_BY_PATH.get(tRow.path()).get());
+        }
+        return rBlocks;
+    }
+
+    /** The item mass storage self-drop provider (task storage-massstorage). */
+    public static final class GT6MassStorageBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6MassStorageBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6MassStorageBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return massStorageLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : massStorageLootBlocks()) dropSelf(tBlock);
+        }
     }
 
     /** The storage-hopper family self-drop provider (task hopper-matrix). */

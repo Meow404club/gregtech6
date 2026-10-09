@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:chests"
+    },
+    "M": {
+      "item": "gt6:casing_machine_tungsten_carbide"
+    },
+    "T": {
+      "item": "gt6:screw_tungsten_carbide"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "ReactorCraft"
+    }
+  ],
+  "pattern": [
+    "TCT",
+    "wMd",
+    "TCT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:mass_storage_tungsten_carbide"
+  }
+}

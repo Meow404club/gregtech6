@@ -278,6 +278,9 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// :894-:895/:970-:971/:1000-:1001/:909-:913; the two-layer body cube is the
 		// tintindex-0 seat, the overlay decals untinted; the colour resolves through the
 		// GT6BatteryBoxBlock / GT6ElectricTransformerBlock carriers)
+		// task storage-massstorage — the 120 item mass storage rows (the Loader :141-142
+		// NBT_MATERIAL columns over the metalset 60-material loop)
+		for (Block tBlock : gregtech6.registry.GT6StaticStorages.massPaintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6Batteries.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6CrystalChargers.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		for (Block tBlock : gregtech6.registry.GT6ZpmDechargers.paintableBlockArray()) wrapStates(tBlock, aEvent);

@@ -939,5 +939,8 @@ public final class GT6BlockTags extends BlockTagsProvider {
 			tWrench.add(tFluxDynamo); // the :953-957 aMachine ladder (the task-card "port-native" claim is the erratum)
 		}
 		tWrench.add(gregtech6.registry.GT6FeConverters.FE_CONVERTER.get()); // the port-native ruling (decisions.p28-eu-inbound-converter), the machine face
+		// task storage-massstorage — the 120 item mass storage rows (the aMachine family,
+		// Loader :141-142 TOOL_wrench block column; the wrench-band ruling)
+		GT6StaticStorages.MASS_BLOCKS_BY_PATH.values().forEach(tHandle -> tWrench.add(tHandle.get()));
 	}
 }

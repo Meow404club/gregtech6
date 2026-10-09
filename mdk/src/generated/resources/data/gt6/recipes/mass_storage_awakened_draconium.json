@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "DraconicEvolution"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "M": {
+      "item": "gt6:casing_machine_draconium_awakened"
+    },
+    "T": {
+      "item": "gt6:screw_draconium_awakened"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TCT",
+    "wMd",
+    "TCT"
+  ],
+  "result": {
+    "item": "gt6:mass_storage_awakened_draconium"
+  },
+  "show_notification": true
+}

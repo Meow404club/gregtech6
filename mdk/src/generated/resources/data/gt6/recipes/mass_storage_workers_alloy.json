@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "hbm"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "M": {
+      "item": "gt6:casing_machine_workers_alloy"
+    },
+    "T": {
+      "item": "gt6:screw_workers_alloy"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TCT",
+    "wMd",
+    "TCT"
+  ],
+  "result": {
+    "item": "gt6:mass_storage_workers_alloy"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:chests"
+    },
+    "M": {
+      "item": "gt6:casing_machine_aluminium"
+    },
+    "T": {
+      "item": "gt6:screw_aluminium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "TConstruct"
+    }
+  ],
+  "pattern": [
+    "TCT",
+    "wMd",
+    "TCT"
+  ],
+  "result": {
+    "count": 1,
+    "id": "gt6:mass_storage_aluminium"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "Thaumcraft"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "M": {
+      "item": "gt6:casing_machine_void_metal"
+    },
+    "T": {
+      "item": "gt6:screw_void_metal"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TCT",
+    "wMd",
+    "TCT"
+  ],
+  "result": {
+    "item": "gt6:mass_storage_void_metal"
+  },
+  "show_notification": true
+}

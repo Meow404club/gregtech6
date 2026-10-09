@@ -1333,6 +1333,7 @@ public class GT6EnUs extends LanguageProvider {
         addStaticStorageUnits();
         addMetalShelfCrateUnits();
         add32xxxUnits(); // task block-family-32xxx-port
+        addMassStorageUnits(); // task storage-massstorage
     }
 
     /**
@@ -1470,6 +1471,20 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /** The two hopper templates (regular/queue) + the row-material units (the GT6Hoppers.ROWS walk; Bronze/Steel join the boiler words, Loader:191/:202). */
+    /**
+     * Task storage-massstorage — the two compose templates (the loader name literals
+     * "Mass Storage (%s)" / "Logistics Mass Storage (%s)", Loader :141-142) + the two
+     * tooltip keys (the upstream LH add :98-101, the tmp/gregtech.lang en face); the
+     * row-material words ride the shared gt6.row.mat.* family (the hopper walk emits
+     * them), so no per-row key exists here.
+     */
+    private void addMassStorageUnits() {
+        add(gregtech6.registry.GT6StaticStorages.MASS_DISPLAY_KEY, "Mass Storage (%s)");
+        add(gregtech6.registry.GT6StaticStorages.MASS_LOGISTICS_DISPLAY_KEY, "Logistics Mass Storage (%s)");
+        add("gt.multitileentity.massstorage.tooltip.1", "Can store Items of one Type, Capacity: ");
+        add("gt.multitileentity.massstorage.tooltip.2", "Can be used adjacent to Advanced Crafting Tables");
+    }
+
     private void addHopperUnits() {
         add(gregtech6.registry.GT6Hoppers.DISPLAY_KEY, "%s Hopper");
         add(gregtech6.registry.GT6Hoppers.DISPLAY_QUEUE_KEY, "%s Queue Hopper");

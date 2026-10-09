@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -50,11 +51,18 @@ import net.minecraftforge.registries.RegistryObject;
 
 import gregapi.data.MT;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.block.GTComposedNameItem;
 import gregtech6.gui.machines.GT6MuiMachine;
+import gregtech6.items.tools.GTMagnifyingGlassItem;
+import gregtech6.items.tools.GTPincersItem;
+import gregtech6.items.tools.GTSoftHammerItem;
+import gregtech6.items.tools.GT6ToolActions;
 import gregtech6.tileentity.inventories.GT6BookShelfBlockEntity;
 import gregtech6.tileentity.inventories.GT6BottleCrateBlockEntity;
 import gregtech6.tileentity.inventories.GT6DrawerQuadBlockEntity;
 import gregtech6.tileentity.inventories.GT6LockerBlockEntity;
+import gregtech6.tileentity.inventories.GT6MassStorageBlockEntity;
+import gregtech6.tileentity.inventories.GT6MassStorageLogisticsBlockEntity;
 import gregtech6.tileentity.inventories.GT6SafeBlockEntity;
 import gregtech6.tileentity.inventories.GT6SafeKeyLockedBlockEntity;
 import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
@@ -310,6 +318,372 @@ public final class GT6StaticStorages {
 	public static Block blockByPath(String aPath) {
 		RegistryObject<GT6StorageBlock> tHandle = BLOCKS_BY_PATH.get(aPath);
 		return tHandle == null ? null : tHandle.get();
+	}
+
+	// -------------------------------------------------------------------------
+	// the item mass storage band (task storage-massstorage — the Loader :141-142
+	// metalset rows over the 60-material loop; the row material anchor IS the
+	// GT6Hoppers.MATERIALS table, the hopper-matrix ruling)
+	// -------------------------------------------------------------------------
+
+	/** The loader meta id bases (Loader :141 id 6000+aID standard, :142 id 6200+aID logistics). */
+	public static final int META_ID_MASS_STORAGE = 6000;
+	public static final int META_ID_MASS_STORAGE_LOGISTICS = 6200;
+
+	/** The display templates (the i18n-compose-rows form; the loader name literals :141-142). */
+	public static final String MASS_DISPLAY_KEY = "gt6.row.massstorage.display";
+	public static final String MASS_LOGISTICS_DISPLAY_KEY = "gt6.row.logistics_massstorage.display";
+
+	/**
+	 * One mass-storage row — the block-carrier projection of one Loader metalset line half
+	 * (:141 standard / :142 logistics). The hardness/resistance columns ride the
+	 * metalset call (aHardness == aResistance on every material line, the hopper-table
+	 * fold); the NBT_CAPACITY column never rides (both loader rows omit it — the
+	 * upstream default 1000000, MultiTileEntityMassStorage.java:71).
+	 *
+	 * @param path      the gt6 registry path (the blockstate/model/lang key tail)
+	 * @param metaId    the upstream MultiTileEntity id (6000+aID / 6200+aID)
+	 * @param material  the row material (the GT6Hoppers.MATERIALS entry)
+	 * @param logistics the :142 kind flag (the black body, cyan digits, the
+	 *                  {@code ITileEntityLogisticsStorage} face; recipe pool-cut — the
+	 *                  {@code IL.Cover_Logistics_Generic_Storage} column item is
+	 *                  unported, the GTBarrels logistics-tank ruling)
+	 */
+	public record MassRow(String path, int metaId, GT6Hoppers.HopperMaterial material, boolean logistics) {
+		/** The block properties (strength(hardness, resistance) — the metalset columns; the aMachine METAL sound). */
+		public BlockBehaviour.Properties properties() {
+			return BlockBehaviour.Properties.of()
+					.strength(material.hardness(), material.hardness())
+					.sound(SoundType.METAL);
+		}
+	}
+
+	/**
+	 * The 120 mass-storage rows in registration order (the metalset loop walk — per
+	 * material the standard :141 then the logistics :142, the upstream pair order).
+	 */
+	public static final List<MassRow> MASS_ROWS = buildMassRows();
+
+	private static List<MassRow> buildMassRows() {
+		List<MassRow> rRows = new ArrayList<>(GT6Hoppers.MATERIALS.size() * 2);
+		for (GT6Hoppers.HopperMaterial tMat : GT6Hoppers.MATERIALS) {
+			rRows.add(new MassRow("mass_storage_" + tMat.slug(), META_ID_MASS_STORAGE + tMat.metaId(), tMat, false));
+			rRows.add(new MassRow("logistics_mass_storage_" + tMat.slug(), META_ID_MASS_STORAGE_LOGISTICS + tMat.metaId(), tMat, true));
+		}
+		return List.copyOf(rRows);
+	}
+
+	/** The registered mass-storage blocks by path (the BET multi-mount arrays + the datagen walkers). */
+	public static final Map<String, RegistryObject<GT6MassStorageBlock>> MASS_BLOCKS_BY_PATH = new LinkedHashMap<>();
+
+	/** The registered mass-storage items, same keys as {@link #MASS_BLOCKS_BY_PATH}. */
+	public static final Map<String, RegistryObject<Item>> MASS_ITEMS_BY_PATH = new LinkedHashMap<>();
+
+	static {
+		for (MassRow tRow : MASS_ROWS) {
+			MASS_BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
+					() -> new GT6MassStorageBlock(tRow, tRow.properties())));
+			MASS_ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
+					() -> new GT6MassStorageItem(GT6StaticStorages.MASS_BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+		}
+	}
+
+	/** The standard-kind blocks in registration order (the MASS_STORAGE_BE multi-mount array). */
+	public static Block[] massStorageBlockArray() {
+		return massKindArray(false);
+	}
+
+	/** The logistics-kind blocks in registration order (the MASS_STORAGE_LOGISTICS_BE multi-mount array). */
+	public static Block[] massLogisticsBlockArray() {
+		return massKindArray(true);
+	}
+
+	private static Block[] massKindArray(boolean aLogistics) {
+		List<Block> rBlocks = new ArrayList<>();
+		for (MassRow tRow : MASS_ROWS) {
+			if (tRow.logistics() == aLogistics) rBlocks.add(MASS_BLOCKS_BY_PATH.get(tRow.path()).get());
+		}
+		return rBlocks.toArray(new Block[0]);
+	}
+
+	/**
+	 * The tint walk payload (the paintableBlockArray form) — every row carries its
+	 * upstream NBT_MATERIAL (Loader :141 aMat / :142 MT.Black), the tintindex-0 body
+	 * cube is the seat.
+	 */
+	public static Block[] massPaintableBlockArray() {
+		return concat(massKindArray(false), massKindArray(true));
+	}
+
+	private static Block[] concat(Block[] aA, Block[] aB) {
+		Block[] rOut = new Block[aA.length + aB.length];
+		System.arraycopy(aA, 0, rOut, 0, aA.length);
+		System.arraycopy(aB, 0, rOut, aA.length, aB.length);
+		return rOut;
+	}
+
+	/** The composed name of a mass-storage row (the {@code GT6Hoppers.displayOf} form). */
+	/** The row-material small-unit key (the shared {@code gt6.row.mat.<slug>} family, the hopper shape). */
+	public static String massMatUnitKeyOf(MassRow aRow) {
+		return "gt6.row.mat." + aRow.material().slug();
+	}
+
+	public static net.minecraft.network.chat.MutableComponent massDisplayOf(MassRow aRow) {
+		return Component.translatable(aRow.logistics() ? MASS_LOGISTICS_DISPLAY_KEY : MASS_DISPLAY_KEY,
+				Component.translatable(massMatUnitKeyOf(aRow)));
+	}
+
+	/**
+	 * The mass-storage block — the front-face machine cube (the aMachine family, the
+	 * upstream pass-0 full cube): the FACING is the front (toward the placer, the
+	 * GT6StorageBlock furnace convention; the upstream getDefaultSide SIDE_FRONT :538
+	 * with SIDES_HORIZONTAL valid sides :539). The use() face is the upstream
+	 * onToolClick2 tool arms (:122-238) ahead of the onBlockActivated3 pixel grid
+	 * (:241-331); no GUI exists upstream — there is no MUI face here.
+	 *
+	 * <p>Geometry: the render/collision/outline trio IS the untouched vanilla full cube
+	 * (no getShape/collision override — the three-way ruling posture, the metal kinds of
+	 * the static batch); the digit strip and the content display are the BER's quads,
+	 * not model geometry.
+	 */
+	public static final class GT6MassStorageBlock extends gregtech6.block.GTEntityBlock {
+
+		/** Facing property — the FRONT face, horizontals only (the upstream SIDES_HORIZONTAL :539). */
+		public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+
+		private final MassRow mRow;
+
+		public GT6MassStorageBlock(MassRow aRow, Properties aProperties) {
+			super(aProperties);
+			mRow = aRow;
+			registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
+		}
+
+		/** The registration row (the block-carrier config read). */
+		public MassRow row() {
+			return mRow;
+		}
+
+		/**
+		 * The combined tint dispatch arm (the {@code GT6StorageBlock.materialOf} shape):
+		 * the standard rows answer their loader material, the logistics rows the
+		 * MT.Black body column (Loader :142 — the black body IS the logistics identity).
+		 */
+		@Nullable
+		public static OreDictMaterial materialOf(@Nullable Block aBlock) {
+			if (!(aBlock instanceof GT6MassStorageBlock tStorage)) return null;
+			return tStorage.mRow.logistics() ? MT.Black : tStorage.mRow.material().mt();
+		}
+
+		//? if neoforge {
+		/*
+		// 21.1 made BaseEntityBlock.codec() abstract (the GT6StorageBlock fork — a
+		// parse-time representative value; world save/load never runs through this codec).
+		@Override
+		protected com.mojang.serialization.MapCodec<? extends GT6MassStorageBlock> codec() {
+			return simpleCodec(aProperties -> new GT6MassStorageBlock(GT6StaticStorages.MASS_ROWS.get(0), aProperties));
+		}
+		*///?}
+
+		@Override
+		protected BlockEntityType<? extends gregtech6.tileentity.TileEntityBase03TicksAndSync> tickerType() {
+			return mRow.logistics() ? GTBlockEntities.MASS_STORAGE_LOGISTICS_BE.get() : GTBlockEntities.MASS_STORAGE_BE.get();
+		}
+
+		@Override
+		public RenderShape getRenderShape(BlockState aState) {
+			return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+		}
+
+		/** The composed display name (the i18n-compose-rows carrier, {@code GT6Hoppers.GT6HopperBlock.getName} form). */
+		@Override
+		public net.minecraft.network.chat.MutableComponent getName() {
+			return massDisplayOf(mRow);
+		}
+
+		@Override
+		protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> aBuilder) {
+			aBuilder.add(FACING);
+		}
+
+		@Override
+		public BlockState getStateForPlacement(BlockPlaceContext aContext) {
+			// the front faces the placer (the vanilla furnace arm; the upstream
+			// getSideForPlayerPlacing horizontal default)
+			return defaultBlockState().setValue(FACING, aContext.getHorizontalDirection().getOpposite());
+		}
+
+		@Override
+		public void setPlacedBy(Level aLevel, BlockPos aPos, BlockState aState, LivingEntity aPlacer, ItemStack aStack) {
+			super.setPlacedBy(aLevel, aPos, aState, aPlacer, aStack);
+			// keep the BE's NBT fallback byte in step (the live truth is the state property)
+			if (aLevel.getBlockEntity(aPos) instanceof GT6MassStorageBlockEntity tStorage) {
+				tStorage.setFacingNbtFallback((byte) aState.getValue(FACING).get3DDataValue());
+			}
+		}
+
+		/**
+		 * The upstream onBlockActivated3 + onToolClick2 routing: the tool arms claim the
+		 * click first (the GT6HopperBlock use() shape), then the pixel grid; every arm
+		 * CONSUMES the click (upstream :330 return T).
+		 */
+		@Override
+		//? if forge {
+		public InteractionResult use(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, InteractionHand aHand, BlockHitResult aHit) {
+		//?} else {
+		/*public InteractionResult useWithoutItem(BlockState aState, Level aLevel, BlockPos aPos, Player aPlayer, BlockHitResult aHit) {
+		//21.1: BlockBehaviour.use folded into useWithoutItem (the GT6HopperBlock fork verbatim)
+		InteractionHand aHand = InteractionHand.MAIN_HAND;
+		*///?}
+			BlockEntity tTile = aLevel.getBlockEntity(aPos);
+			if (!(tTile instanceof GT6MassStorageBlockEntity tStorage)) {
+				return InteractionResult.PASS;
+			}
+			ItemStack tHeld = aPlayer.getItemInHand(aHand);
+			//? if forge {
+			Direction tFront = aState.getValue(FACING);
+			//?} else {
+			/*Direction tFront = aState.getValue(FACING);
+			 *///?}
+			byte tFrontSide = (byte) tFront.get3DDataValue();
+			// the tool arms (upstream onToolClick2 :122-238; the tape/scissors pair rides
+			// the Duct_Tape item pool — the mode bit stays NBT-visible)
+			if (tHeld.canPerformAction(GTPincersItem.ACTION)) {
+				if (!aLevel.isClientSide) tStorage.pincersTakeAll(aPlayer);
+				return InteractionResult.CONSUME;
+			}
+			if (tHeld.canPerformAction(GTSoftHammerItem.ACTION)) {
+				if (!aLevel.isClientSide) tStorage.softHammerEject();
+				return InteractionResult.CONSUME;
+			}
+			if (tHeld.canPerformAction(GT6ToolActions.WRENCH)) {
+				if (!aLevel.isClientSide) aPlayer.displayClientMessage(Component.literal(tStorage.monkeyWrenchToggle()), true);
+				return InteractionResult.CONSUME;
+			}
+			if (tHeld.canPerformAction(GT6ToolActions.SCREWDRIVER)) {
+				if (!aLevel.isClientSide) aPlayer.displayClientMessage(Component.literal(tStorage.screwdriverToggle()), true);
+				return InteractionResult.CONSUME;
+			}
+			if (tHeld.canPerformAction(GT6ToolActions.CUTTER)) {
+				if (!aLevel.isClientSide) aPlayer.displayClientMessage(Component.literal(tStorage.cutterToggle()), true);
+				return InteractionResult.CONSUME;
+			}
+			if (tHeld.canPerformAction(GTMagnifyingGlassItem.ACTION)) {
+				if (!aLevel.isClientSide) {
+					for (Component tLine : tStorage.lensStatus()) aPlayer.displayClientMessage(tLine, false);
+				}
+				return InteractionResult.CONSUME;
+			}
+			// the pixel grid (upstream onBlockActivated3 :241-331, front face only)
+			if (tFaceClicked(aHit, tFrontSide)) {
+				float tHitX = (float) (aHit.getLocation().x - aPos.getX());
+				float tHitY = (float) (aHit.getLocation().y - aPos.getY());
+				float tHitZ = (float) (aHit.getLocation().z - aPos.getZ());
+				boolean tConsumed = tStorage.clickFrontFace(aPlayer, tHeld, tFrontSide, tHitX, tHitY, tHitZ);
+				return tConsumed ? InteractionResult.CONSUME : InteractionResult.PASS;
+			}
+			return InteractionResult.PASS;
+		}
+
+		/** The front-face gate of the upstream :243 conjunct. */
+		private static boolean tFaceClicked(BlockHitResult aHit, byte aFrontSide) {
+			return aHit.getDirection().get3DDataValue() == aFrontSide;
+		}
+
+		/**
+		 * The break face — the partial residue drops BEFORE the content pop (upstream
+		 * breakBlock :559-566), the taped mass stack rides the harvested item (upstream
+		 * keepSlot :556, the crate BlockEntityTag fold), the comparator tail rides the
+		 * vanilla convention; the untaped content pops ride the {@code GTEntityBlock}
+		 * fallback over the BE's {@code canDrop(int)}.
+		 */
+		@Override
+		public void onRemove(BlockState aOldState, Level aLevel, BlockPos aPos, BlockState aNewState, boolean aIsMoving) {
+			if (!aOldState.is(aNewState.getBlock())) {
+				BlockEntity tBE = aLevel.getBlockEntity(aPos);
+				if (tBE instanceof GT6MassStorageBlockEntity tStorage) {
+					tStorage.dropPartialUnits();
+					if ((tStorage.mMode & GT6MassStorageBlockEntity.MODE_TAPED) != 0 && tStorage.slotHas(GT6MassStorageBlockEntity.SLOT_MASS)) {
+						// the keepSlot fold: the mass stack rides the ONE dropped item
+						// (the vanilla shulker convention; the funnel slot popped separately)
+						ItemStack tDrop = new ItemStack(this);
+						CompoundTag tSaved = tStorage.saveWithoutMetadata();
+						stripFunnelSlot(tSaved);
+						//? if forge {
+						tDrop.addTagElement("BlockEntityTag", tSaved);
+						//?} else {
+						/*// 21.1: the same convention over the BLOCK_ENTITY_DATA component
+						tDrop.set(net.minecraft.core.component.DataComponents.BLOCK_ENTITY_DATA,
+								net.minecraft.world.item.component.CustomData.of(tSaved));
+						*///?}
+						Block.popResource(aLevel, aPos, tDrop);
+					}
+					aLevel.updateNeighbourForOutputSignal(aPos, this);
+				}
+			}
+			super.onRemove(aOldState, aLevel, aPos, aNewState, aIsMoving);
+		}
+
+		/** The kept tag carries slot 1 ONLY (the funnel slot pops like upstream canDrop(0) = T). */
+		private static void stripFunnelSlot(CompoundTag aSaved) {
+			if (aSaved.contains("inventory", net.minecraft.nbt.Tag.TAG_LIST)) {
+				net.minecraft.nbt.ListTag tList = aSaved.getList("inventory", net.minecraft.nbt.Tag.TAG_COMPOUND);
+				net.minecraft.nbt.ListTag tFiltered = new net.minecraft.nbt.ListTag();
+				for (int i = 0; i < tList.size(); i++) {
+					CompoundTag tEntry = tList.getCompound(i);
+					if (tEntry.contains("Slot", net.minecraft.nbt.Tag.TAG_ANY_NUMERIC) && tEntry.getInt("Slot") != GT6MassStorageBlockEntity.SLOT_FUNNEL) {
+						tFiltered.add(tEntry);
+					}
+				}
+				aSaved.put("inventory", tFiltered);
+			}
+		}
+
+		/**
+		 * The explosion face (upstream onExploded :544 — the mass store dies, the taped
+		 * or not): the kill rides the BE seam, then the vanilla air swap fires the
+		 * onRemove pop for the funnel slot.
+		 */
+		@Override
+		public void onBlockExploded(BlockState aState, Level aLevel, BlockPos aPos, Explosion aExplosion) {
+			if (aLevel.getBlockEntity(aPos) instanceof GT6MassStorageBlockEntity tStorage) {
+				tStorage.killForExplosion();
+			}
+			aLevel.setBlock(aPos, Blocks.AIR.defaultBlockState(), 3); // the IForgeBlock default body
+		}
+	}
+
+	/**
+	 * The mass-storage BlockItem — the composed name carrier + the tooltip face
+	 * (upstream addToolTips :103-120): the content line (yellow), the capacity line and
+	 * the ACT-adjacent line over the upstream lang keys
+	 * {@code gt.multitileentity.massstorage.tooltip.1/2} (:98-101); the per-tool DGRAY
+	 * hint block folds with the LH cosmetic pool (the tool arms themselves are live).
+	 */
+	public static final class GT6MassStorageItem extends GTComposedNameItem {
+
+		public GT6MassStorageItem(Block aBlock, Item.Properties aProperties) {
+			super(aBlock, aProperties);
+		}
+
+		//? if forge {
+		@Override
+		public void appendHoverText(ItemStack aStack, @Nullable Level aLevel, List<Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+			tooltipRows(aTooltip);
+		}
+		//?} else {
+		/*// 21.1: Level folded into TooltipContext (the GTGrassBlock fork shape)
+		@Override
+		public void appendHoverText(ItemStack aStack, Item.TooltipContext aContext, List<Component> aTooltip, net.minecraft.world.item.TooltipFlag aFlag) {
+			tooltipRows(aTooltip);
+		}
+		*///?}
+
+		/** The two tooltip rows (the upstream LH add :98-101 over :104-107). */
+		private static void tooltipRows(List<Component> aTooltip) {
+			aTooltip.add(Component.translatable("gt.multitileentity.massstorage.tooltip.1").withStyle(net.minecraft.ChatFormatting.GRAY));
+			aTooltip.add(Component.translatable("gt.multitileentity.massstorage.tooltip.2").withStyle(net.minecraft.ChatFormatting.GRAY));
+		}
 	}
 
 	// -------------------------------------------------------------------------

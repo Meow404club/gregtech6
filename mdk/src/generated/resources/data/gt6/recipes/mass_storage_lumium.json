@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "ThermalExpansion"
+    }
+  ],
+  "key": {
+    "C": {
+      "tag": "forge:chests"
+    },
+    "M": {
+      "item": "gt6:casing_machine_lumium"
+    },
+    "T": {
+      "item": "gt6:screw_lumium"
+    },
+    "d": {
+      "tag": "gt6:tools/screwdriver"
+    },
+    "w": {
+      "tag": "gt6:tools/wrench"
+    }
+  },
+  "pattern": [
+    "TCT",
+    "wMd",
+    "TCT"
+  ],
+  "result": {
+    "item": "gt6:mass_storage_lumium"
+  },
+  "show_notification": true
+}

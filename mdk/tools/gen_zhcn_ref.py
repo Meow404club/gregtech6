@@ -577,6 +577,11 @@ HAND_TRANSLATIONS = {
     "block.gt6.fe_source": ("FE 测试源", "hand"),
     "gt6.row.hopper.display": ("%s料斗", "hand"),
     "gt6.row.queue_hopper.display": ("%s队列料斗", "hand"),
+    # task storage-massstorage: the mass storage templates + tooltips, dump-verbatim
+    "gt6.row.massstorage.display": ("量子存储器 (%s)", "hand"),
+    "gt6.row.logistics_massstorage.display": ("物流量子存储器 (%s)", "hand"),
+    "gt.multitileentity.massstorage.tooltip.1": ("储存大量相同物品, 可存储件数:", "hand"),
+    "gt.multitileentity.massstorage.tooltip.2": ("可以在高级工作台旁使用", "hand"),
     # task material-mc-b-storage-mass-shelf: the metal shelf/crate templates, dump-verbatim
     # (tmp/gregtech.lang :14096-14159 书架 (铅)/:14657-14716 瓶筐 (铅) — the parenthesized
     # compose form with the half-width parens + leading space, the gt6.row.mat.* words ride

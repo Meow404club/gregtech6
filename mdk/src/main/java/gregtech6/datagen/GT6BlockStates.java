@@ -276,6 +276,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         addBurningBoxes(); // task burning-box-family
         addBoilers(); // task boiler-tank
         addHoppers(); // task storage-hopper-family
+        addMassStorages(); // task storage-massstorage
         addGearBoxTransformer(); // task gearbox-transformer
         addElectricTransformer(); // task c-ulv-lv-transformer
         addLDEnergyFamilies(); // task energy-tail-machines
@@ -3807,6 +3808,36 @@ public final class GT6BlockStates extends BlockStateProvider {
      * {@code aSpout} DOWN = the down spout, NORTH = the north spout, null = none
      * (the up-facing form). {@see addHoppers} for the box provenance.
      */
+    /**
+     * Task storage-massstorage — the 120 item mass storage rows (GT6StaticStorages
+     * .MASS_ROWS): ONE {@link #storageModel} two-layer faceted cube per kind, DISTINCT
+     * top/bottom (the upstream getTexture2 index mapping — bottom/top/front/back/side
+     * icon columns, MassStorageStandard :143-155 / Logistics :144-156), the tint seat ON
+     * (every row carries its loader NBT_MATERIAL — Loader :141 aMat / :142 MT.Black — the
+     * tintindex-0 body cube, the tint-coverage-batch grammar). The FACING (horizontal)
+     * drives the 4-variant y-rotation; the material ladder folds to the kind model; the
+     * 120 BlockItem models parent their kind model.
+     */
+    private void addMassStorages() {
+        ModelFile tStandard = storageModel("block/massstorage_standard", true);
+        ModelFile tLogistics = storageModel("block/massstorage_logistics", true);
+        for (gregtech6.registry.GT6StaticStorages.MassRow tRow : gregtech6.registry.GT6StaticStorages.MASS_ROWS) {
+            Block tBlock = gregtech6.registry.GT6StaticStorages.MASS_BLOCKS_BY_PATH.get(tRow.path()).get();
+            ModelFile tModel = tRow.logistics() ? tLogistics : tStandard;
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY;
+                switch (aState.getValue(gregtech6.registry.GT6StaticStorages.GT6MassStorageBlock.FACING)) {
+                    case SOUTH -> tY = 180;
+                    case WEST -> tY = 270;
+                    case EAST -> tY = 90;
+                    default -> tY = 0; // NORTH
+                }
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), tModel.getLocation());
+        }
+    }
+
     private ModelFile hopperModel(String aName, String aBand, Direction aSpout) {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block")))
