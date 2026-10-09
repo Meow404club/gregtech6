@@ -55,10 +55,13 @@ public class GT6RecipeMapDataB2cCutRowsPourTest extends GTRecipesOfflineTestBase
 
 	private static final String FILE_KEY = "cutter";
 
-	/** The frozen snapshot census: 20 statements x 4 legs = 5899 materials per leg. */
-	private static final int CENSUS = 23596;
+	/** The frozen snapshot census: 20 statements x 4 legs = 5901 materials per leg.
+	 *  <p>23596 -> 23604 (5899 -> 5901 per leg): +8 task gem-ice-force-rows — the forced
+	 *  gem_chipped_ice/gem_flawed_ice items (the upstream OP.java:613-614 force rows) pass the
+	 *  :638/:639 existence gates, 4 legs x 2 statements. */
+	private static final int CENSUS = 23604;
 	/** Per-leg split of the census (every statement lands every leg). */
-	private static final int PER_LEG = 5899;
+	private static final int PER_LEG = 5901;
 	/** The four walked legs, verbatim :628-632 port ids + tMultiplier (:629). */
 	private static final Set<String> LEG_FLUIDS = Set.of("minecraft:water", "gt6:spdew", "gt6:distilled_water", "gt6:lubricant");
 
@@ -215,6 +218,12 @@ public class GT6RecipeMapDataB2cCutRowsPourTest extends GTRecipesOfflineTestBase
 		// :639 gemFlawed -> plateGemTiny x4 + remains dustDiv72 x4 (U2 - 4xU9 = U18), ruby q=3
 		tRow = findRow(tRows, "gt6:gem_flawed_ruby", "minecraft:water");
 		assertRow(tRow, "gt6:plate_gem_tiny_ruby", 4, "gt6:dust_div72_ruby", 4, 512, 128, 32);
+		// :638/:639 the Ice rows (task gem-ice-force-rows — the forced items un-skip the face):
+		// ice q=0 rides the base lattices, chipped K=1 (4*16=64), flawed K=2 (4*2*16=128, lubricant leg tMult 1: 32)
+		tRow = findRow(tRows, "gt6:gem_chipped_ice", "minecraft:water");
+		assertRow(tRow, "gt6:plate_gem_tiny_ice", 2, "gt6:dust_div72_ice", 2, 64, 64, 32);
+		tRow = findRow(tRows, "gt6:gem_flawed_ice", "gt6:lubricant");
+		assertRow(tRow, "gt6:plate_gem_tiny_ice", 4, "gt6:dust_div72_ice", 4, 32, 32, 32);
 		// :640 gem -> plateGem, the 96 EU tier (:640-643), Water leg, diamond q=3
 		tRow = findRow(tRows, "gt6:gem_diamond", "minecraft:water");
 		assertRow(tRow, "gt6:plate_gem_diamond", 1, null, 0, 256, 64, 96);

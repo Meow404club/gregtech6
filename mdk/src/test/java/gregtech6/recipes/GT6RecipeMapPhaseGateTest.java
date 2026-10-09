@@ -107,7 +107,7 @@ class GT6RecipeMapPhaseGateTest extends GTRecipesOfflineTestBase {
 		//?} else {
 		/*SNAPSHOT.put("SHREDDER", 426); // +4 task material-mc-g2-decor-misc — the same 4 grain-bale Shredder legs resolve live on this leg; task pool-drain-food-machine-tail — +1 the :132 cheese Shredder row (the one GT6 foodCheese member + the dust_cheese output resolve live); the :123-128 foodVanilla band stays TRUE NEGATIVE (zero members); +15 task recipe-b4-juicer-squeezer-flowerfruit — the Vanilla:719 dyed shred legs (the dye-item-axis plantGtFiber items resolve live on this leg)
 		*///?}
-		SNAPSHOT.put("CRUSHER", 1643); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers)
+		SNAPSHOT.put("CRUSHER", 1644); // +11 task machines-bumblelyzer-crucible — the bouleGt force-table item universe grows the ore-chain crush-back walk (the plate-gem/tiny/boule carriers); +1 task gem-ice-force-rows — the ShCL :73 gemFlawed->gemChipped walk gains Ice (the forced gem_flawed_ice item enters the gemFlawed registration walk; the :72 gem-walk row for Ice was already in the census)
 		SNAPSHOT.put("LATHE", 77); // +3 task machines-bumblelyzer-crucible — the same cascade over the lathe rod/wire walk
 		SNAPSHOT.put("CHISEL", 36);
 		SNAPSHOT.put("ENGINE_FUELS", 7);

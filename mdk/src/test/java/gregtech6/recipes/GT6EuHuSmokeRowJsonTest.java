@@ -110,7 +110,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		// statics stay out of this narrow fixture's whitelist — the full file census lives in
 		// the B1/B7 pour tests)
 		assertEquals(12330, GT6RecipeMapJsonLoader.pouredCount("boxinator"), "the boxinator smoke row + the robotics-chain ten + the recipe-b7 pack walk 12319");
-		assertEquals(11292, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "the unboxinator smoke row + the recipe-b7 unbox walk 11291 (the 20 vanilla-bearing seated statics stay out of this narrow fixture's whitelist — the full file census lives in the B2Residual/B7 pour tests)");
+		assertEquals(11293, GT6RecipeMapJsonLoader.pouredCount("unboxinator"), "the unboxinator smoke row + the recipe-b7 unbox walk 11292 (+1 task gem-ice-force-rows — the tool_head_pickaxe_gem_ice head) (the 20 vanilla-bearing seated statics stay out of this narrow fixture's whitelist — the full file census lives in the B2Residual/B7 pour tests)");
 		assertEquals(195, GT6RecipeMapJsonLoader.pouredCount("fermenter"), "the fermenter file — the landed b2b1 census (7 smoke + 188 pour; the seat-IX reconciliation bump)");
 
 		// the Ananas row content pin (review fix): the OFFLINE fixture collapses every
@@ -140,7 +140,7 @@ class GT6EuHuSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 		// the rows are LIVE in the maps (the findRecipe stock grew by the walk each)
 		assertEquals(2, GT6RecipeMaps.LOOM.mRecipeList.size(), "the LOOM map held the smoke row + the fixture-resolvable b4 dyed row (the card-A declared-empty era is long gone; the full stock is the *RowsPourTest census)");
 		assertEquals(12330, GT6RecipeMaps.BOXINATOR.mRecipeList.size()); // the smoke row + the robotics-chain ten + the recipe-b7 pack walk 12319
-		assertEquals(11292, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size()); // the smoke row + the recipe-b7 unbox walk 11291
+		assertEquals(11293, GT6RecipeMaps.UNBOXINATOR.mRecipeList.size()); // the smoke row + the recipe-b7 unbox walk 11292 (+1 task gem-ice-force-rows)
 		assertEquals(195, GT6RecipeMaps.FERMENTER.mRecipeList.size());
 	}
 

@@ -40,7 +40,7 @@ import net.minecraft.world.level.material.Fluids;
  * trails or outruns it. The juice walk pins its 37 carriers against the live GTFluids
  * spec lookups. CENSUS (file rows = seated + poured): juicer 22 (6 + 16), roasting 15
  * (5 corrected + 10), lightning 8 (1 + 7), cryomixer 62 (1 + 37 + 24), loom 35 (1 + 26
- * + 8 recipe-data-b1 statics), unboxinator 11312 (2 + 19 recipe-data-b1 halves + 11291 the recipe-b7 unbox walk).
+ * + 8 recipe-data-b1 statics), unboxinator 11313 (2 + 19 recipe-data-b1 halves + 11292 the recipe-b7 unbox walk; +1 task gem-ice-force-rows).
  *
  * <p>THE recipe-data-b1 SEAM CORRECTIONS ride this class too (the seat XIII
  * re-adjudication against the 1.7.10 sources): the Chem:217/:218 salt legs and the
@@ -63,7 +63,7 @@ public class GT6RecipeMapDataB2ResidualRowsPourTest extends GTRecipesOfflineTest
 	 * recipe-b4 flower/fruit band (juicer +13 BlockFlowersA/B rows, loom +16 :736 dyed rows)
 	 * and the smoke-juice-squeeze-vanilla-crops residue band (juicer +16 the :841-:853/:855/:856/:874 rows)). */
 	private static final Map<String, Integer> CENSUS = Map.of(
-			"juicer", 51, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 51, "unboxinator", 11312);
+			"juicer", 51, "roasting", 15, "lightning", 8, "cryomixer", 62, "loom", 51, "unboxinator", 11313);
 
 	/** The frozen FRUIT_JUICE walk (FL.java:187-224, the 37 members; Juice :186 is NOT one). */
 	private static final String[] JUICES = {"kiwijuice", "juicelime", "juicelemon", "juiceorange", "persimmonjuice",
