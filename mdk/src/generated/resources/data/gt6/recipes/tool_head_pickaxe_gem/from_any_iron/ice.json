@@ -1,0 +1,77 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "GalacticraftCore"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "PneumaticCraft"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "TwilightForest"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "steamcraft2"
+    }
+  ],
+  "ingredients": [
+    {
+      "item": "gt6:gem_flawed_ice"
+    },
+    {
+      "item": "gt6:gem_flawed_ice"
+    },
+    [
+      {
+        "item": "gt6:tool_head_pickaxe_iron"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_enori"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_steel"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_pig_iron"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_wrought_iron"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_iron_compressed"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_meteoric_iron"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_meteoric_steel"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_knightmetal"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_meteorite"
+      },
+      {
+        "item": "gt6:tool_head_pickaxe_cast_iron"
+      }
+    ],
+    {
+      "tag": "gt6:tools/file"
+    },
+    {
+      "tag": "gt6:tools/hard_hammer"
+    },
+    {
+      "tag": "gt6:tools/saw"
+    }
+  ],
+  "result": {
+    "item": "gt6:tool_head_pickaxe_gem_ice"
+  }
+}

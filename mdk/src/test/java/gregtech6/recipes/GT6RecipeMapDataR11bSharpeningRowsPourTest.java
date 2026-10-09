@@ -96,7 +96,7 @@ public class GT6RecipeMapDataR11bSharpeningRowsPourTest extends GTRecipesOffline
 		STATEMENT_CENSUS.put(":398", 201); // gem -> stick
 		STATEMENT_CENSUS.put(":399", 331); // ingot -> stick
 		STATEMENT_CENSUS.put(":400", 331); // billet -> stick
-		STATEMENT_CENSUS.put(":401", 95);  // gemChipped -> arrow x2
+		STATEMENT_CENSUS.put(":401", 96);  // gemChipped -> arrow x2 (+1 task gem-ice-force-rows — the forced gem_chipped_ice item)
 		STATEMENT_CENSUS.put(":402", 79);  // rockGt -> arrow x8 (STONE)
 		STATEMENT_CENSUS.put(":403", 534); // raw arrow
 		STATEMENT_CENSUS.put(":404", 309); // raw saw

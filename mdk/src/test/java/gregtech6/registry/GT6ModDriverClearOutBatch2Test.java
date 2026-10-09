@@ -54,7 +54,7 @@ public class GT6ModDriverClearOutBatch2Test {
     /** The default registration universe (the mdh-3 post-casing census 57113 + 130 GT6-core
      * pairs the post-probe main merges registered — wood-planks/concrete/beam/small-tank —
      * seat-IX re-baseline; unchanged by this card's default mode — the zero-change proof). */
-    private static final int BASELINE = 57114; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired OP.plank WOOD-gated domain rides under the wire retirement) (the wire-gt-registration lift reverted: 16 wireGt prefixes x 14 WIRES materials off the item path)
+    private static final int BASELINE = 57117; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired OP.plank WOOD-gated domain rides under the wire retirement) (the wire-gt-registration lift reverted: 16 wireGt prefixes x 14 WIRES materials off the item path); +3 task gem-ice-force-rows — the OP.java:613-614 force-row items, mod-axis PRESENT
     /** The batch-2 per-domain kept ledger, probe-measured (the card report quotes these).
      * 44 PRIMARY domains; sum = 7234. The GT5U "gregtech" rows are not seedable (our own
      * modid) and carry no ledger line. */
@@ -113,8 +113,8 @@ public class GT6ModDriverClearOutBatch2Test {
     private static final List<String> BATCH1 = List.of(MT.MD.HaC.mID, MT.MD.IC2.mID, MT.MD.TE.mID,
             MT.MD.EIO.mID, MT.MD.HBM.mID, MT.MD.BOTA.mID, MT.MD.GC_EXTRAPLANETS.mID, MT.MD.MET.mID);
     /** Creative-visible pairs before/after the joint pin (the tab face's before/after numbers). */
-    private static final int TAB_DEFAULT = 49835; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired plank family was creative-visible)
-    private static final int TAB_AFTER = 36050; // −112 the wiregt retirement −116 task planks-blockification (the 130 retired plank pairs − the 14 that sat inside the dropped domains)
+    private static final int TAB_DEFAULT = 49838; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired plank family was creative-visible); +3 task gem-ice-force-rows — the three creative-visible force-row items
+    private static final int TAB_AFTER = 36053; // −112 the wiregt retirement −116 task planks-blockification (the 130 retired plank pairs − the 14 that sat inside the dropped domains); +3 task gem-ice-force-rows (the three creative-visible force-row items)
 
     @BeforeAll
     public static void initMaterialSystem() {

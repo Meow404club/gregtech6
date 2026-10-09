@@ -389,13 +389,18 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 		// review-seat 54 re-pin on the measured universe (shaped 23484 -> 23544, the 60 new rows are crafting_shaped).
 		// 41184 -> 41187: +3 task measuring-pot-variants (the :2097-2099 "Ch"/"Pf" metal rows,
 		// all three crafting_shaped; shaped 23544 -> 23547).
-		assertEquals(41187, tTotal, "the gt6-namespace shipped recipe universe");
-		assertEquals(23547, tTypes.get("minecraft:crafting_shaped"),
+		// 41187 -> 41194: +7 task gem-ice-force-rows — the OP.java:613-614 force-row cascade
+		// items (gem_chipped_ice/gem_flawed_ice + the toolHeadPickaxeGem Ice head) light up
+		// 7 crafting rows (gem2plate chipped/flawed shaped, arrow-from-chipped shaped,
+		// pickaxeGem from_any/from_raw/retip shapeless, pickaxe_gem_from_head material_tool;
+		// shaped 23547 -> 23550, shapeless 4594 -> 4597, material_tool 12959 -> 12960).
+		assertEquals(41194, tTotal, "the gt6-namespace shipped recipe universe");
+		assertEquals(23550, tTypes.get("minecraft:crafting_shaped"),
 				"the derivation candidate set — the over-derivation upper bound (bump-on-change ratchet)");
-		assertEquals(4594, tTypes.get("minecraft:crafting_shapeless"),
+		assertEquals(4597, tTypes.get("minecraft:crafting_shapeless"),
 				"declared skip v1 (CR.java:454 — the shapeless default had no REV)");
 		Map<String, Integer> tExpectedOthers = new TreeMap<>();
-		tExpectedOthers.put("gt6:material_tool", 12959); // the serializer face owns these
+		tExpectedOthers.put("gt6:material_tool", 12960); // the serializer face owns these
 		tExpectedOthers.put("minecraft:smelting", 61);
 		tExpectedOthers.put("gt6:circuit_program", 26);
 		Map<String, Integer> tActualOthers = new TreeMap<>(tTypes);

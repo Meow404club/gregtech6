@@ -67,7 +67,7 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 			"rollingmill", 2434,  // 2 seated smoke + 2432 walk (22 statements :262-284)
 			"rollbender",   935,  // 3 seated smoke +  932 walk ( 8 statements :298-306)
 			"boxinator",  12358,  // 39 seated (smoke + b1 28 + robotics-chain 10, the review-seat rebase roll) + 12319 walk (55 statements :492-550)
-			"unboxinator", 11312); // 21 seated (smoke + bookshelf + b1) + 11291 walk (34 statements :451-489)
+			"unboxinator", 11313); // 21 seated (smoke + bookshelf + b1) + 11292 walk (34 statements :451-489; +1 task gem-ice-force-rows — the tool_head_pickaxe_gem_ice head rides the gemFlawed Ice registration)
 
 	private static final java.util.function.Function<ResourceLocation, Item> sDefaultItems = GT6RecipeMapJsonLoader.sItemResolver;
 	private static final java.util.function.Function<ResourceLocation, Fluid> sDefaultFluids = GT6RecipeMapJsonLoader.sFluidResolver;
@@ -144,7 +144,7 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 	@Test
 	public void theWalkRowsCarryNoCommentAndTheSeatedRowsStay() throws Exception {
 		Map<String, JsonArray> tRows = pourShipped();
-		Map<String, Integer> tWalk = Map.of("rollingmill", 2432, "rollbender", 932, "boxinator", 12319, "unboxinator", 11291);
+		Map<String, Integer> tWalk = Map.of("rollingmill", 2432, "rollbender", 932, "boxinator", 12319, "unboxinator", 11292); // +1 task gem-ice-force-rows — the :451 toolHeadPickaxeGem->gemFlawed walk gains Ice (the forced gem_flawed_ice + the toolHeadPickaxeGem Ice cascade head)
 		for (Map.Entry<String, Integer> tPin : tWalk.entrySet()) {
 			int tWalkRows = 0;
 			for (JsonElement tElement : tRows.get(tPin.getKey())) {
@@ -462,7 +462,7 @@ public class GT6RecipeMapDataB7PackUnboxRowsPourTest extends GTRecipesOfflineTes
 	private static String face(String aPair, int aIdx) {return aPair.split(">")[aIdx];}
 
 	private static int walkCount(String aKey) {
-		return switch (aKey) {case "rollingmill" -> 2432; case "rollbender" -> 932; case "boxinator" -> 12319; default -> 11291;};
+		return switch (aKey) {case "rollingmill" -> 2432; case "rollbender" -> 932; case "boxinator" -> 12319; default -> 11292;};
 	}
 
 	private static List<Object[]> unboxinatorStatements() {

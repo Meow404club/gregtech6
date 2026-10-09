@@ -325,14 +325,14 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	/**
 	 * The live-universe census: every material (prefix, material) pair of the ice table
 	 * resolves inside the port item universe ({@link GTMaterialItems#registrationOrder},
-	 * the prefix's isGeneratingItem criterion) — EXCEPT the :513/:514 gemChipped/gemFlawed
-	 * Ice rows, and that is UPSTREAM-Faithful: the gemChipped/gemFlawed condition is
-	 * And(gem, TRANSPARENT, CRYSTAL, PEARL.NOT) (OP.java:1219-1220), Ice carries
-	 * GEMS+DUSTS+TRANSPARENT via its G_GEM_TRANSPARENT set (TD.java:599) but NOT CRYSTAL
-	 * (MT.java:1013 — no CRYSTAL tag), so the item never existed upstream either and the
-	 * upstream {@code gemChipped.mat(MT.Ice, 1)} / {@code gemFlawed.mat(MT.Ice, 1)} calls
-	 * were null → those two rows are dead text in Loader_Recipes_Chem.java:513-514. The
-	 * port transcribes them (the census duty) and pours them to nothing, same skip.
+	 * the prefix's isGeneratingItem criterion). ERRA 2026-10-09 (task gem-ice-force-rows,
+	 * superseding the old ":513/:514 resolve to nothing" pin and the KG id1014 claim):
+	 * the gemChipped/gemFlawed Ice items DO exist upstream — the OP.java:613-614 force rows
+	 * {@code gemChipped/gemFlawed.forceItemGeneration(MT.Ice, ...)} materialize them despite
+	 * the {@code And(gem, TRANSPARENT, CRYSTAL, PEARL.NOT)} condition rejecting Ice (no
+	 * CRYSTAL tag, MT.java:1013); the old "dead text in Loader_Recipes_Chem.java:513-514"
+	 * reading missed the upstream force table. The port landed the same force rows
+	 * (GTMaterialItems.forceItemGeneration), so all thirteen pairs resolve.
 	 */
 	@Test
 	void iceFamilyPairsResolveInThePortItemUniverse() {
@@ -343,8 +343,8 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 			if (tRow.prefix() == null) continue;
 			if (!tUniverse.contains(new PrefixMaterial(tRow.prefix(), tRow.material()))) tUnresolvable.add(tRow.note());
 		}
-		assertEquals(Set.of(":513", ":514"), tUnresolvable,
-				"exactly the gemChipped/gemFlawed Ice rows lack items (upstream-faithful mat() null drops)");
+		assertEquals(Set.of(), tUnresolvable,
+				"every ice-table pair resolves (the :513/:514 gemChipped/gemFlawed Ice items ride the OP.java:613-614 force rows)");
 	}
 
 	/**
@@ -380,8 +380,9 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 
 	/**
 	 * The end-to-end pour census: with the fixture resolvers, load() lands the 7 fluid-only
-	 * water rows plus the eleven resolvable ice rows — the :513/:514 gemChipped/gemFlawed
-	 * Ice rows skip (see {@link #iceFamilyPairsResolveInThePortItemUniverse()}).
+	 * water rows plus the thirteen ice rows — the :513/:514 gemChipped/gemFlawed Ice rows
+	 * pour since task gem-ice-force-rows (the forced items, the upstream OP.java:613-614
+	 * force rows; see {@link #iceFamilyPairsResolveInThePortItemUniverse()}).
 	 */
 	@Test
 	void loadPoursTheWholeIceFamily() {
@@ -392,11 +393,11 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 
 		List<Recipe> tIceRecipes = GT6RecipeMaps.DRYING.mRecipeList.stream()
 				.filter(r -> r.mInputs.length == 1 && r.mFluidOutputs.length == 1 && r.mOutputs.length == 0).toList();
-		assertEquals(11, tIceRecipes.size(), "7 water + 11 ice: the :513/:514 gem rows skip (no such items, upstream too)");
+		assertEquals(13, tIceRecipes.size(), "7 water + 13 ice: the full :510-522 transcription pours (the :513/:514 gem rows ride the force rows)");
 		int tTotal = GT6RecipeMaps.DRYING.mRecipeList.size();
-		assertTrue(tTotal == 35 || tTotal == 39,
-				"35 = the unregistered-leg census (7 water + 11 ice + 2 salt :548/:553 + 8 mineral :559-566 + 6 clay loop :567-568 + 1 BlockDiggable :73; the 4 colored-clay rows :74/:76-78, task worldgen-diggables-pits, skip) / "
-				+ "39 = the FML-booted-leg census (the registry ran, the 4 colored-clay rows pour); the 4-row delta is the leg split, both are the full set");
+		assertTrue(tTotal == 37 || tTotal == 41,
+				"37 = the unregistered-leg census (7 water + 13 ice + 2 salt :548/:553 + 8 mineral :559-566 + 6 clay loop :567-568 + 1 BlockDiggable :73; the 4 colored-clay rows :74/:76-78, task worldgen-diggables-pits, skip) / "
+				+ "41 = the FML-booted-leg census (the registry ran, the 4 colored-clay rows pour); the 4-row delta is the leg split, both are the full set");
 		for (Recipe tRecipe : tIceRecipes) {
 			assertEquals(0, tRecipe.mFluidInputs.length, "an ice row has no fluid inputs (upstream NF)");
 			assertEquals(0, tRecipe.mOutputs.length, "an ice row has no item outputs (upstream NI)");
@@ -556,7 +557,7 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	 * The BlockDiggable.java:74/:76-78 colored-clay rows (task worldgen-diggables-pits) —
 	 * the same hardened_clay face as the :73 vanilla identity, duration 64 verbatim. The
 	 * inputs ride the registry-safe guard (the offline pour skips them — the census pin at
-	 * 35 counts only the offline-resolvable rows); the :75 red-clay row stays OUT (the
+	 * 37 counts only the offline-resolvable rows); the :75 red-clay row stays OUT (the
 	 * meta 3 block is the GT6NetherOres nether_red_clay stand-in domain).
 	 */
 	@Test
@@ -591,7 +592,8 @@ class GT6RecipesDryingTest extends GTRecipesOfflineTestBase {
 	/**
 	 * The backfill pour, end-to-end: with the fixture resolvers the salt rows pour their
 	 * fluid-in/fluid-out/item-out shape, the :73 row pours its fluid-less shape, and the
-	 * full map census is 7 water + 11 ice + 2 salt + 8 mineral + 6 clay + 1 = 35.
+	 * full map census is 7 water + 13 ice + 2 salt + 8 mineral + 6 clay + 1 = 37
+	 * (the ice 11→13 and the total 35→37 are the task gem-ice-force-rows un-skip).
 	 */
 	@Test
 	void loadPoursTheSaltAndDehydrationFamilies() {

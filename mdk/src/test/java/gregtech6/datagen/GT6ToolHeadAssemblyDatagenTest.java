@@ -24,7 +24,7 @@
  * iron-handle stick starves most rows.
  *
  * <p>Row-count pins are the measured item-truth numbers dead-written (the craftfrom
- * ruling-A caliber): the dig walk 202, the assembly walk 7063 and the #39 completion
+ * ruling-A caliber): the dig walk 202, the assembly walk 7064 and the #39 completion
  * walk (the 9 missing head families + the dig/chisel/saw C variants, task
  * 39-toolhead-rows, pinned in {@code theCompletionWalkCarriesTheMaterialGates}).
  */
@@ -185,11 +185,11 @@ public class GT6ToolHeadAssemblyDatagenTest extends GTOfflineTestBase {
 		}
 	}
 
-	/** The assembly walk = the head-item truth (7063 measured); the :333 gate excludes the soft materials, the ACT:68 gate the Empty blank. */
+	/** The assembly walk = the head-item truth (7064 measured; +1 task gem-ice-force-rows); the :333 gate excludes the soft materials, the ACT:68 gate the Empty blank. */
 	@Test
 	public void theAssemblyWalkIsTheHeadTruth() {
 		List<GT6CraftingRecipes.AssemblyRow> tRows = GT6CraftingRecipes.toolAssemblyRows();
-		assertEquals(7063, tRows.size(), "the measured item-truth total over the 17 forms");
+		assertEquals(7064, tRows.size(), "the measured item-truth total over the 17 forms (+1 task gem-ice-force-rows — the tool_head_pickaxe_gem_ice head rides the And(gemFlawed, typemin(1)) condition off the forced gemFlawed Ice)");
 		for (GT6CraftingRecipes.AssemblyRow tRow : tRows) {
 			assertFalse(tRow.aSnake().isEmpty(), "every row carries its material snake");
 			if (tRow.aForm().aNoSoftTag()) {

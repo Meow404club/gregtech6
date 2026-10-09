@@ -1,5 +1,5 @@
 {
-  "_header": "RM.MELTER Chem ice/snow face — Loader_Recipes_Chem.java:480-492 (task recipe-b1-chem-domain). The minecraft:ice block row (:486) already ships in melter.json; the gemChipped/gemFlawed legs (:483-484) are DECLARED skips (no gem_chipped_ice/gem_flawed_ice items, the b2b1 id-universe ruling); gem leg rides (:485). KJS: datapack domain.",
+  "_header": "RM.MELTER Chem ice/snow face — Loader_Recipes_Chem.java:480-492 (task recipe-b1-chem-domain; the :483-484 gemChipped/gemFlawed legs un-skipped by task gem-ice-force-rows — the forced gem_chipped_ice/gem_flawed_ice items). The minecraft:ice block row (:486) already ships in melter.json; gem leg rides (:485). KJS: datapack domain.",
   "recipes": [
     {
       "comment": "RM.Melter Chem:480/495",
@@ -53,7 +53,41 @@
       "eut": 16
     },
     {
-      "comment": "RM.Melter Chem:485/500 (gem leg; gemChipped/gemFlawed items unregistered = declared skip)",
+      "comment": "RM.Melter Chem:483/498 (gemChipped leg, task gem-ice-force-rows)",
+      "inputs": [
+        {
+          "item": "gt6:gem_chipped_ice",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 250
+        }
+      ],
+      "duration": 500,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:484/499 (gemFlawed leg, task gem-ice-force-rows)",
+      "inputs": [
+        {
+          "item": "gt6:gem_flawed_ice",
+          "count": 1
+        }
+      ],
+      "fluidOutputs": [
+        {
+          "fluid": "minecraft:water",
+          "amount": 500
+        }
+      ],
+      "duration": 1000,
+      "eut": 16
+    },
+    {
+      "comment": "RM.Melter Chem:485/500 (gem leg)",
       "inputs": [
         {
           "item": "gt6:gem_ice",

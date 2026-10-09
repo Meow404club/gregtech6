@@ -43,7 +43,11 @@ import net.minecraft.world.level.material.Fluids;
  * :154-155/:157-158/:160-164) + the ANY.Fe walk x5 of 8 (:169-171) + the UF6 chain
  * (:175-178) + the OXYGEN walk (:223-226) + the AIR walk x2 (:229-232) + :267/:268 +
  * :385-386 = 189. ROASTING SO2 face = 14 sulfide + 5 S/Blaze over OXYGEN x1 (:407-441)
- * and AIR x2 (:445-465) = 57. MELTER/SMELTER = 10 of the 13-row ice/snow faces each.
+ * and AIR x2 (:445-465) = 57. MELTER/SMELTER = 12 of the 13-row ice/snow faces each
+ * (the face minus the ice-block row that ships in the main melter/smelter key; the
+ * gemChipped/gemFlawed legs :483-484/:498-499 un-skipped by task gem-ice-force-rows —
+ * the forced gem_chipped_ice/gem_flawed_ice items, GTMaterialItems.forceItemGeneration =
+ * the upstream OP.java:613-614 rows).
  * CRYO DT = 3 of 3 (:363-365; the plain-air row :363 rides the registered gt6:air,
  * task cryo-distillery-air-rewire). INJECTOR = 5
  * (:389-394). AUTOCLAVE = 12 (:274-285).
@@ -52,7 +56,7 @@ import net.minecraft.world.level.material.Fluids;
  * headers carry the same declaration): mixer :140-141/:156 H2S, :150 hematite molten,
  * :151/:266 Glycerol/Glyceryl/NitroFuel, :153 Reikygen, :179-181 the UF4/Ca/U molten
  * legs, :380-381 biodiesel, the ANY.Fe members WroughtIron/CastIron/IronCompressed
- * (no port dust item); melter/smelter gemChipped/gemFlawed legs (:483-484/:498-499).
+ * (no port dust item).
  * The HEATMIXER face (:101-102/:121-128/:159/:166/:174) is the RM.java:75 PURE ALIAS —
  * upstream {@code HeatMixer = Mixer}, so the ten stations ride the MIXER map through
  * this very mixerchem key (the task recipe-b6b alias flip; the old "pools until a
@@ -71,8 +75,8 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 	private static final Map<String, Integer> CENSUS = Map.of(
 			"mixerchem", 189,                // the MIXER Chem face (see the class doc accounting)
 			"roastingchem", 57,              // the SO2 face: 19 OXYGEN-leg + 19x2 AIR-leg
-			"melterchem", 10,                // Chem:480-492 minus the seated ice row and the 2 gem skips
-			"smelterchem", 10,               // Chem:495-507, the melter face mirrored
+			"melterchem", 12,                // Chem:480-492 minus the seated ice row; :483-484 un-skipped (task gem-ice-force-rows)
+			"smelterchem", 12,               // Chem:495-507, the melter face mirrored; :498-499 un-skipped
 			"cryodistillationtowerchem", 3,  // :363-365 (the plain-air row rides the registered gt6:air)
 			"injectorchem", 5,               // :389-394
 			"autoclave", 12);                // :274-285 — the kelp forgery REPLACED by the real Bayer face
@@ -320,6 +324,29 @@ public class GT6RecipeMapDataB1ChemRowsPourTest extends GTRecipesOfflineTestBase
 		assertFalse(rowsText("mixerchem.json").contains("nitrofuel"), ":266 — no NitroFuel carrier");
 		assertFalse(rowsText("mixerchem.json").contains("reikygen"), ":153 — the RotaryCraft oxygen alias is absent");
 		assertFalse(rowsText("mixerchem.json").contains("biodiesel"), ":380-381 — no biodiesel carrier");
+	}
+
+	/**
+	 * The gem-ice un-skip pins (task gem-ice-force-rows, closing the old declared-skip face):
+	 * the gemChipped/gemFlawed Ice legs (:483-484/:498-499) ship verbatim on BOTH chem keys
+	 * now that the forced items exist (GTMaterialItems.forceItemGeneration = the upstream
+	 * OP.java:613-614 rows). Upstream :483/:498 = 250 L at (250*2) t, :484/:499 = 500 L at
+	 * (500*2) t, all EUt 16, the buffered addRecipe1 shape.
+	 */
+	@Test
+	public void theGemIceLegsShipUnSkippedOnBothChemKeys() throws Exception {
+		JsonObject tChipped = findRow(pourShipped("melterchem"), "RM.Melter Chem:483");
+		assertEquals("gt6:gem_chipped_ice", slotId(tChipped.getAsJsonArray("inputs").get(0)), ":483 OP.gemChipped.mat(MT.Ice, 1)");
+		assertEquals(250, slotAmount(tChipped.getAsJsonArray("fluidOutputs").get(0)), "FL.Water.make(250)");
+		assertEquals(500, tChipped.get("duration").getAsLong(), "250 * 2");
+		assertEquals(16, tChipped.get("eut").getAsLong());
+		JsonObject tFlawed = findRow(pourShipped("melterchem"), "RM.Melter Chem:484");
+		assertEquals("gt6:gem_flawed_ice", slotId(tFlawed.getAsJsonArray("inputs").get(0)), ":484 OP.gemFlawed.mat(MT.Ice, 1)");
+		assertEquals(500, slotAmount(tFlawed.getAsJsonArray("fluidOutputs").get(0)), "FL.Water.make(500)");
+		assertEquals(1000, tFlawed.get("duration").getAsLong(), "500 * 2");
+		assertEquals(16, tFlawed.get("eut").getAsLong());
+		assertEquals("gt6:gem_chipped_ice", slotId(findRow(pourShipped("smelterchem"), "RM.Smelter Chem:483").getAsJsonArray("inputs").get(0)), ":498, the melter face mirrored");
+		assertEquals("gt6:gem_flawed_ice", slotId(findRow(pourShipped("smelterchem"), "RM.Smelter Chem:484").getAsJsonArray("inputs").get(0)), ":499, the melter face mirrored");
 	}
 
 	/**

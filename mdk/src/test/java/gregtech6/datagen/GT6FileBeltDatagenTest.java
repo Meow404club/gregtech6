@@ -113,7 +113,7 @@ public class GT6FileBeltDatagenTest extends GTRecipesOfflineTestBase {
 			tTotal += tRows.size();
 		}
 		assertEquals(List.of(), tMissing, "the fifteen file-belt forms must all pour rows (the :420-434 belt)");
-		assertEquals(6313, tTotal, "the poured total == the walk census (95 + 79 + 539 + 4x312 + 8x544)");
+		assertEquals(6314, tTotal, "the poured total == the walk census (95 + 79 + 539 + 4x312 + 8x544; +1 task gem-ice-force-rows — the chipped-face arrow row for Ice)");
 	}
 
 	/** The generated row JSON off the canonical tree — the LEG DIALECT band (the recipe-parse face: the forge codec eats the plural recipes/ "item" form, the 21.1 codec the singular recipe/ "id" form — the ops-rundata-leg-canonical dialect law). */
