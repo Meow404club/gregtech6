@@ -5731,7 +5731,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// :79-81) rides the ladder through /give-stamped identities only (no serializer
 	// multiplier field — the dig card's yagni ruling stands: no generated row needs one).
 
-	/** One machine ladder form: the id, the axis gates, the Steel inclusion, the stamp multiplier, the upstream row shape. (package-private: the offline gem-sister census walk, the TOOL_HEAD_ROW_FORMS precedent) */
+	/** One machine ladder form: the id, the axis gates, the Steel inclusion, the stamp multiplier, the upstream row shape. (package-private: the offline gem-sister census walk, the toolHeadRowForms precedent) */
 	record MachineLadderForm(String aId, int aTypeMin, boolean aNoCoated, boolean aNoSoftTag, boolean aSoftTag,
 			boolean aNoExtruder, int aQualMin, boolean aIncludeSteel, String[] aPattern) {
 	}
@@ -5911,8 +5911,22 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	/** One walked head row (the test-visible census unit). */
 	record ToolHeadRow(ToolHeadRowForm aForm, gregapi.oredict.OreDictMaterial aMaterial, String aSnake) {}
 
-	/** The :293-:310 arg-9 completion table + the dig/chisel/saw C variants — upstream order, shapes verbatim. */
-	static final java.util.List<ToolHeadRowForm> TOOL_HEAD_ROW_FORMS = java.util.List.of(
+	/**
+	 * The :293-:310 arg-9 completion table + the dig/chisel/saw C variants — upstream order,
+	 * shapes verbatim. A METHOD (the {@link #assemblyForms} precedent), NOT a clinit-frozen
+	 * field: the records would capture the {@code OP.*} prefix handles AT CLASS-LOAD TIME,
+	 * and the offline test JVM can class-load this file BEFORE the fork's first material
+	 * flood (a {@code static final RECIPES = new GT6CraftingRecipes(...)} field in any
+	 * fork-mate fires the clinit while every {@code OP.*} field is still null — the frozen
+	 * table then holds null heads and {@code toolHeadRows}' {@code aHead() != prefix}
+	 * identity join skips EVERY pair: the filtered-batch empty walk, measured 0 against the
+	 * 3397 pin while the live-built {@code assemblyForms} walk measured its full 7064 in the
+	 * same JVM, second apart). Building live keeps the walk in sync with whatever generation
+	 * the flood left; a datagen JVM floods before the builders run, so the emission tree is
+	 * byte-identical.
+	 */
+	static java.util.List<ToolHeadRowForm> toolHeadRowForms() {
+		return java.util.List.of(
 			// builderwand :293 — the And(ANTIMATTER.NOT) axis ONLY (no Wood/COATED gate upstream)
 			new ToolHeadRowForm("builder_wand", gregapi.data.OP.toolHeadBuilderwand, 0, 0, Integer.MAX_VALUE, false, new String[] {" P ", "f h", " s "}, null),
 			new ToolHeadRowForm("builder_wand_gem", gregapi.data.OP.toolHeadBuilderwand, 0, 0, Integer.MAX_VALUE, false, new String[] {" C ", "f h", " s "}, null),
@@ -5953,6 +5967,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			new ToolHeadRowForm("wrench_head_gem", gregapi.data.OP.toolHeadWrench, 2, 1, Integer.MAX_VALUE, false, new String[] {"hCW", "CVC", "WCd"},
 					java.util.Map.of('W', new ToolHeadSpecial(gregapi.data.OP.screw, gregapi.data.MT.Steel),
 							'V', new ToolHeadSpecial(gregapi.data.OP.ring, gregapi.data.MT.Steel))));
+	}
 
 	/** The per-form listener gate — the upstream And() rows verbatim (OreDictMaterialCondition :67-89). */
 	private static boolean toolHeadRowAxis(gregapi.oredict.OreDictMaterial aMaterial, ToolHeadRowForm aForm) {
@@ -6032,7 +6047,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	static java.util.List<ToolHeadRow> toolHeadRows() {
 		java.util.List<ToolHeadRow> rRows = new ArrayList<>();
 		for (gregtech6.registry.GTMaterialItems.PrefixMaterial tPair : gregtech6.registry.GTMaterialItems.registrationOrder()) {
-			for (ToolHeadRowForm tForm : TOOL_HEAD_ROW_FORMS) {
+			for (ToolHeadRowForm tForm : toolHeadRowForms()) {
 				if (tForm.aHead() != tPair.prefix()) continue;
 				gregapi.oredict.OreDictMaterial tMaterial = tPair.material();
 				if (!toolHeadRowAxis(tMaterial, tForm)) continue;
