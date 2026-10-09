@@ -4253,11 +4253,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
     // task w3-tank-valves — the 25 Tank Main Valve rows (Loader :1195-1222 recipe
     // strings: wood " R ","rMs"," R "; the small pair " R ","hMs"," R " over the ROW's
     // wall; the large pair "PPP","hMs","PPP" over the SMALL valve + the material plate
-    // (plateDense on the dense larges); R/r = OP.ring of Pb (wood) or the row material,
-    // h = the hard-hammer tool tag, s = the saw tool tag — the lowercase r TOOL letter
-    // folds to the same ring item, the vanilla-JSON consume-all rule, the coil 'W' fold
-    // precedent). Declared CUTS: none — every input resolves (the ring/plate bare items
-    // null-guard to a silent row skip, the coilBuilder precedent).
+    // (plateDense on the dense larges); R = OP.ring of Pb (wood) or the row material,
+    // h = the hard-hammer tool tag, s = the saw tool tag. The lowercase tool letters
+    // carry NO explicit upstream key (:1195 keys only 'M'/'R') — they ride the CR.java
+    // table: 'h' = hammer (:346), 'r' = softhammer (:355), 's' = saw (:356); the wood
+    // 'r' had been folded to the lead ring item (an extra ring, a missing soft hammer
+    // vs upstream — erratum task tank-valve-char-misdecode). Declared CUTS: none —
+    // every input resolves (the ring/plate bare items null-guard to a silent row skip,
+    // the coilBuilder precedent).
     // -------------------------------------------------------------------------
     private static final String TANK_VALVE_RECIPE_PREFIX = "tank_valve/";
 
@@ -4278,7 +4281,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 rRows.add(new PartFamilyRecipeRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GT6Tanks.BLOCKS_BY_PATH.get(tRow.path()).get())
                         .pattern(" R ").pattern("rMs").pattern(" R ")
                         .define('R', tLeadRing)
-                        .define('r', tLeadRing)
+                        .define('r', GT6ItemTags.TOOLS_SOFT_HAMMER) // the CR.java :355 table default — upstream :1195 keys only 'M'/'R'
                         .define('M', tWoodWall)
                         .define('s', GT6ItemTags.TOOLS_SAW)
                         .unlockedBy("has_ring", has(tLeadRing)), tankValveRecipeId(tRow.path())));
