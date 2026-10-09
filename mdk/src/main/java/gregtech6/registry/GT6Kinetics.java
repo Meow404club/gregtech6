@@ -631,6 +631,11 @@ public final class GT6Kinetics {
 			// the front TOWARDS the placer (task singleblock-facing-canon, the steam-engine form)
 			return defaultBlockState().setValue(FACING, gregtech6.block.GT6PlacementFacing.facingTowardsPlacer(aContext.getHorizontalDirection()));
 		}
+
+		@Override
+		public RenderShape getRenderShape(BlockState aState) {
+			return RenderShape.MODEL; // BaseEntityBlock.java:19-21 default is INVISIBLE (BER assumption) — the GTOvenBlock.java:97-98 form
+		}
 		//? if neoforge {
 		/*
 		// 21.1 made BaseEntityBlock.codec() abstract (the vanilla 1.21 block-state codec
