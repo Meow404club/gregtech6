@@ -165,8 +165,8 @@ public class GTEntityBlockDistLeakPinTest extends GTOfflineTestBase {
 				if (tClientTyped.isEmpty() && !bytesMentionModularScreen(tName)) {
 					try {
 						Class<?> tClass = Class.forName(tName, false, tGuard);
-						Object tCanDrop = tProbe.invoke(null, new Object[] {tClass, "canDrop", new Class[] {int.class}});
-						Object tInventory = tProbe.invoke(null, new Object[] {tClass, "getInventory", new Class[0]});
+						Object tCanDrop = tProbe.invoke(null, new Object[] {tClass, "canDrop", new Class<?>[] {int.class}});
+						Object tInventory = tProbe.invoke(null, new Object[] {tClass, "getInventory", new Class<?>[0]});
 						assertTrue(tCanDrop == null || tCanDrop instanceof Method, "canDrop probe yields the gate or nothing on " + tName);
 						assertTrue(tInventory == null || tInventory instanceof Method, "getInventory probe yields the walk or nothing on " + tName);
 					} catch (Throwable aE) {
@@ -215,16 +215,16 @@ public class GTEntityBlockDistLeakPinTest extends GTOfflineTestBase {
 
 		Class<?> tAct = gregtech6.tileentity.machines.TileEntityAdvancedCraftingTable.class;
 		assertEquals(tAct.getMethod("canDrop", int.class),
-				tProbe.invoke(null, new Object[] {tAct, "canDrop", new Class[] {int.class}}),
+				tProbe.invoke(null, new Object[] {tAct, "canDrop", new Class<?>[] {int.class}}),
 				"the walk finds the exact declaration getMethod answered (the ACT holo gate :774)");
 		Class<?> tBasicMachine = Class.forName("gregtech6.tileentity.machines.TileEntityBasicMachine");
 		assertEquals(tBasicMachine.getMethod("getInventory"),
-				tProbe.invoke(null, new Object[] {tBasicMachine, "getInventory", new Class[0]}),
+				tProbe.invoke(null, new Object[] {tBasicMachine, "getInventory", new Class<?>[0]}),
 				"the walk finds the exact declaration getMethod answered (the machine inventory :376)");
 
-		assertNull(tProbe.invoke(null, new Object[] {GTEntityBlock.class, "canDrop", new Class[] {int.class}}),
+		assertNull(tProbe.invoke(null, new Object[] {GTEntityBlock.class, "canDrop", new Class<?>[] {int.class}}),
 				"no declaration up the block chain → null → the all-drop default");
-		assertNull(tProbe.invoke(null, new Object[] {GTEntityBlock.class, "getInventory", new Class[0]}),
+		assertNull(tProbe.invoke(null, new Object[] {GTEntityBlock.class, "getInventory", new Class<?>[0]}),
 				"no declaration up the block chain → null → no inventory walk");
 	}
 

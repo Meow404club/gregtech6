@@ -45,7 +45,7 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 
 	static GT6UsbSticks.GT6UsbStickItem stick() {
 		if (sStick == null) {
-			sStick = (GT6UsbSticks.GT6UsbStickItem)GTOfflineTestBase.registerItemFixture("fixture_qu_e2e_usb_stick_3",
+			sStick = GTOfflineTestBase.registerItemFixture("fixture_qu_e2e_usb_stick_3",
 					() -> new GT6UsbSticks.GT6UsbStickItem(new Item.Properties(), (byte)3));
 		}
 		return sStick;
@@ -53,7 +53,7 @@ public class GT6QuMachinePairE2eTest extends TileEntityBasicMachineOfflineTestBa
 
 	static MaterialPrefixItem scannedGem() {
 		if (sScannedGem == null) {
-			sScannedGem = (MaterialPrefixItem)GTOfflineTestBase.registerItemFixture("fixture_qu_e2e_scanned_gem",
+			sScannedGem = GTOfflineTestBase.registerItemFixture("fixture_qu_e2e_scanned_gem",
 					() -> new MaterialPrefixItem(new Item.Properties(), OP.gem, MT.H));
 		}
 		return sScannedGem;

@@ -47,7 +47,7 @@ public class GT6RotationEngineBlockEntity extends GTBipolarConverterBlockEntity 
 
 	/** The offline (test) entry point — a null type falls back to the shared registry type. */
 	public GT6RotationEngineBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
-		super((BlockEntityType<?>) (aType != null ? aType : GTBlockEntities.ROTATION_ENGINE_BE.get()), aPos, aState);
+		super(aType != null ? aType : GTBlockEntities.ROTATION_ENGINE_BE.get(), aPos, aState);
 	}
 
 	@Override

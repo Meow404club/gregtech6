@@ -88,3 +88,36 @@ third-party/modularui）：
 - **modularui 面复测吻合**：forge 27 / neo 109（与 modularui-lint-cleanup
   残面记账一致；席50 移交的「6/9 real clean 口径」=该残面内的真实可清子集
   JEI/EMI+固有注解面，归 RV 域卡，非本卡 remit）。
+
+## safe-face sweep（2026-10-09，work/safe-face-sweep）
+
+席54 复测标注的 safe-face 池已全数真修清零，无新增豁免。口径同上（mdk 面
+javac lint 行，--rerun-tasks 全量 clean 编译实测，/tmp/sfs_base_*.log 基线、
+/tmp/sfs_after_*.log 扫后）：
+
+- **before/after 对账**：forge mdk 797→777（cast 12→0 / rawtypes 6→0 /
+  unchecked 1→0 / static 1→0；removal 8 持平）；neo mdk 416→394（cast 12→0 /
+  rawtypes 6→0 / unchecked 3→0 / static 1→0；removal 46 持平，RL ctor 不回潮）。
+  池合计 42 腿站点（cast 24 / rawtypes 12 / unchecked 4 / static 2，两腿求和）
+  与席54 移交数吻合。
+- **裁决**：全部走真修（a），零台账豁免（b）、零行为红线——逐站证据：
+  - 冗余 cast ×12 站点（双腿）：编译器冗余判定即零行为证明——删
+    `(int)Math.min(int,int)` ×4（GT6MassStorageBlockEntity :424/:595/:707/:712，
+    int 恒等转换无字节码）、`(long)EU_PER_LAVA`（GT6RecyclingProcessing :212，
+    常量本就 long :126）、`(BlockEntityType<?>)` 三元 ×2（GT6RotationEngine
+    :50/GT6SteamTurbine :109，两臂同型）、registerItemFixture 泛型推断 cast ×4
+    （GT6QuMachinesTest :68/:77、GT6QuMachinePairE2eTest :48/:56，
+    `<T extends Item>` 推断同型）、getTextureAtlas 返回值 cast（GT6MassStorage
+    Renderer :115，双腿签名同 `Function<ResourceLocation,TextureAtlasSprite>`）。
+  - rawtypes ×6 站点（双腿）：`new Class[]`→`new Class<?>[]`
+    （GTEntityBlockDistLeakPinTest :168/:169/:218/:222/:225/:227，擦除同形）。
+  - unchecked ×3 站点：窄域 `@SuppressWarnings("unchecked")`+理由（41d1a526ea
+    固有站点同策略；cast 保留在码，注解仅记擦除不可表达性）——GT6MaterialTree
+    JeiPanzoomTest :510（Proxy Object→泛型 IFocus，双腿）、GT6MassStorage
+    BlockEntity/GT6SteamTurbine 的 21.1 臂 `getCapability` `(T)` 分发（BlockCapability
+    无 Class token，平台形态；仅 neo 腿）。
+  - static ×1 站点（双腿）：`RECIPES.chargingLockerRecipeId`→`GT6CraftingRecipes.
+    chargingLockerRecipeId`（invokestatic owner 不变，GT6ChargingLockerRecipe
+    ARulingTest :93）。
+- **政策重申**：本段不豁免任何新类目；residual 池仍以上文各既有条为准
+  （forge rem 8 / neo rem 46+dep、this-escape 86、modularui 27/109 不动）。

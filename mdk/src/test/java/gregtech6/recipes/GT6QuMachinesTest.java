@@ -65,7 +65,7 @@ public class GT6QuMachinesTest extends GTOfflineTestBase {
 	/** The fixture seat, LAZY (the @BeforeAll assumption would bench the whole class). */
 	static GT6UsbSticks.GT6UsbStickItem stick() {
 		if (sStick == null) {
-			sStick = (GT6UsbSticks.GT6UsbStickItem)registerItemFixture("fixture_qu_usb_stick_3",
+			sStick = registerItemFixture("fixture_qu_usb_stick_3",
 					() -> new GT6UsbSticks.GT6UsbStickItem(new Item.Properties(), (byte)3));
 		}
 		return sStick;
@@ -74,7 +74,7 @@ public class GT6QuMachinesTest extends GTOfflineTestBase {
 	/** A SCANNABLE-prefixed gem item over MT.Hydrogen (the synthetic (prefix, material) pairing the seams read). */
 	static MaterialPrefixItem scannedGem() {
 		if (sScannedGem == null) {
-			sScannedGem = (MaterialPrefixItem)registerItemFixture("fixture_qu_scanned_gem",
+			sScannedGem = registerItemFixture("fixture_qu_scanned_gem",
 					() -> new MaterialPrefixItem(new Item.Properties(), OP.gem, MT.H));
 		}
 		return sScannedGem;

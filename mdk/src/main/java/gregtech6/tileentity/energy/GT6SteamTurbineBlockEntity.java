@@ -106,7 +106,7 @@ public class GT6SteamTurbineBlockEntity extends GTMotorConverterBlockEntity {
 
 	/** The offline (test) entry point — a null type falls back to the shared registry type. */
 	public GT6SteamTurbineBlockEntity(@Nullable BlockEntityType<?> aType, BlockPos aPos, BlockState aState) {
-		super((BlockEntityType<?>) (aType != null ? aType : GTBlockEntities.STEAM_TURBINE_BE.get()), aPos, aState);
+		super(aType != null ? aType : GTBlockEntities.STEAM_TURBINE_BE.get(), aPos, aState);
 		mTank.setCapacity(inputSU() * 2 * 4); // upstream :59 — mEnergyIN.mMax * 4 (the row band, fresh blocks too)
 	}
 
@@ -339,6 +339,9 @@ public class GT6SteamTurbineBlockEntity extends GTMotorConverterBlockEntity {
 	//?} else {
 	/*// (1.21.1 seam: NeoForge 21.1 removed BlockEntity#getCapability/LazyOptional — W4's
 	// RegisterCapabilitiesEvent.registerBlockEntity delegates to this member; no @Override.)
+	// (T) is the BlockCapability dispatch the caller types — T is not expressible
+	// here (no Class token on BlockCapability); the platform-documented shape.
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> aCapability, @Nullable Direction aSide) {
 		if (aCapability == net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK) {
 			// the :239 side gate lives HERE — only the back face exposes the fill door
