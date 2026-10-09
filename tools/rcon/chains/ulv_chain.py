@@ -152,6 +152,22 @@ CU_MERGE2 = feed_merge(MILL_CU_P, "gt6:stick_copper")
 # feed echoes "4x string into slot 0" (plain vs namespaced), the check lists
 # the output slot as out[N]=, and the NBT data-get always renders the
 # namespaced vanilla id.
+#
+# THE INPUT COMMANDS PIN THE ITEM (`input item minecraft:string`, the
+# machines-bumblelyzer-crucible override arm): the bare `input 4` form rides
+# GTMachineCommand.firstPouredLoomInput — the FIRST row of RM.Loom's
+# mRecipeList, an identity HashSet (RecipeMap.java:113; Recipe overrides
+# neither hashCode nor equals) whose iteration order is a JVM-run lottery.
+# Observed live 2026-10-09: the 21.1 leg drew the leather horse-armor row
+# ("4x minecraft:leather into slot 0") and red the loom arm [5,5] while the
+# forge leg drew the loom.json row0 string face and stayed green — the seat53
+# "ulv-chain loom arm baseline red" carry-over, root-caused here. The pin
+# restores the smoke row's string face deterministically on both legs; the
+# render fork below is unchanged (1.20.1 Item.toString renders the bare path,
+# 21.1 the namespaced one — byte-for-byte the P28 acceptance bodies). The
+# Java-side普遍类 (firstPouredLoomInput/firstPouredMixerInput are first-row
+# lottery feeds) is a framework hygiene candidate, out of this card's
+# FILES_SCOPE.
 LOOM_INPUT = {"1.20.1": "GT6 loom input: 4x string into slot 0", "1.21.1": "GT6 loom input: 4x minecraft:string into slot 0"}
 LOOM_SLOT = "minecraft:string"  # the data-get id field — namespaced on BOTH legs
 LOOM_DONE = {"1.20.1": "out[0]=1x white_wool", "1.21.1": "out[0]=1x minecraft:white_wool"}
@@ -197,7 +213,7 @@ steps = [
     # ---------------------------------------------------------------- arm B
     phase("B: negative — 8 EU packets into the LV electricloom are swallowed (white burn), volt 32 on the same rig completes"),
     Step(f"gt6machine electricloom place {LOOM_B_P}", expect="GT6 electricloom placed"),
-    Step(f"gt6machine electricloom input 4 {LOOM_B_P}", expect=LOOM_INPUT, node_expects=LOOM_INPUT),
+    Step(f"gt6machine electricloom input item minecraft:string 4 {LOOM_B_P}", expect=LOOM_INPUT, node_expects=LOOM_INPUT),
     # the LV window pin — the T1 EU window {16,32,64} read straight off the BE report
     Step(f"gt6machine electricloom check {LOOM_B_P}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine electricloom check {LOOM_B_P}", expect="energy=0"),
@@ -248,7 +264,7 @@ steps = [
     Step(f"gt6machine electricloom place {LOOM_D_P}", expect="GT6 electricloom placed"),
     # the pre-flip mode pin: upstream default = step-down
     Step(f"data get block {TRANS_P}", expect="reversed: 0b"),
-    Step(f"gt6machine electricloom input 4 {LOOM_D_P}", expect=LOOM_INPUT, node_expects=LOOM_INPUT),
+    Step(f"gt6machine electricloom input item minecraft:string 4 {LOOM_D_P}", expect=LOOM_INPUT, node_expects=LOOM_INPUT),
     # the headroom budget: 12288 FE per fesource = 384 packet-quantised pulls
     # each (zero tail); the row consumes ~4104 EU at 24/t (~16416 FE) and the
     # idle loom eats the rest until both sources read exactly 0

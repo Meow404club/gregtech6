@@ -9,6 +9,7 @@ and records a per-step verdict ledger + wall-clock timings to /tmp JSON:
   python3 tools/rcon/sweep.py --mode session --only loop,bb
   python3 tools/rcon/sweep.py --mode session --group dye   # whole cluster(s)
   python3 tools/rcon/sweep.py --mode perboot --probe    # + keepfilter reboot probe
+  python3 tools/rcon/sweep.py --mode session --fresh-world  # world* dirs reset first
   python3 tools/rcon/sweep.py --diff a.json b.json      # per-step verdict diff
   python3 tools/rcon/sweep.py --break-lock --node 1.20.1-forge  # clear a stale lock
   python3 tools/rcon/sweep.py --dual ../MGT6GA-trees/<other> --other-node 1.21.1-neoforge
@@ -44,6 +45,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -1150,6 +1152,40 @@ def release_sweep_lock(path):
     Path(path).unlink(missing_ok=True)
 
 
+# --- fresh-world reset (card rcon-hygiene-combo, debt a) --------------------
+#
+# The node run dir (mdk/versions/<node>/run) is SHARED across sessions: block
+# entities a crashed or torn-down chain left outside its bbox cleanup persist
+# in the world save and world-load CCE a later boot (drum-mdh6-chain-sweep:
+# the kf forge leg hit chunk[2,2] shredder/crusher BE residue from earlier
+# sessions — GTMachines.java:425, logs/latest.log:27538-27748). The bbox
+# cleanup only covers DECLARED sites of chains that ran; the reset kills the
+# whole residue class per sweep invocation: world* dirs deleted before the
+# first boot, everything else in the run dir (server.properties, eula.txt)
+# untouched — the census_ore.delete_worlds 删世界 form, opt-in per flag.
+# The per-node sweep lock above already serializes same-node sweeps, so the
+# reset cannot race a concurrent sweep; a foreign NON-sweep boot on this
+# worktree+node during a sweep was already poison before this verb existed.
+
+def reset_world(node, worktree=None, log=print):
+    """Delete the node run dir's world* directories (a fresh world next boot).
+
+    Returns the removed dir names (empty = nothing to reset). Selectively
+    enabled via --fresh-world; without the flag run_and_record never calls
+    this, so legacy sweep behaviour is byte for byte.
+    """
+    root = Path(worktree) if worktree else framework.WORKTREE_ROOT
+    run_dir_ = gt6server.run_dir(root, node)
+    removed = []
+    for world in sorted(run_dir_.glob("world*")):
+        if world.is_dir():
+            shutil.rmtree(world)
+            removed.append(world.name)
+    log(f"[sweep] fresh-world reset on {node}: removed {removed or 'nothing'} "
+        f"under {run_dir_}")
+    return removed
+
+
 # --- census tail step (P32, card ops-census-mover) ------------------------
 #
 # The P31 hygiene item "DC census 升门禁" as a standing sweep step. Lesson
@@ -1473,6 +1509,8 @@ def run_dual(args):
         cmd += ["--only", args.only]
     if args.group:
         cmd += ["--group", args.group]
+    if getattr(args, "fresh_world", False):
+        cmd += ["--fresh-world"]   # both legs sweep the same fresh-world policy
     other_log = gt6server.ARTIFACT_DIR / \
         f"gt6_rs_sweep_dual_{framework.node_suffix(other_node)}_{other_tag}.log"
     print(f"[sweep] dual: spawning {other_node} in {other} "
@@ -1500,6 +1538,11 @@ def run_dual(args):
 def run_and_record(args):
     """Run the sweep for this node and write the result JSON; return it."""
     node = args.node or framework.DEFAULT_NODE
+    # getattr, not args.fresh_world: selftest check 8 hands run_and_record a
+    # hand-built Namespace predating --fresh-world — absent key = no reset
+    # (the same tolerance the --group getattr below already applies).
+    if getattr(args, "fresh_world", False):
+        reset_world(node)
     # getattr, not args.group: selftest check 8 hands run_and_record a
     # hand-built Namespace predating --group — absent key = full roster.
     stems = select(ordered_stems(select_groups(SESSION_GROUPS,
@@ -1559,6 +1602,11 @@ def main(argv=None):
     parser.add_argument("--break-lock", action="store_true",
                         help="standalone: clear a STALE sweep lock on --node "
                              "(owner pid dead); refuses a live owner (exit 3)")
+    parser.add_argument("--fresh-world", action="store_true",
+                        help="delete the node run dir's world* dirs before the "
+                             "first boot — a fresh world per sweep invocation "
+                             "(the shared-run-dir BE-residue fix, card "
+                             "rcon-hygiene-combo; server.properties/eula kept)")
     args = parser.parse_args(argv)
     if args.concurrency is None:
         args.concurrency = framework.concurrency_degree()
