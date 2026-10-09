@@ -32,8 +32,8 @@ import gregtech6.tileentity.GTOfflineTestBase;
  * validity (the 10Attachment:51 default — neither nozzle class carries a
  * getValidSides override), the shared BET pairing (NOZZLE_BE over the nozzle blocks,
  * CAP_NOZZLE_BE over the cap blocks — one {@link GTNozzleBlockEntity} class, the
- * ADR-P3-1 multi-mount) and the declared activation cut (the gas chains ride the
- * nozzle-function pool card — the BE reports it, offline-asserted).
+ * ADR-P3-1 multi-mount) and the activation heads (the gas chains landed by task
+ * nozzle-function — the offline behavior truth table is GT6NozzleFunctionTest).
  */
 public class GT6NozzleRowCensusTest extends GTOfflineTestBase {
 
@@ -130,7 +130,9 @@ public class GT6NozzleRowCensusTest extends GTOfflineTestBase {
 	/**
 	 * The BET pairing: the row's tickerType resolves the family BET
 	 * (NOZZLE_BE/CAP_NOZZLE_BE), both BET classes are the one GTNozzleBlockEntity, and
-	 * the offline-constructed BE answers the nozzle name + the declared activation cut.
+	 * the offline-constructed BE answers the nozzle name + the live chain heads (the
+	 * nozzle-function port: the drain chain is the default, the cap chain the family
+	 * dispatch — behavior pins live in GT6NozzleFunctionTest).
 	 */
 	@Test
 	public void theNozzleRowsRideTheSharedNozzleBetsAndTheDeclaredCut() {
@@ -142,10 +144,11 @@ public class GT6NozzleRowCensusTest extends GTOfflineTestBase {
 		BlockState tState = Blocks.STONE.defaultBlockState();
 		GTNozzleBlockEntity tNozzle = new GTNozzleBlockEntity(sNozzleType, POS, tState);
 		assertEquals("nozzle", tNozzle.getTileEntityName());
-		// the declared pool cut: the gas-drain/gas-fill chains are NOT ported (the
-		// nozzle-function pool card) — the activation consumes and reports, moves nothing
+		// the nozzle-function chains are live: the mount-less drain head answers its
+		// adjacency verdict, the cap dispatch is the family seam (behavior truth table
+		// in GT6NozzleFunctionTest)
 		String tReport = tNozzle.activate(null, (byte)Direction.NORTH.get3DDataValue(), null);
-		assertTrue(tReport.contains("pool card"), "the activation reports the declared cut: " + tReport);
-		assertTrue(tReport.contains("material-mc-f-attachment-rows"), "the cut cites this card: " + tReport);
+		assertTrue(tReport.contains("no tap-accessible container"), "the drain chain head answers: " + tReport);
+		assertFalse(tNozzle.isCapNozzle(), "the stone-carrier fixture defaults to the drain chain");
 	}
 }

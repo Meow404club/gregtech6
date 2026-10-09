@@ -141,8 +141,20 @@ public final class GTBarrelCommand {
 					// counterfactual of "a player holding a water bucket clicks"; the empty
 					// container is reported, not given — DECLARED deviation).
 					.then(Commands.argument("pos", BlockPosArgument.blockPos())
-						.executes(aContext -> funnel(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
-		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|fill|draw|stat|show|tap|funnel)");
+						.executes(aContext -> funnel(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("nozzle")
+					// nozzle-function — the nozzle acceptance channel: runs the gas-drain
+					// chain at pos with a VIRTUAL EMPTY METAL BARREL (the gas-proof item
+					// container — a wood one would refuse the gas at the item fill gate).
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> nozzle(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos")))))
+				.then(Commands.literal("capnozzle")
+					// nozzle-function — the cap-nozzle acceptance channel: runs the gas-fill
+					// chain at pos with a VIRTUAL METAL BARREL holding 4000 L of chlorine
+					// (the live registered gas, density −100).
+					.then(Commands.argument("pos", BlockPosArgument.blockPos())
+						.executes(aContext -> capnozzle(aContext.getSource(), BlockPosArgument.getLoadedBlockPos(aContext, "pos"))))));
+		LOGGER.info("Registered GT6 fluid barrel command /gt6tank (accept|melt|fill|draw|stat|show|tap|funnel|nozzle|capnozzle)");
 	}
 
 	/** {@code down|up|north|south|west|east} → Direction (the GTCoverCommand parse, mirrored here so the driver stays self-contained). */
@@ -186,6 +198,51 @@ public final class GTBarrelCommand {
 		String tReport = tFunnel.activate(null, (byte)Direction.NORTH.get3DDataValue(), tVirtualBucket);
 		String tLine = "GT6 funnel at " + aPos.toShortString() + " (facing "
 				+ Direction.from3DDataValue(tFunnel.mFacing) + ", virtual water bucket): " + tReport;
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The nozzle-function acceptance channel: drives the gas-drain chain at pos with a
+	 * virtual EMPTY metal-barrel stack — the deterministic counterfactual of "a player
+	 * holding an empty (gas-proof) metal drum clicks the nozzle"; the filled container is
+	 * reported, not given (no player to receive it).
+	 */
+	private static int nozzle(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof gregtech6.tileentity.attachment.GTNozzleBlockEntity tNozzle)
+				|| tNozzle.isCapNozzle()) {
+			aSource.sendFailure(Component.literal("No GT6 drain-nozzle BlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		ItemStack tVirtualDrum = new ItemStack(GTBarrels.BARREL_METAL_ITEM.get());
+		String tReport = tNozzle.activate(null, (byte)Direction.NORTH.get3DDataValue(), tVirtualDrum);
+		String tLine = "GT6 nozzle at " + aPos.toShortString() + " (facing "
+				+ Direction.from3DDataValue(tNozzle.mFacing) + ", virtual empty metal drum): " + tReport;
+		aSource.sendSuccess(() -> Component.literal(tLine), false);
+		LOGGER.info(tLine);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/**
+	 * The cap-nozzle acceptance channel: drives the gas-fill chain at pos with a virtual
+	 * metal-barrel stack PRE-FILLED with 4000 L of {@code gt6:chlorine} — the
+	 * deterministic counterfactual of "a player holding a gas-filled drum clicks the cap
+	 * nozzle"; the emptied container is reported, not given.
+	 */
+	private static int capnozzle(CommandSourceStack aSource, BlockPos aPos) {
+		if (!(aSource.getLevel().getBlockEntity(aPos) instanceof gregtech6.tileentity.attachment.GTNozzleBlockEntity tNozzle)
+				|| !tNozzle.isCapNozzle()) {
+			aSource.sendFailure(Component.literal("No GT6 cap-nozzle BlockEntity at " + aPos.toShortString()));
+			return 0;
+		}
+		ItemStack tVirtualDrum = new ItemStack(GTBarrels.BARREL_METAL_ITEM.get());
+		IFluidHandler tHandler = FluidUtil.getFluidHandler(tVirtualDrum).orElse(null);
+		net.minecraft.world.level.material.Fluid tChlorine = ForgeRegistries.FLUIDS.getValue(new ResourceLocation("gt6", "chlorine"));
+		if (tHandler != null && tChlorine != null) tHandler.fill(new FluidStack(tChlorine, 4000), FluidAction.EXECUTE);
+		String tReport = tNozzle.activate(null, (byte)Direction.NORTH.get3DDataValue(), tVirtualDrum);
+		String tLine = "GT6 capnozzle at " + aPos.toShortString() + " (facing "
+				+ Direction.from3DDataValue(tNozzle.mFacing) + ", virtual chlorine drum): " + tReport;
 		aSource.sendSuccess(() -> Component.literal(tLine), false);
 		LOGGER.info(tLine);
 		return Command.SINGLE_SUCCESS;
