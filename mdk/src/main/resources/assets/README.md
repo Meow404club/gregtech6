@@ -11211,12 +11211,12 @@ source (stroke columns/rows aligned, no neighbor bleed).
 | slot_fluid_18x19.png | 18x19 | Distillery.png | 106,24,18,19 | `5f3e1ff1472f37f1` |
 | button_flat_200x20.png | 200x20 | widgets.png | 0,66,200,20 | `483a8aaa9c88642a` |
 | button_flat_hover_200x20.png | 200x20 | widgets.png | 0,86,200,20 | `3815d194e4a8b19e` |
-| act_cell_blueprint_18x18.png | 18x18 | advancedcraftingtable.png | 134,26,18,18 | (see manifest) |
-| act_cell_drop_arrow_18x18.png | 18x18 | advancedcraftingtable.png | 152,26,18,18 | (see manifest) |
-| act_cell_sort_18x18.png | 18x18 | advancedcraftingtable.png | 134,44,18,18 | (see manifest) |
-| act_cell_flush_18x18.png | 18x18 | advancedcraftingtable.png | 152,44,18,18 | (see manifest) |
-| act_cell_craft_18x18.png | 18x18 | advancedcraftingtable.png | 134,62,18,18 | (see manifest) |
-| act_cell_neutral_18x18.png | 18x18 | advancedcraftingtable.png | 152,62,18,18 | (see manifest) |
+| act_cell_blueprint_18x18.png | 18x18 | advancedcraftingtable.png | 134,27,18,18 | (see manifest) |
+| act_cell_drop_arrow_18x18.png | 18x18 | advancedcraftingtable.png | 152,27,18,18 | (see manifest) |
+| act_cell_sort_18x18.png | 18x18 | advancedcraftingtable.png | 134,45,18,18 | (see manifest) |
+| act_cell_flush_18x18.png | 18x18 | advancedcraftingtable.png | 152,45,18,18 | (see manifest) |
+| act_cell_craft_18x18.png | 18x18 | advancedcraftingtable.png | 134,63,18,18 | (see manifest) |
+| act_cell_neutral_18x18.png | 18x18 | advancedcraftingtable.png | 152,63,18,18 | (see manifest) |
 | act_cell_tools_18x18.png | 18x18 | advancedcraftingtable.png | 79,7,18,18 | (see manifest) |
 | act_cell_tools_charging_18x18.png | 18x18 | advancedcraftingtablecharging.png | 79,7,18,18 | (see manifest) |
 

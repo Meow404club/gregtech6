@@ -81,12 +81,12 @@ CROPS = [
     # crops carry its semantics over: the four slot hints (blueprint selector,
     # drop arrow, P neutral, tool holder) and the three button/display faces
     # (sort-into-storage, flush-to-automation, craft-hammer output cell).
-    ("act_cell_blueprint_18x18.png", "advancedcraftingtable.png", 134, 26, 18, 18),  # selector slot 30 hint (the blueprint print)
-    ("act_cell_drop_arrow_18x18.png", "advancedcraftingtable.png", 152, 26, 18, 18),  # drop slot 33 hint (the output arrow print)
-    ("act_cell_sort_18x18.png",      "advancedcraftingtable.png", 134, 44, 18, 18),  # sort button face (put-to-storage holo 32 @135,46)
-    ("act_cell_flush_18x18.png",     "advancedcraftingtable.png", 152, 44, 18, 18),  # flush button face (automation-access holo 32 @153,46)
-    ("act_cell_craft_18x18.png",     "advancedcraftingtable.png", 134, 62, 18, 18),  # output display face (the craft hammer, holo 31 @135,64)
-    ("act_cell_neutral_18x18.png",   "advancedcraftingtable.png", 152, 62, 18, 18),  # neutral slot 34 hint (the P print)
+    ("act_cell_blueprint_18x18.png", "advancedcraftingtable.png", 134, 27, 18, 18),  # selector slot 30 hint (the blueprint print)
+    ("act_cell_drop_arrow_18x18.png", "advancedcraftingtable.png", 152, 27, 18, 18),  # drop slot 33 hint (the output arrow print)
+    ("act_cell_sort_18x18.png",      "advancedcraftingtable.png", 134, 45, 18, 18),  # sort button face (put-to-storage holo 32 @135,46)
+    ("act_cell_flush_18x18.png",     "advancedcraftingtable.png", 152, 45, 18, 18),  # flush button face (automation-access holo 32 @153,46)
+    ("act_cell_craft_18x18.png",     "advancedcraftingtable.png", 134, 63, 18, 18),  # output display face (the craft hammer, holo 31 @135,64)
+    ("act_cell_neutral_18x18.png",   "advancedcraftingtable.png", 152, 63, 18, 18),  # neutral slot 34 hint (the P print)
     ("act_cell_tools_18x18.png",     "advancedcraftingtable.png",  79,  7, 18, 18),  # tool slots 16-20 hint (the holder print, plain line)
     ("act_cell_tools_charging_18x18.png", "advancedcraftingtablecharging.png", 79, 7, 18, 18),  # the charging line's tool print (NBT_GUI swap, Loader:137)
 ]
