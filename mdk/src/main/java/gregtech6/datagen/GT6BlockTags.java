@@ -428,6 +428,9 @@ public final class GT6BlockTags extends BlockTagsProvider {
 		tPickaxe.add(gregtech6.registry.GT6Cups.PORCELAIN_CUP.get());
 		tPickaxe.add(gregtech6.registry.GT6Jugs.CERAMIC_JUG.get());
 		tPickaxe.add(gregtech6.registry.GT6MeasuringPot.MEASURING_POT.get());
+		// task measuring-pot-variants — the :2097-2099 metal rows (aUtilMetal = pickaxe,
+		// the same band walk the gas-cylinder :2101-2104 rows ride below)
+		gregtech6.registry.GT6MeasuringPot.VARIANT_BLOCKS.forEach(tHandle -> tPickaxe.add(tHandle.get()));
 		gregtech6.registry.GT6GasCylinders.BLOCKS_IN_ORDER.forEach(tHandle -> tPickaxe.add(tHandle.get()));
 		for (gregtech6.registry.GT6Attachments.AttachmentRow tRow : gregtech6.registry.GT6Attachments.ROWS) {
 			if (tRow.path().endsWith("_plastic")) continue; // the aUtilWood plastic pair → axe

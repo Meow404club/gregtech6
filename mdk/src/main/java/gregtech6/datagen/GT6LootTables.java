@@ -3752,9 +3752,11 @@ public final class GT6LootTables extends LootTableProvider {
         return rBlocks;
     }
 
-    /** The Measuring Pot — the census's one content-carrying row (Loader :2096), the {@link #tankSelfTable} owner. */
-    public static Block measuringPotLootBlock() {
-        return gregtech6.registry.GT6MeasuringPot.MEASURING_POT.get();
+    /** The Measuring Pot family — the content-carrying rows (Loader :2096-2099, task measuring-pot-variants), the {@link #tankSelfTable} owners. All FOUR rows share the tank+mode copy face: the one BE class carries the same NBT_TANK/NBT_MODE pair on every row (the ceramic verdict below applies verbatim — the metal rows share the visual 32719 column AND the tank class). */
+    public static List<Block> measuringPotLootBlocks() {
+        List<Block> rBlocks = new ArrayList<>();
+        gregtech6.registry.GT6MeasuringPot.BLOCKS_IN_ORDER.forEach(tBlock -> rBlocks.add(tBlock.get()));
+        return rBlocks;
     }
 
     /**
@@ -3786,15 +3788,18 @@ public final class GT6LootTables extends LootTableProvider {
      *     (GT6CupBlock.getDrops:171-197 — the BE tank carry, tag-less when empty), so the
      *     same reasoning as the Grindstone: the table is the BE-less fallback face, dropSelf
      *     = the empty-cup body.</li>
-     * <li><b>Ceramic Measuring Pot (:2096)</b> — same upstream content carry
+     * <li><b>Ceramic Measuring Pot (:2096) + the THREE metal rows (:2097-2099, task
+     *     measuring-pot-variants)</b> — same upstream content carry
      *     ({@code writeItemNBT2}:61-63 chains the Base08 :92-95 tank write) PLUS the
      *     capacity re-bind: upstream writes {@code NBT_MODE} beside the tank (the
      *     MeasuringPot :61-63 override; written only off the class default), and the PORT
      *     BE keeps that face (GT6MeasuringPotBlockEntity.saveAdditional:158 / load:151 —
      *     the empty-hand horizontal click re-binds {@code mTank} capacity, bounded
-     *     {@code [1, DEFAULT_CAPACITY]}). The port block has NO getDrops override
-     *     (GT6MeasuringPotBlock) — the loot table IS the live break face, so BOTH keys
-     *     must ride the table: {@link #tankSelfTable}, the vanilla shulker-box contract
+     *     {@code [1, DEFAULT_CAPACITY]}). The port blocks have NO getDrops override
+     *     (GT6MeasuringPotBlock) — the loot tables ARE the live break face, so BOTH keys
+     *     must ride the tables: {@link #tankSelfTable} per row (the four rows share the one
+     *     BE class and its NBT pair — the same table family), the vanilla shulker-box
+     *     contract
      *     ({@code copy_nbt} keys → {@code BlockEntityTag.*}, the
      *     {@code BlockItem.updateCustomBlockEntityTag} placement merge — the
      *     paintSelfTable javadoc's verified anchor). The empty tank writes NO key
@@ -3824,15 +3829,14 @@ public final class GT6LootTables extends LootTableProvider {
         @Override
         protected Iterable<Block> getKnownBlocks() {
             List<Block> rBlocks = new ArrayList<>(miscToolLootBlocks());
-            rBlocks.add(measuringPotLootBlock());
+            rBlocks.addAll(measuringPotLootBlocks());
             return rBlocks;
         }
 
         @Override
         protected void generate() {
             for (Block tBlock : miscToolLootBlocks()) dropSelf(tBlock);
-            Block tPot = measuringPotLootBlock();
-            add(tPot, tankSelfTable(tPot));
+            for (Block tPot : measuringPotLootBlocks()) add(tPot, tankSelfTable(tPot));
         }
     }
 

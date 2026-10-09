@@ -18,7 +18,9 @@ import net.minecraft.world.level.ItemLike;
 
 import net.minecraftforge.data.event.GatherDataEvent;
 
+import gregapi.data.OP;
 import gregtech6.registry.GT6MeasuringPot;
+import gregtech6.registry.GTMaterialItems;
 
 /**
  * The Measuring Pot crafting datagen (task issue45-c3, issue #45) — the
@@ -37,6 +39,12 @@ import gregtech6.registry.GT6MeasuringPot;
  * <li><b>smelt</b> {@code gt6:smelt_clay_measuring_pot} — the Loader_MultiTileEntities
  *     :2096 tail {@code RM.add_smelting(Measuring_Pot_Raw → Measuring_Pot)}, the raw
  *     hardening into the block item.</li>
+ * <li><b>shaped ×3 metal</b> {@code gt6:measuring_pot_stainless_steel}/
+ *     {@code _tungsten}/{@code _tantalum_hafnium_carbide} — the Loader :2097-2099
+ *     registration-line tails (task measuring-pot-variants) {@code "Ch"/"Pf"} verbatim
+ *     ('C' = {@code OP.plateCurved.dat(aMat)}, 'P' = {@code OP.plate.dat(aMat)}, 'h' =
+ *     {@code #gt6:tools/hard_hammer} + 'f' = {@code #gt6:tools/file}, the
+ *     GT6GasCylinderDatagen tag-define tool-mark form).</li>
  * </ul>
  *
  * <p>The crafting face is the forge-leg runData surface (the GT6CrucibleDatagen.Recipes
@@ -124,6 +132,25 @@ public final class GT6MeasuringPotDatagen {
 			SimpleCookingRecipeBuilder.smelting(Ingredient.of(tRaw), RecipeCategory.MISC, tPot, 0.0F, 200)
 					.unlockedBy("has_clay_measuring_pot", has(tRaw))
 					.save(aOutput, id("smelt_clay_measuring_pot"));
+			// :2097-2099 — the THREE metal rows, the inline "Ch"/"Pf" grid per material
+			// ('C' = OP.plateCurved.dat(aMat), 'P' = OP.plate.dat(aMat), 'h' = the hard-hammer
+			// tag mark, 'f' = the file tag mark — the GT6GasCylinderDatagen tool-mark form;
+			// the material letters resolve through GTMaterialItems concrete items, no tag
+			// families exist for these prefixes)
+			for (GT6MeasuringPot.PotRow tRow : GT6MeasuringPot.ROWS) {
+				int tIndex = GT6MeasuringPot.ROWS.indexOf(tRow);
+				Item tVariant = GT6MeasuringPot.VARIANT_BLOCKS.get(tIndex).get().asItem();
+				gregapi.oredict.OreDictMaterial tMat = tRow.material().get();
+				ShapedRecipeBuilder.shaped(RecipeCategory.MISC, tVariant)
+						.pattern("Ch")
+						.pattern("Pf")
+						.define('C', GTMaterialItems.get(OP.plateCurved, tMat).get())
+						.define('P', GTMaterialItems.get(OP.plate, tMat).get())
+						.define('h', GT6ItemTags.TOOLS_HARD_HAMMER)
+						.define('f', GT6ItemTags.TOOLS_FILE)
+						.unlockedBy("has_plate", has(GTMaterialItems.get(OP.plate, tMat).get()))
+						.save(aOutput, id(tRow.path()));
+			}
 		}
 
 		private static ResourceLocation id(String aPath) {
