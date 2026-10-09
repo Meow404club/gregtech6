@@ -640,16 +640,45 @@ public final class GT6OreBlocks {
      * </ul>
      *
      * <p>The lottery this closes (the 8-row twilight_ores / 137-feature strata_lenses faces,
-     * seat19/20, BOTH legs flipping): the pre-fix gate re-derived the axis from MT/OP statics
-     * AT EMISSION TIME, and that ambient re-derivation is not datagen-stable — the boot
-     * registration measured FULL on the same JVM runs (the log above), while the emission-time
-     * walk under-resolved by exactly the non-RockOres axis rows. The intra-JVM mutator that
-     * degrades the ambient view mid-datagen stays OPEN (hygiene domain, id1467 class); this
-     * witness severs the emission-time dependence on it. A forced guard-bypassing re-flood
-     * (fix_direction (b)) was evaluated and DROPPED: re-creating the materials would move
-     * them OUT of the generation the boot-registered GT6OreBlocks keys hold and turn every
-     * {@code GT6OreBlocks.get(...).get()} emission lookup (GT6WorldgenDatagen.java:1606)
-     * into a miss — the same id1427 generation-flip class.
+     * seat19/20): the pre-fix gate re-derived the axis from MT/OP statics AT EMISSION TIME,
+     * and that ambient re-derivation proved datagen-unstable in the seat19/20 runs (boot
+     * registration measured FULL on the same JVMs, the emission-time walk short by the
+     * A-band rows). Task emission-window-mutator closed the follow-up archaeology
+     * (2026-10-09, base fe6f30980e): <b>no intra-JVM GT6 mutator exists on the current
+     * tree</b> — a five-point probe across the whole emission window (boot registration /
+     * GatherDataEvent / the three {@code GTOreWorldgen.twilightOnAxisRows} bootstrap walks /
+     * the tail mirror provider) measured the ambient axis 157/157, alias/tag/condition clean
+     * end to end on BOTH legs (/tmp/ewm-rundata-forge.log, /tmp/ewm-rundata-neo1.log), and
+     * the mutator census is empty: {@code disableItemGeneration} has zero main-code callers;
+     * the {@code ITEMGENERATOR.*} tags are stamped once at the flood (the {@code put} tag
+     * groups, MT.java) and never removed; {@code mCondition} is assigned at OP clinit only
+     * (OP.java:1098 and the ore-family chains — every runtime {@code setOreStats} caller is
+     * that same clinit); the {@code MaterialRegistry} open/close/reset callers are the boot
+     * {@code GTMaterialItems.initMaterials} (GTMaterialItems.java:104-111) plus the
+     * idempotent warm-up re-entry (the MT.init generation guard MT.java:2711 and the OP.init
+     * mInitialized gate OP.java:622 hold; the force rows are contains-guarded,
+     * GTMaterialItems.java:171-177). What the probe DID pin is the emission-window topology,
+     * which is platform-owned: the worldgen bootstrap — the only ambient consumer cluster —
+     * runs inside the DatagenModLoader lookup future. Forge 1.20.1 chains
+     * {@code registries.thenApply(constructRegistries)} in the
+     * DatapackBuiltinEntriesProvider CONSTRUCTOR (DatapackBuiltinEntriesProvider.java:53),
+     * so the bootstraps execute on a background worker (RegistrySetBuilder$RegistryStub:250)
+     * CONCURRENTLY with the main-thread provider chain — measured: the three twilight walks
+     * on Worker-Main-1 while Item Models ran on main (/tmp/ewm-rundata-forge.log:102-114);
+     * neo 21.1 runs the same bootstraps synchronously on main before the first provider
+     * (RegistrySetBuilder$RegistryStub:404, /tmp/ewm-rundata-neo1.log:105-116). The
+     * seat19/20 flips (neo-leg-only, per-run nondeterministic) therefore close as
+     * PLATFORM-INHERENT (id1467 class: the datagen JVM's thread/lifecycle semantics), not a
+     * fixable GT6 state mutation. The witness stays the correct shape regardless: it severs
+     * emission-time dependence on ALL ambient state — any future mutator, and JMM
+     * visibility across the platform's threads. Future consumers: any new emission-time
+     * gate MUST read this witness (or the boot maps directly), never re-derive ambient
+     * state at emission; the twilight band enforces it with the
+     * {@code GTOreWorldgen.emissionWindowCanary} re-offense pin. A forced guard-bypassing
+     * re-flood (fix_direction (b)) was evaluated and DROPPED: re-creating the materials
+     * would move them OUT of the generation the boot-registered GT6OreBlocks keys hold and
+     * turn every {@code GT6OreBlocks.get(...).get()} emission lookup
+     * (GT6WorldgenDatagen.java:1606) into a miss — the same id1427 generation-flip class.
      */
     public static boolean axisWitness(OreDictMaterial aMaterial) {
         if (aMaterial == null) return false;
