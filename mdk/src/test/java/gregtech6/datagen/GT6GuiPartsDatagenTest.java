@@ -4,10 +4,11 @@
  * <p>Pins asserted here:</p>
  * <ul>
  *   <li>the manifest ({@code mdk/tools/parts_manifest.json}, product of the canonical
- *       cropper {@code mdk/tools/crop_gui_parts.py}) holds exactly the 13 ledger parts
- *       over 6 sha-pinned sources (amazawa pack gregtech domain + its reskinned
+ *       cropper {@code mdk/tools/crop_gui_parts.py}) holds exactly the 21 ledger parts
+ *       over 8 sha-pinned sources (amazawa pack gregtech domain + its reskinned
  *       minecraft domain only — TFC domain is NOT a permitted source, see
- *       assets/README.md "GUI part crops");</li>
+ *       assets/README.md "GUI part crops"; the 7th/8th sources are the two COMMITTED
+ *       ACT sheets, act-gui-overlay-overhaul);</li>
  *   <li>every part PNG is on the static tree ({@code assets/gt6/textures/gui/parts/})
  *       with manifest-exact sha256 + dimensions, is non-empty (real pixels, not a
  *       transparent stub), and is mirrored 1:1 by a {@link GT6GuiParts} constant
@@ -60,14 +61,15 @@ class GT6GuiPartsDatagenTest {
     private static final Path GENERATED_TREE = Path.of("src", "generated", "resources");
     private static final String PARTS_PREFIX = "assets/gt6/textures/gui/parts";
 
-    /** The task-card pin: 13 ledger parts over 6 sources (13th = arrow_outline, composed-ui-energy-slot-and-parts). */
-    private static final int PINNED_PART_TOTAL = 13;
-    private static final int PINNED_SOURCE_TOTAL = 6;
+    /** The task-card pin: 21 ledger parts over 8 sources (13th = arrow_outline, composed-ui-energy-slot-and-parts; 14th-21st = the ACT cell prints, act-gui-overlay-overhaul). */
+    private static final int PINNED_PART_TOTAL = 21;
+    private static final int PINNED_SOURCE_TOTAL = 8;
 
-    /** Committed source fixtures (also present, untracked, under tmp/amazawa-census/v105g). */
+    /** Committed source fixtures (also present, untracked, under tmp/amazawa-census/v105g; the two ACT sheets are the committed assets themselves). */
     private static final List<String> FIXTURE_SOURCES = List.of(
         "Default.png", "Melter.png", "Freezer.png", "Distillery.png",
-        "Crafting2By2.png", "widgets.png");
+        "Crafting2By2.png", "widgets.png",
+        "advancedcraftingtable.png", "advancedcraftingtablecharging.png");
 
     /** ResourceLocation path legality (vanilla [a-z0-9_.-/]). */
     private static final Pattern LEGAL_PATH = Pattern.compile("[a-z0-9_.\\-/]+");

@@ -56,6 +56,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -178,6 +180,17 @@ class GT6MachinePaintRenderDatagenTest {
             assertNotNull(tStream, "the generated JSON must be on the classpath: " + aPath);
             return JsonParser.parseString(new String(tStream.readAllBytes(), StandardCharsets.UTF_8)).getAsJsonObject();
         }
+    }
+
+    /** Location of the mdk project root, walking up from the (leg-dependent) test working dir (the GT6GuiPartsDatagenTest form). */
+    private static Path mdkRoot() {
+        for (Path p = Path.of("").toAbsolutePath(); p != null; p = p.getParent()) {
+            if (Files.isRegularFile(p.resolve("tools").resolve("gen_textures.py"))) {
+                return p;
+            }
+        }
+        throw new AssertionError("mdk root (tools/gen_textures.py) not found upward from "
+            + Path.of("").toAbsolutePath());
     }
 
     /** The tier rows keep the family textures (the p8 texture-base overload); the p28 ULV rows and the p29 W2 _t5 rungs likewise (the addUlvLadder/addEuSpecialFamilies family tokens). */
@@ -317,74 +330,164 @@ class GT6MachinePaintRenderDatagenTest {
     }
 
     /**
-     * The ACT's shared machineModel output (task act-matrix: one model over all 120 rows,
-     * NOT in the paintableBlockArray census): the block/cube parent, the eight-texture key
-     * set (six body keys over the shared oven body set + the advanced front/overlay pair),
-     * and the r11-machine-particle-key particle seat — the oven side art, the same
-     * storage/boiler precedent as the family ladders.
+     * The two ACT family models (task act-gui-overlay-overhaul — the former ONE shared
+     * oven-placeholder model is retired): the plain rows' advanced model and the charging
+     * rows' charging model, each over its own borrowed craftingtables family art
+     * (upstream :136 "craftingtables/advanced" vs :137 "craftingtables/charging").
+     */
+    private static final Map<String, String> ACT_MODELS = Map.of(
+            "advanced_crafting_table", "advanced",
+            "charging_crafting_table", "charging");
+
+    /** The ACT overlay art tokens (the shared-side shape: five keys, west+east share side). */
+    private static final List<String> ACT_OVERLAY_TOKENS = List.of("front", "back", "side", "top", "bottom");
+
+    /**
+     * The ACT models' texture seats (task act-gui-overlay-overhaul, the id1336 ③
+     * closure): block/cube parent, TWELVE texture keys — the six body keys over the
+     * family colored set with BOTH laterals on the shared side art (the upstream
+     * [bottom, top, front, back, side] array has no left/right split,
+     * MultiTileEntityAdvancedCraftingTable.java:658-662), the five overlay keys, and the
+     * r11-machine-particle-key particle seat (= the front art) — plus the cutout
+     * render_type (the issue #8 transparent-decal fix).
      */
     @Test
-    void actMachineModelCarriesParticleKey() throws Exception {
-        JsonObject tModel = json("assets/gt6/models/block/advanced_crafting_table.json");
-        assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
-                "advanced_crafting_table: the block/cube parent");
-        var tTextures = tModel.getAsJsonObject("textures");
-        assertEquals("gt6:block/oven_bottom", tTextures.get("down").getAsString(),
-                "advanced_crafting_table: the shared oven body set (down)");
-        assertEquals("gt6:block/oven_top", tTextures.get("up").getAsString(),
-                "advanced_crafting_table: the shared oven body set (up)");
-        assertEquals("gt6:block/advanced_colored_front", tTextures.get("north").getAsString(),
-                "advanced_crafting_table: the advanced front art (north)");
-        for (String tSideKey : new String[] {"south", "west", "east"}) {
-            assertEquals("gt6:block/oven_side", tTextures.get(tSideKey).getAsString(),
-                    "advanced_crafting_table: the shared oven side art (" + tSideKey + ")");
+    void actMachineModelsCarryTheFamilyArtAndTheParticleKey() throws Exception {
+        for (var tEntry : ACT_MODELS.entrySet()) {
+            String tModelName = tEntry.getKey(), tBase = tEntry.getValue();
+            JsonObject tModel = json("assets/gt6/models/block/" + tModelName + ".json");
+            assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
+                    tModelName + ": the block/cube parent");
+            assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(),
+                    tModelName + ": cutout — the transparent overlay decals discard");
+            var tTextures = tModel.getAsJsonObject("textures");
+            assertEquals("gt6:block/" + tBase + "_colored_bottom", tTextures.get("down").getAsString(),
+                    tModelName + ": the family colored bottom");
+            assertEquals("gt6:block/" + tBase + "_colored_top", tTextures.get("up").getAsString(),
+                    tModelName + ": the family colored top (no more oven_top placeholder)");
+            assertEquals("gt6:block/" + tBase + "_colored_front", tTextures.get("north").getAsString(),
+                    tModelName + ": the family colored front");
+            assertEquals("gt6:block/" + tBase + "_colored_back", tTextures.get("south").getAsString(),
+                    tModelName + ": the family colored back");
+            for (String tSideKey : new String[] {"west", "east"}) {
+                assertEquals("gt6:block/" + tBase + "_colored_side", tTextures.get(tSideKey).getAsString(),
+                        tModelName + ": the shared side art (" + tSideKey + ")");
+            }
+            assertEquals("gt6:block/" + tBase + "_colored_front", tTextures.get("particle").getAsString(),
+                    tModelName + ": particle = the front art (the storage/boiler precedent)");
+            for (String tToken : ACT_OVERLAY_TOKENS) {
+                assertEquals("gt6:block/" + tBase + "_overlay_" + tToken, tTextures.get("overlay_" + tToken).getAsString(),
+                        tModelName + ": the overlay_" + tToken + " decal art");
+            }
+            Set<String> tExpectedKeys = new HashSet<>(FACE_KEYS);
+            tExpectedKeys.add("particle");
+            for (String tToken : ACT_OVERLAY_TOKENS) tExpectedKeys.add("overlay_" + tToken);
+            assertEquals(tExpectedKeys, tTextures.keySet(),
+                    tModelName + ": the twelve-key set (six body + five overlay + particle)");
         }
-        assertEquals("gt6:block/advanced_overlay_front", tTextures.get("overlay").getAsString(),
-                "advanced_crafting_table: the advanced front decal");
-        assertEquals("gt6:block/oven_side", tTextures.get("particle").getAsString(),
-                "advanced_crafting_table: particle = the dominant side art (the storage/boiler"
-                        + " precedent; block/cube ships no particle binding)");
-        Set<String> tExpectedKeys = new HashSet<>(FACE_KEYS);
-        tExpectedKeys.add("overlay");
-        tExpectedKeys.add("particle");
-        assertEquals(tExpectedKeys, tTextures.keySet(),
-                "advanced_crafting_table: the eight-texture key set (six body keys + overlay + particle)");
     }
 
     /**
-     * Task act-charging-table-tint — the ACT shared model's TINT SEATS (the user's
-     * "还是没上色" census gap: the seat was already right, the consumers weren't): the
-     * body cube carries tintindex 0 on ALL six faces (the mRGBa multiplication seat) and
-     * the 0.01 front decal carries NO tintindex (the upstream UNCOLOURED overlay layer,
+     * Task act-charging-table-tint, re-seated by act-gui-overlay-overhaul — the ACT
+     * models' TINT SEATS: the body cube carries tintindex 0 on ALL six faces (the mRGBa
+     * multiplication seat) and the SIX 0.01 decals (one per face, the top decal is the
+     * user's "顶面 overlay") carry NO tintindex (the upstream UNCOLOURED overlay layer,
      * MultiTileEntityAdvancedCraftingTable.java:659-662 = BlockTextureMulti(
-     * BlockTextureDefault(sColoreds[side], mRGBa), BlockTextureDefault(sOverlays[side]))).
-     * One shared model serves BOTH block kinds (the plain :136 and the charging :137),
-     * so this pin covers the 120-row matrix. The consumer half rides the
-     * GTMachinePaintTint dispatch (the tint test's craftingTableRowsRideTheCombinedDispatch).
+     * BlockTextureDefault(sColoreds[aIndex], mRGBa), BlockTextureDefault(sOverlays[aIndex]))).
+     * The consumer half rides the GTMachinePaintTint dispatch
+     * (craftingTableRowsRideTheCombinedDispatch).
      */
     @Test
-    void actMachineModelPinsTheTintSeats() throws Exception {
-        JsonObject tModel = json("assets/gt6/models/block/advanced_crafting_table.json");
-        var tElements = tModel.getAsJsonArray("elements");
-        assertEquals(2, tElements.size(),
-                "advanced_crafting_table: body cube + the single front decal (the p22 form)");
-        JsonObject tBody = tElements.get(0).getAsJsonObject();
-        var tFaces = tBody.getAsJsonObject("faces");
-        assertEquals(6, tFaces.size(), "advanced_crafting_table: six body faces");
-        for (String tFaceKey : FACE_KEYS) {
-            JsonObject tFace = tFaces.getAsJsonObject(tFaceKey);
-            assertEquals(0, tFace.get("tintindex").getAsInt(),
-                    "advanced_crafting_table face " + tFaceKey + ": tintindex 0 — the mRGBa seat"
-                            + " (the colored×mRGBa shell pass, ACT:659-662)");
+    void actMachineModelsPinTheTintSeats() throws Exception {
+        for (String tModelName : ACT_MODELS.keySet()) {
+            JsonObject tModel = json("assets/gt6/models/block/" + tModelName + ".json");
+            var tElements = tModel.getAsJsonArray("elements");
+            assertEquals(7, tElements.size(),
+                    tModelName + ": body cube + the six overlay decals (the familyMachineModel form)");
+            JsonObject tBody = tElements.get(0).getAsJsonObject();
+            var tFaces = tBody.getAsJsonObject("faces");
+            assertEquals(6, tFaces.size(), tModelName + ": six body faces");
+            for (String tFaceKey : FACE_KEYS) {
+                JsonObject tFace = tFaces.getAsJsonObject(tFaceKey);
+                assertEquals(0, tFace.get("tintindex").getAsInt(),
+                        tModelName + " face " + tFaceKey + ": tintindex 0 — the mRGBa seat"
+                                + " (the colored×mRGBa shell pass, ACT:659-662)");
+            }
+            // the six decals: single quad per element, NO tintindex, cullface synced —
+            // element order mirrors craftingTableModel (front, back, east, west, down, up);
+            // both laterals bind the SHARED overlay_side art
+            String[][] tExpected = {
+                    {"north", "#overlay_front"}, {"south", "#overlay_back"},
+                    {"east", "#overlay_side"}, {"west", "#overlay_side"},
+                    {"down", "#overlay_bottom"}, {"up", "#overlay_top"}};
+            for (int i = 0; i < tExpected.length; i++) {
+                JsonObject tDecal = tElements.get(i + 1).getAsJsonObject();
+                var tDecalFaces = tDecal.getAsJsonObject("faces");
+                assertEquals(1, tDecalFaces.size(), tModelName + ": decal " + i + " is a single quad");
+                JsonObject tFace = tDecalFaces.getAsJsonObject(tExpected[i][0]);
+                assertEquals(tExpected[i][1], tFace.get("texture").getAsString(),
+                        tModelName + ": decal " + i + " face art");
+                assertTrue(!tFace.has("tintindex"),
+                        tModelName + " decal " + tExpected[i][0] + ": NO tintindex — the untinted"
+                                + " overlay layer (ACT:662 sOverlays)");
+                assertEquals(tExpected[i][0], tFace.get("cullface").getAsString(),
+                        tModelName + " decal " + tExpected[i][0] + ": cullface synced with the body");
+            }
         }
-        JsonObject tDecal = tElements.get(1).getAsJsonObject();
-        var tDecalFaces = tDecal.getAsJsonObject("faces");
-        assertEquals(1, tDecalFaces.size(), "advanced_crafting_table: the decal is a single quad");
-        for (var tEntry : tDecalFaces.entrySet()) {
-            assertTrue(!tEntry.getValue().getAsJsonObject().has("tintindex"),
-                    "advanced_crafting_table decal face " + tEntry.getKey()
-                            + ": NO tintindex — the untinted overlay layer (ACT:662 sOverlays)");
+    }
+
+    /**
+     * The 120-row variant ride (task act-gui-overlay-overhaul): every charging row's
+     * blockstate wires all four facings to the charging model (y-rotated per facing) and
+     * every plain row's to the advanced model; the row's BlockItem parents the same
+     * family model. The upstream NBT_TEXTURE column split (:136/:137), now rendered.
+     * Walks the generated tree on the filesystem (the GT6GuiPartsDatagenTest mdkRoot
+     * form — no registry bootstrap in this census).
+     */
+    @Test
+    void actBlockstatesAndItemModelsRideTheRowVariant() throws Exception {
+        Path tGenerated = mdkRoot().resolve(Path.of("src", "generated", "resources", "assets", "gt6"));
+        Path tStates = tGenerated.resolve("blockstates");
+        Path tItems = tGenerated.resolve("models").resolve("item");
+        assertTrue(Files.isDirectory(tStates), "the generated blockstate tree exists");
+        int tPlainRows = 0, tChargingRows = 0;
+        try (var tWalk = Files.list(tStates)) {
+            for (Path tFile : tWalk.filter(p -> {
+                String n = p.getFileName().toString();
+                return n.startsWith("advanced_crafting_table_") || n.startsWith("charging_crafting_table_");
+            }).sorted().toList()) {
+                String tPath = tFile.getFileName().toString().replace(".json", "");
+                boolean tCharging = tPath.startsWith("charging_crafting_table_");
+                String tModelRef = "gt6:block/" + (tCharging ? "charging_crafting_table" : "advanced_crafting_table");
+                JsonObject tState = json("assets/gt6/blockstates/" + tPath + ".json");
+                var tVariants = tState.getAsJsonObject("variants");
+                assertEquals(4, tVariants.size(), tPath + ": the four facings");
+                for (var tVariant : tVariants.entrySet()) {
+                    JsonObject tRow = tVariant.getValue().getAsJsonObject();
+                    assertEquals(tModelRef, tRow.get("model").getAsString(),
+                            tPath + " variant " + tVariant.getKey() + ": the family model");
+                    String tFacing = tVariant.getKey().substring("facing=".length());
+                    int tExpectedY = switch (tFacing) {
+                        case "south" -> 180;
+                        case "west" -> 270;
+                        case "east" -> 90;
+                        default -> 0;
+                    };
+                    if (tExpectedY == 0) {
+                        assertTrue(!tRow.has("y"), tPath + " facing=north: no rotation key");
+                    } else {
+                        assertEquals(tExpectedY, tRow.get("y").getAsInt(), tPath + " facing " + tFacing);
+                    }
+                }
+                JsonObject tItem = json("assets/gt6/models/item/" + tPath + ".json");
+                assertEquals(tModelRef, tItem.get("parent").getAsString(), tPath + ": the item parent");
+                if (tCharging) tChargingRows++; else tPlainRows++;
+                assertTrue(Files.isRegularFile(tItems.resolve(tPath + ".json")),
+                        tPath + ": the item model file");
+            }
         }
+        assertEquals(60, tPlainRows, "the plain line (:136, one row per material)");
+        assertEquals(60, tChargingRows, "the charging line (:137, one row per material)");
     }
 
     /**

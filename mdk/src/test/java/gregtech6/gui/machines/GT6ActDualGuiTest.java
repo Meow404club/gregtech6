@@ -19,7 +19,6 @@ import brachy.modularui.widgets.slot.ModularSlot;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -39,8 +38,10 @@ import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
  * panel widget trees (the crafting GUI 0 seats + the player inventory 36 the user
  * field-missed; the GUI 1 charging belt = the ContainerCommonDefault(…, 35, 36) case-36
  * 9x4 grid, gregapi/gui/ContainerCommon.java:250-287, + the same player bind
- * :327-334), the variant-follows-the-sheet rule (Loader_MultiTileEntities.java:137
- * NBT_GUI over the :74 plain default) and the borrowed-sheet ledger.
+ * :327-334), the composed-parts regime (task act-gui-overlay-overhaul: no code
+ * background — the theme plate + theme slot frames draw, the sheet's prints ride the
+ * {@link GT6GuiParts} ACT cell crops, the variant picks the tool-hint print) and the
+ * borrowed-sheet ledger (the sheets stay shipped as the crop sources).
  */
 class GT6ActDualGuiTest extends GTMultiBlocksOfflineTestBase {
 
@@ -248,23 +249,129 @@ class GT6ActDualGuiTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the sheet follows the VARIANT (upstream NBT_GUI :137 over the :74 default)
+	// the composed base (task act-gui-overlay-overhaul) — no code background, the
+	// variant rides the tool-hint print, the buttons/cells carry the sheet faces
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * The composed-parts regime (the user's "GUI 底是原版的+硬贴格子" fix): both panels
+	 * carry NO code background — the gt6 theme's 9-slice plate draws under the panel and
+	 * the theme itemSlot frame under every plain seat, so the sheet-baked frames can no
+	 * longer double-stack under the code slots (the double-slot elimination). The
+	 * former {@code guiSheet}/{@code panelBackground} pair is retired; the sheets stay
+	 * shipped as the {@code GT6GuiParts} ACT cell-crop sources (the ledger test below).
+	 */
 	@Test
-	public void theGuiSheetFollowsTheVariantNotTheGuiId() {
-		ResourceLocation tPlain = GTActMenu.guiSheet(plainTable());
-		assertEquals("gt6", tPlain.getNamespace(), "the sheet namespace");
-		assertEquals("textures/gui/machines/advancedcraftingtable.png", tPlain.getPath(),
-				"the plain row keeps the :74 mGUITexture default");
+	public void thePanelsCarryNoCodeBackgroundTheThemePlateDraws() {
+		for (ModularPanel<?> tPanel : new ModularPanel<?>[] {
+				GTActMenu.buildPanel(plainTable(), headlessSyncManager()),
+				GTActMenu.buildPanel(chargingTable(), headlessSyncManager()),
+				GTActMenu.buildBeltPanel(chargingTable(), headlessSyncManager())}) {
+			assertTrue(tPanel.getBackground() == null,
+					tPanel.getName() + ": the panel carries NO code background — the theme"
+							+ " plate draws (the composed base; a code sheet here was the"
+							+ " double-slot root cause)");
+		}
+	}
 
-		ResourceLocation tCharging = GTActMenu.guiSheet(chargingTable());
-		assertEquals("textures/gui/machines/advancedcraftingtablecharging.png", tCharging.getPath(),
-				"the charging row swaps the sheet (Loader:137 NBT_GUI)");
+	/**
+	 * The variant + icon seats (task act-gui-overlay-overhaul): the five tool slots wear
+	 * the sheet's holder print (the plain crop for a plain row, the charging crop for a
+	 * charging row — the ONLY canvas difference between the two upstream sheets, the
+	 * Loader:137 NBT_GUI semantic); the selector/drop/neutral seats wear the
+	 * blueprint/arrow/P prints; the two holo-32 buttons wear the sort/flush faces; the
+	 * output display wears the craft-hammer face and the four-mode craft button is the
+	 * pure hit area (invisible — theme background disabled, no code background, so the
+	 * print + preview show through).
+	 */
+	@Test
+	public void theIconSeatsCarryTheSheetCellPrintsAndFollowTheVariant() throws Exception {
+		ModularPanel<?> tPlainPanel = GTActMenu.buildPanel(plainTable(), headlessSyncManager());
+		ModularPanel<?> tChargingPanel = GTActMenu.buildPanel(chargingTable(), headlessSyncManager());
+
+		// the five tool slots wear the variant's holder print (slot indices 16-20) —
+		// the ONLY canvas difference between the two upstream sheets (the Loader:137
+		// NBT_GUI semantic, cropped per sheet)
+		assertEquals(5, countTextureSeats(tPlainPanel, 16, 20,
+				GT6GuiParts.ACT_CELL_TOOLS.fileName()), "plain: the five tool seats carry the plain print");
+		assertEquals(5, countTextureSeats(tChargingPanel, 16, 20,
+				GT6GuiParts.ACT_CELL_TOOLS_CHARGING.fileName()), "charging: the five tool seats carry the charging print");
+
+		// the fixed-print seats on the plain panel: selector 30 = blueprint,
+		// drop 33 = arrow, neutral 34 = P (the sheet's hint prints)
+		assertEquals(1, countTextureSeats(tPlainPanel, 30, 30, GT6GuiParts.ACT_CELL_BLUEPRINT.fileName()),
+				"the selector seat carries the blueprint print");
+		assertEquals(1, countTextureSeats(tPlainPanel, 33, 33, GT6GuiParts.ACT_CELL_DROP_ARROW.fileName()),
+				"the drop seat carries the arrow print");
+		assertEquals(1, countTextureSeats(tPlainPanel, 34, 34, GT6GuiParts.ACT_CELL_NEUTRAL.fileName()),
+				"the neutral seat carries the P print");
+
+		// the buttons: sort (135,46) + flush (153,46) carry their faces; the craft
+		// button (135,64) is the invisible hit area; the display (135,64) carries the
+		// craft-hammer face
+		List<IWidget> tButtons = new ArrayList<>();
+		IWidget tDisplay = null;
+		for (IWidget tWidget : allWidgets(tPlainPanel)) {
+			if (tWidget instanceof brachy.modularui.widgets.ButtonWidget<?>) tButtons.add(tWidget);
+			if (tWidget instanceof brachy.modularui.widgets.ItemDisplayWidget) tDisplay = tWidget;
+		}
+		assertEquals(3, tButtons.size(), "the craft button + the two holo-32 action buttons");
+		int tFacedButtons = 0;
+		for (IWidget tButton : tButtons) {
+			if (posOf(tButton, true) == 135 && posOf(tButton, false) == 46) {
+				tFacedButtons++;
+				assertTexturePath(tButton, GT6GuiParts.ACT_CELL_SORT.texture().getPath(), "the sort button");
+			} else if (posOf(tButton, true) == 153 && posOf(tButton, false) == 46) {
+				tFacedButtons++;
+				assertTexturePath(tButton, GT6GuiParts.ACT_CELL_FLUSH.texture().getPath(), "the flush button");
+			} else {
+				// the craft button — invisible: no code background AND the theme
+				// background disabled (the vanilla bevel would cover print + preview)
+				assertTrue(((brachy.modularui.widget.Widget<?>)tButton).getBackground() == null,
+						"the craft button carries no code background");
+				assertTrue(((brachy.modularui.widget.Widget<?>)tButton).isDisableThemeBackground(),
+						"the craft button disables the theme button background (the invisible"
+								+ " hit area over the print + preview cell)");
+			}
+		}
+		assertEquals(2, tFacedButtons, "the sort + flush buttons carry their cell faces");
+		assertNotNull(tDisplay, "the output display rides the tree");
+		assertTexturePath(tDisplay, GT6GuiParts.ACT_CELL_CRAFT.texture().getPath(), "the output display");
+	}
+
+	/** Counts the machine ItemSlots in [aFrom, aTo] whose code background is the named part texture; asserts each match. Skips the player_inventory subtree (its seats resolve their sync handler at construct, getSlot() is build-time-null there). */
+	private static int countTextureSeats(ModularPanel<?> aPanel, int aFrom, int aTo, String aPartFile) {
+		java.util.Set<IWidget> tPlayerSeats = new java.util.HashSet<>();
+		for (IWidget tWidget : allWidgets(aPanel)) {
+			if ("player_inventory".equals(tWidget.getName())) tPlayerSeats.addAll(allWidgets(tWidget));
+		}
+		int rCount = 0;
+		for (IWidget tWidget : allWidgets(aPanel)) {
+			if (tPlayerSeats.contains(tWidget)) continue;
+			if (tWidget instanceof ItemSlot tSlot && tSlot.getSlot() != null
+					&& tSlot.getSlot().getSlotIndex() >= aFrom && tSlot.getSlot().getSlotIndex() <= aTo) {
+				assertTexturePath(tWidget, "textures/gui/parts/" + aPartFile,
+						"seat " + tSlot.getSlot().getSlotIndex());
+				rCount++;
+			}
+		}
+		return rCount;
+	}
+
+	/** The widget's code background must be the UITexture at the path. */
+	private static void assertTexturePath(IWidget aWidget, String aExpectedPath, String aWhat) {
+		assertTrue(aWidget instanceof brachy.modularui.widget.Widget<?>, aWhat + ": is a fork widget");
+		var tBackground = ((brachy.modularui.widget.Widget<?>)aWidget).getBackground();
+		assertNotNull(tBackground, aWhat + ": carries a code background");
+		assertTrue(tBackground instanceof brachy.modularui.drawable.UITexture,
+				aWhat + ": background is a UITexture, found " + tBackground.getClass());
+		assertEquals(aExpectedPath, ((brachy.modularui.drawable.UITexture)tBackground).location.getPath(),
+				aWhat + ": the cell print texture");
 	}
 
 	// ---------------------------------------------------------------------------
-	// the borrowed sheets exist and match the assets/README.md ledger
+	// the borrowed sheets exist and match the assets/README.md ledger (they stay
+	// shipped as the GT6GuiParts ACT cell-crop SOURCES after the composed-base swap)
 	// ---------------------------------------------------------------------------
 
 	@Test

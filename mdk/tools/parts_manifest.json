@@ -24,6 +24,14 @@
     "widgets.png": {
       "path": "tmp/amazawa-census/v105g/assets/minecraft/textures/gui/widgets.png",
       "sha256": "df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0"
+    },
+    "advancedcraftingtable.png": {
+      "path": "mdk/src/main/resources/assets/gt6/textures/gui/machines/advancedcraftingtable.png",
+      "sha256": "af774ea0631d00b61242ea8d18deaba148c9fc581fd90201c615091381729a5a"
+    },
+    "advancedcraftingtablecharging.png": {
+      "path": "mdk/src/main/resources/assets/gt6/textures/gui/machines/advancedcraftingtablecharging.png",
+      "sha256": "cd57524d0fcb72efd3519e4a0e9a62fe8e67b7422aff61194985da9a500f198a"
     }
   },
   "parts": [
@@ -143,6 +151,78 @@
       "w": 200,
       "h": 20,
       "sha256": "3815d194e4a8b19e05e46ca2267938325c97580ee1b959fda554f0718ff87e3b"
+    },
+    {
+      "name": "act_cell_blueprint_18x18.png",
+      "source": "advancedcraftingtable.png",
+      "x": 134,
+      "y": 27,
+      "w": 18,
+      "h": 18,
+      "sha256": "081c46726de838711aad3d5db051deec69a50ddcae551d64fffc84a8f1764dbf"
+    },
+    {
+      "name": "act_cell_drop_arrow_18x18.png",
+      "source": "advancedcraftingtable.png",
+      "x": 152,
+      "y": 27,
+      "w": 18,
+      "h": 18,
+      "sha256": "01a9488f2c8013224289c87d5ca3cba07c89db5ca1c1b758f713912ab0d01f83"
+    },
+    {
+      "name": "act_cell_sort_18x18.png",
+      "source": "advancedcraftingtable.png",
+      "x": 134,
+      "y": 45,
+      "w": 18,
+      "h": 18,
+      "sha256": "00663b45e98e4ed077d803376085b195203fe13d5b60120de98c046513f9e411"
+    },
+    {
+      "name": "act_cell_flush_18x18.png",
+      "source": "advancedcraftingtable.png",
+      "x": 152,
+      "y": 45,
+      "w": 18,
+      "h": 18,
+      "sha256": "574291061a049a4f641c70eeaa7dba0c656e1e655637a56541ab62c083e216ac"
+    },
+    {
+      "name": "act_cell_craft_18x18.png",
+      "source": "advancedcraftingtable.png",
+      "x": 134,
+      "y": 63,
+      "w": 18,
+      "h": 18,
+      "sha256": "0a8bf50e09acd447e3d9e131e32fe2d66aa8841e55fefaaabc998b3d282afd56"
+    },
+    {
+      "name": "act_cell_neutral_18x18.png",
+      "source": "advancedcraftingtable.png",
+      "x": 152,
+      "y": 63,
+      "w": 18,
+      "h": 18,
+      "sha256": "250bfb4b701efe38b340897e90c7cad1c46e052071ccc970456fdb22304d5f14"
+    },
+    {
+      "name": "act_cell_tools_18x18.png",
+      "source": "advancedcraftingtable.png",
+      "x": 79,
+      "y": 7,
+      "w": 18,
+      "h": 18,
+      "sha256": "ab37a83de6102499a509672bd7cfd5621e9394f5d547fb4546dfc8034954ff16"
+    },
+    {
+      "name": "act_cell_tools_charging_18x18.png",
+      "source": "advancedcraftingtablecharging.png",
+      "x": 79,
+      "y": 7,
+      "w": 18,
+      "h": 18,
+      "sha256": "1fb30e5b4b422315d6445bd91ba8db7129daffdeb61a94ce5188d7c5190d4b40"
     }
   ]
 }

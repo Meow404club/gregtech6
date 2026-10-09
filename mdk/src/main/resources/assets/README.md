@@ -11161,7 +11161,7 @@ as historical digests. The fusion/implosion/massfab colored flats STAY (the new
 body cubes still bind them).
 ## GUI part crops, amazawa gregtech + minecraft domains (task gui-part-crops)
 
-New small-caps texture domain `gt6:textures/gui/parts/` (12 sprites): composable GUI
+New small-caps texture domain `gt6:textures/gui/parts/` (21 sprites): composable GUI
 parts cropped out of the amazawa resource-pack's gregtech domain (machine skins) and
 its minecraft domain (reskinned vanilla widgets — the sanctioned generic-part
 fallback for the flat buttons). **TFC domain is NOT used** (2026-09-29 ruling:
@@ -11172,7 +11172,7 @@ paths/dimensions/9-slice borders = `GT6GuiParts` (gui/machines); the machine-pin
 provenance chain is `mdk/tools/crop_gui_parts.py` (canonical cropper, rect table)
 -> `mdk/tools/parts_manifest.json` (per-part source + rect + sha256)
 -> `GT6GuiPartsDatagenTest` (dims + sha + constants mirror + TFC-exclusion guard +
-pixel-exact rect replay from the six committed test fixtures).
+pixel-exact rect replay from the eight committed test fixtures).
 
 Source pack: tfc-amazawa-light-gui v1.0.5g — https://modrinth.com/resourcepack/tfc-amazawa-light-gui
 License: Apache-2.0 (Modrinth license field) + author verbal attribution; author 天沢香
@@ -11211,6 +11211,24 @@ source (stroke columns/rows aligned, no neighbor bleed).
 | slot_fluid_18x19.png | 18x19 | Distillery.png | 106,24,18,19 | `5f3e1ff1472f37f1` |
 | button_flat_200x20.png | 200x20 | widgets.png | 0,66,200,20 | `483a8aaa9c88642a` |
 | button_flat_hover_200x20.png | 200x20 | widgets.png | 0,86,200,20 | `3815d194e4a8b19e` |
+| act_cell_blueprint_18x18.png | 18x18 | advancedcraftingtable.png | 134,27,18,18 | (see manifest) |
+| act_cell_drop_arrow_18x18.png | 18x18 | advancedcraftingtable.png | 152,27,18,18 | (see manifest) |
+| act_cell_sort_18x18.png | 18x18 | advancedcraftingtable.png | 134,45,18,18 | (see manifest) |
+| act_cell_flush_18x18.png | 18x18 | advancedcraftingtable.png | 152,45,18,18 | (see manifest) |
+| act_cell_craft_18x18.png | 18x18 | advancedcraftingtable.png | 134,63,18,18 | (see manifest) |
+| act_cell_neutral_18x18.png | 18x18 | advancedcraftingtable.png | 152,63,18,18 | (see manifest) |
+| act_cell_tools_18x18.png | 18x18 | advancedcraftingtable.png | 79,7,18,18 | (see manifest) |
+| act_cell_tools_charging_18x18.png | 18x18 | advancedcraftingtablecharging.png | 79,7,18,18 | (see manifest) |
+
+The `act_cell_*` row (parts 14-21, task act-gui-overlay-overhaul) crops from the two
+COMMITTED ACT sheets (`gt6/textures/gui/machines/advancedcraftingtable{,charging}.png`
+— themselves byte-identical upstream borrows, sha-ledgered in the act-dual-gui rows
+above; both sheets are also committed as test fixtures so the rect replay covers
+them). They are the cell prints the composed ACT panel would otherwise lose when the
+whole-sheet background retired: the blueprint/drop-arrow/P/tool-holder slot hints and
+the sort/flush button faces plus the craft-hammer output cell. Each crop includes the
+sheet's own frame, so the seat's `background(...)` replaces the theme slot frame (the
+double-slot elimination is the same stroke).
 
 (sha256(16) = first 16 hex of the full digest; the manifest and the test pin the
 full hex for every part — this table is the human-replay view, the manifest is the
@@ -12828,6 +12846,44 @@ ContainerCommon case-36 9x4 belt (8,8)..(152,62) — so the borrowed canvas and
 the port slot geometry align by construction (the dryer.png rationale).
 
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
+Dedication** (same upstream `README.md` block as above).
+
+## task act-gui-overlay-overhaul (2026-10-06) — the craftingtables block-texture families
+
+18 PNGs under `gt6/textures/block/`, byte-identical borrows (16x16, sha256 verified)
+from upstream `src/main/resources/assets/gregtech/textures/blocks/machines/craftingtables/{advanced,charging}/{colored,overlay}/{back,bottom,front,side,top}.png`
+— the id1336 ③ closure (the former "the advanced group ships fronts only" census
+premise was wrong; the full five-direction two-layer sets were always there). The
+2 pre-existing rows ride the same shas (`advanced_colored_front` `0db2f485…`,
+`advanced_overlay_front` `f3747a61…` — shared plate art, see the dedup note).
+Naming: upstream `<family>/<layer>/<dir>.png` → flat `<family>_<layer>_<dir>.png`
+(the autoclave/large-family flat convention).
+
+sha ledger (per file; the families share the colored plate art and most overlay
+fills, so many shas repeat — every FILE below was verified byte-identical to its
+upstream counterpart individually):
+
+- `advanced_colored_{back,front}.png`, `charging_colored_{back,front}.png`
+  `0db2f485531d6cd6e12102406bf80167a5e5446ba83999cc39465309bef583ee`
+- `advanced_colored_{bottom,side}.png`, `charging_colored_{bottom,side}.png`
+  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `advanced_colored_top.png`, `charging_colored_top.png`
+  `f1a7d7e9b41c40b60ec3f78925c2097c8407d2d773ba9ecf10d358dc1d21f282`
+- `advanced_overlay_{back,front}.png`
+  `f3747a6148a20ca82d24f1bf913a6680cdbcc3a9a7bb8c29c6ab2af4c845bfd1`
+- `advanced_overlay_{bottom,side,top}.png`, `charging_overlay_{bottom,side,top}.png`
+  `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
+- `charging_overlay_back.png`
+  `72de95cdd6122ababa7f0f19bc1836f1bc761d4eef91e6e2308e5a4167383a90`
+- `charging_overlay_front.png`
+  `134db525ed2000473a68b3488638293e6f911c764908f9efaa30a6aee2bfce94`
+
+Consumers: `GT6BlockStates.craftingTableModel` (the two family models' tinted body
+six-set + the five overlay decals, top decal included — the user's "顶面 overlay
+光秃秃" fix; charging rows swap the family the same way the upstream NBT_TEXTURE
+column does, Loader_MultiTileEntities.java:136/:137).
+
+Copied on 2026-10-06. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
 
 ## GT6 bottle items (task food-bottles-min, 2026-10-01)
