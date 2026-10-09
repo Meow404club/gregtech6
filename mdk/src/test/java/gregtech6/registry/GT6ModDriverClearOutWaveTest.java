@@ -60,7 +60,7 @@ public class GT6ModDriverClearOutWaveTest {
      * wire-gt-registration item-path lift REVERTED: the sixteen wireGt multipliers x the 14
      * WIRES-condition materials — the 13 explicit WIRES rows plus the Graphene G_MACHINE
      * expansion leg — leave the universe; −16 creative-visible families). */
-    private static final int BASELINE = 57114; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired OP.plank WOOD-gated domain)
+    private static final int BASELINE = 57117; // −224 task wiregt-prefix-item-retirement −130 task planks-blockification (the retired OP.plank WOOD-gated domain); +3 task gem-ice-force-rows — gem_chipped_ice/gem_flawed_ice/tool_head_pickaxe_gem_ice ride the OP.java:613-614 force rows (Ice is mod-axis PRESENT, no drop ledger moves)
     /** The per-domain kept-drop ledger (the card report's 对账表, offline-measured 2026-10-01),
      * re-measured at review on the post-casing universe (probe run, forge offline leg): the
      * casingMachine 210-material axis overlaps five domains' PRIMARY materials, whose casing

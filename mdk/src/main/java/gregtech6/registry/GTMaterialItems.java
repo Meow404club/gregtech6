@@ -134,6 +134,23 @@ public final class GTMaterialItems {
      *     blanks stay unlanded — no port row consumes them (GTMaterialItemsForceTest pins
      *     the scope).</li>
      * </ul>
+     * Plus the gem-family Ice rows (task gem-ice-force-rows):
+     * <ul>
+     * <li>{@code :613/:614 gemChipped/gemFlawed.forceItemGeneration(MT.Ice)} — upstream forces
+     *     the chipped/flawed Ice gems because Ice carries G_GEM_TRANSPARENT but NOT CRYSTAL,
+     *     so the {@code And(gem, TRANSPARENT, CRYSTAL, PEARL.NOT)} condition (OP.java:1223-1224)
+     *     rejects it without the force (upstream OP.java:613-614; the same rows also force
+     *     NaCl/KCl/KIO3/Firestone/Sugar — those stay with the per-consuming-card ruling, no
+     *     port row consumes them, and none carries TRANSPARENT anyway).</li>
+     * </ul>
+     * The un-skip cascade (research.dust-tiny-ice-dead-rows id1688, the "candidate tail card"
+     * section): the two items unlock six suppressed recipe rows — melter/smelter
+     * gemChipped/gemFlawed Ice legs (Loader_Recipes_Chem.java:483-484/:498-499, the
+     * melterchem/smelterchem keys), the drying gem ladder (:513-514, the
+     * GT6RecipesDrying iceTable rows resolve via the mat() null-drop gate) and the cutter
+     * gemChipped/gemFlawed statements (:638-639, the cutter.json walk rows). The
+     * {@code gem_ice} row (:485/:500) needs nothing: gem's condition is the GEMS flag, which
+     * G_GEM_TRANSPARENT already carries.
      * Plus the two port-authority dye-axis rows (task dye-item-axis) — upstream has NO force
      * row for the dyes because the dye() factory routes through dust() whose
      * {@code put(G_DUST, MORTAR)} (MT.java:528 = upstream MT.java:164) stamps
@@ -159,6 +176,8 @@ public final class GTMaterialItems {
         gregapi.data.OP.dust.forceItemGeneration(gregapi.data.MT.DATA.Dye_Materials); // task dye-item-axis — the 16 vanilla-index dyes
         gregapi.data.OP.plantGtFiber.forceItemGeneration(gregapi.data.MT.DATA.Dye_Materials);
         gregapi.data.OP.toolHeadPickaxeGem.forceItemGeneration(gregapi.data.MT.Empty); // OP.java:621, task toolhead-family-closeout
+        gregapi.data.OP.gemChipped.forceItemGeneration(gregapi.data.MT.Ice); // OP.java:613, task gem-ice-force-rows (Ice lacks CRYSTAL, the force IS the landing)
+        gregapi.data.OP.gemFlawed.forceItemGeneration(gregapi.data.MT.Ice); // OP.java:614, task gem-ice-force-rows
     }
 
     /** Segment 2 (RegisterEvent, LOW priority): items and the creative tabs, one listener for both (task card). */

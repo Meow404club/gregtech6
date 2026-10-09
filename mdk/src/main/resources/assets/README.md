@@ -2253,6 +2253,8 @@ Dedication** (same upstream `README.md` block as above).
   - `gear_gt.png` `a74668c6883500747aef771610491866c140a3a57f712e0a7467344881dc584a`
   - `gear_gt_small.png` `24330bfa328023399297a05570ff3571668cac71570815df8a0748989d1db866`
   - `gem.png` `2bc5a1cf9762e0a31785895bf4a14a58373ba6c95d596a876e4adb588ccf14a3`
+  - `gem_chipped.png` `85cda79dceef39aebf3736e47c73be76b1983e6888972f6b9e6dbc785321b1f7` (task gem-ice-force-rows — the forced gem_chipped_ice item, upstream `items/materialicons/CUBE_SHINY/gemChipped.png`; the `_overlay` twin rides the shared chipped-gem overlay sha `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`)
+  - `gem_flawed.png` `9189faa3d773896d7e37225a7808b7d4a0f2fa7e92ebcd069d50fdf81a924283` (task gem-ice-force-rows — the forced gem_flawed_ice item, upstream `items/materialicons/CUBE_SHINY/gemFlawed.png`; `_overlay` twin = the same shared chipped overlay)
   - `lens.png` `48509535120e8bd267dbde4ce63f9bbda7b6f1c69597ba16152c677be8cec3e7`
   - `ore_raw.png` `b56dbf21549efa408d90db7e3f4b06ded5c44c6014858c435de5fd2ef201e313`
   - `plant_gt_berry.png` `245aca41c0896d13fd7eb754ecc72955f31eeeb715714ee957a5fe48c29f8684`
@@ -2274,6 +2276,8 @@ Dedication** (same upstream `README.md` block as above).
   - `tool_head_axe.png` `99e56967c6cd7d1fa85f8a0bed3bc84beebb9ce625b645fb0b259d7171b49609`
   - `tool_head_hoe.png` `c69a257a61301d60bb78712f8ad9757bd80f2acf5394047b048f29ec1ee30264`
   - `tool_head_pickaxe.png` `055819046fa2a7b05f5adace72149d688ba0f4731dab3a65396565158aef453b`
+  - `tool_head_pickaxe_gem.png` `fd096fba72eb2408321ba9b714390e383153cf5f356a8c38441656da5c2ab321` (task gem-ice-force-rows — the cascade item tool_head_pickaxe_gem_ice rides the And(gemFlawed, typemin(1)) condition off the forced gem_flawed_ice; upstream `items/materialicons/CUBE_SHINY/toolHeadPickaxeGem.png`)
+  - `tool_head_pickaxe_gem_overlay.png` `89d2c38f10b44ae730ed2b7dfb46a9c5fa975f8d2aa441b990eea124ea1da4e3` (task gem-ice-force-rows — the head overlay twin, upstream `toolHeadPickaxeGem_OVERLAY.png`)
   - `tool_head_plow.png` `634d08e03b578cae60749935bbca52fd228e2f39154ac5fae11fe8536866041a`
   - `tool_head_raw_arrow.png` `b13c2a573fdc9a3e805e271ade0f4341cd121fa30b21d92efc2a2a25bf32e6ec`
   - `tool_head_raw_axe.png` `99e56967c6cd7d1fa85f8a0bed3bc84beebb9ce625b645fb0b259d7171b49609`

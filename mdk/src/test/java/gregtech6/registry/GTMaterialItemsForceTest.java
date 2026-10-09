@@ -135,6 +135,43 @@ public class GTMaterialItemsForceTest {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    // Task gem-ice-force-rows: the gem-family Ice rows (upstream OP.java:613-614) — the
+    // chipped/flawed Ice gems unlock the six suppressed recipe rows (melter/smelter
+    // :483-484/:498-499, drying :513-514, cutter :638-639).
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /** The force rows fired: both gem prefixes hold Ice in their forced set (the two mdk-side rows). */
+    @Test
+    public void theIceGemForceRowsFired() throws Exception {
+        OreDictMaterial tIce = MaterialLookup.byField("Ice");
+        assertNotNull(tIce, "Ice resolves");
+        assertTrue(forcedSet(OP.gemChipped).contains(tIce), "gemChipped force-row holds Ice (upstream OP.java:613)");
+        assertTrue(forcedSet(OP.gemFlawed).contains(tIce), "gemFlawed force-row holds Ice (upstream OP.java:614)");
+    }
+
+    /** The item face: chipped/flawed Ice enumerate (the condition alone rejects Ice — no CRYSTAL tag — so the force row IS the landing). */
+    @Test
+    public void theChippedAndFlawedIceItemsEnumerate() {
+        assertTrue(generates(OP.gemChipped, "Ice"), "gemChipped.Ice generates (the :613 force, Ice lacks CRYSTAL)");
+        assertTrue(generates(OP.gemFlawed, "Ice"), "gemFlawed.Ice generates (the :614 force)");
+    }
+
+    /**
+     * The per-consuming-card scope (the :618-:620 precedent): upstream also forces
+     * NaCl/KCl/KIO3/Firestone/Sugar onto gemChipped/gemFlawed (:613-614) and Ta onto gem
+     * (:615) — those stay unlanded, no port row consumes them (and none of them carries
+     * TRANSPARENT, so the condition rejects them too; the residual upstream-face gap is a
+     * follow-up card's scope, not this one).
+     */
+    @Test
+    public void theOtherGemForceRowsStayUnlanded() {
+        for (String tName : new String[] {"NaCl", "KCl", "KIO3", "Firestone", "Sugar"}) {
+            assertFalse(generates(OP.gemChipped, tName), "gemChipped." + tName + " must NOT generate (the :613 non-Ice members stay per-consuming-card unlanded)");
+            assertFalse(generates(OP.gemFlawed, tName), "gemFlawed." + tName + " must NOT generate (the :614 non-Ice members stay unlanded)");
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     // Task dye-item-axis: the dye item axis (MT.DATA.Dye_Materials + the 32-item OP.dust/plantGtFiber face).
     // -----------------------------------------------------------------------------------------------------------------
 
