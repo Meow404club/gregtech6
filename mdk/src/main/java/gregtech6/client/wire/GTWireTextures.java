@@ -110,9 +110,4 @@ public final class GTWireTextures {
 	public static net.minecraft.resources.ResourceLocation fiberOverlaySprite() {
 		return new net.minecraft.resources.ResourceLocation("gt6", "block/iconsets/fiber_wire_overlay");
 	}
-
-	/** The legacy p7 placeholder texture (the material-less anchors). */
-	public static net.minecraft.resources.ResourceLocation legacySprite() {
-		return new net.minecraft.resources.ResourceLocation("gt6", "block/wire_electric");
-	}
 }

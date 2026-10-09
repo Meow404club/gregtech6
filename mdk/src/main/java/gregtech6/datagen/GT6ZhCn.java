@@ -1379,8 +1379,7 @@ public class GT6ZhCn extends LanguageProvider {
 		addDirect("block.gt6.tachometer"); // the MTE 31019 dump row 转速传感器
 		addDirect("block.gt6.laserometer"); // the MTE 31021 dump row 激光传感器
 		addDirect("block.gt6.shredder");
-		addDirect("block.gt6.wire_electric_1x");
-		addDirect("block.gt6.wire_electric_2x");
+		// the wire_electric_1x/2x direct rows retired with the legacy pair (wiregt-legacy-anchor-removal)
 		// fluids: the 21 remaining display names (dump anchors 柴油/蒸馏水/幻露 per the research card)
 		addDirect("fluid.gt6.brine"); // task chem-fluids-unlock — the S:fluid.brine=Brine dump face verbatim (tmp/gregtech.lang:114, untranslated upstream)
 		addDirect("fluid.gt6.cactuswater");

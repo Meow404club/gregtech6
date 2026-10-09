@@ -41,10 +41,13 @@ import gregtech6.tooltip.GT6Tooltips;
  * blocks here — safe because the vanilla registry order fires the Block registration
  * event before the BlockEntityType one, across DeferredRegisters (GTBlockEntities doc).
  *
- * <p>The p7 pair (spec ⑤ of that card) stays: 1x = 32 EU / 1 A / 1 loss (the upstream field
- * defaults, MultiTileEntityWireElectric.java:64) and 2x = 32 EU / 2 A / 1 loss (the upstream
- * "2x" bandwidth doubling :73) — they are the material-less legacy anchors the P8 RCON
- * chain and the gen→wire→oven e2e regression drive on, untouched.
+ * <p>The p7 pair (spec ⑤ of that card) is RETIRED (task wiregt-legacy-anchor-removal, the
+ * user ruling 2026-10-06): the material-less 1x/2x blocks were port-built P8 RCON test
+ * anchors — upstream registers NO material-less electric wire (every row is the
+ * addElectricWires material walk, MultiTileEntityWireElectric.java:71-109) — and the P8
+ * RCON idiom drives on the family paths ({@code gt6wire place copper 1}, the live-chain
+ * form), so the placeholder registrations and their tab rows are gone. The 620 family IS
+ * the whole {@link #wireBlockArray()} now.
  *
  * <p>Task wire-family-w1 (spec ①/②) adds the FULL spectrum over the {@link GTWireSpecs}
  * table — the direct addElectricWires :71-109 / Loader_MultiTileEntities.java:1914-1950
@@ -89,22 +92,6 @@ public final class GTWires {
 		while (++i < GTWireSpecs.V.length) if (aVoltage < GTWireSpecs.V[i]) return GTWireSpecs.VN[Math.max(0, i - 1)];
 		return GTWireSpecs.VN[GTWireSpecs.V.length - 1];
 	}
-
-	/** 1x electric wire — 32 EU / 1 A / 1 loss per segment (upstream :64 defaults). */
-	public static final RegistryObject<GTWireBlock> WIRE_ELECTRIC_1X = BLOCKS.register("wire_electric_1x",
-			() -> new GTWireBlock(32, 1, 1, wireProperties()));
-
-	/** 2x electric wire — 32 EU / 2 A / 1 loss per segment (upstream :73 bandwidth doubling). */
-	public static final RegistryObject<GTWireBlock> WIRE_ELECTRIC_2X = BLOCKS.register("wire_electric_2x",
-			() -> new GTWireBlock(32, 2, 1, wireProperties()));
-
-	public static final RegistryObject<Item> WIRE_ELECTRIC_1X_ITEM = ITEMS.register("wire_electric_1x",
-			() -> new GTWireBlockItem(WIRE_ELECTRIC_1X.get(), new Item.Properties(), "wire",
-					32L, tierName(32), 1L, GT6Tooltips.makeString(1L)));
-
-	public static final RegistryObject<Item> WIRE_ELECTRIC_2X_ITEM = ITEMS.register("wire_electric_2x",
-			() -> new GTWireBlockItem(WIRE_ELECTRIC_2X.get(), new Item.Properties(), "wire",
-					32L, tierName(32), 2L, GT6Tooltips.makeString(1L)));
 
 	// -------------------------------------------------------------------------
 	// the wire-family-w1 spectrum: 620 per-(row, form, size) pairs over GTWireSpecs
@@ -263,14 +250,13 @@ public final class GTWires {
 					GTWireBlockEntity::new, laserBlockArray()).build(null));
 
 	/**
-	 * Every electric-wire block this registry owns (the p7 legacy pair + the 620 family) —
-	 * the shared BET's valid-block list (GTBlockEntities.WIRE_ELECTRIC_BE, one line per the card).
+	 * Every electric-wire block this registry owns (the 620 GTWireSpecs family — the p7
+	 * legacy pair retired by wiregt-legacy-anchor-removal) — the shared BET's valid-block
+	 * list (GTBlockEntities.WIRE_ELECTRIC_BE, one line per the card).
 	 */
 	public static Block[] wireBlockArray() {
-		Block[] rBlocks = new Block[2 + FAMILY_BLOCKS.size()];
-		rBlocks[0] = WIRE_ELECTRIC_1X.get();
-		rBlocks[1] = WIRE_ELECTRIC_2X.get();
-		for (int i = 0; i < FAMILY_BLOCKS.size(); i++) rBlocks[2 + i] = FAMILY_BLOCKS.get(i).get();
+		Block[] rBlocks = new Block[FAMILY_BLOCKS.size()];
+		for (int i = 0; i < FAMILY_BLOCKS.size(); i++) rBlocks[i] = FAMILY_BLOCKS.get(i).get();
 		return rBlocks;
 	}
 
@@ -279,24 +265,16 @@ public final class GTWires {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * The Electric Wires tab membership table (task flat-redstone-tab): the legacy pair
-	 * followed by the 620 electric family items — EXACTLY what upstream registers into the
-	 * "Electric Wires" category (every addElectricWires row,
-	 * MultiTileEntityWireElectric.java:72-109 aCreativeTabID 28366). The redstone and laser
-	 * rows are NOT members: upstream files them under their own categories (see
-	 * {@link #REDSTONE_WIRES_TAB} / {@link #LASER_WIRES_TAB}) — the standing P9 observation
-	 * item is resolved by this card. Table-driven (the GT6Tools.TAB_TABLE form) so the
-	 * membership is assertable offline.
+	 * The Electric Wires tab membership table (task flat-redstone-tab): exactly the 620
+	 * electric family items — what upstream registers into the "Electric Wires" category
+	 * (every addElectricWires row, MultiTileEntityWireElectric.java:72-109
+	 * aCreativeTabID 28366). The redstone and laser rows are NOT members: upstream files
+	 * them under their own categories (see {@link #REDSTONE_WIRES_TAB} /
+	 * {@link #LASER_WIRES_TAB}). The p7 legacy 1x/2x pair rows retired with the pair
+	 * itself (task wiregt-legacy-anchor-removal — upstream has no material-less row).
+	 * Table-driven (the GT6Tools.TAB_TABLE form) so the membership is assertable offline.
 	 */
-	public static final List<RegistryObject<Item>> ELECTRIC_WIRES_TAB_TABLE;
-
-	static {
-		List<RegistryObject<Item>> tTable = new ArrayList<>(2 + FAMILY_ITEMS.size());
-		tTable.add(WIRE_ELECTRIC_1X_ITEM);
-		tTable.add(WIRE_ELECTRIC_2X_ITEM);
-		tTable.addAll(FAMILY_ITEMS);
-		ELECTRIC_WIRES_TAB_TABLE = List.copyOf(tTable);
-	}
+	public static final List<RegistryObject<Item>> ELECTRIC_WIRES_TAB_TABLE = FAMILY_ITEMS;
 
 	/**
 	 * The Redstone Wires tab membership: exactly the 6 redstone family items — upstream
@@ -326,16 +304,19 @@ public final class GTWires {
 	 *
 	 * <p>Task wire-family-w2 (the W1 review handoff): the displayItems are TABLE-DRIVEN
 	 * over the full spectrum — upstream registers every addElectricWires row into this
-	 * category (the whole 16-wire + 5-cable ladder per material), so the legacy pair is
-	 * followed by all 620 family items in registration order (the W1 loop order = the
-	 * upstream Loader row order). Task flat-redstone-tab: the table IS the membership
-	 * ({@link #ELECTRIC_WIRES_TAB_TABLE}, 2 + 620) — the p10 interim riders (6 redstone + 1
-	 * laser) moved to their own upstream categories below.
+	 * category (the whole 16-wire + 5-cable ladder per material), so the tab walks all 620
+	 * family items in registration order (the W1 loop order = the upstream Loader row
+	 * order). Task flat-redstone-tab: the table IS the membership
+	 * ({@link #ELECTRIC_WIRES_TAB_TABLE}, 620) — the p10 interim riders (6 redstone + 1
+	 * laser) moved to their own upstream categories below. The icon is the FIRST registered
+	 * family item (the MultiTileEntityRegistry.java:191 rule — upstream icon = the MTE item
+	 * at meta = the tab id 28366 = the first registered electric row, Loader:1914 tin), the
+	 * p7 2x placeholder icon retired with the pair (wiregt-legacy-anchor-removal).
 	 */
 	public static final RegistryObject<CreativeModeTab> ELECTRIC_WIRES_TAB = CREATIVE_MODE_TABS.register("electric_wires",
 			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
 					.title(Component.translatable("itemGroup.gt6.electric_wires"))
-					.icon(() -> new ItemStack(WIRE_ELECTRIC_2X_ITEM.get()))
+					.icon(() -> new ItemStack(FAMILY_ITEMS.get(0).get()))
 					.displayItems((aParameters, aOutput) -> {
 						for (RegistryObject<Item> tRow : ELECTRIC_WIRES_TAB_TABLE) {
 							aOutput.accept(new ItemStack(tRow.get()));

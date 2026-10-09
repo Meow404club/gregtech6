@@ -5390,8 +5390,6 @@
       "required": false
     },
     "gt6:lightning_rod",
-    "gt6:wire_electric_1x",
-    "gt6:wire_electric_2x",
     "gt6:wire_tin_gt01",
     "gt6:wire_tin_gt02",
     "gt6:wire_tin_gt03",

@@ -116,7 +116,8 @@ public final class GTClientHandlers {
 
     /**
      * Task wire-family-w2: the wire family tints — the world half over every wire block
-     * (the p7 legacy pair + the 620 family, {@code GTWires.wireBlockArray()}).
+     * (the 620 family, {@code GTWires.wireBlockArray()} — the p7 legacy pair retired
+     * with its registrations, wiregt-legacy-anchor-removal).
      * {@link GTWireTint} = fRGBaSolid on tint index 0, the fixed insulation gray on index 1.
      *
      * <p>Task clienthandlers-2111: split from the former abstract-typed
@@ -175,14 +176,13 @@ public final class GTClientHandlers {
      * The wire-family inventory-half registration seam (task redstone-wire-tint-reg) — the
      * exact RegistryObject list the event handler registers {@link GTWireTint#itemColor()}
      * over (the {@link #fourPassToolItems()} shape: the offline legs pin
-     * {@code getId().getPath()} without touching the live registry): the legacy pair + the
-     * 620 electric family + the redstone 6 + the laser fiber.
+     * {@code getId().getPath()} without touching the live registry): the 620 electric
+     * family + the redstone 6 + the laser fiber (the p7 legacy pair retired with its
+     * registrations, wiregt-legacy-anchor-removal).
      */
     public static List<RegistryObject<Item>> wireTintItems() {
-        List<RegistryObject<Item>> tWireItems = new ArrayList<>(2 + GTWires.FAMILY_ITEMS.size()
+        List<RegistryObject<Item>> tWireItems = new ArrayList<>(GTWires.FAMILY_ITEMS.size()
                 + GTWires.REDSTONE_ITEMS.size() + GTWires.LASER_ITEMS.size());
-        tWireItems.add(GTWires.WIRE_ELECTRIC_1X_ITEM);
-        tWireItems.add(GTWires.WIRE_ELECTRIC_2X_ITEM);
         tWireItems.addAll(GTWires.FAMILY_ITEMS);
         tWireItems.addAll(GTWires.REDSTONE_ITEMS);
         tWireItems.addAll(GTWires.LASER_ITEMS);

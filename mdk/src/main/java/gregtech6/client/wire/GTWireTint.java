@@ -33,7 +33,8 @@ import gregtech6.registry.GTWireSpecs;
  * the INSULATION_FULL side jacket AND the diameter-tier caps) — both rendered in their
  * unpainted form (the painted-foam variant is a foam-feature deviation). Index 1 = the
  * jacket, bound where the model emits insulation quads. Every other index returns -1 (no
- * tint), as does index 0 on the material-less legacy pair.
+ * tint), as does index 0 on a material-less row (the rowless ctor seam — the retired p7
+ * legacy pair was its last production resident, wiregt-legacy-anchor-removal).
  *
  * <p>CLIENT-ONLY ({@code @OnlyIn(Dist.CLIENT)} — registered from GTClientHandlers under the
  * dist guard; per the Forge docs a BlockColor does NOT colour the BlockItem, so the ItemColor
@@ -54,7 +55,7 @@ public final class GTWireTint {
 	/**
 	 * The opaque ARGB for a tint index over one wire material (the pure seam the tests
 	 * drive). The family picks the jacket: redstone {@value #REDSTONE_JACKET}, everything
-	 * else (electric rows, the material-less legacy pair, the jacket-less laser form that
+	 * else (electric rows, a material-less row, the jacket-less laser form that
 	 * never emits index 1) the electric constant.
 	 */
 	public static int tintARGB(@Nullable OreDictMaterial aMaterial, @Nullable GTWireSpecs.Row.Family aFamily, int aTintIndex) {

@@ -129,7 +129,8 @@ public class GTWireContactDamageTest {
 		assertFalse(block(MT.RedAlloy, false, Family.REDSTONE, 0, GTWireSpecs.MAX_RANGE / 16).contactDamage(),
 				"red_alloy wire — the redstone registration carries no CONTACTDAMAGE at all (Loader:1893-1902)");
 		assertFalse(block(null, false, Family.ELECTRIC, 32, 1).contactDamage(),
-				"the p7 legacy pair has no row identity — the upstream field default F (:57, flag read only when present :64)");
+				"a rowless block (the retired p7 pair was the last production resident, wiregt-legacy-anchor-removal)"
+				+ " keeps the upstream field default F (:57, flag read only when present :64)");
 	}
 
 	// ---------------------------------------------------------------------------

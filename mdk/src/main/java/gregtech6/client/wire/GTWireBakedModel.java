@@ -227,8 +227,9 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 	/** The sprite id for a kind — the borrowed grayscale PNGs (lowercased paths). */
 	public ResourceLocation spriteOf(SpriteKind aKind) {
 		if (aKind == SpriteKind.WIRE) {
-			return mParams.wireSprite() != null ? mParams.wireSprite()
-					: new ResourceLocation("gt6", "block/wire_electric"); // legacy pair: the p7 placeholder texture
+			// every Params carries its row sprite since the p7 legacy pair retired
+			// (wiregt-legacy-anchor-removal) — the block/wire_electric placeholder fallback died with it
+			return mParams.wireSprite();
 		}
 		if (aKind == SpriteKind.FIBER_OVERLAY) {
 			// the p11 laser overlay layer (WireLaser :121-122, untinted)

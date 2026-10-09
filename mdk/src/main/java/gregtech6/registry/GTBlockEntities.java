@@ -106,8 +106,9 @@ public final class GTBlockEntities {
 	 * blocks). The supplier resolves the GTWires block RegistryObjects — safe because the
 	 * vanilla registry order fires the Block event before the BlockEntityType event across
 	 * DeferredRegisters. Since task wire-family-w1 the valid-block list is the ONE-LINE
-	 * family reference {@link GTWires#wireBlockArray()} (the p7 legacy pair + the 620
-	 * GTWireSpecs variants). Registry path "wire_electric" mirrors
+	 * family reference {@link GTWires#wireBlockArray()} (the 620 GTWireSpecs variants —
+	 * the p7 legacy pair left the list with its registrations, wiregt-legacy-anchor-removal).
+	 * Registry path "wire_electric" mirrors
 	 * GTWireBlockEntity#getTileEntityName like every other row.
 	 */
 	public static final RegistryObject<BlockEntityType<GTWireBlockEntity>> WIRE_ELECTRIC_BE =

@@ -82,10 +82,11 @@ public class GTNoOcclusionCensusTest {
 
 	@Test
 	public void wireFamilyBlocksNeverOcclude() {
-		// the legacy pair ctor (no row identity) over the ONE shared family chain
+		// the row-carrier ctor (no row identity at the type level) over the ONE shared family chain
 		assertNeverOccludes("wire", new GTWireBlock(32, 1, 1, GTWires.wireProperties()));
-		// the size pin over the real DeferredRegister entries: 2 legacy + 620 electric + 6 redstone + 1 laser
-		assertEquals(2 + 620 + 6 + 1, GTWires.BLOCKS.getEntries().size(), "the wire register census drifted");
+		// the size pin over the real DeferredRegister entries: 620 electric + 6 redstone + 1 laser
+		// (the p7 legacy pair retired with its registrations, wiregt-legacy-anchor-removal)
+		assertEquals(620 + 6 + 1, GTWires.BLOCKS.getEntries().size(), "the wire register census drifted");
 	}
 
 	@Test

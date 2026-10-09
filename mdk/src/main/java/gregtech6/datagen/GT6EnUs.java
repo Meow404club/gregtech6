@@ -1697,24 +1697,21 @@ public class GT6EnUs extends LanguageProvider {
     }
 
     /**
-     * Electric wire keys (task d2-cable spec ⑥): the two W1 variants (the upstream row
-     * names "1x &lt;material&gt; Wire" / "2x ...", MultiTileEntityWireElectric.java:72-73,
-     * material-less here) and the "Electric Wires" category tab (the upstream MTE category
-     * name, addElectricWires :72).
+     * Electric wire keys: the "Electric Wires" category tab (the upstream MTE category
+     * name, addElectricWires :72). The two material-less W1 placeholder keys
+     * ("1x/2x Electric Wire") retired with their registrations (task
+     * wiregt-legacy-anchor-removal — upstream has no material-less electric row).
      *
      * <p>Task i18n-compose-wires (the B-wave lang ruling, ADR
      * 2026-09-06-i18n-zhcn-pipeline §1.4): the 626 per-variant full strings (620
      * electric + 6 redstone, the old GTWireSpecs.displayName rows) RETIRED — the names
      * compose at runtime from five template keys (GTWireBlock.displayNameOf fills
      * {@code gt6.wire.display[.plain]} with the size numeral, the gt6.material.&lt;snake&gt;
-     * small unit and the gt6.wire.form.* unit). The ATOMIC forms stay: the two material-less
-     * legacy blocks and the material-less laser family ({@code block.gt6.wire_laser},
-     * "Laser Fiber Wire" verbatim, Loader:1815) — the arch card's non-composed-form ruling —
-     * plus the two tab titles.
+     * small unit and the gt6.wire.form.* unit). The ATOMIC form stays: the material-less
+     * laser family ({@code block.gt6.wire_laser}, "Laser Fiber Wire" verbatim,
+     * Loader:1815) — the arch card's non-composed-form ruling — plus the two tab titles.
      */
     private void addElectricWires() {
-        add("block.gt6.wire_electric_1x", "1x Electric Wire");
-        add("block.gt6.wire_electric_2x", "2x Electric Wire");
         add("itemGroup.gt6.electric_wires", "Electric Wires");
         // the five position-param templates the runtime composes (electric takes the size
         // slot, redstone is the size-less variant, the form units close every template)

@@ -243,12 +243,12 @@ public class GT6LangParityTest {
  * verbatim tmp/gregtech.lang:927-974 via the ARMOR_BACKFILL hand layer; all both
  * locales). zh == en, the zero-debt state holds.
  */
-	private static final int ZH_KEY_FLOOR = 6554;
-	// +1 task air-fluid-registration — the fluid.gt6.air display-name pair (en "Air" the
-	// createGas mNameLocal face, zh 空气 the dump face tmp/gregtech.lang:39), measured 6554
-	// = the 6553 union + 1 on the rebase.
-	// (prior note: +185/+530 task books-text-family — the book-page faces and the title hand
-	// row, measured 6195/6540; history in `git log -L`.)
+	private static final int ZH_KEY_FLOOR = 6552;
+	// −2 task wiregt-legacy-anchor-removal — the two p7 legacy direct rows
+	// block.gt6.wire_electric_1x/2x retired with their registrations, re-measured on the
+	// regenerated zh_cn.json — the deliberate-shrink form of the ratchet; 6554 -> 6552 on
+	// the rebase (main carried 6554 = the 6553 union + 1 task air-fluid-registration, the
+	// fluid.gt6.air display-name pair; history in `git log -L`.)
 	/**
 	 * A-wave negative assertions (ADR §1.3): the COMPOSED domains stay absent from zh — those
 	 * en keys are pre-installed full strings that the B-wave cards replace with template keys;
@@ -279,12 +279,10 @@ public class GT6LangParityTest {
 
 	/**
 	 * The B1 atomic exemptions — the material-less forms that keep whole-string keys on both
-	 * faces: the two p7 legacy electric blocks (no row identity to compose from) and the
-	 * laser family (material-less, Loader:1815 verbatim).
+	 * faces: the laser family (material-less, Loader:1815 verbatim). The two p7 legacy
+	 * electric block keys retired with the blocks themselves (wiregt-legacy-anchor-removal).
 	 */
 	private static final Set<String> WIRES_ATOMIC_KEYS = Set.of(
-		"block.gt6.wire_electric_1x",
-		"block.gt6.wire_electric_2x",
 		"block.gt6.wire_laser");
 
 	/** The B1 template keys and their argument-slot counts (display=3: size/material/form; plain=2; the cover templates=1; the form units are slot-less NOUNS the templates consume). */
@@ -1323,10 +1321,13 @@ public class GT6LangParityTest {
 			+ " gt6.row.crucible.display.* template) and the basin/crossing families registered"
 			+ " (78 row carriers over the gt6.row.{basin,crossing}.display templates + the 18 new"
 			+ " gt6.row.mat.* words), 1768 + 35 + 78 = 1881)");
-		assertEquals(414, tChecked,  "the checked block census: every DeferredRegister block NOT"
+		assertEquals(412, tChecked,  "the checked block census: every DeferredRegister block NOT"
 		+ " (+36 task material-mc-e-tool-anvil-rows: the anvil ladder walked 2 -> 35 and the kitchen family 4 -> 7 —"
 		+ " the three TABLE variants — every new block.gt6.* key both locales; the rebase union onto main's 378 (the"
 		+ " +7 drum seat below rides in the shared chain): 378 + 36 = 414)"
+		+ " (−2 task wiregt-legacy-anchor-removal: the p7 legacy wire_electric_1x/2x block carriers left"
+		+ " the checked leg with their registrations — 414 -> 412, GTWires 2 -> 0 checked: the atomic"
+		+ " block.gt6.wire_electric_1x/2x keys retired from both faces)"
 		+ " (+4 task worldgen-diggables-pits: the 4 colored-clay blocks joined the checked leg — 367 + 4 = 371 over main's racks-inclusive census, "
 		+ "the atomic block.gt6.{brown,yellow,blue,white}_clay keys both locales: the en BlockDiggable.java:52-57 names verbatim + the zh hand layer 粘土块 rows)"
 		+ " (+7 task material-mc-f-attachment-rows: the seven 64K drum rows join the CHECKED leg — direct block.gt6.barrel_* keys both locales, 371 + 7 = 378, the review-seat rebase union)"
