@@ -55,7 +55,8 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 
 	/** The probe circuit item — REALLY registered offline (an ItemStack constructor resolves
 	 * the registry delegate eagerly, so an unregistered item cannot ride the channel; the
-	 * OMComponentFaceTest.probeItem three-lock bracket, circuit flavor). */
+	 * shared {@code GTOfflineTestBase.registerItemFixture} seam, circuit flavor — task
+	 * act-circuit-latch-hygiene). */
 	private static net.minecraft.world.item.Item sCircuitItem;
 
 	/** The circuit fixture — a REAL registered {@code IntegratedCircuitItem} instance (the
@@ -96,57 +97,24 @@ public class GTAdvancedCraftingTableTest extends GTMachinesOfflineTestBase {
 	}
 
 	/**
-	 * The GTWireBlockUseLockTest:43 reflection bracket, item flavor (the
-	 * OMComponentFaceTest.probeItem body minus the durability column) — the offline item registry
-	 * keeps THREE locks on the forge wrapper shape / ONE on the 21.1 vanilla shape.
+	 * The circuit probe item seat, folded onto the public GTOfflineTestBase item seam
+	 * (task act-circuit-latch-hygiene — the probeitem-latch-hygiene shape): the private
+	 * three-lock walk this fixture used to own (vanilla {@code unfreeze} + forge-delegate
+	 * {@code unfreeze} + {@code locked=false} on the forge wrapper / one lock on the 21.1
+	 * vanilla shape) is the same write window {@code registerItemFixture} opens via the
+	 * Unsafe latch (identical key {@code gt6:probe_integrated_circuit}, identical gates —
+	 * {@code Registry.register} reads only vanilla {@code frozen} + wrapper {@code locked},
+	 * never the delegate flag the private walk also poked). Declared posture deltas, both
+	 * unobservable on the live legs: the seam re-locks the registry after the registration
+	 * (the private walk left the ITEM window open for the rest of the JVM; census showed no
+	 * consumer rides it — every other fixture seat opens its own window), and an unreachable
+	 * latch assume-skips the class instead of throwing. The method name stays:
+	 * GT6RecipeConfigFaceTest's never-consumable javadoc cites it as the real
+	 * {@code IntegratedCircuitItem} seat.
 	 */
 	private static void registerCircuitFixture() {
-		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// 1. the vanilla frozen flag (the Item ctor intrusive-holder gate);
-			// 2. the delegate ForgeRegistry.isFrozen; 3. the NamespacedWrapper.locked gate
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 shape: the plain vanilla DefaultedMappedRegistry — a single frozen flag
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		sCircuitItem = net.minecraft.core.Registry.register(tRegistry,
-				ResourceLocation.fromNamespaceAndPath("gt6", "probe_integrated_circuit"),
-				new gregtech6.item.GT6Circuits.IntegratedCircuitItem(new net.minecraft.world.item.Item.Properties()));
-	}
-
-	/** getDeclaredField along the superclass chain (the defaulted wrapper hides the lock one level up). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// keep walking up
-			}
-		}
-		throw new NoSuchFieldException(aName);
+		sCircuitItem = gregtech6.tileentity.GTOfflineTestBase.registerItemFixture("probe_integrated_circuit",
+				() -> new gregtech6.item.GT6Circuits.IntegratedCircuitItem(new net.minecraft.world.item.Item.Properties()));
 	}
 
 	/** A MinimalLevel whose crafting bridge resolves the stick + chest recipes. */
