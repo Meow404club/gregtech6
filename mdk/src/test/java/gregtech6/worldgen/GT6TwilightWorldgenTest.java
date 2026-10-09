@@ -483,6 +483,46 @@ public class GT6TwilightWorldgenTest {
         assertEquals(23, GTOreWorldgen.twilightOnAxisRows().size(), "8 RockOres + 14 A-band + 1 netherite");
     }
 
+    /**
+     * THE AXIS-GATE WITNESS MODE (task datagen-axis-lottery-fix — the
+     * known_bugs.datagen_axis_emission_jvm_lottery root fix): the gate reads
+     * {@link gregtech6.registry.GT6OreBlocks#axisWitness}, whose boot-witness mode
+     * (BLOCKS non-empty — a RegisterEvent ran) answers from the immutable boot
+     * registration instead of the ambient MT/OP-derived axis, so the emission cannot
+     * drift with provider order or JVM warmth. WHICH mode this test JVM takes is
+     * leg-dependent and deliberately NOT pinned: the forge test JVM stays offline
+     * (BLOCKS empty — the ambient fallback), while the neo test JVM boots far enough to
+     * fire RegisterEvent (BLOCKS populated — the FML test transformer, the same boot
+     * shape the neo datagen JVM takes), so the pin asserts the MODE-INVARIANT semantics:
+     * the anchors (on-axis members true, the declared off-axis apatite false, null
+     * false) and the gate == witness equivalence over every census row hold in either
+     * mode. The boot-witness emission stability itself is exercised by the runData
+     * double-run byte-stability gate (the acceptance's neo runData ×2 23 行实证).
+     */
+    @Test
+    public void twilightAxisGateRidesTheRegistrationWitness() {
+        // mode-reporting only: ambient (BLOCKS empty, the forge test JVM) vs boot-witness
+        // (BLOCKS non-empty, the neo test JVM) — the anchors below hold in BOTH, never pin the mode
+        boolean tAmbientFallback = gregtech6.registry.GT6OreBlocks.blocks().isEmpty();
+        assertTrue(gregtech6.registry.GT6OreBlocks.axisWitness(MT.Coal),
+                (tAmbientFallback ? "ambient" : "boot-witness") + " mode: an axis member (the :832 always-on row) witnesses true");
+        assertTrue(gregtech6.registry.GT6OreBlocks.axisWitness(MT.S), "the reg0001 sulfur axis member witnesses true");
+        assertFalse(gregtech6.registry.GT6OreBlocks.axisWitness(MT.Apatite),
+                "the declared off-axis apatite (the :678 row stays table data) witnesses false");
+        assertFalse(gregtech6.registry.GT6OreBlocks.axisWitness(null), "null resolves false");
+        // the gate == witness equivalence over the whole census (the same resolution the gate performs)
+        for (GTOreWorldgen.TwilightOreRow tRow : GTOreWorldgen.TWILIGHT_ORE_ROWS) {
+            assertEquals(gregtech6.registry.GT6OreBlocks.axisWitness(tRow.material().get()), GTOreWorldgen.twilightOnAxis(tRow),
+                    tRow.tail() + ": the gate rides the witness (RockOres band)");
+        }
+        for (GTOreWorldgen.TwilightOreRow tRow : GTOreWorldgen.TWILIGHT_ORE_ROWS_A) {
+            assertEquals(gregtech6.registry.GT6OreBlocks.axisWitness(tRow.material().get()), GTOreWorldgen.twilightOnAxis(tRow),
+                    tRow.tail() + ": the gate rides the witness (VanillaOresA band)");
+        }
+        assertEquals(gregtech6.registry.GT6OreBlocks.axisWitness(MT.AncientDebris),
+                GTOreWorldgen.twilightOnAxis(GTOreWorldgen.TWILIGHT_NETHERITE_ROW), "netherite: the gate rides the witness");
+    }
+
     /** The A-band + netherite keys share the twilight_ore directory (the band rule). */
     @Test
     public void twilightVanillaOreAKeysArePinned() {

@@ -609,6 +609,57 @@ public final class GT6OreBlocks {
         aAxis.add(tMaterial);
     }
 
+    /**
+     * The registration-axis validity, in the JVM-warmth-independent form (task
+     * datagen-axis-lottery-fix — the known_bugs.datagen_axis_emission_jvm_lottery root fix,
+     * fix_direction (a) "别名解析的确定性化"). Two modes:
+     * <ul>
+     * <li><b>boot witness</b> (BLOCKS non-empty — a RegisterEvent ran): membership = a block
+     * was REGISTERED for {@code (stone, NORMAL, material)} — the map keys were frozen at boot
+     * ({@link #registerBlocks} walks {@link #materialAxis()} once, inside the loader's
+     * registry stage, strictly before any datagen provider) against the SAME material
+     * generation the emission walks resolve (nothing re-floods between: the {@code MT.init}
+     * generation guard, MT.java:2711, holds from boot on), so the answer cannot drift with
+     * provider order or mid-datagen ambient state. Every JVM that boots the mod takes this
+     * mode — live game AND both legs' datagen JVMs: forge 1.20.1 {@code DatagenModLoader.begin}
+     * → {@code gatherAndInitializeMods} (DatagenModLoader.java:43) dispatches the GATHER
+     * states incl. LOAD_REGISTRIES = {@code GameData.postRegisterEvents}
+     * (ForgeStatesProvider.java:25); neoforge {@code CommonModLoader.begin} runs the
+     * "Registry initialization" initTask (CommonModLoader.java:46-53). Measured on this
+     * repo's forge runData: flood line "GT6 material system initialised: 2200 materials"
+     * precedes "GT6 registered 11618 ore blocks (26 families x 157 materials x 74 ...)" —
+     * registration AFTER the flood, both before datagen (/tmp/dalf_rundata_forge1.log:69-70).
+     * The neo leg's FML-booted test JVM also takes this mode (measured: the pre-fix pin
+     * asserting BLOCKS-empty ran red only there).</li>
+     * <li><b>ambient axis</b> (BLOCKS empty — no RegisterEvent ran: a plain-JUnit offline
+     * test JVM, e.g. the forge leg's test runner, which never boots FML): fall back to a
+     * fresh {@link #materialAxis()} identity scan — the same computation the pre-fix gate
+     * did, correct on a single-threaded JVM where the inline warm-up
+     * ({@code GTOreWorldgen.twilightOnAxisRows} → {@code initMaterials}) floods before the
+     * first walk.</li>
+     * </ul>
+     *
+     * <p>The lottery this closes (the 8-row twilight_ores / 137-feature strata_lenses faces,
+     * seat19/20, BOTH legs flipping): the pre-fix gate re-derived the axis from MT/OP statics
+     * AT EMISSION TIME, and that ambient re-derivation is not datagen-stable — the boot
+     * registration measured FULL on the same JVM runs (the log above), while the emission-time
+     * walk under-resolved by exactly the non-RockOres axis rows. The intra-JVM mutator that
+     * degrades the ambient view mid-datagen stays OPEN (hygiene domain, id1467 class); this
+     * witness severs the emission-time dependence on it. A forced guard-bypassing re-flood
+     * (fix_direction (b)) was evaluated and DROPPED: re-creating the materials would move
+     * them OUT of the generation the boot-registered GT6OreBlocks keys hold and turn every
+     * {@code GT6OreBlocks.get(...).get()} emission lookup (GT6WorldgenDatagen.java:1606)
+     * into a miss — the same id1427 generation-flip class.
+     */
+    public static boolean axisWitness(OreDictMaterial aMaterial) {
+        if (aMaterial == null) return false;
+        if (BLOCKS.isEmpty()) {
+            for (OreDictMaterial tAxis : materialAxis()) if (tAxis == aMaterial) return true;
+            return false;
+        }
+        return get(TAB_FAMILY, FormKind.NORMAL, aMaterial) != null; // map membership IS the witness (get returns null when absent)
+    }
+
     /** The single definition site of the per-pair id scheme: {@code ore[_broken|_small]_<family>_<material>}. */
     public static String path(OreKey key) {
         String tForm = switch (key.kind()) {

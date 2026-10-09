@@ -697,23 +697,23 @@ public final class GTOreWorldgen {
 
     /**
      * The axis gate (the GTVeinConfig validity face over a row): the row emits JSON only
-     * when its resolved material has registrable ore blocks — an identity scan over
-     * {@link GT6OreBlocks#materialAxis()} (the same canonical instances the resolve walk
-     * produces; OreDictMaterial has no equals override, identity IS the comparison). The
-     * netherite row rides the gate too — its axis slot is the :852 always-on small-ore
-     * row (the emission precondition is belt-and-braces there: the placed state is the
-     * vanilla ancient-debris block, not a GT ore face, and vanilla 1.20.1 always ships
-     * it, the upstream {@code IL.Ancient_Debris.exists()} gate statically true).
+     * when its resolved material has registrable ore blocks — {@link GT6OreBlocks#axisWitness}
+     * (the same canonical instances the resolve walk produces; OreDictMaterial has no equals
+     * override, identity IS the comparison). The witness is the registration-axis validity in
+     * the JVM-warmth-independent form (task datagen-axis-lottery-fix: the pre-fix shape
+     * re-derived the axis from MT/OP statics at walk time, so a degraded ambient state could
+     * silently under-emit — the 8-row twilight_ores face, seat19). The netherite row rides
+     * the gate too — its axis slot is the :852 always-on small-ore row (the emission
+     * precondition is belt-and-braces there: the placed state is the vanilla ancient-debris
+     * block, not a GT ore face, and vanilla 1.20.1 always ships it, the upstream
+     * {@code IL.Ancient_Debris.exists()} gate statically true).
      */
     public static boolean twilightOnAxis(TwilightOreRow aRow) {
         OreDictMaterial tMaterial = aRow.material().get();
         if (tMaterial == null || tMaterial.mID < 0) return false;
         tMaterial = MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target
         if (tMaterial == null || tMaterial.mID < 0) return false;
-        for (OreDictMaterial tAxis : GT6OreBlocks.materialAxis()) {
-            if (tAxis == tMaterial) return true;
-        }
-        return false;
+        return GT6OreBlocks.axisWitness(tMaterial);
     }
 
     /**
@@ -722,13 +722,17 @@ public final class GTOreWorldgen {
      * modifier: 3 + 12 + 1 = 16 today).
      */
     public static List<TwilightOreRow> twilightOnAxisRows() {
-        // the datagen-JVM warm-up (review-seat fix, task twilight-vanilla-ores-deadrock):
-        // the alias walk in {@link #twilightOnAxis} (MaterialRegistry alias -> target) only
-        // resolves after the material flood — a cold datagen JVM (the provider order
-        // lottery, the id1467 class) returned the 8 RockOres rows and silently dropped the
-        // A-band/netherite rows from the emitted JSONs, breaking the runData idempotency.
-        // initMaterials is idempotent under the single-flush gate (the
-        // forge-order-pollution-hygiene face), so the call is a no-op on warm JVMs.
+        // the registration-less-JVM warm-up (review-seat fix, task twilight-vanilla-ores-deadrock;
+        // mechanism re-pinned by task datagen-axis-lottery-fix): on a JVM where the mod never
+        // booted (the plain-JUnit offline test runners) the MT suppliers below resolve null
+        // until the material flood runs, so initMaterials is called before the first walk.
+        // initMaterials is idempotent under the MT.init generation guard (MT.java:2711), so
+        // the call is a no-op on booted JVMs (both legs' datagen JVMs DO boot: the flood
+        // drains and RegisterEvent fires before any provider — measured,
+        // /tmp/dalf_rundata_forge1.log:69-70). The axis gate itself no longer TRUSTS the
+        // ambient MT/OP state at emission time: it reads the boot registration witness
+        // (GT6OreBlocks.axisWitness) — the known_bugs.datagen_axis_emission_jvm_lottery
+        // root fix.
         GTMaterialItems.initMaterials();
         List<TwilightOreRow> rRows = new ArrayList<>(23);
         for (TwilightOreRow tRow : TWILIGHT_ORE_ROWS) {
