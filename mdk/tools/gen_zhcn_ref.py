@@ -225,8 +225,11 @@ HAND_TRANSLATIONS = {
     "item.gt6.cutter": ("线缆剪", "hand"),
     "item.gt6.chisel": ("凿子", "hand"),
     "item.gt6.cover_redstone_emitter": ("红石发射器", "hand"),
-    "item.gt6.cover_redstone_conductor_in": ("红石导线面板（接收）", "hand"),
-    "item.gt6.cover_redstone_conductor_out": ("红石导线面板（发出）", "hand"),
+    # task lang-hygiene-consolidated (zh-translation-full-audit cosmetic #3): the pair
+    # regressed to full-width （） while the cover family rides half-width ( ) — 667 vs 2
+    # rows in the direct band. Unified on the family style.
+    "item.gt6.cover_redstone_conductor_in": ("红石导线面板 (接收)", "hand"),
+    "item.gt6.cover_redstone_conductor_out": ("红石导线面板 (发出)", "hand"),
     "item.gt6.cover_redstone_machine_switch": ("红石机器开关", "hand"),
     "item.gt6.cover_shutter": ("挡板面板", "hand"),
     "item.gt6.cover_item_filter": ("物品过滤器", "hand"),
@@ -2550,6 +2553,7 @@ BLOCK_BACKFILL = {
     "block.gt6.longdist_item_pipe": "远距传输用物品管道",
     "block.gt6.longdist_fluid_pipe": "远距传输用流体管道",
 
+
     # ---- the 33 anvil ladder rows (task material-mc-e-tool-anvil-rows, the mc-E card) ----
     # the dump gt.multitileentity.* faces verbatim, Loader :2187-2219 (the two c-anvil
     # pioneers 32025/32095 ride the pre-existing hand layer above)
@@ -2586,6 +2590,10 @@ BLOCK_BACKFILL = {
     "block.gt6.draconium_anvil": "龙砧",                     # gt.multitileentity.32049
     "block.gt6.awakened_draconium_anvil": "觉醒龙砧",           # gt.multitileentity.32068
     "block.gt6.infinity_anvil": "无尽砧",                    # gt.multitileentity.32069
+
+    # (the worldgen-diggables-pits + grindstone-family backfill seats of the old 30-drift
+    # ledger closed on main already — the hand layer rows at the worldgen band above; the
+    # rebase dropped this card's duplicate re-entry)
 }
 
 # ---- fluid.gt6.* (21): hand translations with dump anchors (蒸馏水/柴油/幻露 per the
@@ -2609,6 +2617,10 @@ FLUID_BACKFILL = {
     "fluid.gt6.reedwater": "芦苇水",
     "fluid.gt6.sap": "树液",
     "fluid.gt6.seawater": "海水",
+    # lang-hygiene-consolidated (zh-translation-full-audit cosmetic #2, DECLARED split):
+    # item.gt6.seawater=盐水 vs this fluid=海水 is the dump's OWN split, kept —
+    # S:fluid.seawater=海水 (:851) vs the bottle face gt.multiitem.bottles.1=盐水 (:6904,
+    # tooltip 看起来比海水清澈的盐水). The port item is the drinkable bottle form.
     "fluid.gt6.spdew": "幻露",             # en semantics: Spectral Dew (research-card anchor)
     "fluid.gt6.spruceresin": "云杉树脂",   # task chem-fluids-unlock — no dump face, the hand row (the coffee 咖啡 precedent)
     "fluid.gt6.stagnantwater": "死水",     # task btl-fluids-prereq — no dump face, the hand row (the spruceresin precedent)
@@ -3483,6 +3495,10 @@ FOOD_FLUID_BACKFILL = {
     'fluid.gt6.spiritneutral': '中性白酒',
     'fluid.gt6.spiritsugarcane': '甘蔗烧酒',
     'fluid.gt6.spoiledmilk': '牛奶',
+    # lang-hygiene-consolidated (zh-translation-full-audit cosmetic #1, DECLARED exemption):
+    # 疑漏"腐" — but the dump face itself is S:fluid.spoiledmilk=牛奶 (:868, no 腐 word
+    # anywhere); the spoiled flavor rides gt.drink.spoiledmilk=闻着发臭了 (:3207). Dump
+    # fidelity wins, the semantic fix stays unmade.
     'fluid.gt6.starfruitjuice': '杨桃汁',
     'fluid.gt6.starfruitsmoothie': '杨桃冰沙',
     'fluid.gt6.strawberryjuice': '草莓汁',
@@ -4192,6 +4208,9 @@ ROW_MISC_BACKFILL = {
     'gt6.row.machine.replicator': '物质复制器 (%s)',
     'gt6.surface.rock': '%s地表岩',
     'itemGroup.gt6.bee': '蜜蜂',
+    # (the material-mc-a-storage-chests chest pair backfill seat of the old 30-drift
+    # ledger closed on main already — the mc-D powertrain band's hand rows; the rebase
+    # dropped this card's duplicate re-entry)
 }
 
 # ---- the naming-parity census-gap fluids (34, task p37-fluids-naming): dump faces
@@ -4407,7 +4426,7 @@ BOTTLES_FAMILIES_B_BACKFILL = {
     "item.gt6.mayo": "蛋黄酱",
     "item.gt6.dressing": "调料",
     "item.gt6.bottle_milk": "牛奶",
-    "item.gt6.spoiledmilk": "牛奶",
+    "item.gt6.spoiledmilk": "牛奶",     # the declared exemption of fluid.gt6.spoiledmilk again (dump :868 verbatim)
     "item.gt6.soymilk": "豆浆",
     "item.gt6.chocolatecream": "巧克力冰淇淋",
     "item.gt6.nutella": "花生酱",
@@ -4776,6 +4795,12 @@ CIRCUIT_CHAIN_BACKFILL = {
 		"item.gt6.circuit_board_hsla_circuit.tooltip": "需要焊接",
 		"item.gt6.circuit_board_power_module": "电池组电路板",
 		"item.gt6.circuit_board_power_module.tooltip": "需要焊接",
+		# task circuit-chain-recipes backfill — the THREE gap circuits closed on main
+		# already (the circuit-chain-items band's hand rows; the rebase dropped this
+		# card's duplicate re-entry); the crystal/processor pairs REMAIN as the live
+		# backfill of the still tsv-only rows — landed tsv-only, re-entered VERBATIM
+		# from the committed TSV rows; the values mirror the GT6CircuitChain.ChainRow
+		# records (the test pin) and the ladder position follows the ChainRow order.
 		"item.gt6.circuit_crystal_diamond": "钻石晶体电路",
 		"item.gt6.circuit_crystal_diamond.tooltip": "钻石---逻辑",
 		"item.gt6.circuit_crystal_ruby": "红宝石晶体电路",
