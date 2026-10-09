@@ -52,6 +52,7 @@ import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GT6BeamBlocks;
 import gregtech6.registry.GTMaterialBlocks;
 import gregtech6.registry.GT6FoamBlocks;
+import gregtech6.registry.GT6Kitchen;
 import gregtech6.registry.GT6Kinetics;
 import gregtech6.registry.GT6Tools;
 import gregtech6.registry.GTWires;
@@ -164,6 +165,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register + beam-fireproof-closeout — the wood beams + fireproof twins self-drop
+                new SubProviderEntry(GT6KitchenBlockLoot::new, LootContextParamSets.BLOCK), // task kitchen-loot-dropface — the seven manual-kitchen self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST)), // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -236,6 +238,7 @@ public final class GT6LootTables extends LootTableProvider {
                 new SubProviderEntry(GT6PlaceableBlockLoot::new, LootContextParamSets.BLOCK), // task placeables — the lantern + sandwich self-drops
                 new SubProviderEntry(GT6BumbliaryBlockLoot::new, LootContextParamSets.BLOCK), // task bees-lv3-b-bumbliary — the Bumbliary pair self-drops
                 new SubProviderEntry(GT6BeamBlockLoot::new, LootContextParamSets.BLOCK), // task beam-blocks-register + beam-fireproof-closeout — the wood beams + fireproof twins self-drop
+                new SubProviderEntry(GT6KitchenBlockLoot::new, LootContextParamSets.BLOCK), // task kitchen-loot-dropface — the seven manual-kitchen self-drops
                 new SubProviderEntry(GT6OreLootTables.GT6OreBlockLoot::new, LootContextParamSets.BLOCK), // task ore-4-loot — the 4884 ore tables
                 new SubProviderEntry(GT6WeightTableLoot::new, LootContextParamSets.CHEST), // task loot-injection — the gt.flawless/gems/misc bag tables
                 new SubProviderEntry(GT6DungeonChestLoot::new, LootContextParamSets.CHEST))); // task dungeon-framework — the gt6:chests/dungeon_chest carrier
@@ -3612,6 +3615,71 @@ public final class GT6LootTables extends LootTableProvider {
                     .hasProperty(net.minecraft.world.level.block.CrossCollisionBlock.EAST, (aBits & 2) != 0)
                     .hasProperty(net.minecraft.world.level.block.CrossCollisionBlock.SOUTH, (aBits & 4) != 0)
                     .hasProperty(net.minecraft.world.level.block.CrossCollisionBlock.WEST, (aBits & 8) != 0));
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // task kitchen-loot-dropface — the manual-kitchen band
+    // -------------------------------------------------------------------------
+
+    /**
+     * The manual-kitchen self-drop list (task kitchen-loot-dropface): the seven kitchen
+     * blocks — the two pots, the two pot tables, the bowl + its table, the Juicer
+     * (GT6Kitchen's registrations; the upstream Loader_MultiTileEntities.java:2173-2184
+     * "Misc Tool Blocks" rows).
+     */
+    public static List<Block> kitchenLootBlocks() {
+        return List.of(GT6Kitchen.BATHING_POT_WOOD.get(), GT6Kitchen.BATHING_POT_STEEL.get(),
+                GT6Kitchen.MIXING_BOWL.get(), GT6Kitchen.JUICER.get(),
+                GT6Kitchen.BATHING_POT_TABLE_WOOD.get(), GT6Kitchen.BATHING_POT_TABLE_STEEL.get(),
+                GT6Kitchen.MIXING_BOWL_TABLE.get());
+    }
+
+    /**
+     * The manual-kitchen loot provider (task kitchen-loot-dropface; the tank-valve/item-pipe
+     * dropSelf lane): all seven kitchen blocks self-drop.
+     *
+     * <p>Upstream verdict (the task-card archaeology, read in tmp/gt6-1.7.10): the kitchen
+     * MTEs override NEITHER getDrops NOR writeItemNBT — breaking one lands the MTE-default
+     * self-drop (TileEntityBase04MultiTileEntities.getDrops:166-171,
+     * {@code tRegistry.getItem(mMTEID, writeItemNBT(...))}) whose item NBT is ONLY the
+     * customName/paint pair (writeItemNBT:128-133); the variant material is baked into the
+     * per-row MTE ID, not the stack (Loader_MultiTileEntities.java:2173-2184). The port BE
+     * (GT6ManualKitchenBlockEntity) exposes neither a custom-name nor a paint face, so
+     * dropSelf reproduces the upstream dropped stack 1:1.
+     *
+     * <p>The tank contents (RM.Bath 4000/8000 L, RM.Mixer/RM.Juicer — the carrier
+     * NBT_TANK_CAPACITY) die with the break on BOTH sides — the declared cost is zero
+     * fidelity: upstream the breakBlock overrides trash the tanks explicitly
+     * (MultiTileEntityBathingPot.java:333-336 / MultiTileEntityMixingBowl.java:354-357 /
+     * MultiTileEntityJuicer.java:217-219, {@code GarbageGT.trash(mTanks)}); the port BE
+     * exposes no item inventory (no Container/getInventory face), so the GTEntityBlock
+     * onRemove walk leaves the fluids and the BE vanishes with the removal.
+     *
+     * <p>No driver-domain skip (unlike the item-pipe lane): the family is pure
+     * Ceramic/StainlessSteel/WoodTreated — zero foreign-gated materials under ADR-MDH2.
+     */
+    public static final class GT6KitchenBlockLoot extends BlockLootSubProvider {
+
+        //? if neoforge {
+        /*
+        public GT6KitchenBlockLoot(HolderLookup.Provider registries) {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS, registries);
+        }
+         *///?} else {
+        public GT6KitchenBlockLoot() {
+            super(Set.of(), FeatureFlags.DEFAULT_FLAGS);
+        }
+        //?}
+
+        @Override
+        protected Iterable<Block> getKnownBlocks() {
+            return kitchenLootBlocks();
+        }
+
+        @Override
+        protected void generate() {
+            for (Block tBlock : kitchenLootBlocks()) dropSelf(tBlock);
         }
     }
 }
