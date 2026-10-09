@@ -84,6 +84,7 @@ public final class GTFluidLists {
 		register("carbondioxide"  , GAS); // MT.java:1035 gaschemelec
 		register("carbonmonoxide" , GAS); // MT.java:1034 gaschemelec
 		register("heliumneon"     , GAS); // MT.java:1024 gaschemcent, the GASES flag (task debt-hene-fluid — the blend row the p29 batch left pooled)
+		register("air"            , GAS); // MT.java:1027, the GASES flag (task air-fluid-registration — the same :660 walk)
 		// the cracked hydrocarbons — Loader_Fluids.java:45-48, the four-arg create at state 2
 		register("propane"        , GAS); // :45
 		register("butane"         , GAS); // :46

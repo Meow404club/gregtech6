@@ -896,6 +896,7 @@ HAND_TRANSLATIONS = {
     "block.gt6.large_dynamo_titanium": ("钛大型发电机主外壳", "hand"),
     "block.gt6.large_dynamo_tungstensteel": ("钨钢大型发电机主外壳", "hand"),
     "block.gt6.large_dynamo_adamantium": ("艾德曼合金大型发电机主外壳", "hand"),
+    "fluid.gt6.air": ("空气", "hand"),
     "fluid.gt6.argon": ("氩", "hand"),
     "fluid.gt6.butane": ("丁烷", "hand"),
     "fluid.gt6.carbondioxide": ("二氧化碳", "hand"),

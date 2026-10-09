@@ -40,6 +40,7 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 			"methane", "carbondioxide", "carbonmonoxide", "hydrogen",
 				"nitrogen", "oxygen", "fluorine", "helium", "neon", "argon", "krypton", "xenon", "radon",
 				"heliumneon", // task debt-hene-fluid — the :660 createGas walk blend row the p29 batch left pooled
+				"air", // task air-fluid-registration — the MT.Air GASES-flag walk row
 				"liquidoxygen",
 			"deuterium", "tritium", "helium3",
 			"lithium6_molten", "beryllium7_molten", "beryllium8_molten",
@@ -70,8 +71,8 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 	@Test
 	public void tableCarriesTheChemicalRowsInDeclarationOrder() {
 		assertEquals(IDS, GTFluids.CHEMICAL_SPECS.stream().map(GTFluids.ChemicalFluidSpec::name).toList());
-		assertEquals(85, GTFluids.CHEMICAL_SPECS.size());
-		assertEquals(85, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
+		assertEquals(86, GTFluids.CHEMICAL_SPECS.size());
+		assertEquals(86, GTFluids.CHEMICALS.size(), "the live registrations walk the same table");
 	}
 
 	/** Acceptance ①: the per-fluid declared census, one block per sub-family. */
@@ -196,6 +197,38 @@ public class GTFluidsChemicalFamilyTest extends GTOfflineTestBase {
 		GTMaterialItems.initMaterials();
 		assertSame(tSpec, GTFluids.specOf(gregapi.data.MT.HeNe, false), "specOf(MT.HeNe, gas) binds the blend row");
 		assertSame(gregapi.data.MT.HeNe, GTFluids.materialOf(tSpec), "materialOf round-trips");
+	}
+
+	/**
+	 * Task air-fluid-registration — the plain-air row verbatim: the :1080 createGas walk
+	 * over MT.Air (MT.java:1027, the {@code gas} factory + GASES tag → the
+	 * Loader_Fluids.java:660 loop), temp 300 K over {@code heat(100, 200)} (OreDictMaterial
+	 * .java:919/:927 — melting 100, boiling 200, plasma 20000 → {@code min(300, 19999)}),
+	 * density 0 — the :1128-1136 EQUALS-air branch (MT.Air rides
+	 * {@code WEIGHT_AIR_G_PER_CUBIC_CENTIMETER} 0.0012, CS.java:859, the :1134 else arm)
+	 * plus the explicit {@code FL.Air.fluid().setDensity(0)} literal (Loader_Fluids.java
+	 * :666, the same literal the port's netherair/enderair rows already transcribe), the
+	 * :1105 gas carrier, the material RGBa 169,208,245 tint, the mNameLocal display face.
+	 * The consumers this row wakes: the Canner plain-air fill/release pair
+	 * (GT6RecipesCanner.AIR_FILL_WALK/AIR_RELEASE via the liveAirFluid walk) and the
+	 * crucible alloying walk's Air fluid face (the sAirDisplayFluid live arm —
+	 * {@code GTFluids.liveFluidSource("air")}, task crucible-alloying-flux-rows).
+	 */
+	@Test
+	public void airRowIsTheCreateGasWalkVerbatim() {
+		GTFluids.ChemicalFluidSpec tSpec = GTFluids.chemicalSpec("air");
+		assertNotNull(tSpec, "the plain-air registration the crucible/canner consumers expect");
+		assertEquals("Air", tSpec.displayName(), "the createGas mNameLocal face (the createMaterial raw local string)");
+		assertEquals(300, tSpec.temperature(), "the :1080 rule over heat(100,200) → plasma 20000");
+		assertEquals(0, tSpec.density(), "the :1134 g==WEIGHT_AIR branch + the Loader_Fluids.java:666 literal");
+		assertEquals(200, tSpec.viscosity(), "the FL.java:1105 gas viscosity");
+		assertEquals(0xFFA9D0F5, tSpec.tint(), "the material RGBa 169,208,245 (MT.java:1027)");
+		assertTrue(tSpec.gas(), "setGaseous (STATE_GASEOUS)");
+		assertEquals(0, tSpec.luminosity(), "unlit");
+		// the material binding seam: the port MT.Air internal name lowercases to the row id
+		GTMaterialItems.initMaterials();
+		assertSame(tSpec, GTFluids.specOf(gregapi.data.MT.Air, false), "specOf(MT.Air, gas) binds the plain-air row");
+		assertSame(gregapi.data.MT.Air, GTFluids.materialOf(tSpec), "materialOf round-trips");
 	}
 
 	/**

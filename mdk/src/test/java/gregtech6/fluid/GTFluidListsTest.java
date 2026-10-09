@@ -90,12 +90,14 @@ public class GTFluidListsTest {
 		// the fluids-naming trio — the three state-2 census rows (Loader_Fluids.java
 		// :50-51 the dimension airs, :133 aerotheum; the NAMING_SPECS-side invariant in
 		// GTFluidsNamingFamilyTest); plus the debt-hene-fluid blend row — the same :660
-		// createGas walk over MT.HeNe's GASES flag (MT.java:1024)
+		// createGas walk over MT.HeNe's GASES flag (MT.java:1024); plus the
+		// air-fluid-registration plain-air row — the same :660 walk over MT.Air's GASES
+		// flag (MT.java:1027)
 		assertEquals(Set.of("steam", "natural_gas",
 				"hydrogen", "nitrogen", "oxygen", "fluorine",
 				"helium", "neon", "argon", "krypton", "xenon", "radon",
 				"methane", "carbondioxide", "carbonmonoxide",
-				"heliumneon",
+				"heliumneon", "air",
 				"propane", "butane", "propylene", "ethylene",
 				"chlorine",
 				"deuterium", "tritium", "helium3",
@@ -104,7 +106,7 @@ public class GTFluidListsTest {
 				"nitrogenmonoxide", "nitrogendioxide",
 				"sulfurdioxide", "sulfurtrioxide",
 				"uraniumhexafluoride", "uranium238hexafluoride", "uranium235hexafluoride"),
-			GTFluidLists.GAS, "GAS = steam + natural_gas + the 19 gaseous chemical seeds + the 3 fusion isotopes + the 3 naming-parity gases + the 9 chem-fluids-unlock blocker gases");
+			GTFluidLists.GAS, "GAS = steam + natural_gas + the 19 gaseous chemical seeds + the 3 fusion isotopes + the 3 naming-parity gases + the 9 chem-fluids-unlock blocker gases + the plain-air walk row");
 		assertTrue(GTFluidLists.POWER_CONDUCTING.contains("steam"), "the original seed rides");
 	}
 }
