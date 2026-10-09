@@ -1476,10 +1476,14 @@ public final class GT6WorldgenDatagen {
         return MaterialRegistry.INSTANCE.get(tMaterial); // alias slot -> target (MaterialRegistry.java:182-185)
     }
 
-    /** The registration-universe validity (the GT6VeinGenerator.valid face: 53-axis membership). */
+    /**
+     * The registration-universe validity (the GT6VeinGenerator.valid face: axis membership),
+     * via {@link GT6OreBlocks#axisWitness} — the JVM-warmth-independent form (task
+     * datagen-axis-lottery-fix; the pre-fix shape re-derived the ambient axis at walk time,
+     * the same degradation face as the twilight gate).
+     */
     public static boolean lensOreValid(LensOreRow aRow) {
-        OreDictMaterial tMaterial = lensOreResolve(aRow);
-        return tMaterial != null && GT6OreBlocks.materialAxis().contains(tMaterial);
+        return GT6OreBlocks.axisWitness(lensOreResolve(aRow));
     }
 
     /** The generated rows: LENS_ORE_TABLE minus the axis-gated rows, table order. */
