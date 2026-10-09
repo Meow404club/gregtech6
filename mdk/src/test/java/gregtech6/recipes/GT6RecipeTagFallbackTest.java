@@ -2,7 +2,6 @@ package gregtech6.recipes;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -20,6 +18,7 @@ import net.minecraft.world.item.Items;
 
 import gregapi.data.MT;
 import gregapi.data.OP;
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GTMaterialItems;
@@ -78,10 +77,10 @@ class GT6RecipeTagFallbackTest extends GTRecipesOfflineTestBase {
 	@BeforeAll
 	static void buildProbeItems() {
 		GTMaterialItems.initMaterials(); // the offline material universe (the ShCL convention)
-		INGOT_IRON = probeItem("tagfb_probe_ingot_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Iron));
-		PLATE_IRON = probeItem("tagfb_probe_plate_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.plate, MT.Iron));
-		INGOT_COPPER = probeItem("tagfb_probe_ingot_copper", () -> new MaterialPrefixItem(new Item.Properties(), OP.ingot, MT.Copper));
-		DUST_SMALL_IRON = probeItem("tagfb_probe_dust_small_iron", () -> new MaterialPrefixItem(new Item.Properties(), OP.dustSmall, MT.Iron));
+		INGOT_IRON = OMComponentFaceTest.probeItem("gt6", "tagfb_probe_ingot_iron", p -> new MaterialPrefixItem(p, OP.ingot, MT.Iron));
+		PLATE_IRON = OMComponentFaceTest.probeItem("gt6", "tagfb_probe_plate_iron", p -> new MaterialPrefixItem(p, OP.plate, MT.Iron));
+		INGOT_COPPER = OMComponentFaceTest.probeItem("gt6", "tagfb_probe_ingot_copper", p -> new MaterialPrefixItem(p, OP.ingot, MT.Copper));
+		DUST_SMALL_IRON = OMComponentFaceTest.probeItem("gt6", "tagfb_probe_dust_small_iron", p -> new MaterialPrefixItem(p, OP.dustSmall, MT.Iron));
 	}
 
 	@AfterEach
@@ -333,64 +332,7 @@ class GT6RecipeTagFallbackTest extends GTRecipesOfflineTestBase {
 		};
 	}
 
-	/**
-	 * The offline probe item (the FileSawTest/ScrewdriverTest precedent): the Forge
-	 * intrusive holder makes {@code new MaterialPrefixItem(...)} throw while the vanilla
-	 * item registry is frozen, and an ItemStack constructor resolves the registry delegate
-	 * eagerly — so the probe item is registered under a dedicated probe id and never
-	 * reaches any committed data.
-	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Supplier<I> aCreator) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the Forge runtime shape: THREE locks must open (the FileSawTest walk —
-			// the vanilla frozen flag, the delegate ForgeRegistry.isFrozen, the
-			// NamespacedWrapper.locked register gate)
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 runtime shape: the plain vanilla DefaultedMappedRegistry — a single
-			// frozen flag guards both the intrusive-holder construction and Registry.register
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.get();
-		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in the
-		// minecraft namespace, growing the frozen-vanilla pool that GT6RecipesCokeOvenTest's
-		// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
+	// the probe-item helper folded onto OMComponentFaceTest.probeItem (the gt6 namespace
+	// preserved per file — task probeitem-latch-hygiene).
 
-	/** getDeclaredField along the superclass chain (the FileSawTest helper, mirrored). */
-	private static Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// walk up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
 }

@@ -100,7 +100,7 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 
-	/** The offline item-registry unlock (GT6RecipeMapHashIndexTest.probeItem, the tree-a hoisted form). */
+	/** The offline item-registry unlock (the OMComponentFaceTest.probeItem walk, the tree-a hoisted form). */
 	private static void openOfflineItemRegistry() {
 		var tRegistry = BuiltInRegistries.ITEM;
 		//? if forge {

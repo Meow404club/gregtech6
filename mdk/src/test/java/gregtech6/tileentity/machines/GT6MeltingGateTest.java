@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
@@ -53,78 +54,15 @@ public class GT6MeltingGateTest extends TileEntityBasicMachineOfflineTestBase {
 		sCold.mMeltingPoint = 500;   // the Sn-class low-melt band (505 K upstream)
 		sEdge.mMeltingPoint = 1375;  // EXACTLY the ceiling — the inclusive boundary word
 		sHot.mMeltingPoint  = 1811;  // the Fe-class band (1811 K upstream) — above the ceiling
-		sColdItem = probeItem("melting_gate_cold", sCold);
-		sEdgeItem = probeItem("melting_gate_edge", sEdge);
-		sHotItem  = probeItem("melting_gate_hot" , sHot);
+		sColdItem = OMComponentFaceTest.probeItem("gt6", "melting_gate_cold", p -> new MaterialPrefixItem(p, gregapi.data.OP.ingot, sCold));
+		sEdgeItem = OMComponentFaceTest.probeItem("gt6", "melting_gate_edge", p -> new MaterialPrefixItem(p, gregapi.data.OP.ingot, sEdge));
+		sHotItem  = OMComponentFaceTest.probeItem("gt6", "melting_gate_hot", p -> new MaterialPrefixItem(p, gregapi.data.OP.ingot, sHot));
 	}
 
-	/**
-	 * The probe-item helper (the GT6RecipeMapCrucibleTest GTMaterialItemsBoot posture):
-	 * the Forge 1.20.1 Item constructor registers an INTRUSIVE HOLDER (Item.java:61 →
-	 * NamespacedWrapper.createIntrusiveHolder), so the frozen registry must be unfrozen
-	 * before any offline construction, and the probe lands under a throwaway id local to
-	 * this test class.
-	 */
-	private static MaterialPrefixItem probeItem(String aProbeId, OreDictMaterial aMaterial) {
-		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the Forge runtime shape: THREE locks must open (the GT6RecipeTagFallbackTest
-			// walk — the vanilla frozen flag, the delegate ForgeRegistry.isFrozen, the
-			// NamespacedWrapper.locked register gate)
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not unfreeze the offline item registry", aE);
-		}
-		try {
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-		} catch (NoSuchFieldException | NoSuchMethodException ignored) {
-			// the 21.1 face: no forge delegate behind the vanilla registry
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline forge registry", aE);
-		}
-		try {
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (NoSuchFieldException ignored) {
-			// the 21.1 face: nothing but the vanilla frozen flag to unlock
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not clear the offline registry lock", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 runtime shape: the plain vanilla DefaultedMappedRegistry — a single
-			// frozen flag guards both the intrusive-holder construction and Registry.register
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not clear the offline registry lock", aE);
-		}
-		*///?}
-		MaterialPrefixItem rItem = new MaterialPrefixItem(new net.minecraft.world.item.Item.Properties(), gregapi.data.OP.ingot, aMaterial);
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
-
-	/** The first declared field up the hierarchy (the GTMaterialItemsBoot walk). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> tClass = aClass; tClass != null; tClass = tClass.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = tClass.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {}
-		}
-		throw new NoSuchFieldException(aName);
-	}
+	// The probe-item helper folded onto the common definition OMComponentFaceTest.probeItem
+	// (the gt6 namespace preserved, fresh Properties per probe — task probeitem-latch-hygiene;
+	// the old lenient per-lock walk was the one shape drift, the common definition's strict
+	// walk is proven on both legs).
 
 	// ------------------------------------------------------------------
 	// the pure function tri-state + the multi-stack arm

@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.Container;
@@ -41,6 +40,7 @@ import net.minecraftforge.common.ToolActions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.covers.ICover;
 import gregtech6.datagen.GT6ItemTags;
 import gregtech6.registry.GT6Tools;
@@ -174,7 +174,7 @@ public class ScrewdriverTest {
 	 */
 	@Test
 	public void realCraftingChannelKeepsTheScrewdriverAndPaysOnePoint() {
-		GT6ScrewdriverItem tScrewdriver = probeItem("crafting_probe_screwdriver", GT6ScrewdriverItem::new);
+		GT6ScrewdriverItem tScrewdriver = OMComponentFaceTest.probeItem("gt6", "crafting_probe_screwdriver", p -> new GT6ScrewdriverItem(p.durability(512)));
 		ItemStack tInput = new ItemStack(tScrewdriver);
 		tInput.setDamageValue(3);
 		ItemStack tRemaining = craftingChannel(tInput);
@@ -190,7 +190,7 @@ public class ScrewdriverTest {
 	 */
 	@Test
 	public void realCraftingChannelConsumesTheWornOutScrewdriver() {
-		GT6ScrewdriverItem tScrewdriver = probeItem("crafting_probe_screwdriver_worn", GT6ScrewdriverItem::new);
+		GT6ScrewdriverItem tScrewdriver = OMComponentFaceTest.probeItem("gt6", "crafting_probe_screwdriver_worn", p -> new GT6ScrewdriverItem(p.durability(512)));
 		ItemStack tInput = new ItemStack(tScrewdriver);
 		tInput.setDamageValue(GT6ScrewdriverItem.DURABILITY_POINTS);
 		ItemStack tRemaining = craftingChannel(tInput);
@@ -207,72 +207,9 @@ public class ScrewdriverTest {
 		assertEquals(rl("tools/screwdriver"), GT6ItemTags.TOOLS_SCREWDRIVER.location());
 	}
 
-	/**
-	 * The GTWireBlockUseLockTest:43 reflection bracket, item flavor — copied verbatim
-	 * from FileSawTest.probeItem (the same three forge locks / single 21.1 frozen flag;
-	 * test-JVM-local, the probe item registered under a dedicated probe id and never
-	 * reaching any committed data).
-	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Function<Item.Properties, I> aCreator) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the Forge runtime shape: BuiltInRegistries.ITEM is a NamespacedWrapper over a
-			// ForgeRegistry delegate — THREE locks must open (the defaulted wrapper hides
-			// the lock field on the parent, hence the class-chain walk):
-			// 1. the vanilla frozen flag — the Item constructor's intrusive-holder gate
-			//    (Item.java:61), cleared by NamespacedWrapper.unfreeze();
-			// 2. the delegate ForgeRegistry.isFrozen — its own unfreeze() clears this one
-			//    AND mirrors the wrapper register lock off (ForgeRegistry.java:693-698);
-			// 3. the NamespacedWrapper.locked register gate ("Modder should use Forge
-			//    Register methods").
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 runtime shape: the plain vanilla DefaultedMappedRegistry (no Forge
-			// wrapper) — a single frozen flag guards both the intrusive-holder construction
-			// and Registry.register
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.apply(new Item.Properties().durability(512));
-		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in
-		// the minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
-		// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
-
-	/** getDeclaredField along the superclass chain (the defaulted wrapper hides the lock one level up). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// keep walking up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
+	// the probe-item bracket folded onto the common definition
+	// OMComponentFaceTest.probeItem(ns, id, creator) (the gt6 namespace preserved per
+	// file, durability(512) at the call sites — task probeitem-latch-hygiene).
 
 	/**
 	 * The vanilla crafting loop over a 3x3 grid: slot 0 = the tool, everything else

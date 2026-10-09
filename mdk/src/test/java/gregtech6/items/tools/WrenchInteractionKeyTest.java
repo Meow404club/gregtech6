@@ -4,11 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import gregtech6.components.OMComponentFaceTest;
 
 import net.minecraftforge.common.ToolActions;
 
@@ -58,7 +59,7 @@ public class WrenchInteractionKeyTest {
 	/** THE fix: a formal-wrench stack now passes the key the interaction points gate on. */
 	@Test
 	public void formalWrenchStacksAreTheKey() {
-		GTWrenchItem tWrench = probeItem("wrench_key_probe_wrench", GTWrenchItem::new);
+		GTWrenchItem tWrench = OMComponentFaceTest.probeItem("gt6", "wrench_key_probe_wrench", p -> new GTWrenchItem(p.durability(512)));
 		ItemStack tStack = new ItemStack(tWrench);
 		assertTrue(tWrench.classifies(GT6ToolActions.WRENCH), "the item's own classification is unchanged");
 		assertFalse(tWrench.classifies(ToolActions.HOE_DIG),
@@ -99,61 +100,7 @@ public class WrenchInteractionKeyTest {
 		assertFalse(GTHoeItem.classifies(ToolActions.HOE_DIG), "the gt6 hoe keeps its tilling-only face");
 	}
 
-	/**
-	 * The HammerWrenchTest:274 reflection bracket, verbatim posture — the intrusive-holder
-	 * wall is opened with the ForgeRegistry.unfreeze() window (the probe item is
-	 * registered under a dedicated probe id and never reaches any committed data), so the
-	 * WRENCH leg can be judged on a REAL stack instead of a static seam only.
-	 */
-	private static <I extends Item> I probeItem(String aProbeId, java.util.function.Function<Item.Properties, I> aCreator) {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// the Forge runtime shape: three locks must open (see HammerWrenchTest.probeItem)
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-			// the 21.1 runtime shape: a single frozen flag guards both the intrusive-holder
-			// construction and Registry.register
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-		I rItem = aCreator.apply(new Item.Properties().durability(512));
-		// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in
-		// the minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
-		// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-		return rItem;
-	}
+	// the probe-item bracket folded onto OMComponentFaceTest.probeItem (the gt6
+	// namespace preserved, durability(512) at the call site — task probeitem-latch-hygiene).
 
-	/** getDeclaredField along the superclass chain (the defaulted wrapper hides the lock one level up). */
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// keep walking up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
 }

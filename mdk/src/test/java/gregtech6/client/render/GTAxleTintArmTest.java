@@ -79,63 +79,15 @@ public class GTAxleTintArmTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * The block-registration write window (the GT6MachineBlockItemTest.BlockLatch shape):
-	 * a live BlockItem registration binds its block delegate, so the fixture axle must be
-	 * a REGISTERED block. Unarmed = the fixture tests telemetry-skip (the known ItemLatch
-	 * dual-leg asymmetry).
+	 * The block-registration write window: a live BlockItem registration binds its block
+	 * delegate, so the fixture axle must be a REGISTERED block. The per-class BlockLatch
+	 * mirror folded onto the base's registerBlockFixture (task probeitem-latch-hygiene).
+	 * Unarmed = the fixture tests telemetry-skip (the known ItemLatch dual-leg asymmetry).
 	 */
-	private static final class BlockLatch {
-		static final sun.misc.Unsafe UNSAFE;
-		static final long LOCKED_OFFSET;
-		static final long FROZEN_OFFSET;
-		static final boolean ARMED;
-		static {
-			sun.misc.Unsafe tUnsafe = null;
-			long tLocked = -1, tFrozen = -1;
-			boolean tArmed = true;
-			try {
-				java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-				tUnsafeField.setAccessible(true);
-				tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
-				Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getClass();
-				try {
-					tLocked = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "locked"));
-				} catch (NoSuchFieldException ignored) {
-					// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
-				}
-				tFrozen = tUnsafe.objectFieldOffset(GTOfflineTestBase.findNestedField(tClass, "frozen"));
-			} catch (Throwable ignored) {
-				tArmed = false; // the fallback leg (no registered fixtures)
-			}
-			UNSAFE = tUnsafe;
-			LOCKED_OFFSET = tLocked;
-			FROZEN_OFFSET = tFrozen;
-			ARMED = tArmed;
-		}
-	}
-
-	/** The axle fixture under a UNIQUE fixture key (block first — the delegate binding — then the item). */
 	private static GTAxleBlock registeredAxle(String aSlug, int aSizeIndex, String aFixtureKey) {
-		org.junit.jupiter.api.Assumptions.assumeTrue(BlockLatch.ARMED,
-				"the offline block-registry latch is unreachable on this JVM");
-		GTAxleBlock tAxle;
-		BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-				BlockLatch.FROZEN_OFFSET, false);
-		if (BlockLatch.LOCKED_OFFSET != -1) BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-				BlockLatch.LOCKED_OFFSET, false);
-		try {
-			tAxle = new GTAxleBlock(BlockBehaviour.Properties.of(),
-					GT6Kinetics.AXLE_SPECS.stream().filter(tSpec -> tSpec.material().equals(aSlug)).findFirst().orElseThrow(),
-					aSizeIndex);
-			net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-					ResourceLocation.fromNamespaceAndPath("gt6", aFixtureKey), tAxle);
-		} finally {
-			BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-					BlockLatch.FROZEN_OFFSET, true);
-			if (BlockLatch.LOCKED_OFFSET != -1) BlockLatch.UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.BLOCK,
-					BlockLatch.LOCKED_OFFSET, true);
-		}
-		return tAxle;
+		return registerBlockFixture(aFixtureKey, () -> new GTAxleBlock(BlockBehaviour.Properties.of(),
+				GT6Kinetics.AXLE_SPECS.stream().filter(tSpec -> tSpec.material().equals(aSlug)).findFirst().orElseThrow(),
+				aSizeIndex));
 	}
 
 	/** The X-rod state form (the maskOf contract arm). */

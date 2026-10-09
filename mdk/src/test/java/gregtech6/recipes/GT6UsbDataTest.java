@@ -46,68 +46,9 @@ import gregtech6.tileentity.GTOfflineTestBase;
  */
 public class GT6UsbDataTest extends GTOfflineTestBase {
 
-	// ------------------------------------------------------------------ the latch (the GT6BatteryItemTest posture)
-
-	static final sun.misc.Unsafe UNSAFE;
-	static final long LOCKED_OFFSET;
-	static final long FROZEN_OFFSET;
-	static final boolean ARMED;
-	static {
-		sun.misc.Unsafe tUnsafe = null;
-		long tLocked = -1, tFrozen = -1;
-		boolean tArmed = true;
-		try {
-			java.lang.reflect.Field tUnsafeField = sun.misc.Unsafe.class.getDeclaredField("theUnsafe");
-			tUnsafeField.setAccessible(true);
-			tUnsafe = (sun.misc.Unsafe) tUnsafeField.get(null);
-			Class<?> tClass = net.minecraft.core.registries.BuiltInRegistries.ITEM.getClass();
-			try {
-				tLocked = tUnsafe.objectFieldOffset(findField(tClass, "locked"));
-			} catch (NoSuchFieldException ignored) {
-				// the 21.1 shape: no 'locked' gate anywhere on the chain — 'frozen' is the sole write guard
-			}
-			tFrozen = tUnsafe.objectFieldOffset(findField(tClass, "frozen"));
-		} catch (Throwable ignored) {
-			tArmed = false; // the telemetry leg: carrier tests assume-skip
-		}
-		UNSAFE = tUnsafe;
-		LOCKED_OFFSET = tLocked;
-		FROZEN_OFFSET = tFrozen;
-		ARMED = tArmed;
-	}
-
-	/** The latch fields live on wrapper superclasses — walk up (getDeclaredField sees one class only). */
-	private static java.lang.reflect.Field findField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> tWalk = aClass; tWalk != null; tWalk = tWalk.getSuperclass()) {
-			try {
-				return tWalk.getDeclaredField(aName);
-			} catch (NoSuchFieldException ignored) {
-				// keep walking
-			}
-		}
-		throw new NoSuchFieldException(aName + " (walked " + aClass + " up)");
-	}
-
-	static void unlockItemRegistry() {
-		if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, false);
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, false);
-	}
-
-	static void lockItemRegistry() {
-		UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, FROZEN_OFFSET, true);
-		if (LOCKED_OFFSET != -1) UNSAFE.putBoolean(net.minecraft.core.registries.BuiltInRegistries.ITEM, LOCKED_OFFSET, true);
-	}
-
-	static GT6UsbSticks.GT6UsbStickItem registerFixture(String aKey, java.util.function.Supplier<GT6UsbSticks.GT6UsbStickItem> aItem) {
-		Assumptions.assumeTrue(ARMED, "the offline registry latch is unreachable on this JVM");
-		unlockItemRegistry();
-		try {
-			return net.minecraft.core.Registry.register(net.minecraft.core.registries.BuiltInRegistries.ITEM,
-					new ResourceLocation("gt6", aKey), aItem.get());
-		} finally {
-			lockItemRegistry();
-		}
-	}
+	// the per-class Unsafe latch folded onto the base's registerItemFixture/itemLatchArmed
+	// (the identical assume/unlock/register("gt6", key)/relock walk — task
+	// probeitem-latch-hygiene); the lazy seat below pays the assume directly.
 
 	static GT6UsbSticks.GT6UsbStickItem sStick;
 
@@ -125,7 +66,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	 */
 	static GT6UsbSticks.GT6UsbStickItem stick() {
 		if (sStick == null) {
-			sStick = registerFixture("fixture_usb_stick_3", () -> new GT6UsbSticks.GT6UsbStickItem(new Item.Properties(), (byte)3));
+			sStick = registerItemFixture("fixture_usb_stick_3", () -> new GT6UsbSticks.GT6UsbStickItem(new Item.Properties(), (byte)3));
 		}
 		return sStick;
 	}
@@ -211,7 +152,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	/** A fresh stick carries no data (the Behavior_DataStorage "This Stick is Empty" face). */
 	@Test
 	public void aFreshStickReadsEmpty() {
-		Assumptions.assumeTrue(ARMED);
+		Assumptions.assumeTrue(itemLatchArmed());
 		ItemStack tStack = new ItemStack(stick());
 		assertEquals((byte)0, GT6UsbSticks.readTier(tStack), "no tier byte on a fresh stack");
 		assertNull(GT6UsbSticks.readData(tStack), "no data compound on a fresh stack");
@@ -222,7 +163,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	/** The scanner write shape round-trips: material id short + the tier-3 byte, over the stack copy. */
 	@Test
 	public void theMaterialDataRoundTrips() {
-		Assumptions.assumeTrue(ARMED);
+		Assumptions.assumeTrue(itemLatchArmed());
 		ItemStack tStack = new ItemStack(stick());
 		OreDictMaterial tMaterial = MT.Iron;
 		assertTrue(tMaterial.mID > 0, "the fixture material has a real registry id");
@@ -245,7 +186,7 @@ public class GT6UsbDataTest extends GTOfflineTestBase {
 	/** The written compound is inspectable at the NBT face (the RCON data-merge probe parity). */
 	@Test
 	public void theWrittenCompoundCarriesTheShortFace() {
-		Assumptions.assumeTrue(ARMED);
+		Assumptions.assumeTrue(itemLatchArmed());
 		ItemStack tStack = new ItemStack(stick());
 		GT6UsbSticks.writeMaterialData(tStack, MT.Iron);
 		CompoundTag tData = GT6UsbSticks.readData(tStack);

@@ -24,13 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -43,6 +41,7 @@ import gregapi.data.MT;
 import gregapi.data.OP;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.registry.GT6OreBlocks;
 import gregtech6.registry.GTMaterialItems;
@@ -70,8 +69,8 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * </ul>
  *
  * <p>The offline fixture is the MaterialPrefixItem probe walk (the
- * GT6RecipeMapHashIndexTest.probeItem three-lock precedent hoisted per-class by
- * MaterialTreeBuilderTest): every (prefix, material) resolves to a registered probe so the
+ * OMComponentFaceTest.probeItem three-lock walk, the probe items registered under
+ * dedicated gt6 probe ids): every (prefix, material) resolves to a registered probe so the
  * pour covers the full 4 x 53 walk offline.
  */
 class GT6SifterDustOreRowsTest extends GTRecipesOfflineTestBase {
@@ -81,10 +80,12 @@ class GT6SifterDustOreRowsTest extends GTRecipesOfflineTestBase {
 	private static BiFunction<OreDictPrefix, OreDictMaterial, Item> sDefaultResolver;
 
 	@BeforeAll
-	static void bootUniverseAndOpenRegistry() {
+	static void bootUniverse() {
 		GTMaterialItems.initMaterials(); // the offline material universe (the ShCL convention)
 		sDefaultResolver = GT6RecipesSifter.sMaterialItemResolver;
-		openOfflineItemRegistry(); // the probeItem three-lock walk, ONCE for the whole class
+		// no hoisted registry unlock: the probe registration below rides the common
+		// definition OMComponentFaceTest.probeItem, which opens the write window itself
+		// before each first-of-a-pair construction (task probeitem-latch-hygiene)
 	}
 
 	/** The (prefix, material) -> probe-item resolver the sifter seam gets armed with.
@@ -93,55 +94,8 @@ class GT6SifterDustOreRowsTest extends GTRecipesOfflineTestBase {
 	private static Item probeItem(OreDictPrefix aPrefix, OreDictMaterial aMaterial) {
 		if (aPrefix == null || aMaterial == null) return null; // the loaders' null-pair drop semantics
 		return PREFIX_PROBES.computeIfAbsent(new PrefixMaterial(aPrefix, aMaterial), aPair ->
-			net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, new net.minecraft.resources.ResourceLocation("gt6", "dust_ore_probe_" + sNextProbeId++),
-				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
-	}
-
-	/** The offline item-registry unlock (GT6RecipeMapHashIndexTest.probeItem, hoisted once per class). */
-	private static void openOfflineItemRegistry() {
-		var tRegistry = BuiltInRegistries.ITEM;
-		//? if forge {
-		try {
-			// three locks must open (the FileSawTest walk): the vanilla frozen flag, the
-			// delegate ForgeRegistry.isFrozen, the NamespacedWrapper.locked register gate
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		//?} else {
-		/*try {
-		// 21.1: the plain vanilla DefaultedMappedRegistry — a single frozen flag
-		java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-		tUnfreeze.setAccessible(true);
-		tUnfreeze.invoke(tRegistry);
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry [" + tRegistry.getClass().getName() + "]", aE);
-		}
-		*///?}
-	}
-
-	/** getDeclaredField along the superclass chain (the FileSawTest helper, mirrored). */
-	private static Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// walk up
-			}
-		}
-		throw new NoSuchFieldException(aName);
+			OMComponentFaceTest.probeItem("gt6", "dust_ore_probe_" + sNextProbeId++,
+				p -> new MaterialPrefixItem(p, aPair.prefix(), aPair.material())));
 	}
 
 	@BeforeEach

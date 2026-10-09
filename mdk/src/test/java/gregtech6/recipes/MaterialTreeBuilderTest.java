@@ -38,7 +38,7 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * difference from the phase-gate/hash-index census (their BRICK stand-ins erase the
  * (prefix, material) seam this card derives from; one probe item per referenced pair,
  * lazily created and registered into the offline-opened vanilla registry, the
- * GT6RecipeMapHashIndexTest probeItem pattern).
+ * OMComponentFaceTest.probeItem pattern).
  *
  * <ul>
  * <li><b>Iron chain (acceptance ①)</b>: the spine the repo's maps actually contain —
@@ -88,7 +88,7 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 
-	/** The offline item-registry unlock (GT6RecipeMapHashIndexTest.probeItem, hoisted to once-per-class). */
+	/** The offline item-registry unlock (the OMComponentFaceTest.probeItem walk, hoisted once per class). */
 	private static void openOfflineItemRegistry() {
 		var tRegistry = BuiltInRegistries.ITEM;
 		//? if forge {

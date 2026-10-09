@@ -41,6 +41,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ToolActions;
 
+import gregtech6.components.OMComponentFaceTest;
 import gregtech6.items.tools.pocket.GTPocketMultitoolItem;
 import gregtech6.registry.GT6Tools;
 
@@ -132,10 +133,10 @@ public class PocketEightTest {
 	 */
 	@Test
 	public void theSwitchCarrierPreservesDurabilityAndSwapsTheItem() {
-		Item tNext = probeItem("pocket_switch_probe_next");
+		Item tNext = OMComponentFaceTest.probeItem("gt6", "pocket_switch_probe_next", p -> new Item(p.durability(512)));
 		ItemStack tHeld = new ItemStack(tNext);
 		tHeld.setDamageValue(17);
-		Item tTarget = probeItem("pocket_switch_probe_target");
+		Item tTarget = OMComponentFaceTest.probeItem("gt6", "pocket_switch_probe_target", p -> new Item(p.durability(512)));
 		ItemStack tSwitched = GTPocketMultitoolItem.switchForm(tHeld, tTarget);
 		assertSame(tTarget, tSwitched.getItem(), "the switched stack carries the target form's item");
 		assertEquals(17, tSwitched.getDamageValue(), "the damage rides across the switch");
@@ -248,66 +249,10 @@ public class PocketEightTest {
 	}
 
 	/**
-	 * The probe-item seam (the BendingCylinderSmallTest form, the GTWireBlockUseLockTest
-	 * reflection bracket): the offline switch-carrier test needs two registered items, and
-	 * the mod-Item intrusive-holder wall forces the registry unfreeze window. This file's
-	 * copy is form-agnostic (plain Items, not pocket items — switchForm is item-agnostic).
+	 * The probe-item seam folded onto the common definition OMComponentFaceTest.probeItem
+	 * (the gt6 namespace and the durability(512) properties face preserved at the call
+	 * sites — task probeitem-latch-hygiene). The old per-file dual-arm copy (the
+	 * forge/21.1 //? split with its own walker) is gone; the common definition carries
+	 * both leg shapes internally. Form-agnostic plain Items — switchForm is item-agnostic.
 	 */
-	//? if forge {
-	private static Item probeItem(String aProbeId) {
-		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
-		try {
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			java.lang.reflect.Field tDelegate = inheritedField(tRegistry.getClass(), "delegate");
-			tDelegate.setAccessible(true);
-			Object tForgeRegistry = tDelegate.get(tRegistry);
-			java.lang.reflect.Method tForgeUnfreeze = tForgeRegistry.getClass().getMethod("unfreeze");
-			tForgeUnfreeze.setAccessible(true);
-			tForgeUnfreeze.invoke(tForgeRegistry);
-			java.lang.reflect.Field tLocked = inheritedField(tRegistry.getClass(), "locked");
-			tLocked.setBoolean(tRegistry, false);
-			// the durability() properties face: the 21.1 damage is a data COMPONENT keyed on
-			// max_damage — a bare Item cannot carry the axis (the BendingCylinderSmallTest form)
-			Item rItem = new Item(new Item.Properties().durability(512));
-			// the gt6 namespace is LOAD-BEARING: the String overload would land the probe in
-			// the minecraft namespace, growing the frozen-vanilla pool GT6RecipesCokeOvenTest's
-			// synthetic universe rides (its wrap-around aliasing re-deals on pool size).
-			net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
-			return rItem;
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry", aE);
-		}
-	}
-
-	private static java.lang.reflect.Field inheritedField(Class<?> aClass, String aName) throws NoSuchFieldException {
-		for (Class<?> c = aClass; c != null; c = c.getSuperclass()) {
-			try {
-				java.lang.reflect.Field rField = c.getDeclaredField(aName);
-				rField.setAccessible(true);
-				return rField;
-			} catch (NoSuchFieldException ignored) {
-				// keep walking up
-			}
-		}
-		throw new NoSuchFieldException(aName);
-	}
-	//?} else {
-	/*private static Item probeItem(String aProbeId) {
-		var tRegistry = net.minecraft.core.registries.BuiltInRegistries.ITEM;
-		try {
-			java.lang.reflect.Method tUnfreeze = tRegistry.getClass().getMethod("unfreeze");
-			tUnfreeze.setAccessible(true);
-			tUnfreeze.invoke(tRegistry);
-			// the durability() properties face: the 21.1 damage is a data COMPONENT keyed on
-			// max_damage — a bare Item cannot carry the axis (the BendingCylinderSmallTest form)
-			Item rItem = new Item(new Item.Properties().durability(512));
-			net.minecraft.core.Registry.register(tRegistry, net.minecraft.resources.ResourceLocation.parse("gt6:" + aProbeId), rItem);
-			return rItem;
-		} catch (Exception aE) {
-			throw new IllegalStateException("could not open the offline item registry", aE);
-		}
-	}
-	*///?}
 }
