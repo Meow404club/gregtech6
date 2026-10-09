@@ -208,7 +208,7 @@ final class GT6MaterialItemsLookup {
         sOriginal = GTMaterialItems.sLookup;
         net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.Item, net.minecraft.world.item.Item> tStick =
                 net.neoforged.neoforge.registries.DeferredHolder.create(net.minecraft.core.registries.Registries.ITEM,
-                        new net.minecraft.resources.ResourceLocation("minecraft", "stick"));
+                        net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", "stick"));
         GTMaterialItems.sLookup = (aPrefix, aMaterial) ->
                 aKept.contains(new GTMaterialItems.PrefixMaterial(aPrefix, aMaterial)) && GT6ModDrivers.isVisible(aMaterial) ? tStick : null;
     }

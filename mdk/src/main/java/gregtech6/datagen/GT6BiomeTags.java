@@ -114,7 +114,7 @@ public final class GT6BiomeTags extends TagsProvider<Biome> {
         // "Twilight Glacier" ∈ BIOMES_FROZEN) stays the pack-extension surface, out of
         // this card's declared face.
         tag(GT6HiveFeature.hiveTag("magical"))    // the :157 family — the pack surface + the TF slice
-                .addOptional(new ResourceLocation("twilightforest", "enchanted_forest"));
+                .addOptional(ResourceLocation.fromNamespaceAndPath("twilightforest", "enchanted_forest"));
         tag(GT6HiveFeature.hiveTag("volcanic"));  // the EMPTY pack surface (the :159 family)
         tag(GT6HiveFeature.hiveTag("end"));       // the EMPTY pack surface (the :161 family)
         tag(GT6HiveFeature.hiveTag("nether"));    // the EMPTY pack surface (the :163 family)

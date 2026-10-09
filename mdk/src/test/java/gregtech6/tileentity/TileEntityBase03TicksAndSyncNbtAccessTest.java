@@ -110,7 +110,7 @@ public class TileEntityBase03TicksAndSyncNbtAccessTest extends GTOfflineTestBase
 						java.util.List.of(EquipmentSlotGroup.MAINHAND)),
 				HolderSet.empty(), DataComponentMap.EMPTY);
 		sTestEnchantment = Registry.registerForHolder(tRegistry,
-				ResourceKey.create(Registries.ENCHANTMENT, new ResourceLocation(aEnchantmentId)),
+				ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.parse(aEnchantmentId)),
 				tEnchantment);
 		// the composite: builtin lookups forward to the frozen view, ENCHANTMENT resolves
 		// into the registry above — the exact delta the server composite adds (frozen

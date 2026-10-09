@@ -68,3 +68,23 @@ d91f10e/91d20fc/76a7f33/ac9443d）。残面全部声明豁免：
 - e57280c9：`TextureAtlas.LOCATION_BLOCKS` → `InventoryMenu.BLOCK_ATLAS`
   （forge 侧 LOCATION_BLOCKS 字段体即该常量别名，TextureAtlas.java:30）——双腿
   deprecation 各 15→0。
+
+## 席54 复测（2026-10-09，merge 前 clean 口径实测）
+
+rebase main cedf692692 后以 -Xlint:all init script 双腿 `--rerun-tasks` 全量
+clean 编译实测（/tmp/cw_meas_final2.log；口径同上：mdk 面 javac lint 行，不含
+third-party/modularui）：
+
+- **RL ctor 残余 = 0（双腿）**。main 演进（卡①②③合入波）新增的 115 处
+  RL ctor 站点（两参→`fromNamespaceAndPath`/单参→`parse`，含 FQ 形与嵌套参
+  形）由审查席缝补按本卡语义原位重套——sweep 声明的「forge RL removal→0」
+  在 merge 终态成立。
+- **实测终态：forge mdk 797（main 398 + test 399）/ neo mdk 419（main 273 +
+  test 146）**，较本卡基线（763/380）+34/+39 = f08d3c27a 之后 main 演进新增
+  面（新代码的 dep 主体 + 下述 safe-face 池），非本卡语义回退。
+- **新 safe-face 池（可清债候选，非豁免）**：cast 24 / rawtypes 12 /
+  unchecked 4 / static 2——41d1a526ea/a5a637536b 同类机械面，后继 sweep 卡
+  候选。neo this-escape 86 归构序重构卡（上表既有条）。
+- **modularui 面复测吻合**：forge 27 / neo 109（与 modularui-lint-cleanup
+  残面记账一致；席50 移交的「6/9 real clean 口径」=该残面内的真实可清子集
+  JEI/EMI+固有注解面，归 RV 域卡，非本卡 remit）。

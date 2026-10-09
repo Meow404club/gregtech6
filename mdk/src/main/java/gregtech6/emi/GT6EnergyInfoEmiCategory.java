@@ -53,7 +53,7 @@ public final class GT6EnergyInfoEmiCategory extends EmiRecipeCategory {
 	/** {@code gt6:energy_info} — mirrors the JEI twin's category uid one-to-one (the JEMI skip key). */
 	public static ResourceLocation idOf() {
 		//? if forge {
-		return new ResourceLocation("gt6", "energy_info");
+		return ResourceLocation.fromNamespaceAndPath("gt6", "energy_info");
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "energy_info");
 		 *///?}
@@ -149,7 +149,7 @@ public final class GT6EnergyInfoEmiCategory extends EmiRecipeCategory {
 	static ResourceLocation pageId(TagData aCarrier, int aPage) {
 		String tCode = GT6RecipeMapViewerMeta.energyTypeShortCode(aCarrier).toLowerCase(java.util.Locale.ROOT);
 		//? if forge {
-		return new ResourceLocation("gt6", "energy_info/" + tCode + "/" + aPage);
+		return ResourceLocation.fromNamespaceAndPath("gt6", "energy_info/" + tCode + "/" + aPage);
 		//?} else {
 		/*return ResourceLocation.fromNamespaceAndPath("gt6", "energy_info/" + tCode + "/" + aPage);
 		 *///?}

@@ -64,7 +64,7 @@ public final class GT6SeasonalLeafClientListener {
 			aEvent.register(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, XMAS_MODEL_PATH));
 			//? } else {
 			/*aEvent.register(new ModelResourceLocation(
-					new ResourceLocation(GTRenderModelListener.MOD_ID, XMAS_MODEL_PATH), "standalone"));*/
+					ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, XMAS_MODEL_PATH), "standalone"));*/
 			//? }
 		}
 		GT6Calendars.MapleSeason tSeason = GT6Calendars.mapleSeasonOfMonth(GT6Calendars.sMonth);
@@ -74,7 +74,7 @@ public final class GT6SeasonalLeafClientListener {
 			aEvent.register(ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, tPath));
 			//? } else {
 			/*aEvent.register(new ModelResourceLocation(
-					new ResourceLocation(GTRenderModelListener.MOD_ID, tPath), "standalone"));*/
+					ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, tPath), "standalone"));*/
 			//? }
 		}
 	}

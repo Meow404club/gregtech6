@@ -524,7 +524,7 @@ public class GT6MassStorageFamilyTest extends GTOfflineTestBase {
 		}
 		*///?}
 		MaterialPrefixItem rItem = aCreator.get();
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation("gt6", aProbeId), rItem);
+		net.minecraft.core.Registry.register(tRegistry, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", aProbeId), rItem);
 		return rItem;
 	}
 

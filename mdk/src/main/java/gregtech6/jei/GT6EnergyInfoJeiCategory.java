@@ -94,7 +94,7 @@ public class GT6EnergyInfoJeiCategory implements IRecipeCategory<GT6EnergyInfoJe
 
 	public GT6EnergyInfoJeiCategory() {
 		//? if forge {
-		mRecipeType = new RecipeType<>(new ResourceLocation("gt6", UID_PATH), Page.class);
+		mRecipeType = new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", UID_PATH), Page.class);
 		//?} else {
 		/*mRecipeType = new RecipeType<>(ResourceLocation.fromNamespaceAndPath("gt6", UID_PATH), Page.class);
 		 *///?}

@@ -61,7 +61,7 @@ public final class GTOvenClientListener {
 						rTargets.add(new ModelResourceLocation(GTRenderModelListener.MOD_ID, tPath, tVariant));
 						//? } else {
 						/*rTargets.add(new ModelResourceLocation(
-								new ResourceLocation(GTRenderModelListener.MOD_ID, tPath), tVariant));*/
+								ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID, tPath), tVariant));*/
 						//? }
 					}
 				}

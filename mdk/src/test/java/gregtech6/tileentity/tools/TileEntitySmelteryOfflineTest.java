@@ -75,7 +75,7 @@ public class TileEntitySmelteryOfflineTest {
 
 	static net.minecraft.tags.TagKey<Item> familyTag(String aPath) {
 		return net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
-				new net.minecraft.resources.ResourceLocation("c", aPath));
+				net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("c", aPath));
 	}
 
 	static java.util.function.Function<ItemStack, java.util.stream.Stream<net.minecraft.tags.TagKey<Item>>> sSavedTags;

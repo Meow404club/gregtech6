@@ -435,7 +435,7 @@ public class GT6ComponentDeriverTest extends GTRecipesOfflineTestBase {
 
 	private static ResourceLocation rl(String aId) {
 		//? if forge {
-		return new ResourceLocation(aId);
+		return ResourceLocation.parse(aId);
 		//?} else {
 		/*return ResourceLocation.parse(aId); // the full "namespace:path" string parses itself
 		*///?}

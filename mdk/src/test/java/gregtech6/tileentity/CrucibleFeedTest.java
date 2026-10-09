@@ -83,7 +83,7 @@ public class CrucibleFeedTest {
 	static Map<Item, TagKey<Item>> FAMILY_TAGS;
 
 	static TagKey<Item> family(String aPath) {
-		return TagKey.create(Registries.ITEM, new ResourceLocation("c", aPath));
+		return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", aPath));
 	}
 
 	@BeforeAll
@@ -140,7 +140,7 @@ public class CrucibleFeedTest {
 		net.minecraft.core.Registry<Item> tRegistry = BuiltInRegistries.ITEM;
 		openOffline(tRegistry);
 		MaterialPrefixItem rItem = aCreator.get();
-		net.minecraft.core.Registry.register(tRegistry, new ResourceLocation("gt6", aProbeId), rItem);
+		net.minecraft.core.Registry.register(tRegistry, ResourceLocation.fromNamespaceAndPath("gt6", aProbeId), rItem);
 		return rItem;
 	}
 
@@ -148,7 +148,7 @@ public class CrucibleFeedTest {
 		net.minecraft.core.Registry<Item> tRegistry = BuiltInRegistries.ITEM;
 		openOffline(tRegistry);
 		Item rItem = new Item(new Item.Properties());
-		net.minecraft.core.Registry.register(tRegistry, new ResourceLocation("gt6", aProbeId), rItem);
+		net.minecraft.core.Registry.register(tRegistry, ResourceLocation.fromNamespaceAndPath("gt6", aProbeId), rItem);
 		return rItem;
 	}
 

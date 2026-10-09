@@ -464,7 +464,7 @@ public class OMComponentFaceTest {
 		}
 		*///?}
 		I rItem = aCreator.apply(new Item.Properties());
-		net.minecraft.core.Registry.register(tRegistry, new net.minecraft.resources.ResourceLocation(aNamespace, aProbeId), rItem);
+		net.minecraft.core.Registry.register(tRegistry, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(aNamespace, aProbeId), rItem);
 		return rItem;
 	}
 

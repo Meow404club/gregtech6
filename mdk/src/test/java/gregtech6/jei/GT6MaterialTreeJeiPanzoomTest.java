@@ -129,14 +129,14 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 	private static Item prefixItem(gregapi.oredict.OreDictPrefix aPrefix, gregapi.oredict.OreDictMaterial aMaterial) {
 		if (aPrefix == null || aMaterial == null) return null;
 		return PREFIX_ITEMS.computeIfAbsent(new PrefixMaterial(aPrefix, aMaterial), aPair ->
-			Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("gt6", "mtree_panzoom_probe_" + sNextProbeId++),
+			Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("gt6", "mtree_panzoom_probe_" + sNextProbeId++),
 				new MaterialPrefixItem(new Item.Properties(), aPair.prefix(), aPair.material())));
 	}
 
 	/** One probe machine item per map name (the workstation-stack seam, identity face). */
 	private static ItemStack machineStack(String aMapName) {
 		Item tItem = MACHINE_ITEMS.computeIfAbsent(aMapName, aName ->
-			Registry.register(BuiltInRegistries.ITEM, new ResourceLocation("gt6", "mtree_panzoom_machine_" + sNextProbeId++),
+			Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath("gt6", "mtree_panzoom_machine_" + sNextProbeId++),
 				new MaterialPrefixItem(new Item.Properties(), gregapi.data.OP.gearGt, gregapi.data.MT.Steel)));
 		return new ItemStack(tItem);
 	}

@@ -238,7 +238,7 @@ public final class GTBarrelCommand {
 		}
 		ItemStack tVirtualDrum = new ItemStack(GTBarrels.BARREL_METAL_ITEM.get());
 		IFluidHandler tHandler = FluidUtil.getFluidHandler(tVirtualDrum).orElse(null);
-		net.minecraft.world.level.material.Fluid tChlorine = ForgeRegistries.FLUIDS.getValue(new ResourceLocation("gt6", "chlorine"));
+		net.minecraft.world.level.material.Fluid tChlorine = ForgeRegistries.FLUIDS.getValue(ResourceLocation.fromNamespaceAndPath("gt6", "chlorine"));
 		if (tHandler != null && tChlorine != null) tHandler.fill(new FluidStack(tChlorine, 4000), FluidAction.EXECUTE);
 		String tReport = tNozzle.activate(null, (byte)Direction.NORTH.get3DDataValue(), tVirtualDrum);
 		String tLine = "GT6 capnozzle at " + aPos.toShortString() + " (facing "
