@@ -308,7 +308,15 @@ public class WrenchMiningTest {
 				"the metal bottlecrate ladder moved to the pickaxe band (upstream aUtilMetal, Loader :144)");
 		assertTrue(!tMembers.contains("gt6:bookshelf_oak") && !tMembers.contains("gt6:bottlecrate_oak"),
 				"the wooden storage ladders are the axe-wood card");
-		// the whole-face ratchet: machines + battery boxes + 9 vanilla + the 989 extension
+		// task storage-massstorage — the 120 item mass-storage rows (Loader :141-142, both
+		// aMachine TOOL_wrench columns). The family merged onto main AFTER the tail card
+		// pinned 997 and rode the canonical tree without this pin's bump — the full-run
+		// red measured 1393 -> 1513; the count+membership walk keeps the next merge honest.
+		assertEquals(120, gregtech6.registry.GT6StaticStorages.MASS_BLOCKS_BY_PATH.size(),
+				"60 materials x standard+logistics mass storage (Loader :141-142)");
+		assertTrue(tMembers.containsAll(pathsOf(gregtech6.registry.GT6StaticStorages.MASS_BLOCKS_BY_PATH)),
+				"the item mass-storage family rides the face (Loader :141-142 aMachine)");
+		// the whole-face ratchet: machines + battery boxes + 9 vanilla + the 1117 extension
 		// members, zero overlap (the tag dedups, so any overlap would silently shrink this).
 		// +60 task block-family-32xxx-port reconciliation (the pre-existing-red shape, the
 		// pickaxeBand seat-V precedent): the merged charging-locker ladder rode the canonical
@@ -320,13 +328,16 @@ public class WrenchMiningTest {
 		// + 26 steam engines + 8 diesel) + 10 lasers + 1 logistics core + 1 heat exchanger
 		// + 2 distillation + 4 dynamo housings + 26 boilers + 96 burning boxes + 20 chargers
 		// + 5 flux dynamos + 1 fe converter).
+		// +120 task storage-massstorage (997 -> 1117): the merged family shipped through the
+		// provider walk without this ratchet following — the full-run red measured it.
 		Set<String> tExpected = new java.util.HashSet<>(tMembers);
-		assertEquals(VANILLA_MEMBERS.size() + GT6Batteries.BATTERY_BOX_BLOCKS.size() + 997
+		assertEquals(VANILLA_MEMBERS.size() + GT6Batteries.BATTERY_BOX_BLOCKS.size() + 1117
 				+ GTMachines.BLOCKS.getEntries().size(), tExpected.size(),
-				"the extension adds 997 members (card 1: 54 multiblocks + 120 hoppers + 126 item pipes + 245 metal pipes "
+				"the extension adds 1117 members (card 1: 54 multiblocks + 120 hoppers + 126 item pipes + 245 metal pipes "
 				+ "+ 24 valves + 8 turbines + 1 reactor + 5 energizers + 2 dechargers + 1 absorber + 3 BE + 18 pipes + 5 transformers + 128 storage"
 				+ "; tail: 9 transformers + 82 kinetics metal + 10 lasers + 1 logistics core + 1 heat exchanger + 2 distillation "
-				+ "+ 4 dynamo housings + 26 boilers + 96 burning boxes + 20 chargers + 5 flux dynamos + 1 fe converter)");
+				+ "+ 4 dynamo housings + 26 boilers + 96 burning boxes + 20 chargers + 5 flux dynamos + 1 fe converter"
+				+ "; massstorage: 120 mass storage)");
 	}
 
 	/**
