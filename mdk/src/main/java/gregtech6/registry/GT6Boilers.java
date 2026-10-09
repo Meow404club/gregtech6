@@ -74,13 +74,16 @@ import gregtech6.tileentity.energy.converters.GTBoilerTankBlockEntity;
  * MT.Ultimet → ultimet. Hardness == resistance on every row (upstream NBT_HARDNESS ==
  * NBT_RESISTANCE); the METAL sound (the machine-block convention).
  *
- * <p>Creative tab (task tabfix-a-multiblock): all 26 items join MULTIBLOCKS_TAB via
- * {@link #onBuildTabContents} — registered-but-tab-less is invisible in BOTH the creative
- * menu and JEI (the BurningBoxes issue-#10 form, superseding the old axle/diesel tab-less
- * precedent). Pool cut declared: upstream rode the per-family "Multiblock Machines"
- * creative tab (tab id 17101, Loader :553-579); this port pools the family into the
- * gt6:multiblocks tab. No GUI by census (:103 NO_GUI_FUNNEL_TO_TANK — the upstream
- * tooltip IS the contract, the funnel face is ported).
+ * <p>Creative tab: all 26 items join MACHINES_TAB via {@link #onBuildTabContents} —
+ * registered-but-tab-less is invisible in BOTH the creative menu and JEI (the BurningBoxes
+ * issue-#10 form). REHOME (task small-crucible-boiler-tab-rehome, the user ruling):
+ * tabfix-a pooled the family into gt6:multiblocks, but these are the single-block Steam
+ * Boilers riding their own upstream tab id 1204 "Steam Boilers" (the 4th
+ * {@code aRegistry.add} argument, aCreativeTabID — MultiTileEntityRegistry.java:148,
+ * Loader :553-579; the old doc's "17101 Multiblock Machines" claim misread the column),
+ * NOT the 17101 tab of the Large Boiler barometers (:1248-1252). No GUI by census (:103
+ * NO_GUI_FUNNEL_TO_TANK — the upstream tooltip IS the contract, the funnel face is
+ * ported).
  *
  * <p>The block carrier is the SteamEngineBlock shape: FACING horizontal (the FRONT = the
  * barometer face, :246-247 getDefaultSide SIDE_FRONT over SIDES_HORIZONTAL), the row rides
@@ -411,14 +414,15 @@ public final class GT6Boilers {
 	}
 
 	/**
-	 * The tab walk (task tabfix-a-multiblock — the whole {@link #ITEMS_BY_PATH} family
-	 * joins the multiblocks tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
-	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what delivers
-	 * this handler). JEI derives its item list from the tab display items.
+	 * The tab walk: the whole {@link #ITEMS_BY_PATH} family joins MACHINES_TAB (task
+	 * small-crucible-boiler-tab-rehome — upstream own tab 1204 "Steam Boilers" :553-579, a
+	 * single-block family, not the multiblocks tab; the GT6BurningBoxes.onBuildTabContents
+	 * form, the class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is
+	 * what delivers this handler). JEI derives its item list from the tab display items.
 	 */
 	@SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
-		if (aEvent.getTabKey().location().equals(GTMultiBlocks.MULTIBLOCKS_TAB.getId())) {
+		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
 			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
 				aEvent.accept(new ItemStack(tItem.get()));
 			}
