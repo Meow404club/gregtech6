@@ -60,6 +60,7 @@ class GT6RecyclingProcessingTest {
 			Bootstrap.bootStrap(); // the Forge-patched boot throws offline at NetworkHooks — the registries are ready by then
 		} catch (Throwable ignored) {}
 		GTMaterialItems.initMaterials(); // MT.init + OP.init, the offline material universe
+		GT6RecipeMaps.reset(); // reset-FIRST (the hermetic rule ②): the init below must never ride boot residue
 		GT6RecipeMaps.init(); // defensive + idempotent (the GT6RecipesOreChain.java:165 form); the phase is OPEN offline
 		GT6RecyclingProcessing.resetForTest();
 		sProductionMolten = GT6RecyclingProcessing.sMoltenFluid;

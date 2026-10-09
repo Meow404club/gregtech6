@@ -353,7 +353,10 @@ class GT6ConcreteRegistryTest {
     void pickaxeTagCarriesThe64Ids() throws Exception {
         var tTag = json(generated().resolve("data/minecraft/tags/blocks/mineable/pickaxe.json"));
         Set<String> tValues = new HashSet<>();
-        tTag.getAsJsonArray("values").forEach(aNode -> tValues.add(aNode.getAsString()));
+        // the band carries both entry shapes since the harvest-bands gating cards: plain ids and
+        // {id, required:false} optional rows — unwrap the object form to its id before the pin walk
+        tTag.getAsJsonArray("values").forEach(aNode -> tValues.add(
+                aNode.isJsonObject() ? aNode.getAsJsonObject().get("id").getAsString() : aNode.getAsString()));
         for (int i = 0; i < 16; i++) {
             for (String tFamily : List.of("concrete", "concrete_reinforced")) {
                 assertTrue(tValues.contains("gt6:" + GT6ConcreteBlocks.path(tFamily, i)), "full block in the band: " + tFamily + i);
