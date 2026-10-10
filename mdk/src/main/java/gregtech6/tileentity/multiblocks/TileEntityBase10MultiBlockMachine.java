@@ -13,7 +13,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,9 +28,15 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.sync.PanelSyncManager;
+
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.gui.machines.GTBasicMachineMenu;
-import gregtech6.gui.machines.GTBasicMachinesMenus;
+import gregtech6.gui.machines.GTBasicMachineMUI;
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
@@ -104,15 +109,19 @@ import gregtech6.tileentity.GTItemStackHandler;
  * mOutputItems/mOutputFluids and the output-tank bank (default one tank, re-pointable —
  * constructor capacity = Long.MAX_VALUE, upstream FluidTankGT.java:49).
  *
- * <p>GUI face (task cokeoven-gui-menu ②): the class implements MenuProvider +
- * {@link GTBasicMachineMenu.Host} — the Host methods read the raw slot/field face directly
- * (the upstream ContainerCommonBasicMachine reads the TE inventory the same way; the
- * output no-put rule is the menu's OutputSlot), so the Coke Oven reuses the
- * single-block machine menu and screen without a class of its own. The menu opens
- * through {@link #getMenuType()}, defaulting to the cokeoven MenuType (the only existing
- * subclass — future multiblock machines override it with their own registration).
+ * <p>GUI face (task cokeoven-gui-menu ②, migrated by task basic-machines-mui-migration —
+ * the user ruling "本来不就应该全部走 MUI 拼接 UI 吗？干嘛搞特殊，我要全部统一"): the class
+ * implements MenuProvider + {@link GT6MuiMachine} + {@link GTBasicMachineMenu.Host} — the
+ * Host methods read the raw slot/field face directly (the upstream
+ * ContainerCommonBasicMachine reads the TE inventory the same way; the output no-put rule
+ * is the panel's canPut(F) seat), so {@link #buildUI} is one
+ * {@link GTBasicMachineMUI#buildPanel} delegation (the oven-card implementor form). The
+ * open rides {@link GT6MuiMachine#tryOpen} (the BlockEntityUIFactory network + its native
+ * 64-sq range gate); the gt6:cokeoven MenuType and its screen retired with the whole
+ * vanilla leg. createMenu stays as the declared MenuProvider face returning null (the ACT
+ * C2 form).
  */
-public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10MultiBlockBase implements MenuProvider, GTBasicMachineMenu.Host {
+public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10MultiBlockBase implements MenuProvider, GT6MuiMachine, GTBasicMachineMenu.Host {
 
 	// checkRecipe result codes (upstream :672-675 verbatim).
 	public static final int DID_NOT_FIND_RECIPE = 0;
@@ -917,18 +926,30 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		return mCurrentRecipe;
 	}
 
+	/**
+	 * Server+CLIENT panel build (the IUIHolder contract) — the {@link GTBasicMachineMUI}
+	 * delegation over this Host DIRECTLY (the oven-card implementor form, not a hostOf
+	 * adapter): the family slot topology reads the layout case table over
+	 * {@link #getInventory()}/{@code getInputSlotCount()}/{@link #getOutputSlotCount()},
+	 * the fluid display banks ride the interface default-empty arrays (the COKE_OVEN map's
+	 * fluid face is capability-side, zero display seats — the p8 landing), the progress
+	 * arrow pair + hover tooltip + viewer jump and the map-key title come with the panel.
+	 */
 	@Override
-	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
-		return new GTBasicMachineMenu(getMenuType(), aContainerId, aPlayerInventory, this);
+	public ModularPanel<?> buildUI(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
+		return GTBasicMachineMUI.buildPanel(this, aSyncManager);
 	}
 
 	/**
-	 * The MenuType this machine's GUI opens with — the only existing subclass is the Coke
-	 * Oven (Loader_MultiTileEntities.java:1193), so the default is the cokeoven registration;
-	 * future multiblock machines override this with their own MenuType.
+	 * The declared MenuProvider face (the ACT C2 form) — the ModularUI open chain never
+	 * calls it; the three-state progress reports read
+	 * {@link GTBasicMachineMenu#progressValue(GTBasicMachineMenu.Host)} over this Host
+	 * instead.
 	 */
-	protected MenuType<? extends GTBasicMachineMenu> getMenuType() {
-		return GTBasicMachinesMenus.cokeoven();
+	@Override
+	@Nullable
+	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
+		return null;
 	}
 
 	/** The controller block's translatable name (TileEntityBasicMachine :686 same shape). */
