@@ -14184,3 +14184,67 @@ gregapi `overlays/characters` BI.CHAR_* art, BI.java:42-51/:99, byte-identical).
 - `block/characters/8.png` — `5db408026f1509318f2e75a0681bfa6200adf22ae18964c329e8bd5937f63b29` (upstream gregapi `overlays/characters/8.png`)
 - `block/characters/9.png` — `342aa373eb6097648057cdbdac4659c916a97a72a547ba05542b56bf2508ee6f` (upstream gregapi `overlays/characters/9.png`)
 - `block/characters/percent.png` — `15a1c879d79191f64825b3f02008c566a430dd0e24d6e8fa084b03d72dcd42c0` (upstream gregapi `overlays/characters/percent.png`)
+
+Distillation Tower + Cryo Distillation Tower controller faces, task
+distill-tower-face-3d: the 48 PNGs under `gt6/textures/block/distillationtower_{colored,overlay}_{face}.png`,
+`gt6/textures/block/distillationtower_overlay_{face}_{active,running}.png` and the
+cryo twin `gt6/textures/block/cryodistillationtower_...` (face ∈
+bottom/top/front/back/left/right) come from upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/basicmachines/distillationtower/{colored,overlay,overlay_active,overlay_running}/<face>.png`
+and `.../basicmachines/cryodistillationtower/{colored,overlay,overlay_active,overlay_running}/<face>.png`
+(the NBT_TEXTURE "distillationtower" / "cryodistillationtower" name form of
+Loader_MultiTileEntities.java:1226-1227; the task card's "single overlay group"
+premise was disprobed — MultiTileEntityBasicMachine.java:176-204 derives FOUR
+six-face groups, the mTexturesInactive/Active/Running trio being the three
+`overlay`/`overlay_active`/`overlay_running` dirs; the three states differ ONLY
+in the front art, the other five faces are byte-identical across all three, and
+both towers' art is byte-identical throughout), byte-identical to upstream,
+sha256 verified per file:
+- `distillationtower_colored_bottom.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `distillationtower_overlay_bottom.png` — `e8e039f30126aba855cf9ff7fab12d940c35f1a210c08e18b7884705dd92450c`
+- `distillationtower_overlay_bottom_active.png` — `e8e039f30126aba855cf9ff7fab12d940c35f1a210c08e18b7884705dd92450c`
+- `distillationtower_overlay_bottom_running.png` — `e8e039f30126aba855cf9ff7fab12d940c35f1a210c08e18b7884705dd92450c`
+- `distillationtower_colored_top.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `distillationtower_overlay_top.png` — `ab65e83b4133ba41994a0af9dd1718b1ab677e7f674d4d76fa6f105c60ddd1a1`
+- `distillationtower_overlay_top_active.png` — `ab65e83b4133ba41994a0af9dd1718b1ab677e7f674d4d76fa6f105c60ddd1a1`
+- `distillationtower_overlay_top_running.png` — `ab65e83b4133ba41994a0af9dd1718b1ab677e7f674d4d76fa6f105c60ddd1a1`
+- `distillationtower_colored_front.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `distillationtower_overlay_front.png` — `28ca413ca5f2d6684ecdbd361a78ed39d9c203fb642833f08061e3c9f0acab18`
+- `distillationtower_overlay_front_active.png` — `29b4e009461fb5640035bb12fd97d07143dad723c8f0731facdcae4962096f44`
+- `distillationtower_overlay_front_running.png` — `f0570c614c363d6f64073e0b75ceca17deec3775d55081be46ffbf1e4b2e7ea1`
+- `distillationtower_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `distillationtower_overlay_back.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_overlay_back_active.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_overlay_back_running.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_colored_left.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `distillationtower_overlay_left.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_overlay_left_active.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_overlay_left_running.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_colored_right.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `distillationtower_overlay_right.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_overlay_right_active.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `distillationtower_overlay_right_running.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_colored_bottom.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `cryodistillationtower_overlay_bottom.png` — `e8e039f30126aba855cf9ff7fab12d940c35f1a210c08e18b7884705dd92450c`
+- `cryodistillationtower_overlay_bottom_active.png` — `e8e039f30126aba855cf9ff7fab12d940c35f1a210c08e18b7884705dd92450c`
+- `cryodistillationtower_overlay_bottom_running.png` — `e8e039f30126aba855cf9ff7fab12d940c35f1a210c08e18b7884705dd92450c`
+- `cryodistillationtower_colored_top.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `cryodistillationtower_overlay_top.png` — `ab65e83b4133ba41994a0af9dd1718b1ab677e7f674d4d76fa6f105c60ddd1a1`
+- `cryodistillationtower_overlay_top_active.png` — `ab65e83b4133ba41994a0af9dd1718b1ab677e7f674d4d76fa6f105c60ddd1a1`
+- `cryodistillationtower_overlay_top_running.png` — `ab65e83b4133ba41994a0af9dd1718b1ab677e7f674d4d76fa6f105c60ddd1a1`
+- `cryodistillationtower_colored_front.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `cryodistillationtower_overlay_front.png` — `28ca413ca5f2d6684ecdbd361a78ed39d9c203fb642833f08061e3c9f0acab18`
+- `cryodistillationtower_overlay_front_active.png` — `29b4e009461fb5640035bb12fd97d07143dad723c8f0731facdcae4962096f44`
+- `cryodistillationtower_overlay_front_running.png` — `f0570c614c363d6f64073e0b75ceca17deec3775d55081be46ffbf1e4b2e7ea1`
+- `cryodistillationtower_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `cryodistillationtower_overlay_back.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_overlay_back_active.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_overlay_back_running.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_colored_left.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `cryodistillationtower_overlay_left.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_overlay_left_active.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_overlay_left_running.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_colored_right.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
+- `cryodistillationtower_overlay_right.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_overlay_right_active.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+- `cryodistillationtower_overlay_right_running.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`

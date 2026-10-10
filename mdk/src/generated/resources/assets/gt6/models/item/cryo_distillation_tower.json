@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "gt6:block/parts/distillationtowerparts/0/colored/side"
-  }
+  "parent": "gt6:block/cryo_distillation_tower_active"
 }

@@ -256,6 +256,12 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		for (var tHandle : gregtech6.registry.GT6Crucibles.CRUCIBLE_BLOCKS_BY_PATH.values()) wrapStates(tHandle.get(), aEvent);
 		wrapStates(gregtech6.registry.GT6Logistics.LOGISTICS_CORE.get(), aEvent);
 		wrapStates(gregtech6.registry.GT6HeatExchangers.HEAT_EXCHANGER_BLOCK.get(), aEvent);
+		// task distill-tower-face-3d — the twin distillation tower controllers join the
+		// same baked-tint seat: both rows carry NBT_MATERIAL MT.StainlessSteel (Loader
+		// :1226-1227), the familyMachineModel body cube is the tintindex-0 seat, the
+		// three-state overlay decals untinted; the colour resolves through the
+		// GTMultiBlockControllerBlock carrier (the GTDistillationTowerBlock ctor)
+		for (Block tBlock : gregtech6.registry.GT6Distillation.paintableBlockArray()) wrapStates(tBlock, aEvent);
 		// issue #15 (task beehive-tint) — the bee family joins the baked-tint domain:
 		// the hive's 15 worldgen family colours ride the BE PAINT model data (the worldgen
 		// paints at placement) and the Bumbliary pair's row material rides the
@@ -516,6 +522,11 @@ public final class GTMachineTintModel extends GTDynamicBakedModel {
 		// the five mains BlockItems moved to the census array loop above
 		// (task r11-mains-tint-wrap)
 		for (Block tBlock : gregtech6.registry.GT6LargeMachines.blockArray()) tPaintItems.add(tBlock.asItem());
+		// task distill-tower-face-3d — the twin distillation tower BlockItems join the
+		// same lambda (the StainlessSteel column through the block carrier, the
+		// creative-tab face; an unregistered BlockItem would render the tab face untinted,
+		// the #18 converter-band note)
+		for (Block tBlock : gregtech6.registry.GT6Distillation.paintableBlockArray()) tPaintItems.add(tBlock.asItem());
 		aEvent.getItemColors().register(GTItemPaintTint.itemColor(), tPaintItems.toArray(Item[]::new));
 	}
 
