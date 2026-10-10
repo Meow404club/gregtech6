@@ -261,26 +261,39 @@ public class GT6MaterialTreeEmiRecipe implements EmiRecipe {
 				() -> true,
 				(aMx, aMy, aBtn) -> GT6MaterialTreeNav.handle(tView, GT6MaterialTreeNav.Action.RESET, tCx, tCy));
 		aWidgets.add(new GT6MaterialTreeSliderWidget(tView, SLIDER_X, tSliderY, SLIDER_W, SLIDER_H, tCx, tCy));
-		// the key canvas LAST: it covers the page for the keyboard face but paints nil, and its
-		// mouse faces gate to the tree canvas (the pointer seam above) — clicks on slots pass
-		// through, so the slots' U/R faces are untouched
+		// the S4 escape hatch (task nav-s4-tree-screen): the canvas's top-right corner cell
+		// opens the standalone full-screen tree (GT6MaterialTreeScreen), the r11 大树走独立屏
+		// ruling's face. The blank native cell (u=72 v=0, the strip convention) carries a "T"
+		// glyph drawable above it; the click replaces the EMI page with the screen (setScreen
+		// has no barrier from a widget click). The corner is the page's own top-right (the
+		// static SCREEN_BUTTON_X is the JEI frame's).
+		//
+		// ADD ORDER IS LOAD-BEARING HERE (the mattree-open-fix root cause): EMI 1.1.24
+		// dispatches widget clicks FORWARD in add order — the first containing non-SlotWidget
+		// whose mouseClicked returns true consumes the press (RecipeScreen.mouseClicked, javap
+		// emi-forge-1.1.24+1.20.1: the group widget loop, the SlotWidget branch only records
+		// pressedSlot) — so every native click face MUST precede the nav canvas below.
+		// Tail-appended after it (the nav-s4 form, written while the canvas still had no press
+		// face), the cell went dead when task mattree-emi-panzoom gave the canvas its
+		// empty-canvas pan gesture: the gesture swallowed the corner press and the standalone
+		// fullscreen entry died — the reported 开屏 regression.
+		int tScreenX = tCanvasW - 16;
+		aWidgets.addButton(tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12, 72, 0,
+				() -> true, (aMx, aMy, aBtn) -> GT6MaterialTreeScreen.open(mDisplay));
+		aWidgets.addDrawable(tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12,
+				(aGuiGraphics, aMx, aMy, aDelta) -> aGuiGraphics.drawString(Minecraft.getInstance().font, "T", 3, 2, 0xFFE0E0E0, false));
+		// the key canvas LAST among the click faces: it covers the page for the keyboard face
+		// but paints nil, and its mouse faces gate to the tree canvas (the pointer seam above)
+		// — a press reaches it only when no EARLIER-ADDED native face (the slots' replay, the
+		// strip buttons, the corner cell above) claims the pointer; that forward-dispatch
+		// contract is what keeps the slots' U/R faces AND the fullscreen entry alive beside
+		// the pan gesture
 		aWidgets.add(new GT6MaterialTreeNavWidget(tView, 0, 0, tCanvasW, tCanvasH + CONTROL_STRIP_H, tCx, tCy, tSlots));
 		// hover hints — invisible tooltip widgets, they never consume clicks
 		aWidgets.addTooltipText(List.of(Component.literal("Zoom in (+)")), BUTTON_X0, tButtonY, 12, 12);
 		aWidgets.addTooltipText(List.of(Component.literal("Zoom out (-)")), BUTTON_X0 + BUTTON_PITCH, tButtonY, 12, 12);
 		aWidgets.addTooltipText(List.of(Component.literal("Reset view (R/0)")), BUTTON_X0 + 2 * BUTTON_PITCH, tButtonY, 12, 12);
 		aWidgets.addTooltipText(List.of(Component.literal("Click to set zoom")), SLIDER_X, tSliderY, SLIDER_W, SLIDER_H);
-		// the S4 escape hatch (task nav-s4-tree-screen) — tail-appended after the M2 nav face:
-		// the canvas's top-right corner cell opens the standalone full-screen tree
-		// (GT6MaterialTreeScreen), the r11 大树走独立屏 ruling's face. The blank native cell
-		// (u=72 v=0, the strip convention) carries a "T" glyph drawable above it; the click
-		// replaces the EMI page with the screen (setScreen has no barrier from a widget click).
-		// The corner is the page's own top-right (the static SCREEN_BUTTON_X is the JEI frame's).
-		int tScreenX = tCanvasW - 16;
-		aWidgets.addButton(tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12, 72, 0,
-				() -> true, (aMx, aMy, aBtn) -> GT6MaterialTreeScreen.open(mDisplay));
-		aWidgets.addDrawable(tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12,
-				(aGuiGraphics, aMx, aMy, aDelta) -> aGuiGraphics.drawString(Minecraft.getInstance().font, "T", 3, 2, 0xFFE0E0E0, false));
 		aWidgets.addTooltipText(List.of(Component.literal("Open full tree view")),
 				tScreenX, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12);
 	}

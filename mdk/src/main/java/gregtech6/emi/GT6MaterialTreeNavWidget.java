@@ -57,12 +57,16 @@ import net.minecraft.client.gui.GuiGraphics;
  *     affordances stay live. Drag pans by the forwarded delta ({@code Viewport.pan} is
  *     screen-space — EMI 1.1.24 pages are unscaled, so delta IS the pane delta); release
  *     is consumed only while the gesture is live, so the slots' pressed-slot release
- *     (the U/R jump) is never suppressed by us.
+ *     (the U/R jump) is never suppressed by us.</li>
  * </ul>
  *
  * <p>Mouse clicks outside those two faces pass through (the default false): the canvas
  * never steals the slots' presses — {@link GT6RecipeMapEmiRecipe.GearJumpWidget} is the
- * same shape.
+ * same shape. 「Empty」is enforced by the add order, not by a yield list here: EMI 1.1.24
+ * dispatches presses forward in add order (first containing non-SlotWidget wins), so the
+ * strip buttons and the S4 corner entry cell are simply added BEFORE this canvas
+ * (GT6MaterialTreeEmiRecipe#addWidgets — the mattree-open-fix regression: tail-appended,
+ * they died under the pan gesture).
  */
 public class GT6MaterialTreeNavWidget extends Widget implements EmiInteractionSink {
 
