@@ -13886,3 +13886,26 @@ sha256 verified per file:
 - `cryodistillationtower_overlay_right.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
 - `cryodistillationtower_overlay_right_active.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
 - `cryodistillationtower_overlay_right_running.png` — `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4`
+
+Part-family wall DESIGN ladder bodies, tasks part-family-datagen (0ea8db003b
+borrow) + crucible-formed-vanish-probe (the alpha flatten). The
+`gt6/textures/block/parts/{metalwall,metalwalldense}/<design>/{colored,overlay}/`
+ladders borrow upstream
+`src/main/resources/assets/gregtech/textures/blocks/machines/multiblockparts/`
+byte-identical — EXCEPT the six design-4 BODY textures, flattened on
+2026-10-10 (task crucible-formed-vanish-probe, round-5 root cause): upstream
+`metalwall/4/colored/{bottom,top,side}.png` and `metalwalldense/4/colored/*`
+are RGB(255,255,255) x alpha=0 blanks (upstream md5 91d6a3713d55b78b15ba82f70a841b82
+per file) — the 1.7.10 terrain pipeline ignores the alpha plane (the formed
+crucible's upstream skin: design 4 = the flat material-tinted plate, upstream
+MultiTileEntityCrucible :124-128 repaint), while the 1.20.1 CUTOUT render type
+discards every alpha=0 fragment, so a design-4 wall baked to ZERO visible
+pixels — the formed-crucible shell vanish. The fix keeps the upstream RGB and
+sets the alpha plane opaque (all six files now the one canonical
+16x16 RGBA(255,255,255,255) PNG, sha256
+`84fa319f11ad9113f7bc2b1c76a14b62763893bead1b877bb1adf5c16c44e592`); the
+material tint (GTMachineTintModel) then reproduces the upstream flat-plate
+formed look. The design-4 OVERLAY trios stay the upstream blanks — transparent
+decals are the port's normal (D2 leg6). Pinned by
+`GT6PartBodyAlphaCensusTest` (every body texture must carry an opaque pixel;
+the blank-overlay positive control keeps the detector honest).
