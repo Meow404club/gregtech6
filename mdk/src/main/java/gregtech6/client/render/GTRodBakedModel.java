@@ -79,15 +79,20 @@ import gregtech6.block.energy.GTAxleBlock;
  * (GTClientHandlers, the explicit-registration face — a BlockColor does not colour its
  * BlockItem).
  *
- * <p>Texture semantics (TextureSet.java:145-181 two-pass form): the grayscale
- * {@code materialicons/<set>/pipe_side} art carries the material colour through tint
- * index 0; the untinted {@code pipe_side_overlay} black outline (and the restrictive
- * rows' second {@code pipe_restrictor} decal band, the upstream third render pass
- * MultiTileEntityPipeItem.java:280) rides as inflated twins (tint -1) one epsilon step
- * above every base quad — the JSON {@code tintedPipeModel} band form carried into the
- * baked model. Quads split by chunk layer exactly like the wire model (everything
- * opaque-or-cutout; the JSON fallback already declares cutout for the pipe rows, so the
- * forwarded getRenderTypes keeps the whole set on the layer the blockstate picked).
+ * <p>Texture semantics (task pipe-arm-atlas-facemap — the upstream per-face table,
+ * TileEntityBase10ConnectorRendered getTexture2 :136-140): the grayscale
+ * {@code materialicons/<set>/pipe_side} art (tint index 0) rides the core faces of a
+ * CONNECTED pipe and the four side faces of every arm (upstream :139
+ * {@code getTextureSide}, the :264 {@code pipeSide} selector); the per-diameter
+ * connected art (pipe_tiny..huge, :265) rides the arm end caps (:139) and — for the
+ * ISOLATED pipe ({@code mConnections == 0}, :138) — ALL six core faces. The untinted
+ * {@code pipe_side_overlay} black outline (and the restrictive rows' second
+ * {@code pipe_restrictor} decal band, the upstream third render pass
+ * MultiTileEntityPipeItem.java:280) rides as offset twins (tint -1) one epsilon step
+ * out along each face normal. Quads split by chunk layer exactly like the wire model
+ * (everything opaque-or-cutout; the JSON fallback already declares cutout for the pipe
+ * rows, so the forwarded getRenderTypes keeps the whole set on the layer the blockstate
+ * picked).
  *
  * <p>Item form (state == null) renders the upstream {@code worldObj == null} default
  * mask {@code SBIT_S|SBIT_N = 12} (ConnectorStraight :37 — a straight N-S segment, the
@@ -332,27 +337,31 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 	 * connected. Pass 0 = the core diameter box (TileEntityBase10ConnectorRendered
 	 * :113-116); passes 1-6 = one arm per connected side (each arm spans from the core
 	 * plane flush to the block boundary with the same cross-section — the port arm length
-	 * 0, the wire model's armBox form); every base quad then gets one inflated untinted
-	 * twin per overlay band (the two-pass texture stack, TextureSet.java:145-181). Task
-	 * pipe-render-closeout — the arm quads carry {@link SpriteKind#ARM} (the per-diameter
-	 * connected art, :265), the core {@link SpriteKind#BASE} (:264).
+	 * 0, the wire model's armBox form); every base quad then gets one untinted twin per
+	 * overlay band (the two-pass texture stack, TextureSet.java:145-181), offset one step
+	 * out along the face normal — NOT inflated (the JSON tintedPipeModel band form's
+	 * inflation is a display-model necessity the baked quads don't share; see
+	 * {@link #normalOffset}). The texture kinds follow the upstream per-face table
+	 * (getTexture2 :136-140): the core rides the side art ({@link SpriteKind#BASE},
+	 * :264) — except the ISOLATED pipe ({@code mConnections == 0}), which renders the
+	 * connected art on all six core faces (:138, {@link SpriteKind#ARM}); an arm's end
+	 * face the connected art ({@link SpriteKind#ARM}, :265) and its four side faces the
+	 * side art (upstream :139 {@code getTextureSide}).
 	 */
 	public static List<Shape> planShapes(int aDiameterPx, int aMask, int aBands) {
 		long tKey = ((long) (aBands & 0x1F) << 11) | ((long) (aDiameterPx & 0x1F) << 6) | (aMask & 0x3FL);
 		return SHAPE_CACHE.computeIfAbsent(tKey, tK -> {
 			List<Shape> tBase = planBaseShapes(aDiameterPx, aMask);
 			if (aBands <= 0) return tBase;
-			// the untinted overlay twins — band j inflates by (j+1) * OVERLAY_EPSILON (the
-			// JSON tintedPipeModel's stepped offsets carried into the baked form); built
-			// into a fresh list (iterating tBase while appending would CME)
+			// the untinted overlay twins — band j sits (j+1) * OVERLAY_EPSILON out along the
+			// normal (the stepped decal stack); built into a fresh list (iterating tBase
+			// while appending would CME)
 			List<Shape> rShapes = new ArrayList<>(tBase.size() * (aBands + 1));
 			rShapes.addAll(tBase);
 			for (int tBand = 0; tBand < aBands; tBand++) {
 				double tE = OVERLAY_EPSILON * (tBand + 1);
 				for (Shape tShape : tBase) {
-					double[] tBox = tShape.box();
-					rShapes.add(new Shape(tShape.face(),
-							new double[] {tBox[0] - tE, tBox[1] - tE, tBox[2] - tE, tBox[3] + tE, tBox[4] + tE, tBox[5] + tE},
+					rShapes.add(new Shape(tShape.face(), normalOffset(tShape.face(), tShape.box(), tE),
 							-1, SpriteKind.OVERLAY, tBand, tShape.cull()));
 				}
 			}
@@ -360,14 +369,39 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 		});
 	}
 
-	/** The bare core + arms plan (no overlay twins). */
+	/**
+	 * The twin box = the base box with ONLY its own face plane pushed one step out along
+	 * the normal. Task pipe-arm-atlas-facemap — the former six-way growth made the twins
+	 * of flush core/arm faces coplanar with an epsilon-strip OVERLAP at every core/arm
+	 * seam (the flickering black outline line on N-S runs, the user report). Upstream
+	 * renders the overlay pass on the SAME quad (no inflation), so the translated copy is
+	 * both the faithful and the z-fight-free form: the twins' footprints equal their base
+	 * quads', and the plan's same-facing base quads never overlap by construction (the
+	 * planner test pins the pairwise projected-area intersection empty over all 64 masks).
+	 */
+	private static double[] normalOffset(Direction aFace, double[] aBox, double aE) {
+		double[] rBox = aBox.clone(); // the FlowQuad discipline — never mutate the plan
+		switch (aFace) {
+			case DOWN -> rBox[1] -= aE;
+			case UP -> rBox[4] += aE;
+			case NORTH -> rBox[2] -= aE;
+			case SOUTH -> rBox[5] += aE;
+			case WEST -> rBox[0] -= aE;
+			case EAST -> rBox[3] += aE;
+		}
+		return rBox;
+	}
+
+	/** The bare core + arms plan (no overlay twins) — the :136-140 per-face texture table. */
 	private static List<Shape> planBaseShapes(int aDiameterPx, int aMask) {
 		float tDiameter = Math.max(MIN_DIAMETER_PX / 16.0F, Math.min(1.0F, aDiameterPx / 16.0F)); // readFromNBT2 :64 clamp
 		float tHalf = (1.0F - tDiameter) / 2.0F;
 		List<Shape> rShapes = new ArrayList<>(64);
 
-		// pass 0 — the core (:113-116)
-		addBox(rShapes, new double[] {tHalf, tHalf, tHalf, 1 - tHalf, 1 - tHalf, 1 - tHalf});
+		// pass 0 — the core (:113-116); the ISOLATED pipe carries the connected art on all
+		// six faces (:138 mConnections == 0 — the arm art, not the side art)
+		addBox(rShapes, new double[] {tHalf, tHalf, tHalf, 1 - tHalf, 1 - tHalf, 1 - tHalf},
+				aMask == 0 ? SpriteKind.ARM : SpriteKind.BASE);
 
 		// passes 1-6 — the connection arms (:120-133 boxes, tLength = 0)
 		for (int tBit = 0; tBit < 6; tBit++) {
@@ -376,7 +410,10 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 			double[] tArm = armBox(tDir, tHalf);
 			for (Direction tFace : Direction.values()) {
 				if (tFace == tDir.getOpposite()) continue; // :139 — the buried face renders null
-				rShapes.add(new Shape(tFace, tArm, 0, SpriteKind.ARM, 0, tFace == tDir ? tDir : null));
+				// :139 — the end face (aSide == the pass direction) rides the connected art,
+				// the four side faces the side art (getTextureSide)
+				boolean tEnd = tFace == tDir;
+				rShapes.add(new Shape(tFace, tArm, 0, tEnd ? SpriteKind.ARM : SpriteKind.BASE, 0, tEnd ? tDir : null));
 			}
 		}
 		return rShapes;
@@ -391,7 +428,7 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 		return switch (aDir) {
 			case DOWN  -> new double[] {aHalf, 0, aHalf, 1 - aHalf, aHalf, 1 - aHalf}; // SIDE_Y_NEG :125
 			case UP    -> new double[] {aHalf, 1 - aHalf, aHalf, 1 - aHalf, 1, 1 - aHalf}; // SIDE_Y_POS :128
-			case NORTH -> new double[] {aHalf, aHalf, 0, 1 - aHalf, 1 - aHalf, 1 - aHalf}; // SIDE_Z_NEG :126
+			case NORTH -> new double[] {aHalf, aHalf, 0, 1 - aHalf, 1 - aHalf, aHalf}; // SIDE_Z_NEG :126
 			case SOUTH -> new double[] {aHalf, aHalf, 1 - aHalf, 1 - aHalf, 1 - aHalf, 1}; // SIDE_Z_POS :129
 			case WEST  -> new double[] {0, aHalf, aHalf, aHalf, 1 - aHalf, 1 - aHalf}; // SIDE_X_NEG :124
 			case EAST  -> new double[] {1 - aHalf, aHalf, aHalf, 1, 1 - aHalf, 1 - aHalf}; // SIDE_X_POS :127
@@ -399,8 +436,8 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 	}
 
 	/** Six faces of one box, UVs over the box bounds (the RenderHelper box mapping form). */
-	private static void addBox(List<Shape> aOut, double[] aBox) {
-		for (Direction tFace : Direction.values()) aOut.add(new Shape(tFace, aBox, 0, SpriteKind.BASE, 0, null));
+	private static void addBox(List<Shape> aOut, double[] aBox, SpriteKind aKind) {
+		for (Direction tFace : Direction.values()) aOut.add(new Shape(tFace, aBox, 0, aKind, 0, null));
 	}
 
 	// ---------------------------------------------------------------------------

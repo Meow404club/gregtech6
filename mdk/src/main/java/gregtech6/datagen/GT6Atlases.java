@@ -133,5 +133,21 @@ public final class GT6Atlases extends SpriteSourceProvider {
         // the exact sprite ids GTWireTextures.pipeSideSprite/pipeArmSprite emit.
         atlas(BLOCKS_ATLAS).addSource(new net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister(
                 "block/materialicons", "block/materialicons/"));
+        // task pipe-arm-atlas-facemap — the rod family's bake-only art ids land as explicit
+        // per-id singles (the pin test's consumer-side contract; the directory source above
+        // is the broad stitch, these pin the exact ids the baked models resolve): the full
+        // pipeArmSprite codomain (wood/rubber/copper x tiny..huge), the untinted pipeSide
+        // outline, and the dedicated iconsets/axle arts (restrictor, logistics pair, axle).
+        for (ResourceLocation tArmArt : gregtech6.client.wire.GTWireTextures.allPipeArmSprites()) {
+            atlas(BLOCKS_ATLAS).addSource(new SingleFile(tArmArt, Optional.empty()));
+        }
+        for (ResourceLocation tRodArt : new ResourceLocation[] {
+                gregtech6.client.wire.GTWireTextures.PIPE_SIDE_OVERLAY_SPRITE,
+                gregtech6.client.wire.GTWireTextures.PIPE_RESTRICTOR_SPRITE,
+                gregtech6.client.wire.GTWireTextures.LOGISTICS_WIRE_SPRITE,
+                gregtech6.client.wire.GTWireTextures.LOGISTICS_WIRE_OVERLAY_SPRITE,
+                gregtech6.client.wire.GTWireTextures.AXLE_SPRITE}) {
+            atlas(BLOCKS_ATLAS).addSource(new SingleFile(tRodArt, Optional.empty()));
+        }
     }
 }

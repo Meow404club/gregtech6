@@ -77,10 +77,31 @@ public final class GTWireTextures {
 	 * shared {@link #pipeArtSetOf} dispatch.
 	 */
 	public static net.minecraft.resources.ResourceLocation pipeArmSprite(@Nullable OreDictMaterial aMaterial, int aDiameterPx) {
+		return pipeArmSpriteOfSet(pipeArtSetOf(aMaterial), aDiameterPx);
+	}
+
+	/** The arm art of one art set directly (the codomain walk below). */
+	public static net.minecraft.resources.ResourceLocation pipeArmSpriteOfSet(String aArtSet, int aDiameterPx) {
 		String tSize = aDiameterPx < 5 ? "tiny" : aDiameterPx < 7 ? "small" : aDiameterPx < 9 ? "medium"
 				: aDiameterPx < 13 ? "large" : "huge";
-		String tPath = "block/materialicons/" + pipeArtSetOf(aMaterial) + "/pipe_" + tSize;
-		return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", tPath);
+		return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6",
+				"block/materialicons/" + aArtSet + "/pipe_" + tSize);
+	}
+
+	/**
+	 * The full pipeArmSprite codomain (task pipe-arm-atlas-facemap): wood/rubber/copper
+	 * × tiny..huge — every id the arm selector can ever resolve to. These arts ride NO
+	 * model JSON (baked-model lookups only), so the atlas manifest carries them as
+	 * explicit per-id singles ({@code GT6Atlases}, pinned by GTRodAtlasPinTest).
+	 */
+	public static java.util.List<net.minecraft.resources.ResourceLocation> allPipeArmSprites() {
+		java.util.List<net.minecraft.resources.ResourceLocation> rArms = new java.util.ArrayList<>(15);
+		for (String tSet : new String[] {"wood", "rubber", "copper"}) {
+			for (int tPx : new int[] {4, 6, 8, 12, 16}) {
+				rArms.add(pipeArmSpriteOfSet(tSet, tPx));
+			}
+		}
+		return rArms;
 	}
 
 	/**
@@ -93,6 +114,24 @@ public final class GTWireTextures {
 	 */
 	public static final net.minecraft.resources.ResourceLocation PIPE_SIDE_OVERLAY_SPRITE =
 			net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/materialicons/copper/pipe_side_overlay");
+
+	/**
+	 * The rod family's remaining dedicated bake-only art ids (task pipe-arm-atlas-facemap
+	 * — the atlas manifest seam; the same class of no-model-JSON lookup as
+	 * {@link #PIPE_SIDE_OVERLAY_SPRITE}): the restrictive item rows' third-pass decal
+	 * plate (MultiTileEntityPipeItem.java:280-281), the logistics wire pair
+	 * (MultiTileEntityWireLogistics.java:48-49) and the axle barrel art (GT6Kinetics).
+	 * Consumed by GTRodClientListener's param table; the atlas manifest carries them as
+	 * explicit per-id singles ({@code GT6Atlases}, pinned by GTRodAtlasPinTest).
+	 */
+	public static final net.minecraft.resources.ResourceLocation PIPE_RESTRICTOR_SPRITE =
+			net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/pipe_restrictor");
+	public static final net.minecraft.resources.ResourceLocation LOGISTICS_WIRE_SPRITE =
+			net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/logistics_wire");
+	public static final net.minecraft.resources.ResourceLocation LOGISTICS_WIRE_OVERLAY_SPRITE =
+			net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/iconsets/logistics_wire_overlay");
+	public static final net.minecraft.resources.ResourceLocation AXLE_SPRITE =
+			net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("gt6", "block/axle");
 
 	/**
 	 * The laser family's fixed texture pair (task wire-fiber-texture) — the borrowed
