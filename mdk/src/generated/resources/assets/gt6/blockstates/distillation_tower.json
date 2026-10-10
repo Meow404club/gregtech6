@@ -1,28 +1,124 @@
 {
   "variants": {
-    "facing=east,formed=false": {
+    "active=false,facing=east,formed=false,running=false": {
+      "model": "gt6:block/distillation_tower",
+      "y": 90
+    },
+    "active=false,facing=east,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_running",
+      "y": 90
+    },
+    "active=false,facing=east,formed=true,running=false": {
+      "model": "gt6:block/distillation_tower",
+      "y": 90
+    },
+    "active=false,facing=east,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_running",
+      "y": 90
+    },
+    "active=false,facing=north,formed=false,running=false": {
       "model": "gt6:block/distillation_tower"
     },
-    "facing=east,formed=true": {
+    "active=false,facing=north,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_running"
+    },
+    "active=false,facing=north,formed=true,running=false": {
       "model": "gt6:block/distillation_tower"
     },
-    "facing=north,formed=false": {
-      "model": "gt6:block/distillation_tower"
+    "active=false,facing=north,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_running"
     },
-    "facing=north,formed=true": {
-      "model": "gt6:block/distillation_tower"
+    "active=false,facing=south,formed=false,running=false": {
+      "model": "gt6:block/distillation_tower",
+      "y": 180
     },
-    "facing=south,formed=false": {
-      "model": "gt6:block/distillation_tower"
+    "active=false,facing=south,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_running",
+      "y": 180
     },
-    "facing=south,formed=true": {
-      "model": "gt6:block/distillation_tower"
+    "active=false,facing=south,formed=true,running=false": {
+      "model": "gt6:block/distillation_tower",
+      "y": 180
     },
-    "facing=west,formed=false": {
-      "model": "gt6:block/distillation_tower"
+    "active=false,facing=south,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_running",
+      "y": 180
     },
-    "facing=west,formed=true": {
-      "model": "gt6:block/distillation_tower"
+    "active=false,facing=west,formed=false,running=false": {
+      "model": "gt6:block/distillation_tower",
+      "y": 270
+    },
+    "active=false,facing=west,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_running",
+      "y": 270
+    },
+    "active=false,facing=west,formed=true,running=false": {
+      "model": "gt6:block/distillation_tower",
+      "y": 270
+    },
+    "active=false,facing=west,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_running",
+      "y": 270
+    },
+    "active=true,facing=east,formed=false,running=false": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 90
+    },
+    "active=true,facing=east,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 90
+    },
+    "active=true,facing=east,formed=true,running=false": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 90
+    },
+    "active=true,facing=east,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 90
+    },
+    "active=true,facing=north,formed=false,running=false": {
+      "model": "gt6:block/distillation_tower_active"
+    },
+    "active=true,facing=north,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_active"
+    },
+    "active=true,facing=north,formed=true,running=false": {
+      "model": "gt6:block/distillation_tower_active"
+    },
+    "active=true,facing=north,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_active"
+    },
+    "active=true,facing=south,formed=false,running=false": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 180
+    },
+    "active=true,facing=south,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 180
+    },
+    "active=true,facing=south,formed=true,running=false": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 180
+    },
+    "active=true,facing=south,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 180
+    },
+    "active=true,facing=west,formed=false,running=false": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 270
+    },
+    "active=true,facing=west,formed=false,running=true": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 270
+    },
+    "active=true,facing=west,formed=true,running=false": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 270
+    },
+    "active=true,facing=west,formed=true,running=true": {
+      "model": "gt6:block/distillation_tower_active",
+      "y": 270
     }
   }
 }

@@ -993,18 +993,47 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * Task w3-distill-crucible ①② — the twin tower controllers (Loader:1226-1227,
-     * NBT_TEXTURE "distillationtower"/"cryodistillationtower"): placeholder cubes over the
-     * BORROWED distillation-tower-part texture (the card ① texture table carries no
-     * controller family — the machine-wall placeholder convention; the FACING×FORMED block
-     * state coverage rides forAllStates like the crucible controllers).
+     * Task distill-tower-face-3d — the twin tower controllers (Loader:1226-1227,
+     * NBT_TEXTURE "distillationtower"/"cryodistillationtower"). The w3-era placeholder —
+     * the cube_all over the BORROWED distillation-tower-part side sprite with its 2D
+     * {@code item/generated} icon and the FACING-blind forAllStates — is retired: the
+     * upstream art is real, and the task card's "single overlay group / 24 PNG" premise
+     * was disprobed — MultiTileEntityBasicMachine.java:176-204 derives FOUR six-face
+     * groups from the NBT_TEXTURE name (the colored body plus the
+     * mTexturesInactive/Active/Running trio over the {@code overlay}/{@code
+     * overlay_active}/{@code overlay_running} dirs), so each tower ships its own 24-PNG
+     * flat wave and rides the {@link #familyMachineModel} state trio (the addMachine
+     * grammar: the tintindex-0 grayscale body x the row NBT_MATERIAL MT.StainlessSteel
+     * through the GTDistillationTowerBlock ctor carrier, the six 0.01 untinted state
+     * decals, cutout). The getTexture2 :1014 pick —
+     * {@code mActive||worldObj==null ? Active : mRunning ? Running : Inactive} — maps
+     * onto the blockstate: the ACTIVE/RUNNING properties (the GTDistillationTowerBlock
+     * pair, the BE onTickChecked write) switch the trio under the addLargeBoiler
+     * rotationY band, every FORMED value shares the model (the formed-look visual stays
+     * the render pool, the coke-oven single-model form). The BlockItems parent the
+     * {@code _active} model — the upstream {@code worldObj==null} (item-form) Active arm
+     * of :1014, the 3D block form (the diesel-item-3d shape).
      */
     private void addDistillationTowers() {
         for (gregtech6.registry.GT6Distillation.TowerRow tRow : gregtech6.registry.GT6Distillation.ROWS) {
             Block tBlock = gregtech6.registry.GT6Distillation.TOWER_BLOCKS_BY_PATH.get(tRow.path()).get();
-            ModelFile tModel = models().cubeAll(tRow.path(), modLoc("block/parts/distillationtowerparts/0/colored/side"));
-            getVariantBuilder(tBlock).forAllStates(aState -> ConfiguredModel.builder().modelFile(tModel).build());
-            itemModels().withExistingParent(tRow.path(), mcLoc("item/generated")).texture("layer0", modLoc("block/parts/distillationtowerparts/0/colored/side"));
+            String tFamily = tRow.cryo() ? "cryodistillationtower" : "distillationtower";
+            ModelFile tInactive = familyMachineModel(tRow.path(), tFamily, "");
+            ModelFile tActive = familyMachineModel(tRow.path() + "_active", tFamily, "_active");
+            ModelFile tRunning = familyMachineModel(tRow.path() + "_running", tFamily, "_running");
+            getVariantBuilder(tBlock).forAllStates(aState -> {
+                int tY;
+                switch (aState.getValue(TileEntityBase10MultiBlockBase.FACING)) {
+                    case SOUTH -> tY = 180;
+                    case WEST -> tY = 270;
+                    case EAST -> tY = 90;
+                    default -> tY = 0; // NORTH
+                }
+                ModelFile tModel = aState.getValue(gregtech6.registry.GT6Distillation.GTDistillationTowerBlock.ACTIVE) ? tActive
+                        : aState.getValue(gregtech6.registry.GT6Distillation.GTDistillationTowerBlock.RUNNING) ? tRunning : tInactive;
+                return ConfiguredModel.builder().modelFile(tModel).rotationY(tY).build();
+            });
+            itemModels().withExistingParent(tRow.path(), modLoc("block/" + tRow.path() + "_active"));
         }
     }
 

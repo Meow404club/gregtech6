@@ -223,6 +223,15 @@ class GT6PaintableRenderTypeCensusTest {
         }
         rModels.add("von_da_graagg");
         rModels.add("bedrock_drill");
+        // the twin distillation tower controllers (task distill-tower-face-3d): the
+        // familyMachineModel state trios — the blockstate switch is LIVE on these two
+        // (the GTDistillationTowerBlock ACTIVE/RUNNING properties, the BE onTickChecked
+        // write), so the trio rides the tree wired, not declared defer
+        for (var tRow : gregtech6.registry.GT6Distillation.ROWS) {
+            rModels.add(tRow.path());
+            rModels.add(tRow.path() + "_active");
+            rModels.add(tRow.path() + "_running");
+        }
         return rModels;
     }
 

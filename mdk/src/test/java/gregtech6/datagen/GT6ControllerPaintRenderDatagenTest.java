@@ -20,7 +20,7 @@
  *
  * <p>The offline fixtures cannot resolve RegistryObjects, so the paintable-block-array
  * walkers are pinned through the row tables they walk (the array size is the row
- * total, 44).
+ * total, 46 — task distill-tower-face-3d added the twin tower controllers).
  */
 package gregtech6.datagen;
 
@@ -253,14 +253,15 @@ class GT6ControllerPaintRenderDatagenTest {
     // ------------------------------------------------------------------
 
     @Test
-    public void wiringCensusStays44Blocks() {
+    public void wiringCensusStays46Blocks() {
         int tMains = GT6Turbines.STEAM_ROWS.size() + GT6Turbines.GAS_ROWS.size() + GT6DynamoHousings.DYNAMO_ROWS.size();
         int tBridges = GTMachines.ELECTRIC_HEATER_ROWS.size() + GTMachines.ELECTRIC_ENGINE_ROWS.size()
                 + GTMachines.ELECTRIC_MOTOR_ROWS.size();
         int tLasers = GT6Lasers.CO2_LASER_ROWS.size() + GT6Lasers.LASER_ABSORBER_ROWS.size();
         int tMagic = GT6MagicAbsorbers.MAGIC_ABSORBER_BLOCKS_BY_PATH.size();
         int tQuantum = gregtech6.registry.GT6QuantumEnergizers.QUANTUM_ENERGIZER_ROWS.size();
-        assertEquals(44, tMains + tBridges + tLasers + tMagic + tQuantum + 1 /* the coke-oven bricks */,
-                "the controller-domain tint wiring census (12 mains + 15 bridges + 10 lasers + 1 absorber + 5 energizers + 1 bricks)");
+        int tTowers = gregtech6.registry.GT6Distillation.ROWS.size(); // task distill-tower-face-3d
+        assertEquals(46, tMains + tBridges + tLasers + tMagic + tQuantum + tTowers + 1 /* the coke-oven bricks */,
+                "the controller-domain tint wiring census (12 mains + 15 bridges + 10 lasers + 1 absorber + 5 energizers + 2 towers + 1 bricks)");
     }
 }

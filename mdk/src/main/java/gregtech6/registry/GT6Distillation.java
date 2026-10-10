@@ -18,6 +18,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
@@ -42,6 +44,7 @@ import org.slf4j.Logger;
 import gregapi.code.TagData;
 import gregapi.data.TD;
 import gregtech6.item.GT6MachineBlockItem;
+import gregtech6.block.GTBlockProperties;
 import gregtech6.block.multiblock.GTMultiBlockControllerBlock;
 import gregtech6.fluid.FluidTankGT;
 import gregtech6.gui.machines.GT6MuiMachine;
@@ -182,17 +185,50 @@ public final class GT6Distillation {
 		return TOWER_BLOCKS_BY_PATH.values().stream().map(RegistryObject::get).toArray(Block[]::new);
 	}
 
+	/**
+	 * The two tower controller blocks (task distill-tower-face-3d — the
+	 * GT6QuantumEnergizers :140 array shape): the {@code GTMachineTintModel}
+	 * onModifyBakingResult wrap walk (the tintindex-0 colored body seat, both rows
+	 * NBT_MATERIAL MT.StainlessSteel through the block ctor carrier) and the
+	 * onRegisterControllerPaintItemColors inventory half.
+	 */
+	public static Block[] paintableBlockArray() {
+		Block[] rBlocks = new Block[ROWS.size()];
+		for (int i = 0; i < rBlocks.length; i++) rBlocks[i] = TOWER_BLOCKS_BY_PATH.get(ROWS.get(i).path()).get();
+		return rBlocks;
+	}
+
 	// ------------------------------------------------------------------------------------
 	// the controller block
 	// ------------------------------------------------------------------------------------
 
-	/** The tower controller block — the concrete {@link GTMultiBlockControllerBlock} over the shared BET, the row rides it. The use arm (task gui-distill-tower) opens the ModularUI panel through the {@link GT6MuiMachine#tryOpen} factory chain (the ACT :80-96 shape) — no MenuType (the P26 no-new-MenuType ruling holds, the factory carries its own network). */
+	/**
+	 * The tower controller block — the concrete {@link GTMultiBlockControllerBlock} over the
+	 * shared BET, the row rides it. The use arm (task gui-distill-tower) opens the ModularUI
+	 * panel through the {@link GT6MuiMachine#tryOpen} factory chain (the ACT :80-96 shape) —
+	 * no MenuType (the P26 no-new-MenuType ruling holds, the factory carries its own network).
+	 */
 	public static final class GTDistillationTowerBlock extends GTMultiBlockControllerBlock {
+
+		/**
+		 * The active/running visual pair (upstream getVisualData
+		 * MultiTileEntityBasicMachine.java:1010-1011 — the two-bit payload mActive bit 0 /
+		 * mRunning bit 1, task distill-tower-face-3d): the {@link GTBlockProperties#ACTIVE} /
+		 * {@link GTBlockProperties#RUNNING} shared property objects, the
+		 * GTBasicMachineBlock :353/:356 form. The blockstate variants switch the
+		 * familyMachineModel overlay trio, the BE writes both through its onTickChecked seam.
+		 */
+		public static final BooleanProperty ACTIVE = GTBlockProperties.ACTIVE;
+		public static final BooleanProperty RUNNING = GTBlockProperties.RUNNING;
 
 		private final TowerRow mRow;
 
 		public GTDistillationTowerBlock(TowerRow aRow, net.minecraft.world.level.block.state.BlockBehaviour.Properties aProperties) {
-			super(aProperties);
+			// the material carrier arm — both rows carry NBT_MATERIAL MT.StainlessSteel
+			// (Loader :1226-1227), the c2-controller-tint tint colour source through the
+			// GTMultiBlockControllerBlock.materialOf gate (the task card's grayscale
+			// borrow reads as the bare metal only through this seat)
+			super(aProperties, () -> gregapi.data.MT.StainlessSteel);
 			mRow = aRow;
 		}
 		//? if neoforge {
@@ -204,6 +240,17 @@ public final class GT6Distillation {
 			return simpleCodec(aProperties -> new GTDistillationTowerBlock(GT6Distillation.ROWS.get(0), aProperties));
 		}
 		*///?}
+
+		/**
+		 * The base-owned FACING/FORMED pair plus this card's ACTIVE/RUNNING visual pair —
+		 * the full redeclaration (no super call, the vanilla pattern the
+		 * GTBasicMachineBlock :361-362 override shows); the 32-state space is
+		 * 4 FACING x 2 FORMED x 2 ACTIVE x 2 RUNNING.
+		 */
+		@Override
+		protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> aBuilder) {
+			aBuilder.add(TileEntityBase10MultiBlockBase.FACING, TileEntityBase10MultiBlockBase.FORMED, ACTIVE, RUNNING);
+		}
 
 		/** The registration row (the BoilerTankBlock.row carrier read). */
 		public TowerRow row() {
@@ -426,6 +473,32 @@ public final class GT6Distillation {
 			doOutputFluids(); // :459
 			doWork(aTimer);   // :461
 			doOutputItems();  // the back-arm auto-out (upstream :143, the SIDE_BACK row column)
+		}
+
+		/**
+		 * The active/running visual write (task distill-tower-face-3d): the base's
+		 * :471-473 visual-pair check gates this hook server-side, and the
+		 * getVisualData :1010-1011 two-bit payload lands on the blockstate's
+		 * {@link GTDistillationTowerBlock#ACTIVE}/{@link GTDistillationTowerBlock#RUNNING}
+		 * properties — the TileEntityBasicMachine.applyVisualState :1583 form scoped to
+		 * the two bits (FACING/FORMED stay the base's setFacingFromPlacement /
+		 * applyFormedBlockState writes, :252/:267). The tNew != tState identity keeps the
+		 * setBlock flip-only (off the per-tick hot path); the hasProperty guards keep the
+		 * offline STONE-state fixtures a no-op (the GT6DynamoBlockEntity
+		 * syncActiveToState :152-158 shape).
+		 */
+		@Override
+		public void onTickChecked(long aTimer) {
+			BlockState tState = getBlockState();
+			if (!hasLevel() || !tState.hasProperty(GTDistillationTowerBlock.ACTIVE)
+					|| !tState.hasProperty(GTDistillationTowerBlock.RUNNING)) return;
+			BlockState tNew = tState
+					.setValue(GTDistillationTowerBlock.ACTIVE, mActive)
+					.setValue(GTDistillationTowerBlock.RUNNING, mRunning);
+			if (tNew != tState) {
+				getLevel().setBlock(getBlockPos(), tNew,
+						net.minecraft.world.level.block.Block.UPDATE_NEIGHBORS | net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+			}
 		}
 
 		// ---------------------------------------------------------------------------
