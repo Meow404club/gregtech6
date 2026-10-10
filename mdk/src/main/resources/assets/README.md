@@ -19,11 +19,9 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 `v6.17.06-22-g3703e4030`, files
 `src/main/resources/assets/gregtech/textures/gui/machines/`:
 
-- `gt6/textures/gui/machines/shredder.png` — Shredder GUI background
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
   (upstream `Shredder.png`, task gui-family)
-- `gt6/textures/gui/machines/crusher.png` — Crusher GUI background
   (upstream `Crusher.png`, task gui-family)
-- `gt6/textures/gui/machines/lathe.png` — Lathe GUI background
   (upstream `Lathe.png`, task gui-family)
 - `gt6/textures/block/energy_source.png` — test energy source block texture
   (upstream `textures/blocks/machines/solarpanels/solarpanel_electric_8eu/colored/side.png`,
@@ -36,9 +34,6 @@ Machine GUI backgrounds borrowed from **GregTech 6**
   (`crank/colored/frontspin.png`) while cranking; the port shows the grayscale
   icon un-tinted with no active visual — declared deviation, the tint and the
   ACTIVE-state model swap ride the render pool card.
-- `gt6/textures/gui/machines/cokeoven.png` — Coke Oven GUI background
-  (upstream `CokeOven.png`, task cokeoven-gui-menu; sha256
-  `bdca3b3399173ca025771c598c57ac8ba6b6dd207263750ec693669dcbe0d03f`)
 - `gt6/textures/item/crowbar.png` — crowbar item texture (upstream
   `textures/items/iconsets/CROWBAR.png`, task tool-crowbar; sha256
   `4190549e7662b5fe4657face4097818eb1a4745f16b1740de11e619f8f046894`).
@@ -993,42 +988,10 @@ the card's tooling).
   on disk (the `heat_transmitter` block borrows the `heatacceptor` set since
   w3-nbtdesign-parts).
 
-Dryer GUI background texture, task machine-fluid-gui: the 1 PNG
-`gt6/textures/gui/machines/dryer.png` comes from upstream
-`src/main/resources/assets/gregtech/textures/gui/machines/Dryer.png`
-(256x256, the GTGuiScreen 176x166 panel canvas), byte-identical to upstream,
-sha256 verified:
-
-- `dryer.png`   `d1fae3b57b7c56c01463cbd87d977eb0581cf14128ad4a65f1e95608f9fec7d7`
-
-Path mapping (the gui-family / cokeoven-gui-menu precedents): upstream
-`machines/Dryer` is lowercased to `machines/dryer` (1.20.1 `ResourceLocation`
-charset) — the lowercased path is exactly what the DRYING RecipeMap declares
-(`gt6:textures/gui/machines/dryer`, GT6RecipeMaps the p14 W1b card), parsed by
-`GTBasicMachineScreen.backgroundOf`. The upstream canvas paints its slot frames
-at the same coordinates the port's menu code uses (input (53,25), the 1-output
-arm (107,25), the :267-268 fluid display banks (53,63)/(107,125,143,63)), so
-the borrowed canvas and the port slot geometry align by construction.
-
-Copied on 2026-09-05. Upstream license: **CC0 1.0 Universal Public Domain
-Dedication** (same upstream `README.md` block as above).
-
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 Canner family textures, task canner-machine (5 PNGs, CC0 from the upstream
 canner iconset, sha256 verified):
 
-- `gt6/textures/gui/machines/canner.png` — the GUI background, upstream
-  `src/main/resources/assets/gregtech/textures/gui/machines/Canner.png`
-  (256x256 panel canvas), byte-identical, sha256
-  `7420b4398af0471985cb0d4b13fbdc3f7e2bafcc174b210441f0b2be6ec2dc91`.
-  Path mapping: `machines/Canner` → `machines/canner` (the lowercase
-  ResourceLocation convention, the dryer.png entry above); the declared path is
-  exactly what the CANNER RecipeMap carries (`gt6:textures/gui/machines/canner`,
-  the RM.java:148 RES_PATH_GUI+"machines/Canner" row). The upstream canvas
-  paints its slot frames at the same coordinates the port menu uses — the
-  2-input case-2 pair (35,25)+(53,25) and the 2-output arm (107/125,25), the
-  :267-268 fluid display banks below — so the borrowed canvas and the port
-  slot geometry align by construction (the dryer.png rationale, the 2-input
-  ContainerCommonBasicMachine.java:57-60 case).
 
 - `gt6/textures/block/canner_{colored,overlay,overlay_active,overlay_running}_front.png`
   — the p22 split-front four-layer borrow from upstream
@@ -5457,15 +5420,13 @@ front` / `{machine}_overlay_front` / `{machine}_overlay_front_running` are byte
 copies of the upstream `colored|overlay|overlay_running/front.png`; the
 `overlay_active` strips (sifter 4 frames, compressor 9, wiremill 10/2) are cropped
 to their FRAME 0 16x16 representative and re-encoded — the P20 "animation retired"
-declared deviation carried over verbatim. The three GUI backgrounds are byte
+declared deviation carried over verbatim. The three GUI backgrounds were byte
 copies of the upstream `gui/machines/` files, lowercased (the 1.20.1
-ResourceLocation charset convention); no GUI ships them while the rows carry
-menu=null — they serve the recipe-map `mGUIPath` string and the future GUI pool
-card. Upstream license CC0 (see above).
+ResourceLocation charset convention) — RETIRED with the sheet purge
+(machine-gui-composed-purge; the recipe-map `mGUIPath` column is retired from
+the port, the GUIs compose from `gui/parts/`). Upstream license CC0 (see above).
 
-- `gui/machines/sifter.png` (upstream `Sifter.png`) `bd90d5a3529accf86f37bb2799e7ab3ce896c522b4c486e6b15c21932ef3b653`
-- `gui/machines/compressor.png` (upstream `Compressor.png`) `d5552e8bcf6851f0dea58dcfb866b6dcb4a63bc4ff0ba09781bc2b4f84df8b6c`
-- `gui/machines/wiremill.png` (upstream `Wiremill.png`) `e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458`
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 - `block/sifter_colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `block/sifter_overlay_front.png` `f736601956519d68b411807353cb25a200db9a190a45e9f5c6c920191f9743bc`
 - `block/sifter_overlay_front_active.png` (FRAME 0 of 4) `1a0a8dee55f0fe6e20432affc75b82892270c4f0a7b08dcdf39bf71fea10f315`
@@ -9498,14 +9459,7 @@ across both families and their state layers):
 - `replicator_overlay_front_active.png` — `e7d764c6722b0230aecff5d84cfa8361f9d295336565391f721f571d7da10cf8`
 - `replicator_overlay_front_running.png` — `6a60b16caa227f4b5652ab9444c0818e29a542e69ccd93cae7d00a6a7113d212`
 
-Distillation Tower GUI pair textures, task gui-distill-tower:
-`gt6/textures/gui/machines/distillationtower.png` and
-`gt6/textures/gui/machines/cryodistillationtower.png` come from upstream
-`src/main/resources/assets/gregtech/textures/gui/machines/{DistillationTower,CryoDistillationTower}.png`
-(the mGUITexture = mRecipes.mGUIPath fallback, MultiTileEntityBasicMachine.java:114;
-RM.java:65/:66), byte-identical to upstream, sha256 verified:
-- `distillationtower.png` — `aaca08955d65bb34514a7325c0b4607aec749333aa8a713dfb2aa1d7941e9c85`
-- `cryodistillationtower.png` — `1e69a7683c1dccb8823568a67ef2f497cc7290e771ecbcd960109b4760db48b2`
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 
 
 Burner Mixer + Plantalyzer family textures, task machines-burner-plantalyzer:
@@ -9556,14 +9510,7 @@ tpsmeter,playercounter,tachometer,geigercounter,laserometer}.png`) are deleted �
 the whole 21-family census now borrows the upstream two-layer art verbatim (the
 `Sensor block textures — two-layer faceted borrow, task tex-sensors` section
 at the tail of this ledger).
-Bumbliary GUI pair textures, task bumbliary-gui:
-`gt6/textures/gui/machines/bumbliary.png` and
-`gt6/textures/gui/machines/bumbliaryadvanced.png` come from upstream
-`src/main/resources/assets/gregtech/textures/gui/machines/{Bumbliary,BumbliaryAdvanced}.png`
-(the ContainerClient background pair, MultiTileEntityBumbliary.java:500/:507 and
-MultiTileEntityBumbliaryAdvanced.java:469), byte-identical to upstream, sha256 verified:
-- `bumbliary.png` — `d8273f498408a31a2cf1f5c3b515f38c50fde5ecf5c9ab7f5ab2317b76912ac8`
-- `bumbliaryadvanced.png` — `6fb9c48274095e8ef7a9b4e610dd0d21551b1e99985a17715d42b414c7f114e1`
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 
 ## Bumblelyzer + Crystallisation Crucible machine textures (task machines-bumblelyzer-crucible)
 
@@ -9888,117 +9835,7 @@ the p32 vertex-colour route).
 
 ## machine GUI backgrounds, full mGUIPath borrow (task issue3-gui-bg)
 
-The p7/p8/p14-era cards borrowed GUI backgrounds per-machine as the machines
-landed; GitHub issue #3 showed every not-yet-landed RecipeMap still renders its
-menu over the magenta missing-texture checkerboard. This card closes the gap by
-borrowing the whole remaining declared set (the full mGUIPath census of
-GT6RecipeMaps + RecipeMapFurnaceFuel, 72 unique declared names) from upstream
-`src/main/resources/assets/gregtech/textures/gui/machines/`, filenames
-lowercased (the 1.20.1 ResourceLocation path whitelist `[a-z0-9/._-]`,
-ResourceLocation.java:213-232). sha256 per file:
-
-- `gui/machines/alloying.png` (upstream `Alloying.png`) `c93bb15e340b98314f0053acddda047e65fee4808b4aafe095f8b0a917ed365b`
-- `gui/machines/anvil.png` (upstream `Anvil.png`) `41fc7d5914113898a2b41632cec80e797060583d8aeee7c833e6a0dd4030ca9a`
-- `gui/machines/anvilbend.png` (upstream `AnvilBendingBig.png`) `41d60ba2f35458f4f083ad9f4d5b625cb97d7ddc54b21776271d449ed54cca39`
-- `gui/machines/autoclave.png` (upstream `Autoclave.png`) `35fa142291628237202338ac0294ad1af28b8efc71b9e79e580a6d3e07d46672`
-- `gui/machines/bath.png` (upstream `Bath.png`) `0bd23ee91c081dd5ac96401e09551ad17ffb0075ee767faafa11150eccdeae1d`
-- `gui/machines/boxinator.png` (upstream `Boxinator.png`) `611f06ff139214eade75ecf24a5519a4a4fdc43fdf1c6d4185b130b61f3599e2`
-- `gui/machines/bumblelyzer.png` (upstream `Bumblelyzer.png`) `62cee037e48102460c038dfc7a1d6b496608e0bc692caad09901387fe01afa31`
-- `gui/machines/burnmixer.png` (upstream `BurnMixer.png`) `99f2d031657383db8799bc67108592b9cf985456344379d591e9843b4507e88f`
-- `gui/machines/catalyticcracking.png` (upstream `CatalyticCracking.png`) `be0ff46d7bbf69cdcff899924095dc9753a1530c9057069945b6164b1912eade`
-- `gui/machines/centrifuge.png` (upstream `Centrifuge.png`) `b6f528a4cf7ef1ef364f25ee6ab998e88aedd82f2a226adb56d55999e4a7e953`
-- `gui/machines/clustermill.png` (upstream `ClusterMill.png`) `1268ae82dde623a6c4ed629b48975d73c41c86275e81ca4c1505d07f5079dce8`
-- `gui/machines/coagulator.png` (upstream `Coagulator.png`) `8042cf0762e1735f6d696d9a4105616ce30a341b0cad854c2e6198a61460d29b`
-- `gui/machines/crafting.png` (upstream `Crafting.png`) `1650b226f9dbcd521ac0e7899dbb4668f01020e156a19cfcc6bc39fffcde0ab0`
-- `gui/machines/cryomixer.png` (upstream `CryoMixer.png`) `03150282dce57762fa40bb10ead568bc3d45ed4309b38839ee299ef50494e11a`
-- `gui/machines/crystallisationcrucible.png` (upstream `CrystallisationCrucible.png`) `fdef7f7913aa3d647347706a9bfc80976adb1d2603c2404fd4d9f60429032aeb`
-- `gui/machines/cutter.png` (upstream `Cutter.png`) `cf6cd690c8e268b89db74f3812d9a478357f7eead0828d2466d9e90f1bb69cf4`
-- `gui/machines/default.png` (upstream `Default.png`) `918c84cfe2629d97156dc3f9416c6cd67a95b384608fd14be4278087eb9043dd`
-- `gui/machines/distillery.png` (upstream `Distillery.png`) `cfb1839850b342436c2d999026e09666450dcec87f5128ec96d854c8328eeb45`
-- `gui/machines/electrolyzer.png` (upstream `Electrolyzer.png`) `bf22ca5b9103451bc096a550abbb85b14884fefb5638acfeae89b38ee1017959`
-- `gui/machines/extruder.png` (upstream `Extruder.png`) `86aa98eed02be7718369effa5f1b0c486aba3ae66f86f91b15c9004e5298f8cf`
-- `gui/machines/fermenter.png` (upstream `Fermenter.png`) `b063cecdc8e20e1ca5bd74558b7df3f9e9816b559f2a73888f62197da66f85e6`
-- `gui/machines/freezer.png` (upstream `Freezer.png`) `2796fd94a12ea018135b6f1e84852cfa55e32b2344d055ca3979abedaf3a0858`
-- `gui/machines/fusion.png` (upstream `Fusion.png`) `cddc841a3e215b8e15cffdd22d6b064e3efee65437e137f67b23e2cd208ce855`
-- `gui/machines/generifier.png` (upstream `Generifier.png`) `4fb357bf4c2b15ffd51ceacd31be9a852a8316a30478bca50e9a516e5e4069db`
-- `gui/machines/implosioncompressor.png` (upstream `ImplosionCompressor.png`) `0463764a848353a59bb64003933e63aaa9bcd357e8c3e4b7fe76500437aca773`
-- `gui/machines/injector.png` (upstream `Injector.png`) `4c46ca860b39b8bb114bb915285079110b350ad3ab1ea63cea8ee13f552c9427`
-- `gui/machines/juicer.png` (upstream `Juicer.png`) `4bca2c145dbdddec10b4c42b2a7c09e46b74d338468a28b6c6ce0e09dc4c65ac`
-- `gui/machines/laminator.png` (upstream `Laminator.png`) `ffe624eba09c9dca1b162148bd5381a57e6c26993b0202fe357419850ac61be0`
-- `gui/machines/laserengraver.png` (upstream `LaserEngraver.png`) `5756642cc611e201ac3f469d7ac614f26e2fcb79d48a69124ef32d91c2df6f58`
-- `gui/machines/lightning.png` (upstream `Lightning.png`) `f3259691447fb25a6e7d11f0b669a06ca7160c8b85afff0d9b0666991424a910`
-- `gui/machines/loom.png` (upstream `Loom.png`) `cb08ae37481d90a21916909934a8d862006c2097d68fd57ebd9a84a1683e5cea`
-- `gui/machines/magneticseparator.png` (upstream `MagneticSeparator.png`) `6b0494c658355f754a27f9677e531c1e8750e2af9c5398eaf23b7d096b28efe1`
-- `gui/machines/massfab.png` (upstream `Massfab.png`) `8d9fa2f71d0aa69be3e083c681be74652bd52d7c0f2ac48c2a256691d32c10ca`
-- `gui/machines/melter.png` (upstream `Melter.png`) `e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df`
-- `gui/machines/mixer.png` (upstream `Mixer.png`) `9e053f82c6dd8ab0f45d7f4cb021bbb16504d9699ce15705f2bd5605e86e233e`
-- `gui/machines/plantalyzer.png` (upstream `Plantalyzer.png`) `e188555f8d656ab35885673ea2c20719e1e75eeb765960a0a0295f1dfde2f801`
-- `gui/machines/polarizer.png` (upstream `Polarizer.png`) `c796167d91617dab6dc8dd2060eb420119a0596e3dcfa662e5c4f508530522b2`
-- `gui/machines/press.png` (upstream `Press.png`) `82dc06da002c1a0305a6cbf6dde738cc63fa205266a63416348dda310023ca0f`
-- `gui/machines/pressurewasher.png` (upstream `PressureWasher.png`) `422afd27781761776e9086ce70f06f2ab8155745f26775bb1588adf0904490eb`
-- `gui/machines/printer.png` (upstream `Printer.png`) `f642d762e8eafd8ea69d17d8c6dbe4185ed6071c56c36196e73d60ecdf7adf37`
-- `gui/machines/replicator.png` (upstream `Replicator.png`) `e23b4106a80bf0efc6b4c61820db9f391ab718fcb5673604963fae0cbb38ab55`
-- `gui/machines/roaster.png` (upstream `Roaster.png`) `dfea93d04a614964e933504cac276ae478a647f45c3443515f4881e6a53d5e29`
-- `gui/machines/rollbender.png` (upstream `RollBender.png`) `a66c3a4204ffeca771d9aba8339b8f7e00e3759dc0468a5fc013cc8ac5aedd86`
-- `gui/machines/rollformer.png` (upstream `RollFormer.png`) `8e47d06b55fa1a41d56c1eef0cdc0de9ea7129449be30a7696c8d721e11b4a51`
-- `gui/machines/rollingmill.png` (upstream `RollingMill.png`) `c8b8795d3a6d4e6f008c0767cedde4579c73a02d83c6665f5555c2727c30ea6a`
-- `gui/machines/scannermolecular.png` (upstream `ScannerMolecular.png`) `19e4cfb02533f25317f6b9528a723c19c382fc66cffd0717ee0589a102a11211`
-- `gui/machines/scannervisuals.png` (upstream `ScannerVisuals.png`) `ff247cf44f591fffd2ff92a0a2dc7544ffe3b5505ec10bdab786f4deba2809bb`
-- `gui/machines/sharpener.png` (upstream `Sharpener.png`) `183960d50eb46c20f51ca14518d46002c26593d3605dfa03aaa5933bb3a1e377`
-- `gui/machines/slicer.png` (upstream `Slicer.png`) `56ea38d4f81c5a4f216b37646d6e734ac38a8942c1c772fdd0ef4d7b17072292`
-- `gui/machines/sluice.png` (upstream `Sluice.png`) `2d252699d1ae42d8a040e4e0eeb1d799b77f64ba3f224fb1e011320cdc80f61f`
-- `gui/machines/smelter.png` (upstream `Smelter.png`) `e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df`
-- `gui/machines/squeezer.png` (upstream `Squeezer.png`) `a18eaeeb7f203d1a23722412a0503fd8873a8549cfad3af783fa6e69c9d43b4b`
-- `gui/machines/steamcracking.png` (upstream `SteamCracking.png`) `847a49295932c86af69f051776bc8d6bcea939bcca1061b1924a65a70a78cad5`
-- `gui/machines/unboxinator.png` (upstream `Unboxinator.png`) `0dda888d5409026672f7efdbe887ff07cc2acf442a14d715ee5f369eccaaae30`
-- `gui/machines/welder.png` (upstream `Welder.png`) `a9558b22d7648adde07e6feb12132765e25ea15ec9973404186e0a86648eb33e`
-- `gui/machines/oven.png` — NOT a fresh borrow: the existing ported `Oven.png`
-  (machine-tint lineage, overlay strip already cropped, ported bytes differ
-  from upstream `Oven.png` by intent) renamed lowercase alongside the
-  GT6RecipeMaps/GTOvenScreen string fix; sha256 of the ported bytes
-  `cc6f224752b815458c361911dd38456ecf3f5fdf2283cc650ed23c2dea1b099a`.
-- `gui/machines/bedrockorelist.png` — exempt, deliberately not ported (the
-  GT6RecipeMaps registration comment: display-only map, nothing opens it).
-- `gui/machines/chisel.png` — exempt, deliberately not ported: upstream itself
-  ships no `Chisel.png` (RM.java:138 declares the path, the file never existed —
-  the chisel applies recipes by right-click, no GUI opens). Declared at
-  GT6RecipeMaps CHISEL for the census ride-along.
-- `gui/machines/anvilbend.png` — upstream `AnvilBendingBig.png`: the port folds
-  the Small/Big bend row sets into ONE map (GT6RecipesAnvil "two-maps-in-three
-  fold"), Big rows pour first; the two upstream files differ only in a 6-pixel
-  band (rows 41-46).
-
-- `block/reactor_core_2x2_{bottom,top,side1,side2,face1,face2}.png` — the 2x2
-  Nuclear Reactor Core block faces (task debt-reactor-b-2x2-be), upstream
-  `textures/blocks/machines/generators/reactor_core_2x2/colored/<face>.png`
-  (byte-identical borrows). Upstream tints these grayscale "colored" icons with
-  the Pb material colour (the MTE mRGBa pass) and layers the overlay set over
-  them; the port renders them un-tinted with no overlay — declared deviation,
-  the tint and the facing-routed face/overlay swap ride the render-pool card
-  (with the 11-pass rod/fluid render stack, Core2x2.java:320-390). Only three
-  distinct files exist upstream (bottom/face1/face2/side2 share bytes):
-  `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332` (bottom,
-  face1, face2, side2),
-  `33fe99c466efd19f6e4dcb14349690b60f49c2626f4b435799f1a0b0bfbc9aa1` (side1),
-  `a9582e2de34a2e51aeb4031ab456db5791a27c42f32aa60886554ef9b4e6f467` (top).
-(RETIRED tex-large-machines: the six flat PNGs below are DELETED — the band dir
-`gt6/textures/block/bedrockdrill/` replaces them byte-for-byte on the three TBS
-tiles; the rows stay as historical digests.)
-
-Bedrock Mining Drill controller faces, task bedrock-drill: the 6 controller
-PNGs `gt6/textures/block/bedrockdrill_colored_{face}.png` (face ∈
-bottom/top/front/back/left/right) come from upstream
-`src/main/resources/assets/gregtech/textures/blocks/machines/multiblockmains/bedrockdrill/colored/{side,top,bottom}.png`
-(the NBT_TEXTURE "bedrockdrill" name form of Loader_MultiTileEntities.java:1283)
-byte-identical to upstream, sha256 verified per file (upstream ships one uniform
-tile per machine — colored == colored_front, all six digests equal):
-
-- `bedrockdrill_colored_bottom.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `bedrockdrill_colored_top.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `bedrockdrill_colored_front.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `bedrockdrill_colored_back.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `bedrockdrill_colored_left.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `bedrockdrill_colored_right.png` — `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
+**RETIRED (task machine-gui-composed-purge, 2026-10-10): every sheet below left the tree with the `mGUIPath` retirement — the port's `RecipeMap` no longer carries the GUI-path column and the live GUIs compose from `gui/parts/`. The rows are historical provenance only; the digests deliberately no longer ground.**
 
 ## task debt-emitter-sensor-generators — the 30 technological component textures
 
@@ -10458,7 +10295,10 @@ stay owned by their own part blocks). The formed-look visual stays the p9 render
 pool, as declared since p29.
 ## task gui-reskin-amazawa — the machine GUI reskin (amazawa pack)
 
-All 73 machine GUI backgrounds under `gt6/textures/gui/machines/` are reskinned
+The machine GUI reskin wave retired with machine-gui-composed-purge (the user
+ruling "replace everything with composites, clear out all full images") — 72 sheets left the tree with the
+`mGUIPath` retirement; what survives is EXACTLY the three rows below (the nei
+plate, the 永保留 anchor, and the two ACT crop sources). Historically all 73 machine GUI backgrounds under `gt6/textures/gui/machines/` were reskinned
 from the amazawa resource pack "TFC Amazawa Light GUI" 1.0.5g
 (https://modrinth.com/resourcepack/tfc-amazawa-light-gui), Apache-2.0, author
 天沢香, with explicit chat authorization for this port ("没问题的 标注一下就行
@@ -10478,98 +10318,10 @@ the heaviest AE2-flavoured files (`Default`/`Crafting`/`AnvilBendingBig`/`Alloyi
 verdict = original redraws in the pack's flat light style — style reference, not
 pixel copies of AE2 assets; nothing removed.
 
+**RETIRED (task machine-gui-composed-purge, 2026-10-10): every sheet below left the tree with the `mGUIPath` retirement — the port's `RecipeMap` no longer carries the GUI-path column and the live GUIs compose from `gui/parts/`. The rows are historical provenance only; the digests deliberately no longer ground.**
 - `gui/machines/advancedcraftingtable.png` ← amazawa `advancedcraftingtable.png` sha256 `af774ea0631d00b61242ea8d18deaba148c9fc581fd90201c615091381729a5a` (task act-dual-gui, upstream AdvancedCraftingTable family — not amazawa; manifest row added by the seat-IX catch-up)
 - `gui/machines/advancedcraftingtablecharging.png` ← amazawa `advancedcraftingtablecharging.png` sha256 `cd57524d0fcb72efd3519e4a0e9a62fe8e67b7422aff61194985da9a500f198a` (task act-dual-gui, upstream AdvancedCraftingTable family — not amazawa; manifest row added by the seat-IX catch-up)
-- `gui/machines/alloying.png` ← amazawa `Alloying.png` sha256 `c93bb15e340b98314f0053acddda047e65fee4808b4aafe095f8b0a917ed365b`
-- `gui/machines/anvil.png` ← amazawa `Anvil.png` sha256 `41fc7d5914113898a2b41632cec80e797060583d8aeee7c833e6a0dd4030ca9a`
-- `gui/machines/anvilbend.png` ← amazawa `AnvilBendingBig.png` sha256 `41d60ba2f35458f4f083ad9f4d5b625cb97d7ddc54b21776271d449ed54cca39`
-- `gui/machines/autoclave.png` ← amazawa `Autoclave.png` sha256 `35fa142291628237202338ac0294ad1af28b8efc71b9e79e580a6d3e07d46672`
-- `gui/machines/bath.png` ← amazawa `Bath.png` sha256 `0bd23ee91c081dd5ac96401e09551ad17ffb0075ee767faafa11150eccdeae1d`
-- `gui/machines/boxinator.png` ← amazawa `Boxinator.png` sha256 `611f06ff139214eade75ecf24a5519a4a4fdc43fdf1c6d4185b130b61f3599e2`
-- `gui/machines/bumblelyzer.png` ← amazawa `Bumblelyzer.png` sha256 `62cee037e48102460c038dfc7a1d6b496608e0bc692caad09901387fe01afa31`
-- `gui/machines/bumbliary.png` ← amazawa `Bumbliary.png` sha256 `d8273f498408a31a2cf1f5c3b515f38c50fde5ecf5c9ab7f5ab2317b76912ac8`
-- `gui/machines/bumbliaryadvanced.png` ← amazawa `BumbliaryAdvanced.png` sha256 `6fb9c48274095e8ef7a9b4e610dd0d21551b1e99985a17715d42b414c7f114e1`
-- `gui/machines/burnmixer.png` ← amazawa `BurnMixer.png` sha256 `99f2d031657383db8799bc67108592b9cf985456344379d591e9843b4507e88f`
-- `gui/machines/canner.png` ← amazawa `Canner.png` sha256 `7420b4398af0471985cb0d4b13fbdc3f7e2bafcc174b210441f0b2be6ec2dc91`
-- `gui/machines/catalyticcracking.png` ← amazawa `CatalyticCracking.png` sha256 `be0ff46d7bbf69cdcff899924095dc9753a1530c9057069945b6164b1912eade`
-- `gui/machines/centrifuge.png` ← amazawa `Centrifuge.png` sha256 `b6f528a4cf7ef1ef364f25ee6ab998e88aedd82f2a226adb56d55999e4a7e953`
-- `gui/machines/clustermill.png` ← amazawa `ClusterMill.png` sha256 `1268ae82dde623a6c4ed629b48975d73c41c86275e81ca4c1505d07f5079dce8`
-- `gui/machines/coagulator.png` ← amazawa `Coagulator.png` sha256 `8042cf0762e1735f6d696d9a4105616ce30a341b0cad854c2e6198a61460d29b`
-- `gui/machines/cokeoven.png` ← amazawa `CokeOven.png` sha256 `bdca3b3399173ca025771c598c57ac8ba6b6dd207263750ec693669dcbe0d03f`
-- `gui/machines/compressor.png` ← amazawa `Compressor.png` sha256 `d5552e8bcf6851f0dea58dcfb866b6dcb4a63bc4ff0ba09781bc2b4f84df8b6c`
-- `gui/machines/cooker.png` ← amazawa `Cooker.png` sha256 `625561bed59f0ba99bfc17839914a6330231565258d71692d1224d4c81034d0b`
-- `gui/machines/crafting.png` ← amazawa `Crafting.png` sha256 `1650b226f9dbcd521ac0e7899dbb4668f01020e156a19cfcc6bc39fffcde0ab0`
-- `gui/machines/crafting2by2.png` ← amazawa `Crafting2By2.png` sha256 `df9ab8cc4a492803bcc37665700a090d93b60c4212d57505156f2223e830965f`
-- `gui/machines/crusher.png` ← amazawa `Crusher.png` sha256 `eafe386f4a77d1fa5d36a4177fc2cb55083aa41f419d1f35411ba061c745f4a1`
-- `gui/machines/cryodistillationtower.png` ← amazawa `CryoDistillationTower.png` sha256 `1e69a7683c1dccb8823568a67ef2f497cc7290e771ecbcd960109b4760db48b2`
-- `gui/machines/cryomixer.png` ← amazawa `CryoMixer.png` sha256 `03150282dce57762fa40bb10ead568bc3d45ed4309b38839ee299ef50494e11a`
-- `gui/machines/crystallisationcrucible.png` ← amazawa `CrystallisationCrucible.png` sha256 `fdef7f7913aa3d647347706a9bfc80976adb1d2603c2404fd4d9f60429032aeb`
-- `gui/machines/cutter.png` ← amazawa `Cutter.png` sha256 `cf6cd690c8e268b89db74f3812d9a478357f7eead0828d2466d9e90f1bb69cf4`
-- `gui/machines/default.png` ← amazawa `Default.png` sha256 `918c84cfe2629d97156dc3f9416c6cd67a95b384608fd14be4278087eb9043dd`
-- `gui/machines/distillationtower.png` ← amazawa `DistillationTower.png` sha256 `aaca08955d65bb34514a7325c0b4607aec749333aa8a713dfb2aa1d7941e9c85`
-- `gui/machines/distillery.png` ← amazawa `Distillery.png` sha256 `cfb1839850b342436c2d999026e09666450dcec87f5128ec96d854c8328eeb45`
-- `gui/machines/dryer.png` ← amazawa `Dryer.png` sha256 `d1fae3b57b7c56c01463cbd87d977eb0581cf14128ad4a65f1e95608f9fec7d7`
-- `gui/machines/electrolyzer.png` ← amazawa `Electrolyzer.png` sha256 `bf22ca5b9103451bc096a550abbb85b14884fefb5638acfeae89b38ee1017959`
-- `gui/machines/extruder.png` ← amazawa `Extruder.png` sha256 `86aa98eed02be7718369effa5f1b0c486aba3ae66f86f91b15c9004e5298f8cf`
-- `gui/machines/fermenter.png` ← amazawa `Fermenter.png` sha256 `b063cecdc8e20e1ca5bd74558b7df3f9e9816b559f2a73888f62197da66f85e6`
-- `gui/machines/freezer.png` ← amazawa `Freezer.png` sha256 `2796fd94a12ea018135b6f1e84852cfa55e32b2344d055ca3979abedaf3a0858`
-- `gui/machines/fusion.png` ← amazawa `Fusion.png` sha256 `cddc841a3e215b8e15cffdd22d6b064e3efee65437e137f67b23e2cd208ce855`
-- `gui/machines/generifier.png` ← amazawa `Generifier.png` sha256 `4fb357bf4c2b15ffd51ceacd31be9a852a8316a30478bca50e9a516e5e4069db`
-- `gui/machines/hammer.png` ← amazawa `Hammer.png` sha256 `394f57f1f8c8eef92f7b8c9a5404bb5bd4d826b65352aa4a290804cd0a34898e`
-- `gui/machines/implosioncompressor.png` ← amazawa `ImplosionCompressor.png` sha256 `0463764a848353a59bb64003933e63aaa9bcd357e8c3e4b7fe76500437aca773`
-- `gui/machines/injector.png` ← amazawa `Injector.png` sha256 `4c46ca860b39b8bb114bb915285079110b350ad3ab1ea63cea8ee13f552c9427`
-- `gui/machines/juicer.png` ← amazawa `Juicer.png` sha256 `4bca2c145dbdddec10b4c42b2a7c09e46b74d338468a28b6c6ce0e09dc4c65ac`
-- `gui/machines/laminator.png` ← amazawa `Laminator.png` sha256 `ffe624eba09c9dca1b162148bd5381a57e6c26993b0202fe357419850ac61be0`
-- `gui/machines/laserengraver.png` ← amazawa `LaserEngraver.png` sha256 `5756642cc611e201ac3f469d7ac614f26e2fcb79d48a69124ef32d91c2df6f58`
-- `gui/machines/lathe.png` ← amazawa `Lathe.png` sha256 `4f65896953a794539558fde1938c08189c53d7aad1d483cc57b05cbe35691523`
-- `gui/machines/lightning.png` ← amazawa `Lightning.png` sha256 `f3259691447fb25a6e7d11f0b669a06ca7160c8b85afff0d9b0666991424a910`
-- `gui/machines/loom.png` ← amazawa `Loom.png` sha256 `cb08ae37481d90a21916909934a8d862006c2097d68fd57ebd9a84a1683e5cea`
-- `gui/machines/magneticseparator.png` ← amazawa `MagneticSeparator.png` sha256 `6b0494c658355f754a27f9677e531c1e8750e2af9c5398eaf23b7d096b28efe1`
-- `gui/machines/massfab.png` ← amazawa `Massfab.png` sha256 `8d9fa2f71d0aa69be3e083c681be74652bd52d7c0f2ac48c2a256691d32c10ca`
-- `gui/machines/melter.png` ← amazawa `Melter.png` sha256 `e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df`
-- `gui/machines/mixer.png` ← amazawa `Mixer.png` sha256 `9e053f82c6dd8ab0f45d7f4cb021bbb16504d9699ce15705f2bd5605e86e233e`
-- `gui/machines/mortar.png` ← amazawa `Mortar.png` sha256 `bc40d341fcfc2862ab5e8047c0a5a4c4a4c8ca261bc2ba1b5a3031e7e97ea07d`
-- `gui/machines/oven.png` ← amazawa `Oven.png` sha256 `cc6f224752b815458c361911dd38456ecf3f5fdf2283cc650ed23c2dea1b099a`
-- `gui/machines/plantalyzer.png` ← amazawa `Plantalyzer.png` sha256 `e188555f8d656ab35885673ea2c20719e1e75eeb765960a0a0295f1dfde2f801`
-- `gui/machines/polarizer.png` ← amazawa `Polarizer.png` sha256 `c796167d91617dab6dc8dd2060eb420119a0596e3dcfa662e5c4f508530522b2`
-- `gui/machines/press.png` ← amazawa `Press.png` sha256 `82dc06da002c1a0305a6cbf6dde738cc63fa205266a63416348dda310023ca0f`
-- `gui/machines/pressurewasher.png` ← amazawa `PressureWasher.png` sha256 `422afd27781761776e9086ce70f06f2ab8155745f26775bb1588adf0904490eb`
-- `gui/machines/printer.png` ← amazawa `Printer.png` sha256 `f642d762e8eafd8ea69d17d8c6dbe4185ed6071c56c36196e73d60ecdf7adf37`
-- `gui/machines/replicator.png` ← amazawa `Replicator.png` sha256 `e23b4106a80bf0efc6b4c61820db9f391ab718fcb5673604963fae0cbb38ab55`
-- `gui/machines/roaster.png` ← amazawa `Roaster.png` sha256 `dfea93d04a614964e933504cac276ae478a647f45c3443515f4881e6a53d5e29`
-- `gui/machines/rollbender.png` ← amazawa `RollBender.png` sha256 `a66c3a4204ffeca771d9aba8339b8f7e00e3759dc0468a5fc013cc8ac5aedd86`
-- `gui/machines/rollformer.png` ← amazawa `RollFormer.png` sha256 `8e47d06b55fa1a41d56c1eef0cdc0de9ea7129449be30a7696c8d721e11b4a51`
-- `gui/machines/rollingmill.png` ← amazawa `RollingMill.png` sha256 `c8b8795d3a6d4e6f008c0767cedde4579c73a02d83c6665f5555c2727c30ea6a`
-- `gui/machines/scannermolecular.png` ← amazawa `ScannerMolecular.png` sha256 `19e4cfb02533f25317f6b9528a723c19c382fc66cffd0717ee0589a102a11211`
-- `gui/machines/scannervisuals.png` ← amazawa `ScannerVisuals.png` sha256 `ff247cf44f591fffd2ff92a0a2dc7544ffe3b5505ec10bdab786f4deba2809bb`
-- `gui/machines/sharpener.png` ← amazawa `Sharpener.png` sha256 `183960d50eb46c20f51ca14518d46002c26593d3605dfa03aaa5933bb3a1e377`
-- `gui/machines/shredder.png` ← amazawa `Shredder.png` sha256 `342a5c911b74d2d142f53de7c271ddd8647b3e2c969b9f16c629fde66efbe096`
-- `gui/machines/sifter.png` ← amazawa `Sifter.png` sha256 `bd90d5a3529accf86f37bb2799e7ab3ce896c522b4c486e6b15c21932ef3b653`
-- `gui/machines/slicer.png` ← amazawa `Slicer.png` sha256 `56ea38d4f81c5a4f216b37646d6e734ac38a8942c1c772fdd0ef4d7b17072292`
-- `gui/machines/sluice.png` ← amazawa `Sluice.png` sha256 `2d252699d1ae42d8a040e4e0eeb1d799b77f64ba3f224fb1e011320cdc80f61f`
-- `gui/machines/smelter.png` ← amazawa `Smelter.png` sha256 `e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df`
-- `gui/machines/squeezer.png` ← amazawa `Squeezer.png` sha256 `a18eaeeb7f203d1a23722412a0503fd8873a8549cfad3af783fa6e69c9d43b4b`
-- `gui/machines/steamcracking.png` ← amazawa `SteamCracking.png` sha256 `847a49295932c86af69f051776bc8d6bcea939bcca1061b1924a65a70a78cad5`
-- `gui/machines/unboxinator.png` ← amazawa `Unboxinator.png` sha256 `0dda888d5409026672f7efdbe887ff07cc2acf442a14d715ee5f369eccaaae30`
-- `gui/machines/welder.png` ← amazawa `Welder.png` sha256 `a9558b22d7648adde07e6feb12132765e25ea15ec9973404186e0a86648eb33e`
-- `gui/machines/wiremill.png` ← amazawa `Wiremill.png` sha256 `e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458`
-
-Two more amazawa files joined the folder with task 34-viewer-gui-bg (GitHub
-#34, the JEI/EMI viewer backdrop): the `NEI.png` grey backdrop plate every
-recipe-viewer page composites under the machine band, and `BedrockOreList.png`
-(the BEDROCK_ORE_LIST display map was viewer-visible but its pin-g exemption had
-left the file un-borrowed). Both took the amazawa redraws (the pack carries
-them; same style source as the 73 above), same matching rules and canvas:
-
-- `gui/machines/bedrockorelist.png` ← amazawa `BedrockOreList.png` sha256 `3722cae8d75171c1c8c75384b72a00c7979b6ff5cfc7cd3b83ce00631fa9865d`
 - `gui/machines/nei.png` ← amazawa `NEI.png` sha256 `93fda523222f02a0dbc2b405e2226a9454cbaca0e776c65b861352f8d965b4ac`
-
-One more file joined with the texturecensus-mguipath hotfix (the ASSEMBLER
-mGUIPath→default ruling): the `nanofab.png` machine background ported from the
-1.7.10 upstream (byte-identical 256×256 RGBA) — the modern mass-fab GUI the
-reskin pack predates, so its provenance is the upstream borrow, not amazawa:
-
-- `gui/machines/nanofab.png` ← upstream `nanofab.png` sha256 `5ce15567eeece0d4c69ba531d96cbd2c2eaaec2de0250b404f0e054a2756046e`
 ## Static storages + hoppers + anvils placeholder audit (task tex-placeholder-audit)
 
 The tex-census tierC batch-5 probe verdicts, then the borrows the probes found.
@@ -11285,7 +11037,9 @@ as the base). Derivation (canonical, re-runnable: `mdk/tools/make_panel_base.py`
 `--verify` replays byte-identically; the Java census `GT6PanelBaseThemeCensusTest`
 additionally replays it PIXEL-exactly against the on-tree source): source
 `gui/machines/wiremill.png` (amazawa `Wiremill.png`, sha256
-`e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458` — picked by
+`e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458` — source
+sheet retired with machine-gui-composed-purge, the provenance bytes ride
+`mdk/src/test/resources` for the census replay — picked by
 pixel census, fewest non-background pixels in the machine area x[4,172) y[4,83)
 (1392, ~10%) of all standard sheets; nei.png is flatter but prints no inventory
 band), machine-area interior filled flat with the region's modal panel color

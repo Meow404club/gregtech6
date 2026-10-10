@@ -107,23 +107,13 @@ class GT6RecipesShCLTest extends GTRecipesOfflineTestBase {
 	// map constants
 	// ------------------------------------------------------------------
 
-	/** The three maps register under their upstream internal names, with lowercase GUI paths. */
+	/** The three maps register under their upstream internal names (the GUI-path face retired with machine-gui-composed-purge). */
 	@Test
-	void threeMapsRegisterWithLowercaseGuiPaths() {
+	void threeMapsRegisterUnderTheirUpstreamNames() {
 		GT6RecipeMaps.init();
 		assertSame(GT6RecipeMaps.SHREDDER, RecipeMap.RECIPE_MAPS.get("gt.recipe.shredder"));
 		assertSame(GT6RecipeMaps.CRUSHER, RecipeMap.RECIPE_MAPS.get("gt.recipe.crusher"));
 		assertSame(GT6RecipeMaps.LATHE, RecipeMap.RECIPE_MAPS.get("gt.recipe.lathe"));
-
-		for (RecipeMap tMap : new RecipeMap[] {GT6RecipeMaps.SHREDDER, GT6RecipeMaps.CRUSHER, GT6RecipeMaps.LATHE}) {
-			assertEquals(tMap.mGUIPath, tMap.mGUIPath.toLowerCase(java.util.Locale.ROOT),
-					"1.20.1 ResourceLocation paths are [a-z0-9_.-/] — the GUI path must be lowercase");
-			assertTrue(tMap.mGUIPath.endsWith(".png"), "RecipeMap auto-attaches .png (RecipeMap.java:84)");
-			assertTrue(tMap.mGUIPath.startsWith("gt6:textures/gui/machines/"));
-		}
-		assertEquals("gt6:textures/gui/machines/shredder.png", GT6RecipeMaps.SHREDDER.mGUIPath);
-		assertEquals("gt6:textures/gui/machines/crusher.png", GT6RecipeMaps.CRUSHER.mGUIPath);
-		assertEquals("gt6:textures/gui/machines/lathe.png", GT6RecipeMaps.LATHE.mGUIPath);
 
 		// the transcribed slot constants (RM.java:134/:135/:97)
 		assertEquals(1, GT6RecipeMaps.SHREDDER.mInputItemsCount);

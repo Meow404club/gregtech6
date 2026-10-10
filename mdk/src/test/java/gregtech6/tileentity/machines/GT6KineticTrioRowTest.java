@@ -149,15 +149,12 @@ public class GT6KineticTrioRowTest extends TileEntityBasicMachineOfflineTestBase
 			assertEquals(1, GT6RecipeMaps.SIFTING.mInputItemsCount);
 			assertEquals(12, GT6RecipeMaps.SIFTING.mOutputItemsCount, "the RM.java:83 1/12 row — the Shredder topology");
 			assertEquals(2, GT6RecipeMaps.SIFTING.mProgressBarDirection, "the RM.java:83 row is the one non-0 direction in the RM.java:60-115 block");
-			assertEquals("gt6:textures/gui/machines/sifter.png", GT6RecipeMaps.SIFTING.mGUIPath, "lowercased");
 			assertSame(GT6RecipeMaps.COMPRESSOR, gregtech6.recipes.RecipeMap.RECIPE_MAPS.get("gt.recipe.compressor"));
 			assertEquals("Compressor", GT6RecipeMaps.COMPRESSOR.mNameLocal);
 			assertEquals(1, GT6RecipeMaps.COMPRESSOR.mOutputItemsCount, "the RM.java:87 1/1/1 row");
-			assertEquals("gt6:textures/gui/machines/compressor.png", GT6RecipeMaps.COMPRESSOR.mGUIPath, "lowercased");
 			assertSame(GT6RecipeMaps.WIREMILL, gregtech6.recipes.RecipeMap.RECIPE_MAPS.get("gt.recipe.wiremill"));
 			assertEquals("Wiremill", GT6RecipeMaps.WIREMILL.mNameLocal);
 			assertEquals(1, GT6RecipeMaps.WIREMILL.mOutputItemsCount, "the RM.java:111 1/1/1 row");
-			assertEquals("gt6:textures/gui/machines/wiremill.png", GT6RecipeMaps.WIREMILL.mGUIPath, "lowercased");
 		} finally {
 			GT6RecipeMaps.reset();
 		}

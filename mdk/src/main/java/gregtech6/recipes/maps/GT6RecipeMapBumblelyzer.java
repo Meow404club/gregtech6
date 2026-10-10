@@ -135,10 +135,10 @@ public class GT6RecipeMapBumblelyzer extends RecipeMap {
 			};
 
 	public GT6RecipeMapBumblelyzer(@Nullable java.util.Collection<Recipe> aRecipeList, String aNameInternal, String aNameLocal, @Nullable String aNameNEI,
-			long aProgressBarDirection, long aProgressBarAmount, String aNEIGUIPath,
+			long aProgressBarDirection, long aProgressBarAmount,
 			long aInputItemsCount, long aOutputItemsCount, long aMinimalInputItems,
 			long aInputFluidCount, long aOutputFluidCount, long aMinimalInputFluids, long aMinimalInputs, long aPower) {
-		super(aRecipeList, aNameInternal, aNameLocal, aNameNEI, aProgressBarDirection, aProgressBarAmount, aNEIGUIPath,
+		super(aRecipeList, aNameInternal, aNameLocal, aNameNEI, aProgressBarDirection, aProgressBarAmount,
 				aInputItemsCount, aOutputItemsCount, aMinimalInputItems, aInputFluidCount, aOutputFluidCount,
 				aMinimalInputFluids, aMinimalInputs, aPower);
 	}

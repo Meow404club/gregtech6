@@ -140,7 +140,6 @@ class GT6MachineArrowRecipeJumpTest extends GTRecipesOfflineTestBase {
 		@Override public boolean isSuccessful() { return false; }
 		@Override public long getProgress() { return 0; }
 		@Override public long getMaxProgress() { return 0; }
-		@Override public String getGuiTexture() { return "gt6:textures/gui/machines/shredder"; }
 	}
 
 	/** A bricks-output recipe — the identity-key source (vanilla-registry items resolve offline). */

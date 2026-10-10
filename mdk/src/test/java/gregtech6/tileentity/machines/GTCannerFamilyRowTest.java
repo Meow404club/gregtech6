@@ -136,7 +136,6 @@ public class GTCannerFamilyRowTest extends TileEntityBasicMachineOfflineTestBase
 			assertEquals(1, tMap.mOutputFluidCount, "OUT-FLUIDS 1");
 			assertEquals(0, tMap.mMinimalInputFluids, "MIN-FLUIDS 0");
 			assertEquals(1, tMap.mMinimalInputs, "MIN 1");
-			assertEquals("gt6:textures/gui/machines/canner.png", tMap.mGUIPath, "the GUI path column, lowercased");
 		} finally {
 			GT6RecipeMaps.reset();
 		}

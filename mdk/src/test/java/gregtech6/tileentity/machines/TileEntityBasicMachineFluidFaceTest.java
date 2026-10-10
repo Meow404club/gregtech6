@@ -78,7 +78,6 @@ public class TileEntityBasicMachineFluidFaceTest extends TileEntityBasicMachineO
 		sFluidMap = new RecipeMap(new HashSet<>(),
 				"gt.recipe.test.basicmachine_fluidface", "BasicMachine Fluid Face", null,
 				0, 1,
-				"gt6:textures/gui/machines/shredder",
 				/*IN-OUT-MIN-ITEM=*/ 1, 0, 0,
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 1,
 				/*MIN=*/ 1,

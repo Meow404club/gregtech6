@@ -81,8 +81,6 @@ class GT6RecipesStoneChiselTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.CHISEL.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.CHISEL.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.CHISEL.mPower);
-		assertEquals("gt6:textures/gui/machines/chisel.png", GT6RecipeMaps.CHISEL.mGUIPath,
-				"the RM.java:138 machines/Chisel row, lowercased (the 1.20.1 ResourceLocation charset convention)");
 		assertTrue(GT6RecipeMaps.CHISEL.getClass() == RecipeMap.class,
 				"the base RecipeMap — the RecipeMapChisel oredict ring-composition synthesizer is the OM runtime pool (SKIPPED_UPSTREAM)");
 	}

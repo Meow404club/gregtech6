@@ -58,8 +58,9 @@ import gregtech6.recipes.maps.GT6RecipeMapCrucible;
 	 * arrow-cell/special-slot part crops at the folded furniture exits ({@link
 	 * #ARROW_POS_GUI}/{@link #GEAR_POS_GUI}) — while the {@code viewer*Pos} exits below
 	 * still do the sOffset fold ONCE here (the layout switches above stay in
-	 * machine-GUI coordinates, faithful to the upstream switch; {@code mGUIPath} stays a
-	 * data field whose remaining consumers are the in-game screens).
+	 * machine-GUI coordinates, faithful to the upstream switch; the {@code mGUIPath}
+	 * data field itself was retired with the in-game sheets' composition,
+	 * machine-gui-composed-purge).
  *
  * <p><b>The exclusion table</b> (r-jei-emi-coverage id927, the research-card pin): the
  * true-zero / special-surface maps never enter a category even though their upstream
@@ -550,9 +551,9 @@ public final class GT6RecipeMapViewerMeta {
 	// composed page = plate + the part crops (arrow cell, special-slot gear cell) the
 	// legs blit at the folded furniture exits below; the slot frames come ONLY from the
 	// viewers' own slot widgets (JEI RecipeSlot / EMI SlotWidget draw their own back).
-	// The per-map→PNG mapping (mGUIPath) stays a data field — its remaining consumers
-	// are the in-game screens (GTBasicMachineScreen.backgroundOf parse twin), the
-	// viewer retirement is documented here. Both layers anchored the PANEL origin at
+	// The per-map→PNG mapping (upstream mGUIPath) is retired from the port with the
+	// sheets (machine-gui-composed-purge; the in-game screens compose from gui/parts),
+	// the viewer retirement is documented here. Both layers anchored the PANEL origin at
 	// texture pixel (5,7) band / (5,12) plate — the offset upstream folded into every
 	// PositionedStack (the ctor super call at :112 over :66 sOffsetX/Y=5/11),
 	// re-anchored 4px for the modern viewers' zero-headroom category rects (task

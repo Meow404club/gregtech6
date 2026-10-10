@@ -101,7 +101,6 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 		RecipeMap tMap = new RecipeMap(new HashSet<>(),
 				"gt.recipe.shredder", "Shredder", null,
 				0, 1,
-				"gt6:textures/gui/machines/shredder",
 				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 1,

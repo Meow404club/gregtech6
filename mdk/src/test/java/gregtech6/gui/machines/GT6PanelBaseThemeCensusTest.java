@@ -90,7 +90,13 @@ class GT6PanelBaseThemeCensusTest extends GTRecipesOfflineTestBase {
     private static final String BASE_LOCATION = "gt6:textures/gui/parts/panel_base_176x166.png";
     private static final String BASE_FILE = "panel_base_176x166.png";
 
-    /** The derivation source sheet + the fill window (must mirror make_panel_base.py). */
+    /**
+     * The derivation source sheet + the fill window (must mirror make_panel_base.py). The
+     * source sheet left the SHIPPED tree with the machine-gui-composed-purge purge — the
+     * derivation-provenance bytes ride src/test/resources, so the pixel replay stays
+     * honest without re-shipping a retired sheet (the shipped face is the part crops;
+     * this fixture grounds the panel_base bytes only).
+     */
     private static final String SOURCE_FILE = "wiremill.png";
     private static final int FILL_X0 = 4, FILL_Y0 = 4, FILL_X1 = 172, FILL_Y1 = 83;
     private static final int PANEL_W = 176, PANEL_H = 166;
@@ -126,7 +132,7 @@ class GT6PanelBaseThemeCensusTest extends GTRecipesOfflineTestBase {
      */
     @Test
     void panelBaseReplaysPixelExactAgainstItsSourceSheet() throws IOException {
-        BufferedImage src = readPng("gui/machines/" + SOURCE_FILE);
+        BufferedImage src = ImageIO.read(mdkRoot().resolve(Path.of("src", "test", "resources", "assets", "gt6", "textures", "gui", "machines", SOURCE_FILE)).toFile());
         assertEquals(256, src.getWidth());
         assertEquals(256, src.getHeight(), "the source sheet must stay the standard 256x256 amazawa canvas");
         BufferedImage base = readPng("gui/parts/" + BASE_FILE);

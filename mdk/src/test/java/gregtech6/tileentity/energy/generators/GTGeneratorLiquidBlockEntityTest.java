@@ -54,7 +54,7 @@ public class GTGeneratorLiquidBlockEntityTest extends GTOfflineTestBase {
 	/** A one-row FM.Burn fixture: 1 L WATER-class in, |−64 × 5| = 320 GU raw (the diesel BURN row values, Loader_Fuels.java:90). */
 	static RecipeMap oneRowBurnMap(String aName) {
 		RecipeMap tMap = new RecipeMap(new java.util.HashSet<>(),
-				aName, "Test Burn", null, 0, 1, "gt6:textures/gui/machines/default",
+				aName, "Test Burn", null, 0, 1,
 				1, 2, 0, 1, 2, 0, 1, 1);
 		tMap.addRecipe(new Recipe(true,
 				new ItemStack[0], new ItemStack[0],

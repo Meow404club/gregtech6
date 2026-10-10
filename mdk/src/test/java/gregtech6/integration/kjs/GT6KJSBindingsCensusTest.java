@@ -119,7 +119,7 @@ class GT6KJSBindingsCensusTest {
 		// handwriting, nothing missed). A fixture map guarantees the pin is non-vacuous
 		// even in a bare-JVM generation where no production pour has run.
 		RecipeMap tFixture = new RecipeMap(new java.util.HashSet<>(), "gt.recipe.kjs.census.fixture", "KJS Census", null,
-				0, 1, "gt6:textures/gui/machines/fixture", 1, 1, 0, 0, 0, 0, 0, 1);
+				0, 1, 1, 1, 0, 0, 0, 0, 0, 1);
 		assertEquals(1, RecipeMap.RECIPE_MAPS.size(), "fixture-only generation");
 		assertEquals(new HashSet<>(RecipeMap.RECIPE_MAPS.keySet()), new HashSet<>(GT6KJS.recipeMapTargets()),
 				"the row-write seam covers exactly the registry");

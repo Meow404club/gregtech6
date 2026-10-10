@@ -63,7 +63,6 @@ public class TileEntityBasicMachineSideIOTest extends TileEntityBasicMachineOffl
 		return new RecipeMap(new HashSet<>(),
 				"gt.recipe.sideio" + (++sMapOrdinal), "Side IO Test", null,
 				0, 1,
-				"gt6:textures/gui/machines/shredder",
 				/*IN-OUT-MIN-ITEM=*/ 1, 1, 0,
 				/*IN-OUT-MIN-FLUID=*/ 1, 1, 0,
 				/*MIN=*/ 0,

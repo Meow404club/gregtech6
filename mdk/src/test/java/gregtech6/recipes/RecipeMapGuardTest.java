@@ -25,7 +25,7 @@ class RecipeMapGuardTest {
 
 	@BeforeEach
 	void buildMap() {
-		mMap = new RecipeMap(null, "gt.recipe.guardtest", "Guard Test", null, 0, 1, "gt6:textures/gui/machines/crusher", 1, 1, 1, 0, 0, 0, 0, 1);
+		mMap = new RecipeMap(null, "gt.recipe.guardtest", "Guard Test", null, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1);
 	}
 
 	@AfterEach

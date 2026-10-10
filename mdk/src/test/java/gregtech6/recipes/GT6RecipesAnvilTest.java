@@ -86,8 +86,6 @@ class GT6RecipesAnvilTest extends GTRecipesOfflineTestBase {
 		assertSame(GT6RecipeMaps.ANVIL_BEND, RecipeMap.RECIPE_MAPS.get("gt.recipe.anvil.bend"));
 
 		for (RecipeMap tMap : new RecipeMap[] {GT6RecipeMaps.ANVIL, GT6RecipeMaps.ANVIL_BEND}) {
-			assertEquals(tMap.mGUIPath, tMap.mGUIPath.toLowerCase(java.util.Locale.ROOT));
-			assertTrue(tMap.mGUIPath.startsWith("gt6:textures/gui/machines/"));
 			// the RM.java:118-120 constants row — items 2/2/2, fluids 0/0/0, MIN 0, AMP 1
 			assertEquals(2, tMap.mInputItemsCount, "the two working halves");
 			assertEquals(2, tMap.mOutputItemsCount);
@@ -98,8 +96,6 @@ class GT6RecipesAnvilTest extends GTRecipesOfflineTestBase {
 			assertEquals(0, tMap.mMinimalInputs, "MIN 0");
 			assertEquals(1, tMap.mPower, "AMP 1 folds onto the port mPower");
 		}
-		assertEquals("gt6:textures/gui/machines/anvil.png", GT6RecipeMaps.ANVIL.mGUIPath);
-		assertEquals("gt6:textures/gui/machines/anvilbend.png", GT6RecipeMaps.ANVIL_BEND.mGUIPath);
 	}
 
 	// ------------------------------------------------------------------

@@ -1,7 +1,5 @@
 package gregtech6.gui.machines;
 
-import brachy.modularui.drawable.GuiTextures;
-import brachy.modularui.drawable.UITexture;
 import brachy.modularui.drawable.progress.ProgressDrawable;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.value.sync.DoubleSyncValue;
@@ -36,8 +34,16 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  *     output bank as a 3x3 grid (x 107/125/143, y 63/45/27 — the bank reads bottom-up);</li>
  * <li>the progress bar :277-288 three-state + the arrow at (78,24) 20x18
  *     (ContainerClientBasicMachine.java:57);</li>
- * <li>the background mGUITexture = mRecipes.mGUIPath (:114) — the borrowed tower PNG pair
- *     (assets/README.md, sha256-verified byte-identical).</li>
+ * <li>the background mGUITexture = mRecipes.mGUIPath (:114) upstream — retired here with the
+ *     mGUIPath values (task machine-gui-composed-purge, the user ruling "全部改成拼接，把
+ *     完整图全部清了"): the panel rides the gt6 theme base (the {@code panel.background}
+ *     9-slice of parts/panel_base_176x166, fork Widget.drawBackground :255-264 theme arm)
+ *     and the furniture the tower sheets baked composes back as the part crops — the slot
+ *     frames ride the theme slot arm, the fluid display seats wear the
+ *     {@link GT6GuiParts#SLOT_FLUID} droplet frame, the progress pair is
+ *     {@link GT6GuiParts#ARROW_OUTLINE}/{@link GT6GuiParts#ARROW_FORWARD} at (78,24) and
+ *     the decorative gear print {@link GT6GuiParts#SLOT_SPECIAL} rides at (77,60) — the
+ *     same coordinates the distillationtower/cryodistillationtower sheets printed.</li>
  * </ul>
  *
  * <p>The tower has NO special circuit slot (plain RecipeMap getSpecialSlot → null,
@@ -103,15 +109,11 @@ public final class GTDistillationTowerMUI {
 		DoubleSyncValue tProgress = new DoubleSyncValue(() -> GTBasicMachineMUI.progressRatio(aTower));
 		aSyncManager.syncValue(SYNC_PROGRESS, tProgress);
 
-		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME, 176, 166)
-				// the machine sheets are 256x256 canvases with the art in the top-left 176x166
-				// (the vanilla blit's implicit 256 sampling) — the sub-area is declared
-				// explicitly, fullImage would shrink the art into the corner (task gui-bg-uv-fix)
-				.background(UITexture.builder()
-						.location(GTBasicMachineScreen.backgroundOf(aTower))
-						.imageSize(256, 256)
-						.subAreaXYWH(0, 0, 176, 166)
-						.build());
+		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME, 176, 166);
+		// NO code background: the gt6 theme's 9-slice panel base draws here (fork
+		// Widget.drawBackground :255-264 theme arm, the GTBasicMachineMUI form) — the old
+		// .background(mGUIPath tower sheet) is the retired sheet arm (task
+		// machine-gui-composed-purge); the fluid seats dress their own frames below
 
 		// the input item seat — case1 :55 → (53,7)
 		for (int i = 0; i < tInputs; i++) {
@@ -136,10 +138,20 @@ public final class GTDistillationTowerMUI {
 					.pos(FLUID_OUT_X + (i % 3) * OUTPUT_PITCH, FLUID_OUT_Y - (i / 3) * OUTPUT_PITCH)
 					.name("fluid_out_" + i));
 		}
-		// the progress arrow — (78,24) 20x18, the vendored MUI default drawable, zero new art
+		// the decorative gear print — the 22x22 special-slot cell the tower sheets carried
+		// at (77,60), composed back over the clean theme base (the GTBasicMachineMUI form;
+		// pure decor — no slot is seated, the tower map's getSpecialSlot is null)
+		tPanel.child(GT6GuiParts.asUITexture(GT6GuiParts.SLOT_SPECIAL).asWidget()
+				.pos(77, 60).size(22, 22)
+				.name("special_slot"));
+		// the progress arrow — (78,24) 20x18, the shared parts pair (the empty cell under
+		// the clipped fill, the GTBasicMachineMUI form; zero sheet art)
 		tPanel.child(new ProgressWidget()
 				.value(tProgress)
-				.texture(GuiTextures.PROGRESS_ARROW, ProgressDrawable.Direction.RIGHT)
+				.progress(new ProgressDrawable()
+						.emptyTexture(GT6GuiParts.asUITexture(GT6GuiParts.ARROW_OUTLINE))
+						.filledTexture(GT6GuiParts.asUITexture(GT6GuiParts.ARROW_FORWARD))
+						.direction(ProgressDrawable.Direction.RIGHT))
 				.pos(PROGRESS_X, PROGRESS_Y)
 				.size(PROGRESS_W, PROGRESS_H));
 
@@ -169,6 +181,13 @@ public final class GTDistillationTowerMUI {
 		return new FluidDisplayWidget()
 				.value(tValue)
 				.capacity(FluidTankGT.bindInt(aTank.getCapacity()))
-				.displayAmount(false);
+				.displayAmount(false)
+				// the droplet frame (F2-01 form): the sheet-baked frames are gone with the
+				// sheets — the amazawa 18x19 fluid cell rides as the code background. The
+				// theme's own slot frame would double-frame underneath (fork
+				// Widget.drawBackground :255-264 theme arm first, code second), so the theme
+				// arm is disabled for the seat (the GTBasicMachineMUI.fluidSeat form).
+				.disableThemeBackground(true)
+				.background(GT6GuiParts.asUITexture(GT6GuiParts.SLOT_FLUID));
 	}
 }

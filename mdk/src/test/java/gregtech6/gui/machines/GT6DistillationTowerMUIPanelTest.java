@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -47,7 +48,8 @@ import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
  * <li><b>the output-only face</b> — every output seat refuses insertion while the input
  *     accepts;</li>
  * <li><b>the read-only fluid face</b> — no amount text (the upstream icon-only seat);</li>
- * <li><b>the tower background</b> — the borrowed distillationtower.png path.</li>
+ * <li><b>the composed background</b> — no code background (the theme panel base owns the
+ *     panel, the retired mGUIPath sheets), the droplet fluid frames, the gear decor.</li>
  * </ul>
  */
 class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
@@ -88,7 +90,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 		}
 	}
 
-	/** The row-less tower fixture (row()==null — the risk line the panel factory must survive), fed a 1-in/3-out/1-fluid fake map so the Host projection (getOutputSlotCount/getGuiTexture) resolves. */
+	/** The row-less tower fixture (row()==null — the risk line the panel factory must survive), fed a 1-in/3-out/1-fluid fake map so the Host projection (getOutputSlotCount) resolves. */
 	private static TileEntityDistillationTower newTower() {
 		TileEntityDistillationTower tTower =
 				new TileEntityDistillationTower(sPanelTowerType, P1, Blocks.BRICKS.defaultBlockState());
@@ -96,8 +98,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 		// form GT6DistillationTowerTest rides (its own rows are empty; the panel needs only
 		// the slot-shape numbers and a namespaced GUI path)
 		gregtech6.recipes.RecipeMap tMap = new gregtech6.recipes.RecipeMap(new java.util.HashSet<>(),
-				"gt6.test.towerpanel." + System.nanoTime(), "Tower Panel Test", null, 0, 1,
-				"gt6:textures/gui/machines/distillationtower", 1, 3, 1, 1, 9, 0, 1, 1);
+				"gt6.test.towerpanel." + System.nanoTime(), "Tower Panel Test", null, 0, 1, 1, 3, 1, 1, 9, 0, 1, 1);
 		tTower.mRecipes = tMap;
 		return tTower;
 	}
@@ -224,11 +225,19 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the read-only fluid face + the background
+	// the read-only fluid face + the composed background (machine-gui-composed-purge)
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * The composed face: no code background (the gt6 theme's 9-slice panel base draws at
+	 * runtime, so headless {@code getBackground()} is null — the GTBasicMachineMUIPanelTest
+	 * form; the retired distillationtower/cryodistillationtower sheets carried no art beyond
+	 * the theme furniture), the fluid seats wear the droplet frame with the theme fluidSlot
+	 * frame disabled (no double frame), and the decorative gear print rides at the skins'
+	 * (77,60) 22x22 (pure decor — the tower map's getSpecialSlot is null, no seat).
+	 */
 	@Test
-	public void theFluidSeatsAreReadOnlyDisplayAndTheBackgroundIsTheTowerPair() {
+	public void theFluidSeatsAreReadOnlyDisplayAndThePanelIsTheComposedBase() throws Exception {
 		TileEntityDistillationTower tTower = newTower();
 		PanelSyncManager tSync = headlessSyncManager();
 		ModularPanel<?> tPanel = GTDistillationTowerMUI.buildPanel(tTower, tSync);
@@ -240,10 +249,26 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 			}
 		}
 
-		// the background rides the tower's mGUIPath (the borrowed PNG pair)
-		UITexture tBackground = assertInstanceOf(UITexture.class, tPanel.getBackground(), "the panel background is a texture");
-		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/distillationtower.png"), tBackground.location(),
-				"the tower background path (the row-less fixture defaults the HU tower name)");
+		// no code background — the theme base owns the panel (the retired sheet arm)
+		assertNull(tPanel.getBackground(), "no code background — the theme base owns the panel");
+
+		// the fluid seats wear the amazawa droplet frame, theme frame disabled
+		for (IWidget tWidget : allWidgets(tPanel)) {
+			if (tWidget instanceof FluidDisplayWidget tSeat) {
+				UITexture tFrame = assertInstanceOf(UITexture.class, tSeat.getBackground(),
+						tSeat.getName() + ": the frame is a texture");
+				assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/parts/slot_fluid_18x19.png"),
+						tFrame.location(), tSeat.getName() + ": the droplet frame");
+				assertTrue(tSeat.isDisableThemeBackground(), tSeat.getName() + ": the theme fluidSlot frame is disabled");
+			}
+		}
+
+		// the decorative gear print — the tower sheets' (77,60) 22x22 furniture, composed
+		IWidget tGear = named(tPanel, "special_slot");
+		assertNotNull(tGear, "the gear print widget");
+		assertPos(tGear, 77, 60, "the gear print");
+		assertEquals(22, sizeOf(tGear, true), "the gear print w 22");
+		assertEquals(22, sizeOf(tGear, false), "the gear print h 22");
 	}
 
 	// ---------------------------------------------------------------------------
