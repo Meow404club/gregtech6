@@ -507,9 +507,10 @@ public final class GTMachines {
 	 * One row factory — the four Dryer columns that differ (path/name/id/material/hardness/
 	 * tier/parallel) plus the seven that are family constants (RM.Drying through the
 	 * supplier, HU, "dryer" texture, the masks, the auto sides, cheap overclocking T) and
-	 * the {@code gt6:dryer} MenuType through the supplier (task machine-fluid-gui ① —
-	 * the p14 row.menu pool promise redeemed; the supplier form survives the deferred
-	 * registration, the BE reads it lazily at createMenu time).
+	 * the menu-less MUI carrier (task basic-machines-mui-migration — the user ruling
+	 * 全部统一: the machine-fluid-gui ① supplier promise is redeemed one last time and
+	 * retired; the open rides {@link gregtech6.gui.machines.GT6MuiMachine#tryOpen} and the
+	 * panel seats ride the live Host banks).
 	 */
 	private static GTBasicMachineBlock.MachineRow dryer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier, int aParallel) {
 		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, HEAT_T_LADDER.get(aTier), DRYER_DISPLAY_KEY, aMetaId, aHardness, aTier, aParallel, true,
@@ -521,7 +522,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_A),
 				(byte)5 /*NBT_TANK_SIDE_AUTO_IN SIDE_BACK*/, (byte)1 /*NBT_TANK_SIDE_AUTO_OUT SIDE_TOP*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.DRYER_MENU::get /*gt6:dryer — the GUI pool card redeemed (machine-fluid-gui ①)*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
+				null /*the menu-less MUI carrier (task basic-machines-mui-migration — the user ruling 全部统一: the open rides GT6MuiMachine.tryOpen, the gt6:dryer MenuType retired)*/, true /*NBT_CHEAP_OVERCLOCKING T*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Dryer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -638,8 +639,9 @@ public final class GTMachines {
 	 * One row factory — the Canner columns that differ (path/name/id/metaId/hardness/tier)
 	 * plus the family constants: EU (NBT_ENERGY_ACCEPTED), the "canner" texture, the :1379
 	 * masks and auto sides, parallel 1 / parallelDuration F (no NBT keys), cheap
-	 * overclocking T (the :773 loop runs unconditionally in the port) and the
-	 * {@code gt6:canner} menu supplier.
+	 * overclocking T (the :773 loop runs unconditionally in the port) and the menu-less
+	 * MUI carrier (task basic-machines-mui-migration — 全部统一, the gt6:canner menu
+	 * supplier retired; the open rides the tryOpen chain).
 	 */
 	private static GTBasicMachineBlock.MachineRow canner(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
 		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, ELECTRIC_T_LADDER.get(aTier), CANNER_DISPLAY_KEY, aMetaId, aHardness, aTier, 1, false,
@@ -651,7 +653,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
+				null /*the menu-less MUI carrier (task basic-machines-mui-migration — 全部统一, the gt6:canner MenuType retired)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate on the legacy rows (c-ulv-machine-ladder)*/, false);
 	}
 
 	/** The registered Canner blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
@@ -1214,7 +1216,7 @@ public final class GTMachines {
 				ULV_MELTING_GATE_K /*the 1375 K stone-crucible ceiling*/, true /*ulvVoltage — the {4,8,16} window*/);
 	}
 
-	/** The Canner ULV row factory — the canner() row shape (tank keys + the live gt6:canner menu kept) with the p28 columns. */
+	/** The Canner ULV row factory — the canner() row shape (tank keys + the menu-less MUI carrier, task basic-machines-mui-migration) with the p28 columns. */
 	private static GTBasicMachineBlock.MachineRow cannerUlv() {
 		return new GTBasicMachineBlock.MachineRow("canner_ulv", "ulv", "ULV", ELECTRIC_T0, CANNER_DISPLAY_KEY, 20166, 4.0F,
 				0, 1, false,
@@ -1226,7 +1228,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D) /*NBT_INV_SIDE_OUT*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)0 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BOTTOM*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*gt6:canner — the family menu the ULV row shares*/,
+				null /*the menu-less MUI carrier (task basic-machines-mui-migration — 全部统一, the gt6:canner MenuType retired)*/,
 				true /*NBT_CHEAP_OVERCLOCKING*/,
 				ULV_MELTING_GATE_K /*the 1375 K stone-crucible ceiling*/, true /*ulvVoltage*/);
 	}
@@ -5519,7 +5521,8 @@ public final class GTMachines {
 	/**
 	 * One Burner Mixer row factory — the :1595 masks and the NBT_PARALLEL_DURATION-T
 	 * ladder over RM.BURN_MIXER and the "burnmixer" texture, RU (the :1595 energy column —
-	 * the card erratum above), the shared canner menu carrier.
+	 * the card erratum above), the menu-less MUI carrier (task basic-machines-mui-migration —
+	 * 全部统一; the fluid seats still ride the live Host banks).
 	 */
 	private static GTBasicMachineBlock.MachineRow burnerMixer(String aPath, String aMatSlug, String aMatDisplay, int aMetaId, float aHardness, int aTier) {
 		return new GTBasicMachineBlock.MachineRow(aPath, aMatSlug, aMatDisplay, KINETIC_T_LADDER.get(aTier), MACHINE_BURNER_MIXER_UNIT_KEY, aMetaId, aHardness, aTier,
@@ -5532,13 +5535,13 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_B | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_B, the :138 read*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)5 /*NBT_TANK_SIDE_AUTO_OUT SIDE_BACK*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — zero new gt6:* MenuType, the gui-basicmachine-fluids fluid seats ride the live Host banks*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+				null /*the menu-less MUI carrier (task basic-machines-mui-migration — 全部统一; the fluid seats still ride the live Host banks)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
 	}
 
 	/**
 	 * One Plantalyzer row factory — the :1601 masks over RM.PLANTALYZER and EU + parallel
-	 * 64 / duration F (the NBT_PARALLEL key alone — the :770-771 arm), the shared canner
-	 * menu carrier.
+	 * 64 / duration F (the NBT_PARALLEL key alone — the :770-771 arm), the menu-less MUI
+	 * carrier (task basic-machines-mui-migration — 全部统一).
 	 */
 	private static GTBasicMachineBlock.MachineRow plantalyzer(String aPath, int aMetaId, int aTier) {
 		return new GTBasicMachineBlock.MachineRow(aPath, VOLTAGE_WORDS[aTier][0], VOLTAGE_WORDS[aTier][1], electricTier(aTier), MACHINE_PLANTALYZER_UNIT_KEY, aMetaId, 4.0F, aTier,
@@ -5551,7 +5554,7 @@ public final class GTMachines {
 				(byte)(GTBasicMachineBlock.SBIT_R | GTBasicMachineBlock.SBIT_D | GTBasicMachineBlock.SBIT_A) /*NBT_INV_SIDE_OUT SBIT_R|SBIT_D, the :138 read*/,
 				(byte)1 /*NBT_TANK_SIDE_AUTO_IN SIDE_TOP*/, (byte)-1 /*no NBT_TANK_SIDE_AUTO_OUT key → SIDE_UNDEFINED*/,
 				(byte)2 /*NBT_INV_SIDE_AUTO_IN SIDE_LEFT*/, (byte)4 /*NBT_INV_SIDE_AUTO_OUT SIDE_RIGHT*/,
-				GTBasicMachinesMenus.CANNER_MENU::get /*the SHARED canner carrier — the single tank-in face keeps the gui-basicmachine-fluids input seat*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
+				null /*the menu-less MUI carrier (task basic-machines-mui-migration — 全部统一; the single tank-in face keeps the gui-basicmachine-fluids input seat)*/, true /*NBT_CHEAP_OVERCLOCKING — :773 unconditional*/, null /*no melting gate*/, false);
 	}
 
 	/** The registered Burner Mixer blocks by path (the BET/datagen/loot walkers + /gt6machine place iterate this). */
