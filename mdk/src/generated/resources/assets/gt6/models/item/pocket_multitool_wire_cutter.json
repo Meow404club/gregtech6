@@ -2,6 +2,6 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "gt6:item/pocket/wire_cutter",
-    "layer1": "gt6:item/pocket/wire_cutter_overlay"
+    "layer1": "gt6:item/overlay/pocket_tool"
   }
 }

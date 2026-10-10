@@ -15,10 +15,12 @@
  *       (screwdriver/hammer, the p24/p25 census-erratum ruling) are RETIRED — both tools
  *       now carry the upstream four-pass structure; the composed single-layer pin is
  *       gone with the ruling it guarded;</li>
- *   <li>every material prefix model obeys the existence-gated overlay rule: layer1 is
- *       present IF AND ONLY IF {@code material_sets/<set>/<prefix>_overlay.png} exists
- *       on the static ∪ generated face (research.p27-render-three-fixes F2: the gate is
- *       file existence, never prefix/set inference — BRICK's rockGt base is the full
+ *   <li>every material prefix model obeys the overlay resolution rule: layer1 is
+ *       present IF AND ONLY IF the (iconset, prefix) resolves an overlay sprite — the
+ *       task overlay-texture-dedupe canonical ({@code GT6ItemModels.OVERLAY_CANONICAL})
+ *       first, else the per-set {@code material_sets/<set>/<prefix>_overlay.png}
+ *       existence face for the singletons (research.p27-render-three-fixes F2: the gate
+ *       is never inferred from the prefix or set — BRICK's rockGt base is the full
  *       cobble, DULL/METALLIC's body lives entirely in the overlay);</li>
  *   <li>the F2 visual-fix carriers exist as real layers: a rock_gt model resolves a
  *       rock_gt_overlay layer1 and a chemtube model resolves a chemtube_overlay layer1
@@ -155,9 +157,12 @@ class GT6ItemModelLayersTest {
             Map<String, String> textures = texturesOf(itemModels, head);
             assertEquals(4, layerKeys(textures).size(), head + " must carry exactly 4 layers");
             assertLayer(textures, 0, "gt6:item/material_sets/metallic/tool_head_" + head, head);
-            assertLayer(textures, 1, "gt6:item/material_sets/metallic/tool_head_" + head + "_overlay", head);
+            // task overlay-texture-dedupe: the metallic head OVERLAY passes and the
+            // HANDLE_* passes are fully-transparent VOID borrows, deduped onto the
+            // empty canonical (layer COUNT = the four-pass structure, unchanged)
+            assertLayer(textures, 1, "gt6:item/overlay/empty", head);
             assertLayer(textures, 2, "gt6:item/" + head, head);
-            assertLayer(textures, 3, "gt6:item/" + head + "_overlay", head);
+            assertLayer(textures, 3, "gt6:item/overlay/empty", head);
         }
 
         // builder_wand: EMERALD head pair + the Scorched(SET_WOOD) stick pair
@@ -165,9 +170,9 @@ class GT6ItemModelLayersTest {
         Map<String, String> wand = texturesOf(itemModels, "builder_wand");
         assertEquals(4, layerKeys(wand).size(), "builder_wand must carry exactly 4 layers");
         assertLayer(wand, 0, "gt6:item/builder_wand", "builder_wand");
-        assertLayer(wand, 1, "gt6:item/material_sets/emerald/tool_head_builderwand_overlay", "builder_wand");
+        assertLayer(wand, 1, "gt6:item/overlay/empty", "builder_wand");
         assertLayer(wand, 2, "gt6:item/material_sets/wood/stick", "builder_wand");
-        assertLayer(wand, 3, "gt6:item/material_sets/wood/stick_overlay", "builder_wand");
+        assertLayer(wand, 3, "gt6:item/overlay/empty", "builder_wand");
 
         // soft_hammer (task w5-t3-machine-face-four): the RUBBER-set toolHeadHammer
         // pair (the upstream ANY.Rubber primary, GT_Tool_SoftHammer.getIcon :120) + the
@@ -176,9 +181,9 @@ class GT6ItemModelLayersTest {
         Map<String, String> softHammer = texturesOf(itemModels, "soft_hammer");
         assertEquals(4, layerKeys(softHammer).size(), "soft_hammer must carry exactly 4 layers");
         assertLayer(softHammer, 0, "gt6:item/material_sets/rubber/tool_head_hammer", "soft_hammer");
-        assertLayer(softHammer, 1, "gt6:item/material_sets/rubber/tool_head_hammer_overlay", "soft_hammer");
+        assertLayer(softHammer, 1, "gt6:item/overlay/empty", "soft_hammer");
         assertLayer(softHammer, 2, "gt6:item/material_sets/wood/stick", "soft_hammer");
-        assertLayer(softHammer, 3, "gt6:item/material_sets/wood/stick_overlay", "soft_hammer");
+        assertLayer(softHammer, 3, "gt6:item/overlay/empty", "soft_hammer");
 
         // hard hammer (task issue6-tool-4layer-tint, supersedes the p25 composed
         // single): the soft-hammer row shape over the METALLIC head pair (the default
@@ -187,9 +192,9 @@ class GT6ItemModelLayersTest {
         Map<String, String> hammer = texturesOf(itemModels, "hammer");
         assertEquals(4, layerKeys(hammer).size(), "hammer must carry exactly 4 layers");
         assertLayer(hammer, 0, "gt6:item/material_sets/metallic/tool_head_hammer", "hammer");
-        assertLayer(hammer, 1, "gt6:item/material_sets/metallic/tool_head_hammer_overlay", "hammer");
+        assertLayer(hammer, 1, "gt6:item/overlay/empty", "hammer");
         assertLayer(hammer, 2, "gt6:item/material_sets/wood/stick", "hammer");
-        assertLayer(hammer, 3, "gt6:item/material_sets/wood/stick_overlay", "hammer");
+        assertLayer(hammer, 3, "gt6:item/overlay/empty", "hammer");
     }
 
     // the gun family (task pistol-family-items): FOUR layers over iconset borrows on
@@ -202,21 +207,33 @@ class GT6ItemModelLayersTest {
             Map<String, String> textures = texturesOf(itemModels, gun);
             assertEquals(4, layerKeys(textures).size(), gun + " must carry exactly 4 layers");
             assertLayer(textures, 0, "gt6:item/" + gun, gun);
-            assertLayer(textures, 1, "gt6:item/" + gun + "_overlay", gun);
+            // task overlay-texture-dedupe: the six gun body/handle OVERLAY passes are
+            // one transparent VOID content group, deduped onto the empty canonical
+            assertLayer(textures, 1, "gt6:item/overlay/empty", gun);
             assertLayer(textures, 2, "gt6:item/" + gun + "_handle", gun);
-            assertLayer(textures, 3, "gt6:item/" + gun + "_handle_overlay", gun);
+            assertLayer(textures, 3, "gt6:item/overlay/empty", gun);
         }
     }
 
-    /** The VOID-handle iconset tools: base + overlay, exactly 2 layers. */
+    /**
+     * The VOID-handle iconset tools: base + overlay, exactly 2 layers. wrench +
+     * bending_cylinder_small ride the deduped empty canonical (task
+     * overlay-texture-dedupe); the other five keep their singleton overlay sprites.
+     */
     @Test
     void voidHandleToolsCarryExactlyTwoLayers() throws IOException {
         Path itemModels = mdkRoot().resolve(GENERATED_TREE).resolve(ITEM_MODELS);
-        for (String tool : new String[] {"crowbar", "cutter", "wrench", "bending_cylinder_small", "monkey_wrench", "magnifying_glass", "pincers"}) {
+        for (String tool : new String[] {"crowbar", "cutter", "monkey_wrench", "magnifying_glass", "pincers"}) {
             Map<String, String> textures = texturesOf(itemModels, tool);
             assertEquals(2, layerKeys(textures).size(), tool + " must carry exactly 2 layers");
             assertLayer(textures, 0, "gt6:item/" + tool, tool);
             assertLayer(textures, 1, "gt6:item/" + tool + "_overlay", tool);
+        }
+        for (String tool : new String[] {"wrench", "bending_cylinder_small"}) {
+            Map<String, String> textures = texturesOf(itemModels, tool);
+            assertEquals(2, layerKeys(textures).size(), tool + " must carry exactly 2 layers");
+            assertLayer(textures, 0, "gt6:item/" + tool, tool);
+            assertLayer(textures, 1, "gt6:item/overlay/empty", tool);
         }
     }
 
@@ -250,13 +267,16 @@ class GT6ItemModelLayersTest {
         "pistol", "carbine", "rifle");
 
     /**
-     * The existence-gated overlay rule, walked over EVERY generated item model that
-     * carries a material_sets layer0: layer1 present IF AND ONLY IF the
-     * {@code <prefix>_overlay} PNG exists on the static ∪ generated face — and no
-     * layer1 may ever point at a non-existent file.
+     * The overlay resolution rule, walked over EVERY generated item model that carries a
+     * material_sets layer0: layer1 present IF AND ONLY IF the (iconset, prefix) resolves
+     * an overlay sprite — the task overlay-texture-dedupe canonical table
+     * ({@code GT6ItemModels.OVERLAY_CANONICAL}) first, else the singleton per-set
+     * {@code <prefix>_overlay} PNG existence face — and a resolved layer1 must point at
+     * exactly the resolved sprite (the canonical for group members, the per-set path for
+     * the singletons) on the static ∪ generated face.
      */
     @Test
-    void everyPrefixModelObeysTheExistenceGate() throws IOException {
+    void everyPrefixModelObeysTheOverlayResolutionGate() throws IOException {
         Path mdk = mdkRoot();
         Path itemModels = mdk.resolve(GENERATED_TREE).resolve(ITEM_MODELS);
         Set<String> resolvable = textureRels(mdk, STATIC_TREE);
@@ -276,28 +296,29 @@ class GT6ItemModelLayersTest {
             checked++;
             List<String> layers = layerKeys(textures);
             boolean hasLayer1 = layers.contains("layer1");
-            String overlayRel = textureRel(layer0.substring(0, layer0.lastIndexOf('/') + 1)
-                + layer0.substring(layer0.lastIndexOf('/') + 1) + "_overlay");
-            boolean overlayOnDisk = resolvable.contains(overlayRel);
-            if (hasLayer1 != overlayOnDisk) {
-                violations.add(file + ": layer1=" + hasLayer1 + " but " + overlayRel + " exists=" + overlayOnDisk);
+            // the resolution rule, mirrored from GT6ItemModels.overlaySpriteOf
+            String setPrefix = layer0.substring("gt6:item/material_sets/".length());
+            String canonical = GT6ItemModels.OVERLAY_CANONICAL.get(setPrefix);
+            String perSetOverlayRel = textureRel(layer0 + "_overlay");
+            String expectedLayer1 = canonical != null ? "gt6:" + canonical
+                : (resolvable.contains(perSetOverlayRel) ? layer0 + "_overlay" : null);
+            if (hasLayer1 != (expectedLayer1 != null)) {
+                violations.add(file + ": layer1=" + hasLayer1 + " but resolution=" + expectedLayer1);
             }
-            if (hasLayer1) {
+            if (expectedLayer1 != null) {
                 withOverlay++;
                 String layer1 = textures.get("layer1");
+                assertEquals(expectedLayer1, layer1, file + ": layer1 is not the resolved overlay sprite");
                 if (!resolvable.contains(textureRel(layer1))) {
                     violations.add(file + ": layer1 -> unresolvable " + layer1);
                 }
-                // the overlay layer must be the sibling _overlay sprite of the base
-                String expected = layer0 + "_overlay";
-                assertEquals(expected, layer1, file + ": layer1 is not the base's overlay sibling");
             }
             // no layer beyond the overlay pass on prefix models (tint ladder = later card)
             assertTrue(layers.size() <= 2, file + ": unexpected extra layers " + layers);
         }
         assertTrue(checked > 50000, "prefix walk too small (" + checked + ") — the census must never pass vacuously");
         assertTrue(withOverlay > 50000, "overlay layer coverage too small (" + withOverlay + ")");
-        assertTrue(violations.isEmpty(), "existence-gate violations: " + violations.size() + "\n  "
+        assertTrue(violations.isEmpty(), "overlay-resolution-gate violations: " + violations.size() + "\n  "
             + String.join("\n  ", violations.subList(0, Math.min(10, violations.size()))));
     }
 
@@ -310,14 +331,16 @@ class GT6ItemModelLayersTest {
     void rockGtAndChemtubeResolveTheirOverlayLayers() throws IOException {
         Path itemModels = mdkRoot().resolve(GENERATED_TREE).resolve(ITEM_MODELS);
         Map<String, String> rockGt = texturesOf(itemModels, "rock_gt_andradite");
-        assertEquals("gt6:item/material_sets/ruby/rock_gt_overlay", rockGt.get("layer1"),
-            "rock_gt_andradite must carry the rock_gt_overlay body layer");
+        // task overlay-texture-dedupe: the 25-set rock_gt overlay group resolves onto the
+        // item/overlay/rock_gt canonical (byte-identical art)
+        assertEquals("gt6:item/overlay/rock_gt", rockGt.get("layer1"),
+            "rock_gt_andradite must carry the rock_gt body layer");
         String chemtube = allItemModels(itemModels).stream()
             .filter(f -> f.startsWith("chemtube_"))
             .findFirst().orElse(null);
         assertNotNull(chemtube, "no chemtube prefix model found");
         Map<String, String> textures = texturesOf(itemModels, chemtube.substring(0, chemtube.length() - ".json".length()));
-        assertTrue(textures.get("layer1") != null && textures.get("layer1").endsWith("chemtube_overlay"),
-            chemtube + " must carry the chemtube_overlay glass-wall layer");
+        assertTrue(textures.get("layer1") != null && textures.get("layer1").endsWith("overlay/chemtube"),
+            chemtube + " must carry the chemtube glass-wall layer");
     }
 }

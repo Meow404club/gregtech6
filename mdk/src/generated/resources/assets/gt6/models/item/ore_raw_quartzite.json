@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "gt6:item/material_sets/quartz/ore_raw",
-    "layer1": "gt6:item/material_sets/quartz/ore_raw_overlay"
+    "layer1": "gt6:item/overlay/empty"
   }
 }

@@ -8315,6 +8315,79 @@ upstream `README.md` block as above).
   - `tool_head_wrench_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `wire_fine_overlay.png` `e7706aff0582ee538eb20996e3142e729d0512bdb2eb4ee6b2bbd0d17750c83a`
 
+Overlay content-group canonicalization, task overlay-texture-dedupe
+(2026-10-10). The item overlay passes in the manifest above are
+content-identical across texture sets — upstream copies the same
+`<Prefix>_OVERLAY` art into every SET folder (TextureSet.java:113-116), and
+2146 of the 2871 duplicated passes are fully transparent (the VOID
+handle/slot passes, byte-different encodings of pixel-empty art). Each
+distinct content group now ships ONCE as
+`gt6/textures/item/overlay/<semantic>.png` — byte-identical to one former
+member (digests below) — and every (set, prefix) member resolves onto the
+canonical at datagen time (GT6ItemModels.OVERLAY_CANONICAL). The duplicated
+per-set `<prefix>_overlay.png` copies are deleted in the same wave; manifest
+rows above whose digest survives nowhere are pruned with them, rows whose
+bytes equal the canonical keep grounding through it. Singleton overlays
+(unique content, 117 files) keep their paths unchanged; the block-domain
+overlay families (machine port side-face borrows below, ore/materialicons,
+pipe/wire) are a separate later wave and untouched. The pin test
+GT6OverlayDedupeCensusTest keeps the item overlay family at zero
+same-content duplicates and pins the canonical whitelist. Merge table
+(canonical <- member count; the full member enumeration lives in the
+GT6ItemModels OVERLAY_CONTENT_GROUPS rows):
+
+- `gt6/textures/item/overlay/arrow_gt_plastic.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce` <- 30 members (per-set arrow_gt_pla_overlay)
+- `gt6/textures/item/overlay/arrow_gt_wood.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b` <- 30 members (per-set arrow_gt__overlay)
+- `gt6/textures/item/overlay/billet.png` `e3f561a791554c835122559f7af604620c69f29e584889f80a67b23e990f9d9e` <- 2 members (per-set bi_overlay)
+- `gt6/textures/item/overlay/bolt.png` `c97809394f93669fac71bbc3c6012635ca6a64f8e82252f840156bf720e437f2` <- 3 members (per-set _overlay)
+- `gt6/textures/item/overlay/boule_gt.png` `bdce449cfe0c753cd30c754c50899dcdf53c81294885176bd2e68fe5249bed9e` <- 2 members (per-set boul_overlay)
+- `gt6/textures/item/overlay/bullet_gt_large.png` `aa42b343546e7ac05aeea9d3da7b5d6af82e2e33cbe55fb7e44f4641b4602684` <- 32 members (per-set bullet_gt_l_overlay)
+- `gt6/textures/item/overlay/bullet_gt_medium.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3` <- 32 members (per-set bullet_gt_me_overlay)
+- `gt6/textures/item/overlay/bullet_gt_small.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91` <- 32 members (per-set bullet_gt_s_overlay)
+- `gt6/textures/item/overlay/chemtube.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d` <- 37 members (per-set chem_overlay)
+- `gt6/textures/item/overlay/chunk_gt.png` `d11627da717028a69fee38bbc32fd5fd97b506889b1d30782d25db42682babfe` <- 3 members (per-set chun_overlay)
+- `gt6/textures/item/overlay/crushed.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2` <- 28 members (per-set cru_overlay)
+- `gt6/textures/item/overlay/crushed_tiny.png` `e1fcc7603d828a6f91d383001aa64e006c66f633c9d4eb7b5dfbfae3b9dbc5f0` <- 29 members (per-set crushed__overlay)
+- `gt6/textures/item/overlay/dust.png` `90a0b61029bb55b04339a737980128cacbd655fc3a80d7d6a944a543fa7dba45` <- 14 members (per-set _overlay)
+- `gt6/textures/item/overlay/dust_small.png` `ccbf9304a619b43191f923c91b71f4ffe20ad52253ece8a38fb603241f32afd3` <- 14 members (per-set dust_s_overlay)
+- `gt6/textures/item/overlay/dust_tiny.png` `a030139084aa64bb559ace5014d92800529d9795e94cbfc6d0f6d48d7976d95c` <- 14 members (per-set dust__overlay)
+- `gt6/textures/item/overlay/empty.png` `f138a491eb7b6e4572a64075d57276a36470724c0b57e6f3c42da424ee31398f` <- 2146 members (per-set e_overlay)
+- `gt6/textures/item/overlay/gear_gt.png` `2b314d4b80ee0409dff242ca4e98435c571e1c6703db37baf918ad3ae3832d87` <- 13 members (per-set gea_overlay)
+- `gt6/textures/item/overlay/gear_gt_small.png` `0e2c919e4dd8ee525ab419ab0c69497c59b741e02d6c9765724bc12ead565f02` <- 13 members (per-set gear_gt_s_overlay)
+- `gt6/textures/item/overlay/ingot.png` `8b3a73552fee59f3ad7f42e3dcc3577b4aa87ae9dc309265ea91d921ccc448e4` <- 3 members (per-set i_overlay)
+- `gt6/textures/item/overlay/ingot_hot.png` `d45218b67f4d9fc4721bfe67404de3600f4c64ff56d4e94892507339092a97ba` <- 15 members (per-set ingot_overlay)
+- `gt6/textures/item/overlay/lens.png` `c4dcc78d96b585a46276c68a7876c629058fd2c5e4609ba13052f0ab213c1927` <- 16 members (per-set _overlay)
+- `gt6/textures/item/overlay/minecart_wheels.png` `053c86f7705c7994a95adfb8cccce39441bb6428f66df96da9bbf5682a647f7e` <- 14 members (per-set minecart_wh_overlay)
+- `gt6/textures/item/overlay/nugget.png` `519b6a07fe5d29c3590b92bd4d8b1b6bab862faff5c3654862dc212696fb89e1` <- 3 members (per-set nu_overlay)
+- `gt6/textures/item/overlay/ore_raw.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f` <- 12 members (per-set ore_overlay)
+- `gt6/textures/item/overlay/plant_gt_berry.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca` <- 38 members (per-set plant_gt_b_overlay)
+- `gt6/textures/item/overlay/plant_gt_blossom.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f` <- 38 members (per-set plant_gt_blo_overlay)
+- `gt6/textures/item/overlay/plant_gt_twig.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce` <- 38 members (per-set plant_gt__overlay)
+- `gt6/textures/item/overlay/plate.png` `0daa874c9db0fc2552086805705354a9eb4413c3985ae5e3ad97924bcb4207c8` <- 2 members (per-set p_overlay)
+- `gt6/textures/item/overlay/plate_gem.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f` <- 16 members (per-set plate_overlay)
+- `gt6/textures/item/overlay/plate_gem_tiny.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2` <- 14 members (per-set plate_gem__overlay)
+- `gt6/textures/item/overlay/plate_quadruple.png` `607c82749a640ac41c893a47420ee060db693a5db8e281b67d4f635cd282074e` <- 3 members (per-set plate_quadr_overlay)
+- `gt6/textures/item/overlay/pocket_tool.png` `99dea00a8db5173b549a5a67b7519cdc14bfe972b1677c7eeae0cb9a8ca79ef5` <- 8 members (per-set pocket__overlay)
+- `gt6/textures/item/overlay/ring.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691` <- 31 members (per-set _overlay)
+- `gt6/textures/item/overlay/rock_gt.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d` <- 25 members (per-set roc_overlay)
+- `gt6/textures/item/overlay/stick.png` `ea1caf24eb9ea77ab4d194db2d4d5d90d650dab50b0cad83ff735eebef7fc77e` <- 17 members (per-set s_overlay)
+- `gt6/textures/item/overlay/tool_head_arrow.png` `f666652c6773d202d20b22ef4981425e6c6b9d7b9710d3ca7334eb6acde36ccc` <- 32 members (per-set tool_head_a_overlay)
+- `gt6/textures/item/overlay/tool_head_axe.png` `c12cc4b2e49b77c9a6dead9a7d6fbf1eba01532dd45a5f15f7f56eb11b5663ac` <- 4 members (per-set tool_head_overlay)
+- `gt6/textures/item/overlay/tool_head_axe_double.png` `c58e45f8d41bd6909aae557c0f7eca919a725017e34dee21cacf9887524d2757` <- 2 members (per-set tool_head_axe_do_overlay)
+- `gt6/textures/item/overlay/tool_head_buzz_saw.png` `8aba73b25090ffb7bd017d7ac6f864de0665dca20729ea8be81549878f7b8f07` <- 3 members (per-set tool_head_buzz_overlay)
+- `gt6/textures/item/overlay/tool_head_chisel.png` `6fe68a87526d2adf884d5d015edcbaa5362c20842194d3e6274d2e32779ae932` <- 2 members (per-set tool_head_ch_overlay)
+- `gt6/textures/item/overlay/tool_head_hoe.png` `67ef3aef6a0b181b64b50c013f2c3a8f60f80e4e9959d500e95f02dcba36fd85` <- 4 members (per-set tool_head_overlay)
+- `gt6/textures/item/overlay/tool_head_pickaxe.png` `720b0630a288aae702fb630efdc9e9e28518943ea4b35b5933f0378ee983b7ca` <- 4 members (per-set tool_head_pic_overlay)
+- `gt6/textures/item/overlay/tool_head_pickaxe_gem.png` `89d2c38f10b44ae730ed2b7dfb46a9c5fa975f8d2aa441b990eea124ea1da4e3` <- 15 members (per-set tool_head_pickaxe_overlay)
+- `gt6/textures/item/overlay/tool_head_plow.png` `c450720b71b94d94cec32fb17ec343eafdc425dd706018792b1b988407fea2c2` <- 2 members (per-set tool_head__overlay)
+- `gt6/textures/item/overlay/tool_head_raw_chisel.png` `9433b988fe96d407daaca9548fbf04ebe4fb49cfb2e18d1c395dc7ec5423e894` <- 3 members (per-set tool_head_raw_ch_overlay)
+- `gt6/textures/item/overlay/tool_head_raw_saw.png` `1a9ceba5784b1de59b641c78635d2153cc4e8bf0a90aab12acc4fdd4f6aaea1b` <- 2 members (per-set tool_head_raw_overlay)
+- `gt6/textures/item/overlay/tool_head_raw_sense.png` `02db78469121345b79b2b0569abfa256b5e4cbb3e014b1be890b9b7c28cb3959` <- 4 members (per-set tool_head_raw_s_overlay)
+- `gt6/textures/item/overlay/tool_head_raw_shovel.png` `ce5b0cb2cb07d059583841e3fa086e1cc1113950c1b77ebf0b5952112300f55e` <- 4 members (per-set tool_head_raw_sh_overlay)
+- `gt6/textures/item/overlay/tool_head_raw_sword.png` `8b0bea59d3b8ead1621c721dfa6f1c436df8a733c4085c9c90c7819333d154ee` <- 4 members (per-set tool_head_raw_s_overlay)
+- `gt6/textures/item/overlay/tool_head_raw_universal_spade.png` `b61ad222f8e6ab81d00afce9d119a011f3889e3c64ca181e344493542907d616` <- 4 members (per-set tool_head_raw_universal_s_overlay)
+- `gt6/textures/item/overlay/wire_fine.png` `e7706aff0582ee538eb20996e3142e729d0512bdb2eb4ee6b2bbd0d17750c83a` <- 15 members (per-set wire__overlay)
+
 
 Machine port side-face overlay borrows, task a-port-overlay-assets
 (copied 2026-09-12). The port-face art set for the B render card: per

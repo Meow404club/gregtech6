@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "gt6:item/material_sets/brick/wire_fine",
-    "layer1": "gt6:item/material_sets/brick/wire_fine_overlay"
+    "layer1": "gt6:item/overlay/wire_fine"
   }
 }

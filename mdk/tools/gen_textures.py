@@ -37,9 +37,10 @@ Usage:
   python3 gen_textures.py --force         # regenerate all table placeholders (real textures still yield)
   python3 gen_textures.py --scan DIR      # derive combos from generated models, fill gaps
   python3 gen_textures.py --verify DIR    # assert model coverage over the static∪generated union, write nothing
-  python3 gen_textures.py --borrow DIR    # copy upstream <NAME>_OVERLAY pass textures next to
-                                          # their borrowed bases (byte-identical, sha256 manifest
-                                          # appended to assets/README.md once)
+  python3 gen_textures.py --borrow DIR    # borrow upstream <NAME>_OVERLAY passes as one
+                                          # item/overlay/<semantic> canonical per content group
+                                          # (byte-identical, sha256 manifest appended to
+                                          # assets/README.md once)
 DIR (for --scan/--verify) = mdk/src/generated/resources — the model tree the
 combos are derived from. DIR (for --borrow) = the upstream checkout's
 src/main/resources/assets/gregtech/textures/items directory; it defaults to the
@@ -49,6 +50,7 @@ the static tree mdk/src/main/resources.
 """
 import argparse
 import hashlib
+import os
 import json
 import sys
 import zlib
@@ -3057,6 +3059,77 @@ def borrow_one(src: Path, dst: Path) -> str:
     return "borrowed"
 
 
+def png_is_fully_transparent(data: bytes) -> bool:
+    """True when an 8-bit RGBA PNG decodes to an all-zero alpha channel.
+
+    task overlay-texture-dedupe: the VOID-handle/empty-slot OVERLAY passes are
+    pixel-empty; they dedupe onto one canonical regardless of their (byte-different)
+    upstream encodings. Pure stdlib decode (the script never took an imaging
+    dependency); non-RGBA input conservatively reports False.
+    """
+    if data[:8] != b"\x89PNG\r\n\x1a\n":
+        return False
+    pos, idat, width, height, ctype = 8, b"", 0, 0, 0
+    while pos < len(data):
+        length = int.from_bytes(data[pos:pos + 4], "big")
+        tag = data[pos + 4:pos + 8]
+        payload = data[pos + 8:pos + 8 + length]
+        if tag == b"IHDR":
+            width, height = int.from_bytes(payload[0:4], "big"), int.from_bytes(payload[4:8], "big")
+            ctype = payload[9]
+        elif tag == b"IDAT":
+            idat += payload
+        pos += 12 + length
+    if ctype != 6 or width <= 0 or height <= 0:  # 6 = RGBA, 8-bit
+        return False
+    raw = zlib.decompress(idat)
+    stride = width * 4
+    prev = bytearray(stride)
+    pos = 0
+    for _ in range(height):
+        ftype = raw[pos]
+        pos += 1
+        line = bytearray(raw[pos:pos + stride])
+        pos += stride
+        for x in range(stride):
+            a = line[x - 4] if x >= 4 else 0
+            b = prev[x]
+            c = prev[x - 4] if x >= 4 else 0
+            if ftype == 1:
+                line[x] = (line[x] + a) & 255
+            elif ftype == 2:
+                line[x] = (line[x] + b) & 255
+            elif ftype == 3:
+                line[x] = (line[x] + (a + b) // 2) & 255
+            elif ftype == 4:
+                p = a + b - c
+                pa, pb, pc = abs(p - a), abs(p - b), abs(p - c)
+                pr = a if (pa <= pb and pa <= pc) else (b if pb <= pc else c)
+                line[x] = (line[x] + pr) & 255
+        if any(line[3::4]):
+            return False
+        prev = line
+    return True
+
+
+def canonical_overlay_name(members: list) -> str:
+    """The semantic canonical stem for one content group (task overlay-texture-dedupe).
+
+    Same rule as GT6ItemModels.OVERLAY_CONTENT_GROUPS: the fully-transparent groups
+    collapse onto `item/overlay/empty`; an all-pocket group onto
+    `item/overlay/pocket_tool`; everything else takes the most common member stem
+    (ties lexicographic). `members` = static-tree-relative paths of one md5 group.
+    """
+    if all(m.startswith("item/pocket/") for m in members):
+        return "item/overlay/pocket_tool"
+    stems = {}
+    for m in members:
+        stem = m.rsplit("/", 1)[-1][: -len("_overlay.png")]
+        stems[stem] = stems.get(stem, 0) + 1
+    best = sorted(stems.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+    return f"item/overlay/{best}"
+
+
 def borrow_overlays(upstream_items: Path, static_root: Path):
     """Complete the base+OVERLAY icon pairs over the whole census.
 
@@ -3068,7 +3141,12 @@ def borrow_overlays(upstream_items: Path, static_root: Path):
     Returns (rows, fallbacks); rows are (kind, group, file, sha256) manifest
     entries with kind in {'material_sets', 'iconsets'}.
     """
+    # task overlay-texture-dedupe: same-content upstream overlays are written ONCE as
+    # the item/overlay/<semantic> canonical — the per-set <prefix>_overlay.png copies
+    # are NOT recreated (GT6ItemModels.OVERLAY_CANONICAL resolves members onto the
+    # canonical; GT6OverlayDedupeCensusTest keeps the tree at zero same-content dups).
     rows, fallbacks = [], []
+    staged = []  # (static-rel dst, upstream src path)
     material_root = static_root / TEXTURES_REL
     for iconset, prefix in sorted(COMBOS):
         src = (upstream_items / "materialicons" / iconset.upper()
@@ -3077,10 +3155,7 @@ def borrow_overlays(upstream_items: Path, static_root: Path):
         if not src.is_file():
             fallbacks.append(("material_sets", f"{iconset}/{prefix}", str(src)))
             continue
-        if borrow_one(src, dst) == "conflict":
-            sys.exit(f"error: {dst} differs from upstream {src} — refusing to clobber")
-        rows.append(("material_sets", iconset, f"{prefix}_overlay.png",
-                     sha256_hex(src.read_bytes())))
+        staged.append((dst, src, f"{iconset}/{prefix}"))
     item_root = static_root / ITEM_TEXTURES_REL
     for stem, name in sorted(ICONSET_OVERLAYS.items()):
         src = upstream_items / "iconsets" / f"{name}_OVERLAY.png"
@@ -3088,10 +3163,21 @@ def borrow_overlays(upstream_items: Path, static_root: Path):
         if not src.is_file():
             fallbacks.append(("iconsets", stem, str(src)))
             continue
+        staged.append((dst, src, stem))
+
+    by_content = {}
+    for dst, src, key in staged:
+        by_content.setdefault(sha256_hex(src.read_bytes()), []).append((dst, src, key))
+    for digest, entries in sorted(by_content.items()):
+        members = [e[0].relative_to(static_root).as_posix() for e in entries]
+        canonical = ("item/overlay/empty" if png_is_fully_transparent(entries[0][1].read_bytes())
+                     else canonical_overlay_name(members))
+        dst = static_root / (canonical + ".png")
+        src = entries[0][1]
         if borrow_one(src, dst) == "conflict":
             sys.exit(f"error: {dst} differs from upstream {src} — refusing to clobber")
-        rows.append(("iconsets", "iconsets", f"{stem}_overlay.png",
-                     sha256_hex(src.read_bytes())))
+        rows.append(("canonicals", canonical + ".png", digest,
+                     [key for _, _, key in entries]))
     return rows, fallbacks
 
 
@@ -3105,8 +3191,7 @@ def append_readme_manifest(static_root: Path, rows, fallbacks) -> bool:
     readme = static_root / "assets" / "README.md"
     if README_MARKER in readme.read_text(encoding="utf-8"):
         return False
-    ms = [r for r in rows if r[0] == "material_sets"]
-    ic = [r for r in rows if r[0] == "iconsets"]
+    canons = [r for r in rows if r[0] == "canonicals"]
     if fallbacks:
         listed = ", ".join(f"{kind}:{key}" for kind, key, _ in fallbacks[:20])
         more = "" if len(fallbacks) <= 20 else f" (+{len(fallbacks) - 20} more)"
@@ -3114,14 +3199,21 @@ def append_readme_manifest(static_root: Path, rows, fallbacks) -> bool:
                          f"missing, nothing written: {listed}{more}")
     else:
         fallback_note = "zero conditional fallbacks"
+    member_total = sum(len(r[3]) for r in canons)
+    staged_keys = sum(1 for r in rows if "/" in r[3][0] and not r[3][0].startswith("item/"))
+    staged_iconsets = member_total - staged_keys
     section = f"""
-GT6 item OVERLAY pass textures, task p27-tool-overlay-assets: the {len(ms)}
-`gt6/textures/item/material_sets/<set>/<prefix>_overlay.png` files and the
-{len(ic)} `gt6/textures/item/<stem>_overlay.png` iconset overlays come from
-upstream `{UPSTREAM_REPO_URL}` snapshot `{UPSTREAM_SNAPSHOT}`, files
+GT6 item OVERLAY pass textures, task p27-tool-overlay-assets (canonicalized by
+task overlay-texture-dedupe): the {member_total} upstream overlay passes
+(materialicons/<SET>/<Prefix>_OVERLAY pairs + iconset <NAME>_OVERLAY pairs)
+come from `{UPSTREAM_REPO_URL}` snapshot `{UPSTREAM_SNAPSHOT}`, files
 `src/main/resources/assets/gregtech/textures/items/materialicons/<SET>/<Prefix>_OVERLAY.png`
 and `.../iconsets/<NAME>_OVERLAY.png`, byte-identical to upstream, sha256
-verified per file (manifest below). This completes the base+overlay icon
+verified per content group (manifest below). Upstream copies the same overlay
+art into every SET folder, so each distinct content group ships ONCE as
+`gt6/textures/item/overlay/<semantic>.png` and the (iconset, prefix) members
+resolve onto it (GT6ItemModels.OVERLAY_CANONICAL); the fully-transparent VOID
+groups collapse onto `item/overlay/empty.png`. This completes the base+overlay icon
 pairs: upstream registers every item icon as `<NAME>` + `<NAME>_OVERLAY`
 (TextureSet.java:113-116 materialicons, Textures.java:856-859 iconsets) and
 draws the overlay as the un-tinted second pass (ToolStats.java:247-265 tool
@@ -3134,8 +3226,8 @@ overlays take the port base stem + `_overlay` (`HANDLE_SAW_OVERLAY.png` ->
 `saw_overlay.png`, paired with the byte-identical `saw.png` base).
 Conditional fallback is exists() semantics: a combo whose upstream overlay is
 missing is listed by the script, nothing written, nothing invented — census
-{BORROW_DATE}: {len(ms)}/{len(COMBOS)} material_sets pairs and
-{len(ic)}/{len(ICONSET_OVERLAYS)} iconset pairs present upstream,
+{BORROW_DATE}: {len(staged_keys)}/{len(COMBOS)} material_sets pairs and
+{len(staged_iconsets)}/{len(ICONSET_OVERLAYS)} iconset pairs present upstream,
 {fallback_note}. `item/screwdriver.png` is deliberately un-paired: it is the
 p24 four-layer composite (its entry above; the HANDLE_SCREWDRIVER_OVERLAY
 pass already baked in), not a byte-identical base. Six of the seven iconset
@@ -3149,16 +3241,8 @@ Upstream license: **CC0 1.0 Universal Public Domain Dedication** (same
 upstream `README.md` block as above).
 """
     lines = [section.rstrip()]
-    by_group = {}
-    for kind, group, file, digest in rows:
-        by_group.setdefault((kind, group), []).append((file, digest))
-    for (kind, group), entries in sorted(by_group.items()):
-        if kind == "material_sets":
-            lines.append(f"- `{group.upper()}` -> `{TEXTURES_REL}/{group}/`:")
-        else:
-            lines.append(f"- iconset overlays -> `{ITEM_TEXTURES_REL}/`:")
-        for file, digest in entries:
-            lines.append(f"  - `{file}` `{digest}`")
+    for kind, file, digest, members in sorted(rows):
+        lines.append(f"- `{file}` `{digest}` ({len(members)} members)")
     with readme.open("a", encoding="utf-8") as handle:
         handle.write("\n" + "\n".join(lines) + "\n")
     return True
@@ -3169,11 +3253,10 @@ def borrow_main(upstream_items: Path, static_root: Path) -> None:
     if not upstream_items.is_dir():
         sys.exit(f"error: upstream items tree not found: {upstream_items}")
     rows, fallbacks = borrow_overlays(upstream_items, static_root)
-    ms = sum(1 for r in rows if r[0] == "material_sets")
-    ic = sum(1 for r in rows if r[0] == "iconsets")
+    member_total = sum(len(r[3]) for r in rows)
     print(f"overlay borrow vs {upstream_items} (snapshot {UPSTREAM_SNAPSHOT}):")
-    print(f"  material_sets: {ms}/{len(COMBOS)} pairs present in the static tree")
-    print(f"  iconsets:      {ic}/{len(ICONSET_OVERLAYS)} pairs present in the static tree")
+    print(f"  {len(rows)} content-group canonicals under item/overlay/ "
+          f"({member_total} upstream member passes resolve onto them)")
     print(f"  conditional fallbacks (upstream overlay missing, nothing written): {len(fallbacks)}")
     for _, key, _ in fallbacks:
         print(f"    - {key}")

@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "gt6:item/material_sets/copper/screw",
-    "layer1": "gt6:item/material_sets/copper/screw_overlay"
+    "layer1": "gt6:item/overlay/empty"
   }
 }
