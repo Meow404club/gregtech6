@@ -85,29 +85,29 @@ public final class GT6MoldTintListener {
 	}
 
 	/**
-	 * The bowl content-face tint (tint index 1, task crucible-large-ber): the small
-	 * crucible's synced lightest-content material through the ContentFace dispatch — the
-	 * MOLTEN arm (mRGBaLiquid over the molten art) while the blockstate says molten, the
-	 * SOLID arm (mRGBaSolid over the body art) once the charge cools (task
-	 * crucible-render-followup — the symptom-B fix: the former always-molten arm answered
-	 * -1 on a cooled charge and left the static molten art raw gray-white). The phase
-	 * voice is the BLOCKSTATE (the server's MOLTEN flip and the baked texture ride the
-	 * same state, so art and colour can never disagree); on a non-crucible state (the
-	 * offline fixtures) the BE's molten census stands in. Anything else (no BE, empty
-	 * pile) answers -1 = the sprite renders as-is. The level/pos signature is the
-	 * BlockColor seam (no BE on the item half — {@link #familyItemColor} routes index 1
-	 * through {@link #blockTintARGB}, which answers -1 there).
+	 * The bowl content-face tint (tint index 1, task crucible-large-ber). The phase voice is
+	 * the BLOCKSTATE (the server's MOLTEN flip and the baked texture ride the same state, so
+	 * art and colour can never disagree): MOLTEN=false → the upstream COOLED face verbatim —
+	 * the FIXED gray-black {@link GT6CrucibleDatagen#SOLID_CONTENT} tint 0xFF404040,
+	 * material-INDEPENDENT (MultiTileEntitySmeltery.java:587-591 answers
+	 * {@code MT.NULL×blockRaw×CA_GRAY_64} whenever the displayed fluid is invalid; the
+	 * crucible-render-followup "lightest material's mRGBaSolid" arm is retired, and with it
+	 * the phase-independent {@code mDisplayedLightest} sync it consumed). MOLTEN=true → the
+	 * synced displayed-molten material through the ContentFace molten arm (mRGBaLiquid over
+	 * the molten art). On a non-crucible state (the offline fixtures) the BE's molten census
+	 * stands in. Anything else (no BE) answers -1 = the sprite renders as-is. The level/pos
+	 * signature is the BlockColor seam (no BE on the item half — {@link #familyItemColor}
+	 * routes index 1 through {@link #blockTintARGB}, which answers -1 there).
 	 */
 	public static int crucibleContentTintARGB(@Nullable BlockState aState, @Nullable BlockAndTintGetter aLevel, @Nullable BlockPos aPos) {
 		if (aLevel == null || aPos == null) return -1;
 		if (aLevel.getBlockEntity(aPos) instanceof TileEntitySmeltery tSmeltery) {
-			OreDictMaterial tLightest = tSmeltery.displayedLightestMaterial();
-			if (tLightest != null) {
-				boolean tMolten = aState != null && aState.getBlock() instanceof GT6Crucibles.CrucibleBlock
-						? aState.getValue(GT6Crucibles.CrucibleBlock.MOLTEN)
-						: tSmeltery.mDisplayedFluid != -1; // the offline-fixture stand-in (non-crucible state)
-				return gregtech6.datagen.GT6CrucibleDatagen.contentFace(tLightest, tMolten).tintARGB();
-			}
+			boolean tMolten = aState != null && aState.getBlock() instanceof GT6Crucibles.CrucibleBlock
+					? aState.getValue(GT6Crucibles.CrucibleBlock.MOLTEN)
+					: tSmeltery.mDisplayedFluid != -1; // the offline-fixture stand-in (non-crucible state)
+			if (!tMolten) return gregtech6.datagen.GT6CrucibleDatagen.SOLID_CONTENT.tintARGB();
+			OreDictMaterial tDisplayed = tSmeltery.displayedMaterial();
+			if (tDisplayed != null) return gregtech6.datagen.GT6CrucibleDatagen.contentFace(tDisplayed, true).tintARGB();
 		}
 		return -1;
 	}
