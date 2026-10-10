@@ -344,15 +344,27 @@ public class GT6ConverterProviderTest extends GTOfflineTestBase {
 		assertEquals(GT6ConverterProvider.LANG_STORED, tStored.getKey());
 		assertEquals(100L, tStored.getArgs()[0]);
 		assertEquals(200L, tStored.getArgs()[1]);
-		assertEquals("KU", tStored.getArgs()[2]);
+		assertUnitToken(tStored.getArgs()[2], "KU", ChatFormatting.DARK_GREEN);
 		net.minecraft.network.chat.contents.TranslatableContents tBare =
 				(net.minecraft.network.chat.contents.TranslatableContents) GT6ConverterProvider.storedBareLine(250, "HU").getContents();
 		assertEquals(GT6ConverterProvider.LANG_STORED_BARE, tBare.getKey());
-		assertEquals("HU", tBare.getArgs()[1]);
+		// the burning-box HU face (task jade-energy-token-color, the user's "燃烧室输出的
+		// HU 没上色"): the amount stays neutral, the HU token paints RED, the row is unstyled
+		assertUnitToken(tBare.getArgs()[1], "HU", ChatFormatting.RED);
+		assertEquals(net.minecraft.network.chat.Style.EMPTY, GT6ConverterProvider.storedBareLine(250, "HU").getStyle(),
+				"the bare Stored row is unstyled — only the HU token paints");
 		net.minecraft.network.chat.contents.TranslatableContents tRate =
 				(net.minecraft.network.chat.contents.TranslatableContents) GT6ConverterProvider.rateLine(64, "EU").getContents();
 		assertEquals(GT6ConverterProvider.LANG_RATE, tRate.getKey());
 		assertEquals(64L, tRate.getArgs()[0]);
+		assertUnitToken(tRate.getArgs()[1], "EU", ChatFormatting.BLUE);
+	}
+
+	/** The token-slot pin: the unit arg is the code alone in the carrier color, and the ROW itself carries no style (only the token paints). */
+	private static void assertUnitToken(Object aArg, String aCode, ChatFormatting aExpected) {
+		net.minecraft.network.chat.Component tToken = (net.minecraft.network.chat.Component) aArg;
+		assertEquals(aCode, tToken.getString());
+		assertEquals(TextColor.fromLegacyFormat(aExpected), tToken.getStyle().getColor());
 	}
 
 	@Test

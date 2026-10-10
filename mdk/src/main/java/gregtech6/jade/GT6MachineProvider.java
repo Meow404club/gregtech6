@@ -37,9 +37,10 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  *     &gt;20t 折秒仿 GTCEu WorkableBlockProvider :72-77，文本统一三槽 X / Y (Z%)。</li>
  * <li><b>能量缓冲行</b>——文本 A 形 "Stored: %s %s"（mEnergy + p27 短码）——<b>不出条</b>
  *     （capacitor 半 getEnergyCapacity 未移植，无真上限；Jade 裁定例外条款）。
- *     task jade-energy-colors 起：能量缓冲行与输入带行整行按载体色着色
- *     （{@link gregtech6.jei.GT6EnergyCensus#energyColorOfShortCode}，上游 TD.Energy 第 4 参色转录，
- *     与能量页观感一致；miss = 默认白）。</li>
+ *     task jade-energy-colors 起能量行按载体查色；task jade-energy-token-color 收窄为
+ *     <b>token 化着色</b>（用户修正：只有载体短码字上色，行不动）——短码槽传带
+ *     {@link gregtech6.jei.GT6EnergyCensus#energyColorOfShortCode} 载体色的子组件
+ *     （上游 TD.Energy 第 4 参色转录，与能量页观感一致；miss = 默认白）。</li>
  * <li><b>输入带行</b>——"Input: %s / %s / %s %s"（mInputMin/mInput/mInputMax :243 +
  *     类型短码第四槽，载体色同上）。</li>
  * <li><b>Malfunction 置换</b>——ERROR_MESSAGE 唯一来源 = tick 异常陷阱
@@ -258,22 +259,23 @@ public final class GT6MachineProvider implements IBlockComponentProvider, IServe
 	}
 
 	/**
-	 * 能量缓冲行（文本 A 形）：量 + 类型短码（缺键 "?" 由调用侧供给），整行按载体色着色
-	 * （task jade-energy-colors——与能量页观感一致；查表 miss = 默认白，
-	 * {@link GT6EnergyCensus#energyColorOfShortCode}）。
+	 * 能量缓冲行（文本 A 形）：量 + 类型短码（缺键 "?" 由调用侧供给）。task jade-energy-token-color
+	 * 起<b>只有短码槽着色</b>（用户修正 jade-energy-colors 的整行染色）：短码作为带载体色的子
+	 * 组件进 {@code %s} 槽（{@link GT6EnergyCensus#energyTokenOfShortCode}，子组件样式只作用
+	 * 自身——数字与其余文本回默认白；miss = 白样式 token，观感同裸短码）。
 	 */
 	public static Component energyLine(long aEnergy, String aTypeShortCode) {
-		return Component.translatable(LANG_ENERGY, aEnergy, aTypeShortCode)
-				.withStyle(gregtech6.jei.GT6EnergyCensus.energyColorOfShortCode(aTypeShortCode));
+		return Component.translatable(LANG_ENERGY, aEnergy,
+				gregtech6.jei.GT6EnergyCensus.energyTokenOfShortCode(aTypeShortCode));
 	}
 
 	/**
-	 * 输入带行（四槽）：min / in / max 同序三槽 + 类型短码，整行同载体色
-	 * （与能量缓冲行同一查表——带的是同一载体的输入带，miss = 默认白）。
+	 * 输入带行（四槽）：min / in / max 同序三槽 + 类型短码，短码槽同一 token 查表
+	 * （与能量缓冲行同载体；数字三槽默认白）。
 	 */
 	public static Component inputLine(long aInputMin, long aInput, long aInputMax, String aTypeShortCode) {
-		return Component.translatable(LANG_INPUT, aInputMin, aInput, aInputMax, aTypeShortCode)
-				.withStyle(gregtech6.jei.GT6EnergyCensus.energyColorOfShortCode(aTypeShortCode));
+		return Component.translatable(LANG_INPUT, aInputMin, aInput, aInputMax,
+				gregtech6.jei.GT6EnergyCensus.energyTokenOfShortCode(aTypeShortCode));
 	}
 
 }

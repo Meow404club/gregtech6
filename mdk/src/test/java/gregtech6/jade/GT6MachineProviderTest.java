@@ -263,10 +263,11 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 	public void energyAndInputRowsAreTheTextForms() {
 		// the energy buffer row: "Stored: %s %s" (amount + short code) — the TEXT form, no
 		// bar (no true capacity is ported — the capacitor half is missing, the design ruling).
+		// task jade-energy-token-color: the short-code slot rides the token Component.
 		TranslatableContents tEnergy = (TranslatableContents) GT6MachineProvider.energyLine(1234, "RU").getContents();
 		assertEquals(GT6MachineProvider.LANG_ENERGY, tEnergy.getKey());
 		assertEquals(1234L, tEnergy.getArgs()[0]);
-		assertEquals("RU", tEnergy.getArgs()[1]);
+		assertEquals("RU", ((Component) tEnergy.getArgs()[1]).getString());
 		// the input band: min/in/max + the type short code in the FOURTH slot
 		TranslatableContents tInput = (TranslatableContents) GT6MachineProvider.inputLine(16, 32, 64, "KU").getContents();
 		assertEquals(GT6MachineProvider.LANG_INPUT, tInput.getKey());
@@ -274,29 +275,41 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 		assertEquals(16L, tInput.getArgs()[0]);
 		assertEquals(32L, tInput.getArgs()[1]);
 		assertEquals(64L, tInput.getArgs()[2]);
-		assertEquals("KU", tInput.getArgs()[3]);
+		assertEquals("KU", ((Component) tInput.getArgs()[3]).getString());
 	}
 
 	@Test
-	public void energyRowsCarryTheCarrierColor() {
-		// task jade-energy-colors: the Stored row and the input band row both style with
-		// the carrier color keyed by the wire short code (the upstream TD.Energy createTagData
-		// 4th-argument transcription, GT6EnergyCensus.ENERGY_COLORS — the same look as the
-		// energy pages' cost units).
-		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.BLUE),
-				GT6MachineProvider.energyLine(1234, "EU").getStyle().getColor());
-		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.RED),
-				GT6MachineProvider.energyLine(1234, "HU").getStyle().getColor());
-		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GREEN),
-				GT6MachineProvider.inputLine(16, 32, 64, "KU").getStyle().getColor());
-		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_PURPLE),
-				GT6MachineProvider.inputLine(16, 32, 64, "QU").getStyle().getColor());
-		// the miss face: an untabled short code keeps the neutral WHITE (never a null style,
-		// never a crash — the missing-key "?" and STEAM's word code)
+	public void energyRowsCarryTheCarrierColorOnTheTokenSlotOnly() {
+		// task jade-energy-token-color (the user's narrowing of jade-energy-colors): ONLY
+		// the carrier short code paints — the ROW itself is back to the neutral style (the
+		// amounts and the fixed words stay white) and the token sub-Component in the slot
+		// carries the color (GT6EnergyCensus.energyTokenOfShortCode, the upstream TD.Energy
+		// createTagData 4th-argument transcription).
+		for (String tCode : new String[] {"EU", "HU", "KU", "QU", "CU", "RU", "LU", "MU", "TU"}) {
+			Component tEnergy = GT6MachineProvider.energyLine(1234, tCode);
+			Component tInput = GT6MachineProvider.inputLine(16, 32, 64, tCode);
+			assertEquals(net.minecraft.network.chat.Style.EMPTY, tEnergy.getStyle(),
+					tCode + ": the Stored row is unstyled — only the token paints");
+			assertEquals(net.minecraft.network.chat.Style.EMPTY, tInput.getStyle(),
+					tCode + ": the input band row is unstyled — only the token paints");
+			assertEquals(TextColor.fromLegacyFormat(
+							gregtech6.jei.GT6EnergyCensus.energyColorOfShortCode(tCode)),
+					((Component) ((TranslatableContents) tEnergy.getContents()).getArgs()[1]).getStyle().getColor(),
+					tCode + ": the Stored token carries the carrier color");
+			assertEquals(TextColor.fromLegacyFormat(
+							gregtech6.jei.GT6EnergyCensus.energyColorOfShortCode(tCode)),
+					((Component) ((TranslatableContents) tInput.getContents()).getArgs()[3]).getStyle().getColor(),
+					tCode + ": the input-band token carries the carrier color");
+		}
+		// the miss face: an untabled short code keeps the neutral WHITE token (never a null
+		// style, never a crash — the missing-key "?" and STEAM's word code)
+		assertEquals(net.minecraft.network.chat.Style.EMPTY, GT6MachineProvider.energyLine(0, "?").getStyle());
 		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.WHITE),
-				GT6MachineProvider.energyLine(0, "?").getStyle().getColor());
+				((Component) ((TranslatableContents) GT6MachineProvider.energyLine(0, "?").getContents())
+						.getArgs()[1]).getStyle().getColor());
 		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.WHITE),
-				GT6MachineProvider.inputLine(1, 2, 3, "Steam").getStyle().getColor());
+				((Component) ((TranslatableContents) GT6MachineProvider.inputLine(1, 2, 3, "Steam").getContents())
+						.getArgs()[3]).getStyle().getColor());
 	}
 
 	@Test
