@@ -10,7 +10,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,6 +22,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.minecraftforge.items.IItemHandler;
 
@@ -132,6 +136,37 @@ public class GTAnvilBlock extends GTEntityBlock {
 	@Override
 	public RenderShape getRenderShape(BlockState aState) {
 		return RenderShape.MODEL; // BaseEntityBlock default INVISIBLE is for BER blocks
+	}
+
+	/** The :397-398 box for the X-axis facings (EAST/WEST): x 4..12px waist, z 0..16px band, y 0..12px. */
+	private static final VoxelShape SHAPE_FACING_X = Block.box(4, 0, 0, 12, 12, 16);
+	/** The :397-398 box for the Z-axis facings (NORTH/SOUTH): the X/Z legs swap. */
+	private static final VoxelShape SHAPE_FACING_Z = Block.box(0, 0, 4, 16, 12, 12);
+
+	/**
+	 * The upstream collision/selection box — ONE box for both ({@code
+	 * getCollisionBoundingBoxFromPool} == {@code getSelectedBoundingBoxFromPool},
+	 * MultiTileEntityAnvil.java:397-398; the setBlockBoundsBasedOnState :399 folds onto the
+	 * same box), transcribed as two cached forms picked by the facing axis (the
+	 * {@code SIDES_AXIS_X[mFacing]} leg): the long axis runs PERPENDICULAR to the facing
+	 * (the anvil-shape-models rotation canon) — the facing axis carries the
+	 * {@code PX_P[4]..PX_N[4]} = 4..12px waist, the cross axis the {@code PX_P[0]..PX_N[0]}
+	 * = 0..16px full band, y = {@code PX_P[0]..PX_N[4]} = 0..12px. Symptom pinned here:
+	 * without the override the collision box was the default FULL CUBE, disagreeing with
+	 * the six-box model.
+	 */
+	private static VoxelShape shape(BlockState aState) {
+		return aState.getValue(FACING).getAxis() == Direction.Axis.X ? SHAPE_FACING_X : SHAPE_FACING_Z;
+	}
+
+	@Override
+	public VoxelShape getShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
+		return shape(aState);
+	}
+
+	@Override
+	public VoxelShape getCollisionShape(BlockState aState, BlockGetter aLevel, BlockPos aPos, CollisionContext aContext) {
+		return shape(aState);
 	}
 
 	/**
