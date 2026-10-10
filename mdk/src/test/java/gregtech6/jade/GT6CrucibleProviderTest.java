@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -43,13 +46,18 @@ import gregtech6.registry.GT6MaterialTestSupport;
  * ({@code getTemperatureValue}/{@code getTemperatureMax}/{@code mMeltDown}/{@code mContent}).
  * The BlockAccessor wrapper itself is live-only (GT6MachineProviderTest posture).
  *
- * <p>Groups: the format pins (displayUnits + the lang lines), the truncation, the tank-bar
- * wire (task crucible-jade-tankbar: TOTAL_MAX/MOLTEN/overlay keys + the v3 dispatch — molten
- * bridged = the official fluid payload, molten unbridged = the ContentFace molten arm, solid
- * mapped = the ContentFace solid arm, solid unmapped = the guard fallback, meltdown = the
- * red text path) and the empty state. The bridge coverage census (task
- * jade-molten-bridge-full) pins the full {@code gt6:<mat>_molten} domain face. The tooltip
- * language VALUES (en/zh) are pinned by the datagen faces + runData, not here.
+ * <p>Groups: the format pins (displayUnits + the lang lines — the tank-bar text face keeps
+ * the "n/16" share form, the entry face rides the bare numerator, task
+ * crucible-jade-tankbar-fill's 2026-10-10 user ruling), the truncation, the tank-bar wire
+ * (task crucible-jade-tankbar: TOTAL_MAX/MOLTEN/overlay keys + the ContentFace-only
+ * dispatch — task crucible-jade-tankbar-fill retired the official-fluid payload arm, the
+ * bridged-still water art read near-blank and broke the same-source contract with the
+ * in-world face; meltdown = the red text path) and the empty state. The bridge coverage
+ * census (task jade-molten-bridge-full) pins the full {@code gt6:<mat>_molten} domain
+ * face (the bridge itself lives on for the pour/recycling/replicator consumers). The
+ * render-primitive pin (the atlas pre-bind before the blit in GT6ContentFaceElement) is a
+ * source-structure assertion. The tooltip language VALUES (en/zh) are pinned by the
+ * datagen faces + runData, not here.
  */
 public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 
@@ -127,11 +135,11 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	}
 
 	@Test
-	public void totalAndEntryLinesCarryTheShareAmountForm() {
-		// task crucible-jade-follower (the 2026-10-06 user ruling): the total row loses the
-		// "Content:" label and the amounts ride the n/capacity share string — en "4/16",
-		// zh "4/16 份" (the unit word stays in the lang VALUE, the share string is ONE slot).
-		// The old " U" hardcode (the :255 domain) and the TFRU label row both retire.
+	public void tankBarTextKeepsTheShareAmountForm() {
+		// task crucible-jade-follower (the 2026-10-06 user ruling) + the tankbar-fill
+		// clarification: the TANK-BAR text (totalLine) is the ONLY share-form consumer —
+		// en "4/16", zh "4/16 份" (the unit word stays in the lang VALUE, ONE slot). The
+		// entry face is pinned separately (contentLineRidesTheBareNumerator).
 		TranslatableContents tTotal = (TranslatableContents) GT6CrucibleProvider.totalLine(4 * CS.U, 16 * CS.U).getContents();
 		assertEquals(GT6CrucibleProvider.LANG_TOTAL, tTotal.getKey());
 		assertEquals(1, tTotal.getArgs().length);
@@ -143,18 +151,35 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 		// zero and negative ride the displayUnits faces (the empty/odd guards)
 		assertEquals("0.000/16", GT6CrucibleProvider.shareAmount(0, 16 * CS.U));
 		assertEquals("?.???/16", GT6CrucibleProvider.shareAmount(-1, 16 * CS.U));
-		// the entry row: ONE translatable — the name component + the share string
+		// the truncation tail
+		TranslatableContents tMore = (TranslatableContents) GT6CrucibleProvider.moreLine(2).getContents();
+		assertEquals(GT6CrucibleProvider.LANG_MORE, tMore.getKey());
+		assertEquals(2, tMore.getArgs()[0]);
+	}
+
+	@Test
+	public void contentLineRidesTheBareNumerator() {
+		// task crucible-jade-tankbar-fill (the 2026-10-10 user ruling): the ENTRY row loses
+		// the denominator — "x" not "x/16" (the tank bar keeps its ratio text, see
+		// tankBarTextKeepsTheShareAmountForm). Whole-U rides the bare integer, fractional
+		// keeps the displayUnits precision, zero/negative the displayUnits guard faces.
+		assertEquals("4", GT6CrucibleProvider.shareNumerator(4 * CS.U));
+		assertEquals("0.500", GT6CrucibleProvider.shareNumerator(CS.U / 2));
+		assertEquals("0.000", GT6CrucibleProvider.shareNumerator(0));
+		assertEquals("?.???", GT6CrucibleProvider.shareNumerator(-1));
+		// the entry row: ONE translatable — the name component + the NUMERATOR slot
 		CompoundTag tEntry = GT6CrucibleProvider.entryTag(new OreDictMaterialStack(MT.Fe, 4 * CS.U));
 		assertEquals("iron", tEntry.getString(GT6CrucibleProvider.ENTRY_MAT), "snakeCase(Iron) — the single derivation");
 		TranslatableContents tLine = (TranslatableContents) GT6CrucibleProvider.contentLine(tEntry, 16 * CS.U).getContents();
 		assertEquals(GT6CrucibleProvider.LANG_ENTRY, tLine.getKey());
 		assertEquals(2, tLine.getArgs().length);
 		assertEquals("gt6.material.iron", ((Component)tLine.getArgs()[0]).getString(), "the slot keeps the component face");
-		assertEquals("4/16", tLine.getArgs()[1], "the entry amount rides the same share form");
-		// the truncation tail
-		TranslatableContents tMore = (TranslatableContents) GT6CrucibleProvider.moreLine(2).getContents();
-		assertEquals(GT6CrucibleProvider.LANG_MORE, tMore.getKey());
-		assertEquals(2, tMore.getArgs()[0]);
+		assertEquals("4", tLine.getArgs()[1], "the entry amount rides the bare numerator — no denominator");
+		// the fractional face and the aTotalMax irrelevance (the denominator is GONE from this row)
+		CompoundTag tHalf = GT6CrucibleProvider.entryTag(new OreDictMaterialStack(MT.Fe, CS.U / 2));
+		assertEquals("0.500", ((TranslatableContents) GT6CrucibleProvider.contentLine(tHalf, 16 * CS.U).getContents()).getArgs()[1]);
+		assertEquals("4", ((TranslatableContents) GT6CrucibleProvider.contentLine(tEntry, 432 * CS.U).getContents()).getArgs()[1],
+				"the capacity ceiling never leaks into the entry row");
 	}
 
 	@Test
@@ -204,9 +229,10 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	/**
 	 * The v3 ② dispatch matrix, offline: cold Steel content → the ContentFace SOLID arm —
 	 * the FIXED upstream gray-black (task crucible-solid-gray-fidelity: Smeltery:590
-	 * MT.NULL×blockRaw×CA_GRAY_64 verbatim, material-independent); molten Copper (never
-	 * bridged on either leg) → the MOLTEN arm verbatim (molten art + the mRGBaLiquid tint);
-	 * molten IRON → leg-split (see ironMoltenOverlayFollowsTheBridge*).
+	 * MT.NULL×blockRaw×CA_GRAY_64 verbatim, material-independent); molten Copper → the
+	 * MOLTEN arm verbatim (molten art + the mRGBaLiquid tint). Molten iron (bridged) rides
+	 * the SAME face since the official-fluid arm retired — see
+	 * moltenOverlayIsAlwaysTheContentFacePayload.
 	 */
 	@Test
 	public void overlayDispatchFollowsTheContentFaceSeam() {
@@ -221,7 +247,8 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 				"the solid wire record rides the fixed gray borrow (material-independent)");
 		assertEquals(0xFF404040, tOverlay.getInt(GT6CrucibleProvider.OVERLAY_TINT),
 				"the solid tint is CA_GRAY_64 (CS.java:362) verbatim");
-		assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_FLUID), "the solid face is not a fluid payload");
+		assertEquals(Set.of(GT6CrucibleProvider.OVERLAY_TEXTURE, GT6CrucibleProvider.OVERLAY_TINT), tOverlay.getAllKeys(),
+				"the solid face carries exactly the face pair (the fluid payload arm is retired)");
 		// molten unbridged: the molten arm is the per-set molten sprite + the liquid tint —
 		// the arm never walks the loud bodyTexture map, so ANY material resolves
 		List<OreDictMaterialStack> tCopper = List.of(new OreDictMaterialStack(MT.Cu, 4 * CS.U));
@@ -259,105 +286,36 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	}
 
 	/**
-	 * The ① official fluid-element payload — the molten + bridged arm. Leg reality: the forge
-	 * offline JVM never binds the seed RegistryObject (the FluidBridgeTest posture), so the
-	 * bridge misses and the face fallback answers; the 21.1 leg boots FML, the "iron" holder
-	 * IS bound and the payload is the fluid id + the 144 L/unit bridge amount.
+	 * task crucible-jade-tankbar-fill: the official-fluid payload arm is RETIRED — the
+	 * molten face is the ContentFace payload (the per-set molten art + the mRGBaLiquid
+	 * tint) on BOTH legs, bridged or not. Why: the bridged still art is the water texture
+	 * with a light tint (GTFluids.java:54-56, no dedicated PNG) which read near-blank in
+	 * the bar (the 2026-10-10 field feedback "molten is blank too"), and the upstream
+	 * semantics anchor (MultiTileEntitySmeltery.java:585-591) draws the CONTENT face, not
+	 * a fluid-cell element — the bar now shares its art source with the in-world pass.
+	 * The bridge itself is untouched (pour/recycling/replicator consumers); the forge
+	 * offline JVM never binds the seed RegistryObject (the FluidBridgeTest posture) while
+	 * the 21.1 leg boots FML and binds it — irrelevant now, the payload has no fluid keys
+	 * either way.
 	 */
-	//? if forge {
 	@Test
-	public void ironMoltenOverlayFallsBackToTheFaceOffline() {
-		List<OreDictMaterialStack> tIron = List.of(new OreDictMaterialStack(MT.Fe, 4 * CS.U));
-		CompoundTag tTag = new CompoundTag();
-		GT6CrucibleProvider.writeCrucibleData(tTag, 2000, 2000, false, 16 * CS.U, tIron);
-		assertTrue(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN));
-		GT6CrucibleDatagen.ContentFace tExpected = GT6CrucibleDatagen.contentFace(MT.Fe, true);
-		CompoundTag tOverlay = tTag.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
-		assertEquals(tExpected.texture(), tOverlay.getString(GT6CrucibleProvider.OVERLAY_TEXTURE),
-				"the unbound seed is a bridge miss offline — the molten face arm answers");
-		assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_FLUID));
-		// the full-domain walk (task jade-molten-bridge-full) rides the same leg reality:
-		// EVERY bridged row is unbound in this offline JVM, so a W1 seed (redstone) and an
-		// expansion family row (tungsten) fall back to the identical molten face arm
-		for (OreDictMaterial tMaterial : Arrays.asList(MT.Redstone, MT.W)) {
-			CompoundTag tExpanded = new CompoundTag();
-			GT6CrucibleProvider.writeCrucibleData(tExpanded, 4000, 9999, false, 16 * CS.U,
+	public void moltenOverlayIsAlwaysTheContentFacePayload() {
+		for (OreDictMaterial tMaterial : Arrays.asList(MT.Fe, MT.Redstone, MT.W)) {
+			CompoundTag tTag = new CompoundTag();
+			GT6CrucibleProvider.writeCrucibleData(tTag, 4000, 9999, false, 16 * CS.U,
 					List.of(new OreDictMaterialStack(tMaterial, 4 * CS.U)));
-			assertTrue(tExpanded.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), tMaterial.mNameInternal);
+			assertTrue(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), tMaterial.mNameInternal);
 			GT6CrucibleDatagen.ContentFace tFace = GT6CrucibleDatagen.contentFace(tMaterial, true);
-			CompoundTag tExpandedOverlay = tExpanded.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
-			assertEquals(tFace.texture(), tExpandedOverlay.getString(GT6CrucibleProvider.OVERLAY_TEXTURE),
-					tMaterial.mNameInternal + " unbound offline — same face fallback");
-			assertFalse(tExpandedOverlay.contains(GT6CrucibleProvider.OVERLAY_FLUID), tMaterial.mNameInternal);
-		}
-	}
-	//?} else {
-	/*@Test
-	public void ironMoltenOverlayIsTheOfficialFluidPayload() {
-		List<OreDictMaterialStack> tIron = List.of(new OreDictMaterialStack(MT.Fe, 4 * CS.U));
-		CompoundTag tTag = new CompoundTag();
-		GT6CrucibleProvider.writeCrucibleData(tTag, 2000, 2000, false, 16 * CS.U, tIron);
-		assertTrue(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN));
-		CompoundTag tOverlay = tTag.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
-		assertEquals("gt6:iron_molten", tOverlay.getString(GT6CrucibleProvider.OVERLAY_FLUID),
-				"the bound bridge seed answers the Jade official fluid element payload (v3 ①)");
-		assertEquals(4 * CS.U * gregtech6.fluid.FluidBridge.L_PER_MOLTEN_UNIT,
-				tOverlay.getLong(GT6CrucibleProvider.OVERLAY_AMOUNT), "the 144 L/unit bridge convention");
-		assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_TEXTURE), "no face payload rides along");
-	}
-
-	@Test
-	public void bridgedMaterialsAnswerTheOfficialFluidPayload() {
-		// task jade-molten-bridge-full spot check: the live convention walk covers the whole
-		// gt6:<mat>_molten domain, so the original 7 seeds AND the expansion families answer
-		// the official fluid payload at their own melting point (the :299 <= gate re-pinned
-		// per material — the temperature rides mMeltingPoint exactly, the equality arm)
-		OreDictMaterial[] tSpot = {MT.Fe, MT.Redstone, MT.Si, MT.Ge, MT.RedstoneAlloy,
-				MT.NikolineAlloy, MT.Al2O3, MT.W, MT.Sn, MT.Na, MT.CaCO3, MT.C, MT.Li,
-				MT.Wax, MT.Chocolate, MT.EnderPearl};
-		for (OreDictMaterial tMaterial : tSpot) {
-			CompoundTag tTag = new CompoundTag();
-			GT6CrucibleProvider.writeCrucibleData(tTag, tMaterial.mMeltingPoint, 99999, false, 16 * CS.U,
-					List.of(new OreDictMaterialStack(tMaterial, 4 * CS.U)));
-			assertTrue(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), tMaterial.mNameInternal + " at its melting point is the <= arm");
 			CompoundTag tOverlay = tTag.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
-			assertEquals("gt6:" + tMaterial.mNameInternal.toLowerCase(Locale.ROOT) + "_molten",
-					tOverlay.getString(GT6CrucibleProvider.OVERLAY_FLUID),
-					tMaterial.mNameInternal + " rides the official fluid element payload");
-			assertEquals(4 * CS.U * gregtech6.fluid.FluidBridge.L_PER_MOLTEN_UNIT,
-					tOverlay.getLong(GT6CrucibleProvider.OVERLAY_AMOUNT), tMaterial.mNameInternal + " 144 L/unit");
-			assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_TEXTURE), tMaterial.mNameInternal + " carries no face payload");
+			assertEquals(tFace.texture(), tOverlay.getString(GT6CrucibleProvider.OVERLAY_TEXTURE),
+					tMaterial.mNameInternal + " rides the ContentFace molten arm (bridged or not)");
+			assertEquals(tFace.tintARGB(), tOverlay.getInt(GT6CrucibleProvider.OVERLAY_TINT), tMaterial.mNameInternal);
+			// the payload key set pins the retirement: texture+tint ONLY — the retired fluid
+			// keys must never reappear (no constant exists for them anymore, by design)
+			assertEquals(Set.of(GT6CrucibleProvider.OVERLAY_TEXTURE, GT6CrucibleProvider.OVERLAY_TINT),
+					tOverlay.getAllKeys(), tMaterial.mNameInternal + ": the payload carries exactly the face pair");
 		}
 	}
-
-	@Test
-	public void legacyAliasRowsAnswerTheirTrueFluidPayloads() {
-		// task jade-molten-alias-seam: the five legacy FL shorthand rows bridge through the
-		// explicit alias seam — the payload id is the TRUE registered id (not the
-		// <mat>_molten convention), the 144 L/unit amount like every other bridged row.
-		// Upstream anchors: Loader_Fluids.java:191/:192/:197/:199 and the FL.java:1077
-		// createMolten walk over MT.LiCl (MT.java:1121 MOLTEN grant).
-		Object[][] tRows = {
-				{MT.Plastic, "plastic"},
-				{MT.Glass  , "glass"},
-				{MT.Latex  , "molten_latex"},
-				{MT.HSLA   , "molten_hsla"},
-				{MT.LiCl   , "lithium_chloride_molten"}};
-		for (Object[] tRow : tRows) {
-			OreDictMaterial tMaterial = (OreDictMaterial)tRow[0];
-			CompoundTag tTag = new CompoundTag();
-			GT6CrucibleProvider.writeCrucibleData(tTag, tMaterial.mMeltingPoint, 99999, false, 16 * CS.U,
-					List.of(new OreDictMaterialStack(tMaterial, 4 * CS.U)));
-			assertTrue(tTag.getBoolean(GT6CrucibleProvider.KEY_MOLTEN), tMaterial.mNameInternal + " at its melting point is the <= arm");
-			CompoundTag tOverlay = tTag.getCompound(GT6CrucibleProvider.KEY_OVERLAY);
-			assertEquals("gt6:" + tRow[1], tOverlay.getString(GT6CrucibleProvider.OVERLAY_FLUID),
-					tMaterial.mNameInternal + " rides the TRUE legacy-id payload (the alias seam, not the convention guess)");
-			assertEquals(4 * CS.U * gregtech6.fluid.FluidBridge.L_PER_MOLTEN_UNIT,
-					tOverlay.getLong(GT6CrucibleProvider.OVERLAY_AMOUNT), tMaterial.mNameInternal + " 144 L/unit");
-			assertFalse(tOverlay.contains(GT6CrucibleProvider.OVERLAY_TEXTURE), tMaterial.mNameInternal + " carries no face payload");
-		}
-	}
-	*///?}
 
 	/**
 	 * The bridge coverage census (task jade-molten-bridge-full; alias seam task
@@ -367,8 +325,10 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 	 * convention OR the legacy FL alias table) is a SOURCE_SEAM key. The seam-key face is
 	 * offline-stable on both legs (no registry binding involved). The five legacy-id rows
 	 * (lithium_chloride_molten's underscore, glass/plastic/molten_latex/molten_hsla FL
-	 * shorthands) ride the explicit alias seam now; unknown materials keep the ContentFace
-	 * fallback arm.
+	 * shorthands) ride the explicit alias seam now. The Jade bar no longer consumes this
+	 * walk (the ContentFace arm is unconditional, task crucible-jade-tankbar-fill) — the
+	 * bridge lives on for the pour/recycling/replicator consumers, which is what this
+	 * census keeps pinned.
 	 */
 	@Test
 	public void moltenBridgeCensusCoversTheFullDomain() {
@@ -543,5 +503,49 @@ public class GT6CrucibleProviderTest extends GTOfflineTestBase {
 					tAsset + ".mcmeta missing — the animated molten strip would fail the atlas stitch");
 		}
 		return 1;
+	}
+
+	// ------------------------------------------------------------------------------------
+	// group ⑦ the render primitive (task crucible-jade-tankbar-fill)
+	// ------------------------------------------------------------------------------------
+
+	/**
+	 * The atlas pre-bind pin, as a source-structure assertion (the element's render path is
+	 * live-only client code — no offline GL to drive): GT6ContentFaceElement.render must
+	 * carry {@code RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS)} BEFORE the
+	 * blit call. The Jade precedent never relies on a draw primitive's implicit binding
+	 * (DisplayHelper.drawTiledSprite binds first, 1.20.1 :341 / 1.21.1 :278; the vanilla
+	 * innerBlit does re-bind internally on both legs — 1.20.1 GuiGraphics.java:346-347,
+	 * 1.21.1 :586 — so the pre-bind is redundancy by design: the primitive stays
+	 * self-contained against foreign RenderSystem texture state around the overlay pass).
+	 * Goes RED if either half of the pair is removed — remove consciously then, with the
+	 * class doc's attribution chain re-checked.
+	 */
+	@Test
+	public void contentFaceElementBindsTheAtlasBeforeBlitting() {
+		Path tMdk = locateMdkRoot();
+		assertNotNull(tMdk, "mdk root not found from the test working directory");
+		String tSource;
+		try {
+			tSource = Files.readString(tMdk.resolve("src/main/java/gregtech6/jade/GT6ContentFaceElement.java"));
+		} catch (IOException tMissing) {
+			throw new AssertionError("the element source is unreadable from " + tMdk, tMissing);
+		}
+		int tBind = tSource.indexOf("RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS)");
+		int tBlit = tSource.indexOf("aGraphics.blit(");
+		assertTrue(tBind >= 0, "the explicit atlas pre-bind is gone from GT6ContentFaceElement.render — restore it (the Jade DisplayHelper precedent)");
+		assertTrue(tBlit >= 0, "the blit call itself is gone — the element draws nothing");
+		assertTrue(tBlit > tBind, "the bind must precede the blit call in render()");
+	}
+
+	/** The mdk root from the test working directory (the GT6TintChainHopperGrindstoneSiftingTest form). */
+	private static Path locateMdkRoot() {
+		Path tDir = Path.of("").toAbsolutePath();
+		for (int i = 0; i < 8 && tDir != null; i++, tDir = tDir.getParent()) {
+			if (Files.isRegularFile(tDir.resolve("src/main/java/gregtech6/datagen/GT6BlockStates.java"))) {
+				return tDir;
+			}
+		}
+		return null;
 	}
 }
