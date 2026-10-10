@@ -160,15 +160,19 @@ public class GT6SiftingTableNeiModel extends GTDynamicBakedModel {
 			TextureAtlasSprite tSprite = mSpriteLookup.apply(tSpriteId);
 			if (tSprite == null) return null; // atlas gap: skip the quad instead of rendering garbage
 			GlyphPlan tPlan = new GlyphPlan(tSprite, tSpriteId);
-			// the 2x2px UP quad at the leg top (0..2)x(0..2), lifted off the plane — the
-			// canonical full-face UV [0,0,16,16] (the #27 ruling), tintIndex -1 (the P22
-			// decal contract), cullface up (the glyph hides under a block placed on the
-			// table — vanilla semantics); the tail arg rides the tPlan.sprite() census form
-			// (the stonecutter bakeQuad eight-arg rewrite anchors it, the anvil shape)
+			// the 2x2px UP quad at the leg top (0..2)x(0..2), lifted off the plane — the UV
+			// is the QUAD'S OWN FOOTPRINT [0,0,2,2] (the kitchen bakeNeiQuad correction: the
+			// full-sheet [0,0,16,16] squeezed all 64 words of the glyph sheet onto the patch;
+			// the "#27 canonical full-face UV" ruling it cited is the single-word-texture
+			// semantic, void for glyph sheets), tintIndex -1 (the P22 decal contract),
+			// cullface up (the glyph hides under a block placed on the table — vanilla
+			// semantics); the tail arg rides the tPlan.sprite() census form (the stonecutter
+			// bakeQuad eight-arg rewrite anchors it, the anvil shape)
 			mGlyph = BAKERY.bakeQuad(
 					new Vector3f(0.0F, LEG_TOP_PX + LIFT_PX, 0.0F),
 					new Vector3f(PATCH_PX, LEG_TOP_PX + LIFT_PX, PATCH_PX),
-					new BlockElementFace(Direction.UP, -1, tPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
+					new BlockElementFace(Direction.UP, -1, tPlan.sprite().toString(),
+							new BlockFaceUV(new float[] {0.0F, 0.0F, PATCH_PX, PATCH_PX}, 0)),
 					tPlan.baked(), Direction.UP, BlockModelRotation.X0_Y0, null, true, tPlan.sprite());
 		}
 		return mGlyph;

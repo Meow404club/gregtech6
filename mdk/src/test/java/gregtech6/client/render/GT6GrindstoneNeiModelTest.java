@@ -69,19 +69,22 @@ public class GT6GrindstoneNeiModelTest extends GTOfflineRenderTestBase {
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
 	}
 
-	/** A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest form). */
+	/** A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest form). The geometry mirrors the REAL block atlas seat (a 128px sheet in a 1024 atlas, the GT6KitchenNeiModelTest recipe) because FaceBakery shrinks face UVs toward their centre by {@code uvShrinkRatio() = 4/atlasSize} (FaceBakery.java:45-51) — a 1x1 stub would ratio-4-mangle the glyph UV pins; at 128/1024 the shrink is the real ~0.4%. */
 	private static final class NamedSprite extends TextureAtlasSprite {
+		private static final int SHEET_PX = 128;
+		private static final int ATLAS_PX = 1024;
+
 		private NamedSprite(ResourceLocation aName) {
 			super(aName,
 					new net.minecraft.client.renderer.texture.SpriteContents(aName,
-							new FrameSize(1, 1),
-							new com.mojang.blaze3d.platform.NativeImage(1, 1, false),
+							new FrameSize(SHEET_PX, SHEET_PX),
+							new com.mojang.blaze3d.platform.NativeImage(SHEET_PX, SHEET_PX, false),
 							//? if forge {
 							net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.EMPTY),
 							//?} else {
 							/*net.minecraft.server.packs.resources.ResourceMetadata.EMPTY),*/
 							//?}
-					1, 1, 0, 0);
+					ATLAS_PX, ATLAS_PX, 0, 0);
 		}
 	}
 
@@ -146,6 +149,19 @@ public class GT6GrindstoneNeiModelTest extends GTOfflineRenderTestBase {
 			tMinZ = Math.min(tMinZ, tZ); tMaxZ = Math.max(tMaxZ, tZ);
 		}
 		return new AABB(tMinX, tMinY, tMinZ, tMaxX, tMaxY, tMaxZ);
+	}
+
+	/** The quad's {u, v} extents in normalized sprite space (min/max over the 4 vertices) — {umin, umax}, {vmin, vmax}. */
+	private static double[][] uvOf(BakedQuad aQuad) {
+		int[] tV = aQuad.getVertices();
+		double tMinU = 99, tMinV = 99, tMaxU = -99, tMaxV = -99;
+		for (int v = 0; v * STRIDE < tV.length; v++) {
+			double tU = Float.intBitsToFloat(tV[v * STRIDE + 4]);
+			double tVv = Float.intBitsToFloat(tV[v * STRIDE + 5]);
+			tMinU = Math.min(tMinU, tU); tMaxU = Math.max(tMaxU, tU);
+			tMinV = Math.min(tMinV, tVv); tMaxV = Math.max(tMaxV, tVv);
+		}
+		return new double[][] {{tMinU, tMaxU}, {tMinV, tMaxV}};
 	}
 
 	// ---------------------------------------------------------------- the pins
@@ -213,6 +229,30 @@ public class GT6GrindstoneNeiModelTest extends GTOfflineRenderTestBase {
 		assertEquals(6.0 / 16.0, tBoxE.minZ, 1e-7, "the X-form post top starts at z6");
 		assertEquals(8.0 / 16.0, tBoxE.maxZ, 1e-7, "2x2px in z");
 		assertFalse(tBoxE.equals(tBoxN), "the two axis forms differ (the swap)");
+	}
+
+	/**
+	 * The glyph UV is the quad's own footprint — ONE word cell of the 8x8 sheet (the
+	 * kitchen {@code bakeNeiQuad} correction; the full-sheet UV squeezed all 64 words onto
+	 * the post top). Each axis form crops at ITS corner: the Z-form (6..8, 2..4) → u
+	 * 6/128..8/128, v 2/128..4/128; the X-form (2..4, 6..8) → the swap. The stored values
+	 * carry the vanilla face-UV shrink toward the centre (uvShrinkRatio = 4/1024 on the
+	 * 128-in-1024 stub, FaceBakery.java:45-51) — ~0.4%, inside the pin tolerance.
+	 */
+	@Test
+	void theGlyphUvIsTheQuadFootprintOneSheetCell() {
+		double tEps = 0.0005;
+		double tSheet = 128.0; // the stub sprite's native px — normalized u = sheet px / 128
+		double[][] tZForm = uvOf(quads(model("jei"), state(Direction.NORTH, 16), RenderType.cutout()).get(1));
+		assertEquals(6.0 / tSheet, tZForm[0][0], tEps, "the Z-form u rides its x6 inset");
+		assertEquals(8.0 / tSheet, tZForm[0][1], tEps, "the Z-form u ends one 2px crop in");
+		assertEquals(2.0 / tSheet, tZForm[1][0], tEps, "the Z-form v rides its z2 inset");
+		assertEquals(4.0 / tSheet, tZForm[1][1], tEps, "the Z-form v ends one 2px crop in");
+		double[][] tXForm = uvOf(quads(model("jei"), state(Direction.EAST, 16), RenderType.cutout()).get(1));
+		assertEquals(2.0 / tSheet, tXForm[0][0], tEps, "the X-form u rides its x2 inset (the swap)");
+		assertEquals(4.0 / tSheet, tXForm[0][1], tEps, "the X-form u ends one 2px crop in");
+		assertEquals(6.0 / tSheet, tXForm[1][0], tEps, "the X-form v rides its z6 inset");
+		assertEquals(8.0 / tSheet, tXForm[1][1], tEps, "the X-form v ends one 2px crop in");
 	}
 
 	/** The seat: cutout joins the fallback's layers exactly when the glyph exists. */

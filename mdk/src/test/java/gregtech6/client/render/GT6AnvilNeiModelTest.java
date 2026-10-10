@@ -68,19 +68,22 @@ public class GT6AnvilNeiModelTest extends GTOfflineRenderTestBase {
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
 	}
 
-	/** A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest form). */
+	/** A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest form). The geometry mirrors the REAL block atlas seat (a 128px sheet in a 1024 atlas, the GT6KitchenNeiModelTest recipe) because FaceBakery shrinks face UVs toward their centre by {@code uvShrinkRatio() = 4/atlasSize} (FaceBakery.java:45-51) — a 1x1 stub would ratio-4-mangle the glyph UV pins; at 128/1024 the shrink is the real ~0.4%. */
 	private static final class NamedSprite extends TextureAtlasSprite {
+		private static final int SHEET_PX = 128;
+		private static final int ATLAS_PX = 1024;
+
 		private NamedSprite(ResourceLocation aName) {
 			super(aName,
 					new net.minecraft.client.renderer.texture.SpriteContents(aName,
-							new FrameSize(1, 1),
-							new com.mojang.blaze3d.platform.NativeImage(1, 1, false),
+							new FrameSize(SHEET_PX, SHEET_PX),
+							new com.mojang.blaze3d.platform.NativeImage(SHEET_PX, SHEET_PX, false),
 							//? if forge {
 							net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.EMPTY),
 							//?} else {
 							/*net.minecraft.server.packs.resources.ResourceMetadata.EMPTY),*/
 							//?}
-					1, 1, 0, 0);
+					ATLAS_PX, ATLAS_PX, 0, 0);
 		}
 	}
 
@@ -144,6 +147,19 @@ public class GT6AnvilNeiModelTest extends GTOfflineRenderTestBase {
 			tMinZ = Math.min(tMinZ, tZ); tMaxZ = Math.max(tMaxZ, tZ);
 		}
 		return new AABB(tMinX, tMinY, tMinZ, tMaxX, tMaxY, tMaxZ);
+	}
+
+	/** The quad's {u, v} extents in normalized sprite space (min/max over the 4 vertices) — {umin, umax}, {vmin, vmax}. */
+	private static double[][] uvOf(BakedQuad aQuad) {
+		int[] tV = aQuad.getVertices();
+		double tMinU = 99, tMinV = 99, tMaxU = -99, tMaxV = -99;
+		for (int v = 0; v * STRIDE < tV.length; v++) {
+			double tU = Float.intBitsToFloat(tV[v * STRIDE + 4]);
+			double tVv = Float.intBitsToFloat(tV[v * STRIDE + 5]);
+			tMinU = Math.min(tMinU, tU); tMaxU = Math.max(tMaxU, tU);
+			tMinV = Math.min(tMinV, tVv); tMaxV = Math.max(tMaxV, tVv);
+		}
+		return new double[][] {{tMinU, tMaxU}, {tMinV, tMaxV}};
 	}
 
 	// ---------------------------------------------------------------- the pins
@@ -217,6 +233,34 @@ public class GT6AnvilNeiModelTest extends GTOfflineRenderTestBase {
 		assertEquals(2.0 / 16.0, tBoxW.minZ, 1e-7, "the X-facing rail insets PX_P[2] in z");
 		assertEquals(4.0 / 16.0, tBoxW.maxZ, 1e-7, "2x2px in z");
 		assertEquals((double)(GT6AnvilNeiModel.LIFT_PX / 16.0F), -tBoxW.minX, 1e-7, "the WEST plane protrudes the lift eps");
+	}
+
+	/**
+	 * The glyph UV is the quad's own footprint in the face-UV axes — ONE word cell of the
+	 * 8x8 sheet (the kitchen {@code bakeNeiQuad} correction; the full-sheet UV squeezed
+	 * all 64 words onto the band). Side faces ride the vanilla axes: u along the horizontal
+	 * cross axis, v measured DOWN the face (the upstream render-bounds
+	 * {@code getInterpolatedV(16 - Y*16)}) — the Y 0..2 band samples the sheet's
+	 * bottom-row cell, v 14..16. The stored values carry the vanilla face-UV shrink toward
+	 * the centre (uvShrinkRatio = 4/1024 on the 128-in-1024 stub, FaceBakery.java:45-51) —
+	 * ~0.4%, inside the pin tolerance.
+	 */
+	@Test
+	void theGlyphUvIsTheQuadFootprintOneSheetCell() {
+		double tEps = 0.0005;
+		double tSheet = 128.0; // the stub sprite's native px — normalized u = sheet px / 128
+		// NORTH facing: the min-edge arm x 2..4 → u 2/128..4/128; the floor band → v 14/128..16/128
+		double[][] tMinArm = uvOf(quads(model("jei"), facing(Direction.NORTH), RenderType.cutout()).get(1));
+		assertEquals(2.0 / tSheet, tMinArm[0][0], tEps, "the min arm u rides the PX_P[2] inset");
+		assertEquals(4.0 / tSheet, tMinArm[0][1], tEps, "the min arm u ends one 2px crop in");
+		assertEquals(14.0 / tSheet, tMinArm[1][0], tEps, "the floor band samples v 14 (16 - Y2) — the bottom-row cell");
+		assertEquals(16.0 / tSheet, tMinArm[1][1], tEps, "the floor band samples down to v 16 (Y0)");
+		// SOUTH facing: the max-edge arm x 12..14 → u 12/128..14/128, same floor band
+		double[][] tMaxArm = uvOf(quads(model("jei"), facing(Direction.SOUTH), RenderType.cutout()).get(1));
+		assertEquals(12.0 / tSheet, tMaxArm[0][0], tEps, "the max arm u rides the PX_P[12] mirror");
+		assertEquals(14.0 / tSheet, tMaxArm[0][1], tEps, "the max arm u ends one 2px crop in");
+		assertEquals(14.0 / tSheet, tMaxArm[1][0], tEps, "the floor band v start is facing-invariant");
+		assertEquals(16.0 / tSheet, tMaxArm[1][1], tEps, "the floor band v end is facing-invariant");
 	}
 
 	/** The seat: cutout joins the fallback's layers exactly when the glyph exists. */

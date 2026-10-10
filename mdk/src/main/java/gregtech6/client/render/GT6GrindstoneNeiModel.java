@@ -182,15 +182,20 @@ public class GT6GrindstoneNeiModel extends GTDynamicBakedModel {
 	private record NeiPlan(TextureAtlasSprite baked, ResourceLocation sprite) {}
 
 	/**
-	 * The 2x2px post-top UP quad — the canonical full-face UV [0,0,16,16] (the #27 ruling),
-	 * tintIndex -1 (the P22 decal contract), NO cullface (the post top is INSIDE the block
-	 * space — the class doc), the Z-form at (6..8, 2..4), the X-form at (2..4, 6..8).
+	 * The 2x2px post-top UP quad — the UV is the QUAD'S OWN FOOTPRINT
+	 * {@code [tX0,tZ0,tX0+2,tZ0+2]} (the kitchen {@code bakeNeiQuad} correction; the
+	 * full-sheet {@code [0,0,16,16]} squeezed all 64 words of the glyph sheet onto the post
+	 * top — the "#27 canonical full-face UV" ruling it cited is the SINGLE-WORD-texture
+	 * semantic and does not apply to glyph sheets), tintIndex -1 (the P22 decal contract),
+	 * NO cullface (the post top is INSIDE the block space — the class doc), the Z-form at
+	 * (6..8, 2..4), the X-form at (2..4, 6..8).
 	 */
 	private BakedQuad bakeNeiQuad(NeiPlan aPlan, boolean aAxisZ) {
 		float tX0 = aAxisZ ? 6.0F : 2.0F, tZ0 = aAxisZ ? 2.0F : 6.0F;
 		return BAKERY.bakeQuad(new Vector3f(tX0, PLATE_TOP_PX, tZ0),
 				new Vector3f(tX0 + PATCH_PX, PLATE_TOP_PX + NEI_LIFT, tZ0 + PATCH_PX),
-				new BlockElementFace(Direction.UP, -1, aPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
+				new BlockElementFace(Direction.UP, -1, aPlan.sprite().toString(),
+						new BlockFaceUV(new float[] {tX0, tZ0, tX0 + PATCH_PX, tZ0 + PATCH_PX}, 0)),
 				aPlan.baked(), Direction.UP, BlockModelRotation.X0_Y0, null, true, aPlan.sprite());
 	}
 
