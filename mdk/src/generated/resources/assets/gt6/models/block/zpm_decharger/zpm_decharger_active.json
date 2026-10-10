@@ -2,8 +2,8 @@
   "parent": "gt6:block/zpm_decharger/zpm_decharger",
   "render_type": "minecraft:cutout",
   "textures": {
-    "overlay_back": "gt6:block/zpm_decharger/overlay_active_back",
-    "overlay_front": "gt6:block/zpm_decharger/overlay_active_front",
-    "overlay_side": "gt6:block/zpm_decharger/overlay_active_side"
+    "overlay_back": "gt6:block/overlay/zpm_decharger_overlay_active_back",
+    "overlay_front": "gt6:block/overlay/autocrafter_overlay_bottom_active",
+    "overlay_side": "gt6:item/overlay/empty"
   }
 }

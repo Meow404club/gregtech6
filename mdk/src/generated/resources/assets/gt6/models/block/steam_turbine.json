@@ -159,7 +159,7 @@
     "down": "gt6:block/steam_turbine_colored_side",
     "east": "gt6:block/steam_turbine_colored_side",
     "north": "gt6:block/steam_turbine_colored_front",
-    "overlay_back": "gt6:block/steam_turbine_overlay_back",
+    "overlay_back": "gt6:block/overlay/boiler_steam_overlay_top",
     "overlay_front": "gt6:block/steam_turbine_overlay_front",
     "overlay_side": "gt6:block/steam_turbine_overlay_side",
     "particle": "gt6:block/steam_turbine_colored_side",

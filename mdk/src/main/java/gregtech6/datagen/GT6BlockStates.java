@@ -107,6 +107,15 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockBase;
  */
 public final class GT6BlockStates extends BlockStateProvider {
 
+	/**
+	 * task overlay-dedupe-block-leg — the overlay-path seam: former block overlay
+	 * paths resolve through the content-group canonicals
+	 * (GT6BlockOverlayAliases), everything else passes through unchanged.
+	 */
+	private ResourceLocation texLoc(String aPath) {
+		return modLoc(GT6BlockOverlayAliases.resolve(aPath));
+	}
+
     private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger("gt6");
 
     /** The runData-side tint census counter (machineModel invocations — the datagen-JVM half of the pinned 21x3 audit). */
@@ -547,9 +556,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc("block/bumblehive_colored_side"))
                 .texture("east", modLoc("block/bumblehive_colored_side"))
                 .texture("particle", modLoc("block/bumblehive_colored_side"))
-                .texture("overlay_side", modLoc("block/bumblehive_overlay_side"))
-                .texture("overlay_top", modLoc("block/bumblehive_overlay_top"))
-                .texture("overlay_bottom", modLoc("block/bumblehive_overlay_bottom"))
+                .texture("overlay_side", texLoc("block/bumblehive_overlay_side"))
+                .texture("overlay_top", texLoc("block/bumblehive_overlay_top"))
+                .texture("overlay_bottom", texLoc("block/bumblehive_overlay_bottom"))
                 // issue #15 (task beehive-tint): the six 0.01 overlay decals are
                 // transparent-texel shells — cutout discards them so the tintindex-0
                 // family body shows through (the C7' fix shape; SOLID plates them
@@ -610,9 +619,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc("block/" + tBand + "_colored_sides"))
                 .texture("east", modLoc("block/" + tBand + "_colored_sides"))
                 .texture("particle", modLoc("block/" + tBand + "_colored_sides"))
-                .texture("overlay_side", modLoc("block/" + tBand + "_overlay_sides"))
-                .texture("overlay_top", modLoc("block/" + tBand + "_overlay_top"))
-                .texture("overlay_bottom", modLoc("block/" + tBand + "_overlay_bottom"))
+                .texture("overlay_side", texLoc("block/" + tBand + "_overlay_sides"))
+                .texture("overlay_top", texLoc("block/" + tBand + "_overlay_top"))
+                .texture("overlay_bottom", texLoc("block/" + tBand + "_overlay_bottom"))
                 // issue #15 (task beehive-tint): the same six-shell cutout form as
                 // addHive above (the C7' fix shape) — the material tint on the
                 // tintindex-0 body must survive the overlay shells.
@@ -939,10 +948,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("axle", modLoc("block/tools/grindstone/colored/axle"))
                 .texture("stone", modLoc("block/tools/grindstone/colored/stone"))
                 .texture("bottom", modLoc("block/tools/grindstone/colored/bottom"))
-                .texture("overlay_legs", modLoc("block/tools/grindstone/overlay/legs"))
-                .texture("overlay_axle", modLoc("block/tools/grindstone/overlay/axle"))
-                .texture("overlay_stone", modLoc("block/tools/grindstone/overlay/stone"))
-                .texture("overlay_bottom", modLoc("block/tools/grindstone/overlay/bottom"))
+                .texture("overlay_legs", texLoc("block/tools/grindstone/overlay/legs"))
+                .texture("overlay_axle", texLoc("block/tools/grindstone/overlay/axle"))
+                .texture("overlay_stone", texLoc("block/tools/grindstone/overlay/stone"))
+                .texture("overlay_bottom", texLoc("block/tools/grindstone/overlay/bottom"))
                 .texture("particle", "#legs")
                 .renderType("cutout");
         // the bottom slab — upstream pass 1 (:212)
@@ -1691,12 +1700,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc(aBase + "/colored_side"))
                 .texture("east", modLoc(aBase + "/colored_side"))
                 .texture("particle", modLoc(aBase + "/colored_side"))
-                .texture("overlay_down", modLoc(aBase + (aDistinctTopBottom ? "/overlay_bottom" : "/overlay_side")))
-                .texture("overlay_up", modLoc(aBase + (aDistinctTopBottom ? "/overlay_top" : "/overlay_side")))
-                .texture("overlay_north", modLoc(aBase + "/overlay_front"))
-                .texture("overlay_south", modLoc(aBase + "/overlay_back"))
-                .texture("overlay_west", modLoc(aBase + "/overlay_side"))
-                .texture("overlay_east", modLoc(aBase + "/overlay_side"))
+                .texture("overlay_down", texLoc(aBase + (aDistinctTopBottom ? "/overlay_bottom" : "/overlay_side")))
+                .texture("overlay_up", texLoc(aBase + (aDistinctTopBottom ? "/overlay_top" : "/overlay_side")))
+                .texture("overlay_north", texLoc(aBase + "/overlay_front"))
+                .texture("overlay_south", texLoc(aBase + "/overlay_back"))
+                .texture("overlay_west", texLoc(aBase + "/overlay_side"))
+                .texture("overlay_east", texLoc(aBase + "/overlay_side"))
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
@@ -1981,11 +1990,11 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc("block/" + aBase + "_colored_side"))
                 .texture("east", modLoc("block/" + aBase + "_colored_side"))
                 .texture("particle", modLoc("block/" + aBase + "_colored_front"))
-                .texture("overlay_front", modLoc("block/" + aBase + "_overlay_front"))
-                .texture("overlay_back", modLoc("block/" + aBase + "_overlay_back"))
-                .texture("overlay_side", modLoc("block/" + aBase + "_overlay_side"))
-                .texture("overlay_top", modLoc("block/" + aBase + "_overlay_top"))
-                .texture("overlay_bottom", modLoc("block/" + aBase + "_overlay_bottom"))
+                .texture("overlay_front", texLoc("block/" + aBase + "_overlay_front"))
+                .texture("overlay_back", texLoc("block/" + aBase + "_overlay_back"))
+                .texture("overlay_side", texLoc("block/" + aBase + "_overlay_side"))
+                .texture("overlay_top", texLoc("block/" + aBase + "_overlay_top"))
+                .texture("overlay_bottom", texLoc("block/" + aBase + "_overlay_bottom"))
                 .renderType("cutout");
         // element 0 — the tinted body cube (the familyMachineModel shape).
         tModel.element()
@@ -2091,7 +2100,7 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc("block/multiblock_coke_oven_side"))
                 .texture("east", modLoc("block/multiblock_coke_oven_side"))
                 .texture("particle", modLoc("block/multiblock_coke_oven_side"))
-                .texture("window", modLoc("block/multiblock_coke_oven_overlay_front"))
+                .texture("window", texLoc("block/multiblock_coke_oven_overlay_front"))
                 .renderType("cutout");
         tintedBody(tModel);
         tModel.element()
@@ -2170,9 +2179,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("north", modLoc(tBand + "colored_side")).texture("south", modLoc(tBand + "colored_side"))
                 .texture("west", modLoc(tBand + "colored_side")).texture("east", modLoc(tBand + "colored_side"))
                 .texture("particle", modLoc(tBand + "colored_side"))
-                .texture("overlay_bottom", modLoc(tBand + "overlay_bottom"))
-                .texture("overlay_top", modLoc(tBand + "overlay_top"))
-                .texture("overlay_side", modLoc(tBand + "overlay_side"))
+                .texture("overlay_bottom", texLoc(tBand + "overlay_bottom"))
+                .texture("overlay_top", texLoc(tBand + "overlay_top"))
+                .texture("overlay_side", texLoc(tBand + "overlay_side"))
                 .renderType("cutout");
         tintedBody(tModel);
         overlayShell(tModel, 0.0F, -1, "overlay_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
@@ -2244,13 +2253,13 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("north", modLoc("block/berry_bush")).texture("south", modLoc("block/berry_bush"))
                 .texture("west", modLoc("block/berry_bush")).texture("east", modLoc("block/berry_bush"))
                 .texture("particle", modLoc("block/berry_bush"))
-                .texture("bush_overlay", modLoc(tBand + "overlay_bush"))
+                .texture("bush_overlay", texLoc(tBand + "overlay_bush"))
                 .renderType("cutout");
         tintedBody(tModel);
         overlayShell(tModel, 0.0F, -1, "bush_overlay", "bush_overlay", "bush_overlay", "bush_overlay", "bush_overlay");
         if (aBerries != null) {
             tModel.texture("berries", modLoc(tBand + aBerries));
-            tModel.texture("berries_overlay", modLoc(tBand + aBerriesOverlay));
+            tModel.texture("berries_overlay", texLoc(tBand + aBerriesOverlay));
             overlayShell(tModel, 0.01F, 1, "berries", "berries", "berries", "berries", "berries");
             overlayShell(tModel, 0.02F, -1, "berries_overlay", "berries_overlay", "berries_overlay", "berries_overlay", "berries_overlay");
         }
@@ -2630,12 +2639,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 // vanilla furnace.json particle = #front precedent; debris ignores
                 // tintindex and shows the grayscale base art).
                 .texture("particle", modLoc("block/" + aTextureBase + "_colored_front"))
-                .texture("overlay_front", modLoc("block/" + aTextureBase + "_overlay_front" + aStateSuffix))
-                .texture("overlay_back", modLoc("block/" + aTextureBase + "_overlay_back" + aStateSuffix))
-                .texture("overlay_left", modLoc("block/" + aTextureBase + "_overlay_left" + aStateSuffix))
-                .texture("overlay_right", modLoc("block/" + aTextureBase + "_overlay_right" + aStateSuffix))
-                .texture("overlay_top", modLoc("block/" + aTextureBase + "_overlay_top" + aStateSuffix))
-                .texture("overlay_bottom", modLoc("block/" + aTextureBase + "_overlay_bottom" + aStateSuffix))
+                .texture("overlay_front", texLoc("block/" + aTextureBase + "_overlay_front" + aStateSuffix))
+                .texture("overlay_back", texLoc("block/" + aTextureBase + "_overlay_back" + aStateSuffix))
+                .texture("overlay_left", texLoc("block/" + aTextureBase + "_overlay_left" + aStateSuffix))
+                .texture("overlay_right", texLoc("block/" + aTextureBase + "_overlay_right" + aStateSuffix))
+                .texture("overlay_top", texLoc("block/" + aTextureBase + "_overlay_top" + aStateSuffix))
+                .texture("overlay_bottom", texLoc("block/" + aTextureBase + "_overlay_bottom" + aStateSuffix))
                 // issue #8 (task world-tint-render-type): the six 0.01 state decals are
                 // transparent-texel overlay shells — cutout discards their transparent
                 // texels so the tintindex-0 body shows through (the D2 leg6 fix shape).
@@ -3107,7 +3116,7 @@ public final class GT6BlockStates extends BlockStateProvider {
         BlockModelBuilder tModel = models().getBuilder(aName)
                 .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("all", modLoc("block/" + aTexture))
-                .texture("overlay", modLoc("block/" + aTexture + "_overlay"))
+                .texture("overlay", texLoc("block/" + aTexture + "_overlay"))
                 .texture("particle", "#all")
                 .renderType("cutout");
         for (float[] tBox : aBoxes) {
@@ -3499,9 +3508,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc("block/" + aBand + "_colored_side"))
                 .texture("east", modLoc("block/" + aBand + "_colored_side"))
                 .texture("particle", modLoc("block/" + aBand + "_colored_side"))
-                .texture("overlay_front", modLoc("block/" + aBand + "_overlay_front"))
-                .texture("overlay_back", modLoc("block/" + aBand + "_overlay_back"))
-                .texture("overlay_side", modLoc("block/" + aBand + "_overlay_side"))
+                .texture("overlay_front", texLoc("block/" + aBand + "_overlay_front"))
+                .texture("overlay_back", texLoc("block/" + aBand + "_overlay_back"))
+                .texture("overlay_side", texLoc("block/" + aBand + "_overlay_side"))
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
@@ -3543,9 +3552,9 @@ public final class GT6BlockStates extends BlockStateProvider {
         String tBand = aInactive.getLocation().getPath().replaceFirst("^block/", "");
         return models().getBuilder(tBand + "_active")
                 .parent(aInactive)
-                .texture("overlay_front", modLoc("block/" + tBand + "_overlay_active_front"))
-                .texture("overlay_back", modLoc("block/" + tBand + "_overlay_active_back"))
-                .texture("overlay_side", modLoc("block/" + tBand + "_overlay_active_side"))
+                .texture("overlay_front", texLoc("block/" + tBand + "_overlay_active_front"))
+                .texture("overlay_back", texLoc("block/" + tBand + "_overlay_active_back"))
+                .texture("overlay_side", texLoc("block/" + tBand + "_overlay_active_side"))
                 .renderType("cutout");
     }
 
@@ -3573,9 +3582,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc(tBase + "/colored_side"))
                 .texture("east", modLoc(tBase + "/colored_side"))
                 .texture("particle", modLoc(tBase + "/colored_side"))
-                .texture("overlay_front", modLoc(tBase + "/overlay_front"))
-                .texture("overlay_back", modLoc(tBase + (aBack ? "/overlay_back" : "/overlay_side")))
-                .texture("overlay_side", modLoc(tBase + "/overlay_side"))
+                .texture("overlay_front", texLoc(tBase + "/overlay_front"))
+                .texture("overlay_back", texLoc(tBase + (aBack ? "/overlay_back" : "/overlay_side")))
+                .texture("overlay_side", texLoc(tBase + "/overlay_side"))
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
@@ -3618,9 +3627,9 @@ public final class GT6BlockStates extends BlockStateProvider {
         String tBase = "block/" + aFamily;
         return models().getBuilder(tBase + "/" + aFamily + "_active")
                 .parent(aInactive)
-                .texture("overlay_front", modLoc(tBase + "/overlay_active_front"))
-                .texture("overlay_back", modLoc(tBase + (aBack ? "/overlay_active_back" : "/overlay_active_side")))
-                .texture("overlay_side", modLoc(tBase + "/overlay_active_side"))
+                .texture("overlay_front", texLoc(tBase + "/overlay_active_front"))
+                .texture("overlay_back", texLoc(tBase + (aBack ? "/overlay_active_back" : "/overlay_active_side")))
+                .texture("overlay_side", texLoc(tBase + "/overlay_active_side"))
                 .renderType("cutout");
     }
 
@@ -3934,9 +3943,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("top", modLoc("block/" + aBand + "/colored_top"))
                 .texture("bottom", modLoc("block/" + aBand + "/colored_bottom"))
                 .texture("side", modLoc("block/" + aBand + "/colored_side"))
-                .texture("overlay_top", modLoc("block/" + aBand + "/overlay_top"))
-                .texture("overlay_bottom", modLoc("block/" + aBand + "/overlay_bottom"))
-                .texture("overlay_side", modLoc("block/" + aBand + "/overlay_side"))
+                .texture("overlay_top", texLoc("block/" + aBand + "/overlay_top"))
+                .texture("overlay_bottom", texLoc("block/" + aBand + "/overlay_bottom"))
+                .texture("overlay_side", texLoc("block/" + aBand + "/overlay_side"))
                 .texture("particle", "#side")
                 .renderType("cutout");
         hopperBox(tModel, 0.0F, 10.0F, 0.0F, 16.0F, 16.0F, 16.0F, null);          // the rim (:265)
@@ -4046,12 +4055,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("down", tBody).texture("up", tBody)
                 .texture("north", tBody).texture("south", tBody)
                 .texture("west", tBody).texture("east", tBody)
-                .texture("overlay_front", modLoc("block/burning_box_" + aGroup + "_overlay_front" + tSuffix))
-                .texture("overlay_back", modLoc("block/burning_box_" + aGroup + "_overlay_back" + tSuffix))
-                .texture("overlay_left", modLoc("block/burning_box_" + aGroup + "_overlay_left" + tSuffix))
-                .texture("overlay_right", modLoc("block/burning_box_" + aGroup + "_overlay_right" + tSuffix))
-                .texture("overlay_top", modLoc("block/burning_box_" + aGroup + "_overlay_top" + tSuffix))
-                .texture("overlay_bottom", modLoc("block/burning_box_" + aGroup + "_overlay_bottom" + tSuffix))
+                .texture("overlay_front", texLoc("block/burning_box_" + aGroup + "_overlay_front" + tSuffix))
+                .texture("overlay_back", texLoc("block/burning_box_" + aGroup + "_overlay_back" + tSuffix))
+                .texture("overlay_left", texLoc("block/burning_box_" + aGroup + "_overlay_left" + tSuffix))
+                .texture("overlay_right", texLoc("block/burning_box_" + aGroup + "_overlay_right" + tSuffix))
+                .texture("overlay_top", texLoc("block/burning_box_" + aGroup + "_overlay_top" + tSuffix))
+                .texture("overlay_bottom", texLoc("block/burning_box_" + aGroup + "_overlay_bottom" + tSuffix))
                 // issue #8 (task world-tint-render-type): the six burning decals are
                 // transparent-texel overlay shells — cutout discards them off the body
                 // (the D2 leg6 fix shape).
@@ -4151,12 +4160,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc("block/" + aBand + "/colored_side"))
                 .texture("east", modLoc("block/" + aBand + "/colored_side"))
                 .texture("particle", modLoc("block/" + aBand + "/colored_side"))
-                .texture("overlay_down", modLoc("block/" + aBand + "/overlay_bottom"))
-                .texture("overlay_up", modLoc("block/" + aBand + "/overlay_top"))
-                .texture("overlay_north", modLoc("block/" + aBand + (aFront ? "/overlay_front_side" : "/overlay_side")))
-                .texture("overlay_south", modLoc("block/" + aBand + "/overlay_side"))
-                .texture("overlay_west", modLoc("block/" + aBand + "/overlay_side"))
-                .texture("overlay_east", modLoc("block/" + aBand + "/overlay_side"))
+                .texture("overlay_down", texLoc("block/" + aBand + "/overlay_bottom"))
+                .texture("overlay_up", texLoc("block/" + aBand + "/overlay_top"))
+                .texture("overlay_north", texLoc("block/" + aBand + (aFront ? "/overlay_front_side" : "/overlay_side")))
+                .texture("overlay_south", texLoc("block/" + aBand + "/overlay_side"))
+                .texture("overlay_west", texLoc("block/" + aBand + "/overlay_side"))
+                .texture("overlay_east", texLoc("block/" + aBand + "/overlay_side"))
                 .renderType("cutout");
         tModel.element()
                 .from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
@@ -4278,10 +4287,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("north", modLoc(tBand + "colored_front_side")).texture("south", modLoc(tBand + "colored_side"))
                 .texture("west", modLoc(tBand + "colored_side")).texture("east", modLoc(tBand + "colored_side"))
                 .texture("particle", modLoc(tBand + "colored_side"))
-                .texture("overlay_front_side", modLoc(tBand + "overlay_front_side"))
-                .texture("overlay_bottom", modLoc(tBand + "overlay_bottom"))
-                .texture("overlay_top", modLoc(tBand + "overlay_top"))
-                .texture("overlay_side", modLoc(tBand + "overlay_side"))
+                .texture("overlay_front_side", texLoc(tBand + "overlay_front_side"))
+                .texture("overlay_bottom", texLoc(tBand + "overlay_bottom"))
+                .texture("overlay_top", texLoc(tBand + "overlay_top"))
+                .texture("overlay_side", texLoc(tBand + "overlay_side"))
                 .renderType("cutout");
         tintedBody(tModel);
         overlayShell(tModel, 0.0F, -1, "overlay_front_side", "overlay_side", "overlay_side", "overlay_top", "overlay_bottom");
@@ -4861,9 +4870,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("west", modLoc(tBase + "/colored_side"))
                 .texture("east", modLoc(tBase + "/colored_side"))
                 .texture("particle", modLoc(tBase + "/colored_side"))
-                .texture("overlay_front", modLoc(tBase + "/overlay_front"))
-                .texture("overlay_back", modLoc(tBase + "/overlay_back"))
-                .texture("overlay_side", modLoc(tBase + "/overlay_side"))
+                .texture("overlay_front", texLoc(tBase + "/overlay_front"))
+                .texture("overlay_back", texLoc(tBase + "/overlay_back"))
+                .texture("overlay_side", texLoc(tBase + "/overlay_side"))
                 .renderType("cutout");
         tModel.element() // the 2px wall plate (Sensor :148-150, the FACING=north model form: display plane z=14, body z 14..16 against the opposite wall)
                 .from(0.0F, 0.0F, 14.0F).to(16.0F, 16.0F, 16.0F)
@@ -5177,9 +5186,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("south", modLoc(tBase + "/colored/side"))
                 .texture("west", modLoc(tBase + "/colored/side"))
                 .texture("east", modLoc(tBase + "/colored/side"))
-                .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
-                .texture("overlay_top", modLoc(tBase + "/overlay/top"))
-                .texture("overlay_side", modLoc(tBase + "/overlay/side"))
+                .texture("overlay_bottom", texLoc(tBase + "/overlay/bottom"))
+                .texture("overlay_top", texLoc(tBase + "/overlay/top"))
+                .texture("overlay_side", texLoc(tBase + "/overlay/side"))
                 // issue #8 (task world-tint-render-type): the six 0.01 wall decals are
                 // transparent-texel overlay shells — cutout discards them off the body
                 // (the D2 leg6 fix shape).
@@ -5252,10 +5261,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("south", modLoc(tBase + "/colored/side"))
                 .texture("west", modLoc(tBase + "/colored/side"))
                 .texture("east", modLoc(tBase + "/colored/side"))
-                .texture("overlay_bottom", modLoc(tBase + "/overlay/bottom"))
-                .texture("overlay_top", modLoc(tBase + "/overlay/top"))
-                .texture("overlay_side", modLoc(tBase + "/overlay/side"))
-                .texture("overlay_front", modLoc(tBase + "/overlay_front/side"))
+                .texture("overlay_bottom", texLoc(tBase + "/overlay/bottom"))
+                .texture("overlay_top", texLoc(tBase + "/overlay/top"))
+                .texture("overlay_side", texLoc(tBase + "/overlay/side"))
+                .texture("overlay_front", texLoc(tBase + "/overlay_front/side"))
                 // issue #8 (task world-tint-render-type): the six 0.01 controller decals
                 // are transparent-texel overlay shells — cutout discards them off the body
                 // (the D2 leg6 fix shape).
@@ -5491,11 +5500,11 @@ public final class GT6BlockStates extends BlockStateProvider {
 
     /** The decor families' overlay band (block/tools/&lt;family&gt;_overlay/&lt;face&gt;.png, the borrowed upstream overlay tiles); only tiles with art are declared. */
     private void kitchenOverlayTextures(BlockModelBuilder aModel, String aFamily) {
-        aModel.texture("overlay_sides", modLoc("block/tools/" + aFamily + "_overlay/sides"));
+        aModel.texture("overlay_sides", texLoc("block/tools/" + aFamily + "_overlay/sides"));
         if (kitchenDecorFamily(aFamily)) {
-            aModel.texture("overlay_insides", modLoc("block/tools/" + aFamily + "_overlay/insides"))
-                    .texture("overlay_top", modLoc("block/tools/" + aFamily + "_overlay/top"))
-                    .texture("overlay_bottom", modLoc("block/tools/" + aFamily + "_overlay/bottom"));
+            aModel.texture("overlay_insides", texLoc("block/tools/" + aFamily + "_overlay/insides"))
+                    .texture("overlay_top", texLoc("block/tools/" + aFamily + "_overlay/top"))
+                    .texture("overlay_bottom", texLoc("block/tools/" + aFamily + "_overlay/bottom"));
         }
     }
 
@@ -5694,12 +5703,12 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("bottom", modLoc("block/tools/mortar/bottom"))
                 .texture("middleside", modLoc("block/tools/mortar/middleside"))
                 .texture("middletop", modLoc("block/tools/mortar/middletop"))
-                .texture("overlay_sides", modLoc("block/tools/mortar_overlay/sides"))
-                .texture("overlay_insides", modLoc("block/tools/mortar_overlay/insides"))
-                .texture("overlay_top", modLoc("block/tools/mortar_overlay/top"))
-                .texture("overlay_bottom", modLoc("block/tools/mortar_overlay/bottom"))
-                .texture("overlay_middleside", modLoc("block/tools/mortar_overlay/middleside"))
-                .texture("overlay_middletop", modLoc("block/tools/mortar_overlay/middletop"))
+                .texture("overlay_sides", texLoc("block/tools/mortar_overlay/sides"))
+                .texture("overlay_insides", texLoc("block/tools/mortar_overlay/insides"))
+                .texture("overlay_top", texLoc("block/tools/mortar_overlay/top"))
+                .texture("overlay_bottom", texLoc("block/tools/mortar_overlay/bottom"))
+                .texture("overlay_middleside", texLoc("block/tools/mortar_overlay/middleside"))
+                .texture("overlay_middletop", texLoc("block/tools/mortar_overlay/middletop"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
         mortarFloor(tModel, false); // the floor slab — pass 4 (:120)
@@ -5790,10 +5799,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("insides", modLoc("block/measuring_pot_colored_insides"))
                 .texture("top", modLoc("block/measuring_pot_colored_top"))
                 .texture("bottom", modLoc("block/measuring_pot_colored_bottom"))
-                .texture("overlay_sides", modLoc("block/measuring_pot_overlay_sides"))
-                .texture("overlay_insides", modLoc("block/measuring_pot_overlay_insides"))
-                .texture("overlay_top", modLoc("block/measuring_pot_overlay_top"))
-                .texture("overlay_bottom", modLoc("block/measuring_pot_overlay_bottom"))
+                .texture("overlay_sides", texLoc("block/measuring_pot_overlay_sides"))
+                .texture("overlay_insides", texLoc("block/measuring_pot_overlay_insides"))
+                .texture("overlay_top", texLoc("block/measuring_pot_overlay_top"))
+                .texture("overlay_bottom", texLoc("block/measuring_pot_overlay_bottom"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
         // the base slab — upstream pass 4 (:107); no outward face (the walls ring it)
@@ -5864,10 +5873,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("top", modLoc("block/gas_cylinder/colored_top"))
                 .texture("bottom", modLoc("block/gas_cylinder/colored_bottom"))
                 .texture("barometer", modLoc("block/gas_cylinder/colored_barometer"))
-                .texture("overlay_sides", modLoc("block/gas_cylinder/overlay_sides"))
-                .texture("overlay_top", modLoc("block/gas_cylinder/overlay_top"))
-                .texture("overlay_bottom", modLoc("block/gas_cylinder/overlay_bottom"))
-                .texture("overlay_barometer", modLoc("block/gas_cylinder/overlay_barometer"))
+                .texture("overlay_sides", texLoc("block/gas_cylinder/overlay_sides"))
+                .texture("overlay_top", texLoc("block/gas_cylinder/overlay_top"))
+                .texture("overlay_bottom", texLoc("block/gas_cylinder/overlay_bottom"))
+                .texture("overlay_barometer", texLoc("block/gas_cylinder/overlay_barometer"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
         // the bell body — upstream passes 0-2 (:120-122): two crossed slabs + the shoulder plate
@@ -5950,10 +5959,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("top", modLoc("block/cell/colored_top"))
                 .texture("bottom", modLoc("block/cell/colored_bottom"))
                 .texture("insides", modLoc("block/cell/colored_insides"))
-                .texture("overlay_sides", modLoc("block/cell/overlay_sides"))
-                .texture("overlay_top", modLoc("block/cell/overlay_top"))
-                .texture("overlay_bottom", modLoc("block/cell/overlay_bottom"))
-                .texture("overlay_insides", modLoc("block/cell/overlay_insides"))
+                .texture("overlay_sides", texLoc("block/cell/overlay_sides"))
+                .texture("overlay_top", texLoc("block/cell/overlay_top"))
+                .texture("overlay_bottom", texLoc("block/cell/overlay_bottom"))
+                .texture("overlay_insides", texLoc("block/cell/overlay_insides"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
         cellShellElements(tEmpty);
@@ -6049,10 +6058,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("top", modLoc("block/cup/colored_top"))
                 .texture("bottom", modLoc("block/cup/colored_bottom"))
                 .texture("insides", modLoc("block/cup/colored_insides"))
-                .texture("overlay_sides", modLoc("block/cup/overlay_sides"))
-                .texture("overlay_top", modLoc("block/cup/overlay_top"))
-                .texture("overlay_bottom", modLoc("block/cup/overlay_bottom"))
-                .texture("overlay_insides", modLoc("block/cup/overlay_insides"))
+                .texture("overlay_sides", texLoc("block/cup/overlay_sides"))
+                .texture("overlay_top", texLoc("block/cup/overlay_top"))
+                .texture("overlay_bottom", texLoc("block/cup/overlay_bottom"))
+                .texture("overlay_insides", texLoc("block/cup/overlay_insides"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
         cupShellElements(tEmpty);
@@ -6164,10 +6173,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("top", modLoc("block/jug/colored_top"))
                 .texture("bottom", modLoc("block/jug/colored_bottom"))
                 .texture("insides", modLoc("block/jug/colored_insides"))
-                .texture("overlay_sides", modLoc("block/jug/overlay_sides"))
-                .texture("overlay_top", modLoc("block/jug/overlay_top"))
-                .texture("overlay_bottom", modLoc("block/jug/overlay_bottom"))
-                .texture("overlay_insides", modLoc("block/jug/overlay_insides"))
+                .texture("overlay_sides", texLoc("block/jug/overlay_sides"))
+                .texture("overlay_top", texLoc("block/jug/overlay_top"))
+                .texture("overlay_bottom", texLoc("block/jug/overlay_bottom"))
+                .texture("overlay_insides", texLoc("block/jug/overlay_insides"))
                 .texture("particle", "#sides")
                 .renderType("cutout");
         jugShellElements(tEmpty);
@@ -6373,10 +6382,10 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("grid", modLoc("block/tools/sifting_table/colored/grid"))
                 .texture("border", modLoc("block/tools/sifting_table/colored/border"))
                 .texture("plate", modLoc("block/tools/sifting_table/colored/plate"))
-                .texture("overlay_legs", modLoc("block/tools/sifting_table/overlay/legs"))
-                .texture("overlay_grid", modLoc("block/tools/sifting_table/overlay/grid"))
-                .texture("overlay_border", modLoc("block/tools/sifting_table/overlay/border"))
-                .texture("overlay_plate", modLoc("block/tools/sifting_table/overlay/plate"))
+                .texture("overlay_legs", texLoc("block/tools/sifting_table/overlay/legs"))
+                .texture("overlay_grid", texLoc("block/tools/sifting_table/overlay/grid"))
+                .texture("overlay_border", texLoc("block/tools/sifting_table/overlay/border"))
+                .texture("overlay_plate", texLoc("block/tools/sifting_table/overlay/plate"))
                 .texture("particle", "#legs")
                 .renderType("cutout");
         // the four corner legs — upstream passes 0-3 (:393-396), all faces legs
@@ -6483,9 +6492,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("top", modLoc(tBase + "colored_top"))
                 .texture("bottom", modLoc(tBase + "colored_bottom"))
                 .texture("side", modLoc(tBase + "colored_side"))
-                .texture("overlay_top", modLoc(tBase + aOverlayBand + "top"))
-                .texture("overlay_bottom", modLoc(tBase + aOverlayBand + "bottom"))
-                .texture("overlay_side", modLoc(tBase + aOverlayBand + "side"))
+                .texture("overlay_top", texLoc(tBase + aOverlayBand + "top"))
+                .texture("overlay_bottom", texLoc(tBase + aOverlayBand + "bottom"))
+                .texture("overlay_side", texLoc(tBase + aOverlayBand + "side"))
                 .texture("particle", "#side")
                 .renderType("cutout");
         hopperBox(tModel, 5.0F, 0.0F, 0.0F, 11.0F, 7.0F, 6.0F, null); // the :124 Z_NEG box + the 0.01 overlay twin
@@ -6509,9 +6518,9 @@ public final class GT6BlockStates extends BlockStateProvider {
                 .texture("top", modLoc(tBase + "colored_top"))
                 .texture("bottom", modLoc(tBase + "colored_bottom"))
                 .texture("side", modLoc(tBase + "colored_side"))
-                .texture("overlay_top", modLoc(tBase + "overlay_top"))
-                .texture("overlay_bottom", modLoc(tBase + "overlay_bottom"))
-                .texture("overlay_side", modLoc(tBase + "overlay_side"))
+                .texture("overlay_top", texLoc(tBase + "overlay_top"))
+                .texture("overlay_bottom", texLoc(tBase + "overlay_bottom"))
+                .texture("overlay_side", texLoc(tBase + "overlay_side"))
                 .texture("particle", "#side")
                 .renderType("cutout");
         // the top plate (:67): the down face skipped (the body sits under it)

@@ -63,22 +63,25 @@ class GT6KitchenRenderDatagenTest {
      * are SUBDIR-QUALIFIED — the family root carries the two pass bands, not flat tiles.
      */
     private static final String GRINDSTONE_FAMILY = "grindstone";
+    // task overlay-dedupe-block-leg: the grindstone overlay legs/axle/bottom passes are
+    // pixel-empty and ride the item/overlay/empty canonical — only overlay/stone ships art
     private static final List<String> GRINDSTONE_FACES = List.of(
             "colored/legs", "colored/axle", "colored/stone", "colored/bottom",
-            "overlay/legs", "overlay/axle", "overlay/stone", "overlay/bottom");
+            "overlay/stone");
 
     /** The tub faces (pot pair + bowl) and the juicer's extra pestle faces. */
     private static final List<String> TUB_FACES = List.of("sides", "insides", "top", "bottom");
     private static final List<String> JUICER_FACES = List.of("sides", "insides", "top", "bottom", "middletop", "middleside");
 
     /**
-     * 4 + 4 + 4 + 6 + 3 + 8 + 5 — the walk upstream found exactly these per family; the
+     * 4 + 4 + 4 + 6 + 3 + 5 + 5 — the walk upstream found exactly these per family; the
      * three root tiles are the manual-nei derived art (the kitchen_nei pair) plus the
      * verbatim upstream nei.png (mixingbowl-bathingpot-fidelity, merge 27372d1bf) and the
      * last 5 the mixingbowl overlay band ({@link #OVERLAY_TILES}). Was 28 before that
-     * merge (the Table faces stay unborrowed).
+     * merge, 34 before task overlay-dedupe-block-leg retired the three pixel-empty
+     * grindstone overlay passes (the Table faces stay unborrowed).
      */
-    private static final int PINNED_PNG_TOTAL = 34;
+    private static final int PINNED_PNG_TOTAL = 31;
 
     /** The manual-nei viewer-dynamic pair + the verbatim nei tile — port art at the tools root (no family subdir). */
     private static final List<String> ROOT_DERIVED_TILES = List.of(
@@ -98,25 +101,20 @@ class GT6KitchenRenderDatagenTest {
     /**
      * The non-kitchen residents of the SHARED {@code block/tools} borrow tree (the census
      * walks the whole directory, so every later band must be declared here): the mortar
-     * 12-PNG two-layer band (task mortar-family — colored+overlay x sides/insides/top/
-     * bottom/middleside/middletop) + the sifting-table 8-PNG two-layer band (task
-     * sifting-table-family — colored+overlay x legs/grid/border/plate). The grindstone
-     * sibling extends this list at its own card — with the sifting band (+8) landed the
-     * walk is 34 + 20 = 54 (the grindstone sibling's union: the three root tiles ride the
-     * ROOT_DERIVED_TILES pin inside the 34, the sifting band rides the 3-shape keys —
-     * family dir leads — because the two-level colored/overlay subdirs collide in the old
-     * two-shape key space; the +6 over the old 28+20=48 is the mixingbowl overlay band,
-     * merge 27372d1bf).
+     * 6-PNG colored band (task mortar-family — the overlay six-pass was pixel-empty and
+     * rides the item/overlay/empty canonical since task overlay-dedupe-block-leg) + the
+     * sifting-table 5-PNG two-layer band (task sifting-table-family — colored x
+     * legs/grid/border/plate + the one overlay art tile, grid; the legs/border/plate
+     * overlay passes were pixel-empty and ride the empty canonical). The grindstone
+     * sibling extends this list at its own card — with the sifting band landed the
+     * walk is 31 + 11 = 42.
      */
     private static final List<String> OTHER_TOOL_TREE_RESIDENTS = List.of(
             "mortar/sides.png", "mortar/insides.png", "mortar/top.png",
             "mortar/bottom.png", "mortar/middleside.png", "mortar/middletop.png",
-            "mortar_overlay/sides.png", "mortar_overlay/insides.png", "mortar_overlay/top.png",
-            "mortar_overlay/bottom.png", "mortar_overlay/middleside.png", "mortar_overlay/middletop.png",
             "sifting_table/colored/legs.png", "sifting_table/colored/grid.png",
             "sifting_table/colored/border.png", "sifting_table/colored/plate.png",
-            "sifting_table/overlay/legs.png", "sifting_table/overlay/grid.png",
-            "sifting_table/overlay/border.png", "sifting_table/overlay/plate.png");
+            "sifting_table/overlay/grid.png");
 
     private static List<String> declaredFaces(String aBlockId) {
         return aBlockId.equals("juicer") ? JUICER_FACES : TUB_FACES;

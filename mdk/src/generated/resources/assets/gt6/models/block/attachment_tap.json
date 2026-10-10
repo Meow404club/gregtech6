@@ -217,7 +217,7 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "all": "gt6:block/tap",
-    "overlay": "gt6:block/tap_overlay",
+    "overlay": "gt6:item/overlay/empty",
     "particle": "#all"
   }
 }

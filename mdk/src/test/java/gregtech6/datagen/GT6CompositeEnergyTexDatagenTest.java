@@ -90,26 +90,26 @@ class GT6CompositeEnergyTexDatagenTest extends GTOfflineTestBase {
     /** The 51 borrowed PNGs (tex-composite-family commit 1, the README tail manifest). */
     private static final List<String> BORROWED_PNGS = List.of(
             "battery_box/colored_front.png", "battery_box/colored_side.png",
-            "battery_box/overlay_front.png", "battery_box/overlay_side.png",
-            "battery_box/overlay_active_front.png", "battery_box/overlay_active_side.png",
+            "overlay/battery_box_overlay_front.png", "battery_box/overlay_side.png",
+            "overlay/autocrafter_overlay_bottom_active.png", "battery_box/overlay_active_side.png",
             "battery_box_large/colored_front.png", "battery_box_large/colored_side.png",
-            "battery_box_large/overlay_front.png", "battery_box_large/overlay_side.png",
-            "battery_box_large/overlay_active_front.png", "battery_box_large/overlay_active_side.png",
+            "overlay/battery_box_large_overlay_front.png", "battery_box_large/overlay_side.png",
+            "overlay/battery_box_large_overlay_active_front.png", "battery_box_large/overlay_active_side.png",
             "crystal_charger/colored_front.png", "crystal_charger/colored_side.png",
-            "crystal_charger/overlay_front.png", "crystal_charger/overlay_side.png",
-            "crystal_charger/overlay_active_front.png", "crystal_charger/overlay_active_side.png",
+            "overlay/crystal_charger_overlay_front.png", "crystal_charger/overlay_side.png",
+            "overlay/crystal_charger_overlay_active_front.png", "crystal_charger/overlay_active_side.png",
             "crystal_charger_large/colored_front.png", "crystal_charger_large/colored_side.png",
-            "crystal_charger_large/overlay_front.png", "crystal_charger_large/overlay_side.png",
-            "crystal_charger_large/overlay_active_front.png", "crystal_charger_large/overlay_active_side.png",
+            "overlay/crystal_charger_overlay_front.png", "crystal_charger_large/overlay_side.png",
+            "overlay/crystal_charger_overlay_active_front.png", "crystal_charger_large/overlay_active_side.png",
             "zpm_decharger/colored_front.png", "zpm_decharger/colored_back.png", "zpm_decharger/colored_side.png",
-            "zpm_decharger/overlay_front.png", "zpm_decharger/overlay_back.png", "zpm_decharger/overlay_side.png",
-            "zpm_decharger/overlay_active_front.png", "zpm_decharger/overlay_active_back.png", "zpm_decharger/overlay_active_side.png",
+            "overlay/battery_box_overlay_front.png", "overlay/zpm_decharger_overlay_active_back.png", "item/overlay/empty.png",
+            "overlay/autocrafter_overlay_bottom_active.png", "overlay/zpm_decharger_overlay_active_back.png", "item/overlay/empty.png",
             "zpm_decharger_quantum/colored_front.png", "zpm_decharger_quantum/colored_back.png", "zpm_decharger_quantum/colored_side.png",
-            "zpm_decharger_quantum/overlay_front.png", "zpm_decharger_quantum/overlay_back.png", "zpm_decharger_quantum/overlay_side.png",
-            "zpm_decharger_quantum/overlay_active_front.png", "zpm_decharger_quantum/overlay_active_back.png", "zpm_decharger_quantum/overlay_active_side.png",
+            "overlay/massfab_overlay_back.png", "overlay/zpm_decharger_overlay_active_back.png", "item/overlay/empty.png",
+            "overlay/massfab_overlay_back_active.png", "overlay/zpm_decharger_overlay_active_back.png", "item/overlay/empty.png",
             "long_distance_transformer/colored_front.png", "long_distance_transformer/colored_back.png", "long_distance_transformer/colored_side.png",
-            "long_distance_transformer/overlay_front.png", "long_distance_transformer/overlay_back.png", "long_distance_transformer/overlay_side.png",
-            "long_distance_transformer/overlay_active_front.png", "long_distance_transformer/overlay_active_back.png", "long_distance_transformer/overlay_active_side.png");
+            "overlay/battery_box_large_overlay_front.png", "long_distance_transformer/overlay_back.png", "long_distance_transformer/overlay_side.png",
+            "overlay/battery_box_large_overlay_active_front.png", "long_distance_transformer/overlay_active_back.png", "long_distance_transformer/overlay_active_side.png");
 
     /** The 15 retired src-over composites (the p29/p36 bakes this card deletes). */
     private static final List<String> RETIRED_PNGS = List.of(

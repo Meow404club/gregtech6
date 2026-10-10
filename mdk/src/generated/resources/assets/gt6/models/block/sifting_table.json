@@ -427,10 +427,10 @@
     "border": "gt6:block/tools/sifting_table/colored/border",
     "grid": "gt6:block/tools/sifting_table/colored/grid",
     "legs": "gt6:block/tools/sifting_table/colored/legs",
-    "overlay_border": "gt6:block/tools/sifting_table/overlay/border",
+    "overlay_border": "gt6:item/overlay/empty",
     "overlay_grid": "gt6:block/tools/sifting_table/overlay/grid",
-    "overlay_legs": "gt6:block/tools/sifting_table/overlay/legs",
-    "overlay_plate": "gt6:block/tools/sifting_table/overlay/plate",
+    "overlay_legs": "gt6:item/overlay/empty",
+    "overlay_plate": "gt6:item/overlay/empty",
     "particle": "#legs",
     "plate": "gt6:block/tools/sifting_table/colored/plate"
   }

@@ -147,7 +147,7 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "all": "gt6:block/nozzle",
-    "overlay": "gt6:block/nozzle_overlay",
+    "overlay": "gt6:item/overlay/empty",
     "particle": "#all"
   }
 }

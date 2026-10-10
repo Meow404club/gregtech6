@@ -273,9 +273,9 @@
     "axle": "gt6:block/tools/grindstone/colored/axle",
     "bottom": "gt6:block/tools/grindstone/colored/bottom",
     "legs": "gt6:block/tools/grindstone/colored/legs",
-    "overlay_axle": "gt6:block/tools/grindstone/overlay/axle",
-    "overlay_bottom": "gt6:block/tools/grindstone/overlay/bottom",
-    "overlay_legs": "gt6:block/tools/grindstone/overlay/legs",
+    "overlay_axle": "gt6:item/overlay/empty",
+    "overlay_bottom": "gt6:item/overlay/empty",
+    "overlay_legs": "gt6:item/overlay/empty",
     "overlay_stone": "gt6:block/tools/grindstone/overlay/stone",
     "particle": "#legs",
     "stone": "gt6:block/tools/grindstone/colored/stone"

@@ -160,8 +160,8 @@
     "east": "gt6:block/parts/centrifugeparts/1/colored/side",
     "north": "gt6:block/parts/centrifugeparts/1/colored/side",
     "overlay_bottom": "gt6:block/parts/centrifugeparts/1/overlay/bottom",
-    "overlay_side": "gt6:block/parts/centrifugeparts/1/overlay/side",
-    "overlay_top": "gt6:block/parts/centrifugeparts/1/overlay/top",
+    "overlay_side": "gt6:block/overlay/parts_centrifugeparts_0_overlay_side",
+    "overlay_top": "gt6:block/overlay/parts_centrifugeparts_1_overlay_top",
     "south": "gt6:block/parts/centrifugeparts/1/colored/side",
     "up": "gt6:block/parts/centrifugeparts/1/colored/top",
     "west": "gt6:block/parts/centrifugeparts/1/colored/side"

@@ -326,10 +326,10 @@
   "textures": {
     "bottom": "gt6:block/measuring_pot_colored_bottom",
     "insides": "gt6:block/measuring_pot_colored_insides",
-    "overlay_bottom": "gt6:block/measuring_pot_overlay_bottom",
-    "overlay_insides": "gt6:block/measuring_pot_overlay_insides",
-    "overlay_sides": "gt6:block/measuring_pot_overlay_sides",
-    "overlay_top": "gt6:block/measuring_pot_overlay_top",
+    "overlay_bottom": "gt6:item/overlay/empty",
+    "overlay_insides": "gt6:item/overlay/empty",
+    "overlay_sides": "gt6:item/overlay/empty",
+    "overlay_top": "gt6:item/overlay/empty",
     "particle": "#sides",
     "sides": "gt6:block/measuring_pot_colored_sides",
     "top": "gt6:block/measuring_pot_colored_top"

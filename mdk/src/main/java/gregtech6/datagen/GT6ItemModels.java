@@ -1000,7 +1000,7 @@ public final class GT6ItemModels extends ItemModelProvider {
                     .texture("back", modLoc("block/dynamite_colored_back"))
                     .texture("side", modLoc("block/dynamite_colored_side"))
                     .texture("overlay_front", modLoc("block/dynamite_overlay_front"))
-                    .texture("overlay_back", modLoc("block/dynamite_overlay_back"))
+                    .texture("overlay_back", modLoc(GT6BlockOverlayAliases.resolve("block/dynamite_overlay_back")))
                     .texture("overlay_side", modLoc("block/dynamite_overlay_side"))
                     .renderType("cutout");
             // element 0 — the body stick, tintindex 0 = the material tint (the :157-160 bounds);

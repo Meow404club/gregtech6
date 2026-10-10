@@ -159,9 +159,9 @@
     "down": "gt6:block/parts/metalwalldense/2/colored/bottom",
     "east": "gt6:block/parts/metalwalldense/2/colored/side",
     "north": "gt6:block/parts/metalwalldense/2/colored/side",
-    "overlay_bottom": "gt6:block/parts/metalwalldense/2/overlay/bottom",
-    "overlay_side": "gt6:block/parts/metalwalldense/2/overlay/side",
-    "overlay_top": "gt6:block/parts/metalwalldense/2/overlay/top",
+    "overlay_bottom": "gt6:block/overlay/parts_metalwall_2_overlay_bottom",
+    "overlay_side": "gt6:block/overlay/parts_metalwall_2_overlay_bottom",
+    "overlay_top": "gt6:block/overlay/parts_metalwall_2_overlay_bottom",
     "south": "gt6:block/parts/metalwalldense/2/colored/side",
     "up": "gt6:block/parts/metalwalldense/2/colored/top",
     "west": "gt6:block/parts/metalwalldense/2/colored/side"

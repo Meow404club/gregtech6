@@ -146,10 +146,10 @@
   "textures": {
     "bottom": "gt6:block/cell/colored_bottom",
     "insides": "gt6:block/cell/colored_insides",
-    "overlay_bottom": "gt6:block/cell/overlay_bottom",
-    "overlay_insides": "gt6:block/cell/overlay_insides",
-    "overlay_sides": "gt6:block/cell/overlay_sides",
-    "overlay_top": "gt6:block/cell/overlay_top",
+    "overlay_bottom": "gt6:item/overlay/empty",
+    "overlay_insides": "gt6:item/overlay/empty",
+    "overlay_sides": "gt6:item/overlay/empty",
+    "overlay_top": "gt6:item/overlay/empty",
     "particle": "#sides",
     "sides": "gt6:block/cell/colored_sides",
     "top": "gt6:block/cell/colored_top"
