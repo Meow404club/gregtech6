@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Test;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.Bootstrap;
 
 import gregapi.code.TagData;
@@ -119,6 +121,30 @@ class GT6EnergyCensusTest {
 		// the wire oddities miss white: the missing-key "?" and STEAM's word code
 		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColorOfShortCode("?"));
 		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColorOfShortCode("Steam"));
+	}
+
+	@Test
+	void theUnitTokenIsTheCodeAloneInTheCarrierColor() {
+		// task jade-energy-token-color: the token = the short code as its own Component —
+		// a %s slot paints ONLY the code, the amount and the rest of the row stay neutral.
+		// Every colored carrier: text == the code, style == the tabled color.
+		for (TagData tCarrier : List.of(TD.Energy.EU, TD.Energy.RU, TD.Energy.KU, TD.Energy.HU,
+				TD.Energy.CU, TD.Energy.LU, TD.Energy.MU, TD.Energy.QU, TD.Energy.TU)) {
+			String tCode = GT6RecipeMapViewerMeta.energyTypeShortCode(tCarrier);
+			Component tToken = GT6EnergyCensus.energyTokenOfShortCode(tCode);
+			assertEquals(tCode, tToken.getString(), tCarrier.mName + ": the token text IS the code");
+			assertEquals(TextColor.fromLegacyFormat(GT6EnergyCensus.energyColor(tCarrier)),
+					tToken.getStyle().getColor(), tCarrier.mName + ": the token rides the tabled color");
+		}
+		// the miss face ("?" / the word codes) answers a WHITE-styled token — visually the
+		// plain code, never a null style
+		assertEquals("?", GT6EnergyCensus.energyTokenOfShortCode("?").getString());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.WHITE),
+				GT6EnergyCensus.energyTokenOfShortCode("?").getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.WHITE),
+				GT6EnergyCensus.energyTokenOfShortCode("Steam").getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.WHITE),
+				GT6EnergyCensus.energyTokenOfShortCode("FE").getStyle().getColor());
 	}
 
 	// -------------------------------------------------------------------

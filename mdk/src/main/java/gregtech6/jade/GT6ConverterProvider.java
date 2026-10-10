@@ -44,8 +44,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
  * families.converter）：真上限族（capacity&gt;0）的存量行升 B 形钳位比例条（文本复用既有三槽键，
  * lang 裁定 gt6.jade.converter.* 不动）；裸存量形（capacity=0，燃烧箱）保文本；吞吐行保留文本；
  * 状态行字色收编 {@link GT6JadeRows#FORMAT_OK}/{@link GT6JadeRows#FORMAT_STALLED}（J1 交卡
- * 遗留的第三份状态色复制）。燃烧箱族另有内容物两行（燃料/灰烬，task jade-boiler-burningbox
- * ——无 GUI 族唯一内容可视面，{@link #writeBurningContents} + {@link #contentLine}）。
+ * 遗留的第三份状态色复制）。task jade-energy-token-color：三行能量面的载体短码槽统一走
+ * {@link gregtech6.jei.GT6EnergyCensus#energyTokenOfShortCode} 带色 token 子组件——燃烧盒四族
+ * （Solid/FluidBed/Gas/Liquid，本类 {@link #writeFamilyData} 的 GTGeneratorSolidBlockEntity
+ * 分支即其 Jade 面）的 HU 存量/吞吐行自此只有短码字上色。燃烧箱族另有内容物两行（燃料/灰烬，
+ * task jade-boiler-burningbox——无 GUI 族唯一内容可视面，{@link #writeBurningContents} +
+ * {@link #contentLine}）。
  * 上游 1.7.10 零 WAILA 面（research.r5-jade-integration：全源仅 5 处隔离注释）——本面属现代
  * 增强，行式借 {@link GT6MachineProvider}/{@link GT6CrucibleProvider} 的既有家法与 GTCEu
  * RecipeLogicProvider.java:75+ 的吞吐行先例。
@@ -284,19 +288,25 @@ public final class GT6ConverterProvider implements IBlockComponentProvider, ISer
 		return aActive ? rLine.withStyle(GT6JadeRows.FORMAT_OK) : rLine;
 	}
 
-	/** 存量行（有上限）："Stored: 100 / 200 KU"。 */
+	/** 存量行（有上限）："Stored: 100 / 200 KU"——单位槽是带载体色的 token 子组件
+	 * （task jade-energy-token-color，用户"很多场景下比如燃烧室输出的 HU 没上色"的修正面：
+	 * 本族存量/吞吐行的载体短码自此上色，数字保持默认白；空 unit 串 = 空 token，行不变）。 */
 	public static Component storedLine(long aStored, long aCapacity, String aUnit) {
-		return Component.translatable(LANG_STORED, aStored, aCapacity, aUnit);
+		return Component.translatable(LANG_STORED, aStored, aCapacity,
+				gregtech6.jei.GT6EnergyCensus.energyTokenOfShortCode(aUnit));
 	}
 
-	/** 裸存量行（无硬上限族，燃烧箱）："Stored: 250 HU"。 */
+	/** 裸存量行（无硬上限族，燃烧箱）："Stored: 250 HU"——HU token 红（同 {@link #storedLine}）。 */
 	public static Component storedBareLine(long aStored, String aUnit) {
-		return Component.translatable(LANG_STORED_BARE, aStored, aUnit);
+		return Component.translatable(LANG_STORED_BARE, aStored,
+				gregtech6.jei.GT6EnergyCensus.energyTokenOfShortCode(aUnit));
 	}
 
-	/** 吞吐行（额定输出）："Output: 64 EU/t"（GTCEu RecipeLogicProvider.java:75+ 先例形）。 */
+	/** 吞吐行（额定输出）："Output: 64 EU/t"（GTCEu RecipeLogicProvider.java:75+ 先例形）——
+	 * token 只罩单位字，"/t" 保持白（同 {@link #storedLine}）。 */
 	public static Component rateLine(long aRate, String aUnit) {
-		return Component.translatable(LANG_RATE, aRate, aUnit);
+		return Component.translatable(LANG_RATE, aRate,
+				gregtech6.jei.GT6EnergyCensus.energyTokenOfShortCode(aUnit));
 	}
 
 	/**

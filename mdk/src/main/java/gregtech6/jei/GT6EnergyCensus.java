@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 
 import net.minecraftforge.registries.RegistryObject;
@@ -142,6 +143,19 @@ public final class GT6EnergyCensus {
 			if (GT6RecipeMapViewerMeta.energyTypeShortCode(tEntry.getKey()).equals(aShortCode))
 				return tEntry.getValue();
 		return ChatFormatting.WHITE;
+	}
+
+	/**
+	 * The colored unit token (task jade-energy-token-color): the short code as its own
+	 * {@code Component} carrying the carrier color, so a translatable {@code %s} slot
+	 * paints ONLY the code — the amount and the rest of the row stay the neutral white.
+	 * The one builder both tooltip faces consume ({@code GT6MachineProvider.energyLine/
+	 * inputLine} and the {@code GT6ConverterProvider} stored/rate rows) — it sits next to
+	 * the color table so the token can never drift from the lookup. A miss ("?", "Steam",
+	 * RF/FE, the empty unit) answers a WHITE-styled token — visually the plain code.
+	 */
+	public static Component energyTokenOfShortCode(String aShortCode) {
+		return Component.literal(aShortCode).withStyle(energyColorOfShortCode(aShortCode));
 	}
 
 	/** Every machine emitting this carrier, registration order. Empty = the legal unported state. */
