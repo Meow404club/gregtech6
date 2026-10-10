@@ -2,18 +2,18 @@
   "variants": {
     "facing=east": {
       "model": "gt6:block/thaumium_anvil",
-      "y": 90
+      "y": 180
     },
     "facing=north": {
-      "model": "gt6:block/thaumium_anvil"
+      "model": "gt6:block/thaumium_anvil",
+      "y": 270
     },
     "facing=south": {
       "model": "gt6:block/thaumium_anvil",
-      "y": 180
+      "y": 90
     },
     "facing=west": {
-      "model": "gt6:block/thaumium_anvil",
-      "y": 270
+      "model": "gt6:block/thaumium_anvil"
     }
   }
 }

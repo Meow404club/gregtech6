@@ -780,20 +780,64 @@ public final class GT6BlockStates extends BlockStateProvider {
      * — the basin/crossing 39-row borrow): the grayscale materialicons art carries
      * tintindex 0 and {@code GT6MoldTintListener} answers the mRGBaSolid (task
      * debt-material-tint). The top face is the same art (the single smooth texture
-     * serves every body pass upstream), the FACING y-rotation stays (the upstream
-     * SIDES_VALID :413 horizontal band). Each row keeps its own model; the BlockItem
-     * models parent their row model.
+     * serves every body pass upstream). Each row keeps its own model; the BlockItem
+     * models parent their row model (the 3D silhouette rides the parent chain).
+     *
+     * <p>Task anvil-shape-models — the geometry: the upstream silhouette is the
+     * setBlockBounds2 pass table (MultiTileEntityAnvil.java:324-349, passes 0-5), one
+     * smooth-set texture over every box face (getTexture2 :381-392 — passes 0-4 all
+     * answer mTextureAnvil). Transcribed verbatim into the 0..16 model px space from
+     * the block-space PX_P/PX_N units (CS.java:492-513, ×16); canonical form = the
+     * SIDE_X_NEG (WEST) authoring arm:
+     * <ol>
+     * <li>:326 the base — x[4,12] y[0,4] z[2,14];</li>
+     * <li>:327 the waist — x[6,10] y[4,8] z[4,12];</li>
+     * <li>:328 the plate — x[4,12] y[8,12] z[1,15];</li>
+     * <li>:331 the tall guard — x[5,11] y[8,12] z[15,16] (the 6-wide 4-tall wall at
+     *     the +LONG-axis end, the SIDE_X_NEG arm);</li>
+     * <li>:338 the low guard — x[4,12] y[9,11] z[0,1] (the 8-wide 2-tall wall at the
+     *     −LONG-axis end);</li>
+     * <li>:345 the foot skirt — x[3.9984,12.0016] y[0,2] z[2,4] (the upstream
+     *     PX_P[4]−0.0001F poke-out eps ×16 — keeps the coplanar skirt faces
+     *     rendering beside the base's, the same trick at model-JSON scale).</li>
+     * </ol>
+     * The pass table conditions the first three boxes on SIDES_AXIS_X/Z[mFacing] and
+     * switches the last three per facing — the long axis runs PERPENDICULAR to the
+     * facing (the X-axis facings stretch along Z, the collision box :397-399 confirms:
+     * x[4,12] over the full z[0,16] for X-facings) and the guard pair is asymmetric,
+     * so the four facings are FOUR rotations of ONE canonical model, NOT two axis
+     * models (the grindstone two-form split does not apply — its boxes were
+     * axis-symmetric, here the tall/low guard swap breaks the mirror). The rotationY
+     * table is NOT the furnace front convention: the furnace anchor (the vanilla
+     * blockstate asset facing=east → y=90 with the front on the model's NORTH face,
+     * orientable_with_bottom {@code "north": "#front"}) fixes Rot(y=90):
+     * (x,z)→(16−z,x), Rot(y=270): (x,z)→(z,16−x); mapping the canonical WEST form
+     * onto the four upstream facing geometries gives NORTH(SIDE_Z_NEG)→270,
+     * SOUTH(SIDE_Z_POS)→90, WEST(SIDE_X_NEG)→0, EAST(SIDE_X_POS)→180 — the
+     * perpendicular long axis swings the furnace table by 270°.
+     *
+     * <p>Declared omissions: the anvil-borne item boxes (passes 6-7, the mShapeA/B
+     * :350-376 nine-form table) are per-NBT DYNAMIC geometry — the static model is the
+     * EMPTY anvil (upstream mShapeA/B = 0 renders those passes empty; the loaded form
+     * is the BER/render-pool ruling, not datagen); the pass-5 ALONG_AXIS faces answer
+     * BI.nei() upstream (:388, the glyph decal) — that art is the GT6AnvilNeiModel
+     * wrap's domain (the viewer-dynamic bake, task manual-nei-four-family), the skirt
+     * here rides the body texture.
      */
     private void addAnvils() {
         for (gregtech6.registry.GT6Anvils.AnvilRow tRow : gregtech6.registry.GT6Anvils.ROWS) {
             ModelFile tModel = anvilModel(tRow);
             Block tBlock = gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tRow.path()).get();
             getVariantBuilder(tBlock).forAllStates(aState -> {
+                // the anvil-shape-models rotation table (the addAnvils javadoc) — the
+                // upstream SIDE_X_NEG geometry is the WEST arm; NOT the furnace front
+                // table (the long axis is crosswise to the facing, the guard pair
+                // asymmetric — see the anchor derivation above)
                 int tY = switch (aState.getValue(gregtech6.block.tools.GTAnvilBlock.FACING)) {
-                    case SOUTH -> 180;
-                    case WEST -> 270;
-                    case EAST -> 90;
-                    default -> 0; // NORTH
+                    case NORTH -> 270;
+                    case SOUTH -> 90;
+                    case EAST -> 180;
+                    default -> 0; // WEST — the canonical SIDE_X_NEG arm
                 };
                 return ConfiguredModel.builder().modelFile(tModel).rotationX(0).rotationY(tY).build();
             });
@@ -802,22 +846,38 @@ public final class GT6BlockStates extends BlockStateProvider {
     }
 
     /**
-     * One anvil row model: the two finished-texture rows ride cube_all (the c-anvil
-     * faces, kept byte-stable); the tinted ladder rows ride the full-cube element over
-     * the borrowed grayscale (the basin/crossing shell grammar — cullface everywhere,
-     * tintindex 0 for the {@code GT6MoldTintListener} mRGBaSolid multiply).
+     * One anvil row model: the upstream six-box silhouette (MultiTileEntityAnvil
+     * :326-349 verbatim — the anchor table on {@link #addAnvils}) over the row's
+     * smooth-set texture; the two finished rows keep the vanilla faces untinted, the
+     * ladder rows carry the tintindex-0 seat ({@code GT6MoldTintListener} mRGBaSolid
+     * multiply). No cullface — the guard walls sit flush with the block boundary and
+     * must survive opaque neighbours (the grindstone sub-cube form).
      */
     private ModelFile anvilModel(gregtech6.registry.GT6Anvils.AnvilRow aRow) {
         boolean tLegacy = "stone_anvil".equals(aRow.path()) || "blackstone_anvil".equals(aRow.path());
-        if (tLegacy) return models().cubeAll(aRow.path(), anvilBodyTexture(aRow.path()));
-        net.minecraft.resources.ResourceLocation tBody = GT6CrucibleDatagen
-                .loc(GT6CrucibleDatagen.bodyTexture(aRow.material().get()));
+        net.minecraft.resources.ResourceLocation tBody = tLegacy ? anvilBodyTexture(aRow.path())
+                : GT6CrucibleDatagen.loc(GT6CrucibleDatagen.bodyTexture(aRow.material().get()));
         BlockModelBuilder tModel = models().getBuilder(aRow.path())
                 .parent(models().getExistingFile(mcLoc("block/block")))
                 .texture("all", tBody).texture("particle", tBody);
-        tModel.element().from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
-                .allFaces((aDir, aFace) -> aFace.texture("#all").tintindex(0).cullface(aDir)).end();
+        anvilBox(tModel, !tLegacy, 4, 0, 2, 12, 4, 14);            // pass 0 — the base (:326)
+        anvilBox(tModel, !tLegacy, 6, 4, 4, 10, 8, 12);            // pass 1 — the waist (:327)
+        anvilBox(tModel, !tLegacy, 4, 8, 1, 12, 12, 15);           // pass 2 — the plate (:328)
+        anvilBox(tModel, !tLegacy, 5, 8, 15, 11, 12, 16);          // pass 3 — the tall guard (:331)
+        anvilBox(tModel, !tLegacy, 4, 9, 0, 12, 11, 1);            // pass 4 — the low guard (:338)
+        anvilBox(tModel, !tLegacy, 3.9984F, 0, 2, 12.0016F, 2, 4); // pass 5 — the skirt (:345, the 0.0001F eps ×16)
         return tModel;
+    }
+
+    /** One silhouette box over the shared "#all" face art (aTint = the ladder tintindex-0 seat). */
+    private void anvilBox(BlockModelBuilder aModel, boolean aTint,
+            float aX1, float aY1, float aZ1, float aX2, float aY2, float aZ2) {
+        BlockModelBuilder.ElementBuilder tEl = aModel.element().from(aX1, aY1, aZ1).to(aX2, aY2, aZ2);
+        for (Direction tDir : Direction.values()) {
+            if (aTint) tEl.face(tDir).texture("#all").tintindex(0).end();
+            else tEl.face(tDir).texture("#all").end();
+        }
+        tEl.end();
     }
 
     /** The smooth material face of the two legacy anvil rows (the getTextureSmooth mapping). */
