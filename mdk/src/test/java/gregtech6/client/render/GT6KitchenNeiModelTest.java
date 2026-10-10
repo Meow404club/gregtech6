@@ -1,13 +1,15 @@
 /**
  * The kitchen NEI corner glyph bake pins (task kitchen-nei-corner-jump, corrected by task
- * mixingbowl-bathingpot-fidelity, the GTOvenOverlayModelTest shape): the patch exists only
- * when a viewer is present (the bake-time GTViewerJump.preferredViewer gate), rides the
- * BYTE-IDENTICAL upstream nei.png sheet for ANY viewer (the fidelity correction — the
- * glyph is upstream's NEI mark, not a viewer logo), samples exactly ONE word cell of the
- * 8x8 sheet (the UV = the quad footprint — the upstream render-bounds interpolation,
- * ITexture.java:295-298; the full-sheet UV was the small-letter-pile bug), carries the
- * upstream CA_YELLOW_255 render tint in the vertex colours (the shipped PNG stays
- * untouched), rides the cutout layer (the transparent glyph margins must discard, the
+ * mixingbowl-bathingpot-fidelity, viewer-lettered by task kitchen-nei-viewer-letter, the
+ * GTOvenOverlayModelTest shape): the patch exists only when a viewer is present (the
+ * bake-time GTViewerJump.preferredViewer gate), carries the VIEWER'S OWN LETTER — the
+ * 「EMI」 tile under EMI, the 「JEI」 tile under JEI-only, no glyph at all with neither
+ * (the r11-nei ruling — what you see is what you jump to, the mortar family form) —
+ * samples exactly ONE letter cell of the 16px-period tile (the UV = the quad footprint —
+ * the upstream render-bounds interpolation, ITexture.java:295-298; the full-sheet UV was
+ * the small-letter-pile bug), rides NO vertex tint (the derived pair carries the
+ * CA_YELLOW_255 BAKED in its pixels — a re-tint would darken the anti-aliased edges),
+ * rides the cutout layer (the transparent glyph margins must discard, the
  * r11-oven-solid-layer-fix lesson), carries the upstream pass-6/7 rim-corner geometry
  * derived from the family collision-pool shape, and never perturbs the body quads. The
  * LIVE wrap (listener + atlas stitching + JEI/EMI in a real client) is the field_test.
@@ -185,15 +187,15 @@ public class GT6KitchenNeiModelTest extends GTOfflineRenderTestBase {
 		assertEquals(1, quads(tNone, RenderType.solid()).size(), "no viewer → the plain body everywhere");
 	}
 
-	/** The glyph is the byte-identical upstream NEI sheet for ANY viewer (the fidelity correction — no viewer lettering). */
+	/** The glyph is the loaded viewer's OWN letter — EMI tile under EMI, JEI tile under JEI-only (the dual-install ruling: EMI first). */
 	@Test
-	void theGlyphIsTheUpstreamNeiSheetForAnyViewer() {
-		assertEquals("gt6:" + GT6KitchenNeiModel.SPRITE_NEI,
-				spriteId(quads(model(sTub, "jei"), RenderType.cutout()).get(1)).toString(),
-				"JEI-only → the upstream nei.png sheet");
-		assertEquals("gt6:" + GT6KitchenNeiModel.SPRITE_NEI,
+	void theGlyphIsTheLoadedViewersOwnLetter() {
+		assertEquals("gt6:" + GT6KitchenNeiModel.SPRITE_EMI,
 				spriteId(quads(model(sTub, "emi"), RenderType.cutout()).get(1)).toString(),
-				"EMI present → the SAME upstream sheet (the jump target is EMI, the mark is upstream's)");
+				"EMI present → the 「EMI」 tile (EMI first on a dual install, the GTViewerJump probe order)");
+		assertEquals("gt6:" + GT6KitchenNeiModel.SPRITE_JEI,
+				spriteId(quads(model(sTub, "jei"), RenderType.cutout()).get(1)).toString(),
+				"JEI-only → the 「JEI」 tile");
 	}
 
 	/**
@@ -223,18 +225,19 @@ public class GT6KitchenNeiModelTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * The upstream CA_YELLOW_255 render tint (CS.java:389, {255,255,0,255}) rides the
-	 * vertex colours: white sheet x yellow = ABGR {@code 0xFF00FFFF} on every vertex —
-	 * while the tint index stays -1 (the P22 decal contract, never re-tinted at runtime).
+	 * The lettered pair carries the upstream CA_YELLOW_255 BAKED into its pixels (the
+	 * README "Derived" rows, pixel census: {255,255,0} fills the letter texels) — so the
+	 * bake adds NO vertex tint (a re-tint would darken the anti-aliased edges; the
+	 * siblings' exact form) while the tint index stays -1 (the P22 decal contract).
 	 */
 	@Test
-	void theGlyphCarriesTheUpstreamYellowInVertexColours() {
+	void theGlyphAddsNoVertexTintOverTheBakedYellow() {
 		BakedQuad tGlyph = quads(model(sTub, "jei"), RenderType.cutout()).get(1);
 		assertEquals(-1, tGlyph.getTintIndex(), "the decal is untinted at runtime (the P22 contract)");
 		int[] tV = tGlyph.getVertices();
 		for (int v = 0; v * STRIDE < tV.length; v++) {
-			assertEquals(0xFF00FFFF, tV[v * STRIDE + 3],
-					"vertex " + v + " carries white-sheet-x-CA_YELLOW_255 (ABGR) in its colour slot");
+			assertEquals(0xFFFFFFFF, tV[v * STRIDE + 3],
+					"vertex " + v + " keeps the raw white colour — the yellow lives in the PNG, not the vertices");
 		}
 	}
 
