@@ -24,10 +24,12 @@ import gregtech6.tileentity.tank.GTBarrelMetalBlockEntity;
 
 /**
  * The fluid trio offline acceptance (task covers-gameplay-10): the Vent intake
- * beat (the pump-seam gate + the declared-minimal air-carrier seam), the Drain
- * collection beats and the PressureValve threshold (the full-tank vent, the
- * gas-vs-liquid split, the endpoint disconnect). The host fixtures ride the pump-test
- * forms: the metal drum for the tank-seam covers, the pipe BE for the valve.
+ * beat (the pump-seam gate + the gt6:air carrier lookup — registered by
+ * air-fluid-registration; the former "census fluid gap / declared-minimal carrier"
+ * premise is retired), the Drain collection beats and the PressureValve threshold
+ * (the full-tank vent, the gas-vs-liquid split, the endpoint disconnect). The host
+ * fixtures ride the pump-test forms: the metal drum for the tank-seam covers, the
+ * pipe BE for the valve.
  */
 public class CoverFluidTrioTest extends GTCoverTestBase {
 
@@ -116,12 +118,26 @@ public class CoverFluidTrioTest extends GTCoverTestBase {
 		assertTrue(CoverVent.isVentBeat(450, (byte) 1), "30 + 60*1 = 90, +360");
 	}
 
+	/**
+	 * The stub-environment no-op. Erratum: the former "census fluid gap" premise is
+	 * obsolete — air-fluid-registration registered gt6:air, so the carrier lookup is
+	 * form-agnostic here: the booted test JVMs (the neo leg's FML boot behind the
+	 * BuiltInRegistries swap) see the row and pin the fill budget; the unbooted forms
+	 * (the forge leg's unpopulated ForgeRegistries) resolve null and pass. The
+	 * behavioral pin is the beat itself: the cover sits on face 3 and 390 is the
+	 * face-0 phase — the :45 offset gate returns before anything touches the tank
+	 * (and the stub level's front block is bricks, never collectable air, so no
+	 * later gate could fill it either).
+	 */
 	@Test
-	public void ventBeatNoOpsWithoutTheAirCarrier() {
+	public void ventBeatNoOpsInTheStubEnvironment() {
 		GTBarrelMetalBlockEntity tDrum = drumWith(new CoverVent());
-		assertNull(CoverVent.airStack(), "the gt6:air carrier is not registered (the census fluid gap)");
-		tDrum.getCovers().tickPre(390, true, false, false); // the face-3 beat
-		assertTrue(tDrum.getCoverPumpTank().isEmpty(), "no air carrier in the port — the declared-minimal no-op");
+		FluidStack tCarrier = CoverVent.airStack();
+		if (tCarrier != null) {
+			assertEquals(CoverVent.AIR_FILL_BUDGET, tCarrier.getAmount(), "the registered gt6:air carrier carries the full fill budget");
+		}
+		tDrum.getCovers().tickPre(390, true, false, false); // the face-0 phase against the face-3 cover
+		assertTrue(tDrum.getCoverPumpTank().isEmpty(), "390 is the face-0 phase — the face-3 beat gate returns before any fill");
 	}
 
 	// ------------------------------------------------------------------
