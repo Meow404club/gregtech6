@@ -115,16 +115,18 @@ public final class GTWrenchGridTables {
 		return UT6.getSideWrenching(aFace, aHitX, aHitY, aHitZ);
 	}
 
-	/** The hover grid shows every face; the icon follows the active mode's bit. */
+	/**
+	 * The hover grid shows every face; the icon reads the connection bits in BOTH modes
+	 * (task pipe-flow-indicator-rework, the user ruling verbatim: shift 必须「显示与不按
+	 * shift 时完全相同的连接图标（PIPE_CONNECT/PIPE_BLOCK），不能是别的任何」— the old
+	 * shift branch drew the IO_FACING_ROTATION arrow for ioMask bits and the user struck
+	 * it down twice). The io arrow lives on the pipe body itself
+	 * ({@link GTFluidPipeFlowModel}); the grid stays a pure connection read-out. The
+	 * {@code aShift}/{@code aIoMask} parameters stay for the shared renderer call shape
+	 * (GTWrenchGridRenderer:257) and are deliberately ignored here.
+	 */
 	public static GTWrenchGridIcon iconFor(boolean aShift, byte aSide, byte aConnections, byte aIoMask) {
-		int tBit = 1 << aSide;
-		if (aShift) {
-			// shift mode shows the ioMask bits as arrows; unmarked faces stay red
-			// (the bit itself is displayable without a connection — the connected gate
-			// of isOutputFace is runtime push semantics, not display semantics)
-			return (aIoMask & tBit) != 0 ? GTWrenchGridIcon.IO_FACING_ROTATION : GTWrenchGridIcon.PIPE_BLOCK;
-		}
-		return (aConnections & tBit) != 0 ? GTWrenchGridIcon.PIPE_CONNECT : GTWrenchGridIcon.PIPE_BLOCK;
+		return (aConnections & (1 << aSide)) != 0 ? GTWrenchGridIcon.PIPE_CONNECT : GTWrenchGridIcon.PIPE_BLOCK;
 	}
 
 	/**
