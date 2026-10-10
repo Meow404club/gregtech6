@@ -735,11 +735,18 @@ public final class GT6ItemModels extends ItemModelProvider {
         withExistingParent("pincers", mcLoc("item/handheld"))
             .texture("layer0", modLoc("item/pincers"))
             .texture("layer1", modLoc("item/pincers_overlay"));
-        // the crop seed (task cbc-3-crop-data-assets): one plain generated item over the family
-        // crop-stick sprite — IC2 renders ItemCrop itself with crop_stick.png (ItemCrop.java:27),
-        // the cbc-1 borrow re-seated (assets/README.md, the cbc-3 ledger band).
+        // the crop seed (task crop-seed-icon, re-seating the cbc-3-crop-data-assets model):
+        // one plain generated item over the dedicated seed-bag sprite — the IC2 item/crop_stick
+        // seat here is retired by user ruling (the seed item is not crop-stick art). The old
+        // cbc-3 citation ("IC2 renders ItemCrop with crop_stick.png, ItemCrop.java:27") is VOID
+        // on re-inspection: ItemCrop is the crop STICK (ItemName.crop_stick, ItemCrop.java:24,
+        // :27 = onItemUse) — the seeds are ItemCropSeed/ItemName.crop_seed_bag
+        // (ItemCropSeed.java:27-29) and IC2's own model for them is layer0 =
+        // ic2:items/crop/crop_seed_bag (models/item/crop/crop_seed_bag.json), an independent
+        // texture. Borrowed byte-identical per the cbc-1 borrow family (assets/README.md,
+        // the crop-seed-icon ledger band).
         withExistingParent("crop_seed", mcLoc("item/generated"))
-            .texture("layer0", modLoc("item/crop_stick"));
+            .texture("layer0", modLoc("item/crop_seed"));
         // the electric nineteen (task w5-t6-electric-nineteen): the two-layer tool
         // face per id — layer0 = the head/tip sprite, layer1 = the handle/power-unit
         // pass (the upstream getIcon(false)/getIcon(true) pass order, the crowbar/cutter

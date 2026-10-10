@@ -28,9 +28,14 @@ import net.minecraftforge.registries.RegistryObject;
  * pair {@code cropOwner}/{@code cropId} (the 1.12 TileEntityCrop read face :96-97, the same keys
  * the cbc-1 crop-stick BE writes). Bytes, not ints, per ItemCropSeed :115-118.
  *
- * <p>The item model reuses the family crop-stick sprite (gt6:item/crop_stick — the same borrow
- * cbc-1 seated; IC2 itself renders ItemCrop with the crop_stick texture, ItemCrop.java:27);
- * the datagen model line lives in GT6ItemModels. Creative seat: the crop domain's
+ * <p>The item model rides the dedicated seed-bag sprite (gt6:item/crop_seed — task
+ * crop-seed-icon, user ruling: a seed item is not crop-stick art; the earlier cbc-3
+ * seat on the family crop-stick sprite cited "IC2 renders ItemCrop with crop_stick.png,
+ * ItemCrop.java:27", which is VOID — ItemCrop is the crop STICK (ItemName.crop_stick,
+ * ItemCrop.java:24), while the seeds are ItemCropSeed/ItemName.crop_seed_bag
+ * (ItemCropSeed.java:27-29) whose own IC2 model is layer0 = ic2:items/crop/crop_seed_bag,
+ * an independent texture borrowed byte-identical, assets/README.md ledger); the datagen
+ * model line lives in GT6ItemModels. Creative seat: the crop domain's
  * "GregTech: Crops" tab ({@code gt6:crops}, task crop-creative-tab — the tab walk emits
  * one fully-scanned representative seed per card).
  *
