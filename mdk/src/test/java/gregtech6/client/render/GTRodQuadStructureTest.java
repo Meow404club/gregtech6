@@ -65,7 +65,7 @@ public class GTRodQuadStructureTest extends GTOfflineTestBase {
         float tHalf = (1.0F - 12 / 16F) / 2F;
         List<Shape> tShapes = GTRodBakedModel.planShapes(12, 1 << 4, 0);
         assertEquals(6 + 5, tShapes.size());
-        assertEquals(6, countKind(tShapes, SpriteKind.BASE), "the core's six faces + the arm's four side faces (:139 getTextureSide)");
+        assertEquals(10, countKind(tShapes, SpriteKind.BASE), "the core's six faces + the arm's four side faces (:139 getTextureSide)");
         assertEquals(1, countKind(tShapes, SpriteKind.ARM), "only the arm's end cap rides the connected art (:139)");
         Shape tCap = tShapes.stream().filter(s -> s.face() == Direction.WEST && s.cull() == Direction.WEST).findFirst().orElseThrow();
         assertEquals(SpriteKind.ARM, tCap.kind(), "the end face (aSide == the pass direction) = getTextureConnected");
@@ -183,7 +183,9 @@ public class GTRodQuadStructureTest extends GTOfflineTestBase {
                         if (planeOf(tShapeA) != planeOf(tShapeB)) continue; // different planes never z-fight
                         double tArea = overlapArea(footprint(tShapeA), footprint(tShapeB));
                         assertTrue(tArea <= 1e-12, "mask " + tMask + " band " + tBand + ": coplanar "
-                                + tShapeA.face() + " twins overlap by " + tArea);
+                                + tShapeA.face() + " twins overlap by " + tArea + " — boxes "
+                                + java.util.Arrays.toString(tShapeA.box()) + " vs "
+                                + java.util.Arrays.toString(tShapeB.box()));
                     }
                 }
             }
