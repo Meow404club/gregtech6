@@ -313,8 +313,9 @@ HAND_TRANSLATIONS = {
     #     prefix form + the 柴油 material word — task p27-lang-fix-batch2 P2 deviation);
     #   burning box = 燃烧室 (%s, %s) (:10960) / 致密燃烧室 (:11010) / 流化床燃烧室 (:15018)
     #     / 致密流化床燃烧室 (:15031); family words 固体/液体/气体 = :10960/:11091/:11176;
-    #   boiler = 蒸汽锅炉箱 (%s) (the dump :11025/:11038 faces + the en "Tank" word —
-    #     task p27-lang-fix-batch2 P2 deviation);
+    #   boiler = 蒸汽锅炉 (%s) (the dump :11025/:11038 faces + the en "Tank" word —
+    #     task p27-lang-fix-batch2 P2 deviation; the 箱 suffix retired 2026-10-10, user
+    #     ruling: the plain 锅炉 suffix reads more idiomatic);
     #   dryer = 干燥器 (%s) (:11603 "干燥器 (钢)");
     #   distillery = 蒸馏器 (%s) — NO dump face (the :1398-1401 rows are absent from the
     #     dump); DECLARED DEVIATION: hand translation, the GTCEu Modern community noun;
@@ -395,9 +396,10 @@ HAND_TRANSLATIONS = {
     "gt6.row.burning_box.family.liquid": ("液体", "hand"),
     "gt6.row.burning_box.family.gas": ("气体", "hand"),
     # task p27-lang-fix-batch2 P2 (ledger §3): en "Steam Boiler Tank" — the Tank word was
-    # dropped (蒸汽锅炉); 箱 restores it (declared deviation from the dump :11025/:11038 faces).
-    "gt6.row.boiler.display": ("蒸汽锅炉箱 (%s)", "hand"),
-    "gt6.row.boiler.display.strong": ("强化蒸汽锅炉箱 (%s)", "hand"),
+    # dropped (蒸汽锅炉); the 箱 suffix retired 2026-10-10 (user ruling: 锅炉箱 → 锅炉,
+    # the plain suffix reads more idiomatic — the anvil-shape-cull-rename lang rider).
+    "gt6.row.boiler.display": ("蒸汽锅炉 (%s)", "hand"),
+    "gt6.row.boiler.display.strong": ("强化蒸汽锅炉 (%s)", "hand"),
     # task p29-w2-eu-special — the three eu-special family templates (the dump mte
     # rows :11620/:11689/:11650 自动工作台/闪电处理器/过胶机 verbatim)
     "gt6.row.autocrafter.display": ("自动工作台 (%s)", "hand"),
@@ -1907,7 +1909,7 @@ HAND_TRANSLATIONS = {
     "gt6.jei.recipe_map.wiremill": ("线材机", "hand"),
     "gt6.jei.recipe_map.rollingmill": ("辊压机", "hand"),
     "gt6.jei.recipe_map.extruder": ("压模器", "hand"),
-    "gt6.jei.recipe_map.anvil": ("铁砧", "hand"),
+    "gt6.jei.recipe_map.anvil": ("砧", "hand"),
     "gt6.jei.recipe_map.anvil_bend": ("铁砧弯曲", "hand"),
     "gt6.jei.recipe_map.bath": ("浸洗器", "hand"),
     "gt6.jei.recipe_map.fermenter": ("发酵器", "hand"),

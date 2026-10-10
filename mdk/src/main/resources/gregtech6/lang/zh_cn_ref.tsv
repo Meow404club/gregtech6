@@ -1341,7 +1341,7 @@ direct	gt6.jei.info.ore_gen_info.section.bedrock_ores	基岩矿石	hand
 direct	gt6.jei.info.ore_gen_info.section.large_veins	大型矿脉	hand
 direct	gt6.jei.info.ore_gen_info.section.small_ores	小矿石	hand
 direct	gt6.jei.multiblock_preview	多方块结构预览	hand
-direct	gt6.jei.recipe_map.anvil	铁砧	hand
+direct	gt6.jei.recipe_map.anvil	砧	hand
 direct	gt6.jei.recipe_map.anvil_bend	铁砧弯曲	hand
 direct	gt6.jei.recipe_map.autoclave	高压釜	hand
 direct	gt6.jei.recipe_map.bath	浸洗器	hand
@@ -1443,8 +1443,8 @@ direct	gt6.row.autocrafter.display	自动工作台 (%s)	hand
 direct	gt6.row.axle.display	%s%s轴	hand
 direct	gt6.row.basin.display	浇铸盆 (%s)	hand
 direct	gt6.row.bath.display	浸洗器	hand
-direct	gt6.row.boiler.display	蒸汽锅炉箱 (%s)	hand
-direct	gt6.row.boiler.display.strong	强化蒸汽锅炉箱 (%s)	hand
+direct	gt6.row.boiler.display	蒸汽锅炉 (%s)	hand
+direct	gt6.row.boiler.display.strong	强化蒸汽锅炉 (%s)	hand
 direct	gt6.row.boxinator.display	装箱机 (%s)	hand
 direct	gt6.row.bumble.0	野生大黄蜂	hand
 direct	gt6.row.bumble.10	魅惑大黄蜂	hand
