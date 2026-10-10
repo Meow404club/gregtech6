@@ -31,14 +31,24 @@ import snownee.jade.api.ui.Element;
  * jade-1201-forge-src DisplayHelper.java:341 / 1.21.1 :278 都是 blit 前显式绑定再手拼
  * quad，1.21.1 的 {@code IDisplayHelper.blitSprite} :425-431 同走显式合成面）×
  * {@code setColor}（1.20.1 :173 = flushIfManaged + RenderSystem.setShaderColor；1.21.1
- * 同形）× {@code blit(x, y, w, h, z, TextureAtlasSprite)}（双腿同签名，1.20.1
- * GuiGraphics.java:250 区 / 1.21.1 :348——双腿都经 innerBlit 自带
- * {@code setShaderTexture(0, atlasLocation)}：1.20.1 :346-347 / 1.21.1 :586，Forge 补丁
+ * 同形）× {@code blit(x, y, z, w, h, TextureAtlasSprite)}（<b>参数序 = x, y, z 第三,
+ * w 第四, h 第五</b>，双腿各自实证：1.20.1 GuiGraphics.java:300-302
+ * {@code innerBlit(atlas, x, x+w, y, y+h, z, …)} + innerBlit :346-357 顶点序
+ * {@code vertex(x1, y1, z)} 坐实第三参进 z 槽、第五参是 h；1.21.1 neoforge-21.1.209
+ * minecraft-merged-mojang-patched.jar {@code javap -c -p}：public
+ * {@code blit(int×5, sprite)} 委托私有 {@code blitSprite(sprite, x, y, z, w, h)}，
+ * 字节码 {@code x2 = x + 第5参(w)}、{@code y2 = y + 第6参(h)}、{@code z = 第4参}，且
+ * 零宽/零高直接 return——两腿同序，共享文件单修，零 stonecutter。历史教训：本类曾按
+ * (x, y, w, h, z, sprite) 误序调用（task crucible-jade-tankbar-fill 的 javadoc
+ * "blit(x, y, w, h, z) 双腿同签名" 是重载存在性对、参数序验错的误证）——第五参被喂 0
+ * → 零高度四边形 → 坩埚 Jade 条纯空白四报不破（task crucible-jade-blit-order 修正；
+ * 回归钉 = GT6ContentFaceElementBlitOrderTest 录制桩）。双腿 blit 都经 innerBlit 自带
+ * {@code setShaderTexture(0, atlasLocation)}：1.20.1 :346-347 / 1.21.1 同链，Forge 补丁
  * GuiGraphics.java.patch 不触 innerBlit）。所以预绑与 innerBlit 的内绑同址冗余——留它的
  * 意义是本原语自持、不吃 overlay pass 外层任何 RenderSystem 纹理状态（其他 mod 的
- * HUD mixin/shader 管线），与 Jade 官方先例同一姿势；实机若仍空白则断点在本原语之外
- * （如实记录，2026-10-10 归因链）。innerBlit 双腿都是 Tesselator/BufferUploader 即画，
- * set→blit→复位的次序在两条腿上都把 tint 吃进同一张四边形。模型贴图全部在方块图集
+ * HUD mixin/shader 管线），与 Jade 官方先例同一姿势。innerBlit 双腿都是
+ * Tesselator/BufferUploader 即画，set→blit→复位的次序在两条腿上都把 tint 吃进同一张
+ * 四边形。模型贴图全部在方块图集
  * （{@link InventoryMenu#BLOCK_ATLAS}），精灵经 {@code Minecraft.getTextureAtlas}（双腿）取。
  * 淡出 alpha（OverlayRenderer 为 impl 内部包）不乘——vanilla blit 同样不管，观感差异为零。
  *
@@ -75,7 +85,9 @@ public final class GT6ContentFaceElement extends Element {
 		// blit 前显式绑定方块图集——Jade 官方 DisplayHelper.drawTiledSprite 同款姿势
 		//（1.20.1 :341 / 1.21.1 :278，双腿行号；先例从不吃隐式纹理状态）。类 doc 有完整归因链。
 		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-		aGraphics.blit(Math.round(aX), Math.round(aY), Math.round(tSize.x), Math.round(tSize.y), 0, tSprite);
+		// 参数序铁律：GuiGraphics.blit(x, y, z, w, h, sprite)——第三位是 z、第四是宽、第五是高
+		//（旧序 (x, y, w, h, 0, sprite) 把高喂成 0 = 零高度四边形 = 纯空白，crucible-jade-blit-order）
+		aGraphics.blit(Math.round(aX), Math.round(aY), 0, Math.round(tSize.x), Math.round(tSize.y), tSprite);
 		aGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 }
