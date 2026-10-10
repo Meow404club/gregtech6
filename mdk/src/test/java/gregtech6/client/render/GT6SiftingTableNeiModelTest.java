@@ -69,19 +69,22 @@ public class GT6SiftingTableNeiModelTest extends GTOfflineRenderTestBase {
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
 	}
 
-	/** A named atlas stub — the name is the pin's membership key (the GT6AnvilNeiModelTest form). */
+	/** A named atlas stub — the name is the pin's membership key (the GT6AnvilNeiModelTest form). The geometry mirrors the REAL block atlas seat (a 128px sheet in a 1024 atlas, the GT6KitchenNeiModelTest recipe) because FaceBakery shrinks face UVs toward their centre by {@code uvShrinkRatio() = 4/atlasSize} (FaceBakery.java:45-51) — a 1x1 stub would ratio-4-mangle the glyph UV pins; at 128/1024 the shrink is the real ~0.4%. */
 	private static final class NamedSprite extends TextureAtlasSprite {
+		private static final int SHEET_PX = 128;
+		private static final int ATLAS_PX = 1024;
+
 		private NamedSprite(ResourceLocation aName) {
 			super(aName,
 					new net.minecraft.client.renderer.texture.SpriteContents(aName,
-							new FrameSize(1, 1),
-							new com.mojang.blaze3d.platform.NativeImage(1, 1, false),
+							new FrameSize(SHEET_PX, SHEET_PX),
+							new com.mojang.blaze3d.platform.NativeImage(SHEET_PX, SHEET_PX, false),
 							//? if forge {
 							net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.EMPTY),
 							//?} else {
 							/*net.minecraft.server.packs.resources.ResourceMetadata.EMPTY),*/
 							//?}
-					1, 1, 0, 0);
+					ATLAS_PX, ATLAS_PX, 0, 0);
 		}
 	}
 
@@ -161,6 +164,19 @@ public class GT6SiftingTableNeiModelTest extends GTOfflineRenderTestBase {
 		return new AABB(tMinX, tMinY, tMinZ, tMaxX, tMaxY, tMaxZ);
 	}
 
+	/** The quad's {u, v} extents in normalized sprite space (min/max over the 4 vertices) — {umin, umax}, {vmin, vmax}. */
+	private static double[][] uvOf(BakedQuad aQuad) {
+		int[] tV = aQuad.getVertices();
+		double tMinU = 99, tMinV = 99, tMaxU = -99, tMaxV = -99;
+		for (int v = 0; v * STRIDE < tV.length; v++) {
+			double tU = Float.intBitsToFloat(tV[v * STRIDE + 4]);
+			double tVv = Float.intBitsToFloat(tV[v * STRIDE + 5]);
+			tMinU = Math.min(tMinU, tU); tMaxU = Math.max(tMaxU, tU);
+			tMinV = Math.min(tMinV, tVv); tMaxV = Math.max(tMaxV, tVv);
+		}
+		return new double[][] {{tMinU, tMaxU}, {tMinV, tMaxV}};
+	}
+
 	// ---------------------------------------------------------------- the pins
 
 	/** The glyph exists ONLY with a viewer, on the cutout layer alone, and never disturbs the body pass. */
@@ -206,6 +222,25 @@ public class GT6SiftingTableNeiModelTest extends GTOfflineRenderTestBase {
 		assertEquals(13.0 / 16.0 + (double) (GT6SiftingTableNeiModel.LIFT_PX / 16.0F), tBox.minY, 1e-7,
 				"the leg-top plane Y 13 protrudes the lift eps");
 		assertEquals(tBox.minY, tBox.maxY, 1e-7, "the glyph is the flat UP tile");
+	}
+
+	/**
+	 * The glyph UV is the quad's own footprint — ONE word cell of the 8x8 sheet (the
+	 * kitchen {@code bakeNeiQuad} correction; the full-sheet UV squeezed all 64 words onto
+	 * the leg top). The corner sits at (0,0)px → the sheet's top-left cell, face px 0..2 on
+	 * both axes. The stored values carry the vanilla face-UV shrink toward the centre
+	 * (uvShrinkRatio = 4/1024 on the 128-in-1024 stub, FaceBakery.java:45-51) — ~0.4%,
+	 * inside the pin tolerance.
+	 */
+	@Test
+	void theGlyphUvIsTheQuadFootprintOneSheetCell() {
+		double tEps = 0.0005;
+		double tSheet = 128.0; // the stub sprite's native px — normalized u = sheet px / 128
+		double[][] tUv = uvOf(quads(model("jei"), RenderType.cutout()).get(1));
+		assertEquals(0.0, tUv[0][0], tEps, "the glyph u starts at the sheet edge");
+		assertEquals(0.0, tUv[1][0], tEps, "the glyph v starts at the sheet edge");
+		assertEquals(2.0 / tSheet, tUv[0][1], tEps, "the glyph u spans the 2px crop — one cell");
+		assertEquals(2.0 / tSheet, tUv[1][1], tEps, "the glyph v spans the 2px crop — one cell");
 	}
 
 	/** The seat: cutout joins the fallback's layers exactly when the glyph exists. */

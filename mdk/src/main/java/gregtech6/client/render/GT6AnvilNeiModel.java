@@ -168,9 +168,17 @@ public class GT6AnvilNeiModel extends GTDynamicBakedModel {
 	private record NeiPlan(TextureAtlasSprite baked, ResourceLocation sprite) {}
 
 	/**
-	 * The 2x2px foot-band quad on ONE carrier face — the canonical full-face UV [0,0,16,16]
-	 * (the #27 ruling), tintIndex -1 (the P22 decal contract), the cullface rides the
-	 * BlockElementFace (the glyph hides against an opaque neighbour — vanilla semantics).
+	 * The 2x2px foot-band quad on ONE carrier face — the UV is the QUAD'S OWN FOOTPRINT in
+	 * face-UV axes (the kitchen {@code bakeNeiQuad} correction; the full-sheet
+	 * {@code [0,0,16,16]} squeezed all 64 words of the glyph sheet onto the band — the "#27
+	 * canonical full-face UV" ruling it cited is the SINGLE-WORD-texture semantic and does
+	 * not apply to glyph sheets). Side faces ride the vanilla face-UV axes: u along the
+	 * horizontal cross axis ({@code aCross0..aCross0+2}), v measured DOWN the face
+	 * (FaceInfo NORTH vertex0 = (maxX,maxY) → uv0), the upstream render-bounds
+	 * interpolation {@code getInterpolatedV(16 - Y*16)} — so the Y 0..2 band samples
+	 * v {@code 14..16}, the sheet's bottom-row cell. tintIndex -1 (the P22 decal contract),
+	 * the cullface rides the BlockElementFace (the glyph hides against an opaque neighbour
+	 * — vanilla semantics).
 	 */
 	private BakedQuad bakeGlyphQuad(NeiPlan aPlan, Direction aFace, float aCross0) {
 		// FaceBakery works in model space (0..16) — the box's face-plane sits LIFT_PX
@@ -188,7 +196,8 @@ public class GT6AnvilNeiModel extends GTDynamicBakedModel {
 			default -> new Vector3f(16.0F + LIFT_PX, BAND_TOP_PX, aCross0 + PATCH_PX);
 		};
 		return BAKERY.bakeQuad(tFrom, tTo,
-				new BlockElementFace(aFace, -1, aPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
+				new BlockElementFace(aFace, -1, aPlan.sprite().toString(),
+						new BlockFaceUV(new float[] {aCross0, 16.0F - BAND_TOP_PX, aCross0 + PATCH_PX, 16.0F}, 0)),
 				aPlan.baked(), aFace, BlockModelRotation.X0_Y0, null, true, aPlan.sprite());
 	}
 

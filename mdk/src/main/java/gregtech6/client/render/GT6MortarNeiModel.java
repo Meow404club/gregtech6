@@ -142,9 +142,15 @@ public class GT6MortarNeiModel extends GTDynamicBakedModel {
 	private record NeiPlan(TextureAtlasSprite baked, ResourceLocation sprite) {}
 
 	/**
-	 * The 2x2px rim-corner UP quad — the canonical full-face UV [0,0,16,16] (the #27
-	 * ruling), tintIndex -1 (the P22 decal contract), cullface up (the glyph hides under a
-	 * block placed on the rim — vanilla semantics).
+	 * The 2x2px rim-corner UP quad — the UV is the QUAD'S OWN FOOTPRINT
+	 * {@code [x0,z0,x0+2,z0+2]} (the kitchen {@code bakeNeiQuad} correction): upstream maps
+	 * a box face by RENDER BOUNDS — {@code IIcon.getInterpolatedU(renderMinX*16)}
+	 * (ITexture.java:295-298) — so the 2x2px corner samples exactly one 16px word cell of
+	 * the 128px glyph sheet. The full-sheet {@code [0,0,16,16]} bake squeezed all 64 words
+	 * onto the corner (the 「整张字模表」 bug) — the "#27 canonical full-face UV" ruling it
+	 * cited is the SINGLE-WORD-texture semantic and does not apply to glyph sheets.
+	 * tintIndex -1 (the P22 decal contract), cullface up (the glyph hides under a block
+	 * placed on the rim — vanilla semantics).
 	 */
 	@Nullable
 	private BakedQuad bakeGlyph(@Nullable String aViewer) {
@@ -160,7 +166,8 @@ public class GT6MortarNeiModel extends GTDynamicBakedModel {
 		float tX0 = 2.0F, tZ0 = 2.0F, tRim = 6.0F;
 		return BAKERY.bakeQuad(new Vector3f(tX0, tRim, tZ0),
 				new Vector3f(tX0 + PATCH_PX, tRim + NEI_LIFT, tZ0 + PATCH_PX),
-				new BlockElementFace(Direction.UP, -1, tPlan.sprite().toString(), new BlockFaceUV(new float[] {0, 0, 16, 16}, 0)),
+				new BlockElementFace(Direction.UP, -1, tPlan.sprite().toString(),
+						new BlockFaceUV(new float[] {tX0, tZ0, tX0 + PATCH_PX, tZ0 + PATCH_PX}, 0)),
 				tPlan.baked(), Direction.UP, BlockModelRotation.X0_Y0, null, true, tPlan.sprite());
 	}
 
