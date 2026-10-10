@@ -5497,7 +5497,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `dust_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -5517,19 +5516,15 @@ upstream `README.md` block as above).
   - `nugget_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
-  - `rock_gt_overlay.png` `503dbaf736063cf0074b31c648e49272e6ab27927dc02b3c175c08ba581f297b`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `round_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `scrap_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -5583,7 +5578,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -5610,16 +5604,13 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `rail_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -5687,20 +5678,14 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
   - `scrap_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
 - `CUBE_SHINY` -> `assets/gt6/textures/item/material_sets/cube_shiny/`:
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -5719,9 +5704,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -5755,11 +5738,7 @@ upstream `README.md` block as above).
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `billet_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -5793,9 +5772,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -5804,7 +5781,6 @@ upstream `README.md` block as above).
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
@@ -5862,7 +5838,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -5890,9 +5865,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -5901,7 +5874,6 @@ upstream `README.md` block as above).
   - `plate_gem_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `rail_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -5954,11 +5926,7 @@ upstream `README.md` block as above).
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -5982,9 +5950,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -6042,7 +6008,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `52bb2f76731bcc8f0784cb264fefb30deb972935ef85e2c149f12b7d8c6bca73`
   - `bullet_gt_small_overlay.png` `82cda6dfe11aab98d5fa833f9318028abb9bc08e6a165f51f91ddb8cad36c1f3`
   - `casing_small_overlay.png` `199cb01bfbb82d48764f72a3f4c2fd84b08942ffc18bde5bc3d8325d4c63f660`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6abcbe249a7e95d1cc7e952f2c78e5206e0e011c8378e19cbfb3f865c4c4078b`
   - `dust_overlay.png` `60aae90d06a81e4b9050e13705037fe1c3ee7283a85a93b7e6df3de0166514c9`
@@ -6062,16 +6027,13 @@ upstream `README.md` block as above).
   - `nugget_overlay.png` `c064500f4ed62dca2012a725719277d3990f7ba1fd3aa4621e5a6ab7ea105153`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `0b0911c896476b014c00f0a3e1c2a2e47fef0fe5b1e146c3e95dde3a61161124`
   - `plate_curved_overlay.png` `6f09d1a60e08d4a0ef092d2d5a064cc28a3fc653ab41869bf6755a243f444491`
   - `plate_dense_overlay.png` `70b544019b6f7bae0e89e2bf109685a5662fd885db4a442ce39c44b6bd23c17e`
   - `plate_double_overlay.png` `49fe885793b0fac68cbed51e5b5735943e3d26cda85c4582a36b13ce2fa6c045`
   - `plate_quadruple_overlay.png` `66d0f909e572b3f49772af64187f9c167ff353f6871c5fa262d2a37885e3fc3a`
   - `plate_quintuple_overlay.png` `b2b2cec3aa12bd84711b126fd45e657c8b0b6656670c6a3581e13377952e62dc`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `f9713c4883c75f4e4b59903ab8e9b05e002de69174007f1ab0b74a05c2a9791d`
   - `ring_overlay.png` `dba4fe353672e53aa9ff993d84a7e79e20510316f6cbf5ef9a08c66fd75852c3`
   - `rotor_overlay.png` `a64a746826e17c0dd67f99f6c55eec9438e3ef168b60049569ad4eaf05deabc3`
@@ -6082,7 +6044,6 @@ upstream `README.md` block as above).
   - `spring_small_overlay.png` `185806e3bddb88e31227a0b16185d887b5ea7d4799f0a1b150afbf3b9b694045`
   - `stick_overlay.png` `4dde22ba82fe76604c98052487c304db0a8276eb497bb8579cd0a59bb1318b60`
   - `stick_long_overlay.png` `4d104318a0db238d681e6337748fc696727cc26a0578d9ac1ef6eaa9d67add21`
-  - `tool_head_arrow_overlay.png` `8617861d21faec8c2fad08e0237868b09a1d6597641b1eb44ac4c8732c7edf87`
   - `tool_head_axe_overlay.png` `c12cc4b2e49b77c9a6dead9a7d6fbf1eba01532dd45a5f15f7f56eb11b5663ac`
   - `tool_head_axe_double_overlay.png` `c58e45f8d41bd6909aae557c0f7eca919a725017e34dee21cacf9887524d2757`
   - `tool_head_builderwand_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6096,7 +6057,6 @@ upstream `README.md` block as above).
   - `tool_head_hoe_overlay.png` `67ef3aef6a0b181b64b50c013f2c3a8f60f80e4e9959d500e95f02dcba36fd85`
   - `tool_head_pickaxe_overlay.png` `720b0630a288aae702fb630efdc9e9e28518943ea4b35b5933f0378ee983b7ca`
   - `tool_head_plow_overlay.png` `c450720b71b94d94cec32fb17ec343eafdc425dd706018792b1b988407fea2c2`
-  - `tool_head_raw_arrow_overlay.png` `8617861d21faec8c2fad08e0237868b09a1d6597641b1eb44ac4c8732c7edf87`
   - `tool_head_raw_axe_overlay.png` `c12cc4b2e49b77c9a6dead9a7d6fbf1eba01532dd45a5f15f7f56eb11b5663ac`
   - `tool_head_raw_axe_double_overlay.png` `c58e45f8d41bd6909aae557c0f7eca919a725017e34dee21cacf9887524d2757`
   - `tool_head_raw_chisel_overlay.png` `6fe68a87526d2adf884d5d015edcbaa5362c20842194d3e6274d2e32779ae932`
@@ -6127,7 +6087,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -6155,14 +6114,11 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_gem_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_gem_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6217,7 +6173,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6241,9 +6196,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_gem_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -6296,13 +6249,10 @@ upstream `README.md` block as above).
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
 - `FOOD` -> `assets/gt6/textures/item/material_sets/food/`:
   - `billet_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `dust_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6316,12 +6266,9 @@ upstream `README.md` block as above).
   - `nugget_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `round_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6330,18 +6277,12 @@ upstream `README.md` block as above).
   - `chemtube_overlay.png` `99479ead1cda30c67cc2452c2a0cfdbe4cf49452013bef6c389797f5cf9090fa`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
 - `GEM_HORIZONTAL` -> `assets/gt6/textures/item/material_sets/gem_horizontal/`:
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6365,9 +6306,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -6420,11 +6359,7 @@ upstream `README.md` block as above).
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6448,9 +6383,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -6503,11 +6436,7 @@ upstream `README.md` block as above).
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6531,9 +6460,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -6586,11 +6513,7 @@ upstream `README.md` block as above).
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6614,9 +6537,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `6889367ec6482ed69d98bb92f9649824c21aebe60343d2276b0cb4f6a143e7f5`
   - `plate_gem_tiny_overlay.png` `8df0df4040e6e993fea4f132efe8730ade458aa61fc5297e79c3ed16863f93a2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -6672,7 +6593,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -6699,15 +6619,12 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_gem_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_gem_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6763,7 +6680,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `dust_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6783,16 +6699,13 @@ upstream `README.md` block as above).
   - `nugget_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6867,14 +6780,11 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_gem_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_gem_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
   - `round_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `scrap_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -6919,42 +6829,22 @@ upstream `README.md` block as above).
   - `screw_overlay.png` `cf7dd8afc27c1954c8cf1129abebbd52e9d7de9a3466411e5a7c8787917d3427`
   - `spring_overlay.png` `2e1cbdb14d011437bd80b6b51537131d28dee0dd0e1f25dd13f93ff4e493f63f`
   - `spring_small_overlay.png` `3f971ab01983b15c057a831151e37b521d27f8a76b5f20e89f9f2fe9b08301da`
-  - `stick_overlay.png` `0b61713ce897bebcafac6c89dc805d7ae70067450729615baaa83eaa0268a495`
   - `stick_long_overlay.png` `770a1af694fc6ade3afc2bd2946c1d581758c5902b35fd4fa6a62e1ecb291a8f`
-  - `tool_head_arrow_overlay.png` `7da82c3d5b0bb6531ff90fb4eb4f970ce8fcaac5fe2824eef0a713fef11735b1`
-  - `tool_head_axe_overlay.png` `19f1e02ff509d1bae24176651bee0e37bf75213519fa2f428ce7f6d555578bbd`
-  - `tool_head_axe_double_overlay.png` `0b61713ce897bebcafac6c89dc805d7ae70067450729615baaa83eaa0268a495`
   - `tool_head_builderwand_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `tool_head_buzz_saw_overlay.png` `8aba73b25090ffb7bd017d7ac6f864de0665dca20729ea8be81549878f7b8f07`
   - `tool_head_chainsaw_overlay.png` `93e9113c4eee745beaa72245a92103de52bbf5ff79b24ed7c6a5a1f293145e96`
   - `tool_head_chisel_overlay.png` `d11627da717028a69fee38bbc32fd5fd97b506889b1d30782d25db42682babfe`
-  - `tool_head_construction_pickaxe_overlay.png` `0b61713ce897bebcafac6c89dc805d7ae70067450729615baaa83eaa0268a495`
   - `tool_head_drill_overlay.png` `8d5a3798434b78eba4813673d56daaa0e0e146066e2dd0a04a179963f8688bc9`
   - `tool_head_file_overlay.png` `d11627da717028a69fee38bbc32fd5fd97b506889b1d30782d25db42682babfe`
   - `tool_head_hammer_overlay.png` `1bb2e7e1791c021c6a85082ccc6ba91467c3b75f5fba0de6a553e0bb4b715f8a`
-  - `tool_head_hoe_overlay.png` `5101e046ec122b5e6cd6017e10833d24b016b0840539d766eccf06331326ac1d`
-  - `tool_head_pickaxe_overlay.png` `1a47c73b2c0570197f11a4845010a59f1d423612ac74db91efad6aaecda88196`
   - `tool_head_plow_overlay.png` `8aba73b25090ffb7bd017d7ac6f864de0665dca20729ea8be81549878f7b8f07`
-  - `tool_head_raw_arrow_overlay.png` `7da82c3d5b0bb6531ff90fb4eb4f970ce8fcaac5fe2824eef0a713fef11735b1`
-  - `tool_head_raw_axe_overlay.png` `19f1e02ff509d1bae24176651bee0e37bf75213519fa2f428ce7f6d555578bbd`
-  - `tool_head_raw_axe_double_overlay.png` `0b61713ce897bebcafac6c89dc805d7ae70067450729615baaa83eaa0268a495`
   - `tool_head_raw_chisel_overlay.png` `9433b988fe96d407daaca9548fbf04ebe4fb49cfb2e18d1c395dc7ec5423e894`
-  - `tool_head_raw_hoe_overlay.png` `5101e046ec122b5e6cd6017e10833d24b016b0840539d766eccf06331326ac1d`
-  - `tool_head_raw_pickaxe_overlay.png` `1a47c73b2c0570197f11a4845010a59f1d423612ac74db91efad6aaecda88196`
   - `tool_head_raw_plow_overlay.png` `8aba73b25090ffb7bd017d7ac6f864de0665dca20729ea8be81549878f7b8f07`
   - `tool_head_raw_saw_overlay.png` `9433b988fe96d407daaca9548fbf04ebe4fb49cfb2e18d1c395dc7ec5423e894`
-  - `tool_head_raw_sense_overlay.png` `1249f8c28d4de5c2d914033942e15fc2a3bac65b8f1af241a08ffaded7bae575`
-  - `tool_head_raw_shovel_overlay.png` `d3eec375f9f65427ccaff8b18476956b099d12f92303d324e3c7010eaa2663ea`
   - `tool_head_raw_spade_overlay.png` `024ddd9aac664b129c5906a4d8889f2214403fdf6c635feed74e8e4d85df129a`
-  - `tool_head_raw_sword_overlay.png` `fea98e4547026a1ae7a13acf7729e97d64d4d31ec3bd7ab4d60eccecced39148`
-  - `tool_head_raw_universal_spade_overlay.png` `277605e5e2834d7e1421dc57cc5b61b92850ae7dcb1a669a82b66e4f63869f3e`
   - `tool_head_saw_overlay.png` `9433b988fe96d407daaca9548fbf04ebe4fb49cfb2e18d1c395dc7ec5423e894`
   - `tool_head_screwdriver_overlay.png` `fb240564003d0a90f001d291445feb53a94101e29955f85260c376f8037e4810`
-  - `tool_head_sense_overlay.png` `1249f8c28d4de5c2d914033942e15fc2a3bac65b8f1af241a08ffaded7bae575`
-  - `tool_head_shovel_overlay.png` `d3eec375f9f65427ccaff8b18476956b099d12f92303d324e3c7010eaa2663ea`
   - `tool_head_spade_overlay.png` `9e068a910a926e9eee209732d8aa4fc69a4ac2855115eb0a0c3426f66ba23bf8`
-  - `tool_head_sword_overlay.png` `fea98e4547026a1ae7a13acf7729e97d64d4d31ec3bd7ab4d60eccecced39148`
-  - `tool_head_universal_spade_overlay.png` `277605e5e2834d7e1421dc57cc5b61b92850ae7dcb1a669a82b66e4f63869f3e`
   - `tool_head_wrench_overlay.png` `b8fa1fe47f2dfb55daf7339d0d5a9a232b97cfa8848d6ccf11be8db75d37403b`
   - `wire_fine_overlay.png` `71ff3cc2733815e5dfe7ad0e9318afa395e2636493fac7e774c6eaa5693141e1`
 - `METALLIC` -> `assets/gt6/textures/item/material_sets/metallic/`:
@@ -6966,7 +6856,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -6994,9 +6883,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7005,7 +6892,6 @@ upstream `README.md` block as above).
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `rail_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -7058,11 +6944,7 @@ upstream `README.md` block as above).
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7086,9 +6968,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -7147,11 +7027,7 @@ upstream `README.md` block as above).
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7175,9 +7051,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -7234,9 +7108,7 @@ upstream `README.md` block as above).
   - `dust_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `217fd04b01991fd56f4e1bc499b321a2cc851db6619d534be0a0e1147dc15c92`
   - `plate_quintuple_overlay.png` `9f84058ac218236dc6c1be24f640a922cc7d044cd345009649740d180db93c79`
@@ -7250,7 +7122,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7267,12 +7138,9 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7304,11 +7172,7 @@ upstream `README.md` block as above).
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7326,9 +7190,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -7367,7 +7229,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -7395,9 +7256,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7406,10 +7265,8 @@ upstream `README.md` block as above).
   - `plate_gem_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
-  - `rock_gt_overlay.png` `503dbaf736063cf0074b31c648e49272e6ab27927dc02b3c175c08ba581f297b`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `round_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `scrap_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7461,7 +7318,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `3512700e235de9801036d2616136640e0b3abd46e1bbcf6a8aab8926b69366ef`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -7488,16 +7344,13 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
@@ -7554,7 +7407,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -7588,9 +7440,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7599,7 +7449,6 @@ upstream `README.md` block as above).
   - `plate_gem_tiny_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
@@ -7655,7 +7504,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -7683,16 +7531,13 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
@@ -7710,11 +7555,7 @@ upstream `README.md` block as above).
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `billet_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `dc48bc505678e4c7962e4f45887c5fbf63e7c9c423cb516d6897ad04e23af663`
   - `dust_overlay.png` `90a0b61029bb55b04339a737980128cacbd655fc3a80d7d6a944a543fa7dba45`
@@ -7732,16 +7573,13 @@ upstream `README.md` block as above).
   - `nugget_overlay.png` `940b1f2f0b31732a719df79e9e8d50790556d974ee9285e53917fac6edc1f8c0`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `83de1f05e930b653720b455716cc7c17231f17d2cb187700ba1a6abd3eab2f47`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7777,11 +7615,7 @@ upstream `README.md` block as above).
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `billet_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -7815,9 +7649,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7826,7 +7658,6 @@ upstream `README.md` block as above).
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
@@ -7890,20 +7721,14 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `rock_gt_overlay.png` `feb8c44ceaee957b2cab734d8145bb385799513c9790ded71c6a82ce5104cb8d`
   - `scrap_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
 - `SHARDS` -> `assets/gt6/textures/item/material_sets/shards/`:
   - `arrow_gt_plastic_overlay.png` `388376001ef7ccbb6108289a3d35a8edb318138cca1d39eb0c61e7cdd17753ce`
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -7927,9 +7752,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `b7ab407b4d4d1f221d21fbcb48e75de79e6774786066acb95dfa8ad55cfd609f`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_gem_overlay.png` `78551bff3a91da795971a3cc5b8421d0e14b84e6e1301b562cca9cb4cf38362f`
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -7983,11 +7806,7 @@ upstream `README.md` block as above).
   - `arrow_gt_wood_overlay.png` `df08fa29262eb15dc777ccffaea4fd02d52a94a244627d2b5a8a344ab230728b`
   - `billet_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `bolt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `bullet_gt_large_overlay.png` `27ea2d30452a65b7d39eeb55adfb839f8ee102ffd38f6f42b600a5770f0427c4`
-  - `bullet_gt_medium_overlay.png` `51bf0693d58fd83df16b6bc103d35f155389389263015380c510ba4c36f9ca8e`
-  - `bullet_gt_small_overlay.png` `6f0991c67fe338d0b6096ce379af0cf6e5a85504bc32ff5c4c0e429e048eac99`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -8016,9 +7835,7 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -8027,7 +7844,6 @@ upstream `README.md` block as above).
   - `plate_gem_tiny_overlay.png` `af6a98531185f35bd5c06541e8000e26546de77ef90d378449e11389bacc38e2`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `rail_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
@@ -8085,7 +7901,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
@@ -8112,20 +7927,16 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `rail_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
-  - `rock_gt_overlay.png` `503dbaf736063cf0074b31c648e49272e6ab27927dc02b3c175c08ba581f297b`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `round_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `scrap_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -8178,7 +7989,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `crushed_overlay.png` `42f6a19b09f828648ba417a155c36b41b5a1025c5cd75ba9aa035cce7c8203c2`
   - `crushed_centrifuged_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -8195,14 +8005,10 @@ upstream `README.md` block as above).
   - `ore_raw_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
-  - `rock_gt_overlay.png` `503dbaf736063cf0074b31c648e49272e6ab27927dc02b3c175c08ba581f297b`
   - `rotor_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `round_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `scrap_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -8237,7 +8043,6 @@ upstream `README.md` block as above).
   - `bullet_gt_medium_overlay.png` `f0e19a64164013d7b50b5ef1edb3c740f04245efea7e0fe908982f954dfd4aa3`
   - `bullet_gt_small_overlay.png` `6cedc51e6dcc32e8f96e56aa8a0ef1df06d6d9e360f0ffada27d193c2c479a91`
   - `casing_small_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `chain_overlay.png` `9a8136434004ec3a3d54f0474bac6b85ea86cc7ee869976cfd0c18b2a753019b`
   - `chemtube_overlay.png` `415feeff73ef49de10ecc2fe4b3973a112af5ae1c37395969f081138f4579d5d`
   - `chunk_gt_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `dust_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
@@ -8257,16 +8062,13 @@ upstream `README.md` block as above).
   - `nugget_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plant_gt_berry_overlay.png` `755a53640a8314e62a1df28d92e02fb10d9d32b921b18786c4f8280a9f4bd6ca`
   - `plant_gt_blossom_overlay.png` `233209d61a98be5aea82fccb6222ae546f4ec24ed9f9bad05559b41733094d5f`
-  - `plant_gt_fiber_overlay.png` `40d20c613fb00894e5d29b4305b5bba6c2e50ea95a9e65658c0c0aa1d3cf5c75`
   - `plant_gt_twig_overlay.png` `d433e0784308d1f89412ecb4f67b230543e76ad5fdc06f5ee55a7dc89beb03ce`
-  - `plant_gt_wart_overlay.png` `7f47ef647cd88c87d4cef131a6bf58f9b0447a8a84b29111a8ba7827643cf4d4`
   - `plate_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_curved_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_dense_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_double_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quadruple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `plate_quintuple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
-  - `plate_tiny_overlay.png` `87240e379447cb24a4b8e9333c8db4df86b78139644fe2774b7e4de21d85b8ce`
   - `plate_triple_overlay.png` `6c34b65e82b634baf68ee538e487fbf0753e6f7642963bbe28afc2af589cb510`
   - `ring_overlay.png` `a8d05eb70dd1fcdeb43035b2f25495e9902d39fb2e008a97c15def544ba84691`
   - `rock_gt_overlay.png` `bfa5c640bbc8e7f93fb98facf9d2d2288f3a5bf232ff556c588b96ecf1167c64`
@@ -11300,17 +11102,11 @@ tier (the family declared deviation); the stamped crafting rows carry the materi
 identity for the ladder card.
 
 - `gt6/textures/item/pistol.png` — `2a077eed43306bc6775ff4406b1f02d9456cda8ce82c661753d2df44cd0564f7` (upstream `PISTOL.png`)
-- `gt6/textures/item/pistol_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `PISTOL_OVERLAY.png`)
 - `gt6/textures/item/pistol_handle.png` — `18ab718f4563b91a00018ef5b8373217f18056369deee6b5a25c31f49fac4f9a` (upstream `HANDLE_PISTOL.png`)
-- `gt6/textures/item/pistol_handle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `HANDLE_PISTOL_OVERLAY.png`)
 - `gt6/textures/item/carbine.png` — `c21a65c0edb359799741855a0e1591bbc0e8057b939c4f10acd0fd23df6c6db0` (upstream `CARBINE.png`)
-- `gt6/textures/item/carbine_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `CARBINE_OVERLAY.png`)
 - `gt6/textures/item/carbine_handle.png` — `68e0ae69275348a607f14391f8e40a561899c6fe6cd15e8a8445a227f4f6ee3e` (upstream `HANDLE_CARBINE.png`)
-- `gt6/textures/item/carbine_handle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `HANDLE_CARBINE_OVERLAY.png`)
 - `gt6/textures/item/rifle.png` — `23defe1ed0c41d88c203b42db09976677f17a2bea85b0f4bc4167186e470e70a` (upstream `RIFLE.png`)
-- `gt6/textures/item/rifle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `RIFLE_OVERLAY.png`)
 - `gt6/textures/item/rifle_handle.png` — `4ef9cb01c1ca585e76b1932b718419b69129d8e3246c4640184ea87698364d67` (upstream `HANDLE_RIFLE.png`)
-- `gt6/textures/item/rifle_handle_overlay.png` — `fb794e795db31e63a00a8722a5a5cc2e4c7d2b05e45623097061c107e026379f` (upstream `HANDLE_RIFLE_OVERLAY.png`)
 
 Copied on 2026-09-30. Upstream license: **CC0 1.0 Universal Public Domain
 Dedication** (same upstream `README.md` block as above).
@@ -11336,15 +11132,19 @@ decal tintIndex).
 White-placeholder audit census (same task, list-only — nothing reworked): a PIL/IO
 scan of all 9665 project-owned PNGs under `assets/gt6/textures` (>95% near-white
 opaque pixels) hits 192 files, ALL documented upstream art:
-- 190 = `item/material_sets/<set>/<icon>_overlay.png` — the upstream materialicon
+- `item/material_sets/<set>/<icon>_overlay.png` — the upstream materialicon
   white-on-transparent tint-overlay system (borrow-item-material-sets-a/b manifests),
-  white by design, tinted at render;
+  white by design, tinted at render; 190 per-set files at the audit date, 12 since task
+  overlay-texture-dedupe collapsed the same-content copies onto the item/overlay/
+  canonicals (12 white singletons stay per-set, 12 white canonicals under
+  item/overlay/);
 - `block/barrel_logistics.png` (README.md:758-767, upstream
   `machines/tanks/logistics/colored/side` — genuinely white in 1.7.10 too) and
   `block/placeable/plate_gem_top.png` (README.md:9087-9107) — both tinted in game.
 UNDOCUMENTED near-white placeholders: ZERO. The census is pinned as a test assertion
 surface (`GT6OvenTexAuditDatagenTest`: the block-domain white set must stay exactly
-the two documented borrows, the material_sets overlay count stays 190, the six oven
+the two documented borrows, the material_sets overlay count stays 12 (190 before
+the overlay-texture-dedupe canonicalization), the six oven
 bodies stay below the 95% signature) — a new white texture without a ledger row fails
 there.
 

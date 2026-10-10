@@ -420,6 +420,34 @@ public final class GT6ItemModels extends ItemModelProvider {
     "item/overlay/tool_head_raw_universal_spade fiery/tool_head_raw_universal_spade fiery/tool_head_universal_spade magnetic/tool_head_raw_universal_spade magnetic/tool_head_universal_spade ",
     "item/overlay/wire_fine brick/wire_fine copper/wire_fine diamond/wire_fine dull/wire_fine leaf/wire_fine metallic/wire_fine quartz/wire_fine rad/wire_fine "
         + "redstone/wire_fine rough/wire_fine rubber/wire_fine ruby/wire_fine shiny/wire_fine space/wire_fine wood/wire_fine ",
+        // the casing quartet overlays: transparent VOID borrows too — the decal shells
+        // keep their structure, riding the empty canonical (alias first, so the deleted
+        // per-set copies are never re-expanded)
+    "item/overlay/empty brick/casing_machine brick/casing_machine_dense brick/casing_machine_double brick/casing_machine_quadruple copper/casing_machine copper/casing_machine_dense copper/casing_machine_double copper/casing_machine_quadruple "
+        + "cube/casing_machine cube/casing_machine_dense cube/casing_machine_double cube/casing_machine_quadruple cube_shiny/casing_machine cube_shiny/casing_machine_dense cube_shiny/casing_machine_double cube_shiny/casing_machine_quadruple "
+        + "diamond/casing_machine diamond/casing_machine_dense diamond/casing_machine_double diamond/casing_machine_quadruple dull/casing_machine dull/casing_machine_dense dull/casing_machine_double dull/casing_machine_quadruple "
+        + "emerald/casing_machine emerald/casing_machine_dense emerald/casing_machine_double emerald/casing_machine_quadruple fiery/casing_machine fiery/casing_machine_dense fiery/casing_machine_double fiery/casing_machine_quadruple "
+        + "fine/casing_machine fine/casing_machine_dense fine/casing_machine_double fine/casing_machine_quadruple flint/casing_machine flint/casing_machine_dense flint/casing_machine_double flint/casing_machine_quadruple "
+        + "fluid/casing_machine fluid/casing_machine_dense fluid/casing_machine_double fluid/casing_machine_quadruple food/casing_machine food/casing_machine_dense food/casing_machine_double food/casing_machine_quadruple "
+        + "gas/casing_machine gas/casing_machine_dense gas/casing_machine_double gas/casing_machine_quadruple gem_horizontal/casing_machine gem_horizontal/casing_machine_dense gem_horizontal/casing_machine_double gem_horizontal/casing_machine_quadruple "
+        + "gem_vertical/casing_machine gem_vertical/casing_machine_dense gem_vertical/casing_machine_double gem_vertical/casing_machine_quadruple glass/casing_machine glass/casing_machine_dense glass/casing_machine_double glass/casing_machine_quadruple "
+        + "hex/casing_machine hex/casing_machine_dense hex/casing_machine_double hex/casing_machine_quadruple lapis/casing_machine lapis/casing_machine_dense lapis/casing_machine_double lapis/casing_machine_quadruple "
+        + "leaf/casing_machine leaf/casing_machine_dense leaf/casing_machine_double leaf/casing_machine_quadruple lignite/casing_machine lignite/casing_machine_dense lignite/casing_machine_double lignite/casing_machine_quadruple "
+        + "magnetic/casing_machine magnetic/casing_machine_dense magnetic/casing_machine_double magnetic/casing_machine_quadruple metallic/casing_machine metallic/casing_machine_dense metallic/casing_machine_double metallic/casing_machine_quadruple "
+        + "netherstar/casing_machine netherstar/casing_machine_dense netherstar/casing_machine_double netherstar/casing_machine_quadruple opal/casing_machine opal/casing_machine_dense opal/casing_machine_double opal/casing_machine_quadruple "
+        + "paper/casing_machine paper/casing_machine_dense paper/casing_machine_double paper/casing_machine_quadruple powder/casing_machine powder/casing_machine_dense powder/casing_machine_double powder/casing_machine_quadruple "
+        + "prismarine/casing_machine prismarine/casing_machine_dense prismarine/casing_machine_double prismarine/casing_machine_quadruple quartz/casing_machine quartz/casing_machine_dense quartz/casing_machine_double quartz/casing_machine_quadruple "
+        + "rad/casing_machine rad/casing_machine_dense rad/casing_machine_double rad/casing_machine_quadruple redstone/casing_machine redstone/casing_machine_dense redstone/casing_machine_double redstone/casing_machine_quadruple "
+        + "rough/casing_machine rough/casing_machine_dense rough/casing_machine_double rough/casing_machine_quadruple rubber/casing_machine rubber/casing_machine_dense rubber/casing_machine_double rubber/casing_machine_quadruple "
+        + "ruby/casing_machine ruby/casing_machine_dense ruby/casing_machine_double ruby/casing_machine_quadruple sand/casing_machine sand/casing_machine_dense sand/casing_machine_double sand/casing_machine_quadruple "
+        + "shards/casing_machine shards/casing_machine_dense shards/casing_machine_double shards/casing_machine_quadruple shiny/casing_machine shiny/casing_machine_dense shiny/casing_machine_double shiny/casing_machine_quadruple "
+        + "space/casing_machine space/casing_machine_dense space/casing_machine_double space/casing_machine_quadruple stone/casing_machine stone/casing_machine_dense stone/casing_machine_double stone/casing_machine_quadruple "
+        + "wood/casing_machine wood/casing_machine_dense wood/casing_machine_double wood/casing_machine_quadruple ",
+        // the pocket multitool overlays: the eight byte-identical pocket-form passes
+        // (one shared upstream tool art) — the model loop references the canonical
+        // literally, the rows keep the alias table the single content authority
+    "item/overlay/pocket_tool pocket/chisel pocket/file pocket/knife pocket/multitool pocket/saw pocket/scissors pocket/screwdriver pocket/wire_cutter ",
+
     };
 
     /** member "set/prefix" -> canonical resource path (e.g. "ruby/stick" -> "item/overlay/empty"); package-private for the GT6ItemModelLayersTest gate. */
