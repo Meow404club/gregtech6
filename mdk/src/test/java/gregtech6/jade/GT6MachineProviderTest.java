@@ -279,6 +279,28 @@ public class GT6MachineProviderTest extends GTOfflineTestBase {
 	}
 
 	@Test
+	public void energyRowsCarryTheCarrierColor() {
+		// task jade-energy-colors: the Stored row and the input band row both style with
+		// the carrier color keyed by the wire short code (the upstream TD.Energy createTagData
+		// 4th-argument transcription, GT6EnergyCensus.ENERGY_COLORS — the same look as the
+		// energy pages' cost units).
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.BLUE),
+				GT6MachineProvider.energyLine(1234, "EU").getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.RED),
+				GT6MachineProvider.energyLine(1234, "HU").getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_GREEN),
+				GT6MachineProvider.inputLine(16, 32, 64, "KU").getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.DARK_PURPLE),
+				GT6MachineProvider.inputLine(16, 32, 64, "QU").getStyle().getColor());
+		// the miss face: an untabled short code keeps the neutral WHITE (never a null style,
+		// never a crash — the missing-key "?" and STEAM's word code)
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.WHITE),
+				GT6MachineProvider.energyLine(0, "?").getStyle().getColor());
+		assertEquals(TextColor.fromLegacyFormat(ChatFormatting.WHITE),
+				GT6MachineProvider.inputLine(1, 2, 3, "Steam").getStyle().getColor());
+	}
+
+	@Test
 	public void statusLineCarriesTheActiveSemantics() {
 		// the r8 lift: the green/red meaning moved OFF the bar coloring onto its own row —
 		// Active (mActive&&mRunner conjunction at the call site) GREEN, Inactive RED.

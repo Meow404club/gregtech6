@@ -28,6 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.server.Bootstrap;
 
@@ -76,6 +77,48 @@ class GT6EnergyCensusTest {
 				tCarriers.subList(0, 9).stream().map(GT6RecipeMapViewerMeta::energyTypeShortCode).toList(),
 				"the nine ride the pinnedEnergyCarriers short-code-sorted order");
 		assertEquals(TD.Energy.STEAM, tCarriers.get(9), "STEAM appends last (no EU denomination, no sorted slot)");
+	}
+
+	// -------------------------------------------------------------------
+	// The carrier colors (task jade-energy-colors): the single-source table,
+	// every entry pinned to the upstream TD.Energy transcription
+	// -------------------------------------------------------------------
+
+	@Test
+	void theCarrierColorsAreTheUpstreamTDTranscription() {
+		// the nine tabled carriers, each pinned to the upstream TD.Energy createTagData
+		// 4th argument (root TD.java:81-144 through the LH.Chat constants)
+		assertEquals(ChatFormatting.BLUE, GT6EnergyCensus.energyColor(TD.Energy.EU));          // :81
+		assertEquals(ChatFormatting.GREEN, GT6EnergyCensus.energyColor(TD.Energy.RU));         // :88
+		assertEquals(ChatFormatting.DARK_GREEN, GT6EnergyCensus.energyColor(TD.Energy.KU));    // :95
+		assertEquals(ChatFormatting.RED, GT6EnergyCensus.energyColor(TD.Energy.HU));           // :102
+		assertEquals(ChatFormatting.AQUA, GT6EnergyCensus.energyColor(TD.Energy.CU));          // :109
+		assertEquals(ChatFormatting.YELLOW, GT6EnergyCensus.energyColor(TD.Energy.LU));        // :116
+		assertEquals(ChatFormatting.DARK_GRAY, GT6EnergyCensus.energyColor(TD.Energy.MU));     // :123
+		assertEquals(ChatFormatting.DARK_PURPLE, GT6EnergyCensus.energyColor(TD.Energy.QU));   // :137
+		assertEquals(ChatFormatting.DARK_BLUE, GT6EnergyCensus.energyColor(TD.Energy.TU));     // :144
+		// the table's extent: the colorless carriers answer the neutral WHITE miss —
+		// STEAM (the census tenth) plus the short-coded-but-untabled RF/MJ/AU, and null
+		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColor(TD.Energy.STEAM));
+		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColor(TD.Energy.RF));
+		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColor(TD.Energy.MJ));
+		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColor(TD.Energy.AU));
+		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColor(null));
+	}
+
+	@Test
+	void theJadeWireShortCodeResolvesTheSameColor() {
+		// the Jade provider only carries the short code (GT6MachineProvider.KEY_ENERGY_TYPE,
+		// the TagData never crosses the network) — the reverse lookup must agree with the
+		// TagData face on every colored carrier
+		for (TagData tCarrier : List.of(TD.Energy.EU, TD.Energy.RU, TD.Energy.KU, TD.Energy.HU,
+				TD.Energy.CU, TD.Energy.LU, TD.Energy.MU, TD.Energy.QU, TD.Energy.TU))
+			assertEquals(GT6EnergyCensus.energyColor(tCarrier),
+					GT6EnergyCensus.energyColorOfShortCode(GT6RecipeMapViewerMeta.energyTypeShortCode(tCarrier)),
+					tCarrier.mName + ": the wire face and the TagData face agree");
+		// the wire oddities miss white: the missing-key "?" and STEAM's word code
+		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColorOfShortCode("?"));
+		assertEquals(ChatFormatting.WHITE, GT6EnergyCensus.energyColorOfShortCode("Steam"));
 	}
 
 	// -------------------------------------------------------------------
