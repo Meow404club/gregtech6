@@ -556,6 +556,34 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 		assertEquals(GT6RecipeMapViewerMeta.CATEGORY_HEIGHT, tCategory.getHeight());
 	}
 
+	/**
+	 * The slot-base pad coverage (task viewer-recipe-slot-frames, user 反馈⑦ — empty
+	 * slots rendered as bare holes): BOTH legs pad every DECLARED slot — the JEI category
+	 * blits the {@code slot_frame_18x18}/{@code slot_fluid_18x19} pads inside its draw
+	 * callback (which JEI renders under the slots, RecipeLayout.draw :207→:208-210, and
+	 * JEI's RecipeSlots draw no background of their own without setBackground) and the EMI
+	 * twin adds the same pads as TextureWidgets (pinned in full in
+	 * GT6RecipeMapEmiCategoryTest). The shared face IS this pad walk over the viewer*Pos
+	 * exits, so the declaration pin rides here: on the whole visible census the walk
+	 * yields a pad for EVERY declared index — no null mid-count (the 10/11/13+ slot
+	 * shapes stay dead, the censusProves pin below). If a future map outgrows the
+	 * 12-slot grid this goes red and forces the pad-coverage decision instead of
+	 * silently clipping pads off slot 13+.
+	 */
+	@Test
+	void slotFramePadsCoverEveryDeclaredViewerSlot() {
+		GT6RecipeMaps.init();
+		for (RecipeMap tMap : GT6RecipeMapViewerMeta.visibleMaps()) {
+			int tInPads = 0, tOutPads = 0;
+			for (int i = 0; i < tMap.mInputItemsCount; i++)
+				if (GT6RecipeMapViewerMeta.viewerInputPos(i, tMap) != null) tInPads++;
+			for (int i = 0; i < tMap.mOutputItemsCount; i++)
+				if (GT6RecipeMapViewerMeta.viewerOutputPos(i, tMap) != null) tOutPads++;
+			assertEquals(tMap.mInputItemsCount, tInPads, tMap.mNameInternal + " input pads cover every declared slot");
+			assertEquals(tMap.mOutputItemsCount, tOutPads, tMap.mNameInternal + " output pads cover every declared slot");
+		}
+	}
+
 	// -------------------------------------------------------------------
 	// Task debt-viewer-polish: the nojade decoupling + the gear-spot machine icon
 	// -------------------------------------------------------------------

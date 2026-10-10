@@ -117,13 +117,35 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 		// gear cell) via the 11-arg form — the parts are standalone small PNGs, the texture
 		// dims are declared explicitly (emi-1.20.1 TextureWidget 11-arg ctor, xplat source).
 		// The per-map machine GUI band is RETIRED: its baked slot frames doubled the code
-		// slots' (贴图槽+代码槽叠加), so the frames now come only from the SlotWidgets
-		// below (each draws its own back). The furniture positions are the meta's folded
-		// exits — the same pixels the JEI twin blits.
+		// slots' (贴图槽+代码槽叠加). Since task viewer-recipe-slot-frames the slot bases
+		// are the GT6 GUI parts AGAIN — but as code pads below (task 反馈⑦: the EMI native
+		// slot back is not the GT6 GUI look, and empty slots rendered as bare holes) — the
+		// frame pads at EVERY declared slot position, empty or not, then the SlotWidgets
+		// stack on top with their native back DISABLED (SlotWidget.drawBack(false), the
+		// emi api face — emi-1.20.1/1.21.1 SlotWidget.java:66). The furniture positions are
+		// the meta's folded exits — the same pixels the JEI twin blits.
 		int[] tPlate = GT6RecipeMapViewerMeta.PLATE_CROP;
 		aWidgets.add(new TextureWidget(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[2], tPlate[3], tPlate[0], tPlate[1]));
 		addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.ARROW_OUTLINE, GT6RecipeMapViewerMeta.viewerArrowPos());
 		addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.SLOT_SPECIAL, GT6RecipeMapViewerMeta.viewerGearPos());
+		// the GT6 GUI slot bases (task viewer-recipe-slot-frames, user 反馈⑦): every
+		// DECLARED slot of the map gets its pad — item slots the 18x18 slot_frame part,
+		// fluid slots the 18x19 slot_fluid droplet cell (the GTBasicMachineMUI fluid-seat
+		// convention: the widget box stays 18x18, the 1px lip rides). Empty declared slots
+		// now render as slots, not holes. Positions fold through the same viewer*Pos exits
+		// the slots below use — one geometry source, and the JEI twin blits the same parts.
+		for (int i = 0; i < mMap.mInputItemsCount; i++) {
+			int[] tPos = GT6RecipeMapViewerMeta.viewerInputPos(i, mMap);
+			if (tPos != null) addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.SLOT_FRAME, tPos);
+		}
+		for (int i = 0; i < mMap.mOutputItemsCount; i++) {
+			int[] tPos = GT6RecipeMapViewerMeta.viewerOutputPos(i, mMap);
+			if (tPos != null) addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.SLOT_FRAME, tPos);
+		}
+		for (int i = 0; i < mMap.mInputFluidCount; i++)
+			addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.SLOT_FLUID, GT6RecipeMapViewerMeta.viewerFluidInputPos(i));
+		for (int i = 0; i < mMap.mOutputFluidCount; i++)
+			addPart(aWidgets, gregtech6.gui.machines.GT6GuiParts.SLOT_FLUID, GT6RecipeMapViewerMeta.viewerFluidOutputPos(i));
 		// The gear-spot jump port (task viewer-energy-jump-gear, the user ruling): carrier
 		// maps get the click widget fourth — right after the plate + the two furniture
 		// parts (render order = add order, the art's z face), riding the special-slot
@@ -143,7 +165,9 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 			if (mRow.mInputs[i] == null || mRow.mInputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.viewerInputPos(i, mMap);
 			if (tPos == null) continue; // past the 12th drawn slot (the meta contract)
-			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mInputs[i]), tPos[0], tPos[1]));
+			// drawBack(false): the GT6 slot_frame pad above IS the slot base — EMI's native
+			// widgets.png back must not stack over it (the 反馈⑦ native-frame complaint)
+			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mInputs[i]), tPos[0], tPos[1])).drawBack(false);
 			if (GT6RecipeMapViewerMeta.notConsumable(mRow.mInputs[i]))
 				tSlot.appendTooltip(Component.translatable(GT6RecipeMapViewerMeta.NOT_CONSUMED_KEY));
 		}
@@ -155,19 +179,20 @@ public class GT6RecipeMapEmiRecipe implements EmiRecipe {
 			// passed coordinate (SlotWidget.getBounds output branch), which on the 18px
 			// output pitch overlaps each neighbour by 8px and pushes a 3rd slot past the
 			// 166-wide category. Upstream NEI drew faithful 18px slots — same as the JEI twin.
-			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mOutputs[i]), tPos[0], tPos[1]));
+			// drawBack(false): the slot_frame pad is the base (the 反馈⑦ face)
+			SlotWidget tSlot = aWidgets.add(new SlotWidget(EmiStack.of(mRow.mOutputs[i]), tPos[0], tPos[1])).drawBack(false);
 			Component tChance = GT6RecipeMapViewerMeta.chanceLine(GT6RecipeMapViewerMeta.outputChance(mRow, i), mRow.mOutputs[i].getCount());
 			if (tChance != null) tSlot.appendTooltip(tChance);
 		}
 		for (int i = 0; i < Math.min(mRow.mFluidInputs.length, mMap.mInputFluidCount); i++) {
 			if (mRow.mFluidInputs[i] == null || mRow.mFluidInputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.viewerFluidInputPos(i);
-			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidInputs[i].getFluid(), mRow.mFluidInputs[i].getAmount()), tPos[0], tPos[1]));
+			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidInputs[i].getFluid(), mRow.mFluidInputs[i].getAmount()), tPos[0], tPos[1])).drawBack(false);
 		}
 		for (int i = 0; i < Math.min(mRow.mFluidOutputs.length, mMap.mOutputFluidCount); i++) {
 			if (mRow.mFluidOutputs[i] == null || mRow.mFluidOutputs[i].isEmpty()) continue;
 			int[] tPos = GT6RecipeMapViewerMeta.viewerFluidOutputPos(i);
-			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidOutputs[i].getFluid(), mRow.mFluidOutputs[i].getAmount()), tPos[0], tPos[1]));
+			aWidgets.add(new SlotWidget(EmiStack.of(mRow.mFluidOutputs[i].getFluid(), mRow.mFluidOutputs[i].getAmount()), tPos[0], tPos[1])).drawBack(false);
 		}
 		// drawExtras (:680-717 verbatim arithmetic) at the shared panel-system text band.
 		int tY = GT6RecipeMapViewerMeta.TEXT_BASE_Y;
