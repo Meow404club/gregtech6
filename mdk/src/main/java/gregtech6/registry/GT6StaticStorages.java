@@ -16,7 +16,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -186,11 +185,40 @@ public final class GT6StaticStorages {
 		return "gt6.row.mat." + aRow.material().slug();
 	}
 
-	/** The composed name of a METAL row (the pure compose seam, the GT6Hoppers.displayOf shape; plank rows keep the description id). */
+	/** The composed name of a METAL shelf/crate row (the pure compose seam, the GT6Hoppers.displayOf shape). */
 	public static net.minecraft.network.chat.MutableComponent displayOf(StaticRow aRow) {
 		return net.minecraft.network.chat.Component.translatable(
 				aRow.kind() == Kind.BOOKSHELF ? DISPLAY_METAL_BOOKSHELF_KEY : DISPLAY_METAL_BOTTLECRATE_KEY,
 				net.minecraft.network.chat.Component.translatable(matUnitKeyOf(aRow)));
+	}
+
+	/**
+	 * The display name of a row — the single compose point both name faces ride (the block
+	 * {@code getName} and, through {@link gregtech6.block.GTComposedNameItem}, the item
+	 * stack name). Task shelf-crate-i18n-runtime-probe: the guard is KIND-scoped, not
+	 * material-scoped — {@link #displayOf} carries only the shelf/crate templates, so the
+	 * former material-scoped block guard resolved a bronze LOCKER through the bottlecrate
+	 * template ("Bottlecrate (Bronze)") on the block face (Jade's name row) while its
+	 * atomic {@code block.gt6.locker_bronze} key sat unused there. The metal shelf/crate
+	 * rows compose; every other row resolves its atomic description id (see
+	 * {@link #descriptionIdOf}).
+	 */
+	public static net.minecraft.network.chat.MutableComponent displayNameOf(StaticRow aRow) {
+		return aRow.material() != null && (aRow.kind() == Kind.BOOKSHELF || aRow.kind() == Kind.BOTTLECRATE)
+				? displayOf(aRow)
+				: net.minecraft.network.chat.Component.translatable(descriptionIdOf(aRow));
+	}
+
+	/**
+	 * The row-derived description id (task shelf-crate-i18n-runtime-probe): the exact
+	 * string the registry would derive post-registration
+	 * ({@code Util.makeDescriptionId("block", "gt6:" + path)}), made deterministic so the
+	 * atomic-name face resolves WITHOUT a live registry entry — the offline name ratchet
+	 * (GT6StaticStorageNameResolutionTest) walks it, and the vanilla Block lazy path
+	 * would NPE on an unregistered instance ({@code MappedRegistry.getKey} answers null).
+	 */
+	public static String descriptionIdOf(StaticRow aRow) {
+		return "block.gt6." + aRow.path();
 	}
 
 	/**
@@ -284,8 +312,26 @@ public final class GT6StaticStorages {
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GT6StorageBlock(tRow, tRow.properties())));
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
-					() -> new BlockItem(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
+					() -> itemOf(GT6StaticStorages.BLOCKS_BY_PATH.get(tRow.path()).get())));
 		}
+	}
+
+	/**
+	 * The row item seam (task shelf-crate-i18n-runtime-probe): the composed-name item face
+	 * (the GT6Hoppers:392 / GT6MassStorageItem form) and the ONE place the family's item
+	 * class is chosen. The former plain BlockItem resolved the raw descriptionId on the
+	 * stack (vanilla BlockItem has NO getName(ItemStack) override — it delegates only
+	 * getDescriptionId, BlockItem.java:186-189), so the metal shelf/crate rows — whose
+	 * {@code block.gt6.<path>} keys retired into the compose templates — hovered the raw
+	 * key on all 120 items while the 20 wooden ones kept atomic keys and worked (the
+	 * "most variants untranslated" report). The GTComposedNameItem delegation is
+	 * key-identical for the atomic-key rows (they resolve the same translatable the
+	 * vanilla default would), so the swap is uniform over all 148 rows. The offline
+	 * ratchet (GT6StaticStorageNameResolutionTest) rides THIS seam — a revert to a plain
+	 * BlockItem turns the stack-name assertions red.
+	 */
+	public static Item itemOf(Block aBlock) {
+		return new GTComposedNameItem(aBlock, new Item.Properties());
 	}
 
 	/** The per-kind block arrays (the BET multi-mount arguments). */
@@ -749,14 +795,27 @@ public final class GT6StaticStorages {
 		}
 
 		/**
-		 * The METAL rows compose their name at runtime (task material-mc-b-storage-mass-shelf,
-		 * the GT6HopperBlock.getName shape): "Bookshelf (Bronze)" — the BlockItem inherits the
-		 * block name (the vanilla BlockItem.getName face), the plank rows keep the
-		 * description id.
+		 * The row's display name — a straight delegation to the single compose point
+		 * {@link GT6StaticStorages#displayNameOf} (the kind-scoped guard and the rule
+		 * rationale live THERE; the composed face is consumed by
+		 * {@link gregtech6.block.GTComposedNameItem} — the registered item class, since the
+		 * vanilla BlockItem has no getName(ItemStack) override and would resolve the raw
+		 * descriptionId the composed rows deliberately carry no key for).
 		 */
 		@Override
 		public net.minecraft.network.chat.MutableComponent getName() {
-			return mRow.material() != null ? displayOf(mRow) : super.getName();
+			return GT6StaticStorages.displayNameOf(mRow);
+		}
+
+		/**
+		 * The row-derived description id — a straight delegation to
+		 * {@link GT6StaticStorages#descriptionIdOf} (the exact string the registry would
+		 * derive post-registration, made deterministic so the atomic-name face resolves
+		 * without a live registry entry).
+		 */
+		@Override
+		public String getDescriptionId() {
+			return GT6StaticStorages.descriptionIdOf(mRow);
 		}
 
 		/**
