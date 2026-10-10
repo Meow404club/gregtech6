@@ -72,6 +72,13 @@ public final class MaterialTreeWorkstations {
 		TABLE.put("gt.recipe.shredder", () -> resolve(GTMachines.SHREDDER_ITEM));
 		TABLE.put("gt.recipe.sifter", () -> resolve(GTMachines.SIFTER_ITEMS_BY_PATH.get("sifter")));
 		TABLE.put("gt.recipe.anvil", () -> resolve(GT6Anvils.ITEMS_BY_PATH.get("stone_anvil")));
+		TABLE.put("gt.recipe.anvil.bend", () -> resolve(GT6Anvils.ITEMS_BY_PATH.get("stone_anvil")));
+		TABLE.put("gt.recipe.lathe", () -> resolve(GTMachines.LATHE_ITEM));
+		// the dynamic arms (task mattree-emi-tree-rework): the crucible's tier-0 machine is
+		// the stone smeltery (GT6Crucibles ROWS head), the casting pipeline's is the stone
+		// mold (GT6Molds row0 — the "Mold" synthetic label, no RecipeMap behind it)
+		TABLE.put(MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP, () -> resolve(gregtech6.registry.GT6Crucibles.ITEMS_BY_PATH.get("smeltery_stone")));
+		TABLE.put("Mold", () -> resolve(gregtech6.registry.GT6Molds.ITEMS_BY_PATH.get("mold_stone")));
 	}
 
 	/** The table keys (unmodifiable) — the census test pins them against the live displayed set. */

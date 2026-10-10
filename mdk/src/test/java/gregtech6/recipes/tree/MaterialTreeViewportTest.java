@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
+import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeViewport.Point;
 
 /**
@@ -61,8 +62,8 @@ import gregtech6.recipes.tree.MaterialTreeViewport.Point;
  *     centres (acceptance ②);</li>
  * <li><b>pan clamp</b>: at the default page's fit (scale 1, content == pane) the offsets pin
  *     to 0 — the tree can never be dragged out of view; zoomed in, the pan range follows the
- *     canvas basis ({@code pane - content*scale .. 0}, the 202x206 基准 through behaviour:
- *     the MAX-scale x floor is {@code 202 - 4*202 == -606});</li>
+ *     canvas basis ({@code pane - content*scale .. 0}, the nominal-frame 基准 through behaviour:
+ *     the MAX-scale floors are {@code WIDTH*(1-4)} / {@code HEIGHT*(1-4)});</li>
  * <li><b>fit semantics (mattree-viewport-fit acceptance ①②)</b>: a bigger pane MAGNIFIES
  *     (fit &gt; 1, centred, capped at the ceiling), a smaller pane fits by shrinking — the
  *     former 「never below 1:1」 reading retired with the fit rework (class javadoc);</li>
@@ -123,7 +124,7 @@ class MaterialTreeViewportTest {
 		assertEquals(0.0, tViewport.offsetX());
 		assertEquals(0.0, tViewport.offsetY());
 		assertEquals(new Point(4, 16), tViewport.apply(4, 16));
-		assertEquals(new Point(202, 206), tViewport.unapply(202, 206));
+		assertEquals(new Point(MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT), tViewport.unapply(MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT));
 	}
 
 	@Test
@@ -266,23 +267,23 @@ class MaterialTreeViewportTest {
 		assertEquals(-100.0, tViewport.offsetX(), EPSILON);
 		assertEquals(-100.0, tViewport.offsetY(), EPSILON);
 		tViewport.pan(-1000, 1000); // overshoot BOTH ends in one step
-		assertEquals(-202.0, tViewport.offsetX(), EPSILON, "the x pan floor is pane 202 - content 202*2");
+		assertEquals(MaterialTreeDisplay.WIDTH * (1 - 2.0), tViewport.offsetX(), EPSILON, "the x pan floor is pane - content*2");
 		assertEquals(0.0, tViewport.offsetY(), EPSILON, "the y pan ceiling is 0");
 		tViewport.pan(50, 50); // partial steps walk back inside the range
-		assertEquals(-152.0, tViewport.offsetX(), EPSILON);
+		assertEquals(MaterialTreeDisplay.WIDTH * (1 - 2.0) + 50.0, tViewport.offsetX(), EPSILON);
 		assertEquals(0.0, tViewport.offsetY(), EPSILON);
 	}
 
 	@Test
 	void panRangeFollowsTheCanvasBasis() {
-		// the default viewport binds the material-tree canvas 202x206 as BOTH content and pane;
-		// at MAX scale 4 the x pan floor is 202 - 4*202 == -606 and the y floor 206 - 4*206 == -618
+		// the default viewport binds the material-tree canvas as BOTH content and pane (the
+		// nominal frame since mattree-emi-tree-rework); at MAX scale the floors are the basis
 		MaterialTreeViewport tViewport = new MaterialTreeViewport();
 		tViewport.zoomAt(0, 0, 100);
 		assertEquals(MaterialTreeViewport.MAX_SCALE, tViewport.scale());
 		tViewport.pan(-10000, -10000);
-		assertEquals(202.0 * (1 - MaterialTreeViewport.MAX_SCALE), tViewport.offsetX(), EPSILON);
-		assertEquals(206.0 * (1 - MaterialTreeViewport.MAX_SCALE), tViewport.offsetY(), EPSILON);
+		assertEquals(MaterialTreeDisplay.WIDTH * (1 - MaterialTreeViewport.MAX_SCALE), tViewport.offsetX(), EPSILON);
+		assertEquals(MaterialTreeDisplay.HEIGHT * (1 - MaterialTreeViewport.MAX_SCALE), tViewport.offsetY(), EPSILON);
 	}
 
 	// ------------------------------------------------------------------

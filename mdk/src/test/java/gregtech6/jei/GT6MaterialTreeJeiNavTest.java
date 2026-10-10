@@ -156,11 +156,12 @@ public class GT6MaterialTreeJeiNavTest {
 		MaterialTreeViewport tView = tNav.mView;
 		int tY = GT6MaterialTreeEmiRecipe.BUTTON_Y + 1;
 
-		// zoom-in cell: the exact 2x 档位 anchored at the canvas centre (101/103 = centre*(1-2))
+		// zoom-in cell: the exact 2x 档位 anchored at the canvas centre (centre*(1-2); the
+		// centre is the nominal frame's — mattree-emi-tree-rework re-valued the frame)
 		assertTrue(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 1, tY, 0), "zoom-in click consumed");
 		assertEquals(2.0, tView.scale(), EPSILON);
-		assertEquals(-101.0, tView.offsetX(), EPSILON);
-		assertEquals(-103.0, tView.offsetY(), EPSILON);
+		assertEquals(MaterialTreeDisplay.WIDTH / -2.0, tView.offsetX(), EPSILON);
+		assertEquals(MaterialTreeDisplay.HEIGHT / -2.0, tView.offsetY(), EPSILON);
 		// zoom-out cell undoes it exactly
 		assertTrue(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.BUTTON_X0 + GT6MaterialTreeEmiRecipe.BUTTON_PITCH + 1, tY, 0),
 				"zoom-out click consumed");
@@ -198,7 +199,7 @@ public class GT6MaterialTreeJeiNavTest {
 		// '+' zooms in (GLFW_KEY_EQUAL 61), R resets (GLFW_KEY_R 82)
 		assertTrue(tNav.keyPressed(100, 100, 61, 0, 0), "+ is consumed");
 		assertEquals(2.0, tView.scale(), EPSILON);
-		assertEquals(-101.0, tView.offsetX(), EPSILON);
+		assertEquals(MaterialTreeDisplay.WIDTH / -2.0, tView.offsetX(), EPSILON);
 		assertTrue(tNav.keyPressed(100, 100, 82, 0, 0), "R is consumed");
 		assertEquals(1.0, tView.scale(), EPSILON);
 		assertEquals(0.0, tView.offsetX(), EPSILON);

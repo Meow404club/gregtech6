@@ -45,7 +45,7 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * pure read over the {@link MaterialTreeDisplay} model —
  * <ul>
  * <li><b>the three states</b> (the minimal determined semantics): entry nodes
- *     ({@code COL_ORE}) are COVERED (the mined start); a node whose displayed incoming edge
+ *     ({@code band 0}) are COVERED (the mined start); a node whose displayed incoming edge
  *     carries its machine is COVERED (max over incoming — one machined producer suffices);
  *     a node whose every displayed producer is degraded is REACHABLE (the r11 sluice face:
  *     real data, workstation face inactive); a displayed node with no visible incoming path
@@ -91,18 +91,18 @@ class MaterialTreeCoverageTest extends GTRecipesOfflineTestBase {
 		assertTrue(tEmpty.bands().isEmpty(), "the empty tree has no bands");
 
 		// the single entry node: the mined start is COVERED, its band aggregated
-		Node tEntry = new Node(OP.oreRaw, MaterialTreeDisplay.COL_ORE, 0, ItemStack.EMPTY);
+		Node tEntry = new Node(OP.oreRaw, 0, 0, ItemStack.EMPTY); // band 0 = the ore roots (the EMI depth-band axis)
 		MaterialTreeCoverage tSingle = MaterialTreeCoverage.of(List.of(tEntry), List.of());
 		assertEquals(State.COVERED, tSingle.node(OP.oreRaw), "the entry node's path is 「mine the world」");
-		assertEquals(new Band(MaterialTreeDisplay.COL_ORE, 1, 0, 0), tSingle.band(MaterialTreeDisplay.COL_ORE));
-		assertEquals(State.COVERED, tSingle.band(MaterialTreeDisplay.COL_ORE).state());
-		assertNull(tSingle.band(MaterialTreeDisplay.COL_DUST), "a band without nodes is absent, not empty");
+		assertEquals(new Band(0, 1, 0, 0), tSingle.band(0));
+		assertEquals(State.COVERED, tSingle.band(0).state());
+		assertNull(tSingle.band(3), "a band without nodes is absent, not empty");
 
 		// the negative example: a displayed non-entry node with no visible path is UNREACHABLE
-		Node tOrphan = new Node(OP.dust, MaterialTreeDisplay.COL_DUST, 1, ItemStack.EMPTY);
+		Node tOrphan = new Node(OP.dust, 3, 1, ItemStack.EMPTY);
 		MaterialTreeCoverage tOrphans = MaterialTreeCoverage.of(List.of(tEntry, tOrphan), List.of());
 		assertEquals(State.UNREACHABLE, tOrphans.node(OP.dust), "no displayed producer, no entry column: the gap face");
-		assertEquals(State.UNREACHABLE, tOrphans.band(MaterialTreeDisplay.COL_DUST).state());
+		assertEquals(State.UNREACHABLE, tOrphans.band(3).state());
 
 		// the state trio over one hop: degraded → REACHABLE, machined → COVERED (entry stays COVERED)
 		Edge tDegraded = new Edge(OP.oreRaw, OP.dust, List.of("gt.recipe.sluice"), ItemStack.EMPTY);
@@ -114,7 +114,7 @@ class MaterialTreeCoverageTest extends GTRecipesOfflineTestBase {
 		assertEquals(State.COVERED, tCovered.node(OP.oreRaw), "the entry stays COVERED regardless of its outgoing hops");
 
 		// the guard: an edge with an UNDISPLAYED endpoint is not a visible path
-		Node tShown = new Node(OP.crushed, MaterialTreeDisplay.COL_CRUSHED, 0, ItemStack.EMPTY);
+		Node tShown = new Node(OP.crushed, 1, 0, ItemStack.EMPTY);
 		Edge tGhost = new Edge(OP.ore, OP.crushed, List.of("gt.recipe.crusher"), new ItemStack(Items.BARRIER));
 		assertEquals(State.UNREACHABLE, MaterialTreeCoverage.of(List.of(tShown), List.of(tGhost)).node(OP.crushed),
 				"the producer is not on the tree — no visible path, the honest gap face");
@@ -178,10 +178,10 @@ class MaterialTreeCoverageTest extends GTRecipesOfflineTestBase {
 									+ ": " + tNode.getValue() + " → " + tNowState + " must not downgrade");
 				}
 				for (Band tBand : tOld.getValue().bands()) {
-					Band tNowBand = tNow.band(tBand.column());
-					assertNotNull(tNowBand, "adding paths never empties a band: band " + tBand.column());
+					Band tNowBand = tNow.band(tBand.band());
+					assertNotNull(tNowBand, "adding paths never empties a band: band " + tBand.band());
 					assertTrue(rank(tNowBand.state()) >= rank(tBand.state()),
-							"band " + tBand.column() + " of " + tOld.getKey().mNameInternal
+							"band " + tBand.band() + " of " + tOld.getKey().mNameInternal
 									+ ": " + tBand.state() + " → " + tNowBand.state() + " must not downgrade");
 				}
 			}
@@ -207,7 +207,7 @@ class MaterialTreeCoverageTest extends GTRecipesOfflineTestBase {
 			State tState = tCoverage.node(tNode.prefix());
 			assertNotNull(tState, "every displayed node has a state: " + tNode.prefix().mNameInternal);
 			//? if forge {
-			if (tNode.column() == MaterialTreeDisplay.COL_ORE)
+			if (tNode.band() == 0)
 				assertEquals(State.COVERED, tState, "entry " + tNode.prefix().mNameInternal + " is the mined start");
 			else
 				assertEquals(State.REACHABLE, tState, "offline every workstation face is inactive: " + tNode.prefix().mNameInternal);
@@ -215,14 +215,14 @@ class MaterialTreeCoverageTest extends GTRecipesOfflineTestBase {
 			/*assertEquals(State.COVERED, tState, "the neo harness resolves the real machines: " + tNode.prefix().mNameInternal);
 			*///?}
 		}
-		assertEquals(State.COVERED, tCoverage.band(MaterialTreeDisplay.COL_ORE).state());
+		assertEquals(State.COVERED, tCoverage.band(0).state());
 		//? if forge {
-		assertEquals(State.REACHABLE, tCoverage.band(MaterialTreeDisplay.COL_CRUSHED).state());
+		assertEquals(State.REACHABLE, tCoverage.band(1).state());
 		//?} else {
-		/*assertEquals(State.COVERED, tCoverage.band(MaterialTreeDisplay.COL_CRUSHED).state());
+		/*assertEquals(State.COVERED, tCoverage.band(1).state());
 		*///?}
 		for (Band tBand : tCoverage.bands())
-			assertEquals(0, tBand.unreachable(), "no unreachable node in band " + tBand.column() + " (the negative face is absent from the pour)");
+			assertEquals(0, tBand.unreachable(), "no unreachable node in band " + tBand.band() + " (the negative face is absent from the pour)");
 	}
 
 	@Test
@@ -234,7 +234,7 @@ class MaterialTreeCoverageTest extends GTRecipesOfflineTestBase {
 		for (Map.Entry<OreDictPrefix, State> tNode : tAll.nodes().entrySet())
 			assertEquals(State.COVERED, tNode.getValue(), "a machined producer everywhere covers " + tNode.getKey().mNameInternal);
 		for (Band tBand : tAll.bands())
-			assertEquals(State.COVERED, tBand.state(), "band " + tBand.column() + " fully covered");
+			assertEquals(State.COVERED, tBand.state(), "band " + tBand.band() + " fully covered");
 		// the mixed face: ONLY the anvil resolves — dust Fe has the anvil mortar leg among its
 		// producers → COVERED (max over incoming), while Cu's crushedPurified rides the sifter
 		// alone → still REACHABLE
@@ -256,16 +256,16 @@ class MaterialTreeCoverageTest extends GTRecipesOfflineTestBase {
 	void bandAggregatesCountsAndTheStrongestState() {
 		// entry → machined hop to dust lane 0, degraded hop to dust lane 1: the dust band
 		// holds one COVERED + one REACHABLE node and its own state stays COVERED
-		Node tEntry = new Node(OP.oreRaw, MaterialTreeDisplay.COL_ORE, 0, ItemStack.EMPTY);
-		Node tDustA = new Node(OP.dust, MaterialTreeDisplay.COL_DUST, 0, ItemStack.EMPTY);
-		Node tDustB = new Node(OP.dustTiny, MaterialTreeDisplay.COL_DUST, 1, ItemStack.EMPTY);
+		Node tEntry = new Node(OP.oreRaw, 0, 0, ItemStack.EMPTY); // band 0 = the ore roots (the EMI depth-band axis)
+		Node tDustA = new Node(OP.dust, 3, 0, ItemStack.EMPTY);
+		Node tDustB = new Node(OP.dustTiny, 3, 1, ItemStack.EMPTY);
 		List<Edge> tEdges = List.of(
 				new Edge(OP.oreRaw, OP.dust, List.of("gt.recipe.crusher"), new ItemStack(Items.BARRIER)),
 				new Edge(OP.oreRaw, OP.dustTiny, List.of("gt.recipe.sluice"), ItemStack.EMPTY));
 		MaterialTreeCoverage tCoverage = MaterialTreeCoverage.of(List.of(tEntry, tDustA, tDustB), tEdges);
-		assertEquals(new Band(MaterialTreeDisplay.COL_DUST, 1, 1, 0), tCoverage.band(MaterialTreeDisplay.COL_DUST),
+		assertEquals(new Band(3, 1, 1, 0), tCoverage.band(3),
 				"the counts face: one covered, one reachable");
-		assertEquals(State.COVERED, tCoverage.band(MaterialTreeDisplay.COL_DUST).state(),
+		assertEquals(State.COVERED, tCoverage.band(3).state(),
 				"the band state is the STRONGEST node state (the monotone aggregate)");
 	}
 

@@ -256,7 +256,7 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 		// the role split mirrors the old slot split exactly (the index buckets by role)
 		Map<Item, RecipeIngredientRole> tRoleByItem = new HashMap<>();
 		for (MaterialTreeDisplay.Node tNode : tDisplay.nodes())
-			tRoleByItem.put(tNode.stack().getItem(), tNode.column() == MaterialTreeDisplay.COL_ORE
+			tRoleByItem.put(tNode.stack().getItem(), tNode.band() == 0
 					? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT);
 		for (MaterialTreeDisplay.Byproduct tByproduct : tDisplay.byproducts())
 			tRoleByItem.put(tByproduct.stack().getItem(), RecipeIngredientRole.OUTPUT);
@@ -295,7 +295,7 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 	private static int countOreNodes(MaterialTreeDisplay aDisplay) {
 		int rCount = 0;
 		for (MaterialTreeDisplay.Node tNode : aDisplay.nodes())
-			if (tNode.column() == MaterialTreeDisplay.COL_ORE) rCount++;
+			if (tNode.band() == 0) rCount++;
 		return rCount;
 	}
 
@@ -405,10 +405,11 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 			return true;
 		});
 
-		// a node cell in page coordinates (the ore node sits at LANE_X0, stage y 16): its centre
+		// a node cell in page coordinates (the ore root's leaf cell centres on the node): its centre
 		MaterialTreeDisplay.Node tNode = tDisplay.nodes().get(0);
-		double tNX = MaterialTreeDisplay.nodeX(tNode) + MaterialTreeLayout.SLOT / 2.0;
-		double tNY = MaterialTreeDisplay.nodeY(tNode) + MaterialTreeLayout.SLOT / 2.0;
+		var tCell = MaterialTreeLayout.plan(tDisplay).nodeItemCell(tNode);
+		double tNX = tCell.x() + MaterialTreeLayout.SLOT / 2.0;
+		double tNY = tCell.y() + MaterialTreeLayout.SLOT / 2.0;
 
 		// mouse-down SIMULATE: report the jumpable cell, EXECUTE nothing
 		assertTrue(tHandler.handleInput(tNX, tNY, mouseInput(true)), "the down reports the node is clickable");
@@ -444,7 +445,8 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 
 		// at the fit pose the page point IS the tree point
 		MaterialTreeDisplay.Node tNode = tDisplay.nodes().get(0);
-		double tNX = MaterialTreeDisplay.nodeX(tNode) + 2, tNY = MaterialTreeDisplay.nodeY(tNode) + 2;
+		var tCell = MaterialTreeLayout.plan(tDisplay).nodeItemCell(tNode);
+		double tNX = tCell.x() + 2, tNY = tCell.y() + 2;
 		assertSame(tNode.stack().getItem(), tTree.hitAt(tNX, tNY).stack().getItem(), "the fit-pose hit");
 
 		// zoom about a far anchor: the SAME tree cell now answers from its TRANSFORMED point
@@ -466,14 +468,12 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 		MaterialTreeViewport tView = new MaterialTreeViewport();
 		GT6MaterialTreeJeiTreeWidget tTree = new GT6MaterialTreeJeiTreeWidget(tDisplay, tView, null);
 
-		// a machine-resolved edge's icon answers its via-label (label-only: no jump face)
-		var tLayouts = MaterialTreeLayout.layout(tDisplay);
-		var tEdges = tDisplay.edges();
-		int tMachineIndex = -1;
-		for (int i = 0; i < tEdges.size(); i++)
-			if (tLayouts.get(i).machine() != null) { tMachineIndex = i; break; }
-		if (tMachineIndex >= 0) {
-			var tBox = tLayouts.get(tMachineIndex).machine();
+		// a machine-resolved node's box icon answers its via-label (label-only: no jump face)
+		var tPlan = MaterialTreeLayout.plan(tDisplay);
+		MaterialTreeDisplay.Node tMachineNode = null;
+		for (var tNode : tDisplay.nodes()) if (tPlan.nodeMachineCell(tNode) != null) { tMachineNode = tNode; break; }
+		if (tMachineNode != null) {
+			var tBox = tPlan.nodeMachineCell(tMachineNode);
 			GT6MaterialTreeJeiTreeWidget.Hit tHit = tTree.hitAt(tBox.x() + 7, tBox.y() + 7);
 			assertTrue(tHit.stack().isEmpty(), "machines do not join the jump face");
 			assertFalse(tHit.label().isEmpty(), "the via-label is the machine's hover affordance");
@@ -481,7 +481,7 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 
 		// a byproduct answers its stack AND its source label
 		if (!tDisplay.byproducts().isEmpty()) {
-			double tBX = MaterialTreeDisplay.byproductX(0) + 2, tBY = MaterialTreeDisplay.byproductY() + 2;
+			double tBX = tPlan.byproductX(0) - MaterialTreeLayout.SLOT / 2.0 + 2, tBY = tPlan.byproductY() - MaterialTreeLayout.SLOT / 2.0 + 2;
 			GT6MaterialTreeJeiTreeWidget.Hit tHit = tTree.hitAt(tBX, tBY);
 			assertSame(tDisplay.byproducts().get(0).stack().getItem(), tHit.stack().getItem());
 			assertFalse(tHit.label().isEmpty(), "the source label rides the hover");

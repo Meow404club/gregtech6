@@ -128,7 +128,24 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 	 * documented semantic: a zoom past a limit slides the anchor so one content edge stays
 	 * reachable, MaterialTreeViewport.clampOffsets).
 	 */
-	private static final double FIT = 250.0 / 103.0, FIT_X = 7500.0 / 103.0;
+	// 旧钉迁移声明 (task mattree-emi-tree-rework): the frozen 146x206-era constants died — the
+	// iron content box is uncapped now (depth bands + the casting/machine tails), so the fit
+	// numbers derive from the LIVE layout box instead of a frozen pair.
+
+	/** The centred-fit scale of the LIVE iron content box over the 500x500 synthetic pane. */
+	private static double fitOf(GT6MaterialTreeScreen aScreen) {
+		return Math.min(500.0 / aScreen.mLayout.width(), 500.0 / aScreen.mLayout.height());
+	}
+
+	/** The centred-fit x offset of the LIVE iron content box over the 500x500 synthetic pane. */
+	private static double fitXOf(GT6MaterialTreeScreen aScreen) {
+		return (500.0 - aScreen.mLayout.width() * fitOf(aScreen)) / 2.0;
+	}
+
+	/** The centred-fit y offset of the LIVE iron content box over the 500x500 synthetic pane. */
+	private static double fitYOf(GT6MaterialTreeScreen aScreen) {
+		return (500.0 - aScreen.mLayout.height() * fitOf(aScreen)) / 2.0;
+	}
 
 	// ------------------------------------------------------------------
 	// construction + the S1 four-arg viewport wiring (real pane, centred fit)
@@ -143,16 +160,29 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		assertNull(tScreen.mView, "no viewport before init");
 		tScreen.navInit(500, 500);
 		assertNotNull(tScreen.mView, "init wires the viewport");
-		assertEquals(FIT, tScreen.mView.scale(), EPSILON, "the fit magnifies into the real pane (250/103 > 1)");
-		assertEquals(FIT, tScreen.mView.minScale(), EPSILON, "the fit is the live zoom floor");
-		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
-		assertEquals(0.0, tScreen.mView.offsetY(), EPSILON, "the limiting axis pins to 0");
+		assertEquals(fitOf(tScreen), tScreen.mView.scale(), EPSILON, "the fit magnifies into the real pane (> 1)");
+		assertEquals(fitOf(tScreen), tScreen.mView.minScale(), EPSILON, "the fit is the live zoom floor");
+		assertEquals(fitXOf(tScreen), tScreen.mView.offsetX(), EPSILON);
+		assertEquals(fitYOf(tScreen), tScreen.mView.offsetY(), EPSILON);
+		// the LIMITING axis pins to 0 (the other centres inside its slack) — the iron box is
+		// wider than the 500 pane since the EMI rework, so the x axis is the limiting one here
+		assertTrue(fitXOf(tScreen) == 0.0 ^ fitYOf(tScreen) == 0.0, "exactly one axis is the limiting one");
 		MaterialTreeViewport.Point tCentre = tScreen.mView.apply(tScreen.mLayout.width() / 2.0, tScreen.mLayout.height() / 2.0);
 		assertEquals(250.0, tCentre.x(), EPSILON, "the content centre rides the pane centre");
 		assertEquals(250.0, tCentre.y(), EPSILON, "the content centre rides the pane centre");
-		// the content box is the engine's, not the fixed page canvas (the mattree-r2-layout-engine face)
-		assertEquals(146, tScreen.mLayout.width(), "the iron display: 5 byproduct lanes at pitch 28 + slot + margins");
-		assertEquals(206, tScreen.mLayout.height(), "the iron display: the byproduct band is the deepest used band");
+		// the content box is the engine's content formula (the mattree-r2-layout-engine face,
+		// re-derived on the EMI depth-band geometry: lanes x deepest band + the margins)
+		int tLanes = 1, tBands = 0;
+		for (MaterialTreeDisplay.Node tNode : tDisplay.nodes()) {
+			tLanes = Math.max(tLanes, tNode.row() + 1);
+			tBands = Math.max(tBands, tNode.band());
+		}
+		boolean tHasByproducts = !tDisplay.byproducts().isEmpty();
+		assertEquals(MaterialTreeDisplay.LANE_X0 + (tLanes - 1) * MaterialTreeDisplay.LANE_PITCH + MaterialTreeDisplay.BOX_WIDTH / 2 + 12,
+				tScreen.mLayout.width(), "the width is the content formula");
+		int tDeepest = tHasByproducts ? tBands + 1 : tBands;
+		assertEquals(MaterialTreeDisplay.BAND_Y0 + tDeepest * MaterialTreeDisplay.BAND_PITCH + MaterialTreeDisplay.BOX_HEIGHT / 2 + 12,
+				tScreen.mLayout.height(), "the height is the content formula (the hanging band, when present, is the deepest)");
 	}
 
 	// ------------------------------------------------------------------
@@ -165,14 +195,15 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		MaterialTreeDisplay tDisplay = tScreen.mDisplay;
 		MaterialTreeDisplay.Node tNode0 = tDisplay.nodes().get(0);
 		// the fit pose: screen = apply(tree) — the input inverse (unapply) roundtrips it
-		double tNodeX = tScreen.mView.apply(MaterialTreeDisplay.nodeX(tNode0) + 9, MaterialTreeDisplay.nodeY(tNode0) + 9).x();
-		double tNodeY = tScreen.mView.apply(MaterialTreeDisplay.nodeX(tNode0) + 9, MaterialTreeDisplay.nodeY(tNode0) + 9).y();
+		var tCell = tScreen.mLayout.nodeItemCell(tNode0);
+		double tNodeX = tScreen.mView.apply(tCell.x() + 9, tCell.y() + 9).x();
+		double tNodeY = tScreen.mView.apply(tCell.x() + 9, tCell.y() + 9).y();
 		assertFalse(tScreen.itemAt(tNodeX, tNodeY).isEmpty(), "the node's centre hits");
 		assertEquals(tNode0.stack().getItem(), tScreen.itemAt(tNodeX, tNodeY).getItem(), "the exact node stack");
 		// the byproduct band (the same loop family, its own leg)
 		assertFalse(tDisplay.byproducts().isEmpty(), "the iron display has byproducts (the two-face merge)");
-		double tByX = tScreen.mView.apply(MaterialTreeDisplay.byproductX(0) + 9, MaterialTreeDisplay.byproductY() + 9).x();
-		double tByY = tScreen.mView.apply(MaterialTreeDisplay.byproductX(0) + 9, MaterialTreeDisplay.byproductY() + 9).y();
+		double tByX = tScreen.mView.apply(tScreen.mLayout.byproductX(0), tScreen.mLayout.byproductY()).x();
+		double tByY = tScreen.mView.apply(tScreen.mLayout.byproductX(0), tScreen.mLayout.byproductY()).y();
 		assertEquals(tDisplay.byproducts().get(0).stack().getItem(), tScreen.itemAt(tByX, tByY).getItem(),
 				"the first byproduct slot hits");
 		assertTrue(tScreen.itemAt(10, 10).isEmpty(), "the header corner is no slot");
@@ -194,11 +225,13 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		// rebase seam: the author's 600-wide-pane figures converted to main's 500-pane
 		// convention (screenAt/FIT_X moved with task mattree-item-zoom-pose); the scale path
 		// is pane-independent and the anchor pose stays unclamped (x slack [0, 57] holds 28.5).
-		assertEquals(FIT * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.scale(), EPSILON);
-		// the S1 screen-anchor formula: offset = focus - (focus - offset) * (new/old)
-		assertEquals(250.0 - (250.0 - FIT_X) * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.offsetX(), EPSILON,
+		assertEquals(fitOf(tScreen) * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.scale(), EPSILON);
+		// the S1 screen-anchor formula: offset = focus - (focus - offset) * (new/old), from
+		// the LIVE pre-notch offsets (no clamp assumption — the anchored pose stays in range)
+		double tX0 = fitXOf(tScreen), tY0 = (500.0 - tScreen.mLayout.height() * fitOf(tScreen)) / 2.0;
+		assertEquals(250.0 - (250.0 - tX0) * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.offsetX(), EPSILON,
 				"the x anchor holds the tree point under the pointer");
-		assertEquals(210.0 * (1.0 - GT6MaterialTreeNav.WHEEL_STEP), tScreen.mView.offsetY(), EPSILON,
+		assertEquals(210.0 - (210.0 - tY0) * GT6MaterialTreeNav.WHEEL_STEP, tScreen.mView.offsetY(), EPSILON,
 				"the y anchor holds the tree point under the pointer");
 		// the anchor invariant: the tree point under the pointer is the same before and after a
 		// notch (a pane-centre pointer: the 1.25x pose clears the offset clamps — the x slack
@@ -209,22 +242,23 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		MaterialTreeViewport.Point tStillUnder = tAnchored.mView.unapply(250, 250);
 		assertEquals(tUnderPointer.x(), tStillUnder.x(), EPSILON, "the tree point under the pointer survives the notch");
 		assertEquals(tUnderPointer.y(), tStillUnder.y(), EPSILON, "the tree point under the pointer survives the notch");
-		// and back: the inverse notch re-lands on the exact centred fit pose
+		// and back: the inverse notch re-lands on the exact centred fit pose (both axes
+		// symbolic — the limiting axis pins to 0, the other centres in its slack)
 		assertTrue(tScreen.scroll(250, 210, -1));
-		assertEquals(FIT, tScreen.mView.scale(), EPSILON);
-		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
-		assertEquals(0.0, tScreen.mView.offsetY(), EPSILON);
+		assertEquals(fitOf(tScreen), tScreen.mView.scale(), EPSILON);
+		assertEquals(fitXOf(tScreen), tScreen.mView.offsetX(), EPSILON);
+		assertEquals(fitYOf(tScreen), tScreen.mView.offsetY(), EPSILON);
 		// a zero delta is the Nav table's hostile-delta no-op (the pose freezes at the fit)
 		assertTrue(tScreen.scroll(250, 210, 0));
-		assertEquals(FIT, tScreen.mView.scale(), EPSILON);
-		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
-		// the gradation the small step buys: three notches ride the >2x fit onto the 4x
-		// ceiling (2.43 -> 3.03 -> 3.79 -> clamp), the fourth freezes there
+		assertEquals(fitOf(tScreen), tScreen.mView.scale(), EPSILON);
+		assertEquals(fitXOf(tScreen), tScreen.mView.offsetX(), EPSILON);
+		// the gradation the small step buys: graded notches ride the live fit onto the 4x
+		// ceiling (the notch count rides the fit — the >2x assumption died with the
+		// uncapped iron box, whose fit is below 1 on the 500 pane)
 		GT6MaterialTreeScreen tGraded = screenAt(500, 500);
-		tGraded.scroll(250, 250, 1);
-		tGraded.scroll(250, 250, 1);
-		tGraded.scroll(250, 250, 1);
-		assertEquals(MaterialTreeViewport.MAX_SCALE, tGraded.mView.scale(), EPSILON, "three notches reach the ceiling");
+		for (int i = 0; i < 60 && tGraded.mView.scale() < MaterialTreeViewport.MAX_SCALE; i++)
+			tGraded.scroll(250, 250, 1);
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tGraded.mView.scale(), EPSILON, "graded notches reach the ceiling");
 		double tCeilX = tGraded.mView.offsetX(), tCeilY = tGraded.mView.offsetY();
 		tGraded.scroll(250, 250, 1);
 		assertEquals(MaterialTreeViewport.MAX_SCALE, tGraded.mView.scale(), EPSILON, "the fourth notch is the freeze");
@@ -240,8 +274,9 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 	public void dragPansAndTheClickSlopGuardsTheJump() {
 		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
 		scrollOntoTheCeiling(tScreen, "zoom in so the pan has room");
-		double tZoomX = 250.0 - (250.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT);
-		double tZoomY = 250.0 * (1.0 - MaterialTreeViewport.MAX_SCALE / FIT);
+		// the ceiling pose's offsets, captured live (the anchored-zoom algebra that lands
+		// there is wheelZoomSmallSteps' pin; this test's subject is the pan accumulation)
+		double tZoomX = tScreen.mView.offsetX(), tZoomY = tScreen.mView.offsetY();
 		List<ItemStack> tJumped = new ArrayList<>();
 		tScreen.mJump = tJumped::add;
 
@@ -254,9 +289,8 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		assertTrue(tJumped.isEmpty(), "a dragged release is no jump");
 
 		// a press on a node, released in place: the jump fires with the node's stack
-		MaterialTreeViewport.Point tNode = tScreen.mView.apply(
-				MaterialTreeDisplay.nodeX(tScreen.mDisplay.nodes().get(0)) + 9,
-				MaterialTreeDisplay.nodeY(tScreen.mDisplay.nodes().get(0)) + 9);
+		var tCell0 = tScreen.mLayout.nodeItemCell(tScreen.mDisplay.nodes().get(0));
+		MaterialTreeViewport.Point tNode = tScreen.mView.apply(tCell0.x() + 9, tCell0.y() + 9);
 		assertTrue(tScreen.mouseClicked(tNode.x(), tNode.y(), 0));
 		assertTrue(tScreen.mouseReleased(tNode.x(), tNode.y(), 0));
 		assertEquals(1, tJumped.size(), "the clean click jumps");
@@ -277,17 +311,17 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 	public void keyboardPansAndUnmappedKeysFallThrough() {
 		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
 		scrollOntoTheCeiling(tScreen, "zoom in");
-		double tZoomX = 250.0 - (250.0 - FIT_X) * (MaterialTreeViewport.MAX_SCALE / FIT);
+		double tZoomX = 250.0 - (250.0 - fitXOf(tScreen)) * (MaterialTreeViewport.MAX_SCALE / fitOf(tScreen));
 		assertTrue(tScreen.keyPressed(263, 0, 0), "LEFT is consumed");
-		assertEquals(tZoomX + 28.0, tScreen.mView.offsetX(), EPSILON, "PAN_LEFT = +28, the image-viewer semantics");
+		assertEquals(tZoomX + GT6MaterialTreeNav.PAN_STEP, tScreen.mView.offsetX(), EPSILON, "PAN_LEFT = one lane, the image-viewer semantics");
 		assertFalse(tScreen.keyPressed(65, 0, 0), "an unmapped key falls through");
 		// the pan range follows the REAL window (acceptance ②): drive to the corner
 		assertTrue(tScreen.mouseClicked(250, 250, 0), "the press arms the drag");
 		assertTrue(tScreen.mouseDragged(0, 0, 0, -4000, -4000), "a huge drag slams the corner");
-		assertEquals(500.0 - 146.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetX(), EPSILON,
-				"the x pan floor is the real pane 500 - 146*4 (the iron display's content width)");
-		assertEquals(500.0 - 206.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetY(), EPSILON,
-				"the y pan floor is the real pane 500 - 206*4");
+		assertEquals(500.0 - tScreen.mLayout.width() * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetX(), EPSILON,
+				"the x pan floor is the real pane 500 - width*4 (the iron display's content box)");
+		assertEquals(500.0 - tScreen.mLayout.height() * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetY(), EPSILON,
+				"the y pan floor is the real pane 500 - height*4");
 	}
 
 	// ------------------------------------------------------------------
@@ -297,13 +331,15 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void stripButtonsDriveTheNavTable() {
 		GT6MaterialTreeScreen tScreen = screenAt(500, 500);
-		assertTrue(tScreen.mouseClicked(8, 8, 0), "the + cell");
-		assertEquals(MaterialTreeViewport.MAX_SCALE, tScreen.mView.scale(), EPSILON, "one 档位 rides the clamp onto the ceiling");
-		assertTrue(tScreen.mouseClicked(24, 8, 0), "the - cell");
-		assertEquals(FIT, tScreen.mView.scale(), EPSILON, "one 档位 down re-freezes on the fit floor");
+		for (int i = 0; i < 60 && tScreen.mView.scale() < MaterialTreeViewport.MAX_SCALE; i++)
+			assertTrue(tScreen.mouseClicked(8, 8, 0), "the + cell");
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tScreen.mView.scale(), EPSILON, "graded 档位 ride the clamp onto the ceiling");
+		for (int i = 0; i < 60 && tScreen.mView.scale() > tScreen.mView.minScale(); i++)
+			assertTrue(tScreen.mouseClicked(24, 8, 0), "the - cell");
+		assertEquals(fitOf(tScreen), tScreen.mView.scale(), EPSILON, "graded 档位 down re-freeze on the fit floor");
 		assertTrue(tScreen.mouseClicked(40, 8, 0), "the R cell");
-		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON, "reset is the exact centred fit");
-		assertEquals(0.0, tScreen.mView.offsetY(), EPSILON);
+		assertEquals(fitXOf(tScreen), tScreen.mView.offsetX(), EPSILON, "reset is the exact centred fit");
+		assertEquals(fitYOf(tScreen), tScreen.mView.offsetY(), EPSILON);
 		// outside the cells the press starts a drag (and jumping on release stays the slop's business)
 		assertTrue(tScreen.mouseClicked(300, 300, 0));
 		assertTrue(tScreen.mouseReleased(300, 300, 0));
@@ -324,12 +360,12 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		int tJumpsBefore = tJumped.size();
 		assertTrue(tScreen.mouseClicked(550, 250, 0), "the first press arms");
 		assertTrue(tScreen.mouseReleased(550, 250, 0), "the first clean click");
-		assertTrue(tScreen.mView.scale() > FIT, "one clean click is no reset");
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tScreen.mView.scale(), EPSILON, "one clean click is no reset");
 		assertTrue(tScreen.mouseClicked(552, 248, 0), "the second press arms");
 		assertTrue(tScreen.mouseReleased(552, 248, 0), "the second clean click");
-		assertEquals(FIT, tScreen.mView.scale(), EPSILON, "the double-click re-lands the fit pose");
-		assertEquals(FIT_X, tScreen.mView.offsetX(), EPSILON);
-		assertEquals(0.0, tScreen.mView.offsetY(), EPSILON);
+		assertEquals(fitOf(tScreen), tScreen.mView.scale(), EPSILON, "the double-click re-lands the fit pose");
+		assertEquals(fitXOf(tScreen), tScreen.mView.offsetX(), EPSILON);
+		assertEquals(fitYOf(tScreen), tScreen.mView.offsetY(), EPSILON);
 		assertEquals(tJumpsBefore, tJumped.size(), "no jump rides the double-click's release");
 
 		// the spatial bound: a second click 5 px away is just another single click
@@ -364,11 +400,13 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		MaterialTreeViewport.Point tAfter = tScreen.mView.unapply(400, 300);
 		assertEquals(tBefore.x(), tAfter.x(), EPSILON, "the new pane centre shows the old pane centre's tree point");
 		assertEquals(tBefore.y(), tAfter.y(), EPSILON, "the new pane centre shows the old pane centre's tree point");
-		assertEquals(108.0, tScreen.mView.offsetX(), EPSILON, "400 - 73*4 (the iron content half-width 73)");
-		assertEquals(-112.0, tScreen.mView.offsetY(), EPSILON, "300 - 103*4");
+		assertEquals(400.0 - tScreen.mLayout.width() / 2.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetX(), EPSILON,
+				"400 - half-width*4 (the iron content half box)");
+		assertEquals(300.0 - tScreen.mLayout.height() / 2.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetY(), EPSILON,
+				"300 - half-height*4");
 		// a degenerate pane (a minimized window's 0) keeps the last pose untouched
 		tScreen.navInit(0, 0);
-		assertEquals(108.0, tScreen.mView.offsetX(), EPSILON);
+		assertEquals(400.0 - tScreen.mLayout.width() / 2.0 * MaterialTreeViewport.MAX_SCALE, tScreen.mView.offsetX(), EPSILON);
 		// while a FRESH screen still opens on the centred fit of its real pane
 		GT6MaterialTreeScreen tFresh = screenAt(800, 600);
 		MaterialTreeViewport.Point tCentre = tFresh.mView.apply(tFresh.mLayout.width() / 2.0, tFresh.mLayout.height() / 2.0);
@@ -431,8 +469,8 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 		assertNotNull(tScreen.mCoverage, "the coverage read rides the constructor beside the plan");
 		assertEquals(MaterialTreeCoverage.State.COVERED, tScreen.mCoverage.node(OP.oreRaw),
 				"the entry node's state is queryable off the screen");
-		assertNotNull(tScreen.mCoverage.band(MaterialTreeDisplay.COL_ORE), "the ore band aggregate is queryable");
-		assertEquals(MaterialTreeCoverage.State.COVERED, tScreen.mCoverage.band(MaterialTreeDisplay.COL_ORE).state());
+		assertNotNull(tScreen.mCoverage.band(0), "the ore band aggregate is queryable");
+		assertEquals(MaterialTreeCoverage.State.COVERED, tScreen.mCoverage.band(0).state());
 	}
 
 	@Test
@@ -459,10 +497,11 @@ public class GT6MaterialTreeScreenTest extends GTRecipesOfflineTestBase {
 	 * (MAX/FIT)}, every intermediate step clear of the offset clamps).
 	 */
 	private static void scrollOntoTheCeiling(GT6MaterialTreeScreen aScreen, String aWhy) {
-		assertTrue(aScreen.scroll(250, 250, 1), aWhy);
-		assertTrue(aScreen.scroll(250, 250, 1), aWhy);
-		assertTrue(aScreen.scroll(250, 250, 1), aWhy);
-		assertEquals(MaterialTreeViewport.MAX_SCALE, aScreen.mView.scale(), EPSILON, aWhy + " (three notches reach the ceiling)");
+		// the notches-to-ceiling count rides the LIVE fit (the EMI rework's uncapped iron box
+		// fits BELOW 1 on the 500 pane — the old three-notch constant assumed a >2x fit)
+		for (int i = 0; i < 60 && aScreen.mView.scale() < MaterialTreeViewport.MAX_SCALE; i++)
+			assertTrue(aScreen.scroll(250, 250, 1), aWhy);
+		assertEquals(MaterialTreeViewport.MAX_SCALE, aScreen.mView.scale(), EPSILON, aWhy + " (graded notches reach the ceiling)");
 	}
 
 	private static final Map<PrefixMaterial, Item> PREFIX_ITEMS = new HashMap<>();

@@ -39,8 +39,9 @@ import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMaterialItems.PrefixMaterial;
 
 /**
- * The material-tree display census (task debt-material-tree-b acceptance): the display
- * assembly over the LIVE ore-chain pour, with the same prefix-identity probe fixture as
+ * The material-tree display census (task debt-material-tree-b acceptance, reworked onto the
+ * EMI recipe-tree face by task mattree-emi-tree-rework): the display assembly over the LIVE
+ * ore-chain pour, with the same prefix-identity probe fixture as
  * {@link MaterialTreeBuilderTest} (one MaterialPrefixItem per referenced pair, lazily
  * registered into the offline-opened vanilla registry). The pour arms exactly the maps the
  * ore chain touches — the three ore-chain loaders PLUS the LANDED :351 DUST_ORE sifting
@@ -49,26 +50,23 @@ import gregtech6.registry.GTMaterialItems.PrefixMaterial;
  * pins — the OreByproductInfoTest precedent: bare Sifter, no Canner arm).
  *
  * <ul>
- * <li><b>Layout table census (acceptance ①)</b>: every pinned prefix lands in its
- *     contracted column (ore/blockRaw → 0, crushed family → 1, purified/centrifuged → 2,
- *     dust family → 3), the {@code ore*} wildcard holds, and non-chain prefixes are
- *     excluded (-1 — the table is the ore-chain filter).</li>
- * <li><b>Iron display (acceptance ①, the Fe 离轴 reality)</b>: the six nodes the pour
- *     actually reaches (oreRaw/crushed/crushedTiny/dust/dustTiny/dustDiv72) — crushedPurified
- *     keeps a table column but NO node because Fe is OFF the sifting walk's material axis
- *     (the landed producers only serve the 53 on-axis materials), the anvil
- *     + shredder edge labels, and the two-face byproduct merge: the DERIVED crusher
- *     redirect (Fe → crushed Fe2O3, MT.java:2885) first, then the DECLARED face of the
- *     crushing target Fe2O3 (MT.java:3820: Ilmenite, GraniticMineralSand, MnO2, ClayRed).</li>
+ * <li><b>EMI spacing census (SPEC1, the EMI reference table)</b>: the layout constants are
+ *     the EMI recipe tree's (BoMScreen.java:61-64/:660-661, tmp/harvest/emi-1.20.1-src;
+ *     1.21.1 BoMScreen.java:63-65 byte-identical) with the two ADR deviations documented on
+ *     {@code MaterialTreeDisplay} (BAND_PITCH 28 vs 20, uniform lanes vs extent spread).</li>
+ * <li><b>Iron display, the coverage pin (SPEC2: 矿石链至最深 + 坩埚链在 + 手工/机器族在)</b>:
+ *     the ore chain runs full depth (ore family → crushed → dust), the crucible SELF arm
+ *     delivers the INGOT (the dynamic map's edge, zero stored rows), the casting family
+ *     delivers plate/gear (the Mold edges), and the byproduct merge keeps its two faces
+ *     (the DERIVED crusher redirect first, then the DECLARED face of Fe2O3 — uncapped).</li>
  * <li><b>Copper display (the Cu 在轴 landed shape)</b>: the four DUST_ORE sifting inputs
- *     (oreGravel/Sand/RedSand/Mud) join the ore column, crushedPurified OCCUPIES its
- *     COL_PURIFIED column via the {@code gt.recipe.sifter} edge, and the byproduct column is
- *     two-face — the derived sifting tinies (Cobaltite/Au/Ni) first, then the declared
- *     remainder (Malachite, As; MT.java:3827 order).</li>
+ *     join the ore band, crushedPurified OCCUPIES band 1 via the {@code gt.recipe.sifter}
+ *     edge (BFS: oreGravel → crushedPurified is a one-hop path), and the crucible/casting
+ *     arms reach Cu's ingot and shapes the same way.</li>
  * <li><b>Both-viewer faces (acceptance ①双腿注册)</b>: the JEI category and the EMI
  *     category/recipe construct offline with the ONE shared id {@code gt6:material_tree}
  *     (the JEMI balance), and the EMI recipe's input/output split mirrors the JEI slot
- *     split (ore inputs, downstream + byproduct outputs).</li>
+ *     split (band-0 inputs, downstream + byproduct outputs).</li>
  * </ul>
  */
 class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
@@ -173,25 +171,22 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 	// ------------------------------------------------------------------
 
 	@Test
-	void layoutTableCensus() {
-		assertEquals(MaterialTreeDisplay.COL_ORE, MaterialTreeDisplay.columnOf(OP.oreRaw));
-		assertEquals(MaterialTreeDisplay.COL_ORE, MaterialTreeDisplay.columnOf(OP.ore)); // the wildcard face
-		assertEquals(MaterialTreeDisplay.COL_ORE, MaterialTreeDisplay.columnOf(OP.blockRaw));
-		assertEquals(MaterialTreeDisplay.COL_CRUSHED, MaterialTreeDisplay.columnOf(OP.crushed));
-		assertEquals(MaterialTreeDisplay.COL_CRUSHED, MaterialTreeDisplay.columnOf(OP.crushedTiny));
-		assertEquals(MaterialTreeDisplay.COL_PURIFIED, MaterialTreeDisplay.columnOf(OP.crushedPurified));
-		assertEquals(MaterialTreeDisplay.COL_PURIFIED, MaterialTreeDisplay.columnOf(OP.crushedCentrifuged));
-		assertEquals(MaterialTreeDisplay.COL_DUST, MaterialTreeDisplay.columnOf(OP.dust));
-		assertEquals(MaterialTreeDisplay.COL_DUST, MaterialTreeDisplay.columnOf(OP.dustTiny));
-		assertEquals(MaterialTreeDisplay.COL_DUST, MaterialTreeDisplay.columnOf(OP.dustDiv72));
-		// the table is the ore-chain filter: the item-tree tail never leaks into the diagram
-		assertEquals(-1, MaterialTreeDisplay.columnOf(OP.ingot));
-		assertEquals(-1, MaterialTreeDisplay.columnOf(OP.plate));
-		assertEquals(-1, MaterialTreeDisplay.columnOf(OP.gem));
-		// geometry sanity (the vertical rotation): the deepest band's slot row and the widest
-		// lane's slot column both fit the fixed category box
-		assertTrue(MaterialTreeDisplay.byproductX(MaterialTreeDisplay.MAX_ROWS - 1) + 18 <= MaterialTreeDisplay.WIDTH);
-		assertTrue(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT) + 18 <= MaterialTreeDisplay.HEIGHT);
+	void emiSpacingCensus() {
+		// SPEC1 — the EMI recipe-tree spacing table (tmp/harvest/emi-1.20.1-src
+		// BoMScreen.java:61-64 NODE_WIDTH 30 / NODE_HORIZONTAL_SPACING 8 /
+		// NODE_VERTICAL_SPACING 20; the recipe-node box width 42 at :660-661; the 1.21.1
+		// generation byte-identical at BoMScreen.java:63-65). The two ADR deviations
+		// (BAND_PITCH 28 vs 20 — outline-only boxes cannot paint the rail through the box —
+		// and uniform 50px lanes vs extent spread) are documented on MaterialTreeDisplay.
+		assertEquals(42, MaterialTreeDisplay.BOX_WIDTH, "EMI's recipe-node box (BoMScreen.java:660-661)");
+		assertEquals(20, MaterialTreeDisplay.BOX_HEIGHT, "the symmetric box height (EMI :697-717 is y-11..y+10)");
+		assertEquals(50, MaterialTreeDisplay.LANE_PITCH, "box 42 + NODE_HORIZONTAL_SPACING 8 (BoMScreen.java:62)");
+		assertEquals(28, MaterialTreeDisplay.BAND_PITCH, "the ADR band pitch (EMI NODE_VERTICAL_SPACING 20, BoMScreen.java:63)");
+		assertEquals(16, MaterialTreeDisplay.BAND_Y0, "band 0's centre row");
+		assertEquals(4, MaterialTreeDisplay.HEADER_Y, "the header above band 0");
+		// the nominal page frame derives from the same constants (the JEI per-category seat)
+		assertEquals(MaterialTreeDisplay.LANE_X0 + 7 * MaterialTreeDisplay.LANE_PITCH + MaterialTreeDisplay.BOX_WIDTH / 2 + 12, MaterialTreeDisplay.WIDTH);
+		assertEquals(MaterialTreeDisplay.BAND_Y0 + 6 * MaterialTreeDisplay.BAND_PITCH + MaterialTreeDisplay.BOX_HEIGHT / 2 + 12, MaterialTreeDisplay.HEIGHT);
 	}
 
 	// ------------------------------------------------------------------
@@ -199,52 +194,52 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 	// ------------------------------------------------------------------
 
 	@Test
-	void ironDisplayTwoFaces() {
+	void ironDisplayFullCoverageDepth() {
 		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
 		MaterialTreeDisplay tDisplay = MaterialTreeDisplay.of(tTree, MT.Fe, MaterialTreeDisplayTest::prefixItem);
 		assertNotNull(tDisplay, "Iron's ore walk must yield a display");
 
-		// the six nodes Fe actually reaches — unchanged by the LANDED producer rows (task
-		// debt-ore-purified-edge): Fe is OFF the sifting walk's material axis (the twelve MT
-		// setCrushing redirecters are all off-axis, MaterialTreeBuilderTest's ironChainSpineCensus
-		// pins the same negative), so crushedPurified keeps its table column but NO Fe node —
-		// only the terminal ShCL leg exists for Fe
+		// SPEC2 coverage pin (the 「矿物处理完后没了,坩埚没了,各种加工流程也没了」 root): the tree
+		// runs the FULL walk now — the ore spine, the crucible ingot (the dynamic zero-row
+		// map's synthesized edge) and the casting/machine shapes. No whitelist, no cap.
 		Map<OreDictPrefix, Node> tNodes = new HashMap<>();
 		for (Node tNode : tDisplay.nodes()) tNodes.put(tNode.prefix(), tNode);
-		assertEquals(6, tDisplay.nodes().size(), "node census: " + tDisplay.nodes());
 		assertTrue(tNodes.containsKey(OP.oreRaw) && tNodes.containsKey(OP.crushed) && tNodes.containsKey(OP.crushedTiny)
 				&& tNodes.containsKey(OP.dust) && tNodes.containsKey(OP.dustTiny) && tNodes.containsKey(OP.dustDiv72),
-				"node set: " + tNodes.keySet());
-		assertFalse(tNodes.containsKey(OP.crushedPurified),
-				"crushedPurified has a table column but no node for the OFF-axis Fe");
-		assertEquals(MaterialTreeDisplay.COL_ORE, tNodes.get(OP.oreRaw).column());
-		assertEquals(MaterialTreeDisplay.COL_CRUSHED, tNodes.get(OP.crushed).column());
-		assertEquals(MaterialTreeDisplay.COL_CRUSHED, tNodes.get(OP.crushedTiny).column());
-		assertEquals(MaterialTreeDisplay.COL_DUST, tNodes.get(OP.dust).column());
-		assertEquals(MaterialTreeDisplay.COL_DUST, tNodes.get(OP.dustTiny).column());
-		assertEquals(MaterialTreeDisplay.COL_DUST, tNodes.get(OP.dustDiv72).column());
+				"the ore chain at full depth: " + tNodes.keySet());
+		assertTrue(tNodes.containsKey(OP.ingot), "THE CRUCIBLE PIN: the dynamic smelting arm delivers the ingot");
+		assertEquals(0, tNodes.get(OP.oreRaw).band(), "the ore roots sit on band 0 (the EMI depth axis)");
+		assertEquals(1, tNodes.get(OP.crushed).band(), "one hop: crushed");
+		assertEquals(2, tNodes.get(OP.dust).band(), "two hops: dust");
+		assertEquals(2, tNodes.get(OP.ingot).band(), "the ingot shares band 2 (its shortest hop is the direct crushed -> ingot smelt)");
+		assertTrue(tNodes.containsKey(OP.plate) && tNodes.containsKey(OP.gearGt), "THE CASTING/MACHINE PIN: the mold family's shapes are on the tree");
+		assertEquals(3, tNodes.get(OP.plate).band(), "the mold shapes ride one band below the dust they pour from");
 
-		// the edge labels: the anvil selfcrush hop and the shared crushed->dust leg (anvil mortar
-		// :167 AND shredder :138 both pour same-material rows)
+		// the crucible edge label is the live map; the mold edge label is the declared synthetic
+		Edge tIngotEdge = edgeOf(tDisplay, OP.crushed, OP.ingot);
+		assertNotNull(tIngotEdge, "crushed -> ingot edge");
+		assertTrue(tIngotEdge.mapNames().contains(MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP), "the crucible label: " + tIngotEdge.mapNames());
+		Edge tPlateEdge = edgeOf(tDisplay, OP.dust, OP.plate);
+		assertNotNull(tPlateEdge, "dust -> plate edge");
+		assertTrue(tPlateEdge.mapNames().contains("Mold"), "the casting label: " + tPlateEdge.mapNames());
+
+		// the ore-spine edge labels survive the rework: the anvil selfcrush hop and the shared
+		// crushed->dust leg (anvil mortar :167 AND shredder :138 both pour same-material rows)
 		Edge tOreEdge = edgeOf(tDisplay, OP.oreRaw, OP.crushed);
 		assertNotNull(tOreEdge, "oreRaw -> crushed edge");
 		assertTrue(tOreEdge.mapNames().contains("gt.recipe.anvil"), "anvil label: " + tOreEdge.mapNames());
-		assertNotNull(edgeOf(tDisplay, OP.oreRaw, OP.crushedTiny), "the anvil companion leg");
 		Edge tDustEdge = edgeOf(tDisplay, OP.crushed, OP.dust);
 		assertNotNull(tDustEdge, "crushed -> dust edge");
 		assertTrue(tDustEdge.mapNames().contains("gt.recipe.shredder") && tDustEdge.mapNames().contains("gt.recipe.anvil"),
 				"both producers label the dust leg: " + tDustEdge.mapNames());
-		assertTrue(edgeOf(tDisplay, OP.crushedTiny, OP.dustDiv72) != null || edgeOf(tDisplay, OP.crushed, OP.dustDiv72) != null,
-				"a dustDiv72 chance edge exists");
 
-		// the byproduct two-face merge: derived (the crusher redirect Fe -> crushed Fe2O3,
-		// MT.java:2885 setCrushing) first, then the DECLARED face of the crushing target
-		// Fe2O3 (MT.java:3820) — capped at MAX_ROWS, which the 1+4 exactly fills
+		// the byproduct two-face merge, UNCAPPED now (derived first, then declared)
 		List<Byproduct> tByproducts = tDisplay.byproducts();
 		assertEquals(5, tByproducts.size(), "byproduct census: " + tByproducts);
 		Byproduct tDerived = tByproducts.get(0);
 		assertTrue(tDerived.derived(), "the first byproduct is the derived crusher redirect");
 		assertEquals(prefixItem(OP.crushed, MT.Fe2O3), tDerived.stack().getItem(), "crushed Hematite stack");
+		assertEquals(0, tDerived.step(), "the redirect hangs on band 0 (its ore input)");
 		OreDictMaterial[] tDeclared = {MT.OREMATS.Ilmenite, MT.OREMATS.GraniticMineralSand, MT.MnO2, MT.ClayRed};
 		for (int i = 0; i < tDeclared.length; i++) {
 			Byproduct tByproduct = tByproducts.get(1 + i);
@@ -255,31 +250,27 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 		}
 	}
 
-	// ------------------------------------------------------------------
-	// acceptance ①: the Copper display — Cu 在轴, the LANDED sifter shape
-	// ------------------------------------------------------------------
-
 	@Test
 	void copperDisplayLandedSifter() {
 		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
 		MaterialTreeDisplay tDisplay = MaterialTreeDisplay.of(tTree, MT.Cu, MaterialTreeDisplayTest::prefixItem);
 		assertNotNull(tDisplay, "Copper's ore walk must yield a display");
 
-		// the LANDED node census (debt-ore-purified-edge): the four DUST_ORE sifting inputs join
-		// oreRaw in the wildcard ore* column (exactly the MAX_ROWS cap) and crushedPurified now
-		// OCCUPIES its COL_PURIFIED column — the old "column with no node" gap is closed
+		// the LANDED walk face (debt-ore-purified-edge): the four DUST_ORE sifting inputs join
+		// oreRaw on band 0, and crushedPurified OCCUPIES band 1 — BFS puts it there directly
+		// (oreGravel -> crushedPurified is a one-hop row), while the two-hop bath route would
+		// land the same node deeper; shortest-path layering keeps one node
 		Map<OreDictPrefix, Node> tNodes = new HashMap<>();
 		for (Node tNode : tDisplay.nodes()) tNodes.put(tNode.prefix(), tNode);
-		assertEquals(12, tDisplay.nodes().size(), "node census: " + tDisplay.nodes());
 		assertTrue(tNodes.containsKey(OP.oreRaw) && tNodes.containsKey(OP.oreGravel) && tNodes.containsKey(OP.oreSand)
 				&& tNodes.containsKey(OP.oreRedSand) && tNodes.containsKey(OP.oreMud),
-				"the ore column holds oreRaw + the four DUST_ORE sifting inputs: " + tNodes.keySet());
-		assertEquals(MaterialTreeDisplay.COL_ORE, tNodes.get(OP.oreRaw).column());
-		assertEquals(MaterialTreeDisplay.COL_CRUSHED, tNodes.get(OP.crushed).column());
-		assertEquals(MaterialTreeDisplay.COL_CRUSHED, tNodes.get(OP.crushedTiny).column());
-		assertEquals(MaterialTreeDisplay.COL_PURIFIED, tNodes.get(OP.crushedPurified).column(),
-				"crushedPurified occupies the purified column via the landed :351 rows");
-		assertEquals(MaterialTreeDisplay.COL_DUST, tNodes.get(OP.dust).column());
+				"band 0 holds oreRaw + the four DUST_ORE sifting inputs: " + tNodes.keySet());
+		assertEquals(0, tNodes.get(OP.oreRaw).band());
+		assertEquals(1, tNodes.get(OP.crushed).band());
+		assertEquals(1, tNodes.get(OP.crushedPurified).band(), "crushedPurified rides band 1 via the landed :351 rows");
+		assertEquals(2, tNodes.get(OP.dust).band());
+		assertTrue(tNodes.containsKey(OP.ingot), "the crucible arm reaches Cu too");
+		assertTrue(tNodes.containsKey(OP.plate), "the casting arm reaches Cu too");
 
 		// the on-axis crusher face (unchanged): Copper's crusher hop is a SAME-material chain
 		// edge (OreChain :153), so the crusher label rides the CHAIN edge, not a byproduct edge
@@ -294,10 +285,9 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 		assertNotNull(tPurifiedEdge, "the landed oreGravel -> crushedPurified edge");
 		assertTrue(tPurifiedEdge.mapNames().contains("gt.recipe.sifter"), "sifter label: " + tPurifiedEdge.mapNames());
 
-		// the byproduct column is now TWO-face: the sifting rows' tiny outputs are the DERIVED
-		// face (Cu -> Cobaltite/Au/Ni dustTiny, the :331-333 first-three tiers of MT.java:3827),
-		// then the declared face continues with what the derived rows do not already show —
-		// the 4th+ declared byproducts (Malachite, As) fill up to the MAX_ROWS cap
+		// the byproduct band is TWO-face, uncapped: the derived sifting tinies first
+		// (Cu -> Cobaltite/Au/Ni dustTiny, the :331-333 first-three tiers of MT.java:3827),
+		// then the declared remainder (Malachite, As; MT.java:3827 order)
 		List<Byproduct> tByproducts = tDisplay.byproducts();
 		assertEquals(5, tByproducts.size(), "byproduct census: " + tByproducts);
 		OreDictMaterial[] tDerived = {MT.OREMATS.Cobaltite, MT.Au, MT.Ni};
@@ -316,10 +306,6 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 					"declared byproduct " + tDeclaredTail[i].mNameInternal);
 		}
 	}
-
-	// ------------------------------------------------------------------
-	// acceptance ①: both-viewer registration faces, offline-constructed
-	// ------------------------------------------------------------------
 
 	@Test
 	void bothViewerFacesConstructOffline() {
@@ -340,12 +326,12 @@ class MaterialTreeDisplayTest extends GTRecipesOfflineTestBase {
 		GT6MaterialTreeEmiRecipe tRecipe = new GT6MaterialTreeEmiRecipe(tFe);
 		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", MaterialTreeDisplay.CATEGORY_UID_PATH + "/iron"), tRecipe.getId());
 		assertEquals(GT6MaterialTreeEmiCategory.INSTANCE, tRecipe.getCategory());
-		assertFalse(tRecipe.getInputs().isEmpty(), "the ore column rides inputs (U reachability)");
+		assertFalse(tRecipe.getInputs().isEmpty(), "the band-0 ore roots ride inputs (U reachability)");
 		assertTrue(tRecipe.getInputs().stream().anyMatch(tIn -> tIn.getEmiStacks().get(0).getItemStack().getItem() == prefixItem(OP.oreRaw, MT.Fe)),
 				"the raw ore item is an input");
 		assertTrue(tRecipe.getOutputs().stream().anyMatch(tOut -> tOut.getItemStack().getItem() == prefixItem(OP.crushed, MT.Fe)),
 				"the crushed node rides outputs (R reachability)");
-		assertTrue(tRecipe.getOutputs().size() >= tFe.nodes().size() - 1 + tFe.byproducts().size(),
+		assertTrue(tRecipe.getOutputs().size() >= tFe.nodes().size() - tRecipe.getInputs().size() + tFe.byproducts().size(),
 				"downstream nodes + byproducts are outputs");
 	}
 

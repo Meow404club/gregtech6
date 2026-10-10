@@ -71,8 +71,8 @@ public final class GT6MaterialTreeNav {
 	public static final long DOUBLE_CLICK_MS = 250;
 	/** The double-click radius: the second click lands within this many px of the first on both axes (vanilla bounds the idiom by entry identity; a bare canvas needs the spatial bound). */
 	public static final double DOUBLE_CLICK_RADIUS = 4.0;
-	/** One arrow-key pan = one lane pitch of the shared layout (MaterialTreeLayout.LANE_PITCH). */
-	public static final double PAN_STEP = 28.0;
+	/** One arrow-key pan = one lane pitch of the shared layout (the EMI rework's lane pitch). */
+	public static final double PAN_STEP = gregtech6.recipes.tree.MaterialTreeDisplay.LANE_PITCH;
 	// (the EMI leg's own WHEEL_STEP seat folded into the declaration above — the rebase
 	// union of task mattree-jei-panzoom and task mattree-emi-panzoom, same name/value)
 

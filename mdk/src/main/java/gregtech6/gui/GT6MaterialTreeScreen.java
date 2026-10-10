@@ -36,10 +36,7 @@ import gregtech6.jei.GT6JeiPlugin;
 import gregtech6.recipes.tree.MaterialTreeCoverage;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
-import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
-import gregtech6.recipes.tree.MaterialTreeDisplay.Overflow;
 import gregtech6.recipes.tree.MaterialTreeLayout;
-import gregtech6.recipes.tree.MaterialTreeLayout.EdgeLayout;
 import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 
@@ -290,12 +287,12 @@ public class GT6MaterialTreeScreen extends Screen {
 	ItemStack itemAt(double aMouseX, double aMouseY) {
 		MaterialTreeViewport.Point tTree = mView.unapply(aMouseX, aMouseY);
 		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes()) {
-			double tX = mLayout.nodeX(tNode), tY = mLayout.nodeY(tNode);
-			if (tTree.x() >= tX && tTree.x() < tX + MaterialTreeLayout.SLOT
-					&& tTree.y() >= tY && tTree.y() < tY + MaterialTreeLayout.SLOT) return tNode.stack();
+			Rect tCell = mLayout.nodeItemCell(tNode);
+			if (tTree.x() >= tCell.x() && tTree.x() < tCell.x() + MaterialTreeLayout.SLOT
+					&& tTree.y() >= tCell.y() && tTree.y() < tCell.y() + MaterialTreeLayout.SLOT) return tNode.stack();
 		}
 		for (int i = 0; i < mDisplay.byproducts().size(); i++) {
-			double tX = mLayout.byproductX(i), tY = mLayout.byproductY();
+			double tX = mLayout.byproductX(i) - MaterialTreeLayout.SLOT / 2, tY = mLayout.byproductY() - MaterialTreeLayout.SLOT / 2;
 			if (tTree.x() >= tX && tTree.x() < tX + MaterialTreeLayout.SLOT
 					&& tTree.y() >= tY && tTree.y() < tY + MaterialTreeLayout.SLOT) return mDisplay.byproducts().get(i).stack();
 		}
@@ -337,42 +334,47 @@ public class GT6MaterialTreeScreen extends Screen {
 		*///?}
 		if (mView == null) return;
 		Font tFont = Minecraft.getInstance().font;
-		List<Edge> tEdges = mDisplay.edges();
-		List<EdgeLayout> tLayouts = mLayout.edges();
 		// the tree layer renders inside the pane-sized scissor (the pane is the visible
 		// region — the L2 contract; the strip and the tooltip stay outside it)
 		aGui.enableScissor(0, 0, this.width, this.height);
-		// the wire layer leads (under the slots — the viewers' z-order contract)
-		for (EdgeLayout tLayout : tLayouts) {
+		// the wire layer leads (under the slots — the viewers' z-order contract); the EMI
+		// recipe-tree ink: white two-segment connectors + the box outlines, no arrowheads
+		for (MaterialTreeLayout.EdgeLayout tLayout : mLayout.edges())
 			for (Rect tRect : tLayout.wire()) fillTransformed(aGui, tRect, MaterialTreeLayout.WIRE_INK);
-			for (Rect tRect : tLayout.arrow()) fillTransformed(aGui, tRect, MaterialTreeLayout.ARROW_INK);
-		}
-		// the labels (the EMI twin's render-time-transform form — the same label set)
-		drawLabel(aGui, tFont, MaterialTreeDisplay.materialName(mDisplay.material), 4, 4, 0xFF000000);
-		if (mLayout.byproductBand()) // the hanging band's header — only when the band exists (the content-driven canvas has no room for a floating label)
-			drawLabel(aGui, tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
-					mLayout.overflowX(), mLayout.byproductHeaderY(), 0xFF000000);
-		for (int i = 0; i < tEdges.size(); i++) {
-			EdgeLayout tLayout = tLayouts.get(i);
-			if (tLayout.machine() != null) continue; // the via-label lives on the machine tooltip
-			drawLabel(aGui, tFont, tEdges.get(i).viaLabel(), tLayout.labelX(), tLayout.labelY(), 0xFF555555);
-		}
-		for (Overflow tOverflow : mDisplay.overflow())
-			drawLabel(aGui, tFont, "+" + tOverflow.hidden(),
-					mLayout.overflowX(), mLayout.overflowY(tOverflow.column()), 0xFF000000);
-		// the slots: nodes and byproducts in cells, machine icons bare (the drawBack(false) face)
 		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes()) {
-			drawSlot(aGui, tNode.stack(), mLayout.nodeX(tNode), mLayout.nodeY(tNode));
-			drawBadge(aGui, mCoverage.node(tNode.prefix()), mLayout.nodeX(tNode), mLayout.nodeY(tNode));
+			Rect tBox = mLayout.nodeBox(tNode);
+			if (tBox == null) continue;
+			fillTransformed(aGui, new Rect(tBox.x(), tBox.y(), tBox.w(), 1), MaterialTreeLayout.WIRE_INK);
+			fillTransformed(aGui, new Rect(tBox.x(), tBox.y() + tBox.h() - 1, tBox.w(), 1), MaterialTreeLayout.WIRE_INK);
+			fillTransformed(aGui, new Rect(tBox.x(), tBox.y(), 1, tBox.h()), MaterialTreeLayout.WIRE_INK);
+			fillTransformed(aGui, new Rect(tBox.x() + tBox.w() - 1, tBox.y(), 1, tBox.h()), MaterialTreeLayout.WIRE_INK);
 		}
-		for (int i = 0; i < tEdges.size(); i++) {
-			EdgeLayout tLayout = tLayouts.get(i);
-			if (tLayout.machine() != null)
-				drawItem(aGui, tEdges.get(i).machine(), tLayout.machine().x() - 1, tLayout.machine().y() - 1);
+		// the labels (the EMI twin's render-time-transform form — header + the hanging band's)
+		drawLabel(aGui, tFont, MaterialTreeDisplay.materialName(mDisplay.material), 4, MaterialTreeDisplay.HEADER_Y, 0xFF000000);
+		if (mLayout.byproductBand()) // the hanging band's header — only when the band exists
+			drawLabel(aGui, tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
+					mLayout.byproductX(0), mLayout.byproductHeaderY(), 0xFF000000);
+		// the slots: the EMI node form — the machine icon in its box cell (bare), the item
+		// icon in its cell (the well face), the coverage badge on the item cell
+		for (MaterialTreeDisplay.Node tNode : mDisplay.nodes()) {
+			Rect tMachineCell = mLayout.nodeMachineCell(tNode);
+			if (tMachineCell != null) {
+				for (MaterialTreeDisplay.Edge tEdge : mDisplay.edges())
+					if (tEdge.to() == tNode.prefix() && !tEdge.machine().isEmpty()) {
+						drawItem(aGui, tEdge.machine(), tMachineCell.x(), tMachineCell.y());
+						break;
+					}
+			}
+			Rect tCell = mLayout.nodeItemCell(tNode);
+			drawSlot(aGui, tNode.stack(), tCell.x(), tCell.y());
+			drawBadge(aGui, mCoverage.node(tNode.prefix()), tCell.x(), tCell.y());
 		}
 		int i = 0;
-		for (Byproduct tByproduct : mDisplay.byproducts())
-			drawSlot(aGui, tByproduct.stack(), mLayout.byproductX(i++), mLayout.byproductY());
+		for (Byproduct tByproduct : mDisplay.byproducts()) {
+			drawSlot(aGui, tByproduct.stack(),
+					mLayout.byproductX(i) - MaterialTreeLayout.SLOT / 2, mLayout.byproductY() - MaterialTreeLayout.SLOT / 2);
+			i++;
+		}
 		aGui.disableScissor();
 		drawStrip(aGui, tFont, aMouseX, aMouseY);
 		// the hovered slot's own tooltip (the native face)

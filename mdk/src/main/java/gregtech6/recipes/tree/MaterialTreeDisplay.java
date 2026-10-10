@@ -50,25 +50,37 @@ import gregtech6.registry.GTMaterialItems;
  * both render FROM this model, so the two viewers draw the same geometry from the same
  * functions (the batch-1 双 viewer 共享 clause).
  *
+ * <p><b>The EMI recipe-tree rework</b> (task mattree-emi-tree-rework, the user ruling
+ * 「不是让排版参考EMI的配方树吗」+「就矿物处理完后没了,坩埚没了」): the assembly walk is the EMI
+ * recipe-tree FACE now —
+ * <ul>
+ * <li><b>depth bands, not a prefix whitelist</b>: the old closed {@code COLUMN_TABLE}
+ *     (11 prefixes + the ore* wildcard — the 「矿物处理完后没了」 truncation root, the r11-gaps
+ *     census named it) is retired. The walk is the builder's BFS
+ *     ({@link MaterialTreeBuilder#depthsFromOre}) laid on DEPTH BANDS exactly like EMI's
+ *     tree recursion lays children one {@code NODE_VERTICAL_SPACING} row below their parent
+ *     (BoMScreen.java:334/:337 {@code depth * NODE_VERTICAL_SPACING}): every prefix the
+ *     chain indexes reach is displayed — ore chain full depth, the crucible ingot (the
+ *     dynamic arm), the casting shapes, the machine and hand-crafting tails. Row order
+ *     within a band = BFS encounter order (deterministic, the insertion-ordered walk).</li>
+ * <li><b>forward edges only</b>: a chain hop is displayed when its target's band is
+ *     {@code >=} its source's (BFS shortest-path layering; alias cycles like plate↔ingot
+ *     render once along their shortest hop, the back-edge half drops — EMI never has a
+ *     back edge: its tree is a recursion, BoMScreen.java:311-338).</li>
+ * <li><b>no caps</b>: the old {@code MAX_ROWS=7} per-band cap and its "+N" overflow
+ *     markers are retired with the whitelist (the caps were the 202px-canvas budget's
+ *     device; EMI spreads siblings right without a cap — BoMScreen.java:841-857
+ *     {@code addToRight} — and the pan/zoom viewport carries the canvas).</li>
+ * </ul>
+ *
  * <p><b>Two faces, one diagram</b> (the GTCEu ore-processing-diagram precedent, its
  * GTOreByProduct.java:66-361 one-widget-two-sources shape): the CHAIN spine comes from
- * {@link MaterialTreeBuilder#chainEdges} (what the live RecipeMap rows actually do), the
- * byproduct side column merges the builder's cross-material edges (the derived face) with
- * the DECLARED face — {@code OreDictMaterial.mByProducts} keyed on the crushing target
+ * {@link MaterialTreeBuilder#chainEdges} plus the dynamic arms the builder synthesizes
+ * (crucible smelting, casting), the byproduct band merges the builder's cross-material
+ * edges (the derived face — now including the crucible cross arm) with the DECLARED face —
+ * {@code OreDictMaterial.mByProducts} keyed on the crushing target
  * ({@link GT6RecipesOreChain#crushingTarget}, the upstream Loader_OreProcessing.java:311
- * redirect: Fe ore shows the Fe2O3 page). ponytail note: the declared face is read straight
- * off the material data here; it may migrate to OreByproductInfo once debt-byproducts-data
- * merges (equivalent refactor, zero behavior change — that class is a thin query model over
- * the same three public seams this card consumes).
- *
- * <p><b>Table-driven layout, not hand-drawn</b> (the anti-GTCEu-static-template ruling):
- * {@link #COLUMN_TABLE} is the single per-prefix column-position constant table — every
- * displayed node sits in the column its prefix maps to, rows stack top-down per column in
- * BFS encounter order. Prefixes with no table entry are NOT displayed (the table is also
- * the ore-chain filter: the item-tree tails like ingot/plate never leak into the diagram).
- * The layout adapts to the live maps for free: when the pooled producer rows LANDED (task
- * debt-ore-purified-edge, the :351 DUST_ORE sifting walk) crushedPurified simply occupied its
- * table column — the table only positions nodes, the maps decide which exist.
+ * redirect: Fe ore shows the Fe2O3 page).
  *
  * <p><b>Performance</b>: one {@link MaterialTreeBuilder#build()} sweep per viewer
  * registration (twice per client session, JEI + EMI legs — startup-only, never per open);
@@ -97,102 +109,51 @@ public final class MaterialTreeDisplay {
 	public static final String VIA_PREFIX = "via ";
 	public static final String DECLARED_TEXT = "declared";
 
-	// ---- the layout table (the 布局坐标表 constants) ------------------
+	// ---- the layout constants (the EMI recipe-tree spacing table) ------
 	//
-	// ROW/COLUMN SEMANTIC MAP (the rotation, task mattree-vertical-layout):
+	// EVIDENCE (tmp/harvest/emi-1.20.1-src BoMScreen.java, byte-identical constants on the
+	// 1.21.1 generation BoMScreen.java:63-65):
+	//   NODE_WIDTH             30 (:61)  -> our BOX_WIDTH (the recipe-node box, EMI :660-661 width=42
+	//                                       when the node carries a recipe — ours carries the machine icon)
+	//   NODE_HORIZONTAL_SPACING 8 (:62)  -> the sibling gap inside LANE_PITCH (50 = box 42 + 8)
+	//   NODE_VERTICAL_SPACING  20 (:63)  -> BAND_PITCH (the depth-band axis, ADR deviation below)
 	//
-	//   pre-rotation (horizontal)                    post-rotation (vertical)
-	//   -------------------------                    -----------------------
-	//   processing stage = grid column,              processing stage = band row,
-	//     x = COLUMN_X[c], left→right,                 y = STAGE_Y[c], top→down,
-	//     COLUMN_PITCH 40                              STAGE_PITCH 40
-	//   parallel nodes = rows within a column,       parallel nodes = lanes within a band,
-	//     y = ROW_Y0 + r*20, ROW_PITCH 20              x = LANE_X0 + r*28, LANE_PITCH 28
-	//     (18 px slot + 2 px gap = the 挤)             (18 px slot + 10 px gap)
-	//   byproduct side column rides RIGHT,           byproduct band rides BOTTOM,
-	//     slots stack DOWN                             slots spread RIGHT
-	//
-	// Node.column() keeps naming the SEMANTIC stage (the COLUMN_TABLE lookup and the whole
-	// three-fold display filter are UNTOUCHED — the coverage card owns those); Node.row()
-	// keeps naming the parallel index. Only the coordinate functions below rotate.
+	// ADR (the deliberate deviations, none silent):
+	// - BAND_PITCH 28, not EMI's 20: EMI's boxes OVERLAP their next band by 1px and its
+	//   connector rail paints UNDER the child icons (BoMScreen.java:684 off = 19 against a
+	//   21-tall box, lines drawn before the icons at :675-728). Ours is a 42-wide two-icon
+	//   box with an outline only (no fill) — a rail inside the box would cross the outline.
+	//   28 = box 20 + a clean 8px wire gap (rail at +4 into the gap).
+	// - LANE_PITCH 50, uniform: EMI spaces SIBLING EXTENTS (addToRight, variable subtree
+	//   widths); ours spaces uniform lane centres — the layered-DAG reading of the same rule
+	//   (siblings never overlap at any depth).
+	// - the integer-step window-relative zoom of BoMScreen.java:352-361 stays viewport
+	//   territory (MaterialTreeViewport), unchanged this task.
 
-	public static final int COL_ORE = 0, COL_CRUSHED = 1, COL_PURIFIED = 2, COL_DUST = 3, COL_BYPRODUCT = 4;
-
-	/**
-	 * The band pitch, VERTICAL since the rotation (task mattree-vertical-layout): 18 px slot
-	 * + a 22 px gap BELOW each band that budgets exactly 2 px entry wire + 16 px machine icon
-	 * + 4 px arrowhead (the rotated v2 three-part edge, spec clause ② — the machine rides the
-	 * gap under the from band). Unchanged value from the horizontal COLUMN_PITCH: that axis
-	 * was already loose (the r11 census: 「列距40已松」); the squeeze lived in the old
-	 * ROW_PITCH, now the horizontal LANE_PITCH.
-	 */
-	public static final int STAGE_PITCH = 40;
-
-	/**
-	 * The lane pitch, HORIZONTAL since the rotation (task mattree-vertical-layout): 18 px
-	 * slot + 10 px gap — the spec's ≥28 floor, killing the old ROW_PITCH 20 (2 px gap) that
-	 * was the 「挤的太紧」 root cause. Lanes carry no machine icons (chain hops always
-	 * advance stage bands), so 10 px of visual air is the whole budget.
-	 */
-	public static final int LANE_PITCH = 28;
-
-	/** y of each stage band's slot row (stages grow DOWN; the material-name header sits above). */
-	static final int[] STAGE_Y = {16, 56, 96, 136, 176};
-	/** x of the first lane (parallel nodes spread RIGHT from here). */
-	public static final int LANE_X0 = 4;
-	/**
-	 * Parallel-slot cap per stage band — EXPLICIT overflow since v2 (see {@link Overflow}),
-	 * never silently dropped. RAISED 5 → 7 by the rotation (task mattree-vertical-layout
-	 * cap re-evaluation): the old cap was a VERTICAL screen budget (a 128 px-tall canvas);
-	 * rotated, that semantic moves to the HORIZONTAL width budget, where the new canvas is
-	 * 202 px wide — under the old 228 px width both viewers already shipped. The live pour's
-	 * chain columns top out at 5 reachable nodes (the ore* wildcard: oreRaw + the four
-	 * DUST_ORE sifting inputs), so Fe/Cu censuses are unchanged; the byproduct-rich declared
-	 * faces (Sn/Cassiterite, MT.java:3812-3813: nine declared each) truncate 5 → 7 shown
-	 * instead of 5.
-	 */
-	public static final int MAX_ROWS = 7;
-	/**
-	 * The rotated canvas: 7 lanes at pitch 28 (the last slot's right edge + 12 px margin).
-	 * The viewers both declare width/height freely (the "fixed 178x166" JEI lore is a
-	 * misreading — GT6MaterialTreeJeiCategory has always shipped its own), and both stacks
-	 * paginate tall categories natively (JEI RecipeGuiLayouts 1-per-page stacking, EMI
-	 * RecipeTab per-recipe heights — the r11 vertical-support evidence).
-	 */
-	public static final int WIDTH = LANE_X0 + (MAX_ROWS - 1) * LANE_PITCH + 18 + 12;
-	/** Last band's slot row plus the 10 px overflow-marker strip ({@link #overflowY}). */
-	public static final int HEIGHT = STAGE_Y[COL_BYPRODUCT] + 18 + 12;
-	/** The "Byproducts" band header rides the wire-free gap just ABOVE its band. */
-	public static final int BYPRODUCT_HEADER_Y = STAGE_Y[COL_BYPRODUCT] - 11;
+	/** y of the material-name header (above the first band). */
+	public static final int HEADER_Y = 4;
+	/** y centre of band 0 (the ore roots' row). */
+	public static final int BAND_Y0 = 16;
+	/** The depth-band pitch — one BFS layer per band (the EMI {@code NODE_VERTICAL_SPACING} seat). */
+	public static final int BAND_PITCH = 28;
+	/** The process-node box width (EMI's recipe-node 42, BoMScreen.java:660-661). */
+	public static final int BOX_WIDTH = 42;
+	/** The process-node box height (symmetric ±10 about the band centre; EMI :697-717 outline). */
+	public static final int BOX_HEIGHT = 20;
+	/** x centre of the first lane (the box's left edge lands on x 4). */
+	public static final int LANE_X0 = 25;
+	/** The lane pitch — box 42 + one {@code NODE_HORIZONTAL_SPACING} (8, BoMScreen.java:62). */
+	public static final int LANE_PITCH = 50;
 
 	/**
-	 * The per-prefix column-position constant table (the 表驱动 layout, spec clause): the
-	 * closed ore-chain prefixes get explicit entries; the OPEN {@code ore*} family
-	 * (ore/oreRaw/orePoor/oreDense/…, the {@code startsWith("ore")} face
-	 * MaterialTreeBuilder.isOreFamilyPrefix shares) is the table's one wildcard row.
+	 * The viewer PAGES' nominal frame (the JEI per-category {@code getWidth/getHeight} seat —
+	 * a category dim cannot see a recipe, so it publishes this fixed frame; the CONTENT is
+	 * the layout engine's content box, which the pan/zoom viewport carries when a tree grows
+	 * past the frame). Nominal, not worst-case: uncapped trees have no worst case — this
+	 * frame fits the reference shape (8 lanes x 6 bands + margins).
 	 */
-	private static final Map<String, Integer> COLUMN_TABLE = new LinkedHashMap<>();
-	static {
-		COLUMN_TABLE.put("blockRaw", COL_ORE); // the OreChain :154 template's raw-block input form
-		COLUMN_TABLE.put("crushed", COL_CRUSHED);
-		COLUMN_TABLE.put("crushedTiny", COL_CRUSHED);
-		COLUMN_TABLE.put("crushedPurified", COL_PURIFIED);
-		COLUMN_TABLE.put("crushedPurifiedTiny", COL_PURIFIED);
-		COLUMN_TABLE.put("crushedCentrifuged", COL_PURIFIED);
-		COLUMN_TABLE.put("crushedCentrifugedTiny", COL_PURIFIED);
-		COLUMN_TABLE.put("dust", COL_DUST);
-		COLUMN_TABLE.put("dustSmall", COL_DUST);
-		COLUMN_TABLE.put("dustTiny", COL_DUST);
-		COLUMN_TABLE.put("dustDiv72", COL_DUST); // the ShCL :167-172 chance-row outputs
-	}
-
-	/** The table lookup: explicit entry first, then the {@code ore*} wildcard; -1 = not displayed. */
-	public static int columnOf(OreDictPrefix aPrefix) {
-		Integer tEntry = COLUMN_TABLE.get(aPrefix.mNameInternal);
-		if (tEntry != null) return tEntry.intValue();
-		if (aPrefix.mNameInternal.startsWith("ore")) return COL_ORE;
-		return -1;
-	}
+	public static final int WIDTH = LANE_X0 + (8 - 1) * LANE_PITCH + BOX_WIDTH / 2 + 12;
+	public static final int HEIGHT = BAND_Y0 + 6 * BAND_PITCH + BOX_HEIGHT / 2 + 12;
 
 	/** The production item resolver: the registered (prefix, material) handle, or null. */
 	public static final BiFunction<OreDictPrefix, OreDictMaterial, Item> STANDARD_ITEMS = (aPrefix, aMaterial) -> {
@@ -203,105 +164,58 @@ public final class MaterialTreeDisplay {
 	// ---- the model ----------------------------------------------------
 
 	/**
-	 * The v2 node roles (spec clause ①): grid {@link Node}s riding the columns are
-	 * {@code ITEM}s; the machine-icon nodes that split every chain edge into
-	 * 「from –线– [机器] –箭头→ to」 are carried on {@link Edge#machine()} and positioned by
-	 * {@link MaterialTreeLayout} — the MACHINE role names the face, the edge owns the data
-	 * (keeps {@link #nodes()} the pure column census the existing pins read).
+	 * One displayed slot: the prefix node at its DEPTH-BAND position with its resolved
+	 * stack. {@code band} is the BFS layer from the ore roots ({@code 0} = the mined
+	 * entry), {@code row} the lane within the band (the EMI sibling-spread axis).
 	 */
-	public enum Role { ITEM, MACHINE }
-
-	/** One displayed slot: the prefix node at its table position with its resolved stack. */
-	public record Node(OreDictPrefix prefix, int column, int row, ItemStack stack, Role role) {
-		/** The grid (ITEM) node form — the role-less call sites all mean {@link Role#ITEM}. */
-		public Node(OreDictPrefix aPrefix, int aColumn, int aRow, ItemStack aStack) {
-			this(aPrefix, aColumn, aRow, aStack, Role.ITEM);
-		}
-	}
+	public record Node(OreDictPrefix prefix, int band, int row, ItemStack stack) {}
 
 	/**
 	 * One displayed chain hop: both endpoints displayed, carrying the producing maps' internal
-	 * names and the v2 machine face — {@code machine} is the representative machine stack
+	 * names and the machine face — {@code machine} is the representative machine stack
 	 * resolved off {@link #mapNames()} through {@link MaterialTreeWorkstations#workstationStack}
-	 * (first resolvable name wins; the rest ride the machine node's tooltip), EMPTY = the
-	 * degrade face (plain arrow, via-label text, spec clause ②'s fallback).
+	 * (first resolvable name wins; the rest ride the producing node's tooltip), EMPTY = the
+	 * degrade face (the EMI box renders without its machine icon; the via-label text lives
+	 * in the node tooltip).
 	 */
 	public record Edge(OreDictPrefix from, OreDictPrefix to, List<String> mapNames, ItemStack machine) {
-		/** The label for the machine tooltip / the degraded via-text ("via Shredder/Anvil"). */
+		/** The label for the producing node's tooltip / the degraded via-text ("via Shredder/Anvil"). */
 		public String viaLabel() { return MaterialTreeDisplay.viaLabel(mapNames()); }
 	}
 
 	/**
-	 * One byproduct side-column slot: derived (a real row's cross-material output) or declared.
+	 * One byproduct band slot: derived (a real row's cross-material output — now including
+	 * the crucible cross arm) or declared.
 	 *
 	 * <p>{@code step} is the producing PROCESS STEP's band (task mattree-r2-byproduct-per-step):
-	 * the band the producing row's material-scoped input sits in — the machine icon of that row
-	 * rides the gap under exactly this band, so 「第 n 步的副产」 = the {@code step == n} slots.
-	 * The derived face derives it from the row's input prefix ({@code columnOf(inPrefix)}); the
-	 * declared face is the upstream crushing redirect, which fires on the ore family
-	 * ({@code COL_ORE}). {@code -1} = the producing input is OUTSIDE the display table (an
-	 * item-tree tail row) — the slot belongs to no displayed step, so only the
-	 * {@link gregtech6.recipes.tree.MaterialTreeLayout.ByproductView#ALL} aggregate face shows it.
+	 * the BFS band the producing row's material-scoped input sits in — the machine icon of
+	 * that row rides the producing node's box, so 「第 n 步的副产」 = the {@code step == n}
+	 * slots. The derived face derives it from the row's input prefix's depth; the declared
+	 * face is the upstream crushing redirect, which fires on the ore roots ({@code band 0}).
+	 * {@code -1} = the producing input is not part of this walk — the slot belongs to no
+	 * displayed step, so only the {@link gregtech6.recipes.tree.MaterialTreeLayout.ByproductView#ALL}
+	 * aggregate face shows it.
 	 */
 	public record Byproduct(ItemStack stack, boolean derived, String sourceLabel, int step) {}
-
-	/**
-	 * The explicit overflow marker (the v2 no-silent-drop clause): {@code hidden} prefixes of
-	 * a chain column (or byproduct slots in the side column) that did not fit under
-	 * {@link #MAX_ROWS}. The viewers render "+N" at ({@link #overflowX}, {@link #overflowY});
-	 * v1 just dropped them (MaterialTreeDisplay :234 of the old world).
-	 */
-	public record Overflow(int column, int hidden) {}
-
-	/**
-	 * x of a node's slot (the parallel lane: lanes grow RIGHT).
-	 *
-	 * <p><b>The legacy fixed-grid view</b> (task mattree-r2-layout-engine; seat narrowed by
-	 * task mattree-r3-nav-unify): the layout ENGINE face is {@link MaterialTreeLayout#plan}
-	 * — its {@code Result} computes these coordinates from a {@code Policy} and derives the
-	 * canvas from the content, and ALL THREE hosts now consume that face (the standalone
-	 * screen since R2, the EMI and JEI page geometry since R3). This static table survives
-	 * as (a) the JEI page FRAME's constants — {@code WIDTH/HEIGHT} are the worst-case canvas
-	 * the per-category {@code IRecipeCategory.getWidth/getHeight} seam has to publish — and
-	 * (b) the TEST ORACLE: the equality with the engine is pinned by
-	 * {@code MaterialTreeLayoutTest#engineMatchesTheLegacyStatics}.
-	 */
-	public static int nodeX(Node aNode) { return LANE_X0 + aNode.row() * LANE_PITCH; }
-	/** y of a node's slot (the stage band: stages grow DOWN). */
-	public static int nodeY(Node aNode) { return STAGE_Y[aNode.column()]; }
-	/** x of a byproduct slot (lane aIndex of the bottom band). */
-	public static int byproductX(int aIndex) { return LANE_X0 + aIndex * LANE_PITCH; }
-	/** y of the byproduct band's slot row. */
-	public static int byproductY() { return STAGE_Y[COL_BYPRODUCT]; }
-	/** y of a stage band's slot row (the rotated columnX: stage depth = downward y). */
-	public static int stageY(int aStage) { return STAGE_Y[aStage]; }
-	/** x of a stage band's "+N" overflow marker (under the band's first lane). */
-	public static int overflowX() { return LANE_X0; }
-	/** y of a stage band's "+N" overflow marker (the explicit-not-silent clause, per band). */
-	public static int overflowY(int aStage) { return STAGE_Y[aStage] + 20; }
 
 	public final OreDictMaterial material;
 	private final List<Node> mNodes;
 	private final List<Edge> mEdges;
 	private final List<Byproduct> mByproducts;
-	private final List<Overflow> mOverflow;
 
-	private MaterialTreeDisplay(OreDictMaterial aMaterial, List<Node> aNodes, List<Edge> aEdges, List<Byproduct> aByproducts, List<Overflow> aOverflow) {
+	private MaterialTreeDisplay(OreDictMaterial aMaterial, List<Node> aNodes, List<Edge> aEdges, List<Byproduct> aByproducts) {
 		material = aMaterial;
 		mNodes = aNodes;
 		mEdges = aEdges;
 		mByproducts = aByproducts;
-		mOverflow = aOverflow;
 	}
 
-	/** The displayed nodes (column order, then BFS row order). */
+	/** The displayed nodes (BFS layer order: bands top-down, lanes left-right within a band). */
 	public List<Node> nodes() { return Collections.unmodifiableList(mNodes); }
 	/** The displayed chain edges. */
 	public List<Edge> edges() { return Collections.unmodifiableList(mEdges); }
-	/** The merged two-face byproduct column. */
+	/** The merged two-face byproduct band. */
 	public List<Byproduct> byproducts() { return Collections.unmodifiableList(mByproducts); }
-	/** The explicit overflow bookkeeping (empty when the whole tree fit under the row caps). */
-	public List<Overflow> overflow() { return Collections.unmodifiableList(mOverflow); }
 
 	/** The localized producing-map label ({@code gt.recipe.shredder} → "Shredder"), internal name as fallback. */
 	public static String mapLabel(String aMapName) {
@@ -309,7 +223,7 @@ public final class MaterialTreeDisplay {
 		return tMap == null ? aMapName : tMap.mNameLocal;
 	}
 
-	/** The merged via-label ("via Shredder/Anvil") — one source for both viewers' machine tooltips and degraded edges. */
+	/** The merged via-label ("via Shredder/Anvil") — one source for both viewers' node tooltips. */
 	public static String viaLabel(List<String> aMapNames) {
 		StringBuilder rLabel = new StringBuilder(VIA_PREFIX);
 		for (int i = 0; i < aMapNames.size(); i++) {
@@ -340,7 +254,7 @@ public final class MaterialTreeDisplay {
 		return buildAll(aTree, aItems, MaterialTreeWorkstations::workstationStack);
 	}
 
-	/** {@link #buildAll(MaterialTreeBuilder, BiFunction)} with the v2 machine-stack resolver seam (offline tests inject non-registry stacks). */
+	/** {@link #buildAll(MaterialTreeBuilder, BiFunction)} with the machine-stack resolver seam (offline tests inject non-registry stacks). */
 	public static List<MaterialTreeDisplay> buildAll(MaterialTreeBuilder aTree, BiFunction<OreDictPrefix, OreDictMaterial, Item> aItems, Function<String, ItemStack> aMachines) {
 		List<MaterialTreeDisplay> rDisplays = new ArrayList<>();
 		Set<OreDictMaterial> tSeen = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -358,39 +272,42 @@ public final class MaterialTreeDisplay {
 	}
 
 	/**
-	 * The one material's display with the v2 machine resolver seam: {@code aMachines} maps a
+	 * The one material's display with the machine resolver seam: {@code aMachines} maps a
 	 * RecipeMap internal name to its representative machine stack (EMPTY = untabled/unbound —
-	 * the edge degrades to a plain arrow). Offline tests inject probe stacks here; production
-	 * resolves through {@link MaterialTreeWorkstations#workstationStack}.
+	 * the degrade face: the node box renders without its machine icon). Offline tests inject
+	 * probe stacks here; production resolves through {@link MaterialTreeWorkstations#workstationStack}.
 	 */
 	public static MaterialTreeDisplay of(MaterialTreeBuilder aTree, OreDictMaterial aMaterial, BiFunction<OreDictPrefix, OreDictMaterial, Item> aItems, Function<String, ItemStack> aMachines) {
-		Set<OreDictPrefix> tReachable = aTree.reachableFromOre(aMaterial);
-		if (tReachable.isEmpty()) return null;
+		// the EMI layering face: the BFS walk IS the band assignment (every reachable prefix
+		// displays — no whitelist), insertion order = layer order = row order
+		Map<OreDictPrefix, Integer> tDepths = aTree.depthsFromOre(aMaterial);
+		if (tDepths.isEmpty()) return null;
 
-		// nodes: table-filtered, item-resolved, row-stacked per column (cap MAX_ROWS with
-		// EXPLICIT overflow bookkeeping — the v2 no-silent-drop clause)
-		Map<Integer, Integer> tRowPerColumn = new LinkedHashMap<>();
-		int[] tHidden = new int[COL_BYPRODUCT + 1];
+		Map<Integer, Integer> tRowPerBand = new LinkedHashMap<>();
 		Map<OreDictPrefix, Node> tNodeByPrefix = new LinkedHashMap<>();
 		List<Node> tNodes = new ArrayList<>();
-		for (OreDictPrefix tPrefix : tReachable) {
-			int tColumn = columnOf(tPrefix);
-			if (tColumn < 0) continue; // outside the ore-chain table — the item-tree tail does not leak in
-			int tRow = tRowPerColumn.getOrDefault(tColumn, 0);
-			if (tRow >= MAX_ROWS) { tHidden[tColumn]++; continue; } // explicit "+N" marker, never silent
-			Item tItem = aItems.apply(tPrefix, aMaterial);
-			if (tItem == null) continue;
-			tRowPerColumn.put(tColumn, tRow + 1);
-			tNodes.add(new Node(tPrefix, tColumn, tRow, new ItemStack(tItem)));
-			tNodeByPrefix.put(tPrefix, tNodes.get(tNodes.size() - 1));
+		for (Map.Entry<OreDictPrefix, Integer> tEntry : tDepths.entrySet()) {
+			Item tItem = aItems.apply(tEntry.getKey(), aMaterial);
+			if (tItem == null) continue; // no item — no node (the display drops, the walk keeps)
+			int tBand = tEntry.getValue();
+			int tRow = tRowPerBand.getOrDefault(tBand, 0);
+			tRowPerBand.put(tBand, tRow + 1);
+			Node tNode = new Node(tEntry.getKey(), tBand, tRow, new ItemStack(tItem));
+			tNodes.add(tNode);
+			tNodeByPrefix.put(tNode.prefix(), tNode);
 		}
 		if (tNodes.isEmpty()) return null;
 
-		// edges: only hops whose both endpoints survived the table; labels merged per (from, to);
-		// the machine face = the first mapName with a resolvable representative stack
+		// edges: only hops whose both endpoints survived resolution; FORWARD (or same-band)
+		// hops only — a back edge (to a shallower prefix) is the alias cycle's second half,
+		// its forward twin already shows the relation (the EMI recursion never draws one,
+		// BoMScreen.java:311-338); labels merged per (from, to); the machine face = the first
+		// mapName with a resolvable representative stack
 		Map<OreDictPrefix, Map<OreDictPrefix, Set<String>>> tEdgeMaps = new LinkedHashMap<>();
 		for (ChainEdge tChain : aTree.chainEdges(aMaterial)) {
-			if (!tNodeByPrefix.containsKey(tChain.from()) || !tNodeByPrefix.containsKey(tChain.to())) continue;
+			Node tFrom = tNodeByPrefix.get(tChain.from()), tTo = tNodeByPrefix.get(tChain.to());
+			if (tFrom == null || tTo == null) continue;
+			if (tTo.band() < tFrom.band()) continue;
 			tEdgeMaps.computeIfAbsent(tChain.from(), k -> new LinkedHashMap<>())
 					.computeIfAbsent(tChain.to(), k -> new LinkedHashSet<>())
 					.add(tChain.mapName());
@@ -408,31 +325,41 @@ public final class MaterialTreeDisplay {
 			}
 		}
 
-		// byproducts: derived first (what the rows really emit), then the declared face
-		// (the crushing target's mByProducts) minus what the derived face already shows —
-		// over MAX_ROWS the excess is COUNTED (the side column's "+N" marker), not dropped;
-		// each slot carries its producing step (the input band — per-step hang, task
-		// mattree-r2-byproduct-per-step; the declaration is the crushing redirect = COL_ORE)
+		// byproducts: derived first (what the rows really emit — the builder's cross-material
+		// index, now carrying the crucible cross arm too), then the declared face (the
+		// crushing target's mByProducts) minus what the derived face already shows; each slot
+		// carries its producing step (the input prefix's BFS band — per-step hang, task
+		// mattree-r2-byproduct-per-step; the declaration is the crushing redirect = band 0).
+		// The derived walk is TWO-pass ON PURPOSE (the determinism face): several rows can
+		// produce the same target through different input prefixes (the crusher's ore :153 and
+		// raw-block :154 templates) and only ONE slot shows per target — the pass preferring
+		// inputs ON the walk (a real step band) makes the visible face independent of the
+		// index's insertion order, instead of whoever the set yielded first.
 		List<Byproduct> tByproducts = new ArrayList<>();
 		Set<OreDictMaterial> tShown = Collections.newSetFromMap(new IdentityHashMap<>());
+		List<ByproductEdge> tOnWalk = new ArrayList<>(), tOffWalk = new ArrayList<>();
 		for (ByproductEdge tDerived : aTree.byproductEdges(aMaterial)) {
-			if (tByproducts.size() >= MAX_ROWS) { tHidden[COL_BYPRODUCT]++; continue; }
+			if (tDepths.containsKey(tDerived.inPrefix())) tOnWalk.add(tDerived);
+			else tOffWalk.add(tDerived);
+		}
+		for (ByproductEdge tDerived : tOnWalk) {
 			Item tItem = aItems.apply(tDerived.outPrefix(), tDerived.to());
 			if (tItem == null || !tShown.add(tDerived.to())) continue;
-			tByproducts.add(new Byproduct(new ItemStack(tItem), true, VIA_PREFIX + mapLabel(tDerived.mapName()), columnOf(tDerived.inPrefix())));
+			tByproducts.add(new Byproduct(new ItemStack(tItem), true, VIA_PREFIX + mapLabel(tDerived.mapName()),
+					tDepths.get(tDerived.inPrefix())));
+		}
+		for (ByproductEdge tDerived : tOffWalk) {
+			Item tItem = aItems.apply(tDerived.outPrefix(), tDerived.to());
+			if (tItem == null || !tShown.add(tDerived.to())) continue;
+			tByproducts.add(new Byproduct(new ItemStack(tItem), true, VIA_PREFIX + mapLabel(tDerived.mapName()), -1));
 		}
 		for (OreDictMaterial tDeclared : GT6RecipesOreChain.crushingTarget(aMaterial).mByProducts) {
-			if (tByproducts.size() >= MAX_ROWS) { tHidden[COL_BYPRODUCT]++; continue; }
 			if (tDeclared == null || tDeclared.mID <= 0 || !tShown.add(tDeclared)) continue;
 			Item tItem = aItems.apply(OP.dust, tDeclared);
 			if (tItem == null) continue;
-			tByproducts.add(new Byproduct(new ItemStack(tItem), false, DECLARED_TEXT, COL_ORE));
+			tByproducts.add(new Byproduct(new ItemStack(tItem), false, DECLARED_TEXT, 0));
 		}
 
-		List<Overflow> tOverflow = new ArrayList<>();
-		for (int c = 0; c <= COL_BYPRODUCT; c++)
-			if (tHidden[c] > 0) tOverflow.add(new Overflow(c, tHidden[c]));
-
-		return new MaterialTreeDisplay(aMaterial, tNodes, tEdges, tByproducts, tOverflow);
+		return new MaterialTreeDisplay(aMaterial, tNodes, tEdges, tByproducts);
 	}
 }

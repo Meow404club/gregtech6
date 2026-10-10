@@ -85,12 +85,12 @@ public final class MaterialTreeCoverage {
 	 * One chain band's coverage: the per-state node counts and the derived
 	 * {@link #state()} (the strongest node state in the band).
 	 *
-	 * @param column      the band's semantic stage ({@link MaterialTreeDisplay#COL_ORE}..{@link MaterialTreeDisplay#COL_DUST})
+	 * @param band        the depth band (the BFS layer — EMI BoMScreen.java:334/:337 layering; 0 = the ore roots)
 	 * @param covered     nodes with a known process path
 	 * @param reachable   nodes on a degraded path (real data, workstation face inactive)
 	 * @param unreachable nodes with no visible path
 	 */
-	public record Band(int column, int covered, int reachable, int unreachable) {
+	public record Band(int band, int covered, int reachable, int unreachable) {
 		/** The band's own state: the STRONGEST node state (monotone — adding paths or nodes never downgrades it). */
 		public State state() {
 			if (covered > 0) return State.COVERED;
@@ -138,10 +138,10 @@ public final class MaterialTreeCoverage {
 			State tState;
 			if (tMachined.containsKey(tNode.prefix())) tState = State.COVERED;
 			else if (tReached.containsKey(tNode.prefix())) tState = State.REACHABLE;
-			else if (tNode.column() == MaterialTreeDisplay.COL_ORE) tState = State.COVERED; // the mined entry
+			else if (tNode.band() == 0) tState = State.COVERED; // the mined entry
 			else tState = State.UNREACHABLE;
 			rStates.put(tNode.prefix(), tState);
-			int[] tCounts = tBandCounts.computeIfAbsent(tNode.column(), k -> new int[3]);
+			int[] tCounts = tBandCounts.computeIfAbsent(tNode.band(), k -> new int[3]);
 			tCounts[tState == State.COVERED ? 0 : tState == State.REACHABLE ? 1 : 2]++;
 		}
 		List<Band> rBands = new ArrayList<>();
@@ -168,9 +168,9 @@ public final class MaterialTreeCoverage {
 		return mBands;
 	}
 
-	/** The one band's aggregate ({@code null} = the band has no nodes on this tree). */
-	public Band band(int aColumn) {
-		for (Band tBand : mBands) if (tBand.column() == aColumn) return tBand;
+	/** The one depth band's aggregate ({@code null} = the band has no nodes on this tree). */
+	public Band band(int aBand) {
+		for (Band tBand : mBands) if (tBand.band() == aBand) return tBand;
 		return null;
 	}
 }
