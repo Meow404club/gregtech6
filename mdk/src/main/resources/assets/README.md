@@ -12250,8 +12250,32 @@ walk can reference any of them naively.
 - `block/crop/yellowappletree/4.png` | `8793d8a3fec0190b39b3c07de62b613deb2f9efa83d45470b78d576082442cdb` | 1 |
 Also in this card: `item/crop_stick.png` re-seated from the cbc-1 committed blob (source IC2
 `items/crop/crop_stick.png`, sha256 `ffbdc867…` per the cbc-1 ledger row — byte-identical
-`git show | cmp` clean) as the gt6:crop_seed item model texture (IC2 renders ItemCrop itself
-with the crop-stick sprite, ItemCrop.java:27).
+`git show | cmp` clean) as the gt6:crop_seed item model texture. That crop-stick seat was
+RETIRED by task crop-seed-icon (2026-10-10) — the "IC2 renders ItemCrop with the crop-stick
+sprite (ItemCrop.java:27)" citation behind it is void, see the crop-seed-icon ledger band.
+
+## task crop-seed-icon (2026-10-10) — the dedicated seed-bag item sprite
+
+Borrowed from the IC2 1.12 decompiled assets
+(`tmp/harvest/ic2-crops/reference/ic2-source/decompiled/assets/ic2/textures/` — the same
+official 2.8.222-ex112 dev jar the cbc-1 trio came from, harvest 2026-10-01; IC2 publishes
+the dev jar itself for study, per the ic2-source README). 1 PNG, byte-identical, sha256
+verified:
+
+  - `item/crop_seed.png` `ic2:items/crop/crop_seed_bag.png`
+    (`e1dbf7c0d5eac538d87bea372cda64817a58f9bd46f7bb8c3bd11b7c382071be` — the IC2 seed-bag
+    icon; IC2's own model `models/item/crop/crop_seed_bag.json` is `layer0 =
+    ic2:items/crop/crop_seed_bag`, an independent sprite distinct from
+    `items/crop/crop_stick.png`)
+
+16x16 RGBA. License/attribution standing per the cbc-1 borrow family precedent: the GT6
+1.7.10 crop system parasited IC2's blockCrop entirely and the IC2 textures are the canonical
+crop-domain art. The user ruling (2026-10-10) retires the cbc-3 crop-stick seat for the SEED
+item: the old citation "IC2 renders ItemCrop with crop_stick.png (ItemCrop.java:27)" is void
+on re-inspection — `ItemCrop` is the crop STICK (its constructor binds `ItemName.crop_stick`,
+ItemCrop.java:24; line 27 is `onItemUse`), while the seeds are `ItemCropSeed` bound to
+`ItemName.crop_seed_bag` (ItemCropSeed.java:27-29). Re-encoding stays red per the
+circuit-config borrow law (byte-identical or nothing).
 
 ## Item material_sets borrows — the plank prefix (task wood-planks-register, 2026-10-01; RETIRED task planks-blockification, 2026-10-07)
 
