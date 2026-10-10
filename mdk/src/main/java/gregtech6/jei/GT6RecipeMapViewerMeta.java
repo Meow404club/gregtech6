@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -345,22 +344,9 @@ public final class GT6RecipeMapViewerMeta {
 		return ENERGY_BY_MAP.get(aMap.mNameInternal);
 	}
 
-	/**
-	 * The carrier colors — the upstream TD.Energy createTagData 4th argument (TD.java:81-144)
-	 * through the LH.Chat constants (LH.java:658+, each is the same-named
-	 * EnumChatFormatting). The port's TD.java:39 strips that presentation-only parameter,
-	 * so the consumer side carries it; only the nine carriers the registration rows use.
-	 */
-	private static final Map<TagData, ChatFormatting> ENERGY_COLORS = Map.of(
-			TD.Energy.EU, ChatFormatting.BLUE,          // TD.java:81 LH.Chat.BLUE
-			TD.Energy.RU, ChatFormatting.GREEN,         // :88 GREEN
-			TD.Energy.KU, ChatFormatting.DARK_GREEN,    // :95 DGREEN
-			TD.Energy.HU, ChatFormatting.RED,           // :102 RED
-			TD.Energy.CU, ChatFormatting.AQUA,          // :109 CYAN (= AQUA, LH.java:680)
-			TD.Energy.LU, ChatFormatting.YELLOW,        // :116 YELLOW
-			TD.Energy.MU, ChatFormatting.DARK_GRAY,     // :123 DGRAY
-			TD.Energy.QU, ChatFormatting.DARK_PURPLE,   // :137 PURPLE (= DARK_PURPLE, :669)
-			TD.Energy.TU, ChatFormatting.DARK_BLUE);    // :144 DBLUE
+	// The carrier colors moved to GT6EnergyCensus (task jade-energy-colors) — the single
+	// source both this viewer's cost/gain units and the Jade machine-provider energy rows
+	// read; the table's upstream TD.java:81-144 / LH.Chat evidence chain lives there now.
 
 	// -----------------------------------------------------------------------
 	// The energy-carrier short codes (task machine-energy-display-fix, moved HERE in
@@ -420,13 +406,14 @@ public final class GT6RecipeMapViewerMeta {
 
 	/**
 	 * The colored short-code unit component: the short code from the Jade-free table above
-	 * and the color the upstream LH.Chat transcription. Both viewers eat the style — JEI
-	 * draws via GuiGraphics.drawString (vanilla Font applies the per-run style color) and
-	 * EMI's addText goes through Text.asOrderedText (style runs preserved).
+	 * and the color from the single-source table ({@link GT6EnergyCensus#energyColor}, the
+	 * upstream LH.Chat transcription). Both viewers eat the style — JEI draws via
+	 * GuiGraphics.drawString (vanilla Font applies the per-run style color) and EMI's
+	 * addText goes through Text.asOrderedText (style runs preserved).
 	 */
 	public static Component energyUnit(TagData aEnergy) {
 		return Component.literal(energyTypeShortCode(aEnergy))
-				.withStyle(ENERGY_COLORS.getOrDefault(aEnergy, ChatFormatting.WHITE));
+				.withStyle(GT6EnergyCensus.energyColor(aEnergy));
 	}
 
 	/** Category-eligible: tabled census map, upstream mNEIAllowed, not ruled out. */

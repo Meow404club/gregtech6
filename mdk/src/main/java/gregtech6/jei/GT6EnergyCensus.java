@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.Item;
 
 import net.minecraftforge.registries.RegistryObject;
@@ -95,6 +96,52 @@ public final class GT6EnergyCensus {
 		List<TagData> rCarriers = new ArrayList<>(GT6RecipeMapViewerMeta.pinnedEnergyCarriers());
 		rCarriers.add(TD.Energy.STEAM);
 		return List.copyOf(rCarriers);
+	}
+
+	// -------------------------------------------------------------------------
+	// The carrier colors (task jade-energy-colors — moved HERE verbatim from
+	// GT6RecipeMapViewerMeta as the single source: the viewer cost/gain units
+	// (GT6RecipeMapViewerMeta.energyUnit) and the Jade machine-provider energy rows
+	// (GT6MachineProvider) both read through this one table — one home, no drift).
+	// -------------------------------------------------------------------------
+
+	/**
+	 * The carrier colors — the upstream TD.Energy createTagData 4th argument
+	 * (root TD.java:81-144) through the LH.Chat constants (LH.java:658+, each is the
+	 * same-named EnumChatFormatting). The port's TD.java:39 strips that
+	 * presentation-only parameter, so the consumer side carries it; only the nine
+	 * carriers the registration rows use.
+	 */
+	private static final Map<TagData, ChatFormatting> ENERGY_COLORS = Map.of(
+			TD.Energy.EU, ChatFormatting.BLUE,          // TD.java:81 LH.Chat.BLUE
+			TD.Energy.RU, ChatFormatting.GREEN,         // :88 GREEN
+			TD.Energy.KU, ChatFormatting.DARK_GREEN,    // :95 DGREEN
+			TD.Energy.HU, ChatFormatting.RED,           // :102 RED
+			TD.Energy.CU, ChatFormatting.AQUA,          // :109 CYAN (= AQUA, LH.java:680)
+			TD.Energy.LU, ChatFormatting.YELLOW,        // :116 YELLOW
+			TD.Energy.MU, ChatFormatting.DARK_GRAY,     // :123 DGRAY
+			TD.Energy.QU, ChatFormatting.DARK_PURPLE,   // :137 PURPLE (= DARK_PURPLE, :669)
+			TD.Energy.TU, ChatFormatting.DARK_BLUE);    // :144 DBLUE
+
+	/**
+	 * The carrier color (presentation-only): the tabled color, miss/null → WHITE
+	 * (the default text color — an untabled carrier keeps the neutral look).
+	 */
+	public static ChatFormatting energyColor(TagData aCarrier) {
+		return aCarrier == null ? ChatFormatting.WHITE : ENERGY_COLORS.getOrDefault(aCarrier, ChatFormatting.WHITE);
+	}
+
+	/**
+	 * The carrier color by the Jade-wire short code ({@code GT6MachineProvider.KEY_ENERGY_TYPE}
+	 * carries the display string only — the TagData never crosses the network). The reverse
+	 * walk is nine entries at tooltip frequency; untabled carriers (the folded-name fallback,
+	 * the missing-key "?") miss → WHITE.
+	 */
+	public static ChatFormatting energyColorOfShortCode(String aShortCode) {
+		for (Map.Entry<TagData, ChatFormatting> tEntry : ENERGY_COLORS.entrySet())
+			if (GT6RecipeMapViewerMeta.energyTypeShortCode(tEntry.getKey()).equals(aShortCode))
+				return tEntry.getValue();
+		return ChatFormatting.WHITE;
 	}
 
 	/** Every machine emitting this carrier, registration order. Empty = the legal unported state. */
