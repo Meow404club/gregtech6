@@ -656,20 +656,37 @@ public final class GTBlockEntities {
 			() -> new BlockItem(EXAMPLE_CHEST.get(), new Item.Properties()));
 
 	/**
-	 * Creative tab for the example chest. Upstream tab archaeology: the chest lives in the
-	 * MTE-registry-owned per-category tab — aRegistry.add(..., "Chests", ..., 32745, ...)
-	 * (Loader_MultiTileEntities.java:132) creates one shared CreativeTab per category id
-	 * (MultiTileEntityRegistry.java:191). The flat "chests" tab is the minimal port equivalent;
-	 * the per-registry tab system is a later card.
+	 * Creative tab for the chest family. Upstream tab archaeology: the metalset chest pair
+	 * registers into its OWN MTE-registry category tab — aRegistry.add(..., "Chests", ...,
+	 * 32745, ...) (Loader_MultiTileEntities.java:132-133), one shared CreativeTab per tab id
+	 * (MultiTileEntityRegistry.java:191; the upstream tab carries exactly the chest-pair
+	 * family). Task chests-tab-rehome: the tab shows the whole {@link GT6Chests} 120-row
+	 * family in registration order (the {@link GT6Chests#walkDisplayItems} walk), the icon
+	 * is the family head (the upstream lazy-tab icon face — the tab icon = the first
+	 * registration's block item, :191) and the port-native example chest rides the tail
+	 * (the declared fold: the reference implementation stays reachable in creative + JEI —
+	 * upstream has no such row).
 	 */
+	public static final String TAB_TITLE_KEY = "itemGroup.gt6.chests";
+
 	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
 
 	public static final RegistryObject<CreativeModeTab> CHESTS_TAB = CREATIVE_MODE_TABS.register("chests",
 			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0) // vanilla CreativeModeTab.java:46-48
-					.title(Component.translatable("itemGroup.gt6.chests"))
-					.icon(() -> new ItemStack(EXAMPLE_CHEST_ITEM.get()))
-					.displayItems((aParameters, aOutput) -> aOutput.accept(new ItemStack(EXAMPLE_CHEST_ITEM.get())))
+					.title(Component.translatable(TAB_TITLE_KEY))
+					.icon(() -> new ItemStack(GT6Chests.ITEMS_BY_PATH.get(GT6Chests.ROWS.get(0).path()).get()))
+					.displayItems((aParameters, aOutput) -> displayChests(aOutput))
 					.build());
+
+	/**
+	 * The tab walk: the 120-row chest family, then the port-native example chest (the
+	 * declared fold). Package visible so the offline census drives the SAME walk the tab
+	 * does (the GT6Cells.displayCells form).
+	 */
+	static void displayChests(CreativeModeTab.Output aOutput) {
+		GT6Chests.walkDisplayItems(aOutput);
+		aOutput.accept(new ItemStack(EXAMPLE_CHEST_ITEM.get()));
+	}
 
 	private GTBlockEntities() {}
 

@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -35,7 +36,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -73,9 +73,11 @@ import gregtech6.tileentity.inventories.GT6ChestBlockEntity;
  * </ul>
  * Both rows share the {@code MultiTileEntityChest} class and tool quality 0.
  *
- * <p>Creative tab: the upstream "Chests" category (tab 32745, :132-133) pools into the
- * MACHINES_TAB join (task tabfix-b-energy, {@link #onBuildTabContents}; the
- * GTBarrels:257 pooling precedent). Placement faces the placer (the upstream
+ * <p>Creative tab: the upstream "Chests" category is its OWN tab (tab id 32745, :132-133;
+ * one shared CreativeTab per tab id, MultiTileEntityRegistry.java:191) and the port keeps
+ * that shape: the whole family walks the dedicated {@code gt6:chests} tab
+ * ({@link #walkDisplayItems}; task chests-tab-rehome — the rehome of the tabfix-b-energy
+ * MACHINES_TAB pooling). Placement faces the placer (the upstream
  * getSideForPlayerPlacing SIDES_HORIZONTAL arm — the static-storage convention). The
  * harvest bands ride the block families verbatim: the plain chest joins
  * mineable/pickaxe (aMetal), the reinforced chest mineable/axe (aWooden) — the task
@@ -416,19 +418,16 @@ public final class GT6Chests {
 	}
 
 	/**
-	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family joins
-	 * the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
-	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
-	 * delivers this handler). Pool-cut declaration: upstream gives the family its own
-	 * "Chests" category (tab 32745, Loader :132-133); this port pools the join into
-	 * MACHINES_TAB (the GTBarrels:257 pooling precedent).
+	 * The tab walk (task chests-tab-rehome — the whole {@link #ITEMS_BY_PATH} family rides
+	 * the dedicated {@code gt6:chests} tab, {@link GTBlockEntities#CHESTS_TAB}; the
+	 * GT6Cells.displayCells form): every row, in {@link #ROWS} registration order — per
+	 * loader line the plain chest (:132) then the reinforced chest (:133), the upstream
+	 * family order. Package visible so the tab builder lambda and the offline census drive
+	 * the SAME walk.
 	 */
-	@SubscribeEvent
-	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
-		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
-			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
-				aEvent.accept(new ItemStack(tItem.get()));
-			}
+	static void walkDisplayItems(CreativeModeTab.Output aOutput) {
+		for (ChestRow tRow : ROWS) {
+			aOutput.accept(new ItemStack(ITEMS_BY_PATH.get(tRow.path()).get()));
 		}
 	}
 }
