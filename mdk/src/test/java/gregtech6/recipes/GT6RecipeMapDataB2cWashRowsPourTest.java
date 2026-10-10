@@ -50,6 +50,18 @@ import net.minecraft.world.level.material.Fluids;
  * the OreDict event listener (:199/:201, gated off by :182/:193 + WoodEntry.java:178)
  * and the @Deprecated debarking alias (:716-718, water 1000 face) — get their own
  * negative pins here so they cannot silently grow rows.
+ *
+ * <p>RESTORED FIXTURE ROW (task process-cluster-diesel-rig-red): the p29 acceptance
+ * smoke row (coarse_dirt + water 100 -&gt; dirt, 16/16) rides again at the file tail.
+ * The walk rows are DECLARED-OUT LIVE: the by-product gt6:dust_bark belongs to
+ * MT.Bark, a BINNIE-domain foreign material, and the live server seeds the absent-mod
+ * ABSENT levels (GT6ModDrivers.seedFromEnvironment), so the bark dust never registers
+ * in a real game JVM and the loader's unregistered-id = declared-out seam skips all
+ * 28 walk rows (the offline enumerate/datagen universe is all-PRESENT and cannot see
+ * the divergence — exactly why the b2c replacement shipped green while the live map
+ * was empty). The fixture row is the one live row that keeps the RCON
+ * process-pressurewasher acceptance chain meaningful until a materials card registers
+ * the bark dust. Its citation prefix "task " is the walk-vs-fixture partition key.
  */
 public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBase {
 
@@ -58,8 +70,18 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 
 	private static final String WASH = "pressurewasher";
 
-	/** The frozen census (the file-head Row census statement). */
-	private static final int CENSUS = 28;
+	/** The frozen census (the file-head Row census statement): the 28-row walk + the restored p29 fixture row. */
+	private static final int CENSUS = 29;
+
+	/** The walk rows only (the fixture row is the CENSUS-CENSUS_WALK tail). */
+	private static final int CENSUS_WALK = 28;
+
+	/** The fixture row's citation prefix — the walk-vs-fixture partition key (task process-cluster-diesel-rig-red). */
+	private static final String FIXTURE_PREFIX = "task process-cluster-diesel-rig-red";
+
+	private static boolean isFixtureRow(JsonObject aRow) {
+		return aRow.has("comment") && aRow.get("comment").getAsString().startsWith(FIXTURE_PREFIX);
+	}
 
 	/** The FL.waters leg order (FL.java:689: water/mnwtr/distilled_water/spdew). */
 	private static final List<String> LEGS = List.of("minecraft:water", "gt6:mnwtr", "gt6:distilled_water", "gt6:spdew");
@@ -73,6 +95,7 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		SOURCES.put("tn.oredict:199:201", 0); // the event face, gated by :182/:193 + WoodEntry.java:178
 		SOURCES.put("tn.woodkind-no-log", 0); // the WOOD kind: DEFAULT_BEAM has no static log-side row
 		SOURCES.put("alias.debarking:716-718", 0); // the @Deprecated water-1000 face, skipped by declaration
+		SOURCES.put("fixture.smoke-restored", 1); // the p29 acceptance row, restored by process-cluster-diesel-rig-red
 	}
 
 	@BeforeEach
@@ -136,9 +159,10 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 				"the OreDict event face TRUE NEGATIVE carries its full gate chain");
 		assertTrue(tHead.contains("RM.java:716-718") && tHead.contains("water 1000"),
 				"the debarking alias face is skipped by declaration (with its differing water default)");
-		assertTrue(tLower.contains("replaced smoke row") && tHead.contains("coarse_dirt"), "the replaced p29 smoke row is declared");
+		assertTrue(tLower.contains("smoke row restored") && tHead.contains("coarse_dirt") && tHead.contains("gt6:dust_bark"),
+				"the restored p29 fixture row carries its archaeology (the walk rows are declared-out live: the bark dust never registers in a seeded JVM)");
 		assertTrue(tHead.contains("PRESSURE_WASHER") && tHead.contains("pinned 0"), "the PhaseGate zero-bump posture is declared");
-		assertTrue(tHead.contains("Row census: 28"), "the row census statement is present");
+		assertTrue(tHead.contains("Row census: 29"), "the row census statement covers the walk + the fixture row");
 		// the stripped exclusion + domain-out + tag pin (task stripped-log-qol)
 		assertTrue(tHead.contains("STRIPPED EXCLUSION (task stripped-log-qol)"),
 				"the stripped-input exclusion is declared (no bark face to wash on an already-stripped log)");
@@ -149,17 +173,20 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		assertTrue(tHead.contains("#gt6:beam_wood"), "the beam tag pin is declared");
 	}
 
-	/** Every row is a cited :167 expansion (the citation names the wood and the fluid leg). */
+	/** Every walk row is a cited :167 expansion (the citation names the wood and the fluid leg); exactly one fixture row rides the tail. */
 	@Test
 	public void everyRowCarriesItsLineCitation() throws Exception {
 		JsonArray tRows = pourShipped();
+		int tFixtures = 0;
 		for (JsonElement tElement : tRows) {
 			JsonObject tRow = tElement.getAsJsonObject();
 			assertTrue(tRow.has("comment"), WASH + ": every row carries its citation");
 			String tCite = tRow.get("comment").getAsString();
+			if (isFixtureRow(tRow)) {tFixtures++; continue;}
 			assertTrue(tCite.startsWith("Loader_Recipes_Woods.java:167 ("), WASH + ": the citation names the upstream line");
 			assertTrue(tCite.endsWith(")"), WASH + ": the citation names the wood and the leg");
 		}
+		assertEquals(1, tFixtures, WASH + ": exactly one restored fixture row");
 		assertEquals(CENSUS, tRows.size(), WASH + ": the cited stock is the census");
 	}
 
@@ -184,7 +211,12 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 	public void theSourceAccountingMatchesTheFrozenPartition() throws Exception {
 		Map<String, Integer> tActual = new LinkedHashMap<>();
 		for (JsonElement tElement : pourShipped()) {
-			String tCite = tElement.getAsJsonObject().get("comment").getAsString();
+			JsonObject tRow = tElement.getAsJsonObject();
+			if (isFixtureRow(tRow)) { // the fixture row accounts under its own SOURCES seat
+				tActual.merge("fixture.smoke-restored", 1, Integer::sum);
+				continue;
+			}
+			String tCite = tRow.get("comment").getAsString();
 			String tWood = tCite.substring(tCite.indexOf('(') + 1, tCite.indexOf(';'));
 			tActual.merge("walk." + tWood + ":167", 1, Integer::sum);
 		}
@@ -199,7 +231,7 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		tUnaccounted.removeAll(SOURCES.keySet());
 		assertTrue(tUnaccounted.isEmpty(), WASH + ": shipped rows outside the frozen accounting: " + tUnaccounted);
 		assertTrue(tDrift.isEmpty(), WASH + ": the per-source accounting drifted — re-pour and bump SOURCES: " + tDrift);
-		assertEquals(CENSUS, liveWalk().size(), WASH + ": the live beam-kind walk holds the 7x4 shape");
+		assertEquals(CENSUS_WALK, liveWalk().size(), WASH + ": the live beam-kind walk holds the 7x4 shape");
 	}
 
 	/**
@@ -212,7 +244,9 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		Set<String> tExpected = liveWalk();
 		Set<String> tShipped = new HashSet<>();
 		for (JsonElement tElement : pourShipped()) {
-			tShipped.add(rowKey(tElement.getAsJsonObject()));
+			JsonObject tRow = tElement.getAsJsonObject();
+			if (isFixtureRow(tRow)) continue; // the fixture row is outside the beam-kind walk
+			tShipped.add(rowKey(tRow));
 		}
 		Set<String> tMissing = new HashSet<>(tExpected);
 		tMissing.removeAll(tShipped);
@@ -259,8 +293,23 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		}
 		assertTrue(tItemUniverse.contains("gt6:dust_bark"), "the bark dust is a registered material item (WoodEntry.java:143)");
 		Map<String, Integer> tLegCensus = new HashMap<>();
+		int tWalkRows = 0, tFixtureRows = 0;
 		for (JsonElement tElement : pourShipped()) {
 			JsonObject tRow = tElement.getAsJsonObject();
+			// the fixture row: the all-vanilla acceptance face (16/16, water 100) — outside the wrapper constants
+			if (isFixtureRow(tRow)) {
+				tFixtureRows++;
+				assertEquals("minecraft:coarse_dirt", tRow.getAsJsonArray("inputs").get(0).getAsJsonObject().get("item").getAsString(),
+						"the fixture row feeds coarse dirt");
+				assertEquals("minecraft:dirt", tRow.getAsJsonArray("outputs").get(0).getAsJsonObject().get("item").getAsString(),
+						"the fixture row yields dirt");
+				assertEquals(100, tRow.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("amount").getAsLong(),
+						"the fixture water leg");
+				assertEquals(16, tRow.get("eut").getAsLong(), "fixture eut 16");
+				assertEquals(16, tRow.get("duration").getAsLong(), "fixture duration 16");
+				continue;
+			}
+			tWalkRows++;
 			// items: the gt6 legs resolve against their own universes
 			for (String tLeg : new String[] {"inputs", "outputs"}) {
 				for (JsonElement tSlot : tRow.getAsJsonArray(tLeg)) {
@@ -283,6 +332,8 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 			assertEquals(16, tRow.get("eut").getAsLong(), "eut 16 on every row");
 			assertEquals(64, tRow.get("duration").getAsLong(), "duration 64 on every row");
 		}
+		assertEquals(CENSUS_WALK, tWalkRows, "the walk stock holds the 28-row census");
+		assertEquals(1, tFixtureRows, "exactly one fixture row");
 		for (String tLeg : LEGS) {
 			assertEquals(7, tLegCensus.getOrDefault(tLeg, 0).intValue(), tLeg + ": exactly 7 rows (one per log)");
 		}
@@ -297,6 +348,7 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 	public void theUnpouredFacesStayOut() throws Exception {
 		for (JsonElement tElement : pourShipped()) {
 			JsonObject tRow = tElement.getAsJsonObject();
+			if (isFixtureRow(tRow)) continue; // the fixture row rides its own water-100 face (documented in the head)
 			assertEquals(200, tRow.getAsJsonArray("fluidInputs").get(0).getAsJsonObject().get("amount").getAsLong(),
 					"no water-1000 debarking-alias leg (RM.java:716-718 stays unpoured)");
 			assertTrue(LOGS.contains(tRow.getAsJsonArray("inputs").get(0).getAsJsonObject().get("item").getAsString()),

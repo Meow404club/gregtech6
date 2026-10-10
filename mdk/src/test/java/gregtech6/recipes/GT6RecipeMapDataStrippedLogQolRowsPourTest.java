@@ -58,8 +58,8 @@ import net.minecraft.world.level.material.Fluids;
  */
 public class GT6RecipeMapDataStrippedLogQolRowsPourTest extends GTRecipesOfflineTestBase {
 
-	/** The censuses after this card: sawing +30, generifier +6, wash untouched at 28 (the generifier total back at 9123 — the −64 task wiregt-prefix-item-retirement re-pour). */
-	private static final int SAWING_CENSUS = 4304, GENERIFIER_CENSUS = 9123, WASH_CENSUS = 28;
+	/** The censuses after this card: sawing +30, generifier +6, wash 28+1 (the restored p29 fixture row, task process-cluster-diesel-rig-red — the generifier total back at 9123 — the −64 task wiregt-prefix-item-retirement re-pour). */
+	private static final int SAWING_CENSUS = 4304, GENERIFIER_CENSUS = 9123, WASH_CENSUS = 29;
 
 	/** The six vanilla species (LoaderWoodDictionary.java:51-56, the LIST_WOODS vanilla subset). */
 	private static final String[] SPECIES = {"oak", "spruce", "birch", "jungle", "acacia", "dark_oak"};
@@ -114,7 +114,8 @@ public class GT6RecipeMapDataStrippedLogQolRowsPourTest extends GTRecipesOffline
 		assertEquals(GENERIFIER_CENSUS, GT6RecipeMapJsonLoader.mapFor("generifier").mRecipeList.size(), "generifier: 9181 + 6 stripped rows (the −64 wiregt-prefix-item-retirement re-pour nets out the wire-gt walk rows)");
 		assertEquals(GENERIFIER_CENSUS, GT6RecipeMapJsonLoader.pouredCount("generifier"), "generifier: zero skips");
 		pourShipped("pressurewasher");
-		assertEquals(WASH_CENSUS, GT6RecipeMapJsonLoader.mapFor("pressurewasher").mRecipeList.size(), "wash: the head-only card moves no row");
+		assertEquals(WASH_CENSUS, GT6RecipeMapJsonLoader.mapFor("pressurewasher").mRecipeList.size(),
+				"wash: the head-only card moves no row (28 walk rows + the restored p29 fixture row, task process-cluster-diesel-rig-red)");
 		assertEquals(WASH_CENSUS, GT6RecipeMapJsonLoader.pouredCount("pressurewasher"), "wash: zero skips");
 	}
 

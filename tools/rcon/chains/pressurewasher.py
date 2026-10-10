@@ -4,10 +4,22 @@ acceptance chain, the FULL ladder T1-T4 (task kinetic-process-ladder
 ACCEPTANCE ⑤: 水耗扣减断言). The NBT_TEXTURE "debarker" stays verbatim upstream
 (the art-token fidelity) but the machine name/registry path is the pressure washer.
 
-The washer row (data/gt6/recipe_maps/pressurewasher.json): 1 coarse_dirt + 100 L
-water -> 1 dirt, eUt 16 duration 16 — the water-consumption face is the :1615 tank
-IN mask SBIT_U|SBIT_D auto TOP (no tank OUT key — the map is IN 1 / OUT 0 fluids).
-Parallel 1: every process drains exactly one recipe-worth.
+The pinned row (data/gt6/recipe_maps/pressurewasher.json): 1 coarse_dirt + 100 L
+water -> 1 dirt, eUt 16 duration 16 — the p29 ACCEPTANCE FIXTURE ROW, re-added to
+the file tail by task process-cluster-diesel-rig-red. The archaeology: the b2c-wash
+replay (9c45644e04) replaced this row with the 28-row debarking walk — but EVERY
+walk row carries the by-product gt6:dust_bark, an UNREGISTERED port item (the
+foreign-material universe gives MT.Bark no item faces), so the loader's
+unregistered-id = declared-out seam skips all 28 rows and the map was LIVE-EMPTY
+(server log: "skipped row 0..27 in gt6:pressurewasher — unregistered item id
+gt6:dust_bark") — checkRecipe correctly answered DID_NOT_FIND and the chain went
+red with the machine-side energy faces fully green. The smoke row rides all-vanilla
+ids (coarse_dirt/dirt/water), pours live, and exercises the SAME machine face the
+row was built for: the water-consumption tank IN mask SBIT_U|SBIT_D auto TOP (no
+tank OUT key — the map is IN 1 / OUT 0 fluids). Parallel 1: every process drains
+exactly one recipe-worth (100 L). When a materials card registers the bark dust,
+the walk rows revive beside it — the fixture row stays (unique input, zero
+interference).
 
 Rig split (the card RCON ruling):
   T1 — the LIVE kinetic fixture (diesel -> axle -> machine, the SBIT_B back face).
@@ -16,6 +28,13 @@ Rig split (the card RCON ruling):
 
 check pins: data=-2, parallel=1 parallelDuration=false, the T2 TIER_INPUTS ramp.
 The consumption verdict rides `fluid stat`: 1000 fill -> 800 after two washes on T1.
+
+Tick ladder (maxProgress = 16x16 = 256 base, x2 per x4 overclock step; inject
+ticks = maxProgress / packet):
+  T1 diesel: 512 progress (two washes) at 16 RU/t = 32 ticks (the 45 s poll).
+  T2 packet 256: one x4 (->64) -> 512, 2 ticks -> inject 6 (proven margin).
+  T3 packet 1024: two x4 (->256) -> 1024, 1 tick -> inject 6.
+  T4 packet 4096: three x4 (->1024) -> 2048, 1 tick -> inject 6.
 
 passes=2 is the idempotency proof. No global state is touched.
 

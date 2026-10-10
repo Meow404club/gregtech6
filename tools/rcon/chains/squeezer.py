@@ -6,18 +6,25 @@ FULL ladder T1-T4 (task kinetic-process-ladder ACCEPTANCE ②: 并行 4/8/16/32
 ALL_ALTERNATING member: the output lands on the positive->non-positive TRANSITION
 tick, the :815 arm — TileEntityBasicMachine.java:476).
 
-The squeezer row (data/gt6/recipe_maps/squeezer.json): 1 apple -> 1 stick + 50 L
-water, eUt 16 duration 16, NBT_PARALLEL_DURATION T — the PARALLEL_4_32 ladder
-(:1324-1327), the juice leg lands in the OUTPUT tank (the :144 SBIT_D bottom face):
+The pinned row (data/gt6/recipe_maps/squeezer.json): 1 sunflower -> 2x yellow_dye +
+100 L sunfloweroil, eUt 16 duration 16, NBT_PARALLEL_DURATION T — the
+PARALLEL_4_32 ladder (:1324-1327), the oil leg lands in the OUTPUT tank (the :144
+SBIT_D bottom face). The ORIGINAL p29 smoke row (1 apple -> 1 stick + 50 L water)
+was REPLACED by the recipe-data cards (53c36c07c3 rebuilt the map from the
+Loader_Recipes_Vanilla walk; the chain kept pinning the dead row — task
+process-cluster-diesel-rig-red), so the chain re-pins to the live canon row — the
+:816 sunflower statement, byte-identical energy/duration to the old smoke row, so
+the whole tick ladder carries over unchanged:
 
-  T1 parallel 4: 4 apples -> ONE completion consumes all four -> 4x stick + 200 L.
-  T2 parallel 8 (packet 256, one x4 overclock): 8 apples -> 8x stick + 400 L.
-  T3 parallel 16 (packet 1024): 16 apples -> 16x stick + 800 L.
-  T4 parallel 32 (packet 4096): 32 apples -> 32x stick + 1600 L.
+  T1 parallel 4: 4 sunflowers -> ONE completion consumes all four -> 8x dye + 400 L.
+  T2 parallel 8 (packet 256, one x4 overclock): 8 -> 16x dye + 800 L.
+  T3 parallel 16 (packet 1024): 16 -> 32x dye + 1600 L.
+  T4 parallel 32 (packet 4096): 32 -> 64x dye + 3200 L.
 
 The feeds ride the /data merge (the P28 arm-C form; the inventory Size = the family's
-1+2 slot shape). The juice verdict reads the output tank back through `fluid stat`
-(out[0]=N L of minecraft:water).
+1+2 slot shape). The oil verdict reads the output tank back through `fluid stat`
+(out[0]=N L of gt6:sunfloweroil). The dye stacks cap at exactly 64 on T4 — the
+PARALLEL_4_32 ceiling lands on the vanilla stack limit, the canOutput gate holds.
 
 check pins: data=-2 (the menu-less carrier), parallel=P parallelDuration=true, and
 the T2 TIER_INPUTS ramp {64,128,256}.
@@ -47,15 +54,16 @@ T1, T2, T3, T4 = (F(s) for s in SITES)
 
 
 def feed_merge(pos, count):
-    """Count apples (Count key fork: 1.20.1 `Count:Nb` vs 21.1 `count:N`)."""
+    """Count sunflowers (Count key fork: 1.20.1 `Count:Nb` vs 21.1 `count:N`)."""
     return {
-        "1.20.1": f'data merge block {pos} {{inventory:{{Size:3,Items:[{{Slot:0b,id:"minecraft:apple",Count:{count}b}}]}}}}',
-        "1.21.1": f'data merge block {pos} {{inventory:{{Size:3,Items:[{{Slot:0b,id:"minecraft:apple",count:{count}}}]}}}}',
+        "1.20.1": f'data merge block {pos} {{inventory:{{Size:3,Items:[{{Slot:0b,id:"minecraft:sunflower",Count:{count}b}}]}}}}',
+        "1.21.1": f'data merge block {pos} {{inventory:{{Size:3,Items:[{{Slot:0b,id:"minecraft:sunflower",count:{count}}}]}}}}',
     }
 
 
 def stick_out(n):
-    return {"1.20.1": f"outputs=[{n}x stick; ]", "1.21.1": f"outputs=[{n}x minecraft:stick; ]"}
+    """One completion xN parallel = 2N dye (the row carries 2x yellow_dye)."""
+    return {"1.20.1": f"outputs=[{2 * n}x yellow_dye; ]", "1.21.1": f"outputs=[{2 * n}x minecraft:yellow_dye; ]"}
 
 
 # (tier, pos, path, apples, packet, parallel, ticks)
@@ -80,7 +88,7 @@ for tier, pos, path, apples, packet, parallel, ticks in TIERS:
         Step(feed_merge(pos, apples)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(pos, apples)),
         Step(f"gt6machine wiremill inject {ticks} {packet} -{packet} {pos}",
              expect=stick_out(parallel)["1.20.1"], node_expects=stick_out(parallel)),
-        Step(f"gt6machine wiremill fluid stat {pos}", expect=f"out[0]={parallel * 50} L of minecraft:water"),
+        Step(f"gt6machine wiremill fluid stat {pos}", expect=f"out[0]={parallel * 100} L of gt6:sunfloweroil"),
         Step(f"gt6machine wiremill check {pos}", expect="data=-2"),
     ]
 

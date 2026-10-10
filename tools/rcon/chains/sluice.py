@@ -4,15 +4,29 @@ ladder T1-T4 (task kinetic-process-ladder ACCEPTANCE ④: 双最低输入行跑�
 
 The sluice is the PLAIN BasicMachine — NO world interaction, NO flowing-water
 dependency: the 流水 lives in the RECIPE domain (RM.SLUICE fluid 1/1/1 + MIN 2 =
-every row MUST carry BOTH an item leg AND a fluid leg, the :708/:709/:710 gate trio
-at checkRecipe). The row (data/gt6/recipe_maps/sluice.json): 1 sand + 100 L water ->
-1 clay_ball + 1 gold_nugget, eUt 16 duration 16.
+every row MUST carry BOTH an item leg AND a fluid leg, the :706/:708/:709 gate trio
+at checkRecipe). The pinned row (data/gt6/recipe_maps/sluice.json): 1
+gt6:crushed_lithium + 900 L water -> 1x crushed_purified_lithium (+ the eight 3%
+by-product chance legs), eUt 16 duration 144 — the :385-420 ore walk head row.
+The ORIGINAL p29 smoke row (1 sand + 100 L water -> clay_ball + gold_nugget) was
+REPLACED by the recipe-data cards (ddbd805b80 rebuilt the map from the ore walk;
+the chain kept pinning the dead row — task process-cluster-diesel-rig-red), so the
+chain re-pins to the live canon row. The eUt 16 keeps the bronze diesel rig; the
+chance legs are UNPINNABLE (3% each) — the verdicts ride out[0] only, never the
+full outputs list.
+
+Tick ladder (maxProgress = eUt x duration, x2 per x4 overclock step; inject ticks
+= maxProgress / packet):
+  T1 diesel: 2304 progress at 16 RU/t = 144 ticks (the 45 s poll covers it).
+  T2 packet 256: one x4 (->64) -> 4608, 18 ticks -> inject 20.
+  T3 packet 1024: two x4 (->256) -> 9216, 9 ticks -> inject 12.
+  T4 packet 4096: three x4 (->1024) -> 18432, 5 ticks -> inject 6 (proven margin).
 
 Rig split (the card RCON ruling):
   T1 — the LIVE kinetic fixture (diesel -> axle -> machine, the SBIT_B back energy
     face rotated east by the NBT facing merge) + the DUAL-LEG NEGATIVE: water alone
     (no item) never starts a process — progress=0/0 and the tank intact — then the
-    sand feed completes the row.
+    crushed-ore feed completes the row.
   T2-T4 — the gt6machine inject rig (the wiremill form), each tier fed both
     minimum legs.
 
@@ -51,18 +65,18 @@ AXLE = "gt6:axle_wood_treated_small"
 
 
 def feed_merge(pos, count):
-    """Count sand (the Count key fork)."""
+    """Count crushed lithium ore (the Count key fork)."""
     return {
-        "1.20.1": f'data merge block {pos} {{inventory:{{Size:10,Items:[{{Slot:0b,id:"minecraft:sand",Count:{count}b}}]}}}}',
-        "1.21.1": f'data merge block {pos} {{inventory:{{Size:10,Items:[{{Slot:0b,id:"minecraft:sand",count:{count}}}]}}}}',
+        "1.20.1": f'data merge block {pos} {{inventory:{{Size:10,Items:[{{Slot:0b,id:"gt6:crushed_lithium",Count:{count}b}}]}}}}',
+        "1.21.1": f'data merge block {pos} {{inventory:{{Size:10,Items:[{{Slot:0b,id:"gt6:crushed_lithium",count:{count}}}]}}}}',
     }
 
 
-def pair_report(clay, nugget):
-    """The inject outputs list (the clay + gold-nugget pair per row)."""
+def pair_report(clay):
+    """The inject outputs HEAD (the deterministic purified lithium; the 3% chance tails are unpinnable)."""
     return {
-        "1.20.1": f"outputs=[{clay}x clay_ball; {nugget}x gold_nugget; ]",
-        "1.21.1": f"outputs=[{clay}x minecraft:clay_ball; {nugget}x minecraft:gold_nugget; ]",
+        "1.20.1": f"outputs=[{clay}x crushed_purified_lithium",
+        "1.21.1": f"outputs=[{clay}x gt6:crushed_purified_lithium",
     }
 
 
@@ -79,11 +93,9 @@ steps = [
     Step(f"setblock {F(ENGINE)} {DIESEL}[facing=east]", expect="Changed the block"),
     Step(f"setblock {F(AXLE1)} {AXLE}[axis=x]", expect="Changed the block"),
     Step(f"gt6engine fuel {F(ENGINE)} gt6:diesel 2000", expect="filled"),
-    Step(f"gt6machine wiremill check {T1}", expect="out[0]=1x clay_ball",
-         node_expects={"1.21.1": "out[0]=1x minecraft:clay_ball"}, poll=45.0),
-    Step(f"gt6machine wiremill check {T1}", expect="out[1]=1x gold_nugget",
-         node_expects={"1.21.1": "out[1]=1x minecraft:gold_nugget"}),
-    Step(f"gt6machine wiremill fluid stat {T1}", expect="in[0]=900 L of minecraft:water"),
+    Step(f"gt6machine wiremill check {T1}", expect="out[0]=1x crushed_purified_lithium",
+         node_expects={"1.21.1": "out[0]=1x gt6:crushed_purified_lithium"}, poll=45.0),
+    Step(f"gt6machine wiremill fluid stat {T1}", expect="in[0]=100 L of minecraft:water"),
     Step(f"gt6machine wiremill check {T1}", expect="parallel=1 parallelDuration=false"),
 
     phase("B: T2-T4 — the inject rig, both minimum legs every tier"),
@@ -91,15 +103,15 @@ steps = [
     Step(f"gt6machine wiremill check {T2}", expect="minIn=64 recIn=128 maxIn=256"),
     Step(feed_merge(T2, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T2, 1)),
     Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T2}", expect="filled 1000/1000"),
-    Step(f"gt6machine wiremill inject 6 256 {T2}", expect=pair_report(1, 1)["1.20.1"], node_expects=pair_report(1, 1)),
+    Step(f"gt6machine wiremill inject 20 256 {T2}", expect=pair_report(1)["1.20.1"], node_expects=pair_report(1)),
     Step(f"setblock {T3} gt6:sluice_t3", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T3, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T3, 1)),
     Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T3}", expect="filled 1000/1000"),
-    Step(f"gt6machine wiremill inject 6 1024 {T3}", expect=pair_report(1, 1)["1.20.1"], node_expects=pair_report(1, 1)),
+    Step(f"gt6machine wiremill inject 12 1024 {T3}", expect=pair_report(1)["1.20.1"], node_expects=pair_report(1)),
     Step(f"setblock {T4} gt6:sluice_t4", expect="Changed the block", sleep=1.0),
     Step(feed_merge(T4, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T4, 1)),
     Step(f"gt6machine wiremill fluid fill up minecraft:water 1000 {T4}", expect="filled 1000/1000"),
-    Step(f"gt6machine wiremill inject 6 4096 {T4}", expect=pair_report(1, 1)["1.20.1"], node_expects=pair_report(1, 1)),
+    Step(f"gt6machine wiremill inject 6 4096 {T4}", expect=pair_report(1)["1.20.1"], node_expects=pair_report(1)),
 
     phase("C: the row-carrier pins — menu-less carriers everywhere"),
     Step(f"gt6machine wiremill check {T3}", expect="data=-2"),
