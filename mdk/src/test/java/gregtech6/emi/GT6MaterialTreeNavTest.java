@@ -648,6 +648,38 @@ public class GT6MaterialTreeNavTest extends GTRecipesOfflineTestBase {
 		assertFalse(activeOf(tZoomOut), "zoom-out sleeps at the fit pose");
 	}
 
+	/**
+	 * The mattree-open-fix regression pin: the S4 corner entry (and every native click
+	 * face) must precede the nav canvas in the add order. EMI 1.1.24 dispatches widget
+	 * clicks FORWARD in add order — the first containing non-SlotWidget whose
+	 * {@code mouseClicked} returns true consumes (RecipeScreen.mouseClicked, javap
+	 * emi-forge-1.1.24+1.20.1; the SlotWidget branch only records pressedSlot) — so the
+	 * canvas's empty-canvas pan gesture (mattree-emi-panzoom) tail-swallowed the corner
+	 * press and the standalone fullscreen entry went dead. The offline click itself needs
+	 * the EMI runtime (ButtonWidget plays sounds), so the add order IS the testable face.
+	 */
+	@Test
+	public void everyNativeClickFacePrecedesTheNavCanvas() throws Exception {
+		GT6MaterialTreeEmiRecipe tRecipe = ironRecipe();
+		RecordingHolder tHolder = new RecordingHolder();
+		tRecipe.addWidgets(tHolder);
+		int tNavAt = -1;
+		for (int i = 0; i < tHolder.mAll.size(); i++)
+			if (tHolder.mAll.get(i) instanceof GT6MaterialTreeNavWidget) tNavAt = i;
+		assertTrue(tNavAt >= 0, "the nav canvas is on the page");
+		int tCorners = 0;
+		for (int i = 0; i < tHolder.mAll.size(); i++) {
+			Widget tWidget = tHolder.mAll.get(i);
+			if (tWidget instanceof GT6MaterialTreeNavWidget) continue;
+			if (tWidget instanceof ButtonWidget) {
+				assertTrue(i < tNavAt, "button at #" + i + " must precede the nav canvas at #" + tNavAt
+						+ " — a canvas-preceding add order is the only thing that keeps the corner entry clickable");
+				tCorners++;
+			}
+		}
+		assertEquals(4, tCorners, "zoom in/out, reset and the S4 corner entry all precede the canvas");
+	}
+
 	// the ButtonWidget reflection seams (its fields are EMI's own names, stable in the jar)
 	private static void click(ButtonWidget aButton) throws Exception {
 		((ButtonWidget.ClickAction) inheritedField(aButton.getClass(), "action").get(aButton)).click(0, 0, 0);
