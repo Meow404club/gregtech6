@@ -112,21 +112,38 @@ public class GTWrenchGridTablesTest {
 		assertEquals(270, tAssertions, "54 cells x 5 samples");
 	}
 
+	/**
+	 * The pipe grid icon table, task pipe-flow-indicator-rework form: BOTH modes read the
+	 * connection bits identically — the user ruling (twice-repeated) is that shift must
+	 * show 「与不按 shift 时完全相同的连接图标（PIPE_CONNECT/PIPE_BLOCK），不能是别的任何」;
+	 * the old shift branch drew IO_FACING_ROTATION for ioMask bits and was struck down.
+	 * The io arrow lives on the pipe body (GTFluidPipeFlowModel), the grid never draws it.
+	 */
 	@Test
 	public void iconTableBothModesAllBitSideCombinations() {
-		// NORMAL: connected bit → PIPE_CONNECT else PIPE_BLOCK
-		// SHIFT:  ioMask bit → IO_FACING_ROTATION else PIPE_BLOCK
-		// (the ioMask bit displays without a connection — display semantics)
 		for (byte tSide = 0; tSide < 6; tSide++) {
 			int tBit = 1 << tSide;
 			assertEquals(GTWrenchGridIcon.PIPE_CONNECT, GTWrenchGridTables.iconFor(false, tSide, (byte)tBit, (byte)0), "normal connected " + tSide);
 			assertEquals(GTWrenchGridIcon.PIPE_BLOCK, GTWrenchGridTables.iconFor(false, tSide, (byte)0, (byte)0), "normal disconnected " + tSide);
-			assertEquals(GTWrenchGridIcon.IO_FACING_ROTATION, GTWrenchGridTables.iconFor(true, tSide, (byte)0, (byte)tBit), "shift marked " + tSide);
-			assertEquals(GTWrenchGridIcon.PIPE_BLOCK, GTWrenchGridTables.iconFor(true, tSide, (byte)0, (byte)0), "shift unmarked " + tSide);
+			// the ruling: shift shows exactly the plain grid — connected → PIPE_CONNECT ...
+			assertEquals(GTWrenchGridIcon.PIPE_CONNECT, GTWrenchGridTables.iconFor(true, tSide, (byte)tBit, (byte)0), "shift connected " + tSide);
+			// ... unconnected → PIPE_BLOCK, even when the ioMask bit is set (NEVER IO_FACING_ROTATION)
+			assertEquals(GTWrenchGridIcon.PIPE_BLOCK, GTWrenchGridTables.iconFor(true, tSide, (byte)0, (byte)tBit), "shift io-marked but unconnected " + tSide);
+			assertEquals(GTWrenchGridIcon.PIPE_CONNECT, GTWrenchGridTables.iconFor(true, tSide, (byte)tBit, (byte)tBit), "shift marked and connected " + tSide);
 			// neighbour bits of the same mask never leak into this side's icon
 			byte tOthers = (byte)(tBit ^ 63);
 			assertEquals(GTWrenchGridIcon.PIPE_BLOCK, GTWrenchGridTables.iconFor(false, tSide, tOthers, (byte)0), "normal others-connected " + tSide);
 			assertEquals(GTWrenchGridIcon.PIPE_BLOCK, GTWrenchGridTables.iconFor(true, tSide, (byte)0, tOthers), "shift others-marked " + tSide);
+		}
+		// the exhaustive form of the ruling: shift == plain over the full (connections x ioMask) space
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			for (int tConnections = 0; tConnections < 64; tConnections++) {
+				for (int tIoMask = 0; tIoMask < 64; tIoMask++) {
+					assertEquals(GTWrenchGridTables.iconFor(false, tSide, (byte)tConnections, (byte)tIoMask),
+							GTWrenchGridTables.iconFor(true, tSide, (byte)tConnections, (byte)tIoMask),
+							"shift == plain: side " + tSide + " connections " + tConnections + " ioMask " + tIoMask);
+				}
+			}
 		}
 	}
 
