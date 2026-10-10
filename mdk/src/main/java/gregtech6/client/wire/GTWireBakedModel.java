@@ -373,7 +373,7 @@ public class GTWireBakedModel implements IDynamicBakedModel {
 		return switch (aDir) {
 			case DOWN  -> new double[] {aHalf, 0, aHalf, 1 - aHalf, aHalf, 1 - aHalf}; // SIDE_Y_NEG :125
 			case UP    -> new double[] {aHalf, 1 - aHalf, aHalf, 1 - aHalf, 1, 1 - aHalf}; // SIDE_Y_POS :128
-			case NORTH -> new double[] {aHalf, aHalf, 0, 1 - aHalf, 1 - aHalf, 1 - aHalf}; // SIDE_Z_NEG :126
+			case NORTH -> new double[] {aHalf, aHalf, 0, 1 - aHalf, 1 - aHalf, aHalf}; // SIDE_Z_NEG :126
 			case SOUTH -> new double[] {aHalf, aHalf, 1 - aHalf, 1 - aHalf, 1 - aHalf, 1}; // SIDE_Z_POS :129
 			case WEST  -> new double[] {0, aHalf, aHalf, aHalf, 1 - aHalf, 1 - aHalf}; // SIDE_X_NEG :124
 			case EAST  -> new double[] {1 - aHalf, aHalf, aHalf, 1, 1 - aHalf, 1 - aHalf}; // SIDE_X_POS :127
