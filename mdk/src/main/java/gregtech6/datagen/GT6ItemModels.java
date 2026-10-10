@@ -1123,23 +1123,30 @@ public final class GT6ItemModels extends ItemModelProvider {
     }
 
     /**
-     * Task energium-crystal-appearance-2 — the twelve LU energium crystals (red/cyan
-     * x T0-T5, upstream Loader_MultiTileEntities.java:1078-1092) ride the 3D box item
-     * model, NOT a flat {@code item/generated} sprite. The upstream ITEM form is a 3D
-     * render, not an icon sprite: the MTE registry registers RendererBlockTextured as the
-     * FORGE IItemRenderer for every MTE block (MultiTileEntityRegistry.java:105), and its
-     * renderInventoryBlock (RendererBlockTextured.java:50-98) draws the MTE's own box
-     * through RenderBlocks with per-face shading (y- faces 0.5F, y+ faces 1.0F,
-     * :173/:187). For the batteries that box is the 4x4x4-pixel cube — setBlockBounds2
-     * box(PX_P[6], PX_P[0], PX_P[6], PX_N[6], PX_N[12], PX_N[6]) (MultiTileEntityBatteryLU8.java:50;
-     * PX_P[6]=0.375/PX_N[6]=0.625/PX_N[12]=0.25, CS.java:492-513) — each face carrying the
-     * FULL 16x16 family icon (RenderBlocks renders the whole sprite per face), tinted by
-     * the row mRGBa (getTexture2 :42). The flat full-cell sprite was the user-reported
-     * anti-pattern ("纯色块填满格子" — the second known_bugs.r11-casing-item-model form:
-     * upstream item = 3D block, port sprite = flat). The family colour stays the BAKED
-     * mRGBa multiply (the r11-energium-tint seat, the bake_battery_textures.py products):
-     * upstream top/bottom/sides decode pixel-identical, so one sprite per family serves
-     * all six faces. cullface-less full-uv element, particle = the same sprite.
+     * The twelve LU energium crystals (red/cyan x T0-T5, upstream
+     * Loader_MultiTileEntities.java:1078-1092) ride the 3D item model, NOT a flat
+     * {@code item/generated} sprite. History: task energium-crystal-appearance-2
+     * (2026-10-06) first gave them the faithful 3D form — the upstream ITEM render is
+     * RendererBlockTextured.renderInventoryBlock (the FORGE IItemRenderer registered per
+     * MTE block, MultiTileEntityRegistry.java:105, RendererBlockTextured.java:50-98)
+     * drawing the MTE's own 4x4x4-pixel battery box (setBlockBounds2
+     * box(PX_P[6],PX_P[0],PX_P[6],PX_N[6],PX_N[12],PX_N[6]),
+     * MultiTileEntityBatteryLU8.java:50; CS.java:492-513) with per-face shading — so the
+     * port generated that box as one full-uv element. Task energium-item-2d-gem
+     * (2026-10-10): the user rejected that form twice as too small and too square and
+     * ruled "还是3D,但是和上游一样的钻石形态" — keep the 3D render, reshape to the
+     * DIAMOND-CRYSTAL outline. That is a DECLARED deviation from the upstream box: the
+     * upstream material semantics is the diamond set (MT.java:1581-1582 EnergiumRed/Cyan
+     * = SET_DIAMOND, the crystalcent item art), while the upstream gem ITEM form is
+     * unreachable (GT6_Main.java:138-142 disables gem generation; the in-game MTE item
+     * is the box). The silhouette is a stepped rhombic bipyramid: five concentric
+     * cuboid elements (2px tips, 4px crown/pavilion, 8px girdle; y 2→14) each rotated
+     * 45° about (8,8,8) so corners face the camera — ~11.3px wide x 12px tall, dwarfing
+     * the retired 4px box. The family colour stays the BAKED mRGBa multiply
+     * (the r11-energium-tint seat, the bake_battery_textures.py products): upstream
+     * top/bottom/sides decode pixel-identical, so one sprite per family serves all six
+     * faces, and its diagonal gradient reads as facet shading across the rotated faces.
+     * cullface-less full-uv faces, particle = the same sprite.
      */
     private void energiumCrystalModel(String aItemId, String aFamily) {
         String tBase = "item/battery/" + aFamily;
@@ -1152,8 +1159,20 @@ public final class GT6ItemModels extends ItemModelProvider {
                 .texture("south", modLoc(tBase))
                 .texture("west", modLoc(tBase))
                 .texture("east", modLoc(tBase));
-        tModel.element()
-                .from(6.0F, 0.0F, 6.0F).to(10.0F, 4.0F, 10.0F)
+        energiumCrystalFacet(tModel, 7.0F, 2.0F, 7.0F, 9.0F, 4.0F, 9.0F);
+        energiumCrystalFacet(tModel, 6.0F, 4.0F, 6.0F, 10.0F, 6.0F, 10.0F);
+        energiumCrystalFacet(tModel, 4.0F, 6.0F, 4.0F, 12.0F, 10.0F, 12.0F);
+        energiumCrystalFacet(tModel, 6.0F, 10.0F, 6.0F, 10.0F, 12.0F, 10.0F);
+        energiumCrystalFacet(tModel, 7.0F, 12.0F, 7.0F, 9.0F, 14.0F, 9.0F);
+    }
+
+    /** One girdle/cone step of the energium bipyramid: a full-uv box rotated 45° about the cell centre. */
+    private void energiumCrystalFacet(ItemModelBuilder aModel, float aX1, float aY1, float aZ1,
+            float aX2, float aY2, float aZ2) {
+        aModel.element()
+                .from(aX1, aY1, aZ1).to(aX2, aY2, aZ2)
+                .rotation().origin(8.0F, 8.0F, 8.0F)
+                        .axis(net.minecraft.core.Direction.Axis.Y).angle(45.0F).end()
                 .allFaces((aDir, aFace) -> aFace.texture("#" + aDir.getName()).uvs(0.0F, 0.0F, 16.0F, 16.0F))
                 .end();
     }

@@ -8858,9 +8858,20 @@ SAME visible pixels, the lightningrod one-texture ruling).
   registered per MTE block, MultiTileEntityRegistry.java:105) of the 4x4x4-pixel battery
   box (setBlockBounds2 box(PX_P[6],PX_P[0],PX_P[6],PX_N[6],PX_N[12],PX_N[6]),
   MultiTileEntityBatteryLU8.java:50) with per-face shading — the twelve generated item
-  models carry that box as their one element (full-uv faces), so the crystals sit small
+  models carried that box as their one element (full-uv faces), so the crystals sat small
   in the inventory cell like upstream instead of a flat full-cell colour fill (the
   user's "纯色块填满格子" round-two report).
+  RULING CHAIN, task energium-item-2d-gem (2026-10-10): the user rejected that
+  upstream-faithful box TWICE as too small and too square and ruled "还是3D,但是和上游
+  一样的钻石形态" — the item model stays 3D but takes the DIAMOND-CRYSTAL outline, a
+  declared deviation from the upstream box (the material semantics IS the diamond set,
+  MT.java:1581-1582 EnergiumRed/Cyan = SET_DIAMOND, but the upstream gem item form is
+  disabled, GT6_Main.java:138-142, so no upstream gem shape exists to be faithful to).
+  The twelve models now carry five concentric full-uv elements (2px tips / 4px
+  crown+pavilion / 8px girdle, y 2→14, each rotated 45° about (8,8,8)) — a stepped
+  rhombic bipyramid ~11.3px wide x 12px tall; the textures are UNCHANGED (the same two
+  bakes, their diagonal gradient doubling as facet shading). Pinned by
+  `GT6EnergiumItemTexDatagenTest.energiumItemModelsAreTheDiamondCrystalFormNotFlatSprites`.
   Produced by `mdk/tools/bake_battery_textures.py` (pure stdlib; byte-copy mode plus the
   energium mRGBa multiply).
 - `gt6/textures/block/battery_box.png` and `battery_box_large.png` — the BatteryBox side

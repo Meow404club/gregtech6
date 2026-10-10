@@ -30,12 +30,23 @@
  * (MultiTileEntityRegistry.java:105, RendererBlockTextured.java:50-98,
  * MultiTileEntityBatteryLU8.java:50), not a flat full-cell sprite). So:
  * <ul>
- * <li>the 12 energium ITEM MODELS must be the 3D box form (parent block/cube, one
- *     element 6,0,6→10,4,10, full-uv faces) — the flat item/generated parent IS the
- *     reported bug shape;</li>
  * <li>the two sprites must pass IMAGE-STATISTICS floors (tint-channel spread, unique
  *     colour count, adjacent-pixel edge energy, luminance stdev) — a flat colour fill
  *     or an over-compressed smear fails these numbers, no byte pin can.</li>
+ * </ul>
+ *
+ * <p>Task energium-item-2d-gem (2026-10-10) reversed the MODEL-shape pin: the user
+ * rejected the upstream-faithful 4x4x4 box twice as too small and too square and ruled
+ * the item stays 3D but takes the diamond-crystal outline ("还是3D,但是和上游一样的
+ * 钻石形态"). The declared deviation: upstream material semantics is SET_DIAMOND
+ * (MT.java:1581-1582, the crystalcent art) while the upstream gem ITEM form is
+ * disabled (GT6_Main.java:138-142), so there is no upstream gem shape to be faithful
+ * to — the user ruling IS the spec. So:
+ * <ul>
+ * <li>the 12 energium ITEM MODELS must be the 3D crystal form (parent block/cube,
+ *     MULTIPLE elements forming the stepped bipyramid, union bounding box at least
+ *     8px wide x 10px tall) — the retired single-element 6,0,6→10,4,10 box and the
+ *     flat item/generated parent are BOTH the bug shapes now.</li>
  * </ul>
  */
 package gregtech6.datagen;
@@ -181,39 +192,62 @@ class GT6EnergiumItemTexDatagenTest {
 		return (aArgb >> ((2 - aChannel) * 8)) & 255;
 	}
 
+	// ------------------------------------------------------------------
+	// the model-shape pin (task energium-item-2d-gem, reversing the
+	// energium-crystal-appearance-2 box pin on the 2026-10-10 user ruling):
+	// the crystal form must be multi-element 3D and sizeable; the two bug
+	// shapes — the retired single-element 6,0,6→10,4,10 box and the flat
+	// item/generated sprite — must both go red on their own assertion.
+	// ------------------------------------------------------------------
+
 	/**
-	 * The item-model shape pin: the twelve energium rows must generate the 3D box form —
-	 * parent block/cube, ONE element 6,0,6→10,4,10 (the upstream setBlockBounds2 battery
-	 * box, MultiTileEntityBatteryLU8.java:50), every face full-uv 0,0→16,16 (RenderBlocks
-	 * renders the whole icon per face). The flat {@code item/generated} parent IS the
-	 * user-reported "纯色块填满格子" bug shape — this pin goes red if anyone routes the
-	 * crystals back to a full-cell sprite.
+	 * The item-model shape pin: the twelve energium rows must generate the 3D diamond-
+	 * crystal form — parent block/cube (the flat {@code item/generated} parent IS the
+	 * reported "纯色块填满格子" bug shape and fails here), MULTIPLE elements (the
+	 * retired upstream box was ONE element 6,0,6→10,4,10 and fails here, MultiTileEntity-
+	 * BatteryLU8.java:50), union bounding box at least 8px wide x 10px tall (the user
+	 * rejected the 4px box as too small), every element face still full-uv 0,0→16,16
+	 * (the whole upstream icon per face, the diagonal gradient as facet shading).
 	 */
 	@Test
-	public void energiumItemModelsAreTheUpstreamBoxFormNotFlatSprites() throws Exception {
+	public void energiumItemModelsAreTheDiamondCrystalFormNotFlatSprites() throws Exception {
 		int tPinned = 0;
 		for (GT6Batteries.BatteryRow tRow : GT6Batteries.ROWS) {
 			if (!tRow.family().startsWith("energium_")) continue;
 			tPinned++;
 			JsonObject tModel = generatedJson("assets/gt6/models/item/" + tRow.path() + ".json");
+			assertNotEquals("minecraft:item/generated", tModel.get("parent").getAsString(),
+					tRow.path() + ": the flat item/generated sprite is the reported bug shape — 3D stays");
 			assertEquals("minecraft:block/cube", tModel.get("parent").getAsString(),
-					tRow.path() + ": the 3D box form (the flat item/generated parent is the reported bug shape)");
+					tRow.path() + ": the 3D block-parent form (the flat sprite is the bug shape)");
 			JsonArray tElements = tModel.getAsJsonArray("elements");
-			assertEquals(1, tElements.size(), tRow.path() + ": exactly the battery-box element");
-			JsonObject tBox = tElements.get(0).getAsJsonObject();
-			assertArrayEquals(new double[] {6.0, 0.0, 6.0}, toDoubles(tBox.getAsJsonArray("from")),
-					tRow.path() + ": box from (PX_P[6], PX_P[0], PX_P[6])");
-			assertArrayEquals(new double[] {10.0, 4.0, 10.0}, toDoubles(tBox.getAsJsonArray("to")),
-					tRow.path() + ": box to (PX_N[6], PX_N[12], PX_N[6])");
-			int tFaces = 0;
-			for (String tDir : new String[] {"down", "up", "north", "south", "west", "east"}) {
-				JsonObject tFace = tBox.getAsJsonObject("faces").getAsJsonObject(tDir);
-				assertNotNull(tFace, tRow.path() + ": face " + tDir);
-				assertArrayEquals(new double[] {0.0, 0.0, 16.0, 16.0}, toDoubles(tFace.getAsJsonArray("uv")),
-						tRow.path() + ": face " + tDir + " full-uv (the whole upstream icon per face)");
-				tFaces++;
+			assertTrue(tElements.size() >= 2, tRow.path() + ": the crystal silhouette needs multiple "
+					+ "elements — a single-element model is the retired 6,0,6→10,4,10 box (the "
+					+ "user-rejected '太小/太方' shape)");
+			double[] tMin = {16, 16, 16}, tMax = {0, 0, 0};
+			for (int i = 0; i < tElements.size(); i++) {
+				JsonObject tElem = tElements.get(i).getAsJsonObject();
+				double[] tFrom = toDoubles(tElem.getAsJsonArray("from"));
+				double[] tTo = toDoubles(tElem.getAsJsonArray("to"));
+				for (int a = 0; a < 3; a++) {
+					tMin[a] = Math.min(tMin[a], tFrom[a]);
+					tMax[a] = Math.max(tMax[a], tTo[a]);
+				}
+				int tFaces = 0;
+				for (String tDir : new String[] {"down", "up", "north", "south", "west", "east"}) {
+					JsonObject tFace = tElem.getAsJsonObject("faces").getAsJsonObject(tDir);
+					assertNotNull(tFace, tRow.path() + ": element " + i + " face " + tDir);
+					assertArrayEquals(new double[] {0.0, 0.0, 16.0, 16.0}, toDoubles(tFace.getAsJsonArray("uv")),
+							tRow.path() + ": element " + i + " face " + tDir + " full-uv (the whole "
+									+ "upstream icon per face, the gradient as facet shading)");
+					tFaces++;
+				}
+				assertEquals(6, tFaces, tRow.path() + ": element " + i + " all six faces");
 			}
-			assertEquals(6, tFaces, tRow.path() + ": all six faces");
+			assertTrue(tMax[0] - tMin[0] >= 8, tRow.path() + ": crystal " + (tMax[0] - tMin[0])
+					+ "px wide < 8 — too small is the user-rejected box form");
+			assertTrue(tMax[1] - tMin[1] >= 10, tRow.path() + ": crystal " + (tMax[1] - tMin[1])
+					+ "px tall < 10 — too small is the user-rejected box form");
 		}
 		assertEquals(12, tPinned, "the walk covers all twelve energium rows");
 	}
