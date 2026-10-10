@@ -3,7 +3,7 @@
 T1-T4 (the canner_refill shape: place → input → inject → the output-slot
 verdict — on the P26 W1 trio the verdict rides the inject/check REPORTS because
 `run` refuses menu-less carriers BY DESIGN: the card GUI clause menu=null means
-no MenuType, and GTMachineCommand.run sends "use inject+check instead" — the
+menu-less rows, and the run probe reads the static Host face for every machine — the
 refusal line IS the clause's live face, pinned here as a step).
 
 Chain semantics (task sifter-compressor-wiremill ACCEPTANCE rcon ① —
@@ -33,7 +33,7 @@ Chain semantics (task sifter-compressor-wiremill ACCEPTANCE rcon ① —
   the completion iteration is the LAST iteration, and each rig tick drains
   mEnergy by mInputMax (:443) so the natural tick finds mEnergy 0.
 
-  check pins: data=-2 (the menu-less carrier — the ZERO-new-MenuType clause
+  check pins: data=-1 (the true idle dial since the vanilla leg retired — task basic-machines-mui-migration;
   live), parallel=P parallelDuration=true (the PARALLEL_4_32 table + the
   duration-T column), and on T2 the TIER_INPUTS ramp minIn/recIn/maxIn =
   {64,128,256} (GTMachines.TIER_INPUTS[1]).
@@ -107,7 +107,7 @@ for tier, site, path, feed, packet, parallel, tier_inputs in TIERS:
              expect=d["cmd_expect"],
              node_expects={"1.21.1": d["node_expect"]}),
         Step(f"gt6machine {path} check {site}",
-             expect="data=-2",  # the menu-less carrier: ZERO new MenuType, the GUI clause live
+             expect="data=-1",  # the true idle dial: the menu-less carrier since the vanilla leg retired
              ),
         Step(f"gt6machine {path} check {site}",
              expect=f"parallel={parallel} parallelDuration=true"),

@@ -30,7 +30,7 @@ Rig split (the card RCON ruling):
   T2-T4 — the gt6machine inject rig (the wiremill form), each tier fed both
     minimum legs.
 
-check pins: data=-2, parallel=1 parallelDuration=false, the T2 TIER_INPUTS ramp.
+check pins: data=-1, parallel=1 parallelDuration=false, the T2 TIER_INPUTS ramp.
 The tank verdicts ride `fluid stat` (in[0]=... of minecraft:water).
 
 passes=2 is the idempotency proof. No global state is touched.
@@ -114,7 +114,7 @@ steps = [
     Step(f"gt6machine wiremill inject 6 4096 {T4}", expect=pair_report(1)["1.20.1"], node_expects=pair_report(1)),
 
     phase("C: the row-carrier pins — menu-less carriers everywhere"),
-    Step(f"gt6machine wiremill check {T3}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T3}", expect="data=-1"),
 
     phase("D: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 419 62 251 430 68 254 air", expect="filled"),

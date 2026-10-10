@@ -25,7 +25,7 @@ The item verdict rides the inject/check REPORTS (the outputs=[...] list — the
 deterministic getOutputs(count) overload resolves every chance>0 slot at full
 certainty, Recipe.java:186).
 
-check pins: data=-2 (the menu-less carrier), parallel=P parallelDuration=true —
+check pins: data=-1 (the true idle dial since the vanilla leg retired — task basic-machines-mui-migration), parallel=P parallelDuration=true —
 the T1 parallel=1 IS the non-standard face (the sifter/compressor/crusher T1 arms
 all carry 4), and the T2 TIER_INPUTS ramp {64,128,256}.
 
@@ -96,7 +96,7 @@ steps = [
     Step(f"gt6machine wiremill check {T1}", expect="out[1]=1x flint",
          node_expects={"1.21.1": "out[1]=1x minecraft:flint"}),
     Step(f"gt6machine wiremill check {T1}", expect="parallel=1 parallelDuration=true"),
-    Step(f"gt6machine wiremill check {T1}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T1}", expect="data=-1"),
 
     phase("B: T2-T4 — the inject rig; the 2/4/8 arms multiply the ONE row (2 snowballs) by the parallel table"),
     Step(f"setblock {T2} gt6:centrifuge_t2", expect="Changed the block", sleep=1.0),

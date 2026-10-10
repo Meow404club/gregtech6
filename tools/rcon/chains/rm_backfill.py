@@ -3,9 +3,10 @@
 
 Chain semantics (task rm-row-backfill ACCEPTANCE): three new-row round-trips through
 the P26 handler-template backfill, one per row family, each a menu-less carrier (check
-reports data=-2 — the row family binds no MenuType, GTMachines null-menu rows):
+reports data=-1 — the true idle dial over the static Host face (task basic-machines-mui-migration: the
+menu-or-null marker retired with the vanilla leg):
 
-  A the rigs: one shredder + one lathe placed (fresh band x=360), both data=-2.
+  A the rigs: one shredder + one lathe placed (fresh band x=360), both data=-1.
 
   B the SHREDDER crushed-array arm (:145 — iron carries MORTAR, so the multiplier-16 arm;
     Loader_Recipes_Handlers.java:145 verbatim with :138): a hopper above the shredder feeds
@@ -71,13 +72,13 @@ steps = []
 
 # ------------------------------------------------- A: the rigs
 steps += [
-    phase("A: the rigs — shredder + lathe + second shredder placed, all menu-less (data=-2)"),
+    phase("A: the rigs — shredder + lathe + second shredder placed, all fresh-idle (data=-1)"),
     Step(f"gt6machine shredder place {SHREDDER}", expect="GT6 shredder placed"),
-    Step(f"gt6machine shredder check {SHREDDER}", expect="data=-2"),
+    Step(f"gt6machine shredder check {SHREDDER}", expect="data=-1"),
     Step(f"gt6machine lathe place {LATHE}", expect="GT6 lathe placed"),
-    Step(f"gt6machine lathe check {LATHE}", expect="data=-2"),
+    Step(f"gt6machine lathe check {LATHE}", expect="data=-1"),
     Step(f"gt6machine shredder place {RING_SHREDDER}", expect="GT6 shredder placed"),
-    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="data=-2"),
+    Step(f"gt6machine shredder check {RING_SHREDDER}", expect="data=-1"),
     Step(f"setblock {SHREDDER_HOPPER} hopper[facing=down]", expect="Changed the block"),
     Step(f"setblock {LATHE_HOPPER} hopper[facing=down]", expect="Changed the block"),
     Step(f"setblock {RING_HOPPER} hopper[facing=down]", expect="Changed the block"),

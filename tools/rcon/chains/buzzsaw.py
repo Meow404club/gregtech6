@@ -120,7 +120,7 @@ steps = [
     Step(f"gt6machine wiremill inject 16 4096 {T4}", expect=STICK_INJ["1.20.1"], node_expects=STICK_INJ),
 
     phase("C: the row-carrier pins — menu-less carriers, parallel 1 (no NBT_PARALLEL keys)"),
-    Step(f"gt6machine wiremill check {T1}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T1}", expect="data=-1"),
     Step(f"gt6machine wiremill check {T1}", expect="parallel=1 parallelDuration=false"),
     Step(f"gt6machine wiremill check {T4}", expect="parallel=1 parallelDuration=false"),
 

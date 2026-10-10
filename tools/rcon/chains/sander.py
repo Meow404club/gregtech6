@@ -18,7 +18,7 @@ Rig split (the card RCON ruling):
 The sharpening row (data/gt6/recipe_maps/sharpening.json): 1 sandstone -> 2x sand,
 eUt 16 duration 16 — one row one process per tier, parallel=1 pins throughout.
 
-check pins: data=-2, parallel=1 parallelDuration=false, the T2 TIER_INPUTS ramp, and
+check pins: data=-1, parallel=1 parallelDuration=false, the T2 TIER_INPUTS ramp, and
 the zero-tank masks face (fluid stat: masks fluidIn=127 fluidOut=127 — the 127
 all-sides upstream field defaults with no tank keys on the :1589 rows).
 
@@ -79,7 +79,7 @@ steps = [
     Step(f"gt6machine wiremill check {T1}", expect="out[0]=2x sand",
          node_expects={"1.21.1": "out[0]=2x minecraft:sand"}, poll=45.0),
     Step(f"gt6machine wiremill check {T1}", expect="parallel=1 parallelDuration=false"),
-    Step(f"gt6machine wiremill check {T1}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T1}", expect="data=-1"),
     # the zero-tank masks face: no NBT_TANK_* keys on the :1589 rows -> the 127 defaults
     Step(f"gt6machine wiremill fluid stat {T1}", expect="masks fluidIn=127 fluidOut=127"),
 

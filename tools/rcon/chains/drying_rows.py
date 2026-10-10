@@ -58,7 +58,8 @@ steps += [
     phase("A: the rig — dryer placed, no fuel, empty banks"),
     Step(f"gt6machine dryer place {DRYER}", expect="GT6 dryer placed"),
     # data=-1 not -2: the gt6:dryer menu supplier is bound since machine-fluid-gui,
-    # so the check probe CONSTRUCTS the menu (the old data=-2 menu-less marker is gone)
+    # so the check probe reads the static Host face (the vanilla menu retired — task
+    # basic-machines-mui-migration; the old data=-2 menu-less marker is gone)
     # and the fresh-placed idle ContainerData (progress=0/0, never started) reads -1 —
     # the same flip loop_closure took at its :75 arm
     Step(f"gt6machine dryer check {DRYER}", expect="data=-1"),

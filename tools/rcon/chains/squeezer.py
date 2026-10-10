@@ -26,7 +26,7 @@ The feeds ride the /data merge (the P28 arm-C form; the inventory Size = the fam
 (out[0]=N L of gt6:sunfloweroil). The dye stacks cap at exactly 64 on T4 — the
 PARALLEL_4_32 ceiling lands on the vanilla stack limit, the canOutput gate holds.
 
-check pins: data=-2 (the menu-less carrier), parallel=P parallelDuration=true, and
+check pins: data=-1 (the true idle dial since the vanilla leg retired — task basic-machines-mui-migration), parallel=P parallelDuration=true, and
 the T2 TIER_INPUTS ramp {64,128,256}.
 
 passes=2 is the idempotency proof. No global state is touched.
@@ -89,7 +89,7 @@ for tier, pos, path, apples, packet, parallel, ticks in TIERS:
         Step(f"gt6machine wiremill inject {ticks} {packet} -{packet} {pos}",
              expect=stick_out(parallel)["1.20.1"], node_expects=stick_out(parallel)),
         Step(f"gt6machine wiremill fluid stat {pos}", expect=f"out[0]={parallel * 100} L of gt6:sunfloweroil"),
-        Step(f"gt6machine wiremill check {pos}", expect="data=-2"),
+        Step(f"gt6machine wiremill check {pos}", expect="data=-1"),
     ]
 
 # the TIER_INPUTS ramp pin on T2 (the {16,32,64} x 2^tier table live)

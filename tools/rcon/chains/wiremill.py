@@ -24,7 +24,7 @@ eUt 16). One stick in, exactly one process, every tier:
   either way. The verdict pins 4x wire_fine_iron (OP.wireFine snake = wire_fine,
   GTMaterialItems.snakeCase path = prefix_material).
 
-  check pins: data=-2 (the menu-less carrier — the ZERO-new-MenuType clause
+  check pins: data=-1 (the true idle dial since the vanilla leg retired — task basic-machines-mui-migration — the ZERO-new-MenuType clause
   live), parallel=1 parallelDuration=false (the no-NBT_PARALLEL wiremill
   columns), and on T2 the TIER_INPUTS ramp {64,128,256}.
 
@@ -85,7 +85,7 @@ for tier, site, path, packet, tier_inputs in TIERS:
              expect="outputs=[4x wire_fine_iron; ]",
              node_expects={"1.21.1": "outputs=[4x gt6:wire_fine_iron; ]"}),
         Step(f"gt6machine {path} check {site}",
-             expect="data=-2"),  # the menu-less carrier: ZERO new MenuType, the GUI clause live
+             expect="data=-1"),  # the true idle dial: the menu-less carrier since task basic-machines-mui-migration
         Step(f"gt6machine {path} check {site}",
              expect="parallel=1 parallelDuration=false"),
     ]

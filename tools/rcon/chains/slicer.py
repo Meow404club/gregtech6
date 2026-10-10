@@ -69,7 +69,7 @@ steps = [
     Step(f"setblock {T1F} gt6:slicer", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T1F}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine wiremill check {T1F}", expect="facing=2"),
-    Step(f"gt6machine wiremill check {T1F}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T1F}", expect="data=-1"),
     Step(f"setblock {T2F} gt6:slicer_t2", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T2F}", expect="minIn=64 recIn=128 maxIn=256"),
     Step(f"setblock {T3F} gt6:slicer_t3", expect="Changed the block", sleep=1.0),

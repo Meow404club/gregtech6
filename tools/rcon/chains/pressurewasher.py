@@ -26,7 +26,7 @@ Rig split (the card RCON ruling):
   T2 — the NEGATIVE: dry inject (no water) -> progress=0/0, then fill and complete.
   T3-T4 — the inject rig wet.
 
-check pins: data=-2, parallel=1 parallelDuration=false, the T2 TIER_INPUTS ramp.
+check pins: data=-1, parallel=1 parallelDuration=false, the T2 TIER_INPUTS ramp.
 The consumption verdict rides `fluid stat`: 1000 fill -> 800 after two washes on T1.
 
 Tick ladder (maxProgress = 16x16 = 256 base, x2 per x4 overclock step; inject
@@ -89,7 +89,7 @@ steps = [
     Step(f"gt6machine wiremill check {T1}", expect="out[0]=2x dirt",
          node_expects={"1.21.1": "out[0]=2x minecraft:dirt"}, poll=45.0),
     Step(f"gt6machine wiremill check {T1}", expect="parallel=1 parallelDuration=false"),
-    Step(f"gt6machine wiremill check {T1}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T1}", expect="data=-1"),
     # THE consumption verdict: 1000 - 2x100
     Step(f"gt6machine wiremill fluid stat {T1}", expect="in[0]=800 L of minecraft:water"),
 

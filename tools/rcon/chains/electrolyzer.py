@@ -8,7 +8,7 @@ TWO slots — the :708-710 MIN-2 face):
 
   A the T5 window pins (the card head acceptance): minIn=4096 recIn=8192 maxIn=16384
     (the :126 conversion over NBT_INPUT 8192, the EV_TIER_INPUTS arm) + facing=2
-    (the GT6PlacementFacing default, front north) + data=-2 (the menu-less carrier);
+    (the GT6PlacementFacing default, front north) + data=-1 (the true idle dial since the vanilla leg retired — task basic-machines-mui-migration);
     the 4095 packets are DEAD below the floor (inject 40 ticks -> progress=0/0
     energy=0); re-stock, the 8192 packet completes (out 1 brick).
   B the parallel ladder, T1..T5, inject at each tier's in-window packet
@@ -71,7 +71,7 @@ steps = [
     Step(f"setblock {T5F} gt6:electrolyzer_t5", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T5F}", expect="minIn=4096 recIn=8192 maxIn=16384"),
     Step(f"gt6machine wiremill check {T5F}", expect="facing=2"),
-    Step(f"gt6machine wiremill check {T5F}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T5F}", expect="data=-1"),
     Step(f"gt6machine wiremill check {T5F}", expect="parallel=16 parallelDuration=true"),
     # the 4095 packets are dead below the floor (拒 arm)
     Step(feed_merge(T5F, 1)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(T5F, 1)),
