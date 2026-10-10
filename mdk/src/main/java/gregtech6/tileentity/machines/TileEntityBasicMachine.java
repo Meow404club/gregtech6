@@ -166,11 +166,14 @@ import gregtech6.util.GTSideTables;
  * idiom (setBlock(state, 3) — same-block state changes keep the BE). Facing is
  * double-written NBT + BlockState (P4 spec 7): NBT is the persistent authority.
  *
- * <p>GUI: the row-less families (Shredder/Crusher/Lathe) open the ModularUI chain since
- * task mui-a-open-chain — the BE implements {@link GT6MuiMachine} and
- * {@link #buildUI} delegates to the {@link GTBasicMachineMUI} panel factory over the
- * {@link GTBasicMachineMenu#hostOf} projection; the row families (dryer/canner/
- * distillery) keep the vanilla MenuProvider path ({@link #createMenu}) byte-identical.
+	 * <p>GUI: the WHOLE family opens the ModularUI chain — the row-less families
+	 * (Shredder/Crusher/Lathe) since task mui-a-open-chain, the row families (dryer/canner/
+	 * distillery + the W1 carriers) since task basic-machines-mui-migration retired their
+	 * MenuTypes (menu = null on every row). The BE implements {@link GT6MuiMachine} and
+	 * {@link #buildUI} delegates to the {@link GTBasicMachineMUI} panel factory over the
+	 * {@link GTBasicMachineMenu#hostOf} projection; {@link #createMenu} survives only as the
+	 * declared MenuProvider face (the ACT C2 form — it throws without a bound MenuType, and
+	 * no registered row carries one today).
  *
  * <p>Teardown dist note (task basicmachine-onremove-distleak, the forensics record): the
  * dedicated-server /fill teardown of a producing machine of this family once detonated
@@ -1604,10 +1607,28 @@ public class TileEntityBasicMachine extends TileEntityBase03TicksAndSync impleme
 	 * adapter projects this BE onto the panel factory, which runs on both sides (the sync
 	 * handlers register there). The client screen is the inherited {@link GT6MuiMachine}
 	 * default — no override needed.
+	 *
+	 * <p>Title (task basic-machines-mui-migration-fixback, the S12 rejection blocker): a Host
+	 * whose served map is viewer-EXCLUDED has no {@code gt6.jei.recipe_map.*} title row (the
+	 * datagen emits rows for exactly {@link GT6RecipeMapViewerMeta#visibleToViewers} maps, the
+	 * GT6RecipeMapLangTest domain pin), so the family map-title arm would render the raw key
+	 * — the Plantalyzer ladder served "gt6.jei.recipe_map.plantalyzer" on all five tiers,
+	 * a two-headed regression against upstream (Recipe.java:138 registers mNameLocal,
+	 * ContainerClientBasicMachine.java:44 displayed "Plantalyzer") and the pre-migration
+	 * vanilla leg (the block name). Those hosts take the
+	 * {@link GTBasicMachineMUI#buildPanel} three-arg title override with the machine's
+	 * display name instead — the TileEntityOven.buildUI precedent for the FURNACE trap
+	 * (oven-gui-arrow-align, review-seat memory id1729); the block name composes the row's
+	 * localizable family template ("Plantalyzer (LV)", the upstream mNameLocal arm). The
+	 * map-key arm itself is untouched — every viewer-visible map keeps it.
 	 */
 	@Override
 	public ModularPanel<?> buildUI(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
-		return GTBasicMachineMUI.buildPanel(GTBasicMachineMenu.hostOf(this), aSyncManager);
+		GTBasicMachineMenu.Host tHost = GTBasicMachineMenu.hostOf(this);
+		RecipeMap tMap = tHost.getRecipeMap();
+		return GTBasicMachineMUI.buildPanel(tHost, aSyncManager,
+				tMap != null && !gregtech6.jei.GT6RecipeMapViewerMeta.visibleToViewers(tMap)
+						? getBlockState().getBlock().getName() : null);
 	}
 
 	@Override

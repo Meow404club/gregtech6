@@ -2,10 +2,11 @@
 """machine-fluid-gui — the dryer menu-open smoke chain (declarative framework).
 
 Chain semantics (task machine-fluid-gui ACCEPTANCE, "place dryer → 打开 menu 臂"):
-the gt6:dryer MenuType is bound to the four Dryer rows, so the /gt6machine check/run
-menu probe (GTMachineCommand.menuOrNull — the FakePlayerFactory createMenu path,
-TileEntityBasicMachine.createMenu :1472-1474) now CONSTRUCTS the real menu instead of
-degrading to the data=-2 menu-less marker. Per tier:
+the four Dryer rows are menu-less since task basic-machines-mui-migration (the user
+ruling 全部统一 retired the whole vanilla menu/screen leg), so the /gt6machine check/run
+probes read the STATIC Host face (GTBasicMachineMenu.progressValue over hostOf — the
+same three-state function the retired menu instance's computeProgressValue delegated
+to verbatim). Per tier:
 
   place → fluid stat (the RM 流 1,3 对位 live: the census carries out[2] — the 3-tank
           output bank the display slots pair with) →
@@ -72,8 +73,8 @@ for literal, pos, maxin, inject_progress in TIERS:
         # the RM 流 1,3 对位 live: the output census carries out[2] — the 3-tank bank
         # the :268 display slots pair with (GTBasicMachineMenu FluidDisplaySlot.tank)
         Step(f"gt6machine {literal} fluid stat {F(pos)}", expect="out[2]=0 L of nothing"),
-        # the menu-open arm, fresh idle: menuOrNull now CONSTRUCTS gt6:dryer's menu
-        # (data=-2 was the menu-less carrier marker; idle progress reads -1)
+        # the fresh idle arm: the static Host face reads -1 (no process; the former
+        # menu-construction probe is retired with the vanilla leg)
         Step(f"gt6machine {literal} check {F(pos)}", expect="data=-1"),
         # feed + water: the stub item (never starts alone) and the paired input tank
         Step(f"gt6machine {literal} input 1 {F(pos)}", expect="bricks into slot 0"),

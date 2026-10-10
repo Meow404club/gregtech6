@@ -14,10 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
-//? if forge {
-import net.minecraftforge.network.NetworkHooks;
-//?}
-
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.registry.GTMultiBlocks;
 import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
 
@@ -90,17 +87,14 @@ public class GTCokeOvenBlock extends GTMultiBlockControllerBlock {
 		// GUI override: it inherits getGUIServer/getGUIClient2, so a non-flint right-click opens
 		// the machine GUI whether or not the structure is formed — an unformed oven just runs no
 		// recipe). The flint branch above stays first: the ignition intent wins the click (the
-		// oven-rotation cover-intent-first construction). The open itself is the GTOvenBlock
-		// :115 precedent — NetworkHooks.openScreen with the BlockPos payload the menu factory
-		// resolves the BE from.
+		// oven-rotation cover-intent-first construction). Since task basic-machines-mui-migration
+		// (the user ruling 全部统一) the open is the GT6MuiMachine.tryOpen chain (the
+		// BlockEntityUIFactory network + its native 64-sq range gate) — the retired vanilla
+		// NetworkHooks.openScreen + gt6:cokeoven MenuType pair went with the whole vanilla leg.
 		if (aLevel.getBlockEntity(aPos) instanceof TileEntityCokeOven tOven) {
 			if (aLevel.isClientSide()) return InteractionResult.SUCCESS;
 			if (aPlayer instanceof ServerPlayer tServerPlayer) {
-				//? if forge {
-				NetworkHooks.openScreen(tServerPlayer, tOven, aPos);
-				//?} else {
-				/*tServerPlayer.openMenu(tOven, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted (the command-file precedent)
-				*///?}
+				GT6MuiMachine.tryOpen(tServerPlayer, tOven);
 			}
 			return InteractionResult.CONSUME;
 		}

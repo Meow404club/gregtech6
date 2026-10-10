@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 
 import gregapi.data.OP;
 import gregtech6.gui.machines.GTBasicMachineMenu;
-import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GTMachines;
 import gregtech6.registry.GT6SprayCans;
@@ -53,7 +52,10 @@ import gregtech6.tileentity.TileEntityBase01Root;
  *     distillery = the Integrated Circuit at configuration 0 (the ST.tag(0) selector the
  *     poured :534-541 rows carry, task distillery-family);</li>
  * <li>{@code run <ticks> [<pos>]} — drives the BE dispatcher tick by tick and samples the
- *     live menu ContainerData value ({@link GTBasicMachineMenu#computeProgressValue()}): the
+ *     three-state progress through the STATIC Host face ({@link
+ *     GTBasicMachineMenu#progressValue(GTBasicMachineMenu.Host)} over
+ *     {@link GTBasicMachineMenu#hostOf} — the vanilla menu instance probe retired with the
+ *     vanilla leg, task basic-machines-mui-migration): the
  *     acceptance asserts all three states observed (progress &gt;0 &lt;32767, done 32767 via
  *     mSuccessful, idle -1) plus the output slots filling. The real server ticker keeps
  *     ticking alongside — this only accelerates the same dispatcher. Needs the fake-source
@@ -68,8 +70,8 @@ import gregtech6.tileentity.TileEntityBase01Root;
  *     shape — a 0 packet would divide by zero in the verbatim :503 math);</li>
  * <li>{@code check [<pos>]} — state report: progress/maxprogress/energy/minenergy/the
  *     energy three values (minIn/recIn/maxIn)/state latch/active/running/parallel + the
- *     slot contents (a menu-less carrier reports {@code data=-2} — the trio is a menu
- *     surface);</li>
+ *     slot contents (the data dial reads the static Host face for every machine since the
+ *     vanilla leg retired — no menu surface, no -2 marker);</li>
  * <li>{@code fluid fill <side> <fluid> <amount> [<pos>]} / {@code fluid draw <side>
  *     <amount> [<pos>]} / {@code fluid stat [<pos>]} (task dryer-family) — the
  *     side-gated FLUID_HANDLER driver over the machine-fluid-face carriers: the
@@ -781,21 +783,6 @@ public final class GTMachineCommand {
 	}
 
 	/**
-	 * The menu-or-null probe (task dryer-family): the menu-less carriers (the dryer —
-	 * the GUI pool card owns the MenuType registration) throw the documented
-	 * IllegalStateException out of createMenu; the command surface degrades instead of
-	 * crashing ({@code check} reports {@code data=-2}, {@code run} refuses).
-	 */
-	@javax.annotation.Nullable
-	private static GTBasicMachineMenu menuOrNull(TileEntityBasicMachine aMachine, ServerPlayer aFakePlayer) {
-		try {
-			return (GTBasicMachineMenu) aMachine.createMenu(0, aFakePlayer.getInventory(), aFakePlayer);
-		} catch (IllegalStateException tMenuLess) {
-			return null;
-		}
-	}
-
-	/**
 	 * The openGUI smoke arm (task gui-basicmachine-fluids, the GTAdvancedCraftingTableCommand
 	 * open :289-318 / GT6Distillation open :948-992 shape): dispatches the MUI open chain
 	 * ({@link gregtech6.gui.machines.GT6MuiMachine#tryOpen} — buildUI + the sync-manager
@@ -1058,27 +1045,25 @@ public final class GTMachineCommand {
 			source.sendFailure(Component.literal("No TileEntityBasicMachine at " + (pos != null ? pos.toShortString() : "the source position")));
 			return 0;
 		}
-		ServerPlayer tFakePlayer = FakePlayerFactory.getMinecraft(source.getLevel());
-		GTBasicMachineMenu tMenu = menuOrNull(tMachine, tFakePlayer);
-		if (tMenu == null) {
-			// the menu-less carrier (the dryer — the GUI pool card owns the MenuType); the
-			// trio probe is a menu surface, so run refuses instead of crashing
-			source.sendFailure(Component.literal("GT6 machine run refused: no MenuType bound (the menu-less carrier's GUI is the pool card's surface); use inject+check instead"));
-			return 0;
-		}
+		// task basic-machines-mui-migration — the probe reads the STATIC Host face
+		// (GTBasicMachineMenu.progressValue over hostOf — the same three-state function the
+		// retired menu instance's computeProgressValue delegated to verbatim). No vanilla
+		// menu exists anymore: the whole family is menu-less (the dryer/canner suppliers
+		// retired with the vanilla leg), so the old menuOrNull createMenu probe and its
+		// refusal branch are gone — every machine reports the true trio.
+		GTBasicMachineMenu.Host tHost = GTBasicMachineMenu.hostOf(tMachine);
 
 		boolean tSeenProgress = false, tSeenDone = false, tSeenIdle = false;
-		int tLastValue = tMenu.computeProgressValue();
+		int tLastValue = GTBasicMachineMenu.progressValue(tHost);
 		for (int i = 0; i < ticks; i++) {
 			tMachine.updateEntity();
-			int tValue = tMenu.computeProgressValue();
+			int tValue = GTBasicMachineMenu.progressValue(tHost);
 			if (tValue > 0 && tValue < GTBasicMachineMenu.PROGRESS_DONE) tSeenProgress = true;
 			else if (tValue == GTBasicMachineMenu.PROGRESS_DONE) tSeenDone = true;
 			else if (tValue == -1) tSeenIdle = true;
 			tLastValue = tValue;
 		}
 		String tOutputs = outputList(tMachine);
-		tMenu.removed(tFakePlayer);
 
 		boolean tOk = tSeenProgress && tSeenDone && tSeenIdle && tOutputs.length() > 0;
 		String tReport = String.format(
@@ -1252,12 +1237,12 @@ public final class GTMachineCommand {
 			source.sendFailure(Component.literal("No TileEntityBasicMachine at " + (pos != null ? pos.toShortString() : "the source position")));
 			return 0;
 		}
-		ServerPlayer tFakePlayer = FakePlayerFactory.getMinecraft(source.getLevel());
-		GTBasicMachineMenu tMenu = menuOrNull(tMachine, tFakePlayer);
-		// the menu-less carrier (the dryer) reports data=-2 instead of crashing — the
-		// ContainerData trio is a menu surface, the field report below is not
-		int tDataValue = tMenu != null ? tMenu.computeProgressValue() : -2;
-		if (tMenu != null) tMenu.removed(tFakePlayer);
+		// task basic-machines-mui-migration — the data dial reads the STATIC Host face for
+		// EVERY machine (GTBasicMachineMenu.progressValue over hostOf, the retired menu
+		// instance's computeProgressValue verbatim): the whole family is menu-less since
+		// the vanilla leg retired, so the -2 menu-less marker has no carrier left and the
+		// dial always reports the true three-state value.
+		int tDataValue = GTBasicMachineMenu.progressValue(GTBasicMachineMenu.hostOf(tMachine));
 
 		StringBuilder tSlots = new StringBuilder();
 		ItemStack tInput = tMachine.getInventory().getStackInSlot(TileEntityBasicMachine.SLOT_INPUT);

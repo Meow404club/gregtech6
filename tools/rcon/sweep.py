@@ -798,7 +798,7 @@ SESSION_GROUPS = (
     # gui-basicmachine-fluids (task gui-basicmachine-fluids): the shared
     # basic-machine panel fluid-seat live chain — a fresh z=484 band (the roster census
     # tops out at z=475, the ore_overlay stage starts at z=508), the Fermenter 22003
-    # carrier (RM fluids 1/1, menu=null → the GT6MuiMachine MUI carrier, data=-2) + the
+    # carrier (RM fluids 1/1, menu=null → the GT6MuiMachine MUI carrier, data=-1) + the
     # new /gt6machine open arm (the sanctioned fake-player SKIP face). Admission
     # mirroring the gui_distill_tower form (bbox-registered, no fresh_boot /
     # mutates member — the rig is a band-local setblock + fill teardown).

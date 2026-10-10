@@ -10,18 +10,19 @@ live-server runtime half: every dispatch family places and reports its menu
 surface, proving the registrations and the vanilla-menu arms are untouched and
 the flipped arm's carrier is the documented menu-less form:
 
-  distillery place → check data=-2  (row != null && menu == null — THE flipped
-      arm's live carrier; before this task it sat INERT on the menuBound gate,
-      now use() hands it to GT6MuiMachine.tryOpen)
-  dryer place → check data=-1       (bound gt6:dryer menu — the vanilla path,
-      byte-identical, createMenu still constructs)
-  canner place → check data=-1      (bound gt6:canner menu — same vanilla path)
-  shredder place → check data=-2    (the row-less family since the mui-a-
+  EVERY family reports the true idle dial data=-1 since task basic-machines-mui-migration (the user
+      ruling 全部统一 retired the whole vanilla menu/screen leg): the check probe
+      reads the static Host face (GTBasicMachineMenu.progressValue over hostOf),
+      the menu-or-null marker is gone because no machine serves a vanilla menu.
+  distillery place → check data=-1  (row != null && menu == null — THE flipped
+      arm's live carrier; use() hands it to GT6MuiMachine.tryOpen)
+  dryer place → check data=-1       (menu-less since the vanilla leg retired —
+      was the bound gt6:dryer vanilla path when this chain was written)
+  canner place → check data=-1      (menu-less the same way)
+  shredder place → check data=-1    (the row-less family since the mui-a-
       menu-deregistration dereg — the mui-a-open-chain MUI arm, unchanged)
-  press place → check data=-2       (task mui-dispatch-seam — the W1 Press
-      precedent group's live arm: PRESS_ROWS registered menu = null one day
-      BEFORE the p26 seam landed, the registration comment's "stays inert
-      until seam-①" wording is retired by that landing; the offline census
+  press place → check data=-1       (task mui-dispatch-seam — the W1 Press
+      precedent group's live arm; the offline census
       everyMachineRowFamilyRidesTheDispatch pins all 62 families, this spot
       check is the precedent group's live-server face)
 
@@ -57,11 +58,11 @@ steps = []
 steps += [
     phase("A: the flipped arm — the menu-less row carrier (Distillery): the dispatch "
           "key reads row.menu == null, use() hands it to GT6MuiMachine.tryOpen; the "
-          "command surface still reports the menu-less data=-2 (createMenu throws the "
+          "command surface reads the static Host face (the vanilla menu probe is retired) — "
           "documented IllegalStateException, the menu-less carrier's GUI is the MUI "
           "chain, not a MenuType)"),
     Step(f"gt6machine distillery place {F(DIS)}", expect="GT6 distillery placed"),
-    Step(f"gt6machine distillery check {F(DIS)}", expect="data=-2"),
+    Step(f"gt6machine distillery check {F(DIS)}", expect="data=-1"),
 ]
 
 # ------------------------- B: the bound arms — the vanilla menu path, byte-identical
@@ -79,9 +80,9 @@ steps += [
 steps += [
     phase("C: the row-less arm — the A3-deregistered shredder family: row == null has "
           "no menu column at all, the mui-a-open-chain MUI dispatch unchanged "
-          "(data=-2, the MenuType registration is gone since the dereg)"),
+          "(data=-1, the true idle dial over the static Host face)"),
     Step(f"gt6machine shredder place {F(SHR)}", expect="GT6 shredder placed"),
-    Step(f"gt6machine shredder check {F(SHR)}", expect="data=-2"),
+    Step(f"gt6machine shredder check {F(SHR)}", expect="data=-1"),
 ]
 
 # ------------------------- D: the Press precedent group — the W1 menu-null row arm
@@ -89,10 +90,10 @@ steps += [
     phase("D: the Press precedent group (task mui-dispatch-seam): the four PRESS_ROWS "
           "are the W1 menu-null row form (menu = null, KU, RM.Press) — the same flipped "
           "arm as the Distillery, live-placed here as the precedent group's spot check "
-          "(data=-2, the MUI chain is the GUI; the offline census pins the other 61 "
+          "(data=-1, the true idle dial; the offline census pins the other 61 "
           "families through the same key)"),
     Step(f"gt6machine press place {F(PRS)}", expect="GT6 press placed"),
-    Step(f"gt6machine press check {F(PRS)}", expect="data=-2"),
+    Step(f"gt6machine press check {F(PRS)}", expect="data=-1"),
 ]
 
 CHAIN = Chain(

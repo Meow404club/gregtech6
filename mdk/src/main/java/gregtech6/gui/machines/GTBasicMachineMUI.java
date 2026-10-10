@@ -48,7 +48,8 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * task r11-gui-clean-base-theme) draws under the panel (fork Widget.drawBackground :255-264
  * paints the theme background first, then any code background on top — the old sheet-over-base
  * stack WAS the double-layer bug, so the sheet arm is simply removed). The per-machine mGUIPath
- * sheets stay with the vanilla leg ({@link GTBasicMachineScreen#backgroundOf}).
+ * sheets and the vanilla screen that parsed them retired with the vanilla leg (task
+ * basic-machines-mui-migration).
  *
  * <p>Title (F1-01): the machine display name as a {@link TextWidget} at the upstream print
  * position (8, 4) in the 0x404040 ink — the drawGuiContainerForegroundLayer arm
@@ -164,8 +165,9 @@ public final class GTBasicMachineMUI {
 
 	/**
 	 * The progress arrow seat — the upstream arrow CELL verbatim (78, 24, 20x18,
-	 * GTBasicMachineScreen.ARROW_* / ContainerClientBasicMachine.java:57 case-0 blit), so the
-	 * MUI panel and the vanilla leg draw the bar in the same spot.
+	 * ContainerClientBasicMachine.java:57 case-0 blit; the retired vanilla screen's ARROW_*
+	 * constants carried the same numbers), so the family draws the bar where the upstream
+	 * skins printed it.
 	 */
 	private static final int PROGRESS_X = 78, PROGRESS_Y = 24, PROGRESS_W = 20, PROGRESS_H = 18;
 
@@ -341,9 +343,9 @@ public final class GTBasicMachineMUI {
 				aTooltip -> addArrowTooltip(aTooltip, tRecipeKey, tProgress, tDirection));
 		tArrow.listenGuiAction((IGuiAction.MousePressed) (aContext, aButton) -> {
 			if (!aContext.isMouseAbove(tArrow)) return false;
-			// the vanilla-leg router (GTBasicMachineScreen.java:110-116 precedent): the map's
-			// recipe page, EMI first/JEI fallback/neither a silent no-op (false = vanilla
-			// click handling continues)
+			// the family jump router (the retired vanilla screen's click face, GT_RectHandler
+			// lineage): the map's recipe page, EMI first/JEI fallback/neither a silent no-op
+			// (false = vanilla click handling continues)
 			return tMap != null && GTViewerJump.openRecipeMapPage(tMap);
 		});
 		tPanel.child(tArrow);
@@ -369,8 +371,8 @@ public final class GTBasicMachineMUI {
 	 * {@link GTBasicMachineMenu#progressValue} (ContainerCommonBasicMachine.java:280-286
 	 * verbatim, the RCON-shared function stays untouched): the success flag
 	 * ({@code PROGRESS_DONE}) maps to 1.0, the idle {@code -1} maps to 0.0, anything else
-	 * divides down by {@code PROGRESS_DONE} (the exact fill arithmetic the vanilla
-	 * GTBasicMachineScreen bar runs, GTBasicMachineScreen.java:59-61).
+	 * divides down by {@code PROGRESS_DONE} (the exact fill arithmetic the retired vanilla
+	 * screen's bar ran).
 	 */
 	public static double progressRatio(GTBasicMachineMenu.Host aHost) {
 		int tValue = GTBasicMachineMenu.progressValue(aHost);

@@ -90,7 +90,7 @@ import com.mojang.logging.LogUtils;
  * NEI booleans fold away in the 15-arg port ctor like every other map. The GUI paths are
  * the upstream machines/Distillery|Dryer strings lowercased (the same 1.20.1
  * ResourceLocation-charset convention as the Shredder line — {@code
- * GTBasicMachineScreen.backgroundOf} parses this string). DRYING's Water→Distilled Water row
+ * retired vanilla screen's backgroundOf parsed it). DRYING's Water→Distilled Water row
  * poured with the W3 loop-closure card (Loader_Recipes_Chem.java:525); DISTILLERY stayed
  * DECLARED-empty until task distillery-family ③ landed the Integrated Circuit item
  * system (the ST.tag(0) selector every :534-541 row carries) — its seven water-family rows
@@ -182,9 +182,10 @@ import com.mojang.logging.LogUtils;
  * "全部改成拼接，把完整图全部清了"):</b> the upstream 16th ctor column (the NEI GUI path,
  * upstream {@code mGUIPath}) is RETIRED from the port — the ctor is 14-arg now, every map
  * row drops the string, the 78 data-grounded machines/*.png sheets leave the tree and the
- * live GUIs compose from the gui/parts crops instead (GTBasicMachineScreen,
- * GTDistillationTowerMUI/GT6BumbliaryMUI, the MUI theme base — the oven rides the family
- * MUI panel since oven-gui-arrow-align). The per-map javadoc below
+ * live GUIs compose from the gui/parts crops instead — the whole machine family on the
+ * family MUI panel (GTBasicMachineMUI, the oven since oven-gui-arrow-align, the basic
+ * machines since basic-machines-mui-migration: the vanilla screen/menu leg is retired
+ * whole) plus GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base. The per-map javadoc below
  * still records the upstream "GUI machines/&lt;Name&gt;" words as upstream-row provenance;
  * they bind nothing in this port anymore. The old "值必在盘" fidelity-pin policy is
  * superseded by that ruling (assets/README.md carries the decision chain).</p>

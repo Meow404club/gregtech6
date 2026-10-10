@@ -8,7 +8,7 @@ import gregtech6.recipes.RecipeMap;
 
 /**
  * The viewer-jump router (task debt-jei-emi-batch4): routes the machine-GUI progress-bar
- * click ({@code GTBasicMachineScreen}, the modern counterpart of the upstream GT_RectHandler
+ * click (the family machine GUIs' progress-arrow face, the modern counterpart of the upstream GT_RectHandler
  * click rect, NEI_RecipeMap.java:399-426) to whichever recipe viewer is installed. EMI has
  * priority (the r11-nei-corner-jump ruling, known_bugs.r11-batch2-render
  * .viewer_priority_emi — "同时装JEI和EMI显示EMI，因为EMI的优先级更高"; supersedes the old

@@ -11,8 +11,10 @@
  * {@code MachineRow + menu = null} — the Distillery is the live registered carrier
  * today, the W1 five families are the next consumers; before this task these stayed
  * INERT on the {@code menuBound()} gate);</li>
- * <li>{@code row != null, menu != null} → the vanilla menu path (the dryer/canner
- * chains, byte-identical);</li>
+ * <li>{@code row != null, menu != null} → the vanilla menu path (a dead arm since task
+ * basic-machines-mui-migration — the dryer/canner/cokeoven MenuTypes retired with the
+ * vanilla leg and NO live row binds a supplier anymore; the branch survives in the key
+ * because the MachineRow column still carries the type; the fixture arm pins it);</li>
  * <li>{@code row == null, menu != null} is UNREPRESENTABLE — a null row carries no menu
  * column at all (the record only exists on row carriers).</li>
  * </ul>
@@ -91,7 +93,9 @@ public class GTBasicMachineBlockDispatchTest {
 
 	@Test
 	public void menuBoundRowKeepsTheVanillaPath() {
-		// arm 3 — a bound supplier keeps the vanilla menu path (the dryer/canner chains)
+		// arm 3 — a bound supplier keeps the vanilla menu path. Dead among the live rows
+		// since task basic-machines-mui-migration (the whole family is menu-less), pinned
+		// on the fixture so the key's truth table stays two nulls deep.
 		assertFalse(GTBasicMachineBlock.opensModularUi(row(boundMenu())), "row != null && menu != null → the vanilla menu path");
 		// arm 4 is unrepresentable (a null row has no menu column) — the record itself
 		// documents it: MachineRow.menu is only reachable through a non-null row
@@ -105,13 +109,15 @@ public class GTBasicMachineBlockDispatchTest {
 			assertNull(tRow.menu(), tRow.path() + " carries the menu-less form");
 			assertTrue(GTBasicMachineBlock.opensModularUi(tRow), tRow.path() + " dispatches the ModularUI chain");
 		}
+		// the dryer/canner chains flipped to the menu-less MUI carrier (task
+		// basic-machines-mui-migration — the user ruling 全部统一, the vanilla leg retired)
 		for (GTBasicMachineBlock.MachineRow tRow : GTMachines.DRYER_ROWS) {
-			assertNotNull(tRow.menu(), tRow.path() + " keeps its bound gt6:dryer menu");
-			assertFalse(GTBasicMachineBlock.opensModularUi(tRow), tRow.path() + " keeps the vanilla menu path");
+			assertNull(tRow.menu(), tRow.path() + " carries the menu-less MUI form");
+			assertTrue(GTBasicMachineBlock.opensModularUi(tRow), tRow.path() + " dispatches the ModularUI chain");
 		}
 		for (GTBasicMachineBlock.MachineRow tRow : GTMachines.CANNER_ROWS) {
-			assertNotNull(tRow.menu(), tRow.path() + " keeps its bound gt6:canner menu");
-			assertFalse(GTBasicMachineBlock.opensModularUi(tRow), tRow.path() + " keeps the vanilla menu path");
+			assertNull(tRow.menu(), tRow.path() + " carries the menu-less MUI form");
+			assertTrue(GTBasicMachineBlock.opensModularUi(tRow), tRow.path() + " dispatches the ModularUI chain");
 		}
 	}
 
@@ -159,13 +165,14 @@ public class GTBasicMachineBlockDispatchTest {
 		// the family-count ratchet — a family added or removed must update this pin
 		// consciously (62 families at task mui-dispatch-seam)
 		assertEquals(62, tFamilies, "the MachineRow family count — update this pin when a family lands");
-		// the bound-arm roster is CLOSED: only the five documented shared carriers ride a
-		// gt6:* MenuType (a new bound family must be named here on purpose)
-		assertEquals(java.util.List.of("DRYER_ROWS", "CANNER_ROWS", "CANNER_ULV_ROWS",
-				"BURNER_MIXER_ROWS", "PLANTALYZER_ROWS"), tMenuBoundFamilies,
-				"the menu-bound roster — a new gt6:* MenuType carrier is a conscious decision");
+		// the bound-arm roster is EMPTY since task basic-machines-mui-migration (the user
+		// ruling 全部统一): the last five gt6:* MenuType carriers — DRYER_ROWS, CANNER_ROWS,
+		// CANNER_ULV_ROWS, BURNER_MIXER_ROWS, PLANTALYZER_ROWS — flipped menu-less, and the
+		// P26 no-new-MenuType freeze holds. A new bound family must re-open this pin.
+		assertEquals(java.util.List.of(), tMenuBoundFamilies,
+				"the menu-bound roster — every family rides the MUI chain since the vanilla leg retired");
 		// the row-count ratchets (each ladder's length pinned by family sum)
-		assertEquals(206, tMenuNullRows, "the menu-null row count");
-		assertEquals(18, tMenuBoundRows, "the menu-bound row count (dryer 4 + canner 4 + canner_ulv 1 + burner_mixer 4 + plantalyzer 5)");
+		assertEquals(224, tMenuNullRows, "the menu-null row count (the pre-migration 206 + dryer 4 + canner 4 + canner_ulv 1 + burner_mixer 4 + plantalyzer 5)");
+		assertEquals(0, tMenuBoundRows, "the menu-bound row count — the vanilla leg is retired");
 	}
 }

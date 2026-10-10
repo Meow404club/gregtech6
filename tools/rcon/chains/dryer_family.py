@@ -22,10 +22,15 @@ declared-empty arms (progress=0/0) are stale on main and were rewritten:
           40 ticks at mInputMax — 512/2048, 2048/8192, 8192/32768, 32768/73728) →
   check (the tier columns: parallel 8/16/32/64 + parallelDuration + recIn 32/128/512/2048,
           data=0 = the gt6:dryer menu opens since machine-fluid-gui bound the row
-          supplier (the old data=-2 menu-less marker is gone) — t4 pins data=-1 instead:
+          supplier retired with the vanilla leg — task basic-machines-mui-migration: the
+          check probe reads the static Host face (GTBasicMachineMenu.progressValue over
+          hostOf), the same three-state function the menu instance delegated to) — t4 pins
+          data=-1 (the re-find is DID_NOT_FIND and the not-found arm zeroes the dial):
           its parallel-64 batch drains the whole 1000 L input tank inside the two driven
           injects, so the post-reset re-find is DID_NOT_FIND and the dial rests on the
-          GTOvenMenu -1 arm (mMaxProgress==0), which still proves the menu constructs;
+          three-state -1 arm (mMaxProgress==0 — GTBasicMachineMenu.progressValue, the same
+          static face the check probe reads; the retired vanilla menu this -1 arm once
+          served through is gone since task basic-machines-mui-migration);
           after the driven loop the
           batch resets on the first starved tick: progress=0/<maxProgress> (t4: 0/0, its
           batches complete inside the driven injects and drain the tank), active=false;
@@ -131,8 +136,8 @@ for literal, pos, parallel, recin, maxin, inject_progress, max_progress, data_di
         Step(f"gt6machine {literal} check {F(pos)}", expect="parallelDuration=true"),
         Step(f"gt6machine {literal} check {F(pos)}", expect=recin),
         # flipped by machine-fluid-gui: the gt6:dryer menu supplier is bound, so the
-        # check probe CONSTRUCTS the menu (the old data=-2 menu-less marker is gone) and
-        # the ContainerData dial reads the post-reset state — t1-t3 still hold recipe
+        # check probe reads the static Host face (the vanilla menu retired — task
+        # basic-machines-mui-migration) and the dial reads the post-reset state — t1-t3 still hold recipe
         # water so the re-find leaves units(0, <recipe max>) = 0; t4 drained the tank
         # inside its own driven injects so the re-find is DID_NOT_FIND and the dial
         # rests on the -1 arm — per-tier column, see the TIERS comment

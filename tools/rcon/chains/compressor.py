@@ -25,7 +25,7 @@ tiers; the parallel column follows PARALLEL_4_32 with NBT_PARALLEL_DURATION T:
   mInputMax per tick (:443) so the leftover sand never re-fires a second
   process within the command.
 
-  check pins: data=-2 (the menu-less carrier — the ZERO-new-MenuType clause
+  check pins: data=-1 (the true idle dial since the vanilla leg retired — task basic-machines-mui-migration — the ZERO-new-MenuType clause
   live), parallel=P parallelDuration=true, and on T2 the TIER_INPUTS ramp
   {64,128,256} (GTMachines.TIER_INPUTS[1]).
 
@@ -86,7 +86,7 @@ for tier, site, path, feed, packet, ticks, parallel, out_count, tier_inputs in T
              expect=f"outputs=[{out_count}x sandstone; ]",
              node_expects={"1.21.1": f"outputs=[{out_count}x minecraft:sandstone; ]"}),
         Step(f"gt6machine {path} check {site}",
-             expect="data=-2"),  # the menu-less carrier: ZERO new MenuType, the GUI clause live
+             expect="data=-1"),  # the true idle dial: the menu-less carrier since task basic-machines-mui-migration
         Step(f"gt6machine {path} check {site}",
              expect=f"parallel={parallel} parallelDuration=true"),
     ]

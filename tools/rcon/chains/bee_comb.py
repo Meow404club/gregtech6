@@ -72,7 +72,7 @@ steps = [
     Step(f"gt6machine wiremill inject 24 64 -64 {F(SQZ)}",
          expect=wax_out()["1.20.1"], node_expects=wax_out()),
     Step(f"gt6machine wiremill fluid stat {F(SQZ)}", expect="out[0]=90 L of gt6:honey"),
-    Step(f"gt6machine wiremill check {F(SQZ)}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {F(SQZ)}", expect="data=-1"),
 
     phase("B: Centrifuge — 1 comb_honey -> 100 L gt6:honey + 1x dust_wax_bee (the :251 row live)"),
     Step(f"setblock {F(CEN)} gt6:centrifuge", expect="Changed the block", sleep=1.0),
@@ -84,7 +84,7 @@ steps = [
     Step(f"gt6machine wiremill inject 24 64 {F(CEN)}",
          expect=wax_out()["1.20.1"], node_expects=wax_out()),
     Step(f"gt6machine wiremill fluid stat {F(CEN)}", expect="out[0]=100 L of gt6:honey"),
-    Step(f"gt6machine wiremill check {F(CEN)}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {F(CEN)}", expect="data=-1"),
 
     phase("D: teardown — the explicit band restore (no global state was touched)"),
     Step("fill 382 62 394 396 68 398 air", expect="filled"),

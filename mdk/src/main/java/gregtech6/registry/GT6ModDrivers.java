@@ -48,9 +48,10 @@ import gregapi.oredict.OreDictMaterial;
  * TRUE query (absent mod → false) — the exact inverse of this driver's registration
  * default (unknown → visible), so migrating it would flip the jump gate open on a
  * JEI-less install (mdh-4 keeps); the five {@code ModList.get().getModContainerById("gt6")
- * .getEventBus()} call sites (GTMenuTypes/GTBasicMachinesMenus/GT6Covers/
- * GT6LubricantBucket — GTOvenMenus retired with the oven's vanilla menu chain,
- * task oven-gui-arrow-align) are mod-bus plumbing, not presence decisions (kept, the vendored
+ * .getEventBus()} call sites (GTMenuTypes/GTMuiFactories/GT6Covers/GT6LubricantBucket —
+ * GTOvenMenus retired with the oven's vanilla menu chain (task oven-gui-arrow-align), the
+ * machine-family MenuType register with the whole vanilla leg (task
+ * basic-machines-mui-migration)) are mod-bus plumbing, not presence decisions (kept, the vendored
  * modularui precedent); {@code GT6EmiPlugin} mentions ModList in javadoc only.
  *
  * <p>Mounts (mdh-1 wiring, both zero-effect by default): the material item universe filters

@@ -7,7 +7,7 @@ card-① deviation), on the JSON-poured printer.json smoke row (1x paper + water
 
   A the per-tier window pins T1-T5 (the same gapless doubling chain, ending
     minIn=4096 recIn=8192 maxIn=16384 on the T5) + facing=2 (the placement canon
-    default) + the menu-less carrier data=-2.
+    default) + the idle dial data=-1.
   B the T1 row run: stock the paper, fill the ink tank from the UP face (the
     SBIT_U|SBIT_L tank-in mask — the rotated-face verdict is the mask check),
     inject 24 x 32 -> the paper out (the smoke-row 进出断言).
@@ -60,7 +60,7 @@ steps = [
     Step(f"setblock {T1F} gt6:printer", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T1F}", expect="minIn=16 recIn=32 maxIn=64"),
     Step(f"gt6machine wiremill check {T1F}", expect="facing=2"),
-    Step(f"gt6machine wiremill check {T1F}", expect="data=-2"),
+    Step(f"gt6machine wiremill check {T1F}", expect="data=-1"),
     Step(f"setblock {T2F} gt6:printer_t2", expect="Changed the block", sleep=1.0),
     Step(f"gt6machine wiremill check {T2F}", expect="minIn=64 recIn=128 maxIn=256"),
     Step(f"setblock {T3F} gt6:printer_t3", expect="Changed the block", sleep=1.0),

@@ -19,7 +19,7 @@ Machine GUI backgrounds borrowed from **GregTech 6**
 `v6.17.06-22-g3703e4030`, files
 `src/main/resources/assets/gregtech/textures/gui/machines/`:
 
-**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the live GUIs compose from the `gui/parts` crops (GTOvenScreen — the last vanilla-leg screen, until the oven card lands; the vanilla basic-machine screen retired with its whole leg, task basic-machines-mui-migration; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
   (upstream `Shredder.png`, task gui-family)
   (upstream `Crusher.png`, task gui-family)
   (upstream `Lathe.png`, task gui-family)
@@ -988,7 +988,7 @@ the card's tooling).
   on disk (the `heat_transmitter` block borrows the `heatacceptor` set since
   w3-nbtdesign-parts).
 
-**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the live GUIs compose from the `gui/parts` crops (GTOvenScreen — the last vanilla-leg screen, until the oven card lands; the vanilla basic-machine screen retired with its whole leg, task basic-machines-mui-migration; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 Canner family textures, task canner-machine (5 PNGs, CC0 from the upstream
 canner iconset, sha256 verified):
 
@@ -5426,7 +5426,7 @@ ResourceLocation charset convention) — RETIRED with the sheet purge
 (machine-gui-composed-purge; the recipe-map `mGUIPath` column is retired from
 the port, the GUIs compose from `gui/parts/`). Upstream license CC0 (see above).
 
-**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the live GUIs compose from the `gui/parts` crops (GTOvenScreen — the last vanilla-leg screen, until the oven card lands; the vanilla basic-machine screen retired with its whole leg, task basic-machines-mui-migration; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 - `block/sifter_colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `block/sifter_overlay_front.png` `f736601956519d68b411807353cb25a200db9a190a45e9f5c6c920191f9743bc`
 - `block/sifter_overlay_front_active.png` (FRAME 0 of 4) `1a0a8dee55f0fe6e20432affc75b82892270c4f0a7b08dcdf39bf71fea10f315`
@@ -9334,7 +9334,7 @@ across both families and their state layers):
 - `replicator_overlay_front_active.png` — `e7d764c6722b0230aecff5d84cfa8361f9d295336565391f721f571d7da10cf8`
 - `replicator_overlay_front_running.png` — `6a60b16caa227f4b5652ab9444c0818e29a542e69ccd93cae7d00a6a7113d212`
 
-**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the live GUIs compose from the `gui/parts` crops (GTOvenScreen — the last vanilla-leg screen, until the oven card lands; the vanilla basic-machine screen retired with its whole leg, task basic-machines-mui-migration; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 
 
 Burner Mixer + Plantalyzer family textures, task machines-burner-plantalyzer:
@@ -9385,7 +9385,7 @@ tpsmeter,playercounter,tachometer,geigercounter,laserometer}.png`) are deleted �
 the whole 21-family census now borrows the upstream two-layer art verbatim (the
 `Sensor block textures — two-layer faceted borrow, task tex-sensors` section
 at the tail of this ledger).
-**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the six live GUIs compose from the `gui/parts` crops (GTOvenScreen/GTBasicMachineScreen; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
+**RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the live GUIs compose from the `gui/parts` crops (GTOvenScreen — the last vanilla-leg screen, until the oven card lands; the vanilla basic-machine screen retired with its whole leg, task basic-machines-mui-migration; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 
 ## Bumblelyzer + Crystallisation Crucible machine textures (task machines-bumblelyzer-crucible)
 

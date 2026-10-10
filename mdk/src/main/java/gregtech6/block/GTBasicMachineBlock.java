@@ -407,7 +407,10 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 				GT6MuiMachine.tryOpen(tServerPlayer, tMachine);
 				return InteractionResult.CONSUME;
 			}
-			// the vanilla menu path (a bound supplier — the dryer/canner chains, unchanged):
+			// the vanilla menu path — the truth table's menu-bound arm, DEAD on the registry
+			// today: task basic-machines-mui-migration retired the dryer/canner/cokeoven
+			// MenuTypes (menu = null on every row), so no registered row reaches this arm
+			// anymore; it stays for a future menu-bound row carrier
 			//? if forge {
 			NetworkHooks.openScreen(tServerPlayer, tMachine, aPos); // upstream openGUI
 			//?} else {
@@ -423,9 +426,9 @@ public class GTBasicMachineBlock extends GTEntityBlock {
 	 * with NO MenuType supplier opens the {@link GT6MuiMachine#tryOpen} chain. That is the
 	 * row-less families (null row) AND the menu-less row carriers (the batch-A machine
 	 * form: {@code MachineRow + menu = null}, the Distillery today, the W1 five families
-	 * the wave card registers next). A row WITH a supplier keeps the vanilla menu path —
-	 * the truth table is two nulls deep: (row null) → MUI, (menu null) → MUI, (menu
-	 * bound) → NetworkHooks/openMenu, byte-identical for the dryer/canner chains.
+	 * the wave card registers next). Since task basic-machines-mui-migration retired the
+	 * dryer/canner/cokeoven MenuTypes, EVERY registered row is menu-less — the menu-bound
+	 * arm below survives only for a future row carrier.
 	 */
 	static boolean opensModularUi(@Nullable MachineRow aRow) {
 		return aRow == null || aRow.menu() == null;

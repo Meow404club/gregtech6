@@ -9,8 +9,9 @@ the SERVER half on a fluid-banked shared-panel machine, in-册 verified: the FER
 (id 22003, RM fluids 1/1, menu=null → the GT6MuiMachine.tryOpen MUI carrier,
 GTMachines.java fermenter row + GT6RecipeMaps.FERMENTER):
 
-  A the machine places and reports its menu-less MUI-carrier form (data=-2, the
-    mui_row_dispatch verdict shape — the vanilla-menu byte-identical face untouched);
+  A the machine places and reports the true idle dial (data=-1 — the probe reads the
+    static Host face since the vanilla leg retired, task basic-machines-mui-migration; the former -2 menu-less
+    marker is gone because no machine serves a menu anymore);
   B the new /gt6machine open arm: the fake-player dispatch reports the sanctioned SKIP
     verdict — a real exception / unknown-command here is a red. The open arm's server
     half (BE buildUI → GTBasicMachineMUI.buildPanel over hostOf, the fluid seats +
@@ -41,7 +42,7 @@ FERMENTER = "386 65 484"      # facing north by place default
 steps = [
     phase("A: the fluid-banked shared-panel carrier — place + the menu-less verdict"),
     Step(f"gt6machine fermenter place {FERMENTER}", expect="GT6 fermenter placed"),
-    Step(f"gt6machine fermenter check {FERMENTER}", expect="data=-2"),
+    Step(f"gt6machine fermenter check {FERMENTER}", expect="data=-1"),
 
     phase("B: the open smoke arm — the MUI open chain server half (the sanctioned SKIP)"),
     Step(f"gt6machine fermenter open {FERMENTER}", expect="open SKIP for the fake player"),

@@ -73,7 +73,8 @@ steps += [
     Step(f"gt6burner place {BURNER} brick_burning_box", expect="GT6 burning box placed"),
     # the T1 row columns + the menu-open arm, before any fuel — flipped by
     # machine-fluid-gui: the gt6:dryer supplier is bound, so the check probe
-    # CONSTRUCTS the menu (the old data=-2 menu-less marker is gone) and the idle
+    # reads the static Host face (the vanilla menu retired — task
+    # basic-machines-mui-migration; the old data=-2 menu-less marker is gone) and the idle
     # ContainerData (progress=0/0, never started) reads -1
     Step(f"gt6machine dryer check {DRYER}", expect="data=-1"),
     Step(f"gt6machine dryer check {DRYER}", expect="minIn=16 recIn=32 maxIn=64"),

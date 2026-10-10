@@ -21,7 +21,7 @@ registration face (task rcon-dual-gate spec ③).
     "opening the GUI" is not RCON-observable and no fake arm is invented). The
     row drive is inject/check: place / run refusal / input 1 cobblestone /
     inject (16 ticks x 16 EU = the exact :692 budget: EUt 16 x 16 t) / check
-    (out[0]=9x dust_stone, the ShCL :692 shape; data=-2 is the menu-less live
+    (out[0]=9x dust_stone, the ShCL :692 shape; data=-1 is the true idle live
     proof — the ContainerData three-state verdict of the old run arm was a MENU
     surface, the field report is not). No fakesource flip anymore: the inject
     drive IS the shipped grid-fed doInject seam (GTMachineCommand :91 — off is
@@ -100,10 +100,12 @@ steps += [
     # data plane the P25/W1 chains drive) — no fakesource flip, the global
     # regime switch retired with the run arm (see the docstring M section)
     Step(f"gt6machine shredder place {OV}", expect="GT6 shredder placed"),
-    # P26 MUI batch A design behavior, re-pinned as the probe (the former red):
-    # the menu-less carrier's run is refused by design — GTMachineCommand :609-614
+    # re-pinned by task basic-machines-mui-migration: the run probe reads the static Host face for every
+    # machine (the menu-or-null refusal retired with the vanilla menu leg) — an
+    # EMPTY shredder delivers no progress, so the trio verdict is the deterministic
+    # FAILED report (the command exits 0; allow_failed keeps the step advisory)
     Step(f"gt6machine shredder run 200 {OV}",
-         expect="run refused: no MenuType bound", allow_failed=True),
+         expect="run check FAILED", allow_failed=True),
     Step(f"gt6machine shredder input 1 {OV}", expect="cobblestone into slot 0"),
     # the :692 row (1 cobble -> 9x dust_stone, EUt 16, 16 t = 256 EU budget): 16
     # inject ticks x 16 EU close the exact one-batch budget inside the command;
@@ -113,12 +115,13 @@ steps += [
          node_expects={"1.21.1": "outputs=[9x gt6:dust_stone; ]"}),
     Step(f"gt6machine shredder check {OV}", expect="out[0]=9x dust_stone",
          node_expects={"1.21.1": "out[0]=9x gt6:dust_stone"}),
-    # the menu-less live proof: the ContainerData trio is a menu surface, the field
-    # report is not — check answers data=-2 (GTMachineCommand :804-806). No
+    # the true dial live proof (task basic-machines-mui-migration): the check reads the static Host face — the
+    # batch consumed its input, the re-find fails and the not-found arm zeroes the
+    # dial, so check answers data=-1. No
     # running=false assert here: right after the inject window the running latch
     # still reads true (every iteration carried energy, the machine has not seen
     # its idle debounce yet) — live-verified 2026-09-11 forge leg
-    Step(f"gt6machine shredder check {OV}", expect="data=-2"),
+    Step(f"gt6machine shredder check {OV}", expect="data=-1"),
 ]
 
 # ------------------------------------------------- B: the boiler arm
