@@ -1,11 +1,14 @@
 package gregtech6.gui.machines;
 
+import brachy.modularui.api.widget.IGuiAction;
 import brachy.modularui.drawable.progress.ProgressDrawable;
 import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.RichTooltip;
 import brachy.modularui.utils.Alignment;
 import brachy.modularui.value.sync.DoubleSyncValue;
 import brachy.modularui.value.sync.GenericSyncValue;
 import brachy.modularui.value.sync.PanelSyncManager;
+import brachy.modularui.value.sync.StringSyncValue;
 import brachy.modularui.widgets.FluidDisplayWidget;
 import brachy.modularui.widgets.ProgressWidget;
 import brachy.modularui.widgets.SlotGroupWidget;
@@ -19,9 +22,16 @@ import net.minecraftforge.fluids.FluidStack;
 /*import net.neoforged.neoforge.fluids.FluidStack;
 *///?}
 
+import javax.annotation.Nullable;
+
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import gregtech6.fluid.FluidTankGT;
+import gregtech6.gui.GTViewerJump;
+import gregtech6.recipes.Recipe;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
@@ -69,6 +79,22 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
  * {@link #progressDirection} (F1-02: cases 0-3 grow, 4-7 drain — the drain face feeds
  * {@code 1 - ratio}).
  *
+ * <p>Arrow affordances (task machine-arrow-recipe-jump, the research card
+ * {@code research.machine-arrow-recipe-jump}): the arrow wears a hover tooltip (the
+ * current recipe's output name + progress percent) and a click that opens the served
+ * RecipeMap page in whichever recipe viewer is installed ({@link GTViewerJump}, EMI
+ * first). Both ride fork-native widget faces with zero fork changes: hover =
+ * {@code Widget.drawForeground} (fork Widget.java:305-310) + {@link RichTooltip}
+ * {@code tooltipBuilder}/{@code autoUpdate} (RichTooltip.java:71/:77, the FluidSlot
+ * :59-63 in-service form); click = {@code listenGuiAction} MousePressed behind the
+ * mandatory {@code isMouseAbove} gate (Widget.java:702-711, GuiContext.java:98-99 — the
+ * official fork javadoc example is this exact ProgressWidget+click shape,
+ * Widget.java:954-993). The "processing" identity rides the {@code bm_recipe}
+ * {@link StringSyncValue}: the server getter derives the key from
+ * {@link GTBasicMachineMenu.Host#getCurrentRecipe} ONLY while
+ * {@code progressValue >= 0} — the upstream {@code mCurrentRecipe} is "last applied"
+ * and never cleared (the TRAP), so the three-state progress is the gate.
+ *
  * <p>Composed furniture (composed-ui-energy-slot-and-parts, the five-missing field
  * report): the special-slot gear cell ({@link GT6GuiParts#SLOT_SPECIAL} at (77,60) —
  * the print every machine skin carries and the theme base erased) rides as pure decor,
@@ -106,6 +132,17 @@ public final class GTBasicMachineMUI {
 
 	/** The sync key of the progress ratio value (server getter = {@link #progressRatio}). */
 	public static final String SYNC_PROGRESS = "bm_progress";
+
+	/**
+	 * The sync key of the current-recipe identity (task machine-arrow-recipe-jump): a
+	 * {@link StringSyncValue} the server getter feeds from
+	 * {@link GTBasicMachineMenu.Host#getCurrentRecipe} through {@link #currentRecipeKey},
+	 * gated on the three-state progress (idle syncs {@code null}). The gate rides the getter
+	 * on purpose — the upstream {@code mCurrentRecipe} is "last applied" (assigned at
+	 * MultiTileEntityBasicMachine.java:757, never cleared), so a non-null field is NOT a
+	 * processing predicate; {@code progressValue >= 0} is.
+	 */
+	public static final String SYNC_RECIPE = "bm_recipe";
 
 	/**
 	 * The sync-key prefix of the input fluid seats: {@code bm_fluid_in_} + the tank index
@@ -182,6 +219,15 @@ public final class GTBasicMachineMUI {
 				: new DoubleSyncValue(() -> progressRatio(aHost));
 		aSyncManager.syncValue(SYNC_PROGRESS, tProgress);
 
+		// the recipe identity sync (machine-arrow-recipe-jump): server-authoritative — the
+		// three-state progress gate decides "processing" (the mCurrentRecipe field alone is
+		// "last applied" and never cleared, the research-card TRAP); idle syncs null so the
+		// client tooltip never shows a stale recipe
+		StringSyncValue tRecipeKey = new StringSyncValue(() -> GTBasicMachineMenu.progressValue(aHost) >= 0
+				? currentRecipeKey(aHost.getCurrentRecipe())
+				: null);
+		aSyncManager.syncValue(SYNC_RECIPE, tRecipeKey);
+
 		ModularPanel<?> tPanel = ModularPanel.defaultPanel(PANEL_NAME, 176, 166);
 		// NO code background: the gt6 theme's 9-slice panel base draws here (fork
 		// Widget.drawBackground :255-264 theme arm) — the old .background(mGUIPath sheet) is
@@ -253,15 +299,32 @@ public final class GTBasicMachineMUI {
 				.name("special_slot"));
 		// the progress bar — the amazawa arrow pair, the EMPTY cell (the skins' print at
 		// (78,24), part 13 arrow_outline) always drawn under the clipped fill: the
-		// fill-only form read as "进度箭头缺失" on an idle/blank cell
-		tPanel.child(new ProgressWidget()
+		// fill-only form read as "进度箭头缺失" on an idle/blank cell.
+		// machine-arrow-recipe-jump: the arrow also wears the recipe/progress hover tooltip
+		// (RichTooltip autoUpdate + tooltipBuilder — the fork FluidSlot.java:59-63 form;
+		// hover draw rides Widget.drawForeground, fork Widget.java:305-310) and the
+		// viewer-jump click (listenGuiAction MousePressed with the MANDATORY isMouseAbove
+		// gate — listeners are dispatched screen-level BEFORE widget hit-testing, fork
+		// Widget.java:690-694/:702-711; the official javadoc example is exactly this
+		// ProgressWidget+click shape, Widget.java:954-993).
+		ProgressWidget tArrow = new ProgressWidget()
 				.value(tProgress)
 				.progress(new ProgressDrawable()
 						.emptyTexture(GT6GuiParts.asUITexture(GT6GuiParts.ARROW_OUTLINE))
 						.filledTexture(GT6GuiParts.asUITexture(GT6GuiParts.ARROW_FORWARD))
 						.direction(tDirection.direction()))
 				.pos(PROGRESS_X, PROGRESS_Y)
-				.size(PROGRESS_W, PROGRESS_H));
+				.size(PROGRESS_W, PROGRESS_H);
+		tArrow.tooltip().autoUpdate(true).tooltipBuilder(
+				aTooltip -> addArrowTooltip(aTooltip, tRecipeKey, tProgress, tDirection));
+		tArrow.listenGuiAction((IGuiAction.MousePressed) (aContext, aButton) -> {
+			if (!aContext.isMouseAbove(tArrow)) return false;
+			// the vanilla-leg router (GTBasicMachineScreen.java:110-116 precedent): the map's
+			// recipe page, EMI first/JEI fallback/neither a silent no-op (false = vanilla
+			// click handling continues)
+			return tMap != null && GTViewerJump.openRecipeMapPage(tMap);
+		});
+		tPanel.child(tArrow);
 
 		// the player-inventory label — vanilla's "container.inventory" (物品栏 in zh_cn;
 		// the vanilla key, zero new lang rows) at the vanilla offset (imageHeight-94 = 72),
@@ -292,6 +355,75 @@ public final class GTBasicMachineMUI {
 		if (tValue >= GTBasicMachineMenu.PROGRESS_DONE) return 1.0D;
 		if (tValue < 0) return 0.0D;
 		return (double) tValue / GTBasicMachineMenu.PROGRESS_DONE;
+	}
+
+	/**
+	 * The cross-JVM identity key of the currently applied recipe — the {@code bm_recipe}
+	 * wire form (task machine-arrow-recipe-jump). The first non-empty OUTPUT decides: items
+	 * first ({@code i:} + the item registry id), then fluids ({@code f:} + the fluid
+	 * registry id); no recipe / no output → {@code null} (the tooltip gate).
+	 *
+	 * <p>Wire-form rationale (the research card's two candidates): {@code mapName +
+	 * ROW_ORDER index} would need the O(n log n) resort of the whole map on every sync
+	 * poll (the getter runs server-side each tick) and pins this file to the EMI plugin's
+	 * private comparator; the first-output registry id is O(outputs), renders directly as
+	 * the tooltip's output name client-side ({@link #recipeKeyDisplayName}), and round-trips
+	 * offline as a bare {@link String} (the StringSyncValue pin). The key is tooltip DISPLAY
+	 * only — the click jump opens the RecipeMap page (v1 scope), so no recipe-exact identity
+	 * is needed; v2's exact-page jump would revisit (the ROW_ORDER near-duplicate tie then
+	 * becomes load-bearing, GT6RecipeMapEmiRecipe.java:32-34).
+	 */
+	@Nullable
+	public static String currentRecipeKey(@Nullable Recipe aRecipe) {
+		if (aRecipe == null) return null;
+		for (ItemStack tStack : aRecipe.mOutputs) {
+			if (tStack != null && !tStack.isEmpty()) return "i:" + BuiltInRegistries.ITEM.getKey(tStack.getItem());
+		}
+		for (FluidStack tStack : aRecipe.mFluidOutputs) {
+			if (tStack != null && !tStack.isEmpty()) return "f:" + BuiltInRegistries.FLUID.getKey(tStack.getFluid());
+		}
+		return null;
+	}
+
+	/**
+	 * The display name of a {@link #currentRecipeKey} — the output's localized name,
+	 * resolved HERE on the client so the locale is the viewer's (a server-side name would
+	 * bake en_us on dedicated servers). Unknown ids degrade to the registry defaults, never
+	 * throw. Public for the pin test.
+	 */
+	public static Component recipeKeyDisplayName(String aKey) {
+		String tId = aKey.substring(2);
+		int tColon = tId.indexOf(':');
+		ResourceLocation tRegistryId = tColon < 0
+				? ResourceLocation.fromNamespaceAndPath("minecraft", tId)
+				: ResourceLocation.fromNamespaceAndPath(tId.substring(0, tColon), tId.substring(tColon + 1));
+		if (aKey.startsWith("f:")) {
+			return new FluidStack(BuiltInRegistries.FLUID.get(tRegistryId), 1).getDisplayName();
+		}
+		return new ItemStack(BuiltInRegistries.ITEM.get(tRegistryId)).getHoverName();
+	}
+
+	/**
+	 * The progress-arrow hover tooltip body (the {@code tooltipBuilder} consumer — runs on
+	 * the client each draw frame via {@code autoUpdate(true)}, the FluidSlot.java:59-63
+	 * form): the current recipe's output name, then the progress percent. THE GATE: no
+	 * synced key (idle or recipe-less) → no lines at all — the "processing" truth is the
+	 * three-state progress the server getter gated on, never the never-cleared
+	 * {@code mCurrentRecipe} field (the research-card TRAP). Package-visible for the pin
+	 * test.
+	 */
+	static void addArrowTooltip(RichTooltip aTooltip, StringSyncValue aRecipeKey, DoubleSyncValue aProgress,
+			ProgressDirection aDirection) {
+		String tKey = aRecipeKey.getValue();
+		if (tKey == null || tKey.isEmpty()) return;
+		aTooltip.addLine(recipeKeyDisplayName(tKey));
+		double tShown = Math.min(1.0D, Math.max(0.0D, aProgress.getValue())); // the synced fill value
+		double tTrueRatio = aDirection.drain() ? 1.0D - tShown : tShown; // undo the drain display inversion
+		// Component.literal, NOT the addLine(String) overload — the String arm rides the
+		// fork Text.str → ModularComponent chain, whose AT-widened MutableComponent ctor
+		// IllegalAccessErrors on the offline test JVM (the same face the title avoids,
+		// see the buildPanel title note); vanilla Components draw identically here.
+		aTooltip.addLine(Component.literal((int) Math.round(100.0D * tTrueRatio) + "%"));
 	}
 
 	/**
