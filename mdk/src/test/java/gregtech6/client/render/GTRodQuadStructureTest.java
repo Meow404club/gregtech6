@@ -130,6 +130,40 @@ public class GTRodQuadStructureTest extends GTOfflineTestBase {
                 "the DOWN arm box must equal the :125 SIDE_Y_NEG transcription");
     }
 
+    /**
+     * Task rod-armbox-sixpin: all six arm boxes pinned whole, each the coordinate-by-coordinate
+     * transcription of its upstream case line (TileEntityBase10ConnectorRendered :124-129,
+     * tLength = 0). The former rod pins (singleBitMaskProducesTheUpstreamArmBox) covered only
+     * WEST and DOWN, and the cap-boundary check above only sees the outer plane — the same
+     * blind spot that let the wire model's NORTH :126 inner-plane typo survive (the wire card
+     * sealed its side; the rod twin was already fixed by the pipe card b452cd67aa with no pin
+     * of its own). This pin seals that rod-side blind spot. planBaseShapes :436 is the only
+     * production caller of armBox, so pinning armBox here pins the plan path too.
+     */
+    @Test
+    public void everyArmBoxIsTheUpstream124to129Transcription() {
+        // the wood small row PX_P[6] (MultiTileEntityPipeFluid :93; PX_P[16] is degenerate, half = 0)
+        float tD = 6, tHalf = (1.0F - tD / 16F) / 2F;
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {0, tHalf, tHalf, tHalf, 1 - tHalf, 1 - tHalf}, GTRodBakedModel.armBox(Direction.WEST, tHalf), 1e-9,
+                "the WEST arm box must equal the :124 SIDE_X_NEG transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, 0, tHalf, 1 - tHalf, tHalf, 1 - tHalf}, GTRodBakedModel.armBox(Direction.DOWN, tHalf), 1e-9,
+                "the DOWN arm box must equal the :125 SIDE_Y_NEG transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, tHalf, 0, 1 - tHalf, 1 - tHalf, tHalf}, GTRodBakedModel.armBox(Direction.NORTH, tHalf), 1e-9,
+                "the NORTH arm box must equal the :126 SIDE_Z_NEG transcription (z-max = aHalf, the typo pin)");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {1 - tHalf, tHalf, tHalf, 1, 1 - tHalf, 1 - tHalf}, GTRodBakedModel.armBox(Direction.EAST, tHalf), 1e-9,
+                "the EAST arm box must equal the :127 SIDE_X_POS transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, 1 - tHalf, tHalf, 1 - tHalf, 1, 1 - tHalf}, GTRodBakedModel.armBox(Direction.UP, tHalf), 1e-9,
+                "the UP arm box must equal the :128 SIDE_Y_POS transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, tHalf, 1 - tHalf, 1 - tHalf, 1 - tHalf, 1}, GTRodBakedModel.armBox(Direction.SOUTH, tHalf), 1e-9,
+                "the SOUTH arm box must equal the :129 SIDE_Z_POS transcription");
+    }
+
     @Test
     public void overlayBandsTwinEveryBaseQuadUntintedOneEpsilonOut() {
         List<Shape> tOne = GTRodBakedModel.planShapes(4, 0, 1);
