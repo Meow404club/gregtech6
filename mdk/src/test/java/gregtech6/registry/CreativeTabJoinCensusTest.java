@@ -47,7 +47,10 @@ import gregtech6.items.GT6LaserGas;
  * Dynamos 10111, Quantum Energizers 10121, Crystal Chargers 10131, ZPM 14999, Magical
  * 10180, Hoppers 8010, Misc Tool Blocks 32720, Safes 2010 / Storage 32751,
  * Loader_MultiTileEntities.java per the census anchors); this port pools all the joins
- * into MACHINES_TAB (the GTBarrels:257 pooling precedent).
+ * into MACHINES_TAB (the GTBarrels:257 pooling precedent). ERRATUM (task chests-tab-rehome):
+ * the "Chests" 32745 family left the pool — upstream gives it its own tab and the port now
+ * keeps that shape ({@code gt6:chests}, GT6ChestsCreativeTabTest); the mc-A rows are no
+ * longer part of this census (the batch total 575 → 455).
  *
  * <p>The offline assertion surface follows the GTWiresCreativeTabTest discipline: the
  * tab and the items are not resolvable in this bootstrapped-and-frozen JVM, but map
@@ -154,12 +157,9 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(120, GT6Hoppers.ITEMS_BY_PATH.size());
 	}
 
-	/** The 120 metal chests (the metalset pair :132-133 over the same 60-material loop — task material-mc-a-storage-chests). */
-	@Test
-	public void chestsJoinTheMetalsetLoop() {
-		assertEquals(120, gregtech6.registry.GT6Chests.ROWS.size());
-		assertEquals(120, gregtech6.registry.GT6Chests.ITEMS_BY_PATH.size());
-	}
+	// (the 120 metal chests LEFT the batch — task chests-tab-rehome: the family rides its
+	// own gt6:chests tab, GT6ChestsCreativeTabTest pins the walk; GT6ChestFamilyTest owns
+	// the 120-row axis census.)
 
 	// ---------------------------------------------------------------------------
 	// the single-RO families — field count = join coverage
@@ -206,10 +206,11 @@ public class CreativeTabJoinCensusTest {
 	// the census total + the join-handler presence
 	// ---------------------------------------------------------------------------
 
-	/** The 177-item total (the 171 usb-He baseline + the 6 debt-laser-gas-family emitters — the review-seat
-	 * rebase resolution, coordinator-ruled in the seat-4 notice). */
+	/** The 455-item total — the 575 baseline MINUS the 120 rehomed chests (task chests-tab-rehome:
+	 * the family left MACHINES_TAB for its own gt6:chests tab; history: 563 = 323 p38 + 120 mc-A
+	 * chests + 120 mc-B, +12 mc-F nozzles = 575, −120 mc-A rehome = 455). */
 	@Test
-	public void theBatchTotalIsOneSeventySeven() {
+	public void theBatchTotalIsFourHundredFiftyFive() {
 		int tTotal = GT6ElectricTransformers.ITEMS_BY_PATH.size()
 				+ GT6LongDistanceTransformers.ITEMS_BY_PATH.size()
 				+ GT6LongDistWires.ITEMS_BY_META.size()
@@ -223,19 +224,15 @@ public class CreativeTabJoinCensusTest {
 				+ GT6Attachments.ITEMS_BY_PATH.size()
 				+ GT6StaticStorages.ITEMS_BY_PATH.size()
 				+ GT6Hoppers.ITEMS_BY_PATH.size()
-				+ gregtech6.registry.GT6Chests.ITEMS_BY_PATH.size()
 				+ itemFields(GT6ElectricDynamos.class).size()
 				+ itemFields(GT6FluxDynamos.class).size()
 				+ itemFields(GT6Kinetics.class).size()
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size()
 				+ GT6Emitters.ITEMS_BY_PATH.size();
-		// 575 = 563 + 12 (task material-mc-f-attachment-rows: the nozzle pair joins the
-		// GT6Attachments ITEMS_BY_PATH walk, 12 -> 24 rows — the Loader :2122-2134
-		// nozzle/cap-nozzle lines, the MACHINES_TAB pooling face)
-		// (history: 563 = 323 p38 + 120 mc-A + 120 mc-B; 443 = the pre-merge self-reports,
-		// the union seam — the count follows the live walk, only rises).
-		assertEquals(575, tTotal, "563 (323 p38 batch + 120 mc-A chests + 120 mc-B shelf/crate ladders) + 12 (task material-mc-f-attachment-rows: the nozzle pair joins the attachment walk, 12 -> 24 rows over the metalset-free nozzle material set)");
+		// 455 = 575 (the mc-F peak) − 120 (the mc-A chest rehome to gt6:chests, task
+		// chests-tab-rehome — the count follows the live walk, only rises with the batch).
+		assertEquals(455, tTotal, "575 (323 p38 + 120 mc-B + 12 mc-F + 120 mc-A) − 120 mc-A rehome (chests-tab-rehome)");
 	}
 
 	/**
@@ -250,7 +247,7 @@ public class CreativeTabJoinCensusTest {
 				GT6LongDistPipes.class, GT6Lasers.class, GT6ElectricDynamos.class, GT6FluxDynamos.class,
 				GT6QuantumEnergizers.class, GT6CrystalChargers.class, GT6ZpmDechargers.class,
 				GT6MagicAbsorbers.class, GT6Sensors.class, GT6Attachments.class, GT6StaticStorages.class,
-					GT6Hoppers.class, gregtech6.registry.GT6Chests.class, GT6Kinetics.class,
+					GT6Hoppers.class, GT6Kinetics.class,
 					GT6FeBatteries.class, GT6LaserGas.class, GT6Emitters.class);
 		for (Class<?> tFamily : tFamilies) {
 			Method tWalk = tFamily.getDeclaredMethod("onBuildTabContents", BuildCreativeModeTabContentsEvent.class);
