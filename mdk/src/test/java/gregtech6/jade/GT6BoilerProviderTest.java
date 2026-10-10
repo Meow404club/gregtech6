@@ -363,7 +363,7 @@ public class GT6BoilerProviderTest extends GTOfflineTestBase {
 
 	@Test
 	public void theHeatBarPaintsTheOvenOrangeNotTheGreen() {
-		// ② the hot arm rides the oven-fill orange (GTOvenScreen.java:31 COLOR_FILL — the
+		// ② the hot arm rides the oven-fill orange (the retired oven screen's COLOR_FILL — the
 		// same heat semantics, the user-reported green read as "cold"), NOT the progress
 		// green; the drained arm keeps COLOR_STALLED red (untouched face)
 		assertEquals(0xFFFF8800, GT6JadeRows.COLOR_HEAT, "the oven orange");
