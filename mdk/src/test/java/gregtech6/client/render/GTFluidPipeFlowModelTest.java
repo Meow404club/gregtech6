@@ -2,6 +2,7 @@ package gregtech6.client.render;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -95,11 +96,13 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 
 	/**
 	 * THE pipe-flow-arrow-render-fix killer-1 pin (green form): the flow chain lives on
-	 * the per-state bake keys {@code gt6:<path>#connections=0..63} of the FLUID pipe rows
-	 * — the form vanilla ModelBakery actually mints (GTRenderModelListener class doc).
-	 * The historical regression registered the {@code "block/<path>"} model-file id form,
-	 * which never matches any bake key and is skipped silently — the arrows never
-	 * installed. The old count-only pin was exactly the blind spot that let it through.
+	 * the per-state bake keys {@code gt6:<path>#connections=0..63} of the FLUID and ITEM
+	 * pipe rows (the item rows joined in pipe-output-arrows — the item BE derives its
+	 * output arrows onto the same FLOW_SNAPSHOT) — the form vanilla ModelBakery actually
+	 * mints (GTRenderModelListener class doc). The historical regression registered the
+	 * {@code "block/<path>"} model-file id form, which never matches any bake key and is
+	 * skipped silently — the arrows never installed. The old count-only pin was exactly the
+	 * blind spot that let it through.
 	 */
 	@Test
 	void flowChainKeysAreExactlyThePerStateFluidPipeKeys() {
@@ -115,8 +118,16 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 			assertFalse(GTRodClientListener.isFlowChainKey("gt6:" + tPath + "#axis=y"),
 					"axis is not a pipe variant");
 		}
-		assertFalse(GTRodClientListener.isFlowChainKey("gt6:" + GTItemPipes.ROWS.get(0).path() + "#connections=5"),
-				"item pipes carry no flow/foam snapshots — raw rod");
+		for (String tPath : GTItemPipes.BLOCKS_BY_PATH.keySet()) {
+			for (int tMask = 0; tMask < 64; tMask++) {
+				assertTrue(GTRodClientListener.isFlowChainKey("gt6:" + tPath + "#connections=" + tMask),
+						tPath + "#connections=" + tMask + " must carry the composed chain (pipe-output-arrows)");
+			}
+			assertFalse(GTRodClientListener.isFlowChainKey("gt6:" + tPath),
+					"the item key renders raw rod (no ModelData in the inventory form)");
+		}
+		assertFalse(GTRodClientListener.isFlowChainKey("gt6:some_other_block#connections=5"),
+				"non-pipe connection-state keys stay raw rod");
 	}
 
 	/**
@@ -124,7 +135,8 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 	 * seats Foam(Flow(Rod)) — the foam OUTER (its any-snapshot+PAINT gate), the flow
 	 * middle, the SAME rod instance innermost; every other rod key keeps the raw rod. The
 	 * old form had two listeners replace the same keys last-wins and the rod won, burying
-	 * the whole chain.
+	 * the whole chain. Pipe-output-arrows: the ITEM per-state keys seat the same chain (the
+	 * one arrow system — an extra rod-side arm would double-render the fluid arrows).
 	 */
 	@Test
 	void rodReplacementSeatsFoamOverFlowOverRodOnTheFlowKeys() {
@@ -139,8 +151,30 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 		assertSame(tRod, ((GTFluidPipeFlowModel) tMid).getFallbackModel(), "the rod body is the innermost layer");
 		assertSame(tRod, GTRodClientListener.replacementFor("gt6:" + GTFluidPipes.ROWS.get(0).path(), tRod),
 				"the item key stays raw rod");
-		assertSame(tRod, GTRodClientListener.replacementFor("gt6:" + GTItemPipes.ROWS.get(0).path() + "#connections=5", tRod),
-				"item pipes stay raw rod");
+		String tItemKey = "gt6:" + GTItemPipes.ROWS.get(0).path() + "#connections=5";
+		BakedModel tItemValue = GTRodClientListener.replacementFor(tItemKey, tRod);
+		assertTrue(tItemValue instanceof GTFluidPipeFoamModel,
+				"the item per-state key seats the same composed chain (pipe-output-arrows)");
+		assertSame(tRod, ((GTFluidPipeFlowModel) ((GTFluidPipeFoamModel) tItemValue).getFallbackModel()).getFallbackModel(),
+				"the item chain wraps the SAME rod instance");
+	}
+
+	/**
+	 * THE pipe-output-arrows direction pin: the mask the ITEM pipe BE derives
+	 * ({@code outputArrowMask} — face 2 emit-disabled leaves the other five emitting)
+	 * plans exactly five arrows, and the disabled face (NORTH, bit 2 of the GT6 side order)
+	 * carries none; the unconstrained pipe (mask 0) plans nothing.
+	 */
+	@Test
+	void itemPipeDerivedMaskPlansArrowsOnEveryStillEmittingFace() {
+		byte tMask = (byte)(63 & ~(1 << Direction.NORTH.get3DDataValue())); // the outputArrowMask(emit-off NORTH) form
+		List<GTFluidPipeFlowModel.FlowQuad> tPlans = GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot(tMask), null);
+		assertEquals(5, tPlans.size(), "five still-emitting faces carry arrows");
+		for (GTFluidPipeFlowModel.FlowQuad tPlan : tPlans) {
+			assertNotEquals(Direction.NORTH, tPlan.quadFace(), "the emit-disabled face carries no arrow");
+		}
+		assertTrue(GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot((byte) 0), null).isEmpty(),
+				"an unconstrained pipe (the GT6 default) stays silent");
 	}
 
 	/** A body model that records the Forge 5-arg dispatch (the ModelData forward pin). */
