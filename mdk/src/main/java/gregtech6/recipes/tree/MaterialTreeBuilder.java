@@ -30,12 +30,16 @@ import java.util.Set;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import gregapi.data.OP;
+import gregapi.data.TD;
+import gregapi.oredict.MaterialRegistry;
 import gregapi.oredict.OreDictMaterial;
 import gregapi.oredict.OreDictPrefix;
 import gregtech6.item.GTMaterialPrefixBlockItem;
 import gregtech6.item.MaterialPrefixItem;
 import gregtech6.recipes.Recipe;
 import gregtech6.recipes.RecipeMap;
+import gregtech6.tileentity.tools.TileEntityMold;
 
 /**
  * The material processing tree, data layer only (task debt-material-tree-a, card A of the
@@ -75,7 +79,31 @@ import gregtech6.recipes.RecipeMap;
  * <p><b>Traversal</b>: {@link #reachableFromOre} BFS-walks the chain edges of one material
  * starting at the {@code OP.ore*} prefix family (every prefix whose internal name starts
  * with "ore" — ore/oreRaw/orePoor/dense/stone variants), visited-on-prefix, so cycles
- * (compressor/extruder inverse pairs like plate↔ingot) terminate.
+ * (compressor/extruder inverse pairs like plate↔ingot) terminate. {@link #depthsFromOre}
+ * is the same walk carrying the BFS layer index — the display's depth-band axis (the EMI
+ * recipe-tree layering, BoMScreen.java:334/:337 {@code depth * NODE_VERTICAL_SPACING}).
+ *
+ * <p><b>Dynamic-map synthesis</b> (task mattree-emi-tree-rework, the 「坩埚没了」 root):
+ * the stored-row sweep never sees the on-demand maps — {@code gt.recipe.cruciblesmelting}
+ * is zero-row by construction (GT6RecipeMapCrucible.findRecipe :179-203 derives the row at
+ * lookup time) and the Mold/Faucet casting pipeline is BE-driven (TileEntityMold
+ * MOLD_RECIPES + TileEntityFaucet.fillMold), so after the sweep
+ * {@link #synthesizeDynamicEdges} folds their derivable families in as ordinary edges:
+ * <ul>
+ * <li>the crucible SELF arm (target == self): {@code smeltInputPrefix -> ingot} chain
+ *     edges labelled {@code gt.recipe.cruciblesmelting} (a live RecipeMap — the census
+ *     live-map pin holds);</li>
+ * <li>the crucible CROSS arm (ore-mineral materials whose smelting target is another
+ *     material, e.g. Fe2O3 → Fe): a byproduct edge into the target's ingot — the terminal
+ *     product shows in the byproduct band instead of hijacking the chain axis;</li>
+ * <li>the casting family: {@code dust -> <mold prefix>} chain edges labelled
+ *     {@code Mold} (the one synthetic label — {@link #SYNTHETIC_MAP_LABELS}, the census
+ *     pins exempt it) for every self-solidifying MELTING material, prefixes read off the
+ *     {@code TileEntityMold.MOLD_RECIPES} universe through the public lazy fill.</li>
+ * </ul>
+ * Alloying stays OUT (RM.Combination cross-material dust rows produce non-ore-universe
+ * alloys — the X→alloy edge is a byproduct-band face the alloying viewer page owns; a
+ * deliberate non-extension, not a silent drop).
  *
 	 * <p><b>Purified producers LANDED</b> (task debt-ore-purified-edge): the upstream :351
 	 * DUST_ORE sifting walk (GT6RecipesSifter.load(), the oreGravel/sand/redsand/mud
@@ -129,6 +157,7 @@ public final class MaterialTreeBuilder {
 				scanRow(tMap.mNameInternal, tRow, tChain, tByproduct);
 			}
 		}
+		synthesizeDynamicEdges(tChain, tByproduct);
 		return new MaterialTreeBuilder(tScanned, tChain, tByproduct);
 	}
 
@@ -162,6 +191,78 @@ public final class MaterialTreeBuilder {
 		}
 	}
 
+	// ------------------------------------------------------------------
+	// the dynamic-map synthesis (the 「坩埚没了」 root fix)
+	// ------------------------------------------------------------------
+
+	/** The crucible smelting map's internal name (GT6RecipeMaps :1193, a live zero-row map). */
+	public static final String CRUCIBLE_SMELTING_MAP = "gt.recipe.cruciblesmelting";
+
+	/**
+	 * The one synthetic edge label: the Mold/Faucet casting pipeline has no RecipeMap behind
+	 * it (TileEntityMold BE-driven, TileEntityFaucet.fillMold the pour arm), so its edges
+	 * carry this literal — {@link MaterialTreeDisplay#mapLabel} passes it through and the
+	 * census pins exempt it through this set (the live-map rule keeps its teeth for rows).
+	 */
+	public static final Set<String> SYNTHETIC_MAP_LABELS = Set.of("Mold");
+
+	/**
+	 * The crucible smelting INPUT prefixes — the {@code selfPrefixes()} family of the crucible
+	 * map (GT6RecipeMapCrucible.selfPrefixes, the RecipeMapCrucible.java:63-67 self arm):
+	 * shared by reference, not re-listed here (single source of the arm's shape).
+	 */
+	private static OreDictPrefix[] smeltInputPrefixes() {
+		return gregtech6.recipes.maps.GT6RecipeMapCrucible.selfPrefixes();
+	}
+
+	/**
+	 * Folds the on-demand maps' derivable families into the two indexes: the crucible
+	 * smelting self/cross arms and the Mold casting family, over every registered
+	 * non-hidden material that passes the crucible-food gate (MELTING tag + a positive
+	 * smelting target — GT6RecipeMapCrucible :190-191). Zero row re-scans: this walks the
+	 * MATERIAL registry only, the performance red line holds.
+	 */
+	private static void synthesizeDynamicEdges(Map<OreDictMaterial, Set<ChainEdge>> aChain, Map<OreDictMaterial, Set<ByproductEdge>> aByproduct) {
+		OreDictPrefix[] tSmeltInputs = smeltInputPrefixes();
+		for (OreDictMaterial tMat : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
+			if (tMat == null || tMat.mID <= 0 || tMat.mHidden) continue;
+			// the crucible-food gate (GT6RecipeMapCrucible :190-191) — also the melt-feed gate
+			// of the casting family (a material that cannot melt cannot pour into a mold)
+			if (!tMat.contains(TD.Processing.MELTING) || tMat.mTargetSmelting.mAmount <= 0) continue;
+			OreDictMaterial tTarget = tMat.mTargetSmelting.mMaterial;
+			if (tTarget == null || tTarget.mID <= 0) continue; // setSmelting(null, ..) — no row, no edge (the fluorite-helper face)
+			for (OreDictPrefix tIn : tSmeltInputs) {
+				if (tTarget == tMat) {
+					// the SELF arm: dust iron -> ingot iron — an ordinary chain edge (on-axis)
+					aChain.computeIfAbsent(tMat, k -> new LinkedHashSet<>())
+						.add(new ChainEdge(tIn, OP.ingot, CRUCIBLE_SMELTING_MAP));
+				} else {
+					// the CROSS arm (the ore-mineral face, e.g. Fe2O3 -> Fe): the terminal
+					// product rides the byproduct band instead of hijacking the chain axis
+					aByproduct.computeIfAbsent(tMat, k -> new LinkedHashSet<>())
+						.add(new ByproductEdge(tMat, tTarget, tIn, OP.ingot, CRUCIBLE_SMELTING_MAP));
+				}
+			}
+			// the casting family: the Mold solidifies the melt into the MOLD_RECIPES shapes
+			// (TileEntityMold :540-548, the matStack output) when the material solidifies to
+			// itself (the COOL2CRYSTAL cross-material swap stays out, same self-arm rule)
+			if (tMat.mTargetSolidifying.mMaterial == tMat) {
+				for (OreDictPrefix tPrefix : moldPrefixes()) {
+					aChain.computeIfAbsent(tMat, k -> new LinkedHashSet<>())
+						.add(new ChainEdge(OP.dust, tPrefix, "Mold"));
+				}
+			}
+		}
+	}
+
+	/** The distinct mold output prefixes (the lazy-fill trigger first — the P6 lesson). */
+	private static Set<OreDictPrefix> moldPrefixes() {
+		TileEntityMold.getMoldRecipe(1); // any non-zero shape warms the LAZY MOLD_RECIPES table
+		Set<OreDictPrefix> rPrefixes = new LinkedHashSet<>();
+		for (OreDictPrefix tPrefix : TileEntityMold.MOLD_RECIPES.values()) if (tPrefix != null) rPrefixes.add(tPrefix);
+		return rPrefixes;
+	}
+
 	/** The item seam: (prefix, material) of a material-scoped item, or null for anything else. */
 	private static Pair pairOf(Item aItem) {
 		if (aItem instanceof MaterialPrefixItem tItem) return new Pair(tItem.prefix, tItem.material);
@@ -191,8 +292,22 @@ public final class MaterialTreeBuilder {
 	 * appear as a chain-edge source of this material.
 	 */
 	public Set<OreDictPrefix> reachableFromOre(OreDictMaterial aMaterial) {
+		return depthsFromOre(aMaterial).keySet();
+	}
+
+	/**
+	 * The same BFS carrying each prefix's LAYER index — the display's depth-band axis. The
+	 * layering is the EMI recipe-tree face: a node's children sit one
+	 * {@code NODE_VERTICAL_SPACING} row below it (BoMScreen.java:334/:337
+	 * {@code depth * NODE_VERTICAL_SPACING}, the addNewNodes recursion's {@code depth + 1}).
+	 * Insertion order = BFS layer order (a LinkedHashMap, so the display's row assignment
+	 * within a band is the deterministic encounter order). A prefix reached twice lands on
+	 * its SHORTEST path depth (the first BFS visit) — a later same-band edge renders as the
+	 * horizontal connector, a back-edge (to a shallower prefix) is the display's drop.
+	 */
+	public Map<OreDictPrefix, Integer> depthsFromOre(OreDictMaterial aMaterial) {
 		Set<ChainEdge> tEdges = mChainIndex.get(aMaterial);
-		if (tEdges == null || tEdges.isEmpty()) return Set.of();
+		if (tEdges == null || tEdges.isEmpty()) return Map.of();
 		// adjacency: from-prefix -> to-prefixes (built per query from the indexed edges only)
 		Map<OreDictPrefix, Set<OreDictPrefix>> tAdjacency = new LinkedHashMap<>();
 		Set<OreDictPrefix> tStarts = new LinkedHashSet<>();
@@ -200,16 +315,22 @@ public final class MaterialTreeBuilder {
 			tAdjacency.computeIfAbsent(tEdge.from(), k -> new LinkedHashSet<>()).add(tEdge.to());
 			if (isOreFamilyPrefix(tEdge.from())) tStarts.add(tEdge.from());
 		}
-		Set<OreDictPrefix> rVisited = new LinkedHashSet<>(tStarts);
-		Deque<OreDictPrefix> tQueue = new ArrayDeque<>(tStarts);
+		Map<OreDictPrefix, Integer> rDepths = new LinkedHashMap<>();
+		Deque<OreDictPrefix> tQueue = new ArrayDeque<>();
+		for (OreDictPrefix tStart : tStarts) {
+			rDepths.put(tStart, 0); // visited-on-insert — the cycle break, now carrying the layer
+			tQueue.add(tStart);
+		}
 		while (!tQueue.isEmpty()) {
-			Set<OreDictPrefix> tNext = tAdjacency.get(tQueue.poll());
+			OreDictPrefix tCurrent = tQueue.poll();
+			int tNextDepth = rDepths.get(tCurrent) + 1;
+			Set<OreDictPrefix> tNext = tAdjacency.get(tCurrent);
 			if (tNext == null) continue;
 			for (OreDictPrefix tPrefix : tNext) {
-				if (rVisited.add(tPrefix)) tQueue.add(tPrefix); // visited-on-prefix — the cycle break
+				if (rDepths.putIfAbsent(tPrefix, tNextDepth) == null) tQueue.add(tPrefix);
 			}
 		}
-		return Collections.unmodifiableSet(rVisited);
+		return Collections.unmodifiableMap(rDepths);
 	}
 
 	/** The {@code OP.ore*} family test: the prefix's internal name starts with "ore" (ore/oreRaw/orePoor/oreDense/stone variants). */
