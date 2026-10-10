@@ -61,19 +61,28 @@ public class GT6MortarNeiModelTest extends GTOfflineRenderTestBase {
 				net.minecraft.world.level.block.state.BlockBehaviour.Properties.of());
 	}
 
-	/** A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest form). */
+	/**
+	 * A named atlas stub — the name is the pin's membership key (the GTOvenOverlayModelTest
+	 * form). The geometry mirrors the REAL block atlas seat (a 128px sheet in a 1024 atlas,
+	 * the GT6KitchenNeiModelTest recipe) because FaceBakery shrinks face UVs toward their
+	 * centre by {@code uvShrinkRatio() = 4/atlasSize} (FaceBakery.java:45-51) — a 1x1 stub
+	 * would ratio-4-mangle the glyph UV pins; at 128/1024 the shrink is the real ~0.4%.
+	 */
 	private static final class NamedSprite extends TextureAtlasSprite {
+		private static final int SHEET_PX = 128;
+		private static final int ATLAS_PX = 1024;
+
 		private NamedSprite(ResourceLocation aName) {
 			super(aName,
 					new net.minecraft.client.renderer.texture.SpriteContents(aName,
-							new FrameSize(1, 1),
-							new com.mojang.blaze3d.platform.NativeImage(1, 1, false),
+							new FrameSize(SHEET_PX, SHEET_PX),
+							new com.mojang.blaze3d.platform.NativeImage(SHEET_PX, SHEET_PX, false),
 							//? if forge {
 							net.minecraft.client.resources.metadata.animation.AnimationMetadataSection.EMPTY),
 							//?} else {
 							/*net.minecraft.server.packs.resources.ResourceMetadata.EMPTY),*/
 							//?}
-					1, 1, 0, 0);
+					ATLAS_PX, ATLAS_PX, 0, 0);
 		}
 	}
 
@@ -135,6 +144,19 @@ public class GT6MortarNeiModelTest extends GTOfflineRenderTestBase {
 		return new AABB(tMinX, tMinY, tMinZ, tMaxX, tMaxY, tMaxZ);
 	}
 
+	/** The quad's {u, v} extents in normalized sprite space (min/max over the 4 vertices) — {umin, umax}, {vmin, vmax}. */
+	private static double[][] uvOf(BakedQuad aQuad) {
+		int[] tV = aQuad.getVertices();
+		double tMinU = 99, tMinV = 99, tMaxU = -99, tMaxV = -99;
+		for (int v = 0; v * STRIDE < tV.length; v++) {
+			double tU = Float.intBitsToFloat(tV[v * STRIDE + 4]);
+			double tVv = Float.intBitsToFloat(tV[v * STRIDE + 5]);
+			tMinU = Math.min(tMinU, tU); tMaxU = Math.max(tMaxU, tU);
+			tMinV = Math.min(tMinV, tVv); tMaxV = Math.max(tMaxV, tVv);
+		}
+		return new double[][] {{tMinU, tMaxU}, {tMinV, tMaxV}};
+	}
+
 	// ---------------------------------------------------------------- the pins
 
 	/** The glyph exists ONLY with a viewer, on the cutout layer alone. */
@@ -175,6 +197,28 @@ public class GT6MortarNeiModelTest extends GTOfflineRenderTestBase {
 		assertEquals(6.001 / 16.0, tBox.maxY, 0.0001, "the glyph sits PX_N[10]+0.001 on the rim (the :122 plate)");
 		assertEquals(4.0 / 16.0, tBox.maxX, 0.0001, "the 2px remainder up to PX_P[4] — the clickable corner region");
 		assertEquals(4.0 / 16.0, tBox.maxZ, 0.0001, "the 2px remainder up to PX_P[4]");
+	}
+
+	/**
+	 * The UV is the quad's own footprint — ONE word cell of the 8x8 sheet (the kitchen
+	 * {@code bakeNeiQuad} correction; the upstream render-bounds interpolation,
+	 * ITexture.java:295-298). The corner sits at (2,2)px → the SECOND cell, face px 2..4 on
+	 * both axes. The stored values carry the vanilla face-UV shrink toward the centre
+	 * (uvShrinkRatio = 4/1024 on the 128-in-1024 stub, FaceBakery.java:45-51) — ~0.4%,
+	 * inside the pin tolerance; the OLD full-sheet {@code [0,0,16,16]} UV lands at
+	 * u ≈ 0.125 (the whole 128px sheet squeezed onto the corner — the 「整张字模表」 bug)
+	 * and fails this pin outright.
+	 */
+	@Test
+	void theGlyphUvIsTheQuadFootprintOneSheetCell() {
+		double tEps = 0.0005;
+		double tSheet = 128.0; // the stub sprite's native px — normalized u = sheet px / 128
+		// the corner (2..4)x(2..4)px → the cell one in from the sheet's top-left edge
+		double[][] tUv = uvOf(quads(model("jei"), RenderType.cutout()).get(1));
+		assertEquals(2.0 / tSheet, tUv[0][0], tEps, "the glyph u rides the 2px envelope inset");
+		assertEquals(2.0 / tSheet, tUv[1][0], tEps, "the glyph v rides the 2px envelope inset");
+		assertEquals(4.0 / tSheet, tUv[0][1], tEps, "the glyph u ends at the 4px bound — one cell");
+		assertEquals(4.0 / tSheet, tUv[1][1], tEps, "the glyph v ends at the 4px bound — one cell");
 	}
 
 	/** The seat: cutout joins the fallback's layers exactly when the glyph exists. */
