@@ -917,6 +917,12 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		return recipes();
 	}
 
+	/** The arrow-tooltip identity source (machine-arrow-recipe-jump): the BE's {@code mCurrentRecipe} (the "last applied" field — never a processing predicate). */
+	@Override
+	public gregtech6.recipes.Recipe getCurrentRecipe() {
+		return mCurrentRecipe;
+	}
+
 	@Override
 	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
 		return new GTBasicMachineMenu(getMenuType(), aContainerId, aPlayerInventory, this);

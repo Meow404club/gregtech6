@@ -126,6 +126,16 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		 * null keeps the older fakes compiling; the jump click is a no-op on a null map.
 		 */
 		default gregtech6.recipes.RecipeMap getRecipeMap() { return null; }
+		/**
+		 * The machine's currently applied recipe (upstream {@code mCurrentRecipe},
+		 * MultiTileEntityBasicMachine.java:100) — the progress-arrow tooltip's identity source
+		 * (task machine-arrow-recipe-jump, the {@code bm_recipe} sync getter). NEVER usable as
+		 * a "now processing" predicate: the upstream field is only ever assigned (:757), never
+		 * cleared — the tooltip gate rides the three-state progress on the sync getter instead.
+		 * Default null keeps the older fakes compiling; a null recipe simply renders no
+		 * tooltip line.
+		 */
+		default gregtech6.recipes.Recipe getCurrentRecipe() { return null; }
 	}
 
 	/** The machine bound as the menu's backing container (upstream mTileEntity, ContainerCommon.java:42). */
@@ -291,6 +301,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 			@Override public long getMaxProgress() { return aMachine.mMaxProgress; }
 			@Override public String getGuiTexture() { return aMachine.mRecipes.mGUIPath; }
 			@Override public gregtech6.recipes.RecipeMap getRecipeMap() { return aMachine.mRecipes; }
+			@Override public gregtech6.recipes.Recipe getCurrentRecipe() { return aMachine.mCurrentRecipe; }
 			@Override public FluidTankGT[] getFluidInputTanks() { return aMachine.mTanksInput; }
 			@Override public FluidTankGT[] getFluidOutputTanks() { return aMachine.mTanksOutput; }
 		};
