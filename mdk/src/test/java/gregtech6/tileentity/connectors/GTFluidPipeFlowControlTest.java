@@ -126,14 +126,14 @@ public class GTFluidPipeFlowControlTest {
 		net.minecraftforge.client.model.data.ModelData tData = tPipe.getModelData();
 		assertTrue(tData.get(GTModelProperties.RENDER_SNAPSHOT) instanceof GTCoverRenderSnapshot,
 				"the cover snapshot rides the covers key");
-		assertEquals(new PipeFlowSnapshot(TileEntityBase09Connector.SBIT[1]), tData.get(GTModelProperties.FLOW_SNAPSHOT),
+		assertEquals(new PipeFlowSnapshot(TileEntityBase09Connector.SBIT[1], true), tData.get(GTModelProperties.FLOW_SNAPSHOT),
 				"the arrow snapshot rides its own key, the mask untouched by the cover");
 
 		// THE MUTUAL NON-INVALIDATION, cover side: removing the cover leaves the flow snapshot intact
 		assertTrue(tPipe.setCoverItem((byte) 3, ItemStack.EMPTY, null, false, true));
 		tData = tPipe.getModelData();
 		assertFalse(tData.has(GTModelProperties.RENDER_SNAPSHOT), "the dismantled cover dissolves its snapshot");
-		assertEquals(new PipeFlowSnapshot(TileEntityBase09Connector.SBIT[1]), tData.get(GTModelProperties.FLOW_SNAPSHOT),
+		assertEquals(new PipeFlowSnapshot(TileEntityBase09Connector.SBIT[1], true), tData.get(GTModelProperties.FLOW_SNAPSHOT),
 				"the flow snapshot survives the cover removal");
 
 		// and vice versa, flow side: clearing the arrows leaves the cover snapshot intact

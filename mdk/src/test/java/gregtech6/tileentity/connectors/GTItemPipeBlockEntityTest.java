@@ -282,6 +282,50 @@ public class GTItemPipeBlockEntityTest extends GTOfflineTestBase {
 		assertFalse(tPipe.monkeyWrench((byte)6));
 	}
 
+	// ---------------------------------------------------------------------------
+	// the output-arrow derivation (task pipe-output-arrows) — the render face of the
+	// four-state layer: arrows on the still-emitting faces, silence when unconstrained
+	// ---------------------------------------------------------------------------
+
+	@Test
+	public void outputArrowMaskFollowsTheFourStateCycle() {
+		GTItemPipeBlockEntity tPipe = pipe();
+		int tBit = TileEntityBase09Connector.SBIT[4];
+		assertEquals(0, tPipe.outputArrowMask(), "an unconstrained pipe is silent (the fluid mask==0 default)");
+		assertTrue(tPipe.monkeyWrench((byte)4)); // (0,1) emit-off — the face stops emitting, its arrow dies
+		assertEquals(63 & ~tBit, tPipe.outputArrowMask(), "arrows on the five still-emitting faces");
+		assertTrue(tPipe.monkeyWrench((byte)4)); // (1,0) accept-off — the face emits again (the :268 gate is a different axis)
+		assertEquals(0, tPipe.outputArrowMask(), "outputs unconstrained again → silent");
+		assertTrue(tPipe.monkeyWrench((byte)4)); // (1,1) both-off — the face stops emitting again
+		assertEquals(63 & ~tBit, tPipe.outputArrowMask(), "arrows on the five still-emitting faces");
+		assertTrue(tPipe.monkeyWrench((byte)4)); // (0,0) normal
+		assertEquals(0, tPipe.outputArrowMask());
+		// multi-face + the input half is arrow-inert: disabling acceptance changes nothing
+		// about the output surface (an all-inputs-blocked pipe must not light up six arrows
+		// while emitting exactly like the default)
+		tPipe.mDisabledInputs = 63;
+		tPipe.mDisabledOutputs = (byte)(TileEntityBase09Connector.SBIT[0] | TileEntityBase09Connector.SBIT[5]);
+		assertEquals(63 ^ (TileEntityBase09Connector.SBIT[0] | TileEntityBase09Connector.SBIT[5]),
+				tPipe.outputArrowMask(), "the two emit-off faces lose their arrows, the rest keep theirs");
+		// the saturation edge: every output disabled → ~63 & 63 = 0 → silent again
+		tPipe.mDisabledOutputs = 63;
+		assertEquals(0, tPipe.outputArrowMask(), "nothing emits anywhere → no arrows");
+	}
+
+	@Test
+	public void arrowSnapshotRidesTheModelDataOnlyWhileMarked() {
+		GTItemPipeBlockEntity tPipe = pipe();
+		assertFalse(tPipe.getModelData().has(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT),
+				"an unmarked pipe keeps the plain 03 ModelData (EMPTY/PAINT semantics)");
+		assertTrue(tPipe.monkeyWrench((byte)2)); // emit-off NORTH
+		Object tSnapshot = tPipe.getModelData().get(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT);
+		assertEquals(new gregtech6.client.render.PipeFlowSnapshot((byte)(63 & ~TileEntityBase09Connector.SBIT[2]), false), tSnapshot,
+				"the derived mask rides FLOW_SNAPSHOT — the same key the fluid arrows render from, never the arm override");
+		assertTrue(tPipe.monkeyWrench((byte)2)); // (1,0) — outputs unconstrained again
+		assertFalse(tPipe.getModelData().has(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT),
+				"the dissolved mask dissolves its snapshot");
+	}
+
 	@Test
 	public void disabledOutputsBlockTheEmitGate() {
 		GTItemPipeBlockEntity tPipe = pipe();

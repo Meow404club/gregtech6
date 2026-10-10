@@ -591,7 +591,120 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector implements 
 		}
 		setChanged();
 		updateClientData();
+		gregtech6.client.render.GTRenderUpdates.scheduleRenderUpdate(this); // task pipe-output-arrows — the arrows are render-visible state (the fluid pipe's outputChanged shape)
 		return true;
+	}
+
+	// ---------------------------------------------------------------------------
+	// the output-arrow mask (task pipe-output-arrows — the render face of the
+	// four-state monkeywrench layer)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The 6-bit output-arrow mask for the render chain (task pipe-output-arrows): a set bit
+	 * = the face still EMITS (its {@link #mDisabledOutputs} bit is clear). The arrow answers
+	 * the fluid pipe's question — "where does this pipe push outward?" — over the item
+	 * pipe's four-state layer ({@code mDisabledOutputs} set = emitting disabled, the
+	 * upstream insertItemStackIntoTileEntity :225 gate):
+	 * <ul>
+	 * <li>outputs unconstrained ({@code mDisabledOutputs == 0}) → {@code 0} — the GT6
+	 *     default "every face pushes" stays SILENT, the same mask==0 semantics as the fluid
+	 *     pipe's {@code GTFluidPipeBlockEntity.mIoMask} default;</li>
+	 * <li>any output disabled → arrows on every still-emitting face (an emit-off face loses
+	 *     its arrow; an accept-off face keeps it — it still emits, the :268 input gate is a
+	 *     different axis).</li>
+	 * </ul>
+	 * The input half deliberately does NOT open the arrows: disabling acceptance changes
+	 * nothing about the output surface, and an all-inputs-blocked pipe would otherwise
+	 * light up six arrows while emitting exactly like the default.
+	 */
+	public byte outputArrowMask() {
+		return mDisabledOutputs != 0 ? (byte)(~mDisabledOutputs & 63) : 0;
+	}
+
+	// ---------------------------------------------------------------------------
+	// arrow render + client sync (task pipe-output-arrows — the fluid pipe's
+	// scheduleFlowRenderRefresh/getModelData shape over the derived mask; the FQNs keep
+	// the common-side BE free of client-class imports)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+		scheduleArrowRenderRefresh();
+	}
+
+	//? if forge {
+	@Override
+	public void handleUpdateTag(CompoundTag aTag) {
+		super.handleUpdateTag(aTag);
+		scheduleArrowRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket) {
+		super.onDataPacket(aNet, aPacket);
+		scheduleArrowRenderRefresh(); // block-update channel (monkeywrench changes)
+	}
+	//?} else {
+	/*@Override
+	public void handleUpdateTag(CompoundTag aTag, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.handleUpdateTag(aTag, aProvider);
+		scheduleArrowRenderRefresh(); // chunk-data channel (login/chunk load)
+	}
+
+	@Override
+	public void onDataPacket(net.minecraft.network.Connection aNet, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket aPacket, net.minecraft.core.HolderLookup.Provider aProvider) {
+		super.onDataPacket(aNet, aPacket, aProvider);
+		scheduleArrowRenderRefresh(); // block-update channel (monkeywrench changes)
+	}
+	// 21.1: both IBlockEntityExtension hooks gain the serialization provider (javap)
+	*///?}
+
+	private void scheduleArrowRenderRefresh() {
+		if ((outputArrowMask() != 0 || hasCovers()) && hasLevel() && isClientSide()) gregtech6.client.render.GTRenderUpdates.scheduleRenderUpdate(this);
+	}
+
+	/**
+	 * The C-grade render hook (task pipe-output-arrows): a marked pipe and/or a covered one
+	 * hands the render thread its immutable snapshots — the {@link
+	 * gregtech6.client.render.PipeFlowSnapshot} arrows on {@link
+	 * gregtech6.client.render.GTModelProperties#FLOW_SNAPSHOT} (the SAME property the fluid
+	 * pipe arrows ride — the composed {@code Foam(Flow(Rod))} chain seats on the item-pipe
+	 * per-state keys too, GTRodClientListener.isFlowChainKey) and the covers on {@code
+	 * RENDER_SNAPSHOT} (the fluid-pipe/wire coexistence form; covered item pipes gaining
+	 * their plate visuals is the wire-precedent side effect). An unmarked plain pipe keeps
+	 * {@code super.getModelData()} — the 03 base PAINT supply, else EMPTY.
+	 */
+	@Override
+	public net.minecraftforge.client.model.data.ModelData getModelData() {
+		gregtech6.covers.GTCoverRenderSnapshot tCoverSnapshot = coverSnapshot();
+		byte tMask = outputArrowMask();
+		if (tMask == 0 && tCoverSnapshot == null) return super.getModelData();
+		gregtech6.client.render.GTModelProperties.SnapshotBuilder tBuilder =
+				gregtech6.client.render.GTModelProperties.derive(super.getModelData());
+		if (tCoverSnapshot != null) {
+			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, tCoverSnapshot);
+		}
+		if (tMask != 0) {
+			// rendersArms = false (task pipe-output-arrows): the item mask is the COMPLEMENT
+			// of the disable layer — dense (five still-emitting faces for one disable click)
+			// — so it carries the arrow badges only, never the connected-arm override
+			tBuilder.with(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask, false));
+		}
+		return tBuilder.build();
+	}
+
+	/** The per-face cover sprite snapshot, the GTFluidPipeBlockEntity.coverSnapshot body verbatim (item pipes carry the same ICoverableTE composition). */
+	private @Nullable gregtech6.covers.GTCoverRenderSnapshot coverSnapshot() {
+		if (!hasCovers()) return null;
+		java.util.Map<Direction, net.minecraft.resources.ResourceLocation> tSprites = new java.util.EnumMap<>(Direction.class);
+		for (byte tSide = 0; tSide < 6; tSide++) {
+			if (getCovers().mBehaviours[tSide] == null) continue;
+			net.minecraft.resources.ResourceLocation tSprite = getCovers().mBehaviours[tSide].getCoverTextureSurface(tSide, getCovers());
+			if (tSprite != null) tSprites.put(Direction.from3DDataValue(tSide), tSprite);
+		}
+		return tSprites.isEmpty() ? null : new gregtech6.covers.GTCoverRenderSnapshot(tSprites);
 	}
 
 	// ---------------------------------------------------------------------------

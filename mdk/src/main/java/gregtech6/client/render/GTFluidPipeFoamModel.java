@@ -91,16 +91,20 @@ public class GTFluidPipeFoamModel extends GTDynamicBakedModel {
 	 * per baked key — the old two-listener form (a GTRenderModelListener registration plus
 	 * the GTRodClientListener replacement of the same keys) resolved by last-wins and the
 	 * rod replacement buried the whole chain.
+	 *
+	 * <p>Task pipe-output-arrows: the row diameter rides the seat — the arrow badge is
+	 * sized to the connected-arm cross-section, taken from the rod params (the seat is
+	 * already one model instance per block path).
 	 */
-	public static BakedModel over(BakedModel aBody) {
-		return new GTFluidPipeFoamModel(new GTFluidPipeFlowModel(aBody));
+	public static BakedModel over(BakedModel aBody, int aDiameterPx) {
+		return new GTFluidPipeFoamModel(new GTFluidPipeFlowModel(aBody, aDiameterPx));
 	}
 
 	/**
 	 * The runtime chain factory (the over() form as a bake-table function).
 	 */
-	public static Function<BakedModel, BakedModel> chain() {
-		return GTFluidPipeFoamModel::over;
+	public static Function<BakedModel, BakedModel> chain(int aDiameterPx) {
+		return aBody -> over(aBody, aDiameterPx);
 	}
 
 	/**

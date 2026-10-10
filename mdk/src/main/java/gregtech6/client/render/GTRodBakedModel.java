@@ -50,7 +50,11 @@ import gregtech6.block.energy.GTAxleBlock;
  * order — upstream numbers the same six axes, CS.java:516-521) or, for the axles, in
  * {@link BlockStateProperties#AXIS} (the straight-line port-ism: both axis ends
  * connected — upstream {@code worldObj == null} defaults to the same N-S segment,
- * ConnectorStraight :37, {@link #ITEM_MASK}). NEVER a ModelData/BE read for geometry.
+ * ConnectorStraight :37, {@link #ITEM_MASK}). NEVER a ModelData/BE read for geometry —
+ * the ONE deliberate deviation is {@link #effectiveMask} (task pipe-output-arrows: a
+ * fluid output mark renders the connected-arm form, the user ruling; the immutable
+ * {@code FLOW_SNAPSHOT} channel, never a live BE, and the axles/wire carry no such
+ * snapshot).
  *
  * <p>The dye rides {@link GTMachinePaintTint} — the pipe connector families already
  * resolve there (the tex-pipe-textures arms), so this model multiplies
@@ -191,6 +195,28 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 		return true;
 	}
 
+	/**
+	 * The effective GEOMETRY mask (task pipe-output-arrows, block B — the user ruling,
+	 * port-native): the BlockState mask OR'd with the fluid pipe's output marks — a
+	 * shift-marked face renders the connected-arm form, "the same as a plain-click
+	 * connect" — so a marked-but-unconnected face grows its arm (the pipe mouth the mark
+	 * is about) instead of falling back to the bare core the user reported. Only a
+	 * snapshot with {@code PipeFlowSnapshot#rendersArms} drives the override: the fluid
+	 * mIoMask marks are explicit direction marks, while the ITEM pipe's derived mask is
+	 * the dense complement of the four-state disable layer and must not spawn arms.
+	 *
+	 * <p>ADR ⑨ deviation note: the class doc's "never a ModelData read for geometry"
+	 * posture is deliberately relaxed HERE and only here — the sanctioned immutable-
+	 * snapshot channel (never a live BlockEntity), and the axles/logistics wire never
+	 * carry a {@code FLOW_SNAPSHOT}, so their geometry stays a pure state function.
+	 */
+	public static int effectiveMask(@Nullable BlockState aState, ModelData aModelData) {
+		int tMask = maskOf(aState);
+		PipeFlowSnapshot tFlow = aModelData.get(GTModelProperties.FLOW_SNAPSHOT);
+		if (tFlow != null && tFlow.rendersArms()) tMask |= tFlow.outputMask();
+		return tMask;
+	}
+
 	@Override
 	public List<BakedQuad> getDynamicQuads(@Nullable BlockState aState, @Nullable Direction aSide,
 			RandomSource aRand, ModelData aModelData, @Nullable RenderType aRenderType) {
@@ -200,7 +226,7 @@ public class GTRodBakedModel extends GTDynamicBakedModel {
 		if (aRenderType != null && !aRenderType.equals(RenderType.solid()) && !aRenderType.equals(RenderType.cutout())) {
 			return List.of();
 		}
-		int tMask = maskOf(aState);
+		int tMask = effectiveMask(aState, aModelData);
 		List<BakedQuad> tAll = mBakedCache.computeIfAbsent(tMask,
 				tM -> bakeShapes(planShapes(mParams.diameterPx(), tM, mParams.overlays().size())));
 		// task axle-tint-arm — the axle arm: the state's GTAxleBlock carrier resolves the
