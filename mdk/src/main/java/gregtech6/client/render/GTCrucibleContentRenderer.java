@@ -3,6 +3,7 @@ package gregtech6.client.render;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -27,6 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import org.joml.Vector3f;
+import org.slf4j.Logger;
 
 import gregapi.oredict.OreDictMaterial;
 import gregtech6.datagen.GT6CrucibleDatagen;
@@ -77,6 +79,19 @@ import gregtech6.tileentity.multiblocks.TileEntityCrucible;
  * GTFluidSpringBakedModel.bakeQuad form — two quads, no cache worth it) and emitted
  * through {@code putBulkData}, so the tint multiplies at emit time and no
  * VertexConsumer setter name crosses a leg (forge 7-arg / neo 8-arg form, the only fork).
+ *
+ * <p><b>Never-throw (task crucible-formed-vanish-probe)</b>: a lookup failure on this
+ * path degrades ONE face instead of taking the frame down — and vanilla gives a BER
+ * throw no silent path to hide in, it crashes outright: {@code tryRender} rethrows any
+ * Throwable as a ReportedException (BlockEntityRenderDispatcher.java:95-103) and the
+ * LevelRenderer "blockentities" loop (:1224-1265) carries no catch, so the exception
+ * escapes {@code renderLevel} to the crash screen; the chunk-rebuild leg behaves the
+ * same way in slow motion ({@code delayCrash("Batching chunks")},
+ * ChunkRenderDispatcher.java:123-127, and {@code compiled} is only set on success
+ * :545-551 — the previous section mesh stays). Neither mechanism produces a
+ * "formed multiblock turns transparently invisible" report. {@link #contentFaceSafely}
+ * is the belt-and-braces on top: today the dispatch is total (offline-pinned), should
+ * that ever regress the face falls back to the fixed gray + one log line.
  */
 @OnlyIn(Dist.CLIENT)
 @Mod.EventBusSubscriber(modid = "gt6", value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -129,6 +144,35 @@ public final class GTCrucibleContentRenderer implements BlockEntityRenderer<Tile
 		return Math.max(0, Math.min(255, aValue));
 	}
 
+	/** The render-path logger (the GT6ChiselCommand LogUtils form). */
+	private static final Logger LOGGER = LogUtils.getLogger();
+
+	/** The one-shot log gate — a broken material must not spam a line per frame per crucible. */
+	private static final java.util.concurrent.atomic.AtomicBoolean FACE_WARNED = new java.util.concurrent.atomic.AtomicBoolean();
+
+	/**
+	 * The defensive face resolution — the MOLTEN arm of {@link GT6CrucibleDatagen#contentFace}
+	 * wrapped so the render path NEVER throws (task crucible-formed-vanish-probe): a lookup
+	 * failure falls back to the fixed gray {@link GT6CrucibleDatagen#SOLID_CONTENT} with one
+	 * log line per session. Unreachable today (the dispatch is total, the loud-table era is
+	 * over, pinned by {@code GT6CrucibleSolidFaceMatrixTest.contentFaceIsTotalAcrossTheUniverse}
+	 * and {@code GTCrucibleContentRendererTest}); the wrap exists so a future dispatch
+	 * regression costs one wrong-colored face, not the client frame (vanilla tryRender
+	 * rethrows, BlockEntityRenderDispatcher.java:95-103 — see the class doc). The "loud"
+	 * contract belongs to the datagen side of {@code contentFace} only.
+	 */
+	static ContentFace contentFaceSafely(OreDictMaterial aDisplayed) {
+		try {
+			return GT6CrucibleDatagen.contentFace(aDisplayed, true);
+		} catch (Throwable tBroken) {
+			if (FACE_WARNED.compareAndSet(false, true)) {
+				LOGGER.warn("crucible content-face lookup failed for {}; rendering the fixed gray face instead (logged once per session)",
+						aDisplayed == null ? "null" : aDisplayed.mNameInternal, tBroken);
+			}
+			return GT6CrucibleDatagen.SOLID_CONTENT;
+		}
+	}
+
 	// ------------------------------------------------------------------------------------
 	// the render (upstream getRenderPasses2/setBlockBounds2/getTexture2 :610-651)
 	// ------------------------------------------------------------------------------------
@@ -154,7 +198,9 @@ public final class GTCrucibleContentRenderer implements BlockEntityRenderer<Tile
 			// face is material-INDEPENDENT, MultiTileEntityCrucible.java:619-623/:648: the
 			// former displayedLightestMaterial arm retired with the mDisplayedLightest sync)
 			tMolten = tDisplayed != null;
-			ContentFace tFace = tMolten ? GT6CrucibleDatagen.contentFace(tDisplayed, true) : GT6CrucibleDatagen.SOLID_CONTENT;
+			// the never-throw wrap (contentFaceSafely) around the molten arm — the SOLID arm
+			// is the constant, nothing to defend there
+			ContentFace tFace = tMolten ? contentFaceSafely(tDisplayed) : GT6CrucibleDatagen.SOLID_CONTENT;
 			tContentSprite = spriteOf(tFace.texture());
 			tContentTint = aCrucible.mMeltDown ? meltDownShift(tFace.tintARGB()) : tFace.tintARGB();
 		}

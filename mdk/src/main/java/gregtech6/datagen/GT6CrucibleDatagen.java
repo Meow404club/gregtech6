@@ -224,6 +224,19 @@ public final class GT6CrucibleDatagen {
 	 * The dispatch itself — total (the loud-table era is over: the solid arm is the
 	 * {@link #SOLID_CONTENT} constant, the molten arm walks the {@link #moltenTexture}
 	 * TOTAL set dispatch). {@code aMaterial} is consumed by the MOLTEN arm only.
+	 *
+	 * <p><b>Contract split (task crucible-formed-vanish-probe)</b>: the dispatch is TOTAL —
+	 * both arms answer for every material in {@code MATERIAL_ARRAY}, offline-pinned
+	 * ({@code GT6CrucibleSolidFaceMatrixTest.contentFaceIsTotalAcrossTheUniverse} and the
+	 * BER-side scan) — and the renderer-side consumers never let a lookup failure reach the
+	 * client: the large-crucible BER wraps the molten arm
+	 * ({@code GTCrucibleContentRenderer.contentFaceSafely}, silent fallback to
+	 * {@link #SOLID_CONTENT} + one log line — vanilla tryRender rethrows a BER Throwable as
+	 * a ReportedException, BlockEntityRenderDispatcher.java:95-103, so an unprotected throw
+	 * crashes the frame), the Jade overlay already falls back to a plain bar
+	 * (GT6CrucibleProvider's {@code IllegalStateException} catch). The "loud" contract lives
+	 * on the datagen side only: a future re-tightening of this mapping must re-run the
+	 * material scans, never assume the renderer will absorb it quietly.
 	 */
 	public static ContentFace contentFace(gregapi.oredict.OreDictMaterial aMaterial, boolean aMolten) {
 		if (aMolten) return new ContentFace(moltenTexture(aMaterial), argb(aMaterial.mRGBaLiquid));
