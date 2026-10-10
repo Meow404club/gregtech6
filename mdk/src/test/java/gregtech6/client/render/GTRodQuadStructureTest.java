@@ -40,26 +40,65 @@ public class GTRodQuadStructureTest extends GTOfflineTestBase {
     }
 
     @Test
-    public void unconnectedPipeIsJustTheCoreStub() {
-        // the wood small row: PX_P[6] (MultiTileEntityPipeFluid :93)
+    public void unconnectedPipeCarriesTheConnectedArtOnAllSixCoreFaces() {
+        // the wood small row: PX_P[6] (MultiTileEntityPipeFluid :93). Task
+        // pipe-arm-atlas-facemap — an ISOLATED pipe renders the CONNECTED art on every
+        // core face (upstream :138 mConnections == 0 branch), not the side art.
         List<Shape> tShapes = GTRodBakedModel.planShapes(6, 0, 0);
         assertEquals(6, tShapes.size(), "a standalone pipe is just the 6 core faces");
         for (Shape tShape : tShapes) {
-            assertEquals(SpriteKind.BASE, tShape.kind());
+            assertEquals(SpriteKind.ARM, tShape.kind(), "the :138 isolated pipe rides the connected art (:265)");
             assertEquals(0, tShape.tintIndex(), "material colour rides tint index 0");
             assertNull(tShape.cull(), "internal faces never cull");
             org.junit.jupiter.api.Assertions.assertArrayEquals(core(6), tShape.box(), 1e-9);
         }
     }
 
+    /**
+     * The per-face texture table (task pipe-arm-atlas-facemap, upstream :136-140): a
+     * single connection's arm = end cap ARM + four side faces BASE + the buried face
+     * absent; a connected pipe's core stays BASE.
+     */
+    @Test
+    public void facemapFollowsTheUpstreamPerFaceTable() {
+        // WEST only (bit 4), the large PX_P[12]
+        float tHalf = (1.0F - 12 / 16F) / 2F;
+        List<Shape> tShapes = GTRodBakedModel.planShapes(12, 1 << 4, 0);
+        assertEquals(6 + 5, tShapes.size());
+        assertEquals(6, countKind(tShapes, SpriteKind.BASE), "the core's six faces + the arm's four side faces (:139 getTextureSide)");
+        assertEquals(1, countKind(tShapes, SpriteKind.ARM), "only the arm's end cap rides the connected art (:139)");
+        Shape tCap = tShapes.stream().filter(s -> s.face() == Direction.WEST && s.cull() == Direction.WEST).findFirst().orElseThrow();
+        assertEquals(SpriteKind.ARM, tCap.kind(), "the end face (aSide == the pass direction) = getTextureConnected");
+        for (Direction tSide : List.of(Direction.UP, Direction.DOWN, Direction.NORTH, Direction.SOUTH)) {
+            Shape tFlank = tShapes.stream()
+                    .filter(s -> s.face() == tSide && java.util.Arrays.equals(s.box(), GTRodBakedModel.armBox(Direction.WEST, tHalf)))
+                    .findFirst().orElseThrow();
+            assertEquals(SpriteKind.BASE, tFlank.kind(), "the " + tSide + " flank of the arm rides the side art (getTextureSide)");
+        }
+        // the item form (ITEM_MASK = 12, the N-S segment): two ARM caps, geometry unchanged
+        List<Shape> tItem = GTRodBakedModel.planShapes(8, GTRodBakedModel.ITEM_MASK, 0);
+        assertEquals((6 + 5 * 2), tItem.size());
+        assertEquals(2, countKind(tItem, SpriteKind.ARM), "the N and S end caps");
+        assertEquals(6 + 8, countKind(tItem, SpriteKind.BASE), "core six + both arms' four flanks");
+        Shape tNCap = tItem.stream().filter(s -> s.face() == Direction.NORTH && s.cull() == Direction.NORTH).findFirst().orElseThrow();
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf(8), tHalf(8), 0, 1 - tHalf(8), 1 - tHalf(8), tHalf(8)}, tNCap.box(), 1e-9,
+                "the N cap sits flush on the block boundary (the arm box transcription, :126)");
+    }
+
+    private static double tHalf(int aDiameterPx) {
+        return (1.0 - aDiameterPx / 16.0) / 2.0;
+    }
+
     @Test
     public void fullyConnectedPipeHasCorePlusFiveSidedArms() {
         List<Shape> tShapes = GTRodBakedModel.planShapes(8, 63, 0);
         assertEquals(6 + 6 * 5, tShapes.size(), "core + one 5-face arm per side (the buried face is skipped, :139)");
-        // task pipe-render-closeout — the core rides BASE (pipeSide art, :264), the arms
-        // ARM (the per-diameter connected art, :265)
-        assertEquals(6, countKind(tShapes, SpriteKind.BASE));
-        assertEquals(30, countKind(tShapes, SpriteKind.ARM));
+        // task pipe-arm-atlas-facemap — the :136-140 per-face table: the core rides BASE
+        // (pipeSide, :264), each arm its end cap ARM (the per-diameter connected art, :265)
+        // and its four side faces BASE (:139 getTextureSide)
+        assertEquals(6 + 24, countKind(tShapes, SpriteKind.BASE));
+        assertEquals(6, countKind(tShapes, SpriteKind.ARM));
         // every side has an outward cap whose face plane sits exactly on the block boundary
         for (Direction tDir : Direction.values()) {
             Shape tCap = tShapes.stream().filter(s -> s.face() == tDir && s.cull() == tDir).findFirst().orElse(null);
@@ -92,28 +131,91 @@ public class GTRodQuadStructureTest extends GTOfflineTestBase {
     }
 
     @Test
-    public void overlayBandsTwinEveryBaseQuadUntintedAndInflated() {
+    public void overlayBandsTwinEveryBaseQuadUntintedOneEpsilonOut() {
         List<Shape> tOne = GTRodBakedModel.planShapes(4, 0, 1);
         assertEquals(12, tOne.size(), "core: 6 base + 6 overlay twins");
         for (Shape tShape : tOne) {
             if (tShape.kind() == SpriteKind.OVERLAY) {
                 assertEquals(-1, tShape.tintIndex(), "the overlay outline never tints");
                 assertEquals(0, tShape.band());
-                assertEquals(core(4)[0] - GTRodBakedModel.OVERLAY_EPSILON, tShape.box()[0], 1e-9,
-                        "band 0 inflates by one epsilon");
             } else {
                 assertEquals(0, tShape.tintIndex());
             }
         }
+        // the twin of the core DOWN face: ONLY its own plane moved one epsilon out (task
+        // pipe-arm-atlas-facemap — a translation, not the former six-way inflation whose
+        // epsilon strip coplanar-overlapped the flush arm twins at every core/arm seam)
+        Shape tDown = tOne.stream().filter(s -> s.kind() == SpriteKind.OVERLAY && s.face() == Direction.DOWN).findFirst().orElseThrow();
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {core(4)[0], core(4)[1] - GTRodBakedModel.OVERLAY_EPSILON, core(4)[2],
+                        core(4)[3], core(4)[4], core(4)[5]}, tDown.box(), 1e-9,
+                "band 0 = the base box translated one epsilon out along the normal, no lateral growth");
         // the restrictive rows: two bands (pipe_side_overlay + pipe_restrictor), full mask
         List<Shape> tTwo = GTRodBakedModel.planShapes(8, 63, 2);
         assertEquals((6 + 30) * 3, tTwo.size(), "every base quad twins twice");
-        assertEquals(6, countKind(tTwo, SpriteKind.BASE));
-        assertEquals(30, countKind(tTwo, SpriteKind.ARM));
+        assertEquals(30, countKind(tTwo, SpriteKind.BASE), "core six + the arms' four flanks each (:139 getTextureSide)");
+        assertEquals(6, countKind(tTwo, SpriteKind.ARM), "the six end caps (:139 getTextureConnected)");
         assertEquals(72, countKind(tTwo, SpriteKind.OVERLAY));
-        double tBand1 = tTwo.stream().filter(s -> s.kind() == SpriteKind.OVERLAY && s.band() == 1).findFirst().orElseThrow().box()[0];
-        assertEquals(core(8)[0] - 2 * GTRodBakedModel.OVERLAY_EPSILON, tBand1, 1e-9,
-                "band 1 steps one more epsilon out (the JSON tintedPipeModel 0.01 form)");
+        double tBand1 = tTwo.stream().filter(s -> s.kind() == SpriteKind.OVERLAY && s.band() == 1).findFirst().orElseThrow().box()[1];
+        assertEquals(core(8)[1] - 2 * GTRodBakedModel.OVERLAY_EPSILON, tBand1, 1e-9,
+                "band 1 steps one more epsilon out (the stepped decal stack)");
+    }
+
+    /**
+     * The twin de-overlap pin (task pipe-arm-atlas-facemap acceptance): over ALL 64
+     * connection masks and both decal bands, no two coplanar overlay twins have a
+     * projected-area intersection. The former six-way inflation made the core twin and
+     * the flush arm twins overlap in an epsilon strip at every core/arm seam — the
+     * flickering black outline line on N-S runs (the user report). N-S, E-W and the
+     * L-shapes all live inside the 64-mask sweep.
+     */
+    @Test
+    public void coplanarTwinsNeverOverlapOnAnyConnectionMask() {
+        for (int tMask = 0; tMask < 64; tMask++) {
+            for (int tBandValue = 0; tBandValue < 2; tBandValue++) {
+                final int tBand = tBandValue;
+                List<Shape> tTwins = GTRodBakedModel.planShapes(8, tMask, 2).stream()
+                        .filter(s -> s.kind() == SpriteKind.OVERLAY && s.band() == tBand).toList();
+                for (int tA = 0; tA < tTwins.size(); tA++) {
+                    for (int tB = tA + 1; tB < tTwins.size(); tB++) {
+                        Shape tShapeA = tTwins.get(tA), tShapeB = tTwins.get(tB);
+                        if (tShapeA.face() != tShapeB.face()) continue;
+                        if (planeOf(tShapeA) != planeOf(tShapeB)) continue; // different planes never z-fight
+                        double tArea = overlapArea(footprint(tShapeA), footprint(tShapeB));
+                        assertTrue(tArea <= 1e-12, "mask " + tMask + " band " + tBand + ": coplanar "
+                                + tShapeA.face() + " twins overlap by " + tArea);
+                    }
+                }
+            }
+        }
+    }
+
+    /** The plane coordinate of a twin's quad along its own normal. */
+    private static double planeOf(Shape aShape) {
+        return switch (aShape.face()) {
+            case DOWN -> aShape.box()[1];
+            case UP -> aShape.box()[4];
+            case NORTH -> aShape.box()[2];
+            case SOUTH -> aShape.box()[5];
+            case WEST -> aShape.box()[0];
+            case EAST -> aShape.box()[3];
+        };
+    }
+
+    /** The quad's rectangle over the two in-plane axes: {minA, minB, maxA, maxB}. */
+    private static double[] footprint(Shape aShape) {
+        double[] tBox = aShape.box();
+        return switch (aShape.face()) {
+            case UP, DOWN -> new double[] {tBox[0], tBox[2], tBox[3], tBox[5]};
+            case NORTH, SOUTH -> new double[] {tBox[0], tBox[1], tBox[3], tBox[4]};
+            case WEST, EAST -> new double[] {tBox[2], tBox[1], tBox[5], tBox[4]};
+        };
+    }
+
+    private static double overlapArea(double[] aA, double[] aB) {
+        double tW = Math.min(aA[2], aB[2]) - Math.max(aA[0], aB[0]);
+        double tH = Math.min(aA[3], aB[3]) - Math.max(aA[1], aB[1]);
+        return Math.max(0, tW) * Math.max(0, tH);
     }
 
     @Test
