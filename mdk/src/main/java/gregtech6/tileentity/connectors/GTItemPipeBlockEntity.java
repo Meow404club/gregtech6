@@ -687,7 +687,10 @@ public class GTItemPipeBlockEntity extends TileEntityBase09Connector implements 
 			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, tCoverSnapshot);
 		}
 		if (tMask != 0) {
-			tBuilder.with(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask));
+			// rendersArms = false (task pipe-output-arrows): the item mask is the COMPLEMENT
+			// of the disable layer — dense (five still-emitting faces for one disable click)
+			// — so it carries the arrow badges only, never the connected-arm override
+			tBuilder.with(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask, false));
 		}
 		return tBuilder.build();
 	}

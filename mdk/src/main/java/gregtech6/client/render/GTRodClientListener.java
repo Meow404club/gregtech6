@@ -145,7 +145,9 @@ public final class GTRodClientListener {
 	 * derived mask.
 	 */
 	static net.minecraft.client.resources.model.BakedModel replacementFor(String aBakedKey, GTRodBakedModel aRod) {
-		return isFlowChainKey(aBakedKey) ? GTFluidPipeFoamModel.over(aRod) : aRod;
+		// the row diameter rides the seat (task pipe-output-arrows): the arrow badge is
+		// sized to the connected-arm cross-section of this row
+		return isFlowChainKey(aBakedKey) ? GTFluidPipeFoamModel.over(aRod, aRod.params().diameterPx()) : aRod;
 	}
 
 	/**

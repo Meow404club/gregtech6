@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.Mod;
  * No PAINT (a race before the sync lands) is the {@code -1} no-tint sentinel — the
  * grayscale foam shows untinted for one frame at worst.
  *
- * <p>MODEL registration is NOT here: the composed {@link GTFluidPipeFoamModel#over(BakedModel)}
+ * <p>MODEL registration is NOT here: the composed {@link GTFluidPipeFoamModel#over(BakedModel, int)}
  * chain is seated on the fluid-pipe per-state keys by {@code GTRodClientListener}
  * (task pipe-flow-arrow-render-fix — the single writer of those keys).
  */

@@ -319,8 +319,8 @@ public class GTItemPipeBlockEntityTest extends GTOfflineTestBase {
 				"an unmarked pipe keeps the plain 03 ModelData (EMPTY/PAINT semantics)");
 		assertTrue(tPipe.monkeyWrench((byte)2)); // emit-off NORTH
 		Object tSnapshot = tPipe.getModelData().get(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT);
-		assertEquals(new gregtech6.client.render.PipeFlowSnapshot((byte)(63 & ~TileEntityBase09Connector.SBIT[2])), tSnapshot,
-				"the derived mask rides FLOW_SNAPSHOT — the same key the fluid arrows render from");
+		assertEquals(new gregtech6.client.render.PipeFlowSnapshot((byte)(63 & ~TileEntityBase09Connector.SBIT[2]), false), tSnapshot,
+				"the derived mask rides FLOW_SNAPSHOT — the same key the fluid arrows render from, never the arm override");
 		assertTrue(tPipe.monkeyWrench((byte)2)); // (1,0) — outputs unconstrained again
 		assertFalse(tPipe.getModelData().has(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT),
 				"the dissolved mask dissolves its snapshot");

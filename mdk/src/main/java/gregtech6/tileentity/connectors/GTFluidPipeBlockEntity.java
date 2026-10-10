@@ -816,7 +816,11 @@ public class GTFluidPipeBlockEntity extends TileEntityBase09Connector implements
 			tBuilder.with(gregtech6.client.render.GTModelProperties.RENDER_SNAPSHOT, tCoverSnapshot);
 		}
 		if (tMask != 0) {
-			tBuilder.with(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask));
+			// rendersArms = true (task pipe-output-arrows, the user ruling): the mIoMask
+			// marks are explicit output-direction marks — the marked face renders the
+			// connected-arm form too ("the specified face looks connected, the same as a
+			// plain-click connect"), not just the arrow badge
+			tBuilder.with(gregtech6.client.render.GTModelProperties.FLOW_SNAPSHOT, new gregtech6.client.render.PipeFlowSnapshot(tMask, true));
 		}
 		if (mFoam) {
 			tBuilder.with(gregtech6.client.render.GTModelProperties.FOAM_SNAPSHOT, new gregtech6.client.render.PipeFoamSnapshot(mFoamDried, mOwnable));
