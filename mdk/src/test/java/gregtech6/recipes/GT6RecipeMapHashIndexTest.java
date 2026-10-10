@@ -167,7 +167,7 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 	@Test
 	void syntheticMapStrictEquivalenceAndRouting() {
 		Recipe.sTagTest = membershipStub();
-		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.strict", "HashIndex Strict", null, 0, 1, "gt6:textures/gui/hashindex", 2, 2, 0, 2, 2, 0, 0, 1);
+		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.strict", "HashIndex Strict", null, 0, 1, 2, 2, 0, 2, 2, 0, 0, 1);
 		Recipe tSand = tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(Items.SAND, 4)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 32, 16, 0));
 		Recipe tIngot = tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(INGOT_IRON, 2)}, new ItemStack[] {new ItemStack(Items.IRON_NUGGET)}, null, null, 32, 16, 0));
 		Recipe tPlate = tMap.addRecipe(new Recipe(true, new ItemStack[] {new ItemStack(PLATE_IRON, 1)}, new ItemStack[] {new ItemStack(Items.IRON_NUGGET)}, null, null, 64, 16, 0));
@@ -344,7 +344,7 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 		}
 		int tN = tItems.size();
 		assertTrue(tN >= 256, "the vanilla universe must spare enough distinct items, saw " + tN);
-		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.bench", "HashIndex Bench", null, 0, 1, "gt6:textures/gui/hashindex", 1, 1, 0, 0, 0, 0, 0, 1);
+		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.bench", "HashIndex Bench", null, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1);
 		for (Item tItem : tItems) tMap.addRecipe(new CountingRecipe(new ItemStack(tItem, 4)));
 		long tSize = Long.MAX_VALUE / 4096;
 
@@ -383,7 +383,7 @@ class GT6RecipeMapHashIndexTest extends GTRecipesOfflineTestBase {
 	// ------------------------------------------------------------------
 
 	private static RecipeMap strictMap() {
-		return new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.buf", "HashIndex Buf", null, 0, 1, "gt6:textures/gui/hashindex", 2, 2, 0, 2, 2, 0, 0, 1);
+		return new RecipeMap(new LinkedHashSet<>(), "gt.recipe.hashindex.buf", "HashIndex Buf", null, 0, 1, 2, 2, 0, 2, 2, 0, 0, 1);
 	}
 
 	private static Recipe strictSandRow(RecipeMap aMap) {

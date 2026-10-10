@@ -429,8 +429,7 @@ class GT6RecipeMapViewerMetaTest extends GTRecipesOfflineTestBase {
 
 	/** A census-shaped synthetic map at the given raw slot counts (the 15-arg port ctor). */
 	private static RecipeMap deadMap(String aName, int aInItems, int aOutItems) {
-		return new RecipeMap(new ArrayList<>(), aName, "Batch2 Dead Branch", null, 0, 1,
-				"gt6:textures/gui/machines/mixer", aInItems, aOutItems, 1, 0, 0, 0, 0, 1);
+		return new RecipeMap(new ArrayList<>(), aName, "Batch2 Dead Branch", null, 0, 1, aInItems, aOutItems, 1, 0, 0, 0, 0, 1);
 	}
 
 	private static void assertPos(int[] aPos, int aX, int aY) {

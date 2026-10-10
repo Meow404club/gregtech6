@@ -106,8 +106,6 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 		long getProgress();
 		/** The :282 process length. */
 		long getMaxProgress();
-		/** The mGUITexture = mRecipes.mGUIPath semantics (MultiTileEntityBasicMachine.java:114). */
-		String getGuiTexture();
 		/**
 		 * The :267 display bank — the input tanks, in tank order (task machine-fluid-gui ②).
 		 * Default-empty on purpose: the direct implementor (the multiblock base) and the test
@@ -283,7 +281,7 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 	/**
 	 * The gui-domain adapter (task cokeoven-gui-menu ①): wraps the single-block machine's
 	 * public face — getInventory :199 / getOutputSlotCount :208 / mSuccessful/mProgress/
-	 * mMaxProgress :107-113 / public final mRecipes :161 (mGUIPath) — so the machine domain
+	 * mMaxProgress :107-113 / public final mRecipes :161 — so the machine domain
 	 * needs no gui knowledge (no implements, the file stays frozen for D3/M1). The p16 ②
 	 * overrides read the W1a public final tank arrays LIVE (same identity the fluid face
 	 * gates answer through), no snapshot. Public since task mui-a-open-chain: the
@@ -299,7 +297,6 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 			@Override public boolean isSuccessful() { return aMachine.mSuccessful; }
 			@Override public long getProgress() { return aMachine.mProgress; }
 			@Override public long getMaxProgress() { return aMachine.mMaxProgress; }
-			@Override public String getGuiTexture() { return aMachine.mRecipes.mGUIPath; }
 			@Override public gregtech6.recipes.RecipeMap getRecipeMap() { return aMachine.mRecipes; }
 			@Override public gregtech6.recipes.Recipe getCurrentRecipe() { return aMachine.mCurrentRecipe; }
 			@Override public FluidTankGT[] getFluidInputTanks() { return aMachine.mTanksInput; }

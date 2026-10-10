@@ -272,7 +272,7 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 	@Test
 	public void cheapOverclockingRefusesTheFoldThroughTheTowerRecipeCheck() {
 		RecipeMap tMap = new RecipeMap(new java.util.HashSet<>(), "gt6.test.towercheap", "Tower Cheap Test", null,
-				0, 1, "gt6:textures/gui/machines/default", 1, 9, 1, 0, 1, 0, 1, 1);
+				0, 1, 1, 9, 1, 0, 1, 0, 1, 1);
 		tMap.addRecipe(recipe());
 		TestTower tTower = newTower();
 		tTower.mRecipes = tMap;
@@ -291,7 +291,7 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 	@Test
 	public void withoutCheapOverclockingTheTowerWindowFolds() {
 		RecipeMap tMap = new RecipeMap(new java.util.HashSet<>(), "gt6.test.towerfold", "Tower Fold Test", null,
-				0, 1, "gt6:textures/gui/machines/default", 1, 9, 1, 0, 1, 0, 1, 1);
+				0, 1, 1, 9, 1, 0, 1, 0, 1, 1);
 		tMap.addRecipe(recipe());
 		TestTower tTower = newTower();
 		tTower.mRecipes = tMap;
@@ -447,7 +447,7 @@ class GT6DistillationTowerTest extends GTMultiBlocksOfflineTestBase {
 	public void theSevenFractionRowPassesCanOutputAndEachFractionLandsInItsOwnTank() {
 		Recipe tRow = sevenFractionRow();
 		RecipeMap tMap = new RecipeMap(new java.util.HashSet<>(), "gt6.test.towerbank", "Tower Bank Test", null,
-				0, 1, "gt6:textures/gui/machines/default", 1, 3, 0, 1, 9, 0, 1, 1);
+				0, 1, 1, 3, 0, 1, 9, 0, 1, 1);
 		tMap.addRecipe(tRow);
 		TestTower tTower = newTower();
 		tTower.mRecipes = tMap; // the HU default energy domain rides the fixture ctor

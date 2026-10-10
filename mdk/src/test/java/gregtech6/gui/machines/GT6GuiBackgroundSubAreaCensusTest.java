@@ -102,8 +102,7 @@ class GT6GuiBackgroundSubAreaCensusTest extends GTMultiBlocksOfflineTestBase {
 		TileEntityDistillationTower tTower =
 				new TileEntityDistillationTower(sTowerType, P1, Blocks.BRICKS.defaultBlockState());
 		RecipeMap tMap = new RecipeMap(new java.util.HashSet<>(),
-				"gt6.test.bgsubarea." + System.nanoTime(), "BG Sub-Area Test", null, 0, 1,
-				"gt6:textures/gui/machines/distillationtower", 1, 3, 1, 1, 9, 0, 1, 1);
+				"gt6.test.bgsubarea." + System.nanoTime(), "BG Sub-Area Test", null, 0, 1, 1, 3, 1, 1, 9, 0, 1, 1);
 		tTower.mRecipes = tMap;
 		return tTower;
 	}

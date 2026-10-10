@@ -129,7 +129,5 @@ class GT6DistillTowerSmokeRowJsonTest extends GTRecipesOfflineTestBase {
 			assertEquals(1, tMap.mMinimalInputs, "MIN");
 			assertEquals(1, tMap.mPower, "AMP");
 		}
-		assertEquals("gt6:textures/gui/machines/distillationtower.png", GT6RecipeMaps.DISTILLATION_TOWER.mGUIPath, "the lowercased upstream GUI word (+ the ctor .png)");
-		assertEquals("gt6:textures/gui/machines/cryodistillationtower.png", GT6RecipeMaps.CRYO_DISTILLATION_TOWER.mGUIPath, "the lowercased upstream GUI word (+ the ctor .png)");
 	}
 }

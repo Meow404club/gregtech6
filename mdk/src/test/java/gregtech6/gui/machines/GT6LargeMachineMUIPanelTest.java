@@ -152,11 +152,9 @@ class GT6LargeMachineMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 
 			// the clean-base face (r11-gui-basicmachine-clean-sample): the shared factory carries
 			// NO code background — the gt6 theme 9-slice base draws at runtime (headless the
-			// code face is null); the mGUIPath sheet stays with the vanilla leg. The map sanity
-			// (the namespaced mGUIPath) stays as the row-wiring guard.
+			// code face is null); the sheet face is retired with the mGUIPath values
+			// (machine-gui-composed-purge).
 			assertNull(tPanel.getBackground(), tRow.path() + ": no code background — the theme base owns the panel");
-			String tGuiPath = tMap.mGUIPath;
-			assertTrue(tGuiPath.indexOf(':') > 0, tRow.path() + ": namespaced mGUIPath");
 
 			// the title — the row map's TRANSLATABLE title (the shared viewer key formula,
 			// composed-ui-energy-slot-and-parts: zh rows ship for every visible map; the

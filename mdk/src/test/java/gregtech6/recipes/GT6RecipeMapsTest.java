@@ -46,7 +46,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.FURNACE.mPower);
 		assertEquals(0, GT6RecipeMaps.FURNACE.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.FURNACE.mProgressBarAmount);
-		assertTrue(GT6RecipeMaps.FURNACE.mGUIPath.endsWith(".png"));
 		assertTrue(GT6RecipeMaps.FURNACE instanceof RecipeMapFurnace);
 	}
 
@@ -70,7 +69,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.COKE_OVEN.mProgressBarAmount);
 		// lowercase since cokeoven-gui-menu ⑥ — the 1.20.1 ResourceLocation charset makes
 		// the upstream-style "CokeOven" spelling unparseable for GTBasicMachineScreen.backgroundOf
-		assertEquals("gt6:textures/gui/machines/cokeoven.png", GT6RecipeMaps.COKE_OVEN.mGUIPath);
 	}
 
 	/** The FM.java:45 Engine Fuels map constants (task engine-fuel-fluids). */
@@ -91,7 +89,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.ENGINE_FUELS.mPower);
 		assertEquals(0, GT6RecipeMaps.ENGINE_FUELS.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.ENGINE_FUELS.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.ENGINE_FUELS.mGUIPath, "the FM.java:45 machines/Default row, lowercased");
 	}
 
 	/** The FM.java:40 Fluidized Bed Fuels map constants (task hu-steam-foundation). */
@@ -112,7 +109,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.FLUIDBED.mPower);
 		assertEquals(0, GT6RecipeMaps.FLUIDBED.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.FLUIDBED.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.FLUIDBED.mGUIPath, "the FM.java:40 machines/Default row, lowercased");
 	}
 
 	/** The FM.java:41 Burnable Fuels map constants (task hu-steam-foundation). */
@@ -133,7 +129,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.BURN.mPower);
 		assertEquals(0, GT6RecipeMaps.BURN.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.BURN.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/default.png", GT6RecipeMaps.BURN.mGUIPath, "the FM.java:41 machines/Default row, lowercased");
 	}
 
 	/** The RM.java:70 Distillery map constants (task drying-distillery-maps). */
@@ -154,7 +149,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.DISTILLERY.mPower);
 		assertEquals(0, GT6RecipeMaps.DISTILLERY.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.DISTILLERY.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/distillery.png", GT6RecipeMaps.DISTILLERY.mGUIPath, "the RM.java:70 machines/Distillery row, lowercased");
 		assertTrue(GT6RecipeMaps.DISTILLERY.mRecipeList.isEmpty(), "DECLARED-empty: rows are pooled behind the circuit-selector item system");
 	}
 
@@ -176,7 +170,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.DRYING.mPower);
 		assertEquals(0, GT6RecipeMaps.DRYING.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.DRYING.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/dryer.png", GT6RecipeMaps.DRYING.mGUIPath, "the RM.java:71 machines/Dryer row, lowercased");
 		// the declared-empty assertion on mRecipeList lived here until the W3 pour (task
 		// loop-closure-chain) landed the :525 Water row — the row-level contract now
 		// lives in GT6RecipesDryingTest
@@ -224,7 +217,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.PRESS.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.PRESS.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.PRESS.mPower);
-		assertEquals("gt6:textures/gui/machines/press.png", GT6RecipeMaps.PRESS.mGUIPath, "the RM.java:99 machines/Press row, lowercased");
 		assertTrue(GT6RecipeMaps.PRESS instanceof gregtech6.recipes.maps.GT6RecipeMapFormingPress, "RM.Press is the RecipeMapFormingPress subclass upstream");
 		assertTrue(GT6RecipeMaps.PRESS.mRecipeList.isEmpty(), "DECLARED-empty static rows: the census pools (food-mold/electrode/compat), the rows ride the dynamic arm");
 	}
@@ -245,7 +237,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.EXTRUDER.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.EXTRUDER.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.EXTRUDER.mPower);
-		assertEquals("gt6:textures/gui/machines/extruder.png", GT6RecipeMaps.EXTRUDER.mGUIPath, "the RM.java:136 machines/Extruder row, lowercased");
 		assertFalse(GT6RecipeMaps.EXTRUDER instanceof gregtech6.recipes.maps.GT6RecipeMapFormingPress, "RM.Extruder is the BASE map upstream — no subclass");
 	}
 
@@ -314,7 +305,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		GT6RecipeMaps.init();
 		assertThrows(IllegalArgumentException.class, () -> new RecipeMap(new HashSet<>(),
 				"gt.recipe.cokeoven", "Coke Oven", null,
-				0, 1, "gt6:textures/gui/machines/CokeOven",
+				0, 1,
 				1, 9, 1, 0, 1, 0, 1, 1));
 	}
 
@@ -336,7 +327,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.SIFTING.mPower);
 		assertEquals(2, GT6RecipeMaps.SIFTING.mProgressBarDirection, "the RM.java:83 progress direction 2 — the one non-0 direction in the RM.java:60-115 block");
 		assertEquals(1, GT6RecipeMaps.SIFTING.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/sifter.png", GT6RecipeMaps.SIFTING.mGUIPath, "the RM.java:83 machines/Sifter row, lowercased");
 	}
 
 	/** The RM.java:87 Compressor map constants (task w1-sifter-compressor-wiremill). */
@@ -357,7 +347,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mPower);
 		assertEquals(0, GT6RecipeMaps.COMPRESSOR.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.COMPRESSOR.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/compressor.png", GT6RecipeMaps.COMPRESSOR.mGUIPath, "the RM.java:87 machines/Compressor row, lowercased");
 	}
 
 	/** The RM.java:111 Wiremill map constants (task w1-sifter-compressor-wiremill). */
@@ -378,7 +367,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.WIREMILL.mPower);
 		assertEquals(0, GT6RecipeMaps.WIREMILL.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.WIREMILL.mProgressBarAmount);
-		assertEquals("gt6:textures/gui/machines/wiremill.png", GT6RecipeMaps.WIREMILL.mGUIPath, "the RM.java:111 machines/Wiremill row, lowercased");
 	}
 
 	/**
@@ -452,7 +440,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.FERMENTER.mMinimalInputFluids, "RM.java:69 MIN-FLUID 0");
 		assertEquals(1, GT6RecipeMaps.FERMENTER.mMinimalInputs, "RM.java:69 MIN 1");
 		assertEquals(1, GT6RecipeMaps.FERMENTER.mPower);
-		assertEquals("gt6:textures/gui/machines/fermenter.png", GT6RecipeMaps.FERMENTER.mGUIPath);
 		assertTrue(GT6RecipeMaps.FERMENTER.mRecipeList.isEmpty(), "DECLARED-empty");
 
 		assertNotNull(GT6RecipeMaps.PRESSURE_WASHER);
@@ -465,7 +452,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.PRESSURE_WASHER.mOutputFluidCount);
 		assertEquals(1, GT6RecipeMaps.PRESSURE_WASHER.mMinimalInputFluids, "RM.java:98 MIN-FLUID 1");
 		assertEquals(0, GT6RecipeMaps.PRESSURE_WASHER.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/pressurewasher.png", GT6RecipeMaps.PRESSURE_WASHER.mGUIPath);
 		assertTrue(GT6RecipeMaps.PRESSURE_WASHER.mRecipeList.isEmpty(), "DECLARED-empty");
 
 		assertNotNull(GT6RecipeMaps.SQUEEZER);
@@ -478,7 +464,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.SQUEEZER.mOutputFluidCount, "RM.java:101 OUT-FLUID 1 — the juice leg");
 		assertEquals(0, GT6RecipeMaps.SQUEEZER.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.SQUEEZER.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/squeezer.png", GT6RecipeMaps.SQUEEZER.mGUIPath);
 		assertTrue(GT6RecipeMaps.SQUEEZER.mRecipeList.isEmpty(), "DECLARED-empty");
 
 		assertNotNull(GT6RecipeMaps.CENTRIFUGE);
@@ -491,7 +476,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(6, GT6RecipeMaps.CENTRIFUGE.mOutputFluidCount, "RM.java:122 OUT-FLUID 6");
 		assertEquals(0, GT6RecipeMaps.CENTRIFUGE.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.CENTRIFUGE.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/centrifuge.png", GT6RecipeMaps.CENTRIFUGE.mGUIPath);
 		assertTrue(GT6RecipeMaps.CENTRIFUGE.mRecipeList.isEmpty(), "DECLARED-empty");
 
 		assertNotNull(GT6RecipeMaps.CUTTER);
@@ -504,7 +488,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.CUTTER.mOutputFluidCount);
 		assertEquals(1, GT6RecipeMaps.CUTTER.mMinimalInputFluids, "RM.java:130 MIN-FLUID 1");
 		assertEquals(0, GT6RecipeMaps.CUTTER.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/cutter.png", GT6RecipeMaps.CUTTER.mGUIPath);
 		assertTrue(GT6RecipeMaps.CUTTER instanceof RecipeMap, "RM.Cutter IS the base RecipeMap upstream (:130 — the gregapi RecipeMapCutter class is not this field's type)");
 		assertTrue(GT6RecipeMaps.CUTTER.mRecipeList.isEmpty(), "DECLARED-empty");
 	}
@@ -523,7 +506,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.LOOM.mInputFluidCount);
 		assertEquals(0, GT6RecipeMaps.LOOM.mOutputFluidCount);
 		assertEquals(0, GT6RecipeMaps.LOOM.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/loom.png", GT6RecipeMaps.LOOM.mGUIPath);
 		assertTrue(GT6RecipeMaps.LOOM.mRecipeList.isEmpty(), "DECLARED-empty");
 
 		// the mill trio — three RM.java rows with IDENTICAL constants (1/1/1, 0/0/0, MIN 0,
@@ -546,7 +528,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 			assertEquals(0, tMap.mOutputFluidCount, tMill[4] + " fluids 0/0/0");
 			assertEquals(0, tMap.mMinimalInputs, tMill[4] + " MIN 0");
 			assertEquals(1, tMap.mPower, tMill[4] + " AMP 1");
-			assertEquals("gt6:textures/gui/machines/" + tMill[3] + ".png", tMap.mGUIPath, tMill[4] + " GUI path lowercased");
 			assertTrue(tMap.mRecipeList.isEmpty(), tMill[4] + " DECLARED-empty");
 		}
 
@@ -559,7 +540,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.SHARPENING.mInputFluidCount);
 		assertEquals(0, GT6RecipeMaps.SHARPENING.mOutputFluidCount);
 		assertEquals(0, GT6RecipeMaps.SHARPENING.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/sharpener.png", GT6RecipeMaps.SHARPENING.mGUIPath, "the upstream machines/Sharpener row, lowercased");
 		assertTrue(GT6RecipeMaps.SHARPENING.mRecipeList.isEmpty(), "DECLARED-empty");
 	}
 
@@ -577,7 +557,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.BOXINATOR.mInputFluidCount);
 		assertEquals(0, GT6RecipeMaps.BOXINATOR.mOutputFluidCount);
 		assertEquals(0, GT6RecipeMaps.BOXINATOR.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/boxinator.png", GT6RecipeMaps.BOXINATOR.mGUIPath);
 		assertTrue(GT6RecipeMaps.BOXINATOR.mRecipeList.isEmpty(), "DECLARED-empty");
 
 		assertNotNull(GT6RecipeMaps.UNBOXINATOR);
@@ -589,7 +568,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.UNBOXINATOR.mInputFluidCount);
 		assertEquals(0, GT6RecipeMaps.UNBOXINATOR.mOutputFluidCount);
 		assertEquals(0, GT6RecipeMaps.UNBOXINATOR.mMinimalInputs);
-		assertEquals("gt6:textures/gui/machines/unboxinator.png", GT6RecipeMaps.UNBOXINATOR.mGUIPath);
 		assertTrue(GT6RecipeMaps.UNBOXINATOR instanceof RecipeMap && !(GT6RecipeMaps.UNBOXINATOR instanceof RecipeMapFurnace),
 				"the declared base-form deviation: the upstream RecipeMapUnboxinator loot arms (RecipeMapUnboxinator.java:43-89) stay POOLED");
 		assertTrue(GT6RecipeMaps.UNBOXINATOR.mRecipeList.isEmpty(), "DECLARED-empty — no static row upstream either; a loot-box input finds NO row (the batch-D rejection shape)");
@@ -642,7 +620,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.SLUICE.mMinimalInputFluids, "RM.java:81 MIN-FLUID 1");
 		assertEquals(2, GT6RecipeMaps.SLUICE.mMinimalInputs, "RM.java:81 MIN 2 — every row needs BOTH legs (the :708/:709/:710 gate trio)");
 		assertEquals(1, GT6RecipeMaps.SLUICE.mPower);
-		assertEquals("gt6:textures/gui/machines/sluice.png", GT6RecipeMaps.SLUICE.mGUIPath);
 		assertTrue(GT6RecipeMaps.SLUICE instanceof RecipeMap && !(GT6RecipeMaps.SLUICE instanceof RecipeMapFurnace), "the base RecipeMap form");
 		assertTrue(GT6RecipeMaps.SLUICE.mRecipeList.isEmpty(), "DECLARED-empty at the scaffold");
 	}
@@ -698,7 +675,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 			assertEquals(Integer.parseInt(tRow[9]), tMap.mMinimalInputFluids, tRow[11] + " MIN-FLUID");
 			assertEquals(Integer.parseInt(tRow[10]), tMap.mMinimalInputs, tRow[11] + " MIN");
 			assertEquals(1, tMap.mPower, tRow[11] + " AMP 1");
-			assertEquals("gt6:textures/gui/machines/" + tRow[3] + ".png", tMap.mGUIPath, tRow[11] + " GUI path lowercased");
 			assertTrue(tMap.mRecipeList.isEmpty(), tRow[11] + " DECLARED-empty");
 			assertEquals(RecipeMap.class, tMap.getClass(), tRow[11] + " the base-RecipeMap form (the subclass arms stay pooled)");
 		}
@@ -757,7 +733,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.SCANNER_MOLECULAR.mMinimalInputFluids);
 		assertEquals(2, GT6RecipeMaps.SCANNER_MOLECULAR.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.SCANNER_MOLECULAR.mPower);
-		assertEquals("gt6:textures/gui/machines/scannermolecular.png", GT6RecipeMaps.SCANNER_MOLECULAR.mGUIPath, "the RM.java:143 machines/ScannerMolecular row, lowercased");
 		// RM.java:144 — items 2/1/0, fluids 1/2/0, MIN 1, AMP 1
 		assertNotNull(GT6RecipeMaps.MASSFAB);
 		assertSame(GT6RecipeMaps.MASSFAB, RecipeMap.RECIPE_MAPS.get("gt.recipe.massfab"));
@@ -771,7 +746,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.MASSFAB.mMinimalInputFluids);
 		assertEquals(1, GT6RecipeMaps.MASSFAB.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.MASSFAB.mPower);
-		assertEquals("gt6:textures/gui/machines/massfab.png", GT6RecipeMaps.MASSFAB.mGUIPath, "the RM.java:144 machines/Massfab row, lowercased");
 		// RM.java:145 — items 3/3/1, fluids 3/3/0, MIN 2, AMP 1
 		assertNotNull(GT6RecipeMaps.REPLICATOR);
 		assertSame(GT6RecipeMaps.REPLICATOR, RecipeMap.RECIPE_MAPS.get("gt.recipe.replicator"));
@@ -785,7 +759,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.REPLICATOR.mMinimalInputFluids);
 		assertEquals(2, GT6RecipeMaps.REPLICATOR.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.REPLICATOR.mPower);
-		assertEquals("gt6:textures/gui/machines/replicator.png", GT6RecipeMaps.REPLICATOR.mGUIPath, "the RM.java:145 machines/Replicator row, lowercased");
 		// the base-RecipeMap carry over both runtime-synthesis subclasses (the judged form)
 		// task qu-scanner-replicator — the pool note above is LIFTED: the USB-scan arm is
 		// LIVE (the GT6RecipeMapScannerMolecular synthesis over the GT6UsbSticks carrier)
@@ -861,7 +834,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.MICROWAVE.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.MICROWAVE.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.MICROWAVE.mPower);
-		assertEquals("gt6:textures/gui/machines/oven.png", GT6RecipeMaps.MICROWAVE.mGUIPath, "the RM.java:104 machines/Oven row, lowercased (the :103 twin)");
 		assertTrue(GT6RecipeMaps.MICROWAVE.mRecipeList.isEmpty(), "DECLARED-empty: upstream stock is zero rows (the subclass synthesizes at lookup time)");
 
 		assertSame(GT6RecipeMaps.COOKING, RecipeMap.RECIPE_MAPS.get("gt.recipe.cooker"));
@@ -875,7 +847,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(1, GT6RecipeMaps.COOKING.mMinimalInputFluids);
 		assertEquals(2, GT6RecipeMaps.COOKING.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.COOKING.mPower);
-		assertEquals("gt6:textures/gui/machines/cooker.png", GT6RecipeMaps.COOKING.mGUIPath, "the RM.java:105 machines/Cooker row, lowercased");
 		assertTrue(GT6RecipeMaps.COOKING.mRecipeList.isEmpty(), "DECLARED-empty: upstream zero rows, zero consumers (the no-op honest form)");
 
 		assertSame(GT6RecipeMaps.TOOL_HEADS, RecipeMap.RECIPE_MAPS.get("gt.recipe.toolhead"));
@@ -888,7 +859,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.TOOL_HEADS.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.TOOL_HEADS.mMinimalInputs);
 		assertEquals(0, GT6RecipeMaps.TOOL_HEADS.mPower, "the one zero-power map (RM.java:125 AMP column)");
-		assertEquals("gt6:textures/gui/machines/crafting2by2.png", GT6RecipeMaps.TOOL_HEADS.mGUIPath, "the RM.java:125 machines/Crafting2By2 row, lowercased");
 		assertTrue(GT6RecipeMaps.TOOL_HEADS.mRecipeList.isEmpty(), "DECLARED-empty: the per-material listener walk diverges from the port tool fold (the W5 ruling d)");
 
 		assertSame(GT6RecipeMaps.MORTAR, RecipeMap.RECIPE_MAPS.get("gt.recipe.mortar"));
@@ -901,7 +871,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.MORTAR.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.MORTAR.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.MORTAR.mPower);
-		assertEquals("gt6:textures/gui/machines/mortar.png", GT6RecipeMaps.MORTAR.mGUIPath, "the RM.java:133 machines/Mortar row, lowercased");
 
 		assertSame(GT6RecipeMaps.HAMMER, RecipeMap.RECIPE_MAPS.get("gt.recipe.hammer"));
 		assertEquals("Hammer", GT6RecipeMaps.HAMMER.mNameLocal);
@@ -915,7 +884,6 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.HAMMER.mMinimalInputFluids);
 		assertEquals(0, GT6RecipeMaps.HAMMER.mMinimalInputs);
 		assertEquals(1, GT6RecipeMaps.HAMMER.mPower);
-		assertEquals("gt6:textures/gui/machines/hammer.png", GT6RecipeMaps.HAMMER.mGUIPath, "the RM.java:137 machines/Hammer row, lowercased");
 		// the base-RecipeMap carry over both runtime-synthesis maps (the judged form)
 		assertEquals(RecipeMap.class, GT6RecipeMaps.MICROWAVE.getClass(), "RM.Microwave IS a RecipeMapMicrowave upstream — the synthesis arm stays POOLED (the Chisel judged form)");
 		assertEquals(RecipeMap.class, GT6RecipeMaps.HAMMER.getClass(), "RM.Hammer IS a RecipeMapHammer upstream — the ore→crushed synthesis arm stays POOLED (the Shredder judged form)");

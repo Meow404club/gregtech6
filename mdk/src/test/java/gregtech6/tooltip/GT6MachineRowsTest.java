@@ -32,7 +32,7 @@ public class GT6MachineRowsTest {
 
 	/** The probe map — a unique-name RecipeMap (the jade-provider probe convention), 1 item in / 1 out / 1 fluid in, no fluids out. */
 	static final RecipeMap PROBE = new RecipeMap(new java.util.HashSet<>(),
-			"gt.recipe.probe.rows", "Probe Rows", null, 0, 1, "probe", 1, 1, 0, 1, 0, 0, 0, 0);
+			"gt.recipe.probe.rows", "Probe Rows", null, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0);
 
 	/** The legacy-trio form: the default-127 IO config, RU window {16, 32, 64}, no autos. */
 	static GT6MachineRows.Spec legacy(RecipeMap aMap, int aParallel) {

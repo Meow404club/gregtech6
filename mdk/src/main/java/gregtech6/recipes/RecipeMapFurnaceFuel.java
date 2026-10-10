@@ -68,7 +68,6 @@ public class RecipeMapFurnaceFuel extends RecipeMap {
 		super(new java.util.HashSet<>(),
 				"mc.recipe.furnacefuel", "Furnace Fuels", "smelting",
 				0, 1,
-				"gt6:textures/gui/machines/oven",
 				/*IN-OUT-MIN-ITEM=*/ 1, 1, 1,
 				/*IN-OUT-MIN-FLUID=*/ 0, 0, 0,
 				/*MIN=*/ 0,

@@ -24,13 +24,13 @@ class RecipeMapTest extends GTRecipesOfflineTestBase {
 	}
 
 	private static RecipeMap newTestMap() {
-		return new RecipeMap(new HashSet<>(), "gt.recipe.test", "Test Map", null, 0, 1, "gt6:textures/gui/test", 1, 1, 1, 0, 0, 0, 0, 1);
+		return new RecipeMap(new HashSet<>(), "gt.recipe.test", "Test Map", null, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1);
 	}
 
 	@Test
 	void slotConstantsApplyMinimalFloors() {
 		// upstream :129-135: count = max(count, minimal).
-		RecipeMap tMap = new RecipeMap(new HashSet<>(), "gt.recipe.slots", "Slots", null, 2, 3, "gt6:textures/gui/slots",
+		RecipeMap tMap = new RecipeMap(new HashSet<>(), "gt.recipe.slots", "Slots", null, 2, 3,
 				/*inItems=*/ 1, /*outItems=*/ 2, /*minInItems=*/ 3,
 				/*inFluids=*/ 1, /*outFluids=*/ 1, /*minInFluids=*/ 2,
 				/*minInputs=*/ 5, /*power=*/ 1);
@@ -44,7 +44,6 @@ class RecipeMapTest extends GTRecipesOfflineTestBase {
 		assertEquals(2, tMap.mProgressBarDirection);
 		assertEquals(3, tMap.mProgressBarAmount);
 		assertEquals("Slots", tMap.mNameLocalUnderscored);
-		assertEquals("gt6:textures/gui/slots.png", tMap.mGUIPath, "gui path auto-attaches .png");
 		assertEquals("gt.recipe.slots", tMap.mNameNEI, "null NEI name falls back to the internal name");
 	}
 
@@ -69,7 +68,7 @@ class RecipeMapTest extends GTRecipesOfflineTestBase {
 	void findRecipeScansLinearlyAndGatesOnPower() {
 		// LinkedHashSet keeps insertion order so the first-match semantics are testable
 		// (upstream mRecipeList is a HashSet-backed Collection with unspecified order).
-		RecipeMap tMap = new RecipeMap(new java.util.LinkedHashSet<>(), "gt.recipe.test", "Test Map", null, 0, 1, "gt6:textures/gui/test", 1, 1, 1, 0, 0, 0, 0, 1);
+		RecipeMap tMap = new RecipeMap(new java.util.LinkedHashSet<>(), "gt.recipe.test", "Test Map", null, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1);
 		Recipe tCheap = new Recipe(true, new ItemStack[] {new ItemStack(Items.SAND)}, new ItemStack[] {new ItemStack(Items.GLASS)}, null, null, 16, 8, 0);
 		Recipe tExpensive = new Recipe(true, new ItemStack[] {new ItemStack(Items.SAND)}, new ItemStack[] {new ItemStack(Items.SANDSTONE)}, null, null, 16, 256, 0);
 		tMap.addRecipe(tCheap);
@@ -79,7 +78,7 @@ class RecipeMapTest extends GTRecipesOfflineTestBase {
 		// matching recipe in list order; the gate (upstream :501) only rejects when hit.
 		assertSame(tCheap, tMap.findRecipe(null, 64, null, null, new ItemStack(Items.SAND, 4)));
 
-		RecipeMap tOnlyExpensive = new RecipeMap(new java.util.LinkedHashSet<>(), "gt.recipe.test.expensive", "Test Map", null, 0, 1, "gt6:textures/gui/test", 1, 1, 1, 0, 0, 0, 0, 1);
+		RecipeMap tOnlyExpensive = new RecipeMap(new java.util.LinkedHashSet<>(), "gt.recipe.test.expensive", "Test Map", null, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1);
 		tOnlyExpensive.addRecipe(tExpensive);
 		assertNotNull(tOnlyExpensive.findRecipe(null, 512, null, null, new ItemStack(Items.SAND, 4)), "512 >= 256: covered");
 	}

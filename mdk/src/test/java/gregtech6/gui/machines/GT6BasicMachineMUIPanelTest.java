@@ -122,7 +122,6 @@ class GT6BasicMachineMUIPanelTest extends GTRecipesOfflineTestBase {
 		@Override public boolean isSuccessful() { return mSuccessful; }
 		@Override public long getProgress() { return mProgress; }
 		@Override public long getMaxProgress() { return mMaxProgress; }
-		@Override public String getGuiTexture() { return "gt6:textures/gui/machines/shredder"; }
 	}
 
 	/** A 12-output (shredder/crusher) fake. */

@@ -46,14 +46,12 @@ class GT6CokeOvenMenuTest extends GTRecipesOfflineTestBase {
 		int mOutputCount = 9;
 		boolean mSuccessful = false;
 		long mProgress = 0, mMaxProgress = 0;
-		String mGuiTexture = "gt6:textures/gui/machines/cokeoven";
 
 		@Override public GTItemStackHandler getInventory() { return mInventory; }
 		@Override public int getOutputSlotCount() { return mOutputCount; }
 		@Override public boolean isSuccessful() { return mSuccessful; }
 		@Override public long getProgress() { return mProgress; }
 		@Override public long getMaxProgress() { return mMaxProgress; }
-		@Override public String getGuiTexture() { return mGuiTexture; }
 	}
 
 	/**
@@ -182,8 +180,6 @@ class GT6CokeOvenMenuTest extends GTRecipesOfflineTestBase {
 		// the RecipeMap-derived slot shape
 		assertEquals(tMachine.getOutputSlotCount(), tAdapter.getOutputSlotCount());
 		assertEquals(GT6RecipeMaps.SHREDDER.mOutputItemsCount, tAdapter.getOutputSlotCount());
-		// the GUI texture = mRecipes.mGUIPath (the field the screen parses)
-		assertEquals(tMachine.mRecipes.mGUIPath, tAdapter.getGuiTexture());
 
 		// the three progress inputs — live reads, not a snapshot
 		tMachine.mSuccessful = false;

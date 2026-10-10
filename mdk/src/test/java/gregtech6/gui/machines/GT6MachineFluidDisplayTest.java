@@ -134,7 +134,6 @@ class GT6MachineFluidDisplayTest extends GTRecipesOfflineTestBase {
 		@Override public boolean isSuccessful() { return false; }
 		@Override public long getProgress() { return 0; }
 		@Override public long getMaxProgress() { return 0; }
-		@Override public String getGuiTexture() { return "gt6:textures/gui/machines/cokeoven"; }
 	}
 
 	@Test

@@ -276,7 +276,7 @@ class GT6RecipeTagFallbackTest extends GTRecipesOfflineTestBase {
 	@Test
 	void fallbackFlowsThroughTheRecipeMapLinearScan() {
 		Recipe.sTagTest = membershipStub();
-		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.tagfb", "Tag FB", null, 0, 1, "gt6:textures/gui/tagfb", 1, 1, 1, 0, 0, 0, 0, 1);
+		RecipeMap tMap = new RecipeMap(new LinkedHashSet<>(), "gt.recipe.tagfb", "Tag FB", null, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1);
 		tMap.addRecipe(ironIngotRow());
 
 		assertNotNull(tMap.findRecipe(null, Long.MAX_VALUE, ItemStack.EMPTY, null, new ItemStack(Items.IRON_INGOT, 2)),

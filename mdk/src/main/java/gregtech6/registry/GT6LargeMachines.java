@@ -94,9 +94,8 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
  *
  * <p><b>GUI face:</b> the MUI machine chain (issue #24a, the p33 tower template): the
  * controller block's use arm dispatches {@link GT6MuiMachine#tryOpen} and the BE's
- * {@code buildUI} delegates to the shared {@link GTBasicMachineMUI} panel — background =
- * {@code recipes().mGUIPath} (the upstream MultiTileEntityBasicMachine.java:114 chain,
- * the #3 fix-wave PNGs), zero MenuType (the P26 ruling).
+ * {@code buildUI} delegates to the shared {@link GTBasicMachineMUI} panel — the gt6 theme
+ * base (the mGUIPath sheets retired, machine-gui-composed-purge), zero MenuType (the P26 ruling).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6LargeMachines {
@@ -696,8 +695,8 @@ public final class GT6LargeMachines {
 
 	/**
 	 * The MUI panel build (the IUIHolder.buildUI :21-44 contract) — the shared
-	 * {@link GTBasicMachineMUI} factory over {@code this}: background = recipes().mGUIPath
-	 * (the upstream MultiTileEntityBasicMachine.java:114 chain), slot shape = the row map,
+	 * {@link GTBasicMachineMUI} factory over {@code this}: theme base (the mGUIPath sheet
+	 * arm retired, machine-gui-composed-purge), slot shape = the row map,
 	 * no per-family panel (the tower's own factory is the single-tower special case).
 	 */
 	@Override

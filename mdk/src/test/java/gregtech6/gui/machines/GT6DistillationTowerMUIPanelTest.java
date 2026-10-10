@@ -90,7 +90,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 		}
 	}
 
-	/** The row-less tower fixture (row()==null — the risk line the panel factory must survive), fed a 1-in/3-out/1-fluid fake map so the Host projection (getOutputSlotCount/getGuiTexture) resolves. */
+	/** The row-less tower fixture (row()==null — the risk line the panel factory must survive), fed a 1-in/3-out/1-fluid fake map so the Host projection (getOutputSlotCount) resolves. */
 	private static TileEntityDistillationTower newTower() {
 		TileEntityDistillationTower tTower =
 				new TileEntityDistillationTower(sPanelTowerType, P1, Blocks.BRICKS.defaultBlockState());
@@ -98,8 +98,7 @@ class GT6DistillationTowerMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 		// form GT6DistillationTowerTest rides (its own rows are empty; the panel needs only
 		// the slot-shape numbers and a namespaced GUI path)
 		gregtech6.recipes.RecipeMap tMap = new gregtech6.recipes.RecipeMap(new java.util.HashSet<>(),
-				"gt6.test.towerpanel." + System.nanoTime(), "Tower Panel Test", null, 0, 1,
-				"gt6:textures/gui/machines/distillationtower", 1, 3, 1, 1, 9, 0, 1, 1);
+				"gt6.test.towerpanel." + System.nanoTime(), "Tower Panel Test", null, 0, 1, 1, 3, 1, 1, 9, 0, 1, 1);
 		tTower.mRecipes = tMap;
 		return tTower;
 	}

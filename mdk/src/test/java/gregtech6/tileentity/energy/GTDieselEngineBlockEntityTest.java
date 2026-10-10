@@ -79,7 +79,6 @@ public class GTDieselEngineBlockEntityTest extends GTOfflineTestBase {
 		sType = tHolder[0];
 
 		sFuelMap = new RecipeMap(new HashSet<>(), "gt.test.fuels", "Test Fuels", null, 0, 1,
-				"gt6:textures/gui/machines/default",
 				/*IN-OUT-MIN-ITEM=*/ 1, 2, 0,
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 0,
 				/*MIN=*/ 1, /*AMP=*/ 1);

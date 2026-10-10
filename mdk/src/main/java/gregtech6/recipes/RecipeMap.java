@@ -77,8 +77,6 @@ public class RecipeMap {
 	public final String mNameLocal, mNameLocalUnderscored;
 	/** String used for the Recipe Lists; if null it falls back to the unlocalised Name. (upstream :76/:123) */
 	public final String mNameNEI;
-	/** GUI used for the Recipe Display, usually the GUI of the Machine itself, auto-attaches ".png". (upstream :78/:124) */
-	public final String mGUIPath;
 	public final byte mProgressBarDirection, mProgressBarAmount;
 	/** Slot constants (upstream :81). */
 	public final int mInputItemsCount, mOutputItemsCount, mInputFluidCount, mOutputFluidCount, mMinimalInputItems, mMinimalInputFluids, mMinimalInputs;
@@ -109,7 +107,7 @@ public class RecipeMap {
 	/** The map-level last-recipe buffer (upstream Recipe.java oRecipe, set at :487/:501, probed at :488). */
 	Recipe oRecipe;
 
-	public RecipeMap(@Nullable Collection<Recipe> aRecipeList, String aNameInternal, String aNameLocal, @Nullable String aNameNEI, long aProgressBarDirection, long aProgressBarAmount, String aNEIGUIPath, long aInputItemsCount, long aOutputItemsCount, long aMinimalInputItems, long aInputFluidCount, long aOutputFluidCount, long aMinimalInputFluids, long aMinimalInputs, long aPower) {
+	public RecipeMap(@Nullable Collection<Recipe> aRecipeList, String aNameInternal, String aNameLocal, @Nullable String aNameNEI, long aProgressBarDirection, long aProgressBarAmount, long aInputItemsCount, long aOutputItemsCount, long aMinimalInputItems, long aInputFluidCount, long aOutputFluidCount, long aMinimalInputFluids, long aMinimalInputs, long aPower) {
 		mRecipeList = (aRecipeList == null ? new HashSet<>() : aRecipeList);
 		mNameInternal = aNameInternal;
 		mNameLocal = aNameLocal;
@@ -120,7 +118,6 @@ public class RecipeMap {
 		}
 		mNameLocalUnderscored = tBuilder.toString();
 		mNameNEI = aNameNEI == null ? mNameInternal : aNameNEI;
-		mGUIPath = aNEIGUIPath.endsWith(".png") ? aNEIGUIPath : aNEIGUIPath + ".png";
 		mProgressBarDirection = (byte)aProgressBarDirection;
 		mProgressBarAmount = (byte)aProgressBarAmount;
 		mPower = aPower;

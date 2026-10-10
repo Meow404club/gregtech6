@@ -46,8 +46,8 @@ import net.minecraftforge.fluids.FluidStack;
  * mCanBeBuffered=false so machines do not cache one-time Recipe objects.
  */
 public class RecipeMapFurnace extends RecipeMap {
-	public RecipeMapFurnace(Collection<Recipe> aRecipeList, String aNameInternal, String aNameLocal, @Nullable String aNameNEI, long aProgressBarDirection, long aProgressBarAmount, String aNEIGUIPath, long aInputItemsCount, long aOutputItemsCount, long aMinimalInputItems, long aInputFluidCount, long aOutputFluidCount, long aMinimalInputFluids, long aMinimalInputs, long aPower) {
-		super(aRecipeList, aNameInternal, aNameLocal, aNameNEI, aProgressBarDirection, aProgressBarAmount, aNEIGUIPath, aInputItemsCount, aOutputItemsCount, aMinimalInputItems, aInputFluidCount, aOutputFluidCount, aMinimalInputFluids, aMinimalInputs, aPower);
+	public RecipeMapFurnace(Collection<Recipe> aRecipeList, String aNameInternal, String aNameLocal, @Nullable String aNameNEI, long aProgressBarDirection, long aProgressBarAmount, long aInputItemsCount, long aOutputItemsCount, long aMinimalInputItems, long aInputFluidCount, long aOutputFluidCount, long aMinimalInputFluids, long aMinimalInputs, long aPower) {
+		super(aRecipeList, aNameInternal, aNameLocal, aNameNEI, aProgressBarDirection, aProgressBarAmount, aInputItemsCount, aOutputItemsCount, aMinimalInputItems, aInputFluidCount, aOutputFluidCount, aMinimalInputFluids, aMinimalInputs, aPower);
 	}
 
 	/**

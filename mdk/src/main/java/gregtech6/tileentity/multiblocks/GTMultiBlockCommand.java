@@ -931,11 +931,13 @@ public final class GTMultiBlockCommand {
 		int[] tOutLast = GTBasicMachineMenu.outputGridPos(tOutputs - 1, tOutputs);
 		int tProgress = GTBasicMachineMenu.progressValue(tHost);
 		// (53,25) = the input slot position, offset 84 = the standard machine-panel player bind,
-		// 46 = 10 content + 36 player slots (GTBasicMachineMenu ctor + bindPlayerInventory(84))
+		// 46 = 10 content + 36 player slots (GTBasicMachineMenu ctor + bindPlayerInventory(84));
+		// the former "texture=" column is retired with the mGUIPath values (the GUI composes
+		// from the gui/parts crops, machine-gui-composed-purge)
 		String tReport = String.format(
-				"menu: content_slots=%d slot0=(%d,%d) out0=(%d,%d) out%d=(%d,%d) player_offset=%d total_slots=%d progress=%d texture=%s",
+				"menu: content_slots=%d slot0=(%d,%d) out0=(%d,%d) out%d=(%d,%d) player_offset=%d total_slots=%d progress=%d",
 				tContentSlots, 53, 25, tOut0[0], tOut0[1], tOutputs - 1, tOutLast[0], tOutLast[1],
-				84, tContentSlots + 36, tProgress, tHost.getGuiTexture());
+				84, tContentSlots + 36, tProgress);
 		aSource.sendSuccess(() -> Component.literal(tReport), false);
 		LOGGER.info(tReport);
 		return Command.SINGLE_SUCCESS;

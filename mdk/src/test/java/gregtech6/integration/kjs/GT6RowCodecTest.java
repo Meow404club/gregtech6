@@ -59,7 +59,7 @@ class GT6RowCodecTest extends GTRecipesOfflineTestBase {
 		GT6KJS.resetLedger(); // the kjs ledger must never outlive its generation
 		mMapName = "gt.recipe.kjs.codec." + (sFixtureCounter++);
 		new RecipeMap(new HashSet<>(), mMapName, "KJS Codec", null,
-				0, 1, "gt6:textures/gui/machines/fixture", 2, 2, 0, 1, 1, 0, 0, 1);
+				0, 1, 2, 2, 0, 1, 1, 0, 0, 1);
 	}
 
 	@AfterEach

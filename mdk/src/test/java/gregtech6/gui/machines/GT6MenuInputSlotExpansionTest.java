@@ -139,7 +139,6 @@ class GT6MenuInputSlotExpansionTest extends GTRecipesOfflineTestBase {
 		@Override public boolean isSuccessful() { return false; }
 		@Override public long getProgress() { return 0; }
 		@Override public long getMaxProgress() { return 0; }
-		@Override public String getGuiTexture() { return "gt6:textures/gui/machines/canner"; }
 	}
 
 	@Test
@@ -169,7 +168,6 @@ class GT6MenuInputSlotExpansionTest extends GTRecipesOfflineTestBase {
 			@Override public boolean isSuccessful() { return false; }
 			@Override public long getProgress() { return 0; }
 			@Override public long getMaxProgress() { return 0; }
-			@Override public String getGuiTexture() { return "gt6:textures/gui/machines/dryer"; }
 		};
 		assertEquals(1, tHost.getInputSlotCount(), "the interface default — the multiblock base and older fakes keep their shape");
 		GTBasicMachineMenu tMenu = new GTBasicMachineMenu(null, 0, new Inventory(null), tHost);

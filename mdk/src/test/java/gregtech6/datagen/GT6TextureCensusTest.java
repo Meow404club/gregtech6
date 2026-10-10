@@ -17,9 +17,9 @@
  *       / build.neoforge.gradle.kts:194 append AFTER the default srcDir);</li>
  *   <li>every {@code gt6:} texture reference of every generated item model resolves to a
  *       PNG on the static ∪ generated face;</li>
- *   <li>every RecipeMap {@code mGUIPath} is ResourceLocation-legal and grounded to a
- *       shipped PNG (pin g, task issue3-gui-bg — the in-JVM enumeration is a read of the
- *       recipe registry, still no filesystem write).</li>
+ *   <li>pin g (the RecipeMap {@code mGUIPath} legality/grounding walk) RETIRED with
+ *       machine-gui-composed-purge — the mGUIPath column and its 78 grounded sheets left
+ *       the tree (the GUIs compose from gui/parts);</li>
  * </ul>
  *
  * <p>Upstream grounding is carried by assets/README.md's sha256 table, NOT by any
@@ -53,8 +53,6 @@ import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import gregtech6.recipes.GT6RecipeMaps;
-import gregtech6.recipes.RecipeMap;
 
 class GT6TextureCensusTest {
 
@@ -390,11 +388,22 @@ class GT6TextureCensusTest {
         // gui-part-crops: the amazawa minecraft-domain widget sheet CROP SOURCE
         // (tmp/amazawa-census snapshot, untracked; the pack's reskinned widgets.png)
         // — only crops of it ship under gui/parts/, so its README row never grounds.
-        // The five gregtech-domain crop sources (Default/Melter/Freezer/Distillery/
-        // Crafting2By2) need NO entry: the gui-reskin-amazawa card ships them
-        // byte-identical as gui/machines/<name>.png, so their rows ground there. If
-        // this row ever ships verbatim, it grounds and must leave the list.
+        // If this row ever ships verbatim, it grounds and must leave the list.
         "df79a44d9db494198906db71385078383ed32b6ba3c9e880820c66c5fe056aa0",
+        // machine-gui-composed-purge: the six machine-sheet provenance digests whose
+        // grounding file retired with the gui/machines sheet purge — the five
+        // gregtech-domain part-crop sources (Default/Melter/Freezer/Distillery/
+        // Crafting2By2, the gui-part-crops README rows; the pack crops under gui/parts/
+        // are what ships now) and the r11 panel-base DERIVATION SOURCE (wiremill —
+        // its provenance bytes ride mdk/src/test/resources for the census replay).
+        // Anti-rot: if any of these ever ships verbatim again, its row grounds above
+        // and must leave this list.
+        "918c84cfe2629d97156dc3f9416c6cd67a95b384608fd14be4278087eb9043dd",
+        "e06a503906d0dcc621d6ee83aab307abfd5fb41ecddbec608cf9adcbfb3b46df",
+        "2796fd94a12ea018135b6f1e84852cfa55e32b2344d055ca3979abedaf3a0858",
+        "cfb1839850b342436c2d999026e09666450dcec87f5128ec96d854c8328eeb45",
+        "df9ab8cc4a492803bcc37665700a090d93b60c4212d57505156f2223e830965f",
+        "e9699da9e901cb541803fdc1b7c624310e3f55e14bfb2df186cfbaea285b1458",
         // r11b-crucible-molten-art: the molten borrow's SHARED ANIMATION MCMETA sha —
         // vendored 38x as assets/gt6/textures/block/materialicons/<set>/molten.png.mcmeta
         // (a JSON metadata file, never a PNG, so it can never ground under this pin's
@@ -466,58 +475,4 @@ class GT6TextureCensusTest {
         return "gt6:" + under;
     }
 
-    /**
-     * Pin g (task issue3-gui-bg): every {@link RecipeMap} {@code mGUIPath} is (a) legal per
-     * the vanilla 1.20.1 ResourceLocation character whitelist (path {@code [a-z0-9/._-]},
-     * ResourceLocation.java:213-232 — an uppercase char throws at construction, the
-     * "machines/Oven" class-load mine) and (b) grounded to a PNG on the static tree, except
-     * the two declared exemptions below. Enumerated from {@code RecipeMap.RECIPE_MAPS} after
-     * {@link GT6RecipeMaps#init()} so a newly declared map cannot skip the census (the same
-     * non-vacuous face as pin a). The init/reset pair is the GT6BasicMachineMUIPanelTest
-     * form; RecipeMap construction is plain-Java (every maps/ subclass ctor is a
-     * pass-through), no vanilla bootstrap needed.
-     */
-    @Test
-    void everyRecipeMapGuiPathIsLowercaseLegalAndGroundedOnDisk() throws IOException {
-        // the chisel only (upstream ships no Chisel.png either — the tool applies recipes
-        // by right-click, no GUI; assets/README.md issue3-gui-bg section). bedrockorelist
-        // left the exemption with task 34-viewer-gui-bg (the amazawa BedrockOreList.png
-        // borrow — the map is viewer-visible, the file is grounded now).
-        Set<String> exemptFiles = Set.of("chisel");
-        GT6RecipeMaps.init();
-        try {
-            java.util.regex.Pattern legalNamespace = java.util.regex.Pattern.compile("[a-z0-9_.-]+");
-            java.util.regex.Pattern legalPath = java.util.regex.Pattern.compile("[a-z0-9/._-]+");
-            List<String> violations = new ArrayList<>();
-            Set<String> grounded = textureRels(mdkRoot().resolve(STATIC_TREE));
-            int checked = 0;
-            for (RecipeMap tMap : RecipeMap.RECIPE_MAPS.values()) {
-                checked++;
-                String tGui = tMap.mGUIPath; // the full "gt6:textures/gui/machines/<word>.png"
-                int tColon = tGui.indexOf(':');
-                if (tColon < 0) {
-                    violations.add(tGui + " — not a namespaced path (" + tMap.mNameInternal + ")");
-                    continue;
-                }
-                String tNamespace = tGui.substring(0, tColon);
-                String tPath = tGui.substring(tColon + 1);
-                if (!legalNamespace.matcher(tNamespace).matches() || !legalPath.matcher(tPath).matches()) {
-                    violations.add(tGui + " — ResourceLocation-illegal character (" + tMap.mNameInternal + ")");
-                    continue;
-                }
-                String word = tPath.substring(tPath.lastIndexOf('/') + 1, tPath.length() - ".png".length());
-                if (exemptFiles.contains(word)) {
-                    continue;
-                }
-                String rel = "assets/" + tNamespace + "/" + tPath;
-                if (!grounded.contains(rel)) {
-                    violations.add(tGui + " — no PNG on the static tree (" + rel + ")");
-                }
-            }
-            assertTrue(checked >= 60, "only " + checked + " maps enumerated — init() broke, the pin must never pass vacuously");
-            assertTrue(violations.isEmpty(), sample("RecipeMap mGUIPath violation", violations));
-        } finally {
-            GT6RecipeMaps.reset();
-        }
-    }
 }

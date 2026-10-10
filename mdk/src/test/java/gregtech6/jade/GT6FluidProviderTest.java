@@ -75,7 +75,6 @@ public class GT6FluidProviderTest extends GTOfflineTestBase {
 		RecipeMap tMap = new RecipeMap(new HashSet<>(),
 				"gt.recipe.distillery", "Distillery", null,
 				0, 1,
-				"gt6:textures/gui/machines/distillery",
 				/*IN-OUT-MIN-ITEM=*/ 1, 2, 1,
 				/*IN-OUT-MIN-FLUID=*/ 1, 2, 1,
 				/*MIN=*/ 2,
