@@ -216,8 +216,18 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 	 * the special-slot gear cell (the energy jump's art, drawn whether or not THIS map
 	 * carries a port: the gear slot is the skins' universal decor). The per-map machine
 	 * GUI band is RETIRED here — its baked slot frames doubled the code slots'
-	 * (贴图槽+代码槽叠加), so the frames now come only from JEI's own RecipeSlots. The
-	 * part blits use the full {@code blit(location, x, y, w, h, u, v, uW, vH, tW, tH)}
+	 * (贴图槽+代码槽叠加). Since task viewer-recipe-slot-frames the slot bases are the
+	 * GT6 GUI parts as code pads (user 反馈⑦: empty slots rendered as bare holes): one
+	 * {@code slot_frame_18x18} pad at EVERY declared item-slot position and one
+	 * {@code slot_fluid_18x19} droplet cell at every declared fluid position — drawn
+	 * HERE, in this draw callback, which JEI renders UNDER the slots (RecipeLayout.draw:
+	 * {@code category.draw} :207 precedes {@code slot.draw} :208-210, the jei-1.20.1
+	 * source), and JEI's RecipeSlots draw NO background of their own unless
+	 * {@code setBackground} is called (RecipeSlot.draw's null-background branch — this
+	 * category never calls it), so the pads ARE the slot look with the ingredients drawn
+	 * over them. The pad walk is per-map, not per-row: empty declared slots render as
+	 * slots, not holes. The part blits use the full
+	 * {@code blit(location, x, y, w, h, u, v, uW, vH, tW, tH)}
 	 * form — the parts are standalone small PNGs, not 256x256 canvases. The plate is
 	 * drawn at (0,0) via the 6-int form: it IS a 256x256 canvas.
 	 */
@@ -228,6 +238,21 @@ public class GT6RecipeMapJeiCategory implements IRecipeCategory<Recipe> {
 		aGuiGraphics.blit(GT6RecipeMapViewerMeta.PLATE_TEXTURE, 0, 0, tPlate[0], tPlate[1], tPlate[2], tPlate[3]);
 		blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.ARROW_OUTLINE, GT6RecipeMapViewerMeta.viewerArrowPos());
 		blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.SLOT_SPECIAL, GT6RecipeMapViewerMeta.viewerGearPos());
+		// the GT6 GUI slot pads (task viewer-recipe-slot-frames) — the same declared-slot
+		// walk and the same folded viewer*Pos exits the EMI twin pads with (one geometry
+		// source, pixel-identical legs)
+		for (int i = 0; i < mMap.mInputItemsCount; i++) {
+			int[] tPos = GT6RecipeMapViewerMeta.viewerInputPos(i, mMap);
+			if (tPos != null) blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.SLOT_FRAME, tPos);
+		}
+		for (int i = 0; i < mMap.mOutputItemsCount; i++) {
+			int[] tPos = GT6RecipeMapViewerMeta.viewerOutputPos(i, mMap);
+			if (tPos != null) blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.SLOT_FRAME, tPos);
+		}
+		for (int i = 0; i < mMap.mInputFluidCount; i++)
+			blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.SLOT_FLUID, GT6RecipeMapViewerMeta.viewerFluidInputPos(i));
+		for (int i = 0; i < mMap.mOutputFluidCount; i++)
+			blitPart(aGuiGraphics, gregtech6.gui.machines.GT6GuiParts.SLOT_FLUID, GT6RecipeMapViewerMeta.viewerFluidOutputPos(i));
 		// NO hand-drawn machine item on the plate's gear spot (task viewer-icon-retire-gu-pin,
 		// the user ruling): EMI renders the workstation list itself (RecipeScreen.java:203-217)
 		// and JEI renders the catalyst column itself (RecipesGui.java:635-636 → RecipeCatalysts,
