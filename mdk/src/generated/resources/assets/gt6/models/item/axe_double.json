@@ -2,8 +2,8 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "gt6:item/material_sets/metallic/tool_head_axe_double",
-    "layer1": "gt6:item/material_sets/metallic/tool_head_axe_double_overlay",
+    "layer1": "gt6:item/overlay/empty",
     "layer2": "gt6:item/material_sets/wood/stick",
-    "layer3": "gt6:item/material_sets/wood/stick_overlay"
+    "layer3": "gt6:item/overlay/empty"
   }
 }

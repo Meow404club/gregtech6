@@ -2,6 +2,6 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "gt6:item/pocket/multitool",
-    "layer1": "gt6:item/pocket/multitool_overlay"
+    "layer1": "gt6:item/overlay/pocket_tool"
   }
 }

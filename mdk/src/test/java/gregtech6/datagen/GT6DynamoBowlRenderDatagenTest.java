@@ -80,12 +80,15 @@ class GT6DynamoBowlRenderDatagenTest {
                     List.of("item/faucet_ceramic_raw")),
             "zpm", Map.entry("minecraft:item/generated",
                     List.of("item/zpm")),
+            // task overlay-texture-dedupe: the metallic plow/sense head OVERLAY passes and
+            // the wood stick OVERLAY pass are transparent VOID borrows — deduped onto the
+            // item/overlay/empty canonical, layer COUNT unchanged (the four-pass shape)
             "plow", Map.entry("minecraft:item/handheld",
-                    List.of("item/material_sets/metallic/tool_head_plow", "item/material_sets/metallic/tool_head_plow_overlay",
-                            "item/material_sets/wood/stick", "item/material_sets/wood/stick_overlay")),
+                    List.of("item/material_sets/metallic/tool_head_plow", "item/overlay/empty",
+                            "item/material_sets/wood/stick", "item/overlay/empty")),
             "sense", Map.entry("minecraft:item/handheld",
-                    List.of("item/material_sets/metallic/tool_head_sense", "item/material_sets/metallic/tool_head_sense_overlay",
-                            "item/material_sets/wood/stick", "item/material_sets/wood/stick_overlay")),
+                    List.of("item/material_sets/metallic/tool_head_sense", "item/overlay/empty",
+                            "item/material_sets/wood/stick", "item/overlay/empty")),
             "branch_cutter", Map.entry("minecraft:item/handheld",
                     List.of("item/branch_cutter", "item/branch_cutter_overlay")),
             "hand_drill", Map.entry("minecraft:item/handheld",

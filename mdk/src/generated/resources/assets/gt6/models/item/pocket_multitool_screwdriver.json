@@ -2,6 +2,6 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "gt6:item/pocket/screwdriver",
-    "layer1": "gt6:item/pocket/screwdriver_overlay"
+    "layer1": "gt6:item/overlay/pocket_tool"
   }
 }

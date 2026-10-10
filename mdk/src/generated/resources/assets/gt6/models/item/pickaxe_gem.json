@@ -2,8 +2,8 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "gt6:item/material_sets/fine/tool_head_pickaxe_gem",
-    "layer1": "gt6:item/material_sets/fine/tool_head_pickaxe_gem_overlay",
+    "layer1": "gt6:item/overlay/tool_head_pickaxe_gem",
     "layer2": "gt6:item/material_sets/wood/stick",
-    "layer3": "gt6:item/material_sets/wood/stick_overlay"
+    "layer3": "gt6:item/overlay/empty"
   }
 }

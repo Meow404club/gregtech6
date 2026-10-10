@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "gt6:item/material_sets/lignite/bullet_gt_large",
-    "layer1": "gt6:item/material_sets/lignite/bullet_gt_large_overlay"
+    "layer1": "gt6:item/overlay/bullet_gt_large"
   }
 }

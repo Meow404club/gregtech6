@@ -2,6 +2,6 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "gt6:item/material_sets/magnetic/plate_quadruple",
-    "layer1": "gt6:item/material_sets/magnetic/plate_quadruple_overlay"
+    "layer1": "gt6:item/overlay/plate_quadruple"
   }
 }

@@ -88,8 +88,13 @@ class GT6OvenTexAuditDatagenTest {
 		DOCUMENTED_WHITE_BLOCK_BORROWS = java.util.Collections.unmodifiableSet(tWhite);
 	}
 
-	/** The upstream materialicon tint-overlay family (borrow-item-material-sets-a/b): white by design, tinted at render. */
-	private static final int MATERIAL_SETS_WHITE_OVERLAYS = 190;
+	/**
+	 * The upstream materialicon tint-overlay family (borrow-item-material-sets-a/b): white
+	 * by design, tinted at render. Was 190 per-set files until task overlay-texture-dedupe
+	 * collapsed the same-content copies onto the item/overlay/ canonicals (which live
+	 * outside this material_sets walk); 12 = the surviving white singletons.
+	 */
+	private static final int MATERIAL_SETS_WHITE_OVERLAYS = 12;
 
 	private static Path mdkRoot() {
 		for (Path p = Path.of("").toAbsolutePath(); p != null; p = p.getParent()) {

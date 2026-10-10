@@ -2,6 +2,6 @@
   "parent": "minecraft:item/handheld",
   "textures": {
     "layer0": "gt6:item/club",
-    "layer1": "gt6:item/club_overlay"
+    "layer1": "gt6:item/overlay/empty"
   }
 }
