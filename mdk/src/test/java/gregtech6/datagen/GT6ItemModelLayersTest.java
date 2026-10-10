@@ -340,7 +340,16 @@ class GT6ItemModelLayersTest {
             .findFirst().orElse(null);
         assertNotNull(chemtube, "no chemtube prefix model found");
         Map<String, String> textures = texturesOf(itemModels, chemtube.substring(0, chemtube.length() - ".json".length()));
-        assertTrue(textures.get("layer1") != null && textures.get("layer1").endsWith("overlay/chemtube"),
+        // review stitch (seat-4, task overlay-texture-dedupe): the F2 carrier asserts the
+        // glass-wall layer RESOLVES — canonical OR per-set singleton. The findFirst() probe
+        // is the rad row and rad/chemtube_overlay is PIXEL-DIFFERENT art (md5 9f8bb80c… vs
+        // canonical 35791b54…), a legitimate singleton the alias table must not absorb —
+        // the strict canonical-only form contradicted the card's own alias-first +
+        // per-set-fallback resolution and failed the domain gate (GT6ItemModelLayersTest
+        // rockGtAndChemtubeResolveTheirOverlayLayers, re-run evidence /tmp/r4_c3_forge_datagen.log).
+        assertTrue(textures.get("layer1") != null
+                && (textures.get("layer1").endsWith("overlay/chemtube")
+                    || textures.get("layer1").endsWith("/chemtube_overlay")),
             chemtube + " must carry the chemtube glass-wall layer");
     }
 }
