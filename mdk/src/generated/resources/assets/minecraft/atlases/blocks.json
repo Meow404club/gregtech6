@@ -573,6 +573,86 @@
       "type": "minecraft:directory",
       "prefix": "block/materialicons/",
       "source": "block/materialicons"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/wood/pipe_tiny"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/wood/pipe_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/wood/pipe_medium"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/wood/pipe_large"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/wood/pipe_huge"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/rubber/pipe_tiny"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/rubber/pipe_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/rubber/pipe_medium"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/rubber/pipe_large"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/rubber/pipe_huge"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/pipe_tiny"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/pipe_small"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/pipe_medium"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/pipe_large"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/pipe_huge"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/materialicons/copper/pipe_side_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/iconsets/pipe_restrictor"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/iconsets/logistics_wire"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/iconsets/logistics_wire_overlay"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "gt6:block/axle"
     }
   ]
 }
