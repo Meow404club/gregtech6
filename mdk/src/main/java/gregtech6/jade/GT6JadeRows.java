@@ -47,7 +47,7 @@ public final class GT6JadeRows {
 	public static final int COLOR_STALLED = 0xFFBB1C28;
 	/** 无语义着色 = Jade ProgressStyle 构造器默认白（jade-1201 ProgressStyle.java:32 color(0xFFFFFFFF)）。 */
 	public static final int COLOR_NEUTRAL = 0xFFFFFFFF;
-	/** 热量 = 橙（task r11c-jade-bar-fluid-color ②——GTOvenScreen.java:31 COLOR_FILL 同值先例，
+	/** 热量 = 橙（task r11c-jade-bar-fluid-color ②——退役 oven 屏 COLOR_FILL（0xFFFF8800）同值先例，
 	 * 同为热语义；有进展绿 {@link #COLOR_OK} 语义留在进度面，锅炉热量条改走此处）。 */
 	public static final int COLOR_HEAT = 0xFFFF8800;
 

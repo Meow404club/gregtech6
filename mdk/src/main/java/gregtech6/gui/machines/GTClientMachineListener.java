@@ -13,7 +13,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 //? }
 
 /**
- * Client-side mod-bus wiring for the machine screens (the GTClientOvenListener shape):
+ * Client-side mod-bus wiring for the machine screens (the form the retired
+ * GTClientOvenListener pioneered):
  * self-contained {@code @Mod.EventBusSubscriber(Dist.CLIENT)} — the legacy-row MenuTypes
  * mount the shared {@link GTBasicMachineScreen} inside {@code FMLClientSetupEvent#enqueueWork}
  * (MenuScreens.register is not thread-safe, forge-docs 1.20.x gui/screens.md:314); the

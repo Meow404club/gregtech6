@@ -29,6 +29,13 @@ import net.minecraftforge.items.IItemHandler;
 import gregapi.code.TagData;
 import gregapi.data.TD;
 
+import brachy.modularui.factory.PosGuiData;
+import brachy.modularui.screen.ModularPanel;
+import brachy.modularui.screen.UISettings;
+import brachy.modularui.value.sync.PanelSyncManager;
+import brachy.modularui.widgets.slot.ItemSlot;
+import brachy.modularui.widgets.slot.ModularSlot;
+
 import gregtech6.block.GTOvenBlock;
 import gregtech6.client.render.GTModelProperties;
 import gregtech6.client.render.GTOvenRenderSnapshot;
@@ -36,8 +43,9 @@ import gregtech6.client.render.GTRenderUpdates;
 import gregtech6.covers.CoverData;
 import gregtech6.covers.GTCoverRenderSnapshot;
 import gregtech6.covers.ICoverableTE;
-import gregtech6.gui.machines.GTOvenMenu;
-import gregtech6.gui.machines.GTOvenMenus;
+import gregtech6.gui.machines.GT6MuiMachine;
+import gregtech6.gui.machines.GTBasicMachineMenu;
+import gregtech6.gui.machines.GTBasicMachineMUI;
 import gregtech6.registry.GTMachines;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.Recipe;
@@ -117,8 +125,15 @@ import gregtech6.tileentity.TileEntityBase03TicksAndSync;
  * is re-applied from it. Since render-c-oven-overlay the same two fields additionally
  * project into the C-grade {@link GTOvenRenderSnapshot} ({@code getModelData()}); the
  * client arm of the render pair rides {@link #load} (both sync channels converge there).
+ *
+ * <p>GUI (task oven-gui-arrow-align): the machine opened through the family ModularUI
+ * chain since the vanilla gt6:oven menu/screen chain retired — this BE implements
+ * {@link GT6MuiMachine} (the open rides {@link GT6MuiMachine#tryOpen}, no vanilla
+ * MenuType) and {@link GTBasicMachineMenu.Host} DIRECTLY (the multiblock-base implementor
+ * form, not a gui-domain adapter), so {@link #buildUI} is one delegation to
+ * {@link GTBasicMachineMUI#buildPanel} plus the two inert fluid display seats.
  */
-public class TileEntityOven extends TileEntityBase03TicksAndSync implements MenuProvider, ICoverableTE, ITileEntitySwitchableOnOff {
+public class TileEntityOven extends TileEntityBase03TicksAndSync implements MenuProvider, GT6MuiMachine, GTBasicMachineMenu.Host, ICoverableTE, ITileEntitySwitchableOnOff {
 
 	// checkRecipe result codes (upstream :672-675 verbatim).
 	public static final int DID_NOT_FIND_RECIPE = 0;
@@ -722,12 +737,70 @@ public class TileEntityOven extends TileEntityBase03TicksAndSync implements Menu
 	}
 
 	// ---------------------------------------------------------------------------
-	// GUI (upstream getGUIClient2/getGUIServer2 :1007-1008 → MenuProvider)
+	// GUI (upstream getGUIClient2/getGUIServer2 :1007-1008 → the ModularUI family
+	// chain since task oven-gui-arrow-align; the vanilla gt6:oven menu/screen chain
+	// is retired with it)
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * Server+CLIENT panel build (the IUIHolder contract) — the {@link GTBasicMachineMUI}
+	 * delegation (the TileEntityBasicMachine buildUI shape, TileEntityBasicMachine:1609-1612),
+	 * with the oven's two deviations from the family default:
+	 * <ul>
+	 * <li>the <b>title</b> is the tier-composed block name ("Oven (Steel)" — the block
+	 *     name Component, already localizable through gt6.row.oven.display): the served
+	 *     Furnace map is viewer-EXCLUDED (GT6RecipeMapViewerMeta's exclusion table — the
+	 *     vanilla smelting mirror), so the family map-title arm has no
+	 *     {@code gt6.jei.recipe_map.furnace} key to ride and would print the raw key;</li>
+	 * <li>the two <b>fluid display seats</b> (upstream :267/:268 Slot_Render furniture at
+	 *     (53,63)/(107,63)) ride as inert item-display slots over the BE's reserved
+	 *     display indices: the Furnace shape has no tanks (the Host fluid banks stay the
+	 *     interface default empty), so the family tank seats don't apply — the seats show
+	 *     what automation may insert into the reserved slots, nothing in/out of the GUI
+	 *     (the retired GTOvenMenu RenderSlot semantics).</li>
+	 * </ul>
+	 * Progress (the arrow pair + hover tooltip + viewer jump) rides the family panel
+	 * natively: the three-state value is {@link GTBasicMachineMenu#progressValue} over
+	 * this Host, the tooltip identity rides {@link #mCurrentRecipe}, the jump opens
+	 * {@link #recipes()}.
+	 */
 	@Override
+	public ModularPanel<?> buildUI(PosGuiData aData, PanelSyncManager aSyncManager, UISettings aSettings) {
+		return GTBasicMachineMUI.buildPanel(this, aSyncManager, getBlockState().getBlock().getName())
+				.child(new ItemSlot()
+						.slot(new ModularSlot(getInventory(), SLOT_FLUID_IN_DISPLAY).canPut(false).canTake(false))
+						.pos(53, 63).name("fluid_display_in")) // :267 — the input display bank i=0
+				.child(new ItemSlot()
+						.slot(new ModularSlot(getInventory(), SLOT_FLUID_OUT_DISPLAY).canPut(false).canTake(false))
+						.pos(107, 63).name("fluid_display_out")); // :268 — the output display bank i=0
+	}
+
+	// the GTBasicMachineMenu.Host face — the three-state progress inputs (:280-286) and
+	// the map/recipe identity of the arrow tooltip and viewer jump. getInputSlotCount
+	// (default 1 = INPUT_ITEMS_COUNT) and the fluid banks (default empty — no tanks in
+	// the Furnace shape) ride the interface defaults.
+
+	@Override public int getOutputSlotCount() { return OUTPUT_ITEMS_COUNT; }
+
+	@Override public boolean isSuccessful() { return mSuccessful; }
+
+	@Override public long getProgress() { return mProgress; }
+
+	@Override public long getMaxProgress() { return mMaxProgress; }
+
+	@Override public RecipeMap getRecipeMap() { return recipes(); }
+
+	@Override public Recipe getCurrentRecipe() { return mCurrentRecipe; }
+
+	/**
+	 * The declared MenuProvider face (the ACT C2 form, TileEntityAdvancedCraftingTable
+	 * :833-838) — the ModularUI open chain never calls it; GTOvenCommand reads the
+	 * three-state progress through {@link GTBasicMachineMenu#progressValue} instead.
+	 */
+	@Override
+	@Nullable
 	public AbstractContainerMenu createMenu(int aContainerId, Inventory aPlayerInventory, Player aPlayer) {
-		return new GTOvenMenu(GTOvenMenus.oven(), aContainerId, aPlayerInventory, this);
+		return null;
 	}
 
 	@Override

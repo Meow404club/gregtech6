@@ -22,11 +22,8 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-//? if forge {
-import net.minecraftforge.network.NetworkHooks;
-//?}
-
 import gregtech6.covers.ICoverableTE;
+import gregtech6.gui.machines.GT6MuiMachine;
 import gregtech6.items.tools.GT6ToolActions;
 import gregtech6.registry.GTMachines;
 import gregtech6.tileentity.TileEntityBase03TicksAndSync;
@@ -263,11 +260,11 @@ public class GTOvenBlock extends GTEntityBlock implements gregtech6.block.GTWren
 						(float) (aHit.getLocation().z - aPos.getZ())));
 				return InteractionResult.CONSUME;
 			}
-			//? if forge {
-			NetworkHooks.openScreen(tServerPlayer, tOven, aPos); // upstream openGUI
-			//?} else {
-			/*tServerPlayer.openMenu(tOven, tBuf -> tBuf.writeBlockPos(aPos)); // 21.1: NetworkHooks deleted — ServerPlayer.openMenu(MenuProvider, buf) carries the pos payload (the command-file precedent)
-			*///?}
+			// the ModularUI family chain (task oven-gui-arrow-align — the GTBasicMachineBlock
+			// :407 shape; upstream openGUI onBlockActivated3 :124): the BlockEntityUIFactory's
+			// own network carries the open, no vanilla MenuType (the vanilla gt6:oven chain
+			// is retired); the factory's canInteractWith keeps the 64-sq range gate
+			GT6MuiMachine.tryOpen(tServerPlayer, tOven);
 		}
 		return InteractionResult.CONSUME;
 	}

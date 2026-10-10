@@ -10,32 +10,32 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 
-import gregtech6.gui.machines.GTOvenMenu;
+import gregtech6.gui.machines.GTBasicMachineMenu;
 import gregtech6.registry.GTMachines;
 
 /**
  * {@code /gt6oven} — the machine-level acceptance command (task machine-oven ⑨, W2
  * exclusive, RCON-drivable like the chest's /gt6chest). Console-safe throughout
- * (FakePlayerFactory for the menu path, no client involved):
+ * (no client, no player instance involved):
  *
  * <ul>
  * <li>{@code place [<pos>]} — setBlock a fresh oven (FACING north);</li>
  * <li>{@code input [<count>] [<pos>]} — push cobblestone into the input slot (default 8,
  *     the acceptance feed);</li>
  * <li>{@code run <ticks> [<pos>]} — drives the BE dispatcher tick by tick and samples the
- *     live menu ContainerData value ({@link GTOvenMenu#computeProgressValue()}) every tick:
- *     the acceptance asserts all three states observed (progress &gt;0 &lt;32767, done
- *     32767 via mSuccessful, idle -1) plus the output slot filling. The real server ticker
- *     keeps ticking alongside — this only accelerates the same dispatcher.</li>
+ *     live three-state progress value ({@link GTBasicMachineMenu#progressValue} over the
+ *     oven's Host face — the retired gt6:oven menu's ContainerData computation, verbatim
+ *     :280-286) every tick: the acceptance asserts all three states observed (progress
+ *     &gt;0 &lt;32767, done 32767 via mSuccessful, idle -1) plus the output slot filling.
+ *     The real server ticker keeps ticking alongside — this only accelerates the same
+ *     dispatcher.</li>
  * <li>{@code check [<pos>]} — state report: slots, progress trio, energy, stop flags;</li>
  * <li>{@code rotate &lt;side 0..6&gt; [<pos>]} — the front-facing rotation through the
  *     same BE entry the shift-hoe grid path calls ({@link TileEntityOven#setFrontFacing},
@@ -43,9 +43,10 @@ import gregtech6.registry.GTMachines;
  *     same-facing call are REJECTED.</li>
  * </ul>
  *
- * <p>The ContainerData assertions go through the server-side live computation — the same
- * function vanilla's broadcastChanges polls; the packet round-trip to a real client screen
- * is the runClient visual check left to the user (ADR-P3-8 line 4 precedent).
+ * <p>The progress assertions go through the server-side live computation — the same
+ * function the family ModularUI panel's progress sync polls (and formerly the vanilla
+ * menu's broadcastChanges poll); the packet round-trip to a real client screen is the
+ * runClient visual check left to the user (ADR-P3-8 line 4 precedent).
  */
 @Mod.EventBusSubscriber(modid = "gt6")
 public final class GTOvenCommand {
@@ -135,21 +136,17 @@ public final class GTOvenCommand {
 			source.sendFailure(Component.literal("No TileEntityOven at " + (pos != null ? pos.toShortString() : "the source position")));
 			return 0;
 		}
-		ServerPlayer tFakePlayer = FakePlayerFactory.getMinecraft(source.getLevel());
-		GTOvenMenu tMenu = (GTOvenMenu) tOven.createMenu(0, tFakePlayer.getInventory(), tFakePlayer);
-
 		boolean tSeenProgress = false, tSeenDone = false, tSeenIdle = false;
-		int tLastValue = tMenu.computeProgressValue();
+		int tLastValue = GTBasicMachineMenu.progressValue(tOven);
 		for (int i = 0; i < ticks; i++) {
 			tOven.updateEntity();
-			int tValue = tMenu.computeProgressValue();
-			if (tValue > 0 && tValue < GTOvenMenu.PROGRESS_DONE) tSeenProgress = true;
-			else if (tValue == GTOvenMenu.PROGRESS_DONE) tSeenDone = true;
+			int tValue = GTBasicMachineMenu.progressValue(tOven);
+			if (tValue > 0 && tValue < GTBasicMachineMenu.PROGRESS_DONE) tSeenProgress = true;
+			else if (tValue == GTBasicMachineMenu.PROGRESS_DONE) tSeenDone = true;
 			else if (tValue == -1) tSeenIdle = true;
 			tLastValue = tValue;
 		}
 		ItemStack tOutput = tOven.getInventory().getStackInSlot(TileEntityOven.SLOT_OUTPUT);
-		tMenu.removed(tFakePlayer);
 
 		boolean tOk = tSeenProgress && tSeenDone && tSeenIdle && !tOutput.isEmpty();
 		String tReport = String.format(
@@ -172,10 +169,7 @@ public final class GTOvenCommand {
 			source.sendFailure(Component.literal("No TileEntityOven at " + (pos != null ? pos.toShortString() : "the source position")));
 			return 0;
 		}
-		ServerPlayer tFakePlayer = FakePlayerFactory.getMinecraft(source.getLevel());
-		GTOvenMenu tMenu = (GTOvenMenu) tOven.createMenu(0, tFakePlayer.getInventory(), tFakePlayer);
-		int tDataValue = tMenu.computeProgressValue();
-		tMenu.removed(tFakePlayer);
+		int tDataValue = GTBasicMachineMenu.progressValue(tOven);
 
 		CompoundTag tDebug = new CompoundTag();
 		tOven.saveAdditional(tDebug);
