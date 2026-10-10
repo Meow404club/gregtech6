@@ -22,15 +22,20 @@ import gregtech6.registry.GTItemPipes;
 
 /**
  * The pipe flow-arrow render-path sentinel tests (task pipe-flow-control acceptance
- * ① render group, the CoverPlateModelTest shape): the planner is pure geometry over the
- * immutable snapshot — the per-face emission rules (null pass + the face's own pass,
- * never culled), the 0.002 Z-fighting slab geometry, the snapshot clamp — plus the
- * pipe-flow-arrow-render-fix pins: the composed chain lives on the per-state fluid-pipe
- * keys ({@code gt6:<path>#connections=N}, seated by GTRodClientListener), the ModelData
+ * ① render group, the CoverPlateModelTest shape), form reworked by
+ * pipe-flow-indicator-rework: the planner is pure geometry over the immutable snapshot —
+ * THE USER RULING under test: four arrow patches on the marked arm's own side faces,
+ * each inside the arm's outer segment so a fully-connected neighbourhood can hide
+ * nothing (the retired pipe-output-arrows end-cap slab floated OUTSIDE the block
+ * boundary and sat on the marked face itself), the per-patch emission rules (null pass +
+ * the patch face's own pass, never culled), and the per-(marked, patch) UV rotation
+ * table pointing every sprite head at the marked face. Plus the pipe-flow-arrow-render-fix
+ * pins: the composed chain lives on the per-state fluid-pipe keys
+ * ({@code gt6:<path>#connections=N}, seated by GTRodClientListener), the ModelData
  * forward keeps the paint on the body, and the cutout pass carries arrows and foam.
- * The sprite→BakedQuad baker is pinned offline too since uvof-private-copies (the #27
- * GTOreBakedModelSideUvTest form): the arrow is directional art, so the corrected
- * canonical UV walk is asserted per vertex.
+ * The sprite→BakedQuad baker is pinned offline since uvof-private-copies (the #27
+ * GTOreBakedModelSideUvTest form): directional art, so every baked patch's vertex UVs
+ * and positions are asserted.
  */
 public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 
@@ -46,26 +51,32 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 		assertFalse(tSnapshot.hasArrow(Direction.DOWN), "bit 0 unset");
 	}
 
-	/** The badge half-inset for the 8px test row (GTFluidPipeFlowModel.halfOf — the arm cross-section). */
+	/** The half-inset of the 8px test row (GTFluidPipeFlowModel.halfOf — the arm cross-section). */
 	private static final float HALF = GTFluidPipeFlowModel.halfOf(8);
 
+	/** The patch edge length of the 8px test row (min(h, 1-2h) = min(0.25, 0.5)). */
+	private static final float SIZE = GTFluidPipeFlowModel.patchSize(HALF);
+
+	/**
+	 * The pass bucketing (pipe-flow-indicator-rework form): a patch rides its own patch
+	 * face's pass plus the null pass — for marks {UP, SOUTH}: the UP arm paints N/S/W/E,
+	 * the SOUTH arm paints U/D/W/E, so the side passes see 1/1/2/2 and the U/D passes one
+	 * each (the SOUTH arm's up/down patches); tangent passes with no patch stay empty.
+	 */
 	@Test
-	void plannerEmitsOnlyOnTheNullAndOwnFacePasses() {
+	void plannerEmitsPatchesOnTheirOwnSidePasses() {
 		PipeFlowSnapshot tSnapshot = new PipeFlowSnapshot((byte)(1 << Direction.UP.get3DDataValue() | 1 << Direction.SOUTH.get3DDataValue()), true);
 
-		// the unculled pass sees every marked face
-		List<GTFluidPipeFlowModel.FlowQuad> tNullPass = GTFluidPipeFlowModel.planQuads(tSnapshot, null, HALF);
-		assertEquals(2, tNullPass.size());
-		assertEquals(Direction.UP, tNullPass.get(0).quadFace());
-		assertEquals(Direction.SOUTH, tNullPass.get(1).quadFace());
+		// the unculled pass sees every patch of every marked face
+		assertEquals(8, GTFluidPipeFlowModel.planQuads(tSnapshot, null, HALF).size(), "two marked faces x four side patches");
 
-		// the face's own pass sees exactly its arrow
-		assertEquals(1, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.UP, HALF).size());
-		assertEquals(1, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.SOUTH, HALF).size());
-
-		// other passes see nothing (tangent passes never see the face plane)
-		assertTrue(GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.DOWN, HALF).isEmpty(), "unmarked face pass is empty");
-		assertTrue(GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.WEST, HALF).isEmpty(), "tangent pass is empty");
+		// the per-side pass buckets (1 = only one marked arm has that side, 2 = both do)
+		assertEquals(1, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.UP, HALF).size(), "the SOUTH arm's up patch");
+		assertEquals(1, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.DOWN, HALF).size(), "the SOUTH arm's down patch");
+		assertEquals(1, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.NORTH, HALF).size(), "the UP arm's north patch");
+		assertEquals(1, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.SOUTH, HALF).size(), "the UP arm's south patch");
+		assertEquals(2, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.WEST, HALF).size(), "the west patches of both arms");
+		assertEquals(2, GTFluidPipeFlowModel.planQuads(tSnapshot, Direction.EAST, HALF).size(), "the east patches of both arms");
 
 		// an empty mask plans nothing at all
 		assertTrue(GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot((byte)0, true), null, HALF).isEmpty());
@@ -74,7 +85,7 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 	@Test
 	void plannerSpriteIsTheSingleArrowPlaceholder() {
 		List<GTFluidPipeFlowModel.FlowQuad> tPlans = GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot((byte)63, true), null, HALF);
-		assertEquals(6, tPlans.size(), "all six faces marked → six arrow quads");
+		assertEquals(24, tPlans.size(), "all six faces marked → six arms x four side patches");
 		for (GTFluidPipeFlowModel.FlowQuad tPlan : tPlans) {
 			assertEquals(GTFluidPipeFlowModel.ARROW_SPRITE, tPlan.sprite());
 			assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/pipe_flow_arrow"), tPlan.sprite());
@@ -82,37 +93,160 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 	}
 
 	/**
-	 * THE pipe-output-arrows geometry pin: the badge is the connected-arm cross-section
-	 * (the seated row diameter) centred on the face, pushed fully OUTSIDE the boundary —
-	 * the old full-face slab floated as a big icon over the thin pipe art (the user's
-	 * "rotating icon covering the connection texture"). HALF = halfOf(8) → the tangent
-	 * bounds [0.25, 0.75]; the outer plane pokes ARROW_EPSILON past the face and the inner
-	 * plane sits ARROW_THICKNESS out (the whole badge off the end cap, z-fight-free).
+	 * The patch size table ({@code min(h, 1 - 2h)} — the outer-segment depth vs the arm
+	 * face width) and the full-block consequence: d=16 rows have h=0 → an EMPTY outer
+	 * segment → nothing satisfiable, nothing planned (the class doc derivation).
 	 */
 	@Test
-	void markerGeometryRidesTheArmCrossSectionOutsideTheBoundary() {
-		double e = GTFluidPipeFlowModel.ARROW_EPSILON, t = GTFluidPipeFlowModel.ARROW_THICKNESS;
-		// UP: tangent X/Z clamped to the arm, the slab floats above 1.0
-		double[] tUp = GTFluidPipeFlowModel.markerOf(Direction.UP, HALF);
-		assertEquals(HALF, tUp[0], 1e-9, "minX = the arm half-inset");
-		assertEquals(1 - HALF, tUp[3], 1e-9, "maxX = 1 - the arm half-inset");
-		assertEquals(HALF, tUp[2], 1e-9, "minZ = the arm half-inset");
-		assertEquals(1 - HALF, tUp[5], 1e-9, "maxZ = 1 - the arm half-inset");
-		assertEquals(1 - e - t, tUp[1], 1e-9, "minY = the inner plane, fully outside the block");
-		assertEquals(1 + e, tUp[4], 1e-9, "maxY = the outer plane, epsilon past the face");
-		// DOWN: mirrored
-		double[] tDown = GTFluidPipeFlowModel.markerOf(Direction.DOWN, HALF);
-		assertEquals(-e, tDown[1], 1e-9, "minY = -epsilon");
-		assertEquals(-e + t, tDown[4], 1e-9, "maxY = the inner plane (1px out)");
-		// EAST: the outer plane at 1 + epsilon on X, tangent Y/Z clamped to the arm
-		double[] tEast = GTFluidPipeFlowModel.markerOf(Direction.EAST, HALF);
-		assertEquals(1 - e - t, tEast[0], 1e-9);
-		assertEquals(1 + e, tEast[3], 1e-9);
-		assertEquals(HALF, tEast[1], 1e-9);
-		assertEquals(1 - HALF, tEast[4], 1e-9);
-		// the 2px clamp floor: halfOf(4px tiny rows) still leaves a sane box
+	void patchSizeAdaptsToTheRowDiameterAndFullBlockRowsPlanNothing() {
+		// halfOf clamps kept from pipe-output-arrows
 		assertEquals((16 - 4) / 32.0, GTFluidPipeFlowModel.halfOf(4), 1e-9);
 		assertEquals((16 - 2.0F) / 32.0F, GTFluidPipeFlowModel.halfOf(0), 1e-6, "the readFromNBT2 :64 clamp floor");
+		// sizes in px: bounded by the segment (h) and the face (1-2h), the 2px floor at d=12
+		assertEquals(4.0 / 16, GTFluidPipeFlowModel.patchSize(GTFluidPipeFlowModel.halfOf(4)), 1e-9, "tiny: the face width binds (4px)");
+		assertEquals(5.0 / 16, GTFluidPipeFlowModel.patchSize(GTFluidPipeFlowModel.halfOf(6)), 1e-9, "small: the segment binds (5px)");
+		assertEquals(4.0 / 16, GTFluidPipeFlowModel.patchSize(GTFluidPipeFlowModel.halfOf(8)), 1e-9, "normal: the segment binds (4px)");
+		assertEquals(2.0 / 16, GTFluidPipeFlowModel.patchSize(GTFluidPipeFlowModel.halfOf(12)), 1e-9, "large: the segment binds (2px — the coarse floor)");
+		assertEquals(0, GTFluidPipeFlowModel.patchSize(GTFluidPipeFlowModel.halfOf(16)), 1e-9, "full block: no outer segment");
+		assertTrue(GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot((byte)63, true), null, GTFluidPipeFlowModel.halfOf(16)).isEmpty(),
+				"a fully marked full-block row still plans nothing (nothing can satisfy the visibility ruling)");
+	}
+
+	/**
+	 * THE pipe-flow-indicator-rework position pin (the user ruling 「保证其余面全部连接时，
+	 * 这 4 枚箭头仍全部可见」): against the WORST-case neighbourhood — every face marked or
+	 * connected, i.e. every perpendicular arm at full cross-section [h, 1-h] — every patch
+	 * of every real row diameter must (a) sit entirely in the F arm's OUTER SEGMENT along
+	 * the F axis (F-span ∩ [h, 1-h] = ∅, flush to the block face, inside the boundary),
+	 * (b) lie ON the arm's own side plane (± the epsilon) within the arm face width, and
+	 * (c) be centred on the arm cross-section. armBox reference: GTRodBakedModel:453-461.
+	 */
+	@Test
+	void everyPatchSitsInTheOuterSegmentOfEveryRealRowDiameter() {
+		List<Integer> tDiameters = GTFluidPipes.ROWS.stream().map(tRow -> tRow.variant().diameterPx).distinct().sorted().toList();
+		assertTrue(tDiameters.contains(4) && tDiameters.contains(12), "the real diameter spread is exercised: " + tDiameters);
+		for (int tDiameter : tDiameters) {
+			float tHalf = GTFluidPipeFlowModel.halfOf(tDiameter);
+			List<GTFluidPipeFlowModel.FlowQuad> tPlans = GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot((byte)63, true), null, tHalf);
+			assertEquals(tDiameter >= 16 ? 0 : 24, tPlans.size(), "d=" + tDiameter + ": full-block rows plan nothing, the rest 6x4");
+			for (GTFluidPipeFlowModel.FlowQuad tPlan : tPlans) {
+				for (Direction tMarked : Direction.values()) {
+					if (tMarked.getAxis() == tPlan.quadFace().getAxis()) continue; // not this plan's marked face
+					if (isPatchOf(tPlan, tMarked)) {
+						assertPatchGeometry(tPlan, tMarked, tHalf, GTFluidPipeFlowModel.patchSize(tHalf), "d=" + tDiameter);
+					}
+				}
+			}
+		}
+	}
+
+	/** Whether the plan is one of the marked face's four side patches (its rotation table entry matches). */
+	private static boolean isPatchOf(GTFluidPipeFlowModel.FlowQuad aPlan, Direction aMarked) {
+		Direction tQuadFace = aPlan.quadFace();
+		if (tQuadFace.getAxis() == aMarked.getAxis()) return false;
+		// the patch's F-span hugs the block face on the marked axis — the arm-side tells
+		// (the box layout is the interleaved [x0,y0,z0,x1,y1,z1])
+		double[] tBox = aPlan.box();
+		int tF = aMarked.getAxis().ordinal();
+		boolean tFlushPositive = Math.abs(tBox[tF + 3] - 1) < 1e-9;
+		boolean tFlushNegative = Math.abs(tBox[tF]) < 1e-9;
+		return (aMarked.getAxisDirection() == Direction.AxisDirection.POSITIVE) == tFlushPositive && (tFlushPositive || tFlushNegative);
+	}
+
+	/** The per-patch geometry assertions (a): outer segment, (b) on the arm plane, (c) centred. */
+	private static void assertPatchGeometry(GTFluidPipeFlowModel.FlowQuad aPlan, Direction aMarked, float aHalf, float aSize, String aLabel) {
+		double[] tBox = aPlan.box();
+		Direction tPatchFace = aPlan.quadFace();
+		// (a) the F span: flush to the block face, entirely outside [h, 1-h]
+		int tF = aMarked.getAxis().ordinal();
+		if (aMarked.getAxisDirection() == Direction.AxisDirection.POSITIVE) {
+			assertEquals(1 - aSize, tBox[tF], 1e-9, aLabel + " " + aMarked + " patch F-min = the outer-segment end");
+			assertEquals(1, tBox[tF + 3], 1e-9, aLabel + " " + aMarked + " patch F-max = the block face (inside the boundary)");
+		} else {
+			assertEquals(0, tBox[tF], 1e-9, aLabel + " " + aMarked + " patch F-min = the block face");
+			assertEquals(aSize, tBox[tF + 3], 1e-9, aLabel + " " + aMarked + " patch F-max = the outer-segment end");
+		}
+		// (b) the patch plane sits one epsilon off the arm's own side face (the arm face is at h or 1-h)
+		int tS = tPatchFace.getAxis().ordinal();
+		boolean tPositive = tPatchFace.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+		assertEquals(tPositive ? 1 - aHalf + GTFluidPipeFlowModel.ARROW_EPSILON : aHalf - GTFluidPipeFlowModel.ARROW_EPSILON,
+				tBox[tS + (tPositive ? 3 : 0)], 1e-9, aLabel + " " + aMarked + "/" + tPatchFace + " plane = the arm face ± epsilon");
+		// (c) the third axis is centred on the arm cross-section and inside the arm face
+		Direction.Axis tTAxis = Direction.Axis.X;
+		for (Direction.Axis tAxis : Direction.Axis.values()) {
+			if (tAxis != tPatchFace.getAxis() && tAxis != aMarked.getAxis()) tTAxis = tAxis;
+		}
+		int tT = tTAxis.ordinal();
+		assertEquals(0.5 - aSize / 2, tBox[tT], 1e-9, aLabel + " " + aMarked + "/" + tPatchFace + " centred min");
+		assertEquals(0.5 + aSize / 2, tBox[tT + 3], 1e-9, aLabel + " " + aMarked + "/" + tPatchFace + " centred max");
+		assertTrue(tBox[tT] >= aHalf - 1e-9 && tBox[tT + 3] <= 1 - aHalf + 1e-9, aLabel + ": the patch lies within the arm face width");
+	}
+
+	/**
+	 * THE direction pin: all 24 (marked F, patch face S) combinations bake ONE quad whose
+	 * (a) UVs walk the rotation table's corner sequence (BlockFaceUV.java:40-42: rotation
+	 * k maps vertex i to corner (i+k)%4 of (0,0),(0,16),(16,16),(16,0)) and (b) sprite-top
+	 * edge centre minus sprite-bottom edge centre is exactly the marked face's normal x
+	 * the patch size — the arrow HEAD points along the flow.
+	 */
+	@Test
+	void everyRotationEntryBakesAPatchPointingAtTheMarkedFace() {
+		GTFluidPipeFlowModel tModel = new GTFluidPipeFlowModel(new GTDynamicBakedModelTest.StubFallback(), 8,
+				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
+		for (Direction tMarked : Direction.values()) {
+			ModelData tData = GTModelProperties.snapshot()
+					.with(GTModelProperties.FLOW_SNAPSHOT, new PipeFlowSnapshot((byte)(1 << tMarked.get3DDataValue()), true)).build();
+			for (Direction tPatchFace : Direction.values()) {
+				if (tPatchFace.getAxis() == tMarked.getAxis()) continue;
+				List<BakedQuad> tQuads = tModel.getQuads(null, tPatchFace, RandomSource.create(), tData, null);
+				assertEquals(1, tQuads.size(), tMarked + "/" + tPatchFace + ": the patch pass carries exactly its patch");
+				assertBakedPatch(tQuads.get(0), tMarked, tPatchFace);
+			}
+		}
+	}
+
+	/** The baked-quad form: FaceInfo vertex walk + rotation table + the F-pointing head. */
+	private static void assertBakedPatch(BakedQuad aQuad, Direction aMarked, Direction aPatchFace) {
+		int[] tV = aQuad.getVertices();
+		float[] tX = new float[4], tY = new float[4], tZ = new float[4], tU = new float[4], tVv = new float[4];
+		for (int i = 0; i < 4; i++) {
+			tX[i] = Float.intBitsToFloat(tV[i * 8]);
+			tY[i] = Float.intBitsToFloat(tV[i * 8 + 1]);
+			tZ[i] = Float.intBitsToFloat(tV[i * 8 + 2]);
+			tU[i] = Float.intBitsToFloat(tV[i * 8 + 4]);
+			tVv[i] = Float.intBitsToFloat(tV[i * 8 + 5]);
+		}
+		// (a) the UV walk: vertex i carries corner (i + k) % 4 of (0,0),(0,16),(16,16),(16,0)
+		int tK = GTFluidPipeFlowModel.arrowRotation(aMarked, aPatchFace) / 90;
+		float[][] tCorners = { {0, 0}, {0, 16}, {16, 16}, {16, 0} };
+		for (int i = 0; i < 4; i++) {
+			float[] tCorner = tCorners[(i + tK) % 4];
+			assertEquals(tCorner[0], tU[i], 0.1F, aMarked + "/" + aPatchFace + " vertex " + i + " U");
+			assertEquals(tCorner[1], tVv[i], 0.1F, aMarked + "/" + aPatchFace + " vertex " + i + " V");
+		}
+		// (b) the head (V≈0 vertices) centre sits along the marked normal from the tail centre
+		float tTopX = 0, tTopY = 0, tTopZ = 0, tBotX = 0, tBotY = 0, tBotZ = 0;
+		int tTop = 0, tBot = 0;
+		for (int i = 0; i < 4; i++) {
+			if (tVv[i] < 8) { tTopX += tX[i]; tTopY += tY[i]; tTopZ += tZ[i]; tTop++; }
+			else { tBotX += tX[i]; tBotY += tY[i]; tBotZ += tZ[i]; tBot++; }
+		}
+		assertEquals(2, tTop, "the sprite-top edge is two vertices");
+		// vertex POSITIONS are 0..1 block units (FaceBakery.setupShape divides by 16), UVs are 0..16
+		float tDx = (tTopX - tBotX) / 2, tDy = (tTopY - tBotY) / 2, tDz = (tTopZ - tBotZ) / 2;
+		float tLen = SIZE;
+		assertEquals(tLen * aMarked.getStepX(), tDx, 0.01F, aMarked + "/" + aPatchFace + " arrow ΔX");
+		assertEquals(tLen * aMarked.getStepY(), tDy, 0.01F, aMarked + "/" + aPatchFace + " arrow ΔY");
+		assertEquals(tLen * aMarked.getStepZ(), tDz, 0.01F, aMarked + "/" + aPatchFace + " arrow ΔZ");
+		// (c) the quad sits on the arm plane, one epsilon off the arm face (h or 1-h)
+		float tPlane = aPatchFace.getAxisDirection() == Direction.AxisDirection.POSITIVE
+				? (1 - HALF + (float)GTFluidPipeFlowModel.ARROW_EPSILON)
+				: (HALF - (float)GTFluidPipeFlowModel.ARROW_EPSILON);
+		int tS = aPatchFace.getAxis().ordinal();
+		for (int i = 0; i < 4; i++) {
+			float tCoord = switch (tS) { case 0 -> tX[i]; case 1 -> tY[i]; default -> tZ[i]; };
+			assertEquals(tPlane, tCoord, 0.005F, aMarked + "/" + aPatchFace + " plane coordinate on " + aPatchFace.getAxis());
+		}
 	}
 
 	/**
@@ -178,25 +312,24 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 				"the item per-state key seats the same composed chain (pipe-output-arrows)");
 		assertSame(tRod, ((GTFluidPipeFlowModel) ((GTFluidPipeFoamModel) tItemValue).getFallbackModel()).getFallbackModel(),
 				"the item chain wraps the SAME rod instance");
-		// the badge diameter rides the seat — the flow model sizes its markers to the row's
+		// the patch geometry rides the seat — the flow model sizes its patches to the row's
 		// connected-arm cross-section (8px here)
 		assertEquals(GTFluidPipeFlowModel.halfOf(8),
 				((GTFluidPipeFlowModel) ((GTFluidPipeFoamModel) tValue).getFallbackModel()).half(), 1e-9);
 	}
 
 	/**
-	 * THE pipe-output-arrows direction pin: the mask the ITEM pipe BE derives
-	 * ({@code outputArrowMask} — face 2 emit-disabled leaves the other five emitting)
-	 * plans exactly five arrows, and the disabled face (NORTH, bit 2 of the GT6 side order)
-	 * carries none; the unconstrained pipe (mask 0) plans nothing.
+	 * THE pipe-output-arrows direction pin, item form: the mask the ITEM pipe BE derives
+	 * ({@code outputArrowMask} — one emit-disabled face leaves the other five emitting)
+	 * plans four patches per still-emitting face = twenty regardless of WHICH face is off;
+	 * the unconstrained pipe (mask 0) plans nothing.
 	 */
 	@Test
 	void itemPipeDerivedMaskPlansArrowsOnEveryStillEmittingFace() {
-		byte tMask = (byte)(63 & ~(1 << Direction.NORTH.get3DDataValue())); // the outputArrowMask(emit-off NORTH) form
-		List<GTFluidPipeFlowModel.FlowQuad> tPlans = GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot(tMask, false), null, HALF);
-		assertEquals(5, tPlans.size(), "five still-emitting faces carry arrows");
-		for (GTFluidPipeFlowModel.FlowQuad tPlan : tPlans) {
-			assertNotEquals(Direction.NORTH, tPlan.quadFace(), "the emit-disabled face carries no arrow");
+		for (Direction tFace : Direction.values()) {
+			byte tMask = (byte)(63 & ~(1 << tFace.get3DDataValue())); // the outputArrowMask(emit-off tFace) form
+			List<GTFluidPipeFlowModel.FlowQuad> tPlans = GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot(tMask, false), null, HALF);
+			assertEquals(20, tPlans.size(), tFace + " emit-disabled: five emitting faces x four patches");
 		}
 		assertTrue(GTFluidPipeFlowModel.planQuads(new PipeFlowSnapshot((byte) 0, false), null, HALF).isEmpty(),
 				"an unconstrained pipe (the GT6 default) stays silent");
@@ -332,38 +465,21 @@ public class GTFluidPipeFlowModelTest extends GTOfflineRenderTestBase {
 	/**
 	 * The layer-gate pin: the pipe rows declare {@code render_type: cutout} (the r8-tex
 	 * shared models), so the chunk bake runs ONLY the cutout pass — arrows and foam gated
-	 * to the solid layer are never baked at all.
+	 * to the solid layer are never baked at all. pipe-flow-indicator-rework form: the
+	 * fixture mask 1 marks DOWN, and the DOWN arm paints its four SIDE faces, so the
+	 * NORTH pass carries the one patch.
 	 */
 	@Test
 	void cutoutPassCarriesTheArrowsAndTheFoam() {
 		GTFluidPipeFoamModel tChain = chainOver(new RecordingBody());
-		// the fixture mask 1 marks DOWN — query the DOWN pass
-		List<BakedQuad> tArrows = tChain.getQuads(null, Direction.DOWN, RandomSource.create(),
+		// the fixture mask 1 marks DOWN — its patches ride the N/S/W/E passes
+		List<BakedQuad> tArrows = tChain.getQuads(null, Direction.NORTH, RandomSource.create(),
 				dataWithFlowAndPaint(), net.minecraft.client.renderer.RenderType.cutout());
-		assertEquals(1, tArrows.size() - RecordingBody.BODY_QUADS.size(), "one arrow on the DOWN pass, cutout layer");
+		assertEquals(1, tArrows.size() - RecordingBody.BODY_QUADS.size(), "one patch on the NORTH pass, cutout layer");
 		List<BakedQuad> tFoam = tChain.getQuads(null, Direction.UP, RandomSource.create(),
 				GTModelProperties.snapshot().with(GTModelProperties.FOAM_SNAPSHOT, new PipeFoamSnapshot(false, false)).build(),
 				net.minecraft.client.renderer.RenderType.cutout());
 		assertTrue(tFoam.size() > RecordingBody.BODY_QUADS.size(), "the fresh foam overlay rides the cutout layer");
-	}
-
-	/**
-	 * THE uvof-private-copies PIN: the arrow bakes the canonical full-face UV walk on
-	 * all six faces — the sprite top (V=0, the arrow head) on the side faces' top corners
-	 * (upright, the orientation the art was drawn for). The old GTCEu cubeUV table hung
-	 * the arrow upside down on every side (plus a U mirror on NORTH/EAST).
-	 */
-	@Test
-	void arrowQuadsBakeTheCanonicalFullFaceUvWalk() {
-		GTFluidPipeFlowModel tModel = new GTFluidPipeFlowModel(new GTDynamicBakedModelTest.StubFallback(), 8,
-				aSpriteId -> FaceBakePins.IdentitySprite.INSTANCE);
-		ModelData tData = GTModelProperties.snapshot()
-				.with(GTModelProperties.FLOW_SNAPSHOT, new PipeFlowSnapshot((byte) 63, true)).build();
-		for (Direction tFace : Direction.values()) {
-			List<BakedQuad> tQuads = tModel.getQuads(null, tFace, RandomSource.create(), tData, null);
-			assertEquals(1, tQuads.size(), tFace + ": the face's own pass carries exactly its arrow");
-			FaceBakePins.assertCanonicalFullFaceUv(tQuads.get(0), tFace);
-		}
 	}
 
 	@Test
