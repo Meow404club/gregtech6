@@ -55,6 +55,9 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  *     the 9-output 3x4 grid from (107,7), ZERO display seats (the multiblock Host keeps
  *     the default-empty banks — the p8 landing the menu javadoc pinned byte-identical),
  *     createMenu the declared null face.</li>
+ * <li><b>plantalyzer</b> (RM.PLANTALYZER, the S12 fixback): the title pin — the
+ *     viewer-excluded map takes the explicit machine-name override through the
+ *     three-arg buildPanel overload (the oven precedent), never the raw key.</li>
  * </ul>
  *
  * <p>The open-chain half: every flipped family row dispatches
@@ -92,19 +95,25 @@ public class GT6BasicMachinesMuiParityTest extends GTRecipesOfflineTestBase {
 
 	private static BlockEntityType<TileEntityBasicMachine> sDryerType;
 	private static BlockEntityType<TileEntityBasicMachine> sCannerType;
+	private static BlockEntityType<TileEntityBasicMachine> sPlantalyzerType;
 	private static BlockEntityType<TileEntityCokeOven> sCokeOvenType;
 
 	@BeforeAll
 	static void buildFixtures() {
 		@SuppressWarnings("unchecked")
-		BlockEntityType<TileEntityBasicMachine>[] tSingle = (BlockEntityType<TileEntityBasicMachine>[]) new BlockEntityType<?>[2];
-		// the T1 row configs (the GT6MachineFluidDisplayTest / GT6CokeOvenMenuTest fixture shapes)
+		BlockEntityType<TileEntityBasicMachine>[] tSingle = (BlockEntityType<TileEntityBasicMachine>[]) new BlockEntityType<?>[3];
+		// the T1 row configs (the GT6MachineFluidDisplayTest / GT6CokeOvenMenuTest fixture shapes;
+		// the plantalyzer tier-1 row: parallel 64, no parallel duration — the :1601-1605 shape)
 		tSingle[0] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TileEntityBasicMachine(tSingle[0], aPos, aState, GT6RecipeMaps.DRYING, 8, true, null),
 				Blocks.BRICKS).build(null);
 		tSingle[1] = BlockEntityType.Builder.of(
 				(aPos, aState) -> new TileEntityBasicMachine(tSingle[1], aPos, aState, GT6RecipeMaps.CANNER, 1, false, null),
 				Blocks.BRICKS).build(null);
+		tSingle[2] = BlockEntityType.Builder.of(
+				(aPos, aState) -> new TileEntityBasicMachine(tSingle[2], aPos, aState, GT6RecipeMaps.PLANTALYZER, 64, false, null),
+				Blocks.BRICKS).build(null);
+		sPlantalyzerType = tSingle[2];
 		sDryerType = tSingle[0];
 		sCannerType = tSingle[1];
 		@SuppressWarnings("unchecked")
@@ -131,6 +140,10 @@ public class GT6BasicMachinesMuiParityTest extends GTRecipesOfflineTestBase {
 
 	private static TileEntityBasicMachine canner() {
 		return sCannerType.create(POS, Blocks.BRICKS.defaultBlockState());
+	}
+
+	private static TileEntityBasicMachine plantalyzer() {
+		return sPlantalyzerType.create(POS, Blocks.BRICKS.defaultBlockState());
 	}
 
 	private static TileEntityCokeOven cokeOven() {
@@ -266,6 +279,45 @@ public class GT6BasicMachinesMuiParityTest extends GTRecipesOfflineTestBase {
 		assertEquals("gt6.jei.recipe_map.canner",
 				((net.minecraft.network.chat.contents.TranslatableContents) tTitle.getKey().getContents()).getKey(),
 				"the shared viewer title key");
+	}
+
+	// ---------------------------------------------------------------------------
+	// the plantalyzer title — the viewer-excluded map arm overridden (S12 fixback)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * The S12 rejection blocker (task basic-machines-mui-migration-fixback): PLANTALYZER is
+	 * viewer-EXCLUDED (the GT6RecipeMapViewerMeta exclusion table — the Forestry/IC2 compat
+	 * dead surface), so no {@code gt6.jei.recipe_map.plantalyzer} title row exists (the
+	 * datagen emits rows for the visible maps only, the GT6RecipeMapLangTest domain pin) and
+	 * the family map-title arm would print the raw key on all five tiers — a two-headed
+	 * regression against upstream (Recipe.java:138 registers mNameLocal,
+	 * ContainerClientBasicMachine.java:44 displayed "Plantalyzer") and the pre-migration
+	 * vanilla leg (the block name). The host passes the machine's display name through the
+	 * {@link GTBasicMachineMUI#buildPanel} three-arg title override — the
+	 * TileEntityOven.buildUI precedent for the FURNACE trap (oven-gui-arrow-align).
+	 */
+	@Test
+	void plantalyzerTitleIsTheExplicitMachineNameNotTheRawKey() throws Exception {
+		// all five tiers serve the excluded map — the condition the fix keys on
+		for (GTBasicMachineBlock.MachineRow tRow : GTMachines.PLANTALYZER_ROWS) {
+			assertSame(GT6RecipeMaps.PLANTALYZER, tRow.recipes().get(), tRow.path() + " serves the excluded map");
+			assertFalse(gregtech6.jei.GT6RecipeMapViewerMeta.visibleToViewers(GT6RecipeMaps.PLANTALYZER),
+					tRow.path() + " has no viewer title row — the map-key arm would print the raw key");
+		}
+
+		TileEntityBasicMachine tMachine = plantalyzer();
+		ModularPanel<?> tPanel = tMachine.buildUI(null, headlessSyncManager(), new UISettings());
+		TextWidget<?> tTitle = (TextWidget<?>) named(tPanel, "title");
+		assertNotNull(tTitle, "the title prints (the explicit-name override, not dropped)");
+		// the override rides VERBATIM — the explicit title value passed into the overload
+		// (the fixture state's block name, the oven title-pin form; a real plantalyzer row
+		// composes "Plantalyzer (LV)" through gt6.row.machine.plantalyzer, localizable in
+		// both locales) — never the raw excluded-map key
+		assertEquals(Blocks.BRICKS.getName().getContents(), tTitle.getKey().getContents(),
+				"the explicit title override value — never the raw viewer key");
+		assertEquals(0, posOf(tTitle, true), "title x (the centered full-width row)");
+		assertEquals(4, posOf(tTitle, false), "title y (upstream :44)");
 	}
 
 	// ---------------------------------------------------------------------------
