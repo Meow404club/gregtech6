@@ -20,7 +20,6 @@ import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
 import gregtech6.recipes.tree.MaterialTreeLayout;
-import gregtech6.recipes.tree.MaterialTreeLayout.EdgeLayout;
 
 /**
  * The material-tree category of the JEI leg (task debt-material-tree-b, ruling
@@ -124,16 +123,16 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder aBuilder, MaterialTreeDisplay aDisplay, IFocusGroup aFocuses) {
 		for (Node tNode : aDisplay.nodes()) {
-			RecipeIngredientRole tRole = tNode.column() == MaterialTreeDisplay.COL_ORE
+			RecipeIngredientRole tRole = tNode.band() == 0
 					? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
 			aBuilder.addInvisibleIngredients(tRole).addItemStack(tNode.stack().copy());
 		}
-		List<Edge> tEdges = aDisplay.edges();
-		List<EdgeLayout> tLayouts = MaterialTreeLayout.layout(aDisplay);
-		for (int i = 0; i < tEdges.size(); i++) {
-			if (tLayouts.get(i).machine() == null) continue;
+		// the machine stacks (the data face — the box's machine icons render in the tree
+		// widget, this index only feeds the lookup)
+		for (Edge tEdge : aDisplay.edges()) {
+			if (tEdge.machine().isEmpty()) continue;
 			aBuilder.addInvisibleIngredients(RecipeIngredientRole.RENDER_ONLY)
-					.addItemStack(tEdges.get(i).machine().copy());
+					.addItemStack(tEdge.machine().copy());
 		}
 		for (Byproduct tByproduct : aDisplay.byproducts()) {
 			aBuilder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
@@ -151,7 +150,14 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 	 */
 	@Override
 	public void createRecipeExtras(IRecipeExtrasBuilder aBuilder, MaterialTreeDisplay aDisplay, IFocusGroup aFocuses) {
-		MaterialTreeViewport tView = new MaterialTreeViewport();
+		// the viewport's CONTENT box is the engine's plan (the EMI twin's per-page face — the
+		// pan/zoom clamp must know the real tree extent, the nominal WIDTH/HEIGHT frame is
+		// just the page pane this category publishes); the pane stays the category frame, so
+		// the pan/zoom/jump semantics are unchanged (mattree-emi-tree-rework declaration)
+		MaterialTreeLayout.Result tPlan = aDisplay == null ? null : MaterialTreeLayout.plan(aDisplay);
+		MaterialTreeViewport tView = tPlan == null
+				? new MaterialTreeViewport()
+				: new MaterialTreeViewport(tPlan.width(), tPlan.height(), MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT);
 		GT6MaterialTreeJeiTreeWidget tTree = new GT6MaterialTreeJeiTreeWidget(aDisplay, tView, aFocuses);
 		aBuilder.addWidget(tTree);
 		aBuilder.addInputHandler(new GT6MaterialTreeJeiCanvasHandler(tView, tTree));

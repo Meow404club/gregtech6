@@ -2,6 +2,7 @@ package gregtech6.recipes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
@@ -386,6 +387,90 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ------------------------------------------------------------------
+	// the dynamic-map synthesis (task mattree-emi-tree-rework, the 「坩埚没了」 root):
+	// the zero-row crucible map and the BE-driven mold pipeline fold in as edges
+	// ------------------------------------------------------------------
+
+	@Test
+	void crucibleSelfArmChainsTheIngot() {
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		Set<MaterialTreeBuilder.ChainEdge> tIron = tTree.chainEdges(MT.Fe);
+		// the SELF arm over the full :63-67 family (the five forms, GT6RecipeMapCrucible.selfPrefixes):
+		// dust/blockDust/crushed/crushedPurified/crushedCentrifuged -> ingot, the live map's name
+		for (OreDictPrefix tIn : gregtech6.recipes.maps.GT6RecipeMapCrucible.selfPrefixes()) {
+			assertTrue(tIron.contains(new MaterialTreeBuilder.ChainEdge(tIn, OP.ingot, MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP)),
+					"the crucible self arm chains " + tIn.mNameInternal + " -> ingot, got: " + tIron);
+		}
+		// the label names a LIVE map (the zero-row dynamic map is still a registered RecipeMap)
+		assertTrue(RecipeMap.RECIPE_MAPS.containsKey(MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP),
+				"gt.recipe.cruciblesmelting is a live RecipeMap");
+		// the reachability consequence: the ore walk now carries the ingot (the dynamic arm
+		// delivered what no stored row could)
+		assertTrue(tTree.depthsFromOre(MT.Fe).containsKey(OP.ingot), "the Fe walk reaches the ingot");
+	}
+
+	@Test
+	void crucibleCrossArmRidesTheByproductBand() {
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		// the cross arm is data-driven (mTargetSmelting, the same graph the crucible map's
+		// findRecipe :193 walks): find a MELTING material whose target is another material
+		// (e.g. the sapphire face — MELTING + setSmelting(Al2O3, 3*U4), MT.java:626) and pin
+		// its byproduct edge into the target's ingot. Data-independent: the arm follows
+		// whatever the material tables declare.
+		OreDictMaterial tCross = null;
+		for (OreDictMaterial tMat : gregapi.oredict.OreDictMaterial.MATERIAL_MAP.values()) {
+			if (tMat == null || tMat.mID <= 0 || tMat.mHidden) continue;
+			if (!tMat.contains(gregapi.data.TD.Processing.MELTING) || tMat.mTargetSmelting.mAmount <= 0) continue;
+			OreDictMaterial tTarget = tMat.mTargetSmelting.mMaterial;
+			if (tTarget != null && tTarget.mID > 0 && tTarget != tMat) {tCross = tMat; break;}
+		}
+		assertNotNull(tCross, "the MT tables declare at least one cross-target MELTING material");
+		final OreDictMaterial tCrossMat = tCross;
+		Set<MaterialTreeBuilder.ByproductEdge> tEdges = tTree.byproductEdges(tCross);
+		assertTrue(tEdges.stream().anyMatch(e -> e.to() == tCrossMat.mTargetSmelting.mMaterial && e.outPrefix() == OP.ingot
+						&& MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP.equals(e.mapName())),
+				tCross.mNameInternal + " -> ingot " + tCrossMat.mTargetSmelting.mMaterial.mNameInternal + " via the crucible cross arm, got: " + tEdges);
+		assertFalse(tTree.chainEdges(tCross).stream()
+						.anyMatch(e -> MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP.equals(e.mapName())),
+				"the cross arm never lands on the chain axis");
+	}
+
+	@Test
+	void moldFamilyCastsTheShapes() {
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		Set<MaterialTreeBuilder.ChainEdge> tIron = tTree.chainEdges(MT.Fe);
+		// the casting family: dust -> <mold prefix> via the BE-driven pipeline, the one
+		// synthetic label (the plate and the gear are real mold shapes, TileEntityMold
+		// fillMoldRecipesUniverse)
+		assertTrue(tIron.contains(new MaterialTreeBuilder.ChainEdge(OP.dust, OP.plate, "Mold")),
+				"dust -> plate via the mold family, got: " + tIron);
+		assertTrue(tIron.contains(new MaterialTreeBuilder.ChainEdge(OP.dust, OP.gearGt, "Mold")),
+				"dust -> gear via the mold family");
+		// the synthetic label is declared, and genuinely has no RecipeMap behind it
+		assertTrue(MaterialTreeBuilder.SYNTHETIC_MAP_LABELS.contains("Mold"), "the label is declared synthetic");
+		assertFalse(RecipeMap.RECIPE_MAPS.containsKey("Mold"), "no map hides behind the synthetic label");
+	}
+
+	@Test
+	void depthsFromOreLayersTheWalk() {
+		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
+		Map<OreDictPrefix, Integer> tDepths = tTree.depthsFromOre(MT.Fe);
+		// the EMI layering (BoMScreen.java:334/:337 depth * NODE_VERTICAL_SPACING): the ore
+		// roots sit on layer 0, one hop per layer, the crucible arm delivers the ingot
+		assertEquals(Integer.valueOf(0), tDepths.get(OP.oreRaw), "the ore root is layer 0");
+		assertEquals(Integer.valueOf(1), tDepths.get(OP.crushed), "one hop: crushed");
+		assertEquals(Integer.valueOf(2), tDepths.get(OP.dust), "two hops: dust");
+		// the ingot's SHORTEST hop is the crucible self arm off crushed (a direct :63-67 form,
+		// not the dust detour) — BFS shortest-path layering, the honest hop count
+		assertEquals(Integer.valueOf(2), tDepths.get(OP.ingot), "the crucible arm lands the ingot beside dust (crushed -> ingot)");
+		// insertion order = BFS layer order (the display's row assignment reads it)
+		int tLastDepth = -1;
+		for (Integer tDepth : tDepths.values()) assertTrue(tDepth >= tLastDepth, "the walk is layer-ordered");
+		// reachableFromOre is the key set of the same walk (one BFS, two faces)
+		assertEquals(tDepths.keySet(), tTree.reachableFromOre(MT.Fe));
+	}
+
+	// ------------------------------------------------------------------
 	// acceptance ②: the index is one sweep; queries never re-scan (structural, no wall clock)
 	// ------------------------------------------------------------------
 
@@ -409,13 +494,22 @@ class MaterialTreeBuilderTest extends GTRecipesOfflineTestBase {
 		assertEquals(tTree.chainEdges(MT.Fe), tTree.chainEdges(MT.Fe));
 		assertEquals(tMapRows, tTree.scannedRows(), "per-material queries are pure hash reads — no row re-entered");
 
-		// census invariant: every edge label names a live map (the label IS a RECIPE_MAPS key)
+		// census invariant: every edge label names a live map (the label IS a RECIPE_MAPS key),
+		// except the DECLARED synthetic labels (task mattree-emi-tree-rework: the Mold/Faucet
+		// casting pipeline is BE-driven — TileEntityMold MOLD_RECIPES, TileEntityFaucet.fillMold
+		// — no RecipeMap exists behind it, so its edges carry the "Mold" literal listed in
+		// MaterialTreeBuilder.SYNTHETIC_MAP_LABELS; the crucible arm names the live
+		// gt.recipe.cruciblesmelting map and passes the live-map rule un-exempted)
 		for (PrefixMaterial tPair : GTMaterialItems.registrationOrder()) {
 			for (MaterialTreeBuilder.ChainEdge tEdge : tTree.chainEdges(tPair.material())) {
-				assertTrue(RecipeMap.RECIPE_MAPS.containsKey(tEdge.mapName()), "chain edge label names a live map: " + tEdge);
+				assertTrue(RecipeMap.RECIPE_MAPS.containsKey(tEdge.mapName())
+						|| MaterialTreeBuilder.SYNTHETIC_MAP_LABELS.contains(tEdge.mapName()),
+						"chain edge label names a live map or a declared synthetic: " + tEdge);
 			}
 			for (MaterialTreeBuilder.ByproductEdge tEdge : tTree.byproductEdges(tPair.material())) {
-				assertTrue(RecipeMap.RECIPE_MAPS.containsKey(tEdge.mapName()), "byproduct edge label names a live map: " + tEdge);
+				assertTrue(RecipeMap.RECIPE_MAPS.containsKey(tEdge.mapName())
+						|| MaterialTreeBuilder.SYNTHETIC_MAP_LABELS.contains(tEdge.mapName()),
+						"byproduct edge label names a live map or a declared synthetic: " + tEdge);
 			}
 		}
 		// a material no row touches answers EMPTY, never null: the MT pool is far larger than

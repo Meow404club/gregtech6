@@ -178,7 +178,7 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 	/** Every state the R3 switch will cycle: the aggregate face, each single step, each cumulative cut. */
 	private static List<ByproductView> allStates() {
 		List<ByproductView> rStates = new ArrayList<>(List.of(ByproductView.ALL));
-		for (int n = MaterialTreeDisplay.COL_ORE; n <= MaterialTreeDisplay.COL_DUST; n++) {
+		for (int n = 0; n <= 4; n++) { // the trio's band range (0..3) plus one step past it
 			rStates.add(ByproductView.step(n));
 			rStates.add(ByproductView.cumulative(n));
 		}
@@ -198,9 +198,9 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 	/** The trio's chain: ore -> crushed -> ... -> dust on one lane. */
 	private static List<Node> trioNodes() {
 		return List.of(
-				new Node(OP.oreRaw, MaterialTreeDisplay.COL_ORE, 0, ItemStack.EMPTY),
-				new Node(OP.crushed, MaterialTreeDisplay.COL_CRUSHED, 0, ItemStack.EMPTY),
-				new Node(OP.dust, MaterialTreeDisplay.COL_DUST, 0, ItemStack.EMPTY));
+				new Node(OP.oreRaw, 0, 0, ItemStack.EMPTY),
+				new Node(OP.crushed, 1, 0, ItemStack.EMPTY),
+				new Node(OP.dust, 3, 0, ItemStack.EMPTY));
 	}
 
 	private static List<MaterialTreeDisplay.Edge> trioEdges() {
@@ -282,10 +282,10 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 		List<Byproduct> tSlots = trioSlots();
 		// the nested reveal: cumulative(n) == the union of step(0..n), order preserved
 		List<Byproduct> tPrevious = List.of();
-		for (int n = MaterialTreeDisplay.COL_ORE; n <= MaterialTreeDisplay.COL_DUST; n++) {
+		for (int n = 0; n <= 4; n++) {
 			List<Byproduct> tCut = ByproductView.cumulative(n).apply(tSlots);
 			List<Byproduct> tUnion = new ArrayList<>();
-			for (int j = MaterialTreeDisplay.COL_ORE; j <= n; j++) for (Byproduct tSlot : ByproductView.step(j).apply(tSlots))
+			for (int j = 0; j <= n; j++) for (Byproduct tSlot : ByproductView.step(j).apply(tSlots))
 				if (!tUnion.contains(tSlot)) tUnion.add(tSlot);
 			assertEquals(tUnion, tCut, "cut " + n + " == the union of steps 0.." + n);
 			assertTrue(tCut.size() >= tPrevious.size(), "cut " + n + " reveals at least what cut " + (n - 1) + " did");
@@ -295,12 +295,12 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 		// the boxes: width = the visible lane count's formula, climbing with n, inside ALL
 		Result tAll = MaterialTreeLayout.plan(trioNodes(), trioEdges(), tSlots);
 		int tPreviousWidth = 0;
-		for (int n = MaterialTreeDisplay.COL_ORE; n <= MaterialTreeDisplay.COL_DUST; n++) {
+		for (int n = 0; n <= 4; n++) {
 			int tVisible = ByproductView.cumulative(n).apply(tSlots).size();
 			Result tViewed = MaterialTreeLayout.plan(trioNodes(), trioEdges(), ByproductView.cumulative(n).apply(tSlots));
 			assertTrue(tViewed.byproductBand(), "cut " + n + " keeps the hanging band");
-			assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_BYPRODUCT) + 18 + 12, tViewed.height(), "cut " + n + " height = the hanging band's row");
-			assertEquals(MaterialTreeDisplay.LANE_X0 + (tVisible - 1) * MaterialTreeDisplay.LANE_PITCH + 18 + 12, tViewed.width(),
+			assertEquals(tAll.height(), tViewed.height(), "cut " + n + " height = the aggregate hanging band's row (the deepest band drives it under every cut)");
+			assertEquals(MaterialTreeDisplay.LANE_X0 + (tVisible - 1) * MaterialTreeDisplay.LANE_PITCH + MaterialTreeDisplay.BOX_WIDTH / 2 + 12, tViewed.width(),
 					"cut " + n + " width = the content formula over " + tVisible + " visible slots");
 			assertTrue(tViewed.width() >= tPreviousWidth, "cut " + n + " box only grows");
 			assertTrue(tViewed.width() <= tAll.width() && tViewed.height() <= tAll.height(), "cut " + n + " inside the aggregate box");
@@ -308,7 +308,7 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 		}
 		// the aggregate face shows everything, tail included
 		assertEquals(tSlots, ByproductView.ALL.apply(tSlots));
-		assertEquals(tSlots.size(), ByproductView.cumulative(MaterialTreeDisplay.COL_DUST).apply(tSlots).size() + 1, "ALL = the last cut plus the tail");
+		assertEquals(tSlots.size(), ByproductView.cumulative(4).apply(tSlots).size() + 1, "ALL = the last cut plus the tail");
 	}
 
 	@Test
@@ -320,14 +320,14 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 		List<Byproduct> tSlots = trioSlots();
 		Result tHole = MaterialTreeLayout.plan(trioNodes(), trioEdges(), ByproductView.step(1).apply(tSlots));
 		assertFalse(tHole.byproductBand(), "an empty reveal drops the band");
-		assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_DUST) + 18 + 12, tHole.height(), "height = the deepest chain band's row");
+		assertEquals(MaterialTreeDisplay.BAND_Y0 + 3 * MaterialTreeDisplay.BAND_PITCH + MaterialTreeDisplay.BOX_HEIGHT / 2 + 12, tHole.height(), "height = the deepest chain band's box row");
 		// ...and the chain axis is still exactly the ALL face's
 		Result tAll = MaterialTreeLayout.plan(trioNodes(), trioEdges(), tSlots);
 		assertEquals(tAll.edges(), tHole.edges());
 		// revealed slots pack consecutive lanes from the left — no reveal holes in a cut
-		Result tCut = MaterialTreeLayout.plan(trioNodes(), trioEdges(), ByproductView.cumulative(MaterialTreeDisplay.COL_DUST).apply(tSlots));
-		assertEquals(MaterialTreeDisplay.byproductX(0), tCut.byproductX(0));
-		assertEquals(MaterialTreeDisplay.byproductX(3), tCut.byproductX(3));
+		Result tCut = MaterialTreeLayout.plan(trioNodes(), trioEdges(), ByproductView.cumulative(4).apply(tSlots));
+		assertEquals(MaterialTreeDisplay.LANE_X0, tCut.byproductX(0), "the first byproduct lane is LANE_X0");
+		assertEquals(MaterialTreeDisplay.LANE_X0 + 3 * MaterialTreeDisplay.LANE_PITCH, tCut.byproductX(3), "lanes pack consecutively from the left");
 	}
 
 	// ------------------------------------------------------------------
@@ -337,14 +337,14 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 	@Test
 	void degenerateTreeEveryStateIdentical() {
 		List<Node> tNodes = List.of(
-				new Node(OP.oreRaw, MaterialTreeDisplay.COL_ORE, 0, ItemStack.EMPTY),
-				new Node(OP.dust, MaterialTreeDisplay.COL_DUST, 0, ItemStack.EMPTY));
+				new Node(OP.oreRaw, 0, 0, ItemStack.EMPTY),
+				new Node(OP.dust, 3, 0, ItemStack.EMPTY));
 		List<MaterialTreeDisplay.Edge> tEdges = List.of(new MaterialTreeDisplay.Edge(OP.oreRaw, OP.dust, List.of("gt.recipe.anvil"), ItemStack.EMPTY));
 		for (ByproductView tState : allStates()) {
 			Result tViewed = MaterialTreeLayout.plan(tNodes, tEdges, tState.apply(List.of()));
 			assertFalse(tViewed.byproductBand(), tState + " keeps the band off a byproduct-less tree");
-			assertEquals(MaterialTreeDisplay.LANE_X0 + 18 + 12, tViewed.width(), tState + " width = the one-lane box");
-			assertEquals(MaterialTreeDisplay.stageY(MaterialTreeDisplay.COL_DUST) + 18 + 12, tViewed.height(), tState + " height = the two-band box");
+			assertEquals(MaterialTreeDisplay.LANE_X0 + MaterialTreeDisplay.BOX_WIDTH / 2 + 12, tViewed.width(), tState + " width = the one-lane box");
+			assertEquals(MaterialTreeDisplay.BAND_Y0 + 3 * MaterialTreeDisplay.BAND_PITCH + MaterialTreeDisplay.BOX_HEIGHT / 2 + 12, tViewed.height(), tState + " height = the two-band box");
 			assertEquals(1, tViewed.edges().size(), tState + " keeps the edge");
 		}
 	}
@@ -357,19 +357,23 @@ class MaterialTreeByproductViewTest extends GTRecipesOfflineTestBase {
 	void stepAttributionRidesTheInputBand() {
 		MaterialTreeBuilder tTree = MaterialTreeBuilder.build();
 		// Fe's whole offline face is the CRUSHING step: the derived Fe -> Fe2O3 redirect's
-		// inputs are the ore family (oreRaw/blockRaw, both COL_ORE rows of the :153/:154
-		// crusher templates) and the declared face IS that redirect's tail => every Fe slot
-		// hangs on COL_ORE, so the step(0) reveal IS Fe's whole band
+		// inputs are the ore family (oreRaw/blockRaw, band-0 rows of the :153/:154 crusher
+		// templates) and the declared face IS that redirect's tail => every Fe slot hangs on
+		// band 0, so the step(0) reveal IS Fe's whole band (the crucible cross arm never
+		// fires for Fe — its smelting target is itself, the SELF arm rides the chain)
 		MaterialTreeDisplay tFe = MaterialTreeDisplay.of(tTree, MT.Fe, MaterialTreeByproductViewTest::prefixItem, MaterialTreeByproductViewTest::machineStack);
 		assertNotNull(tFe);
 		assertFalse(tFe.byproducts().isEmpty());
 		for (Byproduct tSlot : tFe.byproducts())
-			assertEquals(MaterialTreeDisplay.COL_ORE, tSlot.step(), "the Fe slot " + tSlot.sourceLabel() + " hangs on the crushing step");
-		assertEquals(tFe.byproducts(), ByproductView.step(MaterialTreeDisplay.COL_ORE).apply(tFe.byproducts()), "step(0) reveals Fe's whole band");
+			assertEquals(0, tSlot.step(), "the Fe slot " + tSlot.sourceLabel() + " hangs on the crushing step");
+		assertEquals(tFe.byproducts(), ByproductView.step(0).apply(tFe.byproducts()), "step(0) reveals Fe's whole band");
 		// over the whole pour: every step lands in the displayed band range or the -1 tail
-		for (MaterialTreeDisplay tDisplay : MaterialTreeDisplay.buildAll(tTree, MaterialTreeByproductViewTest::prefixItem, MaterialTreeByproductViewTest::machineStack))
+		for (MaterialTreeDisplay tDisplay : MaterialTreeDisplay.buildAll(tTree, MaterialTreeByproductViewTest::prefixItem, MaterialTreeByproductViewTest::machineStack)) {
+			int tMaxBand = 0;
+			for (Node tNode : tDisplay.nodes()) tMaxBand = Math.max(tMaxBand, tNode.band());
 			for (Byproduct tSlot : tDisplay.byproducts())
-				assertTrue((tSlot.step() >= MaterialTreeDisplay.COL_ORE && tSlot.step() <= MaterialTreeDisplay.COL_DUST) || tSlot.step() == -1,
-						tDisplay.material.mNameInternal + " slot step in range: " + tSlot);
+				assertTrue((tSlot.step() >= 0 && tSlot.step() <= tMaxBand) || tSlot.step() == -1,
+						tDisplay.material.mNameInternal + " slot step in the displayed band range: " + tSlot);
+		}
 	}
 }

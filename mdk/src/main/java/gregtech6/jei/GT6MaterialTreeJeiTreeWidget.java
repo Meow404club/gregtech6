@@ -36,12 +36,8 @@ import mezz.jei.api.recipe.IFocusGroup;
 
 import gregtech6.gui.GT6MaterialTreeScreen;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
-import gregtech6.recipes.tree.MaterialTreeDisplay.Byproduct;
-import gregtech6.recipes.tree.MaterialTreeDisplay.Edge;
 import gregtech6.recipes.tree.MaterialTreeDisplay.Node;
-import gregtech6.recipes.tree.MaterialTreeDisplay.Overflow;
 import gregtech6.recipes.tree.MaterialTreeLayout;
-import gregtech6.recipes.tree.MaterialTreeLayout.EdgeLayout;
 import gregtech6.recipes.tree.MaterialTreeLayout.Rect;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 
@@ -59,12 +55,19 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * {@link MaterialTreeViewport#apply}/{@code unapply} via {@link MaterialTreeLayout#pose},
  * every fill is a corner-pair of applied points.
  *
+ * <p><b>The EMI recipe-tree ink</b> (task mattree-emi-tree-rework): white two-segment
+ * connectors, the 42x20 process-node box outlines (BoMScreen.java:697-717 outline, no
+ * fill), the machine icons in their box cells (:719-728's category-icon seat) and the
+ * bare-leaf ore roots — the arrowheads, the edge via-labels and the "+N" overflow markers
+ * are retired with the old geometry; the via-info lives in the node tooltips (this class's
+ * {@link #getTooltip}, the EMI RecipeTooltipComponent face :615-647).
+ *
  * <p><b>The rebuilt affordances</b> (what the invisible slots no longer provide):
  * <ul>
  * <li><b>hover</b>: {@link #getTooltip} self-hits through {@code unapply} (the pointer
- *     mapped back into tree space) and answers the hovered node's stack name, the machine
- *     icons' via-label and the byproducts' source label — {@code getScreenRectangle} stays
- *     the API default {@code null} = own hit-testing (IRecipeWidget javadoc);</li>
+ *     mapped back into tree space) and answers the hovered node's stack name + via-label
+ *     and the byproducts' source label — {@code getScreenRectangle} stays the API default
+ *     {@code null} = own hit-testing (IRecipeWidget javadoc);</li>
  * <li><b>click</b>: {@link GT6MaterialTreeJeiCanvasHandler#hitAt} (the same hit domain,
  *     shared verbatim) routes a node/byproduct click into the R-axis jump;</li>
  * <li><b>focus highlight</b>: the native visible slots highlighted themselves under a
@@ -80,8 +83,8 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  */
 public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 
-	/** The plain header/overflow ink (the batch-1 NEI black) and the degraded via-label grey. */
-	private static final int HEADER_INK = 0xFF000000, VIA_INK = 0xFF555555;
+	/** The header ink (the batch-1 NEI black). */
+	private static final int HEADER_INK = 0xFF000000;
 	/** The focus outline: one white px ring, one tree-px outside the 18px cell. */
 	private static final int FOCUS_INK = 0xFFFFFFFF;
 
@@ -90,12 +93,10 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 	/**
 	 * The layout engine's plan (task mattree-r3-nav-unify): the tree geometry authority —
 	 * the same {@code Result} the EMI twin and the standalone screen consume; the Display
-	 * statics' legacy page-canvas seat is the category frame only.
+	 * statics' nominal frame seat is the category frame only.
 	 */
 	private final MaterialTreeLayout.Result mLayout;
 	private final IFocusGroup mFocuses;
-	private final List<Edge> mEdges;
-	private final List<EdgeLayout> mLayouts;
 
 	/** Package-private: the category is the production builder (the extras closure). */
 	GT6MaterialTreeJeiTreeWidget(MaterialTreeDisplay aDisplay, MaterialTreeViewport aView, IFocusGroup aFocuses) {
@@ -103,8 +104,6 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 		mView = aView;
 		mFocuses = aFocuses;
 		mLayout = aDisplay == null ? null : MaterialTreeLayout.plan(aDisplay);
-		mEdges = aDisplay == null ? List.of() : aDisplay.edges();
-		mLayouts = mLayout == null ? List.of() : mLayout.edges();
 	}
 
 	@Override
@@ -122,51 +121,60 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 		if (mDisplay == null) return;
 		Font tFont = Minecraft.getInstance().font;
 		// the headers
-		label(aGui, tFont, MaterialTreeDisplay.materialName(mDisplay.material), 4, 4, HEADER_INK);
+		label(aGui, tFont, MaterialTreeDisplay.materialName(mDisplay.material), 4, MaterialTreeDisplay.HEADER_Y, HEADER_INK);
 		if (mLayout.byproductBand()) // the hanging band's header — only when the band exists (the EMI twin's content-driven face)
 			label(aGui, tFont, MaterialTreeDisplay.BYPRODUCT_HEADER,
-					mLayout.overflowX(), mLayout.byproductHeaderY(), HEADER_INK);
-		// the wires + arrowheads: corner-pair transforms so shared rect edges stay seamless
-		// at any scale (the EMI twin's fillTransformed shape — a per-leg render wiring copy,
-		// not leg geometry; every coordinate still comes from the shared table)
-		for (EdgeLayout tLayout : mLayouts) {
+					mLayout.byproductX(0), mLayout.byproductHeaderY(), HEADER_INK);
+		// the wires: corner-pair transforms so shared rect edges stay seamless at any scale
+		// (the EMI twin's fillTransformed shape — a per-leg render wiring copy, not leg
+		// geometry; every coordinate still comes from the shared table)
+		for (MaterialTreeLayout.EdgeLayout tLayout : mLayout.edges())
 			for (Rect tRect : tLayout.wire()) fillTransformed(aGui, tRect, MaterialTreeLayout.WIRE_INK);
-			for (Rect tRect : tLayout.arrow()) fillTransformed(aGui, tRect, MaterialTreeLayout.ARROW_INK);
+		// the process-node box outlines (the EMI recipe-node form — outline only, no fill)
+		for (Node tNode : mDisplay.nodes()) {
+			Rect tBox = mLayout.nodeBox(tNode);
+			if (tBox != null) boxOutline(aGui, tBox);
 		}
-		// the degraded edges' via-labels (the machine-resolved ones carry theirs as hover text)
-		for (int i = 0; i < mEdges.size(); i++) {
-			EdgeLayout tLayout = mLayouts.get(i);
-			if (tLayout.machine() != null) continue;
-			label(aGui, tFont, mEdges.get(i).viaLabel(), tLayout.labelX(), tLayout.labelY(), VIA_INK);
+		// the machine icons in their box cells (the EMI category-icon seat), then the item
+		// icons in their cells at the +1 inset
+		for (Node tNode : mDisplay.nodes()) {
+			Rect tCell = mLayout.nodeMachineCell(tNode);
+			if (tCell == null) continue;
+			ItemStack tMachine = producingMachine(tNode);
+			if (tMachine != null) item(aGui, tMachine, tCell.x(), tCell.y());
 		}
-		// the "+N" overflow markers (the explicit-not-silent clause)
-		for (Overflow tOverflow : mDisplay.overflow())
-			label(aGui, tFont, "+" + tOverflow.hidden(),
-					mLayout.overflowX(), mLayout.overflowY(tOverflow.column()), HEADER_INK);
-		// the icons: nodes and byproducts at their +1 cell inset, machine icons bare on the
-		// helper's 16px rect (the -1 mount is the old hover-box pad — icon lands on the rect)
 		for (Node tNode : mDisplay.nodes())
-			item(aGui, tNode.stack(), mLayout.nodeX(tNode), mLayout.nodeY(tNode));
-		for (int i = 0; i < mEdges.size(); i++) {
-			EdgeLayout tLayout = mLayouts.get(i);
-			if (tLayout.machine() == null) continue;
-			item(aGui, mEdges.get(i).machine(), tLayout.machine().x() - 1, tLayout.machine().y() - 1);
-		}
+			item(aGui, tNode.stack(), mLayout.nodeItemCell(tNode).x(), mLayout.nodeItemCell(tNode).y());
 		for (int b = 0; b < mDisplay.byproducts().size(); b++)
-			item(aGui, mDisplay.byproducts().get(b).stack(), mLayout.byproductX(b), mLayout.byproductY());
+			item(aGui, mDisplay.byproducts().get(b).stack(),
+					mLayout.byproductX(b) - MaterialTreeLayout.SLOT / 2, mLayout.byproductY() - MaterialTreeLayout.SLOT / 2);
 		// the focus outlines (the invisible slots' replacement highlight)
 		for (Node tNode : mDisplay.nodes())
 			if (isFocused(tNode.stack()))
-				focusBox(aGui, mLayout.nodeX(tNode), mLayout.nodeY(tNode));
+				focusBox(aGui, mLayout.nodeItemCell(tNode).x(), mLayout.nodeItemCell(tNode).y());
 		for (int b = 0; b < mDisplay.byproducts().size(); b++)
 			if (isFocused(mDisplay.byproducts().get(b).stack()))
-				focusBox(aGui, mLayout.byproductX(b), mLayout.byproductY());
+				focusBox(aGui, mLayout.byproductX(b) - MaterialTreeLayout.SLOT / 2, mLayout.byproductY() - MaterialTreeLayout.SLOT / 2);
+	}
+
+	/** The producing edge's resolved machine stack for one node, or null (the degrade face). */
+	private ItemStack producingMachine(Node aNode) {
+		for (var tEdge : mDisplay.edges())
+			if (tEdge.to() == aNode.prefix() && !tEdge.machine().isEmpty()) return tEdge.machine();
+		return null;
+	}
+
+	/** The merged producing-map labels of one node (its incoming edges, display order, dedup). */
+	private String producingLabel(Node aNode) {
+		java.util.Set<String> tNames = new java.util.LinkedHashSet<>();
+		for (var tEdge : mDisplay.edges()) if (tEdge.to() == aNode.prefix()) tNames.addAll(tEdge.mapNames());
+		return tNames.isEmpty() ? "" : MaterialTreeDisplay.viaLabel(List.copyOf(tNames));
 	}
 
 	/**
 	 * The hover affordance: self-hits the pointer through {@code unapply} (the API-default
-	 * {@code null} {@code getScreenRectangle} = own hit-testing) — the node's stack name,
-	 * the machine's via-label, the byproduct's source label.
+	 * {@code null} {@code getScreenRectangle} = own hit-testing) — the node's stack name +
+	 * via-label, the byproduct's source label.
 	 */
 	@Override
 	public void getTooltip(ITooltipBuilder aTooltip, double aMouseX, double aMouseY) {
@@ -180,7 +188,7 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 	// jump and the offline pins — unapply the pointer, scan the shared table's cells
 	// ------------------------------------------------------------------
 
-	/** One hover/click answer: a jumpable stack (nodes, byproducts) and/or a text label (machines). */
+	/** One hover/click answer: a jumpable stack (nodes, byproducts) and/or a text label. */
 	record Hit(ItemStack stack, String label) {
 		static final Hit MISS = new Hit(ItemStack.EMPTY, "");
 	}
@@ -192,19 +200,20 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 		double tX = tPoint.x(), tY = tPoint.y();
 		int tSlot = MaterialTreeLayout.SLOT;
 		for (Node tNode : mDisplay.nodes()) {
-			int tNX = mLayout.nodeX(tNode), tNY = mLayout.nodeY(tNode);
-			if (tX >= tNX && tX < tNX + tSlot && tY >= tNY && tY < tNY + tSlot) return new Hit(tNode.stack(), "");
-		}
-		for (int i = 0; i < mEdges.size(); i++) {
-			EdgeLayout tLayout = mLayouts.get(i);
-			if (tLayout.machine() == null) continue;
-			Rect tBox = tLayout.machine();
-			if (tX >= tBox.x() - 1 && tX < tBox.x() + tBox.w() + 1
-					&& tY >= tBox.y() - 1 && tY < tBox.y() + tBox.h() + 1)
-				return new Hit(ItemStack.EMPTY, mEdges.get(i).viaLabel()); // label-only: no jump face
+			Rect tCell = mLayout.nodeItemCell(tNode);
+			if (tX >= tCell.x() && tX < tCell.x() + tSlot && tY >= tCell.y() && tY < tCell.y() + tSlot) {
+				String tLabel = producingLabel(tNode);
+				return new Hit(tNode.stack(), tLabel);
+			}
+			// the machine icon answers its via-label only (no jump face — the EMI category-icon
+			// precedent, BoMScreen.java:769-772 answers the category hover)
+			Rect tMachineCell = mLayout.nodeMachineCell(tNode);
+			if (tMachineCell != null && tX >= tMachineCell.x() && tX < tMachineCell.x() + tSlot
+					&& tY >= tMachineCell.y() && tY < tMachineCell.y() + tSlot)
+				return new Hit(ItemStack.EMPTY, producingLabel(tNode));
 		}
 		for (int b = 0; b < mDisplay.byproducts().size(); b++) {
-			int tBX = mLayout.byproductX(b), tBY = mLayout.byproductY();
+			int tBX = mLayout.byproductX(b) - MaterialTreeLayout.SLOT / 2, tBY = mLayout.byproductY() - MaterialTreeLayout.SLOT / 2;
 			if (tX >= tBX && tX < tBX + tSlot && tY >= tBY && tY < tBY + tSlot)
 				return new Hit(mDisplay.byproducts().get(b).stack(), mDisplay.byproducts().get(b).sourceLabel());
 		}
@@ -222,13 +231,21 @@ public class GT6MaterialTreeJeiTreeWidget implements IRecipeWidget {
 	// the paint primitives (all coordinates through the viewport — none decided here)
 	// ------------------------------------------------------------------
 
-	/** One wire/arrow rect through the viewport as a corner pair, then filled (exclusive x2/y2). */
+	/** One wire rect through the viewport as a corner pair, then filled (exclusive x2/y2). */
 	private void fillTransformed(GuiGraphics aGui, Rect aRect, int aInk) {
 		MaterialTreeViewport.Point tA = mView.apply(aRect.x(), aRect.y());
 		MaterialTreeViewport.Point tB = mView.apply(aRect.x() + aRect.w(), aRect.y() + aRect.h());
 		aGui.fill(
 				(int) Math.round(Math.min(tA.x(), tB.x())), (int) Math.round(Math.min(tA.y(), tB.y())),
 				(int) Math.round(Math.max(tA.x(), tB.x())), (int) Math.round(Math.max(tA.y(), tB.y())), aInk);
+	}
+
+	/** The EMI node box outline: four white fills through the viewport (BoMScreen.java:714-717, no fill inside). */
+	private void boxOutline(GuiGraphics aGui, Rect aBox) {
+		fillTransformed(aGui, new Rect(aBox.x(), aBox.y(), aBox.w(), 1), MaterialTreeLayout.WIRE_INK);
+		fillTransformed(aGui, new Rect(aBox.x(), aBox.y() + aBox.h() - 1, aBox.w(), 1), MaterialTreeLayout.WIRE_INK);
+		fillTransformed(aGui, new Rect(aBox.x(), aBox.y(), 1, aBox.h()), MaterialTreeLayout.WIRE_INK);
+		fillTransformed(aGui, new Rect(aBox.x() + aBox.w() - 1, aBox.y(), 1, aBox.h()), MaterialTreeLayout.WIRE_INK);
 	}
 
 	/** One label at the pose scale (the unified {@link MaterialTreeLayout#pose} mount). */

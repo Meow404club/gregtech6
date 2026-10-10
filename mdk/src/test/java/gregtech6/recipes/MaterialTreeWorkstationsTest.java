@@ -161,8 +161,11 @@ class MaterialTreeWorkstationsTest extends GTRecipesOfflineTestBase {
 	@Test
 	public void displayedChainMapsAreExactlyTheFourOreChainMachines() {
 		Set<String> tDisplayed = MaterialTreeWorkstations.displayedMapNames(probeDisplays());
+		// task mattree-emi-tree-rework: the dynamic arms joined the tree — the crucible
+		// self/cross arm (the live zero-row map) and the BE-driven Mold casting pipeline
 		Set<String> tExpected = new TreeSet<>(Set.of(
-				"gt.recipe.crusher", "gt.recipe.shredder", "gt.recipe.sifter", "gt.recipe.anvil"));
+				"gt.recipe.crusher", "gt.recipe.shredder", "gt.recipe.sifter", "gt.recipe.anvil", "gt.recipe.anvil.bend",
+				"gt.recipe.lathe", MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP, "Mold"));
 		assertEquals(tExpected, new TreeSet<>(tDisplayed),
 				"the maps displayed on the material tree edges drifted — update BOTH this census and the workstation table together");
 	}
@@ -173,7 +176,8 @@ class MaterialTreeWorkstationsTest extends GTRecipesOfflineTestBase {
 		assertTrue(tDisplayed.stream().allMatch(MaterialTreeWorkstations.tableNames()::contains),
 				"a displayed chain map has NO workstation table entry — clicking its machine never reaches the page");
 		// the table is exact, not a superset: untabled families must join via a census change
-		assertEquals(new TreeSet<>(Set.of("gt.recipe.crusher", "gt.recipe.shredder", "gt.recipe.sifter", "gt.recipe.anvil")),
+		assertEquals(new TreeSet<>(Set.of("gt.recipe.crusher", "gt.recipe.shredder", "gt.recipe.sifter", "gt.recipe.anvil",
+						"gt.recipe.anvil.bend", "gt.recipe.lathe", MaterialTreeBuilder.CRUCIBLE_SMELTING_MAP, "Mold")),
 				new TreeSet<>(MaterialTreeWorkstations.tableNames()));
 	}
 
@@ -181,14 +185,15 @@ class MaterialTreeWorkstationsTest extends GTRecipesOfflineTestBase {
 	public void workstationStacksResolvePerLegHarness() {
 		// the representative handles resolve per-leg offline (the ore-gen card's harness
 		// fork: forge never fires RegisterEvent → unbound → EMPTY; the neo moddev harness
-		// DOES fire registration → the real stacks resolve — the live-content proof)
+		// DOES fire registration → the real stacks resolve — the live-content proof). The
+		// crucible/mold seats joined the table with the dynamic arms (mattree-emi-tree-rework).
 		List<net.minecraft.world.item.ItemStack> tStacks = MaterialTreeWorkstations.workstationStacks(probeDisplays());
 		assertNotNull(tStacks, "the seam must return a list, never null");
 		//? if forge {
 		assertTrue(tStacks.isEmpty(), "unbound handles must resolve EMPTY and drop out offline: " + tStacks);
 		//?} else {
-		/*assertEquals(4, tStacks.size(), "one representative per chain map, TABLE order");
-		assertEquals(List.of("gt6:crusher", "gt6:shredder", "gt6:sifter", "gt6:stone_anvil"),
+		/*assertEquals(8, tStacks.size(), "one representative per chain/casting map, TABLE order");
+		assertEquals(List.of("gt6:crusher", "gt6:shredder", "gt6:sifter", "gt6:stone_anvil", "gt6:stone_anvil", "gt6:lathe", "gt6:smeltery_stone", "gt6:mold_stone"),
 				tStacks.stream().map(tStack -> BuiltInRegistries.ITEM.getKey(tStack.getItem()).toString()).toList(),
 				"the table resolves exactly the four tier-0 chain machines");
 		*///?}

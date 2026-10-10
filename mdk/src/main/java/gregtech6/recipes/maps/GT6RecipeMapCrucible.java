@@ -221,8 +221,14 @@ public class GT6RecipeMapCrucible extends RecipeMap {
 		return new OreDictPrefix[] {OP.ingot, OP.blockIngot, OP.gem, OP.blockGem, OP.dust, OP.blockDust, OP.crushed, OP.crushedPurified, OP.crushedCentrifuged};
 	}
 
-	/** The {@code :63-67} family — the forms the SELF arm shows too (upstream :62 keeps them outside the {@code tMat != self} branch); per-call for the OP-regeneration reason of {@link #crossSourcePrefixes()}. */
-	private static OreDictPrefix[] selfPrefixes() {
+	/**
+	 * The {@code :63-67} family — the forms the SELF arm shows too (upstream :62 keeps them
+	 * outside the {@code tMat != self} branch); per-call for the OP-regeneration reason of
+	 * {@link #crossSourcePrefixes()}. Public since task mattree-emi-tree-rework: the tree
+	 * builder's dynamic-edge synthesis walks THIS family (the material-tree crucible self
+	 * arm), so the arm's shape keeps a single source.
+	 */
+	public static OreDictPrefix[] selfPrefixes() {
 		return new OreDictPrefix[] {OP.dust, OP.blockDust, OP.crushed, OP.crushedPurified, OP.crushedCentrifuged};
 	}
 
