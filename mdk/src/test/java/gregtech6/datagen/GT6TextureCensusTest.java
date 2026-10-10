@@ -78,7 +78,9 @@ class GT6TextureCensusTest {
      * retriever cover pair, and the r8 large-controller wave — the 15 flat
      * <code>&lt;family&gt;_overlay_</code> state trios plus the two front-pair band dirs
      * (the retired vondagraagg six-face flat prefix left the list with its twelve
-     * deleted PNGs, the band dirs replace them).
+     * deleted PNGs, the band dirs replace them). Task distill-tower-face-3d adds the twin
+     * distillation tower controller families — each the full six-face colored+overlay
+     * wave with the three-state overlay group (2 x 24 PNGs).
      */
     private static final List<String> BORROWED_FAMILY_PREFIXES = List.of(
         "block/fusionreactor_colored_", "block/implosioncompressor_colored_",
@@ -92,10 +94,12 @@ class GT6TextureCensusTest {
         "block/largeshredder_overlay_", "block/largesqueezer_overlay_",
         "block/largemassfab_overlay_", "block/fusionreactor_overlay_",
         "block/implosioncompressor_overlay_",
-        "block/vondagraagg/", "block/bedrockdrill/");
+        "block/vondagraagg/", "block/bedrockdrill/",
+        "block/distillationtower_colored_", "block/distillationtower_overlay_",
+        "block/cryodistillationtower_colored_", "block/cryodistillationtower_overlay_");
 
-    /** The wave pin: 330 borrowed controller/cover PNGs + 20 port-generated comb icons (task tex-large-machines: 44 surviving prior + 270 flat overlays + 16 band faces). */
-    private static final int PINNED_WAVE_TOTAL = 350;
+    /** The wave pin: 330 borrowed controller/cover PNGs + 20 port-generated comb icons (task tex-large-machines: 44 surviving prior + 270 flat overlays + 16 band faces). +48 (task distill-tower-face-3d: the twin tower six-face colored + three-state overlay wave, 2 x 24). */
+    private static final int PINNED_WAVE_TOTAL = 398;
 
     /**
      * The pinned distinct iconset count over the same table (walked 2026-09-06: 40 sets

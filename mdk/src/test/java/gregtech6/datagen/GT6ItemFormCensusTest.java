@@ -126,8 +126,7 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * The tier-B front-view families (tex-itemform-b, the 28 rows less the diesel
      * eight, the two mains controllers, the rod pillar and the 12 attachments): 2D
      * icons over the family's own front/side/composite sprite — the single
-     * kinematics rows (crank, the water wheel, the gearbox) and the twin
-     * distillation tower controllers over the borrowed parts side sprite. The 8 diesel
+     * kinematics rows (crank, the water wheel, the gearbox). The 8 diesel
      * tiers LEFT this form in task diesel-item-3d — their block model is genuinely
      * faceted (front/back/side, the steam-family form), so the flat sprite was the
      * anti-pattern; they are pinned 3D below — the lightning-rod CONTROLLER and
@@ -137,17 +136,17 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * retirement shape): upstream has no dedicated item PNG — the 1.7.10 item renders
      * the 3D stack — and the block models are the genuinely faceted overlay-pass
      * spouts now, pinned 3D in {@code GT6AttachmentStackDatagenTest
-     * .attachmentItemModelsRideThe3DBlockIcons}.
+     * .attachmentItemModelsRideThe3DBlockIcons}. The twin distillation tower
+     * controllers left in task distill-tower-face-3d (the same shape — the borrowed
+     * parts-side sprite was the w3 placeholder, the real controller art is the
+     * familyMachineModel trio now): pinned 3D in
+     * {@code GT6DistillationTowerTexDatagenTest.itemModelsRideThe3DBlockFormActiveOverlay}.
      */
     @Test
     void frontViewFamiliesAre2DIcons() throws Exception {
         assert2DForm("crank", "gt6:block/crank");
         assert2DForm("water_wheel", "gt6:block/water_wheel");
         assert2DForm("gearbox", "gt6:block/gearbox");
-        assertEquals(2, gregtech6.registry.GT6Distillation.ROWS.size(), "the twin-tower walk");
-        for (gregtech6.registry.GT6Distillation.TowerRow tRow : gregtech6.registry.GT6Distillation.ROWS) {
-            assert2DForm(tRow.path(), "gt6:block/parts/distillationtowerparts/0/colored/side");
-        }
     }
 
     /**
@@ -206,6 +205,9 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
      * real two-layer art), pinned by GT6MultiblockMainsTexDatagenTest; their ITEM
      * rows left the 2D composites in task r11-mains-tint-wrap (pinned 3D above), the
      * composite sprites stay on disk for the rod part and the historical ledger.
+     * The {@code distillation_tower} archetype left in task distill-tower-face-3d —
+     * the world face is the familyMachineModel two-layer state trio now, pinned by
+     * GT6DistillationTowerTexDatagenTest.
      */
     @Test
     void blockModelsKeepTheCubeAllForm() throws Exception {
@@ -221,9 +223,10 @@ public class GT6ItemFormCensusTest extends GTOfflineTestBase {
                 // face is the upstream three-pass element stack now; the ITEM rows left the
                 // 2D family sprites in task tap-funnel-model-audit, pinned 3D in
                 // GT6AttachmentStackDatagenTest.attachmentItemModelsRideThe3DBlockIcons)
+                // ("distillation_tower" left in task distill-tower-face-3d — the world face
+                // is the two-layer state trio now, pinned by GT6DistillationTowerTexDatagenTest)
                 {"water_wheel", "gt6:block/water_wheel"},
-                {"gearbox", "gt6:block/gearbox"},
-                {"distillation_tower", "gt6:block/parts/distillationtowerparts/0/colored/side"}};
+                {"gearbox", "gt6:block/gearbox"}};
         for (String[] tCase : tArchetypes) {
             JsonObject tModel = generatedJson("assets/gt6/models/block/" + tCase[0] + ".json");
             assertEquals("minecraft:block/cube_all", tModel.get("parent").getAsString(),
