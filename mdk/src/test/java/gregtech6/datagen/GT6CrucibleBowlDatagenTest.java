@@ -10,8 +10,10 @@
  * <li>the 9 LIQUID_LEVEL census — nine DISTINCT models per row, the former
  *     empty+one-flat-cube collapse retired;</li>
  * <li>the item models re-parent to the bowl shell, and the contentFace colour seam
- *     dispatches solid = the bodyTexture blockSolid face + mRGBaSolid tint / molten = the
- *     smeltery_content face + mRGBaLiquid (the 2026-09-30 colour ruling).</li>
+ *     dispatches molten = the per-set molten art + mRGBaLiquid / solid = the FIXED
+ *     upstream gray-black (task crucible-solid-gray-fidelity — the cooled face is the
+ *     MT.NULL×blockRaw×CA_GRAY_64 of MultiTileEntitySmeltery.java:587-591 verbatim,
+ *     material-independent; the former "material solid colour" ruling is reversed).</li>
  * </ol>
  * Reads the committed generated tree on the classpath (the
  * {@link GT6ClayCrucibleDatagenTest} form — no datagen run).
@@ -49,9 +51,6 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
 
     /** The Steel molten colour — the MT.java:1713 setRGBaLiquid(255, 20, 10, 255) tail. Shared with the solid-face matrix test (task crucible-solid-face-matrix). */
     static final int STEEL_LIQUID_TINT = 0xFFFF140A;
-
-    /** The Ceramic solid tint (the GT6MoldTintDatagenTest literal, mRGBaSolid 220/130/70). Shared with the solid-face matrix test (task crucible-solid-face-matrix). */
-    static final int CERAMIC_SOLID_TINT = 0xFFDC8246;
 
     @BeforeAll
     static void bootMaterials() {
@@ -211,15 +210,17 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
     }
 
     /**
-     * The solid-phase filled model (task crucible-render-followup — the symptom-B face):
+     * The solid-phase filled model (task crucible-solid-gray-fidelity — the cooled face):
      * the FULL shell+content element set (the r11a rule — vanilla getElements never merges
-     * the parent), the content seat riding the BODY art (#all) at tintindex 1 — the cooled
-     * charge renders the blockSolid grain recoloured by the lightest content's mRGBaSolid,
-     * the upstream cooled semantics minus the gray-NULL placeholder (the declared port
-     * face, the user ruling "solid = the material's own colour").
+     * the parent), the content seat riding the FIXED upstream gray-black via its own
+     * {@code #content} texture (MultiTileEntitySmeltery.java:587-591 —
+     * {@code MT.NULL×blockRaw×CA_GRAY_64}, material-INDEPENDENT, the SAME texture id in
+     * every row's model). The former crucible-render-followup "#all body art +
+     * mRGBaSolid recolour" form is reversed; the tintindex-1 seat stays (the listener's
+     * solid arm answers the same constant, and the molten twin keeps the live seat).
      */
     @Test
-    void solidFilledModelsCarryTheBodyArtContentSeat() throws Exception {
+    void solidFilledModelsCarryTheUpstreamGrayContentSeat() throws Exception {
         for (GT6Crucibles.SmelteryRow tRow : GT6Crucibles.ROWS) {
             int tShellCount = generatedJson("assets/gt6/models/block/" + tRow.path() + "_empty.json")
                     .getAsJsonArray("elements").size();
@@ -230,14 +231,16 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
                 BlockModel tVanilla = BlockModel.fromString(tModel.toString());
                 assertEquals(tShellCount + 1, tVanilla.getElements().size(),
                         tRow.path() + " solid level " + tLevel + ": vanilla BlockModel.getElements sees the full set");
+                assertEquals(GT6CrucibleDatagen.SOLID_CONTENT.texture(), tModel.getAsJsonObject("textures").get("content").getAsString(),
+                        tRow.path() + " solid level " + tLevel + ": the content seat rides the upstream gray borrow (material-independent)");
                 float tExpectedTop = 2.0F + (tLevel * 255.0F / 8.0F) / 292.571428F * 16.0F;
                 JsonObject tBox = elementAt(tModel, new float[] {0, 2, 0}, new float[] {16, tExpectedTop, 16});
                 assertNotNull(tBox, tRow.path() + " solid level " + tLevel + ": the content box element");
                 JsonObject tUp = tBox.getAsJsonObject("faces").getAsJsonObject("up");
-                assertEquals("#all", tUp.get("texture").getAsString(),
-                        tRow.path() + " solid level " + tLevel + ": the content seat rides the BODY art");
+                assertEquals("#content", tUp.get("texture").getAsString(),
+                        tRow.path() + " solid level " + tLevel + ": the content seat rides its own gray texture");
                 assertEquals(1, tUp.get("tintindex").getAsInt(),
-                        tRow.path() + " solid level " + tLevel + ": the content seat stays tintindex 1");
+                        tRow.path() + " solid level " + tLevel + ": the content seat stays tintindex 1 (the listener constant arm)");
             }
         }
     }
@@ -253,20 +256,23 @@ public class GT6CrucibleBowlDatagenTest extends GTOfflineTestBase {
     }
 
     /**
-     * The colour-ruling seam: solid = the blockSolid face + mRGBaSolid, molten = the
-     * borrowed per-set molten art + mRGBaLiquid (task r11b-crucible-molten-art — the
-     * upstream getTextureMolten shape, OreDictMaterial.java:990-999, the flat
-     * smeltery_content placeholder retired).
+     * The colour-ruling seam (task crucible-solid-gray-fidelity): solid = the FIXED
+     * upstream gray-black, IDENTICAL for every material (acceptance-2 material-independence
+     * pin — the dispatch equality across two unrelated rows); molten = the borrowed per-set
+     * molten art + mRGBaLiquid (task r11b-crucible-molten-art — the upstream
+     * getTextureMolten shape, OreDictMaterial.java:990-999).
      */
     @Test
     void contentFaceDispatchMatchesTheColourRuling() {
-        // SOLID arm — the exact faces the bowl shell renderers draw (unchanged by r11b)
+        // SOLID arm — the upstream cooled face verbatim (MultiTileEntitySmeltery.java:587-591:
+        // MT.NULL rides the setless default set whose blockRaw is the in-pack rough borrow,
+        // tinted CA_GRAY_64 = 0xFF404040) — MATERIAL-INDEPENDENT, two unrelated rows agree
         GT6CrucibleDatagen.ContentFace tStone = GT6CrucibleDatagen.contentFace(gregapi.data.MT.Stone, false);
-        assertEquals("minecraft:block/smooth_stone", tStone.texture(), "stone rides the vanilla finished texture");
-        assertEquals(-1, tStone.tintARGB(), "the finished texture takes no tint");
         GT6CrucibleDatagen.ContentFace tCeramic = GT6CrucibleDatagen.contentFace(gregapi.data.MT.Ceramic, false);
-        assertEquals("gt6:block/materialicons/rough/block_solid", tCeramic.texture(), "ceramic rides the rough borrow");
-        assertEquals(CERAMIC_SOLID_TINT, tCeramic.tintARGB(), "the solid tint is the mRGBaSolid pack");
+        assertEquals(GT6CrucibleDatagen.SOLID_CONTENT, tStone, "stone answers the fixed gray constant");
+        assertEquals(tStone, tCeramic, "the solid arm is material-independent: stone == ceramic");
+        assertEquals("gt6:block/materialicons/rough/block_raw", tStone.texture(), "the gray borrow is the upstream NONE=ROUGH blockRaw art");
+        assertEquals(0xFF404040, tStone.tintARGB(), "the solid tint is CA_GRAY_64 (CS.java:362) verbatim");
         // MOLTEN arm — the per-set molten grayscale + the liquid colour (the Steel setRGBaLiquid tail verbatim)
         GT6CrucibleDatagen.ContentFace tSteelMolten = GT6CrucibleDatagen.contentFace(gregapi.data.MT.Steel, true);
         assertTrue(tSteelMolten.texture().startsWith("gt6:block/materialicons/") && tSteelMolten.texture().endsWith("/molten"),

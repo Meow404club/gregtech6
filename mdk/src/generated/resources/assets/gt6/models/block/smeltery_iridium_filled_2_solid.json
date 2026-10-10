@@ -135,7 +135,7 @@
     {
       "faces": {
         "up": {
-          "texture": "#all",
+          "texture": "#content",
           "tintindex": 1
         }
       },
@@ -150,5 +150,8 @@
         16
       ]
     }
-  ]
+  ],
+  "textures": {
+    "content": "gt6:block/materialicons/rough/block_raw"
+  }
 }

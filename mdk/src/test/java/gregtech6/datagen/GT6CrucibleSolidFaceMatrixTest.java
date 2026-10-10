@@ -1,7 +1,8 @@
 /**
- * Offline dispatch matrix for task crucible-solid-face-matrix — the ContentFace SOLID arm
- * ({@link GT6CrucibleDatagen#bodyTexture}) spread from the four-family loud table to the
- * FULL upstream texture-set universe (the crucible holds ANY material). Pinned:
+ * Offline dispatch matrix for task crucible-solid-face-matrix — the body-texture mapping
+ * ({@link GT6CrucibleDatagen#bodyTexture}, the SHELL face) spread from the four-family
+ * loud table to the FULL upstream texture-set universe (the crucible holds ANY material).
+ * Pinned:
  * <ol>
  * <li>the whole {@code OreDictMaterial.MATERIAL_ARRAY} universe dispatches without
  *     throwing, every answer is one of the three mapped families (the vanilla smooth
@@ -10,8 +11,11 @@
  *     otherwise fall to the shared art silently);</li>
  * <li>representative per-set dispatch pins — the upstream MT.java anchor per SET bucket,
  *     including the four-family regression (the GT6MoldAssetDatagenTest literals);</li>
- * <li>the solid tint stays the mRGBaSolid pack, the vanilla row stays un-tinted, the
- *     molten arm stays untouched (the bowl-card literals, shared).</li>
+ * <li>the ContentFace SOLID arm is the FIXED upstream gray-black for every material
+ *     (task crucible-solid-gray-fidelity — the cooled face MultiTileEntitySmeltery.java
+ *     :587-591 {@code MT.NULL×blockRaw×CA_GRAY_64}, material-independent; the former
+ *     "solid tint = the mRGBaSolid pack" reading reversed), the molten arm stays the
+ *     mRGBaLiquid pack.</li>
  * </ol>
  * Upstream semantics: {@code getTextureSmooth} resolves the material texture set's
  * blockSolid icon (OreDictMaterial.java:983-990 → :974-976 → BlockTextureDefault.java
@@ -44,9 +48,6 @@ public class GT6CrucibleSolidFaceMatrixTest extends GTOfflineTestBase {
     private static final String CERAMIC_BODY = "gt6:block/materialicons/rough/block_solid";
     private static final String BRONZE_BODY  = "gt6:block/materialicons/copper/block_solid";
     private static final String STEEL_BODY   = "gt6:block/materialicons/metallic/block_solid";
-
-    /** The Obsidian solid RGBa 80/50/100 — the MT.java:2395 create(...) tail, packed the {@code argb} way. */
-    private static final int OBSIDIAN_SOLID_TINT = 0xFF503264;
 
     @BeforeAll
     static void bootMaterials() {
@@ -135,24 +136,23 @@ public class GT6CrucibleSolidFaceMatrixTest extends GTOfflineTestBase {
         assertEquals(CERAMIC_BODY, GT6CrucibleDatagen.bodyTexture(gregapi.data.MT.Alexandrite),  "Alexandrite: SET_OPAL (MT.java:2266) — shared art");
     }
 
-    /** The solid tint stays the mRGBaSolid pack; the vanilla row stays un-tinted; the molten arm stays untouched. */
+    /** The solid tint is the FIXED upstream gray — CA_GRAY_64 (CS.java:362) verbatim, material-independent (task crucible-solid-gray-fidelity). */
     @Test
-    void solidArmTintIsTheMRgbaSolidPack() {
-        // the bowl-card literals, SHARED (not re-declared) — one drift catches both tests
-        assertEquals(GT6CrucibleBowlDatagenTest.CERAMIC_SOLID_TINT,
-                GT6CrucibleDatagen.contentFace(gregapi.data.MT.Ceramic, false).tintARGB(),
-                "Ceramic: the solid tint is the shared mRGBaSolid literal");
-        assertEquals(OBSIDIAN_SOLID_TINT,
-                GT6CrucibleDatagen.contentFace(gregapi.data.MT.Obsidian, false).tintARGB(),
-                "Obsidian: the solid tint is the MT.java:2395 RGBa pack");
-        assertEquals(-1, GT6CrucibleDatagen.contentFace(gregapi.data.MT.Stone, false).tintARGB(),
-                "Stone: the finished vanilla texture takes no tint");
+    void solidArmTintIsTheUpstreamFixedGray() {
+        // the upstream cooled face :587-591 — the SAME constant for every material, the
+        // former per-material mRGBaSolid arm (crucible-render-followup) reversed
+        assertEquals(0xFF404040, GT6CrucibleDatagen.contentFace(gregapi.data.MT.Ceramic, false).tintARGB(),
+                "Ceramic: the fixed CA_GRAY_64 gray");
+        assertEquals(0xFF404040, GT6CrucibleDatagen.contentFace(gregapi.data.MT.Obsidian, false).tintARGB(),
+                "Obsidian: the same fixed gray — no mRGBaSolid pack anymore");
+        assertEquals(0xFF404040, GT6CrucibleDatagen.contentFace(gregapi.data.MT.Stone, false).tintARGB(),
+                "Stone: the same fixed gray — no un-tinted vanilla row anymore");
         assertEquals(GT6CrucibleBowlDatagenTest.STEEL_LIQUID_TINT,
                 GT6CrucibleDatagen.contentFace(gregapi.data.MT.Steel, true).tintARGB(),
-                "the molten arm is untouched by the solid-arm spread");
+                "the molten arm is untouched by the solid-arm reversal");
     }
 
-    /** The ContentFace seam is TOTAL across the universe — the Jade bar and the BER never see a throw. */
+    /** The ContentFace seam is TOTAL across the universe — the Jade bar and the BER never see a throw, and the SOLID arm is one constant for all of it. */
     @Test
     void contentFaceIsTotalAcrossTheUniverse() {
         int tCount = 0;
@@ -160,6 +160,8 @@ public class GT6CrucibleSolidFaceMatrixTest extends GTOfflineTestBase {
             if (tMaterial == null) continue;
             assertDoesNotThrow(() -> GT6CrucibleDatagen.contentFace(tMaterial, false),
                     tMaterial.mNameInternal + ": the solid arm must answer for every material");
+            assertEquals(GT6CrucibleDatagen.SOLID_CONTENT, GT6CrucibleDatagen.contentFace(tMaterial, false),
+                    tMaterial.mNameInternal + ": the solid arm is the FIXED gray constant — material-independent");
             assertDoesNotThrow(() -> GT6CrucibleDatagen.contentFace(tMaterial, true),
                     tMaterial.mNameInternal + ": the molten arm must answer for every material");
             tCount++;

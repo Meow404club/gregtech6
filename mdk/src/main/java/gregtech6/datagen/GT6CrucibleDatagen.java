@@ -39,7 +39,8 @@ import gregtech6.registry.GT6Molds;
  *     upstream 6-pass setBlockBounds2 render verbatim, MultiTileEntitySmeltery.java:596-606:
  *     four 2px walls full height + the 2px floor, the {@link #bodyTexture} faces), levels
  *     1..8 the bowl shell + the content box whose top rides the upstream h/292.571428
- *     height formula (:603, the top-face-only gate :616, the molten art).</li>
+ *     height formula (:603, the top-face-only gate :616, the phase art — molten the
+ *     per-set molten strip, cooled the fixed upstream gray {@link #SOLID_CONTENT}).</li>
  * <li><b>item models</b>: the BlockItems parent the bowl-shell block model.</li>
  * <li><b>lang</b>: the four composed display keys (the GT6Crucibles/GT6Molds getName
  *     carriers).</li>
@@ -187,23 +188,46 @@ public final class GT6CrucibleDatagen {
 	}
 
 	/**
-	 * The content render face — the seam one level up (task crucible-bowl-model, the
-	 * 2026-09-30 colour ruling): the sprite + the opaque ARGB tint a crucible content face
-	 * renders with. The SOLID arm is the upstream crucible solid face verbatim (the
-	 * {@link #bodyTexture} blockSolid icon + the {@link #bodyTinted} mRGBaSolid tint — the
-	 * exact faces the bowl shell renders); the MOLTEN arm is the molten face (the
-	 * {@link #moltenTexture} per-set grayscale + the material mRGBaLiquid — the upstream
-	 * {@code getTextureMolten} shape verbatim, OreDictMaterial.java:990-999; task
-	 * r11b-crucible-molten-art retired the flat smeltery_content placeholder). The
-	 * jade-tankbar and the large-crucible BER cards consume THIS dispatch instead of
-	 * re-deriving sprite/colour math; {@code -1} tint = the sprite renders as-is.
+	 * The content render face — the seam one level up (task crucible-bowl-model): the sprite
+	 * + the opaque ARGB tint a crucible content face renders with. The MOLTEN arm is the
+	 * molten face (the {@link #moltenTexture} per-set grayscale + the material mRGBaLiquid
+	 * — the upstream {@code getTextureMolten} shape verbatim, OreDictMaterial.java:990-999;
+	 * task r11b-crucible-molten-art retired the flat smeltery_content placeholder). The
+	 * SOLID arm is the upstream COOLED face verbatim (2026-10-10 user ruling, task
+	 * crucible-solid-gray-fidelity, reversing the crucible-render-followup "solid = the
+	 * material's own colour" declaration): upstream MultiTileEntitySmeltery.java:587-591
+	 * answers {@code BlockTextureDefault.get(MT.NULL, OP.blockRaw, CA_GRAY_64, F)} whenever
+	 * the displayed fluid is invalid — a FIXED gray-black, material-independent (CS.java:362
+	 * {@code CA_GRAY_64 = {64,64,64,255}} = 0xFF404040). MT.NULL rides the setless default
+	 * texture set (OreDictMaterial.java:252 {@code SET_NONE[0].mList}), whose upstream
+	 * {@code NONE/blockRaw.png} is byte-identical to the ROUGH set's (both md5 d71d8c0e) —
+	 * the in-pack {@code gt6:block/materialicons/rough/block_raw} borrow (task
+	 * prefixblock-render, sha256-verified at borrow time) IS that exact atlas art, so the
+	 * port draws the same art × the same gray with zero new pixels (ledger: assets/README.md,
+	 * the crucible solid-content note beside the r11b molten section). The jade-tankbar and
+	 * the large-crucible BER cards consume THIS dispatch instead of re-deriving sprite/colour
+	 * math; {@code -1} tint = the sprite renders as-is.
 	 */
 	public record ContentFace(String texture, int tintARGB) {}
 
-	/** The dispatch itself — loud on an unmapped material ({@link #bodyTexture} rule). */
+	/**
+	 * The upstream cooled-content face — the SOLID arm's answer for EVERY material (the
+	 * upstream gray-NULL :590, see {@link #contentFace}). A constant: the material arm of
+	 * {@link #contentFace} ignores {@code aMaterial} when not molten, and the consumers that
+	 * only need the cooled face (the tint listener's solid arm, the BER's solid arm) read
+	 * this directly, no material resolution required.
+	 */
+	public static final ContentFace SOLID_CONTENT =
+			new ContentFace("gt6:block/materialicons/rough/block_raw", 0xFF404040);
+
+	/**
+	 * The dispatch itself — total (the loud-table era is over: the solid arm is the
+	 * {@link #SOLID_CONTENT} constant, the molten arm walks the {@link #moltenTexture}
+	 * TOTAL set dispatch). {@code aMaterial} is consumed by the MOLTEN arm only.
+	 */
 	public static ContentFace contentFace(gregapi.oredict.OreDictMaterial aMaterial, boolean aMolten) {
 		if (aMolten) return new ContentFace(moltenTexture(aMaterial), argb(aMaterial.mRGBaLiquid));
-		return new ContentFace(bodyTexture(aMaterial), bodyTinted(aMaterial) ? argb(aMaterial.mRGBaSolid) : -1);
+		return SOLID_CONTENT;
 	}
 
 	/** The 0xFFRRGGBB pack (the {@code GT6MoldTintListener.materialTintARGB} form). */
@@ -311,10 +335,12 @@ public final class GT6CrucibleDatagen {
 		 * task debt-material-tint); levels 1..8 = the shell + the content box, its TOP face
 		 * the phase art at the upstream height (:603 {@code 0.125F + h/292.571428F} block
 		 * units, the bucket L carrying the census floor {@code h = L*255/8}; the :616
-		 * top-face-only gate): molten=true the molten art, molten=false the body art (task
-		 * crucible-render-followup — the cooled-charge face, the upstream art choice by the
-		 * mDisplayedFluid validity :587-591, the gray-NULL placeholder retired per the user
-		 * ruling "solid = the material's own colour").
+		 * top-face-only gate): molten=true the per-set molten art (tint live by the displayed
+		 * material), molten=false the upstream COOLED face verbatim (task
+		 * crucible-solid-gray-fidelity — {@link #SOLID_CONTENT}, the fixed gray-black
+		 * MT.NULL×blockRaw×CA_GRAY_64 of MultiTileEntitySmeltery.java:587-591, identical
+		 * across every row; the crucible-render-followup "material solid colour" reading is
+		 * reversed).
 		 */
 		private void addCrucible(GT6Crucibles.SmelteryRow aRow, Block aBlock) {
 			String tEmpty = "block/" + aRow.path() + "_empty";
@@ -346,15 +372,18 @@ public final class GT6CrucibleDatagen {
 						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
 				tElement.face(Direction.UP).texture("#content").tintindex(1).end();
 				tFilledModels[tLevel] = tElement.end();
-				// the cooled twin (task crucible-render-followup): the same geometry, the
-				// content seat on the BODY art — recoloured live by the synced lightest
-				// content's mRGBaSolid (the tint listener's solid arm)
+				// the cooled twin (task crucible-solid-gray-fidelity): the same geometry, the
+				// content seat on the fixed upstream gray-black (SOLID_CONTENT — the
+				// MT.NULL×blockRaw×CA_GRAY_64 cooled face of MultiTileEntitySmeltery.java:587-591,
+				// texture UNIFORM across rows: the tint listener's solid arm answers the same
+				// constant, material-independent)
 				BlockModelBuilder tSolidBuilder = models().getBuilder("block/" + aRow.path() + "_filled_" + tLevel + "_solid")
-						.parent(tEmptyModel);
+						.parent(tEmptyModel)
+						.texture("content", loc(SOLID_CONTENT.texture()));
 				addShellElements(tSolidBuilder, tTinted);
 				var tSolidElement = tSolidBuilder.element()
 						.from(0.0F, 2.0F, 0.0F).to(16.0F, tTop, 16.0F);
-				tSolidElement.face(Direction.UP).texture("#all").tintindex(1).end();
+				tSolidElement.face(Direction.UP).texture("#content").tintindex(1).end();
 				tSolidModels[tLevel] = tSolidElement.end();
 			}
 			getVariantBuilder(aBlock).forAllStates(aState -> {

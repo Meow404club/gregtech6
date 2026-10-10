@@ -52,11 +52,13 @@ import gregtech6.tileentity.tools.TileEntitySmeltery;
  * overlay = Jade 官方流体元素（{@code JadeFluidObject.of} → {@code IElementHelper.fluid} →
  * {@code progressStyle().overlay}，forge FluidView.java:47-48 + FluidStorageProvider.java:68-69 /
  * neo :124 双腿实证），桥材质走 {@link FluidBridge#moltenFluidForMaterial}；②其余态 overlay =
- * 自实现 {@link GT6ContentFaceElement} 渲染 ContentFace 缝同源贴图（固体=bodyTexture+mRGBaSolid
- * / 熔融=moltenTexture 每材质组 molten 灰度+mRGBaLiquid（task r11b-crucible-molten-art，
- * 平板占位退役）——{@code GT6CrucibleDatagen.contentFace} 只读消费，与碗内
- * 观感一致；固体臂经 bodyTexture 全铺 SET 分派（task crucible-solid-face-matrix）对全材质
- * 恒可用）；③量纲词 'U'/'份' 进 lang（{@link #LANG_ENTRY} 新键 +
+ * 自实现 {@link GT6ContentFaceElement} 渲染 ContentFace 缝同源贴图（熔融=moltenTexture 每材质组
+ * molten 灰度+mRGBaLiquid（task r11b-crucible-molten-art，平板占位退役）；固体=固定灰黑
+ * {@code GT6CrucibleDatagen.SOLID_CONTENT}（rough/block_raw×0xFF404040，上游
+ * MultiTileEntitySmeltery.java:590 的 MT.NULL×blockRaw×CA_GRAY_64 逐字——task
+ * crucible-solid-gray-fidelity 恢复上游形，同卡勘误 crucible-render-followup 的
+ * "固体=材质固体面" 声明偏差）——{@code GT6CrucibleDatagen.contentFace} 只读消费，与碗内
+ * 观感一致，固体臂为常量对全材质恒同值）；③量纲词 'U'/'份' 进 lang（{@link #LANG_ENTRY} 新键 +
  * total 键 zh 面 份）；④融毁红字联动——闩落时条文字变红（{@code textColor} =
  * {@link GT6JadeRows#FORMAT_STALLED}），独立红色温度警报行（r8 保留裁定）被用户裁定废除：
  * 行与 gt6.jade.crucible.temperature 键同 lang 四落退役（v3 覆盖 r8 '旧行保留'）。⑤服务端新增
@@ -258,15 +260,15 @@ public final class GT6CrucibleProvider implements IBlockComponentProvider, IServ
 
 	/**
 	 * overlay 载荷（纯函数离线面）：桥熔融流体在 → 官方流体元素载荷（registry id + 桥 144 L/unit
-	 * 惯例量）；否则 ContentFace 缝载荷（texture 全限定名 + 不透明 ARGB tint）。bodyTexture
-	 * 已是全铺 SET 分派（task crucible-solid-face-matrix，上游 :983-990 全材质语义），固体臂
-	 * 恒可用；{@link GT6CrucibleDatagen#contentFace} 的 {@code IllegalStateException} 契约若
-	 * 日后再收窄，此 catch 兜底回落 null = 纯色条，服务器写数据面永不 crash。
+	 * 惯例量）；否则 ContentFace 缝载荷（texture 全限定名 + 不透明 ARGB tint）。熔融臂=全铺
+	 * SET 分派（task crucible-solid-face-matrix），固体臂=固定灰黑常量（task
+	 * crucible-solid-gray-fidelity，上游 :590 逐字）——两臂对全材质恒可用；{@code contentFace}
+	 * 的 {@code IllegalStateException} 契约若日后再收窄，此 catch 兜底回落 null = 纯色条，
+	 * 服务器写数据面永不 crash。
 	 *
-	 * <p>TODO(crucible-render-followup)：贴图源升级缝已在 {@code contentFace} 单点——并行
-	 * 渲染卡搬运的专属 molten/固体资产合入后，此处零改动自动吃新贴图 id（消费面三方同源：
-	 * 碗 tint / 大坩埚 BER / 本 Jade 条）。资产在仓性已由 GT6CrucibleProviderTest 的
-	 * contentFace 资产 census 钉死（条非空白面）。
+	 * <p>贴图源升级缝在 {@code contentFace} 单点（消费面三方同源：碗 tint / 大坩埚 BER /
+	 * 本 Jade 条）——资产变更只动 datagen 一处，本载荷自动跟随。资产在仓性已由
+	 * GT6CrucibleProviderTest 的 contentFace 资产 census 钉死（条非空白面）。
 	 */
 	@Nullable
 	public static CompoundTag overlayTag(OreDictMaterialStack aLightest, boolean aMolten, long aTotal) {

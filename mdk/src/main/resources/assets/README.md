@@ -13559,6 +13559,22 @@ byte-different rough/ art). Pixel-level spot check (acceptance 5): metallic,
 glass and rad decoded RGBA pixel-identical to the upstream files (2026-10-03).
 The census pin: `GT6MoltenBorrowCensusTest` (sha256 over the committed tree).
 
+Crucible COOLED-content face (task crucible-solid-gray-fidelity): NO new file.
+The solid content arm borrows the already-shipped
+`gt6:block/materialicons/rough/block_raw.png` (the task prefixblock-render
+borrow above) rendered × tint `0xFF404040` — the upstream cooled face verbatim
+(`MultiTileEntitySmeltery.java:587-591` `BlockTextureDefault.get(MT.NULL,
+OP.blockRaw, CA_GRAY_64, F)`; `CS.java:362` CA_GRAY_64 = {64,64,64,255};
+`MultiTileEntityCrucible.java:622` the same shape). Choice evidence: MT.NULL
+rides the setless default texture set (`OreDictMaterial.java:252`
+`SET_NONE[0].mList`), and upstream
+`materialicons/NONE/blockRaw.png` md5 `d71d8c0eb32c93d55c5abb0cc1631c11` =
+`materialicons/ROUGH/blockRaw.png` = the in-pack `rough/block_raw.png` (all
+three byte-identical), so the fixed gray tint multiplies the exact upstream
+atlas art. This reverses the crucible-render-followup "solid = the material's
+own colour" declaration (bodyTexture+mRGBaSolid) back to the upstream
+gray-black, material-independent form.
+
 
 
 ## Indicator-flower block textures (task flower-blocks-indicator-family)

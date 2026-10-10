@@ -12,9 +12,11 @@ import snownee.jade.api.ui.Element;
 /**
  * The content-face bar element（task crucible-jade-tankbar 用户三版终裁 v3 ②）：把碗形模型卡
  * ContentFace 缝（{@code GT6CrucibleDatagen.contentFace}，main 3926da237 合入）的
- * 精灵+tint 画成一条贴图填充——固体条取其固体臂（bodyTexture 精灵 + mRGBaSolid tint，
- * 与碗壳同观感），熔融未桥材质取其熔融臂（{@code moltenTexture} 每材质组 molten 灰度 +
- * mRGBaLiquid——task r11b-crucible-molten-art，平板 smeltery_content 占位退役）。塞进
+ * 精灵+tint 画成一条贴图填充——熔融未桥材质取其熔融臂（{@code moltenTexture} 每材质组 molten
+ * 灰度 + mRGBaLiquid——task r11b-crucible-molten-art，平板 smeltery_content 占位退役），
+ * 固体条取其固体臂（task crucible-solid-gray-fidelity 勘误：固定灰黑
+ * {@code SOLID_CONTENT}，rough/block_raw×0xFF404040 = 上游 Smeltery:590 的
+ * MT.NULL×blockRaw×CA_GRAY_64 逐字，与内容材质无关）。塞进
  * {@code progressStyle().overlay(...)} 后由 Jade 官方链路强制 size 成条再渲染
  * （ProgressStyle.render:91-94 双腿实证），渲染面与 Jade 官方流体元素
  * （{@code IElementHelper.fluid}）同一 overlay 位。
