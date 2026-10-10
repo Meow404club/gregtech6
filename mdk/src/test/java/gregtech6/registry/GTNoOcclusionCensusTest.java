@@ -27,6 +27,9 @@
  * review-seat stitch): their open-front frame model rides the FULL-CUBE SHELF_SHAPE, the
  * same mechanism over the shelf family — pinned by {@code GT6StaticShelfNoOcclusionTest}
  * (the crate rows stay innocent: the 8px body shape keeps the occlusion shape non-full).
+ * The anvil family left it too (task anvil-shape-cull-rename): the six-box model renders
+ * over the :397-398 sub-cube collision/selection shape — pinned by
+ * {@code GT6AnvilBlockShapePinTest} (the review-seat stitch).
  *
  * <p>Offline block construction needs the vanilla block registry unfrozen (the
  * GTWireContactDamageTest bracket); the material registry is booted as cheap insurance for

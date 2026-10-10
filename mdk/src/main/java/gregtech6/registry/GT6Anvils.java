@@ -3,14 +3,17 @@ package gregtech6.registry;
 import java.util.List;
 import java.util.function.Supplier;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -133,10 +136,31 @@ public final class GT6Anvils {
 		for (AnvilRow tRow : ROWS) {
 			BLOCKS_BY_PATH.put(tRow.path(), BLOCKS.register(tRow.path(),
 					() -> new GTAnvilBlock(tRow.material(), tRow.durability(), () -> GT6Anvils.ANVIL_BE.get(),
-							BlockBehaviour.Properties.of().strength(1.0F, 6.0F).sound(tRow.sound()))));
+							properties(tRow))));
 			ITEMS_BY_PATH.put(tRow.path(), ITEMS.register(tRow.path(),
 					() -> new BlockItem(GT6Anvils.BLOCKS_BY_PATH.get(tRow.path()).get(), new Item.Properties())));
 		}
+	}
+
+	/**
+	 * The block properties (every row keeps NBT_HARDNESS 1.0 / NBT_RESISTANCE 6.0, the
+	 * Loader :2185-2219 column) — the ONE chain every registration point builds from (the
+	 * GTWires.wireProperties seam form). Task anvil-shape-cull-rename: the family renders
+	 * the six-box model (anvil-shape-models) over the :397-398 sub-cube collision box, so
+	 * the block volume is mostly EMPTY — but the default {@code canOcclude = true} makes
+	 * getOcclusionShape (=getShape, vanilla BlockBehaviour.java:240-242/911) cull the
+	 * neighbor faces against that empty space = the issue #9 wire/hopper X-ray family, so
+	 * the chain rides {@code .noOcclusion()}; {@code isViewBlocking(never)} is the
+	 * fog-only rider (the GT6Hoppers.HopperRow.properties form verbatim).
+	 */
+	public static BlockBehaviour.Properties properties(AnvilRow aRow) {
+		return BlockBehaviour.Properties.of().strength(1.0F, 6.0F).sound(aRow.sound())
+				.noOcclusion().isViewBlocking(GT6Anvils::never);
+	}
+
+	/** The view-blocking fog rider — the sub-cube anvil never blocks the view (the GTWires::never form). */
+	private static boolean never(BlockState aState, BlockGetter aLevel, BlockPos aPos) {
+		return false;
 	}
 
 	/** The stone anvil handle (the :2185 row). */
