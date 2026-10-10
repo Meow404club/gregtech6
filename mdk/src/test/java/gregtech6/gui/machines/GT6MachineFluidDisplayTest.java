@@ -6,14 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.material.Fluids;
 
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,36 +16,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.fluid.FluidTankGT;
-import gregtech6.gui.GTRenderSlot;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.recipes.GTRecipesOfflineTestBase;
 import gregtech6.tileentity.GTItemStackHandler;
 import gregtech6.tileentity.machines.TileEntityBasicMachine;
 
 /**
- * The fluid-tank display slots offline (task machine-fluid-gui ②, the
- * {@link GTBasicMachineMenu} half — the GT6CokeOvenMenuTest shape):
+ * The fluid-tank display offline (task machine-fluid-gui ②, re-based by task
+ * basic-machines-mui-migration — the user ruling 全部统一 retired the vanilla menu/screen
+ * leg, and with it the offline menu-instance arms that pinned the display-slot list):
  * <ul>
  * <li>the :267-268 display geometry full table ({@link GTBasicMachineMenu#fluidDisplayPos})
  *     — inputs descending from (53,63), outputs ascending from (107,63), both wrapping
  *     upward every 3 — with the Drying shape (RM 流 1,3) landing in[0]=(53,63) and
- *     out0..2=(107/125/143, 63) concrete;</li>
+ *     out0..2=(107/125/143, 63) concrete; the MUI panel consumes the same function for its
+ *     display seats (the seat parity rides GT6BasicMachinesMuiParityTest);</li>
  * <li>the Host extension semantics: the default banks are EMPTY (the multiblock base and
- *     the p8 fakes keep the six-method shape → zero display slots, the cokeoven menu stays
+ *     the p8 fakes keep the six-method shape → zero display seats, the cokeoven panel stays
  *     byte-identical to its p8 landing) and the gui-domain adapter reads the W1a public
- *     final tank arrays LIVE (element identity, not a copy);</li>
- * <li>the full offline menu instance over a DRYING-map machine fixture: the 1+1 content
- *     slots + the 4 display slots (in the :267/:268 order) + the 36 player slots, each
- *     display paired 1:1 with its tank ({@code assertSame} on the FluidDisplaySlot.tank
- *     reference), inert in every direction, and the vanilla broadcastChanges poll contract
-     * ({@code getItem()} reads EMPTY even with the tank full — nothing syncs, the backing
- *     container is never dereferenced).</li>
+ *     final tank arrays LIVE (element identity, not a copy).</li>
  * </ul>
  *
- * <p>Declared offline limits: the {@code gt6:dryer} MenuType registration and the
- * createMenu open path resolve only on a live server (RegistryObjects + FakePlayer) —
- * the RCON chain drives those; here the menu type argument stays null (vanilla
- * AbstractContainerMenu stores it, never calls through it at construction).
+ * <p>The retired arms (the offline menu instance pairing/inertness/quickMove pins) served
+ * {@code new GTBasicMachineMenu(...)} over the dryer — a menu instance NO machine opens
+ * since the vanilla leg retired; the display-seat face they pinned lives on the family
+ * panel now.
  */
 class GT6MachineFluidDisplayTest extends GTRecipesOfflineTestBase {
 
@@ -157,67 +147,4 @@ class GT6MachineFluidDisplayTest extends GTRecipesOfflineTestBase {
 		assertSame(tMachine.mTanksOutput[2], tAdapter.getFluidOutputTanks()[2], "out[2] identity");
 	}
 
-	// ---------------------------------------------------------------------------
-	// the full offline menu instance (the slot-tank pairing + inertness)
-	// ---------------------------------------------------------------------------
-
-	@Test
-	void dryerMenuInstanceCarriesThePairedDisplaySlots() {
-		TileEntityBasicMachine tMachine = dryingMachine();
-		// the createMenu shape (TileEntityBasicMachine.java:1474) minus the live MenuType —
-		// vanilla AbstractContainerMenu stores the type, never calls through it here
-		GTBasicMachineMenu tMenu = new GTBasicMachineMenu(null, 0, new Inventory(null), tMachine);
-
-		// 2 content (1 in + 1 out) + 4 displays (1 in-bank + 3 out-bank) + 36 player slots
-		assertEquals(2, tMenu.contentSlotCount, "the Drying 1+1 content shape");
-		assertEquals(6, tMenu.playerInventoryStart(), "the displays sit AFTER the content boundary, BEFORE the player block");
-		assertEquals(42, tMenu.slots.size(), "2 content + 4 displays + 36 player");
-
-		// the display list: :267 bank first, then :268 — menu indices 2..5
-		var tDisplays = tMenu.fluidDisplaySlots();
-		assertEquals(4, tDisplays.size(), "1 input + 3 output displays (the RM 流 1,3 对位)");
-		for (GTBasicMachineMenu.FluidDisplaySlot tSlot : tDisplays) {
-			assertTrue(tSlot instanceof GTRenderSlot, "every display is a Slot_Render (Slot_Holo(F,F,0))");
-		}
-		// the slot-tank pairing 1:1 — slot i of each bank IS tank i of the Host array
-		assertSame(tMachine.mTanksInput[0], tDisplays.get(0).tank, "display 0 pairs with the input tank");
-		assertSame(tMachine.mTanksOutput[0], tDisplays.get(1).tank, "display 1 pairs with output tank 0");
-		assertSame(tMachine.mTanksOutput[1], tDisplays.get(2).tank, "display 2 pairs with output tank 1");
-		assertSame(tMachine.mTanksOutput[2], tDisplays.get(3).tank, "display 3 pairs with output tank 2");
-
-		// the menu geometry: content 0=(53,25), out 1=(107,25), then the :267/:268 banks
-		assertPos(tMenu.slots.get(0), 53, 25, "content input");
-		assertPos(tMenu.slots.get(1), 107, 25, "content output (the 1-output arm)");
-		assertPos(tDisplays.get(0), 53, 63, "display in[0] (:267)");
-		assertPos(tDisplays.get(1), 107, 63, "display out[0] (:268)");
-		assertPos(tDisplays.get(2), 125, 63, "display out[1] (:268)");
-		assertPos(tDisplays.get(3), 143, 63, "display out[2] (:268)");
-	}
-
-	/** The displays are inert and the vanilla sync poll reads them as empty even with fluid in the tanks. */
-	@Test
-	void displaySlotsAreInertAndSyncNothing() {
-		TileEntityBasicMachine tMachine = dryingMachine();
-		tMachine.mTanksInput[0].fill(new FluidStack(Fluids.WATER, 1000), IFluidHandler.FluidAction.EXECUTE);
-		GTBasicMachineMenu tMenu = new GTBasicMachineMenu(null, 0, new Inventory(null), tMachine);
-
-		GTBasicMachineMenu.FluidDisplaySlot tDisplay = tMenu.fluidDisplaySlots().get(0);
-		assertSame(tMachine.mTanksInput[0], tDisplay.tank, "the pairing holds");
-		assertTrue(tDisplay.tank.has(), "precondition: the paired tank holds the water");
-		assertTrue(tDisplay.getItem().isEmpty(), "getItem reads EMPTY regardless of the tank content — "
-				+ "the broadcastChanges poll (AbstractContainerMenu.java:168-170) syncs nothing and never dereferences the backing container");
-		assertFalse(tDisplay.hasItem(), "Slot_Render.hasItem is hardcoded false — the screen draws the frame only");
-		assertFalse(tDisplay.mayPlace(new ItemStack(net.minecraft.world.item.Items.BUCKET)), "nothing goes in");
-		assertFalse(tDisplay.mayPickup(null), "nothing comes out (the player argument is never dereferenced)");
-		assertTrue(tDisplay.remove(1).isEmpty(), "remove stays EMPTY (mCanStackItem F)");
-		// shift-click through a display slot moves nothing (hasItem()=false short-circuits quickMove;
-		// the Player argument is unused by quickMoveBetween, null is safe offline)
-		assertTrue(tMenu.quickMoveStack(null, 2).isEmpty(), "a display slot is never a quickMove source");
-		assertTrue(tMenu.quickMoveStack(null, 5).isEmpty(), "the last output display neither");
-	}
-
-	private static void assertPos(net.minecraft.world.inventory.Slot aSlot, int aX, int aY, String aMessage) {
-		String tFull = aMessage + " — got (" + aSlot.x + "," + aSlot.y + ")";
-		assertTrue(aSlot.x == aX && aSlot.y == aY, tFull);
-	}
 }

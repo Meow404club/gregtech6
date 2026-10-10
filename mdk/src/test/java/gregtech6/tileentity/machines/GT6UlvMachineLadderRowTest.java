@@ -129,7 +129,7 @@ public class GT6UlvMachineLadderRowTest extends TileEntityBasicMachineOfflineTes
 		assertNull(GTMachines.SIFTER_ULV_ROWS.get(0).menu(), "zero new gt6:* MenuType");
 		assertNull(GTMachines.WIREMILL_ULV_ROWS.get(0).menu(), "zero new gt6:* MenuType");
 		assertNull(GTMachines.ROLLINGMILL_ROWS.get(0).menu(), "zero new gt6:* MenuType");
-		assertNotNull(GTMachines.CANNER_ULV_ROWS.get(0).menu(), "the canner_ulv row shares the family gt6:canner menu");
+		assertNull(GTMachines.CANNER_ULV_ROWS.get(0).menu(), "zero new gt6:* MenuType (task basic-machines-mui-migration: the canner_ulv row is menu-less like the family)");
 	}
 
 	/** The applyRow seam carries the gate onto the BE (the mask-carrier form). */

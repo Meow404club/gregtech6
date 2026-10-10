@@ -68,7 +68,7 @@ class GT6RecipeMapsTest extends GTRecipesOfflineTestBase {
 		assertEquals(0, GT6RecipeMaps.COKE_OVEN.mProgressBarDirection);
 		assertEquals(1, GT6RecipeMaps.COKE_OVEN.mProgressBarAmount);
 		// lowercase since cokeoven-gui-menu ⑥ — the 1.20.1 ResourceLocation charset makes
-		// the upstream-style "CokeOven" spelling unparseable for GTBasicMachineScreen.backgroundOf
+		// the upstream-style "CokeOven" spelling unparseable for the retired vanilla screen's backgroundOf
 	}
 
 	/** The FM.java:45 Engine Fuels map constants (task engine-fuel-fluids). */

@@ -67,9 +67,8 @@ public class GTDryerFamilyRowTest extends TileEntityBasicMachineOfflineTestBase 
 			assertEquals("dryer", tRow.texture(), "NBT_TEXTURE dryer on every row (the ladder shares the fronts)");
 			assertSame(GT6RecipeMaps.DRYING, tRow.recipes().get(), "NBT_RECIPEMAP RM.Drying through the supplier");
 			assertTrue(tRow.cheapOverclocking(), "NBT_CHEAP_OVERCLOCKING T on every row (:773 runs unconditionally)");
-			assertNotNull(tRow.menu(), "the gt6:dryer menu supplier is bound on every row (task machine-fluid-gui ① — "
-					+ "the dryer-family pool promise redeemed; the live registration resolves through the RCON gate, "
-					+ "an offline .get() would touch the unbound RegistryObject)");
+			assertNull(tRow.menu(), "the menu-less MUI carrier on every row (task basic-machines-mui-migration — the user ruling 全部统一: "
+					+ "the gt6:dryer supplier retired with the vanilla leg; the open rides tryOpen)");
 		}
 		// the four differing columns, row by row - the composed face replays the old name
 		// column from the family template + the material word (task i18n-compose-rows)

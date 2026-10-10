@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -53,7 +54,7 @@ public class GTCannerFamilyRowTest extends TileEntityBasicMachineOfflineTestBase
 			assertEquals(1, tRow.parallel(), "NO NBT_PARALLEL on the :1379 rows → 1");
 			assertFalse(tRow.parallelDuration(), "NO NBT_PARALLEL_DURATION on the :1379 rows → F");
 			assertTrue(tRow.cheapOverclocking(), "the port :773 loop runs unconditionally (no config source)");
-			assertNotNull(tRow.menu(), "the gt6:canner menu supplier is bound on every row (the offline .get() would touch the unbound RegistryObject)");
+			assertNull(tRow.menu(), "the menu-less MUI carrier on every row (task basic-machines-mui-migration — the gt6:canner supplier retired with the vanilla leg)");
 			// the VN voltage name column (CS.java:154) — NOT a material word
 			assertEquals("gt6.row.canner.display", tRow.displayKey(), "the family template key");
 			assertEquals(tVoltageWords[i], tRow.matDisplay(), "the voltage word, VN[" + tTier + "]");

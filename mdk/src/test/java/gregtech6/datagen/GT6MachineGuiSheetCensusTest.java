@@ -7,8 +7,9 @@
  * assets/README.md): "全部改成拼接，把完整图全部清了" — this SUPERSEDES the prior
  * zero-deletable census (task machine-gui-sheet-purge, whose 78-name classification
  * table is the input this ruling consumed): the six live GUIs compose from the
- * gui/parts crops (GTBasicMachineScreen renderBg + the MUI theme base — the oven rides
- * the family MUI panel since oven-gui-arrow-align),
+ * gui/parts crops (the MUI theme base — the whole machine family rides the family
+ * ModularUI panel since oven-gui-arrow-align and basic-machines-mui-migration: the
+ * vanilla screen/menu leg is retired whole),
  * the {@code RecipeMap.mGUIPath} column and its 67 data-grounded sheets are retired
  * wholesale, and the on-disk set shrinks 78 → 3:</p>
  * <ul>

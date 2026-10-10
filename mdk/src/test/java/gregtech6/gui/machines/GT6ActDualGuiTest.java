@@ -428,7 +428,7 @@ class GT6ActDualGuiTest extends GTMultiBlocksOfflineTestBase {
 		// throws on a second registration) — so only drive it when unregistered.
 		// Either way the lookup contract below must hold.
 		if (!brachy.modularui.factory.GuiManager.hasFactory(GTActMenu.Factory.CRAFT.getFactoryName())) {
-			GTBasicMachinesMenus.registerActUIFactories();
+			GTMuiFactories.registerActUIFactories();
 		}
 
 		// the wire identities (the route table opens exactly these two)
