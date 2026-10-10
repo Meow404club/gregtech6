@@ -171,6 +171,24 @@ public class GTItemPipeBlock extends GTEntityBlock implements gregtech6.block.GT
 		return InteractionResult.CONSUME;
 	}
 
+	// ---------------------------------------------------------------------------
+	// render-update event forward (task pipe-output-arrows — the GTFluidPipeBlock
+	// .triggerEvent body verbatim, GTRenderUpdates.java:31-46 consumer template: the
+	// BE's scheduleRenderUpdate pair delivers server → blockEvent → here → client pair)
+	// ---------------------------------------------------------------------------
+
+	@Override
+	public boolean triggerEvent(BlockState aState, Level aLevel, BlockPos aPos, int aId, int aParam) {
+		if (aId == gregtech6.client.render.GTRenderUpdates.RENDER_UPDATE_EVENT_ID && aLevel.isClientSide) {
+			BlockEntity tTile = aLevel.getBlockEntity(aPos);
+			if (tTile != null) {
+				gregtech6.client.render.GTRenderUpdates.scheduleRenderUpdate(tTile);
+				return true;
+			}
+		}
+		return super.triggerEvent(aState, aLevel, aPos, aId, aParam);
+	}
+
 	@Override
 	public void stepOn(Level aLevel, BlockPos aPos, BlockState aState, Entity aEntity) {
 		super.stepOn(aLevel, aPos, aState, aEntity);

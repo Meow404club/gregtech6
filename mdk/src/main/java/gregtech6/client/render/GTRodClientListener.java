@@ -110,18 +110,21 @@ public final class GTRodClientListener {
 	}
 
 	/**
-	 * The flow-chain key test (task pipe-flow-arrow-render-fix): TRUE exactly on the
-	 * FLUID-pipe per-state bake keys {@code gt6:<path>#connections=0..63} — the only keys
-	 * whose BE can carry the FLOW/FOAM/RENDER snapshots (GTFluidPipeBlockEntity
-	 * .getModelData). Every other rod key — the item keys, the item pipes, the logistics
-	 * wire, the axles — renders the raw rod.
+	 * The flow-chain key test (task pipe-flow-arrow-render-fix; widened by
+	 * pipe-output-arrows): TRUE exactly on the per-state bake keys
+	 * {@code gt6:<path>#connections=0..63} of the FLUID and ITEM pipe rows — the only keys
+	 * whose BE can carry the FLOW/RENDER snapshots (both {@code getModelData} overrides
+	 * build the arrows onto {@link GTModelProperties#FLOW_SNAPSHOT}; the item pipe derives
+	 * its mask from the four-state monkeywrench layer, {@code GTItemPipeBlockEntity
+	 * .outputArrowMask}). Every other rod key — the item keys, the logistics wire, the
+	 * axles — renders the raw rod.
 	 */
 	static boolean isFlowChainKey(String aBakedKey) {
 		int tHash = aBakedKey.indexOf('#');
 		if (tHash < 0) return false;
 		if (!aBakedKey.startsWith("connections=", tHash + 1)) return false;
-		return GTFluidPipes.BLOCKS_BY_PATH.containsKey(
-				aBakedKey.substring(GTRenderModelListener.MOD_ID.length() + 1, tHash));
+		String tPath = aBakedKey.substring(GTRenderModelListener.MOD_ID.length() + 1, tHash);
+		return GTFluidPipes.BLOCKS_BY_PATH.containsKey(tPath) || GTItemPipes.BLOCKS_BY_PATH.containsKey(tPath);
 	}
 
 	/**
@@ -132,6 +135,14 @@ public final class GTRodClientListener {
 	 * dead GTPipeFlowClientListener registration is gone): the old form had
 	 * GTRenderModelListener wrap the keys and this replacement overwrite the wrapper
 	 * last-wins, burying arrows AND foam AND the cover snapshot under plain rod geometry.
+	 *
+	 * <p>Task pipe-output-arrows — the item-pipe per-state keys join the same chain (the
+	 * arrows are the SAME {@code FLOW_SNAPSHOT}/{@code GTFluidPipeFlowModel} system, not a
+	 * second one: an extra IO_MASK arm inside GTRodBakedModel.getDynamicQuads would
+	 * double-render every fluid arrow — the rod body is the chain's innermost layer, the
+	 * arrows live in the middle Flow layer). On an item key the foam layer is inert (the
+	 * item BE carries no FOAM_SNAPSHOT producer) and the arrows render off the item BE's
+	 * derived mask.
 	 */
 	static net.minecraft.client.resources.model.BakedModel replacementFor(String aBakedKey, GTRodBakedModel aRod) {
 		return isFlowChainKey(aBakedKey) ? GTFluidPipeFoamModel.over(aRod) : aRod;
