@@ -103,6 +103,38 @@ public class GTWireQuadStructureTest {
                 "the DOWN arm box must equal the :125 SIDE_Y_NEG transcription");
     }
 
+    /**
+     * Task wire-armbox-typo: all six arm boxes pinned whole, each the coordinate-by-coordinate
+     * transcription of its upstream case line (:124-129, tLength = 0). The former box pins
+     * (singleBitMaskProducesTheUpstreamArmBox) covered only WEST and DOWN, and the cap-boundary
+     * check above only sees the outer plane — so the NORTH :126 inner-plane typo (z-max written
+     * 1 - aHalf instead of aHalf: the arm box reached 3/4 into the block, its base quads coplanar
+     * with the core's, N-S flicker) survived both. planShapes :341 is the only production caller
+     * of armBox, so pinning armBox here pins the plan path too.
+     */
+    @Test
+    public void everyArmBoxIsTheUpstream124to129Transcription() {
+        float tD = 6, tHalf = (1.0F - tD / 16F) / 2F;
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {0, tHalf, tHalf, tHalf, 1 - tHalf, 1 - tHalf}, GTWireBakedModel.armBox(Direction.WEST, tHalf), 1e-9,
+                "the WEST arm box must equal the :124 SIDE_X_NEG transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, 0, tHalf, 1 - tHalf, tHalf, 1 - tHalf}, GTWireBakedModel.armBox(Direction.DOWN, tHalf), 1e-9,
+                "the DOWN arm box must equal the :125 SIDE_Y_NEG transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, tHalf, 0, 1 - tHalf, 1 - tHalf, tHalf}, GTWireBakedModel.armBox(Direction.NORTH, tHalf), 1e-9,
+                "the NORTH arm box must equal the :126 SIDE_Z_NEG transcription (z-max = aHalf, the typo pin)");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {1 - tHalf, tHalf, tHalf, 1, 1 - tHalf, 1 - tHalf}, GTWireBakedModel.armBox(Direction.EAST, tHalf), 1e-9,
+                "the EAST arm box must equal the :127 SIDE_X_POS transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, 1 - tHalf, tHalf, 1 - tHalf, 1, 1 - tHalf}, GTWireBakedModel.armBox(Direction.UP, tHalf), 1e-9,
+                "the UP arm box must equal the :128 SIDE_Y_POS transcription");
+        org.junit.jupiter.api.Assertions.assertArrayEquals(
+                new double[] {tHalf, tHalf, 1 - tHalf, 1 - tHalf, 1 - tHalf, 1}, GTWireBakedModel.armBox(Direction.SOUTH, tHalf), 1e-9,
+                "the SOUTH arm box must equal the :129 SIDE_Z_POS transcription");
+    }
+
     @Test
     public void cableMaskZeroOverlaysTheTierOnTheCore() {
         // cableGt01: diameter 4px = 0.25 → TINY (< 0.37, upstream :238)
