@@ -28,9 +28,11 @@ import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 /**
  * Basic-machine menu — the data-driven generalization of the oven menu (the retired
  * GTOvenMenu, task oven-gui-arrow-align) onto the RecipeMap slot shape of upstream gregapi/gui/ContainerCommonBasicMachine.java addSlots
- * (:45-271): getGUIServer (MultiTileEntityBasicMachine.java:1008) becomes this constructor,
- * the client half (getGUIClient2 :1007 / ContainerClientBasicMachine) is replaced by the
- * statically registered {@link GTBasicMachineScreen}.
+ * (:45-271): getGUIServer (MultiTileEntityBasicMachine.java:1008) became this constructor,
+ * and the client half (getGUIClient2 :1007 / ContainerClientBasicMachine) was first the
+ * registered vanilla screen and is now the family ModularUI panel (task
+ * basic-machines-mui-migration — the whole vanilla leg retired; this class survives as the
+ * pure-function carrier: the Host face, progressValue, the geometry statics and hostOf).
  *
  * <p>Slot geometry is derived from the RecipeMap constants (the upstream switch :51-270
  * shape): the input slots — the mInputItemsCount cases :55/:57-60 (count 1 = (53,25),
@@ -316,16 +318,18 @@ public class GTBasicMachineMenu extends GTGuiMenu {
 
 	/**
 	 * IForgeMenuType factory shape — resolves the BE from the BlockPos payload (oven menu
-	 * precedent, NetworkHooks.openScreen :176). Each registered MenuType binds its own factory
-	 * closing over the type (GTBasicMachinesMenus), so one menu class serves the machine ids.
+	 * precedent, NetworkHooks.openScreen :176). The retired machine MenuType register bound
+	 * its factories here; since task basic-machines-mui-migration no gt6:* MenuType is left
+	 * to call it — the statics below are the pure-function face the MUI leg and the command
+	 * probes share.
 	 */
 	public static GTBasicMachineMenu network(MenuType<GTBasicMachineMenu> aMenuType, int aContainerId, Inventory aPlayerInventory, @Nullable FriendlyByteBuf aExtraData) {
 		return new GTBasicMachineMenu(aMenuType, aContainerId, aPlayerInventory, resolveTileEntity(aPlayerInventory, aExtraData));
 	}
 
 	/**
-	 * The multiblock-machine factory path (task cokeoven-gui-menu ①) — the cokeoven
-	 * MenuType closure (GTBasicMachinesMenus) calls this: same BlockPos payload contract,
+	 * The multiblock-machine factory path (task cokeoven-gui-menu ①) — the retired
+	 * cokeoven MenuType closure called this: same BlockPos payload contract,
 	 * the resolve hard-checks {@link TileEntityBase10MultiBlockMachine} instead.
 	 */
 	public static GTBasicMachineMenu networkMultiBlock(MenuType<GTBasicMachineMenu> aMenuType, int aContainerId, Inventory aPlayerInventory, @Nullable FriendlyByteBuf aExtraData) {

@@ -61,7 +61,7 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
  * (OpenGuiPacket.java:36/:66 resolve the name on the client), so {@link Factory#NORMAL}
  * and {@link Factory#SCOOP} carry the variant without touching the pos-only PosGuiData
  * wire format and without any MenuType (the P26 no-new-MenuType ruling; the factories
- * register through the GTBasicMachinesMenus construct seam). The normal GUI also opens
+ * register through the GTMuiFactories construct seam). The normal GUI also opens
  * through the plain {@link GT6MuiMachine#tryOpen} chain (the BE's buildUI delegates here
  * with {@code scoop=false}).
  *

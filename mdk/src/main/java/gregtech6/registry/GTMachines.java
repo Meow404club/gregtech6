@@ -28,7 +28,6 @@ import gregapi.tileentity.energy.ITileEntityEnergy;
 	import gregtech6.block.GTOvenBlock;
 import gregtech6.block.energy.GT6DynamoBlock;
 import gregtech6.gui.machines.GTBasicMachineMenu;
-import gregtech6.gui.machines.GTBasicMachinesMenus;
 import gregtech6.recipes.GT6RecipeMaps;
 import gregtech6.tooltip.GT6MachineRows;
 import gregtech6.recipes.RecipeMap;
