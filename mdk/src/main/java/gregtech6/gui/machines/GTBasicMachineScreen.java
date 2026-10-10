@@ -11,23 +11,27 @@ import gregtech6.gui.GTGuiScreen;
  * Basic-machine screen — the client half replacing upstream getGUIClient2/
  * ContainerClientBasicMachine (MultiTileEntityBasicMachine.java:1007), statically mounted
  * via MenuScreens.register (GTClientMachineListener). Panel = the standard 176x166 machine
- * GUI; the background texture is the mRecipes.mGUIPath semantics of upstream
- * mGUITexture = mRecipes.mGUIPath (:114) — the W1 RecipeMap GUI strings
- * (gt6:textures/gui/machines/shredder|crusher|lathe + the RecipeMap-appended .png,
- * GT6RecipeMaps.java:97/:105/:113) parsed into a ResourceLocation per machine, so one screen
- * class serves the three backgrounds the gui-family card landed.
+ * GUI composed from the composable GUI part crops (task machine-gui-composed-purge, the
+ * user ruling "全部改成拼接，把完整图全部清了" — the per-machine mGUIPath sheets are
+ * retired): the {@link GT6GuiParts#PANEL_BASE} theme panel (machine-area blank, the printed
+ * player band) under the slot frames ({@link GT6GuiParts#SLOT_FRAME} at each bound slot's
+ * (x-1,y-1)), the progress-arrow cell print ({@link GT6GuiParts#ARROW_OUTLINE} at (78,24))
+ * and the decorative gear print ({@link GT6GuiParts#SLOT_SPECIAL} at (77,60)) — the exact
+ * furniture every machine sheet baked, pixel-aligned to the same coordinates, one screen
+ * class serving the cokeoven/dryer family (GTClientMachineListener) off the shared parts.
  *
  * <p>Progress (gui-render-fixes ①): the three-state ContainerData value drives the upstream
- * RecipeMap progress-arrow overlay — the white arrow baked at UV (176,0) 20x18 on the same
- * 256x256 canvas as the panel (every machine GUI texture ships it next to the 176x166 panel,
- * cokeoven.png/shredder.png/... pixel-verified), width-clipped by the scaled progress. Upstream
- * draw: ContainerClientBasicMachine.java:54-65, case 0 = drawTexturedModalRect(x+78, y+24,
- * 176, 0, tProgress, 18) over the arrow outline the panel bakes at (78,24); the 0..20 step
- * ladder is UT.Code.scale (UT.java:1534-1542) at tSize=20, aMin=0, aMax=Short.MAX_VALUE —
- * 0 at &le;0, 20 at &ge;32767, else 1 + value*19/32767. The port pins the case-0 arm because
- * both maps this screen serves carry direction 0 / amount 1 (COKE_OVEN GT6RecipeMaps.java:348,
- * DRYING :427; GT6RecipeMapsTest:58/:166) — the SIFTING direction-2 map goes through the MUI
- * panel (GTClientMachineListener registers only cokeoven + dryer here).
+ * RecipeMap progress-arrow overlay — the composed arrow pair rides the same parts the MUI
+ * panel uses (GTBasicMachineMUI's {@code emptyTexture}/{@code filledTexture} pair): the
+ * {@link GT6GuiParts#ARROW_OUTLINE} cell (always drawn, the skins' print at (78,24)) under
+ * the {@link GT6GuiParts#ARROW_FORWARD} fill blitted left-to-right, width-clipped by the
+ * scaled progress. Upstream draw: ContainerClientBasicMachine.java:54-65, case 0 =
+ * drawTexturedModalRect(x+78, y+24, 176, 0, tProgress, 18) over the arrow outline the panel
+ * baked at (78,24); the 0..20 step ladder is UT.Code.scale (UT.java:1534-1542) at tSize=20,
+ * aMin=0, aMax=Short.MAX_VALUE — 0 at &le;0, 20 at &ge;32767, else 1 + value*19/32767.
+ * The port pins the case-0 arm because the maps this screen serves carry direction 0 /
+ * amount 1 (COKE_OVEN, DRYING; GT6RecipeMapsTest) — the SIFTING direction-2 map goes
+ * through the MUI panel (GTClientMachineListener registers only cokeoven + dryer here).
  *
  * <p>Progress-bar jump (debt-jei-emi-batch4): clicking the arrow rect opens the served
  * RecipeMap's category page in the installed recipe viewer (JEI first, EMI fallback) — the
@@ -35,45 +39,56 @@ import gregtech6.gui.GTGuiScreen;
  * (65,13,36,18) covered the upstream panel's progress arrow and whose hover label
  * "Recipes" (:420) rides again verbatim. Upstream registered the same NEI handler as
  * crafting AND usage (:75-76), so its left/right arms opened the identical page; this port
- * keeps the single destination. The rect tracks the port arrow (the {@code ARROW_*} cell
- * above), not the upstream coordinates — the arrow moved with the modern 176x166 panel.
+ * keeps the single destination. The rect tracks the composed arrow cell (the {@code ARROW_*}
+ * cell below), not the upstream coordinates — the arrow moved with the modern 176x166 panel.
  */
 public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 
 	/**
 	 * The arrow overlay draw cell (upstream ContainerClientBasicMachine.java:57 case 0): the
-	 * panel's arrow outline sits at (78,24), the white overlay is the 20x18 region at UV
-	 * (176,0) of the same texture, blitted left-to-right with the width clipped to the
-	 * progress step ({@link GuiGraphics#blit} 7-arg = drawTexturedModalRect semantics,
-	 * GuiGraphics.java:315-317 implicit 256x256 canvas).
+	 * composed arrow cell sits at (78,24), the {@link GT6GuiParts#ARROW_FORWARD} fill is
+	 * blitted left-to-right with the width clipped to the progress step ({@link
+	 * GuiGraphics#blit} 7-arg = drawTexturedModalRect semantics, GuiGraphics.java:315-317
+	 * implicit 256x256 canvas — the part is its own 20x18 texture, art from UV 0,0).
 	 */
-	private static final int ARROW_X = 78, ARROW_Y = 24, ARROW_U = 176, ARROW_V = 0;
+	private static final int ARROW_X = 78, ARROW_Y = 24;
 	private static final int ARROW_WIDTH = 20, ARROW_HEIGHT = 18;
 
+	/** The arrow fill overlay — the forward-arrow strip, the same geometry as the sheets' UV(176,0) overlay. */
+	private static final ResourceLocation ARROW_FILL = GT6GuiParts.ARROW_FORWARD.texture();
+
+	/** The empty arrow cell print — the machine skins' (78,24) furniture, always drawn under the fill. */
+	private static final ResourceLocation ARROW_OUTLINE = GT6GuiParts.ARROW_OUTLINE.texture();
+
+	/** The decorative gear print — the 22x22 special-slot cell every machine sheet carried at (77,60). */
+	private static final ResourceLocation GEAR_PRINT = GT6GuiParts.SLOT_SPECIAL.texture();
+
+	/** The slot frame cell — the standard 18x18 white-stroke frame, painted at (slot.x-1, slot.y-1). */
+	private static final ResourceLocation SLOT_FRAME = GT6GuiParts.SLOT_FRAME.texture();
+
 	public GTBasicMachineScreen(GTBasicMachineMenu menu, Inventory playerInventory, Component title) {
-		super(menu, playerInventory, title, backgroundOf(menu.tileEntity));
+		// the panel base rides the vanilla-leg blit face (GTGuiScreen blits it from UV 0,0
+		// in renderBg) — the per-machine sheet parse (the old backgroundOf) is retired with
+		// the mGUIPath values (machine-gui-composed-purge)
+		super(menu, playerInventory, title, GT6GuiParts.PANEL_BASE.texture());
 		this.imageWidth = 176;
 		this.imageHeight = 166;
 	}
 
-	/**
-	 * Upstream mGUITexture = mRecipes.mGUIPath (:114) as a ResourceLocation — the map
-	 * constants are full "namespace:path.png" strings (RecipeMap.java:84 appends .png).
-	 * Host-typed since cokeoven-gui-menu ①: single-block and multiblock machines
-	 * alike carry the path through {@link GTBasicMachineMenu.Host#getGuiTexture()}.
-	 */
-	public static ResourceLocation backgroundOf(GTBasicMachineMenu.Host aMachine) {
-		String tPath = aMachine.getGuiTexture();
-		int tColon = tPath.indexOf(':');
-		if (tColon < 0) throw new IllegalArgumentException("RecipeMap mGUIPath is not a namespaced path: " + tPath);
-		return ResourceLocation.fromNamespaceAndPath(tPath.substring(0, tColon), tPath.substring(tColon + 1));
-	}
-
 	@Override
 	protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		super.renderBg(guiGraphics, partialTick, mouseX, mouseY); // GTGuiScreen blits the texture from UV 0,0
+		super.renderBg(guiGraphics, partialTick, mouseX, mouseY); // GTGuiScreen blits the panel base from UV 0,0
 		int x = (this.width - this.imageWidth) / 2;
 		int y = (this.height - this.imageHeight) / 2;
+		// the slot frames — one 18x18 cell per bound slot before the player block (content
+		// AND fluid display seats; the player band is printed on the panel base)
+		for (int i = 0; i < this.menu.playerInventoryStart(); i++) {
+			net.minecraft.world.inventory.Slot tSlot = this.menu.slots.get(i);
+			guiGraphics.blit(SLOT_FRAME, x + tSlot.x - 1, y + tSlot.y - 1, 0, 0, 18, 18);
+		}
+		// the arrow cell + the gear print — the sheets' composed furniture, same coordinates
+		guiGraphics.blit(ARROW_OUTLINE, x + ARROW_X, y + ARROW_Y, 0, 0, ARROW_WIDTH, ARROW_HEIGHT);
+		guiGraphics.blit(GEAR_PRINT, x + 77, y + 60, 0, 0, 22, 22);
 		int tProgress = this.menu.getProgressBar();
 		if (tProgress >= 0) {
 			// UT.Code.scale (UT.java:1534-1542) at tSize=20: 0 at <=0, 20 at >=PROGRESS_DONE,
@@ -83,7 +98,7 @@ public class GTBasicMachineScreen extends GTGuiScreen<GTBasicMachineMenu> {
 					: tProgress >= GTBasicMachineMenu.PROGRESS_DONE ? ARROW_WIDTH
 					: 1 + (int)((long)tProgress * (ARROW_WIDTH - 1) / GTBasicMachineMenu.PROGRESS_DONE);
 			if (tFill > 0) {
-				guiGraphics.blit(this.backgroundTexture, x + ARROW_X, y + ARROW_Y, ARROW_U, ARROW_V, tFill, ARROW_HEIGHT);
+				guiGraphics.blit(ARROW_FILL, x + ARROW_X, y + ARROW_Y, 0, 0, tFill, ARROW_HEIGHT);
 			}
 		}
 	}

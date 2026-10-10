@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
  *///?}
 
 import brachy.modularui.api.IUIHolder;
-import brachy.modularui.drawable.UITexture;
 import brachy.modularui.factory.AbstractUIFactory;
 import brachy.modularui.factory.GuiManager;
 import brachy.modularui.factory.PosGuiData;
@@ -50,9 +49,11 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
  * (x=44..116, the Advanced :397-419 rows), and the scoop flag picks the interaction flags
  * (the normal pair :396-434 vs the fully-open ROYAL/DRONE scoop pair :450-488/:435-457).
  * The per-seat geometry and flags are the BE's {@link GT6BumbliaryBlockEntity#guiSeat}
- * tables — the factory only renders them. Backgrounds are the borrowed upstream pair
+ * tables — the factory only renders them. Backgrounds upstream were the borrowed pair
  * {@code machines/Bumbliary.png} (:500/:507) and {@code machines/BumbliaryAdvanced.png}
- * (the Advanced :469).
+ * (the Advanced :469) — retired with the mGUIPath values (task machine-gui-composed-purge):
+ * the panel rides the gt6 theme base and the theme slot arm composes the hive grid frames
+ * the sheets carried (they baked no arrow and no gear print — nothing else to compose).
  *
  * <p><b>The two-GUI channel</b>: the framework's own doctrine for several GUIs over one
  * holder is one factory per GUI ("to make sure they are same on client and server",
@@ -103,18 +104,13 @@ public final class GT6BumbliaryMUI {
 		// :68-70 — it runs after the panel builds, when the menu exists; an explicit
 		// bindPlayerInventory here would NPE on the null menu, the issue #3 gate removal)
 
-		ModularPanel<?> tPanel = ModularPanel.defaultPanel(aScoop ? PANEL_NAME_SCOOP : PANEL_NAME, 176, 166)
-				// the (mod, path) overload exists on the forge leg only — the ResourceLocation face is the leg-generic one.
-				// The machine sheets are 256x256 canvases with the art in the top-left 176x166 —
-				// the sub-area is declared explicitly, fullImage would shrink the art into the
-				// corner (task gui-bg-uv-fix).
-				.background(UITexture.builder()
-						.location(ResourceLocation.fromNamespaceAndPath("gt6", aBumbliary.advanced()
-								? "textures/gui/machines/bumbliaryadvanced.png" // the Advanced :469
-								: "textures/gui/machines/bumbliary.png")) // the :500/:507 pair
-						.imageSize(256, 256)
-						.subAreaXYWH(0, 0, 176, 166)
-						.build());
+		ModularPanel<?> tPanel = ModularPanel.defaultPanel(aScoop ? PANEL_NAME_SCOOP : PANEL_NAME, 176, 166);
+		// NO code background: the gt6 theme's 9-slice panel base draws here (fork
+		// Widget.drawBackground :255-264 theme arm, the GTBasicMachineMUI form) and the
+		// slot frames ride the theme slot arm — the retired Bumbliary/BumbliaryAdvanced
+		// sheets carried ONLY the panel + the hive grid frames (no arrow, no gear print),
+		// both of which the theme composes (task machine-gui-composed-purge, the user
+		// ruling "全部改成拼接，把完整图全部清了").
 
 		for (int i = 0; i < aBumbliary.slotCount(); i++) {
 			GT6BumbliaryBlockEntity.GuiSeat tSeat = aBumbliary.guiSeat(aScoop, i);

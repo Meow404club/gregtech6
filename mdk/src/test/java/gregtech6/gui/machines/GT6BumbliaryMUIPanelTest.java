@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -229,23 +230,27 @@ class GT6BumbliaryMUIPanelTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the backgrounds, the player inventory and the factory dispatch
+	// the composed background, the player inventory and the factory dispatch
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * The composed face (machine-gui-composed-purge): no code background on either variant
+	 * — the gt6 theme's 9-slice panel base draws at runtime, so headless {@code
+	 * getBackground()} is null (the GTBasicMachineMUIPanelTest form). The retired
+	 * Bumbliary/BumbliaryAdvanced sheets carried only the panel + the hive grid frames,
+	 * both of which the theme composes (the panel base pin rides GT6PanelBaseThemeCensusTest,
+	 * the slot-frame arm GT6GuiSlotThemeCensusTest); the variant dispatch is unaffected.
+	 */
 	@Test
-	public void theBackgroundsFollowTheVariantAndTheFactoriesCarryTheVariant() {
+	public void thePanelsAreTheComposedThemeBaseAndTheFactoriesCarryTheVariant() {
 		GT6BumbliaryBlockEntity tPrimary = bumbliary(false);
 		GT6BumbliaryBlockEntity tAdvanced = bumbliary(true);
 
 		ModularPanel<?> tNormal = GT6BumbliaryMUI.buildPanel(tPrimary, headlessSyncManager(), false);
-		UITexture tNormalBackground = assertInstanceOf(UITexture.class, tNormal.getBackground(), "the normal background is a texture");
-		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/bumbliary.png"), tNormalBackground.location(),
-				"the :500/:507 primary pair background");
+		assertNull(tNormal.getBackground(), "no code background — the theme base owns the normal panel");
 
 		ModularPanel<?> tAdv = GT6BumbliaryMUI.buildPanel(tAdvanced, headlessSyncManager(), false);
-		UITexture tAdvBackground = assertInstanceOf(UITexture.class, tAdv.getBackground(), "the advanced background is a texture");
-		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "textures/gui/machines/bumbliaryadvanced.png"), tAdvBackground.location(),
-				"the Advanced :469 background");
+		assertNull(tAdv.getBackground(), "no code background — the theme base owns the advanced panel");
 
 		// the factory dispatch — the identity IS the variant (the acceptance ① mAdvanced/scoop arms)
 		assertFalse(GT6BumbliaryMUI.Factory.NORMAL.scoop(), "the normal factory");

@@ -1,26 +1,23 @@
 /**
- * The machine-panel background sub-area gate (task gui-bg-uv-fix): the machine sheets are
- * 256x256 canvases with the art in the top-left 176x166 (GT6GuiReskinCensusTest pin-h), so
- * every MUI panel that still rides a sheet background must declare the explicit sub-area —
- * the former {@code UITexture.fullImage} form stretched the whole canvas into the 176x166
- * panel and shrank the art into the top-left corner (the vanilla-leg furnace blit samples the
- * same window implicitly, GTGuiScreen.renderBg:55-58).
+ * The machine-panel background census (task gui-bg-uv-fix, REWRITTEN by task
+ * machine-gui-composed-purge): the machine sheets are retired — every MUI machine panel
+ * now rides the gt6 theme's 9-slice base (the composed form, the GTBasicMachineMUI
+ * clean-base shape), so NO machine panel carries a code background and the former
+ * sub-area table (256x256 canvas, art window 176x166, task gui-bg-uv-fix) is history:
+ * the vanilla-leg blit that sampled the same window is composed from the part crops.
  *
  * <p>Pinned faces:
  * <ul>
- * <li><b>the sub-area table</b> — the two remaining sheet-riding families (distillation
- *     tower / bumbliary normal+advanced) build backgrounds with UV (0,0)-(176/256,166/256),
- *     the top-left sub-area stretched over the full panel rect. The basic-machine family
- *     LEFT this table (r11-gui-basicmachine-clean-sample): its panel carries no code
- *     background at all — the gt6 theme 9-slice base draws instead (the
- *     GT6BasicMachineMUIPanelTest clean-base pin);</li>
+ * <li><b>the composed table</b> — the distillation tower and the bumbliary normal+advanced
+ *     panels carry NO code background ({@code getBackground()} null headless — the theme
+ *     base draws at runtime); the basic-machine family joined this form at
+ *     r11-gui-basicmachine-clean-sample;</li>
  * <li><b>the consumption census</b> — zero {@code UITexture.fullImage} tokens left in the
  *     mdk main sources: a new panel re-committing the whole-canvas stretch turns this red;</li>
- * <li><b>the clean-base census</b> (r11-gui-basicmachine-clean-sample) — the shared
- *     basic-machine panel factory carries zero {@code gui/machines} sheet tokens and zero
- *     {@code GuiTextures.PROGRESS_ARROW} tokens: the theme base + the parts arrow are the
- *     only visuals. (The tower still rides the vendored arrow until its W3 card — the token
- *     whitelist extends there then.)</li>
+ * <li><b>the sheet-token census</b> — every machine-panel factory (the shared basic-machine
+ *     factory + the tower + the bumbliary pair) sources zero {@code gui/machines} sheet
+ *     tokens, and the shared basic-machine factory zero {@code GuiTextures.PROGRESS_ARROW}
+ *     tokens (the parts arrow only).</li>
  * </ul>
  */
 package gregtech6.gui.machines;
@@ -38,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import brachy.modularui.drawable.UITexture;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.value.sync.ModularSyncManager;
 import brachy.modularui.value.sync.PanelSyncManager;
@@ -56,9 +52,6 @@ import gregtech6.tileentity.bees.GT6BumbliaryBlockEntity;
 import gregtech6.tileentity.multiblocks.GTMultiBlocksOfflineTestBase;
 
 class GT6GuiBackgroundSubAreaCensusTest extends GTMultiBlocksOfflineTestBase {
-
-	/** The top-right UV corner of the declared sub-area: 256-canvas, art window 176x166. */
-	private static final float SUB_U1 = 176f / 256f, SUB_V1 = 166f / 256f;
 
 	private static final BlockPos P1 = new BlockPos(50, 64, 50);
 
@@ -121,49 +114,47 @@ class GT6GuiBackgroundSubAreaCensusTest extends GTMultiBlocksOfflineTestBase {
 	}
 
 	/**
-	 * The sub-area table: every sheet-riding machine-panel family samples ONLY the top-left
-	 * 176x166 of the 256x256 canvas — the exact observable of
-	 * {@code builder().imageSize(256,256).subAreaXYWH(0,0,176,166)} (a fullImage regression
-	 * reads UV (0,0)-(1,1) and fails the u1/v1 pins). The basic-machine family left the
-	 * table with its sheet (r11-gui-basicmachine-clean-sample).
+	 * The composed table: every machine-panel factory builds a panel with NO code
+	 * background — headless {@code getBackground()} is null, the gt6 theme's 9-slice base
+	 * draws at runtime (the GTBasicMachineMUIPanelTest clean-base form; a sheet-background
+	 * regression re-roots a UITexture here and fails).
 	 */
 	@Test
-	public void machineBackgroundsSampleOnlyTheTopLeftSubArea() {
+	public void machinePanelsCarryNoCodeBackground() {
 		// the distillation tower
-		assertSubArea(GTDistillationTowerMUI.buildPanel(newTower(), headlessSyncManager()), "distillation tower");
-		// the bumbliary pair — the advanced flag picks the texture branch, both must sample
-		// the same window
-		assertSubArea(GT6BumbliaryMUI.buildPanel(
+		assertNoBackground(GTDistillationTowerMUI.buildPanel(newTower(), headlessSyncManager()), "distillation tower");
+		// the bumbliary pair — the advanced flag only picks the slot table, both ride the theme
+		assertNoBackground(GT6BumbliaryMUI.buildPanel(
 				new GT6BumbliaryBlockEntity(false, sBumbliaryType, P1, Blocks.BRICKS.defaultBlockState()),
 				headlessSyncManager(), false), "bumbliary normal");
-		assertSubArea(GT6BumbliaryMUI.buildPanel(
+		assertNoBackground(GT6BumbliaryMUI.buildPanel(
 				new GT6BumbliaryBlockEntity(true, sBumbliaryType, P1, Blocks.BRICKS.defaultBlockState()),
 				headlessSyncManager(), false), "bumbliary advanced");
 	}
 
-	private static void assertSubArea(ModularPanel<?> aPanel, String aWhat) {
-		UITexture tBackground = assertInstanceOf(UITexture.class, aPanel.getBackground(),
-				aWhat + ": the panel background is a texture");
-		assertEquals(0f, tBackground.u0(), 0f, aWhat + ": sub-area starts at u=0");
-		assertEquals(0f, tBackground.v0(), 0f, aWhat + ": sub-area starts at v=0");
-		assertEquals(SUB_U1, tBackground.u1(), 0f, aWhat + ": sub-area ends at u=176/256 (NOT the fullImage 1.0)");
-		assertEquals(SUB_V1, tBackground.v1(), 0f, aWhat + ": sub-area ends at v=166/256 (NOT the fullImage 1.0)");
+	private static void assertNoBackground(ModularPanel<?> aPanel, String aWhat) {
+		assertTrue(aPanel.getBackground() == null,
+				aWhat + ": no code background — the theme panel base owns the panel (the composed form)");
 	}
 
 	/**
-	 * The clean-base census (r11-gui-basicmachine-clean-sample): the shared basic-machine
-	 * panel factory sources zero {@code gui/machines} sheet tokens and zero
-	 * {@code GuiTextures.PROGRESS_ARROW} tokens — the theme base and the parts arrow are its
-	 * only visuals (the clean-base acceptance; the tower keeps its vendored-arrow token
-	 * until the W3 card, so the walk is scoped to this factory file).
+	 * The sheet-token census: every machine-panel factory (the shared basic-machine factory,
+	 * the tower factory and the bumbliary factory) sources zero {@code gui/machines} sheet
+	 * tokens (machine-gui-composed-purge — the theme base + the parts compose the visuals),
+	 * and the shared basic-machine factory zero {@code GuiTextures.PROGRESS_ARROW} tokens
+	 * (the parts arrow only).
 	 */
 	@Test
-	public void theBasicMachinePanelFactorySourcesNoSheetAndNoVendoredArrowTokens() throws IOException {
-		Path tFactory = mdkMainJava()
-				.resolve("gregtech6").resolve("gui").resolve("machines").resolve("GTBasicMachineMUI.java");
-		String tSource = Files.readString(tFactory);
-		assertFalse(tSource.contains("gui/machines"), "zero machines/ sheet tokens in the shared panel factory");
-		assertFalse(tSource.contains("GuiTextures.PROGRESS_ARROW"),
+	public void theMachinePanelFactoriesSourceNoSheetTokens() throws IOException {
+		for (String tFactory : new String[] {"GTBasicMachineMUI.java", "GTDistillationTowerMUI.java",
+				"GT6BumbliaryMUI.java"}) {
+			String tSource = Files.readString(mdkMainJava()
+					.resolve("gregtech6").resolve("gui").resolve("machines").resolve(tFactory));
+			assertFalse(tSource.contains("gui/machines"), tFactory + ": zero machines/ sheet tokens");
+		}
+		String tShared = Files.readString(mdkMainJava()
+				.resolve("gregtech6").resolve("gui").resolve("machines").resolve("GTBasicMachineMUI.java"));
+		assertFalse(tShared.contains("GuiTextures.PROGRESS_ARROW"),
 				"zero vendored-arrow tokens in the shared panel factory (the parts arrow only)");
 	}
 

@@ -34,16 +34,18 @@ import gregtech6.tileentity.machines.TileEntityOven;
  *     special seat adds NOTHING on this map — Recipe.RecipeMap.getSpecialSlot (:400-402)
  *     is null and only RecipeMapAutocrafting (:166) overrides it. The skin's 22x22 gear
  *     print at (77,60) is decoration.</li>
- * <li><b>the background texture</b> gui/machines/oven.png (the 176x166 machine panel the
- *     {@link GTOvenScreen} blits): painted 16x16 cells exactly at the four bound coords,
- *     bare panel at (80,43), the fully-painted decorative gear box at (77,60)-(98,81).</li>
+ * <li><b>the composed background</b> (machine-gui-composed-purge — the retired
+ *     gui/machines/oven.png sheet): {@link GTOvenScreen} composes the part crops at the
+ *     same coordinates — slot frames at (slot-1), the arrow cell at (78,24), the gear
+ *     print at (77,60) — and this pin replays that composition from the parts, then
+ *     re-asserts the same painted/bare faces the sheet carried.</li>
  * </ul>
  *
  * <p>The retired bug: the menu bound the BE's reserved special index as a functional slot at
  * (80,43) — a mistranslation of :49 (whose getSpecialSlot call yields null) — floating an
- * interactive cell over the bare panel between the two rows while the painted gear print sat
- * empty. The BE keeps the reserved inventory index (upstream getDefaultInventory :530 keeps
- * the +1; findRecipe still receives its content, TileEntityOven.checkRecipe :452) — it just
+ * interactive cell over the bare panel between the two slot rows while the painted gear print sat
+ * empty. The BE keeps the reserved inventory index (upstream getDefaultInventory :530
+ * keeps the +1; findRecipe still receives its content, TileEntityOven.checkRecipe :452) — it just
  * stays GUI-unbound, reachable through automation only.
  *
  * <p>Declared offline limits: the {@code gt6:oven} MenuType registration and the real open
@@ -54,7 +56,7 @@ class GT6OvenMenuSlotParityTest extends GTRecipesOfflineTestBase {
 
 	private static final BlockPos POS = new BlockPos(1, 2, 3);
 
-	/** The panel fill of gui/machines/oven.png — every bare-panel pixel is exactly this (measured). */
+	/** The flat panel interior of panel_base (the composed base's machine-area blank, measured 203,204,212). */
 	private static final int PANEL_FILL = 0xFFCBCCD4; // ARGB of (203,204,212,255)
 
 	/** The decorative gear print box (upstream Default.png idiom): x 77..98, y 60..81, 22x22. */
@@ -62,6 +64,9 @@ class GT6OvenMenuSlotParityTest extends GTRecipesOfflineTestBase {
 
 	/** The retired (80,43) seat — bare panel on this skin, no functional slot upstream. */
 	private static final int DEAD_X = 80, DEAD_Y = 43;
+
+	/** The four bound cells — the menu geometry the frames compose under. */
+	private static final int[][] BOUND_CELLS = {{53, 25}, {107, 25}, {53, 63}, {107, 63}};
 
 	private static BlockEntityType<TileEntityOven> sOvenType;
 
@@ -134,17 +139,38 @@ class GT6OvenMenuSlotParityTest extends GTRecipesOfflineTestBase {
 	}
 
 	// ---------------------------------------------------------------------------
-	// the background texture vs the bound slots (gui/machines/oven.png pixel pins)
+	// the composed background vs the bound slots (machine-gui-composed-purge — the
+	// retired oven.png sheet's painted/bare faces, replayed from the part crops)
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * The composed-face replay: the same composition GTOvenScreen.renderBg runs — the
+	 * panel base (machine-area blank) under one 18x18 slot_frame cell per bound slot at
+	 * (slot-1), the arrow_outline cell at (78,24) and the 22x22 slot_special gear print at
+	 * (77,60) — then the same painted/bare assertions the retired sheet carried: every
+	 * bound cell painted, the retired (80,43) seat bare panel, the gear print fully painted.
+	 */
 	@Test
-	void backgroundPaintsExactlyTheBoundCells() throws IOException {
-		BufferedImage tPanel = ImageIO.read(guiTexture().toFile());
-		assertNotNull(tPanel, "decodable PNG: " + guiTexture());
+	void composedBackgroundPaintsExactlyTheBoundCells() throws IOException {
+		BufferedImage tBase = ImageIO.read(partTexture("panel_base_176x166.png").toFile());
+		BufferedImage tFrame = ImageIO.read(partTexture("slot_frame_18x18.png").toFile());
+		BufferedImage tArrow = ImageIO.read(partTexture("arrow_outline_20x18.png").toFile());
+		BufferedImage tGear = ImageIO.read(partTexture("slot_special_22x22.png").toFile());
+		assertNotNull(tBase, "the panel base part decodes");
+		assertEquals(176, tBase.getWidth());
+		assertEquals(166, tBase.getHeight(), "the panel base is the 176x166 panel");
+
+		// the composition, verbatim from GTOvenScreen.renderBg's blit sequence
+		BufferedImage tPanel = new BufferedImage(176, 166, BufferedImage.TYPE_INT_ARGB);
+		tPanel.getGraphics().drawImage(tBase, 0, 0, null);
+		for (int[] tCell : BOUND_CELLS) {
+			tPanel.getGraphics().drawImage(tFrame, tCell[0] - 1, tCell[1] - 1, null);
+		}
+		tPanel.getGraphics().drawImage(tArrow, 78, 24, null);
+		tPanel.getGraphics().drawImage(tGear, GEAR_X, GEAR_Y, null);
 
 		// the four bound cells are painted: not one bare-panel texel inside each 16x16
-		int[][] tBound = {{53, 25}, {107, 25}, {53, 63}, {107, 63}};
-		for (int[] tCell : tBound) {
+		for (int[] tCell : BOUND_CELLS) {
 			for (int y = tCell[1]; y < tCell[1] + 16; y++) {
 				for (int x = tCell[0]; x < tCell[0] + 16; x++) {
 					assertTrue(tPanel.getRGB(x, y) != PANEL_FILL,
@@ -179,12 +205,12 @@ class GT6OvenMenuSlotParityTest extends GTRecipesOfflineTestBase {
 		assertEquals(aHandlerSlot, aSlot.getContainerSlot(), aLabel + " bound handler slot");
 	}
 
-	/** The asset dir walk (the GTOvenOverlayModelTest.blockTexturesDir form). */
-	private static Path guiTexture() {
+	/** The gui/parts asset walk (the mdk-root probe the census tests share). */
+	private static Path partTexture(String aFile) {
 		for (Path p = Path.of("").toAbsolutePath(); p != null; p = p.getParent()) {
 			if (Files.isRegularFile(p.resolve("tools").resolve("gen_textures.py"))) {
 				return p.resolve(Path.of("src", "main", "resources", "assets", "gt6",
-						"textures", "gui", "machines", "oven.png"));
+						"textures", "gui", "parts", aFile));
 			}
 		}
 		throw new AssertionError("mdk root (tools/gen_textures.py) not found upward from " + Path.of("").toAbsolutePath());
