@@ -20,8 +20,8 @@ import net.minecraftforge.registries.RegistryObject;
 
 /**
  * Machine {@link MenuType} registration, card-owned (ADR-P3-4): the machine family gets its
- * own self-contained DeferredRegister listener (GTOvenMenus :21 shape — GTMenuTypes stays
- * frozen). One MenuType per legacy-row machine ({@code gt6:cokeoven|dryer|canner}); each
+ * own self-contained DeferredRegister listener (the form the retired GTOvenMenus
+ * pioneered — GTMenuTypes stays frozen). One MenuType per legacy-row machine ({@code gt6:cokeoven|dryer|canner}); each
  * factory closes over its own RegistryObject so the shared {@link GTBasicMachineMenu}
  * network constructor binds the type it was opened with. The cokeoven entry is the first
  * multiblock consumer — its factory takes the

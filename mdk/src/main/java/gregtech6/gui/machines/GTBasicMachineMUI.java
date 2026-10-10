@@ -197,6 +197,20 @@ public final class GTBasicMachineMUI {
 	 * the GTActMenu.buildPanel :73-105 shape). This is the pinned seam card 2 consumes.
 	 */
 	public static ModularPanel<?> buildPanel(GTBasicMachineMenu.Host aHost, PanelSyncManager aSyncManager) {
+		return buildPanel(aHost, aSyncManager, null);
+	}
+
+	/**
+	 * The title-override seam (task oven-gui-arrow-align, the sanctioned minimal
+	 * parameterization): a non-null {@code aTitleOverride} prints instead of the map-title
+	 * arm. The oven ladder needs it — the Furnace map is viewer-EXCLUDED
+	 * (GT6RecipeMapViewerMeta's exclusion table: the vanilla smelting mirror), so no
+	 * {@code gt6.jei.recipe_map.furnace} key exists and the family arm would print the raw
+	 * key; the block name ("Oven (Steel)") is the per-tier title the vanilla GUI showed.
+	 * The override Component arrives already localizable (a vanilla translatable).
+	 */
+	public static ModularPanel<?> buildPanel(GTBasicMachineMenu.Host aHost, PanelSyncManager aSyncManager,
+			@Nullable Component aTitleOverride) {
 		GTItemStackHandler tInventory = aHost.getInventory();
 		int tInputs = aHost.getInputSlotCount();
 		int tOutputs = aHost.getOutputSlotCount();
@@ -233,7 +247,15 @@ public final class GTBasicMachineMUI {
 		// Widget.drawBackground :255-264 theme arm) — the old .background(mGUIPath sheet) is
 		// the removed half of the double-layer stack (r11-gui-basicmachine-clean-sample)
 
-		if (tMap != null) {
+		if (aTitleOverride != null) {
+			// the oven seam (see the overload doc): the caller's Component — already
+			// localizable — in the same centered row/ink the map title wears
+			tPanel.child(new TextWidget<>(aTitleOverride)
+					.pos(0, TITLE_Y).size(176, 9)
+					.textAlign(Alignment.TopCenter)
+					.color(() -> TITLE_COLOR)
+					.name("title"));
+		} else if (tMap != null) {
 			// vanilla Component.literal, NOT the fork Text.str → ModularComponent chain: the
 			// fork builds MutableComponent through its AT-widened package-private ctor (fork
 			// accesstransformer.cfg) — fine in game (Forge merges every mod's AT), but the

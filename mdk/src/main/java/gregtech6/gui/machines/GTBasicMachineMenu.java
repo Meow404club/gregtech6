@@ -26,8 +26,8 @@ import gregtech6.tileentity.machines.TileEntityBasicMachine;
 import gregtech6.tileentity.multiblocks.TileEntityBase10MultiBlockMachine;
 
 /**
- * Basic-machine menu — the data-driven generalization of the oven menu (GTOvenMenu) onto the
- * RecipeMap slot shape of upstream gregapi/gui/ContainerCommonBasicMachine.java addSlots
+ * Basic-machine menu — the data-driven generalization of the oven menu (the retired
+ * GTOvenMenu, task oven-gui-arrow-align) onto the RecipeMap slot shape of upstream gregapi/gui/ContainerCommonBasicMachine.java addSlots
  * (:45-271): getGUIServer (MultiTileEntityBasicMachine.java:1008) becomes this constructor,
  * the client half (getGUIClient2 :1007 / ContainerClientBasicMachine) is replaced by the
  * statically registered {@link GTBasicMachineScreen}.

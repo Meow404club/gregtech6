@@ -182,8 +182,9 @@ import com.mojang.logging.LogUtils;
  * "全部改成拼接，把完整图全部清了"):</b> the upstream 16th ctor column (the NEI GUI path,
  * upstream {@code mGUIPath}) is RETIRED from the port — the ctor is 14-arg now, every map
  * row drops the string, the 78 data-grounded machines/*.png sheets leave the tree and the
- * six live GUIs compose from the gui/parts crops instead (GTOvenScreen/GTBasicMachineScreen,
- * GTDistillationTowerMUI/GT6BumbliaryMUI, the MUI theme base). The per-map javadoc below
+ * live GUIs compose from the gui/parts crops instead (GTBasicMachineScreen,
+ * GTDistillationTowerMUI/GT6BumbliaryMUI, the MUI theme base — the oven rides the family
+ * MUI panel since oven-gui-arrow-align). The per-map javadoc below
  * still records the upstream "GUI machines/&lt;Name&gt;" words as upstream-row provenance;
  * they bind nothing in this port anymore. The old "值必在盘" fidelity-pin policy is
  * superseded by that ruling (assets/README.md carries the decision chain).</p>

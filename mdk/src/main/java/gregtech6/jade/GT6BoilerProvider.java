@@ -41,7 +41,7 @@ import gregtech6.tileentity.multiblocks.TileEntityLargeBoiler;
  * <li><b>热量条</b>——mEnergy/mCapacity（GTBoilerTankBlockEntity:153/:155；LargeBoiler
  *     :178/:180），"Stored Heat Units: %s / %s HU (Z%)" 借上游温度计读数 verbatim 加百分槽
  *     （thermometer :408-411）；热量 &gt; 0 橙（{@link GT6JadeRows#COLOR_HEAT}，r11c ②——
- *     GTOvenScreen COLOR_FILL 同值，热量是温度面非进度面）/ 空红。</li>
+ *     退役 oven 屏 COLOR_FILL 同值，热量是温度面非进度面）/ 空红。</li>
  * <li><b>水条常态显示</b>（从潜行升级，ruling boiler_water）——mTanks[0]，标签 = 实际流体名
  *     （KEY_WATER_FLUID 注册名串过缝，task jade-boiler-burningbox）。<b>空罐零行</b>
  *     （task boiler-jade-display ①，用户裁定「空就是空，不显示」——旧「Empty/空罐」空态行
@@ -218,7 +218,7 @@ public final class GT6BoilerProvider implements IBlockComponentProvider, IServer
 			return; // 非锅炉（本 provider 挂全 GT6 BE 面，键存在即锅炉族——GT6CrucibleProvider 同门）
 		}
 		// ① 热量条：mEnergy/mCapacity 比例，"Stored Heat Units: X / Y HU (Z%)"; 有热橙
-		// （r11c ②——GTOvenScreen COLOR_FILL 同值，热量是温度面非进度面）/ 空红。
+		// （r11c ②——退役 oven 屏 COLOR_FILL 同值，热量是温度面非进度面）/ 空红。
 		long tHeat = aData.getLong(KEY_HEAT);
 		long tHeatMax = aData.getLong(KEY_HEAT_MAX);
 		GT6JadeRows.bar(aTooltip, GT6JadeRows.ratio(tHeat, tHeatMax), heatLine(tHeat, tHeatMax),
