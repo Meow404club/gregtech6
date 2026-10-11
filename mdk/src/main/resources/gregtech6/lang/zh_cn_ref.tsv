@@ -4039,11 +4039,13 @@ direct	itemGroup.gt6.food	格雷食品店	hand
 direct	itemGroup.gt6.food_cans	格雷科技: 罐头	hand
 direct	itemGroup.gt6.item_pipes	物品管道	hand
 direct	itemGroup.gt6.laser_wires	激光导线	hand
+direct	itemGroup.gt6.logistics	物流学	hand
 direct	itemGroup.gt6.machines	机器	hand
 direct	itemGroup.gt6.multiblocks	多方块	hand
 direct	itemGroup.gt6.redstone_wires	红石导线	hand
 direct	itemGroup.gt6.safes	保险箱	hand
 direct	itemGroup.gt6.spray_cans	喷漆罐	hand
+direct	itemGroup.gt6.storage	存储	hand
 direct	itemGroup.gt6.tools	工具	hand
 material	AbyssalOat	深渊燕麦	auto
 material	AbyssalOats	深渊燕麦	auto

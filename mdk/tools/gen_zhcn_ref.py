@@ -205,6 +205,12 @@ HAND_TRANSLATIONS = {
     # member rows are the 保险箱 family (safe_mechanical_/safe_keylocked_ zh rows), the
     # upstream category label "Safes" (Loader :134-135, tab id 2010) has no dump face
     "itemGroup.gt6.safes": ("保险箱", "hand"),
+    # task storage-tab-completion — the storage/logistics tab pair (the safes shape): the
+    # member rows are the charging-locker + standard-mass / logistics-mass families, the
+    # upstream category labels "Storage" (Loader :139/:141, tab id 32751) and "Logistics"
+    # (:142, tab id 17997) have no dump face
+    "itemGroup.gt6.storage": ("存储", "hand"),
+    "itemGroup.gt6.logistics": ("物流学", "hand"),
     "itemGroup.gt6.machines": ("机器", "hand"),
     # task p38-tabfix-d-ruling: the written-books tab (the port-ruling tab, the user
     # ruling 2026-09-24 — the manuals should be easy for players to get; no dump face)
