@@ -175,9 +175,9 @@ class GT6ConverterPaintRenderDatagenTest {
                     aModelName + ": the inactive family model parent");
             assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(), aModelName + ": cutout re-declared");
             JsonObject tOverride = tModel.getAsJsonObject("textures");
-            assertEquals("gt6:block/" + aColoredBand + "_" + aOverlayBand + "_front", tOverride.get("overlay_front").getAsString());
-            assertEquals("gt6:block/" + aColoredBand + "_" + aOverlayBand + "_back", tOverride.get("overlay_back").getAsString());
-            assertEquals("gt6:block/" + aColoredBand + "_" + aOverlayBand + "_side", tOverride.get("overlay_side").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aColoredBand + "_" + aOverlayBand + "_front"), tOverride.get("overlay_front").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aColoredBand + "_" + aOverlayBand + "_back"), tOverride.get("overlay_back").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aColoredBand + "_" + aOverlayBand + "_side"), tOverride.get("overlay_side").getAsString());
             assertTrue(!tModel.has("elements"), aModelName + ": the body elements stay inherited");
             return;
         }
@@ -192,9 +192,9 @@ class GT6ConverterPaintRenderDatagenTest {
             assertEquals("gt6:block/" + aColoredBand + "_colored_side", tTextures.get(tSide).getAsString(),
                     aModelName + ": " + tSide + " = the colored side");
         }
-        assertEquals("gt6:block/" + aColoredBand + "_" + aOverlayBand + "_front", tTextures.get("overlay_front").getAsString());
-        assertEquals("gt6:block/" + aColoredBand + "_" + aOverlayBand + "_back", tTextures.get("overlay_back").getAsString());
-        assertEquals("gt6:block/" + aColoredBand + "_" + aOverlayBand + "_side", tTextures.get("overlay_side").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aColoredBand + "_" + aOverlayBand + "_front"), tTextures.get("overlay_front").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aColoredBand + "_" + aOverlayBand + "_back"), tTextures.get("overlay_back").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aColoredBand + "_" + aOverlayBand + "_side"), tTextures.get("overlay_side").getAsString());
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aModelName + ": body + 6 decals");
         var tBodyFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");

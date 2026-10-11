@@ -267,9 +267,12 @@ class GT6MachinePaintRenderDatagenTest {
                             tModelName + " body face " + tFaceKey + ": the family colored "
                                     + BODY_FACE_ART.get(tFaceKey) + " art (the FACING_ROTATIONS mapping)");
                 }
-                // the overlay keys — the family state decal trio for this state
+                // the overlay keys — the family state decal trio for this state (the
+                // same-content faces through the content-group canonicals — task
+                // overlay-dedupe-block-leg)
                 for (String tToken : OVERLAY_TOKENS) {
-                    assertEquals("gt6:block/" + tFamily + "_overlay_" + tToken + tStateSuffix,
+                    assertEquals("gt6:" + GT6BlockOverlayAliases.resolve(
+                                    "block/" + tFamily + "_overlay_" + tToken + tStateSuffix),
                             tTextures.get("overlay_" + tToken).getAsString(),
                             tModelName + ": the family " + tToken + " state decal for this state");
                 }
@@ -376,8 +379,9 @@ class GT6MachinePaintRenderDatagenTest {
             assertEquals("gt6:block/" + tBase + "_colored_front", tTextures.get("particle").getAsString(),
                     tModelName + ": particle = the front art (the storage/boiler precedent)");
             for (String tToken : ACT_OVERLAY_TOKENS) {
-                assertEquals("gt6:block/" + tBase + "_overlay_" + tToken, tTextures.get("overlay_" + tToken).getAsString(),
-                        tModelName + ": the overlay_" + tToken + " decal art");
+                assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tBase + "_overlay_" + tToken),
+                        tTextures.get("overlay_" + tToken).getAsString(),
+                        tModelName + ": the overlay_" + tToken + " decal art (through the content-group canonicals)");
             }
             Set<String> tExpectedKeys = new HashSet<>(FACE_KEYS);
             tExpectedKeys.add("particle");

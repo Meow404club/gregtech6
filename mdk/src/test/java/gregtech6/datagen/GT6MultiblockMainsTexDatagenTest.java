@@ -112,14 +112,16 @@ class GT6MultiblockMainsTexDatagenTest {
         assertEquals("gt6:block/" + aBand + "/colored_bottom", tTextures.get("down").getAsString());
         assertEquals("gt6:block/" + aBand + "/colored_top", tTextures.get("up").getAsString());
         // the overlay shell: front face = the overlay_front art, the rest the plain overlay
-        assertEquals("gt6:block/" + aBand + "/overlay_front_side", tTextures.get("overlay_north").getAsString(),
-                aName + ": overlay north = the front-face overlay art");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_front_side"),
+                tTextures.get("overlay_north").getAsString(),
+                aName + ": overlay north = the front-face overlay art (through the content-group canonicals)");
         for (String tSide : List.of("south", "west", "east")) {
-            assertEquals("gt6:block/" + aBand + "/overlay_side", tTextures.get("overlay_" + tSide).getAsString(),
-                    aName + ": overlay " + tSide + " = the plain overlay side");
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_side"),
+                    tTextures.get("overlay_" + tSide).getAsString(),
+                    aName + ": overlay " + tSide + " = the plain overlay side (through the content-group canonicals)");
         }
-        assertEquals("gt6:block/" + aBand + "/overlay_bottom", tTextures.get("overlay_down").getAsString());
-        assertEquals("gt6:block/" + aBand + "/overlay_top", tTextures.get("overlay_up").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_bottom"), tTextures.get("overlay_down").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_top"), tTextures.get("overlay_up").getAsString());
         // the two-layer split: 7 elements, tintindex 0 on every body face, none on the decals
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aName + ": body + 6 decals");
@@ -289,10 +291,13 @@ class GT6MultiblockMainsTexDatagenTest {
 
     @Test
     public void borrowedMultiblockmainsTexturesExist() {
+        // task overlay-dedupe-block-leg: the pixel-empty overlay/overlay_front passes ride the
+        // content-group canonicals; resolve() is identity for the colored art
         for (String tBand : List.of("crucible", "logistics_core", "lightningrod", "large_heat_exchanger")) {
             for (String tFace : List.of("bottom", "top", "side")) {
                 for (String tLayer : List.of("colored", "colored_front", "overlay", "overlay_front")) {
-                    assertNotNull(resource("assets/gt6/textures/block/" + tBand + "/" + tLayer + "_" + tFace + ".png"),
+                    assertNotNull(resource("assets/gt6/textures/"
+                                    + GT6BlockOverlayAliases.resolve("block/" + tBand + "/" + tLayer + "_" + tFace) + ".png"),
                             tBand + "/" + tLayer + "_" + tFace + ".png must be borrowed");
                 }
             }

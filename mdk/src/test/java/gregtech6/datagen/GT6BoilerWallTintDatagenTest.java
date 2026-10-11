@@ -142,7 +142,7 @@ class GT6BoilerWallTintDatagenTest {
         assertEquals("gt6:block/boiler_steam/colored_side", tTextures.get("north").getAsString(),
                 "all four sides bind the side sprite (no upstream front art)");
         assertEquals("gt6:block/boiler_steam/colored_side", tTextures.get("south").getAsString());
-        assertEquals("gt6:block/boiler_steam/overlay_side", tTextures.get("overlay_north").getAsString(),
+        assertEquals("gt6:item/overlay/empty", tTextures.get("overlay_north").getAsString(),
                 "the overlay shell rides the untinted decals");
         for (int i = 1; i < 7; i++) {
             for (Map.Entry<String, JsonElement> tFace : tElements.get(i).getAsJsonObject()

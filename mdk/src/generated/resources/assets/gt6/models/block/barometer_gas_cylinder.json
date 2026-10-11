@@ -357,9 +357,9 @@
     "barometer": "gt6:block/gas_cylinder/colored_barometer",
     "bottom": "gt6:block/gas_cylinder/colored_bottom",
     "overlay_barometer": "gt6:block/gas_cylinder/overlay_barometer",
-    "overlay_bottom": "gt6:block/gas_cylinder/overlay_bottom",
-    "overlay_sides": "gt6:block/gas_cylinder/overlay_sides",
-    "overlay_top": "gt6:block/gas_cylinder/overlay_top",
+    "overlay_bottom": "gt6:item/overlay/empty",
+    "overlay_sides": "gt6:item/overlay/empty",
+    "overlay_top": "gt6:item/overlay/empty",
     "particle": "#sides",
     "sides": "gt6:block/gas_cylinder/colored_sides",
     "top": "gt6:block/gas_cylinder/colored_top"

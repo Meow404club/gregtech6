@@ -131,8 +131,8 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "bottom": "gt6:block/plant_pot/colored_bottom",
-    "overlay_bottom": "gt6:block/plant_pot/overlay_bottom",
-    "overlay_side": "gt6:block/plant_pot/overlay_side",
+    "overlay_bottom": "gt6:item/overlay/empty",
+    "overlay_side": "gt6:item/overlay/empty",
     "overlay_top": "gt6:block/plant_pot/overlay_top",
     "particle": "#side",
     "side": "gt6:block/plant_pot/colored_side",

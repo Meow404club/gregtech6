@@ -379,8 +379,8 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "berries": "gt6:block/bush_parts/berries",
-    "berries_overlay": "gt6:block/bush_parts/overlay_berries",
-    "bush_overlay": "gt6:block/bush_parts/overlay_bush",
+    "berries_overlay": "gt6:item/overlay/empty",
+    "bush_overlay": "gt6:item/overlay/empty",
     "down": "gt6:block/berry_bush",
     "east": "gt6:block/berry_bush",
     "north": "gt6:block/berry_bush",

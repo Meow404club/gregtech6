@@ -412,13 +412,11 @@ to upstream, sha256 verified per file:
 - `oven_overlay_active_front.png`    `fb7896fcaf05092c8ce62895b940d779af1d73b5bf9d6d912f0173e9c8b40e36`
 - `oven_overlay_active_left.png`     `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`
 - `oven_overlay_active_right.png`    `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
-- `oven_overlay_active_top.png`      `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
 - `oven_overlay_running_back.png`    `cd5857690ac01a9fc10e3aadd4fe3afe3c2372d685ef0bcf14b680756b92b85e`
 - `oven_overlay_running_bottom.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`
 - `oven_overlay_running_front.png`   `cd5857690ac01a9fc10e3aadd4fe3afe3c2372d685ef0bcf14b680756b92b85e`
 - `oven_overlay_running_left.png`    `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`
 - `oven_overlay_running_right.png`   `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`
-- `oven_overlay_running_top.png`     `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
 
 Filenames were lowercased/flat-mapped onto the `textures/block/` convention on
 borrow (1.20.1 `ResourceLocation` charset; the sprite ids are
@@ -852,9 +850,7 @@ sha256 verified:
   (upstream `machines/tools/funnel/colored/side.png` — the SAME grayscale icon bytes
   as the tap side; the two families are separated by the overlay pass below and the
   material tint)
-- `tap_overlay.png`     `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `machines/tools/tap/overlay/side.png`)
-- `funnel_overlay.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `machines/tools/funnel/overlay/side.png` — byte-identical to the tap
   overlay; both carry alpha texels)
 
@@ -881,10 +877,8 @@ upstream, sha256 verified:
   (upstream `machines/tools/nozzle/colored/side.png`)
 - `cap_nozzle.png`         `b79bcddec1b0f4a289a0b1670ce880665b633d9f3abe2f16fd012229061c51ff`
   (upstream `machines/tools/capnozzle/colored/side.png`)
-- `nozzle_overlay.png`     `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `machines/tools/nozzle/overlay/side.png` — byte-identical to the tap/funnel
   overlay; all four attachment families share the one overlay art)
-- `cap_nozzle_overlay.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `machines/tools/capnozzle/overlay/side.png` — the same shared overlay bytes)
 
 Shared per family: all 6 nozzle rows' model JSONs reference the one `nozzle.png` +
@@ -3402,7 +3396,6 @@ decals, the #18 addConverterModel form), so both layers borrow per-face:
   (upstream `boiler_steam/colored/top.png`)
 - `boiler_steam/colored_side.png`   `4f8004f09dc2ef5f20eca50efd1e691b2650b7b15e173fb95997619f79719332`
   (upstream `boiler_steam/colored/side.png`)
-- `boiler_steam/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `boiler_steam/overlay/bottom.png`)
 - `boiler_steam/overlay_top.png`    `8dd1d34cc36cd9ddccdc23f6f3be16be70d90337a290bc4a6da997f1f9c64236`
   (upstream `boiler_steam/overlay/top.png`)
@@ -3453,17 +3446,11 @@ kept verbatim anyway so the ledger stays 1:1 with the upstream group.
   (upstream `largeboiler/colored_front/top.png`)
 - `large_boiler/colored_front_side.png`  `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
   (upstream `largeboiler/colored_front/side.png`)
-- `large_boiler/overlay_bottom.png`      `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeboiler/overlay/bottom.png`)
-- `large_boiler/overlay_top.png`         `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeboiler/overlay/top.png`)
-- `large_boiler/overlay_side.png`        `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeboiler/overlay/side.png`)
-- `large_boiler/overlay_front_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeboiler/overlay_front/bottom.png`)
-- `large_boiler/overlay_front_top.png`   `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeboiler/overlay_front/top.png`)
-- `large_boiler/overlay_front_side.png`  `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeboiler/overlay_front/side.png`)
 
 Logistics Core / Lightning Rod / Large Heat Exchanger / Large Crucible controller
@@ -3503,11 +3490,8 @@ dies with this task) is RETIRED.
   (upstream `logisticscore/colored_front/top.png`)
 - `logistics_core/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
   (upstream `logisticscore/colored_front/side.png`)
-- `logistics_core/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `logisticscore/overlay/bottom.png`)
-- `logistics_core/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `logisticscore/overlay/top.png`)
-- `logistics_core/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `logisticscore/overlay/side.png`)
 - `logistics_core/overlay_front_bottom.png` `d14d69db5deab5c2ab323351fe5e9f573d1108cedca34849e8395539d9079090`
   (upstream `logisticscore/overlay_front/bottom.png`)
@@ -3527,11 +3511,8 @@ dies with this task) is RETIRED.
   (upstream `lightningrod/colored_front/top.png`)
 - `lightningrod/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
   (upstream `lightningrod/colored_front/side.png`)
-- `lightningrod/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `lightningrod/overlay/bottom.png`)
-- `lightningrod/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `lightningrod/overlay/top.png`)
-- `lightningrod/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `lightningrod/overlay/side.png`)
 - `lightningrod/overlay_front_bottom.png` `b41df1e22f916abd110733c5f5886115fffa13012e49de1767c38b396ecc57ec`
   (upstream `lightningrod/overlay_front/bottom.png`)
@@ -3551,11 +3532,8 @@ dies with this task) is RETIRED.
   (upstream `largeheatexchanger/colored_front/top.png`)
 - `large_heat_exchanger/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
   (upstream `largeheatexchanger/colored_front/side.png`)
-- `large_heat_exchanger/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeheatexchanger/overlay/bottom.png`)
-- `large_heat_exchanger/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeheatexchanger/overlay/top.png`)
-- `large_heat_exchanger/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `largeheatexchanger/overlay/side.png`)
 - `large_heat_exchanger/overlay_front_bottom.png` `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da`
   (upstream `largeheatexchanger/overlay_front/bottom.png`)
@@ -3575,17 +3553,11 @@ dies with this task) is RETIRED.
   (upstream `crucible/colored_front/top.png`)
 - `crucible/colored_front_side.png` `39be6fe649a62a4c6a714b10503b40ab305102bb6f083d6f6665105abdc6e2d0`
   (upstream `crucible/colored_front/side.png`)
-- `crucible/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `crucible/overlay/bottom.png`)
-- `crucible/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `crucible/overlay/top.png`)
-- `crucible/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `crucible/overlay/side.png`)
-- `crucible/overlay_front_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `crucible/overlay_front/bottom.png`)
-- `crucible/overlay_front_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `crucible/overlay_front/top.png`)
-- `crucible/overlay_front_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
   (upstream `crucible/overlay_front/side.png`)
 
 Barrel family block textures, task borrow-tank-barrel-pipe: the 3 PNGs
@@ -5428,9 +5400,6 @@ the port, the GUIs compose from `gui/parts/`). Upstream license CC0 (see above).
 
 **RETIRED (task machine-gui-composed-purge, the 2026-10-10 user ruling "全部改成拼接，把完整图全部清了"): the standalone machine-GUI sheets left the tree — the live GUIs compose from the `gui/parts` crops (GTOvenScreen — the last vanilla-leg screen, until the oven card lands; the vanilla basic-machine screen retired with its whole leg, task basic-machines-mui-migration; GTDistillationTowerMUI/GT6BumbliaryMUI on the gt6 theme base) and the data-grounded `mGUIPath` column is retired from the port (`RecipeMap` is 14-arg). The rows below are the retired borrows' historical provenance; their digests no longer ground (the files are gone on purpose).**
 - `block/sifter_colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `block/sifter_overlay_front.png` `f736601956519d68b411807353cb25a200db9a190a45e9f5c6c920191f9743bc`
-- `block/sifter_overlay_front_active.png` (FRAME 0 of 4) `1a0a8dee55f0fe6e20432affc75b82892270c4f0a7b08dcdf39bf71fea10f315`
-- `block/sifter_overlay_front_running.png` (FRAME 0 of 4) `097a175a6e3de977218a128683fe99be7695f82ffccd3cb31b03b735173c79f5`
 - `block/compressor_colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `block/compressor_overlay_front.png` `9b0af1a60316b9b150a2c793bd3a942674cecfd86ee1ce60d58a81c5af6ae1d6`
 - `block/compressor_overlay_front_active.png` (FRAME 0 of 9) `a16f79ca4ef725116fac391ab7ff41532cec77510ee05a6cd540214f8e601fe9`
@@ -8191,6 +8160,162 @@ GT6ItemModels OVERLAY_CONTENT_GROUPS rows):
 - `gt6/textures/item/overlay/wire_fine.png` `e7706aff0582ee538eb20996e3142e729d0512bdb2eb4ee6b2bbd0d17750c83a` <- 15 members (per-set wire__overlay)
 
 
+Overlay content-group canonicalization, BLOCK domain, task
+overlay-dedupe-block-leg (2026-10-10). The second batch of the
+overlay-texture-dedupe wave: the `*overlay*.png` census over
+`textures/block/` held 2057 files in 550 md5 content groups — the machine
+port side-face borrows (the p28 wave above, byte-identical across families
+by construction), the storage/sensor/tool/parts subdirectory families, and
+571 + 47 fully-transparent pixel-empty passes. Every multi-member group now
+ships ONCE as `gt6/textures/block/overlay/<name>.png` — the flattened
+lexicographically-first former member, byte-identical to it (digests below)
+— and every member resolves onto the canonical at datagen time
+(GT6BlockOverlayAliases; the one runtime seam is
+GTOvenOverlayModel.spriteOf). The 571 pixel-empty members (incl. the 11
+transparent singletons) ride the batch-1
+`gt6/textures/item/overlay/empty.png`; 402 unique-content singletons keep
+their paths; 1608 former paths are deleted. borrow_port_overlays.py lands
+per content group now (the gen_textures.py --borrow precedent), so a re-run
+cannot re-expand the families. NEVER-MERGE exclusion: everything under
+`block/materialicons/` stays byte-for-byte — GT6OreCensusTest pins the 22
+SETs x {ore, ore_small, ore_overlay, ore_small_overlay} atlas sources as 88
+DISTINCT sprite paths (the ore overlay passes are pixel-empty upstream, but
+the per-SET slot paths are the identity) and pipe_side /
+block_plate_gem_overlay are the same per-material art-slot class. The P31
+wave pin drops 398 -> 102 (82 files remain under the borrowed prefixes: the
+front work-face arts and colored bodies). The pin test
+GT6OverlayDedupeCensusTest block pins hold the family at 526 files
+(124 canonicals + 402 singletons) with zero same-content duplicates. Merge
+table (canonical <- member count; full member enumeration lives in the
+GT6BlockOverlayAliases CONTENT_GROUPS rows):
+
+- `gt6/textures/block/overlay/advanced_overlay_back.png` `f3747a6148a20ca82d24f1bf913a6680cdbcc3a9a7bb8c29c6ab2af4c845bfd1` <- 2 members
+- `gt6/textures/block/overlay/autoclave_overlay_back.png` `f44eaecf74644cdd03d37fca05abe06c76d88769a5bd419d27bc4ce9f4885f1c` <- 51 members
+- `gt6/textures/block/overlay/autoclave_overlay_bottom.png` `bd7c41e71dd8ab1b5fc83460af850e53ae1e7e29c48ad376f458484d1de6a00f` <- 51 members
+- `gt6/textures/block/overlay/autoclave_overlay_front.png` `ce1f88c036d82139a6be18ec23328ab7f6193dc464e808e05e26fed0348ed768` <- 4 members
+- `gt6/textures/block/overlay/autoclave_overlay_front_active.png` `118a04e8afc9f009b1e983aeb02ae9da30261ccbfcb076f9976db96bad0c8c3c` <- 2 members
+- `gt6/textures/block/overlay/autoclave_overlay_left.png` `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a` <- 155 members
+- `gt6/textures/block/overlay/autoclave_overlay_right.png` `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3` <- 159 members
+- `gt6/textures/block/overlay/autocrafter_overlay_bottom.png` `a326d5e7732ed7297a4def6b1af9a7f5e2a6da035dab62d3a7e38b7c1a46a482` <- 10 members
+- `gt6/textures/block/overlay/autocrafter_overlay_bottom_active.png` `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428` <- 23 members
+- `gt6/textures/block/overlay/barrel_parts_logistics_overlay_bottom.png` `c9a11fa46a0d9c379c3dbb783fff383769239e0cbc31284274c4d556bde8745b` <- 2 members
+- `gt6/textures/block/overlay/bath_overlay_back.png` `d2b596dba1502b192d1e95d1262a07b34be7c69b8424d7583bd8871cf343c6b2` <- 4 members
+- `gt6/textures/block/overlay/bath_overlay_back_active.png` `17e00f468c5e38af3858aee913ac3a3a3b65f1eceb88be8951634dd057eab9cb` <- 2 members
+- `gt6/textures/block/overlay/battery_box_large_overlay_active_front.png` `375ebaca9f18d34e3edd037d0dd484c4602674a404edbef3b083921ef2e8e6cd` <- 3 members
+- `gt6/textures/block/overlay/battery_box_large_overlay_front.png` `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594` <- 3 members
+- `gt6/textures/block/overlay/battery_box_overlay_front.png` `d6eda0dda3878355b762c6b60356a5b1eb6746079822a282963c1285921e71a3` <- 3 members
+- `gt6/textures/block/overlay/boiler_steam_overlay_top.png` `8dd1d34cc36cd9ddccdc23f6f3be16be70d90337a290bc4a6da997f1f9c64236` <- 3 members
+- `gt6/textures/block/overlay/bridge_motor_overlay_front.png` `e183538e5e6f6af6b4acf6fb3960d53d07b2b0ac370e73d9e46500a929b54463` <- 2 members
+- `gt6/textures/block/overlay/bumblelyzer_overlay_back_active.png` `ad66889fff644b15ab809710a8cc70973cefa9784981838a054a77b7b12c1394` <- 2 members
+- `gt6/textures/block/overlay/bumblelyzer_overlay_bottom.png` `8d40c6712badc8e36dd4e408af27e0ca610fc7718c1ca5797c8cc627941aff3b` <- 3 members
+- `gt6/textures/block/overlay/bumblelyzer_overlay_left.png` `2bfdbc048e23f2da4a8b3b1c2a53e38090e81767c93eb9f2854283f294690e63` <- 3 members
+- `gt6/textures/block/overlay/bumblelyzer_overlay_right.png` `2eb771a963295598843967624c67ba0265a71b538e813de311bfc0e54421950b` <- 3 members
+- `gt6/textures/block/overlay/bumblelyzer_overlay_top.png` `63520376cbc59a122281ed20cea9db8ee80376ba581f857b8bdc879ee790030d` <- 3 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_back.png` `434ce0ef50b8063c864b0fc24e5cd9aea714e19f46088f1b184fa44406e36eed` <- 8 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_bottom.png` `c31b3126efbd3713871016a191d3c7f1f19613e0bfd215e02627b627dbe871fe` <- 8 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_left.png` `92e9fdd5b720064549689c9cd71e266e81c80ac7e9893909d4c7d3cb4ea8aa33` <- 4 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_left_active.png` `524d08f1f6e0734d75625f03cd3f95dbbc7ad22a2a0f1cbb9deffdfa96ccaf59` <- 4 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_right.png` `5fed48cacc86d24191b440b3c7bfb25a7295b3db1b28e8ca5008be3d96b7fd02` <- 4 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_right_active.png` `4ea3a2c4e299c221d3b7187e1c5428dbd1913e3c5dccc1d4a94219962e12b340` <- 4 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_top.png` `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb` <- 19 members
+- `gt6/textures/block/overlay/burning_box_fluidbed_overlay_top_active.png` `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a` <- 24 members
+- `gt6/textures/block/overlay/burnmixer_overlay_bottom.png` `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb` <- 59 members
+- `gt6/textures/block/overlay/buzzsaw_overlay_bottom.png` `dac044163234cae423b53e0ee51e070be6f80f70ae0668298991a0049f305e53` <- 15 members
+- `gt6/textures/block/overlay/catalyticcracker_overlay_right.png` `4429701e5c9841c54aafd14ad87ee1879535a5ec5dbb39670caae42c611da546` <- 21 members
+- `gt6/textures/block/overlay/centrifuge_overlay_back.png` `ead84c48d61458a3212a36e4edae90e7c943a602eb08e65b8812a01a59fa6e44` <- 2 members
+- `gt6/textures/block/overlay/centrifuge_overlay_back_active.png` `c285f762bc0ff78ecc1e304ac89941661c0acbd9fdd0ca26b3a1f15b37fdd1be` <- 4 members
+- `gt6/textures/block/overlay/charging_locker_overlay_front.png` `2660369d62e9c5c7364caed24d1c83cb5720cefae3d1d6aff1a26849b667e04e` <- 2 members
+- `gt6/textures/block/overlay/coagulator_overlay_front.png` `0f6d361a6b66b4dbaff6df4bd7a5a65c3e204d9235538a51beb2e506e760fa12` <- 2 members
+- `gt6/textures/block/overlay/compressor_overlay_left.png` `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09` <- 15 members
+- `gt6/textures/block/overlay/cryodistillationtower_overlay_back.png` `97ff29785f50fdc3f8e703e67fb1e5b73ac066b7da9dba136406c6ace52f22a4` <- 19 members
+- `gt6/textures/block/overlay/cryodistillationtower_overlay_bottom.png` `e8e039f30126aba855cf9ff7fab12d940c35f1a210c08e18b7884705dd92450c` <- 8 members
+- `gt6/textures/block/overlay/cryodistillationtower_overlay_front.png` `28ca413ca5f2d6684ecdbd361a78ed39d9c203fb642833f08061e3c9f0acab18` <- 2 members
+- `gt6/textures/block/overlay/cryodistillationtower_overlay_front_active.png` `29b4e009461fb5640035bb12fd97d07143dad723c8f0731facdcae4962096f44` <- 2 members
+- `gt6/textures/block/overlay/cryodistillationtower_overlay_front_running.png` `f0570c614c363d6f64073e0b75ceca17deec3775d55081be46ffbf1e4b2e7ea1` <- 2 members
+- `gt6/textures/block/overlay/cryodistillationtower_overlay_top.png` `ab65e83b4133ba41994a0af9dd1718b1ab677e7f674d4d76fa6f105c60ddd1a1` <- 8 members
+- `gt6/textures/block/overlay/cryomixer_overlay_front.png` `e3b7e997b352a594ddcd5a73a0b0ff50f6735712543904ddb9f474f7a7aafc65` <- 3 members
+- `gt6/textures/block/overlay/crystal_charger_overlay_active_front.png` `3662fbd21e17077f9e74d7315eb2ecc144f0ebb2e01840ed1bf16fed86e0ffee` <- 3 members
+- `gt6/textures/block/overlay/crystal_charger_overlay_front.png` `dadfb10ea4e61c577aa277880767af657f3bbe19144701ac6fcbe6e97332beea` <- 3 members
+- `gt6/textures/block/overlay/crystallisationcrucible_overlay_back.png` `35b46bf220371c495fda88c9d01bb4aeeadfe2a28212bee89dc1f811b0181384` <- 6 members
+- `gt6/textures/block/overlay/crystallisationcrucible_overlay_bottom_active.png` `16a7e53e3d6e078ff4a0d395e933ab69c6765bb05176f03131c99013b65753f7` <- 2 members
+- `gt6/textures/block/overlay/crystallisationcrucible_overlay_front.png` `6ea35ac994ca4dfc658c0f942367de0bf37c4ddf6b6bd669f28906ee31f7a8a6` <- 2 members
+- `gt6/textures/block/overlay/crystallisationcrucible_overlay_right.png` `8970d19746730d9f821ba92114e3fcd56128d4a89e621876fc9a3ffa3fc959d7` <- 3 members
+- `gt6/textures/block/overlay/crystallisationcrucible_overlay_top.png` `22dce3b768b25a1379ee22d5beece6e86ede787f8dd35bcd6785edf26ec209b7` <- 3 members
+- `gt6/textures/block/overlay/electric_dynamo_overlay_active_front.png` `c3325fa4e7a6d1e479212c6406fc28f4a78c227e8ffbe9d1f051e2ea36acbd56` <- 2 members
+- `gt6/textures/block/overlay/electric_dynamo_overlay_active_side.png` `6569a89537bc53d51e88c51edc435b8b8cf66d1bc2a040cec6b36d2c0074b736` <- 2 members
+- `gt6/textures/block/overlay/electric_dynamo_overlay_front.png` `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185` <- 3 members
+- `gt6/textures/block/overlay/electricloom_overlay_front.png` `b9d1e9a90e616889f453588dadce7589b3a207700e250ba4cd53ccce1ba28295` <- 2 members
+- `gt6/textures/block/overlay/electricmixer_overlay_front_active.png` `ff2f7907234ae8cfd0206f46eac8ce6ca61eb06bcbf58da56895ef321dc2ea71` <- 2 members
+- `gt6/textures/block/overlay/electricmixer_overlay_front_running.png` `db826274ea1b3003d42bd9e1dcac5310801872636c96867ee89b93fa9e4c4807` <- 2 members
+- `gt6/textures/block/overlay/electricsifter_overlay_front.png` `f736601956519d68b411807353cb25a200db9a190a45e9f5c6c920191f9743bc` <- 2 members
+- `gt6/textures/block/overlay/electricsifter_overlay_front_active.png` `1a0a8dee55f0fe6e20432affc75b82892270c4f0a7b08dcdf39bf71fea10f315` <- 2 members
+- `gt6/textures/block/overlay/electricsifter_overlay_front_running.png` `097a175a6e3de977218a128683fe99be7695f82ffccd3cb31b03b735173c79f5` <- 2 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_back.png` `70e8c363f4cc655219777bb8b5c17cf471567da87bd3a59dfb0d4217bc834f42` <- 2 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_back_active.png` `c2396acdd1da966d78de875e9a2af112e77dcbfb2fb1dabf6f33d78f58428b45` <- 2 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_back_running.png` `72228bfc19613baf605bcf0144a0e3d7a3892766bfd4f8bec269330724d4e918` <- 2 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_bottom.png` `e588156372a1d7772cee32901e2529cd119e87e9eb0eb88b86981a5cd925627c` <- 5 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_bottom_active.png` `b7de75667779d6e2166b5c2786058caf9b4148c5be6d08767e161d03350d3c2d` <- 10 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_left.png` `e43946145f42399276f912f4f3e371d866e432ada9a1df0eca51b40100101c78` <- 6 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_right.png` `a64b17eee9987771df5a2d92de1a5126b45129ddfe78b669b1ddb70630c1eae3` <- 15 members
+- `gt6/textures/block/overlay/electrolyzer_overlay_top.png` `565cc6f2138ef1236fc2a0da0596d279292638dedc5db5258207a9bf29e7a267` <- 15 members
+- `gt6/textures/block/overlay/generifier_overlay_back.png` `0a4aa17ff1beac7006dcf7288e2bf2a73abde78129385bd80f6c3aa894830138` <- 2 members
+- `gt6/textures/block/overlay/generifier_overlay_front.png` `2460e3bbde3bba371a837a365db398f4fb45823379a67492de61c944d1015bfe` <- 2 members
+- `gt6/textures/block/overlay/implosioncompressor_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3` <- 36 members
+- `gt6/textures/block/overlay/injector_overlay_top.png` `43fc4abbcfc4dc9bc98bc459c2f511a32161ee1739a642785ecb2a2159553af6` <- 6 members
+- `gt6/textures/block/overlay/laminator_overlay_back_active.png` `86cf4b8590bc1efe068ea95fa2ea86f069c7c2f77a94800bbc0ed76ecb9fb10e` <- 4 members
+- `gt6/textures/block/overlay/large_heat_exchanger_overlay_front_bottom.png` `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da` <- 3 members
+- `gt6/textures/block/overlay/large_heat_exchanger_overlay_front_side.png` `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f` <- 5 members
+- `gt6/textures/block/overlay/largebath_overlay_front.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b` <- 4 members
+- `gt6/textures/block/overlay/largecentrifuge_overlay_back.png` `2c23cec93c260404295cd677011a06e8da81a089b2b844a52980cd970ee2fd3e` <- 3 members
+- `gt6/textures/block/overlay/largecentrifuge_overlay_bottom.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021` <- 3 members
+- `gt6/textures/block/overlay/largecentrifuge_overlay_left.png` `65f81ff3bdcf9eadf1946eb0bd756fbe260bf1e5a56c7c84a88d3d2c57766710` <- 3 members
+- `gt6/textures/block/overlay/largecentrifuge_overlay_right.png` `1d176581c0604af5b9f5984eb853a88811411cb1c95e5fb9f069b26841ed43e0` <- 3 members
+- `gt6/textures/block/overlay/largecentrifuge_overlay_top.png` `74b9b1182bd42a14b99b728b36098292315f16528789cccbcb5999592b1edfd2` <- 3 members
+- `gt6/textures/block/overlay/largemassfab_overlay_front.png` `1533e6e9610e98ed2ba9163b39d6370be0c97eee9808be971abd8103665d78be` <- 2 members
+- `gt6/textures/block/overlay/largemassfab_overlay_front_active.png` `2efd0b5fc366ddcfaf89231730e01571ccf91dfcfc0fca8b8749b8483b656c50` <- 2 members
+- `gt6/textures/block/overlay/largemassfab_overlay_front_running.png` `dc48b3c85dc70970c32d980a10184f918de415336e1f2886a53d891145553999` <- 2 members
+- `gt6/textures/block/overlay/laser_absorber_overlay_active_back.png` `0fe48976578fe023b4ad2ec97d7839ebf3bb53825ad67c5e6ce376462c371112` <- 4 members
+- `gt6/textures/block/overlay/laser_absorber_overlay_back.png` `8782f3171417fe0bd61a410129ee779b9df26ff796e530beea7502afe01f1e06` <- 4 members
+- `gt6/textures/block/overlay/laserengraver_overlay_back.png` `3e4a34a54c821d824baf6298a040c9f467531f1afe28b586a45a7d6b57d21fe6` <- 2 members
+- `gt6/textures/block/overlay/laserengraver_overlay_back_active.png` `2d414b0c8b993b36dd9eda7cf655b2876e35e406cfb13e6cd6d79c44c195d96b` <- 4 members
+- `gt6/textures/block/overlay/laserengraver_overlay_top_running.png` `fc3bd5180345541910d26c6a97f5be5aed684e0059ed04e68b6c29e0b3cafed7` <- 2 members
+- `gt6/textures/block/overlay/laserwelder_overlay_bottom.png` `0a0dc27b8b2ca156e1657943b1f08c1bc1e3f6d89d8082c9369d37c8b5073f69` <- 3 members
+- `gt6/textures/block/overlay/lightningrod_overlay_front_side.png` `94adbe03462ca420f1d9322bffe91584ff361f7e1d1f00f5567148a5377b217d` <- 2 members
+- `gt6/textures/block/overlay/magneticseparator_overlay_top.png` `9d1ed891613da7dca3fb145856022e674cf514b75508dd1d2877d5619f60df00` <- 3 members
+- `gt6/textures/block/overlay/magneticseparator_overlay_top_active.png` `7a7912f78a307d4a3289301921daf5b9945492003ecb96172b39c17f55aefd0e` <- 6 members
+- `gt6/textures/block/overlay/massfab_overlay_back.png` `d1152f690913d11bc286fec25b44a44cf4ce38ded8c72c3da2b404f353ebdbeb` <- 5 members
+- `gt6/textures/block/overlay/massfab_overlay_back_active.png` `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db` <- 8 members
+- `gt6/textures/block/overlay/melter_overlay_back.png` `87fde83e027fe8ba50d290edc9cbb33e5675859003a6441b04105740ec6e4ce4` <- 2 members
+- `gt6/textures/block/overlay/melter_overlay_back_active.png` `cdb04d85e41d69cb96d7f77177188323a9ebe888e8c8c83a5aae602bf660a7cb` <- 2 members
+- `gt6/textures/block/overlay/melter_overlay_back_running.png` `ef6ce1331c752da52a8f41d1ab343eb3e49a1fdc06d2588219579298c83a20a3` <- 2 members
+- `gt6/textures/block/overlay/melter_overlay_front.png` `60fef49fb5c540732ed7153fab55864ad8756954ddaeee1051b6209e739785a8` <- 2 members
+- `gt6/textures/block/overlay/melter_overlay_front_active.png` `0a788a82fedb6d6c67d82a5252435722d3a8c52ba5fe0758bac7a58d3da0379c` <- 2 members
+- `gt6/textures/block/overlay/melter_overlay_front_running.png` `55b7140b85b4462bfea2f90f88421a5ad2c2074b0d553cdb651947f066140b11` <- 2 members
+- `gt6/textures/block/overlay/oven_overlay_back.png` `3da4d0f7d578f6e08102a0b7615160035997d58affc26c7d13813b678c4bd7fd` <- 2 members
+- `gt6/textures/block/overlay/oven_overlay_back_running.png` `cd5857690ac01a9fc10e3aadd4fe3afe3c2372d685ef0bcf14b680756b92b85e` <- 4 members
+- `gt6/textures/block/overlay/parts_centrifugeparts_0_overlay_side.png` `a9fdb651efcb170f70f37762eca8d9bd0e165ca66c7700b532bc4e9af3469915` <- 9 members
+- `gt6/textures/block/overlay/parts_centrifugeparts_1_overlay_top.png` `9092fb0586d8828031f42859ac41789eee3bb06afd6622abb54ae04de1a43f1f` <- 2 members
+- `gt6/textures/block/overlay/parts_metalwall_1_overlay_bottom.png` `b5ea73b4dbc618db374a6abbd97e84bdaf935dfbbad20e183b27a0c3e4018741` <- 8 members
+- `gt6/textures/block/overlay/parts_metalwall_2_overlay_bottom.png` `4a1faec5ae91a0ec64a87f5ddb9cd1b7d6e1d7a94cf0d7186d12de1b2fe0b1e0` <- 6 members
+- `gt6/textures/block/overlay/parts_metalwall_3_overlay_bottom.png` `2e9e3c93c97dfb61176f37ee88764b88d1bffe084628986d54ee536ee5499f73` <- 6 members
+- `gt6/textures/block/overlay/parts_metalwall_5_overlay_side.png` `d5a08e3724aa0e3d6692e5969e88af3bfbc9439299a61c44e80a503d007a719e` <- 2 members
+- `gt6/textures/block/overlay/parts_metalwall_6_overlay_side.png` `7926e01ba00586b9aca2197894abfeb47456134c31a6a14d04d056dd8a55ab5c` <- 2 members
+- `gt6/textures/block/overlay/parts_woodwall_0_overlay_side.png` `c95714eaee8b875393a7f5b22ce71d9e5b6a21596d71810ada3873b96f95609c` <- 2 members
+- `gt6/textures/block/overlay/press_overlay_back.png` `0f36acaa757a9c82b7960f88e7a905dc45364121959b44ffad534b8848fbccc5` <- 2 members
+- `gt6/textures/block/overlay/press_overlay_back_running.png` `016292a072f18b7b9cb149c4a937835eeae980949b6986846835245d8247cb88` <- 2 members
+- `gt6/textures/block/overlay/printer_overlay_front.png` `67597f17739ebaf96fb56bdfede535e503c21ba3ab6e2ce7cd43287443dde30a` <- 2 members
+- `gt6/textures/block/overlay/rollformer_overlay_front.png` `9e0dd48f29a21e2d07ae3adfd298d7b3c546c4143169c9f66c6379d2970f70e5` <- 2 members
+- `gt6/textures/block/overlay/rollformer_overlay_front_active.png` `031b0c87d09052fc386727460901fa0019a84f7a920333b8b273fbcc0b3f1836` <- 2 members
+- `gt6/textures/block/overlay/rollformer_overlay_front_running.png` `3c97bed4e3b242c5d151b5ea46fb71be453fb94015cee561493f6795ebc639a0` <- 2 members
+- `gt6/textures/block/overlay/squeezer_overlay_back.png` `0a8c088e175982e0312a0bce7de9691e484a32c889807625a6b17f14d3b4732f` <- 2 members
+- `gt6/textures/block/overlay/squeezer_overlay_back_running.png` `4da860188c0ea9223a7fcca293a242512010113f2efa75cef942812974a0d711` <- 2 members
+- `gt6/textures/block/overlay/turbine_mains_gasturbine_overlay_front_bottom.png` `8bb228b7d170dafe2fa9a2e8e8bc0e6c92c2156bc42de82961af864e1e30bfea` <- 2 members
+- `gt6/textures/block/overlay/turbine_mains_gasturbine_overlay_front_side.png` `69fd2bbbc82a77cb1db099bf09a5b0f02b21253682cf30c2d3b51334316cf0b4` <- 2 members
+- `gt6/textures/block/overlay/turbine_mains_gasturbine_overlay_front_top.png` `a5c32ee260d44d3708a570fe0fb5905783971a9ef5bf9ed11deae959ddeffcca` <- 2 members
+- `gt6/textures/block/overlay/zpm_decharger_overlay_active_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e` <- 4 members
+- `gt6/textures/item/overlay/empty.png` `f138a491eb7b6e4572a64075d57276a36470724c0b57e6f3c42da424ee31398f` <- 571 members
+
+
 Machine port side-face overlay borrows, task a-port-overlay-assets
 (copied 2026-09-12). The port-face art set for the B render card: per
 basicmachines family the colored six-face body plus the five NON-front side
@@ -8284,17 +8409,14 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `compressor_overlay_bottom.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/compressor/overlay/bottom.png`)
   - `compressor_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/compressor/overlay/top.png`)
   - `compressor_overlay_left.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/compressor/overlay/left.png`)
-  - `compressor_overlay_right.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/compressor/overlay/right.png`)
   - `compressor_overlay_back.png`  `0fea01697877dd0666a1e5a6a7f31292a3deedc41d9510b8dfdae8f7f8e243c1`  (byte copy; upstream `basicmachines/compressor/overlay/back.png`)
   - `compressor_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/compressor/overlay_active/bottom.png`)
   - `compressor_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/compressor/overlay_active/top.png`)
   - `compressor_overlay_left_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/compressor/overlay_active/left.png`)
-  - `compressor_overlay_right_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/compressor/overlay_active/right.png`)
   - `compressor_overlay_back_active.png`  `ec6f5d9a947ca0b94dcc356b808e30976577634f2d3f92aefa1de493fb7295f2`  (FRAME 0 of 9; upstream `basicmachines/compressor/overlay_active/back.png`)
   - `compressor_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/compressor/overlay_running/bottom.png`)
   - `compressor_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/compressor/overlay_running/top.png`)
   - `compressor_overlay_left_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/compressor/overlay_running/left.png`)
-  - `compressor_overlay_right_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/compressor/overlay_running/right.png`)
   - `compressor_overlay_back_running.png`  `644319970ea18872364826dbebaa1160eda0294cf5c880ba22d8d9624c591801`  (FRAME 0 of 9; upstream `basicmachines/compressor/overlay_running/back.png`)
   - `crusher_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/bottom.png`)
   - `crusher_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/top.png`)
@@ -8303,18 +8425,12 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `crusher_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/crusher/colored/back.png`)
   - `crusher_overlay_bottom.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/crusher/overlay/bottom.png`)
   - `crusher_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/crusher/overlay/top.png`)
-  - `crusher_overlay_left.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay/left.png`)
-  - `crusher_overlay_right.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay/right.png`)
   - `crusher_overlay_back.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/crusher/overlay/back.png`)
   - `crusher_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/crusher/overlay_active/bottom.png`)
   - `crusher_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/crusher/overlay_active/top.png`)
-  - `crusher_overlay_left_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_active/left.png`)
-  - `crusher_overlay_right_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_active/right.png`)
   - `crusher_overlay_back_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/crusher/overlay_active/back.png`)
   - `crusher_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/crusher/overlay_running/bottom.png`)
   - `crusher_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/crusher/overlay_running/top.png`)
-  - `crusher_overlay_left_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_running/left.png`)
-  - `crusher_overlay_right_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/crusher/overlay_running/right.png`)
   - `crusher_overlay_back_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/crusher/overlay_running/back.png`)
   - `distillery_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/bottom.png`)
   - `distillery_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/distillery/colored/top.png`)
@@ -8362,17 +8478,14 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `extruder_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/right.png`)
   - `extruder_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/extruder/colored/back.png`)
   - `extruder_overlay_bottom.png`  `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`  (byte copy; upstream `basicmachines/extruder/overlay/bottom.png`)
-  - `extruder_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/extruder/overlay/top.png`)
   - `extruder_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/extruder/overlay/left.png`)
   - `extruder_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/extruder/overlay/right.png`)
   - `extruder_overlay_back.png`  `97a428fc12cb31f4f18114567ec6ba06f33dd73813cbd2d2017b7b66b63a859f`  (byte copy; upstream `basicmachines/extruder/overlay/back.png`)
   - `extruder_overlay_bottom_active.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/extruder/overlay_active/bottom.png`)
-  - `extruder_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/extruder/overlay_active/top.png`)
   - `extruder_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/extruder/overlay_active/left.png`)
   - `extruder_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/extruder/overlay_active/right.png`)
   - `extruder_overlay_back_active.png`  `299a7f0616df27328cec4e71124aeee8040829aabd26e60e4ad208ec64d28b29`  (FRAME 0 of 6; upstream `basicmachines/extruder/overlay_active/back.png`)
   - `extruder_overlay_bottom_running.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/extruder/overlay_running/bottom.png`)
-  - `extruder_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/extruder/overlay_running/top.png`)
   - `extruder_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/extruder/overlay_running/left.png`)
   - `extruder_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/extruder/overlay_running/right.png`)
   - `extruder_overlay_back_running.png`  `fc56cfebfca63bb4f88e26be3d03bd57ed42b8d0e2d2bc6dd9f3f2263a09c99d`  (byte copy; upstream `basicmachines/extruder/overlay_running/back.png`)
@@ -8382,17 +8495,14 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `lathe_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/lathe/colored/right.png`)
   - `lathe_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/lathe/colored/back.png`)
   - `lathe_overlay_bottom.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/lathe/overlay/bottom.png`)
-  - `lathe_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/lathe/overlay/top.png`)
   - `lathe_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/lathe/overlay/left.png`)
   - `lathe_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/lathe/overlay/right.png`)
   - `lathe_overlay_back.png`  `406b11e8a6e88d68f1d654c67f20311b5b6d74ce93940183309ca0e8ce0cd155`  (byte copy; upstream `basicmachines/lathe/overlay/back.png`)
   - `lathe_overlay_bottom_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/lathe/overlay_active/bottom.png`)
-  - `lathe_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/lathe/overlay_active/top.png`)
   - `lathe_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/lathe/overlay_active/left.png`)
   - `lathe_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/lathe/overlay_active/right.png`)
   - `lathe_overlay_back_active.png`  `a90fafa3c10cfb6eb532a0488fcc06adc73ea0295566559111e9549ef4b34289`  (FRAME 0 of 6; upstream `basicmachines/lathe/overlay_active/back.png`)
   - `lathe_overlay_bottom_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/lathe/overlay_running/bottom.png`)
-  - `lathe_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/lathe/overlay_running/top.png`)
   - `lathe_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/lathe/overlay_running/left.png`)
   - `lathe_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/lathe/overlay_running/right.png`)
   - `lathe_overlay_back_running.png`  `a07a82dc3e9f481e2ee8e14f03d7f6c8128fa36765250c81cbb483e3380dcef3`  (FRAME 0 of 6; upstream `basicmachines/lathe/overlay_running/back.png`)
@@ -8402,17 +8512,14 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `oven_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/right.png`)
   - `oven_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/oven/colored/back.png`)
   - `oven_overlay_bottom.png`  `1d116dec67f49dc22a130120f186fbbf7e9f963f4212629ea46a963a6f2feacb`  (byte copy; upstream `basicmachines/oven/overlay/bottom.png`)
-  - `oven_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/oven/overlay/top.png`)
   - `oven_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/oven/overlay/left.png`)
   - `oven_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/oven/overlay/right.png`)
   - `oven_overlay_back.png`  `3da4d0f7d578f6e08102a0b7615160035997d58affc26c7d13813b678c4bd7fd`  (byte copy; upstream `basicmachines/oven/overlay/back.png`)
   - `oven_overlay_bottom_active.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/oven/overlay_active/bottom.png`)
-  - `oven_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/oven/overlay_active/top.png`)
   - `oven_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/oven/overlay_active/left.png`)
   - `oven_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/oven/overlay_active/right.png`)
   - `oven_overlay_back_active.png`  `55ee0c7bd3a569150a80390a3e96c74b9993b2896161a0b46c9eef93daefa821`  (FRAME 0 of 8; upstream `basicmachines/oven/overlay_active/back.png`)
   - `oven_overlay_bottom_running.png`  `b7b0e3f66530c15165ba8d44c2b05ef14986624987636a5c2caea818c670183a`  (byte copy; upstream `basicmachines/oven/overlay_running/bottom.png`)
-  - `oven_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/oven/overlay_running/top.png`)
   - `oven_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/oven/overlay_running/left.png`)
   - `oven_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/oven/overlay_running/right.png`)
   - `oven_overlay_back_running.png`  `cd5857690ac01a9fc10e3aadd4fe3afe3c2372d685ef0bcf14b680756b92b85e`  (byte copy; upstream `basicmachines/oven/overlay_running/back.png`)
@@ -8421,17 +8528,14 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `press_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/left.png`)
   - `press_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/right.png`)
   - `press_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/press/colored/back.png`)
-  - `press_overlay_bottom.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/press/overlay/bottom.png`)
   - `press_overlay_top.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/press/overlay/top.png`)
   - `press_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/press/overlay/left.png`)
   - `press_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/press/overlay/right.png`)
   - `press_overlay_back.png`  `0f36acaa757a9c82b7960f88e7a905dc45364121959b44ffad534b8848fbccc5`  (byte copy; upstream `basicmachines/press/overlay/back.png`)
-  - `press_overlay_bottom_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/press/overlay_active/bottom.png`)
   - `press_overlay_top_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/press/overlay_active/top.png`)
   - `press_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/press/overlay_active/left.png`)
   - `press_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/press/overlay_active/right.png`)
   - `press_overlay_back_active.png`  `b56f809af495a9241d54ce6087cef250d405fbdb78ae33666655e611f0986b37`  (FRAME 0 of 16; upstream `basicmachines/press/overlay_active/back.png`)
-  - `press_overlay_bottom_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/press/overlay_running/bottom.png`)
   - `press_overlay_top_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/press/overlay_running/top.png`)
   - `press_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/press/overlay_running/left.png`)
   - `press_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/press/overlay_running/right.png`)
@@ -8445,17 +8549,14 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `shredder_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/shredder/overlay/top.png`)
   - `shredder_overlay_left.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay/left.png`)
   - `shredder_overlay_right.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay/right.png`)
-  - `shredder_overlay_back.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/shredder/overlay/back.png`)
   - `shredder_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/shredder/overlay_active/bottom.png`)
   - `shredder_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/shredder/overlay_active/top.png`)
   - `shredder_overlay_left_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_active/left.png`)
   - `shredder_overlay_right_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_active/right.png`)
-  - `shredder_overlay_back_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/shredder/overlay_active/back.png`)
   - `shredder_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/shredder/overlay_running/bottom.png`)
   - `shredder_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/shredder/overlay_running/top.png`)
   - `shredder_overlay_left_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_running/left.png`)
   - `shredder_overlay_right_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/shredder/overlay_running/right.png`)
-  - `shredder_overlay_back_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/shredder/overlay_running/back.png`)
   - `sifter_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/bottom.png`)
   - `sifter_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/top.png`)
   - `sifter_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/left.png`)
@@ -8463,42 +8564,27 @@ The 243 new borrows (byte copies unless noted FRAME 0):
   - `sifter_colored_back.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/sifter/colored/back.png`)
   - `sifter_overlay_bottom.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/sifter/overlay/bottom.png`)
   - `sifter_overlay_top.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/sifter/overlay/top.png`)
-  - `sifter_overlay_left.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay/left.png`)
-  - `sifter_overlay_right.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay/right.png`)
   - `sifter_overlay_back.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/sifter/overlay/back.png`)
   - `sifter_overlay_bottom_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/sifter/overlay_active/bottom.png`)
   - `sifter_overlay_top_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/sifter/overlay_active/top.png`)
-  - `sifter_overlay_left_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_active/left.png`)
-  - `sifter_overlay_right_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_active/right.png`)
   - `sifter_overlay_back_active.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/sifter/overlay_active/back.png`)
   - `sifter_overlay_bottom_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/sifter/overlay_running/bottom.png`)
   - `sifter_overlay_top_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/sifter/overlay_running/top.png`)
-  - `sifter_overlay_left_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_running/left.png`)
-  - `sifter_overlay_right_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/sifter/overlay_running/right.png`)
   - `sifter_overlay_back_running.png`  `79587c544b954621e675e9da925d6f5bf9bcacfd7a2a4c6bbab7c8933b75df09`  (byte copy; upstream `basicmachines/sifter/overlay_running/back.png`)
   - `wiremill_colored_bottom.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/bottom.png`)
   - `wiremill_colored_top.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/top.png`)
   - `wiremill_colored_left.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/left.png`)
   - `wiremill_colored_right.png`  `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`  (byte copy; upstream `basicmachines/wiremill/colored/right.png`)
   - `wiremill_colored_back.png`  `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`  (byte copy; upstream `basicmachines/wiremill/colored/back.png`)
-  - `wiremill_overlay_bottom.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay/bottom.png`)
-  - `wiremill_overlay_top.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay/top.png`)
   - `wiremill_overlay_left.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/wiremill/overlay/left.png`)
   - `wiremill_overlay_right.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/wiremill/overlay/right.png`)
   - `wiremill_overlay_back.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/wiremill/overlay/back.png`)
-  - `wiremill_overlay_bottom_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_active/bottom.png`)
-  - `wiremill_overlay_top_active.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_active/top.png`)
   - `wiremill_overlay_left_active.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/wiremill/overlay_active/left.png`)
   - `wiremill_overlay_right_active.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/wiremill/overlay_active/right.png`)
   - `wiremill_overlay_back_active.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/wiremill/overlay_active/back.png`)
-  - `wiremill_overlay_bottom_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_running/bottom.png`)
-  - `wiremill_overlay_top_running.png`  `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`  (byte copy; upstream `basicmachines/wiremill/overlay_running/top.png`)
   - `wiremill_overlay_left_running.png`  `a8ebffe7a5f7e4fe6b9cb606d0142372441bac9cba5b32b7be456a6bef4e241a`  (byte copy; upstream `basicmachines/wiremill/overlay_running/left.png`)
   - `wiremill_overlay_right_running.png`  `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3`  (byte copy; upstream `basicmachines/wiremill/overlay_running/right.png`)
   - `wiremill_overlay_back_running.png`  `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`  (byte copy; upstream `basicmachines/wiremill/overlay_running/back.png`)
-  - `transformer_rotation_overlay_front.png`  `d3e79dc81f8bd97609ad0e3dcda2656d4b0a085811466f46801db3e19e57f04a`  (byte copy [ART-DUBIOUS: all-black art, entity dubious]; upstream `transformers/transformer_rotation/overlay/front.png`)
-  - `transformer_rotation_overlay_back.png`  `d3e79dc81f8bd97609ad0e3dcda2656d4b0a085811466f46801db3e19e57f04a`  (byte copy [ART-DUBIOUS: all-black art, entity dubious]; upstream `transformers/transformer_rotation/overlay/back.png`)
-  - `transformer_rotation_overlay_side.png`  `d3e79dc81f8bd97609ad0e3dcda2656d4b0a085811466f46801db3e19e57f04a`  (byte copy [ART-DUBIOUS: all-black art, entity dubious]; upstream `transformers/transformer_rotation/overlay/side.png`)
 
 `transformer_rotation` flag — the three `overlay` PNGs are visually ALL-BLACK
 upstream; whether that is intentional port art or a dead layer is unproven
@@ -8632,7 +8718,6 @@ for the family two-layer partModel; the sprite stays on disk for the historical
 ledger. Pixel note: the overlay bottom/top plates carry the DARK COLORED cap art
 (96 opaque texels each, sha256 `40b49e9a3738a361078b185e641f4e2ab2ff3e5ea69fafe7107cc586db25598e`
 / `545ec2565e991ba9d29e9094489bed7577eb4b5d36d672066f513f872b148efb`), the overlay
-side is empty upstream (`3cf5abfad9eeea45bb64d71b4391c58a4a2059c173f03fb8ef75383fe77f72f1`)
 — the upstream rod pillar look IS light wall + dark caps. Per-file hashes:
 colored bottom/top `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 (byte-shared with the multiblockmains colored borrows). Upstream license: **CC0 1.0
@@ -8923,9 +9008,6 @@ Universal Public Domain Dedication** (same upstream `README.md` block as above).
 
   - `bush_parts/berries.png`            `f5f544e6e7cc6bba3bfb59e885496a03021ac31318cfd1c7e820774073d58e1b` (upstream `colored/berries.png`)
   - `bush_parts/berries_immature.png`   `3fb0dfa7a665bf0051fbcf38386c9ef4c7850bb1caf803112868398c80822703` (upstream `colored/berries_immature.png`)
-  - `bush_parts/overlay_bush.png`       `57ee6c0dfeba5a32c738a26e1364c6f20c9097ec2676e31b35e7848581490e6c` (upstream `overlay/bush.png`)
-  - `bush_parts/overlay_berries.png`    `595331dbb5390e5fb40bc1fc80eac6082c8f58dc52a2ac02418ae72e336092e4` (upstream `overlay/berries.png`)
-  - `bush_parts/overlay_berries_immature.png` `595331dbb5390e5fb40bc1fc80eac6082c8f58dc52a2ac02418ae72e336092e4` (upstream `overlay/berries_immature.png` — BYTE-IDENTICAL to `overlay/berries.png` UPSTREAM; the two paths borrow the same file, the barrel same-hash precedent `overlay_bottom`/`overlay_top`)
 - `gt6/textures/block/black_sand.png` — the magnetite river sand (upstream
   `iconsets/SAND_MAGNETITE.png`; sha256
   `f512f0776c14d38f5a8c40e8277513e0c569cf2ddb460a0da5d1e9535e6529f8`)
@@ -9263,11 +9345,7 @@ The two former derived files are dead — each digest retired with the file
 - `block/quantum_energizer_colored_front.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e` (upstream `quantum_laser/colored/front.png`)
 - `block/quantum_energizer_colored_back.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e` (upstream `quantum_laser/colored/back.png`; byte-identical to the front — one upstream art, three icon rows)
 - `block/quantum_energizer_colored_side.png` — `d3dd56bee9e777c0800831c570e523300b4c100a75b23a1b6c9ed3948e38b25e` (upstream `quantum_laser/colored/side.png`; byte-identical to the front)
-- `block/quantum_energizer_overlay_front.png` — `d1152f690913d11bc286fec25b44a44cf4ce38ded8c72c3da2b404f353ebdbeb` (upstream `quantum_laser/overlay/front.png`)
-- `block/quantum_energizer_overlay_back.png` — `8782f3171417fe0bd61a410129ee779b9df26ff796e530beea7502afe01f1e06` (upstream `quantum_laser/overlay/back.png`)
 - `block/quantum_energizer_overlay_side.png` — `5a1aa7f1375203df87905992547a6cb21fd81f90ae327e86c16ed77fc7b13514` (upstream `quantum_laser/overlay/side.png`)
-- `block/quantum_energizer_overlay_active_front.png` — `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db` (upstream `quantum_laser/overlay_active/front.png`)
-- `block/quantum_energizer_overlay_active_back.png` — `0fe48976578fe023b4ad2ec97d7839ebf3bb53825ad67c5e6ce376462c371112` (upstream `quantum_laser/overlay_active/back.png`)
 - `block/quantum_energizer_overlay_active_side.png` — `fef048ade7a8eb479f27b587ffc4648e536059f1b9ad471f0ae3c15723b79bc4` (upstream `quantum_laser/overlay_active/side.png`)
 
 ## task placeables (2026-09-19) — the placeables band
@@ -9635,12 +9713,6 @@ tiles are byte-identical to the kitchen family's (same upstream art):
 - `block/tools/mortar/bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/mortar/colored/bottom.png`; byte-identical to the kitchen bottom tile)
 - `block/tools/mortar/middleside.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/mortar/colored/middleside.png`; the same uniform tile as the bottom)
 - `block/tools/mortar/middletop.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `blocks/machines/tools/mortar/colored/middletop.png`; the same uniform tile as the bottom)
-- `block/tools/mortar_overlay/sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/sides.png`; all six overlay tiles ship the one sheet)
-- `block/tools/mortar_overlay/insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/insides.png`)
-- `block/tools/mortar_overlay/top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/top.png`)
-- `block/tools/mortar_overlay/bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/bottom.png`)
-- `block/tools/mortar_overlay/middleside.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/middleside.png`)
-- `block/tools/mortar_overlay/middletop.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/mortar/overlay/middletop.png`)
 
 ## Fluid spring block texture (task spring-texture-tint)
 
@@ -9815,133 +9887,91 @@ tintindex: the rows register NBT-less (Loader_MultiTileEntities.java:1979-1999)
 so upstream mRGBa is white = the colored art displays its own colours. The
 upstream pass1-6 live digit boards (CHAR_* sprite stack, MultiTileEntitySensor
 .java:143-261) stay the pool-gauges render-pool defer — the borrowed
-overlay/front is the static art. sha256 manifest (21 families x 6):
+overlay/front is the static art. sha256 manifest (21 families x 4):
 - `gt6/textures/block/sensors/bucketometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/bucketometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/bucketometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/bucketometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/bucketometer/overlay_front.png` `4fa2cf14f0332a3c5abbfa5b1dca6f79b2c8c4fa4af2d55625b01e05094d4a87`
-- `gt6/textures/block/sensors/bucketometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/chronometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/chronometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/chronometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/chronometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/chronometer/overlay_front.png` `2a667f939ecb463d5ec0b1ba907e877a6e75f1df4d2f36299841e19e95da24e0`
-- `gt6/textures/block/sensors/chronometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/electrometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/electrometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/electrometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/electrometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/electrometer/overlay_front.png` `5c28d9a627936958bcbdcb26c4c460ba106177ebc582071163606f6a1048e238`
-- `gt6/textures/block/sensors/electrometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/fluidometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/fluidometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/fluidometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/fluidometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/fluidometer/overlay_front.png` `08a5a6dbfc5a864a9cd6aa35ff33ba1b97b44e65912d0caa500e726ac327bf7d`
-- `gt6/textures/block/sensors/fluidometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/geigercounter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/geigercounter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/geigercounter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/geigercounter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/geigercounter/overlay_front.png` `b4e405f94a97dc04557f99bb79339f0dc3be2a800ebbe6ff36c89720eeafb0d7`
-- `gt6/textures/block/sensors/geigercounter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/gibblometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/gibblometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/gibblometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/gibblometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/gibblometer/overlay_front.png` `226a11410bc89854c503e679eb77cf3f506f42cff6f9d9913f1b1d9222bbfba1`
-- `gt6/textures/block/sensors/gibblometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/heavyweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/heavyweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/heavyweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/heavyweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/heavyweightometer/overlay_front.png` `1d415638ce9de7f4517bcc93731f0cd98605a08ffa672a8693a9468cccec1e46`
-- `gt6/textures/block/sensors/heavyweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/itemometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/itemometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/itemometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/itemometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/itemometer/overlay_front.png` `6c9e2f2206569dd5e80df0f04621f3820923f1d24cdee3f0e69d55f1c21c5b46`
-- `gt6/textures/block/sensors/itemometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/kilobucketometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/kilobucketometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/kilobucketometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/kilobucketometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/kilobucketometer/overlay_front.png` `cc22308f935bf9d252ed868aed407eaf77ef9f2a2955f4e9d512bc50a86517f9`
-- `gt6/textures/block/sensors/kilobucketometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/kilogibblometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/kilogibblometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/kilogibblometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/kilogibblometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/kilogibblometer/overlay_front.png` `78da3cd21c1255fe113801929e624dcf99b2756bbf695b33d56d86e769830c83`
-- `gt6/textures/block/sensors/kilogibblometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/laserometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/laserometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/laserometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/laserometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/laserometer/overlay_front.png` `53b39f401f43613bd970ad07132acfaca314e2f1712f23c409e2c937945d96d4`
-- `gt6/textures/block/sensors/laserometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/lightweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/lightweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/lightweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/lightweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/lightweightometer/overlay_front.png` `387cc3e78f7e23cacbabaa9a127ec503a30b69a390e731dd26cb62bdf940acd6`
-- `gt6/textures/block/sensors/lightweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/luminometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/luminometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/luminometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/luminometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/luminometer/overlay_front.png` `63da87fff8ab320775068583f0c7a29eedcb9bea10a363e9d5abdfbf54695390`
-- `gt6/textures/block/sensors/luminometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/mediumweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/mediumweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/mediumweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/mediumweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/mediumweightometer/overlay_front.png` `56f9f435a796f53d8b3deb4c022f6ada01b34414cc96f63e91e055b8bc71e58a`
-- `gt6/textures/block/sensors/mediumweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/playercounter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/playercounter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/playercounter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/playercounter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/playercounter/overlay_front.png` `ebbea7b9d4a75e552b67d055bb1fc8c9088b4a503120463455f463a9b686ea79`
-- `gt6/textures/block/sensors/playercounter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/progressmeter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/progressmeter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/progressmeter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/progressmeter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/progressmeter/overlay_front.png` `f44441e5059303b75757aeaff1c5b756c35ab65a6c92618daed64e8cd3c7f9db`
-- `gt6/textures/block/sensors/progressmeter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/stackometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/stackometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/stackometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/stackometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/stackometer/overlay_front.png` `c0dc3a46c4c04d425b0946624a2d5cb76aac38877b43050953775263591aa6e8`
-- `gt6/textures/block/sensors/stackometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/superheavyweightometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/superheavyweightometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/superheavyweightometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/superheavyweightometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/superheavyweightometer/overlay_front.png` `576dc4b38a9834385c09c6daffdee4596174c5b5bb1f07fb80348ecd9699ab62`
-- `gt6/textures/block/sensors/superheavyweightometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/tachometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/tachometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/tachometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/tachometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/tachometer/overlay_front.png` `260dd3b503864eb7076531f5e8f26c2e7fa105def47644956a644fdfbbab84d7`
-- `gt6/textures/block/sensors/tachometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/thermometer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/thermometer/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/thermometer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/thermometer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/thermometer/overlay_front.png` `e1f013a1d442694429065ca406f650b838b363d97cae0e1160c0ef7b900fd3cb`
-- `gt6/textures/block/sensors/thermometer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/tpsmeter/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/sensors/tpsmeter/colored_front.png` `947c71acd0246ce6c3173f72ed1c71559653b9e7f043e6e42e28a50d101f2ae4`
 - `gt6/textures/block/sensors/tpsmeter/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/sensors/tpsmeter/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/sensors/tpsmeter/overlay_front.png` `4a909e8e5fb4ad511d81084f3785ed050fe856950c8d96764729b692e8ae31a6`
-- `gt6/textures/block/sensors/tpsmeter/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 
 ## task tex-pipe-textures — the pipe connector families' material-set dual-layer band
 
@@ -10129,10 +10159,14 @@ MultiTileEntityMeasuringPot.java:113-121), plus the raw item icon (meta 997):
 - `measuring_pot_overlay_bottom.png`  `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `item/clay_measuring_pot.png`       `9fdced840ab17174e98ad5c3efcc02e18911aa24cd79d504ef6308fbccbaf105` (upstream `gt.multiitem.randomtools/997.png`)
 
-Valve borrows (24) — upstream
+Valve borrows (19) — upstream
 `machines/multiblockmains/<family>/<layer>/<face>.png` flattens to
 `tank_valves/<family>_<layer>_<face>.png`, family = tankwood (the one flammable row)
-/ tankmetal (the 24 metal rows):
+/ tankmetal (the 24 metal rows). Task overlay-dedupe-block-leg retired the five
+transparent overlay tiles (tankwood overlay bottom/top, tankmetal overlay
+bottom/side/top) onto the `item/overlay/empty` canonical — digest retired with the
+file; the surviving non-front overlay rows ground through their byte-identical
+`block/overlay/` content-group canonicals:
 
 - `tank_valves/tankwood_colored_bottom.png`        `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
 - `tank_valves/tankwood_colored_side.png`          `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
@@ -10140,9 +10174,7 @@ Valve borrows (24) — upstream
 - `tank_valves/tankwood_colored_front_bottom.png`  `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
 - `tank_valves/tankwood_colored_front_side.png`    `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
 - `tank_valves/tankwood_colored_front_top.png`     `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
-- `tank_valves/tankwood_overlay_bottom.png`        `42492b4a8a79c6a7c1c340b2a3a6628db0fecb68237aa2a02a75482517b61e0e`
 - `tank_valves/tankwood_overlay_side.png`          `c95714eaee8b875393a7f5b22ce71d9e5b6a21596d71810ada3873b96f95609c`
-- `tank_valves/tankwood_overlay_top.png`           `42492b4a8a79c6a7c1c340b2a3a6628db0fecb68237aa2a02a75482517b61e0e`
 - `tank_valves/tankwood_overlay_front_bottom.png`  `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da`
 - `tank_valves/tankwood_overlay_front_side.png`    `50d66eb5cb4a4aad162981044ddac3b28260ce8b839159f8ec771a43fca3429f`
 - `tank_valves/tankwood_overlay_front_top.png`     `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
@@ -10152,9 +10184,6 @@ Valve borrows (24) — upstream
 - `tank_valves/tankmetal_colored_front_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `tank_valves/tankmetal_colored_front_side.png`   `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `tank_valves/tankmetal_colored_front_top.png`    `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `tank_valves/tankmetal_overlay_bottom.png`       `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
-- `tank_valves/tankmetal_overlay_side.png`         `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
-- `tank_valves/tankmetal_overlay_top.png`          `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
 - `tank_valves/tankmetal_overlay_front_bottom.png` `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da`
 - `tank_valves/tankmetal_overlay_front_side.png`   `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
 - `tank_valves/tankmetal_overlay_front_top.png`    `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
@@ -10264,7 +10293,7 @@ over vanilla textures. The ten retired placeholder PNGs (`locker_front/side`,
 `drawer_front/side`, `safe_front/side`, `hopper_front/side`, `anvil_top/side`)
 are deleted with every generated JSON reference.
 
-sha256 manifest (44 files):
+sha256 manifest (25 files):
 - `gt6/textures/block/locker/colored_front.png` `8f2d6b21e56e98018f117d11206faac3d77a225c455e5647eb3735be32a7fbbc`
   (upstream `textures/blocks/machines/lockers/normal/colored/front.png`)
 - `gt6/textures/block/locker/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
@@ -10275,15 +10304,10 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/lockers/normal/colored/top.png`)
 - `gt6/textures/block/locker/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
   (upstream `textures/blocks/machines/lockers/normal/colored/bottom.png`)
-- `gt6/textures/block/locker/overlay_front.png` `2660369d62e9c5c7364caed24d1c83cb5720cefae3d1d6aff1a26849b667e04e`
   (upstream `textures/blocks/machines/lockers/normal/overlay/front.png`)
-- `gt6/textures/block/locker/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/normal/overlay/back.png`)
-- `gt6/textures/block/locker/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/normal/overlay/side.png`)
-- `gt6/textures/block/locker/overlay_top.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/normal/overlay/top.png`)
-- `gt6/textures/block/locker/overlay_bottom.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/normal/overlay/bottom.png`)
 - `gt6/textures/block/drawer/colored_front.png` `ac56d3e0a07b6fbdd032c04dbe05aa4bcb217a71ed1edc67a867d70f657babc8`
   (upstream `textures/blocks/machines/drawers/quad/colored/front.png`)
@@ -10297,13 +10321,9 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/drawers/quad/colored/bottom.png`)
 - `gt6/textures/block/drawer/overlay_front.png` `dfbc6b592662d3b15d7797ed42a48f377a3f59329c927fa660c86de4ff90326e`
   (upstream `textures/blocks/machines/drawers/quad/overlay/front.png`)
-- `gt6/textures/block/drawer/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/drawers/quad/overlay/back.png`)
-- `gt6/textures/block/drawer/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/drawers/quad/overlay/side.png`)
-- `gt6/textures/block/drawer/overlay_top.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/drawers/quad/overlay/top.png`)
-- `gt6/textures/block/drawer/overlay_bottom.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/drawers/quad/overlay/bottom.png`)
 - `gt6/textures/block/safe_mechanical/colored_front.png` `d11c0ac9ace3cb73c353e6a5b1a81fde432b3741e6bb5e96f719814d81afb8a3`
   (upstream `textures/blocks/machines/safes/mechanical/colored/front.png`)
@@ -10313,9 +10333,7 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/safes/mechanical/colored/side.png`)
 - `gt6/textures/block/safe_mechanical/overlay_front.png` `411353d97c020ee3e96f7c393b0c4290b3e9ff888594821c09daff886e6e2088`
   (upstream `textures/blocks/machines/safes/mechanical/overlay/front.png`)
-- `gt6/textures/block/safe_mechanical/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/safes/mechanical/overlay/back.png`)
-- `gt6/textures/block/safe_mechanical/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/safes/mechanical/overlay/side.png`)
 - `gt6/textures/block/safe_keylocked/colored_front.png` `d11c0ac9ace3cb73c353e6a5b1a81fde432b3741e6bb5e96f719814d81afb8a3`
   (upstream `textures/blocks/machines/safes/keylocked/colored/front.png`)
@@ -10325,9 +10343,7 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/safes/keylocked/colored/side.png`)
 - `gt6/textures/block/safe_keylocked/overlay_front.png` `7031c2b01051450cc9bc024930f2527d9862f05ed6ace2d5922529c001138646`
   (upstream `textures/blocks/machines/safes/keylocked/overlay/front.png`)
-- `gt6/textures/block/safe_keylocked/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/safes/keylocked/overlay/back.png`)
-- `gt6/textures/block/safe_keylocked/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/safes/keylocked/overlay/side.png`)
 - `gt6/textures/block/hopper/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
   (upstream `textures/blocks/machines/automation/hopper/colored/bottom.png`)
@@ -10335,11 +10351,8 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/automation/hopper/colored/top.png`)
 - `gt6/textures/block/hopper/colored_side.png` `1f673b0bca5989337468991aa090d1ffd2f72f9a63e3562968259585f60a17e0`
   (upstream `textures/blocks/machines/automation/hopper/colored/side.png`)
-- `gt6/textures/block/hopper/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/hopper/overlay/bottom.png`)
-- `gt6/textures/block/hopper/overlay_top.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/hopper/overlay/top.png`)
-- `gt6/textures/block/hopper/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/hopper/overlay/side.png`)
 - `gt6/textures/block/queuehopper/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
   (upstream `textures/blocks/machines/automation/queuehopper/colored/bottom.png`)
@@ -10347,11 +10360,8 @@ sha256 manifest (44 files):
   (upstream `textures/blocks/machines/automation/queuehopper/colored/top.png`)
 - `gt6/textures/block/queuehopper/colored_side.png` `72794aa151553c5658e07b3670c7d48a335ba8c8b8125da9e714dc8efcc2c496`
   (upstream `textures/blocks/machines/automation/queuehopper/colored/side.png`)
-- `gt6/textures/block/queuehopper/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/queuehopper/overlay/bottom.png`)
-- `gt6/textures/block/queuehopper/overlay_top.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/queuehopper/overlay/top.png`)
-- `gt6/textures/block/queuehopper/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/automation/queuehopper/overlay/side.png`)
 ## Item-model form census, band B — the front-view families (task tex-itemform-b)
 
@@ -10424,58 +10434,36 @@ UNBORROWED (the port has no unloaded visual channel — the defer declaration). 
 casing, tinted per row through GTMachinePaintTint at runtime (battery + crystal =
 Electric_T tier ladder, Loader :894-:895/:970-:971; zpm = Osmiridium both rows,
 :1000-:1001; LD = Electric_T[4..8], :909-:913). License: upstream GregTech 6 assets
-are CC0 (see the Public Domain Dedication block above). sha256 manifest (7 dirs, 51
+are CC0 (see the Public Domain Dedication block above). sha256 manifest (7 dirs, 29
 files):
 - `gt6/textures/block/battery_box/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/battery_box/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/battery_box/overlay_active_front.png` `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428`
 - `gt6/textures/block/battery_box/overlay_active_side.png` `ef626071c326699b95b2a37a16503ee72ac29537e1ec762a8830bbae84cd1b39`
-- `gt6/textures/block/battery_box/overlay_front.png` `d6eda0dda3878355b762c6b60356a5b1eb6746079822a282963c1285921e71a3`
 - `gt6/textures/block/battery_box/overlay_side.png` `2c1f9698eadc27daed78e90d992a322413595a21015a38f10ae8d7fc5da6249e`
 - `gt6/textures/block/battery_box_large/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/battery_box_large/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/battery_box_large/overlay_active_front.png` `375ebaca9f18d34e3edd037d0dd484c4602674a404edbef3b083921ef2e8e6cd`
 - `gt6/textures/block/battery_box_large/overlay_active_side.png` `692598e545b0f57da5cb89a2cf30ef0b7474313a879702629cfcc4f3860678dd`
-- `gt6/textures/block/battery_box_large/overlay_front.png` `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
 - `gt6/textures/block/battery_box_large/overlay_side.png` `a63669c16f2456ab39f379cbd2a87a366c0c7ea754169d1d682c0f13f02db126`
 - `gt6/textures/block/crystal_charger/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/crystal_charger/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/crystal_charger/overlay_active_front.png` `3662fbd21e17077f9e74d7315eb2ecc144f0ebb2e01840ed1bf16fed86e0ffee`
 - `gt6/textures/block/crystal_charger/overlay_active_side.png` `d10032144f8c902d91248f950f4186fcbecda34420169858eeae74de18bdcf35`
-- `gt6/textures/block/crystal_charger/overlay_front.png` `dadfb10ea4e61c577aa277880767af657f3bbe19144701ac6fcbe6e97332beea`
 - `gt6/textures/block/crystal_charger/overlay_side.png` `aef1e8d84ce0ebb2a358f6f7c7de012a3fa116b6d7979222a83114a5e7917c73`
 - `gt6/textures/block/crystal_charger_large/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/crystal_charger_large/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/crystal_charger_large/overlay_active_front.png` `3662fbd21e17077f9e74d7315eb2ecc144f0ebb2e01840ed1bf16fed86e0ffee`
 - `gt6/textures/block/crystal_charger_large/overlay_active_side.png` `a305b12b4ea1446a53ac263f1bdea34f4b3e400fc8c7fa5e848f320ee2ba591b`
-- `gt6/textures/block/crystal_charger_large/overlay_front.png` `dadfb10ea4e61c577aa277880767af657f3bbe19144701ac6fcbe6e97332beea`
 - `gt6/textures/block/crystal_charger_large/overlay_side.png` `1d38b53fbe21f9d0763dcffabc6a73d6992a327e74b3f452e92ff454f4e6d243`
 - `gt6/textures/block/zpm_decharger/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/zpm_decharger/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/zpm_decharger/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/zpm_decharger/overlay_active_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
-- `gt6/textures/block/zpm_decharger/overlay_active_front.png` `eb0b3a8c6bae86e319d153af758c8094695dd63ed2d2991ca72920dab1d76428`
-- `gt6/textures/block/zpm_decharger/overlay_active_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
-- `gt6/textures/block/zpm_decharger/overlay_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
-- `gt6/textures/block/zpm_decharger/overlay_front.png` `d6eda0dda3878355b762c6b60356a5b1eb6746079822a282963c1285921e71a3`
-- `gt6/textures/block/zpm_decharger/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/zpm_decharger_quantum/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/zpm_decharger_quantum/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/zpm_decharger_quantum/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
-- `gt6/textures/block/zpm_decharger_quantum/overlay_active_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
-- `gt6/textures/block/zpm_decharger_quantum/overlay_active_front.png` `8aa1e3925d65fd057270593e8f56b445ebb8287f872fe12f743c695a28aae8db`
-- `gt6/textures/block/zpm_decharger_quantum/overlay_active_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
-- `gt6/textures/block/zpm_decharger_quantum/overlay_back.png` `6589278b27a2a353bac0d85a9f01f305538c8d8ab5896f322911eedb956add1e`
-- `gt6/textures/block/zpm_decharger_quantum/overlay_front.png` `d1152f690913d11bc286fec25b44a44cf4ce38ded8c72c3da2b404f353ebdbeb`
-- `gt6/textures/block/zpm_decharger_quantum/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `gt6/textures/block/long_distance_transformer/colored_back.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/long_distance_transformer/colored_front.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/long_distance_transformer/colored_side.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
 - `gt6/textures/block/long_distance_transformer/overlay_active_back.png` `d0e525ef0eb6f59143dabe754433f9a0b0a97423d978aa2b4717a8b4c5bf87a1`
-- `gt6/textures/block/long_distance_transformer/overlay_active_front.png` `375ebaca9f18d34e3edd037d0dd484c4602674a404edbef3b083921ef2e8e6cd`
 - `gt6/textures/block/long_distance_transformer/overlay_active_side.png` `bd4153add32cf0c39beefdec2ad098922d6584aa5cb0ff0bcf417555936467d7`
 - `gt6/textures/block/long_distance_transformer/overlay_back.png` `730c38e957b9a9c755f654098723a8605665eb1ba51896728cb488e86bcbb227`
-- `gt6/textures/block/long_distance_transformer/overlay_front.png` `5c728ec16e0f33fd41d656f32d8f697d9622e324666e909d37ed0af386530594`
 - `gt6/textures/block/long_distance_transformer/overlay_side.png` `e050854cf05804a7dd0654039666f71f6016185e4704efc3375b80155ba91c24`
 Large machine controller two-layer wave, task tex-large-machines: the 17
 controller domains swap the single-layer tintless cubes for the two-layer
@@ -10494,276 +10482,41 @@ outside this card's files. The upstream pick (MultiTileEntityBasicMachine :1014
 reads mActive/mRunning) wires the trio the moment a property card lands; until
 then the 8 FACING x FORMED variants all render the inactive model.
 
-- `gt6/textures/block/largecentrifuge_overlay_bottom.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
-- `gt6/textures/block/largecentrifuge_overlay_bottom_active.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
-- `gt6/textures/block/largecentrifuge_overlay_bottom_running.png` `9ebf66f9e5ff728c63db579af93feca54f0a646a48b489019d25deeadd46a021`
-- `gt6/textures/block/largecentrifuge_overlay_top.png` `74b9b1182bd42a14b99b728b36098292315f16528789cccbcb5999592b1edfd2`
-- `gt6/textures/block/largecentrifuge_overlay_top_active.png` `74b9b1182bd42a14b99b728b36098292315f16528789cccbcb5999592b1edfd2`
-- `gt6/textures/block/largecentrifuge_overlay_top_running.png` `74b9b1182bd42a14b99b728b36098292315f16528789cccbcb5999592b1edfd2`
 - `gt6/textures/block/largecentrifuge_overlay_front.png` `c63a21c0561875f408e112ff0d957df42667f25a8fad980cf538cdd6fcab87de`
 - `gt6/textures/block/largecentrifuge_overlay_front_active.png` `ab51c1d5af060a944c5ee0867d92202ac3a6329c842eaa34f2c1178e5ad591e7`
 - `gt6/textures/block/largecentrifuge_overlay_front_running.png` `a858ac5d35eef27b6ccf4d3e46bc2718218a9bb1e93c1d85d50e8859ec8c13d1`
-- `gt6/textures/block/largecentrifuge_overlay_back.png` `2c23cec93c260404295cd677011a06e8da81a089b2b844a52980cd970ee2fd3e`
-- `gt6/textures/block/largecentrifuge_overlay_back_active.png` `2c23cec93c260404295cd677011a06e8da81a089b2b844a52980cd970ee2fd3e`
-- `gt6/textures/block/largecentrifuge_overlay_back_running.png` `2c23cec93c260404295cd677011a06e8da81a089b2b844a52980cd970ee2fd3e`
-- `gt6/textures/block/largecentrifuge_overlay_left.png` `65f81ff3bdcf9eadf1946eb0bd756fbe260bf1e5a56c7c84a88d3d2c57766710`
-- `gt6/textures/block/largecentrifuge_overlay_left_active.png` `65f81ff3bdcf9eadf1946eb0bd756fbe260bf1e5a56c7c84a88d3d2c57766710`
-- `gt6/textures/block/largecentrifuge_overlay_left_running.png` `65f81ff3bdcf9eadf1946eb0bd756fbe260bf1e5a56c7c84a88d3d2c57766710`
-- `gt6/textures/block/largecentrifuge_overlay_right.png` `1d176581c0604af5b9f5984eb853a88811411cb1c95e5fb9f069b26841ed43e0`
-- `gt6/textures/block/largecentrifuge_overlay_right_active.png` `1d176581c0604af5b9f5984eb853a88811411cb1c95e5fb9f069b26841ed43e0`
-- `gt6/textures/block/largecentrifuge_overlay_right_running.png` `1d176581c0604af5b9f5984eb853a88811411cb1c95e5fb9f069b26841ed43e0`
-- `gt6/textures/block/largeelectrolyzer_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeelectrolyzer_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeelectrolyzer_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeelectrolyzer_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largeelectrolyzer_overlay_front.png` `9e6edcd95775d621b1a94dd84c8216058b1e55c85fa1f03e301529a139c0b705`
 - `gt6/textures/block/largeelectrolyzer_overlay_front_active.png` `6e8f480f8b78da5ddb2d4a208178b41bbe7c5b3f720f340beac328c266ea6a04`
 - `gt6/textures/block/largeelectrolyzer_overlay_front_running.png` `569787a68b04999cffff477e27f50ea394684e90d497c382355d98cfd32b2d05`
-- `gt6/textures/block/largeelectrolyzer_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeelectrolyzer_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largecoagulator_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largecoagulator_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largecoagulator_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_front.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
 - `gt6/textures/block/largecoagulator_overlay_front_active.png` `123ca25c9cf9e2fb4c87709cf99e041ee582c66f6dd72e70da04477066a2a4a8`
-- `gt6/textures/block/largecoagulator_overlay_front_running.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
-- `gt6/textures/block/largecoagulator_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecoagulator_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeautoclave_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeautoclave_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeautoclave_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_front.png` `ce1f88c036d82139a6be18ec23328ab7f6193dc464e808e05e26fed0348ed768`
-- `gt6/textures/block/largeautoclave_overlay_front_active.png` `118a04e8afc9f009b1e983aeb02ae9da30261ccbfcb076f9976db96bad0c8c3c`
-- `gt6/textures/block/largeautoclave_overlay_front_running.png` `ce1f88c036d82139a6be18ec23328ab7f6193dc464e808e05e26fed0348ed768`
-- `gt6/textures/block/largeautoclave_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeautoclave_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largebath_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largebath_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largebath_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_front.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
 - `gt6/textures/block/largebath_overlay_front_active.png` `1471fda113ea746cacd3d58848cdb2b6041be7b0afcac7c9139036347c2a216e`
-- `gt6/textures/block/largebath_overlay_front_running.png` `c5fff58abf3bd77ce8088c4a77ee40d9308e6a80860ceee6b5869c12b017408b`
-- `gt6/textures/block/largebath_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largebath_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largemixer_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largemixer_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largemixer_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largemixer_overlay_front.png` `0e52399cf5fd1ab68118072b6e3bda0a25d6864a41905d39bb7447aeac9307bb`
 - `gt6/textures/block/largemixer_overlay_front_active.png` `e7340bdfd7d29969aca693820b0752db6e89e6acbd1eab426d8e568ce90e0ad7`
 - `gt6/textures/block/largemixer_overlay_front_running.png` `ce043fc389780c68ee5a2178de77ae0fb6d269330a77ab80f26832f892b30fcc`
-- `gt6/textures/block/largemixer_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemixer_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_bottom.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_bottom_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_bottom_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largefermenter_overlay_front.png` `a10c7ed6829d539aea0d2d7a5fba163b0d1564db10ad93569727794bb0714190`
 - `gt6/textures/block/largefermenter_overlay_front_active.png` `c5ad78c81ba3c132ba48dbb185390cc2b7ca3c7eb70d065250cb7174ffe0460c`
 - `gt6/textures/block/largefermenter_overlay_front_running.png` `b92a9a8a86d5609ec9db765adfed301ba472763f7814904c5f77f789cade6ae5`
-- `gt6/textures/block/largefermenter_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largefermenter_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeoven_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeoven_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeoven_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largeoven_overlay_front.png` `9f3fc9c743ea11a1e2e19d3cb7b05607012907b87f4c225f4bb07a2970fbef7f`
 - `gt6/textures/block/largeoven_overlay_front_active.png` `6276c48e70ec422f61c803c1b77caa692d8385e002cce6d66c9a927ebb056af7`
 - `gt6/textures/block/largeoven_overlay_front_running.png` `d41554c3bcba51aeac53e2d4840214e0138a8c130415e6eec1bb4686dadfc731`
-- `gt6/textures/block/largeoven_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeoven_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largesluice_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largesluice_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largesluice_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largesluice_overlay_front.png` `ee5c86b3e5053ff589ca046ba4d8d6e330aefc74bab76c9579363fa9f94f1504`
 - `gt6/textures/block/largesluice_overlay_front_active.png` `cb16d7183a4757d0f6f937446743ad60bd3c43747d0f74a330f686132b6e3d35`
 - `gt6/textures/block/largesluice_overlay_front_running.png` `c1cee6569e2b461da253c20b56eaeb7db03c6d29b03ff68c909bee662fdfc8bb`
-- `gt6/textures/block/largesluice_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesluice_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largecrusher_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largecrusher_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largecrusher_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largecrusher_overlay_front.png` `444990575731ead4034705535bf29e2cbfee6924aeed8f4932c5147aef5c9f4f`
 - `gt6/textures/block/largecrusher_overlay_front_active.png` `4feabfad7efe9859c783fa962920989cd791c8aedd8f7375d80f8202c33223b9`
 - `gt6/textures/block/largecrusher_overlay_front_running.png` `ac14ab6b769f71f42f292cd0461abd061578b814a4ab60eeab3dbeade286814d`
-- `gt6/textures/block/largecrusher_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largecrusher_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeshredder_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeshredder_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largeshredder_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largeshredder_overlay_front.png` `bd95b743ff65985a6a20128cb4088081507857537c93e8a24c67a67c507ab1fe`
 - `gt6/textures/block/largeshredder_overlay_front_active.png` `46cd0795cf2f08a0787609c03f8639e3a4e1aa0598de4cfa8405bce6aed8c9fb`
 - `gt6/textures/block/largeshredder_overlay_front_running.png` `83f404248e8dd73dd004994962971d2aa2ff0405923139b0707ece80109ff022`
-- `gt6/textures/block/largeshredder_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largeshredder_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largesqueezer_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largesqueezer_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largesqueezer_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/largesqueezer_overlay_front.png` `fb9305309a88bf514fee35390694930f7784c865d7acc6220ffac404ce5ad5b6`
 - `gt6/textures/block/largesqueezer_overlay_front_active.png` `e3fd010a9a701fbd1cac7e67a8ef35496175728b65c87f6bd9d2bcb9fc9e4097`
 - `gt6/textures/block/largesqueezer_overlay_front_running.png` `060f8c2732d0bdfdd6539ed33f36846696aacf9be65e4c368f6131c7b359a935`
-- `gt6/textures/block/largesqueezer_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largesqueezer_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largemassfab_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largemassfab_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/largemassfab_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_front.png` `1533e6e9610e98ed2ba9163b39d6370be0c97eee9808be971abd8103665d78be`
-- `gt6/textures/block/largemassfab_overlay_front_active.png` `2efd0b5fc366ddcfaf89231730e01571ccf91dfcfc0fca8b8749b8483b656c50`
-- `gt6/textures/block/largemassfab_overlay_front_running.png` `dc48b3c85dc70970c32d980a10184f918de415336e1f2886a53d891145553999`
-- `gt6/textures/block/largemassfab_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/largemassfab_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_bottom.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_bottom_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_bottom_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/fusionreactor_overlay_front.png` `51c05c6f5c7869e2c565ee100156a0ae7e5dcfd464cf08cffbc617c037a7ca79`
 - `gt6/textures/block/fusionreactor_overlay_front_active.png` `c14008cd5ef19bb1de5ec61b2423de71d37930902e8b5da3dc506deb37962e23`
 - `gt6/textures/block/fusionreactor_overlay_front_running.png` `82462c94dfe3cc538099c0ccf7a7b5508ae077aa38cc90b42a62cddd0b5fac47`
-- `gt6/textures/block/fusionreactor_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/fusionreactor_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_bottom.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/implosioncompressor_overlay_bottom_active.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/implosioncompressor_overlay_bottom_running.png` `15fb2093e598de0c7bc89b7cba52114d8de4115da2e2432bb0fc0eaa3c5e8ad3`
-- `gt6/textures/block/implosioncompressor_overlay_top.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_top_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_top_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 - `gt6/textures/block/implosioncompressor_overlay_front.png` `57993e8cde031481874e028700ee1ee4d697204e01275eea81e5c620c13a388b`
 - `gt6/textures/block/implosioncompressor_overlay_front_active.png` `5288c13c9f6064c9ab57b6363e320beb04d1e928439ddf5dc88f0914a860dd5d`
 - `gt6/textures/block/implosioncompressor_overlay_front_running.png` `ee9219dcaa0c102aa0efa58bca1d56fb53ccd733ccbe72f813d3959bca59e118`
-- `gt6/textures/block/implosioncompressor_overlay_back.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_back_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_back_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_left.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_left_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_left_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_right.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_right_active.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
-- `gt6/textures/block/implosioncompressor_overlay_right_running.png` `d84bb6fbb057c3c20a45c2234925af0970fd674d14ef5bf0f348b5bcdd160010`
 
 Three upstream fronts animate (the .png.mcmeta sidecars verbatim):
 - `gt6/textures/block/largebath_overlay_front_active.png.mcmeta` (upstream basicmachines/largebath/overlay_active/front.png.mcmeta)
@@ -10781,17 +10534,10 @@ reading of the census card was disprobed) — one static front-pair model each.
 - `gt6/textures/block/vondagraagg/colored_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `gt6/textures/block/vondagraagg/colored_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `gt6/textures/block/vondagraagg/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `gt6/textures/block/vondagraagg/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
-- `gt6/textures/block/vondagraagg/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
-- `gt6/textures/block/vondagraagg/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
-- `gt6/textures/block/vondagraagg/overlay_front_side.png` `94adbe03462ca420f1d9322bffe91584ff361f7e1d1f00f5567148a5377b217d`
 - `gt6/textures/block/bedrockdrill/colored_bottom.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `gt6/textures/block/bedrockdrill/colored_top.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `gt6/textures/block/bedrockdrill/colored_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
 - `gt6/textures/block/bedrockdrill/colored_front_side.png` `37dab1b9c5e4acbb51dd8df66cb4ffb391d9eae3c6ee95c8fc5d15b3969e8810`
-- `gt6/textures/block/bedrockdrill/overlay_bottom.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
-- `gt6/textures/block/bedrockdrill/overlay_top.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
-- `gt6/textures/block/bedrockdrill/overlay_side.png` `f1c5fa5625303ba20b7bf175eb94dcc5a25e4a2ed2daa79082cee56628247e32`
 - `gt6/textures/block/bedrockdrill/overlay_front_side.png` `43de1896bef12ed23f903714b6e62374cdff5d7cde869f0fc4c69d1caff306e8`
 
 RETIRED (tex-large-machines): the twelve flat `vondagraagg_colored_<face>.png` /
@@ -10987,43 +10733,21 @@ Path mapping: upstream `machines/<dir>/<group>/<face>` →
 `textures/block/<port_band>_<group>_<face>.png` (the #18 converter convention;
 `colored/sides` flattens to `_colored_side`, the diesel row).
 
-Borrowed rows (37):
+Borrowed rows (16):
 
 - `block/bridge_heater_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `heaters/heat_electric/colored/back.png`)
 - `block/bridge_heater_overlay_front.png` — `5cfdf5978d60090e2f470106b0d45a7125cb9611aaebf239fd749dcbe902a1ba` (upstream `heaters/heat_electric/overlay/front.png`)
-- `block/bridge_heater_overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay/back.png`)
-- `block/bridge_heater_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay/side.png`)
 - `block/bridge_heater_overlay_active_front.png` — `1255b278daa0cdc7b771188b06c87e0f27edb2b09cf5b2bdda1113204b295612` (upstream `heaters/heat_electric/overlay_active/front.png`)
-- `block/bridge_heater_overlay_active_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay_active/back.png`)
-- `block/bridge_heater_overlay_active_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `heaters/heat_electric/overlay_active/side.png`)
 - `block/bridge_engine_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `engines/kinetic_electric/colored/back.png`)
-- `block/bridge_engine_overlay_front.png` — `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d` (upstream `engines/kinetic_electric/overlay/front.png`)
 - `block/bridge_engine_overlay_back.png` — `17da5c91f2d07dde141f085f1c0e051a5b017f4eedd815c56be3cb70993c6452` (upstream `engines/kinetic_electric/overlay/back.png`)
-- `block/bridge_engine_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `engines/kinetic_electric/overlay/side.png`)
 - `block/bridge_motor_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `motors/rotation_electric/colored/back.png`)
-- `block/bridge_motor_overlay_front.png` — `e183538e5e6f6af6b4acf6fb3960d53d07b2b0ac370e73d9e46500a929b54463` (upstream `motors/rotation_electric/overlay/front.png`)
-- `block/bridge_motor_overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `motors/rotation_electric/overlay/back.png`)
-- `block/bridge_motor_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `motors/rotation_electric/overlay/side.png`)
 - `block/laser_electric_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `lasers/laser_electric/colored/back.png`)
-- `block/laser_electric_overlay_front.png` — `dadfb10ea4e61c577aa277880767af657f3bbe19144701ac6fcbe6e97332beea` (upstream `lasers/laser_electric/overlay/front.png`)
-- `block/laser_electric_overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay/back.png`)
-- `block/laser_electric_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay/side.png`)
-- `block/laser_electric_overlay_active_front.png` — `3662fbd21e17077f9e74d7315eb2ecc144f0ebb2e01840ed1bf16fed86e0ffee` (upstream `lasers/laser_electric/overlay_active/front.png`)
-- `block/laser_electric_overlay_active_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay_active/back.png`)
-- `block/laser_electric_overlay_active_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `lasers/laser_electric/overlay_active/side.png`)
 - `block/laser_absorber_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `laserabsorbers/electric_laser/colored/back.png`)
-- `block/laser_absorber_overlay_front.png` — `48b6811ef825b2be50dcbda29ef5e2a3f707708a499a2d3796561ddb29770185` (upstream `laserabsorbers/electric_laser/overlay/front.png`)
-- `block/laser_absorber_overlay_back.png` — `8782f3171417fe0bd61a410129ee779b9df26ff796e530beea7502afe01f1e06` (upstream `laserabsorbers/electric_laser/overlay/back.png`)
 - `block/laser_absorber_overlay_side.png` — `f6a0daf38a714831dd0052d1b6a6d0ba6341ced91fa0cde69bb61bceeaf9196f` (upstream `laserabsorbers/electric_laser/overlay/side.png`)
 - `block/laser_absorber_overlay_active_front.png` — `6f6ad3863270ef62a18ae3b16f486514497ea2563f16833c651ab07eab1effdc` (upstream `laserabsorbers/electric_laser/overlay_active/front.png`)
-- `block/laser_absorber_overlay_active_back.png` — `0fe48976578fe023b4ad2ec97d7839ebf3bb53825ad67c5e6ce376462c371112` (upstream `laserabsorbers/electric_laser/overlay_active/back.png`)
 - `block/laser_absorber_overlay_active_side.png` — `e25015aba9aafd3c0fedbdec933cd4836ce829f7c7146432c38f0018abaffaeb` (upstream `laserabsorbers/electric_laser/overlay_active/side.png`)
-- `block/steam_engine_overlay_front.png` — `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d` (upstream `engines/kinetic_steam/overlay/front.png`)
-- `block/steam_engine_overlay_back.png` — `8dd1d34cc36cd9ddccdc23f6f3be16be70d90337a290bc4a6da997f1f9c64236` (upstream `engines/kinetic_steam/overlay/back.png`)
-- `block/steam_engine_overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `engines/kinetic_steam/overlay/side.png`)
 - `block/diesel_engine_colored_back.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `generators/motor_liquid/colored/back.png`)
 - `block/diesel_engine_colored_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `generators/motor_liquid/colored/sides.png`)
-- `block/diesel_engine_overlay_front.png` — `e183538e5e6f6af6b4acf6fb3960d53d07b2b0ac370e73d9e46500a929b54463` (upstream `generators/motor_liquid/overlay/front.png`)
 - `block/diesel_engine_overlay_back.png` — `d7d7b4e63f3ae789badc895760bacdbc5c5a61332261dbc89e46cb37f1f898a1` (upstream `generators/motor_liquid/overlay/back.png`)
 - `block/diesel_engine_overlay_side.png` — `763844cd3e9003c46357a10cbb0bd30644efabfb224d07de689a147481720a4d` (upstream `generators/motor_liquid/overlay/sides.png`)
 - `block/transformer_rotation_colored_back.png` — `b419727a8d541049e954d8c013f9b7f5c64c37a4b5e4161ec1f87cd500f37e4d` (upstream `transformers/transformer_rotation/colored/back.png`)
@@ -11205,9 +10929,6 @@ shell. Path mapping: upstream `barometer_gas_cylinder/<layer>/<face>.png` →
 - `block/gas_cylinder/colored_top.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `barometer_gas_cylinder/colored/top.png`)
 - `block/gas_cylinder/colored_bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `barometer_gas_cylinder/colored/bottom.png`)
 - `block/gas_cylinder/colored_barometer.png` — `f8318c872ac19a09284e9755fe23bd9b1aa7f79b002b8ac80e8c5be8e73ac895` (upstream `barometer_gas_cylinder/colored/barometer.png`)
-- `block/gas_cylinder/overlay_sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `barometer_gas_cylinder/overlay/sides.png`)
-- `block/gas_cylinder/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `barometer_gas_cylinder/overlay/top.png`)
-- `block/gas_cylinder/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `barometer_gas_cylinder/overlay/bottom.png`)
 - `block/gas_cylinder/overlay_barometer.png` — `1d919a02aea17628436b93fbcb734331974cdc18e1efd649f03f4f1b39194590` (upstream `barometer_gas_cylinder/overlay/barometer.png`)
 
 (The repeated digests are the upstream files' own: colored/top and colored/bottom
@@ -11245,10 +10966,6 @@ upstream `cell/<layer>/<face>.png` → `block/cell/<layer>_<face>.png`.
 - `block/cell/colored_insides.png` — `61c214d7ae3696e5ff65f4c4c76184fdbfc66149652f1a857f936e6dc601f6df` (upstream `cell/colored/insides.png`)
 - `block/cell/colored_top.png` — `90e80b2475c1f38e2f72cf34bb2476a051b2eb912ebb263090064db1a89da40f` (upstream `cell/colored/top.png`)
 - `block/cell/colored_bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `cell/colored/bottom.png`)
-- `block/cell/overlay_sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/sides.png`; the shared blank tile)
-- `block/cell/overlay_insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/insides.png`; byte-identical to overlay_sides)
-- `block/cell/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/top.png`; byte-identical to overlay_sides)
-- `block/cell/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cell/overlay/bottom.png`; byte-identical to overlay_sides)
 
 ## task small-tank-cup (2026-10-01) — the Porcelain Cup 9-tile borrow
 
@@ -11281,10 +10998,6 @@ without model change when the render pool gets to it). Path mapping: upstream
 - `block/cup/colored_insides.png` — `f473154c5fa57694fdfdcb7fed48b1a612979144da3a226ba5d6b20e39e4ae2a` (upstream `cup/colored/insides.png`)
 - `block/cup/colored_top.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `cup/colored/top.png`; byte-identical to colored_bottom)
 - `block/cup/colored_bottom.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `cup/colored/bottom.png`)
-- `block/cup/overlay_sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/sides.png`; the shared blank tile)
-- `block/cup/overlay_insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/insides.png`; byte-identical to overlay_sides)
-- `block/cup/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/top.png`; byte-identical to overlay_sides)
-- `block/cup/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `cup/overlay/bottom.png`; byte-identical to overlay_sides)
 - `item/modeled_porcelain_cup.png` — `36cec9451e3b27c46467b0daea2af2a8b85cd9132852d0d131048aa975f78260` (upstream `gt.multiitem.randomtools/899.png`, MultiItemRandomTools.java:76 — the raw item icon)
 
 ## task small-tank-jug (2026-10-01) — the Ceramic Jug 9-tile borrow
@@ -11318,10 +11031,7 @@ gets to it). Path mapping: upstream `jug/<layer>/<face>.png` →
 - `block/jug/colored_insides.png` — `c256f5702a40de69120972a020024ef47be7d6041b3bdc163d0df4c289e971a1` (upstream `jug/colored/insides.png`; byte-identical to the cup colored_top rim tile)
 - `block/jug/colored_top.png` — `32b84bd8db01d134f0a6a82f5af7a63b40708a57720f4e238e0999ea82747569` (upstream `jug/colored/top.png`)
 - `block/jug/colored_bottom.png` — `cca96edd07868f74cd934bc7695d6f9c0587363135d5bf6e1e31f76476d794db` (upstream `jug/colored/bottom.png`)
-- `block/jug/overlay_sides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `jug/overlay/sides.png`; the shared blank tile)
-- `block/jug/overlay_insides.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `jug/overlay/insides.png`; byte-identical to overlay_sides)
 - `block/jug/overlay_top.png` — `f10e037c9301ffc100785bf586b88da43a9fa549e60a18ab8de9fde010963940` (upstream `jug/overlay/top.png`; real art, NOT the blank tile)
-- `block/jug/overlay_bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `jug/overlay/bottom.png`; byte-identical to overlay_sides)
 - `item/clay_jug.png` — `2d4fb109b86ab8a3711e480a3368d78c54f12beeb9d9d4c91f6e8a2d9184a1f1` (upstream `gt.multiitem.randomtools/996.png`, MultiItemRandomTools.java:120 — the raw item icon)
 Wood-beam block textures, task beam-blocks-register: the 16 PNGs under
 `gt6/textures/block/beam_top_*.png` and `gt6/textures/block/beam_side_*.png`
@@ -13616,9 +13326,6 @@ form): an unpainted grindstone renders the untinted grayscale until that pool ca
 - `block/tools/grindstone/colored/axle.png` — `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b` (upstream `blocks/machines/tools/grindstone/colored/axle.png`)
 - `block/tools/grindstone/colored/bottom.png` — `99fa529d58845f2d92c980c558058ed646a3753603e30f23914f7a9bed8f580b` (upstream `blocks/machines/tools/grindstone/colored/bottom.png`)
 - `block/tools/grindstone/colored/stone.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/colored/stone.png`)
-- `block/tools/grindstone/overlay/legs.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/legs.png`; byte-identical to the axle + bottom overlay tiles)
-- `block/tools/grindstone/overlay/axle.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/axle.png`)
-- `block/tools/grindstone/overlay/bottom.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `blocks/machines/tools/grindstone/overlay/bottom.png`)
 - `block/tools/grindstone/overlay/stone.png` — `d706e3a18b45b7688e489fb362789c6ad5dc206378216905aa9919db6d159fc6` (upstream `blocks/machines/tools/grindstone/overlay/stone.png`)
 
 ## Metal-chest family textures (task material-mc-a-storage-chests)
@@ -13668,7 +13375,7 @@ own pairing.
 - `block/woodchest/plain_lid_side.png` — `88125cedfbadbde02487082dbf5dd76e99b16c708f527c1f7a74beaaebe2664e` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
 - `block/woodchest/plain_side.png` — `964528f8e7356bb0a68e56c56d3e9930c72c273ca9c18ec82923ea941af6ca44` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
 - `block/woodchest/plain_top.png` — `cb49b818f6329312eca64dfc24a60797fef040db1b74ce0c2588257f8e886300` (derived from upstream `woodchest.plain.png`, the ModelChest region crop)
-sha256 manifest (25 files, task block-family-32xxx-port — the 32xxx domain: the
+sha256 manifest (13 files, task block-family-32xxx-port — the 32xxx domain: the
 charging locker (Loader :139 machines/lockers/charging), the plant pot (:2229
 machines/plantpot) and the sap bag (:2221 machines/tools/sapbag), the byte-verbatim
 group borrows; the census four-face clause):
@@ -13683,16 +13390,11 @@ group borrows; the census four-face clause):
   (upstream `textures/blocks/machines/lockers/charging/colored/top.png`)
 - `gt6/textures/block/charging_locker/colored_bottom.png` `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e`
   (upstream `textures/blocks/machines/lockers/charging/colored/bottom.png`)
-- `gt6/textures/block/charging_locker/overlay_front.png` `2660369d62e9c5c7364caed24d1c83cb5720cefae3d1d6aff1a26849b667e04e`
   (upstream `textures/blocks/machines/lockers/charging/overlay/front.png` — the
   charging-shell decal, byte-identical to the locker family overlay_front)
-- `gt6/textures/block/charging_locker/overlay_back.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/charging/overlay/back.png`)
-- `gt6/textures/block/charging_locker/overlay_side.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/charging/overlay/side.png`)
-- `gt6/textures/block/charging_locker/overlay_top.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/charging/overlay/top.png`)
-- `gt6/textures/block/charging_locker/overlay_bottom.png` `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
   (upstream `textures/blocks/machines/lockers/charging/overlay/bottom.png`)
 - `gt6/textures/block/plant_pot/colored_top.png` `be457a2037c72c56d3825e9fb053452b267a2ed729bc84a2f2d0efb14d63a243`
   (upstream `textures/blocks/machines/plantpot/colored/top.png`)
@@ -13702,9 +13404,7 @@ group borrows; the census four-face clause):
   (upstream `textures/blocks/machines/plantpot/colored/bottom.png`)
 - `gt6/textures/block/plant_pot/overlay_top.png` `3cf7ad6db75879069331e9848489d18762851a5a74a5cf2dd6f5707889dfa792`
   (upstream `textures/blocks/machines/plantpot/overlay/top.png`)
-- `gt6/textures/block/plant_pot/overlay_side.png` `0e6548bcd35ef47b9c08b6cedb8b7dc7d18dfcdc948e790dfbc16d561dd0a10a`
   (upstream `textures/blocks/machines/plantpot/overlay/side.png`)
-- `gt6/textures/block/plant_pot/overlay_bottom.png` `0e6548bcd35ef47b9c08b6cedb8b7dc7d18dfcdc948e790dfbc16d561dd0a10a`
   (upstream `textures/blocks/machines/plantpot/overlay/bottom.png`)
 - `gt6/textures/block/sap_bag/colored_top.png` `d55283f32bbba5f1419b019a588a5a949be77983ff21cd5cf8df5eae13b0c8e6`
   (upstream `textures/blocks/machines/tools/sapbag/colored/top.png`)
@@ -13712,18 +13412,13 @@ group borrows; the census four-face clause):
   (upstream `textures/blocks/machines/tools/sapbag/colored/side.png`)
 - `gt6/textures/block/sap_bag/colored_bottom.png` `53aa09d7d49172da2701152fec38f932a84835d9758ecd6821c3a9d024857dbf`
   (upstream `textures/blocks/machines/tools/sapbag/colored/bottom.png`)
-- `gt6/textures/block/sap_bag/overlay_top.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/tools/sapbag/overlay/top.png`)
-- `gt6/textures/block/sap_bag/overlay_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/tools/sapbag/overlay/side.png`)
-- `gt6/textures/block/sap_bag/overlay_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/tools/sapbag/overlay/bottom.png`)
 - `gt6/textures/block/sap_bag/overlay_full_top.png` `99feaff3b02f55fdc0cf672d747e09b32773342add4db5338e96776f8a0502e2`
   (upstream `textures/blocks/machines/tools/sapbag/overlay_full/top.png` — the
   FULL-state swap, the SapBag visual data byte)
-- `gt6/textures/block/sap_bag/overlay_full_side.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/tools/sapbag/overlay_full/side.png`)
-- `gt6/textures/block/sap_bag/overlay_full_bottom.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `textures/blocks/machines/tools/sapbag/overlay_full/bottom.png`)
 
 
@@ -13746,12 +13441,9 @@ join when the kinetics-BE functional card wires the converter/motor behaviour).
   (upstream `engines/kinetic_rotation/colored/back.png` — the same art as the front face)
 - `gt6/textures/block/rotation_engine_colored_side.png` `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
   (upstream `engines/kinetic_rotation/colored/side.png`)
-- `gt6/textures/block/rotation_engine_overlay_front.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `engines/kinetic_rotation/overlay/front.png` — the universal overlay
   front, the sap_bag borrow same digest)
-- `gt6/textures/block/rotation_engine_overlay_back.png` `02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d`
   (upstream `engines/kinetic_rotation/overlay/back.png`)
-- `gt6/textures/block/rotation_engine_overlay_side.png` `4da8c35319cd5b640d5d2363df857edcef1c58a26545a6f1a689f5d0b8d196cb`
   (upstream `engines/kinetic_rotation/overlay/side.png`)
 - `gt6/textures/block/steam_turbine_colored_front.png` `b94934858d010e0381fd5056dbc0ec00e964cad00c152944b2e6e0918991f977`
   (upstream `turbines/rotation_steam/colored/front.png` — the kinetic_rotation side
@@ -13763,7 +13455,6 @@ join when the kinetics-BE functional card wires the converter/motor behaviour).
   (upstream `turbines/rotation_steam/colored/side.png`)
 - `gt6/textures/block/steam_turbine_overlay_front.png` `3670c7f45fb371b957db44cb03c5614a9a473e76d67a582b2590b78d35f0ecb9`
   (upstream `turbines/rotation_steam/overlay/front.png`)
-- `gt6/textures/block/steam_turbine_overlay_back.png` `8dd1d34cc36cd9ddccdc23f6f3be16be70d90337a290bc4a6da997f1f9c64236`
   (upstream `turbines/rotation_steam/overlay/back.png`)
 - `gt6/textures/block/steam_turbine_overlay_side.png` `464acaaedfdb995ece3c60390b2e6c826101e564ecccc969cb63d85783250fe8`
   (upstream `turbines/rotation_steam/overlay/side.png`)
@@ -13820,11 +13511,7 @@ gregapi `overlays/characters` BI.CHAR_* art, BI.java:42-51/:99, byte-identical).
 - `block/massstorage_standard/colored_front.png` — `6a86dfa00c65eb3d5884c3c436d2a16eabf01d4dac2cc0964e0835c21449d763` (upstream `machines/massstorage/standard/colored/front.png`)
 - `block/massstorage_standard/colored_side.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `machines/massstorage/standard/colored/side.png`)
 - `block/massstorage_standard/colored_top.png` — `db9560d38648fee70a0c8618e793d5c262cb269a408af0fdba99518343e4372e` (upstream `machines/massstorage/standard/colored/top.png`)
-- `block/massstorage_standard/overlay_back.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `machines/massstorage/standard/overlay/back.png`; byte-identical to the side/top overlay tiles)
-- `block/massstorage_standard/overlay_bottom.png` — `c7a4765d842b42d645ebce6eb0848c4d792d44f87117b02399520f299027cfc3` (upstream `machines/massstorage/standard/overlay/bottom.png`)
 - `block/massstorage_standard/overlay_front.png` — `985ec4ba29bf70560e076db727e3444bf3e37b1e934c9219dc8e8b90fd5c1b67` (upstream `machines/massstorage/standard/overlay/front.png`)
-- `block/massstorage_standard/overlay_side.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `machines/massstorage/standard/overlay/side.png`)
-- `block/massstorage_standard/overlay_top.png` — `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f` (upstream `machines/massstorage/standard/overlay/top.png`)
 - `block/massstorage_logistics/colored_back.png` — `dc86a74eb29bee4e69170c87fd3682650dc9c9599ce589168c73e7ecea2513b7` (upstream `machines/massstorage/logistics/colored/back.png`)
 - `block/massstorage_logistics/colored_bottom.png` — `07da6fadfd8c42bbeb8dd0f1b07a7b48ec08d76ece9fb49ec793ab55d01e7d23` (upstream `machines/massstorage/logistics/colored/bottom.png`)
 - `block/massstorage_logistics/colored_front.png` — `f378cc9fa9cd07e1ce116a056b730181e7608cf7c660c0282965274b5600d5e6` (upstream `machines/massstorage/logistics/colored/front.png`)

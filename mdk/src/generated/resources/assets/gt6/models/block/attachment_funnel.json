@@ -221,7 +221,7 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "all": "gt6:block/funnel",
-    "overlay": "gt6:block/funnel_overlay",
+    "overlay": "gt6:item/overlay/empty",
     "particle": "#all"
   }
 }

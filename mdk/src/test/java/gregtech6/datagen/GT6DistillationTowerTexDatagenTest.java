@@ -167,9 +167,9 @@ class GT6DistillationTowerTexDatagenTest extends GTOfflineTestBase {
 						tPath + tGroup + ": the particle key (the r11-machine-particle-key rule)");
 				// the state overlay trio — the group suffix swaps ALL six shells
 				for (String tFace : FACES) {
-					assertEquals("gt6:block/" + tFamily + "_overlay_" + tFace + tGroup,
+					assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tFamily + "_overlay_" + tFace + tGroup),
 							tTextures.get("overlay_" + tFace).getAsString(),
-							tPath + tGroup + ": the overlay_" + tFace + " shell rides the " + (tGroup.isEmpty() ? "inactive" : tGroup.substring(1)) + " group");
+							tPath + tGroup + ": the overlay_" + tFace + " shell rides the " + (tGroup.isEmpty() ? "inactive" : tGroup.substring(1)) + " group (through the content-group canonicals)");
 				}
 				// the elements: the tinted body + six untinted 0.01 decals
 				var tElements = tModel.getAsJsonArray("elements");
@@ -274,8 +274,13 @@ class GT6DistillationTowerTexDatagenTest extends GTOfflineTestBase {
 								tFace.equals("front") ? SHA_FRONT_BY_GROUP.get("_running") : tFace.equals("bottom") ? SHA_BOTTOM : tFace.equals("top") ? SHA_TOP : SHA_SIDES}};
 				for (String[] tEntry : tEntries) {
 					tCount++;
-					Path tPng = tStatic.resolve(tEntry[0]);
-					assertTrue(Files.isRegularFile(tPng), tEntry[0] + " must exist on the static tree");
+					// task overlay-dedupe-block-leg: the overlay state groups ride the
+					// cryodistillation content-group canonicals; resolve() is identity for
+					// the colored six-face wave
+					Path tPng = tStatic.resolve(GT6BlockOverlayAliases.resolve(
+							"block/" + tEntry[0].substring(0, tEntry[0].length() - 4))
+							.substring("block/".length()) + ".png");
+					assertTrue(Files.isRegularFile(tPng), tEntry[0] + " must exist on the static tree (directly or as its content-group canonical)");
 					String tHex = HexFormat.of().formatHex(tSha256.digest(Files.readAllBytes(tPng)));
 					if (!tHex.equals(tEntry[1])) tViolations.add(tEntry[0] + " hashes " + tHex + ", expected the upstream " + tEntry[1]);
 					if (!tReadme.contains(tEntry[0])) tViolations.add(tEntry[0] + " — filename absent from assets/README.md");

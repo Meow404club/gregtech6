@@ -146,7 +146,7 @@
   "textures": {
     "back": "gt6:block/dynamite_colored_back",
     "front": "gt6:block/dynamite_colored_front",
-    "overlay_back": "gt6:block/dynamite_overlay_back",
+    "overlay_back": "gt6:item/overlay/empty",
     "overlay_front": "gt6:block/dynamite_overlay_front",
     "overlay_side": "gt6:block/dynamite_overlay_side",
     "particle": "gt6:block/dynamite_colored_side",

@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.block.model.BlockElementFace;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import gregtech6.datagen.GT6BlockOverlayAliases;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.BlockModelRotation;
@@ -242,7 +243,7 @@ public class GTOvenOverlayModel extends GTDynamicBakedModel {
 		// backported the same factory (both legs javap-proven, adapt-registry-core) —
 		// the swap table's conservative regex skips this call (concat expression argument).
 		return ResourceLocation.fromNamespaceAndPath(GTRenderModelListener.MOD_ID,
-				SPRITE_PREFIX + aGroup.textureKey() + "_" + aFace.textureKey());
+				GT6BlockOverlayAliases.resolve(SPRITE_PREFIX + aGroup.textureKey() + "_" + aFace.textureKey()));
 	}
 
 	/**

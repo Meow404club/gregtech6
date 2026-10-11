@@ -3,7 +3,7 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "overlay_back": "gt6:block/crystal_charger_large/overlay_active_side",
-    "overlay_front": "gt6:block/crystal_charger_large/overlay_active_front",
+    "overlay_front": "gt6:block/overlay/crystal_charger_overlay_active_front",
     "overlay_side": "gt6:block/crystal_charger_large/overlay_active_side"
   }
 }

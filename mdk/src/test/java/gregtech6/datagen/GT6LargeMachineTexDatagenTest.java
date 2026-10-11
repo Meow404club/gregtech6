@@ -148,9 +148,10 @@ class GT6LargeMachineTexDatagenTest {
         assertEquals("gt6:block/" + aFamily + "_colored_top", tTextures.get("up").getAsString());
         // the state decal layer: the six art tokens with the state suffix
         for (String tArt : List.of("front", "back", "left", "right", "top", "bottom")) {
-            assertEquals("gt6:block/" + aFamily + "_overlay_" + tArt + aSuffix,
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aFamily + "_overlay_" + tArt + aSuffix),
                     tTextures.get("overlay_" + tArt).getAsString(),
-                    aName + ": overlay_" + tArt + " = the " + (aSuffix.isEmpty() ? "inactive" : aSuffix) + " decal");
+                    aName + ": overlay_" + tArt + " = the " + (aSuffix.isEmpty() ? "inactive" : aSuffix)
+                            + " decal (through the content-group canonicals)");
         }
         // the two-layer split: 7 elements, tintindex 0 on every body face, none on the decals
         var tElements = tModel.getAsJsonArray("elements");
@@ -234,14 +235,16 @@ class GT6LargeMachineTexDatagenTest {
         }
         assertEquals("gt6:block/" + aBand + "/colored_bottom", tTextures.get("down").getAsString());
         assertEquals("gt6:block/" + aBand + "/colored_top", tTextures.get("up").getAsString());
-        assertEquals("gt6:block/" + aBand + "/overlay_front_side", tTextures.get("overlay_north").getAsString(),
-                aName + ": overlay north = the front-face overlay art");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_front_side"),
+                tTextures.get("overlay_north").getAsString(),
+                aName + ": overlay north = the front-face overlay art (through the content-group canonicals)");
         for (String tSide : List.of("south", "west", "east")) {
-            assertEquals("gt6:block/" + aBand + "/overlay_side", tTextures.get("overlay_" + tSide).getAsString(),
-                    aName + ": overlay " + tSide + " = the plain overlay side");
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_side"),
+                    tTextures.get("overlay_" + tSide).getAsString(),
+                    aName + ": overlay " + tSide + " = the plain overlay side (through the content-group canonicals)");
         }
-        assertEquals("gt6:block/" + aBand + "/overlay_bottom", tTextures.get("overlay_down").getAsString());
-        assertEquals("gt6:block/" + aBand + "/overlay_top", tTextures.get("overlay_up").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_bottom"), tTextures.get("overlay_down").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_top"), tTextures.get("overlay_up").getAsString());
         // the two-layer split: tintindex 0 body, untinted decals
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aName + ": body + 6 decals");
@@ -347,11 +350,15 @@ class GT6LargeMachineTexDatagenTest {
 
     @Test
     public void borrowedLargeMachineTexturesExist() {
+        // task overlay-dedupe-block-leg: the same-content/transparent state-trio faces ride
+        // the block/overlay content-group canonicals or the shared item/overlay/empty;
+        // resolve() is identity for the surviving front arts
         // the twelve rows' state trios: 6 faces x (overlay + active + running)
         for (var tRow : gregtech6.registry.GT6LargeMachines.ROWS) {
             for (String tFace : List.of("bottom", "top", "front", "back", "left", "right")) {
                 for (String tState : List.of("", "_active", "_running")) {
-                    assertNotNull(resource("assets/gt6/textures/block/" + tRow.texture() + "_overlay_" + tFace + tState + ".png"),
+                    assertNotNull(resource("assets/gt6/textures/"
+                                    + GT6BlockOverlayAliases.resolve("block/" + tRow.texture() + "_overlay_" + tFace + tState) + ".png"),
                             tRow.texture() + "_overlay_" + tFace + tState + ".png must be borrowed");
                 }
             }
@@ -360,7 +367,8 @@ class GT6LargeMachineTexDatagenTest {
         for (String[] tMain : TRIO_MAINS) {
             for (String tFace : List.of("bottom", "top", "front", "back", "left", "right")) {
                 for (String tState : List.of("", "_active", "_running")) {
-                    assertNotNull(resource("assets/gt6/textures/block/" + tMain[1] + "_overlay_" + tFace + tState + ".png"),
+                    assertNotNull(resource("assets/gt6/textures/"
+                                    + GT6BlockOverlayAliases.resolve("block/" + tMain[1] + "_overlay_" + tFace + tState) + ".png"),
                             tMain[1] + "_overlay_" + tFace + tState + ".png must be borrowed");
                 }
             }
@@ -375,7 +383,8 @@ class GT6LargeMachineTexDatagenTest {
             for (String tFace : List.of(
                     "colored_bottom", "colored_top", "colored_side", "colored_front_side",
                     "overlay_bottom", "overlay_top", "overlay_side", "overlay_front_side")) {
-                assertNotNull(resource("assets/gt6/textures/block/" + tMain[1] + "/" + tFace + ".png"),
+                assertNotNull(resource("assets/gt6/textures/"
+                                + GT6BlockOverlayAliases.resolve("block/" + tMain[1] + "/" + tFace) + ".png"),
                         tMain[1] + "/" + tFace + ".png must be borrowed");
             }
         }

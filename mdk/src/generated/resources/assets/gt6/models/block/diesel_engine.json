@@ -160,7 +160,7 @@
     "east": "gt6:block/diesel_engine_colored_side",
     "north": "gt6:block/diesel_engine_colored_front",
     "overlay_back": "gt6:block/diesel_engine_overlay_back",
-    "overlay_front": "gt6:block/diesel_engine_overlay_front",
+    "overlay_front": "gt6:block/overlay/bridge_motor_overlay_front",
     "overlay_side": "gt6:block/diesel_engine_overlay_side",
     "particle": "gt6:block/diesel_engine_colored_side",
     "south": "gt6:block/diesel_engine_colored_back",

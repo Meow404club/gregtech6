@@ -55,8 +55,8 @@ class GT6GasCylinderDatagenTest extends GTOfflineTestBase {
 	/** The borrow faces — colored + overlay over {sides, top, bottom, barometer} (the :129-137 icon set, NO insides). */
 	private static final List<String> FACES = List.of("sides", "top", "bottom", "barometer");
 	private static final List<String> LAYERS = List.of("colored", "overlay");
-	/** 2 layers x 4 faces — the walk upstream found exactly these files (the id1055 correction: no insides tile). */
-	private static final int PINNED_PNG_TOTAL = 8;
+	/** The four colored tiles + the overlay_barometer art keep their own files (the id1055 correction: no insides tile); the three transparent overlay passes retired onto the shared item/overlay/empty canonical (task overlay-dedupe-block-leg). */
+	private static final int PINNED_PNG_TOTAL = 5;
 
 	/** The mdk root (src/main/resources/assets/README.md), walked upward from the leg-dependent test working dir. */
 	private static Path mdkRoot() {
@@ -106,9 +106,11 @@ class GT6GasCylinderDatagenTest extends GTOfflineTestBase {
 	void everyDeclaredFaceHasItsBorrowedPng() {
 		for (String tLayer : LAYERS) {
 			for (String tFace : FACES) {
-				assertNotNull(GT6GasCylinderDatagenTest.class.getResource(
-						"/assets/gt6/textures/block/gas_cylinder/" + tLayer + "_" + tFace + ".png"),
-						tLayer + "_" + tFace + ".png must be borrowed");
+				// task overlay-dedupe-block-leg: transparent passes ride the shared
+				// item/overlay/empty canonical; resolve() is identity for real art.
+				String tKey = GT6BlockOverlayAliases.resolve("block/gas_cylinder/" + tLayer + "_" + tFace);
+				assertNotNull(GT6GasCylinderDatagenTest.class.getResource("/assets/gt6/textures/" + tKey + ".png"),
+						tLayer + "_" + tFace + " must be borrowed (own file or the shared canonical)");
 			}
 		}
 	}
@@ -122,10 +124,15 @@ class GT6GasCylinderDatagenTest extends GTOfflineTestBase {
 			tWalk.filter(p -> p.toString().endsWith(".png"))
 					.forEach(p -> tFound.add(p.getFileName().toString()));
 		}
-		assertEquals(PINNED_PNG_TOTAL, tFound.size(), "2 layers x 4 faces borrowed PNGs, walked");
+		assertEquals(PINNED_PNG_TOTAL, tFound.size(), "the tiles that keep their own file, walked (the transparent overlay passes ride the shared empty canonical)");
 		Set<String> tDeclared = new HashSet<>();
 		for (String tLayer : LAYERS) {
-			for (String tFace : FACES) tDeclared.add(tLayer + "_" + tFace + ".png");
+			for (String tFace : FACES) {
+				String tKey = GT6BlockOverlayAliases.resolve("block/gas_cylinder/" + tLayer + "_" + tFace);
+				if (tKey.startsWith("block/gas_cylinder/")) tDeclared.add(tKey.substring("block/gas_cylinder/".length()) + ".png");
+				else assertNotNull(GT6GasCylinderDatagenTest.class.getResource("/assets/gt6/textures/" + tKey + ".png"),
+						"the shared empty canonical must exist");
+			}
 		}
 		assertEquals(tDeclared, tFound, "the borrow is 1:1 with the declared tile set — zero strays, zero gaps (no insides tile, the id1055 correction)");
 	}

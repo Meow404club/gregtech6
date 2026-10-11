@@ -158,7 +158,7 @@ class GT6Domain32xxxTintTest extends GTOfflineRenderTestBase {
 			assertEquals(5.0F, tFrom.getAsJsonArray().get(0).getAsFloat(), "the bag hugs x 5 (:124 Z_NEG form)");
 			assertEquals(0.0F, tFrom.getAsJsonArray().get(1).getAsFloat(), "the bag sits on the floor");
 		}
-		assertEquals("gt6:block/sap_bag/overlay_top",
+		assertEquals("gt6:item/overlay/empty",
 				tEmptyRoot.getAsJsonObject("textures").get("overlay_top").getAsString());
 		assertEquals("gt6:block/sap_bag/overlay_full_top",
 				tFullRoot.getAsJsonObject("textures").get("overlay_top").getAsString(),

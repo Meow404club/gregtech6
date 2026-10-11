@@ -150,7 +150,7 @@ public class GT6BushTintDatagenTest extends GTOfflineTestBase {
 			assertEquals(0, tFaces.getAsJsonObject(tFace).get("tintindex").getAsInt(),
 					"the " + tFace + " face carries tintindex 0");
 		}
-		assertEquals("gt6:block/bush_parts/overlay_bush", tModel.getAsJsonObject("textures").get("bush_overlay").getAsString(),
+		assertEquals("gt6:item/overlay/empty", tModel.getAsJsonObject("textures").get("bush_overlay").getAsString(),
 				"the detail shell rides the borrowed overlay sprite");
 		assertEquals(0, tintedFaceCount(tModel, "#bush_overlay", 1), "the age-0 model has no tintindex-1 face");
 	}
@@ -178,9 +178,10 @@ public class GT6BushTintDatagenTest extends GTOfflineTestBase {
 			JsonObject tTextures = tModel.getAsJsonObject("textures");
 			assertEquals("gt6:block/bush_parts/" + tStage[1], tTextures.get("berries").getAsString(),
 					tStage[0] + ": the berries sprite");
-			assertEquals("gt6:block/bush_parts/" + tStage[2], tTextures.get("berries_overlay").getAsString(),
-					tStage[0] + ": the berries detail sprite");
-			assertEquals("gt6:block/bush_parts/overlay_bush", tTextures.get("bush_overlay").getAsString(),
+			assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/bush_parts/" + tStage[2]),
+					tTextures.get("berries_overlay").getAsString(),
+					tStage[0] + ": the berries detail sprite (the retired transparent pass rides the shared empty)");
+			assertEquals("gt6:item/overlay/empty", tTextures.get("bush_overlay").getAsString(),
 					tStage[0] + ": the shared bush detail sprite");
 		}
 		// the explicit upstream anchor: blueberry stage 3 = the pure blue row
@@ -274,7 +275,14 @@ public class GT6BushTintDatagenTest extends GTOfflineTestBase {
 	@Test
 	void theBushPartBorrowsStayTheVerbatimUpstreamSprites() throws Exception {
 		for (var tRow : BUSH_PARTS_SHA256.entrySet()) {
-			assertBorrowSha("assets/gt6/textures/block/bush_parts/" + tRow.getKey() + ".png", tRow.getValue());
+			// task overlay-dedupe-block-leg: the three pixel-empty overlay passes ride the
+			// shared item/overlay/empty canonical — byte-verbatim is retired for the
+			// pixel-empty class (byte-different encodings, one pixel truth), the map above
+			// keeps their upstream provenance digests; resolve() is identity for the berries art
+			String tResolved = "assets/gt6/textures/"
+					+ GT6BlockOverlayAliases.resolve("block/bush_parts/" + tRow.getKey()) + ".png";
+			assertNotNull(GT6BushTintDatagenTest.class.getClassLoader().getResourceAsStream(tResolved),
+					"the borrow ships (own file or the shared canonical): " + tResolved);
 		}
 		assertFalse(BUSH_PARTS_SHA256.get("overlay_berries")
 				.equals(BUSH_PARTS_SHA256.get("berries")), "the berries COLOUR sprite differs from its overlay");

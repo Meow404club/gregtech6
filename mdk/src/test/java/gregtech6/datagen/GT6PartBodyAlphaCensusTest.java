@@ -37,7 +37,9 @@ import org.junit.jupiter.api.Test;
  * overlay is the standing precedent.
  *
  * <p>The positive control pins the KNOWN-blank overlay so the detector can never pass
- * vacuously.
+ * vacuously (since task overlay-dedupe-block-leg retired the flat tier-4 file onto the
+ * {@code item/overlay/empty} transparent canonical, the control reads the resolved
+ * canonical — the bytes the model actually consumes).
  */
 public class GT6PartBodyAlphaCensusTest {
 
@@ -65,8 +67,13 @@ public class GT6PartBodyAlphaCensusTest {
 	/** The detector's positive control: the blank OVERLAY stays blank (decals are exempt). */
 	@Test
 	public void theBlankOverlayControlStaysBlank() throws Exception {
-		assertEquals(0, opaquePixels(read(path("metalwall", 4, "overlay", "side"))),
-				"metalwall/4/overlay/side is the known-blank decal — if this turned opaque the census walk is stale");
+		// task overlay-dedupe-block-leg: the tier-4 blank overlay retired onto the
+		// item/overlay/empty transparent canonical — the control re-pins through
+		// resolve() onto the bytes the model actually consumes (the same resolution
+		// every other pinned overlay family rides)
+		assertEquals(0, opaquePixels(read(overlayPath("metalwall", 4, "overlay", "side"))),
+				"metalwall/4/overlay/side (resolved to its content-group canonical) is the known-blank "
+						+ "decal — if this turned opaque the census walk is stale");
 	}
 
 	/** All 48 body files are the 16x16 upstream tile size (the census walks the real ladder, not stale paths). */
@@ -85,6 +92,12 @@ public class GT6PartBodyAlphaCensusTest {
 
 	private static String path(String aFamily, int aDesign, String aLayer, String aFace) {
 		return "assets/gt6/textures/block/parts/" + aFamily + "/" + aDesign + "/" + aLayer + "/" + aFace + ".png";
+	}
+
+	/** The path of a former flat overlay file after the block content-group resolution (task overlay-dedupe-block-leg). */
+	private static String overlayPath(String aFamily, int aDesign, String aLayer, String aFace) {
+		return "assets/gt6/textures/" + GT6BlockOverlayAliases.resolve(
+				"block/parts/" + aFamily + "/" + aDesign + "/" + aLayer + "/" + aFace) + ".png";
 	}
 
 	private static BufferedImage read(String aPath) throws Exception {

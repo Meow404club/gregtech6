@@ -62,8 +62,12 @@ import sys
 import zlib
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gen_textures import png_is_fully_transparent  # the batch-1 pixel-empty probe
+
 SIZE = 16
 UPSTREAM_MACHINES = "src/main/resources/assets/gregtech/textures/blocks/machines"
+CANONICAL_SUBDIR = "overlay"  # task overlay-dedupe-block-leg: block/overlay/<name>.png
 LAYERS = (
     # (upstream layer dir, state tail; the output name is
     #  <fam>_<colored|overlay>_<face><_state>.png -- the p22 front shape
@@ -272,6 +276,64 @@ def borrow_face(args: argparse.Namespace, src_path: Path, out_path: Path, label:
     return status, sha256_bytes(data), note
 
 
+def produce_face(src_path: Path, label: str, want_strip_ok: bool) -> tuple[bytes | None, str]:
+    """Produce one face product's bytes without landing it.
+
+    Returns (data-or-None, note); None = upstream source missing (borrow-or-declare).
+    """
+    if not src_path.is_file():
+        print(f"DECLARE {label}: {src_path} missing — nothing written (borrow-or-declare)")
+        return None, ""
+    w, h, _ = decode_png(src_path.read_bytes())
+    if w != SIZE or h % SIZE != 0:
+        raise ValueError(f"{label}: {src_path} is {w}x{h}, expected {SIZE}xN")
+    frames = h // SIZE
+    if frames == 1:
+        data = src_path.read_bytes()  # byte-identical copy — no re-encode
+        note = "byte copy"
+    else:
+        if not (0 <= FRAME < frames):
+            raise ValueError(f"{label}: frame {FRAME} out of range 0..{frames - 1}")
+        _, _, px = decode_png(src_path.read_bytes())
+        data = encode_png(SIZE, SIZE, px[FRAME * SIZE * 4 * SIZE:(FRAME + 1) * SIZE * 4 * SIZE])
+        note = f"FRAME 0 of {frames}"
+        if not want_strip_ok:
+            print(f"NOTE {label}: unexpected {SIZE}x{h} strip, cropping FRAME {FRAME}")
+    assert decode_png(data)[:2] == (SIZE, SIZE)
+    return data, note
+
+
+def canonical_dir_contents(dst: Path) -> dict[str, str]:
+    """The content-group canonicals already shipped under block/overlay/ (task
+    overlay-dedupe-block-leg): sha256 -> file name. One file per content group."""
+    out: dict[str, str] = {}
+    canon_dir = dst / CANONICAL_SUBDIR
+    if canon_dir.is_dir():
+        for p in sorted(canon_dir.glob("*.png")):
+            out[sha256(p)] = p.name
+    return out
+
+
+def land_canonical(args: argparse.Namespace, dst: Path, canonical_rel: str, data: bytes,
+                   label: str) -> str:
+    """Land (or verify in --check) one canonical product; returns the land status."""
+    out_path = dst / canonical_rel
+    if out_path.exists():
+        if sha256_bytes(out_path.read_bytes()) == sha256_bytes(data):
+            print(f"skip {label}".ljust(64) + f"-> {canonical_rel} (canonical byte-identical)")
+            return "in-place"
+        print(f"ERROR {label}: {canonical_rel} exists with DIFFERENT bytes — "
+              f"refusing to overwrite a foreign asset", file=sys.stderr)
+        return "error"
+    if not args.check:
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_bytes(data)
+        print(f"borrowed {label}".ljust(64) + f"{SIZE}x{SIZE}  sha256={sha256_bytes(data)}  -> {out_path}")
+    else:
+        print(f"borrowed {label}".ljust(64) + f"{SIZE}x{SIZE}  sha256={sha256_bytes(data)}  (check-only)")
+    return "borrowed"
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--src", default="tmp/gt6-1.7.10", type=Path,
@@ -306,8 +368,16 @@ def main(argv: list[str]) -> int:
           f"x (colored 6 + 3 states x 5 sides) = {len(families) * 21} PNG")
     print()
 
-    totals = {"borrowed": 0, "in-place": 0, "declared": 0, "error": 0}
+    totals = {"borrowed": 0, "in-place": 0, "deduped": 0, "declared": 0, "error": 0}
     manifest: list[str] = []  # (out_name, upstream_rel, note, sha256)
+
+    # task overlay-dedupe-block-leg (root-cause sync, the gen_textures.py --borrow
+    # precedent): the overlay passes are content-identical across families, so the
+    # products land PER CONTENT GROUP — one canonical under block/overlay/ (or the
+    # batch-1 item/overlay/empty for the pixel-empty passes), members never re-expand.
+    # The colored faces are NOT overlay-family and keep the byte-copy semantics.
+    canon_index = canonical_dir_contents(args.dst)
+    overlay_group: dict[str, list] = {}  # sha256 -> [(out_name, label, up_rel, note)]
 
     for fam in families:
         fam_dir = machines_dir / "basicmachines" / fam
@@ -317,24 +387,79 @@ def main(argv: list[str]) -> int:
             for face in faces:
                 out_name = f"{fam}_{base}_{face}{tail}.png"
                 src_path = fam_dir / layer / f"{face}.png"
-                status, digest, note = borrow_face(
-                    args, src_path, args.dst / out_name,
-                    f"{fam}/{layer}/{face}", want_strip_ok=True)
-                totals[status] += 1
-                if digest:
-                    manifest.append((out_name, f"basicmachines/{fam}/{layer}/{face}.png", note, digest))
+                if base == "colored":
+                    status, digest, note = borrow_face(
+                        args, src_path, args.dst / out_name,
+                        f"{fam}/{layer}/{face}", want_strip_ok=True)
+                    totals[status] += 1
+                    if digest:
+                        manifest.append((out_name, f"basicmachines/{fam}/{layer}/{face}.png", note, digest))
+                    continue
+                data, note = produce_face(src_path, f"{fam}/{layer}/{face}", want_strip_ok=True)
+                if data is None:
+                    totals["declared"] += 1
+                    continue
+                overlay_group.setdefault(sha256_bytes(data), []).append(
+                    (out_name, f"{fam}/{layer}/{face}", f"basicmachines/{fam}/{layer}/{face}.png", note, data))
 
     # --- transformer_rotation overlay trio (front/back/side), flagged dubious ---
     print()
     trans_dir = machines_dir / "transformers" / "transformer_rotation"
     for face, out_name in TRANSFORMER_OVERLAYS:
         src_path = trans_dir / "overlay" / f"{face}.png"
-        status, digest, note = borrow_face(args, src_path, args.dst / out_name,
-                                           f"transformer_rotation/overlay/{face}", want_strip_ok=True)
-        totals[status] += 1
-        if digest:
-            manifest.append((out_name, f"transformers/transformer_rotation/overlay/{face}.png",
-                             f"{note} [{TRANSFORMER_FLAG}: all-black art, entity dubious]", digest))
+        data, note = produce_face(src_path, f"transformer_rotation/overlay/{face}", want_strip_ok=True)
+        if data is None:
+            totals["declared"] += 1
+            continue
+        overlay_group.setdefault(sha256_bytes(data), []).append(
+            (out_name, f"transformer_rotation/overlay/{face}",
+             f"transformers/transformer_rotation/overlay/{face}.png",
+             f"{note} [{TRANSFORMER_FLAG}: all-black art, entity dubious]", data))
+
+    # --- land the overlay content groups ---
+    empty_path = args.dst.parent / "item" / "overlay" / "empty.png"
+    print()
+    for digest, members in sorted(overlay_group.items()):
+        members.sort()
+        if len(members) > 1:
+            print(f"GROUP sha256 {digest[:16]}…  {len(members)} content-identical overlay passes")
+        data = members[0][4]
+        first_out, first_label, first_up, first_note, _ = members[0]
+        if png_is_fully_transparent(data):
+            # the batch-1 empty canonical is the pixel-class home; the member encodings
+            # are byte-different but pixel-empty — nothing lands, the canonical must exist
+            if not (empty_path.is_file() and png_is_fully_transparent(empty_path.read_bytes())):
+                print(f"ERROR transparent pass group {digest[:16]}…: {empty_path} missing or not pixel-empty",
+                      file=sys.stderr)
+                totals["error"] += len(members)
+                continue
+            for out_name, label, up_rel, note, _ in members:
+                print(f"  dedupe {out_name} -> item/overlay/empty (transparent pass)")
+                totals["deduped"] += 1
+            continue
+        # resolution order: the shipped content-group canonical, else the legacy flat
+        # singleton path (unique-content groups keep their paths — the dedupe census
+        # rule), else a fresh canonical under block/overlay/
+        if digest in canon_index:
+            canonical_rel = CANONICAL_SUBDIR + "/" + canon_index[digest]
+        elif (args.dst / first_out).is_file():
+            if sha256_bytes((args.dst / first_out).read_bytes()) != digest:
+                print(f"ERROR {first_label}: {first_out} exists with DIFFERENT bytes than the "
+                      f"current upstream source — refusing to overwrite a foreign asset", file=sys.stderr)
+                totals["error"] += len(members)
+                continue
+            canonical_rel = first_out
+            print(f"skip {first_label}".ljust(64) + f"-> {first_out} (legacy singleton byte-identical)")
+            totals["in-place"] += 1
+        else:
+            canonical_rel = CANONICAL_SUBDIR + "/" + first_out
+            status = land_canonical(args, args.dst, canonical_rel, data, first_label)
+            totals[status] += 1
+        if canonical_rel != first_out or digest in canon_index:
+            for out_name, label, up_rel, note, _ in members[1:]:
+                print(f"  dedupe {out_name} -> {canonical_rel} (content-identical)")
+                totals["deduped"] += 1
+        manifest.append((canonical_rel, first_up, first_note, digest))
 
     # --- engines/kinetic_steam: colored-only domain, re-verify the p12 trio ---
     print()
@@ -361,7 +486,7 @@ def main(argv: list[str]) -> int:
     # --- summary ---
     print()
     print(f"summary: borrowed={totals['borrowed']} in-place={totals['in-place']} "
-          f"declared={totals['declared']} errors={totals['error']}")
+          f"deduped={totals['deduped']} declared={totals['declared']} errors={totals['error']}")
     if totals["declared"]:
         print("declared entries need manual triage (see DECLARE lines above)")
     if totals["error"]:

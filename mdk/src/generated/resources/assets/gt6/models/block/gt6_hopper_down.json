@@ -201,9 +201,9 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "bottom": "gt6:block/hopper/colored_bottom",
-    "overlay_bottom": "gt6:block/hopper/overlay_bottom",
-    "overlay_side": "gt6:block/hopper/overlay_side",
-    "overlay_top": "gt6:block/hopper/overlay_top",
+    "overlay_bottom": "gt6:item/overlay/empty",
+    "overlay_side": "gt6:item/overlay/empty",
+    "overlay_top": "gt6:item/overlay/empty",
     "particle": "#side",
     "side": "gt6:block/hopper/colored_side",
     "top": "gt6:block/hopper/colored_top"

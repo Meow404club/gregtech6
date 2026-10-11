@@ -159,9 +159,9 @@
     "down": "gt6:block/parts/distillationtowerparts/0/colored/bottom",
     "east": "gt6:block/parts/distillationtowerparts/0/colored/side",
     "north": "gt6:block/parts/distillationtowerparts/0/colored/side",
-    "overlay_bottom": "gt6:block/parts/distillationtowerparts/0/overlay/bottom",
-    "overlay_side": "gt6:block/parts/distillationtowerparts/0/overlay/side",
-    "overlay_top": "gt6:block/parts/distillationtowerparts/0/overlay/top",
+    "overlay_bottom": "gt6:block/overlay/cryodistillationtower_overlay_bottom",
+    "overlay_side": "gt6:block/overlay/cryodistillationtower_overlay_back",
+    "overlay_top": "gt6:block/overlay/cryodistillationtower_overlay_top",
     "south": "gt6:block/parts/distillationtowerparts/0/colored/side",
     "up": "gt6:block/parts/distillationtowerparts/0/colored/top",
     "west": "gt6:block/parts/distillationtowerparts/0/colored/side"

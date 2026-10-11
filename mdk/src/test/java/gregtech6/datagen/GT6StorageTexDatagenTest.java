@@ -91,14 +91,16 @@ class GT6StorageTexDatagenTest {
         String tUp = aDistinctTB ? "colored_top" : "colored_side";
         assertEquals("gt6:block/" + aBand + "/" + tDown, tTextures.get("down").getAsString(), aBand + ": down");
         assertEquals("gt6:block/" + aBand + "/" + tUp, tTextures.get("up").getAsString(), aBand + ": up");
-        assertEquals("gt6:block/" + aBand + "/overlay_front", tTextures.get("overlay_north").getAsString(),
-                aBand + ": overlay north");
-        assertEquals("gt6:block/" + aBand + "/overlay_back", tTextures.get("overlay_south").getAsString(),
-                aBand + ": overlay south");
-        assertEquals("gt6:block/" + aBand + "/" + (aDistinctTB ? "overlay_bottom" : "overlay_side"),
-                tTextures.get("overlay_down").getAsString(), aBand + ": overlay down");
-        assertEquals("gt6:block/" + aBand + "/" + (aDistinctTB ? "overlay_top" : "overlay_side"),
-                tTextures.get("overlay_up").getAsString(), aBand + ": overlay up");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_front"),
+                tTextures.get("overlay_north").getAsString(), aBand + ": overlay north (through the content-group canonicals)");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_back"),
+                tTextures.get("overlay_south").getAsString(), aBand + ": overlay south (through the content-group canonicals)");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/"
+                        + (aDistinctTB ? "overlay_bottom" : "overlay_side")),
+                tTextures.get("overlay_down").getAsString(), aBand + ": overlay down (through the content-group canonicals)");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/"
+                        + (aDistinctTB ? "overlay_top" : "overlay_side")),
+                tTextures.get("overlay_up").getAsString(), aBand + ": overlay up (through the content-group canonicals)");
         // the two-layer split: 7 elements — the body cube is the tintindex-0 seat since
         // task tint-coverage-batch (the grayscale colored_* art multiplies the row colour,
         // the GT6StorageBlock.materialOf carrier), the six decal plates stay untinted
@@ -249,10 +251,14 @@ class GT6StorageTexDatagenTest {
 
     @Test
     public void borrowedStorageAndHopperTexturesExist() {
+        // task overlay-dedupe-block-leg: the pixel-empty overlay faces ride the content-group
+        // canonicals (locker/overlay_front -> block/overlay/charging_locker_overlay_front, the
+        // rest of the overlay faces -> item/overlay/empty); resolve() is identity for colored
         for (String tBand : List.of("locker", "drawer")) {
             for (String tFace : List.of("front", "back", "side", "top", "bottom")) {
                 for (String tLayer : List.of("colored", "overlay")) {
-                    assertNotNull(resource("assets/gt6/textures/block/" + tBand + "/" + tLayer + "_" + tFace + ".png"),
+                    assertNotNull(resource("assets/gt6/textures/"
+                                    + GT6BlockOverlayAliases.resolve("block/" + tBand + "/" + tLayer + "_" + tFace) + ".png"),
                             tBand + "/" + tLayer + "_" + tFace + ".png must be borrowed");
                 }
             }
@@ -260,7 +266,8 @@ class GT6StorageTexDatagenTest {
         for (String tBand : List.of("safe_mechanical", "safe_keylocked")) {
             for (String tFace : List.of("front", "back", "side")) {
                 for (String tLayer : List.of("colored", "overlay")) {
-                    assertNotNull(resource("assets/gt6/textures/block/" + tBand + "/" + tLayer + "_" + tFace + ".png"),
+                    assertNotNull(resource("assets/gt6/textures/"
+                                    + GT6BlockOverlayAliases.resolve("block/" + tBand + "/" + tLayer + "_" + tFace) + ".png"),
                             tBand + "/" + tLayer + "_" + tFace + ".png must be borrowed");
                 }
             }
@@ -268,7 +275,8 @@ class GT6StorageTexDatagenTest {
         for (String tBand : List.of("hopper", "queuehopper")) {
             for (String tFace : List.of("bottom", "top", "side")) {
                 for (String tLayer : List.of("colored", "overlay")) {
-                    assertNotNull(resource("assets/gt6/textures/block/" + tBand + "/" + tLayer + "_" + tFace + ".png"),
+                    assertNotNull(resource("assets/gt6/textures/"
+                                    + GT6BlockOverlayAliases.resolve("block/" + tBand + "/" + tLayer + "_" + tFace) + ".png"),
                             tBand + "/" + tLayer + "_" + tFace + ".png must be borrowed");
                 }
             }

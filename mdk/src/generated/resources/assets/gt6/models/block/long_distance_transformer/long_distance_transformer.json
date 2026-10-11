@@ -160,7 +160,7 @@
     "east": "gt6:block/long_distance_transformer/colored_side",
     "north": "gt6:block/long_distance_transformer/colored_front",
     "overlay_back": "gt6:block/long_distance_transformer/overlay_back",
-    "overlay_front": "gt6:block/long_distance_transformer/overlay_front",
+    "overlay_front": "gt6:block/overlay/battery_box_large_overlay_front",
     "overlay_side": "gt6:block/long_distance_transformer/overlay_side",
     "particle": "gt6:block/long_distance_transformer/colored_side",
     "south": "gt6:block/long_distance_transformer/colored_back",

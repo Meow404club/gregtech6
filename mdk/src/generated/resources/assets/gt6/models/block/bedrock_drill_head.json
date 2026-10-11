@@ -160,7 +160,7 @@
     "east": "gt6:block/parts/bedrockdrill/0/colored/side",
     "north": "gt6:block/parts/bedrockdrill/0/colored/side",
     "overlay_bottom": "gt6:block/parts/bedrockdrill/0/overlay/bottom",
-    "overlay_side": "gt6:block/parts/bedrockdrill/0/overlay/side",
+    "overlay_side": "gt6:item/overlay/empty",
     "overlay_top": "gt6:block/parts/bedrockdrill/0/overlay/top",
     "south": "gt6:block/parts/bedrockdrill/0/colored/side",
     "up": "gt6:block/parts/bedrockdrill/0/colored/top",

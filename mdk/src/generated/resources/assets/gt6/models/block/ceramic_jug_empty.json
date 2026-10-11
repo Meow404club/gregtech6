@@ -356,9 +356,9 @@
   "textures": {
     "bottom": "gt6:block/jug/colored_bottom",
     "insides": "gt6:block/jug/colored_insides",
-    "overlay_bottom": "gt6:block/jug/overlay_bottom",
-    "overlay_insides": "gt6:block/jug/overlay_insides",
-    "overlay_sides": "gt6:block/jug/overlay_sides",
+    "overlay_bottom": "gt6:item/overlay/empty",
+    "overlay_insides": "gt6:item/overlay/empty",
+    "overlay_sides": "gt6:item/overlay/empty",
     "overlay_top": "gt6:block/jug/overlay_top",
     "particle": "#sides",
     "sides": "gt6:block/jug/colored_sides",
