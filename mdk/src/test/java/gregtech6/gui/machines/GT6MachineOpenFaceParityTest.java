@@ -69,8 +69,9 @@ import gregtech6.tileentity.multiblocks.TileEntityMassfab;
  * </ul>
  *
  * <p>The already-migrated families stay untouched: the cokeoven zero-display-seat banks
- * keep their p8 pin (GT6BasicMachinesMuiParityTest), the twelve large machines shadow the
- * base input truth with the identical :724 body, the tower builds its own panel.
+ * keep their p8 pin (GT6BasicMachinesMuiParityTest), the twelve large machines ride the
+ * base input truth (their identical :724 shadow retired, task
+ * large-machines-shadow-retirement), the tower builds its own panel.
  */
 public class GT6MachineOpenFaceParityTest extends GTMultiBlocksOfflineTestBase {
 
