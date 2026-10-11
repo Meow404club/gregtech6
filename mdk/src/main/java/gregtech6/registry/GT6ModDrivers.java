@@ -61,13 +61,21 @@ import gregapi.oredict.OreDictMaterial;
 	 * disableItemGeneration census OP.java:599-601/GT6_Main.java:135-137/
 	 * GT_API_Post.java:177-178 is all material-axis), so an ABSENT domain never condemns them
 	 * and every GT6-material recipe row stays live (the Bark shape: GT6's own dust row
-	 * MT.java:1243, BINNIE is a :2263 attribution-only put). The driver still governs the faces
+	 * MT.java:1243, BINNIE is a :2263 attribution-only put). The BLOCK-face mount followed in
+	 * task material-block-face-revival (the same ruling extended): upstream block generation is
+	 * equally axis-free — one PrefixBlock_ per storage prefix over the full MATERIAL_ARRAY under
+	 * owner MD.GT (Loader_PrefixBlocks.java:40-46), the per-material filter being the item
+	 * face's own {@code isGeneratingItem} criterion (PrefixBlock.java:238/243) — so
+	 * {@code GTMaterialBlocks.enumerate} no longer consults {@link #visibilityGate()} either.
+	 * The driver still governs the faces
 	 * the port itself conditions: the fluid spec families carry a per-row {@code driverDomain}
 	 * consulted in their registration cores (GTFluids engineFluid/registerFluidFamily/specFluid),
-	 * the block enumeration and the five table-driven families consult {@link #visibilityGate()}
-	 * (GTMaterialBlocks + the mdh-6 rows), and the datagen walk guards consume
-	 * {@code GTMaterialItems.get} (the f8ffa0bd1 sweep, now driver-inert for item pairs — the
-	 * guards stay for genuinely unregistered pairs). A registration condition family that is not
+	 * and the five table-driven families keep their mdh-6 per-row gates (GTBarrels/GT6Cells/
+	 * GT6Hoppers/GTFluidPipes/GTMachines — genuinely foreign-exclusive rows, the dormant
+	 * negative arm). The datagen walk guards consume
+	 * {@code GTMaterialItems.get} (the f8ffa0bd1 sweep, driver-inert for item AND block pairs —
+	 * the guards stay for genuinely unregistered pairs; the storage-block LOOT skip face lifted
+	 * with the block face, GT6LootTables.lootBlocks). A registration condition family that is not
 	 * mod-presence (item_exists, ...) composes into {@link #visibilityGate()} here too — one
 	 * ruling face, no second fork (mdh-4 keeps the orthogonal condition systems where they are).
 	 */

@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -104,6 +103,19 @@ public final class GTMaterialBlocks {
      * The single enumeration source for "what material prefix blocks exist": the registration
      * bridge and the render card's datagen all take this one walk. Order:
      * {@link OreDictPrefix#VALUES} x MATERIAL_ARRAY ascending-mID (GTMaterialItems:106-108 mirror).
+     *
+     * <p><b>Driver-free by ruling (id1745-4, the block-face extension — task
+     * material-block-face-revival):</b> the mdh-6 {@code GT6ModDrivers.visibilityGate()} consult
+     * this walk carried between cards mdh-6 and here is retired. Upstream block generation has
+     * no mod axis at all — every storage PrefixBlock_ is constructed ONCE over the full
+     * {@code OreDictMaterial.MATERIAL_ARRAY} under owner {@code MD.GT} (Loader_PrefixBlocks.java
+     * :40-46) and the only per-material filter is {@code mPrefix.isGeneratingItem(mMaterialList
+     * [i])} (PrefixBlock.java:238/243, the exact criterion of the item face's PrefixItem.java
+     * :104) — so a GT6-generated prefix block is GT6's own content and an ABSENT attribution
+     * domain never condemns it, the same semantics the item face adopted (GTMaterialItems, task
+     * material-foreign-domain-registration). The five mdh-6 table-driven families
+     * (GTBarrels/GT6Cells/GT6Hoppers/GTFluidPipes/GTMachines) keep their per-row driverDomain
+     * gates — genuinely foreign-exclusive rows, the dormant negative arm.
      */
     public static List<GTMaterialItems.PrefixMaterial> registrationOrder() {
         return enumerate().kept();
@@ -116,7 +128,6 @@ public final class GTMaterialBlocks {
     /** Full walk over ALL prefixes; non-block-path prefixes are skipped whole (aggregate counter). */
     static Enumeration enumerate() {
         Set<OreDictPrefix> tBlockPath = new HashSet<>(blockPathPrefixes());
-        Predicate<OreDictMaterial> tGate = GT6ModDrivers.visibilityGate(); // the unified driver face (mdh-1), the GTMaterialItems:172 mirror (task mdh-6-family-gate)
         List<GTMaterialItems.PrefixMaterial> tRaw = new ArrayList<>();
         int tNonBlockPath = 0, tDuplicatePairs = 0;
         Set<GTMaterialItems.PrefixMaterial> tSeenPairs = new HashSet<>();
@@ -131,7 +142,6 @@ public final class GTMaterialBlocks {
                 GTMaterialItems.PrefixMaterial tPair = new GTMaterialItems.PrefixMaterial(tPrefix, tMaterial);
                 if (!tSeenPairs.add(tPair)) {tDuplicatePairs++; continue;} // alias slot: the target already owns the block
                 if (!tPrefix.isGeneratingItem(tMaterial)) continue; // upstream OreDictPrefix.java:364-366
-                if (!tGate.test(tMaterial)) continue; // the mdh-1 mount (task mdh-6-family-gate) — default all-PRESENT = pair-for-pair unchanged (ADR-MDH1)
                 tRaw.add(tPair);
             }
         }

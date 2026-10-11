@@ -27,15 +27,18 @@ import gregtech6.registry.GTMaterialItems;
  *
  * <p><b>The divergence.</b> The live registration universe is seeded NARROW —
  * {@code GT6ModDrivers.seedFromEnvironment} pins every {@link GT6ForeignMaterialAtlas} PRIMARY
- * domain the install lacks to ABSENT and the walk mounts ({@code GTMaterialItems.enumerate()},
- * {@code GTMaterialBlocks.enumerate()}) drop those pairs on a real install — while the
- * committed datagen tree walks the default full universe (the datagen-JVM seed short-circuit,
- * GT6ModDrivers.seedFromEnvironment). Until this class the committed recipe/loot JSONs
- * therefore referenced ids no bare install ever registered: the 12018 "Unknown item" parse
- * errors (B1 chemtube + B2 exotic-material rows, one root cause) and the loot-side sibling
- * (B5), headers {@code tool_head_hammer_spectre_iron} / {@code stick_astral_silver} /
- * {@code foil_shadow_iron} / {@code tool_head_construction_pickaxe_meteoflame_red_steel} /
- * {@code rock_gt_dolamide} / {@code block_ingot_obsidian_refined}.
+ * domain the install lacks to ABSENT and the gated walk mounts drop those pairs on a real
+ * install (the ITEM face left the driver in task material-foreign-domain-registration and the
+ * BLOCK face in task material-block-face-revival — ruling id1745-4 — so the material walks
+ * register unconditionally now; what still hides is the five mdh-6 family faces and the fluid
+ * spec rows) — while the committed datagen tree walks the default full universe (the
+ * datagen-JVM seed short-circuit, GT6ModDrivers.seedFromEnvironment). Until this class the
+ * committed recipe/loot JSONs therefore referenced ids no bare install ever registered: the
+ * 12018 "Unknown item" parse errors (B1 chemtube + B2 exotic-material rows, one root cause)
+ * and the loot-side sibling (B5), headers {@code tool_head_hammer_spectre_iron} /
+ * {@code stick_astral_silver} / {@code foil_shadow_iron} /
+ * {@code tool_head_construction_pickaxe_meteoflame_red_steel} / {@code rock_gt_dolamide} /
+ * {@code block_ingot_obsidian_refined}.
  *
  * <p><b>The two forms</b> (the load paths decide, not taste):
  * <ul>
@@ -51,7 +54,10 @@ import gregtech6.registry.GTMaterialItems;
  * <li><b>loot tables</b> have NO load-time condition mechanism (ForgeHooks.loadLootTable
  *     deserializes straight into LootTable; no top-level key is read), so the loot row faces
  *     SKIP gated pairs at datagen instead ({@link #gatingDomain} at the walk seams of
- *     GT6LootTables.GT6BlockLoot / GT6OreLootTables / GT6LootInjectionDatagen): the committed
+ *     GT6OreLootTables / GT6LootInjectionDatagen — and formerly GT6LootTables.GT6BlockLoot,
+ *     whose storage-block skip face lifted with the driver-free block face, task
+ *     material-block-face-revival: those blocks register on every install and every one of
+ *     them needs its self-drop table): the committed
  *     tree carries no loot JSON referencing a would-be-absent id — the upstream bare-install
  *     shape (no item, no loot row; Loader_Loot addLoot :566-569 skip face), with the declared
  *     cost that an install carrying the owning mod also misses the row.</li>
@@ -77,6 +83,17 @@ public final class GT6ForeignRowConvergence {
     private static Map<String, String> sGatedIds;
     /** The machine-family tail (the tag face only): paths the two material walks never carry. */
     private static Map<String, String> sMachineGatedIds;
+    /**
+     * The storage-block face (the tag face only, task material-block-face-revival): the block
+     * enumeration is driver-free (ruling id1745-4 — Loader_PrefixBlocks.java:40-46 +
+     * PrefixBlock.java:238/243 have no mod axis), so its ids left the ROW face map — a recipe
+     * or loot row referencing a storage block must not carry a {@code mod_loaded} condition,
+     * the block registers on every install. The ids stay keyed for the TAG face only: the
+     * committed tag tree keeps its {@code "required": false} optional-members ledger for them
+     * (harmless either way — an optional member that registers still joins — and re-pouring
+     * ~1400 tag entries to strict strings buys nothing).
+     */
+    private static Map<String, String> sBlockGatedIds;
 
     private GT6ForeignRowConvergence() {
     }
@@ -97,8 +114,10 @@ public final class GT6ForeignRowConvergence {
     }
 
     /**
-     * The gated id map of the RECIPE + LOOT faces, lazily over the item + block walks (first
-     * use is post-initMaterials). The machine-family tail is deliberately NOT here: the loot
+     * The gated id map of the RECIPE + LOOT faces, lazily over the item walk (first use is
+     * post-initMaterials). The BLOCK walk left this map with the block face (task
+     * material-block-face-revival — the enumeration is driver-free, its ids always register,
+     * see {@link #sBlockGatedIds}). The machine-family tail is deliberately NOT here: the loot
      * face skips gated pairs at datagen over the material walks (the convergence card's four
      * loot seams), and machine-family loot rows are the declared residual of the unported-
      * family loot card — folding them in here would flip that card's law red without a fix
@@ -111,13 +130,25 @@ public final class GT6ForeignRowConvergence {
                 String tDomain = gatingDomain(tPair.material());
                 if (tDomain != null) rIds.put(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()), tDomain);
             }
+            sGatedIds = rIds;
+        }
+        return sGatedIds;
+    }
+
+    /**
+     * The storage-block slice of the old gated map, kept for the TAG face only (see
+     * {@link #sBlockGatedIds}).
+     */
+    private static Map<String, String> blockGatedIds() {
+        if (sBlockGatedIds == null) {
+            Map<String, String> rIds = new HashMap<>();
             for (GTMaterialItems.PrefixMaterial tPair : GTMaterialBlocks.registrationOrder()) {
                 String tDomain = gatingDomain(tPair.material());
                 if (tDomain != null) rIds.put(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()), tDomain);
             }
-            sGatedIds = rIds;
+            sBlockGatedIds = rIds;
         }
-        return sGatedIds;
+        return sBlockGatedIds;
     }
 
     /**
@@ -171,7 +202,8 @@ public final class GT6ForeignRowConvergence {
      */
     public static boolean gatedId(String aNamespaceFreePath) {
         if (sMachineGatedIds == null) machineFamilies(new HashMap<>());
-        return sMachineGatedIds.containsKey(aNamespaceFreePath) || gatedIds().containsKey(aNamespaceFreePath);
+        return sMachineGatedIds.containsKey(aNamespaceFreePath) || gatedIds().containsKey(aNamespaceFreePath)
+                || blockGatedIds().containsKey(aNamespaceFreePath);
     }
 
     /** The modids a serialized recipe row must require: the gated domains of its gt6 item refs, sorted. */
