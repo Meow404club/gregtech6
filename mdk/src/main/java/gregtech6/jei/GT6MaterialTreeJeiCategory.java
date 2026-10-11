@@ -51,7 +51,9 @@ import gregtech6.recipes.tree.MaterialTreeLayout;
  *     rebuilt affordances (the invisible slots carry none).</li>
  * <li><b>the controls</b>: {@link GT6MaterialTreeJeiNavWidget} keeps the strip + keyboard
  *     face (the nav-m3-jei shape), now driving the LIVE viewport instead of an idle one,
- *     next to the S4 corner entry.</li>
+ *     next to the S4 corner entry. Since task mattree-jei-leg-parity the strip is the EMI
+ *     twin's full band — the zoom slider included — and the sleeping cells read the live
+ *     fit floor (the rework declaration's 「行为语义未动」 interaction face, pulled even).</li>
  * </ul>
  *
  * <p><b>The frame vs the content</b> (task mattree-r3-nav-unify): {@link #getWidth}/
@@ -173,6 +175,11 @@ public class GT6MaterialTreeJeiCategory implements IRecipeCategory<MaterialTreeD
 				GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12).setTooltip(Component.literal("Zoom out (-)"));
 		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 2 * GT6MaterialTreeEmiRecipe.BUTTON_PITCH,
 				GT6MaterialTreeEmiRecipe.BUTTON_Y, 12, 12).setTooltip(Component.literal("Reset view (R/0)"));
+		// the slider's hint (task mattree-jei-leg-parity: the EMI twin's fifth strip hint, its
+		// shared seat constants)
+		aBuilder.addTooltipArea(GT6MaterialTreeEmiRecipe.SLIDER_X, GT6MaterialTreeEmiRecipe.SLIDER_Y,
+				GT6MaterialTreeEmiRecipe.SLIDER_W, GT6MaterialTreeEmiRecipe.SLIDER_H)
+				.setTooltip(Component.literal("Click to set zoom"));
 		aBuilder.addTooltipArea(GT6MaterialTreeScreen.SCREEN_BUTTON_X, GT6MaterialTreeScreen.SCREEN_BUTTON_Y, 12, 12)
 				.setTooltip(Component.literal("Open full tree view"));
 	}

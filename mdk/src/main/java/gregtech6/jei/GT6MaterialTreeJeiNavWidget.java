@@ -71,6 +71,17 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  * (IRecipeExtrasBuilder: slots take priority for tooltips — with the slots invisible, these
  * hints and the tree widget's own tooltip are the only hover text on the page).
  *
+ * <p><b>The EMI strip parity</b> (task mattree-jei-leg-parity, the rework declaration's
+ * 「行为语义未动」face): the strip carries the EMI twin's full band now — the three nav
+ * cells PLUS the click-track zoom slider on the shared seat constants
+ * ({@link GT6MaterialTreeEmiRecipe#SLIDER_X}/{@code SLIDER_Y}/{@code SLIDER_W}/
+ * {@code SLIDER_H}, whose javadoc names them this category frame's seat), and the
+ * sleeping cells read the viewport's LIVE fit floor ({@link MaterialTreeViewport#minScale()})
+ * instead of the static legacy floor — this leg's content is the real plan inside the
+ * nominal frame, so a small tree's fit sits above 1.0 and the static reading left the
+ * zoom-out cell falsely awake (the EMI page can keep statics: its content == pane pins
+ * the fit to exactly 1.0).
+ *
  * <p>Consumed faces (JEI 15.x = 1.20.1-forge 15.62 and 19.x = 1.21.1-neoforge 19.52,
  * identical on this surface): {@code IRecipeWidget} ({@code getPosition}/
  * {@code drawWidget} — 15.20/19.19 floors), {@code IJeiGuiEventListener}
@@ -86,6 +97,9 @@ public class GT6MaterialTreeJeiNavWidget implements IRecipeWidget, IJeiGuiEventL
 	private static final int BORDER_INK = 0xFF555555, BORDER_HOVER_INK = 0xFF7F7F7F;
 	private static final int FILL_INK = 0xFF181818, FILL_HOVER_INK = 0xFF2A2A2A, FILL_SLEEP_INK = 0xFF101010;
 	private static final int GLYPH_INK = 0xFFE0E0E0, GLYPH_SLEEP_INK = 0xFF555555;
+	/** The slider's ink faces (the EMI twin's {@code GT6MaterialTreeSliderWidget} palette — per-leg render wiring, the geometry is the shared seat). */
+	private static final int TRACK_INK = 0xFF555555, FILL_TRACK_INK = 0xFF8B8B8B, HANDLE_INK = 0xFFF0F0F0;
+	private static final int HANDLE_W = 3;
 
 	/** The glyphs of the three cells, in {@link GT6MaterialTreeNav.Action} order: in, out, reset. */
 	private static final String[] GLYPHS = {"+", "-", "R"};
@@ -131,13 +145,32 @@ public class GT6MaterialTreeJeiNavWidget implements IRecipeWidget, IJeiGuiEventL
 			aGuiGraphics.drawString(tFont, tGlyph, tX + (12 - tFont.width(tGlyph)) / 2, tY + 2,
 					tSleeping ? GLYPH_SLEEP_INK : GLYPH_INK, false);
 		}
+		// the click-track zoom slider (the EMI twin's strip tail — task mattree-jei-leg-parity,
+		// the shared seat constants whose javadoc names them the JEI frame's seat): track,
+		// filled span (the current scale's handle position) and a 3px handle, no textures
+		int tSX = GT6MaterialTreeEmiRecipe.SLIDER_X, tSY = GT6MaterialTreeEmiRecipe.SLIDER_Y;
+		int tSW = GT6MaterialTreeEmiRecipe.SLIDER_W, tSH = GT6MaterialTreeEmiRecipe.SLIDER_H;
+		aGuiGraphics.fill(tSX, tSY, tSX + tSW, tSY + tSH, TRACK_INK);
+		int tFill = (int) Math.round(GT6MaterialTreeNav.fractionOfScale(mView.scale()) * tSW);
+		if (tFill > 0) aGuiGraphics.fill(tSX, tSY, tSX + tFill, tSY + tSH, FILL_TRACK_INK);
+		int tHandle = Math.min(tSW - HANDLE_W, Math.max(0, tFill - 1));
+		aGuiGraphics.fill(tSX + tHandle, tSY - 1, tSX + tHandle + HANDLE_W, tSY + tSH + 1, HANDLE_INK);
 	}
 
-	/** The EMI twin's active faces: zoom-out sleeps at the fit pose, zoom-in at the ceiling; reset never does. */
-	private boolean isSleeping(int aCell) {
+	/**
+	 * The EMI twin's active faces: zoom-out sleeps at the LIVE fit floor, zoom-in at the
+	 * ceiling; reset never does. The floor is {@link MaterialTreeViewport#minScale()}, not
+	 * the static {@code MIN_SCALE} (task mattree-jei-leg-parity): this leg's pane is the
+	 * nominal frame while the content is the real plan, so a small tree's fit sits ABOVE
+	 * the static floor and a click inside it is a frozen no-op — the sleeping cell must
+	 * say so (the EMI page can read statics only because its content == pane pins the fit
+	 * to exactly 1.0; the standalone screen's strip rides the same live floor).
+	 * Package-private: the pins drive it.
+	 */
+	boolean isSleeping(int aCell) {
 		return switch (aCell) {
 			case 0 -> mView.scale() >= MaterialTreeViewport.MAX_SCALE;
-			case 1 -> mView.scale() <= MaterialTreeViewport.MIN_SCALE;
+			case 1 -> mView.scale() <= mView.minScale();
 			default -> false;
 		};
 	}
@@ -157,8 +190,22 @@ public class GT6MaterialTreeJeiNavWidget implements IRecipeWidget, IJeiGuiEventL
 	public boolean mouseClicked(double aMouseX, double aMouseY, int aButton) {
 		if (aButton != 0) return false;
 		int tCell = cellAt(aMouseX, aMouseY);
-		if (tCell < 0) return false; // canvas clicks belong to the canvas input handler (routes first)
+		if (tCell < 0) {
+			// the slider track: a click JUMPS the zoom to the clicked level (the EMI twin's
+			// click-track face — {@code GT6MaterialTreeNav#zoomToFraction} at the shared anchor)
+			if (!inTrack(aMouseX, aMouseY)) return false; // canvas clicks belong to the canvas input handler (routes first)
+			GT6MaterialTreeNav.zoomToFraction(mView,
+					GT6MaterialTreeNav.trackFraction(aMouseX, GT6MaterialTreeEmiRecipe.SLIDER_X, GT6MaterialTreeEmiRecipe.SLIDER_W),
+					mFocusX, mFocusY);
+			return true;
+		}
 		return GT6MaterialTreeNav.handle(mView, actionOf(tCell), mFocusX, mFocusY);
+	}
+
+	/** Whether the page point sits inside the slider's track rect (the click-track's whole bounds, the EMI slider's own shape). */
+	private static boolean inTrack(double aMouseX, double aMouseY) {
+		return aMouseX >= GT6MaterialTreeEmiRecipe.SLIDER_X && aMouseX < GT6MaterialTreeEmiRecipe.SLIDER_X + GT6MaterialTreeEmiRecipe.SLIDER_W
+				&& aMouseY >= GT6MaterialTreeEmiRecipe.SLIDER_Y && aMouseY < GT6MaterialTreeEmiRecipe.SLIDER_Y + GT6MaterialTreeEmiRecipe.SLIDER_H;
 	}
 
 	@Override
