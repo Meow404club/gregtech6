@@ -3294,7 +3294,7 @@ public final class GT6LootTables extends LootTableProvider {
             // task w6-t3-large-veins — the 31 vein-indicator rocks: the WorldgenOresLarge
             // .java:104 arm (the rock carries rockGt of the picked vein material) as one
             // collectedTable per rock, INDICATOR_SPECS order. The sweep guard skips a rock whose
-            // vein material is driver-hidden (the axis carries Azurite/Eudialyte, TROPIC PRIMARY
+            // vein material is unregistered (the axis carries Azurite/Eudialyte, TROPIC PRIMARY
             // :2527/:2528) — the walk-leg semantics; default mode never skips.
             for (int i = 0; i < GT6SurfaceBlocks.INDICATOR_ROCKS.size(); i++) {
                 OreDictMaterial tMaterial = GT6SurfaceBlocks.INDICATOR_MATERIALS.get(i).get();

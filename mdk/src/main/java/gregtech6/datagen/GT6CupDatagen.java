@@ -102,7 +102,7 @@ public final class GT6CupDatagen {
 		}
 
 		/** The three rows (the leg-neutral builder chain). The porcelain-dust pair rows skip when
-		 * MT.Porcelain is driver-hidden (IHL PRIMARY, atlas :2234 — the sweep semantics); the raw→cup
+		 * MT.Porcelain is unregistered (IHL PRIMARY, atlas :2234 — the sweep semantics); the raw→cup
 		 * smelt row rides only GT6 registry items and stays. */
 		private void build(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aOutput) {
 			Item tRaw = GT6Cups.MODELED_PORCELAIN_CUP_RAW.get();

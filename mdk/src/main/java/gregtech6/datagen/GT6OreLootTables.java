@@ -238,7 +238,7 @@ public final class GT6OreLootTables {
                 // material's table references items no bare install registers and loot has no
                 // load-time condition mechanism — ship no table at all (the oreLootBlocks face).
                 if (GT6ForeignRowConvergence.gatingDomain(tKey.material()) != null) continue;
-                // the sweep guard: the ore AXIS carries five driver-hidden-able materials (Azurite/
+                // the sweep guard: the ore AXIS carries five unregistered-able materials (Azurite/
                 // Eudialyte TROPIC, CaF2 RoC, Jade ERE, Dolamide MO — all atlas PRIMARY), whose
                 // flood items vanish under an ABSENT pin while the block axis stays (mdh-3 scope
                 // ruling) — skip the material-item tables for a hidden key, the walk-leg semantics.
