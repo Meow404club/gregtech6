@@ -68,9 +68,13 @@ import gregtech6.tileentity.multiblocks.MultiBlockPartBlockEntity;
  * auto-out SIDE_BOTTOM — the fluid half is the {@link #getFluidOutputTarget} override,
  * the item half rides the gated output slots this port keeps).
  *
- * <p>GUI face: none — the controller block carries no use-face (the W2 menu-null form,
- * the twelve large machines' shape); the recipe walk is RCON/data-visible through the
- * block NBT like every headless machine.
+ * <p>GUI face (task machine-openface-gap — the sheet-purge debt closing): the panel is
+ * the family {@link GTBasicMachineMUI} delegation (the base buildUI); the open rides
+ * {@code GT6MuiMachine.tryOpen} dispatched by {@code GTImplosionCompressorBlock.use}
+ * (the upstream open is MultiTileEntityBasicMachine.onBlockActivated3 :483-486
+ * inherited through TileEntityBase10MultiBlockMachine). The :267 input bank keeps the
+ * empty default (the map is fluid-less); the :268 output bank is the live one-tank
+ * default below.
  */
 public class TileEntityImplosionCompressor extends TileEntityBase10MultiBlockMachine {
 
@@ -118,6 +122,16 @@ public class TileEntityImplosionCompressor extends TileEntityBase10MultiBlockMac
 			mRecipes = tMap;
 		}
 		return tMap;
+	}
+
+	/**
+	 * The :268 display bank (task machine-openface-gap) — the live output tank (the
+	 * one-tank default; the map is fluid-less, the seat is the upstream icon-only display).
+	 * The :267 input bank keeps the empty default.
+	 */
+	@Override
+	public FluidTankGT[] getFluidOutputTanks() {
+		return mTanksOutput;
 	}
 
 	/**

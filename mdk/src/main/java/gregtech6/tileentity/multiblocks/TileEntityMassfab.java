@@ -98,8 +98,12 @@ import gregtech6.fluid.FluidTankGT;
  * no port identity (the W3 absent-input pool, the implosion/graagg CUT precedent); the
  * ledger lives on the GTMultiBlocks registration comment.
  *
- * <p>GUI face: none — the controller block carries no use-face (the W2 menu-null form,
- * the implosion shape); the recipe walk is RCON/data-visible through the block NBT.
+ * <p>GUI face (task machine-openface-gap — the sheet-purge debt closing): the panel is
+ * the family {@link GTBasicMachineMUI} delegation (the base buildUI); the open rides
+ * {@code GT6MuiMachine.tryOpen} dispatched by {@code GTMassfabBlock.use} (the upstream
+ * open is MultiTileEntityBasicMachine.onBlockActivated3 :483-486 inherited through
+ * TileEntityBase10MultiBlockMachine). The display banks: output = the live TWO tanks
+ * (below); input = the empty default — the port rows are item-only.
  */
 public class TileEntityMassfab extends TileEntityBase10MultiBlockMachine implements ITileEntityEnergy {
 
@@ -170,6 +174,16 @@ public class TileEntityMassfab extends TileEntityBase10MultiBlockMachine impleme
 			mRecipes = tMap;
 		}
 		return tMap;
+	}
+
+	/**
+	 * The :268 display bank (task machine-openface-gap) — the live output tanks (the TWO
+	 * the ctor re-pointed; the disintegration rows park charged + neutral). The :267 input
+	 * bank keeps the empty default (zero input seats — the port rows are item-only).
+	 */
+	@Override
+	public FluidTankGT[] getFluidOutputTanks() {
+		return mTanksOutput;
 	}
 
 	// ---------------------------------------------------------------------------
