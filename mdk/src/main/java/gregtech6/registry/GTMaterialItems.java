@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -211,15 +210,28 @@ public final class GTMaterialItems {
      * forced || !blacklist && mCondition — NOT canGenerateItem, which drops the blacklist leg,
      * OreDictPrefix.java:285 vs :290).
      *
-     * <p>Two-layer gate (mdh-4 closeout, KEEP ruling): layer 1 = the unified mod-driver
-     * pre-filter on the mod axis, GT6ModDrivers (mdh series; visibilityGate — the mdh-1
-     * mount point rides this walk); layer 2 = the OP.setCondition material-axis condition
-     * chain inside isGeneratingItem's mCondition leg — the gregapi chain stays as the
-     * second layer; the driver face does not replace it.
+     * <p><b>Single-layer gate (user ruling id1745-4, 2026-10-10, task
+     * material-foreign-domain-registration — the mdh driver retired from the item face):</b>
+     * the walk is the plain upstream criterion chain with NO mod-presence consult. Upstream
+     * item generation has no mod axis at all: PrefixItem.java:104 walks the full material list
+     * over isGeneratingItem (OreDictPrefix.java:364-366 = forced || !blacklist && mCondition),
+     * and the disableItemGeneration census is all material-axis (OP.java:599-601,
+     * GT6_Main.java:135-137, GT_API_Post.java:177-178 — not one call is mod-conditioned). Every
+     * GT6-generated prefix item is therefore GT6's own content, registered unconditionally even
+     * when its material's attributed foreign mod is absent — the Bark shape: the material is
+     * GT6's own dust() row (MT.java:1243, dust factory, mID 8275) that only later carries the
+     * BINNIE oredict attribution (MT.java:2263 {@code .put(MD.BINNIE)}). The former two-layer
+     * gate (mdh-1 {@code visibilityGate}) made a seeded ABSENT domain condemn its GT6-generated
+     * items live, so the loader's unregistered-id seam silently declared out every recipe row
+     * referencing them (the pressurewasher b2c-wash 28-row live void — offline/datagen JVMs
+     * never seed and stayed green, the mdh 分层盲区). The mod axis stays on the faces where the
+     * port itself conditions content: the fluid spec families (GTFluids driverDomain rows, the
+     * mdh-3 ratchet), the block enumeration + the mdh-6 family rows (GTMaterialBlocks/
+     * GTBarrels/GT6Cells/GT6Hoppers/GTFluidPipes/GTMachines), and the datagen walk guards
+     * (GT6DatagenWalkLegTest).
      */
     private static Enumeration enumerate() {
         Set<OreDictPrefix> tItemPath = new HashSet<>(itemPathPrefixes());
-        Predicate<OreDictMaterial> tGate = GT6ModDrivers.visibilityGate(); // the unified driver face (mdh-1)
         List<PrefixMaterial> tRaw = new ArrayList<>();
         int tNonItemPath = 0, tDuplicatePairs = 0;
         Set<PrefixMaterial> tSeenPairs = new HashSet<>();
@@ -234,8 +246,7 @@ public final class GTMaterialItems {
                 if (tMaterial == null || tMaterial.mID < 0) continue;
                 PrefixMaterial tPair = new PrefixMaterial(tPrefix, tMaterial);
                 if (!tSeenPairs.add(tPair)) {tDuplicatePairs++; continue;} // alias slot: the target already owns the item
-                if (!generatesItemPathItem(tPrefix, tMaterial)) continue; // PrefixItem.java:104 + the plank WOOD gate (task wood-planks-register; rebase-union with the mdh-1 mount below)
-                if (!tGate.test(tMaterial)) continue; // GT6ModDrivers mount ① (mdh-1) — default all-PRESENT = pair-for-pair unchanged (ADR-MDH1)
+                if (!generatesItemPathItem(tPrefix, tMaterial)) continue; // PrefixItem.java:104 — the plain upstream criterion, the ruling's single layer
                 tRaw.add(tPair);
             }
         }
