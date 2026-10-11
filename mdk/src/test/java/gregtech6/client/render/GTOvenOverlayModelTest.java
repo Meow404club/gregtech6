@@ -38,6 +38,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import gregtech6.client.render.GTOvenRenderSnapshot.OvenOverlayGroup;
+import gregtech6.datagen.GT6BlockOverlayAliases;
 import gregtech6.client.render.GTOvenOverlayModel.OvenTextureFace;
 import gregtech6.client.render.GTOvenOverlayModel.OverlayPlan;
 
@@ -178,19 +179,22 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 		List<OverlayPlan> tQuirk = GTOvenOverlayModel.planOverlayQuads(new GTOvenRenderSnapshot(true, true), Direction.NORTH, Direction.NORTH);
 		assertEquals(1, tQuirk.size());
 		assertEquals(GTOvenOverlayModel.spriteOf(OvenOverlayGroup.ACTIVE, OvenTextureFace.FRONT), tQuirk.get(0).sprite());
-		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/oven_overlay_active_front"), tQuirk.get(0).sprite());
+		assertEquals(ResourceLocation.fromNamespaceAndPath("gt6",
+				GT6BlockOverlayAliases.resolve("block/oven_overlay_active_front")), tQuirk.get(0).sprite());
 
 		// every sprite id has the gt6:block/oven_overlay_<group>_<face> shape
 		for (OvenOverlayGroup tGroup : List.of(OvenOverlayGroup.ACTIVE, OvenOverlayGroup.RUNNING)) {
 			for (Direction tSide : Direction.values()) {
 				OverlayPlan tPlan = GTOvenOverlayModel.planOverlayQuads(new GTOvenRenderSnapshot(tGroup == OvenOverlayGroup.ACTIVE, tGroup == OvenOverlayGroup.RUNNING),
 						Direction.NORTH, tSide).get(0);
+				String tExpectedPath = GT6BlockOverlayAliases.resolve(
+						"block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey());
 				//? if forge {
-				assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey()),
+				assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tExpectedPath),
 				//?} else {
-				/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", "block/oven_overlay_" + tGroup.textureKey() + "_" + tPlan.textureFace().textureKey()),
+				/*assertEquals(ResourceLocation.fromNamespaceAndPath("gt6", tExpectedPath),
 				*///?}
-						tPlan.sprite(), "the sprite id mirrors the upstream NBT_TEXTURE name form");
+						tPlan.sprite(), "the sprite id mirrors the canonical content-group form (task overlay-dedupe-block-leg)");
 			}
 		}
 	}
@@ -450,13 +454,24 @@ public class GTOvenOverlayModelTest extends GTOfflineRenderTestBase {
 		// the pixel-level semantics pin: every oven_overlay_* PNG has alpha<255 texels, so
 		// the family MUST render on an alpha-tested layer (the JSON-declared cutout); on
 		// the discard-less solid layer those texels paint their RGB residue instead.
-		List<Path> tDecals;
-		try (Stream<Path> tWalk = Files.list(blockTexturesDir())) {
-			tDecals = tWalk.map(Path::getFileName).map(Path::toString)
-					.filter(tName -> tName.startsWith("oven_overlay_") && tName.endsWith(".png")).sorted()
-					.map(tName -> blockTexturesDir().resolve(tName)).toList();
+		// task overlay-dedupe-block-leg: the decal census walks the sprite ids the planner
+		// can actually emit — spriteOf over both visual groups x the six faces, resolved
+		// through the content-group canonicals (the retired flat oven_overlay_* paths ride
+		// block/overlay/ or the shared item/overlay/empty)
+		Path tTexturesRoot = blockTexturesDir().getParent();
+		java.util.LinkedHashSet<ResourceLocation> tIds = new java.util.LinkedHashSet<>();
+		for (OvenOverlayGroup tGroup : List.of(OvenOverlayGroup.ACTIVE, OvenOverlayGroup.RUNNING)) {
+			for (OvenTextureFace tFace : OvenTextureFace.values()) {
+				tIds.add(GTOvenOverlayModel.spriteOf(tGroup, tFace));
+			}
 		}
-		assertTrue(tDecals.size() >= 30, "the decal census is non-vacuous: " + tDecals.size() + " oven_overlay PNGs");
+		assertFalse(tIds.isEmpty(), "the decal census is non-vacuous: " + tIds.size() + " distinct sprite ids");
+		List<Path> tDecals = new java.util.ArrayList<>();
+		for (ResourceLocation tId : tIds) {
+			Path tFile = tTexturesRoot.resolve(tId.getPath() + ".png");
+			assertTrue(Files.isRegularFile(tFile), tId + ": the decal canonical ships");
+			tDecals.add(tFile);
+		}
 		for (Path tFile : tDecals) {
 			BufferedImage tImage = ImageIO.read(tFile.toFile());
 			assertNotNull(tImage, "decodable PNG: " + tFile);

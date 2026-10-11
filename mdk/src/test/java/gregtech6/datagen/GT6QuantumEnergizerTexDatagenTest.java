@@ -150,9 +150,14 @@ class GT6QuantumEnergizerTexDatagenTest extends GTOfflineTestBase {
             assertEquals(tBase + "_colored_side", tTextures.get(tSide).getAsString(),
                     tSide + " = the colored side");
         }
-        assertEquals(tBase + "_overlay_front", tTextures.get("overlay_front").getAsString());
-        assertEquals(tBase + "_overlay_back", tTextures.get("overlay_back").getAsString());
-        assertEquals(tBase + "_overlay_side", tTextures.get("overlay_side").getAsString());
+        // task overlay-dedupe-block-leg: the four retired overlay faces ride the content-group
+        // canonicals; overlay_side keeps its own file (the resolve() identity arm)
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/quantum_energizer_overlay_front"),
+                tTextures.get("overlay_front").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/quantum_energizer_overlay_back"),
+                tTextures.get("overlay_back").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/quantum_energizer_overlay_side"),
+                tTextures.get("overlay_side").getAsString());
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), "body + 6 decals");
         var tBodyFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");
@@ -175,11 +180,14 @@ class GT6QuantumEnergizerTexDatagenTest extends GTOfflineTestBase {
         assertEquals("minecraft:cutout", tActive.get("render_type").getAsString(),
                 "_active: cutout re-declared");
         JsonObject tOverride = tActive.getAsJsonObject("textures");
-        assertEquals(tBase + "_overlay_active_front", tOverride.get("overlay_front").getAsString(),
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/quantum_energizer_overlay_active_front"),
+                tOverride.get("overlay_front").getAsString(),
                 "_active: the front shell swaps to overlay_active");
-        assertEquals(tBase + "_overlay_active_back", tOverride.get("overlay_back").getAsString(),
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/quantum_energizer_overlay_active_back"),
+                tOverride.get("overlay_back").getAsString(),
                 "_active: the back shell");
-        assertEquals(tBase + "_overlay_active_side", tOverride.get("overlay_side").getAsString(),
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/quantum_energizer_overlay_active_side"),
+                tOverride.get("overlay_side").getAsString(),
                 "_active: the side shell");
         assertFalse(tActive.has("elements"), "_active: the body elements stay inherited");
     }
@@ -258,14 +266,23 @@ class GT6QuantumEnergizerTexDatagenTest extends GTOfflineTestBase {
         MessageDigest tSha256 = MessageDigest.getInstance("SHA-256");
         List<String> tViolations = new java.util.ArrayList<>();
         for (var tEntry : BORROWED_PNG_SHA256.entrySet()) {
-            Path tPng = tMdkRoot.resolve("src/main/resources/assets/gt6/textures/block").resolve(tEntry.getKey());
-            assertTrue(Files.isRegularFile(tPng), "the borrowed PNG must exist on the static tree: " + tEntry.getKey());
+            // task overlay-dedupe-block-leg: the four overlay faces ride the block
+            // content-group canonicals now (overlay/front -> overlay/massfab_overlay_back,
+            // overlay/back -> overlay/laser_absorber_overlay_back, overlay_active/front ->
+            // overlay/massfab_overlay_back_active, overlay_active/back ->
+            // overlay/laser_absorber_overlay_active_back); resolve() is identity for the
+            // five faces that keep their own file. Same sha either way — byte-verbatim.
+            String tRel = GT6BlockOverlayAliases.resolve(
+                    "block/" + tEntry.getKey().substring(0, tEntry.getKey().length() - 4))
+                    .substring("block/".length()) + ".png";
+            Path tPng = tMdkRoot.resolve("src/main/resources/assets/gt6/textures/block").resolve(tRel);
+            assertTrue(Files.isRegularFile(tPng), "the borrowed PNG must exist on the static tree: " + tRel);
             String tHex = HexFormat.of().formatHex(tSha256.digest(Files.readAllBytes(tPng)));
             if (!tHex.equals(tEntry.getValue())) {
                 tViolations.add(tEntry.getKey() + " — hashes to " + tHex + ", the upstream pin is " + tEntry.getValue());
             }
-            if (!tReadme.contains(tEntry.getKey())) {
-                tViolations.add(tEntry.getKey() + " — filename absent from assets/README.md");
+            if (!tReadme.contains(tRel)) {
+                tViolations.add(tRel + " — filename absent from assets/README.md");
             }
         }
         assertTrue(tViolations.isEmpty(), String.join("\n", tViolations));

@@ -177,7 +177,8 @@ public class GT6MeasuringPotDatagenTest extends GTOfflineTestBase {
 		JsonObject tTextures = tModel.getAsJsonObject("textures");
 		for (String tKey : TEXTURE_KEYS) {
 			String tRef = tTextures.get(tKey).getAsString();
-			assertTrue(tRef.startsWith("gt6:block/measuring_pot_"), tKey + " rides the borrowed band: " + tRef);
+			assertTrue(tRef.startsWith("gt6:block/measuring_pot_") || tRef.equals("gt6:item/overlay/empty"),
+				tKey + " rides the borrowed band or the shared empty canonical: " + tRef);
 			assertTextureExists(tRef.substring("gt6:".length()) + ".png");
 		}
 		assertEquals(10, tModel.getAsJsonArray("elements").size(), "5 body boxes + 5 overlay shells");
@@ -224,7 +225,9 @@ public class GT6MeasuringPotDatagenTest extends GTOfflineTestBase {
 	void allNineBorrowsExist() {
 		for (String tLayer : new String[] {"colored", "overlay"}) {
 			for (String tFace : new String[] {"sides", "insides", "top", "bottom"}) {
-				assertTextureExists("block/measuring_pot_" + tLayer + "_" + tFace + ".png");
+				// task overlay-dedupe-block-leg: the four transparent overlay tiles ride the
+				// shared item/overlay/empty canonical; resolve() is identity for real art
+				assertTextureExists(GT6BlockOverlayAliases.resolve("block/measuring_pot_" + tLayer + "_" + tFace) + ".png");
 			}
 		}
 		assertTextureExists("item/clay_measuring_pot.png");

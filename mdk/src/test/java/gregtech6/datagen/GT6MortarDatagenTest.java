@@ -38,7 +38,8 @@ public class GT6MortarDatagenTest extends gregtech6.tileentity.GTOfflineTestBase
 	private static final List<String> INGREDIENTS = List.of("ingot_iron", "ingot_netherite",
 			"gem_sapphire", "gem_diamond", "gem_amethyst");
 	/** 2 layers x 6 faces — the borrowed tile set (assets/README.md, the mortar section). */
-	private static final int PINNED_PNG_TOTAL = 12;
+	/** The six colored tiles keep their own files; the six pixel-empty mortar_overlay passes retired onto the shared item/overlay/empty canonical (task overlay-dedupe-block-leg). */
+	private static final int PINNED_PNG_TOTAL = 6;
 	private static final List<String> FACES = List.of("sides", "insides", "top", "bottom", "middleside", "middletop");
 
 	@BeforeAll
@@ -99,8 +100,11 @@ public class GT6MortarDatagenTest extends gregtech6.tileentity.GTOfflineTestBase
 		for (String tFace : FACES) {
 			assertNotNull(GT6MortarDatagenTest.class.getResource("/assets/gt6/textures/block/tools/mortar/" + tFace + ".png"),
 					"colored " + tFace + ".png must be borrowed");
-			assertNotNull(GT6MortarDatagenTest.class.getResource("/assets/gt6/textures/block/tools/mortar_overlay/" + tFace + ".png"),
-					"overlay " + tFace + ".png must be borrowed");
+			// task overlay-dedupe-block-leg: the six pixel-empty mortar_overlay passes ride
+			// the shared item/overlay/empty canonical
+			String tOverlayKey = GT6BlockOverlayAliases.resolve("block/tools/mortar_overlay/" + tFace);
+			assertNotNull(GT6MortarDatagenTest.class.getResource("/assets/gt6/textures/" + tOverlayKey + ".png"),
+					"overlay " + tFace + " must be borrowed (own file or the shared canonical)");
 		}
 	}
 
@@ -111,7 +115,11 @@ public class GT6MortarDatagenTest extends gregtech6.tileentity.GTOfflineTestBase
 		MessageDigest tSha256 = MessageDigest.getInstance("SHA-256");
 		List<Path> tPngs = new ArrayList<>();
 		tPngs.add(Path.of(GT6MortarDatagenTest.class.getResource("/assets/gt6/textures/block/tools/mortar").toURI()));
-		tPngs.add(Path.of(GT6MortarDatagenTest.class.getResource("/assets/gt6/textures/block/tools/mortar_overlay").toURI()));
+		// task overlay-dedupe-block-leg: the six pixel-empty mortar_overlay tiles ride the
+		// shared item/overlay/empty canonical — ground that one file instead of a local walk
+		Path tEmpty = Path.of(GT6MortarDatagenTest.class.getResource("/assets/gt6/textures/item/overlay/empty.png").toURI());
+		assertTrue(tReadme.contains(java.util.HexFormat.of().formatHex(tSha256.digest(Files.readAllBytes(tEmpty)))),
+				"the shared empty canonical must stay grounded in the ledger");
 		List<String> tViolations = new ArrayList<>();
 		int tWalked = 0;
 		for (Path tDir : tPngs) {
@@ -125,7 +133,7 @@ public class GT6MortarDatagenTest extends gregtech6.tileentity.GTOfflineTestBase
 				}
 			}
 		}
-		assertEquals(PINNED_PNG_TOTAL, tWalked, "the borrow is exactly the declared 12-tile set — zero strays");
+		assertEquals(PINNED_PNG_TOTAL, tWalked, "the borrow is exactly the declared 6-tile colored set — zero strays");
 		assertTrue(tViolations.isEmpty(), "borrowed mortar texture without attribution: " + tViolations);
 	}
 

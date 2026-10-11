@@ -221,8 +221,12 @@ class GT6PartPaintRenderDatagenTest {
                     "lightning_rod " + tFace + ": the borrowed colored side (the :1179 texture key)");
         }
         for (String tFace : List.of("overlay_bottom", "overlay_top", "overlay_side")) {
-            assertTrue(tTextures.get(tFace).getAsString().startsWith("gt6:block/parts/lightningrod/0/overlay/"),
-                    "lightning_rod " + tFace + ": the overlay cap-plate decals");
+            // task overlay-dedupe-block-leg: the pixel-empty side pass rides the content-group
+            // canonical (lightningrod_overlay_front_side); bottom/top keep their cap art
+            String tKey = GT6BlockOverlayAliases.resolve(
+                    "block/parts/lightningrod/0/overlay/" + tFace.substring("overlay_".length()));
+            assertEquals("gt6:" + tKey, tTextures.get(tFace).getAsString(),
+                    "lightning_rod " + tFace + ": the overlay cap-plate decals (through the content-group canonicals)");
         }
         JsonObject tBody = tModel.getAsJsonArray("elements").get(0).getAsJsonObject();
         for (Map.Entry<String, JsonElement> tFace : tBody.getAsJsonObject("faces").entrySet()) {

@@ -106,9 +106,9 @@ class GT6BridgeKineticTexDatagenTest {
                     aModelName + ": the inactive family model parent");
             assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(), aModelName + ": cutout re-declared");
             JsonObject tOverride = tModel.getAsJsonObject("textures");
-            assertEquals("gt6:block/" + aBand + "_overlay_active_front", tOverride.get("overlay_front").getAsString());
-            assertEquals("gt6:block/" + aBand + "_overlay_active_back", tOverride.get("overlay_back").getAsString());
-            assertEquals("gt6:block/" + aBand + "_overlay_active_side", tOverride.get("overlay_side").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "_overlay_active_front"), tOverride.get("overlay_front").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "_overlay_active_back"), tOverride.get("overlay_back").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "_overlay_active_side"), tOverride.get("overlay_side").getAsString());
             assertTrue(!tModel.has("elements"), aModelName + ": the body elements stay inherited");
             return;
         }
@@ -123,9 +123,9 @@ class GT6BridgeKineticTexDatagenTest {
             assertEquals("gt6:block/" + aBand + "_colored_side", tTextures.get(tSide).getAsString(),
                     aModelName + ": " + tSide + " = the colored side");
         }
-        assertEquals("gt6:block/" + aBand + "_overlay_front", tTextures.get("overlay_front").getAsString());
-        assertEquals("gt6:block/" + aBand + "_overlay_back", tTextures.get("overlay_back").getAsString());
-        assertEquals("gt6:block/" + aBand + "_overlay_side", tTextures.get("overlay_side").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "_overlay_front"), tTextures.get("overlay_front").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "_overlay_back"), tTextures.get("overlay_back").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "_overlay_side"), tTextures.get("overlay_side").getAsString());
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aModelName + ": body + 6 decals");
         var tBodyFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");
@@ -309,8 +309,13 @@ class GT6BridgeKineticTexDatagenTest {
     public void borrowedWavePinsThePngs() throws Exception {
         assertEquals(38, BORROWED.size(), "the wave census stays 38 (the README section rows)");
         for (String tName : BORROWED) {
+            // task overlay-dedupe-block-leg: the same-content/transparent wave faces ride the
+            // block/overlay content-group canonicals or item/overlay/empty; resolve() is
+            // identity for the colored arts
+            String tPath = "assets/gt6/textures/"
+                    + GT6BlockOverlayAliases.resolve("block/" + tName.substring(0, tName.length() - 4)) + ".png";
             try (InputStream tStream = GT6BridgeKineticTexDatagenTest.class.getClassLoader()
-                    .getResourceAsStream("assets/gt6/textures/block/" + tName)) {
+                    .getResourceAsStream(tPath)) {
                 assertNotNull(tStream, "the borrowed PNG must be on the classpath: " + tName);
                 byte[] tHead = tStream.readNBytes(8);
                 assertTrue(java.util.Arrays.equals(PNG_MAGIC, tHead), tName + ": the PNG magic");

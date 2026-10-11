@@ -93,14 +93,15 @@ class GT6BoilerTexDatagenTest {
         assertEquals("gt6:block/" + aBand + "/colored_bottom", tTextures.get("down").getAsString());
         assertEquals("gt6:block/" + aBand + "/colored_top", tTextures.get("up").getAsString());
         // the overlay shell: front face = the overlay_front art, the rest the plain overlay
-        assertEquals("gt6:block/" + aBand + (aFront ? "/overlay_front_side" : "/overlay_side"),
-                tTextures.get("overlay_north").getAsString(), aName + ": overlay north = the front-face overlay art");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + (aFront ? "/overlay_front_side" : "/overlay_side")),
+                tTextures.get("overlay_north").getAsString(), aName + ": overlay north = the front-face overlay art (through the content-group canonicals)");
         for (String tSide : List.of("south", "west", "east")) {
-            assertEquals("gt6:block/" + aBand + "/overlay_side", tTextures.get("overlay_" + tSide).getAsString(),
-                    aName + ": overlay " + tSide + " = the plain overlay side");
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_side"),
+                    tTextures.get("overlay_" + tSide).getAsString(),
+                    aName + ": overlay " + tSide + " = the plain overlay side (through the content-group canonicals)");
         }
-        assertEquals("gt6:block/" + aBand + "/overlay_bottom", tTextures.get("overlay_down").getAsString());
-        assertEquals("gt6:block/" + aBand + "/overlay_top", tTextures.get("overlay_up").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_bottom"), tTextures.get("overlay_down").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aBand + "/overlay_top"), tTextures.get("overlay_up").getAsString());
         // the two-layer split: 7 elements, tintindex 0 on every body face, none on the decals
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aName + ": body + 6 decals");
@@ -207,13 +208,19 @@ class GT6BoilerTexDatagenTest {
 
     @Test
     public void borrowedBoilerTexturesExist() {
+        // task overlay-dedupe-block-leg: the pixel-empty overlay passes ride the content-group
+        // canonicals (boiler_steam/overlay_top -> block/overlay/boiler_steam_overlay_top, the
+        // rest of the overlay/overlay_front faces -> item/overlay/empty); resolve() is
+        // identity for the colored art
         for (String tFace : List.of("bottom", "top", "side")) {
             for (String tLayer : List.of("colored", "colored_front", "overlay", "overlay_front")) {
-                assertNotNull(resource("assets/gt6/textures/block/large_boiler/" + tLayer + "_" + tFace + ".png"),
+                assertNotNull(resource("assets/gt6/textures/"
+                                + GT6BlockOverlayAliases.resolve("block/large_boiler/" + tLayer + "_" + tFace) + ".png"),
                         "large_boiler/" + tLayer + "_" + tFace + ".png must be borrowed");
             }
             for (String tLayer : List.of("colored", "overlay")) {
-                assertNotNull(resource("assets/gt6/textures/block/boiler_steam/" + tLayer + "_" + tFace + ".png"),
+                assertNotNull(resource("assets/gt6/textures/"
+                                + GT6BlockOverlayAliases.resolve("block/boiler_steam/" + tLayer + "_" + tFace) + ".png"),
                         "boiler_steam/" + tLayer + "_" + tFace + ".png must be borrowed");
             }
         }

@@ -146,9 +146,12 @@ class GT6CompositeEnergyTexDatagenTest extends GTOfflineTestBase {
     }
 
     private static void assertPngOnTree(String aRel) {
+        // task overlay-dedupe-block-leg: the retired transparent passes resolve onto the
+        // shared item/overlay/empty canonical, which lives under textures/ not textures/block/
+        String tPath = "assets/gt6/textures/" + (aRel.startsWith("item/") ? aRel : "block/" + aRel);
         try (InputStream tStream = GT6CompositeEnergyTexDatagenTest.class.getClassLoader()
-                .getResourceAsStream("assets/gt6/textures/block/" + aRel)) {
-            assertNotNull(tStream, "the borrowed PNG must exist on the static tree: " + aRel);
+                .getResourceAsStream(tPath)) {
+            assertNotNull(tStream, "the borrowed PNG must exist on the static tree: " + tPath);
         } catch (Exception e) {
             throw new AssertionError(e);
         }
@@ -173,9 +176,12 @@ class GT6CompositeEnergyTexDatagenTest extends GTOfflineTestBase {
             assertEquals(tBase + "/colored_side", tTextures.get(tSide).getAsString(),
                     aFamily + ": " + tSide + " = the colored side");
         }
-        assertEquals(tBase + "/overlay_front", tTextures.get("overlay_front").getAsString());
-        assertEquals(tBase + (aBack ? "/overlay_back" : "/overlay_side"), tTextures.get("overlay_back").getAsString());
-        assertEquals(tBase + "/overlay_side", tTextures.get("overlay_side").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aFamily + "/overlay_front"),
+                tTextures.get("overlay_front").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aFamily + (aBack ? "/overlay_back" : "/overlay_side")),
+                tTextures.get("overlay_back").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aFamily + "/overlay_side"),
+                tTextures.get("overlay_side").getAsString());
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aFamily + ": body + 6 decals");
         var tBodyFaces = tElements.get(0).getAsJsonObject().getAsJsonObject("faces");
@@ -195,11 +201,14 @@ class GT6CompositeEnergyTexDatagenTest extends GTOfflineTestBase {
         assertEquals(tModelRef, tActive.get("parent").getAsString(), aFamily + "_active: the inactive parent");
         assertEquals("minecraft:cutout", tActive.get("render_type").getAsString(), aFamily + "_active: cutout re-declared");
         JsonObject tOverride = tActive.getAsJsonObject("textures");
-        assertEquals(tBase + "/overlay_active_front", tOverride.get("overlay_front").getAsString(),
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aFamily + "/overlay_active_front"),
+                tOverride.get("overlay_front").getAsString(),
                 aFamily + "_active: the front shell swaps to overlay_active");
-        assertEquals(tBase + (aBack ? "/overlay_active_back" : "/overlay_active_side"), tOverride.get("overlay_back").getAsString(),
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aFamily + (aBack ? "/overlay_active_back" : "/overlay_active_side")),
+                tOverride.get("overlay_back").getAsString(),
                 aFamily + "_active: the back shell");
-        assertEquals(tBase + "/overlay_active_side", tOverride.get("overlay_side").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aFamily + "/overlay_active_side"),
+                tOverride.get("overlay_side").getAsString());
         assertFalse(tActive.has("elements"), aFamily + "_active: the body elements stay inherited");
     }
 
@@ -348,7 +357,8 @@ class GT6CompositeEnergyTexDatagenTest extends GTOfflineTestBase {
         List<String> tViolations = new java.util.ArrayList<>();
         for (String tRel : BORROWED_PNGS) {
             assertPngOnTree(tRel);
-            Path tPng = tMdkRoot.resolve("src/main/resources/assets/gt6/textures/block").resolve(tRel);
+            Path tPng = tMdkRoot.resolve("src/main/resources/assets/gt6/textures")
+                    .resolve(tRel.startsWith("item/") ? tRel : "block/" + tRel);
             String tHex = HexFormat.of().formatHex(tSha256.digest(Files.readAllBytes(tPng)));
             if (!tReadme.contains(tRel)) {
                 tViolations.add(tRel + " — filename absent from assets/README.md");

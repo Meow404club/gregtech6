@@ -182,9 +182,9 @@ class GT6DynamoBowlRenderDatagenTest {
             assertEquals("minecraft:cutout", tModel.get("render_type").getAsString(),
                     tFamily + ": cutout re-declared on the active shell");
             JsonObject tOverride = tModel.getAsJsonObject("textures");
-            assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_front", tOverride.get("overlay_front").getAsString());
-            assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_back", tOverride.get("overlay_back").getAsString());
-            assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_side", tOverride.get("overlay_side").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tFamily + "_" + tOverlayBand + "_front"), tOverride.get("overlay_front").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tFamily + "_" + tOverlayBand + "_back"), tOverride.get("overlay_back").getAsString());
+            assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tFamily + "_" + tOverlayBand + "_side"), tOverride.get("overlay_side").getAsString());
             assertTrue(!tModel.has("elements"), tFamily + ": the body elements stay inherited");
             return;
         }
@@ -201,9 +201,9 @@ class GT6DynamoBowlRenderDatagenTest {
             assertEquals("gt6:block/" + tFamily + "_colored_side", tTextures.get(tSide).getAsString(),
                     tFamily + ": the " + tSide + " face is the colored side");
         }
-        assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_front", tTextures.get("overlay_front").getAsString());
-        assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_back", tTextures.get("overlay_back").getAsString());
-        assertEquals("gt6:block/" + tFamily + "_" + tOverlayBand + "_side", tTextures.get("overlay_side").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tFamily + "_" + tOverlayBand + "_front"), tTextures.get("overlay_front").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tFamily + "_" + tOverlayBand + "_back"), tTextures.get("overlay_back").getAsString());
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + tFamily + "_" + tOverlayBand + "_side"), tTextures.get("overlay_side").getAsString());
         // the element split: body tintindex 0, the six decals untinted (the P22 contract)
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), tFamily + ": body + 6 decals");
@@ -230,7 +230,9 @@ class GT6DynamoBowlRenderDatagenTest {
             assertTwoLayerConverterModel(tFamily, tFamily + "_active", "overlay_active");
         }
         for (String tPng : BORROWED_PNGS) {
-            assertTrue(Files.isRegularFile(assetFile("textures/block/" + tPng)), tPng + " must exist");
+            assertTrue(Files.isRegularFile(assetFile("textures/"
+                    + GT6BlockOverlayAliases.resolve("block/" + tPng.substring(0, tPng.length() - 4)) + ".png")),
+                    tPng + " must exist (directly or as its content-group canonical)");
         }
     }
 
@@ -292,7 +294,11 @@ class GT6DynamoBowlRenderDatagenTest {
         List<String> tViolations = new ArrayList<>();
         for (String tPng : BORROWED_PNGS) {
             try {
-                assertGroundedInLedger("textures/block/" + tPng, tPng);
+                // task overlay-dedupe-block-leg: the pixel-empty dynamo passes ride the
+                // content-group canonicals; resolve() is identity for the colored arts
+                String tKey = GT6BlockOverlayAliases.resolve("block/" + tPng.substring(0, tPng.length() - 4));
+                assertGroundedInLedger("textures/" + tKey + ".png",
+                        tKey.substring(tKey.lastIndexOf('/') + 1) + ".png");
             } catch (AssertionError tMiss) {
                 tViolations.add(tMiss.getMessage());
             }

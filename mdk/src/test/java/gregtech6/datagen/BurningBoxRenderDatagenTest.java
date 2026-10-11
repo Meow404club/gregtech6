@@ -56,22 +56,27 @@ class BurningBoxRenderDatagenTest {
 	/** Pin a: the 60 borrowed overlay sprites + the body + the 6 mcmeta all ship. */
 	@Test
 	void theFiveGroupsBorrowedSpritesAllShip() throws IOException {
-		Path textures = staticResources().resolve("assets/gt6/textures/block");
+		Path textures = staticResources().resolve("assets/gt6/textures");
 		List<String> missing = new ArrayList<>();
 		for (String tGroup : GROUPS) {
 			for (String tFace : FACES) {
-				if (!Files.isRegularFile(textures.resolve("burning_box_" + tGroup + "_overlay_" + tFace + ".png"))) {
+				// task overlay-dedupe-block-leg: the same-content side/back faces ride the
+				// burning_box_fluidbed content-group canonicals; the front work-face arts
+				// keep their flat paths (resolve() identity)
+				if (!Files.isRegularFile(textures.resolve(GT6BlockOverlayAliases.resolve(
+						"block/burning_box_" + tGroup + "_overlay_" + tFace) + ".png"))) {
 					missing.add("burning_box_" + tGroup + "_overlay_" + tFace + ".png");
 				}
-				if (!Files.isRegularFile(textures.resolve("burning_box_" + tGroup + "_overlay_" + tFace + "_active.png"))) {
+				if (!Files.isRegularFile(textures.resolve(GT6BlockOverlayAliases.resolve(
+						"block/burning_box_" + tGroup + "_overlay_" + tFace + "_active") + ".png"))) {
 					missing.add("burning_box_" + tGroup + "_overlay_" + tFace + "_active.png");
 				}
 			}
-			assertTrue(Files.isRegularFile(textures.resolve("burning_box_" + tGroup + "_overlay_front_active.png.mcmeta")),
+			assertTrue(Files.isRegularFile(textures.resolve("block/burning_box_" + tGroup + "_overlay_front_active.png.mcmeta")),
 					"the animated front strip needs its mcmeta: " + tGroup);
 		}
-		assertTrue(Files.isRegularFile(textures.resolve("burning_box_solid.png")), "the shared body PNG");
-		assertTrue(Files.isRegularFile(textures.resolve("burning_box_brick_overlay_top_active.png.mcmeta")),
+		assertTrue(Files.isRegularFile(textures.resolve("block/burning_box_solid.png")), "the shared body PNG");
+		assertTrue(Files.isRegularFile(textures.resolve("block/burning_box_brick_overlay_top_active.png.mcmeta")),
 				"the Brick top strip is animated upstream too");
 		assertTrue(missing.isEmpty(), "missing borrowed sprites: " + missing);
 		// the three retired placeholder copies must NOT come back (their digest stays
@@ -154,12 +159,12 @@ class BurningBoxRenderDatagenTest {
 	void everyBorrowedSpriteDigestGroundsInTheLedger() throws Exception {
 		String tReadme = Files.readString(staticResources().resolve("assets/README.md"), StandardCharsets.UTF_8);
 		MessageDigest tSha256 = MessageDigest.getInstance("SHA-256");
-		Path tTextures = staticResources().resolve("assets/gt6/textures/block");
+		Path tTextures = staticResources().resolve("assets/gt6/textures");
 		List<String> tNames = new ArrayList<>();
 		for (String tGroup : GROUPS) {
 			for (String tFace : FACES) {
-				tNames.add("burning_box_" + tGroup + "_overlay_" + tFace + ".png");
-				tNames.add("burning_box_" + tGroup + "_overlay_" + tFace + "_active.png");
+				tNames.add(GT6BlockOverlayAliases.resolve("block/burning_box_" + tGroup + "_overlay_" + tFace) + ".png");
+				tNames.add(GT6BlockOverlayAliases.resolve("block/burning_box_" + tGroup + "_overlay_" + tFace + "_active") + ".png");
 			}
 		}
 		List<String> tUngrounded = new ArrayList<>();
@@ -172,7 +177,7 @@ class BurningBoxRenderDatagenTest {
 		}
 		assertTrue(tUngrounded.isEmpty(), "borrowed sprites without a README digest row: " + tUngrounded);
 		// and the mcmeta digests stay OUT of the ledger (the census grounds PNG bytes only)
-		assertTrue(Files.readString(tTextures.resolve("burning_box_solid_overlay_front_active.png.mcmeta"),
+		assertTrue(Files.readString(tTextures.resolve("block/burning_box_solid_overlay_front_active.png.mcmeta"),
 				StandardCharsets.UTF_8).contains("frametime"), "the front strip is the 4-frame animation");
 	}
 

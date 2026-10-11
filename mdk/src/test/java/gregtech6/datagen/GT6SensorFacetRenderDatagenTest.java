@@ -7,7 +7,7 @@
  * plates, cutout render type, ZERO tintindex (the rows register NBT-less, Loader
  * :1979-1999, so mRGBa is white = the colored art shows its own colours). Reads the
  * committed generated tree + the borrowed PNGs off the classpath (the
- * {@link GT6RailItemModelDatagenTest} classpath form); the 126-PNG census and the
+ * {@link GT6RailItemModelDatagenTest} classpath form); the 84-PNG census and the
  * old-flat-bake death watch ride the same walk.
  */
 package gregtech6.datagen;
@@ -34,10 +34,12 @@ import gregtech6.tileentity.GTOfflineTestBase;
 
 public class GT6SensorFacetRenderDatagenTest extends GTOfflineTestBase {
 
-    /** The per-face borrowed layer ids under gt6:block/sensors/<family>/. */
+    /** The per-face borrowed layer ids under gt6:block/sensors/<family>/ — the four faces that keep their own file (task overlay-dedupe-block-leg retired the pixel-empty overlay_back/overlay_side passes onto the shared item/overlay/empty canonical). */
     private static final List<String> LAYER_FACES = List.of(
-            "colored_front", "colored_back", "colored_side",
-            "overlay_front", "overlay_back", "overlay_side");
+            "colored_front", "colored_back", "colored_side", "overlay_front");
+
+    /** The retired transparent passes: the shared batch-1 empty canonical they ride. */
+    private static final List<String> EMPTY_FACES = List.of("overlay_back", "overlay_side");
 
     /** The facing → blockstate rotation map (the p26 dispenser band, pinned verbatim). */
     private static final Set<String> FACING_KEYS = Set.of("north", "south", "east", "west", "up", "down");
@@ -81,7 +83,8 @@ public class GT6SensorFacetRenderDatagenTest extends GTOfflineTestBase {
     }
 
     // ------------------------------------------------------------------
-    // the 126-PNG census (21 families x 6 layer-face borrows)
+    // the 84-PNG census (21 families x 4 face borrows) + the shared empty
+    // the 42 retired transparent passes ride (task overlay-dedupe-block-leg)
     // ------------------------------------------------------------------
 
     @Test
@@ -92,6 +95,8 @@ public class GT6SensorFacetRenderDatagenTest extends GTOfflineTestBase {
                 assertPng("assets/gt6/textures/block/sensors/" + tRow.path() + "/" + tLayerFace + ".png");
             }
         }
+        // the retired overlay_back/overlay_side passes share the one pixel-empty canonical
+        assertPng("assets/gt6/textures/item/overlay/empty.png");
     }
 
     // ------------------------------------------------------------------
@@ -120,10 +125,10 @@ public class GT6SensorFacetRenderDatagenTest extends GTOfflineTestBase {
             }
             assertEquals(tBase + "/overlay_front", tTex.get("overlay_front").getAsString(),
                     tRow.path() + ": the front overlay shell");
-            assertEquals(tBase + "/overlay_back", tTex.get("overlay_back").getAsString(),
-                    tRow.path() + ": the back overlay shell");
-            assertEquals(tBase + "/overlay_side", tTex.get("overlay_side").getAsString(),
-                    tRow.path() + ": the side overlay shell");
+            for (String tEmptyFace : EMPTY_FACES) {
+                assertEquals("gt6:item/overlay/empty", tTex.get(tEmptyFace).getAsString(),
+                        tRow.path() + ": the " + tEmptyFace + " shell rides the shared empty canonical");
+            }
             // the facet references are pairwise distinct (front/back/side never collapse)
             assertFalse(tTex.get("north").getAsString().equals(tTex.get("south").getAsString())
                     || tTex.get("north").getAsString().equals(tTex.get("west").getAsString())

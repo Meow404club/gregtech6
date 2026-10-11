@@ -127,10 +127,14 @@ class GT6TankFamilyPaintRenderDatagenTest {
         assertEquals(tBand + "colored_side", tTextures.get("north").getAsString(), aModelName + ": side = colored_side");
         assertEquals(3, Set.of(tTextures.get("down").getAsString(), tTextures.get("up").getAsString(),
                 tTextures.get("north").getAsString()).size(), aModelName + ": the top/bottom/side refs stay distinct");
-        // the overlay borrows ride their own keys
-        assertEquals(tBand + "overlay_bottom", tTextures.get("overlay_bottom").getAsString(), aModelName + ": overlay_bottom");
-        assertEquals(tBand + "overlay_top", tTextures.get("overlay_top").getAsString(), aModelName + ": overlay_top");
-        assertEquals(tBand + "overlay_side", tTextures.get("overlay_side").getAsString(), aModelName + ": overlay_side");
+        // the overlay borrows ride their own keys (the retired pixel-empty passes through the
+        // content-group canonicals — task overlay-dedupe-block-leg)
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/barrel_parts/" + aFamily + "/overlay_bottom"),
+                tTextures.get("overlay_bottom").getAsString(), aModelName + ": overlay_bottom");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/barrel_parts/" + aFamily + "/overlay_top"),
+                tTextures.get("overlay_top").getAsString(), aModelName + ": overlay_top");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/barrel_parts/" + aFamily + "/overlay_side"),
+                tTextures.get("overlay_side").getAsString(), aModelName + ": overlay_side");
         // body + six decals; body tinted, decals not
         var tElements = tModel.getAsJsonArray("elements");
         assertEquals(7, tElements.size(), aModelName + ": body + 6 decals");
@@ -197,8 +201,9 @@ class GT6TankFamilyPaintRenderDatagenTest {
         // the FRONT pair on north (the Base10 getTexture2 front semantics)
         assertEquals(tBand + "colored_front_side", tTextures.get("north").getAsString(),
                 aModelName + ": north = the colored_front front art");
-        assertEquals(tBand + "overlay_front_side", tTextures.get("overlay_front_side").getAsString(),
-                aModelName + ": the overlay_front front decal");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/tank_valves/" + aFamily + "_overlay_front_side"),
+                tTextures.get("overlay_front_side").getAsString(),
+                aModelName + ": the overlay_front front decal (through the content-group canonicals)");
         // the remaining faces ride the plain colored/overlay set
         assertEquals(tBand + "colored_bottom", tTextures.get("down").getAsString(), aModelName + ": bottom");
         assertEquals(tBand + "colored_top", tTextures.get("up").getAsString(), aModelName + ": top");
@@ -234,7 +239,8 @@ class GT6TankFamilyPaintRenderDatagenTest {
         for (String tFamily : List.of("tankwood", "tankmetal")) {
             for (String tLayer : List.of("colored_front", "overlay_front")) {
                 for (String tFace : List.of("bottom", "top", "side")) {
-                    assertPng("assets/gt6/textures/block/tank_valves/" + tFamily + "_" + tLayer + "_" + tFace + ".png");
+                    assertPng("assets/gt6/textures/" + GT6BlockOverlayAliases.resolve(
+                            "block/tank_valves/" + tFamily + "_" + tLayer + "_" + tFace) + ".png");
                 }
             }
         }
@@ -246,7 +252,8 @@ class GT6TankFamilyPaintRenderDatagenTest {
         for (String tFamily : BARREL_FAMILIES) {
             for (String tLayer : List.of("colored", "overlay")) {
                 for (String tFace : List.of("bottom", "top", "side")) {
-                    assertPng("assets/gt6/textures/block/barrel_parts/" + tFamily + "/" + tLayer + "_" + tFace + ".png");
+                    assertPng("assets/gt6/textures/" + GT6BlockOverlayAliases.resolve(
+                            "block/barrel_parts/" + tFamily + "/" + tLayer + "_" + tFace) + ".png");
                 }
             }
         }

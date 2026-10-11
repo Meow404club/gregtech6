@@ -96,8 +96,8 @@ class GT6TextureCensusTest {
         "block/distillationtower_colored_", "block/distillationtower_overlay_",
         "block/cryodistillationtower_colored_", "block/cryodistillationtower_overlay_");
 
-    /** The wave pin: 330 borrowed controller/cover PNGs + 20 port-generated comb icons (task tex-large-machines: 44 surviving prior + 270 flat overlays + 16 band faces). +48 (task distill-tower-face-3d: the twin tower six-face colored + three-state overlay wave, 2 x 24). */
-    private static final int PINNED_WAVE_TOTAL = 398;
+    /** The wave pin: 330 borrowed controller/cover PNGs + 20 port-generated comb icons (task tex-large-machines: 44 surviving prior + 270 flat overlays + 16 band faces). +48 (task distill-tower-face-3d: the twin tower six-face colored + three-state overlay wave, 2 x 24). Task overlay-dedupe-block-leg retired the 276 same-content/transparent side-face members of these prefixes onto the block/overlay/ + item/overlay/empty canonicals (82 files remain under the prefixes — the colored bodies, the front work-face arts and the retriever cover pair), 398 -> 102. */
+    private static final int PINNED_WAVE_TOTAL = 102;
 
     /**
      * The pinned distinct iconset count over the same table (walked 2026-09-06: 40 sets

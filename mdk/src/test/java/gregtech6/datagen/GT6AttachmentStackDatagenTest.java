@@ -90,10 +90,6 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
     private static final List<float[]> CAP_NOZZLE_BOXES = List.of(
             new float[] {6, 3, 1, 10, 7, 6}, new float[] {7, 4, 0, 9, 6, 2});
 
-    /** The upstream overlay side borrow (tap == funnel, byte-identical — assets/README.md). */
-    private static final String OVERLAY_SHA256 =
-            "02fc1d92864f19600bd1abd5bd455bb2ea8932f340050c913a198736e1eca27d";
-
     /** The 0.01 outward inflation of an overlay twin (the addConverterModel decal grammar). */
     private static final float EPSILON = 0.01F;
 
@@ -211,8 +207,9 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
                 aModelPath + ": the overlay alpha needs the cutout layer (the r11-oven solid-layer lesson)");
         JsonObject tTex = tModel.getAsJsonObject("textures");
         assertEquals("gt6:block/" + aTexture, tTex.get("all").getAsString(), aModelPath + ": the family texture");
-        assertEquals("gt6:block/" + aTexture + "_overlay", tTex.get("overlay").getAsString(),
-                aModelPath + ": the family overlay texture");
+        assertEquals("gt6:" + GT6BlockOverlayAliases.resolve("block/" + aTexture + "_overlay"),
+                tTex.get("overlay").getAsString(),
+                aModelPath + ": the family overlay texture (the retired pixel-empty pass rides the shared empty)");
         assertEquals("#all", tTex.get("particle").getAsString(), aModelPath + ": the particle rides the family texture");
 
         var tElements = tModel.getAsJsonArray("elements");
@@ -238,10 +235,15 @@ public class GT6AttachmentStackDatagenTest extends GTOfflineTestBase {
     /** The borrowed overlay art is byte-identical upstream (the sha ledger, assets/README.md). */
     @Test
     public void overlayTexturesAreTheUpstreamBorrows() throws Exception {
-        assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/tap_overlay.png"), "tap_overlay sha256");
-        assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/funnel_overlay.png"), "funnel_overlay sha256");
-        assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/nozzle_overlay.png"), "nozzle_overlay sha256");
-        assertEquals(OVERLAY_SHA256, sha256("assets/gt6/textures/block/cap_nozzle_overlay.png"), "cap_nozzle_overlay sha256");
+        // task overlay-dedupe-block-leg: the four pixel-empty family overlay passes retired
+        // onto the shared item/overlay/empty canonical — the shared-art point now reads as
+        // "all four resolve onto the ONE canonical file, and that file stays on the tree"
+        String tShared = GT6BlockOverlayAliases.resolve("block/tap_overlay");
+        assertEquals(tShared, GT6BlockOverlayAliases.resolve("block/funnel_overlay"), "the four families share the one overlay art");
+        assertEquals(tShared, GT6BlockOverlayAliases.resolve("block/nozzle_overlay"), "the four families share the one overlay art");
+        assertEquals(tShared, GT6BlockOverlayAliases.resolve("block/cap_nozzle_overlay"), "the four families share the one overlay art");
+        assertEquals("item/overlay/empty", tShared, "the shared art is the pixel-empty canonical");
+        sha256("assets/gt6/textures/" + tShared + ".png");
     }
 
     @Test

@@ -69,8 +69,8 @@ class GT6CellDatagenTest extends GTOfflineTestBase {
 	/** The borrow faces — colored + overlay over {sides, insides, top, bottom} (the :58-66 icon set, the 4+4 WITH insides). */
 	private static final List<String> FACES = List.of("sides", "insides", "top", "bottom");
 	private static final List<String> LAYERS = List.of("colored", "overlay");
-	/** 2 layers x 4 faces — the walk upstream found exactly these files (the id1055 correction: cell HAS insides). */
-	private static final int PINNED_PNG_TOTAL = 8;
+	/** The four colored tiles keep their own files (the id1055 correction: cell HAS insides); the four transparent overlay passes retired onto the shared item/overlay/empty canonical (task overlay-dedupe-block-leg). */
+	private static final int PINNED_PNG_TOTAL = 4;
 
 	/** The per-row VARYING columns verbatim (Loader :1770-1809): {path, local-name, woodHost, acid, magic, plasma, temperature}. Gas/capacity/stack/hardness/resistance are the shared columns — pinned once below. */
 	private static final String[][] LOADER_ROWS = {
@@ -194,9 +194,11 @@ class GT6CellDatagenTest extends GTOfflineTestBase {
 	void everyDeclaredFaceHasItsBorrowedPng() {
 		for (String tLayer : LAYERS) {
 			for (String tFace : FACES) {
-				assertNotNull(GT6CellDatagenTest.class.getResource(
-						"/assets/gt6/textures/block/cell/" + tLayer + "_" + tFace + ".png"),
-						tLayer + "_" + tFace + ".png must be borrowed");
+				// task overlay-dedupe-block-leg: transparent passes ride the shared
+				// item/overlay/empty canonical; resolve() is identity for real art.
+				String tKey = GT6BlockOverlayAliases.resolve("block/cell/" + tLayer + "_" + tFace);
+				assertNotNull(GT6CellDatagenTest.class.getResource("/assets/gt6/textures/" + tKey + ".png"),
+						tLayer + "_" + tFace + " must be borrowed (own file or the shared canonical)");
 			}
 		}
 	}
@@ -210,12 +212,17 @@ class GT6CellDatagenTest extends GTOfflineTestBase {
 			tWalk.filter(p -> p.toString().endsWith(".png"))
 					.forEach(p -> tFound.add(p.getFileName().toString()));
 		}
-		assertEquals(PINNED_PNG_TOTAL, tFound.size(), "2 layers x 4 faces borrowed PNGs, walked");
+		assertEquals(PINNED_PNG_TOTAL, tFound.size(), "the tiles that keep their own file, walked (the transparent overlay passes ride the shared empty canonical)");
 		Set<String> tDeclared = new HashSet<>();
 		for (String tLayer : LAYERS) {
-			for (String tFace : FACES) tDeclared.add(tLayer + "_" + tFace + ".png");
+			for (String tFace : FACES) {
+				String tKey = GT6BlockOverlayAliases.resolve("block/cell/" + tLayer + "_" + tFace);
+				if (tKey.startsWith("block/cell/")) tDeclared.add(tKey.substring("block/cell/".length()) + ".png");
+				else assertNotNull(GT6CellDatagenTest.class.getResource("/assets/gt6/textures/" + tKey + ".png"),
+						"the shared empty canonical must exist");
+			}
 		}
-		assertEquals(tDeclared, tFound, "the borrow is 1:1 with the declared tile set — zero strays, zero gaps (the 4+4 set WITH insides, the id1055 correction)");
+		assertEquals(tDeclared, tFound, "the borrow is 1:1 with the declared tile set — zero strays, zero gaps (the 4 colored, the id1055 correction)");
 	}
 
 	/** The attribution nail (the p31 wave pattern): every borrowed PNG is named in assets/README.md AND its actual file bytes hash to a sha256 the ledger records. */
