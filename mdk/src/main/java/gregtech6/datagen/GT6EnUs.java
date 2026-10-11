@@ -2164,6 +2164,12 @@ public class GT6EnUs extends LanguageProvider {
         // "Safes" (Loader_MultiTileEntities.java:134-135, tab id 2010; no dump face, the
         // special-tab hand-row form like chests above)
         add("itemGroup.gt6.safes", "Safes");
+        // task storage-tab-completion — the storage/logistics tab titles = the upstream
+        // category labels "Storage" (Loader_MultiTileEntities.java :139/:141, tab id 32751)
+        // and "Logistics" (:142, tab id 17997; no dump face, the special-tab hand-row form
+        // like safes above)
+        add("itemGroup.gt6.storage", "Storage");
+        add("itemGroup.gt6.logistics", "Logistics");
     }
 
     /**

@@ -54,7 +54,14 @@ import gregtech6.items.GT6LaserGas;
  * storage-tabs-buckets-safes): the safe rows left the pool for their own upstream-category
  * tab ({@code gt6:safes}, tab id 2010, Loader :134-135; GT6SafesCreativeTabTest) — the
  * batch total 455 → 451, and the static-storage term rides the live machines walk
- * (ROWS minus {@link GT6StaticStorages#safeRows()}).
+ * (ROWS minus {@link GT6StaticStorages#safeRows()}). ERRATUM (task storage-tab-completion,
+ * zero arithmetic: neither family was ever a census term): the charging-locker machines
+ * join RETIRED for its upstream "Storage" tab (id 32751, Loader :139 — the family was a
+ * block-family-32xxx-port registrant, never a tabfix-b-energy census slot), and the
+ * {@link GT6StaticStorages#MASS_ROWS} 120 — always join-less, never counted — split onto
+ * gt6:storage (the :141 standard rows) / gt6:logistics (the :142 rows, category
+ * "Logistics", tab id 17997), GT6StorageCreativeTabTest pins those walks. The total stays
+ * 451.
  *
  * <p>The offline assertion surface follows the GTWiresCreativeTabTest discipline: the
  * tab and the items are not resolvable in this bootstrapped-and-frozen JVM, but map
@@ -151,7 +158,10 @@ public class CreativeTabJoinCensusTest {
 	 * The 148 static-storage rows; the MACHINES_TAB join covers 144 of them since task
 	 * storage-tabs-buckets-safes — the 4 SAFE rows (two kinds x Bronze/Steel) ride the
 	 * dedicated {@code gt6:safes} tab (upstream "Safes" 2010, Loader
-	 * :134-135; {@link GT6StaticStorages#SAFES_TAB}, GT6SafesCreativeTabTest).
+	 * :134-135; {@link GT6StaticStorages#SAFES_TAB}, GT6SafesCreativeTabTest). The parallel
+	 * {@link GT6StaticStorages#MASS_ROWS} 120 are NOT this walk's terms — task
+	 * storage-tab-completion home them on gt6:storage / gt6:logistics (upstream "Storage"
+	 * 32751 / "Logistics" 17997, Loader :141/:142).
 	 */
 	@Test
 	public void staticStoragesJoinOneFortyEight() {
