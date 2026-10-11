@@ -54,14 +54,23 @@ import gregapi.oredict.OreDictMaterial;
  * basic-machines-mui-migration)) are mod-bus plumbing, not presence decisions (kept, the vendored
  * modularui precedent); {@code GT6EmiPlugin} mentions ModList in javadoc only.
  *
- * <p>Mounts (mdh-1 wiring, both zero-effect by default): the material item universe filters
- * through {@link #visibilityGate()} in {@code GTMaterialItems.enumerate()} (after the
- * isGeneratingItem criterion, GTMaterialItems.java:176), and the fluid spec families carry a
- * per-row {@code driverDomain} consulted in their registration cores (GTFluids
- * engineFluid/registerFluidFamily/specFluid). A registration condition family that is not
- * mod-presence (item_exists, ...) composes into {@link #visibilityGate()} here too — one
- * ruling face, no second fork (mdh-4 keeps the orthogonal condition systems where they are).
- */
+	 * <p>Mounts: the mdh-1 ITEM-face mount ({@code GTMaterialItems.enumerate} consulted
+	 * {@link #visibilityGate()}) is RETIRED — user ruling id1745-4 (2026-10-10, task
+	 * material-foreign-domain-registration): GT6-generated prefix items are GT6's own content
+	 * (upstream PrefixItem.java:104 + OreDictPrefix.java:364-366 have no mod axis; the
+	 * disableItemGeneration census OP.java:599-601/GT6_Main.java:135-137/
+	 * GT_API_Post.java:177-178 is all material-axis), so an ABSENT domain never condemns them
+	 * and every GT6-material recipe row stays live (the Bark shape: GT6's own dust row
+	 * MT.java:1243, BINNIE is a :2263 attribution-only put). The driver still governs the faces
+	 * the port itself conditions: the fluid spec families carry a per-row {@code driverDomain}
+	 * consulted in their registration cores (GTFluids engineFluid/registerFluidFamily/specFluid),
+	 * the block enumeration and the five table-driven families consult {@link #visibilityGate()}
+	 * (GTMaterialBlocks + the mdh-6 rows), and the datagen walk guards consume
+	 * {@code GTMaterialItems.get} (the f8ffa0bd1 sweep, now driver-inert for item pairs — the
+	 * guards stay for genuinely unregistered pairs). A registration condition family that is not
+	 * mod-presence (item_exists, ...) composes into {@link #visibilityGate()} here too — one
+	 * ruling face, no second fork (mdh-4 keeps the orthogonal condition systems where they are).
+	 */
 public final class GT6ModDrivers {
 
 	/** The two answer states a modid can be pinned to. */

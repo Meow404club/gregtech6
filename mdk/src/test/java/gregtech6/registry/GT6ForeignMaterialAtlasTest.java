@@ -203,13 +203,17 @@ public class GT6ForeignMaterialAtlasTest {
         assertEquals(46, tBatch2PrimaryDomains.size(), "the batch-2 PRIMARY-domain census (45 seedable + GT5U)");
         assertEquals(53, tSeed.size(), "the seed = the batch-1 eight + the 45 batch-2 PRIMARY domains");
 
-        // A batch-2 COMMON_SECONDARY row answers no domain and survives its own domain's ABSENT pin,
-        // while the domain's PRIMARY rows hide (ADR-MDH2 over batch-2 data; Thaumcraft has both kinds).
+        // A batch-2 COMMON_SECONDARY row answers no domain and survives its own domain's ABSENT pin;
+        // the domain's PRIMARY rows also register (the item face is pin-invariant, ruling id1745-4)
+        // while STILL answering their domain for the fluid/block faces (ADR-MDH2 over batch-2 data;
+        // Thaumcraft has both kinds).
         assertTrue(countRegistered("Thaumium") > 0, "TC precondition: Thaumium (COMMON_SECONDARY flag) registers");
         assertTrue(countRegistered("VoidMetal") > 0, "TC precondition: VoidMetal (PRIMARY) registers");
         assertEquals(null, GT6ForeignMaterialAtlas.domainOf(material(rowOf(tBatch2, "Thaumium"))), "CS row answers no domain");
         GT6ModDrivers.setDriver(MT.MD.TC.mID, GT6ModDrivers.DriverLevel.ABSENT);
-        assertEquals(0, countRegistered("VoidMetal"), "TC PRIMARY rows hide under the ABSENT pin");
+        assertEquals(MT.MD.TC.mID, GT6ForeignMaterialAtlas.domainOf(material(rowOf(tBatch2, "VoidMetal"))),
+                "TC PRIMARY still answers its domain under the pin (the fluid/block faces' truth)");
+        assertTrue(countRegistered("VoidMetal") > 0, "TC PRIMARY rows register under the ABSENT pin (the item face never condemned, ruling id1745-4)");
         assertTrue(countRegistered("Thaumium") > 0, "TC COMMON_SECONDARY rows survive the ABSENT pin");
         GT6ModDrivers.reset();
         assertTrue(countRegistered("VoidMetal") > 0 && countRegistered("Thaumium") > 0, "reset restores both");
@@ -285,7 +289,7 @@ public class GT6ForeignMaterialAtlasTest {
     }
 
     @Test
-    public void secondaryAndSelfRowsSurviveAbsentInjection() {
+    public void everyKindRegistersUnderAbsentInjectionTheGateStillAnswers() {
         int tBaseline = GTMaterialItems.registrationOrder().size();
         assertTrue(countRegistered("Enderium") > 0, "TE precondition: Enderium (PRIMARY) registers");
         assertTrue(countRegistered("Nickel") > 0, "TE precondition: Ni (COMMON_SECONDARY flag) registers");
@@ -293,20 +297,22 @@ public class GT6ForeignMaterialAtlasTest {
         assertTrue(countRegistered("Pyrotheum") > 0, "TE precondition: Pyrotheum (GT6_SELF) registers");
         assertTrue(countRegistered("Angmallen") > 0, "MET precondition");
 
-        // The production lookup is live (reset restored the atlas default): one ABSENT pin,
-        // no fixture attribution — PRIMARY rows drop, COMMON_SECONDARY and GT6_SELF survive.
+        // The production lookup is live (reset restored the atlas default): one ABSENT pin.
+        // Ruling id1745-4: every kind keeps registering (the item face is pin-invariant), while
+        // the atlas attribution still answers for the fluid/block faces.
         GT6ModDrivers.setDriver(MT.MD.TE.mID, GT6ModDrivers.DriverLevel.ABSENT);
-        assertEquals(0, countRegistered("Enderium"), "TE PRIMARY rows hide under the ABSENT pin");
+        assertTrue(countRegistered("Enderium") > 0, "TE PRIMARY rows register under the ABSENT pin (ruling id1745-4)");
         assertTrue(countRegistered("Nickel") > 0, "COMMON_SECONDARY (COMMON_ORE flag row) still registers");
         assertTrue(countRegistered("Invar") > 0, "COMMON_SECONDARY (conservative shared alloy) still registers");
         assertTrue(countRegistered("Pyrotheum") > 0, "GT6_SELF (theum quartet, lesson id1218) still registers");
+        assertEquals(MT.MD.TE.mID, GT6ForeignMaterialAtlas.domainOf(MT.Enderium), "the TE PRIMARY attribution still answers (fluid/block faces)");
 
         GT6ModDrivers.setDriver(MT.MD.MET.mID, GT6ModDrivers.DriverLevel.ABSENT);
-        assertEquals(0, countRegistered("Angmallen"), "MET (all-PRIMARY domain) hides under the ABSENT pin");
+        assertTrue(countRegistered("Angmallen") > 0, "MET (all-PRIMARY domain) registers under the ABSENT pin (ruling id1745-4)");
 
         GT6ModDrivers.reset();
         assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "reset restores the full universe");
-        assertTrue(countRegistered("Enderium") > 0 && countRegistered("Angmallen") > 0, "hidden PRIMARY rows come back");
+        assertTrue(countRegistered("Enderium") > 0 && countRegistered("Angmallen") > 0, "all kinds registered throughout");
     }
 
     @Test

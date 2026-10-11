@@ -1,17 +1,16 @@
 /**
- * Tests for task mdh-3-clear-out-wave: the batch-1 clear-out wave — the data face that
- * makes an ABSENT domain actually shrink the port's registration universe, plus the five
- * census-face re-signs (ADR-MDH4: asset/lang/tab/datagen/KJS re-signed in the same card).
- *
- * <p>What mdh-3 owns here: the per-domain kept ledger (the ratchet the card report quotes),
- * the census arms (all five faces walk the ONE shared root —
- * {@link GTMaterialItems#registrationOrder()} — so each arm pins its face's own derivation:
- * id strings for the asset guard, name keys for lang, the convergence source list for
- * datagen, per-tab totals for the tab face, and the class-level binding surface for KJS),
- * and the fluid data-face ratchet (the three annotated material-fluid rows plus the
- * no-unannotated-PRIMARY-row pin — the family LISTS freeze at GTFluids class-init, so the
- * registration-core gate itself stays mdh-1's mechanism and the real-install face is
- * field_test).
+ * Tests for task mdh-3-clear-out-wave: the batch-1 clear-out wave — RE-SIGNED by task
+ * material-foreign-domain-registration (user ruling id1745-4, 2026-10-10): the ITEM face left
+ * the driver. Upstream item generation has no mod axis (PrefixItem.java:104 +
+ * OreDictPrefix.java:364-366; the disableItemGeneration census OP.java:599-601 /
+ * GT6_Main.java:135-137 / GT_API_Post.java:177-178 is all material-axis), so every
+ * GT6-generated prefix item is GT6's own content and registers unconditionally — the mdh-3
+ * per-domain drop ledger below is re-interpreted as the VICTIM-SET CENSUS (the pairs the
+ * driver used to condemn live; 8234 batch-1 + 7274 batch-2), now pinned to register under any
+ * pin. The census arms follow the same re-sign (pin-invariance over the one shared root,
+ * {@link GTMaterialItems#registrationOrder()}). The FLUID data-face ratchet keeps its original
+ * mdh-3 semantics: the seven annotated material-fluid rows still answer their driverDomain and
+ * still hide under an ABSENT pin (the "真外域专属 stays dormant" half of the ruling).
  *
  * <p>The offline JVM has no FML and the neo junit-fml JVM is kept out of seeding by the
  * GT6ModDrivers test-JVM guard, so every ABSENT state here is explicit seam injection and
@@ -106,98 +105,102 @@ public class GT6ModDriverClearOutWaveTest {
         GT6ModDrivers.reset();
     }
 
-    // ---- the per-domain kept ledger (card acceptance 3) ----
+    // ---- the per-domain victim-set census (re-signed by task material-foreign-domain-registration) ----
 
+    /**
+     * The ledger re-sign (ruling id1745-4): the batch-1 eight domains' formerly-condemned pairs
+     * (the mdh-3 drop ledger, now the victim-set census) register under ANY driver pin — the
+     * item face is pin-invariant. The visibility gate itself still answers the pin
+     * ({@code isVisible}, the fluid/block faces' truth), so each arm also re-asserts the gate
+     * split that survives: PRIMARY rows answer their domain, CS/SELF rows answer null.
+     */
     @Test
     public void perDomainKeptLedgerMatchesTheAtlas() {
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "default universe unchanged (acceptance 2, zero-change proof)");
-        assertEquals(8234, TOTAL_DROP, "the eight-domain drop total (57114 → 48880; −80 task wiregt-prefix-item-retirement rides inside the HBM leg, −3 task planks-blockification the BOTA plank pairs left)");
+        assertEquals(8234, TOTAL_DROP, "the eight-domain victim-set census (the pairs mdh-3 used to condemn; they register unconditionally now)");
 
-        Set<String> allDroppedNames = new HashSet<>();
+        Set<String> allVictimNames = new HashSet<>();
         for (Map.Entry<String, Integer> tEntry : PER_DOMAIN_DROPS.entrySet()) {
             String tDomain = tEntry.getKey();
             Set<String> tPrimaryNames = primaryNamesOf(tDomain);
             assertFalse(tPrimaryNames.isEmpty(), "every ledger domain owns PRIMARY materials: " + tDomain);
 
             GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
-            List<GTMaterialItems.PrefixMaterial> tShrunk = GTMaterialItems.registrationOrder();
-            assertEquals(BASELINE - tEntry.getValue(), tShrunk.size(), "kept count after pinning " + tDomain + " ABSENT");
-            // every dropped pair belongs to the pinned domain's PRIMARY rows, and they drop entirely
-            for (GTMaterialItems.PrefixMaterial tPair : tShrunk)
-                assertFalse(tPrimaryNames.contains(tPair.material().mNameInternal),
-                        tPair.material().mNameInternal + " is " + tDomain + " PRIMARY and must drop entirely");
-            // and the domain's COMMON_SECONDARY/GT6_SELF members survive the same pin (ADR-MDH2, the fluid-side ruling too)
+            List<GTMaterialItems.PrefixMaterial> tKept = GTMaterialItems.registrationOrder();
+            assertEquals(BASELINE, tKept.size(), "the item face is pin-invariant under " + tDomain + " ABSENT (ruling id1745-4: GT6-generated items are GT6's own)");
+            // every formerly-condemned pair of this domain is present — the revival census
+            long tVictimPairs = tKept.stream().filter(tPair -> tPrimaryNames.contains(tPair.material().mNameInternal)).count();
+            assertEquals(tEntry.getValue().intValue(), tVictimPairs, "the " + tDomain + " victim-set pairs all register (the mdh-3 ledger, revived)");
+            // the visibility gate still answers the pin (the fluid/block faces' truth, ADR-MDH2)
             for (Row tRow : GT6ForeignMaterialAtlas.rows()) {
                 if (!tRow.domain().equals(tDomain) || tRow.kind() == AttributionKind.PRIMARY) continue;
                 OreDictMaterial tMaterial = tRow.material().get();
                 if (tMaterial == null || tMaterial.mID < 0) continue;
                 assertTrue(GT6ModDrivers.isVisible(tMaterial), tRow.kind() + " row survives its own domain's pin: " + tMaterial.mNameInternal);
-                assertTrue(tShrunk.stream().anyMatch(tPair -> tPair.material() == tMaterial),
+                assertTrue(tKept.stream().anyMatch(tPair -> tPair.material() == tMaterial),
                         tRow.kind() + " row keeps its registration pairs: " + tMaterial.mNameInternal);
             }
-            allDroppedNames.addAll(tPrimaryNames);
+            allVictimNames.addAll(tPrimaryNames);
             GT6ModDrivers.reset();
             assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "reset between domains");
         }
 
-        // the eight-domain joint pin: exactly the 137 PRIMARY materials' pairs leave (no cross-domain bleed)
+        // the eight-domain joint pin: the full victim set stays registered, no bleed either way
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
-        assertEquals(BASELINE - TOTAL_DROP, GTMaterialItems.registrationOrder().size(), "all-eight ABSENT keeps 49006");
-        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder())
-            assertFalse(allDroppedNames.contains(tPair.material().mNameInternal),
-                    "no PRIMARY material of any pinned domain survives the joint pin: " + tPair.material().mNameInternal);
+        assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(), "all-eight ABSENT keeps the full universe (the item face never condemned again)");
+        long tVictimTotal = GTMaterialItems.registrationOrder().stream()
+                .filter(tPair -> allVictimNames.contains(tPair.material().mNameInternal)).count();
+        assertEquals(TOTAL_DROP, tVictimTotal, "the joint pin registers exactly the 8234 victim pairs (no cross-domain bleed)");
     }
 
     // ---- the five census faces, re-signed in-card (ADR-MDH4); all walk the shared root ----
 
     @Test
-    public void assetGuardFaceIdsShrinkWithTheRoot() {
+    public void assetGuardFaceIdsSurviveThePin() {
         Set<String> tDefaultIds = new TreeSet<>();
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tDefaultIds.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
         assertEquals(BASELINE, tDefaultIds.size(), "the asset-guard item channel ids are the full universe by default");
 
         GT6ModDrivers.setDriver(MT.MD.TE.mID, DriverLevel.ABSENT);
-        Set<String> tShrunkIds = new TreeSet<>();
-        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tShrunkIds.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
-        assertEquals(BASELINE - PER_DOMAIN_DROPS.get(MT.MD.TE.mID), tShrunkIds.size(), "the guard's item channel shrinks to the kept count");
-        assertFalse(tShrunkIds.contains("ingot_enderium"), "a hidden material's model id leaves the guard universe");
-        assertTrue(tDefaultIds.contains("ingot_enderium"), "precondition: the id exists in the default universe");
+        Set<String> tPinnedIds = new TreeSet<>();
+        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tPinnedIds.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
+        assertEquals(tDefaultIds, tPinnedIds, "the guard's item channel is pin-invariant (ruling id1745-4)");
+        assertTrue(tPinnedIds.contains("ingot_enderium"), "a formerly-condemned material's model id stays in the guard universe");
     }
 
     @Test
-    public void langFaceNameKeysExcludeHiddenPairs() {
+    public void langFaceNameKeysSurviveThePin() {
         List<String> tDefaultKeys = new ArrayList<>();
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tDefaultKeys.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
         assertTrue(tDefaultKeys.contains("ingot_enderium"), "lang parity source carries the default key set");
         assertTrue(tDefaultKeys.contains("ingot_manasteel"), "lang parity source carries Botania keys too");
 
         GT6ModDrivers.setDriver(MT.MD.BOTA.mID, DriverLevel.ABSENT);
-        List<String> tShrunkKeys = new ArrayList<>();
-        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tShrunkKeys.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
-        assertFalse(tShrunkKeys.contains("ingot_manasteel"), "hidden materials leave the computed name-key walk (extra committed keys are inert datagen artifacts)");
-        assertTrue(tShrunkKeys.contains("ingot_enderium"), "unpinned domains keep their keys");
+        List<String> tPinnedKeys = new ArrayList<>();
+        for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder()) tPinnedKeys.add(GTMaterialItems.itemIdOf(tPair.prefix(), tPair.material()));
+        assertEquals(new HashSet<>(tDefaultKeys), new HashSet<>(tPinnedKeys), "the computed name-key walk is pin-invariant (ruling id1745-4)");
+        assertTrue(tPinnedKeys.contains("ingot_manasteel"), "the Botania keys stay (the manasteel family is revived live)");
     }
 
     @Test
-    public void datagenFaceConvergenceSourceShrinksWithTheRoot() {
+    public void datagenFaceConvergenceSourceSurvivesThePin() {
         // GT6DatagenItemsConvergenceTest consumes registrationOrder() directly; the committed
         // tree is datagen'd in default mode, so the convergence pin itself is untouched
-        // (acceptance 2) — this arm pins that the SOURCE the convergence test walks shrinks.
+        // (acceptance 2) — this arm pins that the SOURCE the convergence test walks is
+        // pin-invariant (the datagen short-circuit is now belt-and-suspenders on this face).
         assertEquals(BASELINE, GTMaterialItems.registrationOrder().size());
         GT6ModDrivers.setDriver(MT.MD.GC_EXTRAPLANETS.mID, DriverLevel.ABSENT);
-        assertEquals(BASELINE - PER_DOMAIN_DROPS.get(MT.MD.GC_EXTRAPLANETS.mID), GTMaterialItems.registrationOrder().size(),
-                "the convergence walk shrinks exactly by the domain's ledger line");
-        assertEquals(BASELINE - PER_DOMAIN_DROPS.get(MT.MD.GC_EXTRAPLANETS.mID),
-                GTMaterialItems.registrationOrder().stream().mapToInt(tPair -> 1).sum(), "the source list is the single walk (no second census)");
+        assertEquals(BASELINE, GTMaterialItems.registrationOrder().size(),
+                "the convergence walk is pin-invariant (ruling id1745-4)");
+        assertEquals(BASELINE, GTMaterialItems.registrationOrder().stream().mapToInt(tPair -> 1).sum(), "the source list is the single walk (no second census)");
     }
 
     @Test
-    public void tabFaceBurdenBeforeAfter() {
+    public void tabFaceBurdenSurvivesThePin() {
         Set<String> tDefaultTabs = new TreeSet<>();
         for (var tPrefix : GTMaterialItems.tabPrefixes()) tDefaultTabs.add(tPrefix.mNameInternal);
         assertEquals(TAB_PREFIX_COUNT, tDefaultTabs.size(), "default creative-visible prefix families");
         int tDefaultTabItems = registrationOrderTabItems();
-        int tEligible = tabEligibleDrop(tDefaultTabItems); // resets the driver after itself
 
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
         Set<String> tAbsentTabs = new TreeSet<>();
@@ -205,8 +208,8 @@ public class GT6ModDriverClearOutWaveTest {
         int tAbsentTabItems = registrationOrderTabItems();
         GT6ModDrivers.reset();
         assertEquals(tDefaultTabs, tAbsentTabs, "no prefix family empties out — the tab set is unchanged");
-        assertEquals(tDefaultTabItems - tEligible, tAbsentTabItems,
-                "the tab burden shrinks exactly by the tab-eligible share of the 8234 dropped pairs");
+        assertEquals(tDefaultTabItems, tAbsentTabItems,
+                "the tab burden is pin-invariant (the formerly-condemned tab pairs stay on the tabs, ruling id1745-4)");
     }
 
     @Test
@@ -215,8 +218,8 @@ public class GT6ModDriverClearOutWaveTest {
         assertFalse(tDefault.isEmpty(), "binding census precondition");
         for (String tDomain : PER_DOMAIN_DROPS.keySet()) GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
         assertEquals(tDefault.keySet(), GT6KJS.bindingClasses().keySet(),
-                "the KJS binding surface is class-level — the registration universe shrinks beneath it (script faces call the same gated walks), keys unchanged");
-        assertEquals(GTMaterialItems.class, GT6KJS.bindingClasses().get("GTMaterialItems"), "the script item face binds the gated walk's owner");
+                "the KJS binding surface is class-level — the script faces call the same (now pin-invariant) walks, keys unchanged");
+        assertEquals(GTMaterialItems.class, GT6KJS.bindingClasses().get("GTMaterialItems"), "the script item face binds the registration walk's owner");
     }
 
     // ---- the fluid data-face ratchet (the GTFluids half of the data face) ----
@@ -283,22 +286,6 @@ public class GT6ModDriverClearOutWaveTest {
         int rCount = 0;
         for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder())
             if (tTabPrefixes.contains(tPair.prefix().mNameInternal)) rCount++;
-        return rCount;
-    }
-
-    /** The tab-eligible share of the ledger drop: per domain, the tab pairs present by default minus the pairs the pin keeps. */
-    private static int tabEligibleDrop(int aDefaultTabItems) {
-        Set<String> tTabPrefixes = new HashSet<>();
-        for (var tPrefix : GTMaterialItems.tabPrefixes()) tTabPrefixes.add(tPrefix.mNameInternal);
-        int rCount = 0;
-        for (String tDomain : PER_DOMAIN_DROPS.keySet()) {
-            GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
-            int tKeptTabItems = 0;
-            for (GTMaterialItems.PrefixMaterial tPair : GTMaterialItems.registrationOrder())
-                if (tTabPrefixes.contains(tPair.prefix().mNameInternal)) tKeptTabItems++;
-            GT6ModDrivers.reset();
-            rCount += aDefaultTabItems - tKeptTabItems;
-        }
         return rCount;
     }
 

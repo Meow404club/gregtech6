@@ -383,13 +383,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BakeSmeltRow tRow : clayPitSmeltRows()) tRow.builder().save(aConsumer, tRow.id()); // task worldgen-diggables-pits — the 4 colored-clay hardening smelts
 		for (gregtech6.registry.GT6Anvils.AnvilRow tAnvilRow : gregtech6.registry.GT6Anvils.ROWS) { // task material-mc-e-tool-anvil-rows — the :2185-2219 ladder
 			net.minecraft.world.level.ItemLike tAnvilIngredient = anvilIngredient(tAnvilRow);
-			if (tAnvilIngredient == null) continue; // the carrier item is driver-hidden — the JSON skip semantics
+			if (tAnvilIngredient == null) continue; // the carrier item is unregistered — the JSON skip semantics
 			anvilBuilder(gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tAnvilRow.path()).get(), tAnvilIngredient)
 					.save(aConsumer, anvilRecipeId(tAnvilRow));
 		}
 		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
 			ShapelessRecipeBuilder tMortarBuilder = mortarBuilder(tRow);
-			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
+			if (tMortarBuilder == null) continue; // the row's ingredient is unregistered — the JSON skip semantics
 			tMortarBuilder.save(aConsumer, mortarRecipeId(tRow));
 		}
 		siftingTableBuilder().save(aConsumer, SIFTING_TABLE_ID); // task sifting-table-family
@@ -402,12 +402,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
+			if (tBuilder == null) continue; // the row's material is unregistered — the JSON/wall skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aConsumer, hopperRecipeId(tRow));
 		}
 		for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) { // task material-mc-a-storage-chests
 			ShapedRecipeBuilder tBuilder = chestRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON skip semantics (mdh-3 wave readiness)
+			if (tBuilder == null) continue; // the row's material is unregistered — the JSON skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aConsumer, chestRecipeId(tRow));
 		}
 		// task block-family-32xxx-port — the charging locker rows ride the A RULING: only
@@ -449,7 +449,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
 			ShapedRecipeBuilder tBuilder = staticStorageRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the row's material is driver-hidden — the hopper walk's skip semantics
+			if (tBuilder == null) continue; // the row's material is unregistered — the hopper walk's skip semantics
 			tBuilder.save(aConsumer, staticStorageRecipeId(tRow));
 		}
 		for (gregtech6.registry.GT6StaticStorages.MassRow tRow : gregtech6.registry.GT6StaticStorages.MASS_ROWS) {
@@ -549,7 +549,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
 			for (int i = 0; i < GT6ArmorMaterials.PIECE_TYPES.length; i++) {
 				ShapedRecipeBuilder tArmorBuilder = armorPieceBuilder(tSuit, i);
-				if (tArmorBuilder == null) continue; // the suit's 'M' material is driver-hidden (HEAT = Al) — the skip semantics
+				if (tArmorBuilder == null) continue; // the suit's 'M' material is unregistered (HEAT = Al) — the skip semantics
 				tArmorBuilder.save(aConsumer, armorRecipeId(tSuit, i));
 			}
 		}
@@ -575,7 +575,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
 		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
 			ShapedRecipeBuilder tRailBuilder = railRecipeBuilder(tRailRow);
-			if (tRailBuilder == null) continue; // the row's rail material is driver-hidden — the JSON/wall skip semantics (mdh-clearout-batch2 sweep)
+			if (tRailBuilder == null) continue; // the row's rail material is unregistered — the JSON/wall skip semantics (mdh-clearout-batch2 sweep)
 			tRailBuilder.save(aConsumer, railRecipeId(tRailRow));
 		}
 		// task craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
@@ -633,7 +633,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
 			ShapedRecipeBuilder tRocksBuilder = slabFromRocksBuilder(tStone);
-			if (tRocksBuilder == null) continue; // the family's rock material is driver-hidden (EtFu prismarines) — the skip semantics (mdh-clearout-batch2 sweep)
+			if (tRocksBuilder == null) continue; // the family's rock material is unregistered (EtFu prismarines) — the skip semantics (mdh-clearout-batch2 sweep)
 			tRocksBuilder.save(aConsumer, slabFromRocksId(tStone));
 			slabFromCobbleBuilder(tStone).save(aConsumer, slabFromCobbleId(tStone));
 		}
@@ -705,13 +705,13 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (BakeSmeltRow tRow : clayPitSmeltRows()) tRow.builder().save(aOutput, tRow.id()); // task worldgen-diggables-pits — the 4 colored-clay hardening smelts
 		for (gregtech6.registry.GT6Anvils.AnvilRow tAnvilRow : gregtech6.registry.GT6Anvils.ROWS) { // task material-mc-e-tool-anvil-rows — the :2185-2219 ladder
 			net.minecraft.world.level.ItemLike tAnvilIngredient = anvilIngredient(tAnvilRow);
-			if (tAnvilIngredient == null) continue; // the carrier item is driver-hidden — the JSON skip semantics
+			if (tAnvilIngredient == null) continue; // the carrier item is unregistered — the JSON skip semantics
 			anvilBuilder(gregtech6.registry.GT6Anvils.BLOCKS_BY_PATH.get(tAnvilRow.path()).get(), tAnvilIngredient)
 					.save(aOutput, anvilRecipeId(tAnvilRow));
 		}
 		for (gregtech6.registry.GT6Mortars.MortarRow tRow : gregtech6.registry.GT6Mortars.ROWS) { // task mortar-family
 			ShapelessRecipeBuilder tMortarBuilder = mortarBuilder(tRow);
-			if (tMortarBuilder == null) continue; // the row's ingredient is driver-hidden — the JSON skip semantics
+			if (tMortarBuilder == null) continue; // the row's ingredient is unregistered — the JSON skip semantics
 			tMortarBuilder.save(aOutput, mortarRecipeId(tRow));
 		}
 		siftingTableBuilder().save(aOutput, SIFTING_TABLE_ID); // task sifting-table-family
@@ -724,12 +724,12 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (GT6Hoppers.HopperRow tRow : GT6Hoppers.ROWS) {
 			ShapedRecipeBuilder tBuilder = hopperRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON/wall skip semantics (mdh-3 wave readiness)
+			if (tBuilder == null) continue; // the row's material is unregistered — the JSON/wall skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aOutput, hopperRecipeId(tRow));
 		}
 		for (gregtech6.registry.GT6Chests.ChestRow tRow : gregtech6.registry.GT6Chests.ROWS) { // task material-mc-a-storage-chests
 			ShapedRecipeBuilder tBuilder = chestRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the row's material is driver-hidden — the JSON skip semantics (mdh-3 wave readiness)
+			if (tBuilder == null) continue; // the row's material is unregistered — the JSON skip semantics (mdh-3 wave readiness)
 			tBuilder.save(aOutput, chestRecipeId(tRow));
 		}
 		// task block-family-32xxx-port — the charging locker A ruling + the sap bag row
@@ -769,7 +769,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (gregtech6.registry.GT6StaticStorages.StaticRow tRow : gregtech6.registry.GT6StaticStorages.ROWS) {
 			ShapedRecipeBuilder tBuilder = staticStorageRecipeBuilder(tRow);
-			if (tBuilder == null) continue; // the row's material is driver-hidden — the hopper walk's skip semantics
+			if (tBuilder == null) continue; // the row's material is unregistered — the hopper walk's skip semantics
 			tBuilder.save(aOutput, staticStorageRecipeId(tRow));
 		}
 		for (gregtech6.registry.GT6StaticStorages.MassRow tRow : gregtech6.registry.GT6StaticStorages.MASS_ROWS) {
@@ -869,7 +869,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (GT6ArmorMaterials.SuitRow tSuit : GT6ArmorMaterials.SUITS) {
 			for (int i = 0; i < GT6ArmorMaterials.PIECE_TYPES.length; i++) {
 				ShapedRecipeBuilder tArmorBuilder = armorPieceBuilder(tSuit, i);
-				if (tArmorBuilder == null) continue; // the suit's 'M' material is driver-hidden (HEAT = Al) — the skip semantics
+				if (tArmorBuilder == null) continue; // the suit's 'M' material is unregistered (HEAT = Al) — the skip semantics
 				tArmorBuilder.save(aOutput, armorRecipeId(tSuit, i));
 			}
 		}
@@ -889,7 +889,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task rails-31-blocks — the 30 rail rows (the :107-140 no-RC fallback band)
 		for (GT6Rails.RailRow tRailRow : GT6Rails.ROWS) {
 			ShapedRecipeBuilder tRailBuilder = railRecipeBuilder(tRailRow);
-			if (tRailBuilder == null) continue; // the row's rail material is driver-hidden — the JSON/wall skip semantics (mdh-clearout-batch2 sweep)
+			if (tRailBuilder == null) continue; // the row's rail material is unregistered — the JSON/wall skip semantics (mdh-clearout-batch2 sweep)
 			tRailBuilder.save(aOutput, railRecipeId(tRailRow));
 		}
 		// task craftfrom-plategem — the CraftFrom hand-craft family (Loader_OreProcessing.java:171-178)
@@ -946,7 +946,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		}
 		for (gregtech6.registry.GTStoneBlocks.StoneSpec tStone : gregtech6.registry.GTStoneBlocks.STONES) {
 			ShapedRecipeBuilder tRocksBuilder = slabFromRocksBuilder(tStone);
-			if (tRocksBuilder == null) continue; // the family's rock material is driver-hidden (EtFu prismarines) — the skip semantics (mdh-clearout-batch2 sweep)
+			if (tRocksBuilder == null) continue; // the family's rock material is unregistered (EtFu prismarines) — the skip semantics (mdh-clearout-batch2 sweep)
 			tRocksBuilder.save(aOutput, slabFromRocksId(tStone));
 			slabFromCobbleBuilder(tStone).save(aOutput, slabFromCobbleId(tStone));
 		}
@@ -1054,7 +1054,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	// package-private: the GT6DatagenWalkLegTest seam (the guarded walk builders the leg pins)
 	ShapedRecipeBuilder slabFromRocksBuilder(gregtech6.registry.GTStoneBlocks.StoneSpec aStone) {
 		// null-drop guard: the prismarine families' rock material is EtFu PRIMARY (atlas :2085/:2086) —
-		// a driver-hidden rock has no rockGt item; skip the family exactly like the hopper row face.
+		// a unregistered rock has no rockGt item; skip the family exactly like the hopper row face.
 		if (GTMaterialItems.get(gregapi.data.OP.rockGt, aStone.material().get()) == null) return null;
 		Item tRock = GTMaterialItems.get(gregapi.data.OP.rockGt, aStone.material().get()).get();
 		return ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS,
@@ -1180,7 +1180,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// task material-mc-b-storage-mass-shelf — the metal shelf/crate ladders (Loader
 		// :143 "PTP","sdh","PTP" plate+screw / :144 "CdC","TCT" casingSmall+screw, the
 		// CR.java:342-365 tool chars s=saw d=screwdriver h=hammer), the null-drop guard
-		// rides the hopperRecipeBuilder shape (a driver-hidden material has no registered
+		// rides the hopperRecipeBuilder shape (a unregistered material has no registered
 		// screw — the walk must never dereference an unregistered pair)
 		if (aRow.material() != null && (aRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOOKSHELF
 				|| aRow.kind() == gregtech6.registry.GT6StaticStorages.Kind.BOTTLECRATE)) {
@@ -1530,7 +1530,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 */
 	// package-private: the GT6DatagenWalkLegTest seam (the guarded walk builders the leg pins)
 	ShapedRecipeBuilder hopperRecipeBuilder(GT6Hoppers.HopperRow aRow) {
-		// null-drop guard: a driver-hidden material has no registered curved plate — skip the
+		// null-drop guard: a unregistered material has no registered curved plate — skip the
 		// row exactly like the JSON resolveItem bad-row face (the mdh-3 clear-out readiness,
 		// review seat XVI; the walk must never dereference an unregistered pair).
 		if (gregtech6.registry.GTMaterialItems.get(gregapi.data.OP.plateCurved, aRow.material().mt()) == null) return null;
@@ -1591,7 +1591,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 	 * "sSw"/"RCR"/"SSS" over stick + ring + any chest (the 'S'/'R'/'C' columns of :133 —
 	 * OD.craftingChest = {@code Tags.Items.CHESTS}, the hopper 'C' column face). The
 	 * lowercase 's'/'w' = the screwdriver/wrench in-grid tool letters. Null-drop guard:
-	 * a driver-hidden material has no registered ring/stick/plate pair (the hopper
+	 * a unregistered material has no registered ring/stick/plate pair (the hopper
 	 * mdh-3 guard verbatim, the walk must never dereference an unregistered item).
 	 */
 	private ShapedRecipeBuilder chestRecipeBuilder(gregtech6.registry.GT6Chests.ChestRow aRow) {
@@ -2160,7 +2160,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			Item tCable = wireItemByPath(USB_CABLE_COL_PATHS[i]);
 			var tPlateHandle = GTMaterialItems.get(gregapi.data.OP.plate, USB_PLATE_MATS[i]);
 			var tScrewHandle = GTMaterialItems.get(gregapi.data.OP.screw, USB_PLATE_MATS[i]);
-			if (tPlateHandle == null || tScrewHandle == null) continue; // the tier's plate material (USB_PLATE_MATS[0] = Al, TiC PRIMARY :2350) is driver-hidden — the skip semantics
+			if (tPlateHandle == null || tScrewHandle == null) continue; // the tier's plate material (USB_PLATE_MATS[0] = Al, TiC PRIMARY :2350) is unregistered — the skip semantics
 			Item tPlate = tPlateHandle.get();
 			Item tScrew = tScrewHandle.get();
 			String tPath = "usb_cable_" + (i + 1);
@@ -2189,7 +2189,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		for (int i = 0; i < 4; i++) {
 			var tPlateHandle = GTMaterialItems.get(gregapi.data.OP.plate, USB_PLATE_MATS[i]);
 			var tScrewHandle = GTMaterialItems.get(gregapi.data.OP.screw, USB_PLATE_MATS[i]);
-			if (tPlateHandle == null || tScrewHandle == null) continue; // the tier's plate material (USB_PLATE_MATS[0] = Al, TiC PRIMARY :2350) is driver-hidden — the skip semantics
+			if (tPlateHandle == null || tScrewHandle == null) continue; // the tier's plate material (USB_PLATE_MATS[0] = Al, TiC PRIMARY :2350) is unregistered — the skip semantics
 			Item tPlate = tPlateHandle.get();
 			Item tScrew = tScrewHandle.get();
 			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + (i + 3)); // OD_CIRCUITS[3..6]
@@ -2253,7 +2253,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			Item tWire = wireItemByPath(USB_WIRE_COL_PATHS[i]);
 			var tPlateHandle = GTMaterialItems.get(gregapi.data.OP.plate, USB_PLATE_MATS[i]);
 			var tScrewHandle = GTMaterialItems.get(gregapi.data.OP.screw, USB_PLATE_MATS[i]);
-			if (tPlateHandle == null || tScrewHandle == null) continue; // the tier's plate material (USB_PLATE_MATS[0] = Al, TiC PRIMARY :2350) is driver-hidden — the skip semantics
+			if (tPlateHandle == null || tScrewHandle == null) continue; // the tier's plate material (USB_PLATE_MATS[0] = Al, TiC PRIMARY :2350) is unregistered — the skip semantics
 			Item tPlate = tPlateHandle.get();
 			Item tScrew = tScrewHandle.get();
 			TagKey<Item> tCircuit = GT6ItemTags.gt6("circuit" + (i + 3)); // OD_CIRCUITS[3..6]
@@ -3112,7 +3112,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// comment and the 1.21.1 leg stops compiling); `var` never names it
 		var tPestle = gregtech6.registry.GTMaterialItems.get(
 				gregtech6.registry.GT6Mortars.pestlePrefix(aRow), gregtech6.registry.GT6Mortars.pestleIngredient(aRow));
-		if (tPestle == null) return null; // the row's ingredient is driver-hidden — the skip semantics (the hopperRecipeBuilder form)
+		if (tPestle == null) return null; // the row's ingredient is unregistered — the skip semantics (the hopperRecipeBuilder form)
 		net.minecraft.world.item.Item tPestleItem = tPestle.get();
 		return ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, gregtech6.registry.GT6Mortars.ITEMS_BY_PATH.get(aRow.path()).get())
 				.requires(GT6Kitchen.MIXING_BOWL_ITEM.get())
@@ -3641,7 +3641,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 			} else {
 				var tCasing = GTMaterialItems.get(gregapi.data.OP.casingSmall,
 						gregtech6.registry.GT6ElectricDynamos.ELECTRIC_T_LADDER.get(tRow.tier()).get());
-				if (tCasing == null) continue; // a tier's housing can be driver-hidden (the dynamo ladder carries Al, TiC PRIMARY :2350) — the skip semantics
+				if (tCasing == null) continue; // a tier's housing can be unregistered (the dynamo ladder carries Al, TiC PRIMARY :2350) — the skip semantics
 				tM = tCasing.get();
 			}
 			ShapedRecipeBuilder tBuilder = ShapedRecipeBuilder
@@ -3782,7 +3782,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		gregapi.oredict.OreDictMaterial[] tHeaterWires = {gregapi.data.MT.Copper, gregapi.data.MT.Constantan, gregapi.data.MT.Kanthal, gregapi.data.MT.Nichrome};
 		for (int i = 0; i < 4; i++) {
 			gregapi.oredict.OreDictMaterial tMat = bridgeMat(i);
-			if (GTMaterialItems.get(gregapi.data.OP.screw, tMat) == null) continue; // the rung's housing (bridgeMat(1) = Al, TiC PRIMARY :2350) is driver-hidden — the skip semantics
+			if (GTMaterialItems.get(gregapi.data.OP.screw, tMat) == null) continue; // the rung's housing (bridgeMat(1) = Al, TiC PRIMARY :2350) is unregistered — the skip semantics
 			String tPath = bridgePath("electric_heater", i);
 			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.ELECTRIC_HEATER_ITEMS_BY_PATH.get(tPath).get())
 					.pattern("TCT").pattern("CMC").pattern("TCd")
@@ -3797,7 +3797,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		gregapi.oredict.OreDictMaterial[] tCopperWires = {gregapi.data.MT.Copper, gregapi.data.MT.Copper, gregapi.data.MT.AnnealedCopper, gregapi.data.MT.AnnealedCopper, gregapi.data.MT.AnnealedCopper};
 		for (int i = 0; i < 5; i++) {
 			gregapi.oredict.OreDictMaterial tMat = bridgeMat(i);
-			if (GTMaterialItems.get(gregapi.data.OP.plateTriple, tMat) == null) continue; // the rung's housing (bridgeMat(1) = Al, TiC PRIMARY :2350) is driver-hidden — the skip semantics
+			if (GTMaterialItems.get(gregapi.data.OP.plateTriple, tMat) == null) continue; // the rung's housing (bridgeMat(1) = Al, TiC PRIMARY :2350) is unregistered — the skip semantics
 			String tPath = bridgePath("electric_engine", i);
 			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.ELECTRIC_ENGINE_ITEMS_BY_PATH.get(tPath).get())
 					.pattern("PhP").pattern("CIC").pattern("PwP")
@@ -3811,7 +3811,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
 		// --- the Motors :849-853 ("TIT","CMC","TGd") ---
 		for (int i = 0; i < 5; i++) {
 			gregapi.oredict.OreDictMaterial tMat = bridgeMat(i);
-			if (GTMaterialItems.get(gregapi.data.OP.screw, tMat) == null) continue; // the rung's housing (bridgeMat(1) = Al, TiC PRIMARY :2350) is driver-hidden — the skip semantics
+			if (GTMaterialItems.get(gregapi.data.OP.screw, tMat) == null) continue; // the rung's housing (bridgeMat(1) = Al, TiC PRIMARY :2350) is unregistered — the skip semantics
 			String tPath = bridgePath("electric_motor", i);
 			rRows.add(new BridgeCraftRow(ShapedRecipeBuilder.shaped(RecipeCategory.MISC, gregtech6.registry.GTMachines.ELECTRIC_MOTOR_ITEMS_BY_PATH.get(tPath).get())
 					.pattern("TIT").pattern("CMC").pattern("TGd")
@@ -4729,7 +4729,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
                 gregtech6.items.tools.electric.GT6ElectricToolItem.JACKHAMMER_HV_NORMAL};
         for (gregtech6.items.tools.electric.GT6ElectricToolItem.Spec tSpec : tSpecs) {
             ShapedRecipeBuilder tToolBuilder = electricToolBuilder(tSpec);
-            if (tToolBuilder == null) continue; // the tier's ladder material is driver-hidden (the Al rung) — the skip semantics
+            if (tToolBuilder == null) continue; // the tier's ladder material is unregistered (the Al rung) — the skip semantics
             rRows.add(new ElectricToolRow(tToolBuilder, electricToolRecipeId(tSpec.aPath())));
         }
         return rRows;
@@ -4834,7 +4834,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     // package-private: the GT6DatagenWalkLegTest seam (the guarded walk builders the leg pins)
     ShapedRecipeBuilder armorPieceBuilder(GT6ArmorMaterials.SuitRow aSuit, int aSlot) {
         if (aSuit.suit() != GT6ArmorMaterials.UNIVERSAL) {
-            // the 'M'-column guard BEFORE the registry reads: a driver-hidden suit 'M' (HEAT = Al,
+            // the 'M'-column guard BEFORE the registry reads: a unregistered suit 'M' (HEAT = Al,
             // TiC PRIMARY :2350) skips the suit's pieces, the hopper semantics
             Item tEarlyMaterial = suitMaterial(aSuit);
             if (tEarlyMaterial == null) return null;
@@ -4874,7 +4874,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
     }
 
     /** The 'M' column per base suit — the Loader_Tools.java:68-91 material rows; null when the
-     * material is driver-hidden (HEAT rides MT.Al, the TiC PRIMARY row :2350 — the walk skips
+     * material is unregistered (HEAT rides MT.Al, the TiC PRIMARY row :2350 — the walk skips
      * the suit, the hopper semantics; Rubber/Asbestos/Pb are COMMON_SECONDARY and never hide). */
     private Item suitMaterial(GT6ArmorMaterials.SuitRow aSuit) {
         return switch (aSuit.suit()) {
@@ -7680,13 +7680,14 @@ public class GT6CraftingRecipes extends RecipeProvider {
 				// are the Extruder cell rows (Loader_Recipes_Extruder.java:254-255, 1 cell -> 3 empty
 				// tubes), the loot tables (Loader_Loot.java:177) and the book-binding shaped
 				// (Loader_Books.java:767) — recipe faces, not item functionality.
-				// The residual Unknown-item rows these two walks can produce in a foreign-mod-less
-				// install are NOT a row-count defect (the ratchet 1096/1068 is the measured datagen
-				// truth): they are the GT6ForeignMaterialAtlas PRIMARY materials the GT6ModDrivers
-				// seed hides from the live registration while datagen walks the default full universe
-				// (ADR-MDH1) — the same root cause as the B2 bucket, the registration-convergence
-				// card's face (measured 522 rows / 260 unique items in the Oct 6 boot log, e.g.
-				// chemtube_teflon = HBM, chemtube_aluminium = MT.Al -> TiC).
+				// The residual Unknown-item rows these two walks can produce were a foreign-mod-less
+				// install face only while the driver gated the item registration (the atlas PRIMARY
+				// materials hid from the live registry while datagen walked the default universe —
+				// measured 522 rows / 260 unique items in the Oct 6 boot log, e.g. chemtube_teflon =
+				// HBM, chemtube_aluminium = MT.Al -> TiC). Ruling id1745-4 (task
+				// material-foreign-domain-registration) retired the driver from the item face:
+				// upstream PrefixItem.java:104 has no mod axis, so those rows resolve live now and
+				// the ratchet 1096/1068 (the measured datagen truth) is unchanged.
 				new ShapelessCraftFromForm("chemtube/from_dust_tiny", gregapi.data.OP.chemtube, 1, COND_TRUE, gregapi.data.OP.dustTiny, 1, gregapi.data.OP.chemtube, gregapi.data.MT.Empty, null, null, new String[0]),
 				new ShapelessCraftFromForm("dust_tiny/from_chemtube", gregapi.data.OP.dustTiny, 1, COND_MELT_MIN_ENV, gregapi.data.OP.chemtube, 1, null, null, null, null, new String[0]),
 				new ShapelessCraftFromForm("tool_head_raw_universal_spade/from_shovel", gregapi.data.OP.toolHeadRawUniversalSpade, 1, COND_COATED_ANTIMATTER, gregapi.data.OP.toolHeadShovel, 1, null, null, null, null, new String[] {"file", "saw"}),
@@ -9158,7 +9159,7 @@ public class GT6CraftingRecipes extends RecipeProvider {
      * sticks to 3 bars). Declared: the sawaxe 'v' face folds into the saw tag (the
      * nearest port member), the wood-bar stick rides the vanilla STICKS tag (the
      * ANY.Wood pseudo-material has no port item), and a row whose material item pair is
-     * unregistered skips (the driver-hidden JSON semantics).
+     * unregistered skips (the unregistered JSON semantics).
      */
     //? if forge {
     private void decorSpikeBarsRows(java.util.function.Consumer<net.minecraft.data.recipes.FinishedRecipe> aConsumer) {
