@@ -55,9 +55,10 @@ import gregtech6.tileentity.multiblocks.TileEntityCokeOven;
  *     the 9-output 3x4 grid from (107,7), ZERO display seats (the multiblock Host keeps
  *     the default-empty banks — the p8 landing the menu javadoc pinned byte-identical),
  *     createMenu the declared null face.</li>
- * <li><b>plantalyzer</b> (RM.PLANTALYZER, the S12 fixback): the title pin — the
- *     viewer-excluded map takes the explicit machine-name override through the
- *     three-arg buildPanel overload (the oven precedent), never the raw key.</li>
+ * <li><b>plantalyzer + bumblelyzer</b> (RM.PLANTALYZER / RM.BUMBLELYZER, the S12
+ *     fixback + the S13 debt re-pin): the title pin — both viewer-excluded maps take
+ *     the explicit machine-name override through the three-arg buildPanel overload
+ *     (the oven precedent), never the raw key.</li>
  * </ul>
  *
  * <p>The open-chain half: every flipped family row dispatches
@@ -286,23 +287,33 @@ public class GT6BasicMachinesMuiParityTest extends GTRecipesOfflineTestBase {
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * The S12 rejection blocker (task basic-machines-mui-migration-fixback): PLANTALYZER is
-	 * viewer-EXCLUDED (the GT6RecipeMapViewerMeta exclusion table — the Forestry/IC2 compat
-	 * dead surface), so no {@code gt6.jei.recipe_map.plantalyzer} title row exists (the
+	 * The S12 rejection blocker (task basic-machines-mui-migration-fixback): PLANTALYZER and
+	 * BUMBLELYZER are both viewer-EXCLUDED (the GT6RecipeMapViewerMeta exclusion table — the
+	 * Forestry/IC2 compat dead surface, and the display stock riding sFakeRecipes outside
+	 * mRecipeList), so no {@code gt6.jei.recipe_map.*} title row exists for either (the
 	 * datagen emits rows for the visible maps only, the GT6RecipeMapLangTest domain pin) and
-	 * the family map-title arm would print the raw key on all five tiers — a two-headed
+	 * the family map-title arm would print the raw key on all tiers — a two-headed
 	 * regression against upstream (Recipe.java:138 registers mNameLocal,
 	 * ContainerClientBasicMachine.java:44 displayed "Plantalyzer") and the pre-migration
-	 * vanilla leg (the block name). The host passes the machine's display name through the
-	 * {@link GTBasicMachineMUI#buildPanel} three-arg title override — the
-	 * TileEntityOven.buildUI precedent for the FURNACE trap (oven-gui-arrow-align).
+	 * vanilla leg (the block name). Both families ride the same
+	 * {@link TileEntityBasicMachine} carrier, so both are pinned under the explicit
+	 * machine-name override — the {@link GTBasicMachineMUI#buildPanel} three-arg title
+	 * override — the TileEntityOven.buildUI precedent for the FURNACE trap
+	 * (oven-gui-arrow-align). The bumblelyzer half is the S13 debt re-pin (debt sweep
+	 * 2026-10-11): both excluded families covered by an explicit title arm, so no future
+	 * family re-arms the bare excluded key.
 	 */
 	@Test
-	void plantalyzerTitleIsTheExplicitMachineNameNotTheRawKey() throws Exception {
-		// all five tiers serve the excluded map — the condition the fix keys on
+	void excludedMapFamiliesTitleIsTheExplicitMachineNameNotTheRawKey() throws Exception {
+		// every tier of both families serves its excluded map — the condition the fix keys on
 		for (GTBasicMachineBlock.MachineRow tRow : GTMachines.PLANTALYZER_ROWS) {
 			assertSame(GT6RecipeMaps.PLANTALYZER, tRow.recipes().get(), tRow.path() + " serves the excluded map");
 			assertFalse(gregtech6.jei.GT6RecipeMapViewerMeta.visibleToViewers(GT6RecipeMaps.PLANTALYZER),
+					tRow.path() + " has no viewer title row — the map-key arm would print the raw key");
+		}
+		for (GTBasicMachineBlock.MachineRow tRow : GTMachines.BUMBLELYZER_ROWS) {
+			assertSame(GT6RecipeMaps.BUMBLELYZER, tRow.recipes().get(), tRow.path() + " serves the excluded map");
+			assertFalse(gregtech6.jei.GT6RecipeMapViewerMeta.visibleToViewers(GT6RecipeMaps.BUMBLELYZER),
 					tRow.path() + " has no viewer title row — the map-key arm would print the raw key");
 		}
 
