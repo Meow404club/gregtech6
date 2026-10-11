@@ -64,9 +64,14 @@ public class GT6SafesCreativeTabTest extends GTOfflineTestBase {
 		assertEquals("itemGroup.gt6.safes", GT6StaticStorages.TAB_TITLE_KEY);
 	}
 
-	/** The DR holds exactly the one "safes" tab (the per-family tab discipline, the GT6FoodsTest form). */
+	/**
+	 * The DR holds exactly the static-storage tab family — gt6:safes plus the task
+	 * storage-tab-completion pair gt6:storage/gt6:logistics that split the remaining
+	 * upstream categories off the machines pool (the per-family tab discipline, the
+	 * GT6FoodsTest form; the safes membership itself is unchanged).
+	 */
 	@Test
-	public void tabsRegistryHoldsExactlyTheSafesTab() {
+	public void tabsRegistryHoldsExactlyTheStaticStorageTabs() {
 		Set<ResourceLocation> tIds = new LinkedHashSet<>();
 		//? if forge {
 		for (net.minecraftforge.registries.RegistryObject<CreativeModeTab> tTab : GT6StaticStorages.CREATIVE_MODE_TABS.getEntries()) {
@@ -75,7 +80,7 @@ public class GT6SafesCreativeTabTest extends GTOfflineTestBase {
 		 *///?}
 			tIds.add(tTab.getId());
 		}
-		assertEquals(Set.of(rl("safes")), tIds);
+		assertEquals(Set.of(rl("safes"), rl("storage"), rl("logistics")), tIds);
 	}
 
 	// ----------------------------------------------------------------- the display walk

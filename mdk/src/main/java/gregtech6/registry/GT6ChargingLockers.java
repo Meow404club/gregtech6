@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -34,7 +35,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -52,7 +52,8 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
 /**
  * The Charging Locker family (task block-family-32xxx-port) — the full 60-material
  * metalset parameterized ladder of Loader_MultiTileEntities.java:139 ("Charging Locker
- * (Mat)", id 7500+aID, item id 32751, MultiTileEntityLockerCharging, aMachine): the
+ * (Mat)", id 7500+aID, creative tab id 32751 "Storage", MultiTileEntityLockerCharging,
+ * aMachine): the
  * energy-injecting twin of the plain Locker, ported here because the census pool note
  * demanded the 32xxx domain ride the four-face chain (research.material-coverage-census
  * gap "Charging Locker n=60 m=0").
@@ -298,15 +299,19 @@ public final class GT6ChargingLockers {
 	}
 
 	/**
-	 * The tab walk (the GT6Hoppers form): the upstream category "Storage" (tab 32751,
-	 * Loader :139) pools into MACHINES_TAB (the storage-static-batch pooling precedent).
+	 * The storage-tab walk seam (task storage-tab-completion, the
+	 * {@code GT6StaticStorages.walkDisplayItems} form): the 60 rows in registration order,
+	 * driven by {@link GT6StaticStorages#STORAGE_TAB} — upstream registers this family into
+	 * the "Storage" category tab (tab id 32751, Loader_MultiTileEntities.java:139; one
+	 * shared CreativeTab per tab id, MultiTileEntityRegistry.java:191), and the port keeps
+	 * that shape instead of the former MACHINES_TAB pooling (the join handler is RETIRED —
+	 * task storage-tab-completion; JEI 1.20.1 derives its item list from the tab display
+	 * items, so the pool join was the family's only creative/JEI face). Package visible so
+	 * the tab builder lambda and the offline pins drive the SAME walk.
 	 */
-	@SubscribeEvent
-	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
-		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
-			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
-				aEvent.accept(new ItemStack(tItem.get()));
-			}
+	static void walkDisplayItems(CreativeModeTab.Output aOutput) {
+		for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
+			aOutput.accept(new ItemStack(tItem.get()));
 		}
 	}
 }

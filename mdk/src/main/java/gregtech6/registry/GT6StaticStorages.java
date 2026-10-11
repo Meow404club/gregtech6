@@ -113,10 +113,16 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * faces (task storage-tabs-buckets-safes, the chests-tab-rehome shape): the SAFE rows ride
  * their own upstream category tab — "Safes" (tab id 2010, Loader_MultiTileEntities.java
  * :134-135 exactly; one shared CreativeTab per tab id, MultiTileEntityRegistry.java:191) —
- * via {@link #SAFES_TAB} / {@link #walkDisplayItems}, while the remaining "Storage" rows
- * (:138-144/:181-184, tab id 32751) keep the MACHINES_TAB join ({@link #onBuildTabContents};
- * the tabfix-b-energy pooling — the storage-tab split is a later card, the GTBarrels:257
- * pooling precedent).
+ * via {@link #SAFES_TAB} / {@link #walkDisplayItems}. Task storage-tab-completion splits
+ * the rest of the registered domain per the upstream category labels: the STANDARD mass
+ * rows (:141, "Storage", tab id 32751) and the charging-locker family (GT6ChargingLockers,
+ * :139, same tab) ride {@link #STORAGE_TAB} / {@link #walkStorageItems}; the LOGISTICS
+ * mass rows (:142, category "Logistics", tab id 17997 — NOT "Storage", the metalset line
+ * verbatim) ride {@link #LOGISTICS_TAB} / {@link #walkLogisticsItems}. The REMAINING
+ * "Storage" rows (locker :138, drawer :140, the wooden shelf/crate ladders :181-184, the
+ * metal shelf/crate ladders :143-144 — all tab id 32751) keep the MACHINES_TAB join
+ * ({@link #onBuildTabContents}; the tabfix-b-energy pooling — the declared deviation for
+ * a later split card, the GTBarrels:257 pooling precedent).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6StaticStorages {
@@ -1225,6 +1231,70 @@ public final class GT6StaticStorages {
 		}
 	}
 
+	/** The storage-tab title key — the upstream category label "Storage" (tmp/gregtech.lang :18006 {@code itemGroup.gt.multitileentity.32751=存储}). */
+	public static final String STORAGE_TAB_TITLE_KEY = "itemGroup.gt6.storage";
+
+	/** The logistics-tab title key — the upstream category label "Logistics" (tmp/gregtech.lang :17987 {@code itemGroup.gt.multitileentity.17997=物流学}). */
+	public static final String LOGISTICS_TAB_TITLE_KEY = "itemGroup.gt6.logistics";
+
+	/**
+	 * The storage tab (task storage-tab-completion, the {@link #SAFES_TAB} shape): upstream
+	 * hangs the Charging Locker pair-line (Loader_MultiTileEntities.java:139) and the
+	 * standard Mass Storage line (:141) on the "Storage" category tab — aRegistry.add(...,
+	 * "Storage", ..., 32751, ...), one shared CreativeTab per tab id
+	 * (MultiTileEntityRegistry.java:191) — and the port keeps that shape: the walk is the
+	 * charging lockers then the standard mass rows (the metalset line order :139 before
+	 * :141). The icon is the first PORTED row of the upstream tab in registration order:
+	 * the tab's true head (:153 Storage Inserter) and the barrel/box block (:155-172) are
+	 * unported (the GT6StaticStorages ITEM BARREL TRAP javadoc), so the first ported
+	 * registration is the wooden bookshelf ladder head (:181, i=0 — the
+	 * {@code gt6:chests} icon face, where the unported mossy chest yields to chest_lead).
+	 */
+	public static final RegistryObject<CreativeModeTab> STORAGE_TAB = CREATIVE_MODE_TABS.register("storage",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0) // vanilla CreativeModeTab.java:46-48
+					.title(Component.translatable(STORAGE_TAB_TITLE_KEY))
+					.icon(() -> new ItemStack(ITEMS_BY_PATH.get("bookshelf_oak").get()))
+					.displayItems((aParameters, aOutput) -> walkStorageItems(aOutput))
+					.build());
+
+	/**
+	 * The logistics tab (task storage-tab-completion): the logistics Mass Storage line
+	 * registers under its OWN category — aRegistry.add(..., "Logistics", ..., 17997, ...)
+	 * (Loader :142 verbatim; NOT "Storage", the mass-storage/logistics pair is split
+	 * upstream) — so the port keeps two tabs rather than merging the pair (the upstream
+	 * category split is the truth, no fabricated merge). The
+	 * icon = the family head logistics_mass_storage_lead: the first Logistics-17997
+	 * registration upstream (storages() is invoked at Loader :114, before the machinesN
+	 * block :120-128 that registers the Logistics Core :1281, so :142 precedes it; the
+	 * MultiTileEntityRegistry.java:191 first-registration icon face).
+	 */
+	public static final RegistryObject<CreativeModeTab> LOGISTICS_TAB = CREATIVE_MODE_TABS.register("logistics",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0) // vanilla CreativeModeTab.java:46-48
+					.title(Component.translatable(LOGISTICS_TAB_TITLE_KEY))
+					.icon(() -> new ItemStack(MASS_ITEMS_BY_PATH.get(MASS_ROWS.get(1).path()).get()))
+					.displayItems((aParameters, aOutput) -> walkLogisticsItems(aOutput))
+					.build());
+
+	/**
+	 * The storage tab walk: the charging-locker family ({@link GT6ChargingLockers#walkDisplayItems},
+	 * 60 rows) then the standard mass rows (60), the loader line order (:139 before :141).
+	 * Package visible so the tab builder lambda and the offline census drive the SAME walk
+	 * (the {@link #walkDisplayItems} form).
+	 */
+	static void walkStorageItems(CreativeModeTab.Output aOutput) {
+		GT6ChargingLockers.walkDisplayItems(aOutput);
+		for (MassRow tRow : MASS_ROWS) {
+			if (!tRow.logistics()) aOutput.accept(new ItemStack(MASS_ITEMS_BY_PATH.get(tRow.path()).get()));
+		}
+	}
+
+	/** The logistics tab walk: the 60 logistics mass rows (the :142 line, the {@link #MASS_ROWS} registration order). */
+	static void walkLogisticsItems(CreativeModeTab.Output aOutput) {
+		for (MassRow tRow : MASS_ROWS) {
+			if (tRow.logistics()) aOutput.accept(new ItemStack(MASS_ITEMS_BY_PATH.get(tRow.path()).get()));
+		}
+	}
+
 	/**
 	 * The tab walk (task tabfix-b-energy — the "Storage" rows join the machines tab; the
 	 * GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
@@ -1232,9 +1302,13 @@ public final class GT6StaticStorages {
 	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-tab-less
 	 * was invisible in both the creative menu and JEI. Pool-cut declaration: the SAFE rows
 	 * LEFT this join (task storage-tabs-buckets-safes — upstream gives them their own "Safes"
-	 * tab, id 2010, Loader_MultiTileEntities.java:134-135; {@link #SAFES_TAB}); the remaining
-	 * "Storage" rows (tab id 32751, :138-144/:177-184) keep the MACHINES_TAB pooling (the
-	 * GTBarrels:257 pooling precedent — the storage-tab split is a later card).
+	 * tab, id 2010, Loader_MultiTileEntities.java:134-135; {@link #SAFES_TAB}); the mass
+	 * rows never rode this walk (the {@link #MASS_ROWS} family shipped tab-less until task
+	 * storage-tab-completion split them onto {@link #STORAGE_TAB} / {@link #LOGISTICS_TAB}
+	 * per the upstream categories, and the charging-locker pool join retired the same card);
+	 * the remaining "Storage" rows (tab id 32751, :138-144/:177-184) keep the MACHINES_TAB
+	 * pooling (the GTBarrels:257 pooling precedent — the declared deviation for the later
+	 * split card).
 	 */
 	@SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
