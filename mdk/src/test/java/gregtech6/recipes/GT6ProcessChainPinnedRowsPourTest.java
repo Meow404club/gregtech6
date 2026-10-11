@@ -125,7 +125,7 @@ public class GT6ProcessChainPinnedRowsPourTest extends GTRecipesOfflineTestBase 
 		return null;
 	}
 
-	private static void assertChanceFree(JsonObject aRow, JsonArray aOutputs, String aLabel) {
+	private static void assertChanceFree(JsonArray aOutputs, String aLabel) {
 		for (JsonElement tOut : aOutputs) {
 			JsonObject tSlot = tOut.getAsJsonObject();
 			assertTrue(!tSlot.has("chance") || tSlot.get("chance").getAsInt() >= 10000,
@@ -153,7 +153,7 @@ public class GT6ProcessChainPinnedRowsPourTest extends GTRecipesOfflineTestBase 
 		JsonArray tOutputs = tRow.getAsJsonArray("outputs");
 		assertEquals(1, tOutputs.size(), "one output leg");
 		assertEquals(4, tOutputs.get(0).getAsJsonObject().get("count").getAsInt(), "the x4 bolt leg");
-		assertChanceFree(tRow, tOutputs, "cutter stick->bolt");
+		assertChanceFree(tOutputs, "cutter stick->bolt");
 
 		RecipeMap tMap = GT6RecipeMapJsonLoader.mapFor("cutter");
 		Recipe tHit = tMap.findRecipe(null, 64, ItemStack.EMPTY,
@@ -177,7 +177,7 @@ public class GT6ProcessChainPinnedRowsPourTest extends GTRecipesOfflineTestBase 
 		assertEquals(1, tOutputs.size(), "one item leg");
 		assertEquals("minecraft:yellow_dye", tOutputs.get(0).getAsJsonObject().get("item").getAsString(), "the dye carrier");
 		assertEquals(2, tOutputs.get(0).getAsJsonObject().get("count").getAsInt(), "the x2 dye leg");
-		assertChanceFree(tRow, tOutputs, "squeezer sunflower");
+		assertChanceFree(tOutputs, "squeezer sunflower");
 		assertEquals("gt6:sunfloweroil", tRow.getAsJsonArray("fluidOutputs").get(0).getAsJsonObject().get("fluid").getAsString(),
 				"the oil leg the fluid stat reads");
 
@@ -226,7 +226,7 @@ public class GT6ProcessChainPinnedRowsPourTest extends GTRecipesOfflineTestBase 
 				"the water leg the consumption verdict reads (1000 - 2x100 = 800)");
 		JsonArray tOutputs = tRow.getAsJsonArray("outputs");
 		assertEquals(1, tOutputs.size(), "one dirt leg");
-		assertChanceFree(tRow, tOutputs, "pressurewasher fixture");
+		assertChanceFree(tOutputs, "pressurewasher fixture");
 
 		// the walk rows are declared-out LIVE (gt6:dust_bark never registers in a seeded JVM
 		// — the BINNIE-domain foreign material, GT6ModDrivers.seedFromEnvironment) — the
