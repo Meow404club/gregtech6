@@ -1342,7 +1342,7 @@ direct	gt6.jei.info.ore_gen_info.section.large_veins	大型矿脉	hand
 direct	gt6.jei.info.ore_gen_info.section.small_ores	小矿石	hand
 direct	gt6.jei.multiblock_preview	多方块结构预览	hand
 direct	gt6.jei.recipe_map.anvil	砧	hand
-direct	gt6.jei.recipe_map.anvil_bend	铁砧弯曲	hand
+direct	gt6.jei.recipe_map.anvil_bend	砧弯	hand
 direct	gt6.jei.recipe_map.autoclave	高压釜	hand
 direct	gt6.jei.recipe_map.bath	浸洗器	hand
 direct	gt6.jei.recipe_map.bedrockorelist	基岩钻机	hand

@@ -1910,7 +1910,7 @@ HAND_TRANSLATIONS = {
     "gt6.jei.recipe_map.rollingmill": ("辊压机", "hand"),
     "gt6.jei.recipe_map.extruder": ("压模器", "hand"),
     "gt6.jei.recipe_map.anvil": ("砧", "hand"),
-    "gt6.jei.recipe_map.anvil_bend": ("铁砧弯曲", "hand"),
+    "gt6.jei.recipe_map.anvil_bend": ("砧弯", "hand"),
     "gt6.jei.recipe_map.bath": ("浸洗器", "hand"),
     "gt6.jei.recipe_map.fermenter": ("发酵器", "hand"),
     "gt6.jei.recipe_map.loom": ("织布机", "hand"),

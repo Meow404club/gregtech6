@@ -207,15 +207,6 @@ public final class MaterialTreeBuilder {
 	public static final Set<String> SYNTHETIC_MAP_LABELS = Set.of("Mold");
 
 	/**
-	 * The crucible smelting INPUT prefixes — the {@code selfPrefixes()} family of the crucible
-	 * map (GT6RecipeMapCrucible.selfPrefixes, the RecipeMapCrucible.java:63-67 self arm):
-	 * shared by reference, not re-listed here (single source of the arm's shape).
-	 */
-	private static OreDictPrefix[] smeltInputPrefixes() {
-		return gregtech6.recipes.maps.GT6RecipeMapCrucible.selfPrefixes();
-	}
-
-	/**
 	 * Folds the on-demand maps' derivable families into the two indexes: the crucible
 	 * smelting self/cross arms and the Mold casting family, over every registered
 	 * non-hidden material that passes the crucible-food gate (MELTING tag + a positive
@@ -223,7 +214,7 @@ public final class MaterialTreeBuilder {
 	 * MATERIAL registry only, the performance red line holds.
 	 */
 	private static void synthesizeDynamicEdges(Map<OreDictMaterial, Set<ChainEdge>> aChain, Map<OreDictMaterial, Set<ByproductEdge>> aByproduct) {
-		OreDictPrefix[] tSmeltInputs = smeltInputPrefixes();
+		OreDictPrefix[] tSmeltInputs = gregtech6.recipes.maps.GT6RecipeMapCrucible.selfPrefixes();
 		for (OreDictMaterial tMat : MaterialRegistry.INSTANCE.MATERIAL_MAP.values()) {
 			if (tMat == null || tMat.mID <= 0 || tMat.mHidden) continue;
 			// the crucible-food gate (GT6RecipeMapCrucible :190-191) — also the melt-feed gate

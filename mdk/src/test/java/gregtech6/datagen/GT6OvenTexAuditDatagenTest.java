@@ -60,7 +60,13 @@ class GT6OvenTexAuditDatagenTest {
 	 * and {@code decor/glass_clear.png} (task material-mc-g2-decor-misc, the
 	 * `block/decor/` README ledger — the upstream GLASS_CLEAR grayscale fill,
 	 * alpha-48 translucent, white by design and dye-tinted at render by
-	 * GT6DecorTintListener).
+	 * GT6DecorTintListener); and the six wall design-4 BODY bodies
+	 * {@code parts/{metalwall,metalwalldense}/4/colored/{bottom,top,side}.png}
+	 * (task crucible-formed-vanish-probe, the README "Part-family wall DESIGN ladder
+	 * bodies" section — the upstream RGB(255,255,255) x alpha=0 borrow flattened to the
+	 * one opaque-white canonical, sha256 84fa319f…, because the 1.20.1 CUTOUT render
+	 * discards alpha=0; the GTMachineTintModel multiply then reproduces the upstream
+	 * flat material-tinted formed plate).
 	 * A new white block texture must be added here WITH its ledger row, or reworked.
 	 */
 	private static final Set<String> DOCUMENTED_WHITE_BLOCK_BORROWS;
@@ -83,7 +89,17 @@ class GT6OvenTexAuditDatagenTest {
 				"massstorage_logistics/colored_top.png",
 				"massstorage_logistics/colored_bottom.png",
 				"massstorage_logistics/colored_front.png",
-				"massstorage_logistics/colored_back.png"));
+				"massstorage_logistics/colored_back.png",
+				// task crucible-formed-vanish-probe: the six wall design-4 BODY bodies —
+				// the upstream alpha=0 white blanks flattened opaque (CUTOUT discards
+				// alpha=0), the tint multiply carries the formed-plate look (the README
+				// "Part-family wall DESIGN ladder bodies" ledger section)
+				"parts/metalwall/4/colored/bottom.png",
+				"parts/metalwall/4/colored/side.png",
+				"parts/metalwall/4/colored/top.png",
+				"parts/metalwalldense/4/colored/bottom.png",
+				"parts/metalwalldense/4/colored/side.png",
+				"parts/metalwalldense/4/colored/top.png"));
 		for (int i = 0; i < 32; i++) tWhite.add(String.format("barometer/%02d.png", i));
 		DOCUMENTED_WHITE_BLOCK_BORROWS = java.util.Collections.unmodifiableSet(tWhite);
 	}
