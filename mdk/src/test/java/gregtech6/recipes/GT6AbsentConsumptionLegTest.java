@@ -1,19 +1,24 @@
 /**
  * Tests for task mdh-3-clear-out-wave, acceptance 4: the recipe-consumption mechanism pin —
- * under an ABSENT driver domain the referencing rows fall out naturally, nothing crashes.
+ * rows referencing an unregistered id fall out naturally, nothing crashes. RE-SIGNED by task
+ * material-foreign-domain-registration (user ruling id1745-4): the driver no longer condemns
+ * GT6-generated item ids, so on a real ABSENT install the ~11.9k committed references to the
+ * atlas materials' gt6 ids RESOLVE (the item face is pin-invariant) — the JSON leg below pins
+ * the mechanism itself (unregistered id → bad row, WARN + skip, never crash), which stays the
+ * dormant-row face for genuinely absent content (foreign-mod ids; the still driver-gated
+ * fluid rows, e.g. the annotated GTFluids chemical specs).
  *
  * <p>Two legs, the two row surfaces the card names:
  * <ul>
  * <li><b>JSON leg</b> — {@code GT6RecipeMapJsonLoader.resolveItem} answers a bad row for an
- *     unregistered id ("unregistered item id", WARN + skip, never crash the reload), so the
- *     ~11.9k committed references to the 137 PRIMARY materials' ids drop per-row at reload
- *     time on a real ABSENT install. The fixture resolver stands in for the shrunk registry:
- *     hidden-material ids answer null exactly like the live ForgeRegistries lookup would.</li>
+ *     unregistered id ("unregistered item id", WARN + skip, never crash the reload). The
+ *     fixture resolver stands in for a shrunk registry: unresolvable ids answer null exactly
+ *     like the live ForgeRegistries lookup would.</li>
  * <li><b>Java-wall leg</b> — the recipe walls resolve materials through
- *     {@code sMaterialItemResolver} (the upstream {@code mat() → null} drop): a hidden
- *     material's {@code buildRecipe} answers null and the pour counts it skipped
- *     (GT6RecipesImplosion.java:187/:203-207). The fixture mirrors the real gate: an item
- *     exists iff the driver keeps its material visible.</li>
+ *     {@code sMaterialItemResolver} (the upstream {@code mat() → null} drop): a
+ *     genuinely-unregistered pair's {@code buildRecipe} answers null and the pour counts it
+ *     skipped (GT6RecipesImplosion.java:187/:202-207). The fixture mirrors the real gate: an
+ *     item exists iff the registration face registered it.</li>
  * </ul>
  *
  * <p>Offline discipline: no FML, resolvers injected (the GT6RecipeMapJsonLoaderTest
@@ -22,6 +27,7 @@
 package gregtech6.recipes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -44,6 +50,7 @@ import net.minecraft.world.level.material.Fluids;
 
 import gregapi.data.MT;
 import gregapi.data.OP;
+import gregapi.oredict.OreDictMaterial;
 import gregtech6.registry.GTMaterialItems;
 import gregtech6.registry.GT6ModDrivers;
 import gregtech6.registry.GT6ModDrivers.DriverLevel;
@@ -57,12 +64,10 @@ import gregtech6.registry.GT6ModDrivers.DriverLevel;
  * GTMaterialItems.get(...).get() under a live-FML seeded JVM) is guarded row-level by the
  * f8ffa0bd1 review fix (the builder answers null, the walk callers skip — the JSON bad-row
  * semantics); mdh-clearout-batch2 landed the remaining sweep guards and the walk-face pin
- * lives in {@code gregtech6.datagen.GT6DatagenWalkLegTest} (same package as the guarded
- * builders — the runData both-legs byte-identity rerun stays the committed-tree evidence).
- * The SEEDED_DOMAINS re-activation rode those three preconditions: the datagen-JVM
- * short-circuit (GT6ModDriversTest.datagenJvmShortCircuitsTheSeed), this sweep, and the
- * committed-tree verdict — registration precedes GatherDataEvent, so a late reset cannot
- * un-shrink the universe.
+ * lives in {@code gregtech6.datagen.GT6DatagenWalkLegTest}. Since ruling id1745-4 the driver
+ * never removes item pairs from the INDEX, so the guards only ever fire on genuinely
+ * unregistered pairs — the SEEDED_DOMAINS activation's other two preconditions (the
+ * datagen-JVM short-circuit, the committed-tree verdict) keep their full force.
  */
 public class GT6AbsentConsumptionLegTest extends GTRecipesOfflineTestBase {
 
@@ -116,29 +121,45 @@ public class GT6AbsentConsumptionLegTest extends GTRecipesOfflineTestBase {
         assertEquals(1, GT6RecipeMapJsonLoader.pouredCount("shredder"), "the tracker mirrors the survivors");
     }
 
-    /** The wall leg: the driver-gated resolver nulls hidden materials, buildRecipe drops the row. */
+    /** The wall leg: the registration-truth resolver (the real-install shape post-ruling id1745-4:
+     * an item exists iff the registration face registered it — the item face is pin-invariant),
+     * buildRecipe drops only genuinely-unregistered rows. The row material is picked at runtime
+     * from the TE PRIMARY set by registration truth (a synthetic row for a material without a
+     * generated dust would say nothing about the gate). */
     @Test
     public void wallRowsFallOutThroughTheMatNullDrop() {
-        // the real-install shape: an item exists iff the driver keeps its material visible
-        GT6RecipesImplosion.sMaterialItemResolver = (aPrefix, aMaterial) -> GT6ModDrivers.isVisible(aMaterial) ? Items.IRON_INGOT : null;
+        // the real-install shape: an item exists iff the registration order carries the pair
+        java.util.Set<GTMaterialItems.PrefixMaterial> tOrder =
+                java.util.Set.copyOf(GTMaterialItems.registrationOrder());
+        GT6RecipesImplosion.sMaterialItemResolver = (aPrefix, aMaterial) ->
+                tOrder.contains(new GTMaterialItems.PrefixMaterial(aPrefix, aMaterial)) ? Items.IRON_INGOT : null;
         GT6RecipesImplosion.sTntResolver = () -> Items.TNT;
         GT6RecipesImplosion.sCircuitResolver = aConfig -> new ItemStack(Items.STICK);
-        GT6RecipesImplosion.ImplosionTier tTier = new GT6RecipesImplosion.ImplosionTier(":leg", 8, 1, 1, OP.gem);
 
-        GT6RecipesImplosion.ImplosionRow tEnderium = new GT6RecipesImplosion.ImplosionRow(":leg-te", MT.Enderium, MT.Enderium); // TE PRIMARY
-        GT6RecipesImplosion.ImplosionRow tPyrotheum = new GT6RecipesImplosion.ImplosionRow(":leg-self", MT.Pyrotheum, MT.Pyrotheum); // GT6_SELF
-        GT6RecipesImplosion.ImplosionRow tInvar = new GT6RecipesImplosion.ImplosionRow(":leg-cs", MT.Invar, MT.Invar); // TE COMMON_SECONDARY
+        // the row material: a TE PRIMARY material whose GT6 dust registers (the revival arm's
+        // subject); the synthetic tier's outPrefix rides OP.dust so the row needs only that pair
+        OreDictMaterial tTeRow = java.util.Arrays.stream(new OreDictMaterial[] {MT.Enderium, MT.Signalum, MT.Lumium, MT.Basalz, MT.Blitz, MT.Blizz})
+                .filter(tMaterial -> tOrder.contains(new GTMaterialItems.PrefixMaterial(OP.dust, tMaterial)))
+                .findFirst().orElse(null);
+        assertNotNull(tTeRow, "precondition: a TE PRIMARY material with a generated dust (the item face's registration truth)");
+        GT6RecipesImplosion.ImplosionTier tTier = new GT6RecipesImplosion.ImplosionTier(":leg", 8, 1, 1, OP.dust);
+        GT6RecipesImplosion.ImplosionRow tTe = new GT6RecipesImplosion.ImplosionRow(":leg-te", tTeRow, tTeRow); // TE PRIMARY
 
-        // default (all-PRESENT): every row builds
-        assertNotNull(GT6RecipesImplosion.buildRecipe(tEnderium, tTier), "default: the TE PRIMARY row builds");
-        assertNotNull(GT6RecipesImplosion.buildRecipe(tPyrotheum, tTier), "default: the GT6_SELF row builds");
-        assertNotNull(GT6RecipesImplosion.buildRecipe(tInvar, tTier), "default: the CS row builds");
+        // default (all-PRESENT): the row builds
+        assertNotNull(GT6RecipesImplosion.buildRecipe(tTe, tTier), "default: the TE PRIMARY row builds");
 
-        // TE ABSENT: the PRIMARY row falls out (the upstream mat() null drop), CS/SELF survive
+        // TE ABSENT: the row still builds — the GT6-generated items are GT6's own content and
+        // register unconditionally (ruling id1745-4, the mdh ABSENT 连坐 retired from the item face)
         GT6ModDrivers.setDriver(MT.MD.TE.mID, DriverLevel.ABSENT);
-        assertNull(GT6RecipesImplosion.buildRecipe(tEnderium, tTier), "ABSENT domain: the PRIMARY row resolves null and the pour skips it");
-        assertNotNull(GT6RecipesImplosion.buildRecipe(tPyrotheum, tTier), "GT6_SELF rows survive (lesson id1218)");
-        assertNotNull(GT6RecipesImplosion.buildRecipe(tInvar, tTier), "COMMON_SECONDARY rows survive (ADR-MDH2)");
+        assertNotNull(GT6RecipesImplosion.buildRecipe(tTe, tTier), "ABSENT domain: the PRIMARY row still builds (the item face is pin-invariant, ruling id1745-4)");
+        assertFalse(GT6ModDrivers.isVisible(MT.Enderium), "the visibility gate still answers the pin (the fluid/block faces' truth)");
+
+        // the mat() null-drop mechanics (the upstream shape, GT6RecipesImplosion.java:202-207):
+        // a genuinely-unregistered pair resolves null and the pour skips the row — pinned
+        // driver-free (the fluid face keeps the driver semantics for its own rows).
+        GT6ModDrivers.reset();
+        GT6RecipesImplosion.sMaterialItemResolver = (aPrefix, aMaterial) -> null;
+        assertNull(GT6RecipesImplosion.buildRecipe(tTe, tTier), "an unregistered pair resolves null and buildRecipe drops the row (never crashes)");
     }
 
     private static JsonElement json(String aJson) {

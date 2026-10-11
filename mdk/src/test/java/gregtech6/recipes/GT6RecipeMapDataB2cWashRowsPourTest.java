@@ -25,9 +25,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import gregapi.data.MT;
+import gregapi.data.OP;
 import gregtech6.block.tree.GT6BeamKind;
 import gregtech6.block.tree.GT6TreeKind;
 import gregtech6.registry.GT6BeamBlocks;
+import gregtech6.registry.GT6ForeignMaterialAtlas;
+import gregtech6.registry.GT6ModDrivers;
 import gregtech6.registry.GT6TreeBlocks;
 import gregtech6.registry.GTMaterialItems;
 
@@ -53,15 +57,22 @@ import net.minecraft.world.level.material.Fluids;
  *
  * <p>RESTORED FIXTURE ROW (task process-cluster-diesel-rig-red): the p29 acceptance
  * smoke row (coarse_dirt + water 100 -&gt; dirt, 16/16) rides again at the file tail.
- * The walk rows are DECLARED-OUT LIVE: the by-product gt6:dust_bark belongs to
+ * The walk rows WERE declared-out live: the by-product gt6:dust_bark belongs to
  * MT.Bark, a BINNIE-domain foreign material, and the live server seeds the absent-mod
- * ABSENT levels (GT6ModDrivers.seedFromEnvironment), so the bark dust never registers
- * in a real game JVM and the loader's unregistered-id = declared-out seam skips all
+ * ABSENT levels (GT6ModDrivers.seedFromEnvironment), so the bark dust never registered
+ * in a real game JVM and the loader's unregistered-id = declared-out seam skipped all
  * 28 walk rows (the offline enumerate/datagen universe is all-PRESENT and cannot see
  * the divergence — exactly why the b2c replacement shipped green while the live map
- * was empty). The fixture row is the one live row that keeps the RCON
- * process-pressurewasher acceptance chain meaningful until a materials card registers
- * the bark dust. Its citation prefix "task " is the walk-vs-fixture partition key.
+ * was empty). REVIVED (task material-foreign-domain-registration, user ruling id1745-4):
+ * MT.Bark is GT6's own dust() row (upstream MT.java:1243) with a BINNIE
+ * attribution-only put (MT.java:2263), upstream item generation has no mod axis
+ * (PrefixItem.java:104 + OreDictPrefix.java:364-366), so the item face left the driver —
+ * the bark dust registers unconditionally and the 28 walk rows pour live again. The
+ * fixture row stays (the vanilla-only acceptance smoke, unique input, zero
+ * interference). Its citation prefix "task " is the walk-vs-fixture partition key.
+ * The revival pin + the still-dormant negative (the driver-gated FLUID rows, e.g. the
+ * RP nikolinealloy_molten crystallisationcrucible rows) live in
+ * {@link #theRevivedBarkChainRegistersUnderItsDomainPinAndTheFluidRowsStayDormant}.
  */
 public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBase {
 
@@ -200,6 +211,58 @@ public class GT6RecipeMapDataB2cWashRowsPourTest extends GTRecipesOfflineTestBas
 		}
 		assertTrue(tStripped.isEmpty(),
 				"the debarking wash strips the bark — an already-stripped log has no bark face to wash: " + tStripped);
+	}
+
+	/**
+	 * The revival pin + the dormant negative (task material-foreign-domain-registration,
+	 * ruling id1745-4): the bark chain's by-product pair registers under its own domain's
+	 * ABSENT pin (the item face is pin-invariant — GT6's own dust row, BINNIE attribution
+	 * only), while the still driver-gated FLUID face keeps its rows dormant (the
+	 * nikolinealloy_molten crystallisationcrucible rows stay on the loader's
+	 * unregistered-id face under an RP pin — the ruling's 真外域专属 half; the fluid
+	 * annotation ratchet itself lives in GT6ModDriverClearOutWaveTest).
+	 */
+	@Test
+	public void theRevivedBarkChainRegistersUnderItsDomainPinAndTheFluidRowsStayDormant() throws Exception {
+		JsonArray tRows = pourShipped();
+		// the shipped walk rows' by-product is exactly the Bark dust pair
+		String tBarkId = "gt6:" + GTMaterialItems.itemIdOf(OP.dust, MT.Bark);
+		assertEquals("gt6:dust_bark", tBarkId, "the Bark dust id composition (the JSON rows reference this id)");
+		long tBarkRows = 0;
+		for (JsonElement tElement : tRows) {
+			JsonObject tRow = tElement.getAsJsonObject();
+			if (isFixtureRow(tRow)) continue;
+			for (JsonElement tOut : tRow.getAsJsonArray("outputs"))
+				if (tBarkId.equals(tOut.getAsJsonObject().get("item").getAsString())) tBarkRows++;
+		}
+		assertEquals(CENSUS_WALK, tBarkRows, "every walk row carries the bark by-product");
+		assertEquals("BinnieCore", MT.MD.BINNIE.mID, "the attribution domain (MT.java:2263 put(MD.BINNIE))");
+		assertEquals(MT.MD.BINNIE.mID, GT6ForeignMaterialAtlas.domainOf(MT.Bark), "the atlas still answers the domain (fluid/block faces)");
+
+		try {
+			// the revival arm: under the full BINNIE ABSENT pin the bark dust STILL registers
+			GT6ModDrivers.setDriver(MT.MD.BINNIE.mID, GT6ModDrivers.DriverLevel.ABSENT);
+			assertFalse(GT6ModDrivers.isLoaded(MT.MD.BINNIE.mID), "pin precondition");
+			assertTrue(GTMaterialItems.registrationOrder().contains(new GTMaterialItems.PrefixMaterial(OP.dust, MT.Bark)),
+					"the bark dust pair survives its own domain's ABSENT pin (upstream MT.java:1243 dust() row, no mod axis on the item path — ruling id1745-4)");
+		} finally {
+			GT6ModDrivers.reset();
+		}
+
+		// the dormant negative: the RP-annotated fluid row keeps its domain under the pin — its
+		// registration core still shells it live, so the crystallisationcrucible rows consuming
+		// gt6:nikolinealloy_molten stay on the loader's unregistered-id face (true foreign sleep)
+		try {
+			GT6ModDrivers.setDriver(MT.MD.RP.mID, GT6ModDrivers.DriverLevel.ABSENT);
+			assertFalse(GT6ModDrivers.isLoaded(MT.MD.RP.mID), "pin precondition");
+			assertEquals(MT.MD.RP.mID, GT6ForeignMaterialAtlas.domainOf(MT.NikolineAlloy),
+					"the RP PRIMARY attribution still answers (the fluid/block faces' truth)");
+			GTMaterialItems.PrefixMaterial tNikolinePair = new GTMaterialItems.PrefixMaterial(OP.ingot, MT.NikolineAlloy);
+			assertTrue(GTMaterialItems.registrationOrder().contains(tNikolinePair),
+					"the item face stays pin-invariant (the alloy's GT6 ingot registers; only its annotated FLUID row stays dormant)");
+		} finally {
+			GT6ModDrivers.reset();
+		}
 	}
 
 	/**

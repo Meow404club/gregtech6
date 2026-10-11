@@ -1,8 +1,10 @@
 /**
  * Tests for task mdh-1-driver-core: the unified mod-driver core — the injection seam
- * contract (ADR-MDH3), the all-PRESENT default (ADR-MDH1), and the enumerate mount
- * mechanism proven on a fixture domain (no real domain data written; production lookup
- * stays the mdh-2 atlas slot).
+ * contract (ADR-MDH3), the all-PRESENT default (ADR-MDH1), and the gate mechanism proven on a
+ * fixture domain (no real domain data written; production lookup stays the mdh-2 atlas slot).
+ * Since ruling id1745-4 (task material-foreign-domain-registration) the ITEM face is
+ * pin-invariant — the gate's live consumers are the fluid/block/walk faces, so the fixture
+ * arm observes the gate itself, not the item universe.
  *
  * <p>The offline JVM has no FML, so {@link GT6ModDrivers#seedFromEnvironment()} must be a
  * no-op here (forge leg: ModList == null; neo leg: FML boots but the SEEDED_DOMAINS set is
@@ -63,28 +65,31 @@ public class GT6ModDriversTest {
     }
 
     @Test
-    public void absentFixtureDomainShrinksEnumerateAndResetRestores() {
+    public void absentFixtureDomainAnswersTheGateAndTheItemFaceStaysInert() {
         int tBaseline = GTMaterialItems.registrationOrder().size();
         long tIronRows = countMaterial(GTMaterialItems.registrationOrder(), FIXTURE_MATERIAL);
         assertTrue(tBaseline > 0 && tIronRows > 0, "fixture precondition: universe and iron family both populated");
 
         // Binding alone is inert — attribution without a pin changes nothing (ADR-MDH1).
         GT6ModDrivers.setMaterialDomain(tMaterial -> FIXTURE_MATERIAL.equals(tMaterial.mNameInternal) ? FIXTURE_DOMAIN : null);
-        assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "attribution alone must not shrink the universe");
+        assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "attribution alone must not change the universe");
 
         // The PRESENT state of the seam: explicit pin, no change.
         GT6ModDrivers.setDriver(FIXTURE_DOMAIN, GT6ModDrivers.DriverLevel.PRESENT);
-        assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "explicit PRESENT keeps the pair-for-pair universe");
+        assertTrue(GT6ModDrivers.isVisible(findMaterial(FIXTURE_MATERIAL)), "explicit PRESENT keeps the material visible");
 
-        // The ABSENT state: exactly the fixture family drops, the rest is untouched.
+        // The ABSENT state: the GATE answers the pin (the fluid/block faces' truth), while the
+        // ITEM face stays inert — ruling id1745-4 (task material-foreign-domain-registration)
+        // retired the driver from the item path (upstream PrefixItem generation has no mod axis).
         GT6ModDrivers.setDriver(FIXTURE_DOMAIN, GT6ModDrivers.DriverLevel.ABSENT);
-        List<GTMaterialItems.PrefixMaterial> tShrunk = GTMaterialItems.registrationOrder();
-        assertEquals(tBaseline - tIronRows, tShrunk.size(), "exactly the attributed family drops");
-        assertTrue(tShrunk.stream().noneMatch(tPair -> FIXTURE_MATERIAL.equals(tPair.material().mNameInternal)), "no attributed material survives");
         assertFalse(GT6ModDrivers.visibilityGate().test(findMaterial(FIXTURE_MATERIAL)), "the gate answers the pin");
+        assertFalse(GT6ModDrivers.isVisible(findMaterial(FIXTURE_MATERIAL)), "isVisible answers the pin");
+        assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "the item universe is pin-invariant (ruling id1745-4)");
+        assertEquals(tIronRows, countMaterial(GTMaterialItems.registrationOrder(), FIXTURE_MATERIAL), "the attributed family keeps every item pair");
 
-        // reset restores the pristine universe (the acceptance's ratchet-proof arm).
+        // reset restores the pristine gate (the acceptance's ratchet-proof arm).
         GT6ModDrivers.reset();
+        assertTrue(GT6ModDrivers.isVisible(findMaterial(FIXTURE_MATERIAL)), "reset clears the pin");
         assertEquals(tBaseline, GTMaterialItems.registrationOrder().size(), "reset restores the full universe");
     }
 

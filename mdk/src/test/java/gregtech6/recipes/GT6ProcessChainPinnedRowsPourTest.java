@@ -53,9 +53,10 @@ import net.minecraftforge.fluids.FluidStack;
  * statement (eUt 16 duration 16 — the ladder numbers carry over byte-identical);
  * sluice : the :385-420 ore-walk head row (crushed_lithium, water 900, 144t);
  * pressurewasher : the RESTORED p29 fixture row (coarse_dirt, water 100, 16t) — the
- * b2c-walk rows are all declared-out live on the unregistered bark dust (the
- * GT6ModDrivers seeded-JVM divergence; see the wash file head), so the fixture is the
- * map's one live row.
+ * b2c-walk rows WERE declared-out live on the unregistered bark dust (the
+ * GT6ModDrivers seeded-JVM divergence; see the wash file head) and REVIVED with task
+ * material-foreign-domain-registration (ruling id1745-4: the bark dust registers
+ * unconditionally), so the fixture now rides beside 28 live walk rows.
  *
  * <p>Hermetic form (the hermetic-pour-tests law): the generation reset participates
  * before the init/pour and the live seams are restored after each test. The stand-in
@@ -228,9 +229,11 @@ public class GT6ProcessChainPinnedRowsPourTest extends GTRecipesOfflineTestBase 
 		assertEquals(1, tOutputs.size(), "one dirt leg");
 		assertChanceFree(tOutputs, "pressurewasher fixture");
 
-		// the walk rows are declared-out LIVE (gt6:dust_bark never registers in a seeded JVM
-		// — the BINNIE-domain foreign material, GT6ModDrivers.seedFromEnvironment) — the
-		// fixture row is the map's one live row, so the FOUND half must answer for IT.
+		// the walk rows WERE declared-out LIVE (gt6:dust_bark never registered in a seeded JVM
+		// — the BINNIE-domain foreign material, GT6ModDrivers.seedFromEnvironment) and REVIVED
+		// with task material-foreign-domain-registration (ruling id1745-4: the bark dust
+		// registers unconditionally) — the fixture row keeps its unique coarse_dirt input,
+		// so the FOUND half still answers for IT alone.
 		RecipeMap tMap = GT6RecipeMapJsonLoader.mapFor("pressurewasher");
 		Recipe tHit = tMap.findRecipe(null, 64, ItemStack.EMPTY,
 				new FluidStack[] {new FluidStack(Fluids.WATER, 1000)}, new ItemStack(Items.COARSE_DIRT));
