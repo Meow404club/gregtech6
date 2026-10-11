@@ -251,17 +251,20 @@ public final class GT6LootTables extends LootTableProvider {
 
     /**
      * The block list this provider owns: exactly the material prefix block array (the census
-     * walk order), minus the convergence skip (task parse-errors-registration-convergence) —
-     * loot tables have no load-time condition mechanism (ForgeHooks.loadLootTable deserializes
-     * straight into LootTable), so a block whose pair is seed-hidden on a bare install ships no
-     * table at all (the upstream bare shape: no item, no loot row); getKnownBlocks narrows to
-     * the same list, so the missing-table validation stays aligned.
+     * walk order). Formerly the walk carried the convergence skip (task
+     * parse-errors-registration-convergence) — loot tables have no load-time condition
+     * mechanism (ForgeHooks.loadLootTable deserializes straight into LootTable), so a block
+     * whose pair was seed-hidden on a bare install shipped no table at all. That premise is
+     * dead since task material-block-face-revival (the id1745-4 block-face extension): the
+     * storage-block registration walk is driver-free (Loader_PrefixBlocks.java:40-46 +
+     * PrefixBlock.java:238/243 — no mod axis), so every block of the array registers on every
+     * install and every one of them needs its self-drop table (a registered block without a
+     * table breaks into nothing and logs the missing-table error). getKnownBlocks narrows to
+     * the same array, so the missing-table validation stays aligned; machines/barrels/pipes
+     * are other cards' surfaces and must not be validated here.
      */
     public static List<Block> lootBlocks() {
-        List<Block> rBlocks = new ArrayList<>();
-        for (Block tBlock : GTMaterialBlocks.blockArray())
-            if (!(tBlock instanceof GTMaterialPrefixBlock tMat) || GT6ForeignRowConvergence.gatingDomain(tMat.material) == null) rBlocks.add(tBlock);
-        return rBlocks;
+        return new ArrayList<>(java.util.Arrays.asList(GTMaterialBlocks.blockArray()));
     }
 
     /**
