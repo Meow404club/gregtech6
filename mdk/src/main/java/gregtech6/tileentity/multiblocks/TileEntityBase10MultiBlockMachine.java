@@ -899,6 +899,18 @@ public abstract class TileEntityBase10MultiBlockMachine extends TileEntityBase10
 		return recipes().mOutputItemsCount;
 	}
 
+	/**
+	 * The live input truth (the {@code GTLargeMachineBlockEntity} :724 form lifted to the
+	 * family base, task machine-openface-gap): the Host default 1 mis-sized the multi-input
+	 * maps — the implosion 3/3 or fusion 2/6 shape seated ONE input and bound the outputs
+	 * over the remaining input slots. The COKE_OVEN map (1 input) and the tower rows (1)
+	 * are zero-delta; the large machines shadow this with the identical body.
+	 */
+	@Override
+	public int getInputSlotCount() {
+		return recipes().mInputItemsCount;
+	}
+
 	@Override
 	public boolean isSuccessful() {
 		return mSuccessful;

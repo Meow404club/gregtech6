@@ -114,8 +114,13 @@ import gregtech6.registry.GTMultiBlocks;
  * item family has no port identity (the W3 absent-input pool, the implosion/graagg/
  * massfab CUT precedent); the ledger lives on the GTMultiBlocks registration comment.
  *
- * <p>GUI face: none — the controller block carries no use-face (the W2 menu-null form,
- * the massfab shape); the recipe walk is RCON/data-visible through the block NBT.
+ * <p>GUI face (task machine-openface-gap — the sheet-purge debt closing): the panel is
+ * the family {@link GTBasicMachineMUI} delegation (the base buildUI); the open rides
+ * {@code GT6MuiMachine.tryOpen} dispatched by {@code GTFusionReactorBlock.use} (the
+ * upstream open is MultiTileEntityBasicMachine.onBlockActivated3 :483-486 inherited
+ * through TileEntityBase10MultiBlockMachine). The display banks are the live tanks
+ * below — TWO inputs + SIX outputs (the RM.java:146 row), the upstream :465-466
+ * FL.display face.
  */
 public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 
@@ -202,6 +207,21 @@ public class TileEntityFusionReactor extends TileEntityBase10MultiBlockMachine {
 			mRecipes = tMap;
 		}
 		return tMap;
+	}
+
+	/**
+	 * The :267/:268 display banks (task machine-openface-gap) — the live tanks: TWO inputs
+	 * + SIX outputs, the RM.java:146 row the ctor sized (the upstream :465-466 FL.display
+	 * face over mTanksInput/mTanksOutput).
+	 */
+	@Override
+	public FluidTankGT[] getFluidInputTanks() {
+		return mTanksInput;
+	}
+
+	@Override
+	public FluidTankGT[] getFluidOutputTanks() {
+		return mTanksOutput;
 	}
 
 	// ---------------------------------------------------------------------------
