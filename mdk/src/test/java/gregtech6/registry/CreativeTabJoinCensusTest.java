@@ -50,7 +50,11 @@ import gregtech6.items.GT6LaserGas;
  * into MACHINES_TAB (the GTBarrels:257 pooling precedent). ERRATUM (task chests-tab-rehome):
  * the "Chests" 32745 family left the pool — upstream gives it its own tab and the port now
  * keeps that shape ({@code gt6:chests}, GT6ChestsCreativeTabTest); the mc-A rows are no
- * longer part of this census (the batch total 575 → 455).
+ * longer part of this census (the batch total 575 → 455). ERRATUM (task
+ * storage-tabs-buckets-safes): the safe rows left the pool for their own upstream-category
+ * tab ({@code gt6:safes}, tab id 2010, Loader :134-135; GT6SafesCreativeTabTest) — the
+ * batch total 455 → 451, and the static-storage term rides the live machines walk
+ * (ROWS minus {@link GT6StaticStorages#safeRows()}).
  *
  * <p>The offline assertion surface follows the GTWiresCreativeTabTest discipline: the
  * tab and the items are not resolvable in this bootstrapped-and-frozen JVM, but map
@@ -143,11 +147,19 @@ public class CreativeTabJoinCensusTest {
 		assertEquals(24, GT6Attachments.ITEMS_BY_PATH.size());
 	}
 
-	/** The 148 static storages (2 metals x 4 kinds + 10 planks x 2 wooden kinds + the 60-material metal shelf/crate ladders, task material-mc-b-storage-mass-shelf). */
+	/**
+	 * The 148 static-storage rows; the MACHINES_TAB join covers 144 of them since task
+	 * storage-tabs-buckets-safes — the 4 SAFE rows (two kinds x Bronze/Steel) ride the
+	 * dedicated {@code gt6:safes} tab (upstream "Safes" 2010, Loader
+	 * :134-135; {@link GT6StaticStorages#SAFES_TAB}, GT6SafesCreativeTabTest).
+	 */
 	@Test
 	public void staticStoragesJoinOneFortyEight() {
 		assertEquals(148, GT6StaticStorages.ROWS.size());
 		assertEquals(148, GT6StaticStorages.ITEMS_BY_PATH.size());
+		assertEquals(4, GT6StaticStorages.safeRows().size());
+		assertEquals(144, GT6StaticStorages.ROWS.size() - GT6StaticStorages.safeRows().size(),
+				"the machines-tab pool = the family minus the rehomed safes");
 	}
 
 	/** The 120 hoppers (the 60-material metalset loop :186-245 x the pair :145-146). */
@@ -206,9 +218,9 @@ public class CreativeTabJoinCensusTest {
 	// the census total + the join-handler presence
 	// ---------------------------------------------------------------------------
 
-	/** The 455-item total — the 575 baseline MINUS the 120 rehomed chests (task chests-tab-rehome:
-	 * the family left MACHINES_TAB for its own gt6:chests tab; history: 563 = 323 p38 + 120 mc-A
-	 * chests + 120 mc-B, +12 mc-F nozzles = 575, −120 mc-A rehome = 455). */
+	/** The 451-item total — the 455 baseline MINUS the 4 rehomed safes (task storage-tabs-buckets-safes:
+	 * the safe rows left MACHINES_TAB for their own gt6:safes tab; history: 563 = 323 p38 + 120 mc-A
+	 * chests + 120 mc-B, +12 mc-F nozzles = 575, −120 mc-A rehome = 455, −4 safes rehome = 451). */
 	@Test
 	public void theBatchTotalIsFourHundredFiftyFive() {
 		int tTotal = GT6ElectricTransformers.ITEMS_BY_PATH.size()
@@ -222,7 +234,7 @@ public class CreativeTabJoinCensusTest {
 				+ GT6MagicAbsorbers.MAGIC_ABSORBER_ITEMS_BY_PATH.size()
 				+ GT6Sensors.ITEMS_BY_PATH.size()
 				+ GT6Attachments.ITEMS_BY_PATH.size()
-				+ GT6StaticStorages.ITEMS_BY_PATH.size()
+				+ GT6StaticStorages.ROWS.size() - GT6StaticStorages.safeRows().size()
 				+ GT6Hoppers.ITEMS_BY_PATH.size()
 				+ itemFields(GT6ElectricDynamos.class).size()
 				+ itemFields(GT6FluxDynamos.class).size()
@@ -230,9 +242,10 @@ public class CreativeTabJoinCensusTest {
 				+ itemFields(GT6FeBatteries.class).size()
 				+ itemFields(GT6LaserGas.class).size()
 				+ GT6Emitters.ITEMS_BY_PATH.size();
-		// 455 = 575 (the mc-F peak) − 120 (the mc-A chest rehome to gt6:chests, task
-		// chests-tab-rehome — the count follows the live walk, only rises with the batch).
-		assertEquals(455, tTotal, "575 (323 p38 + 120 mc-B + 12 mc-F + 120 mc-A) − 120 mc-A rehome (chests-tab-rehome)");
+		// 451 = 575 (the mc-F peak) − 120 (the mc-A chest rehome, task chests-tab-rehome)
+		// − 4 (the safes rehome, task storage-tabs-buckets-safes — the count follows the live
+		// walk, only rises with the batch).
+		assertEquals(451, tTotal, "575 (323 p38 + 120 mc-B + 12 mc-F + 120 mc-A) − 120 mc-A rehome (chests-tab-rehome) − 4 safes rehome (storage-tabs-buckets-safes)");
 	}
 
 	/**

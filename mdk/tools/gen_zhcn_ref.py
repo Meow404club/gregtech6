@@ -201,6 +201,10 @@ HAND_TRANSLATIONS = {
     "gt6.tagprefix.tool_head_raw_universal_spade": ("%s万用铲头毛坯", "hand"),
     # ---- special creative tabs (upstream MTE-registry categories + port tabs, no dump face) ----
     "itemGroup.gt6.chests": ("箱子", "hand"),
+    # task storage-tabs-buckets-safes — the safes tab (the chests-tab-rehome shape): the
+    # member rows are the 保险箱 family (safe_mechanical_/safe_keylocked_ zh rows), the
+    # upstream category label "Safes" (Loader :134-135, tab id 2010) has no dump face
+    "itemGroup.gt6.safes": ("保险箱", "hand"),
     "itemGroup.gt6.machines": ("机器", "hand"),
     # task p38-tabfix-d-ruling: the written-books tab (the port-ruling tab, the user
     # ruling 2026-09-24 — the manuals should be easy for players to get; no dump face)
