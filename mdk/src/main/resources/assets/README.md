@@ -10159,10 +10159,14 @@ MultiTileEntityMeasuringPot.java:113-121), plus the raw item icon (meta 997):
 - `measuring_pot_overlay_bottom.png`  `9530007bcf67b1bcd7246c12f3cc93d6c4794547b15038bcb45abb7418ac231f`
 - `item/clay_measuring_pot.png`       `9fdced840ab17174e98ad5c3efcc02e18911aa24cd79d504ef6308fbccbaf105` (upstream `gt.multiitem.randomtools/997.png`)
 
-Valve borrows (24) — upstream
+Valve borrows (19) — upstream
 `machines/multiblockmains/<family>/<layer>/<face>.png` flattens to
 `tank_valves/<family>_<layer>_<face>.png`, family = tankwood (the one flammable row)
-/ tankmetal (the 24 metal rows):
+/ tankmetal (the 24 metal rows). Task overlay-dedupe-block-leg retired the five
+transparent overlay tiles (tankwood overlay bottom/top, tankmetal overlay
+bottom/side/top) onto the `item/overlay/empty` canonical — digest retired with the
+file; the surviving non-front overlay rows ground through their byte-identical
+`block/overlay/` content-group canonicals:
 
 - `tank_valves/tankwood_colored_bottom.png`        `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
 - `tank_valves/tankwood_colored_side.png`          `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
@@ -10170,9 +10174,7 @@ Valve borrows (24) — upstream
 - `tank_valves/tankwood_colored_front_bottom.png`  `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
 - `tank_valves/tankwood_colored_front_side.png`    `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
 - `tank_valves/tankwood_colored_front_top.png`     `84fbf7592063f4e3a573e5f16380a8a1036762efa15fd8cefb5c93b4983b85ee`
-- `tank_valves/tankwood_overlay_bottom.png`        `42492b4a8a79c6a7c1c340b2a3a6628db0fecb68237aa2a02a75482517b61e0e`
 - `tank_valves/tankwood_overlay_side.png`          `c95714eaee8b875393a7f5b22ce71d9e5b6a21596d71810ada3873b96f95609c`
-- `tank_valves/tankwood_overlay_top.png`           `42492b4a8a79c6a7c1c340b2a3a6628db0fecb68237aa2a02a75482517b61e0e`
 - `tank_valves/tankwood_overlay_front_bottom.png`  `7cb53218fd3a8a9e8dfe1eb08e29990993c58e1c8ff0f0e517b65c1d264161da`
 - `tank_valves/tankwood_overlay_front_side.png`    `50d66eb5cb4a4aad162981044ddac3b28260ce8b839159f8ec771a43fca3429f`
 - `tank_valves/tankwood_overlay_front_top.png`     `84dc0ec51853d324af69084abbb34a4795c8ab265d578d4385bfc7240f3ae67f`
