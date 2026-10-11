@@ -1,8 +1,12 @@
 /**
- * Tests for task mdh-6-family-gate: the six remaining registration faces join the mod
- * driver gate — the material BLOCK enumeration (the visibilityGate mirror of
- * GTMaterialItems.enumerate) plus the five table-driven families (metal drums, capsule
- * cells, hoppers, fluid pipes, crafting tables), each carrying a per-row
+ * Tests for task mdh-6-family-gate, RE-SIGNED by task material-block-face-revival (the
+ * id1745-4 block-face extension): of the six registration faces this card joined to the mod
+ * driver, the material BLOCK enumeration has left it again — upstream block generation has no
+ * mod axis (Loader_PrefixBlocks.java:40-46 constructs every storage PrefixBlock_ once over the
+ * full MATERIAL_ARRAY under owner MD.GT; the only per-material filter is the item face's own
+ * {@code isGeneratingItem} criterion, PrefixBlock.java:238/243) — so the block enumeration is
+ * pin-invariant (the revival arms below) and the driver keeps the five table-driven families
+ * (metal drums, capsule cells, hoppers, fluid pipes, crafting tables), each carrying a per-row
  * {@code driverDomain} decision consulted in its registration walk (the GTFluids spec-row
  * column precedent, because every family LIST freezes at class-init — strictly before
  * {@code MT.init()} fills the material fields, so the columns are Strings keyed by slug,
@@ -157,22 +161,59 @@ public class GT6ModDriverFamilyGateTest {
         }
     }
 
-    // ---- the block-face kept 对账: the ABSENT pin drops exactly the attributed pairs ----
+    // ---- the block-face revival (task material-block-face-revival, the id1745-4 extension):
+    // the enumeration is pin-invariant — an ABSENT domain never drops a GT6-generated block ----
+
+    /**
+     * The two yardsticks (task material-block-face-revival). The WALK face: 144
+     * atlas-attributed blockSolid pairs in the enumeration. The LIVE face: the cutter RCON
+     * group skipped 129 distinct {@code gt6:block_solid_*} ids x 4 legs = 516 (the
+     * gt6_rs_session_1201-forge_buzzsaw+centrifuge+press account) while the storage blocks sat
+     * behind the retired mdh-6 gate. The 15-pair delta (butter/chocolate/fish x3/meat x2/
+     * salted_butter/tofu/peat x2/HSS x3/netherized_diamond) takes non-storage-block cutter
+     * paths live — the walk face is the stable offline ledger, the 129 the RCON acceptance.
+     */
+    private static final int BLOCK_SOLID_VICTIMS = 144;
 
     @Test
-    public void absentPinDropsExactlyTheAttributedBlockPairs() {
+    public void blockSolidVictimCensusIsTheRconYardstick() {
+        long tVictims = GTMaterialBlocks.enumerate().kept().stream()
+                .filter(p -> p.prefix() == gregapi.data.OP.blockSolid)
+                .filter(p -> GT6ForeignMaterialAtlas.domainOf(p.material()) != null)
+                .count();
+        assertEquals(BLOCK_SOLID_VICTIMS, tVictims,
+                "atlas-attributed blockSolid pairs (walk face 144; the live cutter skip yardstick was 129 x 4 legs = 516)");
+    }
+
+    @Test
+    public void blockEnumerationIsPinInvariantTheVictimsRevive() {
         List<GTMaterialItems.PrefixMaterial> tPre = GTMaterialBlocks.enumerate().kept();
         for (String tDomain : GT6ForeignMaterialAtlas.seedableDomains()) {
-            long tAttributed = tPre.stream().filter(p -> tDomain.equals(GT6ForeignMaterialAtlas.domainOf(p.material()))).count();
             GT6ModDrivers.setDriver(tDomain, DriverLevel.ABSENT);
             try {
-                assertEquals(tPre.size() - tAttributed, GTMaterialBlocks.enumerate().kept().size(),
-                        "block pairs kept under " + tDomain + " ABSENT (attributed: " + tAttributed + ")");
+                assertEquals(tPre.size(), GTMaterialBlocks.enumerate().kept().size(),
+                        "block pairs kept under " + tDomain + " ABSENT (the enumeration is driver-free, ruling id1745-4)");
             } finally {
                 GT6ModDrivers.reset();
             }
         }
+        // the named revival pin (the item face's Bark shape, block face): the Metallurgy-domain
+        // adamantine storage block survives its own domain's ABSENT pin — upstream registers it
+        // unconditionally (Loader_PrefixBlocks.java:46 walks the full array)
+        GT6ModDrivers.setDriver(MT.MD.MET.mID, DriverLevel.ABSENT);
+        try {
+            assertFalse(GT6ModDrivers.isLoaded(MT.MD.MET.mID), "pin precondition");
+            assertTrue(GTMaterialBlocks.registrationOrder().contains(
+                            new GTMaterialItems.PrefixMaterial(gregapi.data.OP.blockSolid, MT.Adamantine)),
+                    "the adamantine blockSolid pair survives its own domain's ABSENT pin (no mod axis on the block path)");
+        } finally {
+            GT6ModDrivers.reset();
+        }
     }
+
+    // ---- the dormant negative arm (真外域专属) is the five table-driven families: pinned by
+    // absentPinFlipsExactlyTheAttributedFamilyRows + the named AV/DE arms below — the block
+    // ENUMERATION is the only face the revival freed. ----
 
     // ---- the named high-value arms: AV + DE (the card's headline domains) ----
 

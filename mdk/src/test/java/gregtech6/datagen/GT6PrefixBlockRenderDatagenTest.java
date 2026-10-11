@@ -193,22 +193,21 @@ class GT6PrefixBlockRenderDatagenTest {
 
     /**
      * The loot count law: the provider's generate() maps dropSelf over
-     * {@link GT6LootTables#lootBlocks()} = the block array MINUS the convergence skip (task
-     * parse-errors-registration-convergence: loot has no load-time condition mechanism, a
-     * seed-hidden pair ships no table — the upstream bare shape). Offline the registries
-     * never fire, so this pins the enumeration side of the equality (both empty, 0 == 0);
-     * the neo junit-fml boot registers live, so the subtracted form is the executed law
-     * there (3777 pairs − the atlas-gated ones). The generated-file side is gated by
+     * {@link GT6LootTables#lootBlocks()} = the FULL block array. The convergence skip this arm
+     * once pinned (task parse-errors-registration-convergence: a seed-hidden pair shipped no
+     * table) is lifted by task material-block-face-revival — the block enumeration is
+     * driver-free (ruling id1745-4, Loader_PrefixBlocks.java:40-46 + PrefixBlock.java:238/243),
+     * so every array block registers on every install and every one of them needs its
+     * self-drop table. Offline the registries never fire, so this pins the enumeration side of
+     * the equality (both empty, 0 == 0); the neo junit-fml boot registers live, so the full
+     * identity is the executed law there (3777 pairs). The generated-file side is gated by
      * runData + the GT6ForeignRowConvergenceTest loot walk.
      */
     @Test
     void lootTableCountEqualsBlockCountByConstruction() {
         assertEquals(PINNED_TOTAL, GTMaterialBlocks.registrationOrder().size(), "the census walk the blocks and tables both derive from");
-        long tGated = java.util.Arrays.stream(GTMaterialBlocks.blockArray())
-                .filter(tBlock -> tBlock instanceof gregtech6.block.material.GTMaterialPrefixBlock tMat
-                        && GT6ForeignRowConvergence.gatingDomain(tMat.material) != null).count();
-        assertEquals(GTMaterialBlocks.blockArray().length - tGated, GT6LootTables.lootBlocks().size(),
-                "lootBlocks is the block array minus the gated pairs (the convergence skip face)");
+        assertEquals(GTMaterialBlocks.blockArray().length, GT6LootTables.lootBlocks().size(),
+                "lootBlocks is the full block array (the convergence skip face is lifted with the driver-free block face)");
         assertEquals("block_ingot_coal", GTMaterialItems.itemIdOf(OP.blockIngot, MT.Coal),
                 "the vanilla default table location: gt6:blocks/block_ingot_coal (Block.getLootTable default, zero block code)");
     }
