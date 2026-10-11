@@ -82,7 +82,7 @@ steps = [phase("A: the KU pulse-cycle ladder — the PARALLEL_4_32 columns live,
 
 for tier, pos, path, apples, packet, parallel, ticks in TIERS:
     steps += [
-        phase(f"T{tier}: parallel {parallel}, budget 16x16x{parallel} at packet {packet} — outputs x{parallel} + {parallel*50} L"),
+        phase(f"T{tier}: parallel {parallel}, budget 16x16x{parallel} at packet {packet} — outputs x{parallel} + {parallel*100} L"),
         Step(f"setblock {pos} gt6:{path}", expect="Changed the block", sleep=1.0),
         Step(f"gt6machine wiremill check {pos}", expect=f"parallel={parallel} parallelDuration=true"),
         Step(feed_merge(pos, apples)["1.20.1"], expect="Modified block data", node_cmds=feed_merge(pos, apples)),
