@@ -66,6 +66,13 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
  *     {@code dev/emi/emi} leaks into the JEI leg.</li>
  * </ul>
  *
+ * <p>The EMI strip parity (task mattree-jei-leg-parity, the rework declaration's
+ * 「行为语义未动」 interaction face pulled even): the click-track slider rides the shared
+ * seat constants ({@code sliderTrackClickJumpsTheZoomLikeTheNavTable}) and the sleeping
+ * cells read the viewport's live fit floor ({@code zoomOutCellSleepsAtTheLiveFitFloor} —
+ * the static {@code MIN_SCALE} reading left the zoom-out cell falsely awake above a small
+ * tree's fit-pose floor, a frozen no-op behind an awake face).</p>
+ *
  * <p>Offline by construction: no display build, no registry, no bootstrap — the nav face
  * is pure viewport state plus JEI api value types (pure JUnit, runs in any order).
  */
@@ -130,11 +137,16 @@ public class GT6MaterialTreeJeiNavTest {
 		assertEquals(MaterialTreeDisplay.WIDTH, tArea.width(), "area width");
 		assertEquals(MaterialTreeDisplay.HEIGHT + GT6MaterialTreeEmiRecipe.CONTROL_STRIP_H, tArea.height(), "area height");
 
-		// three hover hints on the EMI-parity button cells (12px cells, 4px gaps) + the
-		// S4 corner cell's hint (the union's fourth area)
-		assertEquals(4, tExtras.mTooltipAreas.size(), "zoom in, zoom out, reset + open full tree");
-		assertEquals(gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_X, tExtras.mTooltipAreas.get(3)[0], "corner cell x");
-		assertEquals(gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_Y, tExtras.mTooltipAreas.get(3)[1], "corner cell y");
+		// three hover hints on the EMI-parity button cells (12px cells, 4px gaps), the
+		// slider's hint (task mattree-jei-leg-parity: the EMI twin's fifth hint on the shared
+		// seat) and the S4 corner cell's hint
+		assertEquals(5, tExtras.mTooltipAreas.size(), "zoom in, zoom out, reset, slider + open full tree");
+		assertEquals(GT6MaterialTreeEmiRecipe.SLIDER_X, tExtras.mTooltipAreas.get(3)[0], "slider hint x (the shared seat)");
+		assertEquals(GT6MaterialTreeEmiRecipe.SLIDER_Y, tExtras.mTooltipAreas.get(3)[1], "slider hint y");
+		assertEquals(GT6MaterialTreeEmiRecipe.SLIDER_W, tExtras.mTooltipAreas.get(3)[2], "slider hint width");
+		assertEquals(GT6MaterialTreeEmiRecipe.SLIDER_H, tExtras.mTooltipAreas.get(3)[3], "slider hint height");
+		assertEquals(gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_X, tExtras.mTooltipAreas.get(4)[0], "corner cell x");
+		assertEquals(gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_Y, tExtras.mTooltipAreas.get(4)[1], "corner cell y");
 		for (int i = 0; i < 3; i++) {
 			int[] tRect = tExtras.mTooltipAreas.get(i);
 			assertEquals(GT6MaterialTreeEmiRecipe.BUTTON_X0 + i * GT6MaterialTreeEmiRecipe.BUTTON_PITCH, tRect[0],
@@ -188,6 +200,74 @@ public class GT6MaterialTreeJeiNavTest {
 	}
 
 	// ------------------------------------------------------------------
+	// the EMI strip parity (task mattree-jei-leg-parity): slider + live floor
+	// ------------------------------------------------------------------
+
+	/**
+	 * The click-track slider (the EMI twin's fifth strip face, G1): a track click JUMPS the
+	 * zoom to the clicked level — byte-equal to the Nav table's
+	 * {@link GT6MaterialTreeNav#zoomToFraction} at the shared anchor (the mirror-viewport
+	 * equality shape of the wheel pin).
+	 */
+	@Test
+	public void sliderTrackClickJumpsTheZoomLikeTheNavTable() {
+		GT6MaterialTreeJeiNavWidget tNav = new GT6MaterialTreeJeiNavWidget(new MaterialTreeViewport());
+		MaterialTreeViewport tView = tNav.mView;
+		int tMidX = GT6MaterialTreeEmiRecipe.SLIDER_X + GT6MaterialTreeEmiRecipe.SLIDER_W / 2;
+		int tTrackY = GT6MaterialTreeEmiRecipe.SLIDER_Y + GT6MaterialTreeEmiRecipe.SLIDER_H / 2;
+
+		// mid-track = the range midpoint (MIN + f*(MAX-MIN) = 2.5 on the default 1..4 range)
+		assertTrue(tNav.mouseClicked(tMidX, tTrackY, 0), "the track click is consumed");
+		MaterialTreeViewport tMirror = new MaterialTreeViewport();
+		GT6MaterialTreeNav.zoomToFraction(tMirror, 0.5, tCx, tCy);
+		assertEquals(2.5, tView.scale(), EPSILON);
+		assertEquals(tMirror.scale(), tView.scale(), EPSILON);
+		assertEquals(tMirror.offsetX(), tView.offsetX(), EPSILON);
+		assertEquals(tMirror.offsetY(), tView.offsetY(), EPSILON);
+
+		// one px short of the right end: the honest in-track fraction (137/138), byte-equal
+		// to the Nav table at that fraction — the true ceiling stays a track-edge miss
+		assertTrue(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X + GT6MaterialTreeEmiRecipe.SLIDER_W - 1, tTrackY, 0));
+		MaterialTreeViewport tEndMirror = new MaterialTreeViewport();
+		GT6MaterialTreeNav.zoomToFraction(tEndMirror,
+				(GT6MaterialTreeEmiRecipe.SLIDER_W - 1.0) / GT6MaterialTreeEmiRecipe.SLIDER_W, tCx, tCy);
+		assertEquals(tEndMirror.scale(), tView.scale(), EPSILON, "the end click is the Nav table's answer at its fraction");
+		assertTrue(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X, tTrackY, 0), "the left-end click is consumed");
+		assertEquals(MaterialTreeViewport.MIN_SCALE, tView.scale(), EPSILON, "the floor click lands MIN");
+		// reset clears the pose (the strip's reset cell, unchanged)
+		assertTrue(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 2 * GT6MaterialTreeEmiRecipe.BUTTON_PITCH + 1,
+				GT6MaterialTreeEmiRecipe.BUTTON_Y + 1, 0));
+		assertEquals(1.0, tView.scale(), EPSILON);
+	}
+
+	/**
+	 * The sleeping cells read the LIVE fit floor (G2, the false-awake cure): this leg's
+	 * pane is the nominal frame over the real plan's content, so a small tree's fit sits
+	 * ABOVE the static legacy floor — zoom-out must SLEEP at that fit (the static reading
+	 * left the cell awake over a frozen no-op). Half-sized content in the full pane: fit =
+	 * min(202/101, 206/103) = 2.0.
+	 */
+	@Test
+	public void zoomOutCellSleepsAtTheLiveFitFloor() {
+		MaterialTreeViewport tView = new MaterialTreeViewport(101, 103, MaterialTreeDisplay.WIDTH, MaterialTreeDisplay.HEIGHT);
+		GT6MaterialTreeJeiNavWidget tNav = new GT6MaterialTreeJeiNavWidget(tView);
+		assertEquals(2.0, tView.minScale(), EPSILON, "the fixture's fit floor");
+		assertEquals(2.0, tView.scale(), EPSILON, "a fresh viewport IS the fit pose");
+
+		// at the fit pose zoom-out sleeps even though the scale is above the STATIC floor
+		assertTrue(tView.scale() > MaterialTreeViewport.MIN_SCALE, "the static reading would call it awake");
+		assertTrue(tNav.isSleeping(1), "the zoom-out cell sleeps at the live floor");
+		// zoom-in wakes it and rides to the sleeping ceiling
+		assertFalse(tNav.isSleeping(0));
+		assertTrue(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 1, GT6MaterialTreeEmiRecipe.BUTTON_Y + 1, 0));
+		assertEquals(MaterialTreeViewport.MAX_SCALE, tView.scale(), EPSILON);
+		assertTrue(tNav.isSleeping(0), "the zoom-in cell sleeps at the ceiling");
+		assertFalse(tNav.isSleeping(1));
+		// reset never sleeps (the third cell, unchanged)
+		assertFalse(tNav.isSleeping(2));
+	}
+
+	// ------------------------------------------------------------------
 	// acceptance ①: canvas keyboard -> viewport state
 	// ------------------------------------------------------------------
 
@@ -235,6 +315,12 @@ public class GT6MaterialTreeJeiNavTest {
 		assertFalse(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.BUTTON_X0 + 1, GT6MaterialTreeEmiRecipe.BUTTON_Y + 1, 1),
 				"only the left button drives the strip");
 		assertEquals(1.0, tView.scale(), EPSILON);
+		// the strip band's dead gaps fall through (between the cells and the slider track)
+		assertFalse(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X - 2, GT6MaterialTreeEmiRecipe.BUTTON_Y + 1, 0),
+				"the gap is nobody's face");
+		// and the slider track answers the left hand only
+		assertFalse(tNav.mouseClicked(GT6MaterialTreeEmiRecipe.SLIDER_X + 1, GT6MaterialTreeEmiRecipe.SLIDER_Y + 1, 1),
+				"a right-click on the track is unconsumed");
 		// typing keys and controls stay with JEI (search etc.)
 		assertFalse(tNav.keyPressed(100, 100, 65, 0, 0), "A falls through");
 		assertFalse(tNav.keyPressed(100, 100, 256, 0, 0), "ESC falls through");
