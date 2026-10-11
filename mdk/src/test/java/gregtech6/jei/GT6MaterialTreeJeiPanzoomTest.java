@@ -103,6 +103,14 @@ import net.minecraft.world.item.ItemStack;
  * <li><b>apiSurface guard</b>: the new classes reference only {@code mezz/jei/api/}.</li>
  * </ul>
  *
+ * <p><b>The EMI strip parity pins</b> (task mattree-jei-leg-parity, the rework declaration's
+ * 「行为语义未动」 interaction face): the middle hand pans like the left
+ * ({@code middleHandDragsPanLikeTheLeft}, the EMI canvas's drag buttons) and the S4 corner
+ * cell's clicks yield to the fullscreen entry's listener
+ * ({@code cornerCellClicksYieldToTheScreenButton} — the add-order contract's JEI analog,
+ * the mattree-open-fix overlap shape). The strip-side pins (slider, live-floor sleeping)
+ * live in {@code GT6MaterialTreeJeiNavTest}.</p>
+ *
  * <p>Offline with the display-test pour (the MaterialTreeDisplayTest fixture shape: the
  * probe-item resolver armed into the three ore-chain loaders + the Sifter walk, and a probe
  * machine supplier so the RENDER_ONLY bucket is populated offline).
@@ -368,8 +376,28 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 		// the off-canvas-release face: the handler carries NO drag state — a fresh event
 		// stream pans from wherever the pose is, nothing sticks
 		InputConstants.Key tRight = InputConstants.Type.MOUSE.getOrCreate(1);
-		assertFalse(tHandler.handleMouseDragged(0, 0, tRight, 50.0, 50.0), "only the left hand pans");
+		assertFalse(tHandler.handleMouseDragged(0, 0, tRight, 50.0, 50.0), "the right hand does not pan");
 		assertFalse(tHandler.handleMouseDragged(0, 0, null, 50.0, 50.0), "a null key is unconsumed");
+	}
+
+	/**
+	 * The middle hand pans (task mattree-jei-leg-parity G3, the EMI canvas's drag buttons —
+	 * {@code GT6MaterialTreeNavWidget#mouseClicked} opens its gesture on buttons 0 AND 2):
+	 * JEI delivers drags for whichever key is pressed with no press-consumption
+	 * prerequisite (RecipeGuiLayouts.mouseDragged: layout hovered → handleMouseDragged), so
+	 * the middle face rides the same stateless delta pan.
+	 */
+	@Test
+	public void middleHandDragsPanLikeTheLeft() {
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		GT6MaterialTreeJeiCanvasHandler tHandler = new GT6MaterialTreeJeiCanvasHandler(tView, new GT6MaterialTreeJeiTreeWidget(null, tView, null));
+		InputConstants.Key tMiddle = InputConstants.Type.MOUSE.getOrCreate(2); // GLFW_MOUSE_BUTTON_MIDDLE
+
+		GT6MaterialTreeNav.wheelZoom(tView, 1.0, MaterialTreeDisplay.WIDTH / 2.0, MaterialTreeDisplay.HEIGHT / 2.0);
+		double tX = tView.offsetX(), tY = tView.offsetY();
+		assertTrue(tHandler.handleMouseDragged(0, 0, tMiddle, 7.0, -5.0), "the middle-hand drag is consumed");
+		assertEquals(tX + 7.0, tView.offsetX(), EPSILON, "the middle drag is the same clamped pan");
+		assertEquals(tY - 5.0, tView.offsetY(), EPSILON);
 	}
 
 	// ------------------------------------------------------------------
@@ -431,6 +459,38 @@ public class GT6MaterialTreeJeiPanzoomTest extends GTRecipesOfflineTestBase {
 		// non-mouse inputs stay with JEI (page flip, transfer)
 		assertFalse(tHandler.handleInput(tNX, tNY, keyInput()), "keys are not the canvas handler's face");
 		assertEquals(1, tJumped.size());
+	}
+
+	/**
+	 * The S4 corner yield (task mattree-jei-leg-parity G4, the add-order contract's JEI
+	 * analog): JEI routes input handlers BEFORE the gui event listeners, so without the
+	 * yield a tree cell under the corner cell would eat the fullscreen entry's press —
+	 * the exact shape of the mattree-open-fix regression on the EMI twin (fixed there by
+	 * mounting the corner before the canvas). The corner's clicks are unconsumed in BOTH
+	 * phases on this handler, leaving the {@link GT6MaterialTreeJeiScreenButton} listener
+	 * the only claimant.
+	 */
+	@Test
+	public void cornerCellClicksYieldToTheScreenButton() {
+		MaterialTreeDisplay tDisplay = ironDisplay();
+		MaterialTreeViewport tView = new MaterialTreeViewport();
+		GT6MaterialTreeJeiTreeWidget tTree = new GT6MaterialTreeJeiTreeWidget(tDisplay, tView, null);
+		List<ItemStack> tJumped = new ArrayList<>();
+		GT6MaterialTreeJeiCanvasHandler tHandler = new GT6MaterialTreeJeiCanvasHandler(tView, tTree, aStack -> {
+			tJumped.add(aStack);
+			return true;
+		});
+		// the corner cell's centre — inside the canvas handler's whole-canvas area
+		double tCX = gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_X + 6;
+		double tCY = gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_Y + 6;
+
+		assertFalse(tHandler.handleInput(tCX, tCY, mouseInput(true)), "the corner press is unconsumed (no report)");
+		assertFalse(tHandler.handleInput(tCX, tCY, mouseInput(false)), "the corner release is unconsumed (no jump)");
+		assertTrue(tJumped.isEmpty(), "the canvas handler never jumps from the corner");
+		// one px outside the cell the canvas face is back (the yield is the cell, not a band)
+		assertFalse(tHandler.handleInput(gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_X - 1,
+				gregtech6.gui.GT6MaterialTreeScreen.SCREEN_BUTTON_Y + 6, mouseInput(true)),
+				"beside the corner the ordinary canvas protocol holds");
 	}
 
 	// ------------------------------------------------------------------

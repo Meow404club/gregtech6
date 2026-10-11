@@ -29,6 +29,7 @@ import mezz.jei.api.gui.inputs.IJeiInputHandler;
 import mezz.jei.api.gui.inputs.IJeiUserInput;
 
 import gregtech6.emi.GT6MaterialTreeNav;
+import gregtech6.gui.GT6MaterialTreeScreen;
 import gregtech6.recipes.tree.MaterialTreeDisplay;
 import gregtech6.recipes.tree.MaterialTreeViewport;
 
@@ -55,8 +56,23 @@ import gregtech6.recipes.tree.MaterialTreeViewport;
  *     EXECUTE nothing (the 防吞分页键 clause — a half-click that slides off the page must
  *     not eat the input); mouse-up EXECUTEs the R-axis jump through
  *     {@link GT6JeiPlugin#openItemPage}. Non-mouse inputs (keys) return false so the page
- *     keeps its keyboard face (page flip, transfer).</li>
+ *     keeps its keyboard face (page flip, transfer). <b>The corner yield</b> (task
+ *     mattree-jei-leg-parity): clicks inside the S4 corner cell return false in BOTH
+ *     phases — JEI routes input handlers BEFORE the gui event listeners, so without the
+ *     yield a tree cell under the corner would eat the fullscreen entry's press; this is
+ *     the JEI analog of the EMI twin's add-order contract (task mattree-open-fix, where
+ *     the corner was explicitly mounted before the canvas so the same overlap could never
+ *     starve it).</li>
  * </ul>
+ *
+ * <p><b>Parity note</b> (task mattree-jei-leg-parity, the EMI-twin drag buttons): the pan
+ * drag rides the LEFT and MIDDLE hands, like the EMI canvas's empty-canvas gesture
+ * ({@code GT6MaterialTreeNavWidget#mouseClicked}, buttons 0 and 2) — JEI delivers drags
+ * for whichever key is pressed with no press-consumption prerequisite
+ * ({@code RecipeGuiLayouts.mouseDragged}: layout hovered → {@code handleMouseDragged}),
+ * so the middle face needs no press routing of its own. The click/jump face stays
+ * left-hand only: a middle press keeps falling through to the native routing, the same
+ * yield the EMI slot presses get.
  *
  * <p><b>Area</b>: the tree canvas only (0, 0, WIDTH, HEIGHT) — the control strip below
  * stays with the nav widget's listener (its cells) and JEI's default wheel (page flip), so
@@ -66,6 +82,10 @@ public class GT6MaterialTreeJeiCanvasHandler implements IJeiInputHandler {
 
 	/** The left mouse button's InputConstants value (GLFW_MOUSE_BUTTON_LEFT = 0). */
 	private static final int LEFT_BUTTON = 0;
+	/** The middle mouse button's InputConstants value (GLFW_MOUSE_BUTTON_MIDDLE = 2) — the EMI canvas's second pan hand. */
+	private static final int MIDDLE_BUTTON = 2;
+	/** The S4 corner cell's 12px side (the strip-cell convention both legs share; the cell itself is {@link GT6MaterialTreeJeiScreenButton}). */
+	private static final int CORNER_CELL = 12;
 
 	private final MaterialTreeViewport mView;
 	private final GT6MaterialTreeJeiTreeWidget mTree;
@@ -91,11 +111,18 @@ public class GT6MaterialTreeJeiCanvasHandler implements IJeiInputHandler {
 	@Override
 	public boolean handleInput(double aMouseX, double aMouseY, IJeiUserInput aInput) {
 		if (aInput.getKey().getType() != InputConstants.Type.MOUSE) return false; // keys stay with JEI
-		if (aInput.getKey().getValue() != LEFT_BUTTON) return false; // the canvas pans/jumps on the left hand only
+		if (aInput.getKey().getValue() != LEFT_BUTTON) return false; // the jump face is the left hand; middle/right fall through
+		if (inCornerCell(aMouseX, aMouseY)) return false; // the fullscreen entry owns its clicks, both phases
 		ItemStack tTarget = mTree.hitAt(aMouseX, aMouseY).stack();
 		if (aInput.isSimulate()) return !tTarget.isEmpty(); // mouse-down: report only, execute nothing
 		if (tTarget.isEmpty()) return false;
 		return mJump.test(tTarget); // mouse-up EXECUTE: the R-axis jump
+	}
+
+	/** Whether the page point sits in the S4 corner cell (the fullscreen entry the canvas yields to). */
+	private static boolean inCornerCell(double aMouseX, double aMouseY) {
+		return aMouseX >= GT6MaterialTreeScreen.SCREEN_BUTTON_X && aMouseX < GT6MaterialTreeScreen.SCREEN_BUTTON_X + CORNER_CELL
+				&& aMouseY >= GT6MaterialTreeScreen.SCREEN_BUTTON_Y && aMouseY < GT6MaterialTreeScreen.SCREEN_BUTTON_Y + CORNER_CELL;
 	}
 
 	//? if forge {
@@ -119,7 +146,7 @@ public class GT6MaterialTreeJeiCanvasHandler implements IJeiInputHandler {
 	@Override
 	public boolean handleMouseDragged(double aMouseX, double aMouseY, InputConstants.Key aMouseKey, double aDragX, double aDragY) {
 		if (aMouseKey == null || aMouseKey.getType() != InputConstants.Type.MOUSE
-				|| aMouseKey.getValue() != LEFT_BUTTON) return false;
+				|| (aMouseKey.getValue() != LEFT_BUTTON && aMouseKey.getValue() != MIDDLE_BUTTON)) return false;
 		GT6MaterialTreeNav.dragPan(mView, aDragX, aDragY);
 		return true;
 	}
