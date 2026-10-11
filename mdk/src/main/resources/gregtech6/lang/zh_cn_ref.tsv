@@ -4042,6 +4042,7 @@ direct	itemGroup.gt6.laser_wires	激光导线	hand
 direct	itemGroup.gt6.machines	机器	hand
 direct	itemGroup.gt6.multiblocks	多方块	hand
 direct	itemGroup.gt6.redstone_wires	红石导线	hand
+direct	itemGroup.gt6.safes	保险箱	hand
 direct	itemGroup.gt6.spray_cans	喷漆罐	hand
 direct	itemGroup.gt6.tools	工具	hand
 material	AbyssalOat	深渊燕麦	auto

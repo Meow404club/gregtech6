@@ -2160,6 +2160,10 @@ public class GT6EnUs extends LanguageProvider {
         add("block.gt6.test_machine", "Test Machine");
         add("block.gt6.test_machine_idle", "Test Machine (Passive)");
         add("itemGroup.gt6.chests", "Chests");
+        // task storage-tabs-buckets-safes — the safes tab title = the upstream category label
+        // "Safes" (Loader_MultiTileEntities.java:134-135, tab id 2010; no dump face, the
+        // special-tab hand-row form like chests above)
+        add("itemGroup.gt6.safes", "Safes");
     }
 
     /**

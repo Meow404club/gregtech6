@@ -2198,6 +2198,7 @@ public class GT6ZhCn extends LanguageProvider {
 		// tabs only) — their titles ride the hand rows, keyed by the same literals/constants
 		// the en walk uses so the faces cannot drift
 		addDirect("itemGroup.gt6.chests");
+		addDirect("itemGroup.gt6.safes"); // task storage-tabs-buckets-safes — the safes tab 保险箱 (the tsv hand row; the upstream "Safes" category label, Loader :134-135, no dump face)
 		addDirect("itemGroup.gt6.machines");
 		addDirect("itemGroup.gt6.books"); // task tabfix-d-ruling — the written-books tab 说明书 (the tsv hand row; the port-ruling tab, no dump face)
 		addDirect("itemGroup.gt6.multiblocks");

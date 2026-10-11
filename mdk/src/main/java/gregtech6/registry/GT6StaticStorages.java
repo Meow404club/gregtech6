@@ -9,13 +9,14 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -108,11 +109,14 @@ import gregtech6.tileentity.inventories.GT6StaticStorageBaseBlockEntity;
  * <li>Metal Bottlecrate — id 8600+aID (:144), hardness 0.5, resistance = aHardness.</li>
  * </ul>
  * Tool-quality columns fold (no hardness-harvest layer on the port block properties); the
- * SFX folds (click/collect/anvil place) defer with the cosmetic layer; the upstream
- * creative-tab homes (Safes 2010, Storage 32751 — Loader_MultiTileEntities.java:134-135
- * and the :138-144/:181-184 storage rows) pool into the MACHINES_TAB join (task
- * tabfix-b-energy, {@link #onBuildTabContents}; the GTBarrels:257 pooling precedent —
- * supersedes the old "no creative tab row" append note).
+ * SFX folds (click/collect/anvil place) defer with the cosmetic layer; the creative-tab
+ * faces (task storage-tabs-buckets-safes, the chests-tab-rehome shape): the SAFE rows ride
+ * their own upstream category tab — "Safes" (tab id 2010, Loader_MultiTileEntities.java
+ * :134-135 exactly; one shared CreativeTab per tab id, MultiTileEntityRegistry.java:191) —
+ * via {@link #SAFES_TAB} / {@link #walkDisplayItems}, while the remaining "Storage" rows
+ * (:138-144/:181-184, tab id 32751) keep the MACHINES_TAB join ({@link #onBuildTabContents};
+ * the tabfix-b-energy pooling — the storage-tab split is a later card, the GTBarrels:257
+ * pooling precedent).
  */
 @Mod.EventBusSubscriber(modid = "gt6", bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class GT6StaticStorages {
@@ -294,6 +298,20 @@ public final class GT6StaticStorages {
 	/** The loader-line anchor conversion (the slug/display/hardness/aID columns carry over one-to-one). */
 	private static StaticMaterial materialOf(GT6Hoppers.HopperMaterial aMat) {
 		return new StaticMaterial(aMat.slug(), aMat.display(), aMat.hardness(), aMat.metaId());
+	}
+
+	/** The safe-kind face (the two Safe loader rows :134-135) — the single predicate both tab walks branch on. */
+	static boolean isSafe(StaticRow aRow) {
+		return aRow.kind() == Kind.SAFE_MECHANICAL || aRow.kind() == Kind.SAFE_KEYLOCKED;
+	}
+
+	/** The safe rows in registration order — 4 = two kinds x the Bronze/Steel anchors (Loader :134-135 over :191/:202). */
+	static List<StaticRow> safeRows() {
+		List<StaticRow> rRows = new ArrayList<>(4);
+		for (StaticRow tRow : ROWS) {
+			if (isSafe(tRow)) rRows.add(tRow);
+		}
+		return rRows;
 	}
 
 	/** The registered blocks by path (the BET multi-mount arrays + the datagen walkers). */
@@ -1170,24 +1188,60 @@ public final class GT6StaticStorages {
 		*///?}
 		BLOCKS.register(tModBus);
 		ITEMS.register(tModBus);
+		CREATIVE_MODE_TABS.register(tModBus);
+	}
+
+	/** The safes-tab title key (the GTBlockEntities.TAB_TITLE_KEY form). */
+	public static final String TAB_TITLE_KEY = "itemGroup.gt6.safes";
+
+	public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, "gt6");
+
+	/**
+	 * The safes tab (task storage-tabs-buckets-safes, the gt6:chests shape): upstream hangs
+	 * the safe pair on its OWN MTE-registry category tab — aRegistry.add(..., "Safes", ...,
+	 * 2010, ...) (Loader_MultiTileEntities.java:134-135 exactly; the whole tab, one shared
+	 * CreativeTab per tab id, MultiTileEntityRegistry.java:191) — and the port keeps that
+	 * shape: the tab shows the 4 safe rows in {@link #ROWS} registration order (the
+	 * {@link #walkDisplayItems} walk), the icon is the family head (the upstream lazy-tab
+	 * icon face — the tab icon = the first registration's block item, :191 =
+	 * safe_mechanical_bronze, the Bronze anchor's Mechanical Safe).
+	 */
+	public static final RegistryObject<CreativeModeTab> SAFES_TAB = CREATIVE_MODE_TABS.register("safes",
+			() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0) // vanilla CreativeModeTab.java:46-48
+					.title(Component.translatable(TAB_TITLE_KEY))
+					.icon(() -> new ItemStack(ITEMS_BY_PATH.get(safeRows().get(0).path()).get()))
+					.displayItems((aParameters, aOutput) -> walkDisplayItems(aOutput))
+					.build());
+
+	/**
+	 * The safes tab walk: the 4 safe rows (the two loader Safe lines :134-135 over the
+	 * Bronze/Steel anchors), {@link #ROWS} registration order. Package visible so the tab
+	 * builder lambda and the offline census drive the SAME walk (the
+	 * {@code GT6Chests.walkDisplayItems} form).
+	 */
+	static void walkDisplayItems(CreativeModeTab.Output aOutput) {
+		for (StaticRow tRow : safeRows()) {
+			aOutput.accept(new ItemStack(ITEMS_BY_PATH.get(tRow.path()).get()));
+		}
 	}
 
 	/**
-	 * The tab walk (task tabfix-b-energy — the whole {@link #ITEMS_BY_PATH} family
-	 * joins the machines tab; the GT6BurningBoxes.onBuildTabContents verbatim form, the
-	 * class-level MOD-bus {@code @Mod.EventBusSubscriber} at the class head is what
-	 * delivers this handler). JEI 1.20.1 derives its item list from the tab display
-	 * items, so registered-but-tab-less was invisible in both the creative menu and JEI.
-	 * Pool-cut declaration: upstream hangs the metal kinds on the "Safes" category (tab
-	 * 2010, Loader_MultiTileEntities.java:134-135) and the wooden kinds on "Storage" (tab
-	 * 32751, :138-144/:177-184); this port pools both joins into MACHINES_TAB (the
-	 * GTBarrels:257 pooling precedent).
+	 * The tab walk (task tabfix-b-energy — the "Storage" rows join the machines tab; the
+	 * GT6BurningBoxes.onBuildTabContents verbatim form, the class-level MOD-bus
+	 * {@code @Mod.EventBusSubscriber} at the class head is what delivers this handler).
+	 * JEI 1.20.1 derives its item list from the tab display items, so registered-but-tab-less
+	 * was invisible in both the creative menu and JEI. Pool-cut declaration: the SAFE rows
+	 * LEFT this join (task storage-tabs-buckets-safes — upstream gives them their own "Safes"
+	 * tab, id 2010, Loader_MultiTileEntities.java:134-135; {@link #SAFES_TAB}); the remaining
+	 * "Storage" rows (tab id 32751, :138-144/:177-184) keep the MACHINES_TAB pooling (the
+	 * GTBarrels:257 pooling precedent — the storage-tab split is a later card).
 	 */
 	@SubscribeEvent
 	public static void onBuildTabContents(BuildCreativeModeTabContentsEvent aEvent) {
 		if (aEvent.getTabKey().location().equals(GTMachines.MACHINES_TAB.getId())) {
-			for (RegistryObject<Item> tItem : ITEMS_BY_PATH.values()) {
-				aEvent.accept(new ItemStack(tItem.get()));
+			for (StaticRow tRow : ROWS) {
+				if (isSafe(tRow)) continue; // the safes ride gt6:safes (SAFES_TAB)
+				aEvent.accept(new ItemStack(ITEMS_BY_PATH.get(tRow.path()).get()));
 			}
 		}
 	}
