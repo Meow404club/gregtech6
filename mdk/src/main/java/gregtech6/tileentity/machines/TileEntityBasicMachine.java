@@ -165,7 +165,7 @@ import gregtech6.util.GTSideTables;
  * two-bit payload), applied in {@link #onTickChecked(long)} through the vanilla furnace
  * idiom (setBlock(state, 3) — same-block state changes keep the BE). Facing is
  * double-written NBT + BlockState (P4 spec 7): NBT is the persistent authority.
- *
+	 *
 	 * <p>GUI: the WHOLE family opens the ModularUI chain — the row-less families
 	 * (Shredder/Crusher/Lathe) since task mui-a-open-chain, the row families (dryer/canner/
 	 * distillery + the W1 carriers) since task basic-machines-mui-migration retired their
@@ -174,7 +174,7 @@ import gregtech6.util.GTSideTables;
 	 * {@link GTBasicMachineMenu#hostOf} projection; {@link #createMenu} survives only as the
 	 * declared MenuProvider face (the ACT C2 form — it throws without a bound MenuType, and
 	 * no registered row carries one today).
- *
+	 *
  * <p>Teardown dist note (task basicmachine-onremove-distleak, the forensics record): the
  * dedicated-server /fill teardown of a producing machine of this family once detonated
  * ("Attempted to load class brachy/modularui/screen/ModularScreen for invalid dist

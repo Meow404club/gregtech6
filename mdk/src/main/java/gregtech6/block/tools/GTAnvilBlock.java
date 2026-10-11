@@ -49,15 +49,16 @@ import gregtech6.tileentity.tools.GT6AnvilBlockEntity;
  * rows, aUtilStone → the STONE sound, :277-282 folds onto it) — plus the family BET this
  * member mounts (one shared BET over both rows, ADR-P3-1).
  *
- * <p>Upstream rows (Loader_MultiTileEntities.java:2185-2186, category "Misc Tool Blocks"):
+ * <p>Upstream rows (Loader_MultiTileEntities.java:2185-2219, category "Misc Tool Blocks",
+ * 35 rows — registered verbatim in {@link gregtech6.registry.GT6Anvils#ROWS}): the two stone carriers
  * <ul>
  * <li>Stone Anvil — MT.Stone, NBT_DURABILITY 10000, recipe "RRR","hR ","RRR" over stone;</li>
  * <li>Blackstone Anvil — MT.STONES.Blackstone, NBT_DURABILITY 100000, same shape over
  *     OP.stone.dat(Blackstone) (= the vanilla blackstone item).</li>
  * </ul>
- * The other 14 material rows (:2187-2200+) are the material-ladder pool cut (the
- * single-tier tools ruling repeated — the BE/behaviour is material-blind except the two
- * carrier values above).
+ * plus the 33 material-ladder rows (:2187-2219 — task material-mc-e-tool-anvil-rows).
+ * The BE/behaviour is material-blind except the two carrier values above — the ladder
+ * rows differ in the registration NBT only.
  *
  * <p>{@code use} is the one-click manual-interaction face (the GTKitchenBlock form): the
  * whole upstream onBlockActivated3 (:218-274) + the onToolClick2 hammer strike (:94-141)
